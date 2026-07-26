@@ -678,6 +678,52 @@ object InuConfig {
     @JvmField
     val ICON_REPLACEMENT = IconReplacementItem()
 
+    @JvmField
+    val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
+
+    @JvmField
+    val CENTER_TITLE_SETTINGS = BoolItem("center_title_settings", false)
+
+    @JvmField
+    val CENTER_TITLE_PROFILE = BoolItem("center_title_profile", false)
+
+    @JvmField
+    val CENTER_TITLE_DIALOGS = BoolItem("center_title_dialogs", false)
+
+    @JvmField
+    val SAVE_SELF_DESTRUCT = BoolItem("save_self_destruct", false)
+
+    @JvmField
+    val SAVE_ANY_STORY = BoolItem("save_any_story", true)
+
+    @JvmField
+    val SAVE_DELETED_MESSAGES = BoolItem("save_deleted_messages", true)
+
+    @JvmField
+    val HIDE_SPONSORED_MESSAGES = BoolItem("hide_sponsored_messages", true)
+
+    @JvmField
+    val SAVE_EDITED_MESSAGES = BoolItem("save_edited_messages", true)
+
+    @JvmField
+    val REGEX_FILTER_ENABLED = BoolItem("regex_filter_enabled", false)
+
+    @JvmField
+    val REGEX_FILTER_PATTERNS = StringItem(
+        "regex_filter_patterns",
+        "(?i)(реклама|промокод|казино|знижка|ставк|підпишись|referral|crypto|binance|buy now)"
+    )
+
+    class RegexFilterModeItem : IntItem("regex_filter_mode", HIDE) {
+        companion object {
+            const val HIDE = 0
+            const val SPOILER = 1
+        }
+    }
+
+    @JvmField
+    val REGEX_FILTER_MODE = RegexFilterModeItem()
+
     class NotificationIconItem : IntItem("notification_icon", TELEGRAM) {
         companion object {
             const val TELEGRAM = 0
@@ -777,4 +823,5 @@ object InuConfig {
 
     @JvmField
     val BIOMETRIC_ALLOW_DEVICE_CREDENTIAL = BoolItem("biometric_allow_device_credential", false)
+
 }

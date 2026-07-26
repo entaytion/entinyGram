@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path'
+import { execSync } from 'node:child_process'
 import { glob } from 'tinyglobby'
 import { $, chalk } from 'zx'
 import {
@@ -12,6 +13,10 @@ import {
 } from './config.js'
 
 $.verbose = false
+if (process.platform === 'win32') {
+  $.shell = 'cmd.exe'
+  $.prefix = ''
+}
 
 export function step(message: string) {
   console.log(`${chalk.blue('==>')} ${message}`)
@@ -69,7 +74,7 @@ export async function cloneUpstream(targetDir: string, commit: string) {
   await ensureEmptyCloneTarget(targetDir)
   if (!existsSync(join(targetDir, '.git'))) {
     step(`Cloning upstream into ${targetDir}`)
-    await $`git clone ${upstreamUrl} ${targetDir}`
+    execSync(`git clone "${upstreamUrl}" "${targetDir}"`, { cwd: rootDir, stdio: 'inherit' })
   } else {
     step(`Reusing existing checkout in ${targetDir}`)
   }
@@ -290,17 +295,11 @@ export async function generateStablePatchFromCommit(repoDir: string, commitId: s
 }
 
 export async function getAllPatchCommitIds(repoDir: string) {
-  const branch = (await cd(repoDir)`git symbolic-ref --short HEAD`).stdout.trim()
-  const format = '%(refname) %(objectname)'
-  const out = await cd(repoDir)`git for-each-ref --format=${format} refs/patches/${branch}/`
-  const prefix = `refs/patches/${branch}/`
+  const patchNames = await getAppliedPatchNames(repoDir)
   const map = new Map<string, string>()
-  for (const line of out.stdout.split(/\r?\n/)) {
-    const trimmed = line.trim()
-    if (!trimmed) continue
-    const [ref, sha] = trimmed.split(' ')
-    if (!ref.startsWith(prefix)) continue
-    map.set(ref.slice(prefix.length), sha)
+  for (const patchName of patchNames) {
+    const sha = (await cd(repoDir)`stg id ${patchName}`).stdout.trim()
+    map.set(patchName, sha)
   }
   return map
 }

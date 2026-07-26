@@ -233,7 +233,7 @@ New hook → `@JvmStatic fun` on `InuHooks`, one-line call site in the patch, **
 
 - Values are palette tones (`a1_600`, `n1_50`), M3 semantic tokens (`monet_surface_container_light`), custom names (`monetGreen`), or raw ints.
 - Modifiers: `(a=)` alpha %, `(s=)` blend→white %, `(l=)` blend→black %, `(t=)` absolute HCT tone, `(c=)` HCT chroma multiplier % (0–400, relative so monochrome palettes stay gray). Comma-separated: `monet_secondary_container_light(t=90,c=75)`.
-- Debug hot reload: `pnpm run push-theme [light|dark|amoled] [--watch] [--clear] [-s <serial>]` — adb-pushes the asset to the app's external files dir and broadcasts `desu.inugram.RELOAD_THEME`. Debug builds only (`getThemeOverrideFile` is a no-op otherwise); the app must be running.
+- Debug hot reload: `bun run push-theme [light|dark|amoled] [--watch] [--clear] [-s <serial>]` — adb-pushes the asset to the app's external files dir and broadcasts `desu.inugram.RELOAD_THEME`. Debug builds only (`getThemeOverrideFile` is a no-op otherwise); the app must be running.
 
 ## Java ↔ Kotlin gotchas
 
@@ -269,7 +269,7 @@ You never run these unless explicitly asked — documented so you can answer que
 stg new feature__my-patch -m 'Allow editing by double tapping a message'
 # ...edit worktree/...
 stg refresh
-pnpm run export
+bun run export
 
 # modify existing patch in-place
 # ...edit worktree/...
@@ -279,13 +279,17 @@ stg refresh -p feature__my-patch  # --index for staged-only
 stg float feature__my-patch
 # ...edit...
 stg refresh
-pnpm run export
+bun run export
 ```
 
-`pnpm run export` rewrites `patches/` + `series` from the stack. User runs it.
+`bun run export` rewrites `patches/` + `series` from the stack. User runs it.
 
 If user asks "which patch am I on" → `stg top`.
 
 ## Self-maintenance
 
 When adding a new `InuHooks` method, settings page, or shared `hooks/` patch — update this file. Tribal knowledge rots.
+
+## Commit convention
+
+Patches and commits use the configured Git user identity (format: `First Last <email@example.com>`).

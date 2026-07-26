@@ -69,16 +69,14 @@ jobs:
 
       - name: configure git identity
         run: |
-          git config --global user.email ci@inugram
-          git config --global user.name 'inugram ci'
+          git config --global user.email ci@entinygram
+          git config --global user.name 'entinygram ci'
 
-      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-          cache: pnpm
+          bun-version: latest
 
-      - run: pnpm install --frozen-lockfile
+      - run: bun install --frozen-lockfile
 
       - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
@@ -98,13 +96,13 @@ jobs:
           save: ${{ github.event_name != 'pull_request' }}
 
       - name: set up worktree
-        run: pnpm run setup -- --no-stgit
+        run: bun run setup -- --no-stgit
 
       - name: compute build info
         id: info
         env:
           INU_BUILD: ${{ vars.INU_BUILD || '1' }}
-        run: pnpm tsx scripts/ci/version.ts
+        run: bun run tsx scripts/ci/version.ts
 
       - uses: gradle/actions/setup-gradle@0b6dd653ba04f4f93bf581ec31e66cbd7dcb644d # v4
         with:

@@ -134,10 +134,12 @@ async function ensureAdGuardFilter() {
 
 async function importSeries(seriesEntries: string[]) {
   const repo = cd(worktreeDir)
+  await repo`git config core.autocrlf false`
   for (const entry of seriesEntries) {
     const patchName = patchNameFromSeriesEntry(entry)
     step(`Importing ${entry} as ${patchName}`)
-    await repo`stg import -n ${patchName} ${join(patchesDir, entry)}`
+    const patchPath = join(patchesDir, entry).replaceAll('\\', '/')
+    await repo`stg import --3way -n ${patchName} ${patchPath}`
   }
 }
 
@@ -206,7 +208,8 @@ if (noStgit) {
   const repo = cd(worktreeDir)
   for (const entry of seriesEntries) {
     step(`Applying ${entry}`)
-    await repo`git apply ${join(patchesDir, entry)}`
+    const patchPath = join(patchesDir, entry).replaceAll('\\', '/')
+    await repo`git apply ${patchPath}`
   }
   await ensureAdGuardFilter()
   await linkForkSource(worktreeDir)

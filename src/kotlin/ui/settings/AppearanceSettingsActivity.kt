@@ -20,8 +20,18 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuLookAndFeel)
+    private val centerTitleGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuCenterTitle),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuCenterTitleChats, InuConfig.CENTER_TITLE_CHATS),
+            ExpandableBoolGroup.Option(R.string.InuCenterTitleSettings, InuConfig.CENTER_TITLE_SETTINGS),
+            ExpandableBoolGroup.Option(R.string.InuCenterTitleProfile, InuConfig.CENTER_TITLE_PROFILE),
+            ExpandableBoolGroup.Option(R.string.InuCenterTitleDialogs, InuConfig.CENTER_TITLE_DIALOGS),
+        ),
+        sectionId = SECTION_CENTER_TITLE,
+    )
 
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuLookAndFeel)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
@@ -36,6 +46,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
+        centerTitleGroup.addTo(items) { adapter.update(true) }
         items.add(
             UItem.asButton(
                 BUTTON_NOTIFICATION_ICON,
@@ -190,6 +201,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (centerTitleGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
             TOGGLE_HIDE_FADE_VIEW -> {
                 val new = InuConfig.HIDE_FADE_VIEW.toggle()
@@ -208,6 +220,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.ICON_REPLACEMENT.value = which
                 showRestartBulletin()
             }
+
 
             BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
                 this, view,
@@ -346,6 +359,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
+        private val SECTION_CENTER_TITLE = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
@@ -382,6 +396,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
+                SearchRegistry.Entry("center-title", R.string.InuCenterTitle, SECTION_CENTER_TITLE),
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),

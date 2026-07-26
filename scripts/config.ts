@@ -12,7 +12,7 @@ export const seriesFile = join(rootDir, 'series')
 export const upstreamCommitFile = join(rootDir, 'upstream-commit')
 export const assetsDir = join(rootDir, 'src/res/assets')
 
-export const debugAppId = 'desu.inugram.beta'
+export const debugAppId = 'ua.entaytion.entinygram.beta'
 
 export interface ForkSyncFile {
   source: string
@@ -57,6 +57,10 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/values-ru',
   },
   {
+    source: 'src/res/values-uk/strings_inu.xml',
+    target: 'TMessagesProj/src/main/res/values-uk',
+  },
+  {
     source: 'src/res/values-ja/strings_inu.xml',
     target: 'TMessagesProj/src/main/res/values-ja',
   },
@@ -97,14 +101,30 @@ export const forkSyncFiles: ForkSyncFile[] = [
     source: 'src/res/raw/*',
     target: 'TMessagesProj/src/main/res/raw',
   },
-  // launcher icons, produced by `pnpm run generate-icons`
+  // launcher icons, produced by `bun run generate-icons`
   {
     source: 'src/res/launcher/generated/drawable/*',
     target: 'TMessagesProj/src/main/res/drawable',
   },
   {
+    source: 'src/res/launcher/generated/mipmap/*',
+    target: 'TMessagesProj/src/main/res/mipmap-anydpi-v26',
+    replace: true,
+  },
+  {
     source: 'src/res/launcher/generated/mipmap-debug/*',
     target: 'TMessagesProj_App/src/debug/res/mipmap-anydpi-v26',
+    replace: true,
+  },
+  {
+    source: 'src/google-services.json',
+    target: 'TMessagesProj',
+    replace: true,
+  },
+  {
+    source: 'src/google-services.json',
+    target: 'TMessagesProj_App',
+    replace: true,
   },
 ]
 

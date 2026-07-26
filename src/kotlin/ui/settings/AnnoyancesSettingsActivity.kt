@@ -134,6 +134,12 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(
+            mkSubPageButton(
+                BUTTON_REGEX_FILTER,
+                LocaleController.getString(R.string.InuRegexFilter),
+            )
+        )
+        items.add(
             mkTwoLineCheckItem(
                 TOGGLE_DISABLE_QUICK_SHARE,
                 R.string.InuDisableQuickShare,
@@ -221,6 +227,8 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.DISABLE_QUICK_SHARE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+
+            BUTTON_REGEX_FILTER -> presentFragment(RegexFilterSettingsActivity())
 
             BUTTON_CLEAR_HINTS -> {
                 // holy fucking shit how is it so inconsistent
@@ -310,6 +318,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
         private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
         private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
+        private val BUTTON_REGEX_FILTER = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
         private val SECTION_HIDE_AI_FEATURES = InuUtils.generateId()
         private val SECTION_HIDE_SUGGESTIONS = InuUtils.generateId()
@@ -334,6 +343,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
+                SearchRegistry.Entry("regex-filter", R.string.InuRegexFilter, BUTTON_REGEX_FILTER),
                 SearchRegistry.Entry("clear-hints", R.string.InuClearHints, BUTTON_CLEAR_HINTS),
                 SearchRegistry.Entry("hide-ai-features", R.string.InuHideAiFeatures, SECTION_HIDE_AI_FEATURES),
                 SearchRegistry.Entry("hide-suggestions", R.string.InuHideSuggestions, SECTION_HIDE_SUGGESTIONS),

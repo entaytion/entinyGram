@@ -1,6 +1,12 @@
 node_modules/
 worktree/
 .DS_Store
+.idea/
+.vscode/
+.gradle/
+*.apk
+*.aab
+src/google-services.json
 src/core/build
 src/res/assets/adguard_url_tracking.txt
 TODO.md

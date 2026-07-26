@@ -10,7 +10,9 @@ import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
+import desu.inugram.ui.settings.RegexFilterSettingsActivity
 import desu.inugram.ui.settings.SettingsPageActivity
+import desu.inugram.ui.settings.TosSettingsActivity
 import desu.inugram.ui.settings.TranslatorSettingsActivity
 import desu.inugram.ui.settings.UserProfileSettingsActivity
 import desu.inugram.ui.settings.fonts.FontStackActivity
@@ -47,6 +49,8 @@ object SearchRegistry {
             UserProfileSettingsActivity.PAGE,
             AnnoyancesSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
+            TosSettingsActivity.PAGE,
+            RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
         )

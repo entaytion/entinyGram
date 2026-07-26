@@ -96,6 +96,13 @@ class InuSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuPrivacySecurity)
             )
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_TOS,
+                R.drawable.msg_autodelete,
+                LocaleController.getString(R.string.InuTOS)
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(
@@ -140,6 +147,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             BUTTON_BEHAVIOR -> presentFragment(BehaviorSettingsActivity())
             BUTTON_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
             BUTTON_PRIVACY -> presentFragment(PrivacySecurityActivity())
+            BUTTON_TOS -> presentFragment(TosSettingsActivity())
             BUTTON_ABOUT -> presentFragment(AboutActivity())
             BUTTON_EXPORT -> launchExport()
             BUTTON_IMPORT -> launchImport()
@@ -256,6 +264,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val BUTTON_BEHAVIOR = InuUtils.generateId()
         private val BUTTON_TRANSLATOR = InuUtils.generateId()
         private val BUTTON_PRIVACY = InuUtils.generateId()
+        private val BUTTON_TOS = InuUtils.generateId()
         private val BUTTON_ABOUT = InuUtils.generateId()
         private val BUTTON_EXPORT = InuUtils.generateId()
         private val BUTTON_IMPORT = InuUtils.generateId()
@@ -267,7 +276,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "root",
             titleRes = R.string.InuSettings,
-            iconRes = R.drawable.msg_settings,
+            iconRes = R.drawable.icon_settings_inu,
             factory = ::InuSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("about", R.string.InuAbout, BUTTON_ABOUT),

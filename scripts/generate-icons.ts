@@ -14,7 +14,7 @@ import {
 // run manually after changing src/res/launcher SVGs; output is committed
 
 const ADAPTIVE_SIZE = 108
-const FG_SAFE = 72
+const FG_SAFE = 60
 // settings-list icon: 24dp render in a 72dp viewport, tinted white by
 // SettingCell — mirrors stock settings_account/settings_chat/settings_privacy
 const SETTINGS_DP = 24
@@ -26,8 +26,8 @@ const SETTINGS_SAFE = 80
 const NOTIFICATION_DP = 24
 const NOTIFICATION_VIEWPORT = 24
 const NOTIFICATION_SAFE = 39
-const BG_GRADIENT_FROM = '#FFD4A3FF'
-const BG_GRADIENT_TO = '#FFD59EFF'
+const BG_GRADIENT_FROM = '#F20C3CFF'
+const BG_GRADIENT_TO = '#A00320FF'
 // debug badge: a small white square (only its top-left corner rounded) tucked
 // into the bottom-right corner, holding a β. the white fill is framed with a
 // background-coloured outline so it doesn't clash with the icon underneath.
@@ -161,7 +161,7 @@ function buildNotificationVector(shapes: SvgShape[], srcW: number, srcH: number)
   })
 }
 
-function buildAdaptiveIcon(foreground: string): string {
+function buildAdaptiveIcon(foreground = 'icon_foreground_inu'): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/icon_background_inu" />
@@ -223,10 +223,13 @@ const monochrome = buildForegroundVector(mono.shapes, mono.srcW, mono.srcH, true
 const settingsIcon = buildSettingsVector(mono.shapes, mono.srcW, mono.srcH)
 const notificationIcon = buildNotificationVector(mono.shapes, mono.srcW, mono.srcH)
 const background = buildBackgroundVector()
+const releaseIcon = buildAdaptiveIcon('icon_foreground_inu')
 const debugIcon = buildAdaptiveIcon('icon_foreground_inu_debug')
 
+const GEN_MIPMAP = 'src/res/launcher/generated/mipmap'
+
 // the *_inu drawables back stock @mipmap/ic_launcher{,_round} (rewired by
-// misc__branding); the mipmap-debug wrappers override it for the debug build
+// misc__branding); the mipmap wrappers override it
 const targets: [string, string][] = [
   [`${GEN_DRAWABLE}/icon_background_inu.xml`, background],
   [`${GEN_DRAWABLE}/icon_plane_inu.xml`, monochrome],
@@ -235,6 +238,8 @@ const targets: [string, string][] = [
   [`${GEN_DRAWABLE}/icon_foreground_inu_debug.xml`, foregroundDebug],
   [`${GEN_DRAWABLE}/icon_settings_inu.xml`, settingsIcon],
   [`${GEN_DRAWABLE}/icon_notification_inu.xml`, notificationIcon],
+  [`${GEN_MIPMAP}/ic_launcher.xml`, releaseIcon],
+  [`${GEN_MIPMAP}/ic_launcher_round.xml`, releaseIcon],
   [`${GEN_DEBUG_MIPMAP}/ic_launcher.xml`, debugIcon],
   [`${GEN_DEBUG_MIPMAP}/ic_launcher_round.xml`, debugIcon],
 ]

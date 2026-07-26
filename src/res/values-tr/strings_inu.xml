@@ -8,8 +8,8 @@
     <string name="InuNavigationDrawerInfo">Alt sekme çubuğunu v12.0 öncesi sol yan menü ile değiştirir. Yeniden başlatma gerektirir.</string>
     <string name="InuDrawerBackGesture">Geri hareketiyle yan menüyü aç</string>
     <string name="InuDrawerBackGestureInfo">Sohbet listesinin sol kenarından sağa kaydırmak, uygulamadan çıkmak yerine yan menüyü açar.</string>
-    <string name="InuSettings">Inugram Ayarları</string>
-    <string name="InuSettingsInfo">ne yapıyor bu köpek?</string>
+    <string name="InuSettings">entinyGram Ayarları</string>
+    <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuExperimental">Deneysel</string>
     <string name="InuGeneral">Genel</string>
     <string name="InuMiscellaneous">Çeşitli</string>
@@ -223,7 +223,7 @@
     <string name="InuConfirmReactionText">**%2$s** sohbetine %1$s tepkisi gönderilsin mi?</string>
     <string name="InuNotificationIcon">Bildirim simgesi</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">Inugram</string>
+    <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuDisableChatBubbles">Android bildirim balonlarını devre dışı bırak</string>
     <string name="InuInPlaceTranslation">Yerinde çeviri</string>
     <string name="InuTranslateWebPreviews">Web önizlemelerini çevir</string>
@@ -471,7 +471,7 @@
     <string name="InuFormattingPopupDivider">——————</string>
     <string name="InuCut">Kes</string>
     <string name="InuCodeLanguage">Kod dili</string>
-    <string name="InuVersion">Inugram v%1$s (%2$s tabanlı, derleme %3$s)</string>
+    <string name="InuVersion">entinyGram v%1$s (%2$s tabanlı, derleme %3$s)</string>
 
     <string name="InuSearchFilter">Medyaya göre filtrele</string>
     <string name="InuSearchFilterPhotos">Fotoğraflar</string>
@@ -531,7 +531,7 @@
     <string name="InuBackupImportSheetApply">Evet, uygula</string>
     <string name="InuBackupImportSheetCancel">Hayır, olduğu gibi bırak</string>
     <string name="InuCloudSync">Ayarları senkronize et</string>
-    <string name="InuCloudSyncDesc">Inugram ayarlarınızı Telegram bulutuna yedekleyin ve başka bir cihazda geri yükleyin.\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) kullanılır, verileriniz asla bizim sunucularımıza gönderilmez.</string>
+    <string name="InuCloudSyncDesc">entinyGram ayarlarınızı Telegram bulutuna yedekleyin ve başka bir cihazda geri yükleyin.\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) kullanılır, verileriniz asla bizim sunucularımıza gönderilmez.</string>
     <string name="InuCloudSyncNow">Şimdi senkronize et</string>
     <string name="InuCloudSyncing">Senkronize ediliyor…</string>
     <string name="InuCloudRestore">Buluttan geri yükle</string>
@@ -568,7 +568,7 @@
     <string name="InuMentionInsertTitle">Bahsetme ekle</string>
     <string name="InuPasscode">Parola</string>
     <string name="InuPasscodeNeeded">Önce bir Telegram parolası ayarlayın.</string>
-    <string name="InuPasscodeShowInSettings">Inugram ayarlarında göster</string>
+    <string name="InuPasscodeShowInSettings">entinyGram ayarlarında göster</string>
     <string name="InuPasscodeShowInSettingsInfo">Kapalı olduğunda, bu sayfa **yalnızca** aşağıdaki bağlantı üzerinden açılabilir. Şimdi kaydedin — bir kez oluşturulduktan sonra değişmez.</string>
     <string name="InuPasscodeAccountsInfo">Her hesabın kendine ait bir parolası olabilir. Kilit ekranında bu parolayı girmek uygulamanın kilidini açar ve o hesaba geçiş yapar.</string>
     <string name="InuPasscodeStateNone">Yapılandırılmadı</string>
@@ -613,12 +613,12 @@
     <string name="InuGoToMessagePrompt">Mesaj Kimliği (ID)</string>
     <string name="InuPrivacySecurity">Gizlilik &amp; Güvenlik</string>
     <string name="InuPerAccountPasscode">Hesap başına parola</string>
-    <string name="InuHideInugramSettings">Inugram ayarlarını gizle</string>
+    <string name="InuHideInugramSettings">entinyGram ayarlarını gizle</string>
     <string name="InuParanoiaDisableNotifications">Bildirimleri devre dışı bırak</string>
     <string name="InuParanoiaHideOtherAccounts">Diğer hesapları gizle</string>
     <string name="InuParanoiaHideFolders">Klasörleri gizle</string>
     <string name="InuParanoiaDisguise">Telegram olarak gizle</string>
-    <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir. Android kısıtlamaları nedeniyle bildirimler ve uygulama içi ad hâlâ \"Inugram\" olarak görünür.</string>
+    <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir. Android kısıtlamaları nedeniyle bildirimler ve uygulama içi ad hâlâ \"entinyGram\" olarak görünür.</string>
     <string name="InuDisguiseName" translatable="false">Telegram</string>
     <string name="InuParanoiaMode">Paranoia modu</string>
     <string name="InuParanoiaModeInfo">Paranoia modu, \"tehlikeli\" sohbetleri gizleyerek ve isteğe bağlı olarak varsayılan uygulama gibi görünerek bir başkasının telefonunuzu kontrol etmesine \"hazırlıklı\" olmanızı sağlar.</string>
@@ -645,17 +645,17 @@
     <string name="InuBotHelp">Bot Yardımı</string>
 
     <string name="InuSimulateOom">OOM (bellek yetersizliği) çökmesini simüle et</string>
-    <string name="InuCrashTitle">Inugram geçen sefer çöktü</string>
-    <string name="InuCrashTitleOom">Inugram bellek yetersizliği yaşadı</string>
+    <string name="InuCrashTitle">entinyGram geçen sefer çöktü</string>
+    <string name="InuCrashTitleOom">entinyGram bellek yetersizliği yaşadı</string>
     <string name="InuCrashDesc">Bunun için üzgünüz. Düzeltilmesine yardımcı olmak için çökme günlüğünü geliştiriciyle paylaşabilirsiniz.</string>
     <string name="InuCrashDescOom">Bunun için üzgünüz. Çökme günlükleri bellek yetersizliği sorunları için pek yararlı değildir — bellek dökümü (heap dump) daha çok yardımcı olur.</string>
     <string name="InuCrashDescHeapDump">Bir bellek dökümü de kaydedildi. BUNU PAYLAŞMAYIN! Özel veriler içerir! İsterseniz kendiniz inceleyin ve bulgularınızı paylaşın — bu çok yardımcı olur.</string>
-    <string name="InuCrashOomEnableLogs">Gelecekteki her OOM durumunda bellek dökümü oluşturmak için Inugram Ayarları > Hakkında bölümünden hata ayıklama modunu etkinleştirin.</string>
+    <string name="InuCrashOomEnableLogs">Gelecekteki her OOM durumunda bellek dökümü oluşturmak için entinyGram Ayarları > Hakkında bölümünden hata ayıklama modunu etkinleştirin.</string>
     <string name="InuCrashShare">Çökme günlüğünü paylaş</string>
     <string name="InuCrashShareHeapDump">Bellek dökümünü kaydet</string>
     <string name="InuCrashDiscard">Vazgeç</string>
     <string name="InuCrashChannel">Çökme kurtarma</string>
-    <string name="InuCrashNotifTitle">Inugram çöktü</string>
+    <string name="InuCrashNotifTitle">entinyGram çöktü</string>
     <string name="InuCrashNotifText">Yeniden başlatmak için dokunun</string>
 
     <string name="InuLogs">Hata Ayıklama</string>

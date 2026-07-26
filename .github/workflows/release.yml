@@ -61,7 +61,8 @@ jobs:
           apksigner=$ANDROID_HOME/build-tools/35.0.0/apksigner
           "$apksigner" sign \
             --ks "$RUNNER_TEMP/release.keystore" \
-            --ks-key-alias inugram \
+            --ks-type PKCS12 \
+            --ks-key-alias entaytion \
             --ks-pass "pass:$KEYSTORE_PASSWORD" \
             --key-pass "pass:$KEY_PASSWORD" \
             --in "out/$apk" \
@@ -95,13 +96,11 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-          cache: pnpm
+          bun-version: latest
 
-      - run: pnpm install --frozen-lockfile
+      - run: bun install --frozen-lockfile
 
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:

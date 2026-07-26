@@ -62,12 +62,20 @@ object BlockedMessagesHelper {
 
     @JvmStatic
     fun shouldHide(messageObject: MessageObject?): Boolean {
-        return isHideMode() && isBlockedMessage(messageObject)
+        if (isHideMode() && isBlockedMessage(messageObject)) return true
+        if (RegexFilterHelper.isEnabled() && RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE) {
+            if (isRegexFilteredMessage(messageObject)) return true
+        }
+        return false
     }
 
     @JvmStatic
     fun shouldSpoil(messageObject: MessageObject?): Boolean {
-        return InuConfig.BLOCKED_MESSAGES_MODE.value == InuConfig.BlockedMessagesModeItem.SPOILER && isBlockedMessage(messageObject)
+        if (InuConfig.BLOCKED_MESSAGES_MODE.value == InuConfig.BlockedMessagesModeItem.SPOILER && isBlockedMessage(messageObject)) return true
+        if (RegexFilterHelper.isEnabled() && RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.SPOILER) {
+            if (isRegexFilteredMessage(messageObject)) return true
+        }
+        return false
     }
 
     @JvmStatic
@@ -143,6 +151,14 @@ object BlockedMessagesHelper {
         if (isBlockedPeer(messageObject.currentAccount, messageObject.fromChatId)) return true
         val forwardedFrom = messageObject.messageOwner.fwd_from?.from_id ?: return false
         return isBlockedPeer(messageObject.currentAccount, MessageObject.getPeerId(forwardedFrom))
+    }
+
+    private fun isRegexFilteredMessage(messageObject: MessageObject?): Boolean {
+        if (messageObject?.messageOwner == null || !RegexFilterHelper.isEnabled()) return false
+        val text = messageObject.messageText
+        if (RegexFilterHelper.shouldFilter(text)) return true
+        val caption = messageObject.caption
+        return RegexFilterHelper.shouldFilter(caption)
     }
 
     private fun isBlockedPeer(currentAccount: Int, peerId: Long): Boolean {

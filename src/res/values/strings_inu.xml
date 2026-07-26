@@ -8,8 +8,8 @@
     <string name="InuNavigationDrawerInfo">Replaces the bottom tab bar with the pre-12.0 hamburger side drawer. Requires restart.</string>
     <string name="InuDrawerBackGesture">Open drawer with back gesture</string>
     <string name="InuDrawerBackGestureInfo">Swiping back from the left edge of the chat list opens the drawer instead of leaving the app.</string>
-    <string name="InuSettings">Inugram Settings</string>
-    <string name="InuSettingsInfo">what the dog doin?</string>
+    <string name="InuSettings">entinyGram Settings</string>
+    <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuExperimental">Experimental</string>
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>
@@ -223,7 +223,7 @@
     <string name="InuConfirmReactionText">Send %1$s reaction in **%2$s**?</string>
     <string name="InuNotificationIcon">Notification icon</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">Inugram</string>
+    <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuDisableChatBubbles">Disable Android notification bubbles</string>
     <string name="InuInPlaceTranslation">In-place translation</string>
     <string name="InuTranslateWebPreviews">Translate web previews</string>
@@ -471,7 +471,7 @@
     <string name="InuFormattingPopupDivider">——————</string>
     <string name="InuCut">Cut</string>
     <string name="InuCodeLanguage">Code language</string>
-    <string name="InuVersion">Inugram v%1$s (based on %2$s, build %3$s)</string>
+    <string name="InuVersion">entinyGram v%1$s (based on %2$s, build %3$s)</string>
 
     <string name="InuSearchFilter">Filter by media</string>
     <string name="InuSearchFilterPhotos">Photos</string>
@@ -531,7 +531,7 @@
     <string name="InuBackupImportSheetApply">Yes, apply</string>
     <string name="InuBackupImportSheetCancel">No, leave as is</string>
     <string name="InuCloudSync">Sync settings</string>
-    <string name="InuCloudSyncDesc">Back up your Inugram settings to Telegram cloud and restore on another device.\n\nUses [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), your data is never sent to our servers.</string>
+    <string name="InuCloudSyncDesc">Back up your entinyGram settings to Telegram cloud and restore on another device.\n\nUses [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), your data is never sent to our servers.</string>
     <string name="InuCloudSyncNow">Sync now</string>
     <string name="InuCloudSyncing">Syncing…</string>
     <string name="InuCloudRestore">Restore from cloud</string>
@@ -568,7 +568,7 @@
     <string name="InuMentionInsertTitle">Insert mention</string>
     <string name="InuPasscode">Passcode</string>
     <string name="InuPasscodeNeeded">Set up a Telegram passcode first.</string>
-    <string name="InuPasscodeShowInSettings">Show in inugram settings</string>
+    <string name="InuPasscodeShowInSettings">Show in entinyGram settings</string>
     <string name="InuPasscodeShowInSettingsInfo">When off, this page can **only** be opened via the link below. Save it now — it doesn\'t change once generated.</string>
     <string name="InuPasscodeAccountsInfo">Each account can have its own passcode. Entering it on the lock screen unlocks the app and switches to that account.</string>
     <string name="InuPasscodeStateNone">Not configured</string>
@@ -613,12 +613,12 @@
     <string name="InuGoToMessagePrompt">Message ID</string>
     <string name="InuPrivacySecurity">Privacy &amp; Security</string>
     <string name="InuPerAccountPasscode">Per-account passcode</string>
-    <string name="InuHideInugramSettings">Hide Inugram settings</string>
+    <string name="InuHideInugramSettings">Hide entinyGram settings</string>
     <string name="InuParanoiaDisableNotifications">Disable notifications</string>
     <string name="InuParanoiaHideOtherAccounts">Hide other accounts</string>
     <string name="InuParanoiaHideFolders">Hide folders</string>
     <string name="InuParanoiaDisguise">Disguise as Telegram</string>
-    <string name="InuParanoiaDisguiseInfo">Only the launcher icon and name change. Notifications and the in-app name still show \"Inugram\", due to Android limitations.</string>
+    <string name="InuParanoiaDisguiseInfo">Only the launcher icon and name change. Notifications and the in-app name still show \"entinyGram\", due to Android limitations.</string>
     <string name="InuDisguiseName" translatable="false">Telegram</string>
     <string name="InuParanoiaMode">Paranoia mode</string>
     <string name="InuParanoiaModeInfo">Paranoia mode lets you \"prepare\" for someone else checking your phone, by hiding any \"dangerous\" chats, and optionally disguising as the stock app.</string>
@@ -645,17 +645,17 @@
     <string name="InuBotHelp">Bot Help</string>
 
     <string name="InuSimulateOom">Simulate OOM crash</string>
-    <string name="InuCrashTitle">Inugram crashed last time</string>
-    <string name="InuCrashTitleOom">Inugram ran out of memory</string>
+    <string name="InuCrashTitle">entinyGram crashed last time</string>
+    <string name="InuCrashTitleOom">entinyGram ran out of memory</string>
     <string name="InuCrashDesc">Sorry about that. You can share the crash log with the developer to help fix it.</string>
     <string name="InuCrashDescOom">Sorry about that. Crash logs aren\'t very useful for out-of-memory issues — a heap dump is what helps.</string>
     <string name="InuCrashDescHeapDump">A heap dump was also saved. DO NOT SHARE IT! It contains private data! Take a look at it yourself, if you want, and share your findings — that would help a lot.</string>
-    <string name="InuCrashOomEnableLogs">Enable debug mode in Inugram Settings > About to create a heap dump on every future OOM.</string>
+    <string name="InuCrashOomEnableLogs">Enable debug mode in entinyGram Settings > About to create a heap dump on every future OOM.</string>
     <string name="InuCrashShare">Share crash log</string>
     <string name="InuCrashShareHeapDump">Save heap dump</string>
     <string name="InuCrashDiscard">Discard</string>
     <string name="InuCrashChannel">Crash recovery</string>
-    <string name="InuCrashNotifTitle">Inugram crashed</string>
+    <string name="InuCrashNotifTitle">entinyGram crashed</string>
     <string name="InuCrashNotifText">Tap to restart</string>
 
     <string name="InuLogs">Debug</string>
@@ -693,4 +693,32 @@
     <string name="InuBiometricConfirmLogoutInfo">Ask for biometric confirmation before logging out of an account.</string>
     <string name="InuBiometricAllowDeviceCredential">Allow device PIN/pattern</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Fall back to the device PIN, pattern or password when no biometric is enrolled.</string>
+
+    <string name="InuTOS">TOS</string>
+    <string name="InuSelfDestructMedia">Self-destructing media</string>
+    <string name="InuSaveSelfDestruct">Save self-destructing media</string>
+    <string name="InuSaveSelfDestructInfo">View-once photos, videos and video messages will show as normal media and can be saved or forwarded.</string>
+    <string name="InuDownloadingStory">Downloading story…</string>
+    <string name="InuSaveAnyStory">Save any story</string>
+    <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>
+    <string name="InuCenterTitle">Center titles</string>
+    <string name="InuCenterTitleChats">In chats</string>
+    <string name="InuCenterTitleSettings">In settings</string>
+    <string name="InuCenterTitleProfile">In profiles</string>
+    <string name="InuCenterTitleDialogs">In main list (dialogs)</string>
+    <string name="InuSaveDeletedMessages">Save deleted messages</string>
+    <string name="InuSaveDeletedMessagesInfo">Keeps deleted messages in chats marked with 🗑️</string>
+    <string name="InuSaveEditedMessages">Save edit history</string>
+    <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
+    <string name="InuHideSponsoredMessages">Hide sponsored messages (AdBlock)</string>
+    <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
+    <string name="InuRegexFilter">AdBlock &amp; Regex Filter (experimental)</string>
+    <string name="InuRegexFilterEnabled">Enable content filter</string>
+    <string name="InuRegexFilterEnabledInfo">Filters out posts and messages matching specified keywords or regular expressions (beta)</string>
+    <string name="InuRegexFilterMode">Filter mode</string>
+    <string name="InuRegexFilterModeHide">Hide completely</string>
+    <string name="InuRegexFilterModeSpoiler">Cover with spoiler</string>
+    <string name="InuRegexPatterns">Keywords / Patterns</string>
+    <string name="InuRegexPatternsDialogHint">Enter regular expressions or keywords separated by | or newlines</string>
+    <string name="InuRegexFilterHint">Filtering runs locally in real-time without slowing down scrolling.</string>
 </resources>

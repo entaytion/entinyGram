@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Mon, 27 Jul 2026 01:27:00 +0300
+Subject: save deleted and edited messages history
+
+---
+ .../messenger/MessagesController.java         | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -9302,6 +9302,32 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
++        if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) {
++            if (messages != null) {
++                ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
++                for (int a = 0; a < messages.size(); a++) {
++                    int id = messages.get(a);
++                    MessageObject found = null;
++                    if (objs != null) {
++                        for (int i = 0; i < objs.size(); ++i) {
++                            MessageObject obj = objs.get(i);
++                            if (obj != null && obj.getId() == id) {
++                                found = obj;
++                                break;
++                            }
++                        }
++                    }
++                    if (found != null) {
++                        long fromId = found.messageOwner != null && found.messageOwner.from_id != null ? org.telegram.messenger.DialogObject.getPeerDialogId(found.messageOwner.from_id) : 0;
++                        String text = found.messageOwner != null ? found.messageOwner.message : "";
++                        int date = found.messageOwner != null ? found.messageOwner.date : 0;
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, fromId, text, date);
++                    } else {
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, 0L, "", 0);
++                    }
++                }
++            }
++        }
+         ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
+         if (objs != null) {
+             for (int i = 0; i < objs.size(); ++i) {

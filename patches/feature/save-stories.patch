@@ -1,0 +1,85 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Sun, 26 Jul 2026 01:27:04 +0300
+Subject: allow saving any story to gallery without premium requirement
+
+---
+ .../telegram/ui/Stories/PeerStoriesView.java  | 45 +++++++------------
+ 1 file changed, 16 insertions(+), 29 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -2068,40 +2068,14 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+                             createQualityItem(popupLayout);
+                         }
+ 
+-                        if (!unsupported && allowShare && !currentStory.isLive) {
+-                            if (UserConfig.getInstance(currentAccount).isPremium()) {
++                        if (!unsupported && !currentStory.isLive) {
++                            if (desu.inugram.InuConfig.SAVE_ANY_STORY.getValue() || UserConfig.getInstance(currentAccount).isPremium()) {
+                                 ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_gallery, getString(R.string.SaveToGallery), false, resourcesProvider).setOnClickListener(v -> {
+                                     saveToGallery();
+                                     if (popupMenu != null) {
+                                         popupMenu.dismiss();
+                                     }
+                                 });
+-                            } else if (!MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) {
+-                                Drawable lockIcon = ContextCompat.getDrawable(context, R.drawable.msg_gallery_locked2);
+-                                lockIcon.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(Color.WHITE, Color.BLACK, 0.5f), PorterDuff.Mode.MULTIPLY));
+-                                CombinedDrawable combinedDrawable = new CombinedDrawable(
+-                                        ContextCompat.getDrawable(context, R.drawable.msg_gallery_locked1),
+-                                        lockIcon
+-                                ) {
+-                                    @Override
+-                                    public void setColorFilter(ColorFilter colorFilter) {
+-
+-                                    }
+-                                };
+-                                ActionBarMenuSubItem item = ActionBarMenuItem.addItem(popupLayout, R.drawable.msg_gallery, getString(R.string.SaveToGallery), false, resourcesProvider);
+-                                item.setIcon(combinedDrawable);
+-                                item.setOnClickListener(v -> {
+-                                    item.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+-                                    BulletinFactory bulletinFactory = BulletinFactory.global();
+-                                    if (bulletinFactory != null) {
+-                                        bulletinFactory.createSimpleBulletin(R.raw.ic_save_to_gallery, AndroidUtilities.replaceSingleTag(
+-                                                getString(R.string.SaveStoryToGalleryPremiumHint),
+-                                                () -> {
+-                                                    PremiumFeatureBottomSheet sheet = new PremiumFeatureBottomSheet(storyViewer.fragment, PremiumPreviewFragment.PREMIUM_FEATURE_STORIES, false);
+-                                                    delegate.showDialog(sheet);
+-                                                })).show();
+-                                    }
+-                                });
+                             }
+                         }
+ 
+@@ -3747,6 +3721,15 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+             MediaController.saveFile(f.toString(), getContext(), isVideo ? 1 : 0, null, null, uri -> {
+                 BulletinFactory.createSaveToGalleryBulletin(storyContainer, isVideo, resourcesProvider).show();
+             });
++        } else if (desu.inugram.InuConfig.SAVE_ANY_STORY.getValue() && currentStory.storyItem != null) {
++            TL_stories.StoryItem storyItem = currentStory.storyItem;
++            if (storyItem.media != null && storyItem.media.getDocument() != null) {
++                FileLoader.getInstance(currentAccount).loadFile(storyItem.media.getDocument(), storyItem, FileLoader.PRIORITY_HIGH, 1);
++            } else if (storyItem.media != null && storyItem.media.photo != null) {
++                TLRPC.PhotoSize size = FileLoader.getClosestPhotoSizeWithSize(storyItem.media.photo.sizes, Integer.MAX_VALUE);
++                FileLoader.getInstance(currentAccount).loadFile(ImageLocation.getForPhoto(size, storyItem.media.photo), storyItem, "jpg", FileLoader.PRIORITY_HIGH, 1);
++            }
++            BulletinFactory.of(storyContainer, resourcesProvider).createSimpleBulletin(R.raw.ic_download, LocaleController.getString(R.string.InuDownloadingStory)).show();
+         } else {
+             showDownloadAlert();
+         }
+@@ -7121,7 +7104,11 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+             }
+             if (storyItem != null) {
+                 if (storyItem.media != null && storyItem.media.getDocument() != null) {
+-                    return FileLoader.getInstance(currentAccount).getPathToAttach(storyItem.media.getDocument());
++                    File file = FileLoader.getInstance(currentAccount).getPathToAttach(storyItem.media.getDocument(), true);
++                    if (!file.exists()) {
++                        file = FileLoader.getInstance(currentAccount).getPathToAttach(storyItem.media.getDocument(), false);
++                    }
++                    return file;
+                 } else if (storyItem.media != null && storyItem.media.photo != null) {
+                     TLRPC.PhotoSize size = FileLoader.getClosestPhotoSizeWithSize(storyItem.media.photo.sizes, Integer.MAX_VALUE);
+                     File file = FileLoader.getInstance(currentAccount).getPathToAttach(size, true);

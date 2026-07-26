@@ -8,11 +8,13 @@ Subject: change app name to Inugram
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
  .../telegram/messenger/LocaleController.java  | 10 +++---
  .../telegram/messenger/MediaController.java   | 22 ++++++-------
+ .../messenger/MessagesController.java         |  3 ++
  .../java/org/telegram/ui/DialogsActivity.java |  6 +++-
  .../telegram/ui/LauncherIconController.java   |  6 ++--
  .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
+ .../main/res/drawable/icon_background_sa.xml  |  4 +--
  .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
@@ -24,10 +26,10 @@ Subject: change app name to Inugram
  .../src/main/res/values-nl/strings.xml        |  2 +-
  .../src/main/res/values-pt-rBR/strings.xml    |  6 ++--
  .../src/main/res/values-ru/strings.xml        |  6 ++--
- .../src/main/res/values-uk/strings.xml        |  6 ++--
+ .../src/main/res/values-uk/strings.xml        | 16 ++++-----
  .../src/main/res/values-v31/styles.xml        |  2 +-
- TMessagesProj/src/main/res/values/strings.xml | 10 +++---
- 23 files changed, 129 insertions(+), 71 deletions(-)
+ TMessagesProj/src/main/res/values/strings.xml | 20 +++++------
+ 25 files changed, 144 insertions(+), 83 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -220,6 +222,20 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Audio.Media.DISPLAY_NAME, filename);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -21519,6 +21519,9 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public SponsoredMessagesInfo getSponsoredMessages(long dialogId) {
++        if (desu.inugram.InuConfig.HIDE_SPONSORED_MESSAGES.getValue()) {
++            return null;
++        }
+         SponsoredMessagesInfo info = sponsoredMessages.get(dialogId);
+         if (info != null && (info.loading || Math.abs(SystemClock.elapsedRealtime() - info.loadTime) <= 5 * 60 * 1000)) {
+             return info;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
@@ -421,6 +437,20 @@ index 0000000..0000000 100644
  
          super.dispatchDraw(canvas);
      }
+diff --git a/TMessagesProj/src/main/res/drawable/icon_background_sa.xml b/TMessagesProj/src/main/res/drawable/icon_background_sa.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/drawable/icon_background_sa.xml
++++ b/TMessagesProj/src/main/res/drawable/icon_background_sa.xml
+@@ -3,6 +3,6 @@
+     <gradient
+         android:type="linear"
+         android:angle="90"
+-        android:startColor="#289AD1"
+-        android:endColor="#38AEEB" />
++        android:startColor="#A00320"
++        android:endColor="#F20C3C" />
+ </shape>
+\ No newline at end of file
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
@@ -605,20 +635,36 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Українська</string>
      <string name="English">Англійська</string>
      <string name="LanguageNameInEnglish">Ukrainian</string>
-@@ -222,7 +222,7 @@
+@@ -222,18 +222,18 @@
      <string name="CheckYourNewEmailSubtitle">Введіть код, який ми щойно надіслали на вашу нову е-пошту %1$s.</string>
      <string name="LoginOrSingInWithGoogle">або</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Швидкий</string>
      <string name="Page3Title">Безплатний</string>
      <string name="Page4Title">Захищений</string>
+     <string name="Page5Title">Потужний</string>
+     <string name="Page6Title">Хмарний</string>
+     <string name="Page1Message">**Найшвидший** месенджер у світі.\n**Безплатний** і **захищений**.</string>
+-    <string name="Page2Message">**Telegram** доставляє повідомлення\nшвидше за всі інші застосунки.</string>
+-    <string name="Page3Message">У **Telegram** можна безплатно зберігати\nскільки завгодно повідомлень і медіафайлів.</string>
+-    <string name="Page4Message">**Telegram** оберігає ваші повідомлення\nвід хакерських атак.</string>
+-    <string name="Page5Message">**Telegram** не обмежує вас\nу розмірі чатів і медіа.</string>
+-    <string name="Page6Message">**Telegram** надає вам доступ до\nповідомлень з безлічі пристроїв.</string>
++    <string name="Page2Message">**entinyGram** доставляє повідомлення\nшвидше за всі інші застосунки.</string>
++    <string name="Page3Message">У **entinyGram** можна безплатно зберігати\nскільки завгодно повідомлень і медіафайлів.</string>
++    <string name="Page4Message">**entinyGram** оберігає ваші повідомлення\nвід хакерських атак.</string>
++    <string name="Page5Message">**entinyGram** не обмежує вас\nу розмірі чатів і медіа.</string>
++    <string name="Page6Message">**entinyGram** дозволяє дістатися до повідомлень\nз кількох пристроїв.</string>
+     <string name="StartMessaging">Почати спілкування</string>
+     <!--date formatters-->
+     <string name="formatterBoostExpired">dd MMM yyyy</string>
 diff --git a/TMessagesProj/src/main/res/values-v31/styles.xml b/TMessagesProj/src/main/res/values-v31/styles.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values-v31/styles.xml
@@ -641,8 +687,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">English</string>
      <string name="English">English</string>
      <string name="LanguageNameInEnglish">English</string>
@@ -657,12 +703,28 @@ index 0000000..0000000 100644
      <string name="AppUpdateVersionAndSize">Version %1$s • %2$s</string>
      <string name="AppBetaUpdateVersion">Version %1$s (%2$s)</string>
      <string name="AppUpdateDownloading">Downloading %1$d%%...</string>
-@@ -4176,7 +4176,7 @@
+@@ -4176,18 +4176,18 @@
      <string name="ViewMessageStatistic">Message Statistic</string>
      <string name="ViewMessage">Open Message</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Fast</string>
      <string name="Page3Title">Free</string>
      <string name="Page4Title">Secure</string>
+     <string name="Page5Title">Powerful</string>
+     <string name="Page6Title">Cloud-Based</string>
+     <string name="Page1Message">The world\'s **fastest** messaging app.\nIt is **free** and **secure**.</string>
+-    <string name="Page2Message">**Telegram** delivers messages faster than\nany other application.</string>
+-    <string name="Page3Message">**Telegram** provides free unlimited cloud storage for chats and media.</string>
+-    <string name="Page4Message">**Telegram** keeps your messages safe\nfrom hacker attacks.</string>
+-    <string name="Page5Message">**Telegram** has no limits on\nthe size of your media and chats.</string>
+-    <string name="Page6Message">**Telegram** lets you access your messages\nfrom multiple devices.</string>
++    <string name="Page2Message">**entinyGram** delivers messages faster than\nany other application.</string>
++    <string name="Page3Message">**entinyGram** provides free unlimited cloud storage for chats and media.</string>
++    <string name="Page4Message">**entinyGram** keeps your messages safe\nfrom hacker attacks.</string>
++    <string name="Page5Message">**entinyGram** has no limits on\nthe size of your media and chats.</string>
++    <string name="Page6Message">**entinyGram** lets you access your messages\nfrom multiple devices.</string>
+     <string name="StartMessaging">Start Messaging</string>
+     <!-- VoIP -->
+     <string name="AccountSettings">Account Settings</string>

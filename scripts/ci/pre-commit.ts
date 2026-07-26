@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises'
+﻿import fs from 'node:fs/promises'
 import { join, relative } from 'node:path'
 import { parallelMap } from '@fuman/utils'
 import { chalk } from 'zx'
@@ -91,6 +91,6 @@ print('missing from patches/', missing)
 print('not in stgit stack', orphaned)
 print('content drift', drifted)
 console.error()
-console.error(chalk.yellow('hint: run `pnpm export` to refresh,'))
+console.error(chalk.yellow('hint: run `bun export` to refresh,'))
 console.error(chalk.yellow('      or skip this check entirely via --no-verify'))
 process.exit(1)

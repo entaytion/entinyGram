@@ -192,12 +192,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuCompactEdited),
             ).setChecked(InuConfig.COMPACT_EDITED.value)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_BUBBLE_TAILS,
-                LocaleController.getString(R.string.InuBubbleTails),
-            ).setChecked(InuConfig.BUBBLE_TAILS.value)
-        )
         items.add(UItem.asShadow(null))
         items.add(
             UItem.asButton(
@@ -423,6 +417,8 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_FORWARD_TIME = InuUtils.generateId()
         private val TOGGLE_COMPACT_FORWARDED = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
+        private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()

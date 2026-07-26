@@ -2,8 +2,8 @@
 <resources>
     <string name="InuOpenInDiscussion">在讨论中打开</string>
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
-    <string name="InuSettings">Inugram 设置</string>
-    <string name="InuSettingsInfo">汪汪在干啥？</string>
+    <string name="InuSettings">entinyGram 设置</string>
+    <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuExperimental">实验性</string>
     <string name="InuGeneral">通用</string>
     <string name="InuMiscellaneous">杂项</string>
@@ -380,7 +380,7 @@
     <string name="InuFormattingPopupDivider">——————</string>
     <string name="InuCut">剪切</string>
     <string name="InuCodeLanguage">代码语言</string>
-    <string name="InuVersion">Inugram v%1$s (基于 %2$s, 构建 %3$s)</string>
+    <string name="InuVersion">entinyGram v%1$s (基于 %2$s, 构建 %3$s)</string>
 
     <string name="InuSearchFilter">按媒体过滤</string>
     <string name="InuSearchFilterPhotos">照片</string>
@@ -437,7 +437,7 @@
     <string name="InuBackupImportSheetApply">是，应用</string>
     <string name="InuBackupImportSheetCancel">否，保持不变</string>
     <string name="InuCloudSync">同步设置</string>
-    <string name="InuCloudSyncDesc">将 Inugram 设置备份到 Telegram 云端，并在其他设备上恢复。\n\n使用 [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage)，你的数据不会发送到我们的服务器。</string>
+    <string name="InuCloudSyncDesc">将 entinyGram 设置备份到 Telegram 云端，并在其他设备上恢复。\n\n使用 [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage)，你的数据不会发送到我们的服务器。</string>
     <string name="InuCloudSyncNow">立即同步</string>
     <string name="InuCloudSyncing">同步中…</string>
     <string name="InuCloudRestore">从云端恢复</string>
@@ -474,7 +474,7 @@
     <string name="InuMentionInsertTitle">插入提及</string>
     <string name="InuPasscode">密码锁</string>
     <string name="InuPasscodeNeeded">请先设置 Telegram 密码锁。</string>
-    <string name="InuPasscodeShowInSettings">在 inugram 设置中显示</string>
+    <string name="InuPasscodeShowInSettings">在 entinyGram 设置中显示</string>
     <string name="InuPasscodeShowInSettingsInfo">关闭时，本页**只能**通过下方链接打开。请立即保存 —— 一旦生成将不再更改。</string>
     <string name="InuPasscodeAccountsInfo">每个账号可以有自己的密码。在锁屏输入它会解锁应用并切换到该账号。</string>
     <string name="InuPasscodeStateNone">未设置</string>
@@ -513,11 +513,11 @@
     <string name="InuMenuBottomRowFull">快捷操作栏已满 (最多 4 个)</string>
     <string name="InuPrivacySecurity">隐私与安全</string>
     <string name="InuPerAccountPasscode">每个账号独立密码</string>
-    <string name="InuHideInugramSettings">隐藏 inugram 设置</string>
+    <string name="InuHideInugramSettings">隐藏 entinyGram 设置</string>
     <string name="InuParanoiaDisableNotifications">禁用通知</string>
     <string name="InuParanoiaHideOtherAccounts">隐藏其他账号</string>
     <string name="InuParanoiaDisguise">伪装成 Telegram</string>
-    <string name="InuParanoiaDisguiseInfo">仅更改启动器图标和名称。由于 Android 限制，通知和应用内名称仍显示「Inugram」。</string>
+    <string name="InuParanoiaDisguiseInfo">仅更改启动器图标和名称。由于 Android 限制，通知和应用内名称仍显示「entinyGram」。</string>
     <string name="InuParanoiaMode">偏执模式</string>
     <string name="InuParanoiaModeInfo">偏执模式让你为他人查看手机做好「准备」：隐藏任何「危险」聊天，并可选择伪装成原版应用。</string>
     <string name="InuParanoiaLauncherShortcut">启动器快捷方式</string>
@@ -592,7 +592,7 @@
     <string name="InuConfirmReactionText">在 **%2$s** 发送 %1$s 回应？</string>
     <string name="InuNotificationIcon">通知图标</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">Inugram</string>
+    <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNothingToTranslate">没有可翻译的消息。</string>
     <string name="InuAlreadyInTargetLanguage">此消息已是 %1$s。</string>
     <string name="InuVoiceRecorder">语音 / 圆形录制</string>
@@ -615,12 +615,12 @@
     <string name="InuBotSettings">机器人设置</string>
     <string name="InuBotHelp">机器人帮助</string>
 
-    <string name="InuCrashTitle">Inugram 上次崩溃了</string>
+    <string name="InuCrashTitle">entinyGram 上次崩溃了</string>
     <string name="InuCrashDesc">抱歉。你可以与开发者分享崩溃日志以帮助修复。</string>
     <string name="InuCrashShare">分享崩溃日志</string>
     <string name="InuCrashDiscard">丢弃</string>
     <string name="InuCrashChannel">崩溃恢复</string>
-    <string name="InuCrashNotifTitle">Inugram 崩溃了</string>
+    <string name="InuCrashNotifTitle">entinyGram 崩溃了</string>
     <string name="InuCrashNotifText">点击重启</string>
 
     <string name="InuLogs">调试</string>
@@ -666,10 +666,10 @@
     <string name="InuStripTrackingParamsSourceRow">过滤器源</string>
 
     <string name="InuSimulateOom">模拟 OOM 崩溃</string>
-    <string name="InuCrashTitleOom">Inugram 内存不足</string>
+    <string name="InuCrashTitleOom">entinyGram 内存不足</string>
     <string name="InuCrashDescOom">抱歉。崩溃日志对内存不足问题帮助不大 —— 堆转储才有用。</string>
     <string name="InuCrashDescHeapDump">同时保存了堆转储。请勿分享！里面包含隐私数据！如果愿意，可以自己查看一下，并把你的发现告诉开发者——会非常有帮助。</string>
-    <string name="InuCrashOomEnableLogs">在 Inugram 设置 > 关于 中启用调试模式，以便在今后每次内存不足时生成堆转储。</string>
+    <string name="InuCrashOomEnableLogs">在 entinyGram 设置 > 关于 中启用调试模式，以便在今后每次内存不足时生成堆转储。</string>
     <string name="InuCrashShareHeapDump">保存堆转储</string>
 
     <string name="InuDeleteOwnMessages">删除我的消息</string>

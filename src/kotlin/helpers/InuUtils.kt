@@ -65,4 +65,17 @@ public object InuUtils {
             buf.reuse()
         }
     }
+
+    @JvmStatic
+    fun shouldCenterTitle(fragment: Any?): Boolean {
+        if (fragment == null) return false
+        val name = fragment.javaClass.name
+        return when {
+            name == "org.telegram.ui.ChatActivity" -> desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+            name == "org.telegram.ui.ProfileActivity" -> desu.inugram.InuConfig.CENTER_TITLE_PROFILE.value
+            name == "org.telegram.ui.DialogsActivity" -> desu.inugram.InuConfig.CENTER_TITLE_DIALOGS.value
+            name.contains("Settings") -> desu.inugram.InuConfig.CENTER_TITLE_SETTINGS.value
+            else -> false
+        }
+    }
 }

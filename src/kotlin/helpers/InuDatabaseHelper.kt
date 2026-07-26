@@ -21,7 +21,69 @@ object InuDatabaseHelper {
             version = 1
         }
 
+        if (version == 1) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_deleted_messages(dialog_id INTEGER, msg_id INTEGER, from_id INTEGER, text TEXT, date INTEGER, PRIMARY KEY(dialog_id, msg_id))")
+                .stepThis().dispose();
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_edit_history(dialog_id INTEGER, msg_id INTEGER, text TEXT, date INTEGER)")
+                .stepThis().dispose();
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history ON inu_edit_history(dialog_id, msg_id)")
+                .stepThis().dispose();
+            writeKv(db, "version", "2")
+            version = 2
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
+    }
+
+    fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int) {
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_deleted_messages VALUES(?, ?, ?, ?, ?)");
+        query.bindLong(1, dialogId)
+        query.bindInteger(2, msgId)
+        query.bindLong(3, fromId)
+        query.bindString(4, text)
+        query.bindInteger(5, date)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadDeletedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
+        val map = HashMap<Long, HashSet<Int>>()
+        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_deleted_messages")
+        try {
+            while (cursor.next()) {
+                val dialogId = cursor.longValue(0)
+                val msgId = cursor.intValue(1)
+                map.getOrPut(dialogId) { HashSet() }.add(msgId)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return map
+    }
+
+    fun saveEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int, text: String, date: Int) {
+        val query = db.executeFast("INSERT INTO inu_edit_history VALUES(?, ?, ?, ?)");
+        query.bindLong(1, dialogId)
+        query.bindInteger(2, msgId)
+        query.bindString(3, text)
+        query.bindInteger(4, date)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int): List<Pair<Long, String>> {
+        val list = ArrayList<Pair<Long, String>>()
+        val cursor = db.queryFinalized("SELECT date, text FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date ASC", dialogId, msgId)
+        try {
+            while (cursor.next()) {
+                val date = cursor.longValue(0)
+                val text = cursor.stringValue(1)
+                list.add(Pair(date, text))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
     }
 
     fun readKv(db: SQLiteDatabase, key: String): String? {

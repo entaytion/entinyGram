@@ -2,7 +2,7 @@
 <resources>
     <string name="InuOpenInDiscussion">ディスカッションで開く</string>
     <string name="InuBanUserConfirm">%1$s をこのグループから BAN しますか？</string>
-    <string name="InuSettings">Inugram 設定</string>
+    <string name="InuSettings">entinyGram 設定</string>
     <string name="InuSettingsInfo">犬は何してるの？</string>
     <string name="InuExperimental">実験的機能</string>
     <string name="InuGeneral">一般</string>
@@ -381,7 +381,7 @@
     <string name="InuFormattingPopupDivider">——————</string>
     <string name="InuCut">切り取り</string>
     <string name="InuCodeLanguage">コードの言語</string>
-    <string name="InuVersion">Inugram v%1$s (%2$s ベース, ビルド %3$s)</string>
+    <string name="InuVersion">entinyGram v%1$s (%2$s ベース, ビルド %3$s)</string>
 
     <string name="InuSearchFilter">メディアで絞り込み</string>
     <string name="InuSearchFilterPhotos">写真</string>
@@ -438,7 +438,7 @@
     <string name="InuBackupImportSheetApply">はい、適用する</string>
     <string name="InuBackupImportSheetCancel">いいえ、そのままにする</string>
     <string name="InuCloudSync">設定を同期</string>
-    <string name="InuCloudSyncDesc">Inugram の設定を Telegram クラウドにバックアップし、他のデバイスで復元します。\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) を使用するため、データが当方のサーバーに送信されることはありません。</string>
+    <string name="InuCloudSyncDesc">entinyGram の設定を Telegram クラウドにバックアップし、他のデバイスで復元します。\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) を使用するため、データが当方のサーバーに送信されることはありません。</string>
     <string name="InuCloudSyncNow">今すぐ同期</string>
     <string name="InuCloudSyncing">同期中…</string>
     <string name="InuCloudRestore">クラウドから復元</string>
@@ -475,7 +475,7 @@
     <string name="InuMentionInsertTitle">メンションを挿入</string>
     <string name="InuPasscode">パスコード</string>
     <string name="InuPasscodeNeeded">先に Telegram のパスコードを設定してください。</string>
-    <string name="InuPasscodeShowInSettings">inugram の設定に表示</string>
+    <string name="InuPasscodeShowInSettings">entinyGram の設定に表示</string>
     <string name="InuPasscodeShowInSettingsInfo">オフの場合、このページは下のリンクからしか開けません。今すぐ保存してください — 一度生成されると変更されません。</string>
     <string name="InuPasscodeAccountsInfo">各アカウントに独自のパスコードを設定できます。ロック画面で入力するとアプリのロックが解除され、そのアカウントに切り替わります。</string>
     <string name="InuPasscodeStateNone">未設定</string>
@@ -514,11 +514,11 @@
     <string name="InuMenuBottomRowFull">クイックアクション行は満杯です（最大 4 件）</string>
     <string name="InuPrivacySecurity">プライバシーとセキュリティ</string>
     <string name="InuPerAccountPasscode">アカウントごとのパスコード</string>
-    <string name="InuHideInugramSettings">inugram の設定を非表示</string>
+    <string name="InuHideInugramSettings">entinyGram の設定を非表示</string>
     <string name="InuParanoiaDisableNotifications">通知を無効化</string>
     <string name="InuParanoiaHideOtherAccounts">他のアカウントを非表示</string>
     <string name="InuParanoiaDisguise">Telegram に偽装</string>
-    <string name="InuParanoiaDisguiseInfo">ランチャーのアイコンと名前のみが変わります。Android の制限により、通知やアプリ内の名前は引き続き「Inugram」と表示されます。</string>
+    <string name="InuParanoiaDisguiseInfo">ランチャーのアイコンと名前のみが変わります。Android の制限により、通知やアプリ内の名前は引き続き「entinyGram」と表示されます。</string>
     <string name="InuParanoiaMode">パラノイアモード</string>
     <string name="InuParanoiaModeInfo">パラノイアモードでは、「危険な」チャットを隠し、必要に応じて標準アプリに偽装することで、誰かに端末を見られる事態に「備える」ことができます。</string>
     <string name="InuParanoiaLauncherShortcut">ランチャーショートカット</string>
@@ -593,7 +593,7 @@
     <string name="InuConfirmReactionText">**%2$s** に %1$s リアクションを送信しますか？</string>
     <string name="InuNotificationIcon">通知アイコン</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
-    <string name="InuNotificationIconInugram">Inugram</string>
+    <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNothingToTranslate">翻訳対象のメッセージが選択されていません。</string>
     <string name="InuVoiceRecorder">音声 / 丸メッセージ録画</string>
     <string name="InuSummarize">要約</string>
@@ -615,13 +615,13 @@
     <string name="InuBotSettings">ボット設定</string>
     <string name="InuBotHelp">ボットヘルプ</string>
 
-    <string name="InuCrashTitle">前回 Inugram がクラッシュしました</string>
+    <string name="InuCrashTitle">前回 entinyGram がクラッシュしました</string>
     <string name="InuCrashDesc">ご迷惑をおかけしました。修正に役立てるため、クラッシュログを開発者と共有できます。</string>
     <string name="InuCrashDescOom">ご迷惑をおかけしました。メモリ不足の問題にはクラッシュログはあまり役立ちません — ヒープダンプの方が有用です。</string>
     <string name="InuCrashShare">クラッシュログを共有</string>
     <string name="InuCrashDiscard">破棄</string>
     <string name="InuCrashChannel">クラッシュリカバリー</string>
-    <string name="InuCrashNotifTitle">Inugram がクラッシュしました</string>
+    <string name="InuCrashNotifTitle">entinyGram がクラッシュしました</string>
     <string name="InuCrashNotifText">タップで再起動</string>
 
     <string name="InuLogs">デバッグ</string>
@@ -667,9 +667,9 @@
     <string name="InuStripTrackingParamsSourceRow">フィルターソース</string>
 
     <string name="InuSimulateOom">OOM クラッシュをシミュレート</string>
-    <string name="InuCrashTitleOom">Inugram のメモリが不足しました</string>
+    <string name="InuCrashTitleOom">entinyGram のメモリが不足しました</string>
     <string name="InuCrashDescHeapDump">ヒープダンプも保存されました。共有しないでください！プライベートな情報が含まれています！自分で確認して、気づいたことを教えていただけると、大変助かります。</string>
-    <string name="InuCrashOomEnableLogs">Inugram 設定 > アプリについて でデバッグモードを有効にすると、次回以降の OOM 発生時にヒープダンプを作成します。</string>
+    <string name="InuCrashOomEnableLogs">entinyGram 設定 > アプリについて でデバッグモードを有効にすると、次回以降の OOM 発生時にヒープダンプを作成します。</string>
     <string name="InuCrashShareHeapDump">ヒープダンプを保存</string>
 
     <string name="InuDeleteOwnMessages">自分のメッセージを削除</string>
