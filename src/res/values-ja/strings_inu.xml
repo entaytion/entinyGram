@@ -278,6 +278,8 @@
     <string name="InuMsgDetailEmojiPackCreators">絵文字パックの作成者</string>
     <string name="InuShowJson">JSON を表示</string>
     <string name="InuRegDate">登録日: %s</string>
+    <string name="InuJoinDate">参加日: %s</string>
+    <string name="InuCreatedDate">作成日: %s</string>
 
     <string name="InuChatVoiceInAttach">録音を添付パネルへ</string>
     <string name="InuChatVoiceInAttachInfo">音声/動画録音ボタンを入力バーから添付シートに移動します</string>
@@ -346,6 +348,7 @@
     <string name="InuOldMentionIndicator">従来のメンション表示</string>
 
     <string name="InuShowForwardTime">転送時刻を表示</string>
+    <string name="InuCompactForwarded">コンパクトな転送インジケーター</string>
     <string name="InuCompactEdited">コンパクトな編集インジケーター</string>
 
     <string name="InuAddToStickersGifs">ステッカー/GIFに追加</string>
@@ -644,6 +647,7 @@
     <string name="InuMaterial3Fabs">フローティングボタン</string>
     <string name="InuMaterial3Sections">リスト項目</string>
     <string name="InuMaterial3Avatars">アバター</string>
+    <string name="InuMaterialProfileActions">プロフィールの操作ボタン</string>
     <string name="InuTypographyAndIcons">タイポグラフィとアイコン</string>
     <string name="InuMotion">モーション</string>
     <string name="InuFormatting">書式設定</string>

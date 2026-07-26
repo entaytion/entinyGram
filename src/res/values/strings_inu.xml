@@ -42,6 +42,7 @@
     <string name="InuMaterial3Fabs">Floating buttons</string>
     <string name="InuMaterial3Sections">List items</string>
     <string name="InuMaterial3Avatars">Avatars</string>
+    <string name="InuMaterialProfileActions">Profile action buttons</string>
     <string name="InuMonetTheme">Monet theme</string>
     <string name="InuMonetThemeDisabled">Disabled</string>
     <string name="InuMonetThemeLight">Light</string>
@@ -371,7 +372,6 @@
     <string name="InuReduceMenuMotionInfo">Skip context menu stagger and simplify message menu animations</string>
 
     <string name="InuProfilePhotoGradientFade">Disable profile photo blur</string>
-
     <string name="InuNonIslandUI">Classic UI</string>
     <string name="InuTypographyAndIcons">Typography &amp; icons</string>
     <string name="InuMotion">Motion</string>

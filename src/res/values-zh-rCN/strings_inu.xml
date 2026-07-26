@@ -277,6 +277,8 @@
     <string name="InuMsgDetailEmojiPackCreators">表情符号包创建者</string>
     <string name="InuShowJson">显示 JSON</string>
     <string name="InuRegDate">注册于: %s</string>
+    <string name="InuJoinDate">加入于: %s</string>
+    <string name="InuCreatedDate">创建于: %s</string>
 
     <string name="InuChatVoiceInAttach">录制按钮放入附件</string>
     <string name="InuChatVoiceInAttachInfo">将语音/视频录制按钮从输入栏移入附件面板</string>
@@ -345,6 +347,7 @@
     <string name="InuOldMentionIndicator">旧版提及指示器</string>
 
     <string name="InuShowForwardTime">显示转发时间</string>
+    <string name="InuCompactForwarded">紧凑转发指示器</string>
     <string name="InuCompactEdited">紧凑编辑指示器</string>
 
     <string name="InuAddToStickersGifs">添加到贴纸/GIF</string>
@@ -643,6 +646,7 @@
     <string name="InuMaterial3Fabs">悬浮按钮</string>
     <string name="InuMaterial3Sections">列表项</string>
     <string name="InuMaterial3Avatars">头像</string>
+    <string name="InuMaterialProfileActions">个人资料操作按钮</string>
     <string name="InuTypographyAndIcons">字体与图标</string>
     <string name="InuMotion">动画</string>
     <string name="InuFormatting">格式化</string>

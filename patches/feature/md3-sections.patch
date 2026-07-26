@@ -4,6 +4,7 @@ Date: Thu, 28 May 2026 22:18:07 +0400
 Subject: md3-style sections redesign
 
 ---
+ .../ui/ActionBar/ThemeDescription.java        |  7 +++-
  .../java/org/telegram/ui/BoostsActivity.java  |  5 +++
  .../java/org/telegram/ui/Cells/TextCell.java  | 25 +++++++++---
  .../org/telegram/ui/Cells/TextCheckCell.java  |  6 ++-
@@ -21,8 +22,33 @@ Subject: md3-style sections redesign
  .../org/telegram/ui/ProxyListActivity.java    |  5 ---
  .../org/telegram/ui/SettingsActivity.java     | 18 +++++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 17 files changed, 138 insertions(+), 27 deletions(-)
+ 18 files changed, 144 insertions(+), 28 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
+@@ -32,6 +32,7 @@ import androidx.viewpager.widget.ViewPager;
+ 
+ import org.telegram.messenger.AndroidUtilities;
+ import org.telegram.messenger.FileLog;
++import org.telegram.ui.Cells.HeaderCell;
+ import org.telegram.ui.Components.AnimatedArrowDrawable;
+ import org.telegram.ui.Components.AudioPlayerAlert;
+ import org.telegram.ui.Components.AvatarDrawable;
+@@ -529,7 +530,11 @@ public class ThemeDescription {
+                             }
+                         }
+                     } else if ((changeFlags & FLAG_CELLBACKGROUNDCOLOR) != 0) {
+-                        child.setBackgroundColor(color);
++                        if (child instanceof HeaderCell && viewToInvalidate instanceof RecyclerListView && ((RecyclerListView) viewToInvalidate).hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
++                            // skip
++                        } else {
++                            child.setBackgroundColor(color);
++                        }
+                     } else if ((changeFlags & FLAG_TEXTCOLOR) != 0) {
+                         if (child instanceof TextView) {
+                             ((TextView) child).setTextColor(color);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java

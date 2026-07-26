@@ -42,6 +42,7 @@
     <string name="InuMaterial3Fabs">Yüzen düğmeler</string>
     <string name="InuMaterial3Sections">Liste ögeleri</string>
     <string name="InuMaterial3Avatars">Profil resimleri</string>
+    <string name="InuMaterialProfileActions">Profil eylem düğmeleri</string>
     <string name="InuMonetTheme">Monet teması</string>
     <string name="InuMonetThemeDisabled">Devre dışı</string>
     <string name="InuMonetThemeLight">Açık</string>

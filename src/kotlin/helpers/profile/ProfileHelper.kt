@@ -62,6 +62,9 @@ object ProfileHelper {
     fun preferMediaTab(): Boolean = InuConfig.PROFILE_PREFER_MEDIA_TAB.value
 
     @JvmStatic
+    fun useMaterialProfileActions(): Boolean = InuConfig.MATERIAL_PROFILE_ACTIONS.value
+
+    @JvmStatic
     fun applyReduceMotionAlpha(openAnimationInProgress: Boolean, diff: Float, vararg views: View?) {
         if (!reduceMotion() || openAnimationInProgress) return
         val fade = diff.coerceIn(0f, 1f)

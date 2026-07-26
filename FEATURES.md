@@ -39,6 +39,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - predictive back
   - lists & sections
   - avatars (tonal on-container initials instead of white)
+  - profile action buttons
 - 🐶 toggle to replace profile photo bottom blur with a plain gradient fade
 - disable number rounding
 - export/import settings to/from json file
@@ -237,6 +238,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 
 - "Save to Downloads" preserves the original filename on Android 10+
 - gboard image paste no longer skips PhotoViewer
+- reordering an attach-panel album preserves per-photo captions and no longer duplicates its album caption
 - photo crop silently not applied to the sent image
 - high-quality photo cropping in PhotoViewer (crop *before* downscaling)
 - sticker creator output sent as photo when high-quality default is on
@@ -244,6 +246,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - recyclerlistview double-tap requires same view
 - list ripple left behind when the pressed row moves because another row changed height (selector was only re-synced on scroll)
 - dead zones in list rows where a hidden clickable child kept stale bounds from a previous binding (e.g. top-right corner of a member row in profile after a tagged member was recycled)
+- chat list crash while flinging when RecyclerView exposes a stale child without a ViewHolder
 - dialogs list pull-to-reveal-archive glitches
 - inline code in dialog previews no longer inherits chat-bubble colors
 - pinned dialog reorder scrolling/glitching mid-drag in the archive (stock bug: async list diffing dispatched the move after the drag swap)
@@ -254,6 +257,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - paid reaction animation respects litemode
 - reaction counter shift during long-tap menu
 - reactions silently disappearing right after being sent (stale server read race)
+- sticky date pill jump and color shift when replacing an inline date separator
 - bubble jump when ime height changes mid send-animation
 - "regular" formatting option with mixed-span selections
 - applying a style over a mixed-span selection smearing one span (e.g. mono) across the whole range
@@ -294,6 +298,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - fix lingering webpage when quickly sending
 - fix sponsored message media not respecting data saver
 - fix non-joined channels history getting stuck in the past
+- jumping to an uncached message no longer flashes and returns to the chat bottom
 - expandable switch cell (e.g. admin rights groups) counter badge overlapping the switch on long titles
 - fix stuck red snapshot box when the frame capture fails/times out on enter in pip
 - heads-up notifications show only the new message instead of the whole group, on the correct channel (Private Chats/Groups/Channels) instead of "Internal notifications" (visible since android 16 forced grouping)

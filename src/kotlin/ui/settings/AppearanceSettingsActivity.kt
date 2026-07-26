@@ -84,6 +84,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuMaterial3Avatars)
             ).setChecked(InuConfig.MATERIAL3_AVATARS.value)
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_MATERIAL_PROFILE_ACTIONS,
+                LocaleController.getString(R.string.InuMaterialProfileActions),
+            ).setChecked(InuConfig.MATERIAL_PROFILE_ACTIONS.value)
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             items.add(
                 UItem.asButton(
@@ -275,6 +281,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            TOGGLE_MATERIAL_PROFILE_ACTIONS -> {
+                val new = InuConfig.MATERIAL_PROFILE_ACTIONS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             TOGGLE_NAVIGATION_DRAWER -> {
                 val new = InuConfig.NAVIGATION_DRAWER.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -358,6 +369,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
+        private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
         private val SECTION_CENTER_TITLE = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
@@ -394,6 +406,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-fabs", R.string.InuMaterial3Fabs, TOGGLE_MATERIAL3_FABS),
                 SearchRegistry.Entry("material3-sections", R.string.InuMaterial3Sections, TOGGLE_M3_SECTIONS_STYLE),
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
+                SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
                 SearchRegistry.Entry("center-title", R.string.InuCenterTitle, SECTION_CENTER_TITLE),

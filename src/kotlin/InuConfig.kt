@@ -120,6 +120,9 @@ object InuConfig {
     @JvmField
     val MATERIAL3_AVATARS = BoolItem("material3_avatars", false)
 
+    @JvmField
+    val MATERIAL_PROFILE_ACTIONS = BoolItem("material_profile_actions", false)
+
     // snapshot of theme state before Monet was enabled, "day|night|autoNightType"; empty = none
     @JvmField
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)

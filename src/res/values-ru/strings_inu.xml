@@ -277,6 +277,8 @@
     <string name="InuMsgDetailEmojiPackCreators">Создатели наборов эмодзи</string>
     <string name="InuShowJson">Показать JSON</string>
     <string name="InuRegDate">Зарегистрирован: %s</string>
+    <string name="InuJoinDate">Присоединился: %s</string>
+    <string name="InuCreatedDate">Создан: %s</string>
 
     <string name="InuChatVoiceInAttach">Запись в панели вложений</string>
     <string name="InuChatVoiceInAttachInfo">Перемещает кнопку записи голоса/видео из строки ввода в панель вложений</string>
@@ -345,6 +347,7 @@
     <string name="InuOldMentionIndicator">Старый индикатор упоминаний</string>
 
     <string name="InuShowForwardTime">Показывать время пересылки</string>
+    <string name="InuCompactForwarded">Компактный индикатор пересылки</string>
     <string name="InuCompactEdited">Компактный индикатор изменения</string>
 
     <string name="InuAddToStickersGifs">Добавить в стикеры/GIF</string>
@@ -553,6 +556,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Переключатели</string>
     <string name="InuMaterial3Avatars">Аватары</string>
+    <string name="InuMaterialProfileActions">Кнопки действий в профиле</string>
     <string name="InuMonetTheme">Monet тема</string>
     <string name="InuMonetThemeDisabled">Отключено</string>
     <string name="InuMonetThemeLight">Светлая</string>
