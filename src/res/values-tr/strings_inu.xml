@@ -432,7 +432,11 @@
     <string name="InuOldMentionIndicator">Eski bahsetme göstergesi</string>
 
     <string name="InuShowForwardTime">İletilme zamanını göster</string>
-    <string name="InuCompactForwarded">Kompakt iletim göstergesi</string>
+    <string name="InuForwardHeaderMode">İletim başlığı</string>
+    <string name="InuForwardHeaderModeRegular">Normal</string>
+    <string name="InuForwardHeaderModeIcon">Simge</string>
+    <string name="InuForwardHeaderModeIconNoTimeInfo">&quot;İletilme zamanını göster&quot; kapalıyken Kompakt ile aynıdır</string>
+    <string name="InuForwardHeaderModeCompact">Kompakt</string>
     <string name="InuCompactEdited">Küçük düzenlendi göstergesi</string>
 
     <string name="InuAddToStickersGifs">Çıkartmalara/GIF\'lere ekle</string>

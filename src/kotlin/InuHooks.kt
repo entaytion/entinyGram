@@ -9,6 +9,7 @@ import desu.inugram.helpers.ProxyVpnHelper
 import desu.inugram.helpers.ShortcutHelper
 import desu.inugram.helpers.UrlCleanerHelper
 import desu.inugram.helpers.cloud.CloudSettingsHelper
+import desu.inugram.helpers.dialogs.DrawerHelper
 import desu.inugram.helpers.font.FontHelper
 import desu.inugram.helpers.maps.MapsHelper
 import desu.inugram.helpers.security.PasscodeHelper
@@ -126,6 +127,7 @@ object InuHooks {
         }
         CrashReporter.maybeShowReportSheet(launchActivity)
         ProxyVpnHelper.reconcile()
+        DrawerHelper.refreshUpdateState()
     }
 
     @JvmStatic

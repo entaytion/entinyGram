@@ -5,7 +5,6 @@ misc/remove-play.patch
 misc/settings-ui.patch
 misc/defaults.patch
 debloat/hide-trending-stickers.patch
-feature/predictive-back.patch
 debloat/disable-instant-camera.patch
 feature/show-seconds.patch
 debloat/disable-rounding.patch
@@ -76,6 +75,7 @@ debloat/recyclerview-instant-tap.patch
 debloat/motion-photos.patch
 feature/long-press-reply-in-replies.patch
 feature/animation-multiplier.patch
+feature/predictive-back.patch
 feature/search-media-type-filter.patch
 debloat/disable-bg-parallax.patch
 feature/no-join-discuss.patch
@@ -245,6 +245,12 @@ feature/send-mp4-as-video.patch
 bugfix/admin-sort-overflow.patch
 bugfix/reaction-animation-alignment.patch
 bugfix/dialog-preview-code-color.patch
+bugfix/sections-adapter-first-diff.patch
+feature/refresh-sticker-set.patch
+bugfix/profile-menu-duplicate-actions.patch
+bugfix/album-caption-link-ripple.patch
+bugfix/recyclerview-prelayout-space-change.patch
+bugfix/save-uncached-documents-to-downloads.patch
 feature/title-alignment.patch
 feature/regex-filter.patch
 feature/save-stories.patch

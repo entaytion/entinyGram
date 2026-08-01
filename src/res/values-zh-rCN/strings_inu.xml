@@ -347,7 +347,11 @@
     <string name="InuOldMentionIndicator">旧版提及指示器</string>
 
     <string name="InuShowForwardTime">显示转发时间</string>
-    <string name="InuCompactForwarded">紧凑转发指示器</string>
+    <string name="InuForwardHeaderMode">转发标题</string>
+    <string name="InuForwardHeaderModeRegular">常规</string>
+    <string name="InuForwardHeaderModeIcon">图标</string>
+    <string name="InuForwardHeaderModeIconNoTimeInfo">“显示转发时间”关闭时与紧凑模式相同</string>
+    <string name="InuForwardHeaderModeCompact">紧凑</string>
     <string name="InuCompactEdited">紧凑编辑指示器</string>
 
     <string name="InuAddToStickersGifs">添加到贴纸/GIF</string>

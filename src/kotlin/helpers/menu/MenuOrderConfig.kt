@@ -198,7 +198,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         ),
         SAVE_TO_DOWNLOADS(
             "save_to_downloads",
-            listOf(ChatActivity.OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC),
+            listOf(ChatActivity.OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC, ChatHelper.OPTION_SAVE_STICKER_TO_DOWNLOADS),
             R.string.SaveToDownloads,
             R.drawable.msg_download
         ),

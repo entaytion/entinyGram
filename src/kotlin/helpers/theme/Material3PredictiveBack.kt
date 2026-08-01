@@ -8,7 +8,6 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Outline
-import android.graphics.Path
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -27,8 +26,6 @@ import org.telegram.messenger.AndroidUtilities.dpf2
 import org.telegram.ui.ActionBar.ActionBarLayout
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.ProfileActivity
-import org.telegram.ui.ViewPagerActivity
 import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -37,43 +34,13 @@ object Material3PredictiveBack {
     private const val LAZY_START = 0.015f
     private const val MAX_SCALE = 0.9f
     private const val EDGE_MARGIN_DP = 16f
-    private const val ENTER_OFFSET_DP = 96f // entering screen starts this far off the left edge; closing slides this far off on commit
-    private const val SCRIM_ALPHA_BYTE = 77 // ~0.3 * 255 (AOSP uses 0.2 light / 0.8 dark; fixed 0.3 reads better in-app)
     private const val CLOSING_ALPHA_FADE = 0.2f // leaving screen is fully faded by this much of commit progress (AOSP)
-    private const val SCRIM_FADE = 0.5f // scrim lifts by this much of commit progress (AOSP fades it over the full duration, which lingers past the motion)
     private const val COMMIT_DURATION = 450L
     private const val CANCEL_DURATION = 200L
 
     private val GESTURE_INTERP: Interpolator = PathInterpolator(0.1f, 0.1f, 0f, 1f)
     private val VERTICAL_INTERP: Interpolator = DecelerateInterpolator()
     private val EMPHASIZED_DECELERATE: Interpolator = PathInterpolator(0.05f, 0.7f, 0.1f, 1f)
-    private val EMPHASIZED: Interpolator = PathInterpolator(
-        Path().apply {
-            moveTo(0f, 0f)
-            cubicTo(0.05f, 0f, 0.133333f, 0.06f, 0.166666f, 0.4f)
-            cubicTo(0.208333f, 0.82f, 0.25f, 1f, 1f, 1f)
-        }
-    )
-
-    private inline fun ViewGroup.eachChild(action: (View) -> Unit) {
-        for (i in 0 until childCount) action(getChildAt(i))
-    }
-
-    // The entering fragment's own background to fill the M3 gap. ViewPagerActivity (e.g.
-    // MainTabsActivity) sets hasOwnBackground but draws nothing itself — the visible color comes
-    // from the current tab's inner fragment, so descend into it.
-    private fun enteringBackground(fragment: BaseFragment?): Drawable? {
-        var f = fragment
-        while (f is ViewPagerActivity) f = f.currentVisibleFragment
-        // ProfileActivity keeps fragmentView transparent and paints via its children (gray listView),
-        // so use the gray window background directly.
-        if (f is ProfileActivity) return ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray))
-        val bg = f?.fragmentView?.background
-        // A transparent fill can't fill the gap — it would show the black window behind. Reject it so
-        // the caller falls back to a solid color.
-        if (bg is ColorDrawable && Color.alpha(bg.color) == 0) return null
-        return bg
-    }
 
     @JvmStatic
     fun createCallback(
@@ -101,7 +68,7 @@ object Material3PredictiveBack {
         private var savedClipToOutline = false
         private var savedCvbBackground: Drawable? = null
         private var savedCvbForeground: Drawable? = null
-        private val scrim = ColorDrawable(Color.BLACK).apply { alpha = SCRIM_ALPHA_BYTE }
+        private val scrim = ColorDrawable(Color.BLACK).apply { alpha = Material3BackMotion.SCRIM_ALPHA_BYTE }
 
         private val outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
@@ -139,7 +106,7 @@ object Material3PredictiveBack {
                     ?.getRoundedCorner(RoundedCorner.POSITION_TOP_LEFT)?.radius ?: 0
             } else 0
             edgeMarginPx = dpf2(EDGE_MARGIN_DP)
-            enterOffsetPx = dpf2(ENTER_OFFSET_DP)
+            enterOffsetPx = dpf2(Material3BackMotion.ENTER_OFFSET_DP)
             // Run stock's heavy prep (attach previous fragment, relayout, onResume, HW layer) during the
             // pre-LAZY_START invisible phase so the first visible frame is just a transform.
             layout.onBackStarted(backEvent.touchX, backEvent.touchY)
@@ -202,7 +169,7 @@ object Material3PredictiveBack {
             val cvb = layout.containerViewBack ?: return
             savedCvbBackground = cvb.background
             savedCvbForeground = cvb.foreground
-            val enterBg = enteringBackground(layout.backgroundFragment)
+            val enterBg = Material3BackMotion.getFragmentBackground(layout.backgroundFragment)
             cvb.background = enterBg?.constantState?.newDrawable()
                 ?: ColorDrawable(Theme.getColor(Theme.key_windowBackgroundWhite))
             cvb.foreground = scrim
@@ -292,7 +259,7 @@ object Material3PredictiveBack {
                     addUpdateListener {
                         val f = it.animatedValue as Float
                         cv.alpha = (1f - f / CLOSING_ALPHA_FADE).coerceIn(0f, 1f)
-                        scrim.alpha = (startScrim * (1f - f / SCRIM_FADE).coerceAtLeast(0f)).toInt()
+                        scrim.alpha = (startScrim * (1f - f / Material3BackMotion.SCRIM_FADE).coerceAtLeast(0f)).toInt()
                     }
                 }
             }
@@ -300,7 +267,7 @@ object Material3PredictiveBack {
             runningAnim = AnimatorSet().apply {
                 playTogether(animators)
                 duration = if (cancel) CANCEL_DURATION else COMMIT_DURATION
-                if (cancel) interpolator = EMPHASIZED_DECELERATE else spatial.forEach { it.interpolator = EMPHASIZED }
+                if (cancel) interpolator = EMPHASIZED_DECELERATE else spatial.forEach { it.interpolator = Material3BackMotion.EMPHASIZED }
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         runningAnim = null
@@ -348,7 +315,7 @@ object Material3PredictiveBack {
             }
             savedCvbBackground = null
             savedCvbForeground = null
-            scrim.alpha = SCRIM_ALPHA_BYTE
+            scrim.alpha = Material3BackMotion.SCRIM_ALPHA_BYTE
         }
     }
 }

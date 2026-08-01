@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 29 Jul 2026 06:33:41 +0400
+Subject: fix link ripple in album captions
+
+---
+ .../java/org/telegram/ui/Cells/ChatMessageCell.java   | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -23523,6 +23523,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             invalidate();
+         }
+         canvas.restore();
++        if (selectionOnly && linkBlockNum >= 0 && linkBlockNum < captionLayout.textLayoutBlocks.size()) {
++            MessageObject.TextLayoutBlock block = captionLayout.textLayoutBlocks.get(linkBlockNum);
++            float blockRtl = block.isRtl() ? captionLayout.textXOffset - (block.quote ? dp(10) : 0) : 0;
++            canvas.save();
++            canvas.translate(captionX - blockRtl, captionY + block.textYOffset(captionLayout.textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);
++            if (links.draw(canvas)) {
++                invalidate();
++            }
++            drawProgressLoadingLink(canvas, linkBlockNum);
++            canvas.restore();
++        }
+         if (currentMessageObject.type == MessageObject.TYPE_ROUND_VIDEO) {
+             Theme.chat_timePaint.setColor(
+                 ColorUtils.blendARGB(

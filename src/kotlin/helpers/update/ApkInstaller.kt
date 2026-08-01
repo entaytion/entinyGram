@@ -26,6 +26,7 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import desu.inugram.helpers.NotificationsHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -345,7 +346,7 @@ object ApkInstaller {
                 nm.notify(
                     NOTIFICATION_ID,
                     NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.notification)
+                        .setSmallIcon(NotificationsHelper.smallIconRes())
                         .setShowWhen(false)
                         .setContentText(LocaleController.getString(R.string.InuUpdateInstalledNotification))
                         .setCategory(NotificationCompat.CATEGORY_STATUS)

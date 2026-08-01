@@ -30,6 +30,7 @@ import kotlin.math.min
 object SpoilerHelper {
     private class State {
         var baseColor: Int = 0
+        var drawAlphaMultiplier: Float = 1f
         var prevLeft: Float = Float.NaN
         var prevRight: Float = Float.NaN
         var nextLeft: Float = Float.NaN
@@ -60,7 +61,7 @@ object SpoilerHelper {
 
         if (mode == InuConfig.TextSpoilerModeItem.EPSTEIN) {
             solidPaint.color = Color.BLACK
-            solidPaint.alpha = mAlpha
+            solidPaint.alpha = (mAlpha * stateOf(effect).drawAlphaMultiplier).toInt().coerceIn(0, 0xFF)
             canvas.drawRect(bounds, solidPaint)
             return true
         }
@@ -76,7 +77,7 @@ object SpoilerHelper {
         if (effect.rippleProgress < 0) state.baseColor = lastColor
         val alphaScale = if (isOutgoingBubble(parent)) 0.45f else 0.25f
         solidPaint.color = state.baseColor
-        solidPaint.alpha = (0xFF * alphaScale).toInt().coerceIn(0, 0xFF)
+        solidPaint.alpha = (0xFF * alphaScale * state.drawAlphaMultiplier).toInt().coerceIn(0, 0xFF)
 
         val r = dp(4f).toFloat()
         val tlR = if (state.prevLeft <= bounds.left) 0f else r
@@ -100,6 +101,11 @@ object SpoilerHelper {
             drawFillet(canvas, bounds.right.toFloat(), bounds.bottom.toFloat(), dx = +1, dy = -1, r = r)
 
         return true
+    }
+
+    @JvmStatic
+    fun setDrawAlphaMultiplier(effect: SpoilerEffect, alpha: Float) {
+        stateOf(effect).drawAlphaMultiplier = alpha.coerceIn(0f, 1f)
     }
 
     @JvmStatic

@@ -12,10 +12,15 @@ import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
+import org.telegram.messenger.ImageLoader
+import org.telegram.messenger.ImageReceiver
 import org.telegram.messenger.MediaController
 import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.Utilities
+import org.telegram.ui.PhotoViewer
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
 object GalleryHelper {
     private class Entry(val dateModified: Long, val description: MotionPhotoDescription?)
@@ -78,9 +83,53 @@ object GalleryHelper {
     private var incrementalEligible = false
     @Volatile
     private var cachedCameraAlbumId: Int? = null
+    private val visiblePhotoViewerRefreshVersion = AtomicLong()
 
     private val IMAGE_URI_RE = Regex("""^content://media/[^/]+/images/media/(\d+)$""")
     private val VIDEO_URI_RE = Regex("""^content://media/[^/]+/video/media/(\d+)$""")
+
+    @JvmStatic
+    fun invalidateThumbnailIfChanged(
+        receiver: ImageReceiver,
+        previous: MediaController.PhotoEntry?,
+        current: MediaController.PhotoEntry,
+    ) {
+        if (!hasMediaChanged(previous, current)) return
+        receiver.imageKey?.let { ImageLoader.getInstance().removeImage(it) }
+        receiver.clearImage()
+    }
+
+    @JvmStatic
+    fun refreshPhotoViewer(album: MediaController.AlbumEntry?) {
+        if (album == null || !PhotoViewer.hasInstance()) return
+        val viewer = PhotoViewer.getInstance()
+        if (!viewer.isVisible) return
+        val index = viewer.currentIndex
+        val photos = viewer.imagesArrLocals
+        if (index !in photos.indices) return
+        val previous = photos[index] as? MediaController.PhotoEntry ?: return
+        val current = album.photosByIds[previous.imageId] ?: return
+        if (previous === current) return
+        viewer.inu_reloadCurrentPhoto(current)
+    }
+
+    @JvmStatic
+    fun shouldRefreshVisiblePhotoViewer(): Boolean {
+        return visiblePhotoViewerRefreshVersion.get() != 0L
+    }
+
+    private fun hasMediaChanged(
+        previous: MediaController.PhotoEntry?,
+        current: MediaController.PhotoEntry,
+    ): Boolean {
+        if (previous == null || previous.imageId != current.imageId) return false
+        return previous.dateTaken != current.dateTaken ||
+            previous.size != current.size ||
+            previous.width != current.width ||
+            previous.height != current.height ||
+            previous.orientation != current.orientation ||
+            previous.path != current.path
+    }
 
     @JvmStatic
     fun recordEvent(uri: Uri?, flags: Int) {
@@ -96,6 +145,10 @@ object GalleryHelper {
             return
         }
         val isImage = imageMatch != null
+        if (isImage && (flags and ContentResolver.NOTIFY_DELETE) == 0 && isShowingPhoto(id.toInt())) {
+            visiblePhotoViewerRefreshVersion.incrementAndGet()
+            forceFullRescan = true
+        }
         when {
             (flags and ContentResolver.NOTIFY_DELETE) != 0 -> forceFullRescan = true
             (flags and ContentResolver.NOTIFY_INSERT) != 0 -> {
@@ -113,9 +166,18 @@ object GalleryHelper {
                     // IS_PENDING finalization: row appears in default queries only after the
                     // writer flips IS_PENDING=0, which fires as UPDATE. If we don't have this id
                     // yet, treat it as a fresh insert.
-                    val allPhotos = MediaController.allPhotosAlbumEntry
-                    if (allPhotos == null || allPhotos.photosByIds.indexOfKey(id.toInt()) < 0) {
+                    val existingPhoto = MediaController.allPhotosAlbumEntry?.photosByIds?.get(id.toInt())
+                    if (existingPhoto == null) {
                         synchronized(pendingLock) { pendingInserts.add(id) }
+                    } else {
+                        cache.remove(id.toInt())
+                        val path = existingPhoto.path
+                        if (path != null) {
+                            AndroidUtilities.runOnUIThread {
+                                ImageLoader.getInstance().removeImage(Utilities.MD5("thumb://$id:$path"))
+                            }
+                        }
+                        forceFullRescan = true
                     }
                 }
             }
@@ -124,13 +186,27 @@ object GalleryHelper {
         }
     }
 
+    private fun isShowingPhoto(imageId: Int): Boolean {
+        if (!PhotoViewer.hasInstance()) return false
+        val viewer = PhotoViewer.getInstance()
+        val index = viewer.currentIndex
+        val photos = viewer.imagesArrLocals
+        return viewer.isVisible && index in photos.indices &&
+            (photos[index] as? MediaController.PhotoEntry)?.imageId == imageId
+    }
+
     @JvmStatic
     fun markFullScanComplete(cameraAlbumId: Int?) {
         // do NOT clear pendingInserts — events that arrived during the scan stay queued
         // so the next debounce picks them up incrementally; merge dedupes via photosByIds.
-        forceFullRescan = false
         cachedCameraAlbumId = cameraAlbumId
         incrementalEligible = true
+        val refreshVersion = visiblePhotoViewerRefreshVersion.get()
+        if (refreshVersion != 0L) {
+            AndroidUtilities.runOnUIThread({
+                visiblePhotoViewerRefreshVersion.compareAndSet(refreshVersion, 0)
+            }, 1000)
+        }
     }
 
     /**

@@ -7,7 +7,7 @@ Subject: non-island ui in various parts of the app
  .../org/telegram/ui/ActionBar/ActionBar.java  |  45 +++---
  .../ui/ActionBar/ActionBarLayout.java         |   2 +-
  .../telegram/ui/ChannelAdminLogActivity.java  |  21 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 125 +++++++++------
+ .../java/org/telegram/ui/ChatActivity.java    | 127 +++++++++------
  .../ui/Components/ChatActivityEnterView.java  |  66 +++++---
  ...ChatActivityEnterViewAnimatedIconView.java |  17 +-
  .../ChatActivityTopPanelLayout.java           |  16 +-
@@ -38,7 +38,7 @@ Subject: non-island ui in various parts of the app
  .../ui/bots/BotCommandsMenuContainer.java     |   4 +-
  .../bots/ChatAttachAlertBotWebViewLayout.java |   5 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   4 +-
- 34 files changed, 642 insertions(+), 244 deletions(-)
+ 34 files changed, 643 insertions(+), 245 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -154,7 +154,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
-@@ -2103,7 +2103,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+@@ -2096,7 +2096,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
  
                          @Override
                          public void getOutline(View view, Outline outline) {
@@ -503,6 +503,15 @@ index 0000000..0000000 100644
          }
      }
  
+@@ -16614,7 +16625,7 @@ public class ChatActivity extends BaseFragment implements
+         return getScrollOffsetForMessage(getHeightForMessage(object, !TextUtils.isEmpty(highlightMessageQuote))) - scrollOffsetForQuote(object);
+     }
+     private int getScrollOffsetForMessage(int messageHeight) {
+-        return (int) Math.max(-AndroidUtilities.dp(2), (chatListView.getMeasuredHeight() - blurredViewBottomOffset - chatListViewPaddingTop - windowInsetsStateHolder.getCurrentMaxBottomInset() - dp(44 + 9) - messageHeight) / 2);
++        return (int) Math.max(-AndroidUtilities.dp(2), (chatListView.getMeasuredHeight() - chatListViewPaddingTop - chatListView.getPaddingBottom() - messageHeight) / 2);
+     }
+ 
+     private int scrollOffsetForQuote(MessageObject object) {
 @@ -17048,6 +17059,10 @@ public class ChatActivity extends BaseFragment implements
      private boolean shouldHaveLightNavigationBarIcons;
  

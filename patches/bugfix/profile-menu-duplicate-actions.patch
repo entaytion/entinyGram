@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 29 Jul 2026 05:21:25 +0400
+Subject: duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
+
+---
+ .../src/main/java/org/telegram/ui/ProfileActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -12181,7 +12181,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                         editItemVisible = true;
+                     }
+                 }
+-                if (!hasMainTabs) {
++                if (!hasMainTabs && (actionsView == null || !actionsView.supportsEditInfo())) {
+                     otherItem.addSubItem(edit_info, R.drawable.msg_edit, LocaleController.getString(R.string.EditInfo));
+                     if (imageUpdater != null) {
+                         otherItem.addSubItem(add_photo, R.drawable.msg_addphoto, LocaleController.getString(R.string.AddPhoto));

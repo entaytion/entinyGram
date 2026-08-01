@@ -38,7 +38,7 @@ Format: `group__name` → `patches/<group>/<name>.patch`. Commit subject = plain
 
 `debloat` vs `feature`: only *removes/toggles off* stock → `debloat`. Adds new capability → `feature`. `visual__`, `ui__`, etc. are **not** valid groups.
 
-Propose a patch name for every newly made patch — don't touch stgit yourself.
+Propose a patch name (and comment) for every newly made patch — don't touch stgit yourself.
 
 ## Writing a stock patch
 

@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 30 Jul 2026 00:07:04 +0400
+Subject: Fix chat list drifting off the input when hiding keyboard during a message animation
+
+---
+ .../recyclerview/widget/LinearLayoutManager.java         | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java b/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java
++++ b/TMessagesProj/src/main/java/androidx/recyclerview/widget/LinearLayoutManager.java
+@@ -715,9 +715,12 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager implements
+             }
+         }
+         layoutForPredictiveAnimations(recycler, state, startOffset, endOffset);
+-        if (!state.isPreLayout()) {
+-            mOrientationHelper.onLayoutComplete();
+-        } else {
++        // upstream AOSP bug: skipping onLayoutComplete() for pre-layout leaves getTotalSpaceChange()
++        // unconsumed, so an end-anchored padding delta is applied twice (pre-layout shifts the
++        // children, post-layout re-anchors from them and adds the same delta again), leaving the
++        // list permanently scrolled by that delta after the spurious move animation settles
++        mOrientationHelper.onLayoutComplete();
++        if (state.isPreLayout()) {
+             mAnchorInfo.reset();
+         }
+         mLastStackFromEnd = mStackFromEnd;

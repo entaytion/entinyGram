@@ -348,7 +348,11 @@
     <string name="InuOldMentionIndicator">従来のメンション表示</string>
 
     <string name="InuShowForwardTime">転送時刻を表示</string>
-    <string name="InuCompactForwarded">コンパクトな転送インジケーター</string>
+    <string name="InuForwardHeaderMode">転送ヘッダー</string>
+    <string name="InuForwardHeaderModeRegular">通常</string>
+    <string name="InuForwardHeaderModeIcon">アイコン</string>
+    <string name="InuForwardHeaderModeIconNoTimeInfo">「転送時刻を表示」がオフの場合はコンパクトと同じです</string>
+    <string name="InuForwardHeaderModeCompact">コンパクト</string>
     <string name="InuCompactEdited">コンパクトな編集インジケーター</string>
 
     <string name="InuAddToStickersGifs">ステッカー/GIFに追加</string>

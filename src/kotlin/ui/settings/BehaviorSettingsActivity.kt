@@ -10,6 +10,7 @@ import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.maps.MapsHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.SharedConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
@@ -93,15 +94,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.CONFIRM_INTERNAL_LINKS.value,
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            items.add(
-                UItem.asButton(
-                    BUTTON_TEXT_CLASSIFIER_MODE,
-                    LocaleController.getString(R.string.InuTextClassifierMode),
-                    textClassifierModeLabel(InuConfig.TEXT_CLASSIFIER_MODE.value),
-                )
-            )
-        }
         items.add(
             UItem.asCheck(
                 TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE,
@@ -168,6 +160,25 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
+        items.add(
+            UItem.asButton(
+                BUTTON_PERFORMANCE_CLASS,
+                LocaleController.getString(R.string.InuPerformanceClass),
+                performanceClassLabel(SharedConfig.getDevicePerformanceClass()),
+            )
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            items.add(
+                UItem.asButton(
+                    BUTTON_TEXT_CLASSIFIER_MODE,
+                    LocaleController.getString(R.string.InuTextClassifierMode),
+                    textClassifierModeLabel(InuConfig.TEXT_CLASSIFIER_MODE.value),
+                )
+            )
+        }
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -178,6 +189,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            BUTTON_PERFORMANCE_CLASS -> showPerformanceClassSelector()
             BUTTON_TEXT_CLASSIFIER_MODE -> showTextClassifierModeSelector()
             BUTTON_WEB_PREVIEW_REPLACEMENTS -> presentFragment(WebPreviewReplacementsActivity())
 
@@ -261,6 +273,34 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         }
     }
 
+    private fun showPerformanceClassSelector() {
+        val context = context ?: return
+        val measuredClass = SharedConfig.measureDevicePerformanceClass()
+        val values = intArrayOf(
+            SharedConfig.PERFORMANCE_CLASS_HIGH,
+            SharedConfig.PERFORMANCE_CLASS_AVERAGE,
+            SharedConfig.PERFORMANCE_CLASS_LOW,
+        )
+        showDialog(
+            RadioDialogBuilder(context, getResourceProvider())
+                .setTitle(LocaleController.getString(R.string.InuPerformanceClass))
+                .setSubtitle(LocaleController.getString(R.string.InuPerformanceClassInfo))
+                .setItems(
+                    values.map {
+                        RadioDialogBuilder.Item(
+                            performanceClassLabel(it),
+                            if (it == measuredClass) LocaleController.getString(R.string.InuPerformanceClassMeasured) else null,
+                        )
+                    },
+                    values.indexOf(SharedConfig.getDevicePerformanceClass()),
+                ) { _, which ->
+                    val newClass = values[which]
+                    SharedConfig.overrideDevicePerformanceClass(if (newClass == measuredClass) -1 else newClass)
+                    listView.adapter.update(true)
+                }.create()
+        )
+    }
+
     private fun showTextClassifierModeSelector() {
         val context = context ?: return
         val values = intArrayOf(
@@ -295,6 +335,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
+        private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_TEXT_CLASSIFIER_MODE = InuUtils.generateId()
         private val TOGGLE_CALL_CONFIRMATION = InuUtils.generateId()
         private val TOGGLE_CONFIRM_INTERNAL_LINKS = InuUtils.generateId()
@@ -311,6 +352,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_SECONDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
 
+        private fun performanceClassLabel(value: Int): String = when (value) {
+            SharedConfig.PERFORMANCE_CLASS_HIGH -> LocaleController.getString(R.string.InuPerformanceClassHigh)
+            SharedConfig.PERFORMANCE_CLASS_AVERAGE -> LocaleController.getString(R.string.InuPerformanceClassAverage)
+            else -> LocaleController.getString(R.string.InuPerformanceClassLow)
+        }
+
         private fun textClassifierModeLabel(value: Int): String = when (value) {
             InuConfig.TextClassifierModeItem.NATIVE -> LocaleController.getString(R.string.InuTextClassifierModeNative)
             InuConfig.TextClassifierModeItem.OFF -> LocaleController.getString(R.string.InuTextClassifierModeOff)
@@ -324,6 +371,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             factory = ::BehaviorSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
+                SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),
                 SearchRegistry.Entry("call-confirmation", R.string.InuCallConfirmation, TOGGLE_CALL_CONFIRMATION),
                 SearchRegistry.Entry("confirm-internal-links", R.string.InuConfirmInternalLinks, TOGGLE_CONFIRM_INTERNAL_LINKS),

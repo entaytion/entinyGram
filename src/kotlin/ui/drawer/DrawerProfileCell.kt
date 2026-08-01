@@ -251,6 +251,7 @@ class DrawerProfileCell(context: Context, drawerLayoutContainer: DrawerLayoutCon
             Theme.turnOffAutoNight(bf, openSettings)
         }
         darkThemeView.setOnLongClickListener {
+            drawerLayoutContainer.inu_drawer?.closeDrawer(false)
             drawerLayoutContainer.parentActionBarLayout.presentFragment(ThemeActivity(ThemeActivity.THEME_TYPE_BASIC))
             true
         }

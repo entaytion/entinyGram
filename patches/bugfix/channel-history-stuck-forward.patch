@@ -4,22 +4,13 @@ Date: Sat, 13 Jun 2026 16:44:25 +0400
 Subject: fix non-joined channels history getting stuck in the past
 
 ---
- .../messenger/MessagesController.java         | 30 +++++++++++++++----
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ .../messenger/MessagesController.java         | 28 +++++++++++++++----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -11696,7 +11696,7 @@ public class MessagesController extends BaseController implements NotificationCe
-                             if (!res.dialogs.isEmpty()) {
-                                 TLRPC.Dialog dialog = res.dialogs.get(0);
- 
--                                if (dialog.top_message != 0 && (chat == null || !ChatObject.isNotInChat(chat))) {
-+                                if (dialog.top_message != 0) {
-                                     TLRPC.TL_messages_dialogs dialogs = new TLRPC.TL_messages_dialogs();
-                                     dialogs.chats = res.chats;
-                                     dialogs.users = res.users;
 @@ -11915,6 +11915,22 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          final boolean isInitialLoading = offset_date == 0 && max_id == 0;

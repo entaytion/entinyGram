@@ -16,6 +16,12 @@
     <string name="InuAppearance">Appearance</string>
     <string name="InuLookAndFeel">Look &amp; Feel</string>
     <string name="InuBehavior">Behavior</string>
+    <string name="InuPerformanceClass">Performance class</string>
+    <string name="InuPerformanceClassInfo">It is not recommended to change this settings, as this might tank performance on low-performance budget devices</string>
+    <string name="InuPerformanceClassMeasured">Measured</string>
+    <string name="InuPerformanceClassLow">Low</string>
+    <string name="InuPerformanceClassAverage">Average</string>
+    <string name="InuPerformanceClassHigh">High</string>
     <string name="InuAnnoyances">Annoyances</string>
     <string name="InuMessages">Messages</string>
     <string name="InuOther">Other</string>
@@ -42,6 +48,7 @@
     <string name="InuMaterial3Fabs">Floating buttons</string>
     <string name="InuMaterial3Sections">List items</string>
     <string name="InuMaterial3Avatars">Avatars</string>
+    <string name="InuMaterial3NavigationAnimation">Navigation animation</string>
     <string name="InuMaterialProfileActions">Profile action buttons</string>
     <string name="InuMonetTheme">Monet theme</string>
     <string name="InuMonetThemeDisabled">Disabled</string>
@@ -431,7 +438,11 @@
     <string name="InuOldMentionIndicator">Legacy mention indicator</string>
 
     <string name="InuShowForwardTime">Show forward time</string>
-    <string name="InuCompactForwarded">Compact forward indicator</string>
+    <string name="InuForwardHeaderMode">Forward header</string>
+    <string name="InuForwardHeaderModeRegular">Regular</string>
+    <string name="InuForwardHeaderModeIcon">Icon</string>
+    <string name="InuForwardHeaderModeIconNoTimeInfo">Same as Compact with &quot;Show forward time&quot; off</string>
+    <string name="InuForwardHeaderModeCompact">Compact</string>
     <string name="InuCompactEdited">Compact edit indicator</string>
 
     <string name="InuAddToStickersGifs">Add to Stickers/GIFs</string>
@@ -693,6 +704,7 @@
     <string name="InuBiometricConfirmLogoutInfo">Ask for biometric confirmation before logging out of an account.</string>
     <string name="InuBiometricAllowDeviceCredential">Allow device PIN/pattern</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Fall back to the device PIN, pattern or password when no biometric is enrolled.</string>
+<<<<<<< HEAD
 
     <string name="InuTOS">TOS</string>
     <string name="InuSelfDestructMedia">Self-destructing media</string>
@@ -730,4 +742,7 @@
     <string name="InuRegexPatterns">Keywords / Patterns</string>
     <string name="InuRegexPatternsDialogHint">Enter regular expressions or keywords separated by | or newlines</string>
     <string name="InuRegexFilterHint">Filtering runs locally in real-time without slowing down scrolling.</string>
+    <string name="InuRefreshStickerSet">Refresh</string>
+    <string name="InuStickerSetRefreshed">Pack updated</string>
+    <string name="InuStickerSetRefreshFailed">Couldn\'t refresh the pack</string>
 </resources>

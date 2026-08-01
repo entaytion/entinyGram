@@ -5,15 +5,15 @@ Subject: prevent tapping the chat preview from expanding it to avoid accidentall
 
 ---
  .../org/telegram/ui/ActionBar/ActionBarLayout.java |  8 ++++++++
- .../main/java/org/telegram/ui/ChatActivity.java    |  4 ++--
+ .../main/java/org/telegram/ui/ChatActivity.java    | 11 +++++++----
  .../main/java/org/telegram/ui/DialogsActivity.java | 14 +++++++++++++-
- 3 files changed, 23 insertions(+), 3 deletions(-)
+ 3 files changed, 28 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
-@@ -1968,6 +1968,14 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+@@ -1974,6 +1974,14 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
          if (fragment == null || checkTransitionAnimation() || delegate != null && check && !delegate.needPresentFragment(this, params) || !fragment.onFragmentCreate()) {
              return false;
          }
@@ -32,7 +32,38 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -40540,12 +40540,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -17479,8 +17479,9 @@ public class ChatActivity extends BaseFragment implements
+                 return true;
+             }
+ 
+-            if (isInPreviewMode() && allowExpandPreviewByClick) {
++            if (isInPreviewMode()) {
+                 if (ev.getAction() == MotionEvent.ACTION_DOWN) {
++                    pressActionBar = false;
+                     boolean pressedOnPageDownButtons = false, pressedOnAction = false;
+                     int[] off = new int[2];
+                     getLocationInWindow(off);
+@@ -17510,7 +17511,7 @@ public class ChatActivity extends BaseFragment implements
+                             pressedOnAction = true;
+                         }
+                     }
+-                    if (!pressedOnPageDownButtons) {
++                    if (!pressedOnPageDownButtons && (pressedOnAction || allowExpandPreviewByClick)) {
+                         x = ev.getX();
+                         y = ev.getY();
+                         pressTime = SystemClock.elapsedRealtime();
+@@ -17536,8 +17537,10 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                         ev.setAction(MotionEvent.ACTION_CANCEL);
+                     }
++                    pressActionBar = false;
+                     pressTime = -1;
+                 } else if (ev.getAction() == MotionEvent.ACTION_CANCEL) {
++                    pressActionBar = false;
+                     pressTime = -1;
+                 }
+             }
+@@ -40540,12 +40543,12 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean canPerformActions() {

@@ -12,6 +12,7 @@ import android.os.UserManager
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.XiaomiUtilities
 import java.time.Instant
 
@@ -20,6 +21,8 @@ object SystemInfo {
         append(UpdateHelper.getVersionInfoString()).append("\n")
         append("Android ${Build.VERSION.RELEASE} SDK ${Build.VERSION.SDK_INT}\n")
         append("Device ${Build.MANUFACTURER} ${Build.MODEL} (${Build.FINGERPRINT})\n")
+        append("Performance class current=${SharedConfig.performanceClassName(SharedConfig.getDevicePerformanceClass())}")
+        append(", measured=${SharedConfig.performanceClassName(SharedConfig.measureDevicePerformanceClass())}\n")
         append("Time ${Instant.now()}\n")
         append(profileInfo()).append("\n")
         append(permissionsInfo()).append("\n")

@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 28 Jul 2026 19:28:39 +0400
+Subject: refresh sticker/emoji sets
+
+---
+ .../org/telegram/ui/Components/EmojiPacksAlert.java   | 11 +++++++++++
+ .../org/telegram/ui/Components/StickersAlert.java     |  3 +++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
+@@ -1514,6 +1514,16 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
+             } catch (Exception e) {
+                 FileLog.e(e);
+             }
++        } else if (id == 100) {
++            final int index = customEmojiPacks.stickerSets.indexOf(stickerSet);
++            desu.inugram.helpers.StickerSetHelper.refreshStickerSet(currentAccount, (FrameLayout) containerView, resourcesProvider, stickerSet, newSet -> {
++                if (index < 0 || index >= customEmojiPacks.stickerSets.size()) {
++                    return;
++                }
++                customEmojiPacks.stickerSets.set(index, newSet);
++                customEmojiPacks.putStickerSet(index, newSet);
++                customEmojiPacks.onUpdate();
++            });
+         }
+     }
+ 
+@@ -1729,6 +1739,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
+                 addView(optionsButton, LayoutHelper.createFrame(40, 40, Gravity.TOP | Gravity.RIGHT, 0, 5, 5 - backgroundPaddingLeft / AndroidUtilities.density, 0));
+                 optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString(R.string.StickersShare));
+                 optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString(R.string.CopyLink));
++                optionsButton.addSubItem(100, R.drawable.msg_retry, LocaleController.getString(R.string.InuRefreshStickerSet));
+                 optionsButton.setOnClickListener(v -> optionsButton.toggleSubMenu());
+                 optionsButton.setDelegate(EmojiPacksAlert.this::onSubItemClick);
+                 optionsButton.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+@@ -1121,6 +1121,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
+         containerView.addView(optionsButton, LayoutHelper.createFrame(40, 40, Gravity.TOP | Gravity.RIGHT, 0, 5, 5, 0));
+         optionsButton.addSubItem(1, R.drawable.msg_share, LocaleController.getString(R.string.StickersShare));
+         optionsButton.addSubItem(2, R.drawable.msg_link, LocaleController.getString(R.string.CopyLink));
++        optionsButton.addSubItem(100, R.drawable.msg_retry, LocaleController.getString(R.string.InuRefreshStickerSet));
+ 
+         optionsButton.setOnClickListener(v -> {
+             checkOptions();
+@@ -1422,6 +1423,8 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
+                 dismiss();
+                 MediaDataController.getInstance(currentAccount).toggleStickerSet(getContext(), stickerSet, 1, parentFragment, false, false);
+             });
++        } else if (id == 100) {
++            desu.inugram.helpers.StickerSetHelper.refreshStickerSet(currentAccount, (FrameLayout) containerView, resourcesProvider, stickerSet, this::updateStickerSet);
+         }
+     }
+ 

@@ -4,8 +4,8 @@ Date: Tue, 12 May 2026 21:30:08 +0200
 Subject: prefer media tab in profile shared media
 
 ---
- .../telegram/ui/Components/SharedMediaLayout.java   | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ .../telegram/ui/Components/SharedMediaLayout.java  | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 index 0000000..0000000 100644
@@ -20,43 +20,44 @@ index 0000000..0000000 100644
          if (userInfo != null) {
              main_tab = userInfo.main_tab;
          } else if (chatInfo != null) {
-@@ -1637,6 +1637,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -1637,6 +1637,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          } else {
              main_tab = null;
          }
-+        if (desu.inugram.helpers.profile.ProfileHelper.preferMediaTab()) {
++        final boolean inuPreferMediaTab = desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() && !isStoriesView();
++        if (inuPreferMediaTab) {
 +            main_tab = null;
 +        }
          if (initialTab == TAB_GIFTS || initialTab == TAB_RECOMMENDED_CHANNELS || initialTab == TAB_SAVED_DIALOGS || initialTab == TAB_COMMON_GROUPS) {
              this.initialTab = initialTab;
          } else if (user != null && user.bot && user.bot_has_main_app && user.bot_can_edit) {
-@@ -1657,9 +1660,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -1657,9 +1661,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              this.initialTab = TAB_AUDIO;
          } else if (main_tab instanceof TLRPC.TL_profileTabVoice && (hasMedia[2] == -1 || hasMedia[2] > 0)) {
              this.initialTab = TAB_VOICE;
 -        } else if (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView()) {
-+        } else if (!desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() && (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
++        } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
              this.initialTab = getInitialTab();
 -        } else if (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0) {
-+        } else if (!desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
++        } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
              this.initialTab = TAB_GIFTS;
          } else if (initialTab != -1 && topicId == 0) {
              this.initialTab = initialTab;
-@@ -6807,7 +6810,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6807,7 +6811,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              }
          }
          if (info != null && (stories_pinned_available != info.stories_pinned_available)) {
 -            if (scrollSlidingTextTabStrip != null) {
-+            if (scrollSlidingTextTabStrip != null && !desu.inugram.helpers.profile.ProfileHelper.preferMediaTab()) {
++            if (scrollSlidingTextTabStrip != null && (!desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() || isStoriesView())) {
                  scrollSlidingTextTabStrip.setInitialTabId(isArchivedOnlyStoriesView() ? TAB_ARCHIVED_STORIES : TAB_STORIES);
              }
              updateTabs(true);
-@@ -6819,7 +6822,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6819,7 +6823,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          boolean stories_pinned_available = this.userInfo != null && this.userInfo.stories_pinned_available;
          this.userInfo = userInfo;
          updateTabs(true);
 -        if (userInfo != null && (stories_pinned_available != userInfo.stories_pinned_available)) {
-+        if (userInfo != null && (stories_pinned_available != userInfo.stories_pinned_available) && !desu.inugram.helpers.profile.ProfileHelper.preferMediaTab()) {
++        if (userInfo != null && (stories_pinned_available != userInfo.stories_pinned_available) && (!desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() || isStoriesView())) {
              scrollToPage(TAB_STORIES);
          }
      }

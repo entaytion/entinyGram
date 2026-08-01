@@ -39,6 +39,7 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagePreviewParams
 import org.telegram.messenger.MessagesStorage
@@ -96,6 +97,7 @@ object ChatHelper {
     const val OPTION_REPEAT_FORWARD = 516
     const val OPTION_SHOW_JSON = 517
     const val OPTION_EDIT_HISTORY = 518
+    const val OPTION_SAVE_STICKER_TO_DOWNLOADS = 521
 
     @JvmStatic
     fun timeAdditionsHash(msg: MessageObject?): Int {
@@ -306,15 +308,18 @@ object ChatHelper {
             icons.add(R.drawable.msg_copy)
         }
 
-        // stock only offers this for documents/music, but its handler saves any cached file just fine
-        if (!noforwards && !options.contains(ChatActivity.OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC) &&
+        if (!noforwards &&
             (selectedObject.isSticker || selectedObject.isAnimatedSticker) &&
-            selectedObject.messageOwner?.media is TLRPC.TL_messageMediaDocument &&
-            (selectedObject.mediaExists || selectedObject.attachPathExists)
+            selectedObject.messageOwner?.media is TLRPC.TL_messageMediaDocument
         ) {
-            items.add(LocaleController.getString(R.string.SaveToDownloads))
-            options.add(ChatActivity.OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC)
-            icons.add(R.drawable.msg_download)
+            val index = options.indexOf(ChatActivity.OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC)
+            if (index >= 0) {
+                options[index] = OPTION_SAVE_STICKER_TO_DOWNLOADS
+            } else {
+                items.add(LocaleController.getString(R.string.SaveToDownloads))
+                options.add(OPTION_SAVE_STICKER_TO_DOWNLOADS)
+                icons.add(R.drawable.msg_download)
+            }
         }
 
         if (SavedMessagesHelper.hasEditHistory(selectedObject.dialogId, selectedObject.id) ||
@@ -636,6 +641,31 @@ object ChatHelper {
 
             OPTION_EDIT_HISTORY -> {
                 SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject.dialogId, selectedObject.id)
+            }
+
+            OPTION_SAVE_STICKER_TO_DOWNLOADS -> {
+                val parent = activity.parentActivity ?: return true
+                if (Build.VERSION.SDK_INT >= 23 &&
+                    (Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE) &&
+                    parent.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    parent.requestPermissions(
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE,
+                    )
+                    return true
+                }
+                MediaController.saveFilesFromMessages(
+                    parent,
+                    activity.accountInstance,
+                    arrayListOf(selectedObject),
+                ) { count ->
+                    if (count > 0 && activity.parentActivity != null) {
+                        BulletinFactory.of(activity)
+                            .createDownloadBulletin(BulletinFactory.FileType.UNKNOWNS, count, activity.resourceProvider)
+                            .show()
+                    }
+                }
             }
 
             else -> return false
@@ -1038,18 +1068,26 @@ object ChatHelper {
     }
 
     @JvmStatic
-    fun maybeAppendForwardTime(forwardedString: String, messageObject: MessageObject): String {
-        if (isCompactForward(messageObject)) return forwardedString
-        val suffix = getForwardTimeSuffix(messageObject) ?: return forwardedString
-        return "$forwardedString • $suffix"
+    fun formatForwardHeaderLine(line: CharSequence, messageObject: MessageObject): CharSequence {
+        if (messageObject.type == MessageObject.TYPE_STORY) return line
+        if (isCompactForward(messageObject)) return line
+        val suffix = getForwardTimeSuffix(messageObject)
+        if (isIconForward(messageObject)) {
+            val sb = SpannableStringBuilder()
+            appendTimeIcon(sb, R.drawable.mini_forwarded, sizeDp = COMPACT_FORWARD_ICON_SIZE, translateYDp = 1f)
+            suffix?.let { sb.append(" ").append(it) }
+            return sb
+        }
+        if (suffix == null) return line
+        return SpannableStringBuilder(line).append(" • ").append(suffix)
     }
 
     @JvmStatic
     fun isCompactForward(messageObject: MessageObject?): Boolean {
-        if (!InuConfig.COMPACT_FORWARDED.value) return false
-        if (messageObject == null || messageObject.type == MessageObject.TYPE_STORY) return false
-        val fwd = messageObject.messageOwner?.fwd_from ?: return false
-        return fwd.psa_type.isNullOrEmpty()
+        if (!supportsCustomForwardHeader(messageObject)) return false
+        return InuConfig.FORWARD_HEADER_MODE.value == InuConfig.ForwardHeaderModeItem.COMPACT ||
+            InuConfig.FORWARD_HEADER_MODE.value == InuConfig.ForwardHeaderModeItem.ICON &&
+            !InuConfig.SHOW_FORWARD_TIME.value
     }
 
     @JvmStatic
@@ -1100,8 +1138,20 @@ object ChatHelper {
 
     @JvmStatic
     fun getForwardAccessibilityPrefix(messageObject: MessageObject?): String {
-        if (!isCompactForward(messageObject)) return ""
+        if (!isCompactForward(messageObject) && !isIconForward(messageObject)) return ""
         return LocaleController.getString(R.string.ForwardedFrom) + " "
+    }
+
+    private fun isIconForward(messageObject: MessageObject?): Boolean {
+        return supportsCustomForwardHeader(messageObject) &&
+            InuConfig.FORWARD_HEADER_MODE.value == InuConfig.ForwardHeaderModeItem.ICON &&
+            InuConfig.SHOW_FORWARD_TIME.value
+    }
+
+    private fun supportsCustomForwardHeader(messageObject: MessageObject?): Boolean {
+        if (messageObject == null || messageObject.type == MessageObject.TYPE_STORY) return false
+        val fwd = messageObject.messageOwner?.fwd_from ?: return false
+        return fwd.psa_type.isNullOrEmpty()
     }
 
     private fun getForwardTimeSuffix(messageObject: MessageObject): String? {

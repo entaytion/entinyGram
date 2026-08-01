@@ -109,10 +109,15 @@ object DrawerHelper {
         } else {
             notifyDataChanged()
             rebindPerAccountObservers()
-            sideMenu?.let { applySideMenuBottomPadding(it) }
-            updateLayout?.updateAppUpdateViews(UserConfig.selectedAccount, false)
-            refreshMenuButton(false)
+            refreshUpdateState()
         }
+    }
+
+    fun refreshUpdateState() {
+        if (!InuConfig.NAVIGATION_DRAWER.value) return
+        updateLayout?.updateAppUpdateViews(UserConfig.selectedAccount, false)
+        sideMenu?.let { applySideMenuBottomPadding(it) }
+        refreshMenuButton(false)
     }
 
     @JvmStatic

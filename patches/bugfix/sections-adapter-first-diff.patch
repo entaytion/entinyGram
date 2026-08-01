@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 28 Jul 2026 14:37:29 +0400
+Subject: fix hashes crash in RecyclerListView.SectionsAdapter
+
+---
+ .../java/org/telegram/ui/Components/RecyclerListView.java    | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
+@@ -333,6 +333,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+         private int count;
+ 
+         private ArrayList<Integer> hashes = new ArrayList<>();
++        private boolean hashesComputed;
+ 
+         public void cleanupCache() {
+             if (sectionCache == null) {
+@@ -450,9 +451,10 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+ 
+         public void update(boolean diff) {
+             ArrayList<Integer> oldHashes = new ArrayList<>(hashes);
++            boolean hadHashes = hashesComputed;
+             updateHashes();
+ 
+-            if (diff) {
++            if (diff && hadHashes) {
+                 DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                     @Override
+                     public int getOldListSize() {
+@@ -482,6 +484,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+         public void updateHashes() {
+             cleanupCache();
+ 
++            hashesComputed = true;
+             hashes.clear();
+ 
+             for (int i = 0, N = internalGetSectionCount(); i < N; i++) {

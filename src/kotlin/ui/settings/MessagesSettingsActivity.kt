@@ -181,10 +181,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.SHOW_FORWARD_TIME.value)
         )
         items.add(
-            UItem.asCheck(
-                TOGGLE_COMPACT_FORWARDED,
-                LocaleController.getString(R.string.InuCompactForwarded),
-            ).setChecked(InuConfig.COMPACT_FORWARDED.value)
+            UItem.asButton(
+                BUTTON_FORWARD_HEADER_MODE,
+                LocaleController.getString(R.string.InuForwardHeaderMode),
+                forwardHeaderModeLabel(InuConfig.FORWARD_HEADER_MODE.value),
+            )
         )
         items.add(
             UItem.asCheck(
@@ -297,11 +298,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 miscPreview?.invalidate()
             }
 
-            TOGGLE_COMPACT_FORWARDED -> {
-                val new = InuConfig.COMPACT_FORWARDED.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
-            }
+            BUTTON_FORWARD_HEADER_MODE -> showForwardHeaderModeSelector()
 
             TOGGLE_COMPACT_EDITED -> {
                 val new = InuConfig.COMPACT_EDITED.toggle()
@@ -376,6 +373,29 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         }
     }
 
+    private fun showForwardHeaderModeSelector() {
+        val context = context ?: return
+        val items = listOf(
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuForwardHeaderModeRegular)),
+            RadioDialogBuilder.Item(
+                LocaleController.getString(R.string.InuForwardHeaderModeIcon),
+                if (InuConfig.SHOW_FORWARD_TIME.value) null
+                else LocaleController.getString(R.string.InuForwardHeaderModeIconNoTimeInfo),
+            ),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuForwardHeaderModeCompact)),
+        )
+        showDialog(
+            RadioDialogBuilder(context, getResourceProvider())
+                .setTitle(LocaleController.getString(R.string.InuForwardHeaderMode))
+                .setItems(items, InuConfig.FORWARD_HEADER_MODE.value) { _, which ->
+                    if (InuConfig.FORWARD_HEADER_MODE.value == which) return@setItems
+                    InuConfig.FORWARD_HEADER_MODE.value = which
+                    miscPreview?.invalidate()
+                    listView.adapter.update(false)
+                }.create()
+        )
+    }
+
     private fun openBlockedExtraPicker() {
         val args = Bundle().apply {
             putBoolean("isNeverShare", true)
@@ -415,7 +435,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CONFIRM_REACTION_NON_MEMBER = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
         private val TOGGLE_SHOW_FORWARD_TIME = InuUtils.generateId()
-        private val TOGGLE_COMPACT_FORWARDED = InuUtils.generateId()
+        private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
@@ -441,6 +461,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             else -> LocaleController.getString(R.string.InuMediaSpoilerModeTelegram)
         }
 
+        private fun forwardHeaderModeLabel(value: Int): String = when (value) {
+            InuConfig.ForwardHeaderModeItem.COMPACT -> LocaleController.getString(R.string.InuForwardHeaderModeCompact)
+            InuConfig.ForwardHeaderModeItem.ICON -> LocaleController.getString(R.string.InuForwardHeaderModeIcon)
+            else -> LocaleController.getString(R.string.InuForwardHeaderModeRegular)
+        }
+
         private fun blockedMessagesModeLabel(value: Int): String = when (value) {
             InuConfig.BlockedMessagesModeItem.SPOILER -> LocaleController.getString(R.string.InuBlockedMessagesModeSpoiler)
             InuConfig.BlockedMessagesModeItem.HIDE -> LocaleController.getString(R.string.InuBlockedMessagesModeHide)
@@ -464,7 +490,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("message-menu-order", R.string.InuMessageMenuOrder, BUTTON_MESSAGE_MENU_ORDER),
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
                 SearchRegistry.Entry("show-forward-time", R.string.InuShowForwardTime, TOGGLE_SHOW_FORWARD_TIME),
-                SearchRegistry.Entry("compact-forwarded", R.string.InuCompactForwarded, TOGGLE_COMPACT_FORWARDED),
+                SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
