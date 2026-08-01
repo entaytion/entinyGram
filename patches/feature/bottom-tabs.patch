@@ -6,7 +6,7 @@ Subject: bottom tabs tweaks: compact mode, hiding contacts, hiding it completely
 ---
  .../java/org/telegram/ui/CallLogActivity.java | 15 ++--
  .../ui/Components/BulletinFactory.java        |  9 +++
- .../ui/Components/glass/GlassTabView.java     | 27 +++++++
+ .../ui/Components/glass/GlassTabView.java     | 35 +++++++-
  .../org/telegram/ui/ContactsActivity.java     |  9 ++-
  .../java/org/telegram/ui/DialogsActivity.java | 14 ++--
  .../org/telegram/ui/MainTabsActivity.java     | 81 ++++++++++++++-----
@@ -14,7 +14,7 @@ Subject: bottom tabs tweaks: compact mode, hiding contacts, hiding it completely
  .../org/telegram/ui/SettingsActivity.java     |  8 +-
  .../java/org/telegram/ui/TopicsFragment.java  |  9 ++-
  .../org/telegram/ui/ViewPagerActivity.java    |  2 +-
- 10 files changed, 134 insertions(+), 49 deletions(-)
+ 10 files changed, 141 insertions(+), 50 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java
 index 0000000..0000000 100644
@@ -115,10 +115,32 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassT
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
-@@ -673,4 +673,31 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+@@ -514,6 +514,9 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+ 
+     @Override
+     public float measureTextWidth() {
++        if (textView.getVisibility() != VISIBLE) {
++            return 0;
++        }
+         return defaultTextPaint.measureText(textView.getText().toString());
+     }
+ 
+@@ -521,6 +524,9 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+ 
+     @Override
+     public float measureTextWidth(float textSizeDp) {
++        if (textView.getVisibility() != VISIBLE) {
++            return 0;
++        }
+         if (scaledTextPaint == null) {
+             scaledTextPaint = new TextPaint(defaultTextPaint);
+         }
+@@ -673,4 +679,31 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
      public void onPreBind() {
  
      }
+-}
+\ No newline at end of file
 +
 +    public void setMainTabsCompact(boolean compact) {
 +        if (textView.getVisibility() == (compact ? GONE : VISIBLE)) {
@@ -146,8 +168,7 @@ index 0000000..0000000 100644
 +        requestLayout();
 +        invalidate();
 +    }
- }
-\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContactsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ContactsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ContactsActivity.java

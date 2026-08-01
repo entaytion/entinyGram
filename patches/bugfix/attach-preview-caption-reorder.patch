@@ -1,0 +1,78 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 26 Jul 2026 18:39:42 +0400
+Subject: fix attach caption handling when reordering photos in preview
+
+---
+ .../ChatAttachAlertPhotoLayout.java           | 37 +++++++++++++++----
+ 1 file changed, 30 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -3166,10 +3166,22 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+     }
+ 
+     public void updateSelected(HashMap<Object, Object> newSelectedPhotos, ArrayList<Object> newPhotosOrder, boolean updateLayout) {
++        Object previousFirstKey = selectedPhotosOrder.isEmpty() ? null : selectedPhotosOrder.get(0);
++        boolean firstPhotoChanged = !newPhotosOrder.isEmpty() && (previousFirstKey == null || !previousFirstKey.equals(newPhotosOrder.get(0)));
++        boolean hasMultipleCaptions = !captionForAllMedia();
++        if (firstPhotoChanged && hasMultipleCaptions) {
++            applyCaption(parentAlert.getCommentView().getText());
++            if (newSelectedPhotos.containsKey(previousFirstKey)) {
++                newSelectedPhotos.put(previousFirstKey, selectedPhotos.get(previousFirstKey));
++            }
++        }
+         selectedPhotos.clear();
+         selectedPhotos.putAll(newSelectedPhotos);
+         selectedPhotosOrder.clear();
+         selectedPhotosOrder.addAll(newPhotosOrder);
++        if (firstPhotoChanged && hasMultipleCaptions) {
++            photoViewerProvider.onApplyCaption(null);
++        }
+         if (updateLayout) {
+             updatePhotosCounter(false);
+             updateCheckedPhotoIndices();
+@@ -3581,23 +3593,34 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+ 
+     @Override
+     public void applyCaption(CharSequence text) {
++        boolean hasCaptionForAllMedia = PhotoViewer.getInstance().hasCaptionForAllMedia;
+         for (int a = 0; a < selectedPhotosOrder.size(); a++) {
+-            if (a == 0) {
++            if (a == 0 || hasCaptionForAllMedia) {
+                 final Object key = selectedPhotosOrder.get(a);
+                 Object o = selectedPhotos.get(key);
+                 if (o instanceof MediaController.PhotoEntry) {
+                     MediaController.PhotoEntry photoEntry1 = (MediaController.PhotoEntry) o;
+                     photoEntry1 = photoEntry1.clone();
+-                    CharSequence[] caption = new CharSequence[] { text };
+-                    photoEntry1.entities = MediaDataController.getInstance(UserConfig.selectedAccount).getEntities(caption, false);
+-                    photoEntry1.caption = caption[0];
++                    if (a == 0) {
++                        CharSequence[] caption = new CharSequence[] { text };
++                        photoEntry1.entities = MediaDataController.getInstance(UserConfig.selectedAccount).getEntities(caption, false);
++                        photoEntry1.caption = caption[0];
++                    } else {
++                        photoEntry1.caption = null;
++                        photoEntry1.entities = null;
++                    }
+                     o = photoEntry1;
+                 } else if (o instanceof MediaController.SearchImage) {
+                     MediaController.SearchImage photoEntry1 = (MediaController.SearchImage) o;
+                     photoEntry1 = photoEntry1.clone();
+-                    CharSequence[] caption = new CharSequence[] { text };
+-                    photoEntry1.entities = MediaDataController.getInstance(UserConfig.selectedAccount).getEntities(caption, false);
+-                    photoEntry1.caption = caption[0];
++                    if (a == 0) {
++                        CharSequence[] caption = new CharSequence[] { text };
++                        photoEntry1.entities = MediaDataController.getInstance(UserConfig.selectedAccount).getEntities(caption, false);
++                        photoEntry1.caption = caption[0];
++                    } else {
++                        photoEntry1.caption = null;
++                        photoEntry1.entities = null;
++                    }
+                     o = photoEntry1;
+                 }
+                 selectedPhotos.put(key, o);

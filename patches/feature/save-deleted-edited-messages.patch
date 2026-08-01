@@ -1,12 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: "\"\\\"Oleksii \\\\\\\"Entaytion\\\\\\\" Kulinich\\\"\""
+ <entaytion@gmail.com>
 Date: Sun, 26 Jul 2026 01:48:18 +0300
 Subject: save deleted and edited messages history
 
 ---
- .../messenger/MessagesController.java         |  31 +++++
- .../telegram/messenger/MessagesStorage.java   |  11 +-
- 5 files changed, 63 insertions(+), 243 deletions(-)
+ .../messenger/MessagesController.java         | 31 +++++++++++++++++++
+ .../telegram/messenger/MessagesStorage.java   | 11 +++++--
+ 2 files changed, 39 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -61,7 +62,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -14470,8 +14470,10 @@ public class MessagesStorage extends BaseController {
+@@ -14482,8 +14482,10 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -74,7 +75,7 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -15828,12 +15830,15 @@ public class MessagesStorage extends BaseController {
+@@ -15840,12 +15842,15 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();

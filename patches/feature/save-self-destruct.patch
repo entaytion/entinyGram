@@ -1,5 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: "\"\\\"Oleksii \\\\\\\"Entaytion\\\\\\\" Kulinich\\\"\""
+ <entaytion@gmail.com>
 Date: Sun, 26 Jul 2026 01:24:46 +0300
 Subject: allow saving self-destructing media
 
@@ -63,7 +64,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19083,6 +19083,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19085,6 +19085,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -76,7 +77,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19090,7 +19096,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19092,7 +19098,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -85,7 +86,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33180,6 +33186,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33182,6 +33188,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -98,7 +99,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -45505,7 +45517,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45507,7 +45519,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

@@ -1,0 +1,316 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Sun, 26 Jul 2026 20:33:50 +0400
+Subject: md3-style actions in profile
+
+---
+ .../ui/Components/ProfileActionsView.java     | 82 +++++++++++++------
+ .../java/org/telegram/ui/ProfileActivity.java | 22 +++--
+ 2 files changed, 68 insertions(+), 36 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
+@@ -73,6 +73,7 @@ public class ProfileActionsView extends View {
+ 
+     private int activeCount = 0;
+     private final int targetHeight;
++    private final boolean inu_materialLayout;
+     private boolean ignoreRect = false;
+     private float currentHeight = 0;
+ 
+@@ -136,7 +137,8 @@ public class ProfileActionsView extends View {
+         top = dpf2(8);
+         textPadding = dpf2(4);
+ 
+-        this.targetHeight = (int) (targetHeight - ypadding - top);
++        inu_materialLayout = desu.inugram.helpers.profile.ProfileHelper.useMaterialProfileActions();
++        this.targetHeight = (int) (targetHeight - top - (inu_materialLayout ? 0 : ypadding));
+ 
+         setBackgroundColor(0);
+ 
+@@ -200,12 +202,11 @@ public class ProfileActionsView extends View {
+         int w = getMeasuredWidth();
+         if (w <= 0) return;
+ 
+-        float betweenPadding = xpadding / 2f;
+-        float width = (w - betweenPadding * Math.max(0, activeCount - 1) - xpadding * 2f) / Math.max(1, activeCount);
++        float width = getItemWidth();
+ 
+         this.radialGradient = new RadialGradient(
+                 width / 2f,
+-                targetHeight / 2f,
++                inu_materialLayout ? getRoundRadius() : targetHeight / 2f,
+                 hasColorById ? width * 0.65f : 1f,
+                 Theme.multAlpha(color, 0.8f),
+                 color,
+@@ -218,7 +219,7 @@ public class ProfileActionsView extends View {
+     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+         setMeasuredDimension(
+                 MeasureSpec.getSize(widthMeasureSpec),
+-                MeasureSpec.makeMeasureSpec((int) (targetHeight + top + ypadding), MeasureSpec.EXACTLY)
++                MeasureSpec.makeMeasureSpec((int) (targetHeight + top + (inu_materialLayout ? 0 : ypadding)), MeasureSpec.EXACTLY)
+         );
+     }
+ 
+@@ -231,7 +232,25 @@ public class ProfileActionsView extends View {
+     private float getItemWidth() {
+         int w = getMeasuredWidth();
+         float betweenPadding = xpadding / 2f;
+-        return (w - betweenPadding * (activeCount - 1) - xpadding * 2f) / activeCount;
++        int itemCount = Math.max(1, inu_materialLayout ? Math.max(4, activeCount) : activeCount);
++        float width = (w - betweenPadding * (itemCount - 1) - xpadding * 2f) / itemCount;
++        return inu_materialLayout ? Math.min(width, dpf2(112)) : width;
++    }
++
++    private float inu_getItemsLeft(float width) {
++        if (!inu_materialLayout) {
++            return xpadding;
++        }
++        float betweenPadding = xpadding / 2f;
++        float itemsWidth = width * activeCount + betweenPadding * Math.max(0, activeCount - 1);
++        return (getMeasuredWidth() - itemsWidth) / 2f;
++    }
++
++    private void inu_setActionBackgroundRect(RectF out, RectF actionRect) {
++        out.set(actionRect);
++        if (inu_materialLayout) {
++            out.bottom = Math.min(out.bottom, out.top + getRoundRadius() * 2f);
++        }
+     }
+ 
+     @Override
+@@ -244,7 +263,7 @@ public class ProfileActionsView extends View {
+             canvas.clipRect(0f, 0f, getMeasuredWidth(), bottom);
+         }
+ 
+-        float height = Math.max(0f, currentHeight - ypadding - top);
++        float height = Math.max(0f, currentHeight - (inu_materialLayout ? 0 : ypadding) - top);
+ 
+         if (height <= 0f) {
+             return;
+@@ -252,7 +271,7 @@ public class ProfileActionsView extends View {
+ 
+         final float betweenPadding = xpadding / 2f;
+         final float width = getItemWidth();
+-        float left = xpadding;
++        float left = inu_getItemsLeft(width);
+         float r = getRoundRadius();
+ 
+         if (renderNode != null) {
+@@ -277,10 +296,10 @@ public class ProfileActionsView extends View {
+ 
+             action.updatePosition();
+             if (renderNode != null) {
+-                AndroidUtilities.rectTmp.set(action.rect);
++                inu_setActionBackgroundRect(AndroidUtilities.rectTmp, action.rect);
+                 AndroidUtilities.rectTmp.inset(
+-                    action.rect.width() / 2.0f * (1.0f - action.getScale()),
+-                    action.rect.height() / 2.0f * (1.0f - action.getScale())
++                    AndroidUtilities.rectTmp.width() / 2.0f * (1.0f - action.getScale()),
++                    AndroidUtilities.rectTmp.height() / 2.0f * (1.0f - action.getScale())
+                 );
+                 AndroidUtilities.rectTmp.inset(-1, -1);
+                 clipPath.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CCW);
+@@ -303,10 +322,10 @@ public class ProfileActionsView extends View {
+             for (int i = 0; i < c; i++) {
+                 Action action = actions.get(i);
+                 if (!action.isDeleted) {
+-                    AndroidUtilities.rectTmp.set(action.rect);
++                    inu_setActionBackgroundRect(AndroidUtilities.rectTmp, action.rect);
+                     AndroidUtilities.rectTmp.inset(
+-                        action.rect.width() / 2.0f * (1.0f - action.getScale()),
+-                        action.rect.height() / 2.0f * (1.0f - action.getScale())
++                        AndroidUtilities.rectTmp.width() / 2.0f * (1.0f - action.getScale()),
++                        AndroidUtilities.rectTmp.height() / 2.0f * (1.0f - action.getScale())
+                     );
+                     int wasAlpha = paint.getAlpha();
+                     int newAlpha = (int) (action.getAlpha() * alphaFraction1 * wasAlpha);
+@@ -396,7 +415,9 @@ public class ProfileActionsView extends View {
+ 
+         action.text.setMaxWidth(action.rect.width() - dp(2));
+         action.textScale = action.text.getLineCount() >= 3 ? 0.75f : action.text.getLineCount() >= 2 ? 0.85f : 1.0f;
+-        final float drawableTop = Math.max(0, (targetHeight - action.text.getHeight() * action.textScale) / 3f + dpf2(1.33f));
++        final float drawableTop = inu_materialLayout
++            ? top + getRoundRadius() - drawableR
++            : Math.max(0, (targetHeight - action.text.getHeight() * action.textScale) / 3f + dpf2(1.33f));
+         action.setBounds(
+             (int) (cx - drawableR),
+             (int) (drawableTop),
+@@ -420,9 +441,13 @@ public class ProfileActionsView extends View {
+         }
+ 
+         final int textColor = ColorUtils.blendARGB(Color.BLACK, Color.WHITE, useFilledWhiteIcon);
+-        if (lastColorFilter == null || lastColorFilterColor != textColor) {
+-            lastColorFilterColor = textColor;
+-            lastColorFilter = new PorterDuffColorFilter(textColor, PorterDuff.Mode.SRC_IN);
++        final boolean useMaterialFilledIcon = inu_materialLayout && isButtonColorLight;
++        final int iconColor = useMaterialFilledIcon
++            ? ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhiteBlueIcon), Color.WHITE, useFilledWhiteIcon)
++            : textColor;
++        if (lastColorFilter == null || lastColorFilterColor != iconColor) {
++            lastColorFilterColor = iconColor;
++            lastColorFilter = new PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN);
+         }
+ 
+         canvas.save();
+@@ -435,7 +460,9 @@ public class ProfileActionsView extends View {
+ 
+         updateBounds(action);
+ 
+-        final float textY = action.bounds.bottom + action.bounds.top - action.text.getHeight() * action.textScale / 2.0f - dp(4.66f);
++        final float textY = inu_materialLayout
++            ? top + getRoundRadius() * 2f + textPadding
++            : action.bounds.bottom + action.bounds.top - action.text.getHeight() * action.textScale / 2.0f - dp(4.66f);
+         canvas.save();
+         canvas.scale(action.textScale, action.textScale, cx, textY + action.text.getHeight() * action.textScale / 2.0f);
+         action.text.draw(canvas, cx - action.text.getWidth() / 2f, textY, textColor, alpha);
+@@ -449,8 +476,8 @@ public class ProfileActionsView extends View {
+             canvas.scale(action.iconScale, action.iconScale, action.bounds.centerX(), action.bounds.centerY());
+         }
+         if (!isAnimatingCallAction || action.key != KEY_CALL) {
+-            final float outlineAlpha = (1f - useFilledWhiteIcon) * alpha;
+-            final float filledAlpha = useFilledWhiteIcon * alpha;
++            final float outlineAlpha = (useMaterialFilledIcon ? 0f : 1f - useFilledWhiteIcon) * alpha;
++            final float filledAlpha = (useMaterialFilledIcon ? 1f : useFilledWhiteIcon) * alpha;
+             if (action.drawableAnimated != null) {
+                 if (action.key == KEY_NOTIFICATION) {
+                     drawActionDrawable(canvas, action.drawableOutline, outlineAlpha);
+@@ -506,7 +533,8 @@ public class ProfileActionsView extends View {
+         }
+ 
+         if (action.loadingDrawable != null) {
+-            action.loadingDrawable.setBounds(action.rect);
++            inu_setActionBackgroundRect(AndroidUtilities.rectTmp, action.rect);
++            action.loadingDrawable.setBounds(AndroidUtilities.rectTmp);
+             action.loadingDrawable.setRadii(getRoundRadius());
+             action.loadingDrawable.setAlpha((int) (0xFF * alpha));
+             action.loadingDrawable.draw(canvas);
+@@ -514,7 +542,7 @@ public class ProfileActionsView extends View {
+     }
+ 
+     public float getRoundRadius() {
+-        return dp(16);
++        return dp(inu_materialLayout ? 26 : 16);
+     }
+ 
+     private Action hit = null;
+@@ -945,7 +973,7 @@ public class ProfileActionsView extends View {
+             int c = actions.size();
+             final float betweenPadding = xpadding / 2f;
+             final float width = getItemWidth();
+-            float left = xpadding;
++            float left = inu_getItemsLeft(width);
+ 
+             for (int i = 0; i < c; i++) {
+                 Action action = actions.get(i);
+@@ -959,7 +987,7 @@ public class ProfileActionsView extends View {
+ 
+             updateBounds(callAction);
+ 
+-            float callAnimateEndY = maxBottom - targetHeight - ypadding - top
++            float callAnimateEndY = maxBottom - targetHeight - (inu_materialLayout ? 0 : ypadding) - top
+                     + callAction.bounds.centerY()
+                     - callView.getMeasuredHeight() / 2f
+                     - callAnimateFromY;
+@@ -1031,8 +1059,8 @@ public class ProfileActionsView extends View {
+         }
+ 
+         public void setText(CharSequence cs) {
+-            this.text = new Text(cs, 11, AndroidUtilities.bold())
+-                .multiline(3)
++            this.text = new Text(cs, inu_materialLayout ? 13 : 11, AndroidUtilities.bold())
++                .multiline(inu_materialLayout ? 2 : 3)
+                 .align(Layout.Alignment.ALIGN_CENTER);
+         }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -384,6 +384,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+     private FrameLayout avatarContainer;
+     private FrameLayout avatarContainer2;
+     private ProfileActionsView actionsView;
++    private final boolean inu_materialProfileActions = ProfileHelper.useMaterialProfileActions();
++    private final int inu_profileActionsHeight = inu_materialProfileActions ? 94 : 74;
+     private MessagesController.SavedMusicList savedMusicList;
+     private ProfileMusicView musicView;
+     private AnimatedStatusView animatedStatusView;
+@@ -3886,7 +3888,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 }
+             });
+ 
+-            actionsView = new ProfileActionsView(context, dp(74));
++            actionsView = new ProfileActionsView(context, dp(inu_profileActionsHeight));
+             setActionsMode();
+             updateNotifications(false);
+ 
+@@ -5495,7 +5497,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             avatarsViewPager.setChatInfo(chatInfo);
+         }
+         avatarContainer2.addView(avatarsViewPager);
+-        avatarContainer2.addView(avatarsBlurView, LayoutHelper.createFrame(-1, 74 + 64));
++        avatarContainer2.addView(avatarsBlurView, LayoutHelper.createFrame(-1, inu_profileActionsHeight + 64));
+         avatarContainer2.addView(overlaysView);
+         if (actionsView != null) {
+             avatarsBlurView.setActionsView(actionsView);
+@@ -6056,7 +6058,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+     private int getActionsExtraHeight(boolean withMusic) {
+         if (userId != 0 && imageUpdater != null && !myProfile)
+             return 0;
+-        return dp(74 + (withMusic && hasMusic ? 25 : 0));
++        return dp(inu_profileActionsHeight + (withMusic && hasMusic ? 25 : 0));
+     }
+ 
+     private int getHeaderExtraHeight() {
+@@ -11273,17 +11275,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             return;
+         }
+         final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
++        final int actionsHeight = dp(inu_profileActionsHeight);
+         actionsView.isOpeningLayout = openAnimationInProgress || ProfileHelper.reduceMotion();
+ 
+         if (openAnimationInProgress && playProfileAnimation == 2 && avatarContainer != null) {
+             float vh = avatarContainer.getHeight() * avatarContainer.getScaleY();
+             actionsView.clipHeight = avatarContainer.getY() + vh;
+             actionsView.setAlpha(avatarAnimationProgress);
+-            actionsView.updatePosition(listView.getMeasuredWidth(), dp(74));
++            actionsView.updatePosition(listView.getMeasuredWidth() + dp(inu_materialProfileActions && hasMusic ? 25 : 0), actionsHeight);
+         } else {
+             actionsView.clipHeight = -1;
+-            float bottom = extraHeight + newTop - dp(hasMusic ? 25 : 0);
+-            float height = Math.min(dp(74), bottom - newTop);
++            float bottom = extraHeight + newTop - dp(!inu_materialProfileActions && hasMusic ? 25 : 0);
++            float height = Math.min(actionsHeight, bottom - newTop);
+             actionsView.updatePosition(bottom - height + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height);
+         }
+ 
+@@ -11303,22 +11306,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             return;
+         }
+         final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
++        final int actionsHeight = dp(inu_profileActionsHeight);
+ //        musicView.isOpeningLayout = openAnimationInProgress;
+ 
+         if (openAnimationInProgress && playProfileAnimation == 2 && avatarContainer != null) {
+ //            float vh = avatarContainer.getHeight() * avatarContainer.getScaleY();
+ //            musicView.clipHeight = avatarContainer.getY() + vh;
+             musicView.setAlpha(avatarAnimationProgress);
+-            musicView.updatePosition(listView.getMeasuredWidth() + dp(74), getActionsExtraHeight() - dp(74));
++            musicView.updatePosition(listView.getMeasuredWidth() + (inu_materialProfileActions ? dp(6) : actionsHeight), getActionsExtraHeight() - actionsHeight);
+         } else {
+             if (openAnimationInProgress) {
+                 musicView.setAlpha(avatarAnimationProgress);
+             }
+ 
+ //            musicView.clipHeight = -1;
+-            float bottom = extraHeight + newTop + dp(74);
++            float bottom = extraHeight + newTop + (inu_materialProfileActions ? 0 : actionsHeight);
+             float height = Math.min(getActionsExtraHeight(), bottom - newTop);
+-            musicView.updatePosition(bottom - height + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height - dp(74));
++            musicView.updatePosition(bottom - height + dp(inu_materialProfileActions ? 6 : 0) + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height - actionsHeight);
+         }
+     }
+ 

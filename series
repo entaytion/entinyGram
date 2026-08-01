@@ -245,6 +245,11 @@ feature/send-mp4-as-video.patch
 bugfix/admin-sort-overflow.patch
 bugfix/reaction-animation-alignment.patch
 bugfix/dialog-preview-code-color.patch
+bugfix/recyclerview-null-holder.patch
+bugfix/sticky-date-jump.patch
+bugfix/attach-preview-caption-reorder.patch
+feature/md3-profile-actions.patch
+bugfix/message-cache-fallback.patch
 bugfix/sections-adapter-first-diff.patch
 feature/refresh-sticker-set.patch
 bugfix/profile-menu-duplicate-actions.patch
