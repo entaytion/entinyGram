@@ -1,11 +1,12 @@
-# Inugram features
+# entinyGram features
 
 > non-exhaustive list of what this fork adds, tweaks or fixes vs stock telegram android.
 > keep this updated as patches are added/removed.
 
-most things are toggleable in `Settings → Inugram`, with sensible opinionated defaults.
+most things are toggleable in `Settings → entinyGram`, with sensible opinionated defaults.
 
 🐶 - Inugram-exclusive (as far as i know, as of writing)
+📡 - entinyGram-exclusive
 
 ## appearance & general
 
@@ -14,9 +15,10 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
 - icon replacement (currently: solar pack, [480 Design](https://t.me/Design480)) - *ported from [NagramX](https://github.com/risin42/NagramX)*
-- notification icon: Telegram (default) or Inugram
+- notification icon: Telegram (default) or entinyGram
+- 📡 title alignment options: selective centering for chats, settings, profiles, and main list (dialogs) — *adapted from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- 📡 emulation of official Telegram app (APP_ID 4): unlocks direct purchases, Telegram Premium bot/web checkout without "Official app needed" blocks
 - show seconds in timestamps
-- override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
 - estimated registration date in profile - *ported & datapoints from [NagramX](https://github.com/risin42/NagramX)*
 - join/creation date in group & channel profiles
@@ -35,7 +37,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
   - switches
   - fabs
   - predictive back
-  - navigation animation
   - lists & sections
   - avatars (tonal on-container initials instead of white)
   - profile action buttons
@@ -75,7 +76,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - show all recent stickers
 - minimize sticker creator button in recent stickers
 - sticker time overlay modes: show / 🐶 hide time / 🐶 hide on incoming / hide completely
-- "Refresh" in the sticker/emoji pack menu
 - compact edited indicator: pencil icon instead of the "edited" label
 - toggleable message bubble tails
 - 🐶 jump-to-discussion button from comments
@@ -126,7 +126,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - more bulk actions in message selection mode (save, translate, gallery, pin/unpin, no-quote forward)
 - in-place message translation, with optional web preview translation, original-text appending and on-device source-language auto-detection (hides Translate when already in your language)
 - instant view pages translator
-- show original time/date in the forwarded header, with regular, icon-only label, and compact one-line modes
+- show original time/date in "forwarded from" header, optionally collapsing it to a single line with an icon instead of the "forwarded from" label
 - long-tap forward bar (above input) to cycle between regular / without sender / without caption
 - long-tap a mention in a message to insert a name-mention into the input with custom text
 - 🐶 restrict/ban menu items the avatar long-tap menu
@@ -205,6 +205,15 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - send MP4 files attached through Files as playable videos without conversion
 - original video quality option in quality picker when sending videos
 
+## TOS
+
+- 📡 **save self-destructing media**: view-once photos, videos and video messages show as normal media and can be saved or forwarded (disabled by default)
+- 📡 allow saving any story to gallery directly, bypassing Telegram Premium requirements and download restrictions
+- 📡 **save deleted messages**: keep deleted messages in chats (marked with 🗑️)
+- 📡 **save edit history**: record and view previous message versions (marked with ✏️)
+- 📡 **hide sponsored messages (AdBlock)**: disables channel sponsored ads and prevents loading promotional messages
+- 📡 **AdBlock & Regex Content Filter** (experimental): filter out ad posts, spam, or messages matching custom regular expressions / keywords (hide completely or cover with spoiler)
+
 ## annoyances
 
 - hide trending stickers/emoji in egs
@@ -227,7 +236,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 
 ## 🐶 bugfixes (vs stock)
 
-- "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
 - "Save to Downloads" preserves the original filename on Android 10+
 - gboard image paste no longer skips PhotoViewer
 - reordering an attach-panel album preserves per-photo captions and no longer duplicates its album caption
@@ -237,7 +245,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - non-square webm stickers rendered off-center in the emoji panel (precached frames were blitted top-left and scaled by width only)
 - recyclerlistview double-tap requires same view
 - list ripple left behind when the pressed row moves because another row changed height (selector was only re-synced on scroll)
-- link ripples in album captions work across the entire group
 - dead zones in list rows where a hidden clickable child kept stale bounds from a previous binding (e.g. top-right corner of a member row in profile after a tagged member was recycled)
 - chat list crash while flinging when RecyclerView exposes a stale child without a ViewHolder
 - dialogs list pull-to-reveal-archive glitches
@@ -271,7 +278,6 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - nav stack lockup after rapid back swipes
 - click-through area to the left/right of bottom bar tabs
 - profile scroll jump when opening uncached user
-- duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
 - stale unread badges on global-search top peers
 - stale unread mention pointer after reading mention on another device (mention button jumping to old message)
 - folder pins silently missing when the pinned dialog isn't in the local dialogs cache (now fetched from server)
@@ -310,5 +316,4 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - crash cutting out a sticker after the photo editor recycled the source image mid-segmentation
 - storage usage cached-media list intermittently refusing to scroll
 - crash after transferring channel ownership (admin sort comparator overflowed on 64-bit peer ids)
-- chat drifting a few px off the input when hiding the keyboard while a message animation runs (aosp recyclerview bug: end-anchored padding delta applied twice across pre+post layout)
-- crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
+- premium app icons available for all users (no subscription required)
