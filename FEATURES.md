@@ -19,6 +19,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 📡 title alignment options: selective centering for chats, settings, profiles, and main list (dialogs) — *adapted from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - 📡 emulation of official Telegram app (APP_ID 4): unlocks direct purchases, Telegram Premium bot/web checkout without "Official app needed" blocks
 - show seconds in timestamps
+- override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
 - estimated registration date in profile - *ported & datapoints from [NagramX](https://github.com/risin42/NagramX)*
 - join/creation date in group & channel profiles
@@ -37,6 +38,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - switches
   - fabs
   - predictive back
+  - navigation animation
   - lists & sections
   - avatars (tonal on-container initials instead of white)
   - profile action buttons
@@ -76,6 +78,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - show all recent stickers
 - minimize sticker creator button in recent stickers
 - sticker time overlay modes: show / 🐶 hide time / 🐶 hide on incoming / hide completely
+- "Refresh" in the sticker/emoji pack menu
 - compact edited indicator: pencil icon instead of the "edited" label
 - toggleable message bubble tails
 - 🐶 jump-to-discussion button from comments
@@ -314,6 +317,10 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - notifications for chats read on another device no longer linger forever when the app process was killed in between (stock only tracked posted notifications in memory)
 - crash long-pressing a sticker set while off-screen rows are cached (reorder update bound null item on cached/hidden holders)
 - crash cutting out a sticker after the photo editor recycled the source image mid-segmentation
-- storage usage cached-media list intermittently refusing to scroll
 - crash after transferring channel ownership (admin sort comparator overflowed on 64-bit peer ids)
 - premium app icons available for all users (no subscription required)
+- "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
+- link ripples in album captions work across the entire group
+- duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
+- chat drifting a few px off the input when hiding the keyboard while a message animation runs (aosp recyclerview bug: end-anchored padding delta applied twice across pre+post layout)
+- crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)

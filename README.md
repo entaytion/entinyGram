@@ -80,6 +80,29 @@ stg refresh
 bun run export
 ```
 
+### modifying an existing patch
+
+```bash
+# option 1: edit the patch in-place via stg refresh
+# ...do whatever you need in worktree/...
+stg refresh -p feature__my-patch # --index to only append staged changes
+bun run export
+
+# option 2: push the patch to the top of the stack
+stg float feature__my-patch
+# ...do whatever you need in worktree/...
+stg refresh
+bun run export
+```
+
+### auditing patch interactions
+
+```bash
+bun run lint-patches
+bun run lint-patches -- --check
+```
+
+
 ## acknowledgements
 
 - **[Inugram](https://github.com/teidesu/inugram)** - huge respect and special thanks to the original Inugram project & patchset architecture, which serves as the foundation and core inspiration for entinyGram.
