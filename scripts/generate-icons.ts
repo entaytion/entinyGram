@@ -26,8 +26,8 @@ const SETTINGS_SAFE = 80
 const NOTIFICATION_DP = 24
 const NOTIFICATION_VIEWPORT = 24
 const NOTIFICATION_SAFE = 39
-const BG_GRADIENT_FROM = '#F20C3CFF'
-const BG_GRADIENT_TO = '#A00320FF'
+const BG_GRADIENT_FROM = '#FFF20C3C'
+const BG_GRADIENT_TO = '#FFA00320'
 // debug badge: a small white square (only its top-left corner rounded) tucked
 // into the bottom-right corner, holding a β. the white fill is framed with a
 // background-coloured outline so it doesn't clash with the icon underneath.

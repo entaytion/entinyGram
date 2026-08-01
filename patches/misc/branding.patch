@@ -14,7 +14,6 @@ Subject: change app name to Inugram
  .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
- .../main/res/drawable/icon_background_sa.xml  |  4 +--
  .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
@@ -437,20 +436,6 @@ index 0000000..0000000 100644
  
          super.dispatchDraw(canvas);
      }
-diff --git a/TMessagesProj/src/main/res/drawable/icon_background_sa.xml b/TMessagesProj/src/main/res/drawable/icon_background_sa.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/res/drawable/icon_background_sa.xml
-+++ b/TMessagesProj/src/main/res/drawable/icon_background_sa.xml
-@@ -3,6 +3,6 @@
-     <gradient
-         android:type="linear"
-         android:angle="90"
--        android:startColor="#289AD1"
--        android:endColor="#38AEEB" />
-+        android:startColor="#A00320"
-+        android:endColor="#F20C3C" />
- </shape>
-\ No newline at end of file
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml

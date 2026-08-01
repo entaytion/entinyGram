@@ -4,28 +4,38 @@ Date: Sun, 26 Jul 2026 01:24:46 +0300
 Subject: allow saving self-destructing media
 
 ---
- .../java/org/telegram/messenger/FileLoader.java  |  4 ++--
+ .../java/org/telegram/messenger/FileLoader.java  | 14 ++++++++++++--
  .../org/telegram/messenger/MessageObject.java    |  2 ++
  .../main/java/org/telegram/ui/ChatActivity.java  | 16 ++++++++++++++--
- 3 files changed, 18 insertions(+), 4 deletions(-)
+ 3 files changed, 28 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
-@@ -1289,13 +1289,13 @@ public class FileLoader extends BaseController {
+@@ -1289,13 +1289,23 @@ public class FileLoader extends BaseController {
              }
          } else {
              if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaDocument) {
 -                return getPathToAttach(MessageObject.getMedia(message).document, null, forceCache || MessageObject.getMedia(message).ttl_seconds != 0, useFileDatabaseQueue);
-+                return getPathToAttach(MessageObject.getMedia(message).document, null, forceCache || (MessageObject.getMedia(message).ttl_seconds != 0 && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()), useFileDatabaseQueue);
++                File res = getPathToAttach(MessageObject.getMedia(message).document, null, forceCache || (MessageObject.getMedia(message).ttl_seconds != 0 && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()), useFileDatabaseQueue);
++                if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && !res.exists()) {
++                    File cacheRes = getPathToAttach(MessageObject.getMedia(message).document, null, true, useFileDatabaseQueue);
++                    if (cacheRes.exists()) return cacheRes;
++                }
++                return res;
              } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaPhoto) {
                  ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).photo.sizes;
                  if (sizes.size() > 0) {
                      TLRPC.PhotoSize sizeFull = getClosestPhotoSizeWithSize(sizes, AndroidUtilities.getPhotoSize(true), false, null, true);
                      if (sizeFull != null) {
 -                        return getPathToAttach(sizeFull, null, forceCache || MessageObject.getMedia(message).ttl_seconds != 0, useFileDatabaseQueue);
-+                        return getPathToAttach(sizeFull, null, forceCache || (MessageObject.getMedia(message).ttl_seconds != 0 && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()), useFileDatabaseQueue);
++                        File res = getPathToAttach(sizeFull, null, forceCache || (MessageObject.getMedia(message).ttl_seconds != 0 && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()), useFileDatabaseQueue);
++                        if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && !res.exists()) {
++                            File cacheRes = getPathToAttach(sizeFull, null, true, useFileDatabaseQueue);
++                            if (cacheRes.exists()) return cacheRes;
++                        }
++                        return res;
                      }
                  }
              } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaWebPage) {

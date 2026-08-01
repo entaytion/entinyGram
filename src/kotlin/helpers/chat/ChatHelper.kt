@@ -95,6 +95,7 @@ object ChatHelper {
     const val OPTION_REPEAT_COPY = 515
     const val OPTION_REPEAT_FORWARD = 516
     const val OPTION_SHOW_JSON = 517
+    const val OPTION_EDIT_HISTORY = 518
 
     @JvmStatic
     fun timeAdditionsHash(msg: MessageObject?): Int {
@@ -106,6 +107,9 @@ object ChatHelper {
         }
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             hash = hash * 31 + 2
+        }
+        if (SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)) {
+            hash = hash * 31 + 3
         }
         return hash
     }
@@ -119,7 +123,10 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             width += AndroidUtilities.dp(13f)
         }
-        if (edited && InuConfig.COMPACT_EDITED.value) {
+        val isDeleted = msg != null && SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
+        if (isDeleted) {
+            width += AndroidUtilities.dp(13f)
+        } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(13f)
         }
         return width
@@ -134,7 +141,11 @@ object ChatHelper {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
         }
-        if (edited && InuConfig.COMPACT_EDITED.value) {
+        val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
+        if (isDeleted) {
+            appendTimeIcon(sb, R.drawable.msg_delete, sizeDp = 11f, translateYDp = 1f)
+            sb.append(" ")
+        } else if (edited && InuConfig.COMPACT_EDITED.value) {
             appendTimeIcon(sb, R.drawable.group_edit, sizeDp = 11f)
             sb.append(" ")
         }
@@ -304,6 +315,14 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.SaveToDownloads))
             options.add(ChatActivity.OPTION_SAVE_TO_DOWNLOADS_OR_MUSIC)
             icons.add(R.drawable.msg_download)
+        }
+
+        if (SavedMessagesHelper.hasEditHistory(selectedObject.dialogId, selectedObject.id) ||
+            (selectedObject.messageOwner != null && (selectedObject.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0)
+        ) {
+            items.add(LocaleController.getString(R.string.InuEditHistory))
+            options.add(OPTION_EDIT_HISTORY)
+            icons.add(R.drawable.group_edit)
         }
 
         items.add(LocaleController.getString(R.string.InuMessageDetails))
@@ -613,6 +632,10 @@ object ChatHelper {
                         .createCopyBulletin(LocaleController.getString(bulletinRes))
                         .show()
                 }
+            }
+
+            OPTION_EDIT_HISTORY -> {
+                SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject.dialogId, selectedObject.id)
             }
 
             else -> return false

@@ -710,6 +710,15 @@
     <string name="InuSaveDeletedMessagesInfo">Keeps deleted messages in chats marked with 🗑️</string>
     <string name="InuSaveEditedMessages">Save edit history</string>
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
+    <string name="InuCacheTtl">Auto-clear message cache</string>
+    <string name="InuCacheTtlInfo">Automatically deletes saved deleted/edited messages older than the chosen period</string>
+    <string name="InuCacheTtlNever">Never (keep forever)</string>
+    <string name="InuCacheTtlDay">Older than 1 day</string>
+    <string name="InuCacheTtlWeek">Older than 1 week</string>
+    <string name="InuCacheTtlMonth">Older than 1 month</string>
+    <string name="InuEditHistory">Edit history</string>
+    <string name="InuNoEditHistory">No edit history available</string>
+    <string name="InuEditedAt">Edited %1$s</string>
     <string name="InuHideSponsoredMessages">Hide sponsored messages (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
     <string name="InuRegexFilter">AdBlock &amp; Regex Filter (experimental)</string>

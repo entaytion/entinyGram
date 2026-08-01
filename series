@@ -245,14 +245,10 @@ feature/send-mp4-as-video.patch
 bugfix/admin-sort-overflow.patch
 bugfix/reaction-animation-alignment.patch
 bugfix/dialog-preview-code-color.patch
-bugfix/recyclerview-null-holder.patch
-bugfix/sticky-date-jump.patch
-bugfix/attach-preview-caption-reorder.patch
-feature/md3-profile-actions.patch
-bugfix/message-cache-fallback.patch
 feature/title-alignment.patch
-feature/save-deleted-edited-messages.patch
 feature/regex-filter.patch
 feature/save-stories.patch
 feature/save-self-destruct.patch
 feature/unlock-icons.patch
+feature/save-deleted-edited-messages.patch
+bugfix/enable-premium-purchase.patch

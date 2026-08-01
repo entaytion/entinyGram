@@ -8,7 +8,6 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  TMessagesProj/proguard-rules.pro              |  13 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
- .../telegram/tgnet/ConnectionsManager.java    |   2 +-
  .../org/telegram/ui/PaymentFormActivity.java  |  28 ++--
  .../org/telegram/ui/SettingsActivity.java     |  24 +---
  TMessagesProj_App/build.gradle                | 121 ++++--------------
@@ -16,7 +15,7 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  build.gradle                                  |  12 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |   5 +-
- 14 files changed, 137 insertions(+), 356 deletions(-)
+ 13 files changed, 226 insertions(+), 229 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -88,7 +87,7 @@ index 0000000..0000000 100644
 -
 -        multiDexEnabled true
 +        ndk {
-+            abiFilters "arm64-v8a"
++            abiFilters "arm64-v8a", "x86_64", "armeabi-v7a", "x86"
 +        }
  
          externalNativeBuild {
@@ -301,19 +300,6 @@ index 0000000..0000000 100644
  
      // works only on official app ids, disable on your forks
      public static boolean SUPPORTS_PASSKEYS = true;
-diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-+++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -1045,7 +1045,7 @@ public class ConnectionsManager extends BaseController {
-         if (Build.VERSION.SDK_INT < 19) {
-             return USE_IPV4_ONLY;
-         }
--        if (BuildVars.LOGS_ENABLED) {
-+        if (BuildVars.LOGS_ENABLED && BuildVars.DEBUG_VERSION) {
-             try {
-                 NetworkInterface networkInterface;
-                 Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java

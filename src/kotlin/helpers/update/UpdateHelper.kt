@@ -23,8 +23,8 @@ import kotlin.math.min
 import desu.inugram.helpers.security.ParanoiaHelper
 
 object UpdateHelper {
-    const val USERNAME = "InugramCI"
-    private const val CHANNEL_ID = 3968318575L
+    const val USERNAME = "entinyGram"
+    private const val CHANNEL_ID = 4346771715L
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
@@ -56,7 +56,7 @@ object UpdateHelper {
         return "${getVersionInfoString()}\nBuilt on: ${BuildVars.BUILD_DATE}"
     }
 
-    private val APK_RE = Regex("^inugram-(.+)-(\\d+)\\.apk$")
+    private val APK_RE = Regex("^(?:inugram|entinygram)-(.+)-(\\d+)\\.apk$")
     private val SHORT_SHA_RE = Regex("-([0-9a-f]{7,40})$")
 
     @Volatile

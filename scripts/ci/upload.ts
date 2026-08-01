@@ -23,7 +23,7 @@ await fs.access(apkPath)
 const apiId = Number(process.env.TELEGRAM_API_ID)
 const apiHash = process.env.TELEGRAM_API_HASH
 const botToken = process.env.TELEGRAM_BOT_TOKEN
-const channel = process.env.TELEGRAM_CHANNEL ?? 'InugramCI'
+const channel = process.env.TELEGRAM_CHANNEL ?? 'entinyGram'
 
 if (!apiId || !apiHash || !botToken) {
   throw new Error('TELEGRAM_API_ID, TELEGRAM_API_HASH and TELEGRAM_BOT_TOKEN must be set')
@@ -71,9 +71,9 @@ try {
     <br/><br/>
     <blockquote expandable>
       ${joinTextWithEntities(
-        cs.map(c => html`<a href="https://github.com/${info.repo}/commit/${c.sha}">${c.sha.slice(0, 7)}</a>: ${c.message}`),
-        '\n',
-      )}
+    cs.map(c => html`<a href="https://github.com/${info.repo}/commit/${c.sha}">${c.sha.slice(0, 7)}</a>: ${c.message}`),
+    '\n',
+  )}
     </blockquote>
   `
 

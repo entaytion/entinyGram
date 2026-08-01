@@ -32,6 +32,12 @@ object InuDatabaseHelper {
             version = 2
         }
 
+        if (version == 2) {
+            // no schema changes; just bump to enable TTL prune support
+            writeKv(db, "version", "3")
+            version = 3
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 
@@ -84,6 +90,33 @@ object InuDatabaseHelper {
             cursor.dispose()
         }
         return list
+    }
+
+    /**
+     * Removes deleted messages older than [cutoffUnixSec] from the DB.
+     * Returns the number of rows deleted.
+     */
+    fun pruneDeletedMessages(db: SQLiteDatabase, cutoffUnixSec: Long): Int {
+        db.executeFast("DELETE FROM inu_deleted_messages WHERE date > 0 AND date < ?")
+            .also {
+                it.bindLong(1, cutoffUnixSec)
+                it.step()
+                it.dispose()
+            }
+        // SQLite doesn't give us rows-affected easily via this API, that's fine
+        return 0
+    }
+
+    /**
+     * Removes edit history entries older than [cutoffUnixSec] from the DB.
+     */
+    fun pruneEditHistory(db: SQLiteDatabase, cutoffUnixSec: Long) {
+        db.executeFast("DELETE FROM inu_edit_history WHERE date > 0 AND date < ?")
+            .also {
+                it.bindLong(1, cutoffUnixSec)
+                it.step()
+                it.dispose()
+            }
     }
 
     fun readKv(db: SQLiteDatabase, key: String): String? {

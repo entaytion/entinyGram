@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Mon, 27 Jul 2026 19:36:38 +0300
+Subject: Enable Premium purchase via invoice and PremiumBot
+
+---
+ .../src/main/java/org/telegram/messenger/BuildVars.java        | 2 +-
+ .../src/main/java/org/telegram/ui/PremiumPreviewFragment.java  | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+@@ -40,7 +40,7 @@ public class BuildVars {
+     public static String HUAWEI_APP_ID = "";
+ 
+     // You can use this flag to disable Google Play Billing (If you're making fork and want it to be in Google Play)
+-    public static boolean IS_BILLING_UNAVAILABLE = true;
++    public static boolean IS_BILLING_UNAVAILABLE = false;
+ 
+     // works only on official app ids, disable on your forks
+     public static boolean SUPPORTS_PASSKEYS = true;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
+@@ -1169,6 +1169,9 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
+                         launchActivity.onNewIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/" + messagesController.premiumBotUsername + "?start=" + source)), (Browser.Progress) null);
+                     } else if (!TextUtils.isEmpty(messagesController.premiumInvoiceSlug)) {
+                         launchActivity.onNewIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/$" + messagesController.premiumInvoiceSlug)), (Browser.Progress) null);
++                    } else {
++                        launchActivity.setNavigateToPremiumBot(true);
++                        launchActivity.onNewIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/PremiumBot?start=" + source)), (Browser.Progress) null);
+                     }
+                 } else {
+                     final Uri uri = Uri.parse(selectedTier.subscriptionOption.bot_url);

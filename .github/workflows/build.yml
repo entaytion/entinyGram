@@ -39,7 +39,7 @@ concurrency:
 permissions: {}
 
 env:
-  ARTIFACT_NAME: ${{ inputs.artifact-name || format('inugram-build-{0}', github.run_id) }}
+  ARTIFACT_NAME: ${{ inputs.artifact-name || format('entinygram-build-{0}', github.run_id) }}
 
 jobs:
   build:

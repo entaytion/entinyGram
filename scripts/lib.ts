@@ -289,9 +289,39 @@ export async function getPatchSubject(repoDir: string, patchName: string) {
 
 export async function generateStablePatchFromCommit(repoDir: string, commitId: string) {
   const patch = await cd(repoDir)`git format-patch --stdout --zero-commit --no-signature --subject-prefix= -1 ${commitId}`
-  return patch.stdout
+  let clean = patch.stdout
     .replace(/^index [0-9a-f]+\.\.[0-9a-f]+( \d+)?$/gm, 'index 0000000..0000000$1')
     .replace(/^Subject:.*(?:\n[ \t].*)+/m, m => m.replace(/\n[ \t]+/g, ' '))
+
+  // Strip diffs and diffstat lines for local/synced files that must never land in patches
+  const GARBAGE_FILE_PATTERNS = [
+    /google-services\.json/,
+    /gradlew\.bat/,
+    /icon_background_sa\.xml/,
+  ]
+
+  function isGarbagePath(path: string): boolean {
+    return GARBAGE_FILE_PATTERNS.some(p => p.test(path))
+  }
+
+  // Remove diffstat lines (e.g. " TMessagesProj/google-services.json | 5 +++--")
+  clean = clean.replace(
+    /^[ \t]+\S.*\|\s*\d+\s*[+\-]+\s*\n/gm,
+    (line) => (GARBAGE_FILE_PATTERNS.some(p => p.test(line)) ? '' : line),
+  )
+
+  // Remove full diff blocks for garbage files
+  // Split on "diff --git" boundaries and drop matching blocks
+  const diffBlocks = clean.split(/(?=^diff --git )/m)
+  clean = diffBlocks
+    .filter(block => {
+      const firstLine = block.split('\n')[0] ?? ''
+      if (!firstLine.startsWith('diff --git ')) return true // header or preamble
+      return !isGarbagePath(firstLine)
+    })
+    .join('')
+
+  return clean
 }
 
 export async function getAllPatchCommitIds(repoDir: string) {

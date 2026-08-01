@@ -708,6 +708,19 @@ object InuConfig {
     @JvmField
     val SAVE_EDITED_MESSAGES = BoolItem("save_edited_messages", true)
 
+    // Days to keep deleted/edited message cache. 0 = never auto-clear.
+    class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
+        companion object {
+            const val NEVER = 0
+            const val ONE_DAY = 1
+            const val ONE_WEEK = 7
+            const val ONE_MONTH = 30
+        }
+    }
+
+    @JvmField
+    val DELETED_MESSAGES_TTL = DeletedMessagesTtlItem()
+
     @JvmField
     val REGEX_FILTER_ENABLED = BoolItem("regex_filter_enabled", false)
 
@@ -726,6 +739,12 @@ object InuConfig {
 
     @JvmField
     val REGEX_FILTER_MODE = RegexFilterModeItem()
+
+    @JvmField
+    val UNLOCK_ICONS = BoolItem("unlock_icons", true)
+
+    @JvmField
+    val TITLE_ALIGNMENT = IntItem("title_alignment", 0)
 
     class NotificationIconItem : IntItem("notification_icon", TELEGRAM) {
         companion object {

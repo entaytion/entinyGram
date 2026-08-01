@@ -36,18 +36,68 @@ object SavedMessagesHelper {
     @JvmStatic
     fun isSaveEditedEnabled(): Boolean = InuConfig.SAVE_EDITED_MESSAGES.value
 
-    private fun ensureAccountLoaded(account: Int) {
+    @JvmStatic
+    fun ensureAccountLoaded(account: Int) {
         if (loadedAccounts.contains(account)) return
         val storage = MessagesStorage.getInstance(account) ?: return
-        val db = storage.database ?: return
-        
-        val deletedMap = InuDatabaseHelper.loadDeletedMessageIds(db)
-        val dialogArray = LongSparseArray<HashSet<Int>>()
-        for ((dialogId, set) in deletedMap) {
-            dialogArray.put(dialogId, set)
+        val db = storage.database
+        if (db != null) {
+            loadFromDb(account, db)
+        } else {
+            storage.storageQueue.postRunnable {
+                val asyncDb = storage.database ?: return@postRunnable
+                loadFromDb(account, asyncDb)
+            }
         }
-        deletedMessageIds.put(account.toLong(), dialogArray)
-        loadedAccounts.add(account)
+    }
+
+    private fun loadFromDb(account: Int, db: org.telegram.SQLite.SQLiteDatabase) {
+        if (loadedAccounts.contains(account)) return
+
+        // Prune stale entries before loading into memory
+        val ttlDays = InuConfig.DELETED_MESSAGES_TTL.getValue()
+        if (ttlDays > 0) {
+            val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
+            InuDatabaseHelper.pruneDeletedMessages(db, cutoff)
+            InuDatabaseHelper.pruneEditHistory(db, cutoff)
+        }
+
+        val deletedMap = InuDatabaseHelper.loadDeletedMessageIds(db)
+        org.telegram.messenger.AndroidUtilities.runOnUIThread {
+            if (loadedAccounts.contains(account)) return@runOnUIThread
+            var dialogArray = deletedMessageIds.get(account.toLong())
+            if (dialogArray == null) {
+                dialogArray = LongSparseArray()
+                deletedMessageIds.put(account.toLong(), dialogArray)
+            }
+            for ((dialogId, set) in deletedMap) {
+                dialogArray.put(dialogId, set)
+            }
+            loadedAccounts.add(account)
+        }
+    }
+
+    /**
+     * Manually trigger a prune pass for [account] with the current TTL setting.
+     * Safe to call from any thread; runs on the storage queue.
+     */
+    @JvmStatic
+    fun pruneIfNeeded(account: Int) {
+        val ttlDays = InuConfig.DELETED_MESSAGES_TTL.getValue()
+        if (ttlDays == 0) return
+        val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            InuDatabaseHelper.pruneDeletedMessages(db, cutoff)
+            InuDatabaseHelper.pruneEditHistory(db, cutoff)
+            // Invalidate in-memory cache so it's reloaded fresh on next access
+            org.telegram.messenger.AndroidUtilities.runOnUIThread {
+                deletedMessageIds.remove(account.toLong())
+                editHistoryCache.remove(account.toLong())
+                loadedAccounts.remove(account)
+            }
+        }
     }
 
     @JvmStatic
@@ -156,4 +206,75 @@ object SavedMessagesHelper {
     fun hasEditHistory(dialogId: Long, msgId: Int): Boolean {
         return getEditHistory(dialogId, msgId).isNotEmpty()
     }
+
+    @JvmStatic
+    fun showEditHistoryDialog(context: android.content.Context?, activity: org.telegram.ui.ChatActivity?, dialogId: Long, msgId: Int) {
+        if (context == null) return
+        val history = getEditHistory(dialogId, msgId)
+        if (history.isEmpty()) {
+            val bulletinFactory = if (activity != null) org.telegram.ui.Components.BulletinFactory.of(activity) else org.telegram.ui.Components.BulletinFactory.global()
+            bulletinFactory?.createSimpleBulletin(
+                R.drawable.group_edit,
+                LocaleController.getString(R.string.InuNoEditHistory)
+            )?.show()
+            return
+        }
+
+        val builder = org.telegram.ui.ActionBar.BottomSheet.Builder(context)
+        builder.setTitle(LocaleController.getString(R.string.InuEditHistory))
+
+        val linear = android.widget.LinearLayout(context).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(org.telegram.messenger.AndroidUtilities.dp(18f), org.telegram.messenger.AndroidUtilities.dp(8f), org.telegram.messenger.AndroidUtilities.dp(18f), org.telegram.messenger.AndroidUtilities.dp(20f))
+        }
+
+        history.forEachIndexed { index, entry ->
+            val itemLayout = android.widget.LinearLayout(context).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                setPadding(0, org.telegram.messenger.AndroidUtilities.dp(10f), 0, org.telegram.messenger.AndroidUtilities.dp(10f))
+            }
+
+            val dateStr = LocaleController.formatDateTime(entry.timestamp, false)
+            val headerText = LocaleController.formatString(R.string.InuEditedAt, dateStr)
+
+            val headerView = android.widget.TextView(context).apply {
+                text = headerText
+                setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13f)
+                setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteGrayText))
+                setPadding(0, 0, 0, org.telegram.messenger.AndroidUtilities.dp(4f))
+            }
+
+            val contentView = android.widget.TextView(context).apply {
+                text = entry.text
+                setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16f)
+                setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText))
+                setTextIsSelectable(true)
+            }
+
+            itemLayout.addView(headerView)
+            itemLayout.addView(contentView)
+
+            if (index > 0) {
+                val divider = android.view.View(context).apply {
+                    setBackgroundColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_divider))
+                }
+                linear.addView(divider, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1, 0f, 4f, 0f, 4f))
+            }
+
+            linear.addView(itemLayout)
+        }
+
+        val scrollView = android.widget.ScrollView(context).apply {
+            addView(linear)
+        }
+
+        builder.setCustomView(scrollView)
+        val sheet = builder.create()
+        if (activity != null) {
+            activity.showDialog(sheet)
+        } else {
+            sheet.show()
+        }
+    }
 }
+

@@ -15,7 +15,7 @@ const sha = process.env.GITHUB_SHA ?? ''
 const shortSha = sha.slice(0, 7)
 const verName = `${appVerName}-${shortSha}`
 const verCode = buildNum
-const apkName = `inugram-${verName}-${verCode}.apk`
+const apkName = `entinygram-${verName}-${verCode}.apk`
 const tag = `v${appVerName}-${buildNum}`
 
 const out = {
