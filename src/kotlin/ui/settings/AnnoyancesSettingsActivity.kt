@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
@@ -51,6 +52,15 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(
+            UItem.asButton(
+                BUTTON_REGEX_FILTER,
+                R.drawable.msg_permissions,
+                LocaleController.getString(R.string.InuRegexFilter)
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_HIDE_STORIES,
@@ -131,12 +141,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 R.string.InuDisableVolumePlayVideo,
                 R.string.InuDisableVolumePlayVideoInfo,
                 InuConfig.DISABLE_VOLUME_PLAY_VIDEO.value
-            )
-        )
-        items.add(
-            mkSubPageButton(
-                BUTTON_REGEX_FILTER,
-                LocaleController.getString(R.string.InuRegexFilter),
             )
         )
         items.add(
@@ -228,7 +232,13 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
-            BUTTON_REGEX_FILTER -> presentFragment(RegexFilterSettingsActivity())
+            BUTTON_REGEX_FILTER -> {
+                if (x > view.width - AndroidUtilities.dp(48f)) {
+                    BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuBetaFeatureInfo)).show()
+                } else {
+                    presentFragment(RegexFilterSettingsActivity())
+                }
+            }
 
             BUTTON_CLEAR_HINTS -> {
                 // holy fucking shit how is it so inconsistent

@@ -1,0 +1,347 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      post-to-telegram:
+        description: Post the APK to the Telegram channel
+        required: false
+        default: true
+        type: boolean
+      create-release:
+        description: Also create a GitHub release for this build
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+env:
+  ARTIFACT_NAME: entinygram-${{ github.sha }}
+
+# ─────────────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── 1. BUILD ────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    outputs:
+      apk-arm64:    ${{ steps.info.outputs.apk-arm64 }}
+      apk-universal: ${{ steps.info.outputs.apk-universal }}
+      ver-name:     ${{ steps.info.outputs.ver-name }}
+      ver-code:     ${{ steps.info.outputs.ver-code }}
+      app-ver-code: ${{ steps.info.outputs.app-ver-code }}
+      build-num:    ${{ steps.info.outputs.build-num }}
+      tag:          ${{ steps.info.outputs.tag }}
+
+    steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # main
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: false
+          swap-storage: true
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email ci@entinygram
+          git config --global user.name 'entinygram ci'
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@e42e6681d2906409c5dde4a315af6214eaa890ee # v1.2
+        with:
+          append-timestamp: true
+          key: ${{ runner.os }}-ndk-27.2-release
+          restore-keys: |
+            ${{ runner.os }}-ndk-27.2-release
+            ${{ runner.os }}-
+          max-size: 5G
+          verbose: 2
+          save: true
+
+      - name: Set up worktree
+        run: bun run setup -- --no-stgit
+
+      - name: Write google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
+            echo "::error::GOOGLE_SERVICES_JSON secret missing"
+            exit 1
+          fi
+          printf '%s' "$GOOGLE_SERVICES_JSON" > worktree/TMessagesProj/google-services.json
+          printf '%s' "$GOOGLE_SERVICES_JSON" > worktree/TMessagesProj_App/google-services.json
+
+      - name: Compute build info
+        id: info
+        env:
+          INU_BUILD: ${{ vars.INU_BUILD || '0' }}
+        run: bun run tsx scripts/ci/version.ts
+
+      - uses: gradle/actions/setup-gradle@0b6dd653ba04f4f93bf581ec31e66cbd7dcb644d # v4
+        with:
+          gradle-home-cache-cleanup: true
+
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: >-
+            platforms;android-35
+            build-tools;35.0.0
+            cmake;3.10.2.4988404
+            ndk;27.2.12479018
+
+      - name: Tune Gradle
+        run: |
+          echo 'org.gradle.caching=true'                                              >> ~/.gradle/gradle.properties
+          echo 'org.gradle.parallel=true'                                             >> ~/.gradle/gradle.properties
+          echo 'org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8 -XX:+UseParallelGC' >> ~/.gradle/gradle.properties
+          echo 'android.native.buildOutput=verbose'                                   >> ~/.gradle/gradle.properties
+
+      - name: Reset ccache stats
+        run: ccache -z
+
+      - name: Build arm64-v8a
+        working-directory: worktree
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD_TYPE: release
+          ABI_FILTERS: arm64-v8a
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
+        run: |
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+
+      - name: Build universal
+        working-directory: worktree
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD_TYPE: release
+          ABI_FILTERS: all
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
+        run: |
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-universal }}"
+
+      - name: Show ccache stats
+        if: always()
+        run: ccache -s -v
+
+      - name: Stage artifacts
+        env:
+          LAST_UPLOADED_SHA: ${{ vars.LAST_RELEASE_SHA }}
+        run: |
+          mkdir -p out
+          apk_arm64='${{ steps.info.outputs.apk-arm64 }}'
+          apk_universal='${{ steps.info.outputs.apk-universal }}'
+          apk_files_json=$(jq -cn --arg a "$apk_arm64" --arg u "$apk_universal" '[$a,$u]')
+
+          base="$LAST_UPLOADED_SHA"
+          if [ -n "$base" ] && ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            echo "::warning::last uploaded sha $base not in history, falling back"
+            base=
+          fi
+          if [ -n "$base" ] && [ "$base" != "$GITHUB_SHA" ]; then
+            git log --pretty='%H %s' "$base..$GITHUB_SHA" > out/commits.txt
+          else
+            git log -1 --pretty='%H %s' "$GITHUB_SHA" > out/commits.txt
+          fi
+
+          commits_json=$(jq -R -n '
+            [inputs | capture("^(?<sha>[0-9a-f]+) (?<message>.*)$")]
+          ' out/commits.txt)
+          rm out/commits.txt
+
+          jq -n \
+            --arg     verName    '${{ steps.info.outputs.ver-name }}'    \
+            --argjson verCode    '${{ steps.info.outputs.ver-code }}'    \
+            --argjson appVerCode '${{ steps.info.outputs.app-ver-code }}' \
+            --argjson buildNum   '${{ steps.info.outputs.build-num }}'   \
+            --argjson apkFiles   "$apk_files_json"                       \
+            --arg     commitSha  "$GITHUB_SHA"                           \
+            --argjson commits    "$commits_json"                         \
+            --arg     repo       "$GITHUB_REPOSITORY"                    \
+            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildNum:$buildNum,apkFiles:$apkFiles,commitSha:$commitSha,commits:$commits,repo:$repo}' \
+            > out/build-info.json
+
+      - name: Generate release notes
+        env:
+          GEMINI_API_KEY:  ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL:    ${{ vars.GEMINI_MODEL }}
+          GEMINI_BASE_URL: ${{ vars.GEMINI_BASE_URL }}
+        run: bun run tsx scripts/release-notes.ts out
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-unsigned
+          path: out/*
+          if-no-files-found: error
+          retention-days: 1
+
+  # ── 2. SIGN ─────────────────────────────────────────────────────────────────
+  sign:
+    name: Sign
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: signing
+    permissions:
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+      contents: read
+
+    steps:
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: build-tools;35.0.0
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: entinygram-${{ github.sha }}-unsigned
+          path: out
+
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::KEYSTORE_BASE64 secret missing"
+            exit 1
+          fi
+          umask 077
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+
+      - name: Sign APKs
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD:      ${{ secrets.KEY_PASSWORD }}
+        run: |
+          apksigner=$ANDROID_HOME/build-tools/35.0.0/apksigner
+          for apk in \
+            '${{ needs.build.outputs.apk-arm64 }}' \
+            '${{ needs.build.outputs.apk-universal }}'; do
+            "$apksigner" sign \
+              --ks "$RUNNER_TEMP/release.keystore" \
+              --ks-type PKCS12 \
+              --ks-key-alias mrtv \
+              --ks-pass "pass:$KEYSTORE_PASSWORD" \
+              --key-pass "pass:$KEY_PASSWORD" \
+              --in  "out/$apk" \
+              --out "out/$apk.signed"
+            "$apksigner" verify --print-certs "out/$apk.signed"
+            mv "out/$apk.signed" "out/$apk"
+          done
+
+      - name: Wipe keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: Attest signed APKs
+        uses: actions/attest@281a49d4cbb0a72c9575a50d18f6deb515a11deb # v4
+        with:
+          subject-path: out/*.apk
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: entinygram-${{ github.sha }}
+          path: out/*
+          if-no-files-found: error
+          retention-days: 30
+
+  # ── 3. UPLOAD ───────────────────────────────────────────────────────────────
+  upload:
+    name: Upload
+    needs: [build, sign]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: entinygram-${{ github.sha }}
+          path: out
+
+      - name: Create GitHub release
+        if: ${{ inputs.create-release }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag='${{ needs.build.outputs.tag }}'
+          apk_arm64="out/${{ needs.build.outputs.apk-arm64 }}"
+          apk_univ="out/${{ needs.build.outputs.apk-universal }}"
+          gh release create "$tag" \
+            --target "$GITHUB_SHA" \
+            --title  "$tag" \
+            --generate-notes \
+            "$apk_arm64" "$apk_univ" || \
+          gh release upload "$tag" \
+            --clobber \
+            "$apk_arm64" "$apk_univ"
+
+      - name: Upload to Telegram
+        if: ${{ inputs.post-to-telegram }}
+        env:
+          TELEGRAM_API_ID:  ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL: ${{ vars.TELEGRAM_CHANNEL || 'entinyGramCI' }}
+          MTPROTO_SESSION:  ${{ secrets.MTPROTO_SESSION }}
+          GH_VARS_TOKEN:    ${{ secrets.INU_VARS_TOKEN }}
+        run: bun run tsx scripts/ci/upload.ts out
+
+      - name: Bump build variables
+        if: ${{ vars.INU_BUILD != '' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
+        run: |
+          next=$((${{ needs.build.outputs.build-num }} + 1))
+          gh variable set INU_BUILD        --body "$next"
+          gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"

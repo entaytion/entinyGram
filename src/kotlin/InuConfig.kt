@@ -318,6 +318,16 @@ object InuConfig {
     @JvmField
     val HIDE_AI_EDITOR = BoolItem("hide_ai_editor", false)
 
+    // AI compose — client-side rewrite/continue of the draft via a user-configured OpenAI-compatible endpoint
+    @JvmField
+    val AI_COMPOSE_ENABLED = BoolItem("ai_compose_enabled", false)
+
+    @JvmField
+    val AI_COMPOSE_ACTIVE_ENDPOINT = StringItem("ai_compose_active_endpoint", "", exportable = false)
+
+    @JvmField
+    val AI_COMPOSE_ENDPOINTS = desu.inugram.helpers.ai.AiEndpointsConfig("ai_compose_endpoints")
+
     @JvmField
     val HIDE_MESSAGE_SUMMARY = BoolItem("hide_message_summary", false)
 
@@ -723,6 +733,9 @@ object InuConfig {
 
     @JvmField
     val SAVE_DELETED_MESSAGES = BoolItem("save_deleted_messages", true)
+
+    @JvmField
+    val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
 
     @JvmField
     val HIDE_SPONSORED_MESSAGES = BoolItem("hide_sponsored_messages", true)

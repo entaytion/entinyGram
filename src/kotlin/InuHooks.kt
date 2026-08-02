@@ -97,8 +97,21 @@ object InuHooks {
     fun handleIntent(activity: LaunchActivity, intent: Intent?): Boolean {
         return PasscodeHelper.tryHandleDeepLink(activity, intent)
             || SearchRegistry.tryHandleDeepLink(activity, intent)
+            || tryHandleUpdateDeepLink(activity, intent)
             || tryHandleFunDeepLink(activity, intent)
             || ShortcutHelper.handleAction(activity, intent)
+    }
+
+    // tg://update — runs the fork custom update check (stock doesn't route it).
+    private fun tryHandleUpdateDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {
+        val uri = intent?.data ?: return false
+        if (uri.scheme != "tg") return false
+        val host = uri.host ?: uri.schemeSpecificPart?.removePrefix("//")?.substringBefore('/')
+        if (host != "update") return false
+        UpdateHelper.checkForCustomUpdate(true) {
+            if (UpdateHelper.pendingBetaUpdate != null) UpdateHelper.revealPendingUpdate()
+        }
+        return true
     }
 
     private fun tryHandleFunDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {

@@ -209,7 +209,7 @@ if (noStgit) {
   for (const entry of seriesEntries) {
     step(`Applying ${entry}`)
     const patchPath = join(patchesDir, entry).replaceAll('\\', '/')
-    await repo`git apply ${patchPath}`
+    await repo`git apply --allow-empty ${patchPath}`
   }
   await ensureAdGuardFilter()
   await linkForkSource(worktreeDir)

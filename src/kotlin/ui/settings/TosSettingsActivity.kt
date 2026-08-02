@@ -3,9 +3,12 @@ package desu.inugram.ui.settings
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
+import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.SavedMessagesHelper
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -15,7 +18,18 @@ import org.telegram.ui.Components.UniversalAdapter
 class TosSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuTOS)
 
+    private var cachedSizeText: String? = null
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(
+            UItem.asButton(
+                BUTTON_BETA_INFO,
+                R.drawable.ic_beta_badge,
+                LocaleController.getString(R.string.InuBetaFeatureTitle)
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)))
         items.add(
             mkTwoLineCheckItem(
@@ -49,10 +63,23 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_EDITED_MESSAGES.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ALLOW_FORWARD_RESTRICTED,
+                R.string.InuAllowForwardRestricted,
+                R.string.InuAllowForwardRestrictedInfo,
+                InuConfig.ALLOW_FORWARD_RESTRICTED.value,
+            )
+        )
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(UItem.asButton(BUTTON_CACHE_TTL, LocaleController.getString(R.string.InuCacheTtl)).also {
-                it.text2 = ttlLabel(InuConfig.DELETED_MESSAGES_TTL.value)
+                it.subtext = ttlLabel(InuConfig.DELETED_MESSAGES_TTL.value)
+            })
+            items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, LocaleController.getString(R.string.InuClearDeletedCache)).also {
+                if (cachedSizeText != null) {
+                    it.subtext = cachedSizeText
+                }
             })
         }
 
@@ -72,6 +99,12 @@ class TosSettingsActivity : SettingsPageActivity() {
         InuConfig.DeletedMessagesTtlItem.ONE_WEEK -> LocaleController.getString(R.string.InuCacheTtlWeek)
         InuConfig.DeletedMessagesTtlItem.ONE_MONTH -> LocaleController.getString(R.string.InuCacheTtlMonth)
         else -> LocaleController.getString(R.string.InuCacheTtlNever)
+    }
+
+    private fun showBetaBottomSheet() {
+        org.telegram.ui.Components.BulletinFactory.of(this)
+            .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuBetaFeatureInfo))
+            .show()
     }
 
     private fun showTtlDialog() {
@@ -106,8 +139,135 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
     }
 
+    private fun showClearCacheDialog() {
+        val context = context ?: return
+        val account = UserConfig.selectedAccount
+        val storage = org.telegram.messenger.MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            val stats = InuDatabaseHelper.getDeletedMessagesStats(db)
+            org.telegram.messenger.AndroidUtilities.runOnUIThread {
+                if (stats.isEmpty()) {
+                    cachedSizeText = AndroidUtilities.formatFileSize(0)
+                    listView?.adapter?.update(true)
+                    org.telegram.ui.Components.BulletinFactory.of(this@TosSettingsActivity)
+                        .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuClearDeletedCacheEmpty))
+                        .show()
+                    return@runOnUIThread
+                }
+
+                val totalSize = stats.sumOf { it.estimatedSize }
+                cachedSizeText = AndroidUtilities.formatFileSize(totalSize)
+                listView?.adapter?.update(true)
+
+                val selected = BooleanArray(stats.size) { true }
+
+                val builder = org.telegram.ui.ActionBar.BottomSheet.Builder(context)
+                builder.setTitle(LocaleController.getString(R.string.InuClearDeletedCache))
+
+                val container = android.widget.LinearLayout(context).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(8f), AndroidUtilities.dp(16f), AndroidUtilities.dp(16f))
+                }
+
+                val linearLayout = android.widget.LinearLayout(context).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                }
+
+                fun calcSelectedSize(): Long {
+                    var sum = 0L
+                    stats.forEachIndexed { i, stat ->
+                        if (selected[i]) sum += stat.estimatedSize
+                    }
+                    return sum
+                }
+
+                val buttonTextView = android.widget.TextView(context).apply {
+                    setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(12f), AndroidUtilities.dp(16f), AndroidUtilities.dp(12f))
+                    setGravity(android.view.Gravity.CENTER)
+                    setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_buttonText))
+                    setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15f)
+                    setTypeface(AndroidUtilities.bold())
+                    background = org.telegram.ui.ActionBar.Theme.createSimpleSelectorRoundRectDrawable(
+                        AndroidUtilities.dp(8f),
+                        org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_addButton),
+                        org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_addButtonPressed)
+                    )
+                }
+
+                fun updateButtonText() {
+                    val selSize = calcSelectedSize()
+                    buttonTextView.text = LocaleController.getString(R.string.Delete) + " (" + AndroidUtilities.formatFileSize(selSize) + ")"
+                }
+
+                stats.forEachIndexed { i, stat ->
+                    val name = if (stat.dialogId == 0L) {
+                        LocaleController.getString(R.string.SavedMessages)
+                    } else {
+                        val user = MessagesController.getInstance(account).getUser(stat.dialogId)
+                        val chat = MessagesController.getInstance(account).getChat(-stat.dialogId)
+                        val userName = if (user != null) org.telegram.messenger.UserObject.getUserName(user) else null
+                        userName ?: chat?.title ?: "ID ${stat.dialogId}"
+                    }
+                    val sizeFormatted = AndroidUtilities.formatFileSize(stat.estimatedSize)
+                    val text = "$name ($sizeFormatted)"
+                    val value = LocaleController.formatPluralString("messages", stat.count)
+
+                    val cell = org.telegram.ui.Cells.CheckBoxCell(context, 1, getResourceProvider()).apply {
+                        setText(text, value, true, true)
+                        setChecked(selected[i], false)
+                        setTag(i)
+                        setOnClickListener {
+                            val idx = tag as Int
+                            selected[idx] = !selected[idx]
+                            setChecked(selected[idx], true)
+                            updateButtonText()
+                        }
+                    }
+                    linearLayout.addView(cell)
+                }
+
+                val scrollView = android.widget.ScrollView(context).apply {
+                    addView(linearLayout)
+                }
+
+                val scrollParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    1.0f
+                ).apply {
+                    bottomMargin = AndroidUtilities.dp(12f)
+                }
+                container.addView(scrollView, scrollParams)
+                container.addView(buttonTextView, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT))
+
+                updateButtonText()
+
+                builder.setCustomView(container)
+                val sheet = builder.create()
+
+                buttonTextView.setOnClickListener {
+                    val toDelete = stats.filterIndexed { index, _ -> selected[index] }.map { it.dialogId }
+                    if (toDelete.isNotEmpty()) {
+                        sheet.dismiss()
+                        SavedMessagesHelper.clearCache(account, if (toDelete.size == stats.size) null else toDelete) {
+                            cachedSizeText = null
+                            listView?.adapter?.update(true)
+                            org.telegram.ui.Components.BulletinFactory.of(this@TosSettingsActivity)
+                                .createSimpleBulletin(R.raw.ic_delete, LocaleController.getString(R.string.InuClearDeletedCacheDone))
+                                .show()
+                        }
+                    }
+                }
+
+                showDialog(sheet)
+            }
+        }
+    }
+
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            BUTTON_BETA_INFO -> showBetaBottomSheet()
             TOGGLE_SAVE_SELF_DESTRUCT -> {
                 val new = InuConfig.SAVE_SELF_DESTRUCT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -126,7 +286,12 @@ class TosSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
+            TOGGLE_ALLOW_FORWARD_RESTRICTED -> {
+                val new = InuConfig.ALLOW_FORWARD_RESTRICTED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             BUTTON_CACHE_TTL -> showTtlDialog()
+            BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
             TOGGLE_HIDE_SPONSORED_MESSAGES -> {
                 val new = InuConfig.HIDE_SPONSORED_MESSAGES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -135,11 +300,14 @@ class TosSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val BUTTON_BETA_INFO = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
+        private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
         private val TOGGLE_HIDE_SPONSORED_MESSAGES = InuUtils.generateId()
 
         @JvmField val PAGE = SearchRegistry.Page(
@@ -152,6 +320,7 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-any-story", R.string.InuSaveAnyStory, TOGGLE_SAVE_ANY_STORY),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
+                SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_CACHE_TTL),
                 SearchRegistry.Entry("hide-sponsored-messages", R.string.InuHideSponsoredMessages, TOGGLE_HIDE_SPONSORED_MESSAGES),
             ),

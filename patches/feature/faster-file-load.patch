@@ -4,9 +4,9 @@ Date: Sat, 16 May 2026 16:08:00 +0400
 Subject: faster upload&download by tweaking chunk size params
 
 ---
- .../main/java/org/telegram/messenger/FileLoadOperation.java    | 2 +-
- .../main/java/org/telegram/messenger/FileUploadOperation.java  | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ .../main/java/org/telegram/messenger/FileLoadOperation.java   | 4 ++--
+ .../main/java/org/telegram/messenger/FileUploadOperation.java | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
 index 0000000..0000000 100644
@@ -21,6 +21,15 @@ index 0000000..0000000 100644
              downloadChunkSizeBig = 1024 * 512;
              maxDownloadRequests = 8;
              maxDownloadRequestsBig = 8;
+@@ -846,7 +846,7 @@ public class FileLoadOperation {
+                 currentDownloadChunkSize = downloadChunkSizeAnimation;
+                 currentMaxDownloadRequests = maxDownloadRequestsAnimation;
+             } else {
+-                boolean bigChunk = totalBytesCount >= bigFileSizeFrom;
++                boolean bigChunk = totalBytesCount >= bigFileSizeFrom || desu.inugram.InuConfig.FASTER_DOWNLOADS.getValue();
+                 currentDownloadChunkSize = bigChunk ? downloadChunkSizeBig : downloadChunkSize;
+                 currentMaxDownloadRequests = bigChunk ? maxDownloadRequestsBig : maxDownloadRequests;
+             }
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java

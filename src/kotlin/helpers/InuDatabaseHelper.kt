@@ -119,6 +119,59 @@ object InuDatabaseHelper {
             }
     }
 
+    data class DialogCacheStat(
+        val dialogId: Long,
+        val count: Int,
+        val estimatedSize: Long
+    )
+
+    fun getDeletedMessagesStats(db: SQLiteDatabase): List<DialogCacheStat> {
+        val map = HashMap<Long, Pair<Int, Long>>()
+        var cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)) FROM inu_deleted_messages GROUP BY dialog_id")
+        try {
+            while (cursor.next()) {
+                val dialogId = cursor.longValue(0)
+                val count = cursor.intValue(1)
+                val textLen = cursor.longValue(2)
+                val estSize = (count * 250L) + textLen
+                map[dialogId] = Pair(count, estSize)
+            }
+        } finally {
+            cursor.dispose()
+        }
+
+        cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(old_text)) FROM inu_edit_history GROUP BY dialog_id")
+        try {
+            while (cursor.next()) {
+                val dialogId = cursor.longValue(0)
+                val count = cursor.intValue(1)
+                val textLen = cursor.longValue(2)
+                val estSize = (count * 150L) + textLen
+                val existing = map[dialogId]
+                if (existing != null) {
+                    map[dialogId] = Pair(existing.first + count, existing.second + estSize)
+                } else {
+                    map[dialogId] = Pair(count, estSize)
+                }
+            }
+        } finally {
+            cursor.dispose()
+        }
+
+        return map.map { (id, pair) -> DialogCacheStat(id, pair.first, pair.second) }.sortedByDescending { it.estimatedSize }
+    }
+
+    fun clearDeletedMessages(db: SQLiteDatabase, dialogIds: Collection<Long>? = null) {
+        if (dialogIds == null) {
+            db.executeFast("DELETE FROM inu_deleted_messages").stepThis().dispose()
+            db.executeFast("DELETE FROM inu_edit_history").stepThis().dispose()
+        } else if (dialogIds.isNotEmpty()) {
+            val idsStr = dialogIds.joinToString(",")
+            db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id IN ($idsStr)").stepThis().dispose()
+            db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id IN ($idsStr)").stepThis().dispose()
+        }
+    }
+
     fun readKv(db: SQLiteDatabase, key: String): String? {
         val cursor = db.queryFinalized("select value from inu_kv where key = ?", key);
         try {

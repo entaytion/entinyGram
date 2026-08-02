@@ -128,7 +128,6 @@ bugfix/top-peers-unread-counter.patch
 bugfix/stale-unread-mention.patch
 feature/forward-options.patch
 debloat/hashtag-suggestions.patch
-feature/faster-file-load.patch
 bugfix/faster-gallery.patch
 bugfix/sticker-over-side-controls.patch
 feature/cycle-forward-mode.patch
@@ -263,3 +262,8 @@ feature/save-self-destruct.patch
 feature/unlock-icons.patch
 feature/save-deleted-edited-messages.patch
 bugfix/enable-premium-purchase.patch
+bugfix/save-deleted-all-chats.patch
+feature/ai-compose.patch
+feature/faster-file-load.patch
+feature/bypass-noforwards.patch
+misc/abi-toggle.patch

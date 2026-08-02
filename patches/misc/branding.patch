@@ -13,8 +13,6 @@ Subject: change app name to Inugram
  .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
- .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
- .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
  .../ic_launcher_stock_round.xml               |  6 ++++
  .../src/main/res/values-de/strings.xml        |  4 +--
@@ -84,7 +82,7 @@ index 0000000..0000000 100644
          File storageDir = null;
          if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 -            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
-+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Inugram");
++            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "entinyGram");
              if (!storageDir.mkdirs()) {
                  if (!storageDir.exists()) {
                      if (BuildVars.LOGS_ENABLED) {
@@ -130,7 +128,7 @@ index 0000000..0000000 100644
                  final ContentValues cv = new ContentValues();
                  final Uri uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
 -                final File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "Telegram");
-+                final File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "Inugram");
++                final File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "entinyGram");
                  cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  cv.put(MediaStore.Downloads.DISPLAY_NAME, filename);
                  cv.put(MediaStore.MediaColumns.MIME_TYPE, outputMime);
@@ -139,7 +137,7 @@ index 0000000..0000000 100644
                  }
              } else {
 -                final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Telegram");
-+                final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Inugram");
++                final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "entinyGram");
                  destDir.mkdirs();
                  File destFile = new File(destDir, filename);
                  if (!destFile.exists()) {
@@ -148,12 +146,12 @@ index 0000000..0000000 100644
                          File destFile;
                          if (type == 0) {
 -                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
-+                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Inugram");
++                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "entinyGram");
                              destFile.mkdirs();
                              destFile = new File(destFile, AndroidUtilities.generateFileName(0, FileLoader.getFileExtension(sourceFile)));
                          } else if (type == 1) {
 -                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Telegram");
-+                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Inugram");
++                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "entinyGram");
                              destFile.mkdirs();
                              destFile = new File(destFile, AndroidUtilities.generateFileName(1, FileLoader.getFileExtension(sourceFile)));
                          } else {
@@ -162,7 +160,7 @@ index 0000000..0000000 100644
                                  dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
                              }
 -                            dir = new File(dir, "Telegram");
-+                            dir = new File(dir, "Inugram");
++                            dir = new File(dir, "entinyGram");
                              dir.mkdirs();
                              destFile = new File(dir, name);
                              if (destFile.exists()) {
@@ -171,7 +169,7 @@ index 0000000..0000000 100644
                      final ContentValues cv = new ContentValues();
                      final Uri uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
 -                    final File dirDest = new File(Environment.DIRECTORY_PICTURES, "Telegram");
-+                    final File dirDest = new File(Environment.DIRECTORY_PICTURES, "Inugram");
++                    final File dirDest = new File(Environment.DIRECTORY_PICTURES, "entinyGram");
                      cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                      cv.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                      cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
@@ -180,7 +178,7 @@ index 0000000..0000000 100644
                      }
                  } else {
 -                    final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
-+                    final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Inugram");
++                    final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "entinyGram");
                      destDir.mkdirs();
                      File destFile = new File(destDir, AndroidUtilities.generateFileName(0, "jpg"));
                      if (!destFile.exists()) {
@@ -189,7 +187,7 @@ index 0000000..0000000 100644
                  }
                  uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
 -                File dirDest = new File(Environment.DIRECTORY_PICTURES, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_PICTURES, "Inugram");
++                File dirDest = new File(Environment.DIRECTORY_PICTURES, "entinyGram");
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                  contentValues.put(MediaStore.Images.Media.MIME_TYPE, mimeType);
@@ -198,7 +196,7 @@ index 0000000..0000000 100644
                      filename = AndroidUtilities.generateFileName(1, extension);
                  }
 -                File dirDest = new File(Environment.DIRECTORY_MOVIES, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_MOVIES, "Inugram");
++                File dirDest = new File(Environment.DIRECTORY_MOVIES, "entinyGram");
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, filename);
@@ -207,7 +205,7 @@ index 0000000..0000000 100644
                      filename = sourceFile.getName();
                  }
 -                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "Inugram");
++                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "entinyGram");
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Downloads.DISPLAY_NAME, filename);
@@ -216,7 +214,7 @@ index 0000000..0000000 100644
                      filename = sourceFile.getName();
                  }
 -                File dirDest = new File(Environment.DIRECTORY_MUSIC, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_MUSIC, "Inugram");
++                File dirDest = new File(Environment.DIRECTORY_MUSIC, "entinyGram");
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Audio.Media.DISPLAY_NAME, filename);
@@ -421,35 +419,6 @@ index 0000000..0000000 100644
  
          super.dispatchDraw(canvas);
      }
-diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-+++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-@@ -1,6 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
--    <background android:drawable="@drawable/icon_background" />
--    <foreground android:drawable="@mipmap/icon_foreground" />
--    <monochrome android:drawable="@drawable/icon_plane" />
-+    <background android:drawable="@drawable/icon_background_inu" />
-+    <foreground android:drawable="@drawable/icon_foreground_inu" />
-+    <monochrome android:drawable="@drawable/icon_plane_inu" />
- </adaptive-icon>
-\ No newline at end of file
-diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-+++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-@@ -1,6 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
--    <background android:drawable="@drawable/icon_background_round" />
--    <foreground android:drawable="@mipmap/icon_foreground_round" />
--    <monochrome android:drawable="@drawable/icon_plane" />
-+    <background android:drawable="@drawable/icon_background_inu" />
-+    <foreground android:drawable="@drawable/icon_foreground_inu_round" />
-+    <monochrome android:drawable="@drawable/icon_plane_inu" />
- </adaptive-icon>
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
 new file mode 100644
 index 0000000..0000000
@@ -483,8 +452,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Deutsch</string>
      <string name="English">Englisch</string>
      <string name="LanguageNameInEnglish">German</string>
@@ -497,8 +466,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Español</string>
      <string name="English">Inglés</string>
      <string name="LanguageNameInEnglish">Spanish</string>
@@ -507,7 +476,7 @@ index 0000000..0000000 100644
      <string name="PermissionDrawAboveOtherAppsGroupCallTitle">Superposición del videochat</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Rápido</string>
      <string name="Page3Title">Gratuito</string>
      <string name="Page4Title">Seguro</string>
@@ -520,8 +489,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Italiano</string>
      <string name="English">Inglese</string>
      <string name="LanguageNameInEnglish">Italian</string>
@@ -546,7 +515,7 @@ index 0000000..0000000 100644
  <?xml version="1.0" encoding="utf-8"?>
  <resources>
 -    <string name="AppName">Telegram</string>
-+    <string name="AppName">Inugram</string>
++    <string name="AppName">entinyGram</string>
      <string name="AppNameBeta">Telegram-bèta</string>
      <string name="LanguageName">Nederlands</string>
      <string name="English">Engels</string>
@@ -559,8 +528,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Português (Brasil)</string>
      <string name="English">Inglês</string>
      <string name="LanguageNameInEnglish">Portuguese (Brazil)</string>
@@ -569,7 +538,7 @@ index 0000000..0000000 100644
      <string name="PermissionDrawAboveOtherAppsGroupCallTitle">Chat de vídeo flutuante</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Rápido</string>
      <string name="Page3Title">Gratuito</string>
      <string name="Page4Title">Seguro</string>
@@ -582,8 +551,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Русский</string>
      <string name="English">Английский</string>
      <string name="LanguageNameInEnglish">Russian</string>
@@ -592,7 +561,7 @@ index 0000000..0000000 100644
      <string name="LoginOrSingInWithGoogle">или</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Быстрый</string>
      <string name="Page3Title">Бесплатный</string>
      <string name="Page4Title">Безопасный</string>
@@ -605,8 +574,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">Українська</string>
      <string name="English">Англійська</string>
      <string name="LanguageNameInEnglish">Ukrainian</string>
@@ -615,7 +584,7 @@ index 0000000..0000000 100644
      <string name="LoginOrSingInWithGoogle">або</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Швидкий</string>
      <string name="Page3Title">Безплатний</string>
      <string name="Page4Title">Захищений</string>
@@ -641,8 +610,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">Inugram</string>
-+    <string name="AppNameBeta">Inugram Beta</string>
++    <string name="AppName">entinyGram</string>
++    <string name="AppNameBeta">entinyGram Beta</string>
      <string name="LanguageName">English</string>
      <string name="English">English</string>
      <string name="LanguageNameInEnglish">English</string>
@@ -652,8 +621,8 @@ index 0000000..0000000 100644
      <string name="SetProfilePhoto">Set Profile Photo</string>
 -    <string name="AppUpdate">Update Telegram</string>
 -    <string name="AppUpdateBeta">Update Telegram Beta</string>
-+    <string name="AppUpdate">Update Inugram</string>
-+    <string name="AppUpdateBeta">Update Inugram Beta</string>
++    <string name="AppUpdate">Update entinyGram</string>
++    <string name="AppUpdateBeta">Update entinyGram Beta</string>
      <string name="AppUpdateVersionAndSize">Version %1$s • %2$s</string>
      <string name="AppBetaUpdateVersion">Version %1$s (%2$s)</string>
      <string name="AppUpdateDownloading">Downloading %1$d%%...</string>
@@ -662,7 +631,7 @@ index 0000000..0000000 100644
      <string name="ViewMessage">Open Message</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">Inugram</string>
++    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Fast</string>
      <string name="Page3Title">Free</string>
      <string name="Page4Title">Secure</string>

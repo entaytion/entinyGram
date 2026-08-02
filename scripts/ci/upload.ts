@@ -9,7 +9,7 @@ interface BuildInfo {
   verCode: number
   appVerCode: number
   buildNum: number
-  apkFile: string
+  apkFiles: string[]
   commitSha: string
   commits: { sha: string, message: string }[]
   repo: string
@@ -17,13 +17,14 @@ interface BuildInfo {
 
 const artifactDir = resolve(process.argv[2] ?? 'out')
 const info: BuildInfo = JSON.parse(await fs.readFile(join(artifactDir, 'build-info.json'), 'utf8'))
-const apkPath = join(artifactDir, info.apkFile)
-await fs.access(apkPath)
+for (const file of info.apkFiles) {
+  await fs.access(join(artifactDir, file))
+}
 
 const apiId = Number(process.env.TELEGRAM_API_ID)
 const apiHash = process.env.TELEGRAM_API_HASH
 const botToken = process.env.TELEGRAM_BOT_TOKEN
-const channel = process.env.TELEGRAM_CHANNEL ?? 'entinyGram'
+const channel = process.env.TELEGRAM_CHANNEL ?? 'entinyGramCI'
 
 if (!apiId || !apiHash || !botToken) {
   throw new Error('TELEGRAM_API_ID, TELEGRAM_API_HASH and TELEGRAM_BOT_TOKEN must be set')
@@ -64,31 +65,75 @@ async function persistSession(session: string) {
 
 try {
   const commits = info.commits.filter(c => !c.message.startsWith('infra:')).reverse()
-  const buildCaption = (cs: typeof commits) => html`
-    #release
-    <br/>
-    <b>v${info.verName}</b> (build ${info.buildNum}, based on ${info.appVerCode})
-    <br/><br/>
-    <blockquote expandable>
-      ${joinTextWithEntities(
-    cs.map(c => html`<a href="https://github.com/${info.repo}/commit/${c.sha}">${c.sha.slice(0, 7)}</a>: ${c.message}`),
-    '\n',
-  )}
-    </blockquote>
-  `
 
-  let caption = buildCaption(commits)
-  while (caption.text.length > 1024 && commits.length > 0) {
-    commits.pop()
-    caption = buildCaption(commits)
+  // Bilingual release notes from scripts/release-notes.ts (may be absent).
+  let en = ''
+  let uk = ''
+  try {
+    const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
+    en = String(notes.en ?? '')
+    uk = String(notes.uk ?? '')
+  } catch {}
+
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const abiOf = (file: string) => /universal/i.test(file) ? 'Universal' : 'ARM64'
+  const postUrl = (id: number) => `https://t.me/${channel}/${id}`
+  const bullets = (text: string) =>
+    text.split('\n').map(l => l.trim()).filter(Boolean).map(l => html`${esc(l)}`)
+
+  // 1) Upload the APK documents first, remembering their post ids for the links.
+  const apkPosts: { file: string, id: number }[] = []
+  for (const file of info.apkFiles) {
+    const msg = await tg.sendMedia(channel, {
+      type: 'document',
+      file: `file:${join(artifactDir, file)}`,
+      fileName: file,
+      caption: html`#release <br/> <b>entinyGram v${info.verName}</b> (build ${info.buildNum}, ${abiOf(file)})`,
+    })
+    apkPosts.push({ file, id: msg.id })
   }
 
-  await tg.sendMedia(channel, {
-    type: 'document',
-    file: `file:${apkPath}`,
-    fileName: info.apkFile,
-    caption,
+  // 2) Release banner photo (the "cover").
+  const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.png')
+  try {
+    await tg.sendMedia(channel, { type: 'photo', file: `file:${bannerPath}` })
+  } catch (e) {
+    console.warn('release: banner post failed (continuing):', e)
+  }
+
+  // 3) Full release message with download links + bilingual changelog.
+  const downloadLinks = apkPosts.map(p => {
+    const url = postUrl(p.id)
+    return html`• Download ${abiOf(p.file)} (<a href="${url}">${url}</a>)`
   })
+  const enBlock = en ? joinTextWithEntities(bullets(en), '\n') : html`• See the channel`
+  const ukBlock = uk ? joinTextWithEntities(bullets(uk), '\n') : html`• Дивіться канал`
+  const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
+
+  const release = html`
+    #release
+    <br/>
+    ✈️ entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
+    <br/><br/>
+    ${joinTextWithEntities(downloadLinks, '\n')}
+    <br/>
+    • Channel (https://t.me/${channel})
+    ${extra ? html`<br/>${extra}` : ''}
+    <br/><br/>
+    🇺🇸 EN:
+    <br/>
+    ${enBlock}
+    <br/><br/>
+    🇺🇦 UK:
+    <br/>
+    ${ukBlock}
+    <br/><br/>
+    Thanks to all contributors and supporters ❤️
+    <br/>
+    Check for updates (tg://update)
+  `
+
+  await tg.sendText(channel, release)
 } finally {
   const exported = await tg.exportSession()
   if (exported !== cachedSession) {

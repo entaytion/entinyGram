@@ -28,8 +28,76 @@ import java.util.Locale
 class InuSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuSettings)
 
+    private var topHeaderView: View? = null
+
+    private fun createHeaderView(): View {
+        val context = context ?: return View(org.telegram.messenger.ApplicationLoader.applicationContext)
+        val linear = android.widget.LinearLayout(context).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+            setPadding(0, AndroidUtilities.dp(24f), 0, AndroidUtilities.dp(16f))
+        }
+
+        val imageView = android.widget.ImageView(context).apply {
+            setImageResource(R.drawable.icon_settings_inu)
+        }
+        linear.addView(
+            imageView,
+            org.telegram.ui.Components.LayoutHelper.createLinear(
+                72,
+                72,
+                android.view.Gravity.CENTER_HORIZONTAL,
+                0,
+                0,
+                0,
+                10
+            )
+        )
+
+        val titleView = android.widget.TextView(context).apply {
+            text = "entinyGram"
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 22f)
+            setTypeface(AndroidUtilities.bold())
+            setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText))
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+        }
+        linear.addView(
+            titleView,
+            org.telegram.ui.Components.LayoutHelper.createLinear(
+                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
+                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
+                android.view.Gravity.CENTER_HORIZONTAL,
+                0,
+                0,
+                0,
+                4
+            )
+        )
+
+        val subtitleView = android.widget.TextView(context).apply {
+            text = "${desu.inugram.helpers.update.UpdateHelper.stockVersionName} (${org.telegram.messenger.BuildConfig.STOCK_VERSION_CODE})"
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 14f)
+            setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteGrayText2))
+            gravity = android.view.Gravity.CENTER_HORIZONTAL
+        }
+        linear.addView(
+            subtitleView,
+            org.telegram.ui.Components.LayoutHelper.createLinear(
+                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
+                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
+                android.view.Gravity.CENTER_HORIZONTAL
+            )
+        )
+
+        return linear
+    }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAppearance)))
+        val headerView = topHeaderView ?: createHeaderView().also { topHeaderView = it }
+        items.add(UItem.asCustom(headerView))
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCategories)))
         items.add(
             UItem.asButton(
                 BUTTON_GENERAL,
@@ -72,9 +140,6 @@ class InuSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuAnnoyances)
             )
         )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuOther)))
         items.add(
             UItem.asButton(
                 BUTTON_BEHAVIOR,
@@ -103,8 +168,16 @@ class InuSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuTOS)
             )
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_AI,
+                R.drawable.input_ai_star,
+                LocaleController.getString(R.string.InuAiCompose)
+            )
+        )
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(
             UItem.asButton(
                 BUTTON_EXPORT,
@@ -126,6 +199,9 @@ class InuSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuCloudSync)
             )
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLinks)))
         items.add(
             UItem.asButton(
                 BUTTON_ABOUT,
@@ -148,6 +224,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             BUTTON_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
             BUTTON_PRIVACY -> presentFragment(PrivacySecurityActivity())
             BUTTON_TOS -> presentFragment(TosSettingsActivity())
+            BUTTON_AI -> presentFragment(AiSettingsActivity())
             BUTTON_ABOUT -> presentFragment(AboutActivity())
             BUTTON_EXPORT -> launchExport()
             BUTTON_IMPORT -> launchImport()
@@ -265,6 +342,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val BUTTON_TRANSLATOR = InuUtils.generateId()
         private val BUTTON_PRIVACY = InuUtils.generateId()
         private val BUTTON_TOS = InuUtils.generateId()
+        private val BUTTON_AI = InuUtils.generateId()
         private val BUTTON_ABOUT = InuUtils.generateId()
         private val BUTTON_EXPORT = InuUtils.generateId()
         private val BUTTON_IMPORT = InuUtils.generateId()

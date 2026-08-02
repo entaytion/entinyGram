@@ -23,8 +23,8 @@ import kotlin.math.min
 import desu.inugram.helpers.security.ParanoiaHelper
 
 object UpdateHelper {
-    const val USERNAME = "entinyGram"
-    private const val CHANNEL_ID = 4346771715L
+    const val USERNAME = "entinyGramCI"
+    private const val CHANNEL_ID = 4319600055L
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
@@ -42,7 +42,6 @@ object UpdateHelper {
     fun getVersionInfoString(): String {
         return LocaleController.formatString(
             R.string.InuVersion,
-            pInfo.versionCode,
             stockVersionName,
             BuildConfig.STOCK_VERSION_CODE
         )
@@ -56,8 +55,9 @@ object UpdateHelper {
         return "${getVersionInfoString()}\nBuilt on: ${BuildVars.BUILD_DATE}"
     }
 
-    private val APK_RE = Regex("^(?:inugram|entinygram)-(.+)-(\\d+)\\.apk$")
-    private val SHORT_SHA_RE = Regex("-([0-9a-f]{7,40})$")
+    // apk name schema from scripts/ci/version.ts: entinygram-<abi>-<date>[-<build>].apk
+    // build is omitted when 0; the installed apk's versionCode is always build+1 (so build 0 => 1).
+    private val APK_RE = Regex("^entinygram-(arm64|universal)-(\\d+)(?:-(\\d+))?\\.apk$")
 
     @Volatile
     private var inflight = false
@@ -245,11 +245,14 @@ object UpdateHelper {
                     finish(callback, CheckResult.Error(err?.text ?: "no response"))
                     return@runOnUIThread
                 }
-                val match = resp.messages.firstNotNullOfOrNull { msg ->
-                    extractApkInfo(msg)?.let { msg to it }
-                }
                 val current = currentBuild()
-                if (match == null || !isNewer(match.second, current)) {
+                val candidates = resp.messages.mapNotNull { msg ->
+                    extractApkInfo(msg)?.let { msg to it }
+                }.filter { (_, info) -> isNewer(info, current) }
+                val match = candidates.firstOrNull { (_, info) -> info.abi == "arm64" && isArm64Device() }
+                    ?: candidates.firstOrNull { (_, info) -> info.abi == "universal" }
+                    ?: candidates.firstOrNull()
+                if (match == null) {
                     clearPending()
                     finish(callback, CheckResult.UpToDate)
                     return@runOnUIThread
@@ -339,11 +342,15 @@ object UpdateHelper {
         val nameAttr = doc.attributes.filterIsInstance<TLRPC.TL_documentAttributeFilename>().firstOrNull()
             ?: return null
         val match = APK_RE.matchEntire(nameAttr.file_name) ?: return null
-        val verName = match.groupValues[1]
-        val verCode = match.groupValues[2].toIntOrNull() ?: return null
-        val appVerName = verName.replace(SHORT_SHA_RE, "")
-        return ApkInfo(verCode, appVerName, doc)
+        val abi = match.groupValues[1]
+        val buildNum = match.groupValues[3].toIntOrNull() ?: 0
+        val verCode = buildNum + 1
+        if (abi == "arm64" && !isArm64Device()) return null
+        return ApkInfo(verCode, match.groupValues[2], doc, abi)
     }
+
+    private fun isArm64Device(): Boolean =
+        Build.SUPPORTED_ABIS.any { it.contains("arm64") || it.contains("aarch64") }
 
     private fun isNewer(remote: ApkInfo, current: CurrentBuild): Boolean {
         return remote.verCode > current.versionCode
@@ -360,6 +367,7 @@ object UpdateHelper {
         val verCode: Int,
         val appVerName: String,
         val document: TLRPC.Document,
+        val abi: String,
     )
 
     private data class CurrentBuild(

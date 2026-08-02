@@ -6,6 +6,7 @@ worktree/
 .gradle/
 *.apk
 *.aab
+out/
 src/google-services.json
 src/core/build
 src/res/assets/adguard_url_tracking.txt
