@@ -286,6 +286,44 @@ bun run export
 
 If user asks "which patch am I on" → `stg top`.
 
+## Merge hygiene — read before/after EVERY merge (do not skip)
+
+A merge from upstream (inugram) frequently lands in a **broken, half-finished** state:
+upstream branding/APIs overwrite fork files, and conflict markers get left behind in odd
+places. Never treat an upstream merge as "done" or "safe" just because source control
+reported no conflict. Every merge breakage seen here was silent or half-applied.
+
+Golden merge attitude:
+1. **Assume the merge is broken until proven otherwise.** Treat "no conflict reported" as
+   a lie. Actually verify the build/identity matches the fork, not the upstream.
+2. **Never leave a merge unfinished.** Any `<<<<<<<`, `=======`, `>>>>>>>` marker — even a
+   lone marker with no matching pair (which still kills XML parsing) — is a hard error.
+   Resolve all of them before moving on. Do not "commit" around them.
+3. **Verify branding survived the merge.** The fork identity must be restored every time:
+   - `TMessagesProj_App/build.gradle`: `defaultConfig.applicationId = "ua.entaytion.entinygram"`
+     (debug suffix `.beta` → `ua.entaytion.entinygram.beta`).
+   - Must match `google-services.json` `package_name` values **exactly** (case-sensitive);
+     otherwise `:TMessagesProj_App:processDebugGoogleServices` fails with
+     "No matching client found for package name ...". Upstream overwrites this to
+     `desu.inugram` on merge — check & restore.
+4. **Post-merge static scan (all must come back empty)** across fork-relevant code:
+   - `<<<<<<<` / `=======` / `>>>>>>>` markers anywhere (`*.xml`, `*.kt`, `*.java`, `*.gradle`).
+   - Well-formedness of every touched `res/values/*.xml` (malformed XML is a silent
+     resource-build failure — `packageDebugResources`).
+   - In `src/kotlin`: `\.getValue\(\)` (must be `.value` per Java↔Kotlin gotchas) and any
+     stock API that may have been renamed by the merge.
+5. **Verify fork Kotlin against current stock APIs.** A merge can rename stock
+   fields/methods the fork relies on (e.g. `UItem.text2` → `UItem.subtext`) or change
+   signatures. Before assuming a bad symbol is a fork bug, confirm the current stock API:
+   `rg` the exact symbol in `worktree/TMessagesProj/src/main/java/...`, then fix the fork
+   call site to match. Do the same for Kotlin-side access of `InuConfig` items.
+6. **Do not "fix forward" a half-merge by patching symptoms.** First fully resolve the merge
+   (markers, branding, API drift), then validate holistically. If any check raises a doubt,
+   stop and tell the user instead of guessing.
+7. **Final gate before declaring done:** every item above is green, and reason through the
+   runtime path (not just symbols). Because we follow rule 11 (no local build), be explicit
+   about what was verified statically vs what remains unverified, and flag residual risk.
+
 ## Self-maintenance
 
 When adding a new `InuHooks` method, settings page, or shared `hooks/` patch — update this file. Tribal knowledge rots.

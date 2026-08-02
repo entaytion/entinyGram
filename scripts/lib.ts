@@ -298,6 +298,8 @@ export async function generateStablePatchFromCommit(repoDir: string, commitId: s
     /google-services\.json/,
     /gradlew\.bat/,
     /icon_background_sa\.xml/,
+    /icplaceholder\.jpg/,
+    /ic_launcher(?:_round)?\.xml/,
   ]
 
   function isGarbagePath(path: string): boolean {
@@ -306,7 +308,13 @@ export async function generateStablePatchFromCommit(repoDir: string, commitId: s
 
   // Remove diffstat lines (e.g. " TMessagesProj/google-services.json | 5 +++--")
   clean = clean.replace(
-    /^[ \t]+\S.*\|\s*\d+\s*[+\-]+\s*\n/gm,
+    /^[ \t]+\S.*\|\s*(?:\d+\s*[+\-]+|Bin\s+.*)\s*\n/gm,
+    (line) => (GARBAGE_FILE_PATTERNS.some(p => p.test(line)) ? '' : line),
+  )
+
+  // Remove mode change lines for garbage files (e.g. " mode change 100644 => 120000 TMessagesProj/google-services.json")
+  clean = clean.replace(
+    /^[ \t]*mode change \d+ => \d+ .*\n/gm,
     (line) => (GARBAGE_FILE_PATTERNS.some(p => p.test(line)) ? '' : line),
   )
 

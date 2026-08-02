@@ -20,6 +20,15 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuRegexFilter)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(
+            UItem.asButton(
+                BUTTON_BETA_INFO,
+                R.drawable.ic_beta_badge,
+                LocaleController.getString(R.string.InuBetaFeatureTitle)
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRegexFilter)))
         items.add(
             mkTwoLineCheckItem(
@@ -51,6 +60,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            BUTTON_BETA_INFO -> showBetaBottomSheet()
             TOGGLE_REGEX_FILTER_ENABLED -> {
                 val new = InuConfig.REGEX_FILTER_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -77,6 +87,8 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
         val editText = EditText(context).apply {
             setLines(5)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+            setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_dialogTextBlack))
+            setHintTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_dialogTextHint))
             setText(InuConfig.REGEX_FILTER_PATTERNS.value)
             setSelection(text.length)
         }
@@ -94,7 +106,14 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
         showDialog(builder.create())
     }
 
+    private fun showBetaBottomSheet() {
+        org.telegram.ui.Components.BulletinFactory.of(this)
+            .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuBetaFeatureInfo))
+            .show()
+    }
+
     companion object {
+        private val BUTTON_BETA_INFO = InuUtils.generateId()
         private val TOGGLE_REGEX_FILTER_ENABLED = InuUtils.generateId()
         private val BUTTON_REGEX_FILTER_MODE = InuUtils.generateId()
         private val BUTTON_REGEX_PATTERNS = InuUtils.generateId()

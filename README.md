@@ -108,7 +108,6 @@ bun run lint-patches -- --check
 - **[Inugram](https://github.com/teidesu/inugram)** - huge respect and special thanks to the original Inugram project & patchset architecture, which serves as the foundation and core inspiration for entinyGram.
 - **[Telegram Android](https://github.com/DrKLO/Telegram)** - the official Telegram client codebase.
 - A bunch of features were ported or adapted from [Nekogram](https://github.com/Nekogram/Nekogram), [NagramX](https://github.com/risin42/NagramX), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), and [materialgram](https://github.com/kukuruzka165/materialgram).
-- `src/res/drawable/icplaceholder.jpg` artwork by [Chobles](https://www.pixiv.net/en/artworks/128756420).
 - Tabler icons by [Tabler Team](https://tabler.io/icons).
 - Solar icon pack by [480 Design](https://t.me/Design480).
 - AdGuard URL Tracking filter by [AdGuard](https://adguard.com/).

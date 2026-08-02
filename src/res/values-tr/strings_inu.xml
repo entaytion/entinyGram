@@ -476,7 +476,7 @@
     <string name="InuFormattingPopupDivider">——————</string>
     <string name="InuCut">Kes</string>
     <string name="InuCodeLanguage">Kod dili</string>
-    <string name="InuVersion">entinyGram v%1$s (%2$s tabanlı, derleme %3$s)</string>
+    <string name="InuVersion">entinyGram v%1$s (derleme %2$s)</string>
 
     <string name="InuSearchFilter">Medyaya göre filtrele</string>
     <string name="InuSearchFilterPhotos">Fotoğraflar</string>

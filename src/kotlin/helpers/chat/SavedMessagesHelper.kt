@@ -55,7 +55,7 @@ object SavedMessagesHelper {
         if (loadedAccounts.contains(account)) return
 
         // Prune stale entries before loading into memory
-        val ttlDays = InuConfig.DELETED_MESSAGES_TTL.getValue()
+        val ttlDays = InuConfig.DELETED_MESSAGES_TTL.value
         if (ttlDays > 0) {
             val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
             InuDatabaseHelper.pruneDeletedMessages(db, cutoff)
@@ -83,7 +83,7 @@ object SavedMessagesHelper {
      */
     @JvmStatic
     fun pruneIfNeeded(account: Int) {
-        val ttlDays = InuConfig.DELETED_MESSAGES_TTL.getValue()
+        val ttlDays = InuConfig.DELETED_MESSAGES_TTL.value
         if (ttlDays == 0) return
         val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
         val storage = MessagesStorage.getInstance(account) ?: return
@@ -96,6 +96,26 @@ object SavedMessagesHelper {
                 deletedMessageIds.remove(account.toLong())
                 editHistoryCache.remove(account.toLong())
                 loadedAccounts.remove(account)
+            }
+        }
+    }
+
+    /**
+     * Clear deleted message cache for [dialogIds] (or all if null) for [account].
+     */
+    @JvmStatic
+    fun clearCache(account: Int, dialogIds: Collection<Long>? = null, onDone: Runnable? = null) {
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database
+            if (db != null) {
+                InuDatabaseHelper.clearDeletedMessages(db, dialogIds)
+            }
+            org.telegram.messenger.AndroidUtilities.runOnUIThread {
+                deletedMessageIds.remove(account.toLong())
+                editHistoryCache.remove(account.toLong())
+                loadedAccounts.remove(account)
+                onDone?.run()
             }
         }
     }

@@ -387,7 +387,10 @@
     <string name="InuFormattingPopupDivider">——————</string>
     <string name="InuCut">Вырезать</string>
     <string name="InuCodeLanguage">Язык кода</string>
-    <string name="InuVersion">entinyGram v%1$s (на основе %2$s, сборка %3$s)</string>
+    <string name="InuVersion">entinyGram %1$s (%2$s)</string>
+    <string name="InuCategories">Категории</string>
+    <string name="InuLinks">Ссылки</string>
+    <string name="InuDataBackup">Резервное копирование</string>
 
     <string name="InuSearchFilter">Фильтр по медиа</string>
     <string name="InuSearchFilterPhotos">Фото</string>
@@ -710,4 +713,30 @@
     <string name="InuBiometricConfirmLogoutInfo">Запрашивать биометрическое подтверждение перед выходом из аккаунта.</string>
     <string name="InuBiometricAllowDeviceCredential">Разрешить PIN/графический ключ устройства</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Использовать PIN, графический ключ или пароль устройства, если биометрия не настроена.</string>
+    <string name="InuAiCompose">AI Compose</string>
+    <string name="InuAiComposeInfo">Переписывайте или продолжайте черновики через собственный AI-эндпоинт. Заменяет встроенный серверный AI-редактор.</string>
+    <string name="InuAiEndpoints">API-эндпоинты</string>
+    <string name="InuAiEndpointAdd">Добавить эндпоинт</string>
+    <string name="InuAiEndpointEdit">Изменить эндпоинт</string>
+    <string name="InuAiEndpointName">Название</string>
+    <string name="InuAiEndpointUrl">URL эндпоинта</string>
+    <string name="InuAiEndpointApiKey">API-ключ</string>
+    <string name="InuAiEndpointModel">Модель</string>
+    <string name="InuAiEndpointActive">Активный</string>
+    <string name="InuAiEndpointSetActive">Сделать активным</string>
+    <string name="InuAiOpenSettings">Открыть настройки</string>
+    <string name="InuAiNoEndpoint">Не настроено ни одного активного API-эндпоинта. Добавьте его в Настройках &gt; AI Compose.</string>
+    <string name="InuAiBadEndpoint">У активного эндпоинта нет URL. Измените его в Настройках &gt; AI Compose.</string>
+    <string name="InuAiActionRewrite">Переписать</string>
+    <string name="InuAiActionContinue">Продолжить</string>
+    <string name="InuAiActionSummarize">Резюмировать</string>
+    <string name="InuAiActionFixGrammar">Исправить грамматику</string>
+    <string name="InuAiActionCustom">Выполнить свой запрос</string>
+    <string name="InuAiCustomPrompt">Свой запрос</string>
+    <string name="InuAiUse">Применить</string>
+    <string name="InuAiCopy">Копировать</string>
+    <string name="InuAiGenerating">Генерация…</string>
+    <string name="InuAiError">Ошибка запроса: %1$s</string>
+    <string name="InuBetaFeatureTitle">Бета-функция</string>
+    <string name="InuBetaFeatureInfo">Функция находится в активной разработке (бета/экспериментальная).</string>
 </resources>

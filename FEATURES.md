@@ -214,6 +214,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 📡 allow saving any story to gallery directly, bypassing Telegram Premium requirements and download restrictions
 - 📡 **save deleted messages**: keep deleted messages in chats (marked with 🗑️)
 - 📡 **save edit history**: record and view previous message versions (marked with ✏️)
+- 📡 **forward as own message**: when enabled, every forward is downloaded and re-sent as your own new message (no "Forwarded from" header) — also bypasses content protection in chats with forwarding disabled; text, stickers and captions carry over (disabled by default)
 - 📡 **hide sponsored messages (AdBlock)**: disables channel sponsored ads and prevents loading promotional messages
 - 📡 **AdBlock & Regex Content Filter** (experimental): filter out ad posts, spam, or messages matching custom regular expressions / keywords (hide completely or cover with spoiler)
 
