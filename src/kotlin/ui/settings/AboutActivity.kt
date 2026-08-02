@@ -22,6 +22,7 @@ import desu.inugram.helpers.LogsHelper
 import desu.inugram.helpers.SystemInfo
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.BuildVars
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -85,16 +86,18 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         )
         items.add(UItem.asShadow(lastCheckLabel()))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_LOGS_ENABLED,
-                LocaleController.getString(R.string.InuLogsEnabled),
-            ).setChecked(LogsHelper.isEnabled())
-        )
-        if (LogsHelper.isEnabled()) {
-            items.add(UItem.asCustom(getOrCreateLogsRow()))
-            items.add(UItem.asCustom(getOrCreateHeapRow()))
+        if (BuildVars.DEBUG_VERSION) {
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
+            items.add(
+                UItem.asCheck(
+                    TOGGLE_LOGS_ENABLED,
+                    LocaleController.getString(R.string.InuLogsEnabled),
+                ).setChecked(LogsHelper.isEnabled())
+            )
+            if (LogsHelper.isEnabled()) {
+                items.add(UItem.asCustom(getOrCreateLogsRow()))
+                items.add(UItem.asCustom(getOrCreateHeapRow()))
+            }
         }
         items.add(UItem.asButton(BUTTON_COPY_SYSINFO, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))

@@ -7,7 +7,8 @@ Subject: settings ui
  .../org/telegram/messenger/ApplicationLoader.java     |  2 ++
  .../main/java/org/telegram/ui/ProfileActivity.java    |  4 ++--
  .../main/java/org/telegram/ui/SettingsActivity.java   | 11 ++++++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ .../main/java/org/telegram/ui/ChatActivity.java       |  9 +++++++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 index 0000000..0000000 100644
@@ -78,5 +79,26 @@ index 0000000..0000000 100644
 +                presentFragment(new desu.inugram.ui.settings.InuSettingsActivity());
 +                break;
          }
-     }
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -42048,6 +42048,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
+     private boolean openLinkInternally(String urlFinal, ChatMessageCell cell, CharacterStyle span, int fromMessageId, int fromMessageProgressType) {
++        if (urlFinal != null && (urlFinal.startsWith("tg://settings/") || urlFinal.startsWith("tg:settings/")) && getParentActivity() instanceof LaunchActivity) {
++            if (desu.inugram.SearchRegistry.tryHandleDeepLink((LaunchActivity) getParentActivity(), new Intent(Intent.ACTION_VIEW, Uri.parse(urlFinal)))) {
++                return true;
++            }
++        }
+         if (currentChat == null || urlFinal == null || chatMode != 0) {
+             return false;
+         }
+@@ -36433,6 +36433,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
+     private void processExternalUrl(int type, String url, CharacterStyle span, ChatMessageCell cell, boolean forceAlert, boolean forceNoIV) {
++        LaunchActivity launchActivity = getParentActivity() instanceof LaunchActivity ? (LaunchActivity) getParentActivity() : LaunchActivity.instance;
++        if (url != null && (url.startsWith("tg://settings/") || url.startsWith("tg:settings/")) && launchActivity != null && desu.inugram.SearchRegistry.tryHandleDeepLink(launchActivity, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) {
++            return;
++        }
+         try {
  

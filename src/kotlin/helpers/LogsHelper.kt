@@ -17,9 +17,10 @@ object LogsHelper {
     private const val SYSTEM_PREFS = "systemConfig"
     private const val LOGS_ENABLED_KEY = "logsEnabled"
 
-    fun isEnabled(): Boolean = BuildVars.LOGS_ENABLED
+    fun isEnabled(): Boolean = BuildVars.DEBUG_VERSION && BuildVars.LOGS_ENABLED
 
     fun setEnabled(enabled: Boolean) {
+        if (!BuildVars.DEBUG_VERSION) return
         if (BuildVars.LOGS_ENABLED == enabled) return
         BuildVars.LOGS_ENABLED = enabled
         ApplicationLoader.applicationContext.getSharedPreferences(SYSTEM_PREFS, Context.MODE_PRIVATE).edit {

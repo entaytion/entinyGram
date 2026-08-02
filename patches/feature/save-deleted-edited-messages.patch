@@ -7,7 +7,8 @@ Subject: save deleted and edited messages history
 ---
  .../messenger/MessagesController.java         | 31 +++++++++++++++++++
  .../telegram/messenger/MessagesStorage.java   | 11 +++++--
- 2 files changed, 39 insertions(+), 3 deletions(-)
+ .../telegram/messenger/SendMessagesHelper.java |  9 +++++++++
+ 3 files changed, 48 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -92,3 +93,21 @@ index 0000000..0000000 100644
                                              message.attachPath = oldMessage.attachPath;
                                          }
                                          message.ttl = cursor.intValue(2);
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2908,6 +2908,9 @@ public class SendMessagesHelper extends BaseController {
+             } else {
++                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && newMsg != null && newMsg.message != null && !android.text.TextUtils.isEmpty(newMsg.message) && messageObject.messageOwner != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message)) {
++                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++                }
+                 messageObject.previousMedia = newMsg.media;
+@@ -3410,6 +3413,9 @@ public int editMessage(MessageObject messageObject, String message, boolean searchLinks, final BaseFragment fragment, ArrayList<TLRPC.MessageEntity> entities, int scheduleDate, int scheduleRepeatPeriod) {
+             }
+         }
++        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && message != null && !messageObject.messageOwner.message.equals(message)) {
++            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++        }
+         return getConnectionsManager().sendRequest(req, (response, error) -> {

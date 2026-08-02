@@ -26,7 +26,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             ExpandableBoolGroup.Option(R.string.InuCenterTitleChats, InuConfig.CENTER_TITLE_CHATS),
             ExpandableBoolGroup.Option(R.string.InuCenterTitleSettings, InuConfig.CENTER_TITLE_SETTINGS),
             ExpandableBoolGroup.Option(R.string.InuCenterTitleProfile, InuConfig.CENTER_TITLE_PROFILE),
-            ExpandableBoolGroup.Option(R.string.InuCenterTitleDialogs, InuConfig.CENTER_TITLE_DIALOGS),
         ),
         sectionId = SECTION_CENTER_TITLE,
     )

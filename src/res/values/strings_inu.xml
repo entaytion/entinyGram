@@ -10,6 +10,8 @@
     <string name="InuDrawerBackGestureInfo">Swiping back from the left edge of the chat list opens the drawer instead of leaving the app.</string>
     <string name="InuSettings">entinyGram Settings</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
+    <string name="InuSettingsPrefixHint">Settings links use tg://settings/entiny/&lt;slug&gt;</string>
+    <string name="InuLegacySettingsLink">This settings link format is obsolete. Use tg://settings/entiny/&lt;slug&gt;.</string>
     <string name="InuExperimental">Experimental</string>
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>

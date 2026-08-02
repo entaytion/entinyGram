@@ -7,7 +7,7 @@ Subject: allow centering actionbar titles
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 37 +++++++++++++++---
  .../ui/Components/ChatAvatarContainer.java    | 38 +++++++++++++++----
- 2 files changed, 62 insertions(+), 13 deletions(-)
+ 2 files changed, 63 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -72,7 +72,6 @@ index 0000000..0000000 100644
          }
  
 +        int rightBound = (right - left) - (menu != null && menu.getVisibility() != GONE ? menu.getMeasuredWidth() : 0) - titleRightMargin;
-+        int availableSpace = Math.max(0, rightBound - textLeft);
 +
          for (int i = 0; i < 2; i++) {
              if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
@@ -82,7 +81,8 @@ index 0000000..0000000 100644
                      }
                  }
 -                titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
-+                int curTextLeft = isCenterTitle ? textLeft + Math.max(0, (availableSpace - titleTextView[i].getMeasuredWidth()) / 2) : textLeft;
++                float centerTitleWidth = titleTextView[i].getTextPaint().measureText(titleTextView[i].getText(), 0, titleTextView[i].getText().length());
++                int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - (int) centerTitleWidth) / 2) : textLeft;
 +                int curTextRight = curTextLeft + titleTextView[i].getMeasuredWidth();
 +                titleTextView[i].layout(curTextLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), curTextRight, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
              }
@@ -90,14 +90,14 @@ index 0000000..0000000 100644
          if (additionalSubTitleOverlayContainer != null) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubTitleOverlayContainer.getMeasuredHeight()) / 2 - dp(2);
 -            additionalSubTitleOverlayContainer.layout(textLeft, additionalTop + textTop, textLeft + additionalSubTitleOverlayContainer.getMeasuredWidth(), additionalTop + textTop + additionalSubTitleOverlayContainer.getMeasuredHeight());
-+            int curTextLeft = isCenterTitle ? textLeft + Math.max(0, (availableSpace - additionalSubTitleOverlayContainer.getMeasuredWidth()) / 2) : textLeft;
++            int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - additionalSubTitleOverlayContainer.getMeasuredWidth()) / 2) : textLeft;
 +            int curTextRight = curTextLeft + additionalSubTitleOverlayContainer.getMeasuredWidth();
 +            additionalSubTitleOverlayContainer.layout(curTextLeft, additionalTop + textTop, curTextRight, additionalTop + textTop + additionalSubTitleOverlayContainer.getMeasuredHeight());
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
 -            subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
-+            int curTextLeft = isCenterTitle ? textLeft + Math.max(0, (availableSpace - subtitleTextView.getMeasuredWidth()) / 2) : textLeft;
++            int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - subtitleTextView.getMeasuredWidth()) / 2) : textLeft;
 +            int curTextRight = curTextLeft + subtitleTextView.getMeasuredWidth();
 +            subtitleTextView.layout(curTextLeft, additionalTop + textTop, curTextRight, additionalTop + textTop + subtitleTextView.getTextHeight());
          }
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
          if (additionalSubtitleTextView != null && additionalSubtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubtitleTextView.getTextHeight()) / 2 - dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 1);
 -            additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
-+            int curTextLeft = isCenterTitle ? textLeft + Math.max(0, (availableSpace - additionalSubtitleTextView.getMeasuredWidth()) / 2) : textLeft;
++            int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - additionalSubtitleTextView.getMeasuredWidth()) / 2) : textLeft;
 +            int curTextRight = curTextLeft + additionalSubtitleTextView.getMeasuredWidth();
 +            additionalSubtitleTextView.layout(curTextLeft, additionalTop + textTop, curTextRight, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
          }
@@ -199,4 +199,3 @@ index 0000000..0000000 100644
 +            subtitleTextLargerCopyView.layout(subL, subtitleTop, subL + subtitleTextLargerCopyView.getMeasuredWidth(), subtitleTop + subtitleTextLargerCopyView.getTextHeight());
          }
      }
- 

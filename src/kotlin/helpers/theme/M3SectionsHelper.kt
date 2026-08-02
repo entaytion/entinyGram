@@ -269,7 +269,9 @@ object M3SectionsHelper {
         }
 
         resizeSquare(iconLayout, 36)
-        resizeSquare(iconView, 22)
+        // Keep the stock drawable viewport: forcing 22dp clips several list icons and makes
+        // their strokes look flattened. The 36dp container still provides the M3 visual size.
+        resizeSquare(iconView, 24)
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(flat, hsl)

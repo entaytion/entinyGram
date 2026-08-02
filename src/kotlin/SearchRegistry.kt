@@ -81,7 +81,7 @@ object SearchRegistry {
     }
 
     fun deepLinkForItemId(itemId: Int): String? =
-        slugByItemId[itemId]?.let { "tg://settings/inu/$it" }
+        slugByItemId[itemId]?.let { "tg://settings/entiny/$it" }
 
     @JvmStatic
     fun extendSearchArray(
@@ -99,7 +99,7 @@ object SearchRegistry {
                     pageTitle,
                     LocaleController.getString(R.string.InuSettings),
                     page.iconRes,
-                ) { f.presentFragment(page.factory()) }.withLink("tg://settings/inu/${page.slug}")
+                ) { f.presentFragment(page.factory()) }.withLink("tg://settings/entiny/${page.slug}")
             )
             for (entry in page.entries) {
                 val title = LocaleController.getString(entry.titleRes)
@@ -111,7 +111,7 @@ object SearchRegistry {
                         page.iconRes,
                     ) {
                         f.presentFragment(page.factory().withHighlight(entry.itemId))
-                    }.withLink("tg://settings/inu/${entry.slug}")
+                    }.withLink("tg://settings/entiny/${entry.slug}")
                 )
             }
         }
@@ -132,8 +132,18 @@ object SearchRegistry {
 
             else -> return false
         }
-        if (segs.size < 2 || segs[0] != "inu") return false
+        if (segs.size < 2 || (segs[0] != "inu" && segs[0] != "entiny")) return false
         val target = targetBySlug[segs[1]] ?: return false
+        if (segs[0] == "inu") {
+            val fragment = activity.actionBarLayout?.lastFragment ?: return false
+            org.telegram.ui.Components.BulletinFactory.of(fragment)
+                .createSimpleBulletin(
+                    R.raw.chats_infotip,
+                    LocaleController.getString(R.string.InuLegacySettingsLink)
+                )
+                .show()
+            return true
+        }
         val fragment = target.page.factory()
         target.entry?.let { fragment.withHighlight(it.itemId) }
         activity.actionBarLayout.presentFragment(fragment)

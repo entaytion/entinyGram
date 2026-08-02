@@ -209,7 +209,7 @@ class InuSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuAbout)
             )
         )
-        items.add(UItem.asShadow(null))
+
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {

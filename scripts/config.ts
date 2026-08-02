@@ -73,6 +73,11 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/values-tr',
   },
   {
+    source: 'src/res/drawable/icplaceholder.jpg',
+    target: 'TMessagesProj/src/main/res/drawable',
+    replace: true,
+  },
+  {
     source: 'src/res/drawable/sticker.webp',
     target: 'TMessagesProj/src/main/res/drawable',
   },

@@ -30,7 +30,7 @@ const out = {
   'app-ver-code': appVerCode,
   'build-num': String(buildNum),
   'ver-name': verName,
-  'ver-code': String(buildNum + 1),
+  'ver-code': String(buildNum * 100 + 1),
   date,
   'apk-arm64': `entinygram-arm64-${date}${suffix}.apk`,
   'apk-universal': `entinygram-universal-${date}${suffix}.apk`,
