@@ -400,7 +400,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -914,29 +914,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -915,29 +915,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
      }
  
      public String getVersionName() {

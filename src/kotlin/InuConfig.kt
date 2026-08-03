@@ -3,6 +3,7 @@ package desu.inugram
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import desu.inugram.helpers.chat.DoubleTapActionHelper
 import desu.inugram.helpers.chat.PinnedReactionsHelper
 import desu.inugram.helpers.font.FontConfig
 import desu.inugram.helpers.menu.ChatMenuConfig
@@ -396,6 +397,9 @@ object InuConfig {
 
     @JvmField
     val DOUBLE_TAP_ACTION_OUTGOING = IntItem("double_tap_action_outgoing", 1)
+
+    @JvmField
+    val DOUBLE_TAP_ACTION_CHANNEL = IntItem("double_tap_action_channel", DoubleTapActionHelper.INHERIT_INCOMING)
 
     @JvmField
     val DOUBLE_TAP_DELAY = IntItem("double_tap_delay", 220)

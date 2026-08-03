@@ -22,6 +22,8 @@
     <string name="InuDoubleTapDelay">双击延迟</string>
     <string name="InuIncomingMessages">收到的消息</string>
     <string name="InuOutgoingMessages">发出的消息</string>
+    <string name="InuChannelMessages">你可以发布消息的频道</string>
+    <string name="InuSameAsIncoming">与收到的消息相同</string>
     <string name="InuDoubleTapInfo">注意：由于 Telegram 处理双击的方式，启用双击操作会让普通点击延迟上述时间，使应用响应变慢。\n你可以调整时长，但完全消除延迟的唯一方法是禁用这些操作。</string>
     <string name="InuQuickReaction">快速回应</string>
     <string name="InuShowReactions">显示回应</string>
@@ -183,7 +185,8 @@
     <string name="InuHideMyPhoneNumber">隐藏我的手机号</string>
     <string name="InuFonts">字体</string>
     <string name="InuAppFont">应用字体</string>
-    <string name="InuAppFontInfo">整个应用界面使用的字体。</string>
+    <string name="InuAppFontInfo">整个应用界面使用的字体。只有自定义（导入的）字体才能设为应用字体。</string>
+    <string name="InuFontCustomOnly">只有自定义（导入的）字体才能设为应用字体。</string>
     <string name="InuAvailableFonts">可用字体</string>
     <string name="InuFontsInfo">可见字体可在媒体编辑器的文字工具中使用。拖动以重新排序，点击眼睛图标隐藏；点击已导入的字体可将其移除。</string>
     <string name="InuFontAdd">添加字体</string>

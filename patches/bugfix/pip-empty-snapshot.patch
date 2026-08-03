@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -1062,12 +1062,13 @@ public class AndroidUtilities {
+@@ -1065,12 +1065,13 @@ public class AndroidUtilities {
      }
  
      @RequiresApi(api = Build.VERSION_CODES.N)
@@ -32,7 +32,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -1657,8 +1657,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -1658,8 +1658,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          }
                      } else {
                          currentBitmap = Bitmaps.createBitmap(videoSurfaceView.getWidth(), videoSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                                  if (textureImageView != null) {
                                      textureImageView.setVisibility(View.VISIBLE);
                                      textureImageView.setImageBitmap(currentBitmap);
-@@ -6785,8 +6785,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6574,8 +6574,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
                  if (usedSurfaceView) {
                      Bitmap toBitmap = Bitmap.createBitmap(videoSurfaceView.getWidth(), videoSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
                      });
                  } else {
                      Bitmap src = videoTextureView.getBitmap(videoTextureView.getWidth(), videoTextureView.getHeight());
-@@ -9252,8 +9256,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9041,8 +9045,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      try {
                          if (usedSurfaceView) {
                              Bitmap toBitmap = Bitmap.createBitmap(bitmap);
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
                                  animation.replaceAnimatedBitmap(toBitmap);
                                  animation.invalidateInternal();
                              });
-@@ -9343,27 +9347,23 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9132,27 +9136,23 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      Bitmap bitmap = Bitmaps.createBitmap(videoSurfaceView.getWidth(), videoSurfaceView.getHeight(), Bitmap.Config.ARGB_8888);
                      awaitBeforeAnimation = true;
                      final boolean[] started = new boolean[1];

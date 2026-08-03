@@ -96,7 +96,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - static pinned reactions in the reaction bar
 - 🐶 reachable reactions bar (moved to the bottom of message menu)
 - 🐶 reachable "seen by" (moved to bottom of message menu)
-- double-tap message actions (separate for incoming/outgoing), 🐶 customizable double-tap delay
+- double-tap message actions (separate for incoming/outgoing/editable channel posts), 🐶 customizable double-tap delay
 - hide keyboard on scroll
 - always show go-to-bottom button (don't hide on scroll-down)
 - web preview: replacements (e.g. twitter→fixupx)
@@ -158,6 +158,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - "copy photo" / "copy frame" menu actions
 - show dc + platform of the photo in menu
 - seek bar for mp4 gifs
+- always use the modern speed-control rewind on long-press
 - mark public (fallback) / personal profile photos next to the date
 
 ## admin / event log
@@ -189,6 +190,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - call confirmation
 - 🐶 reaction confirmation in non-joined chats
 - 🐶 internal link confirmation (tg://, t.me/…)
+- support `tg://user?id=…` links (opens the profile; user must be known locally)
 - 🐶 disable swipe-down to minimize the in-app browser (only the minimize button collapses it)
 - predictive back mode selector
 - disable pull-to-next-channel
@@ -248,6 +250,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - high-quality photo cropping in PhotoViewer (crop *before* downscaling)
 - sticker creator output sent as photo when high-quality default is on
 - non-square webm stickers rendered off-center in the emoji panel (precached frames were blitted top-left and scaled by width only)
+- webm sticker permanently stuck blank until the app is restarted (an image load cancelled mid-flight published a decoder-less drawable into the animation cache, whose stream stayed cancelled and which never retried decoding)
 - recyclerlistview double-tap requires same view
 - list ripple left behind when the pressed row moves because another row changed height (selector was only re-synced on scroll)
 - dead zones in list rows where a hidden clickable child kept stale bounds from a previous binding (e.g. top-right corner of a member row in profile after a tagged member was recycled)
@@ -275,6 +278,8 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - photo viewer no longer dismissing the keyboard / jumping at end of close animation (12.8 regression)
 - missing action bar title/date and open/close animation when viewing a photo of a user who hid theirs from you (stock bug: profile photo locations carried no dc id)
 - text spoilers jittering/blinking while scrolling on high-refresh displays (12.8 regression)
+- revealed spoilers in album captions re-hiding themselves after a scroll (reveal flag was set on the drawing cell's message instead of the group's primary one)
+- black screen after rotating the screen with a chat preview open
 - round video recorder cancel crash when leaving chat
 - missing `Emoji.replaceEmoji` calls
 - background media loading cpu usage (experimental)
@@ -314,7 +319,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - a bunch of stock memory/resource leaks
 - correctly handle "Open in..." in ChatAttachAlert: open editor before sending + support multi-attach
 - avatar of a bubble right below a topic separator (forum "All" tab) only clickable in its lower part
-- lingering system media session after voice/round/music playback ends (12.8 singleton regression, visible on MIUI)
+- opt out of android media resumption, so a phantom telegram player chip no longer reappears in quick settings after a reboot or once the app process is gone
 - fix profile crash when a contact's note is removed server-side while the open animation is running (note row built from stale user info, bound against fresh)
 - notifications for chats read on another device no longer linger forever when the app process was killed in between (stock only tracked posted notifications in memory)
 - crash long-pressing a sticker set while off-screen rows are cached (reorder update bound null item on cached/hidden holders)
@@ -326,3 +331,5 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu
 - chat drifting a few px off the input when hiding the keyboard while a message animation runs (aosp recyclerview bug: end-anchored padding delta applied twice across pre+post layout)
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
+- crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
+- stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of

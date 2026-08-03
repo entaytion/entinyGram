@@ -113,6 +113,27 @@ export async function ensureUpstreamRemote(repoDir: string) {
   await git`git remote add upstream ${upstreamUrl}`
 }
 
+export async function syncSubmodules(repoDir: string) {
+  if (!existsSync(join(repoDir, '.gitmodules'))) {
+    return false
+  }
+
+  const git = cd(repoDir)
+  // status prefixes: ' ' in sync, '-' uninitialized, '+' sha mismatch, 'U' conflicted
+  const stale = (await git`git submodule status`)
+    .stdout
+    .split(/\r?\n/)
+    .filter(line => line.length > 0 && line[0] !== ' ')
+
+  if (stale.length === 0) {
+    return false
+  }
+
+  step(`Syncing ${stale.length} submodule(s), this will take a while`)
+  await git`git submodule update --init --recursive --filter=blob:none`
+  return true
+}
+
 export function hasGitRepo(repoDir: string) {
   return existsSync(join(repoDir, '.git'))
 }

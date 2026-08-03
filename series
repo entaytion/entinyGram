@@ -156,7 +156,6 @@ bugfix/expand-emoji-tabs.patch
 bugfix/spoiler-reveal-keep.patch
 feature/reaction-confirm-non-member.patch
 feature/confirm-internal-links.patch
-bugfix/hq-stickers-editor.patch
 feature/no-selection-cap.patch
 feature/seekable-gifs.patch
 feature/disable-browser-collapse.patch
@@ -255,6 +254,13 @@ bugfix/profile-menu-duplicate-actions.patch
 bugfix/album-caption-link-ripple.patch
 bugfix/recyclerview-prelayout-space-change.patch
 bugfix/save-uncached-documents-to-downloads.patch
+bugfix/album-caption-spoiler-reset.patch
+bugfix/story-privacy-hint-npe.patch
+bugfix/preview-rotation-black-screen.patch
+bugfix/dead-animated-drawable.patch
+bugfix/community-admin-list-spam.patch
+feature/unified-video-rewind.patch
+feature/user-deeplink.patch
 feature/title-alignment.patch
 feature/regex-filter.patch
 feature/save-stories.patch

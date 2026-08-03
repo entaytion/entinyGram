@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 3 Aug 2026 13:46:59 +0400
+Subject: Fix black screen when rotating the screen with a chat preview open
+
+---
+ .../org/telegram/ui/ActionBar/ActionBarLayout.java     | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -313,8 +313,12 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+             int width = MeasureSpec.getSize(widthMeasureSpec);
+             int height = MeasureSpec.getSize(heightMeasureSpec);
+             boolean isPortrait = height > width;
+-            if (wasPortrait != isPortrait && isInPreviewMode()) {
+-                finishPreviewFragment();
++            if (wasPortrait != isPortrait && isInPreviewMode() && !inu_previewFinishPosted) {
++                inu_previewFinishPosted = true;
++                AndroidUtilities.runOnUIThread(() -> {
++                    inu_previewFinishPosted = false;
++                    finishPreviewFragment();
++                });
+             }
+             wasPortrait = isPortrait;
+ 
+@@ -567,6 +571,8 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+     private boolean previewOpenAnimationInProgress;
+     private ColorDrawable previewBackgroundDrawable;
+ 
++    private boolean inu_previewFinishPosted;
++
+     public LayoutContainer containerView;
+     public LayoutContainer containerViewBack;
+     public LayoutContainer sheetContainer;

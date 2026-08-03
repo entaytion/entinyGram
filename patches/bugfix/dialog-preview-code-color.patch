@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.Components.URLSpanNoUnderline;
  import org.telegram.ui.Components.URLSpanNoUnderlineBold;
  import org.telegram.ui.Components.VectorAvatarThumbDrawable;
-@@ -2741,7 +2742,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -2738,7 +2739,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              if (messageString instanceof Spannable) {
                  Spannable messageStringSpannable = (Spannable) messageString;
                  for (Object span : messageStringSpannable.getSpans(0, messageStringSpannable.length(), Object.class)) {

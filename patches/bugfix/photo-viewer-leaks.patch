@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -12416,6 +12416,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -12205,6 +12205,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  animatorX.addUpdateListener(animation -> photoPaintView.setOffsetTranslationX((Float) animation.getAnimatedValue()));
                  paintingOverlay.showAll();
                  containerView.invalidate();
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                  photoPaintView.shutdown();
                  animators.add(animatorY);
                  animators.add(animatorX);
-@@ -18444,6 +18451,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18235,6 +18242,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  editorDoneLayout.setVisibility(View.GONE);
                  photoCropView.setVisibility(View.GONE);
              } else if (currentEditMode == EDIT_MODE_PAINT) {
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
                  photoPaintView.shutdown();
                  containerView.removeView(photoPaintView.getView());
                  photoPaintView = null;
-@@ -18974,6 +18988,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18765,6 +18779,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              currentThumb = null;
          }
          animatingImageView.setImageBitmap(null);

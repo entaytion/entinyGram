@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -1896,10 +1896,10 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -1898,10 +1898,10 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
      }
  
      public void sendSticker(TLRPC.Document document, String query, long peer, CharSequence caption, VideoEditedInfo videoEditedInfo, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, MessageObject.SendAnimationData sendAnimationData, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean updateStickersOrder, Object parentObject, String quick_reply_shortcut, int quick_reply_shortcut_id, long stars, long monoForumPeerId, MessageSuggestionParams suggestionParams) {
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
          if (document == null) {
              return;
          }
-@@ -2022,6 +2022,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2024,6 +2024,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                      sendMessageParams.suggestionParams = suggestionParams;
                      sendMessageParams.caption = caption != null ? caption.toString() : null;
                      sendMessageParams.invert_media = invertMedia;
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                      sendMessage(sendMessageParams);
                  });
              });
-@@ -2042,6 +2043,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2044,6 +2045,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
              sendMessageParams.monoForumPeer = monoForumPeerId;
              sendMessageParams.suggestionParams = suggestionParams;
              sendMessageParams.invert_media = invertMedia;
@@ -48,7 +48,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19775,6 +19775,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19811,6 +19811,7 @@ public class ChatActivity extends BaseFragment implements
                  info.entities = entry.entities;
                  info.masks = entry.stickers;
                  info.ttl = entry.ttl;
@@ -81,7 +81,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -241,6 +241,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -240,6 +240,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      public final static int preview = 7;
      public final static int caption = 8;
      public final static int stars = 9;
@@ -89,7 +89,7 @@ index 0000000..0000000 100644
  
      private ActionBarMenuSubItem spoilerItem;
      private ActionBarMenuSubItem compressItem;
-@@ -258,6 +259,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -257,6 +258,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      }
  
      private class BasePhotoProvider extends PhotoViewer.EmptyPhotoViewerProvider {
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
          @Override
          public boolean isPhotoChecked(int index) {
              MediaController.PhotoEntry photoEntry = getPhotoEntryAtPosition(index);
-@@ -3268,7 +3274,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3267,7 +3273,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                      parentAlert.delegate.didPressedButton(4, true, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, payStars);
                  });
              }
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
              if (parentAlert.getPhotoPreviewLayout() != null) {
                  parentAlert.getPhotoPreviewLayout().startMediaCrossfade();
              }
-@@ -3281,7 +3287,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3280,7 +3286,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                      break;
                  }
              }
@@ -119,7 +119,7 @@ index 0000000..0000000 100644
              boolean finalSpoilersEnabled = spoilersEnabled;
              AndroidUtilities.runOnUIThread(()-> {
                  spoilerItem.setText(LocaleController.getString(finalSpoilersEnabled ? R.string.DisablePhotoSpoiler : R.string.EnablePhotoSpoiler));
-@@ -3307,7 +3313,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3306,7 +3312,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              for (HashMap.Entry<Object, Object> entry : selectedPhotos.entrySet()) {
                  if (entry.getValue() instanceof MediaController.PhotoEntry) {
                      MediaController.PhotoEntry photoEntry = (MediaController.PhotoEntry) entry.getValue();
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
                      photoEntry.isChatPreviewSpoilerRevealed = false;
                      photoEntry.isAttachSpoilerRevealed = false;
                      selectedIds.add(photoEntry.imageId);
-@@ -3317,7 +3323,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3316,7 +3322,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              gridView.forAllChild(view -> {
                  if (view instanceof PhotoAttachPhotoCell) {
                      MediaController.PhotoEntry entry = ((PhotoAttachPhotoCell) view).getPhotoEntry();
@@ -141,7 +141,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -2944,6 +2944,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -2945,6 +2945,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public interface PhotoViewerProvider {
@@ -149,7 +149,7 @@ index 0000000..0000000 100644
          PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing);
          ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
          void willSwitchFromPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
-@@ -7626,6 +7627,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7415,6 +7416,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return false;
              }
  
@@ -159,7 +159,7 @@ index 0000000..0000000 100644
              final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
              final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
              final boolean userIsSelf = UserObject.isUserSelf(user);
-@@ -7652,13 +7656,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7441,13 +7445,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final boolean showSchedule = !canEdit && canScheduleMessage && !hasTtl;
              final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
              final boolean multipleSelected = placeProvider != null && placeProvider.getSelectedCount() > 1;

@@ -39,7 +39,7 @@ index 0000000..0000000 100644
              delegate.showChatPreview(DialogCell.this);
          }
      };
-@@ -4750,7 +4759,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -4747,7 +4756,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  storyParams.forceState = s;
              }
  

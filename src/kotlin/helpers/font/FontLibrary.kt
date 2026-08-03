@@ -14,6 +14,7 @@ import desu.inugram.helpers.font.SfntParser.Script
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.DispatchQueue
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.Utilities
@@ -21,6 +22,8 @@ import org.telegram.ui.Components.Paint.PaintTypeface
 import java.io.File
 import java.io.FileOutputStream
 import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 
 /**
  * Owns the editor **font roster** and the storage behind it: imported font families, discovered device
@@ -43,6 +46,9 @@ object FontLibrary {
     private const val INDEX = "index.json"
     private const val MANIFEST = "pack.json"
     private const val STAGING = ".staging"
+
+    // 8K (the stdlib default) means ~1600 read+write syscall pairs per 13MB face file
+    private const val COPY_BUFFER = 256 * 1024
 
     data class Face(
         val file: String,
@@ -246,6 +252,10 @@ object FontLibrary {
             return out.also { cachedScripts = it }
         }
     }
+
+    // importing parses & rewrites multi-MB files for tens of seconds; a shared queue would stall
+    // every other subsystem posting to it meanwhile
+    val importQueue: DispatchQueue by lazy { DispatchQueue("inuFontImport") }
 
     private var rootDir: File? = null
     private val families = LinkedHashMap<String, Family>()
@@ -485,9 +495,16 @@ object FontLibrary {
             val glyphCount = raf.readShort().toInt() and 0xffff
             if (glyphCount <= 0) return null
 
+            // a seek+read per loca entry and per glyph header is ~4 syscalls x glyphCount; fonts with
+            // tens of thousands of glyphs (Iosevka & co) spend seconds there. map both tables instead.
+            val locaEntry = if (longLoca) 4 else 2
+            val locaBuf = raf.map(loca, (glyphCount + 1).toLong() * locaEntry) ?: return null
+            val glyfBuf = raf.map(glyf, glyf.length.toLong()) ?: return null
+
             fun locaOffset(index: Int): Int {
-                raf.seek(loca.offset.toLong() + if (longLoca) index * 4L else index * 2L)
-                return if (longLoca) raf.readInt() else (raf.readShort().toInt() and 0xffff) * 2
+                val at = index * locaEntry
+                if (at + locaEntry > locaBuf.limit()) return -1
+                return if (longLoca) locaBuf.getInt(at) else (locaBuf.getShort(at).toInt() and 0xffff) * 2
             }
 
             var yMin = Int.MAX_VALUE
@@ -496,10 +513,10 @@ object FontLibrary {
                 val start = locaOffset(i)
                 val end = locaOffset(i + 1)
                 if (end <= start || start < 0 || end > glyf.length) continue
-                raf.seek(glyf.offset.toLong() + start + 4)
-                val glyphYMin = raf.readShort().toInt()
-                raf.skipBytes(2)
-                val glyphYMax = raf.readShort().toInt()
+                // glyph header: numberOfContours, xMin, yMin, xMax, yMax
+                if (start + 10 > glyfBuf.limit()) continue
+                val glyphYMin = glyfBuf.getShort(start + 4).toInt()
+                val glyphYMax = glyfBuf.getShort(start + 8).toInt()
                 if (glyphYMin < yMin) yMin = glyphYMin
                 if (glyphYMax > yMax) yMax = glyphYMax
             }
@@ -507,6 +524,14 @@ object FontLibrary {
         } catch (_: Throwable) {
             null
         }
+    }
+
+    /** Read-only mapping of [table], clamped to the file; null when the table lies outside it. */
+    private fun RandomAccessFile.map(table: SfntTable, size: Long): ByteBuffer? {
+        if (table.offset < 0) return null
+        val available = length() - table.offset
+        if (available <= 0) return null
+        return channel.map(FileChannel.MapMode.READ_ONLY, table.offset.toLong(), minOf(size, available))
     }
 
     private fun updateTableChecksum(raf: RandomAccessFile, table: SfntTable) {
@@ -745,7 +770,7 @@ object FontLibrary {
                     FileLog.d("$TAG: importFromUris: openInputStream returned null for $uri")
                     false
                 } else {
-                    ins.use { FileOutputStream(tmp).use { os -> it.copyTo(os) } }
+                    ins.use { FileOutputStream(tmp).use { os -> it.copyTo(os, COPY_BUFFER) } }
                     true
                 }
             } catch (e: Throwable) {
@@ -770,7 +795,7 @@ object FontLibrary {
         val staged = ArrayList<StagedFile>()
         var rejected = 0
         try {
-            source.copyTo(tmp, overwrite = true)
+            source.copyTo(tmp, overwrite = true, bufferSize = COPY_BUFFER)
             if (stageParsedFile(tmp, staged) == StageResult.UNSUPPORTED) rejected++
         } catch (e: Throwable) {
             FileLog.e("$TAG: importFromFile: failed to stage ${source.absolutePath}", e)
@@ -938,6 +963,7 @@ object FontLibrary {
         (FontConfig.FONT.value as? FontConfig.FontMode.Custom)?.takeIf { tok in it.fallbacks }?.let {
             FontConfig.FONT.value = it.copy(fallbacks = it.fallbacks - tok)
         }
+        if (FontConfig.MONO_FONT.value == tok.token()) FontConfig.MONO_FONT.value = ""
         saveRoster()
     }
 

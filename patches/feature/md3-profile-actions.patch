@@ -247,7 +247,7 @@ index 0000000..0000000 100644
              setActionsMode();
              updateNotifications(false);
  
-@@ -5495,7 +5497,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5496,7 +5498,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setChatInfo(chatInfo);
          }
          avatarContainer2.addView(avatarsViewPager);
@@ -256,7 +256,7 @@ index 0000000..0000000 100644
          avatarContainer2.addView(overlaysView);
          if (actionsView != null) {
              avatarsBlurView.setActionsView(actionsView);
-@@ -6056,7 +6058,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6057,7 +6059,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private int getActionsExtraHeight(boolean withMusic) {
          if (userId != 0 && imageUpdater != null && !myProfile)
              return 0;
@@ -265,7 +265,7 @@ index 0000000..0000000 100644
      }
  
      private int getHeaderExtraHeight() {
-@@ -11273,17 +11275,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11277,17 +11279,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
              actionsView.updatePosition(bottom - height + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height);
          }
  
-@@ -11303,22 +11306,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11307,22 +11310,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);

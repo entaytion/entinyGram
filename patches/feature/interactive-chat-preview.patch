@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
-@@ -1974,6 +1974,14 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+@@ -1965,6 +1965,14 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
          if (fragment == null || checkTransitionAnimation() || delegate != null && check && !delegate.needPresentFragment(this, params) || !fragment.onFragmentCreate()) {
              return false;
          }
@@ -25,14 +25,14 @@ index 0000000..0000000 100644
 +            }, 250);
 +            return false;
 +        }
-         final boolean isSupportEdgeToEdge = fragment.isSupportEdgeToEdge();
+         final EdgeToEdgeSupportMode edgeToEdgeSupportMode = fragment.getEdgeToEdgeSupportMode();
+         final boolean isSupportEdgeToEdge = edgeToEdgeSupportMode != EdgeToEdgeSupportMode.NONE;
          final boolean drawNavigationBar = fragment.drawEdgeNavigationBar();
- 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17479,8 +17479,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17497,8 +17497,9 @@ public class ChatActivity extends BaseFragment implements
                  return true;
              }
  
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                      boolean pressedOnPageDownButtons = false, pressedOnAction = false;
                      int[] off = new int[2];
                      getLocationInWindow(off);
-@@ -17510,7 +17511,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -17528,7 +17529,7 @@ public class ChatActivity extends BaseFragment implements
                              pressedOnAction = true;
                          }
                      }
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                          x = ev.getX();
                          y = ev.getY();
                          pressTime = SystemClock.elapsedRealtime();
-@@ -17536,8 +17537,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -17554,8 +17555,10 @@ public class ChatActivity extends BaseFragment implements
                          }
                          ev.setAction(MotionEvent.ACTION_CANCEL);
                      }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
                      pressTime = -1;
                  }
              }
-@@ -40540,12 +40543,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -40583,12 +40586,12 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean canPerformActions() {
@@ -82,7 +82,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -8696,6 +8696,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8699,6 +8699,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              });
          }
  
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
          if (!isCommunityCell) {
              ActionBarMenuSubItem markAsUnreadItem = new ActionBarMenuSubItem(getParentActivity(), true, false);
              if (cell.getHasUnread()) {
-@@ -8898,7 +8910,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8901,7 +8913,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  presentFragmentAsPreviewWithMenu(previewActivity[0] = chatActivity1, previewMenu[0]);
                  if (chatActivity1 != null) {

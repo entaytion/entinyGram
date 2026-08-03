@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -7958,7 +7958,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7747,7 +7747,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              if (currentEditMode == EDIT_MODE_CROP && !photoCropView.isReady()) {
                  return;
              }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              switchToEditMode(EDIT_MODE_NONE);
          });
  
-@@ -8313,7 +8313,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -8102,7 +8102,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      }
                      return;
                  }
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              }
              if (!replace && parentChatActivity != null) {
                  TLRPC.Chat chat = parentChatActivity.getCurrentChat();
-@@ -11638,15 +11644,16 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11427,15 +11433,16 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
      }
  
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bitmap[] paintThumbBitmap = new Bitmap[1];
          List<TLRPC.InputDocument> stickers = null;
          MediaController.SavedFilterState savedFilterState = null;
-@@ -11655,10 +11662,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11444,10 +11451,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          boolean hasChanged = false;
          MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
          if (currentEditMode == EDIT_MODE_CROP || currentEditMode == EDIT_MODE_NONE && sendPhotoType == SELECT_TYPE_AVATAR) {
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
              if (isCurrentVideo) {
                  if (!TextUtils.isEmpty(entry.filterPath)) {
                      bitmap = ImageLoader.loadBitmap(entry.filterPath, null, thumbSize, thumbSize, true);
-@@ -11675,6 +11678,24 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11464,6 +11467,24 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              } else {
                  bitmap = centerImage.getBitmap();
                  orientation = new int[]{centerImage.getOrientation(), centerImage.getInvert()};
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
              }
          } else if (currentEditMode == EDIT_MODE_FILTER) {
              bitmap = photoFilterView.getBitmap();
-@@ -11716,10 +11737,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11505,10 +11526,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      stickerMakerView.updateOutlinePath(bitmap);
                  }
              }
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
          }
  
          if (entry.thumbPath != null) {
-@@ -11737,7 +11758,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11526,7 +11547,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              editState.croppedMediaEntities = entry.croppedMediaEntities;
  
              if (entry.cropState != null) {
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
                  if (entry.paintPath != null) {
                      Bitmap paintBitmap = BitmapFactory.decodeFile(entry.fullPaintPath);
                      Bitmap croppedPaintBitmap = createCroppedBitmap(paintBitmap, entry.cropState, null, false);
-@@ -12003,6 +12024,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11792,6 +11813,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
          ignoreDidSetImage = false;
          centerImage.setParentView(containerView);

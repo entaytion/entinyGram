@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 3 Aug 2026 16:24:28 +0400
+Subject: support for tg://user deeplinks
+
+---
+ .../java/org/telegram/ui/LaunchActivity.java    | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -1597,6 +1597,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+             }
+         }
+         boolean pushOpened = false;
++        boolean inu_pushOpenProfile = false;
+         long push_user_id = 0;
+         long push_chat_id = 0;
+         long[] push_story_dids = null;
+@@ -2627,6 +2628,13 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                                                 }
+                                             } catch (NumberFormatException ignore) {}
+                                         }
++                                    } else if (url.startsWith("tg:user?") || url.startsWith("tg://user?")) {
++                                        url = url.replace("tg:user?", "tg://telegram.org?").replace("tg://user?", "tg://telegram.org?");
++                                        data = Uri.parse(url);
++                                        try {
++                                            push_user_id = Long.parseLong(data.getQueryParameter("id"));
++                                            inu_pushOpenProfile = true;
++                                        } catch (Exception ignore) {}
+                                     } else if (url.startsWith("tg:passport") || url.startsWith("tg://passport") || url.startsWith("tg:secureid")) {
+                                         url = url.replace("tg:passport", "tg://telegram.org").replace("tg://passport", "tg://telegram.org").replace("tg:secureid", "tg://telegram.org");
+                                         data = Uri.parse(url);
+@@ -3037,7 +3045,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                 NotificationCenter.getInstance(intentAccount[0]).postNotificationName(NotificationCenter.closeChats);
+                 openStories(push_story_dids, true);
+             } else if (push_user_id != 0) {
+-                if (audioCallUser || videoCallUser) {
++                if (inu_pushOpenProfile) {
++                    Bundle args = new Bundle();
++                    args.putLong("user_id", push_user_id);
++                    if (getActionBarLayout().presentFragment(new INavigationLayout.NavigationParams(new ProfileActivity(args)).setNoAnimation(true))) {
++                        pushOpened = true;
++                        LaunchActivity.dismissAllWeb();
++                    }
++                } else if (audioCallUser || videoCallUser) {
+                     if (needCallAlert) {
+                         final BaseFragment lastFragment = actionBarLayout.getLastFragment();
+                         if (lastFragment != null) {

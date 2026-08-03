@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -9404,6 +9404,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9406,6 +9406,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  }
              }
          }
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          final String captionFinal = caption != null ? caption.toString() : "";
  
          final TLRPC.TL_document documentFinal = document;
-@@ -9413,7 +9414,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -9415,7 +9416,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (originalPath != null) {
              params.put("originalPath", originalPath);
          }

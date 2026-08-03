@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -1291,6 +1291,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1292,6 +1292,7 @@ public class ChatActivity extends BaseFragment implements
          }
      };
      private int chatEmojiViewPadding;
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      private int fixedKeyboardHeight = -1;
      private Runnable cancelFixedPositionRunnable;
      private boolean invalidateMessagesVisiblePart;
-@@ -18351,8 +18352,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -18381,8 +18382,7 @@ public class ChatActivity extends BaseFragment implements
              if (actionBar.getVisibility() == VISIBLE) {
                  heightSize -= actionBarHeight;
              }
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
              if (lastHeight != allHeight) {
                  measureKeyboardHeight();
              }
-@@ -18368,7 +18368,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -18398,7 +18398,11 @@ public class ChatActivity extends BaseFragment implements
              }
              setEmojiKeyboardHeight(chatEmojiViewPadding);
  
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
              boolean waitingChatListItemAnimator = false;
              if (MediaController.getInstance().getPlayingMessageObject() != null && MediaController.getInstance().getPlayingMessageObject().isRoundVideo() && keyboardVisibleOld != keyboardVisible) {
                  for (int i = 0; i < chatListView.getChildCount(); i++) {
-@@ -18379,7 +18383,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -18409,7 +18413,16 @@ public class ChatActivity extends BaseFragment implements
                          if (messageObject.isRoundVideo() && MediaController.getInstance().isPlayingMessage(messageObject)) {
                              int p = chatListView.getChildAdapterPosition(child);
                              if (p >= 0) {
@@ -62,7 +62,7 @@ index 0000000..0000000 100644
                                  chatAdapter.notifyItemChanged(p);
                                  adjustPanLayoutHelper.delayAnimation();
                                  waitingChatListItemAnimator = true;
-@@ -22911,7 +22924,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -22953,7 +22966,7 @@ public class ChatActivity extends BaseFragment implements
                                  if (MediaController.getInstance().isPlayingMessage(messageObject1)) {
                                      boolean keyboardIsVisible = contentView.getKeyboardHeight() >= AndroidUtilities.dp(20);
                                      float topPadding = chatListViewPaddingTop - (contentPanTranslation);
@@ -112,7 +112,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/inset/Window
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/inset/WindowInsetsStateHolder.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/inset/WindowInsetsStateHolder.java
-@@ -105,6 +105,12 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -106,6 +106,12 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
          final Insets inputInsets = Insets.max(imeInsets, inAppInsets);
          final Insets maxInsets = Insets.max(systemInsets, inputInsets);
  
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
          if (animated) {
              final boolean changed = keyboardVisibility.differs(inputInsets.bottom > 0 ? 1f : 0f)
                  || insetsMaxRect.differs(maxInsets.left, maxInsets.top, maxInsets.right, maxInsets.bottom)
-@@ -165,7 +171,7 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -166,7 +172,7 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
  
      @Override
      public float getAnimatedMaxBottomInset() {
@@ -134,7 +134,7 @@ index 0000000..0000000 100644
              return Math.max(animatedImeInset, insetsMaxRect.getBottom());
          }
  
-@@ -174,16 +180,22 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -175,16 +181,22 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
  
      @Override
      public int getCurrentMaxBottomInset() {
@@ -160,7 +160,7 @@ index 0000000..0000000 100644
              return Math.max(animatedImeInset, insetsImeRect.getBottom());
          }
  
-@@ -254,6 +266,17 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -255,6 +267,17 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
      private @Nullable View animatedInsetsProviderTarget;
      private int animatedImeInset;
  
@@ -178,7 +178,7 @@ index 0000000..0000000 100644
      public void setupAnimatedInsetsProvider(WindowAnimatedInsetsProvider provider, View target) {
          animatedInsetsProvider = provider;
          animatedInsetsProviderTarget = target;
-@@ -275,6 +298,9 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -276,6 +299,9 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
  
      @Override
      public void onAnimatedInsetsStarted() {
@@ -188,7 +188,7 @@ index 0000000..0000000 100644
          activeAnimations++;
      }
  
-@@ -284,6 +310,7 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -285,6 +311,7 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
              animatedInsetsProviderTarget.postOnAnimation(() -> {
                  activeAnimations--;
                  if (activeAnimations == 0) {

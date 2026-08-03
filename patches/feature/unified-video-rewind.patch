@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 3 Aug 2026 15:41:47 +0400
+Subject: Always use the modern rewind UI in the video player.
+
+---
+ .../main/java/org/telegram/ui/PhotoViewer.java   | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -20933,20 +20933,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             }
+             float x = longPressX;
+             int width = getContainerViewWidth();
+-            if (total > 180 * 1000) {
+-                boolean forward;
+-                if (x >= width / 3 * 2) {
+-                    forward = true;
+-                } else if (x < width / 3) {
+-                    forward = false;
+-                } else {
+-                    return;
+-                }
+-                longVideoPlayerRewinder.startRewind(videoPlayer, forward, currentVideoSpeed);
+-            } else {
+-                final boolean forward = x > width / 3;
+-                videoPlayerRewinder.startRewind(videoPlayer, forward, longPressX, currentVideoSpeed, seekSpeedDrawable);
+-            }
++            final boolean forward = x > width / 3;
++            videoPlayerRewinder.startRewind(videoPlayer, forward, longPressX, currentVideoSpeed, seekSpeedDrawable);
+         }
+     }
+ 

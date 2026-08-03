@@ -84,7 +84,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -383,7 +383,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -406,7 +406,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
  
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
          tabsViewWrapper.setOnClickListener(v -> {});
          tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
          tabsViewWrapper.setClipToPadding(false);
-@@ -972,6 +978,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1095,6 +1101,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (viewPager == null || fadeView == null || MainTabsHelper.isHidden()) {
              return;
          }

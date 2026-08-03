@@ -3,6 +3,7 @@ package desu.inugram.helpers.chat
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.helpers.translate.TranslateHelper
+import org.telegram.messenger.ChatObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
@@ -10,36 +11,43 @@ import org.telegram.ui.Cells.ChatActionCell
 import org.telegram.ui.Cells.ChatMessageCell
 import org.telegram.ui.ChatActivity
 
+enum class DoubleTapContext {
+    INCOMING,
+    OUTGOING,
+    CHANNEL,
+}
+
 enum class DoubleTapAction(
     val value: Int,
     private val labelRes: Int,
-    private val incoming: Boolean = true,
-    private val outgoing: Boolean = true,
+    private val allowedIn: Set<DoubleTapContext> = DoubleTapContext.entries.toSet(),
 ) {
     NONE(0, R.string.None),
     QUICK_REACTION(1, R.string.InuQuickReaction),
     SHOW_REACTIONS(2, R.string.InuShowReactions),
-    TRANSLATE(3, R.string.TranslateMessage, outgoing = false),
+    TRANSLATE(3, R.string.TranslateMessage, setOf(DoubleTapContext.INCOMING, DoubleTapContext.CHANNEL)),
     REPLY(4, R.string.Reply),
     SAVE(5, R.string.Save),
-    EDIT(6, R.string.Edit, incoming = false),
+    EDIT(6, R.string.Edit, setOf(DoubleTapContext.OUTGOING, DoubleTapContext.CHANNEL)),
     DELETE(7, R.string.Delete),
     DETAILS(8, R.string.InuMessageDetails),
     ;
 
-    fun isAllowed(outgoing: Boolean): Boolean = if (outgoing) this.outgoing else incoming
+    fun isAllowedIn(context: DoubleTapContext): Boolean = context in allowedIn
 
     fun label(): CharSequence = LocaleController.getString(labelRes)
 
     companion object {
-        fun fromValue(value: Int, outgoing: Boolean): DoubleTapAction =
-            entries.firstOrNull { it.value == value && it.isAllowed(outgoing) } ?: NONE
+        fun fromValue(value: Int, context: DoubleTapContext): DoubleTapAction =
+            entries.firstOrNull { it.value == value && it.isAllowedIn(context) } ?: NONE
 
-        fun available(outgoing: Boolean): List<DoubleTapAction> = entries.filter { it.isAllowed(outgoing) }
+        fun available(context: DoubleTapContext): List<DoubleTapAction> = entries.filter { it.isAllowedIn(context) }
     }
 }
 
 object DoubleTapActionHelper {
+    const val INHERIT_INCOMING = -1
+
     private fun menuOptionForAction(action: DoubleTapAction, message: MessageObject): Int? {
         return when (action) {
             DoubleTapAction.REPLY -> ChatActivity.OPTION_REPLY
@@ -55,7 +63,7 @@ object DoubleTapActionHelper {
     @JvmStatic
     fun hasDoubleTap(activity: ChatActivity, view: View): Boolean? {
         val message = extractMessage(view) ?: return null
-        val action = getAction(message)
+        val action = getAction(activity, message)
 
         return when (action) {
             // fallback to the default handling
@@ -77,7 +85,7 @@ object DoubleTapActionHelper {
     @JvmStatic
     fun onDoubleTap(activity: ChatActivity, view: View, x: Float, y: Float): Boolean {
         val message = extractMessage(view) ?: return false
-        val action = getAction(message)
+        val action = getAction(activity, message)
 
         return when (action) {
             // fallback to the default handling
@@ -99,14 +107,25 @@ object DoubleTapActionHelper {
         }
     }
 
-    fun getAction(message: MessageObject): DoubleTapAction {
-        val outgoing = message.isOutOwner
-        val value = if (outgoing) {
-            InuConfig.DOUBLE_TAP_ACTION_OUTGOING.value
-        } else {
-            InuConfig.DOUBLE_TAP_ACTION_INCOMING.value
+    fun getAction(activity: ChatActivity, message: MessageObject): DoubleTapAction {
+        val context = getContext(activity, message)
+        val value = when (context) {
+            DoubleTapContext.OUTGOING -> InuConfig.DOUBLE_TAP_ACTION_OUTGOING.value
+            DoubleTapContext.INCOMING -> InuConfig.DOUBLE_TAP_ACTION_INCOMING.value
+            DoubleTapContext.CHANNEL -> InuConfig.DOUBLE_TAP_ACTION_CHANNEL.value
+                .takeIf { it != INHERIT_INCOMING }
+                ?: InuConfig.DOUBLE_TAP_ACTION_INCOMING.value
         }
-        return DoubleTapAction.fromValue(value, outgoing)
+        return DoubleTapAction.fromValue(value, context)
+    }
+
+    private fun getContext(activity: ChatActivity, message: MessageObject): DoubleTapContext {
+        if (message.isOutOwner) return DoubleTapContext.OUTGOING
+        val chat = activity.currentChat
+        if (ChatObject.isChannelAndNotMegaGroup(chat) && ChatObject.canPost(chat)) {
+            return DoubleTapContext.CHANNEL
+        }
+        return DoubleTapContext.INCOMING
     }
 
 //    private fun canUseAction(activity: ChatActivity, message: MessageObject): Boolean =

@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 3 Aug 2026 13:56:17 +0400
+Subject: Fix webm stickers stuck blank until app restart
+
+---
+ .../src/main/java/org/telegram/messenger/ImageLoader.java  | 6 ++++++
+ .../org/telegram/ui/Components/AnimatedFileDrawable.java   | 7 +++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+@@ -1181,6 +1181,12 @@ public class ImageLoader {
+                 } else {
+                     fileDrawable.setLimitFps(limitFps);
+                     Thread.interrupted();
++                    synchronized (sync) {
++                        if (isCancelled) {
++                            fileDrawable.recycle();
++                            return;
++                        }
++                    }
+                     onPostExecute(fileDrawable);
+                 }
+             } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+@@ -317,6 +317,9 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+         }
+ 
+         if (!decoderCreated && mDecoder == null) {
++            if (stream != null && stream.isCanceled()) {
++                stream.reset();
++            }
+             mDecoder = AnimatedFileNative.createDecoderFrom(path.getAbsolutePath(), metaData, currentAccount, streamFileSize, stream, false);
+             ptrFail = mDecoder == null && (!isWebmSticker || decoderTryCount > MAX_TRIES);
+             if (mDecoder != null && (metaData[0] > 3840 || metaData[1] > 3840)) {
+@@ -328,6 +331,10 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+             decoderCreated = !isWebmSticker || mDecoder != null || (decoderTryCount++) > MAX_TRIES;
+             AndroidUtilities.runOnUIThread(AnimatedFileDrawable.this::checkChoreographerInternal);
+         }
++        if (mDecoder == null && !precache) {
++            AndroidUtilities.runOnUIThread(uiRunnableNoFrame);
++            return;
++        }
+         try {
+             if (bitmapsCache != null) {
+                 if (backgroundBuffer == null) {

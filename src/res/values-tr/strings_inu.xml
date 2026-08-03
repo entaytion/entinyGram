@@ -29,6 +29,8 @@
     <string name="InuDoubleTapDelay">Çift dokunma gecikmesi</string>
     <string name="InuIncomingMessages">Gelen mesajlar</string>
     <string name="InuOutgoingMessages">Giden mesajlar</string>
+    <string name="InuChannelMessages">Gönderi paylaşabildiğiniz kanallar</string>
+    <string name="InuSameAsIncoming">Gelen ile aynı</string>
     <string name="InuDoubleTapInfo">Not: Telegram\'ın çift dokunmaları işleme biçimi nedeniyle, bir çift dokunma eylemini etkinleştirmek tek dokunmaların yukarıdaki süre kadar gecikmesine ve uygulamanın daha az tepkisel hissettirmesine neden olur.\nSüreyi ayarlayabilirsiniz, ancak gecikmeyi tamamen önlemenin tek yolu eylemleri devre dışı bırakmaktır.</string>
     <string name="InuQuickReaction">Hızlı Tepki</string>
     <string name="InuShowReactions">Tepkileri Göster</string>
@@ -253,7 +255,8 @@
     <string name="InuHideMyPhoneNumber">Telefon numaramı gizle</string>
     <string name="InuFonts">Yazı Tipleri</string>
     <string name="InuAppFont">Uygulama yazı tipi</string>
-    <string name="InuAppFontInfo">Uygulama arayüzü genelinde kullanılan yazı tipi.</string>
+    <string name="InuAppFontInfo">Uygulama arayüzü genelinde kullanılan yazı tipi. Uygulama yazı tipi olarak yalnızca Özel (içe aktarılmış) yazı tipleri seçilebilir.</string>
+    <string name="InuFontCustomOnly">Uygulama yazı tipi olarak yalnızca Özel (içe aktarılmış) yazı tipleri seçilebilir.</string>
     <string name="InuAvailableFonts">Kullanılabilir yazı tipleri</string>
     <string name="InuFontsInfo">Görünür yazı tipleri medya düzenleyicisinin metin aracında mevcuttur. Yeniden sıralamak için sürükleyin, gizlemek için göze dokunun; kaldırmak için içe aktarılan bir yazı tipine dokunun.</string>
     <string name="InuFontAdd">Yazı tipi ekle</string>

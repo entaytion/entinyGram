@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java b/TM
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
-@@ -1982,6 +1982,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+@@ -1980,6 +1980,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
              int count = webPage.cached_page.blocks.size();
              for (int a = 0; a < count; a++) {
                  TL_iv.PageBlock block = webPage.cached_page.blocks.get(a);
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6936,7 +6936,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6956,7 +6956,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      drawSideButton = 2;
                  }
              }

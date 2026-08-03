@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTa
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTabs.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheetTabs.java
-@@ -1015,6 +1015,7 @@ public class BottomSheetTabs extends FrameLayout {
+@@ -1019,6 +1019,7 @@ public class BottomSheetTabs extends FrameLayout {
                  return title;
              }
              if (props == null) return "";

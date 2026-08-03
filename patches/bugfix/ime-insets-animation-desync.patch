@@ -127,7 +127,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/inset/Window
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/inset/WindowInsetsStateHolder.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/inset/WindowInsetsStateHolder.java
-@@ -308,7 +308,7 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
+@@ -309,7 +309,7 @@ public class WindowInsetsStateHolder implements WindowInsetsProvider, WindowInse
      public void onAnimatedInsetsFinished() {
          if (animatedInsetsProviderTarget != null) {
              animatedInsetsProviderTarget.postOnAnimation(() -> {

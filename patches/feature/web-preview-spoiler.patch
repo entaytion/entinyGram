@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -1132,12 +1132,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -1137,12 +1137,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      public boolean captionAbove;
      private boolean isSmallImage;
      private boolean drawImageButton;
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
      private boolean animatingNoSoundPlaying;
      private int animatingNoSound;
      private float animatingNoSoundProgress;
-@@ -1477,7 +1477,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -1482,7 +1482,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      private boolean drawContinueBotTopic;
      private int pressedBotButton;
  
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
      private boolean isSpoilerRevealing;
  
      private boolean checkFileLoad;
-@@ -1727,6 +1727,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -1732,6 +1732,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      private float mediaSpoilerRevealMaxRadius;
      private SpoilerEffect2 mediaSpoilerEffect2;
      private Integer mediaSpoilerEffect2Index;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
  
  //    private Drawable startsAtDrawable;
  //    private Text startsAtText, startsAtTextShorter;
-@@ -3054,7 +3055,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3074,7 +3075,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
          if (x >= unmovedTextX && x <= unmovedTextX + backgroundWidth - dp(14) && y >= linkPreviewY && y <= linkPreviewY + linkPreviewHeight + dp(8 + (drawInstantView ? 46 : 0))) {
              if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
                      try {
                          int checkX = x - (unmovedTextX + dp(10) + descriptionX);
                          int checkY = y - descriptionY;
-@@ -3100,7 +3102,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3120,7 +3122,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  if (pressedLink == null) {
                      int side = dp(48);
                      boolean area2 = false;
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
                          int offset = dp(27);
                          area2 = x >= buttonX + offset && x <= buttonX + offset + side && y >= buttonY + offset && y <= buttonY + offset + side;
                      }
-@@ -3108,11 +3110,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3128,11 +3130,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          miniButtonPressed = 1;
                          invalidate();
                          return true;
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                          buttonPressed = 1;
                          invalidate();
                          if (currentMessageObject.sponsoredMedia != null && (MessageObject.isGifDocument(currentMessageObject.sponsoredMedia.document) || currentMessageObject.sponsoredMedia.photo != null)) {
-@@ -3160,6 +3162,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -3180,6 +3182,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  }
              } else if (event.getAction() == MotionEvent.ACTION_UP) {
                  if (instantPressed) {
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                      if (documentAttachType == DOCUMENT_ATTACH_TYPE_ROUND) {
                          if (!MediaController.getInstance().isPlayingMessage(currentMessageObject) || MediaController.getInstance().isMessagePaused()) {
                              delegate.needPlayMessage(this, currentMessageObject, false);
-@@ -4569,6 +4572,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -4589,6 +4592,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          block.spoilers.clear();
                      }
                  }
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                  invalidate();
              }));
              if (explanationLayout != null) {
-@@ -4616,6 +4620,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -4636,6 +4640,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  }
              }
  
@@ -103,7 +103,7 @@ index 0000000..0000000 100644
              spoilerPressed = null;
              return true;
          }
-@@ -6428,6 +6433,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6448,6 +6453,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          if (mediaSpoilerEffect2 != null) {
              mediaSpoilerEffect2.detach(this);
          }
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
          if (channelRecommendationsCell != null) {
              channelRecommendationsCell.onDetachedFromWindow();
          }
-@@ -6555,6 +6561,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6575,6 +6581,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  mediaSpoilerEffect2.attach(this);
              }
          }
@@ -119,7 +119,7 @@ index 0000000..0000000 100644
          if (channelRecommendationsCell != null) {
              channelRecommendationsCell.onAttachedToWindow();
          }
-@@ -6731,7 +6738,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6751,7 +6758,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
      public MultiLayoutTypingAnimator botDraftTypingAnimator;
  
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
          if (messageObject.checkLayout() || currentPosition != null && lastHeight != AndroidUtilities.displaySize.y) {
              currentMessageObject = null;
          }
-@@ -8660,7 +8667,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8680,7 +8687,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              } else if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO) {
                                  photoImage.setNeedsQualityThumb(true);
                                  photoImage.setShouldGenerateQualityThumb(true);
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
                                      (currentMessageObject.mediaExists || currentMessageObject.attachPathExists) ||
                                      messageObject.canStreamVideo() && DownloadController.getInstance(currentAccount).canDownloadMedia(currentMessageObject)
                                  )) {
-@@ -8690,7 +8697,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -8710,7 +8717,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                      autoDownload = false;
                                  }
                                  String filter = currentPhotoObject instanceof TLRPC.TL_photoStrippedSize || "s".equals(currentPhotoObject.type) ? currentPhotoFilterThumb : currentPhotoFilter;
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
                                      autoPlayingMedia = true;
                                      TLRPC.VideoSize videoSize = MessageObject.getDocumentVideoThumb(document);
                                      if (!messageObject.mediaExists && videoSize != null && (currentPhotoObject == null || currentPhotoObjectThumb == null)) {
-@@ -11285,6 +11292,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11305,6 +11312,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
          highlightCaptionToSetStart = highlightCaptionToSetEnd = -1;
  
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
          updateFlagSecure();
      }
  
-@@ -15528,6 +15537,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15545,6 +15554,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  .offsetEmoji(0, drawPhotoImageBefore ? (1f - isSmallImage()) * (dp(18) + photoImage.getImageHeight() + (siteNameLayout != null ? siteNameLayout.getLineBottom(siteNameLayout.getLineCount() - 1) : 0)) : 0)
                  .drawBackground(canvas, AndroidUtilities.rectTmp, rad, rad, rad, alpha);
  
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
              int rippleColor = linkLine.getBackgroundColor();
              if (linkPreviewSelector == null) {
                  linkPreviewSelector = Theme.createRadSelectorDrawable(linkPreviewSelectorColor = rippleColor, 0, 0);
-@@ -16161,6 +16172,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -16178,6 +16189,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              }
          }
  
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
          canvas.restoreToCount(restoreCount);
      }
  
-@@ -18062,7 +18075,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18079,7 +18092,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              } else {
                  radialProgress.setProgress(1, true);
              }
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
                  if (documentAttachType == DOCUMENT_ATTACH_TYPE_ROUND) {
                      photoImage.setImage(ImageLocation.getForDocument(documentAttach), ImageLoader.AUTOPLAY_FILTER, ImageLocation.getForObject(currentPhotoObject, photoParentObject), currentPhotoObject instanceof TLRPC.TL_photoStrippedSize || currentPhotoObject != null && "s".equals(currentPhotoObject.type) ? currentPhotoFilterThumb : currentPhotoFilter, ImageLocation.getForObject(currentPhotoObjectThumb, photoParentObject), currentPhotoFilterThumb, currentPhotoObjectThumbStripped, documentAttach.size, null, currentMessageObject, 0);
                      photoImage.setAllowStartAnimation(true);
-@@ -20270,7 +20283,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -20290,7 +20303,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              drawNamesLayout(canvas, 1f);
          }
  
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
              drawOverlays(canvas);
          }
          if ((drawTime || !mediaBackground) && !forceNotDrawTime && !transitionParams.animateBackgroundBoundsInner && !(enterTransitionInProgress && !currentMessageObject.isVoice()) && (!currentMessageObject.isQuickReply() || currentMessageObject.isSendError())) {
-@@ -23729,7 +23742,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -23749,7 +23762,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              }
          }
  
@@ -204,7 +204,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -5745,10 +5745,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5742,10 +5742,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              hasVideoThumb = hasVideoThumb || (message.isVideo() || message.isRoundVideo());
              if (thumbsCount < 3) {
                  thumbsCount++;

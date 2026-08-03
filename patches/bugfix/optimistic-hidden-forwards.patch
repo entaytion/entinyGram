@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2259,7 +2259,17 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2261,7 +2261,17 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          }
                          newMsg.fwd_from.channel_post = msgObj.getId();
                          newMsg.fwd_from.flags |= 4;
@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -22447,6 +22447,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -22489,6 +22489,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  boolean mediaUpdated = false;
                  boolean updatedForward = false;
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                  if (newMsgObj != null) {
                      try {
                          updatedForward = obj.isForwarded() && (obj.messageOwner.reply_markup == null && newMsgObj.reply_markup != null || !obj.messageOwner.message.equals(newMsgObj.message));
-@@ -22467,8 +22468,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -22509,8 +22510,8 @@ public class ChatActivity extends BaseFragment implements
                      TLRPC.MessageFwdHeader fwdHeader = obj.messageOwner.fwd_from;
                      obj.messageOwner = newMsgObj;
                      if (fwdHeader != null && newMsgObj.fwd_from != null && !TextUtils.isEmpty(newMsgObj.fwd_from.from_name)) {
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
                      }
                      obj.generateThumbs(true);
                      obj.setType();
-@@ -22484,7 +22485,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -22526,7 +22527,7 @@ public class ChatActivity extends BaseFragment implements
                  messagesDict[0].put(newMsgId, obj);
                  obj.messageOwner.id = newMsgId;
                  obj.messageOwner.send_state = MessageObject.MESSAGE_SEND_STATE_SENT;

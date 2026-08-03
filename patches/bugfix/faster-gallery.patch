@@ -7,8 +7,8 @@ Subject: faster gallery handling in attach sheet
  .../telegram/messenger/MediaController.java   | 44 +++++++++++++++----
  .../ui/Cells/PhotoAttachPhotoCell.java        |  1 +
  .../ChatAttachAlertPhotoLayout.java           |  1 +
- .../java/org/telegram/ui/PhotoViewer.java     | 14 ++++++
- 4 files changed, 52 insertions(+), 8 deletions(-)
+ .../java/org/telegram/ui/PhotoViewer.java     | 15 +++++++
+ 4 files changed, 53 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
@@ -127,7 +127,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -4270,6 +4270,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -4269,6 +4269,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                          }
                      }
                  }
@@ -139,7 +139,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -19663,6 +19663,20 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -19454,6 +19454,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          return imagesArrLocals;
      }
  
@@ -147,6 +147,7 @@ index 0000000..0000000 100644
 +        if (currentEditMode != EDIT_MODE_NONE || currentIndex < 0 || currentIndex >= imagesArrLocals.size() || !(imagesArrLocals.get(currentIndex) instanceof MediaController.PhotoEntry)) {
 +            return;
 +        }
++        applyCaption();
 +        entry.copyFrom((MediaController.PhotoEntry) imagesArrLocals.get(currentIndex));
 +        imagesArrLocals.set(currentIndex, entry);
 +        String key = centerImage.getImageKey();

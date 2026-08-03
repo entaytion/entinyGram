@@ -4,30 +4,32 @@ Date: Mon, 20 Apr 2026 12:50:31 +0300
 Subject: improved ios-style release-to-activate gestures: plain backgrounds, gesture detection
 
 ---
- .../telegram/ui/Components/ItemOptions.java   | 21 ++++++-------------
- .../org/telegram/ui/MainTabsActivity.java     |  7 +++----
- 2 files changed, 9 insertions(+), 19 deletions(-)
+ .../telegram/ui/Components/ItemOptions.java   | 23 +++++--------------
+ .../org/telegram/ui/MainTabsActivity.java     |  7 +++---
+ 2 files changed, 9 insertions(+), 21 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
-@@ -1470,12 +1470,8 @@ public class ItemOptions {
+@@ -1476,14 +1476,8 @@ public class ItemOptions {
              }
          }
  
--//        // discard all scrolls/gestures
--//        if (fragment != null && fragment.getFragmentView() != null) {
--//            fragment.getFragmentView().getRootView().dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
--//        } else if (this.container != null) {
--//            container.dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
--//        }
+-        if (!longPressSelectionEnabled) {
+-            // End the gesture that opened the menu so its source view cannot keep scrolling.
+-            if (fragment != null && fragment.getFragmentView() != null) {
+-                fragment.getFragmentView().getRootView().dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
+-            } else if (this.container != null) {
+-                container.dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
+-            }
+-        }
 +        // stock discarded the in-flight gesture here, but that cancels the press-hold-drag-release
 +        // started by installHoverReleaseListener() — keep the gesture alive instead
  
          if (blurForMenu && scrimBlur3SourceBitmap != null) {
              setGapBackgroundColor(Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0.06f));
-@@ -1801,7 +1797,6 @@ public class ItemOptions {
+@@ -1811,7 +1805,6 @@ public class ItemOptions {
  
      private View.OnTouchListener hoverReleaseListener;
      private View hoveredItem;
@@ -35,7 +37,7 @@ index 0000000..0000000 100644
  
      private void installHoverReleaseListener() {
          if (scrimView == null) return;
-@@ -1846,17 +1841,13 @@ public class ItemOptions {
+@@ -1856,17 +1849,13 @@ public class ItemOptions {
          View hit = findItemAt(layout, rawX, rawY);
          if (hit != hoveredItem) {
              if (hoveredItem != null) {
@@ -55,7 +57,7 @@ index 0000000..0000000 100644
      }
  
      private void releaseHover(int rawX, int rawY) {
-@@ -1864,14 +1855,14 @@ public class ItemOptions {
+@@ -1874,14 +1863,14 @@ public class ItemOptions {
          if (hoveredItem != null) {
              View target = hoveredItem;
              hoveredItem = null;
@@ -76,7 +78,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -320,7 +320,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -343,7 +343,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabs[INDEX_CHATS].setOnLongClickListener(this::openFoldersSelector);
          tabs[INDEX_CONTACTS].setOnLongClickListener(this::openContactsSelector);
          tabs[INDEX_CALLS].setOnLongClickListener(this::openCallsSelector);
@@ -85,7 +87,7 @@ index 0000000..0000000 100644
  
          tabsView.addTabToIgnoreClick(tabs[INDEX_CHATS]);
          tabsView.addTabToIgnoreClick(tabs[INDEX_CONTACTS]);
-@@ -522,7 +522,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -635,7 +635,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          }
      }
  
@@ -94,7 +96,7 @@ index 0000000..0000000 100644
          final ArrayList<Integer> accountNumbers = new ArrayList<>();
  
          accountNumbers.clear();
-@@ -591,11 +591,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -704,11 +704,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
          bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
          o.setScrimViewBackground(bg);

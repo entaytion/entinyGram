@@ -109,7 +109,7 @@ object GalleryHelper {
         if (index !in photos.indices) return
         val previous = photos[index] as? MediaController.PhotoEntry ?: return
         val current = album.photosByIds[previous.imageId] ?: return
-        if (previous === current) return
+        if (!hasMediaChanged(previous, current)) return
         viewer.inu_reloadCurrentPhoto(current)
     }
 

@@ -328,7 +328,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
-@@ -1260,6 +1260,13 @@ public class ItemOptions {
+@@ -1266,6 +1266,13 @@ public class ItemOptions {
              scrimBlur3SourceBitmap = new BlurredBackgroundSourceBitmap();
          }
  
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
          ViewGroup container = pointContainer = this.container == null ? fragment.getParentLayout().getOverlayContainerView() : this.container;
  
          if (context == null || container == null) {
-@@ -2144,6 +2151,7 @@ public class ItemOptions {
+@@ -2152,6 +2159,7 @@ public class ItemOptions {
                      } else {
                          canvas.save();
                      }
@@ -593,7 +593,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1192,6 +1192,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1195,6 +1195,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              titleView.setTranslationX(icon == 0 ? dp(2) : 0);
              subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
  
@@ -602,7 +602,7 @@ index 0000000..0000000 100644
              iconBackground.setColor(iconColorTop, iconColorBottom);
              iconView.setImageResource(icon);
              titleView.setText(title);
-@@ -1207,6 +1209,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1210,6 +1212,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          @Override
          protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -616,7 +616,7 @@ index 0000000..0000000 100644
              super.onMeasure(
                  MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
                  MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? 60 : 50), MeasureSpec.EXACTLY)
-@@ -1235,8 +1244,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1238,8 +1247,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  this.border = drawBorder;
              }
  

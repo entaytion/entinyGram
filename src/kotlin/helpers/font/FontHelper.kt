@@ -31,6 +31,7 @@ object FontHelper {
     fun init(context: Context) {
         FontLibrary.loadStorage(context)
         validateActiveAppFont()
+        validateMonoFont()
 
         try {
             typefaceDefaultField.isAccessible = true
@@ -62,9 +63,38 @@ object FontHelper {
         FontConfig.FONT.value = FontMode.Bundled
     }
 
+    /**
+     * Reverts the monospace font to the stock one when the selection can't be applied: a removed family,
+     * or a device system font (those are discovered lazily, long after [installGlobal] runs, so they
+     * would silently render as stock monospace anyway).
+     */
+    fun validateMonoFont() {
+        when (val id = FontId.parse(FontConfig.MONO_FONT.value.ifEmpty { return })) {
+            is FontId.Builtin -> Unit
+            is FontId.System -> {
+                FileLog.d("$TAG: validateMonoFont: system font ${id.name} can't be the mono font, resetting to stock monospace")
+                resetMonoFont()
+            }
+
+            is FontId.Family -> if (!FontLibrary.containsFamily(id.id)) {
+                FileLog.d("$TAG: validateMonoFont: family ${id.id} not loaded, resetting to stock monospace")
+                resetMonoFont()
+            }
+        }
+    }
+
+    fun resetMonoFont() {
+        FontConfig.MONO_FONT.value = ""
+    }
+
     fun isActiveCustomFont(id: FontId): Boolean {
         val m = FontConfig.FONT.value as? FontMode.Custom ?: return false
         return maybeResolveLegacyEmpty(m.fontId) == id
+    }
+
+    fun isActiveMonoFont(id: FontId): Boolean {
+        val token = FontConfig.MONO_FONT.value
+        return token.isNotEmpty() && FontId.parse(token) == id
     }
 
     /** resolve the legacy font id marker (empty string) to the first available family */

@@ -8,6 +8,8 @@ import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.chat.BlockedMessagesHelper
 import desu.inugram.helpers.chat.DoubleTapAction
+import desu.inugram.helpers.chat.DoubleTapActionHelper
+import desu.inugram.helpers.chat.DoubleTapContext
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -220,14 +222,21 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             UItem.asButton(
                 BUTTON_DOUBLE_TAP_INCOMING,
                 LocaleController.getString(R.string.InuIncomingMessages),
-                DoubleTapAction.fromValue(InuConfig.DOUBLE_TAP_ACTION_INCOMING.value, false).label()
+                DoubleTapAction.fromValue(InuConfig.DOUBLE_TAP_ACTION_INCOMING.value, DoubleTapContext.INCOMING).label()
             )
         )
         items.add(
             UItem.asButton(
                 BUTTON_DOUBLE_TAP_OUTGOING,
                 LocaleController.getString(R.string.InuOutgoingMessages),
-                DoubleTapAction.fromValue(InuConfig.DOUBLE_TAP_ACTION_OUTGOING.value, true).label()
+                DoubleTapAction.fromValue(InuConfig.DOUBLE_TAP_ACTION_OUTGOING.value, DoubleTapContext.OUTGOING).label()
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_DOUBLE_TAP_CHANNEL,
+                LocaleController.getString(R.string.InuChannelMessages),
+                channelActionLabel(),
             )
         )
         if (doubleTapDelaySlider == null) doubleTapDelaySlider = SliderCell(
@@ -368,8 +377,9 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             BUTTON_MESSAGE_MENU_ORDER -> presentFragment(MessageMenuOrderActivity())
 
-            BUTTON_DOUBLE_TAP_INCOMING -> showDoubleTapSelector(view, false)
-            BUTTON_DOUBLE_TAP_OUTGOING -> showDoubleTapSelector(view, true)
+            BUTTON_DOUBLE_TAP_INCOMING -> showDoubleTapSelector(view, DoubleTapContext.INCOMING)
+            BUTTON_DOUBLE_TAP_OUTGOING -> showDoubleTapSelector(view, DoubleTapContext.OUTGOING)
+            BUTTON_DOUBLE_TAP_CHANNEL -> showDoubleTapSelector(view, DoubleTapContext.CHANNEL)
         }
     }
 
@@ -411,17 +421,43 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         presentFragment(fragment)
     }
 
-    private fun showDoubleTapSelector(anchor: View, outgoing: Boolean) {
-        val actions = DoubleTapAction.available(outgoing)
-        val config = if (outgoing) InuConfig.DOUBLE_TAP_ACTION_OUTGOING else InuConfig.DOUBLE_TAP_ACTION_INCOMING
-        RadioItemOptions.show(
-            this, anchor,
-            actions.map { it.label() },
-            actions.indexOfFirst { it.value == config.value }.coerceAtLeast(0),
-        ) { which ->
-            val action = actions.getOrNull(which) ?: return@show
-            config.value = action.value
+    private fun doubleTapConfig(context: DoubleTapContext) = when (context) {
+        DoubleTapContext.INCOMING -> InuConfig.DOUBLE_TAP_ACTION_INCOMING
+        DoubleTapContext.OUTGOING -> InuConfig.DOUBLE_TAP_ACTION_OUTGOING
+        DoubleTapContext.CHANNEL -> InuConfig.DOUBLE_TAP_ACTION_CHANNEL
+    }
+
+    private fun showDoubleTapSelector(anchor: View, context: DoubleTapContext) {
+        val actions = DoubleTapAction.available(context)
+        val config = doubleTapConfig(context)
+        val inheritable = context == DoubleTapContext.CHANNEL
+        val offset = if (inheritable) 1 else 0
+
+        val labels = ArrayList<CharSequence>()
+        if (inheritable) labels.add(LocaleController.getString(R.string.InuSameAsIncoming))
+        actions.mapTo(labels) { it.label() }
+
+        val selected = if (inheritable && config.value == DoubleTapActionHelper.INHERIT_INCOMING) {
+            0
+        } else {
+            actions.indexOfFirst { it.value == config.value }.coerceAtLeast(0) + offset
         }
+
+        RadioItemOptions.show(this, anchor, labels, selected) { which ->
+            config.value = if (inheritable && which == 0) {
+                DoubleTapActionHelper.INHERIT_INCOMING
+            } else {
+                actions.getOrNull(which - offset)?.value ?: return@show
+            }
+        }
+    }
+
+    private fun channelActionLabel(): CharSequence {
+        val value = InuConfig.DOUBLE_TAP_ACTION_CHANNEL.value
+        if (value == DoubleTapActionHelper.INHERIT_INCOMING) {
+            return LocaleController.getString(R.string.InuSameAsIncoming)
+        }
+        return DoubleTapAction.fromValue(value, DoubleTapContext.CHANNEL).label()
     }
 
     companion object {
@@ -442,6 +478,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
+        private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
         private val BUTTON_TEXT_SPOILER_MODE = InuUtils.generateId()
         private val TOGGLE_SPOILER_EXTEND_TO_LINE_END = InuUtils.generateId()
         private val TOGGLE_LINK_PREVIEW_SPOILER = InuUtils.generateId()
@@ -495,6 +532,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
+                SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),
                 SearchRegistry.Entry("text-spoiler-mode", R.string.InuTextSpoilerMode, BUTTON_TEXT_SPOILER_MODE),
                 SearchRegistry.Entry("spoiler-extend-to-line-end", R.string.InuSpoilerExtendToLineEnd, TOGGLE_SPOILER_EXTEND_TO_LINE_END),
                 SearchRegistry.Entry("link-preview-spoiler", R.string.InuLinkPreviewSpoiler, TOGGLE_LINK_PREVIEW_SPOILER),

@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -157,6 +157,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
+@@ -158,6 +158,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
  import org.telegram.ui.Adapters.DialogsAdapter;
  import org.telegram.ui.Adapters.DialogsSearchAdapter;
  import org.telegram.ui.Adapters.FiltersView;
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.Cells.ActiveGiftAuctionsHintCell;
  import org.telegram.ui.Cells.AnimatedStatusView;
  import org.telegram.ui.Cells.ArchiveHintInnerCell;
-@@ -3910,6 +3911,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3914,6 +3915,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              imageView.getImageReceiver().setCurrentAccount(currentAccount);
              Drawable thumb = user != null && user.photo != null && user.photo.strippedBitmap != null ? user.photo.strippedBitmap : avatarDrawable;
              imageView.setImage(ImageLocation.getForUserOrChat(currentAccount, user, ImageLocation.TYPE_SMALL), "50_50", ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_STRIPPED), "50_50", thumb, user);
@@ -93,7 +93,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -530,7 +530,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -643,7 +643,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          accountNumbers.clear();
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
@@ -144,7 +144,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -638,7 +638,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -639,7 +639,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          accountNumbers.clear();
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {

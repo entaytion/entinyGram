@@ -22,6 +22,8 @@
     <string name="InuDoubleTapDelay">Задержка двойного тапа</string>
     <string name="InuIncomingMessages">Входящие сообщения</string>
     <string name="InuOutgoingMessages">Исходящие сообщения</string>
+    <string name="InuChannelMessages">Каналы, куда вы можете писать</string>
+    <string name="InuSameAsIncoming">Как у входящих</string>
     <string name="InuDoubleTapInfo">Из-за того, как Telegram обрабатывает двойные тапы, включение действия по двойному тапу приводит к задержке обычных тапов на указанное выше время, отчего приложение ощущается менее отзывчивым.\nВы можете настроить длительность, но полностью избавиться от задержки можно только отключив действия.</string>
     <string name="InuQuickReaction">Быстрая реакция</string>
     <string name="InuShowReactions">Показать реакции</string>
@@ -188,7 +190,8 @@
     <string name="InuFontImporting">Импортируем шрифт…</string>
     <string name="InuFonts">Шрифты</string>
     <string name="InuAppFont">Шрифт приложения</string>
-    <string name="InuAppFontInfo">Шрифт, используемый по всему интерфейсу приложения.</string>
+    <string name="InuAppFontInfo">Шрифт, используемый по всему интерфейсу приложения. Шрифтом приложения можно выбрать только свои (импортированные) шрифты.</string>
+    <string name="InuFontCustomOnly">Шрифтом приложения можно выбрать только свои (импортированные) шрифты.</string>
     <string name="InuAvailableFonts">Доступные шрифты</string>
     <string name="InuFontsInfo">Видимые шрифты доступны в инструменте текста медиа-редактора. Перетаскивай, чтобы изменить порядок, нажми на глаз, чтобы скрыть; нажми на импортированный шрифт, чтобы удалить его.</string>
     <string name="InuFontAdd">Добавить шрифт</string>

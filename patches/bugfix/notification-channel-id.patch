@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -4081,6 +4081,234 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4099,6 +4099,234 @@ public class NotificationsController extends BaseController implements Notificat
          return channelId;
      }
  
@@ -246,7 +246,7 @@ index 0000000..0000000 100644
      private void showOrUpdateNotification(boolean notifyAboutLast) {
          if (!getUserConfig().isClientActivated() || pushMessages.isEmpty() && storyPushMessages.isEmpty() || NotificationsHelper.shouldSuppressNotifications(currentAccount) || !SharedConfig.showNotificationsForAllAccounts && currentAccount != UserConfig.selectedAccount) {
              dismissNotification();
-@@ -4368,149 +4596,17 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4386,149 +4614,17 @@ public class NotificationsController extends BaseController implements Notificat
                  }
              }
  
@@ -406,7 +406,7 @@ index 0000000..0000000 100644
  
              Intent intent = new Intent(ApplicationLoader.applicationContext, LaunchActivity.class);
              intent.setAction("com.tmessages.openchat" + Math.random() + Integer.MAX_VALUE);
-@@ -5669,7 +5765,14 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5687,7 +5783,14 @@ public class NotificationsController extends BaseController implements Notificat
              }
  
              if (Build.VERSION.SDK_INT >= 26) {
@@ -422,7 +422,7 @@ index 0000000..0000000 100644
              }
              FileLog.d("showExtraNotifications: holders.add " + dialogId);
              holders.add(new NotificationHolder(internalId, dialogId, dialogKey.story, topicId, name, user, chat, builder));
-@@ -5680,6 +5783,11 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5698,6 +5801,11 @@ public class NotificationsController extends BaseController implements Notificat
              if (BuildVars.LOGS_ENABLED) {
                  FileLog.d("show summary with id " + notificationId);
              }

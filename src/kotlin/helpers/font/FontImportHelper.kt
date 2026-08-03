@@ -6,7 +6,6 @@ import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
-import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.Components.BulletinFactory
 import java.io.File
@@ -22,7 +21,7 @@ object FontImportHelper {
 
     fun startImportFromFile(fragment: BaseFragment, message: MessageObject, file: File, displayName: String) {
         FileLog.d("$TAG: startImportFromFile: path=${file.absolutePath} exists=${file.exists()} size=${file.length()} name=$displayName")
-        Utilities.globalQueue.postRunnable {
+        FontLibrary.importQueue.postRunnable {
             val info = FontLibrary.inspectFont(file)
             FileLog.d("$TAG: startImportFromFile: inspect result: family=${info?.family} faces=${info?.faceCount}")
             val loadable = info != null && FontLibrary.isLoadableBySystem(file)
@@ -53,7 +52,7 @@ object FontImportHelper {
 
     private fun installFont(fragment: BaseFragment, file: File) {
         FileLog.d("$TAG: installFont: path=${file.absolutePath} exists=${file.exists()} size=${file.length()}")
-        Utilities.globalQueue.postRunnable {
+        FontLibrary.importQueue.postRunnable {
             val result = FontLibrary.importFromFile(file)
             FileLog.d("$TAG: installFont: added=${result.addedFaces} rejected=${result.rejectedBySystem}")
             AndroidUtilities.runOnUIThread {

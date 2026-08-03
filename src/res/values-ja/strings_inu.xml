@@ -22,6 +22,8 @@
     <string name="InuDoubleTapDelay">ダブルタップの遅延</string>
     <string name="InuIncomingMessages">受信メッセージ</string>
     <string name="InuOutgoingMessages">送信メッセージ</string>
+    <string name="InuChannelMessages">投稿できるチャンネル</string>
+    <string name="InuSameAsIncoming">受信メッセージと同じ</string>
     <string name="InuDoubleTapInfo">注：Telegram のダブルタップ処理の都合上、ダブルタップ動作を有効にすると通常のタップが上記の時間だけ遅延し、アプリの応答が鈍く感じられます。\n時間は調整できますが、遅延を完全になくすには動作を無効にするしかありません。</string>
     <string name="InuQuickReaction">クイックリアクション</string>
     <string name="InuShowReactions">リアクションを表示</string>
@@ -184,7 +186,8 @@
     <string name="InuHideMyPhoneNumber">自分の電話番号を非表示</string>
     <string name="InuFonts">フォント</string>
     <string name="InuAppFont">アプリのフォント</string>
-    <string name="InuAppFontInfo">アプリ全体のインターフェースで使用するフォントです。</string>
+    <string name="InuAppFontInfo">アプリ全体のインターフェースで使用するフォントです。アプリのフォントに設定できるのはカスタム（インポートした）フォントのみです。</string>
+    <string name="InuFontCustomOnly">アプリのフォントに設定できるのは、カスタム（インポートした）フォントのみです。</string>
     <string name="InuAvailableFonts">利用可能なフォント</string>
     <string name="InuFontsInfo">表示中のフォントはメディアエディターのテキストツールで使用できます。ドラッグで並べ替え、目のアイコンで非表示、インポートしたフォントをタップで削除できます。</string>
     <string name="InuFontAdd">フォントを追加</string>

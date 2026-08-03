@@ -65,7 +65,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -22032,6 +22032,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22038,6 +22038,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
              final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
              if (d instanceof TLRPC.TL_dialog || isCommunity) {
                  long dialogId = d.id;
-@@ -22245,6 +22246,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22251,6 +22252,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
                  for (int a = 0, N = allDialogs.size(); a < N; a++) {
                      final TLRPC.Dialog d = allDialogs.get(a);
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
                      final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
                      if (d instanceof TLRPC.TL_dialog || isCommunity) {
                          long dialogId = d.id;
-@@ -22284,6 +22286,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22290,6 +22292,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
                      if (add) {
                          dids.add(dialogId);
                      }
-@@ -17772,6 +17775,7 @@ public class MessagesStorage extends BaseController {
+@@ -17782,6 +17785,7 @@ public class MessagesStorage extends BaseController {
              }
              while (cursor.next()) {
                  long id = cursor.longValue(0);
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
                  DialogsSearchAdapter.DialogSearchResult dialogSearchResult = new DialogsSearchAdapter.DialogSearchResult();
                  dialogSearchResult.date = cursor.intValue(1);
                  dialogsResult.put(id, dialogSearchResult);
-@@ -18047,6 +18051,9 @@ public class MessagesStorage extends BaseController {
+@@ -18057,6 +18061,9 @@ public class MessagesStorage extends BaseController {
                  cursor = getDatabase().queryFinalized("SELECT u.data, u.status, u.name, u.uid FROM users as u INNER JOIN contacts as c ON u.uid = c.uid");
                  while (cursor.next()) {
                      long uid = cursor.longValue(3);
@@ -139,7 +139,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -1381,6 +1381,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1387,6 +1387,7 @@ public class NotificationsController extends BaseController implements Notificat
              SharedPreferences preferences = getAccountInstance().getNotificationsSettings();
              for (int b = 0; b < dialogsToUpdate.size(); b++) {
                  long dialogId = dialogsToUpdate.keyAt(b);
@@ -147,22 +147,22 @@ index 0000000..0000000 100644
                  Integer currentCount = pushDialogs.get(dialogId);
                  int newCount = dialogsToUpdate.get(dialogId);
                  boolean forum = false;
-@@ -1722,6 +1723,7 @@ public class NotificationsController extends BaseController implements Notificat
-                             final ArrayList<TLRPC.Dialog> dialogs = new ArrayList<>(MessagesController.getInstance(a).allDialogs);
-                             for (int i = 0, N = dialogs.size(); i < N; i++) {
-                                 TLRPC.Dialog dialog = dialogs.get(i);
-+                                if (dialog != null && desu.inugram.helpers.security.ParanoiaHelper.isHidden(a, dialog.id)) continue;
-                                 if (dialog != null && DialogObject.isChatDialog(dialog.id)) {
-                                     TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
-                                     if (ChatObject.isNotInChat(chat)) {
-@@ -1743,6 +1745,7 @@ public class NotificationsController extends BaseController implements Notificat
-                         try {
-                             for (int i = 0, N = MessagesController.getInstance(a).allDialogs.size(); i < N; i++) {
-                                 TLRPC.Dialog dialog = MessagesController.getInstance(a).allDialogs.get(i);
-+                                if (desu.inugram.helpers.security.ParanoiaHelper.isHidden(a, dialog.id)) continue;
-                                 if (DialogObject.isChatDialog(dialog.id)) {
-                                     TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
-                                     if (ChatObject.isNotInChat(chat)) {
+@@ -1741,6 +1742,7 @@ public class NotificationsController extends BaseController implements Notificat
+                         final ArrayList<TLRPC.Dialog> dialogs = new ArrayList<>(MessagesController.getInstance(a).allDialogs);
+                         for (int i = 0, N = dialogs.size(); i < N; i++) {
+                             TLRPC.Dialog dialog = dialogs.get(i);
++                            if (dialog != null && desu.inugram.helpers.security.ParanoiaHelper.isHidden(a, dialog.id)) continue;
+                             if (dialog != null && DialogObject.isChatDialog(dialog.id)) {
+                                 TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
+                                 if (ChatObject.isNotInChat(chat) || ChatObject.isCommunity(chat)) {
+@@ -1762,6 +1764,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     try {
+                         for (int i = 0, N = MessagesController.getInstance(a).allDialogs.size(); i < N; i++) {
+                             TLRPC.Dialog dialog = MessagesController.getInstance(a).allDialogs.get(i);
++                            if (desu.inugram.helpers.security.ParanoiaHelper.isHidden(a, dialog.id)) continue;
+                             if (DialogObject.isChatDialog(dialog.id)) {
+                                 TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
+                                 if (ChatObject.isNotInChat(chat) || ChatObject.isCommunity(chat)) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
@@ -315,7 +315,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6960,7 +6960,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6963,7 +6963,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -324,7 +324,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8617,7 +8617,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8620,7 +8620,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
@@ -338,7 +338,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
-@@ -143,6 +143,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+@@ -144,6 +144,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
      private final int chatAddType;
      private final boolean allowPremium;
      private final boolean allowMiniApps;
@@ -346,7 +346,7 @@ index 0000000..0000000 100644
      private GroupCreateSpan selectedPremium;
      private GroupCreateSpan selectedMiniApps;
      private LongSparseArray<GroupCreateSpan> selectedContacts = new LongSparseArray<>();
-@@ -235,6 +236,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+@@ -236,6 +237,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
          chatAddType = args.getInt("chatAddType", 0);
          allowPremium = args.getBoolean("allowPremium", false);
          allowMiniApps = args.getBoolean("allowMiniapps", false);
@@ -354,7 +354,7 @@ index 0000000..0000000 100644
          chatId = args.getLong("chatId");
          channelId = args.getLong("channelId");
          if (isAlwaysShare || isNeverShare || addToGroup) {
-@@ -1221,7 +1223,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+@@ -1222,7 +1224,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
                              continue;
                          }
                          TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);

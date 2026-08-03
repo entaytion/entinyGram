@@ -334,6 +334,9 @@ class FontStackActivity : SettingsPageActivity() {
     private fun showMonoDialog() = showFontPickerDialog(R.string.InuMonoFont, ::pickMono) { addRow ->
         addRow(LocaleController.getString(R.string.InuFontDefault), FontHelper.stockMonospace, null, "")
         for (font in FontLibrary.getCachedRoster()) {
+            // device system fonts are discovered lazily, long after the mono font is installed at
+            // startup — they'd silently render as stock monospace, so keep them out
+            if (font is FontId.System) continue
             if (FontLibrary.isHidden(font)) continue
             addRow(FontLibrary.getFontName(font), FontLibrary.getTypefaceFor(font), font.token(), font.token())
         }

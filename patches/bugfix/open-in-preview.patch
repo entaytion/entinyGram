@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12526,7 +12526,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12543,7 +12543,7 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          if (getParentActivity() == null || getContext() == null) {
              return;
          }
-@@ -20331,6 +20331,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -20373,6 +20373,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  currentPicturePath = null;
              } else if (requestCode == 1) {
@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -186,8 +186,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -185,8 +185,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      private TextView tooltipTextView;
      private ImageView switchCameraButton;
      private boolean takingPhoto;
@@ -59,7 +59,7 @@ index 0000000..0000000 100644
      public static HashMap<Object, Object> selectedPhotos = new HashMap<>();
      public static ArrayList<Object> selectedPhotosOrder = new ArrayList<>();
      public static int lastImageId = -1;
-@@ -2064,7 +2065,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -2063,7 +2064,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
          AndroidUtilities.unlockOrientation(AndroidUtilities.findActivity(getContext()));
      }
  
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
          if (entry != null) {
              cameraPhotos.add(entry);
              selectedPhotos.put(entry.imageId, entry);
-@@ -2129,6 +2132,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -2128,6 +2131,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              arrayList = getAllPhotosArray();
              index = cameraPhotos.size() - 1;
          }
@@ -80,7 +80,7 @@ index 0000000..0000000 100644
          if (parentAlert.getAvatarFor() != null && entry != null) {
              parentAlert.getAvatarFor().isVideo = entry.isVideo;
          }
-@@ -3382,6 +3388,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3381,6 +3387,9 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                  parentAlert.getPhotoPreviewLayout().invalidateGroupsView();
              }
          } else if (id == open_in) {

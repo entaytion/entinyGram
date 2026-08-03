@@ -97,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
-@@ -135,8 +135,6 @@ public class ImageLoader {
+@@ -136,8 +136,6 @@ public class ImageLoader {
      private HashMap<String, Integer> forceLoadingImages = new HashMap<>();
      private static ThreadLocal<byte[]> bytesLocal = new ThreadLocal<>();
      private static ThreadLocal<byte[]> bytesThumbLocal = new ThreadLocal<>();
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
      private int currentHttpTasksCount = 0;
      private int currentArtworkTasksCount = 0;
      private boolean canForce8888;
-@@ -171,11 +169,24 @@ public class ImageLoader {
+@@ -172,11 +170,24 @@ public class ImageLoader {
          return false;
      }
  
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
              }
          }
          return null;
-@@ -853,6 +864,8 @@ public class ImageLoader {
+@@ -854,6 +865,8 @@ public class ImageLoader {
      private class CacheOutTask implements Runnable {
          private Thread runningThread;
          private final Object sync = new Object();
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
  
          private CacheImage cacheImage;
          private boolean isCancelled;
-@@ -2060,14 +2073,14 @@ public class ImageLoader {
+@@ -2051,14 +2064,14 @@ public class ImageLoader {
          int memoryClass = ((ActivityManager) ApplicationLoader.applicationContext.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
          int maxSize;
          if (canForce8888 = memoryClass >= 192) {

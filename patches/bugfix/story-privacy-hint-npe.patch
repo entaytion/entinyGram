@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 3 Aug 2026 13:14:59 +0400
+Subject: Fix crash tapping the story privacy badge when the poster has no first name
+
+---
+ .../src/main/java/org/telegram/ui/Stories/PeerStoriesView.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -2271,7 +2271,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+                 if (user == null) {
+                     return;
+                 }
+-                String firstName = user.first_name;
++                String firstName = UserObject.getForcedFirstName(user);
+                 int index;
+                 if ((index = firstName.indexOf(' ')) > 0) {
+                     firstName = firstName.substring(0, index);

@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -6086,6 +6086,13 @@ public class AndroidUtilities {
+@@ -6087,6 +6087,13 @@ public class AndroidUtilities {
              return;
          }
  
@@ -61,7 +61,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
-@@ -349,6 +349,14 @@ public class ScrimOptions extends Dialog {
+@@ -347,6 +347,14 @@ public class ScrimOptions extends Dialog {
      }
  
      public static void makeGlobalBlurBitmaps(Utilities.Callback2<Bitmap, Bitmap> bitmaps) {
@@ -76,7 +76,7 @@ index 0000000..0000000 100644
          AndroidUtilities.makeGlobalBlurBitmap(bitmap -> {
              final ColorMatrix colorMatrixBg = new ColorMatrix();
              AndroidUtilities.adjustSaturationColorMatrix(colorMatrixBg, Theme.isCurrentThemeDark() ? .04f : +.25f);
-@@ -368,7 +376,7 @@ public class ScrimOptions extends Dialog {
+@@ -366,7 +374,7 @@ public class ScrimOptions extends Dialog {
      }
  
      public static void makeGlobalBlurBitmaps(View cutToContainer, Utilities.Callback2<Bitmap, Bitmap> bitmaps) {
@@ -89,7 +89,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
-@@ -2090,7 +2090,7 @@ public class ContentPreviewViewer {
+@@ -2056,7 +2056,7 @@ public class ContentPreviewViewer {
                  containerView.invalidate();
              }
  
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
                  paint.setAlpha((int) (blurProgress * 255));
                  if (paint.getAlpha() != 255) {
                      canvas.drawColor(Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundGray, resourcesProvider), blurProgress));
-@@ -2099,7 +2099,7 @@ public class ContentPreviewViewer {
+@@ -2065,7 +2065,7 @@ public class ContentPreviewViewer {
              }
          }
  
@@ -111,7 +111,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9037,6 +9037,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9040,6 +9040,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (blurredView == null) {
              return;
          }
@@ -132,7 +132,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
-@@ -159,7 +159,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+@@ -161,7 +161,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
              @Override
              protected void dispatchDraw(@NonNull Canvas canvas) {
                  if (activityVisibilityController != null) {
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
                  }
  
                  if (openProgress > 0 && blurBitmapPaint != null) {
-@@ -1164,7 +1164,9 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+@@ -1166,7 +1166,9 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                  WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
                  WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION |
                  WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
@@ -150,9 +150,9 @@ index 0000000..0000000 100644
 +            params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
 +        }
          params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
-         if (Build.VERSION.SDK_INT >= 28) {
-             params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-@@ -1695,6 +1697,15 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+         window.setAttributes(params);
+ 
+@@ -1694,6 +1696,15 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
          if (dismissing) return;
          dismissing = true;
  
@@ -168,7 +168,7 @@ index 0000000..0000000 100644
          SpoilerEffect2.pause(SpoilerEffect2.TYPE_DEFAULT, false);
          if (spoilerEffect2 != null) {
              spoilerEffect2.detach(windowView);
-@@ -1777,13 +1788,13 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+@@ -1776,13 +1787,13 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
                      closing = false;
                  }
                  if (editText != null) {

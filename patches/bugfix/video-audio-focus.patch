@@ -100,7 +100,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10749,6 +10749,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10538,6 +10538,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      }
                  };
                  videoPlayer.setOnQualityChangeListener(this::updateQualityItems);

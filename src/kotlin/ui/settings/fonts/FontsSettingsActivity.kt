@@ -32,7 +32,6 @@ import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
@@ -47,6 +46,7 @@ import org.telegram.ui.Components.UniversalAdapter
 class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
     private var reorderSectionId = -1
     private val rows = HashMap<String, FontRow>()
+    private var skeletonRow: FontImportSkeletonRow? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuFonts)
 
@@ -125,14 +125,15 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             })
         }
         adapter.reorderSectionEnd()
-        for (i in 0 until importPlaceholderCount) {
-            items.add(UItem.asCustom(FontImportSkeletonRow(ctx), 58).apply { id = BUTTON_IMPORT_PROGRESS xor i })
+        if (importing) {
+            val row = skeletonRow ?: FontImportSkeletonRow(ctx).also { skeletonRow = it }
+            items.add(UItem.asCustom(row, 58).apply { id = BUTTON_IMPORT_PROGRESS })
         }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuFontsInfo)))
 
         items.add(
             UItem.asButton(BUTTON_ADD, R.drawable.msg_add, LocaleController.getString(R.string.InuFontAdd))
-                .setEnabled(importPlaceholderCount == 0)
+                .setEnabled(!importing)
         )
         items.add(UItem.asButton(BUTTON_RESET, R.drawable.msg_reset, LocaleController.getString(R.string.InuFontResetOrder)))
         items.add(UItem.asShadow(null))
@@ -141,7 +142,7 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
             BUTTON_APP_FONT -> presentFragment(FontStackActivity())
-            BUTTON_ADD -> if (importPlaceholderCount == 0) launchFontPicker()
+            BUTTON_ADD -> if (!importing) launchFontPicker()
             BUTTON_RESET -> {
                 FontLibrary.resetOrder()
                 FontLibrary.invalidateEditorRoster()
@@ -182,8 +183,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
     private fun showFontMenu(font: FontId, anchor: View) {
         // for imported/system families, list individual faces as disabled rows (in their own face) on top
         val faces = FontLibrary.getFontFaces(font)
-        // built-ins can't be app font or removed and have no faces to list → no menu
-        if (faces.isEmpty() && font !is FontId.Family) return
 
         val opts = ItemOptions.makeOptions(this, anchor)
         if (faces.isNotEmpty()) {
@@ -209,30 +208,40 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             opts.add(R.drawable.msg_delete, LocaleController.getString(R.string.InuFontRemove), true) {
                 removeFont(font)
             }
+        } else {
+            opts.addText(LocaleController.getString(R.string.InuFontCustomOnly), 13, AndroidUtilities.dp(200f))
         }
         opts.show()
     }
 
     private fun setHidden(font: FontId, hidden: Boolean) {
         FontLibrary.setHidden(font, hidden)
-        // hiding the active app font (family or built-in) reverts it to the default — otherwise the
-        // editor would hide it while the app keeps rendering everything in it.
-        if (hidden && FontHelper.isActiveCustomFont(font)) {
-            FontHelper.resetAppFont()
-            showRestartBulletin()
+        // hiding the active app / mono font (family or built-in) reverts it to the default — otherwise
+        // the editor would hide it while the app keeps rendering everything in it.
+        if (hidden) {
+            var changed = false
+            if (FontHelper.isActiveCustomFont(font)) {
+                FontHelper.resetAppFont()
+                changed = true
+            }
+            if (FontHelper.isActiveMonoFont(font)) {
+                FontHelper.resetMonoFont()
+                changed = true
+            }
+            if (changed) showRestartBulletin()
         }
         FontLibrary.invalidateEditorRoster()
         listView.adapter.update(true)
     }
 
     private fun removeFont(font: FontId.Family) {
-        val wasActive = FontHelper.isActiveCustomFont(font)
+        val wasAppFont = FontHelper.isActiveCustomFont(font)
+        // removeFamily clears the mono selection itself; check before it runs
+        val wasMonoFont = FontHelper.isActiveMonoFont(font)
         FontLibrary.removeFamily(font.id)
         rows.remove(font.token())
-        if (wasActive) {
-            FontHelper.resetAppFont()
-            showRestartBulletin()
-        }
+        if (wasAppFont) FontHelper.resetAppFont()
+        if (wasAppFont || wasMonoFont) showRestartBulletin()
         FontLibrary.invalidateEditorRoster()
         listView.adapter.update(true)
     }
@@ -272,12 +281,12 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
         if (uris.isEmpty()) return
         val ctx = parentActivity ?: context ?: return
         FileLog.d("InuFonts: onActivityResultFragment: picked ${uris.size} uris")
-        setImportPlaceholderCount(uris.size)
+        setImporting(true)
         BulletinFactory.of(this).createSimpleBulletin(
             R.raw.chats_infotip,
             LocaleController.getString(R.string.InuFontImporting)
         ).show()
-        Utilities.globalQueue.postRunnable {
+        FontLibrary.importQueue.postRunnable {
             val result = try {
                 FontLibrary.importFromUris(ctx, uris)
             } catch (e: Throwable) {
@@ -286,7 +295,7 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             }
             AndroidUtilities.runOnUIThread {
                 val added = (result?.addedFaces ?: 0) > 0
-                setImportPlaceholderCount(0, notifyOthers = result == null || !added)
+                setImporting(false, notifyOthers = result == null || !added)
                 if (added) FontLibrary.invalidateEditorRoster()
                 if (context == null) return@runOnUIThread
                 if (added) {
@@ -311,15 +320,15 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
         }
     }
 
-    private fun setImportPlaceholderCount(value: Int, notifyOthers: Boolean = false) {
-        importPlaceholderCount = value.coerceAtLeast(0)
+    private fun setImporting(value: Boolean, notifyOthers: Boolean = false) {
+        importing = value
         if (context != null) listView?.adapter?.update(true)
         if (notifyOthers) NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.customTypefacesLoaded)
     }
 
     companion object {
         @Volatile
-        private var importPlaceholderCount = 0
+        private var importing = false
 
         private val BUTTON_APP_FONT = InuUtils.generateId()
         private val BUTTON_INCLUDE_SYSTEM = InuUtils.generateId()

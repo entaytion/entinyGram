@@ -20,7 +20,7 @@ index 0000000..0000000 100644
          AndroidUtilities.runOnUIThread(() -> {
              getNotificationCenter().addObserver(this, NotificationCenter.fileLoaded);
          });
-@@ -3259,6 +3261,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -3277,6 +3279,7 @@ public class NotificationsController extends BaseController implements Notificat
                  notificationManager.cancel(wearNotificationsIds.valueAt(a));
              }
              wearNotificationsIds.clear();
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
          });
      }
  
-@@ -3277,6 +3280,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -3295,6 +3298,7 @@ public class NotificationsController extends BaseController implements Notificat
                  notificationManager.cancel(wearNotificationsIds.valueAt(a));
              }
              wearNotificationsIds.clear();
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
              AndroidUtilities.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.pushMessagesUpdated));
          } catch (Exception e) {
              FileLog.e(e);
-@@ -5832,6 +5836,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5850,6 +5854,7 @@ public class NotificationsController extends BaseController implements Notificat
                  ShortcutManagerCompat.removeDynamicShortcuts(ApplicationLoader.applicationContext, ids);
              }
          }

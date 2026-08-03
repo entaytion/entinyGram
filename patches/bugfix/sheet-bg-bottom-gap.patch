@@ -50,7 +50,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBa
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBase.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBase.java
-@@ -528,7 +528,6 @@ public class UsersAlertBase extends BottomSheet {
+@@ -522,7 +522,6 @@ public class UsersAlertBase extends BottomSheet {
              if (Build.VERSION.SDK_INT >= 21) {
                  top += AndroidUtilities.statusBarHeight;
                  y += AndroidUtilities.statusBarHeight;

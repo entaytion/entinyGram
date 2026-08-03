@@ -52,7 +52,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
  
-@@ -6871,6 +6872,11 @@ public class EmojiView extends FrameLayout implements
+@@ -6872,6 +6873,11 @@ public class EmojiView extends FrameLayout implements
                              ((ChatActivity) fragment).openAttachMenuForCreatingSticker();
                          }
                      });
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
  
                      final ImageView icon = new ImageView(context);
                      icon.setImageResource(R.drawable.menu_sticker_add);
-@@ -6965,6 +6971,17 @@ public class EmojiView extends FrameLayout implements
+@@ -6966,6 +6972,17 @@ public class EmojiView extends FrameLayout implements
                              }
                          } else if (object == recentStickers) {
                              cell.setText(getString(R.string.RecentStickers), R.drawable.msg_close, getString(R.string.ClearRecentStickersAlertTitle));

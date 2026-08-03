@@ -5,6 +5,7 @@ import {
   getAllPatchNames,
   step,
   success,
+  syncSubmodules,
   warn,
   writePinnedUpstreamCommit,
 } from './lib.js'
@@ -43,7 +44,9 @@ if (result.exitCode !== 0) {
     console.error(result.stderr.trim())
   }
 
+  warn('Run `pnpm run setup` once conflicts are resolved to sync submodules')
   process.exit(result.exitCode)
 }
 
+await syncSubmodules(worktreeDir)
 success(`Rebased onto ${resolvedCommit}`)

@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                  if (id == -1) {
                      if (sharedMediaLayout != null && sharedMediaLayout.scrollSlidingTextTabStrip != null && sharedMediaLayout.scrollSlidingTextTabStrip.isReordering()) {
                          stopTabsReorder();
-@@ -12321,6 +12324,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12325,6 +12328,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              otherItem.hideSubItem(edit_avatar);
              otherItem.hideSubItem(delete_avatar);
          }

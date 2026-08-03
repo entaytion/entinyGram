@@ -75,7 +75,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -2450,16 +2450,17 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -2468,16 +2468,17 @@ public class NotificationsController extends BaseController implements Notificat
              return null;
          }
          String text = messageObject.messageOwner.message;
@@ -101,7 +101,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -7385,7 +7385,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -7405,7 +7405,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          hasInvoicePrice = false;
                      }
                  }
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
                  TLRPC.WebPage webpage = hasLinkPreview ? MessageObject.getMedia(messageObject.messageOwner).webpage : null;
                  if (messageObject.isStoryMention()) {
                      hasLinkPreview = true;
-@@ -19438,7 +19438,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19458,7 +19458,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          }
                          stringFinalText = TextUtils.ellipsize(stringFinalText, textPaint, maxWidth, TextUtils.TruncateAt.END);
                          if (stringFinalText instanceof Spannable && messageObject.replyMessageObject.messageOwner != null) {
@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -1903,7 +1903,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -1900,7 +1900,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                                              if (message != null) {
                                                  message.spoilLoginCode();
                                              }
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
                                              MediaDataController.addAnimatedEmojiSpans(message.messageOwner.entities, msgBuilder, currentMessagePaint == null ? null : currentMessagePaint.getFontMetricsInt());
                                          }
                                          messageString = new SpannableStringBuilder(emoji).append(msgBuilder);
-@@ -5962,7 +5962,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5959,7 +5959,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  if (message != null) {
                      message.spoilLoginCode();
                  }
@@ -145,7 +145,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -2972,6 +2972,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -2973,6 +2973,8 @@ public class ChatActivity extends BaseFragment implements
              .add(NotificationCenter.botForumDraftDelete)
              .add(NotificationCenter.joinedGroup);
  
@@ -154,7 +154,7 @@ index 0000000..0000000 100644
          globalObserversGroup
              .add(NotificationCenter.emojiLoaded)
              .add(NotificationCenter.invalidateMotionBackground)
-@@ -22786,6 +22788,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -22828,6 +22830,9 @@ public class ChatActivity extends BaseFragment implements
          } else if (id == NotificationCenter.screenshotTook) {
              updateInformationForScreenshotDetector();
          } else if (id == NotificationCenter.blockedUsersDidLoad) {
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
              if (currentUser != null && !UserObject.isReplyUser(currentUser)) {
                  boolean oldValue = userBlocked;
                  userBlocked = getMessagesController().blockePeers.indexOfKey(currentUser.id) >= 0;
-@@ -36680,6 +36685,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -36722,6 +36727,12 @@ public class ChatActivity extends BaseFragment implements
          private int messagesEndRow;
  
          public ArrayList<MessageObject> getMessages() {
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
              if (isFrozen) {
                  return frozenMessages;
              } else if (isFiltered) {
-@@ -36753,14 +36764,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36795,14 +36806,7 @@ public class ChatActivity extends BaseFragment implements
  
          private void updateRowsInternal() {
              rowCount = 0;
@@ -193,7 +193,7 @@ index 0000000..0000000 100644
              if (chatMode == MODE_SAVED && isInsideContainer) {
                  hintRow = rowCount++;
              } else {
-@@ -36852,14 +36856,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36894,14 +36898,7 @@ public class ChatActivity extends BaseFragment implements
                      return 1;
                  }
              }
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
  
              if (position >= messagesStartRow && position < messagesEndRow) {
                  return messages.get(position - messagesStartRow).stableId;
-@@ -37322,21 +37319,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -37364,21 +37361,14 @@ public class ChatActivity extends BaseFragment implements
                  actionCell.setAlpha(1.0f);
                  actionCell.setSpoilersSuppressed(chatListView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE);
              } else if (position >= messagesStartRow && position < messagesEndRow) {
@@ -233,7 +233,7 @@ index 0000000..0000000 100644
                      messageCell.isChat = currentChat != null || UserObject.isUserSelf(currentUser) || UserObject.isReplyUser(currentUser) || (chatMode == MODE_SEARCH);
                      messageCell.setSponsoredMessageVisible(true, false);
                      messageCell.isBotForum = UserObject.isBotForum(currentUser);
-@@ -37868,14 +37858,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37910,14 +37900,7 @@ public class ChatActivity extends BaseFragment implements
                  return 1;
              }
              if (position >= messagesStartRow && position < messagesEndRow) {

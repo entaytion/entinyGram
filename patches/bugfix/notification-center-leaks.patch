@@ -45,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -23009,7 +23009,11 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -23015,7 +23015,11 @@ public class MessagesController extends BaseController implements NotificationCe
              loadMessagesInternal(dialogId, 0, true, count, finalMessageId, 0, true, 0, classGuid, 2, 0, 0, 0, -1, 0, 0, 0, false, 0, true, false, false, null, 0L);
          }
  
@@ -75,7 +75,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3342,6 +3342,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -3343,6 +3343,10 @@ public class ChatActivity extends BaseFragment implements
      @Override
      public void onFragmentDestroy() {
          super.onFragmentDestroy();
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
          ReactionsEffectOverlay.dismissByFragment(this);
          if (messageMetricsView != null) {
              messageMetricsView.finish();
-@@ -35591,6 +35595,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35633,6 +35637,7 @@ public class ChatActivity extends BaseFragment implements
      private int commentMessagesRequestId;
      private int commentLoadingMessageId;
      private boolean hideCommentLoading;
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      private long commentLoadingStartedAt;
      private TLRPC.TL_messages_discussionMessage savedDiscussionMessage;
      private TLRPC.messages_Messages savedHistory;
-@@ -35688,9 +35693,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -35730,9 +35735,11 @@ public class ChatActivity extends BaseFragment implements
                                      chatActivity.didReceivedNotification(id, account, args);
                                  }, 50);
                                  NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.messagesDidLoad);
@@ -110,7 +110,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.java
-@@ -1847,16 +1847,22 @@ public class Bulletin {
+@@ -1848,16 +1848,22 @@ public class Bulletin {
              reactionsContainerLayout.setMessage(null, null, true);
          }
  
@@ -139,7 +139,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
-@@ -6151,6 +6151,7 @@ public class EmojiView extends FrameLayout implements
+@@ -6152,6 +6152,7 @@ public class EmojiView extends FrameLayout implements
              colorPickerView.dismiss();
          }
          ContentPreviewViewer.getInstance().clearDelegate(contentPreviewViewerDelegate);
@@ -196,7 +196,7 @@ index 0000000..0000000 100644
              LocaleController.getInstance().applyLanguage(localeInfo, true, false, currentAccount);
          });
  
-@@ -483,6 +486,10 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+@@ -472,6 +475,10 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
          destroyed = true;
          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.suggestedLangpack);
          NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.configLoaded);
@@ -259,7 +259,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer.java
-@@ -233,6 +233,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+@@ -234,6 +234,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
      private BottomSheet cameraBottomSheet;
      private boolean hasQRPending;
      private String lastQrText;
@@ -267,7 +267,7 @@ index 0000000..0000000 100644
  
      private BotBiometry biometry;
      private BotLocation location;
-@@ -1064,6 +1065,10 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+@@ -1065,6 +1066,10 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didSetNewTheme);
          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onActivityResultReceived);
          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onRequestPermissionResultReceived);
@@ -278,7 +278,7 @@ index 0000000..0000000 100644
  
          Bulletin.removeDelegate(this);
      }
-@@ -1436,7 +1441,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+@@ -1437,7 +1442,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                      hasQRPending = true;
  
                      if (Build.VERSION.SDK_INT >= 23 && parentActivity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                              @Override
                              public void didReceivedNotification(int id, int account, Object... args) {
                                  if (id == NotificationCenter.onRequestPermissionResultReceived) {
-@@ -1446,6 +1451,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+@@ -1447,6 +1452,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
  
                                      if (requestCode == REQUEST_CODE_QR_CAMERA_PERMISSION) {
                                          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.onRequestPermissionResultReceived);
@@ -295,7 +295,7 @@ index 0000000..0000000 100644
  
                                          if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                                              openQrScanActivity();
-@@ -1455,7 +1461,8 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+@@ -1456,7 +1462,8 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
                                      }
                                  }
                              }
