@@ -7,10 +7,10 @@ Subject: Allow forwarding from content-protected chats
  .../org/telegram/messenger/FileLoader.java    |   4 +-
  .../org/telegram/messenger/MessageObject.java |   2 +-
  .../messenger/MessagesController.java         |   2 +
- .../messenger/SendMessagesHelper.java         |   7 +++
+ .../messenger/SendMessagesHelper.java         |   5 ++
  .../telegram/ui/Cells/ChatMessageCell.java    |   2 +-
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
- 11 files changed, 18 insertions(+), 113 deletions(-)
+ 6 files changed, 12 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
          if (messages == null || messages.isEmpty()) {
              return 0;
          }
-+        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
++        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() && desu.inugram.helpers.chat.ForwardProtectedHelper.needsBypass(currentAccount, messages)) {
 +            desu.inugram.helpers.chat.ForwardProtectedHelper.resendMessages(
 +                currentAccount, messages, peer, forwardFromMyName, hideCaption, notify,
 +                scheduleDate, scheduleRepeatPeriod, replyToTopMsg, payStars,

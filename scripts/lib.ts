@@ -70,14 +70,21 @@ export async function ensureDir(dir: string) {
   await fs.mkdir(dir, { recursive: true })
 }
 
+export async function configureGitLineEndings(repoDir: string) {
+  const git = cd(repoDir)
+  await git`git config core.autocrlf false`
+  await git`git config core.eol lf`
+}
+
 export async function cloneUpstream(targetDir: string, commit: string) {
   await ensureEmptyCloneTarget(targetDir)
   if (!existsSync(join(targetDir, '.git'))) {
     step(`Cloning upstream into ${targetDir}`)
-    execSync(`git clone "${upstreamUrl}" "${targetDir}"`, { cwd: rootDir, stdio: 'inherit' })
+    execSync(`git clone -c core.autocrlf=false -c core.eol=lf "${upstreamUrl}" "${targetDir}"`, { cwd: rootDir, stdio: 'inherit' })
   } else {
     step(`Reusing existing checkout in ${targetDir}`)
   }
+  await configureGitLineEndings(targetDir)
   await ensureUpstreamRemote(targetDir)
   const git = cd(targetDir)
   step(`Checking out ${commit}`)

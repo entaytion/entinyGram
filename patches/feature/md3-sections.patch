@@ -102,7 +102,7 @@ index 0000000..0000000 100644
 +    public int offsetFromImage = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 60 : 58;
 +    public int heightDp = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 56 : 50;
      public int imageLeft = 16;
-+    public int inu_m3IconSize = 24;
++    public int inu_m3IconSize = 22;
      private boolean inDialogs;
      private boolean prioritizeTitleOverValue;
      private Theme.ResourcesProvider resourcesProvider;
@@ -122,7 +122,7 @@ index 0000000..0000000 100644
 +            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
 +                imageView.setPadding(0, 0, 0, 0);
 +                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-+                final boolean autoSizeLottie = inu_m3IconSize == 24 && imageView.getDrawable() instanceof RLottieDrawable;
++                final boolean autoSizeLottie = inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
 +                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(autoSizeLottie ? 48 : inu_m3IconSize), autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
 +                imageView.measure(iconMeasureSpec, iconMeasureSpec);
 +            } else {
@@ -644,3 +644,5 @@ index 0000000..0000000 100644
                  headerCell.setPadding(headerCell.getPaddingLeft(), dp(16), headerCell.getRight(), dp(16));
 +                desu.inugram.helpers.theme.M3SectionsHelper.markMerged(headerCell, false, true);
                  v = headerCell;
+             } else if (viewType == 14) {
+                 v = new OverviewCell(parent.getContext(), isMegagroup ? 2 : 4);

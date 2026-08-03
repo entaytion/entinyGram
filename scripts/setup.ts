@@ -4,6 +4,7 @@ import { ICON_SELECTION, patchesDir, rootDir, worktreeDir } from './config.js'
 import {
   cd,
   cloneUpstream,
+  configureGitLineEndings,
   ensureDir,
   ensureGitExclude,
   ensureUpstreamRemote,
@@ -33,6 +34,7 @@ async function ensureWorktree(commit: string) {
     return
   }
   step(`Reusing existing checkout in ${worktreeDir}`)
+  await configureGitLineEndings(worktreeDir)
   await ensureUpstreamRemote(worktreeDir)
 }
 

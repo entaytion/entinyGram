@@ -48,6 +48,36 @@ object ForwardProtectedHelper {
         TLRPC.TL_messageEntityCustomEmoji::class.java,
     )
 
+    /**
+     * True only when the batch actually contains content that cannot be forwarded
+     * normally: the source chat has forwarding restricted (noforwards) or the
+     * message itself carries the noforwards flag. A pure toggle-on must NOT reroute
+     * forwards from unrestricted chats through the re-upload path.
+     */
+    @JvmStatic
+    fun needsBypass(currentAccount: Int, messages: ArrayList<MessageObject>): Boolean {
+        val controller = org.telegram.messenger.MessagesController.getInstance(currentAccount)
+        for (messageObject in messages) {
+            val owner = messageObject?.messageOwner ?: continue
+            if (owner.noforwards) return true
+            val dialogId = messageObject.getDialogId()
+            if (dialogId < 0) {
+                // Chat/channel: raw flag, independent of the bypass toggle.
+                var chat = controller.getChat(-dialogId)
+                if (chat?.migrated_to != null) {
+                    chat = controller.getChat(chat.migrated_to.channel_id)
+                }
+                if (chat != null && chat.noforwards) return true
+            } else if (dialogId > 0) {
+                val userFull = controller.getUserFull(dialogId)
+                if (userFull != null && (userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     @JvmStatic
     fun resendMessages(
         currentAccount: Int,

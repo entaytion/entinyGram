@@ -1,0 +1,194 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii "Entaytion" Kulinich <entaytion@gmail.com>
+Date: Sun, 2 Aug 2026 14:00:00 +0300
+Subject: allow translating whole chats without premium
+
+---
+ .../org/telegram/messenger/TranslateController.java                       | 16 +++-------------
+ .../org/telegram/ui/ChatActivity.java                                     | 19 ++-----------------
+ .../org/telegram/ui/Components/TranslateAlert3.java                       |  7 -------
+ .../org/telegram/ui/Components/TranslateButton.java                       | 12 ++----------
+ .../org/telegram/ui/LanguageSelectActivity.java                           | 10 +++-------
+ 5 files changed, 10 insertions(+), 54 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+@@ -92,27 +92,17 @@ public class TranslateController extends BaseController {
+     }
+ 
+     public boolean isFeatureAvailable() {
+-        return isChatTranslateEnabled() && UserConfig.getInstance(currentAccount).isPremium();
++        return isChatTranslateEnabled();
+     }
+ 
+     public boolean isFeatureAvailable(long dialogId) {
+-        if (!isChatTranslateEnabled()) {
+-            return false;
+-        }
+-        final TLRPC.Chat chat = getMessagesController().getChat(-dialogId);
+-        return (
+-            UserConfig.getInstance(currentAccount).isPremium() ||
+-            chat != null && chat.autotranslation
+-        );
++        return isChatTranslateEnabled();
+     }
+ 
+     private Boolean chatTranslateEnabled;
+     private Boolean contextTranslateEnabled;
+ 
+     public boolean isChatTranslateEnabled() {
+-        if (!getMessagesController().isTranslationsAutoEnabled()) {
+-            return false;
+-        }
+         if (chatTranslateEnabled == null) {
+             chatTranslateEnabled = messagesController.getMainSettings().getBoolean("translate_chat_button", true);
+         }
+@@ -1170,7 +1160,7 @@ public class TranslateController extends BaseController {
+                         for (int i = 0; i < count; ++i) {
+                             callbacks.get(i).run(isTranscription, ids.get(i), TranslateAlert2.preprocess(texts.get(i), translated.get(i)), toLanguage);
+                         }
+-                    } else if (err != null && "TRANSLATIONS_DISABLED_ALT".equalsIgnoreCase(err.text)) {
++                    } else if (err != null && !isTranscription) {
+                         for (int i = 0; i < ids.size(); ++i) {
+                             final int id = ids.get(i);
+                             final Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> _callback = callbacks.get(i);
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -9796,18 +9796,7 @@ public class ChatActivity extends BaseFragment implements
+         translateButton = new TranslateButton(getContext(), this, themeDelegate) {
+             @Override
+             protected void onButtonClick() {
+-                if (getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation) {
+-                    getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId());
+-                } else {
+-                    MessagesController.getNotificationsSettings(currentAccount).edit().putInt("dialog_show_translate_count" + getDialogId(), 14).commit();
+-                    showDialog(new PremiumFeatureBottomSheet(ChatActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, false));
+-                }
+-                updateTopPanel(true);
+-            }
+-
+-            @Override
+-            protected void onCloseClick() {
+-                MessagesController.getNotificationsSettings(currentAccount).edit().putInt("dialog_show_translate_count" + getDialogId(), 140).commit();
++                getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId());
+                 updateTopPanel(true);
+             }
+         };
+@@ -29148,11 +29137,7 @@ public class ChatActivity extends BaseFragment implements
+         }
+ 
+         boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
+-        boolean showTranslate = (
+-            getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation ?
+-                getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
+-                !getMessagesController().premiumFeaturesBlocked() && preferences.getInt("dialog_show_translate_count" + did, 5) <= 0
+-        ) || DEBUG_TOP_PANELS;
++        boolean showTranslate = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) || DEBUG_TOP_PANELS;
+         boolean showAddProfilePicture = UserObject.isBot(currentUser) && currentUser.bot_can_edit && currentUser.photo == null;
+         boolean showBizBot = currentEncryptedChat == null && getUserConfig().isPremium() && preferences.getLong("dialog_botid" + did, 0) != 0 || DEBUG_TOP_PANELS;
+         boolean showBotAd = currentUser != null && currentUser.bot && messages.size() >= 2 && botSponsoredMessage != null;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+@@ -114,13 +114,6 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+                     AndroidUtilities.addToClipboard(translated);
+                 }
+             } else if (item.id == 2) {
+-                if (!UserConfig.getInstance(currentAccount).isPremium()) {
+-                    final BaseFragment fragment = LaunchActivity.getSafeLastFragment();
+-                    if (fragment == null) return;
+-                    new PremiumFeatureBottomSheet(getContext(), PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, true, resourcesProvider)
+-                        .show();
+-                    return;
+-                }
+                 MessagesController.getInstance(currentAccount).getTranslateController().toggleTranslatingDialog(dialogId);
+                 dismiss();
+             }
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
+@@ -112,14 +112,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
+         menuView = new ImageView(context);
+         menuView.setScaleType(ImageView.ScaleType.CENTER);
+         menuView.setImageResource(R.drawable.msg_mini_customize);
+-        menuView.setOnClickListener(e -> {
+-            final TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialogId);
+-            if (UserConfig.getInstance(currentAccount).isPremium() || chat != null && chat.autotranslation) {
+-                onMenuClick();
+-            } else {
+-                onCloseClick();
+-            }
+-        });
++        menuView.setOnClickListener(e -> onMenuClick());
+         addView(menuView, LayoutHelper.createFrame(30, 30, Gravity.RIGHT | Gravity.CENTER_VERTICAL, 0, 0, 7, 0));
+ 
+         updateColors();
+@@ -391,7 +384,6 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
+ 
+     public void updateText() {
+         final TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
+-        final TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialogId);
+         if (translateController.isTranslatingDialog(dialogId)) {
+             String detectedLanguage = translateController.getDialogDetectedLanguage(dialogId);
+             detectedLanguage = TranslateAlert2.languageName(detectedLanguage);
+@@ -414,7 +406,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
+             }
+             textView.setText(TextUtils.concat(translateIcon, " ", text));
+         }
+-        menuView.setImageResource(UserConfig.getInstance(currentAccount).isPremium() || chat != null && chat.autotranslation ? R.drawable.msg_mini_customize : R.drawable.msg_close);
++        menuView.setImageResource(R.drawable.msg_mini_customize);
+     }
+ 
+     public static void showCocoonAlert(Context context, Theme.ResourcesProvider resourcesProvider) {
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
+@@ -220,10 +220,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
+                     } else if (position == autoTranslationPosition) {
+                         boolean value = !getChatValue();
+-                        if (value && !getUserConfig().isPremium()) {
+-                            showDialog(new PremiumFeatureBottomSheet(LanguageSelectActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, false));
+-                            return;
+-                        }
+                         getMessagesController().getTranslateController().setChatTranslateEnabled(value);
+                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
+                         ((TextCheckCell) view).setChecked(value);
+@@ -612,7 +608,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                     if (getMessagesController().isTranslationsManualEnabled()) {
+                         count++;
+                     }
+-                    if (getMessagesController().isTranslationsAutoEnabled() && !getMessagesController().premiumFeaturesBlocked()) {
++                    if (getMessagesController().isTranslationsAutoEnabled() || !getUserConfig().isPremium()) {
+                         count++;
+                     }
+                     if (getChatValue() || getContextValue()) {
+@@ -781,7 +777,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                         cell.setCheckBoxIcon(0);
+                     } else if (position == autoTranslationPosition) {
+                         cell.setTextAndCheck(LocaleController.getString(R.string.ShowTranslateChatButton), getChatValue(), getContextValue() || getChatValue());
+-                        cell.setCheckBoxIcon(!getUserConfig().isPremium() ? R.drawable.permission_locked : 0);
++                        cell.setCheckBoxIcon(0);
+                     }
+                     break;
+                 }
+@@ -823,7 +819,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                     } else {
+                         manualTranslationPosition = -1;
+                     }
+-                    if (getMessagesController().isTranslationsAutoEnabled() && !getMessagesController().premiumFeaturesBlocked()) {
++                    if (getMessagesController().isTranslationsAutoEnabled() || !getUserConfig().isPremium()) {
+                         if (i-- == 0) {
+                             autoTranslationPosition = position;
+                             return VIEW_TYPE_SWITCH;
+

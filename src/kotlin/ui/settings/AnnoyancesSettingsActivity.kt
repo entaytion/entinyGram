@@ -353,7 +353,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
-                SearchRegistry.Entry("regex-filter", R.string.InuRegexFilter, BUTTON_REGEX_FILTER),
+                SearchRegistry.Entry("annoyances-regex-filter", R.string.InuRegexFilter, BUTTON_REGEX_FILTER),
                 SearchRegistry.Entry("clear-hints", R.string.InuClearHints, BUTTON_CLEAR_HINTS),
                 SearchRegistry.Entry("hide-ai-features", R.string.InuHideAiFeatures, SECTION_HIDE_AI_FEATURES),
                 SearchRegistry.Entry("hide-suggestions", R.string.InuHideSuggestions, SECTION_HIDE_SUGGESTIONS),

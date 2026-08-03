@@ -128,6 +128,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 two-finger swipe over messages to select/deselect them
 - more bulk actions in message selection mode (save, translate, gallery, pin/unpin, no-quote forward)
 - in-place message translation, with optional web preview translation, original-text appending and on-device source-language auto-detection (hides Translate when already in your language)
+- 📡 whole-chat translation (the "translate this chat" top bar and its menu) without premium
 - instant view pages translator
 - show original time/date in "forwarded from" header, optionally collapsing it to a single line with an icon instead of the "forwarded from" label
 - long-tap forward bar (above input) to cycle between regular / without sender / without caption
