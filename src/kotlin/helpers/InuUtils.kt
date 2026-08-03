@@ -69,15 +69,8 @@ public object InuUtils {
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
         if (fragment == null) return false
-        val name = fragment.javaClass.name
-        return when {
-            name == "org.telegram.ui.ChatActivity" -> desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
-            name == "org.telegram.ui.ProfileActivity" -> desu.inugram.InuConfig.CENTER_TITLE_PROFILE.value
-            // upstream's status/avatar icon in the main screen title breaks any centering math
-            // (exteraGram/Cherrygram have the exact same bug) - never center here, full stop.
-            name == "org.telegram.ui.DialogsActivity" -> false
-            name.startsWith("org.telegram.ui") && name.contains("Settings") -> desu.inugram.InuConfig.CENTER_TITLE_SETTINGS.value
-            else -> false
-        }
+        // upstream's status/avatar icon in the main screen title breaks any centering math
+        // (exteraGram/Cherrygram have the exact same bug) - never center here, full stop.
+        return fragment.javaClass.name == "org.telegram.ui.ChatActivity" && desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
     }
 }

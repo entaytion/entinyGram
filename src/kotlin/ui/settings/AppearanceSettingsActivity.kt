@@ -20,16 +20,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
 
-    private val centerTitleGroup = ExpandableBoolGroup(
-        LocaleController.getString(R.string.InuCenterTitle),
-        listOf(
-            ExpandableBoolGroup.Option(R.string.InuCenterTitleChats, InuConfig.CENTER_TITLE_CHATS),
-            ExpandableBoolGroup.Option(R.string.InuCenterTitleSettings, InuConfig.CENTER_TITLE_SETTINGS),
-            ExpandableBoolGroup.Option(R.string.InuCenterTitleProfile, InuConfig.CENTER_TITLE_PROFILE),
-        ),
-        sectionId = SECTION_CENTER_TITLE,
-    )
-
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuLookAndFeel)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
@@ -45,7 +35,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
-        centerTitleGroup.addTo(items) { adapter.update(true) }
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CENTER_TITLE_CHATS,
+                LocaleController.getString(R.string.InuCenterTitleChats),
+            ).setChecked(InuConfig.CENTER_TITLE_CHATS.value)
+        )
         items.add(
             UItem.asButton(
                 BUTTON_NOTIFICATION_ICON,
@@ -212,8 +207,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (centerTitleGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
+            TOGGLE_CENTER_TITLE_CHATS -> {
+                val new = InuConfig.CENTER_TITLE_CHATS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             TOGGLE_HIDE_FADE_VIEW -> {
                 val new = InuConfig.HIDE_FADE_VIEW.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -382,7 +381,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
-        private val SECTION_CENTER_TITLE = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
@@ -421,7 +420,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
-                SearchRegistry.Entry("center-title", R.string.InuCenterTitle, SECTION_CENTER_TITLE),
+                SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),

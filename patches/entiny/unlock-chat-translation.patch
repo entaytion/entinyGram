@@ -1,21 +1,52 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Oleksii "Entaytion" Kulinich <entaytion@gmail.com>
-Date: Sun, 2 Aug 2026 14:00:00 +0300
-Subject: allow translating whole chats without premium
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 3 Aug 2026 18:04:34 +0300
+Subject: Allow translating whole chats without premium
 
 ---
- .../org/telegram/messenger/TranslateController.java                       | 16 +++-------------
- .../org/telegram/ui/ChatActivity.java                                     | 19 ++-----------------
- .../org/telegram/ui/Components/TranslateAlert3.java                       |  7 -------
- .../org/telegram/ui/Components/TranslateButton.java                       | 12 ++----------
- .../org/telegram/ui/LanguageSelectActivity.java                           | 10 +++-------
- 5 files changed, 10 insertions(+), 54 deletions(-)
+ .../telegram/messenger/LanguageDetector.java  | 13 +++++++++++++
+ .../messenger/TranslateController.java        | 16 +++-------------
+ .../java/org/telegram/ui/ChatActivity.java    | 19 ++-----------------
+ .../ui/Components/TranslateAlert3.java        |  7 -------
+ .../ui/Components/TranslateButton.java        | 12 ++----------
+ .../telegram/ui/LanguageSelectActivity.java   | 10 +++-------
+ 6 files changed, 23 insertions(+), 54 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
+@@ -1,5 +1,7 @@
+ package org.telegram.messenger;
+ 
++import android.os.Build;
++
+ public class LanguageDetector {
+     public interface StringCallback {
+         void run(String str);
+@@ -9,6 +11,17 @@ public class LanguageDetector {
+     }
+ 
+     public static boolean hasSupport() {
++        // MLKit's language-id native lib crashes (SIGABRT) under ARM translation on
++        // emulators; skip auto-detection there so translate doesn't break the app.
++        if (Build.FINGERPRINT != null && (Build.FINGERPRINT.contains("generic")
++                || Build.FINGERPRINT.toLowerCase().contains("emulator"))) {
++            return false;
++        }
++        if (Build.MODEL != null && (Build.MODEL.contains("Emulator")
++                || Build.MODEL.contains("Android SDK built for")
++                || Build.MODEL.toLowerCase().contains("google_sdk"))) {
++            return false;
++        }
+         return true;
+     }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
-@@ -92,27 +92,17 @@ public class TranslateController extends BaseController {
+@@ -91,27 +91,17 @@ public class TranslateController extends BaseController {
      }
  
      public boolean isFeatureAvailable() {
@@ -45,7 +76,7 @@ index 0000000..0000000 100644
          if (chatTranslateEnabled == null) {
              chatTranslateEnabled = messagesController.getMainSettings().getBoolean("translate_chat_button", true);
          }
-@@ -1170,7 +1160,7 @@ public class TranslateController extends BaseController {
+@@ -1169,7 +1159,7 @@ public class TranslateController extends BaseController {
                          for (int i = 0; i < count; ++i) {
                              callbacks.get(i).run(isTranscription, ids.get(i), TranslateAlert2.preprocess(texts.get(i), translated.get(i)), toLanguage);
                          }
@@ -54,12 +85,11 @@ index 0000000..0000000 100644
                          for (int i = 0; i < ids.size(); ++i) {
                              final int id = ids.get(i);
                              final Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> _callback = callbacks.get(i);
-
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9796,18 +9796,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9813,18 +9813,7 @@ public class ChatActivity extends BaseFragment implements
          translateButton = new TranslateButton(getContext(), this, themeDelegate) {
              @Override
              protected void onButtonClick() {
@@ -79,7 +109,7 @@ index 0000000..0000000 100644
                  updateTopPanel(true);
              }
          };
-@@ -29148,11 +29137,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29182,11 +29171,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
@@ -110,7 +140,6 @@ index 0000000..0000000 100644
                  MessagesController.getInstance(currentAccount).getTranslateController().toggleTranslatingDialog(dialogId);
                  dismiss();
              }
-
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
@@ -148,7 +177,6 @@ index 0000000..0000000 100644
      }
  
      public static void showCocoonAlert(Context context, Theme.ResourcesProvider resourcesProvider) {
-
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
@@ -191,4 +219,3 @@ index 0000000..0000000 100644
                          if (i-- == 0) {
                              autoTranslationPosition = position;
                              return VIEW_TYPE_SWITCH;
-

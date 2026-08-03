@@ -6,6 +6,7 @@ import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
+import org.telegram.messenger.UserObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.BaseFragment
 
@@ -16,14 +17,34 @@ class StickerSizePreviewMessagesCell(context: Context?, fragment: BaseFragment) 
     companion object {
         private fun buildMessages(): Array<MessageObject> {
             val now = (System.currentTimeMillis() / 1000).toInt() - 60 * 60
-            val selfId = UserConfig.getInstance(UserConfig.selectedAccount).clientUserId
+            val selfAccount = UserConfig.selectedAccount
+            val selfId = UserConfig.getInstance(selfAccount).clientUserId
+            val selfUser = UserConfig.getInstance(selfAccount).currentUser
+            val senderName = UserObject.getUserName(selfUser).takeIf { !it.isNullOrBlank() }
+                ?: getString(R.string.InuMiscPreviewForwardedFrom)
+
+            val textTlMessage = TLRPC.TL_message().apply {
+                message = getString(R.string.InuStickerSizeDialogMessage)
+                date = now
+                dialog_id = -1
+                flags = 259 or TLRPC.MESSAGE_FLAG_FWD
+                id = 1
+                fwd_from = TLRPC.TL_messageFwdHeader().apply {
+                    flags = flags or 32
+                    from_name = senderName
+                    date = now - 60 * 60 * 20
+                }
+                media = TLRPC.TL_messageMediaEmpty()
+                out = false
+                peer_id = TLRPC.TL_peerUser().apply { user_id = 1 }
+            }
 
             val stickerTlMessage = TLRPC.TL_message().apply {
                 date = now + 10
                 dialog_id = 1
                 flags = 257
                 from_id = TLRPC.TL_peerUser().apply { user_id = selfId }
-                id = 1
+                id = 2
                 media = TLRPC.TL_messageMediaDocument().apply {
                     flags = 1
                     document = TLRPC.TL_document().apply {
@@ -43,28 +64,11 @@ class StickerSizePreviewMessagesCell(context: Context?, fragment: BaseFragment) 
                 peer_id = TLRPC.TL_peerUser().apply { user_id = 0 }
             }
 
-            val textTlMessage = TLRPC.TL_message().apply {
-                message = getString(R.string.InuStickerSizeDialogMessage)
-                date = now + 1270
-                dialog_id = -1
-                flags = 259
-                id = 3
-                reply_to = TLRPC.TL_messageReplyHeader().apply {
-                    flags = flags or 16
-                    reply_to_msg_id = 2
-                }
-                media = TLRPC.TL_messageMediaEmpty()
-                out = false
-                peer_id = TLRPC.TL_peerUser().apply { user_id = 1 }
-            }
-
+            val textMessageObject = MessageObject(UserConfig.selectedAccount, textTlMessage, true, false)
             val stickerMessageObject = MessageObject(UserConfig.selectedAccount, stickerTlMessage, true, false).apply {
                 useCustomPhoto = true
             }
-            val textMessageObject = MessageObject(UserConfig.selectedAccount, textTlMessage, true, false).apply {
-                replyMessageObject = stickerMessageObject
-            }
-            return arrayOf(stickerMessageObject, textMessageObject)
+            return arrayOf(textMessageObject, stickerMessageObject)
         }
     }
 }

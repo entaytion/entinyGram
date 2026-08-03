@@ -35,8 +35,23 @@ Format: `group__name` → `patches/<group>/<name>.patch`. Commit subject = plain
 | `debloat` | hides/disables stock behavior behind a toggle |
 | `hooks` | thin stock hooks for fork code to attach to; no user-visible change alone |
 | `misc` | build, branding, infra |
+| `entiny` | your own overlay patches (authored by you). Kept in `patches/entiny/`, separate from the inugram base, so upstream (inugram) merges never touch them |
 
 `debloat` vs `feature`: only *removes/toggles off* stock → `debloat`. Adds new capability → `feature`. `visual__`, `ui__`, etc. are **not** valid groups.
+
+**Ownership boundary:** everything under `patches/<bugfix|feature|debloat|hooks|misc>/` is the inherited inugram base — don't rename it. When you *take over* a patch (meaningfully modify it for entinygram), move it into `entiny/` via `stg rename <old> entiny__<name>`; at that point you own its maintenance (upstream fixes won't auto-apply). `entiny/` is your layer, so merging upstream stays clean.
+
+**Merge behavior — will a patch duplicate?** Before taking over (or when planning a merge), check whether inugram also has the patch:
+```bash
+git show upstream/HEAD:series | grep <name>
+```
+- **New `entiny__` patches** (inugram doesn't have them) → **zero merge conflict**; inugram never touches them.
+- **Taken-over patches** (you renamed an inugram patch to `entiny__`) → on each inugram merge, inugram's original `<group>/<name>` comes back → **duplication**. Resolve by dropping inugram's `<group>/<name>` from `series` (keep your `entiny__` version), or manually port inugram's fixes into yours.
+- **Shared inugram patches you only tweak** (e.g. `misc/branding`) → don't take over; inugram overwrites them every merge, so re-assert your values post-merge (see merge hygiene). Taking over wouldn't avoid this.
+
+As of writing, all `entiny__*` patches are **new** (not in inugram) — only `feature__translator` and `misc__branding` remain shared inugram base patches.
+
+**`bun run own-patches [--apply]`** (scripts/own-patches.ts): finds your patches by author email (see `OWN_AUTHORS` in the script) and renames them into the `entiny__*` namespace. Dry-run by default; add `--apply` to perform. Run `bun run export` afterwards.
 
 Propose a patch name (and comment) for every newly made patch — don't touch stgit yourself.
 

@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 3 Aug 2026 21:47:53 +0300
+Subject: Post-rebase fixes: restore media session release, edited-message cache, forward-bypass refinement, compact-edited time
+
+---
+ .../java/org/telegram/messenger/MusicPlayerService.java   | 6 +++---
+ .../java/org/telegram/messenger/SendMessagesHelper.java   | 8 +++++++-
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 8 +++++---
+ 3 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
+@@ -819,9 +819,9 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+             metadataEditor.apply();
+             audioManager.unregisterRemoteControlClient(remoteControlClient);
+         }
+-        // mediaSession is owned by TelegramMediaSession (process singleton) — do NOT release here.
+-        if (sessionHolder != null) {
+-            sessionHolder.inu_releaseIfIdle();
++        if (mediaSession != null) {
++            mediaSession.release();
++            mediaSession = null;
+         }
+         for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+             NotificationCenter.getInstance(a).removeObserver(this, NotificationCenter.messagePlayingDidSeek);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2075,7 +2075,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (messages == null || messages.isEmpty()) {
+             return 0;
+         }
+-        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
++        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() && desu.inugram.helpers.chat.ForwardProtectedHelper.needsBypass(currentAccount, messages)) {
+             desu.inugram.helpers.chat.ForwardProtectedHelper.resendMessages(
+                 currentAccount, messages, peer, forwardFromMyName, hideCaption, notify,
+                 scheduleDate, scheduleRepeatPeriod, replyToTopMsg, payStars,
+@@ -2912,6 +2912,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 messageObject.editingMessageEntities = newMsg.entities;
+                 path = newMsg.attachPath;
+             } else {
++                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && newMsg != null && newMsg.message != null && !android.text.TextUtils.isEmpty(newMsg.message)) {
++                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++                }
+                 messageObject.previousMedia = newMsg.media;
+                 messageObject.previousMessage = newMsg.message;
+                 messageObject.previousMessageEntities = newMsg.entities;
+@@ -3414,6 +3417,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 req.flags |= TLObject.FLAG_18;
+             }
+         }
++        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && !messageObject.messageOwner.message.equals(message)) {
++            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++        }
+         return getConnectionsManager().sendRequest(req, (response, error) -> {
+             if (error == null) {
+                 getMessagesController().processUpdates((TLRPC.Updates) response, false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -18476,9 +18476,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         } else if (currentMessageObject.isRepostPreview) {
+             timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+         } else if (edited) {
+-            timeString = AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
+-                LocaleController.formatPmEditedDate(currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date) :
+-                ((desu.inugram.InuConfig.COMPACT_EDITED.getValue() ? "" : getString(R.string.EditedMessage) + " ") + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
++            timeString = desu.inugram.InuConfig.COMPACT_EDITED.getValue() ?
++                LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000) :
++                AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
++                    LocaleController.formatPmEditedDate(currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date) :
++                    (getString(R.string.EditedMessage) + " " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
+         } else if (currentMessageObject.isSaved && currentMessageObject.messageOwner.fwd_from != null && (currentMessageObject.messageOwner.fwd_from.date != 0 || currentMessageObject.messageOwner.fwd_from.saved_date != 0)) {
+             int date = currentMessageObject.messageOwner.fwd_from.saved_date;
+             if (date == 0) {

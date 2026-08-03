@@ -1,5 +1,5 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 1 Aug 2026 14:16:29 +0300
 Subject: Allow forwarding from content-protected chats
 
@@ -7,10 +7,10 @@ Subject: Allow forwarding from content-protected chats
  .../org/telegram/messenger/FileLoader.java    |   4 +-
  .../org/telegram/messenger/MessageObject.java |   2 +-
  .../messenger/MessagesController.java         |   2 +
- .../messenger/SendMessagesHelper.java         |   5 ++
+ .../messenger/SendMessagesHelper.java         |   7 +++
  .../telegram/ui/Cells/ChatMessageCell.java    |   2 +-
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
- 6 files changed, 12 insertions(+), 5 deletions(-)
+ 11 files changed, 18 insertions(+), 113 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -11570,7 +11570,7 @@ public class MessageObject {
+@@ -11567,7 +11567,7 @@ public class MessageObject {
          if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && isSecretMedia()) return true;
          if (isQuickReply() || isEphemeral()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
@@ -68,11 +68,11 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2073,6 +2073,13 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2075,6 +2075,13 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (messages == null || messages.isEmpty()) {
              return 0;
          }
-+        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() && desu.inugram.helpers.chat.ForwardProtectedHelper.needsBypass(currentAccount, messages)) {
++        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
 +            desu.inugram.helpers.chat.ForwardProtectedHelper.resendMessages(
 +                currentAccount, messages, peer, forwardFromMyName, hideCaption, notify,
 +                scheduleDate, scheduleRepeatPeriod, replyToTopMsg, payStars,
@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6937,7 +6937,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6952,7 +6952,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  drawSideButton = checkNeedDrawShareButton(messageObject) ? 2 : 0;
              } else if (messageObject.searchType == ChatActivity.SEARCH_MY_MESSAGES) {
                  drawSideButton = 0;
@@ -99,7 +99,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3483,7 +3483,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3484,7 +3484,7 @@ public class ChatActivity extends BaseFragment implements
              if (chatActivity != null && chatActivity.getDialogId() == UserObject.VERIFY) {
                  return false;
              }

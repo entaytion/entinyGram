@@ -140,7 +140,7 @@ object InuDatabaseHelper {
             cursor.dispose()
         }
 
-        cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(old_text)) FROM inu_edit_history GROUP BY dialog_id")
+        cursor = db.queryFinalized("SELECT dialog_id, COUNT(*), SUM(LENGTH(text)) FROM inu_edit_history GROUP BY dialog_id")
         try {
             while (cursor.next()) {
                 val dialogId = cursor.longValue(0)

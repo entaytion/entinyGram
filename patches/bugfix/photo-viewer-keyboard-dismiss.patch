@@ -4,14 +4,37 @@ Date: Tue, 23 Jun 2026 17:19:08 +0400
 Subject: fix photo viewer dismissing keyboard (and also breaking close animation target), by essentially reverting to its pre-12.8 behavior
 
 ---
- .../src/main/java/org/telegram/ui/LaunchActivity.java | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ .../java/org/telegram/ui/LaunchActivity.java  | 27 +++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -9170,6 +9170,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -467,7 +467,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+         AndroidUtilities.fillStatusBarHeight(this, false);
+         actionBarLayout = new ActionBarLayout(this, true);
+ 
+-        frameLayout = new ActivityContentLayout(this);
++        frameLayout = new FrameLayout(this) {
++            @Override
++            protected void dispatchDraw(@NonNull Canvas canvas) {
++                if (inu_mainContentHidden) {
++                    return;
++                }
++                super.dispatchDraw(canvas);
++                drawRippleAbove(canvas, this);
++            }
++
++            @Override
++            public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
++                return AndroidUtilities.fixedDispatchApplyWindowInsets(insets, this);
++            }
++        };
+         frameLayout.setClipToPadding(false);
+         frameLayout.setClipChildren(false);
+         setContentView(frameLayout);
+@@ -9170,6 +9184,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
      private int reasonsToHideMainContent = 0;
      private int reasonsToHideDecorView = 0;
@@ -23,7 +46,7 @@ index 0000000..0000000 100644
  
      private void updateReasonsToHideMainContent(boolean increment, boolean withDecorView) {
          reasonsToHideMainContent += (increment ? 1 : -1);
-@@ -9177,7 +9182,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -9177,7 +9196,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              reasonsToHideDecorView += (increment ? 1 : -1);
          }
          if (frameLayout != null) {
@@ -33,7 +56,7 @@ index 0000000..0000000 100644
          }
          checkDecorViewVisibility();
      }
-@@ -9249,6 +9255,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -9249,6 +9269,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
          @Override
          protected void dispatchDraw(@NonNull Canvas canvas) {

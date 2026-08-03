@@ -1,13 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "\"\\\"Oleksii \\\\\\\"Entaytion\\\\\\\" Kulinich\\\"\""
- <entaytion@gmail.com>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 26 Jul 2026 01:30:43 +0300
 Subject: allow centering actionbar titles
 
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 37 +++++++++++++++---
  .../ui/Components/ChatAvatarContainer.java    | 38 +++++++++++++++----
- 2 files changed, 63 insertions(+), 13 deletions(-)
+ 2 files changed, 62 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -67,7 +66,7 @@ index 0000000..0000000 100644
          textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1522,6 +1538,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1522,6 +1538,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              menu.layout(menuLeft, additionalTop, menuLeft + menu.getMeasuredWidth(), additionalTop + menu.getMeasuredHeight());
          }
  
@@ -76,7 +75,7 @@ index 0000000..0000000 100644
          for (int i = 0; i < 2; i++) {
              if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
                  int textTop;
-@@ -1534,21 +1553,29 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1534,21 +1552,30 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
@@ -199,3 +198,4 @@ index 0000000..0000000 100644
 +            subtitleTextLargerCopyView.layout(subL, subtitleTop, subL + subtitleTextLargerCopyView.getMeasuredWidth(), subtitleTop + subtitleTextLargerCopyView.getTextHeight());
          }
      }
+ 

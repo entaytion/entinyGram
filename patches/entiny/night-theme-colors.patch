@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 3 Aug 2026 21:23:52 +0300
+Subject: Night theme background color tweaks
+
+---
+ TMessagesProj/src/main/res/values-night/styles.xml | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/res/values-night/styles.xml b/TMessagesProj/src/main/res/values-night/styles.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/values-night/styles.xml
++++ b/TMessagesProj/src/main/res/values-night/styles.xml
+@@ -15,16 +15,16 @@
+         <item name="android:windowActionBar">false</item>
+         <item name="android:windowNoTitle">true</item>
+         <item name="android:actionBarStyle">@style/ActionBar.Transparent.TMessages.Start</item>
+-        <item name="android:colorBackground">#1f2732</item>
+-        <item name="android:windowBackground">#1f2732</item>
++        <item name="android:colorBackground">#121318</item>
++        <item name="android:windowBackground">#121318</item>
+         <item name="android:windowContentOverlay">@null</item>
+-        <item name="android:colorPrimaryDark">#1c242e</item>
+-        <item name="android:colorPrimary">#232d3a</item>
++        <item name="android:colorPrimaryDark">#121318</item>
++        <item name="android:colorPrimary">#1b1b20</item>
+         <item name="android:navigationBarColor">#000000</item>
+         <item name="android:forceDarkAllowed">false</item>
+         <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_320</item>
+         <item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
+-        <item name="android:windowSplashScreenBackground">#1f2732</item>
++        <item name="android:windowSplashScreenBackground">#121318</item>
+     </style>
+ 
+     <style name="ActionBar.Transparent.TMessages.Start" parent="android:style/Widget.Material.Light.ActionBar">

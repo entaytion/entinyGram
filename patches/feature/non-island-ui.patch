@@ -1663,10 +1663,10 @@ index 0000000..0000000 100644
 +                topPanelLayout.inu_blurHelper = desu.inugram.ui.BlurBehindHelper.create(topPanelLayout, sizeNotifierFrameLayout, Theme.key_windowBackgroundWhite);
 +                topPanelLayout.setPadding(0, 0, 0, 0);
 +            }
- 
              fragmentContextView.setDelegate((start, show) -> {
                  if (!start) {
-@@ -3758,6 +3796,12 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                     requestLayout();
+@@ -3757,6 +3795,12 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              } else {
                  addView(scrollSlidingTextTabStrip, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.TOP));
              }
@@ -1679,7 +1679,7 @@ index 0000000..0000000 100644
              searchTagsList = new SearchTagsList(getContext(), profileActivity, profileActivity.getCurrentAccount(), includeSavedDialogs() ? 0 : dialog_id, resourcesProvider) {
                  @Override
                  protected boolean setFilter(ReactionsLayoutInBubble.VisibleReaction reaction) {
-@@ -3802,7 +3846,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -3801,7 +3845,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              };
              searchTagsList.setShown(0f);
              addView(searchTagsList, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.LEFT | Gravity.TOP, 0, 4, 0, 0));
@@ -1688,7 +1688,7 @@ index 0000000..0000000 100644
          }
  
          updateTabs(false);
-@@ -5700,6 +5744,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -5699,6 +5743,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          if (heightSize == 0) {
              heightSize = MeasureSpec.getSize(heightMeasureSpec);
          }
@@ -1696,7 +1696,7 @@ index 0000000..0000000 100644
  
          setMeasuredDimension(widthSize, heightSize);
  
-@@ -7409,7 +7454,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7408,7 +7453,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                          Theme.isCurrentThemeDark()
                      )
                  );
@@ -1705,7 +1705,7 @@ index 0000000..0000000 100644
                      @Override
                      public void getOutline(View view, Outline outline) {
                          outline.setRoundRect(0, dp(50), view.getWidth(), view.getHeight() + dp(24), dp(24));
-@@ -11570,6 +11615,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -11569,6 +11614,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
  
          @Override
          protected void dispatchDraw(@NonNull Canvas canvas) {

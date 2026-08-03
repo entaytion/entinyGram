@@ -51,6 +51,16 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
+            if (actionBar.backButtonImageView == null) {
+                actionBar.setBackButtonImage(R.drawable.ic_ab_back)
+            }
+            if (actionBar.actionBarMenuOnItemClick == null) {
+                actionBar.setActionBarMenuOnItemClick(object : org.telegram.ui.ActionBar.ActionBar.ActionBarMenuOnItemClick() {
+                    override fun onItemClick(id: Int) {
+                        if (id == -1) finishFragment()
+                    }
+                })
+            }
             listView.setSections()
             actionBar.setAdaptiveBackground(listView)
             listView.clipToPadding = false

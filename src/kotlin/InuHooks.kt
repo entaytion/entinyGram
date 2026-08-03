@@ -25,6 +25,7 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLObject
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AnimatedFloat
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ChatActivityEnterView
@@ -138,6 +139,8 @@ object InuHooks {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MonetHelper.refreshMonetThemeIfChanged()
         }
+        val bg = Theme.getColor(Theme.key_windowBackgroundWhite)
+        launchActivity.window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(bg))
         CrashReporter.maybeShowReportSheet(launchActivity)
         ProxyVpnHelper.reconcile()
         DrawerHelper.refreshUpdateState()

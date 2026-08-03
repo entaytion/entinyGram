@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 3 Aug 2026 18:05:26 +0300
+Subject: Handle tg://settings deeplinks in chat messages and enlarge the AI star drawable
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java      | 9 +++++++++
+ TMessagesProj/src/main/res/drawable/input_ai_star.xml    | 4 ++--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -36612,6 +36612,10 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     private void processExternalUrl(int type, String url, CharacterStyle span, ChatMessageCell cell, boolean forceAlert, boolean forceNoIV) {
++        LaunchActivity launchActivity = getParentActivity() instanceof LaunchActivity ? (LaunchActivity) getParentActivity() : LaunchActivity.instance;
++        if (url != null && (url.startsWith("tg://settings/") || url.startsWith("tg:settings/")) && launchActivity != null && desu.inugram.SearchRegistry.tryHandleDeepLink(launchActivity, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) {
++            return;
++        }
+         try {
+             String host = AndroidUtilities.getHostAuthority(url);
+             if ((currentEncryptedChat == null || getMessagesController().secretWebpagePreview == 1) && getMessagesController().authDomains.contains(host)) {
+@@ -42230,6 +42234,11 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     private boolean openLinkInternally(String urlFinal, ChatMessageCell cell, CharacterStyle span, int fromMessageId, int fromMessageProgressType) {
++        if (urlFinal != null && (urlFinal.startsWith("tg://settings/") || urlFinal.startsWith("tg:settings/")) && getParentActivity() instanceof LaunchActivity) {
++            if (desu.inugram.SearchRegistry.tryHandleDeepLink((LaunchActivity) getParentActivity(), new Intent(Intent.ACTION_VIEW, Uri.parse(urlFinal)))) {
++                return true;
++            }
++        }
+         if (currentChat == null || urlFinal == null || chatMode != 0) {
+             return false;
+         }
+diff --git a/TMessagesProj/src/main/res/drawable/input_ai_star.xml b/TMessagesProj/src/main/res/drawable/input_ai_star.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/drawable/input_ai_star.xml
++++ b/TMessagesProj/src/main/res/drawable/input_ai_star.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <vector xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:width="5.3dp"
+-    android:height="5.3dp"
++    android:width="24dp"
++    android:height="24dp"
+     android:viewportWidth="16"
+     android:viewportHeight="16">
+ 

@@ -1,5 +1,5 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 2 Aug 2026 13:44:28 +0300
 Subject: Add ABI filter toggle driven by ABI_FILTERS env var
 

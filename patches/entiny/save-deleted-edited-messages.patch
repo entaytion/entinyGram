@@ -1,14 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "\"\\\"Oleksii \\\\\\\"Entaytion\\\\\\\" Kulinich\\\"\""
- <entaytion@gmail.com>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 26 Jul 2026 01:48:18 +0300
 Subject: save deleted and edited messages history
 
 ---
  .../messenger/MessagesController.java         | 31 +++++++++++++++++++
  .../telegram/messenger/MessagesStorage.java   | 11 +++++--
- .../telegram/messenger/SendMessagesHelper.java |  9 +++++++++
- 3 files changed, 48 insertions(+), 3 deletions(-)
+ 2 files changed, 39 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -47,7 +45,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -21156,6 +21182,11 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21162,6 +21188,11 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -63,7 +61,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -14482,8 +14482,10 @@ public class MessagesStorage extends BaseController {
+@@ -14492,8 +14492,10 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -76,7 +74,7 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -15840,12 +15842,15 @@ public class MessagesStorage extends BaseController {
+@@ -15850,12 +15852,15 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -93,21 +91,3 @@ index 0000000..0000000 100644
                                              message.attachPath = oldMessage.attachPath;
                                          }
                                          message.ttl = cursor.intValue(2);
-
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2908,6 +2908,9 @@ public class SendMessagesHelper extends BaseController {
-             } else {
-+                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && newMsg != null && newMsg.message != null && !android.text.TextUtils.isEmpty(newMsg.message) && messageObject.messageOwner != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message)) {
-+                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
-+                }
-                 messageObject.previousMedia = newMsg.media;
-@@ -3410,6 +3413,9 @@ public int editMessage(MessageObject messageObject, String message, boolean searchLinks, final BaseFragment fragment, ArrayList<TLRPC.MessageEntity> entities, int scheduleDate, int scheduleRepeatPeriod) {
-             }
-         }
-+        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && message != null && !messageObject.messageOwner.message.equals(message)) {
-+            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
-+        }
-         return getConnectionsManager().sendRequest(req, (response, error) -> {
