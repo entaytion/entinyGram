@@ -808,4 +808,8 @@
     <string name="InuAiTranslateRun">Translate</string>
     <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
+    <string name="InuShowMutualContactIcon">Mutual Contact Icon</string>
+    <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
+    <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
+    <string name="InuShowMutualContactInChatsInfo">Display mutual contact icon in group and channel member lists</string>
 </resources>

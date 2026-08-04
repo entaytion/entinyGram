@@ -82,6 +82,22 @@ class ChatsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableBotDraftTop),
             ).setChecked(InuConfig.DISABLE_BOT_DRAFT_TOP.value)
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SHOW_MUTUAL_CONTACT_ICON,
+                R.string.InuShowMutualContactIcon,
+                R.string.InuShowMutualContactIconInfo,
+                InuConfig.SHOW_MUTUAL_CONTACT_ICON.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS,
+                R.string.InuShowMutualContactInChats,
+                R.string.InuShowMutualContactInChatsInfo,
+                InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAttachmentSheet)))
@@ -313,12 +329,16 @@ class ChatsSettingsActivity : SettingsPageActivity() {
             }
 
             TOGGLE_SEARCH_FROM_GLOBAL -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEARCH_FROM_GLOBAL.toggle()
+            TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
+            TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
             BUTTON_CHAT_MENU_ORDER -> presentFragment(ChatMenuOrderActivity())
         }
     }
 
     companion object {
+        private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
+        private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
         private val TOGGLE_DISABLE_PULL_TO_NEXT = InuUtils.generateId()
         private val TOGGLE_CHAT_ALWAYS_SHOW_DOWN = InuUtils.generateId()
@@ -388,6 +408,8 @@ class ChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("emoji-panel-keyword-search", R.string.InuEmojiPanelKeywordSearch, TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH),
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),
                 SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
+                SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
+                SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
                 SearchRegistry.Entry("chat-menu-order", R.string.InuChatMenuOrder, BUTTON_CHAT_MENU_ORDER),
                 SearchRegistry.Entry("hide-bottom-bar", R.string.InuHideBottomBar, SECTION_HIDE_BOTTOM_BAR),
                 SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),

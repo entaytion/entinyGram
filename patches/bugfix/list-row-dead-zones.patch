@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
-@@ -318,6 +318,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -301,6 +301,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
              adminTextView.setTranslationX(0);
              adminTextView.setBackground(null);
              adminTextView.setOnClickListener(onClick);

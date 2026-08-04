@@ -28,7 +28,6 @@ hooks/photo-viewer-menu.patch
 debloat/hide-bot-elements.patch
 feature/call-confirmation.patch
 feature/double-tap-delay.patch
-feature/mutual-contact-icon.patch
 hooks/chat-activity.patch
 feature/message-menu.patch
 debloat/disable-pull-to-next.patch
@@ -279,3 +278,4 @@ feature/translator.patch
 entiny/night-theme-colors.patch
 entiny/rebase-leftover-fixes.patch
 entiny/translator-without-premium.patch
+entiny/mutual-contact-icon.patch

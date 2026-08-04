@@ -815,4 +815,8 @@
     <string name="InuMaterial3NavigationAnimation">Анімація навігації</string>
     <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
+    <string name="InuShowMutualContactIcon">Значок взаємного контакту</string>
+    <string name="InuShowMutualContactIconInfo">Показувати значок взаємного контакту у списку контактів</string>
+    <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>
+    <string name="InuShowMutualContactInChatsInfo">Показувати значок взаємного контакту у списках учасників груп та каналів</string>
 </resources>

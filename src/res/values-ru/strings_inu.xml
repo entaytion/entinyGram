@@ -818,4 +818,8 @@
     <string name="InuBetaFeatureTitle">Бета-функция</string>
     <string name="InuBetaFeatureInfo">Эта функция находится в активной разработке (бета/экспериментальная).</string>
     <string name="InuTOS">Условия использования</string>
+    <string name="InuShowMutualContactIcon">Значок взаимного контакта</string>
+    <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
+    <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>
+    <string name="InuShowMutualContactInChatsInfo">Показывать значок взаимного контакта в списках участников групп и каналов</string>
 </resources>

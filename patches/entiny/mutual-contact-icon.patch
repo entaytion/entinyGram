@@ -1,12 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.su>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 12 Apr 2026 17:20:59 +0300
-Subject: show an icon for mutual contacts in contacts view
+Subject: show mutual contact icon in user lists and chat member lists with auto-shifted tags
 
+Modified from inugram base patch by alina sireneva <alina@tei.su> and Oleksii Kulinich <entaytion@gmail.com> for entinyGram.
+This is an entiny-owned overlay patch taken over from inugram's feature/mutual-contact-icon; do not pull/overwrite during upstream inugram syncs.
 ---
  .../telegram/ui/Adapters/ContactsAdapter.java |  2 +-
- .../java/org/telegram/ui/Cells/UserCell.java  | 20 +++++++++++++++++++
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ .../java/org/telegram/ui/Cells/UserCell.java  | 41 +++++++++++++++++++
+ 2 files changed, 42 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
 index 0000000..0000000 100644
@@ -25,15 +27,16 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
-@@ -77,6 +77,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -77,6 +77,8 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
      private final AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable emojiStatus;
      private ImageView closeView;
      protected Theme.ResourcesProvider resourcesProvider;
 +    private ImageView inu_mutualView;
++    private boolean inu_isContactsList;
  
      protected AvatarDrawable avatarDrawable;
      private boolean storiable;
-@@ -134,6 +135,10 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -134,8 +136,13 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
      private final int padding;
  
      public UserCell(Context context, int padding, int checkbox, boolean admin, boolean needAddButton, Theme.ResourcesProvider resourcesProvider) {
@@ -43,32 +46,61 @@ index 0000000..0000000 100644
 +    public UserCell(Context context, int padding, int checkbox, boolean admin, boolean needAddButton, Theme.ResourcesProvider resourcesProvider, boolean inu_needMutualIcon) {
          super(context);
          this.resourcesProvider = resourcesProvider;
++        this.inu_isContactsList = inu_needMutualIcon;
  
-@@ -231,6 +236,18 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+         int additionalPadding;
+         if (needAddButton) {
+@@ -231,6 +238,18 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
              addView(adminTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, LocaleController.isRTL ? 23 : 0, 10, LocaleController.isRTL ? 0 : 23, 0));
          }
  
-+        if (inu_needMutualIcon) {
++        if (inu_needMutualIcon || desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_ICON.getValue() || desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.getValue()) {
 +            inu_mutualView = new ImageView(context);
-+            inu_mutualView.setImageResource(R.drawable.player_new_repeatall);
++            inu_mutualView.setImageResource(R.drawable.ic_mutual_contact);
 +            inu_mutualView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_player_actionBarSelector)));
 +            inu_mutualView.setScaleType(ImageView.ScaleType.CENTER);
 +            inu_mutualView.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.MULTIPLY));
 +            inu_mutualView.setVisibility(GONE);
 +            inu_mutualView.setContentDescription(LocaleController.getString(R.string.InuMutualContact));
-+            inu_mutualView.setOnClickListener(v -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, org.telegram.ui.Components.Bulletin.TYPE_ERROR, LocaleController.getString(R.string.InuMutualContactDescription)));
++            inu_mutualView.setOnClickListener(v -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, org.telegram.ui.Components.Bulletin.TYPE_SUCCESS, LocaleController.getString(R.string.InuMutualContactDescription)));
 +            addView(inu_mutualView, LayoutHelper.createFrame(40, 40, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.CENTER_VERTICAL, LocaleController.isRTL ? 8 : 0, 0, LocaleController.isRTL ? 0 : 8, 0));
 +        }
 +
          setFocusable(true);
      }
  
-@@ -741,6 +758,9 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -311,6 +330,22 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+         } else {
+             setRightPadding(0, true, false);
+         }
++        inu_updateAdminTextViewMargin();
++    }
++
++    private void inu_updateAdminTextViewMargin() {
++        if (adminTextView != null) {
++            boolean visible = inu_mutualView != null && inu_mutualView.getVisibility() == VISIBLE;
++            int margin = visible ? (dp(54) + (int) adminTextView.getTranslationX()) : dp(23);
++            int rightMargin = LocaleController.isRTL ? 0 : margin;
++            int leftMargin = LocaleController.isRTL ? margin : 0;
++            android.widget.FrameLayout.LayoutParams lp = (android.widget.FrameLayout.LayoutParams) adminTextView.getLayoutParams();
++            if (lp != null && (lp.rightMargin != rightMargin || lp.leftMargin != leftMargin)) {
++                lp.rightMargin = rightMargin;
++                lp.leftMargin = leftMargin;
++                adminTextView.setLayoutParams(lp);
++            }
++        }
+     }
+ 
+     public void setRightPadding(int pad, boolean top, boolean bottom) {
+@@ -742,6 +777,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                  (currentChat != null && currentChat.forum ? dp(14) : dp(24)));
  
          nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
 +        if (inu_mutualView != null) {
-+            inu_mutualView.setVisibility(currentUser != null && currentUser.mutual_contact ? VISIBLE : GONE);
++            boolean enabled = inu_isContactsList ? desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_ICON.getValue() : desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.getValue();
++            boolean visible = currentUser != null && currentUser.mutual_contact && enabled;
++            inu_mutualView.setVisibility(visible ? VISIBLE : GONE);
++            inu_updateAdminTextViewMargin();
 +        }
      }
  

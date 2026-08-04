@@ -750,6 +750,12 @@ object InuConfig {
     @JvmField
     val SHOW_EDIT_HISTORY_DIFF = BoolItem("show_edit_history_diff", false)
 
+    @JvmField
+    val SHOW_MUTUAL_CONTACT_ICON = BoolItem("show_mutual_contact_icon", true)
+
+    @JvmField
+    val SHOW_MUTUAL_CONTACT_IN_CHATS = BoolItem("show_mutual_contact_in_chats", true)
+
     // Days to keep deleted/edited message cache. 0 = never auto-clear.
     class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
         companion object {

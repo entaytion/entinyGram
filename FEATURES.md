@@ -64,7 +64,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation
 - 🐶 deeplink / username quick-open from global search
-- mutual contact icon in contacts list
+- 📡 mutual contact icon in user lists and chats with auto-shifted role tags & toggle in settings (entinyGram updated)
 - open archive directly on pull-down (🐶 done right, without revealing the cell)
 - interactive chat preview (long-tap avatar): tappable bubbles, no tap-to-expand
 - 🐶 community display modes: regular / open on avatar long-tap / invisible
