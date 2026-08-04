@@ -1,0 +1,358 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 3 Aug 2026 23:00:36 +0300
+Subject: Unlock translator without premium and fix emulator crash
+
+---
+ .../telegram/messenger/LanguageDetector.java  |  35 ++-
+ .../ui/Components/TranslateAlert2.java        |   4 +
+ .../telegram/ui/LanguageSelectActivity.java   | 232 +-----------------
+ 3 files changed, 38 insertions(+), 233 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
+@@ -13,13 +13,38 @@ public class LanguageDetector {
+     public static boolean hasSupport() {
+         // MLKit's language-id native lib crashes (SIGABRT) under ARM translation on
+         // emulators; skip auto-detection there so translate doesn't break the app.
+-        if (Build.FINGERPRINT != null && (Build.FINGERPRINT.contains("generic")
+-                || Build.FINGERPRINT.toLowerCase().contains("emulator"))) {
++        String fp = Build.FINGERPRINT;
++        if (fp != null && (fp.contains("generic") || fp.toLowerCase().contains("emulator"))) {
+             return false;
+         }
+-        if (Build.MODEL != null && (Build.MODEL.contains("Emulator")
+-                || Build.MODEL.contains("Android SDK built for")
+-                || Build.MODEL.toLowerCase().contains("google_sdk"))) {
++        String model = Build.MODEL;
++        if (model != null && (model.contains("Emulator")
++                || model.contains("Android SDK built for")
++                || model.toLowerCase().contains("google_sdk"))) {
++            return false;
++        }
++        String brand = Build.BRAND;
++        if (brand != null && brand.toLowerCase().contains("generic")) {
++            return false;
++        }
++        String device = Build.DEVICE;
++        if (device != null && device.toLowerCase().contains("generic")) {
++            return false;
++        }
++        String hardware = Build.HARDWARE;
++        if (hardware != null && (hardware.contains("goldfish") || hardware.contains("ranchu"))) {
++            return false;
++        }
++        String product = Build.PRODUCT;
++        if (product != null && (product.contains("emulator") || product.contains("google_sdk"))) {
++            return false;
++        }
++        String manufacturer = Build.MANUFACTURER;
++        if (manufacturer != null && manufacturer.toLowerCase().contains("emulator")) {
++            return false;
++        }
++        String host = Build.HOST;
++        if (host != null && host.toLowerCase().contains("emulator")) {
+             return false;
+         }
+         return true;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+@@ -521,6 +521,10 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
+     public static void alternativeTranslate(String text, String fromLng, String toLng, Utilities.Callback2<String, Boolean> done) {
+         if (done == null) return;
+         if (fromLng == null) {
++            if (!LanguageDetector.hasSupport()) {
++                alternativeTranslate(text, "en", toLng, done);
++                return;
++            }
+             LanguageDetector.detectLanguage(text, lng -> {
+                 alternativeTranslate(text, lng, toLng, done);
+             }, e -> {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
+@@ -211,83 +211,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+ 
+         listView.setOnItemClickListener((view, position) -> {
+             try {
+-                if (view instanceof TextCheckCell) {
+-                    final boolean prevFullValue = getContextValue() || getChatValue();
+-                    if (position == manualTranslationPosition) {
+-                        boolean value = !getContextValue();
+-                        getMessagesController().getTranslateController().setContextTranslateEnabled(value);
+-                        ((TextCheckCell) view).setChecked(value);
+-                        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
+-                    } else if (position == autoTranslationPosition) {
+-                        boolean value = !getChatValue();
+-                        getMessagesController().getTranslateController().setChatTranslateEnabled(value);
+-                        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
+-                        ((TextCheckCell) view).setChecked(value);
+-                    }
+-                    final boolean currentFullValue = getContextValue() || getChatValue();
+-                    if (currentFullValue != prevFullValue) {
+-                        int start = autoTranslationPosition >= 0 ? autoTranslationPosition : manualTranslationPosition;
+-                        TextCheckCell last = null;
+-                        for (int i = 0; i < listView.getChildCount(); ++i) {
+-                            View child = listView.getChildAt(i);
+-                            if (listView.getChildAdapterPosition(child) == start && child instanceof TextCheckCell) {
+-                                last = (TextCheckCell) child;
+-                            }
+-                        }
+-                        if (last != null) {
+-                            last.setDivider(currentFullValue);
+-                        }
+-                        if (currentFullValue) {
+-                            listAdapter.notifyItemInserted(start + 1);
+-                        } else {
+-                            listAdapter.notifyItemRemoved(start + 1);
+-                        }
+-                    }
+-                    return;
+-                } else if (view instanceof TextSettingsCell) {
+-//                    if (listAdapter.getItemViewType(position) == VIEW_TYPE_SETTINGS_2) {
+-//                        final ArrayList<String> languages = new ArrayList<>();
+-//                        for (int i = 0; i < translationModels.size(); ++i) {
+-//                            languages.add(TranslateAlert2.languageName(translationModels.get(i)));
+-//                        }
+-//                        final int finalPosition = position;
+-//                        new AlertDialog.Builder(getContext(), resourceProvider)
+-//                            .setTitle(LocaleController.getString(R.string.DeleteTranslationModelsTitle))
+-//                            .setMessage(LocaleController.formatPluralString("DeleteTranslationModelsText", languages.size(), TextUtils.join(", ", languages)))
+-//                            .setPositiveButton(LocaleController.getString(R.string.Delete), (di, w) -> {
+-//                                translationModels = null;
+-//                                listAdapter.notifyItemChanged(finalPosition - 1);
+-//                                listAdapter.notifyItemRemoved(finalPosition);
+-//                                RemoteModelManager.getInstance().getDownloadedModels(TranslateRemoteModel.class)
+-//                                    .addOnSuccessListener(res -> {
+-//                                        ArrayList<String> languages2 = new ArrayList<>();
+-//                                        for (TranslateRemoteModel model : res) {
+-//                                            if (!"en".equalsIgnoreCase(model.getLanguage())) {
+-//                                                languages2.add(TranslateAlert2.languageName(model.getLanguage()));
+-//                                            }
+-//                                        }
+-//                                        if (languages2.isEmpty()) return;
+-//                                        for (int account = 0; account < UserConfig.MAX_ACCOUNT_COUNT; ++account) {
+-//                                            MessagesController.getInstance(account).getTranslateController().clearDownloadingModels();
+-//                                        }
+-//                                        BaseFragment lastFragment = LaunchActivity.getSafeLastFragment();
+-//                                        if (lastFragment != null) {
+-//                                            BulletinFactory.of(lastFragment)
+-//                                                .createSimpleBulletin(R.raw.ic_delete, LocaleController.formatPluralStringComma("DeletedTranslationModelsTitle", languages2.size()), TextUtils.join(", ", languages2))
+-//                                                .show();
+-//                                        }
+-//                                        for (TranslateRemoteModel model : res) {
+-//                                            RemoteModelManager.getInstance().deleteDownloadedModel(model);
+-//                                        }
+-//                                    });
+-//                            })
+-//                            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+-//                            .show();
+-//                            return;
+-//                    }
+-                    presentFragment(new RestrictedLanguagesSelectActivity());
+-                    return;
+-                }
+                 if (getParentActivity() == null || parentLayout == null || !(view instanceof TextRadioCell)) {
+                     return;
+                 }
+@@ -590,7 +513,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+         @Override
+         public boolean isEnabled(RecyclerView.ViewHolder holder) {
+             final int viewType = holder.getItemViewType();
+-            return viewType == VIEW_TYPE_LANGUAGE || viewType == VIEW_TYPE_SETTINGS || viewType == VIEW_TYPE_SETTINGS_2 || viewType == VIEW_TYPE_SWITCH;
++            return viewType == VIEW_TYPE_LANGUAGE;
+         }
+ 
+         @Override
+@@ -603,23 +526,6 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+             } else {
+                 int count = 0;
+                 count++;
+-                if (getMessagesController().isTranslationsManualEnabled() || getMessagesController().isTranslationsAutoEnabled()) {
+-                    count++;
+-                    if (getMessagesController().isTranslationsManualEnabled()) {
+-                        count++;
+-                    }
+-                    if (getMessagesController().isTranslationsAutoEnabled() || !getUserConfig().isPremium()) {
+-                        count++;
+-                    }
+-                    if (getChatValue() || getContextValue()) {
+-                        count++;
+-                    }
+-                    count++;
+-                    //if (!("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled))) {
+-                    //    count++;
+-                    //}
+-                }
+-                count++;
+                 count += sortedLanguages.size();
+                 if (!unofficialLanguages.isEmpty()) {
+                     count += unofficialLanguages.size() + 1;
+@@ -636,23 +542,10 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                     view = new TextRadioCell(mContext);
+                     break;
+                 }
+-                case VIEW_TYPE_SWITCH:
+-                    TextCheckCell switchCell = new TextCheckCell(mContext);
+-                    view = switchCell;
+-                    break;
+-                case VIEW_TYPE_SETTINGS:
+-                case VIEW_TYPE_SETTINGS_2:
+-                    TextSettingsCell settingsCell = new TextSettingsCell(mContext);
+-                    view = settingsCell;
+-                    break;
+                 case VIEW_TYPE_HEADER:
+                     HeaderCell header = new HeaderCell(mContext);
+                     view = header;
+                     break;
+-                case VIEW_TYPE_INFO:
+-                    TextInfoPrivacyCell infoCell = new TextInfoPrivacyCell(mContext);
+-                    view = infoCell;
+-                    break;
+                 case VIEW_TYPE_SHADOW:
+                 default: {
+                     view = new ShadowSectionCell(mContext);
+@@ -718,85 +611,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                     }
+                     break;
+                 }
+-                case VIEW_TYPE_SETTINGS: {
+-                    TextSettingsCell settingsCell = (TextSettingsCell) holder.itemView;
+-                    settingsCell.updateRTL();
+-                    HashSet<String> langCodes = RestrictedLanguagesSelectActivity.getRestrictedLanguages();
+-                    final String doNotTranslateCellName = LocaleController.getString(R.string.DoNotTranslate);
+-                    String doNotTranslateCellValue = null;
+-                    try {
+-                        boolean[] accusative = new boolean[1];
+-                        if (langCodes.size() == 0) {
+-                            doNotTranslateCellValue = "";
+-                        } else if (langCodes.size() == 1) {
+-                            doNotTranslateCellValue = TranslateAlert2.capitalFirst(TranslateAlert2.languageName(langCodes.iterator().next(), accusative));
+-                        } else {
+-                            Iterator<String> iterator = langCodes.iterator();
+-                            boolean first = true;
+-                            StringBuilder string = new StringBuilder();
+-                            while (iterator.hasNext()) {
+-                                String lang = iterator.next();
+-                                if (!first) {
+-                                    string.append(", ");
+-                                }
+-                                String langName = TranslateAlert2.capitalFirst(TranslateAlert2.languageName(lang, accusative));
+-                                if (langName != null) {
+-                                    string.append(langName);
+-                                    first = false;
+-                                }
+-                            }
+-                            doNotTranslateCellValue = string.toString();
+-                            if (settingsCell.getValueTextView().getPaint().measureText(doNotTranslateCellValue) > Math.min((AndroidUtilities.displaySize.x - AndroidUtilities.dp(34)) / 2f, AndroidUtilities.displaySize.x - AndroidUtilities.dp(21 * 4) - settingsCell.getTextView().getPaint().measureText(doNotTranslateCellName))) {
+-                                doNotTranslateCellValue = null;
+-                            }
+-                        }
+-                    } catch (Exception ignore) {}
+-                    if (doNotTranslateCellValue == null) {
+-                        doNotTranslateCellValue = String.format(LocaleController.getPluralString("Languages", langCodes.size()), langCodes.size());
+-                    }
+-                    settingsCell.setTextAndValue(doNotTranslateCellName, doNotTranslateCellValue, true, false/*translationModels != null*/);
+-                    break;
+-                }
+-                case VIEW_TYPE_SETTINGS_2: {
+-                    TextSettingsCell settingsCell = (TextSettingsCell) holder.itemView;
+-                    settingsCell.updateRTL();
+-//                    if (translationModels != null) {
+-//                        ArrayList<String> languages = new ArrayList<>();
+-//                        for (int i = 0; i < translationModels.size(); ++i) {
+-//                            languages.add(TranslateAlert2.languageName(translationModels.get(i)));
+-//                        }
+-//                        settingsCell.setTextAndValue("Delete Translation Models", languages.size() >= 3 ? languages.size() + " models" : TextUtils.join(", ", languages), false);
+-//                    }
+-                    break;
+-                }
+-                case VIEW_TYPE_SWITCH: {
+-                    TextCheckCell cell = (TextCheckCell) holder.itemView;
+-                    cell.updateRTL();
+-                    if (position == manualTranslationPosition) {
+-                        cell.setTextAndCheck(LocaleController.getString(R.string.ShowTranslateButton), getContextValue(), true);
+-                        cell.setCheckBoxIcon(0);
+-                    } else if (position == autoTranslationPosition) {
+-                        cell.setTextAndCheck(LocaleController.getString(R.string.ShowTranslateChatButton), getChatValue(), getContextValue() || getChatValue());
+-                        cell.setCheckBoxIcon(0);
+-                    }
+-                    break;
+-                }
+-                case VIEW_TYPE_INFO: {
+-                    TextInfoPrivacyCell infoCell = (TextInfoPrivacyCell) holder.itemView;
+-                    infoCell.updateRTL();
+-                    if (position == infoPosition1) {
+-                        infoCell.setText(LocaleController.getString(R.string.TranslateMessagesInfo1));
+-                        infoCell.setTopPadding(11);
+-                        infoCell.setBottomPadding(16);
+-                    } else {
+-                        infoCell.setTopPadding(0);
+-                        infoCell.setBottomPadding(16);
+-                    }
+-                    break;
+-                }
+                 case VIEW_TYPE_HEADER: {
+                     HeaderCell header = (HeaderCell) holder.itemView;
+-                    header.setText(position == 0 && (getMessagesController().isTranslationsManualEnabled() || getMessagesController().isTranslationsAutoEnabled()) ? LocaleController.getString(R.string.TranslateMessages) : LocaleController.getString(R.string.Language));
++                    header.setText(LocaleController.getString(R.string.Language));
+                     break;
+                 }
+             }
+@@ -808,49 +625,8 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+             if (search) {
+                 return VIEW_TYPE_LANGUAGE;
+             } else {
+-                if (getMessagesController().isTranslationsManualEnabled() || getMessagesController().isTranslationsAutoEnabled()) {
+-                    settingsFromPosition = position - i;
+-                    if (i-- == 0) return VIEW_TYPE_HEADER;
+-                    if (getMessagesController().isTranslationsManualEnabled()) {
+-                        if (i-- == 0) {
+-                            manualTranslationPosition = position;
+-                            return VIEW_TYPE_SWITCH;
+-                        }
+-                    } else {
+-                        manualTranslationPosition = -1;
+-                    }
+-                    if (getMessagesController().isTranslationsAutoEnabled() || !getUserConfig().isPremium()) {
+-                        if (i-- == 0) {
+-                            autoTranslationPosition = position;
+-                            return VIEW_TYPE_SWITCH;
+-                        }
+-                    } else {
+-                        autoTranslationPosition = -1;
+-                    }
+-                    if (getChatValue() || getContextValue()) {
+-                        doNotTranslatePosition = position;
+-                        if (i-- == 0) return VIEW_TYPE_SETTINGS;
+-                    }
+-//                    if (translationModels != null) {
+-//                        if (i-- == 0) return VIEW_TYPE_SETTINGS_2;
+-//                    }
+-                    settingsToPosition = position - i - 1;
+-                    if (i-- == 0) {
+-                        infoPosition1 = position;
+-                        return VIEW_TYPE_INFO;
+-                    }
+-                    //if ("system".equals(getMessagesController().translationsManualEnabled) && "system".equals(getMessagesController().translationsAutoEnabled)) {
+-                    //    infoPosition2 = -1;
+-                    //} else {
+-                    //    if (i-- == 0) {
+-                    //        infoPosition2 = position;
+-                    //        return VIEW_TYPE_INFO;
+-                    //    }
+-                    //}
+-                } else {
+-                    settingsFromPosition = -1;
+-                    settingsToPosition = -1;
+-                }
++                settingsFromPosition = -1;
++                settingsToPosition = -1;
+                 if (i-- == 0) return VIEW_TYPE_HEADER;
+                 if (!unofficialLanguages.isEmpty() && (i == unofficialLanguages.size() || i == unofficialLanguages.size() + sortedLanguages.size() + 1) || unofficialLanguages.isEmpty() && i == sortedLanguages.size()) {
+                     return VIEW_TYPE_SHADOW;

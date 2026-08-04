@@ -73,7 +73,7 @@ try {
     const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
     en = String(notes.en ?? '')
     uk = String(notes.uk ?? '')
-  } catch {}
+  } catch { }
 
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const abiOf = (file: string) => /universal/i.test(file) ? 'Universal' : 'ARM64'
@@ -104,7 +104,7 @@ try {
   // 3) Full release message with download links + bilingual changelog.
   const downloadLinks = apkPosts.map(p => {
     const url = postUrl(p.id)
-    return html`• Download ${abiOf(p.file)} (<a href="${url}">${url}</a>)`
+    return html`• <b><a href="${url}">Download ${abiOf(p.file)} APK</a></b>`
   })
   const enBlock = en ? joinTextWithEntities(bullets(en), '\n') : html`• See the channel`
   const ukBlock = uk ? joinTextWithEntities(bullets(uk), '\n') : html`• Дивіться канал`
@@ -113,24 +113,24 @@ try {
   const release = html`
     #release
     <br/>
-    ✈️ entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
+    📡 entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
     <br/><br/>
     ${joinTextWithEntities(downloadLinks, '\n')}
-    <br/>
-    • Channel (https://t.me/${channel})
     ${extra ? html`<br/>${extra}` : ''}
     <br/><br/>
     🇺🇸 EN:
     <br/>
+    <blockquote expandable>
     ${enBlock}
+    </blockquote>
     <br/><br/>
     🇺🇦 UK:
     <br/>
+    <blockquote expandable>
     ${ukBlock}
+    </blockquote>
     <br/><br/>
-    Thanks to all contributors and supporters ❤️
-    <br/>
-    Check for updates (tg://update)
+    @entinyGram
   `
 
   await tg.sendText(channel, release)

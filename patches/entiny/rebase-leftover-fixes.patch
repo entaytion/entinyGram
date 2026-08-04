@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerServi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
-@@ -819,9 +819,9 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+@@ -821,9 +821,9 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
              metadataEditor.apply();
              audioManager.unregisterRemoteControlClient(remoteControlClient);
          }

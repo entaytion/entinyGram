@@ -23,6 +23,17 @@ the same change.
 11. **No LSP, no local build.** Don't try to compile.
 12. **Debug logs use `android.util.Log.d`**, not `FileLog`.
 13. **Prefer non-`_solar` icons** when an alternative exists.
+14. **Format Commits Carefully.** Use the exact format: `type(scope): subject` followed by an empty line, an optional short summary paragraph, and an explicit bulleted list of changes starting with `- `. Example:
+```
+chore(maintainer): migrate owned patches to entiny/ namespace...
+
+...it-history stats crash, remove premium translation lock, and harden media-session lifecycle
+
+- migrate 16 authored patches into patches/entiny/ via own-patches.ts --apply
+- document entiny/ ownership and merge behavior in AGENTS.md
+- fix InuDatabaseHelper SQLite crash: old_text -> text in inu_edit_history stats
+```
+15. **Release Bumping:** The APK `versionCode` and release tag are controlled solely by the `INU_BUILD` GitHub variable, not `gradle.properties`. To check the current build number, run `gh variable list --repo entaytion/entinyGram` in the terminal. To perform a major version jump (e.g., when upstream updates), instruct the user to update the variable via the browser, or execute: `gh variable set INU_BUILD --body <number> --repo entaytion/entinyGram`.
 
 ## Patch groups & naming
 

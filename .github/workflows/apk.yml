@@ -172,16 +172,7 @@ jobs:
             echo "::warning::last uploaded sha $base not in history, falling back"
             base=
           fi
-          if [ -n "$base" ] && [ "$base" != "$GITHUB_SHA" ]; then
-            git log --pretty='%H %s' "$base..$GITHUB_SHA" > out/commits.txt
-          else
-            git log -1 --pretty='%H %s' "$GITHUB_SHA" > out/commits.txt
-          fi
-
-          commits_json=$(jq -R -n '
-            [inputs | capture("^(?<sha>[0-9a-f]+) (?<message>.*)$")]
-          ' out/commits.txt)
-          rm out/commits.txt
+          commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
 
           jq -n \
             --arg     verName    '${{ steps.info.outputs.ver-name }}'    \

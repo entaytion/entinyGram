@@ -46,18 +46,24 @@ function cleanCommits(commits: Commit[]): Commit[] {
 }
 
 function buildPrompt(info: BuildInfo, commits: Commit[]): string {
-  const list = commits.map(c => `- ${c.message} (${c.sha.slice(0, 7)})`).join('\n')
+  const list = commits.map(c => {
+    const indented = c.message.split('\n').map(l => `  ${l}`).join('\n')
+    return `Commit ${c.sha.slice(0, 7)}:\n${indented}`
+  }).join('\n\n')
+
   return [
     'You are writing the release notes for entinyGram, a fork of Telegram for Android.',
     '',
     `Release: v${info.verName} (build ${info.buildNum}, repo ${info.repo})`,
     '',
-    'Commits since the last release:',
+    'Commits since the last release (these contain technical subjects and detailed bullet points of what changed):',
     list || '(no commits)',
     '',
-    'Write concise, polished, user-friendly release notes grouped into sections with ',
-    'emoji headings (e.g. "✨ New", "🛠 Improvements", "🐛 Fixes", "⚙️ Other").',
-    'Use one bullet per line starting with "• ". Keep each language version SHORT (under ~500 chars).',
+    'Write concise, polished, user-friendly release notes without any section headings.',
+    'Instead, prefix EACH bullet point directly with a hacker-style tag:',
+    'Use "[+] " for new features/additions, "[-] " for removals, "[*] " for bug fixes/optimizations, and "[=] " for other changes.',
+    'Extract the actual meaning from the detailed commit bodies. Paraphrase the technical details into clear benefits or changes for the end user. Do NOT just copy-paste the commit subjects or generate generic boilerplate.',
+    'Start every line with its prefix (e.g., "[+] Implemented..."). Do NOT use bullet symbols like "•". Keep each language version SHORT (under ~1000 chars).',
     'Do NOT mention commit hashes or the word "commit". Do not mention the repo name.',
     '',
     'Write the notes in TWO languages (natural, idiomatic copy). Return ONLY valid JSON,',
@@ -133,24 +139,27 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string } {
 
   const sections: Record<string, string[]> = { feature: [], fix: [], other: [] }
   for (const c of commits) {
-    sections[categorize(c.message)].push(c.message)
+    const subject = c.message.split('\n')[0].trim()
+    sections[categorize(subject)].push(subject)
   }
 
   const en: string[] = []
   const uk: string[] = []
+  
   if (sections.feature.length) {
-    en.push('✨ New', bulletize(sections.feature))
-    uk.push('✨ Нове', bulletize(sections.feature))
+    en.push(...sections.feature.map(l => `[+] ${l}`))
+    uk.push(...sections.feature.map(l => `[+] ${l}`))
   }
   if (sections.fix.length) {
-    en.push('🐛 Fixes & improvements', bulletize(sections.fix))
-    uk.push('🐛 Виправлення та покращення', bulletize(sections.fix))
+    en.push(...sections.fix.map(l => `[*] ${l}`))
+    uk.push(...sections.fix.map(l => `[*] ${l}`))
   }
   if (sections.other.length) {
-    en.push('⚙️ Other', bulletize(sections.other))
-    uk.push('⚙️ Інше', bulletize(sections.other))
+    en.push(...sections.other.map(l => `[=] ${l}`))
+    uk.push(...sections.other.map(l => `[=] ${l}`))
   }
-  return { en: en.join('\n\n'), uk: uk.join('\n\n') }
+  
+  return { en: en.join('\n'), uk: uk.join('\n') }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
