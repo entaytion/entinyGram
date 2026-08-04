@@ -12,7 +12,7 @@ the same change.
 
 1. **Edit `worktree/` directly.** Never hand-edit `patches/*.patch` or `series` — they regenerate from stgit.
 2. **Do not run `stg` or `git` yourself** unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
-3. **Stock patches stay tiny.** Only wiring/hooks/guards. Real logic goes in `src/kotlin`. A patch touching only `src/**` is usually wrong.
+3. **Stock patches stay tiny & code-only.** Only Java wiring/hooks/guards in `TMessagesProj/src/main/java/...`. Real logic goes in `src/kotlin`. **NEVER include XML resources, drawables, or non-Java assets in stgit patches.** New icons, drawables, and XML resources MUST be placed in `src/res/drawable/` or `src/res/`, NOT tracked inside `patches/*.patch`. A patch touching only `src/**` or resource XMLs is WRONG.
 4. **Default off = stock-identical.** Every behavior change gated behind an `InuConfig.*.getValue()` check. Verify every call site is gated.
 5. **Check if stock already does it** before implementing a toggle (e.g. Lite Mode often has it). Tell the user, don't silently re-implement.
 6. **Confirm bug repro in unpatched worktree** before treating a visual/behavior issue as a patch regression.
@@ -36,6 +36,8 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 - fix InuDatabaseHelper SQLite crash: old_text -> text in inu_edit_history stats
 ```
 15. **Release Bumping:** The APK `versionCode` and release tag are controlled solely by the `INU_BUILD` GitHub variable, not `gradle.properties`. To check the current build number, run `gh variable list --repo entaytion/entinyGram` in the terminal. To perform a major version jump (e.g., when upstream updates), instruct the user to update the variable via the browser, or execute: `gh variable set INU_BUILD --body <number> --repo entaytion/entinyGram`.
+16. **Check stgit Stack Before Patch Operations:** Always check `stg top` and `stg series` BEFORE creating, modifying, or refreshing patches. Verify if a patch for the feature already exists in `patches/` or `series`. Never run `stg refresh` blindly on whatever patch happens to be at the top of the stack.
+17. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
 
 ## Patch groups & naming
 
