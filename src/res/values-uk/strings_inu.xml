@@ -12,7 +12,6 @@
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
     <string name="InuSettingsPrefixHint">Посилання на налаштування використовують tg://settings/entiny/&lt;slug&gt;</string>
     <string name="InuLegacySettingsLink">Цей формат посилання застарів. Використовуйте tg://settings/entiny/&lt;slug&gt;.</string>
-    <string name="InuExperimental">Експериментальні</string>
     <string name="InuGeneral">Загальні</string>
     <string name="InuMiscellaneous">Різне</string>
     <string name="InuAppearance">Зовнішній вигляд</string>

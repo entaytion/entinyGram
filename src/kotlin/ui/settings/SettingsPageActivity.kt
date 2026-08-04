@@ -35,6 +35,7 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCell
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ColoredImageSpan
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
@@ -234,89 +235,18 @@ abstract class SettingsPageActivity : UniversalFragment() {
         }
     }
 
-    class ExperimentalSpan : ReplacementSpan {
-        var textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-        var bgPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        var layout: StaticLayout? = null
-        var width: Float = 0f
-        var height: Float = 0f
-
-        var color = 0
-
-        constructor() {
-            textPaint.setTypeface(AndroidUtilities.bold())
-            bgPaint.style = Paint.Style.FILL
-            textPaint.textSize = AndroidUtilities.dp(12f).toFloat()
-        }
-
-        private var text: CharSequence? = "NEW"
-        fun setText(text: CharSequence?) {
-            this.text = text
-            if (layout != null) {
-                layout = null
-                makeLayout()
-            }
-        }
-
-        fun makeLayout(): StaticLayout? {
-            if (layout == null) {
-                layout = StaticLayout(
-                    text,
-                    textPaint,
-                    AndroidUtilities.displaySize.x,
-                    Layout.Alignment.ALIGN_NORMAL,
-                    1f,
-                    0f,
-                    false
-                )
-                width = layout!!.getLineWidth(0)
-                height = layout!!.height.toFloat()
-            }
-            return layout
-        }
-
-        override fun getSize(paint: Paint, text: CharSequence?, start: Int, end: Int, fm: FontMetricsInt?): Int {
-            makeLayout()
-            return (AndroidUtilities.dp(10f) + width).toInt()
-        }
-
-        override fun draw(canvas: Canvas, text: CharSequence?, start: Int, end: Int, _x: Float, top: Int, _y: Int, bottom: Int, paint: Paint) {
-            makeLayout()
-
-            bgPaint.setColor(color)
-            textPaint.setColor(color)
-            bgPaint.setAlpha(16)
-            textPaint.setAlpha(255)
-
-            val x = _x + AndroidUtilities.dp(2f)
-            val y = _y - height + AndroidUtilities.dp(1f)
-            AndroidUtilities.rectTmp.set(x, y, x + width, y + height)
-            val r = AndroidUtilities.dp(4.4f).toFloat()
-            AndroidUtilities.rectTmp.inset(
-                AndroidUtilities.dp(-4f).toFloat(),
-                AndroidUtilities.dp(-2.33f).toFloat()
-            )
-
-            canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, bgPaint)
-            canvas.withTranslation(x, y) {
-                layout!!.draw(this)
-            }
-        }
-    }
 
     protected fun addExperimentalSpan(string: CharSequence): CharSequence {
-        val tag = LocaleController.getString(R.string.InuExperimental)
+        val span = ColoredImageSpan(R.drawable.ic_beta_badge, ColoredImageSpan.ALIGN_CENTER)
+        span.setSize(AndroidUtilities.dp(14f))
 
-        val tagSpan = ExperimentalSpan()
-        tagSpan.color = Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)
-        tagSpan.setText(tag)
+        val tagText = SpannableString(" ")
+        tagText.setSpan(span, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-        val tagText = SpannableString(tag)
-        tagText.setSpan(tagSpan, 0, tagText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        val text = SpannableStringBuilder(string)
-        text.append("  ")
+        val text = SpannableStringBuilder()
         text.append(tagText)
+        text.append("  ")
+        text.append(string)
         return text
     }
 

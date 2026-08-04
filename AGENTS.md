@@ -38,6 +38,7 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 15. **Release Bumping:** The APK `versionCode` and release tag are controlled solely by the `INU_BUILD` GitHub variable, not `gradle.properties`. To check the current build number, run `gh variable list --repo entaytion/entinyGram` in the terminal. To perform a major version jump (e.g., when upstream updates), instruct the user to update the variable via the browser, or execute: `gh variable set INU_BUILD --body <number> --repo entaytion/entinyGram`.
 16. **Check stgit Stack Before Patch Operations:** Always check `stg top` and `stg series` BEFORE creating, modifying, or refreshing patches. Verify if a patch for the feature already exists in `patches/` or `series`. Never run `stg refresh` blindly on whatever patch happens to be at the top of the stack.
 17. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
+18. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
 
 ## Patch groups & naming
 
