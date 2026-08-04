@@ -63,6 +63,16 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_EDITED_MESSAGES.value,
             )
         )
+        if (InuConfig.SAVE_EDITED_MESSAGES.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_SHOW_EDIT_HISTORY_DIFF,
+                    R.string.InuEditHistoryDiff,
+                    R.string.InuEditHistoryDiffInfo,
+                    InuConfig.SHOW_EDIT_HISTORY_DIFF.value,
+                )
+            )
+        }
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_ALLOW_FORWARD_RESTRICTED,
@@ -286,6 +296,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
+            TOGGLE_SHOW_EDIT_HISTORY_DIFF -> {
+                val new = InuConfig.SHOW_EDIT_HISTORY_DIFF.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_ALLOW_FORWARD_RESTRICTED -> {
                 val new = InuConfig.ALLOW_FORWARD_RESTRICTED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -305,6 +319,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
         private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()

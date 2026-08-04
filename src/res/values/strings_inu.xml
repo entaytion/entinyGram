@@ -722,11 +722,7 @@
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>
     <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>
-    <string name="InuCenterTitle">Center titles</string>
-    <string name="InuCenterTitleChats">In chats</string>
-    <string name="InuCenterTitleSettings">In settings</string>
-    <string name="InuCenterTitleProfile">In profiles</string>
-    <string name="InuCenterTitleDialogs">In main list (dialogs)</string>
+    <string name="InuCenterTitleChats">Center title in chats/channels</string>
     <string name="InuSaveDeletedMessages">Save deleted messages</string>
     <string name="InuSaveDeletedMessagesInfo">Keeps deleted messages in chats marked with 🗑️</string>
     <string name="InuSaveEditedMessages">Save edit history</string>
@@ -810,4 +806,6 @@
     <string name="InuAiTranslateFrom">From</string>
     <string name="InuAiTranslateTo">To</string>
     <string name="InuAiTranslateRun">Translate</string>
+    <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
+    <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
 </resources>

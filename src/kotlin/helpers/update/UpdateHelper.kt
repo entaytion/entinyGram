@@ -114,7 +114,8 @@ object UpdateHelper {
     fun clearPendingIfInstalled() {
         val pending = SharedConfig.pendingAppUpdate ?: return
         val current = currentBuild()
-        if (pending.version == current.versionCode.toString()) {
+        val pendingVer = pending.version?.toIntOrNull() ?: 0
+        if (pendingVer <= current.versionCode) {
             clearPending()
         }
     }
@@ -249,9 +250,18 @@ object UpdateHelper {
                 val candidates = resp.messages.mapNotNull { msg ->
                     extractApkInfo(msg)?.let { msg to it }
                 }.filter { (_, info) -> isNewer(info, current) }
-                val match = candidates.firstOrNull { (_, info) -> info.abi == "arm64" && isArm64Device() }
-                    ?: candidates.firstOrNull { (_, info) -> info.abi == "universal" }
-                    ?: candidates.firstOrNull()
+                val maxVerCode = candidates.maxOfOrNull { (_, info) -> info.verCode }
+                val match = if (maxVerCode != null) {
+                    val latestCandidates = candidates.filter { (_, info) -> info.verCode == maxVerCode }
+                    if (isArm64Device()) {
+                        latestCandidates.firstOrNull { (_, info) -> info.abi == "arm64" }
+                            ?: latestCandidates.firstOrNull { (_, info) -> info.abi == "universal" }
+                            ?: latestCandidates.firstOrNull()
+                    } else {
+                        latestCandidates.firstOrNull { (_, info) -> info.abi == "universal" }
+                            ?: latestCandidates.firstOrNull()
+                    }
+                } else null
                 if (match == null) {
                     clearPending()
                     finish(callback, CheckResult.UpToDate)
@@ -273,9 +283,16 @@ object UpdateHelper {
         val current = currentBuild()
         if (!isNewer(info, current)) return
         AndroidUtilities.runOnUIThread {
-            applyUpdate(msg, info, current)
-            revealPendingUpdate()
-            InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+            val account = UserConfig.selectedAccount
+            MessagesController.getInstance(account).userNameResolver.resolve(USERNAME) { id ->
+                if (id != null && id != 0L && id != Long.MAX_VALUE) {
+                    performSearch(account, id) { result ->
+                        if (result is CheckResult.Updated) {
+                            revealPendingUpdate()
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -350,7 +367,9 @@ object UpdateHelper {
     }
 
     private fun isArm64Device(): Boolean =
-        Build.SUPPORTED_ABIS.any { it.contains("arm64") || it.contains("aarch64") }
+        Build.SUPPORTED_ABIS?.any { it.contains("arm64", ignoreCase = true) || it.contains("aarch64", ignoreCase = true) } == true
+            || (Build.CPU_ABI?.contains("arm64", ignoreCase = true) == true)
+            || (Build.CPU_ABI?.contains("aarch64", ignoreCase = true) == true)
 
     private fun isNewer(remote: ApkInfo, current: CurrentBuild): Boolean {
         return remote.verCode > current.versionCode

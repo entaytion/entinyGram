@@ -5,8 +5,8 @@ Subject: save deleted and edited messages history
 
 ---
  .../messenger/MessagesController.java         | 31 +++++++++++++++++++
- .../telegram/messenger/MessagesStorage.java   | 11 +++++--
- 2 files changed, 39 insertions(+), 3 deletions(-)
+ .../telegram/messenger/MessagesStorage.java   | 16 ++++++++--
+ 2 files changed, 44 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -35,9 +35,9 @@ index 0000000..0000000 100644
 +                        long fromId = found.messageOwner != null && found.messageOwner.from_id != null ? org.telegram.messenger.DialogObject.getPeerDialogId(found.messageOwner.from_id) : 0;
 +                        String text = found.messageOwner != null ? found.messageOwner.message : "";
 +                        int date = found.messageOwner != null ? found.messageOwner.date : 0;
-+                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, fromId, text, date);
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, fromId, text, date, found.messageOwner);
 +                    } else {
-+                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, 0L, "", 0);
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, 0L, "", 0, null);
 +                    }
 +                }
 +            }
@@ -74,13 +74,18 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -15850,12 +15852,15 @@ public class MessagesStorage extends BaseController {
+@@ -15850,12 +15852,20 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
-+                                    if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && oldMessage != null && oldMessage.message != null && !android.text.TextUtils.isEmpty(oldMessage.message) && !oldMessage.message.equals(message.message)) {
-+                                         desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, oldMessage.message, oldMessage.date);
-+                                     }
++                                    if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && oldMessage != null) {
++                                        boolean textChanged = oldMessage.message != null && !oldMessage.message.equals(message.message);
++                                        boolean mediaChanged = oldMessage.media != null || message.media != null;
++                                        if (textChanged || mediaChanged) {
++                                            String textToSave = oldMessage.message != null ? oldMessage.message : "";
++                                            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, textToSave, oldMessage.date, oldMessage);
++                                        }
++                                    }
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }

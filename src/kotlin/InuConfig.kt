@@ -747,6 +747,9 @@ object InuConfig {
     @JvmField
     val SAVE_EDITED_MESSAGES = BoolItem("save_edited_messages", true)
 
+    @JvmField
+    val SHOW_EDIT_HISTORY_DIFF = BoolItem("show_edit_history_diff", false)
+
     // Days to keep deleted/edited message cache. 0 = never auto-clear.
     class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
         companion object {

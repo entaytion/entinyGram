@@ -38,7 +38,7 @@
     <string name="InuHideStoriesInfo">Приховує панель історій зі списку чатів</string>
     <string name="InuShowSeconds">Показувати секунди</string>
     <string name="InuDisableRounding">Вимкнути округлення чисел</string>
-    <string name="InuDisableRoundingInfo">1.2K -> 1,234</string>
+    <string name="InuDisableRoundingInfo">1,2K -&gt; 1 234</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Перемикачі</string>
     <string name="InuMaterial3Fabs">Плаваючі кнопки (FAB)</string>
@@ -315,7 +315,7 @@
 
     <string name="InuMapsHeader">Карти</string>
     <string name="InuMapProvider">Провайдер карт</string>
-    <string name="InuMapProviderGoogle">Google Maps</string>
+    <string name="InuMapProviderGoogle">Карти Google</string>
     <string name="InuMapProviderOsm">OpenStreetMap</string>
     <string name="InuMapPreviewProvider">Провайдер прев\'ю карт</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
@@ -645,7 +645,7 @@
     <string name="InuCrashOomEnableLogs">Увімкніть режим відладки в Налаштуваннях entinyGram > Про додаток.</string>
     <string name="InuCrashShare">Поділитися краш-логом</string>
     <string name="InuCrashShareHeapDump">Зберегти хіпдамп</string>
-    <string name="InuCrashDiscard">Scасувати</string>
+    <string name="InuCrashDiscard">Скасувати</string>
     <string name="InuCrashChannel">Відновлення після крашу</string>
     <string name="InuCrashNotifTitle">entinyGram упав</string>
     <string name="InuCrashNotifText">Натисніть для перезапуску</string>
@@ -667,15 +667,11 @@
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
-    <string name="InuCenterTitle">Центрувати заголовки</string>
-    <string name="InuCenterTitleChats">У чатах</string>
-    <string name="InuCenterTitleSettings">У налаштуваннях</string>
+    <string name="InuCenterTitleChats">Центрування в чатах/каналах</string>
     <string name="InuClearDeletedCache">Очистити кеш збережених повідомлень</string>
     <string name="InuClearDeletedCacheConfirm">Очистити збережені видалені/відредаговані повідомлення для обраних чатів?</string>
     <string name="InuClearDeletedCacheDone">Кеш збережених повідомлень очищено</string>
     <string name="InuClearDeletedCacheEmpty">Кеш збережених повідомлень порожній</string>
-    <string name="InuCenterTitleProfile">У профілях</string>
-    <string name="InuCenterTitleDialogs">У головному списку (діалогах)</string>
     <string name="InuSaveDeletedMessages">Зберігати видалені повідомлення</string>
     <string name="InuSaveDeletedMessagesInfo">Зберігає видалені співрозмовниками повідомлення у чаті з позначкою 🗑️</string>
     <string name="InuSaveEditedMessages">Зберігати історію редагувань</string>
@@ -799,6 +795,24 @@
     <string name="InuAiStylePoetic">Поетично</string>
     <string name="InuAiEmoji">Емоджі</string>
     <string name="InuAiTranslateFrom">З мови</string>
-    <string name="InuAiTranslateTo">На %s</string>
+    <string name="InuAiTranslateTo">На мову</string>
     <string name="InuAiTranslateRun">Перекласти</string>
+    <string name="InuChannelMessages">Канали, де ви можете писати</string>
+    <string name="InuSameAsIncoming">Як у вхідних</string>
+    <string name="InuDownloadingStory">Завантаження історії…</string>
+    <string name="InuFontCustomOnly">Лише власні (імпортовані) шрифти можна встановити як шрифт додатка.</string>
+    <string name="InuForwardHeaderMode">Заголовок пересилання</string>
+    <string name="InuForwardHeaderModeRegular">Звичайний</string>
+    <string name="InuForwardHeaderModeCompact">Компактний</string>
+    <string name="InuForwardHeaderModeIcon">Іконка</string>
+    <string name="InuForwardHeaderModeIconNoTimeInfo">Те саме, що й компактний з вимкненим «Показувати час пересилання»</string>
+    <string name="InuPerformanceClass">Клас продуктивності</string>
+    <string name="InuPerformanceClassInfo">Не рекомендується змінювати цей параметр, оскільки це може погіршити продуктивність на слабких пристроях</string>
+    <string name="InuPerformanceClassMeasured">Виміряний</string>
+    <string name="InuPerformanceClassLow">Низький</string>
+    <string name="InuPerformanceClassAverage">Середній</string>
+    <string name="InuPerformanceClassHigh">Високий</string>
+    <string name="InuMaterial3NavigationAnimation">Анімація навігації</string>
+    <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
+    <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
 </resources>
