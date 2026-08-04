@@ -5,10 +5,10 @@ Subject: fix lingering system media session after playback ends.
 
 ---
  .../messenger/MusicBrowserService.java        |  7 +++
- .../messenger/MusicPlayerService.java         |  5 +-
+ .../messenger/MusicPlayerService.java         |  7 ++-
  .../messenger/TelegramMediaSession.java       | 50 ++++++++++++++++---
  .../messenger/car/TelegramCarAppService.java  | 14 ++++++
- 4 files changed, 68 insertions(+), 8 deletions(-)
+ 4 files changed, 70 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserService.java b/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserService.java
 index 0000000..0000000 100644
@@ -49,7 +49,23 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerServi
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
-@@ -819,8 +819,9 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+@@ -71,6 +71,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+     private MediaSessionCompat mediaSession;
+     private PlaybackStateCompat.Builder playbackState;
+     private Bitmap albumArtPlaceholder;
++    private TelegramMediaSession sessionHolder;
+     private int notificationMessageID;
+     private ImageReceiver imageReceiver;
+     private boolean foregroundServiceIsStarted;
+@@ -94,6 +95,7 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+     @Override
+     public void onCreate() {
+         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
++        sessionHolder = TelegramMediaSession.getInstance(this);
+         for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+             NotificationCenter.getInstance(a).addObserver(this, NotificationCenter.messagePlayingDidSeek);
+             NotificationCenter.getInstance(a).addObserver(this, NotificationCenter.messagePlayingPlayStateChanged);
+@@ -819,8 +821,9 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
              metadataEditor.apply();
              audioManager.unregisterRemoteControlClient(remoteControlClient);
          }

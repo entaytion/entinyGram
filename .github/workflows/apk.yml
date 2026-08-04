@@ -172,16 +172,7 @@ jobs:
             echo "::warning::last uploaded sha $base not in history, falling back"
             base=
           fi
-          if [ -n "$base" ] && [ "$base" != "$GITHUB_SHA" ]; then
-            git log --pretty='%H %s' "$base..$GITHUB_SHA" > out/commits.txt
-          else
-            git log -1 --pretty='%H %s' "$GITHUB_SHA" > out/commits.txt
-          fi
-
-          commits_json=$(jq -R -n '
-            [inputs | capture("^(?<sha>[0-9a-f]+) (?<message>.*)$")]
-          ' out/commits.txt)
-          rm out/commits.txt
+          commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
 
           jq -n \
             --arg     verName    '${{ steps.info.outputs.ver-name }}'    \
@@ -316,10 +307,23 @@ jobs:
           tag='${{ needs.build.outputs.tag }}'
           apk_arm64="out/${{ needs.build.outputs.apk-arm64 }}"
           apk_univ="out/${{ needs.build.outputs.apk-universal }}"
+          
+          # Use AI-generated English notes if available
+          if [ -f "out/release-notes.json" ]; then
+            jq -r '.en' out/release-notes.json > release_body.md
+          else
+            echo "Release $tag" > release_body.md
+          fi
+          
+          prev_tag=$(gh release view --json tagName -q .tagName 2>/dev/null || echo "")
+          if [ -n "$prev_tag" ]; then
+            echo -e "\n\n**Full Changelog**: https://github.com/entaytion/entinyGram/compare/${prev_tag}...${tag}" >> release_body.md
+          fi
+          
           gh release create "$tag" \
             --target "$GITHUB_SHA" \
             --title  "$tag" \
-            --generate-notes \
+            --notes-file release_body.md \
             "$apk_arm64" "$apk_univ" || \
           gh release upload "$tag" \
             --clobber \
@@ -328,12 +332,13 @@ jobs:
       - name: Upload to Telegram
         if: ${{ inputs.post-to-telegram }}
         env:
-          TELEGRAM_API_ID:  ${{ secrets.TELEGRAM_API_ID }}
-          TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL: ${{ vars.TELEGRAM_CHANNEL || 'entinyGramCI' }}
-          MTPROTO_SESSION:  ${{ secrets.MTPROTO_SESSION }}
-          GH_VARS_TOKEN:    ${{ secrets.INU_VARS_TOKEN }}
+          TELEGRAM_API_ID:       ${{ secrets.TELEGRAM_API_ID }}
+          TELEGRAM_API_HASH:     ${{ secrets.TELEGRAM_API_HASH }}
+          TELEGRAM_BOT_TOKEN:    ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_MAIN_CHANNEL: ${{ vars.TELEGRAM_CHANNEL }}
+          TELEGRAM_CI_CHANNEL:   ${{ vars.TELEGRAM_CI_CHANNEL || vars.TELEGRAM_CHANNEL }}
+          MTPROTO_SESSION:       ${{ secrets.MTPROTO_SESSION }}
+          GH_VARS_TOKEN:         ${{ secrets.GH_VARS_TOKEN }}
         run: bun run tsx scripts/ci/upload.ts out
 
       - name: Bump build variables

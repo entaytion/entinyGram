@@ -24,7 +24,8 @@ for (const file of info.apkFiles) {
 const apiId = Number(process.env.TELEGRAM_API_ID)
 const apiHash = process.env.TELEGRAM_API_HASH
 const botToken = process.env.TELEGRAM_BOT_TOKEN
-const channel = process.env.TELEGRAM_CHANNEL ?? 'entinyGramCI'
+const channelCI = process.env.TELEGRAM_CI_CHANNEL ?? process.env.TELEGRAM_CHANNEL ?? 'entinyGramCI'
+const channelMain = process.env.TELEGRAM_MAIN_CHANNEL ?? 'entinyGram'
 
 if (!apiId || !apiHash || !botToken) {
   throw new Error('TELEGRAM_API_ID, TELEGRAM_API_HASH and TELEGRAM_BOT_TOKEN must be set')
@@ -73,18 +74,18 @@ try {
     const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
     en = String(notes.en ?? '')
     uk = String(notes.uk ?? '')
-  } catch {}
+  } catch { }
 
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const abiOf = (file: string) => /universal/i.test(file) ? 'Universal' : 'ARM64'
-  const postUrl = (id: number) => `https://t.me/${channel}/${id}`
+  const postUrl = (id: number) => `https://t.me/${channelCI}/${id}`
   const bullets = (text: string) =>
     text.split('\n').map(l => l.trim()).filter(Boolean).map(l => html`${esc(l)}`)
 
-  // 1) Upload the APK documents first, remembering their post ids for the links.
+  // 1) Upload the APK documents first to the CI channel.
   const apkPosts: { file: string, id: number }[] = []
   for (const file of info.apkFiles) {
-    const msg = await tg.sendMedia(channel, {
+    const msg = await tg.sendMedia(channelCI, {
       type: 'document',
       file: `file:${join(artifactDir, file)}`,
       fileName: file,
@@ -93,18 +94,12 @@ try {
     apkPosts.push({ file, id: msg.id })
   }
 
-  // 2) Release banner photo (the "cover").
   const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.png')
-  try {
-    await tg.sendMedia(channel, { type: 'photo', file: `file:${bannerPath}` })
-  } catch (e) {
-    console.warn('release: banner post failed (continuing):', e)
-  }
 
-  // 3) Full release message with download links + bilingual changelog.
+  // 2) Full release message with download links + bilingual changelog.
   const downloadLinks = apkPosts.map(p => {
     const url = postUrl(p.id)
-    return html`• Download ${abiOf(p.file)} (<a href="${url}">${url}</a>)`
+    return html`• <b><a href="${url}">Download ${abiOf(p.file)} APK</a></b>`
   })
   const enBlock = en ? joinTextWithEntities(bullets(en), '\n') : html`• See the channel`
   const ukBlock = uk ? joinTextWithEntities(bullets(uk), '\n') : html`• Дивіться канал`
@@ -113,27 +108,53 @@ try {
   const release = html`
     #release
     <br/>
-    ✈️ entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
+    📡 entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
     <br/><br/>
     ${joinTextWithEntities(downloadLinks, '\n')}
-    <br/>
-    • Channel (https://t.me/${channel})
     ${extra ? html`<br/>${extra}` : ''}
     <br/><br/>
     🇺🇸 EN:
     <br/>
+    <blockquote expandable>
     ${enBlock}
+    </blockquote>
     <br/><br/>
     🇺🇦 UK:
     <br/>
+    <blockquote expandable>
     ${ukBlock}
+    </blockquote>
     <br/><br/>
-    Thanks to all contributors and supporters ❤️
-    <br/>
-    Check for updates (tg://update)
+    @entinyGram
   `
 
-  await tg.sendText(channel, release)
+  // 3) Send the banner photo with the release text as caption to the main channel.
+  // If the caption exceeds 1024 characters, Telegram will throw MEDIA_CAPTION_TOO_LONG.
+  // We'll calculate length manually to avoid API errors and fallback to separate messages.
+  const releaseText = release.text
+  if (releaseText.length <= 1024) {
+    try {
+      await tg.sendMedia(channelMain, { 
+        type: 'photo', 
+        file: `file:${bannerPath}`, 
+        caption: release 
+      })
+    } catch (e: any) {
+      if (e?.message?.includes('CAPTION_TOO_LONG')) {
+        await tg.sendMedia(channelMain, { type: 'photo', file: `file:${bannerPath}` })
+        await tg.sendText(channelMain, release)
+      } else {
+        throw e
+      }
+    }
+  } else {
+    try {
+      await tg.sendMedia(channelMain, { type: 'photo', file: `file:${bannerPath}` })
+    } catch (e) {
+      console.warn('release: banner post failed (continuing):', e)
+    }
+    await tg.sendText(channelMain, release)
+  }
 } finally {
   const exported = await tg.exportSession()
   if (exported !== cachedSession) {

@@ -278,3 +278,4 @@ entiny/local-build-number.patch
 feature/translator.patch
 entiny/night-theme-colors.patch
 entiny/rebase-leftover-fixes.patch
+entiny/translator-without-premium.patch
