@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.dialogs.AccountOrderHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
+import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -112,12 +113,19 @@ class DrawerLayoutAdapter(
                 )
             }
 
+            2 -> DrawerM3SectionsHelper.applySeparator(holder.itemView)
+
             3 -> {
                 val cell = holder.itemView as DrawerActionCell
                 var pos = position - 2
                 if (accountsShown) pos -= getAccountRowsCount()
                 items[pos]!!.bind(cell)
                 cell.setPadding(0, 0, 0, 0)
+                if (DrawerM3SectionsHelper.isEnabled()) {
+                    m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }
+                } else {
+                    DrawerM3SectionsHelper.resetMenuRow(cell)
+                }
             }
 
             4 -> {
@@ -135,8 +143,24 @@ class DrawerLayoutAdapter(
                 cell.setSwitchVisible(hasProxies)
                 cell.setChecked(SharedConfig.isProxyEnabled())
                 cell.onSwitchToggled = onProxySwitchToggled
+                if (DrawerM3SectionsHelper.isEnabled()) {
+                    m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }
+                } else {
+                    DrawerM3SectionsHelper.resetMenuRow(cell)
+                }
             }
         }
+    }
+
+    private fun m3GroupFor(position: Int): Pair<Int, Int>? {
+        var idx = position - 2
+        if (accountsShown) idx -= getAccountRowsCount()
+        if (idx < 0 || idx >= items.size || items[idx] == null) return null
+        var start = idx
+        while (start > 0 && items[start - 1] != null) start--
+        var end = idx
+        while (end < items.size - 1 && items[end + 1] != null) end++
+        return (idx - start) to (end - start + 1)
     }
 
     override fun getItemViewType(i: Int): Int {

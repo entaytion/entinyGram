@@ -8,6 +8,8 @@
     <string name="InuNavigationDrawerInfo">Замінює нижню панель вкладок класичним гамбургер-меню. Потрібен перезапуск.</string>
     <string name="InuDrawerBackGesture">Відкривати панель жестом «Назад»</string>
     <string name="InuDrawerBackGestureInfo">Свайп назад від лівого краю списку чатів відкриває бічну панель замість виходу з додатка.</string>
+    <string name="InuDrawerM3Sections">Модульні секції в бічному меню</string>
+    <string name="InuDrawerM3SectionsInfo">Групує пункти бічного меню в картки Material 3.</string>
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
     <string name="InuSettingsPrefixHint">Посилання на налаштування використовують tg://settings/entiny/&lt;slug&gt;</string>

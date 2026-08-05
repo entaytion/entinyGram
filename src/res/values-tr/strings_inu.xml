@@ -8,6 +8,8 @@
     <string name="InuNavigationDrawerInfo">Alt sekme çubuğunu v12.0 öncesi sol yan menü ile değiştirir. Yeniden başlatma gerektirir.</string>
     <string name="InuDrawerBackGesture">Geri hareketiyle yan menüyü aç</string>
     <string name="InuDrawerBackGestureInfo">Sohbet listesinin sol kenarından sağa kaydırmak, uygulamadan çıkmak yerine yan menüyü açar.</string>
+    <string name="InuDrawerM3Sections">Yan menüde modüler bölümler</string>
+    <string name="InuDrawerM3SectionsInfo">Yan menü öğelerini yuvarlatılmış Material 3 kartları olarak gruplar.</string>
     <string name="InuSettings">entinyGram Ayarları</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuGeneral">Genel</string>

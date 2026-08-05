@@ -562,6 +562,8 @@
     <string name="InuNavigationDrawerInfo">Заменяет нижнюю панель вкладок на боковое меню, как в старых версиях. Требуется перезапуск.</string>
     <string name="InuDrawerBackGesture">Открывать меню жестом «назад»</string>
     <string name="InuDrawerBackGestureInfo">Свайп назад от левого края списка чатов открывает боковое меню вместо выхода из приложения.</string>
+    <string name="InuDrawerM3Sections">Модульные секции в боковом меню</string>
+    <string name="InuDrawerM3SectionsInfo">Группирует пункты бокового меню в карточки Material 3.</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Переключатели</string>
     <string name="InuMaterial3Avatars">Аватары</string>

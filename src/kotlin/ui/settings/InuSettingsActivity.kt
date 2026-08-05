@@ -40,6 +40,9 @@ class InuSettingsActivity : SettingsPageActivity() {
 
         val imageView = android.widget.ImageView(context).apply {
             setImageResource(R.drawable.icon_settings_inu)
+            setColorFilter(
+                org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText)
+            )
         }
         linear.addView(
             imageView,

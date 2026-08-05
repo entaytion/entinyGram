@@ -42,6 +42,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - lists & sections
   - avatars (tonal on-container initials instead of white)
   - profile action buttons
+  - 📡 modular sections in the navigation drawer - menu rows as rounded M3 cards, ported from the Modular Sections plugin by @RnPlugins
 - 🐶 toggle to replace profile photo bottom blur with a plain gradient fade
 - disable number rounding
 - export/import settings to/from json file

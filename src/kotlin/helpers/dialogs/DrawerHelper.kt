@@ -343,7 +343,7 @@ object DrawerHelper {
         val bg = Theme.getColor(Theme.key_chats_menuBackground)
         sm.setBackgroundColor(bg)
         sm.setGlowColor(bg)
-        sm.setListSelectorColor(Theme.getColor(Theme.key_listSelector))
+        sm.setListSelectorColor(if (DrawerM3SectionsHelper.isEnabled()) 0 else Theme.getColor(Theme.key_listSelector))
     }
 
     private fun installThemeObserver() {

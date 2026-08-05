@@ -10,6 +10,7 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
@@ -128,6 +129,16 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     R.string.InuDrawerBackGesture,
                     R.string.InuDrawerBackGestureInfo,
                     InuConfig.DRAWER_BACK_GESTURE.value,
+                )
+            )
+        }
+        if (InuConfig.NAVIGATION_DRAWER.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_DRAWER_M3_SECTIONS,
+                    R.string.InuDrawerM3Sections,
+                    R.string.InuDrawerM3SectionsInfo,
+                    InuConfig.DRAWER_M3_SECTIONS.value,
                 )
             )
         }
@@ -308,6 +319,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 showRestartBulletin()
             }
 
+            TOGGLE_DRAWER_M3_SECTIONS -> {
+                val new = InuConfig.DRAWER_M3_SECTIONS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
+
             TOGGLE_NON_ISLAND_FOLDERS_BAR -> {
                 val new = InuConfig.NON_ISLAND_FOLDERS_BAR.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -366,6 +383,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_FADE_VIEW = InuUtils.generateId()
         private val TOGGLE_NAVIGATION_DRAWER = InuUtils.generateId()
         private val TOGGLE_DRAWER_BACK_GESTURE = InuUtils.generateId()
+        private val TOGGLE_DRAWER_M3_SECTIONS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_FOLDERS_BAR = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_GLOBAL_SEARCH = InuUtils.generateId()
@@ -426,6 +444,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
                 SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
+                SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),

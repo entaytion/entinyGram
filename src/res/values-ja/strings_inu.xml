@@ -553,6 +553,8 @@
     <string name="InuNavigationDrawerInfo">下部タブバーを 12.0 以前のハンバーガーサイドドロワーに置き換えます。再起動が必要です。</string>
     <string name="InuDrawerBackGesture">戻るジェスチャーでドロワーを開く</string>
     <string name="InuDrawerBackGestureInfo">チャットリストの左端から戻るスワイプをすると、アプリを終了せずにドロワーを開きます。</string>
+    <string name="InuDrawerM3Sections">ナビゲーションドロワーのモジュラーセクション</string>
+    <string name="InuDrawerM3SectionsInfo">ドロワーメニューの行を角丸のMaterial 3カードとしてグループ化します。</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">スイッチ</string>
     <string name="InuMonetTheme">Monet テーマ</string>

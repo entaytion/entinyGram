@@ -221,6 +221,9 @@ object InuConfig {
     val DRAWER_BACK_GESTURE = BoolItem("drawer_back_gesture", false)
 
     @JvmField
+    val DRAWER_M3_SECTIONS = BoolItem("drawer_m3_sections", false)
+
+    @JvmField
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
     @JvmField
