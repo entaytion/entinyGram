@@ -19,6 +19,7 @@ object RadioItemOptions {
                 if (index == selectedIndex) return@addChecked
                 (anchor as? TextCell)?.setValue(text, true)
                 onSelect(index)
+                (fragment as? SettingsPageActivity)?.listView?.adapter?.update(true)
             }
         }
         options.show()

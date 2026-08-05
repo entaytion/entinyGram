@@ -1,0 +1,90 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 5 Aug 2026 10:20:40 +0300
+Subject: feat(ui): adapt colorful icons, Monet theme transitions, dialog inputs, and popups
+
+---
+ .../java/org/telegram/ui/Cells/TextCell.java  | 31 ++++++++++++++-----
+ .../telegram/ui/Components/ItemOptions.java   |  4 +--
+ 2 files changed, 26 insertions(+), 9 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+@@ -204,13 +204,20 @@ public class TextCell extends FrameLayout {
+         }
+         if (imageView.getVisibility() == VISIBLE) {
+             if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
+-                imageView.setPadding(0, 0, 0, 0);
++                final boolean isColorful = imageView.getBackground() != null;
++                final int targetSize = isColorful ? dp(28) : dp(inu_m3IconSize);
++                if (isColorful) {
++                    int p = dp(5);
++                    imageView.setPadding(p, p, p, p);
++                } else {
++                    imageView.setPadding(0, 0, 0, 0);
++                }
+                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+-                final boolean autoSizeLottie = inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
+-                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(autoSizeLottie ? 48 : inu_m3IconSize), autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
++                final boolean autoSizeLottie = !isColorful && inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
++                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(autoSizeLottie ? dp(48) : targetSize, autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
+                 imageView.measure(iconMeasureSpec, iconMeasureSpec);
+             } else {
+-            imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
++                imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+             }
+         }
+         if (valueImageView.getVisibility() == VISIBLE) {
+@@ -634,15 +641,25 @@ public class TextCell extends FrameLayout {
+     public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
+         offsetFromImage = getOffsetFromImage(true);
+         imageView.setVisibility(VISIBLE);
+-        imageView.setPadding(dp(2), dp(2), dp(2), dp(2));
++        imageView.setPadding(dp(5), dp(5), dp(5), dp(5));
+         imageView.setTranslationX(dp(LocaleController.isRTL ? 0 : -3));
+         imageView.setImageResource(resId);
+-        imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
++
++        boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().inu_isMonet();
++        if (isMonet) {
++            int baseColor = desu.inugram.helpers.theme.MonetHelper.maybeHarmonizePeerColor(colorTop);
++            int windowBg = Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider);
++            int bgColor = androidx.core.graphics.ColorUtils.blendARGB(baseColor, windowBg, Theme.isCurrentThemeDark() ? 0.78f : 0.84f);
++            colorTop = colorBottom = bgColor;
++            imageView.setColorFilter(new PorterDuffColorFilter(baseColor, PorterDuff.Mode.SRC_IN));
++        } else {
++            imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
++        }
+ 
+         final boolean border = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
+         SettingsActivity.SettingCell.Background drawable = new SettingsActivity.SettingCell.Background();
+         drawable.setColor(colorTop, colorBottom);
+-        drawable.setDrawBorder(border);
++        drawable.setDrawBorder(border && !isMonet);
+         imageView.setBackground(drawable);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
+@@ -217,7 +217,7 @@ public class ItemOptions {
+         this.resourcesProvider = fragment.getResourceProvider();
+         this.context = fragment.getContext();
+         this.scrimView = scrimView;
+-        this.dimAlpha = AndroidUtilities.computePerceivedBrightness(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider)) > .705 ? 0x66 : 0x33;
++        this.dimAlpha = AndroidUtilities.computePerceivedBrightness(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider)) > .705 ? 0x26 : 0x33;
+         this.swipeback = swipeback;
+         this.useScrollView = useScrollView;
+         this.shownFromBottom = shownFromBottom;
+@@ -238,7 +238,7 @@ public class ItemOptions {
+         this.resourcesProvider = resourcesProvider;
+         this.context = container.getContext();
+         this.scrimView = scrimView;
+-        this.dimAlpha = AndroidUtilities.computePerceivedBrightness(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider)) > .705 ? 0x66 : 0x33;
++        this.dimAlpha = AndroidUtilities.computePerceivedBrightness(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider)) > .705 ? 0x26 : 0x33;
+         this.swipeback = swipeback;
+         this.shownFromBottom = shownFromBottom;
+         this.useScrollView = useScrollView;

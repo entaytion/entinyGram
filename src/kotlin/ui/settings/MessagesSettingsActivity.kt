@@ -35,19 +35,23 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(this.context, this)
-        if (stickerSizeSlider == null) stickerSizeSlider = SliderCell(
-            context,
-            min = 4f,
-            max = 20f,
-            defaultValue = InuConfig.STICKER_SIZE.default,
-            initialValue = InuConfig.STICKER_SIZE.value,
-            title = LocaleController.getString(R.string.InuStickerSize),
-            format = { "%.1f".format(it) },
-            onChanged = {
-                InuConfig.STICKER_SIZE.value = it
-                stickerSizePreview?.invalidate()
-            },
-        )
+        if (stickerSizeSlider == null) {
+            stickerSizeSlider = SliderCell(
+                context,
+                min = 4f,
+                max = 20f,
+                defaultValue = InuConfig.STICKER_SIZE.default,
+                initialValue = InuConfig.STICKER_SIZE.value,
+                title = LocaleController.getString(R.string.InuStickerSize),
+                format = { "%.1f".format(it) },
+                onChanged = {
+                    InuConfig.STICKER_SIZE.value = it
+                    stickerSizePreview?.invalidate()
+                },
+            )
+        } else {
+            stickerSizeSlider?.updateColors()
+        }
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickers)))
         items.add(UItem.asCustom(stickerSizePreview))
         items.add(UItem.asCustom(stickerSizeSlider))
@@ -239,17 +243,21 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 channelActionLabel(),
             )
         )
-        if (doubleTapDelaySlider == null) doubleTapDelaySlider = SliderCell(
-            this.context, min = 75f, max = 300f,
-            defaultValue = InuConfig.DOUBLE_TAP_DELAY.default.toFloat(),
-            initialValue = InuConfig.DOUBLE_TAP_DELAY.value.toFloat(),
-            title = LocaleController.getString(R.string.InuDelay),
-            format = { "${it.toInt()} ms" },
-            onChanged = {
-                InuConfig.DOUBLE_TAP_DELAY.value = it.toInt()
-                InuHooks.syncDoubleTapDelay()
-            },
-        )
+        if (doubleTapDelaySlider == null) {
+            doubleTapDelaySlider = SliderCell(
+                this.context, min = 75f, max = 300f,
+                defaultValue = InuConfig.DOUBLE_TAP_DELAY.default.toFloat(),
+                initialValue = InuConfig.DOUBLE_TAP_DELAY.value.toFloat(),
+                title = LocaleController.getString(R.string.InuDelay),
+                format = { "${it.toInt()} ms" },
+                onChanged = {
+                    InuConfig.DOUBLE_TAP_DELAY.value = it.toInt()
+                    InuHooks.syncDoubleTapDelay()
+                },
+            )
+        } else {
+            doubleTapDelaySlider?.updateColors()
+        }
         items.add(UItem.asCustom(doubleTapDelaySlider))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuDoubleTapInfo)))
     }

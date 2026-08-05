@@ -127,6 +127,18 @@ class SliderCell(
         onChanged(newValue)
     }
 
+    fun updateColors() {
+        valueLabel.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText))
+        titleView?.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
+        resetButton.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon))
+        resetButton.background = Theme.createSelectorDrawable(
+            Theme.getColor(Theme.key_listSelector),
+            Theme.RIPPLE_MASK_CIRCLE_20DP,
+        )
+        seekBarView.updateColors()
+        invalidate()
+    }
+
     private fun refresh() {
         valueLabel.text = format(value)
         resetButton.alpha = if (value == defaultValue) 0.35f else 1f
@@ -153,6 +165,14 @@ class SliderCell(
         private val seekBar = SeekBar(this)
 
         init {
+            updateColors()
+            seekBar.setDelegate(object : SeekBar.SeekBarDelegate {
+                override fun onSeekBarDrag(progress: Float) = onDrag(progress)
+                override fun onSeekBarContinuousDrag(progress: Float) = onDrag(progress)
+            })
+        }
+
+        fun updateColors() {
             seekBar.setColors(
                 Theme.getColor(Theme.key_player_progressBackground),
                 Theme.getColor(Theme.key_player_progressCachedBackground),
@@ -160,10 +180,7 @@ class SliderCell(
                 Theme.getColor(Theme.key_player_progress),
                 Theme.getColor(Theme.key_player_progressBackground),
             )
-            seekBar.setDelegate(object : SeekBar.SeekBarDelegate {
-                override fun onSeekBarDrag(progress: Float) = onDrag(progress)
-                override fun onSeekBarContinuousDrag(progress: Float) = onDrag(progress)
-            })
+            invalidate()
         }
 
         private fun onDrag(progress: Float) {

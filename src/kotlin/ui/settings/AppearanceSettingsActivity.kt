@@ -188,21 +188,25 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
 
-        if (animationSpeedSlider == null) animationSpeedSlider = SliderCell(
-            this.context, min = 0.5f, max = 3f,
-            defaultValue = InuConfig.ANIMATION_SPEED.default,
-            initialValue = if (InuConfig.ANIMATION_SPEED.value >= 3f) 3f else InuConfig.ANIMATION_SPEED.value,
-            step = 0.05f,
-            title = LocaleController.getString(R.string.InuAnimationSpeed),
-            format = {
-                if (it >= 3f) LocaleController.getString(R.string.InuAnimationSpeedInstant)
-                else String.format("%.2fx", it)
-            },
-            onChanged = {
-                InuConfig.ANIMATION_SPEED.value = if (it >= 3f) 9999f else it
-                InuHooks.syncAnimationSpeed()
-            },
-        )
+        if (animationSpeedSlider == null) {
+            animationSpeedSlider = SliderCell(
+                this.context, min = 0.5f, max = 3f,
+                defaultValue = InuConfig.ANIMATION_SPEED.default,
+                initialValue = if (InuConfig.ANIMATION_SPEED.value >= 3f) 3f else InuConfig.ANIMATION_SPEED.value,
+                step = 0.05f,
+                title = LocaleController.getString(R.string.InuAnimationSpeed),
+                format = {
+                    if (it >= 3f) LocaleController.getString(R.string.InuAnimationSpeedInstant)
+                    else String.format("%.2fx", it)
+                },
+                onChanged = {
+                    InuConfig.ANIMATION_SPEED.value = if (it >= 3f) 9999f else it
+                    InuHooks.syncAnimationSpeed()
+                },
+            )
+        } else {
+            animationSpeedSlider?.updateColors()
+        }
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMotion)))
         items.add(
@@ -361,6 +365,8 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 MonetHelper.getThemeMode().ordinal,
             ) { which ->
                 MonetHelper.setThemeMode(MonetHelper.ThemeMode.entries[which])
+                softRebuild()
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
 
             BUTTON_PREDICTIVE_BACK_MODE -> RadioItemOptions.show(

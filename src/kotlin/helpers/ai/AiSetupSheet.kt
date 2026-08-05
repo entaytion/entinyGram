@@ -64,7 +64,7 @@ class AiSetupSheet(
             },
             LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT,
-                Gravity.CENTER_HORIZONTAL, 20, 18, 20, 12
+                Gravity.CENTER_HORIZONTAL, 20f, 18f, 20f, 12f
             )
         )
 
@@ -83,7 +83,7 @@ class AiSetupSheet(
 
         stepContainer.addView(
             label(LocaleController.getString(R.string.InuAiSetupProvider)),
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 20, 0)
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 20f)
         )
 
         // Provider buttons
@@ -97,7 +97,7 @@ class AiSetupSheet(
         }
 
         // Divider
-        stepContainer.addView(divider(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0, 8, 0, 8, 0))
+        stepContainer.addView(divider(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0f, 8f, 0f, 8f))
 
         // Manual
         stepContainer.addView(
@@ -117,21 +117,28 @@ class AiSetupSheet(
 
         stepContainer.addView(
             label(provider.displayName),
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 14, 0)
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 14f)
         )
 
-        val keyInput = EditText(context).apply {
+        val keyInput = org.telegram.ui.Components.EditTextBoldCursor(context).apply {
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
-            setBackgroundColor(Color.TRANSPARENT)
+            setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))
+            setCursorSize(AndroidUtilities.dp(20f))
+            setCursorWidth(1.5f)
             hint = LocaleController.getString(R.string.InuAiSetupApiKey)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
             isSingleLine = true
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+            background = Theme.createRoundRectDrawable(
+                dp(12),
+                Theme.getColor(Theme.key_windowBackgroundGray)
+            )
         }
         stepContainer.addView(
             keyInput,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 14, 4, 14, 4)
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 20f, 12f, 20f, 12f)
         )
 
         val statusLabel = TextView(context).apply {
@@ -141,7 +148,7 @@ class AiSetupSheet(
         }
         stepContainer.addView(
             statusLabel,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 14, 4)
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 14f)
         )
 
         var verifyBtn: TextView? = null
@@ -172,7 +179,7 @@ class AiSetupSheet(
         }
         stepContainer.addView(
             verifyBtn,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 44, 0, 8, 0, 20, 10)
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, 20f, 8f, 20f, 16f)
         )
     }
 
@@ -187,7 +194,7 @@ class AiSetupSheet(
 
         stepContainer.addView(
             label(LocaleController.getString(R.string.InuAiSetupPickModel)),
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 0, 0, 8, 0)
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 8f)
         )
 
         for (model in models) {
@@ -270,12 +277,12 @@ class AiSetupSheet(
             gravity = Gravity.CENTER
             isSingleLine = true
             ellipsize = TextUtils.TruncateAt.END
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
             typeface = AndroidUtilities.bold()
             text = label
             setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText))
             background = Theme.createSimpleSelectorRoundRectDrawable(
-                AndroidUtilities.dp(8f),
+                AndroidUtilities.dp(12f),
                 Theme.getColor(Theme.key_featuredStickers_addButton),
                 ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhite), 120)
             )

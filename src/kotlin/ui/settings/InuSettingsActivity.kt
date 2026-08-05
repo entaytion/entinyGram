@@ -95,8 +95,26 @@ class InuSettingsActivity : SettingsPageActivity() {
         return linear
     }
 
+    private fun updateHeaderViewColors(view: View) {
+        val linear = view as? android.widget.LinearLayout ?: return
+        val imageView = linear.getChildAt(0) as? android.widget.ImageView
+        val titleView = linear.getChildAt(1) as? android.widget.TextView
+        val subtitleView = linear.getChildAt(2) as? android.widget.TextView
+
+        imageView?.setColorFilter(
+            org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText)
+        )
+        titleView?.setTextColor(
+            org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText)
+        )
+        subtitleView?.setTextColor(
+            org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteGrayText2)
+        )
+    }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val headerView = topHeaderView ?: createHeaderView().also { topHeaderView = it }
+        updateHeaderViewColors(headerView)
         items.add(UItem.asCustom(headerView))
         items.add(UItem.asShadow(null))
 

@@ -194,15 +194,23 @@ class AiSettingsActivity : SettingsPageActivity() {
     }
 
     private fun fieldInput(hint: String, text: String, inputType: Int): EditText =
-        EditText(context!!).apply {
+        org.telegram.ui.Components.EditTextBoldCursor(context!!).apply {
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
+            setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))
+            setCursorSize(AndroidUtilities.dp(20f))
+            setCursorWidth(1.5f)
             setHint(hint)
             setText(text)
             this.inputType = inputType
             isSingleLine = true
             setSelection(text.length)
-            textSize = 16f
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16f)
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+            background = Theme.createRoundRectDrawable(
+                dp(12),
+                Theme.getColor(Theme.key_windowBackgroundGray)
+            )
         }
 
     companion object {

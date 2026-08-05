@@ -566,17 +566,25 @@ object MonetHelper {
         Theme.selectedAutoNightType = Theme.AUTO_NIGHT_TYPE_NONE
         Theme.saveAutoNightThemeConfig()
         rememberLastTheme(name, dark = dark)
-        applyDayTheme(Theme.getTheme(name))
+        val theme = Theme.getTheme(name) ?: return
+        Theme.applyTheme(theme, dark)
+        NotificationCenter.getGlobalInstance().postNotificationName(
+            NotificationCenter.needSetDayNightTheme, theme, dark, null, -1
+        )
     }
 
     private fun applyAuto(nightName: String) {
         Theme.getTheme(nightName)?.let { Theme.setCurrentNightTheme(it) }
         rememberLastTheme("Monet Light", dark = false)
         rememberLastTheme(nightName, dark = true)
-        applyDayTheme(Theme.getTheme("Monet Light"))
+        val dayTheme = Theme.getTheme("Monet Light") ?: return
+        Theme.applyTheme(dayTheme, false)
         Theme.selectedAutoNightType = Theme.AUTO_NIGHT_TYPE_SYSTEM
         Theme.saveAutoNightThemeConfig()
         Theme.checkAutoNightThemeConditions(true)
+        NotificationCenter.getGlobalInstance().postNotificationName(
+            NotificationCenter.needSetDayNightTheme, dayTheme, false, null, -1
+        )
     }
 
     private fun restorePrevious() {
