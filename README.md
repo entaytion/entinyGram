@@ -13,6 +13,7 @@ you can expect:
 - *a lot* of QoL and privacy features (story downloads without Premium, TOS self-destruct media bypass, deleted/edited messages history)
 - UI tweaks to make it look prettier, cleaner, and customized
 - opinionated defaults with full user control
+- maps use the original Telegram Google Maps API key (from TL_config), so no personal key lives in the repo
 
 all that while still allowing users to disable custom tweaks to achieve a stock-like experience when needed.
 
