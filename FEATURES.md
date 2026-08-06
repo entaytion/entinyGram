@@ -335,3 +335,4 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
+- URL parsing: multi-component TLDs (`.is-a.dev`, `.github.io`, `.co.uk`) and hyphens in subdomains work; Cyrillic text before a domain (e.g. `слово.entaytion.is-a.dev`) is no longer swallowed into the link — the ASCII domain stays clickable; bio and channel/group description links are clickable for everyone, with or without `http(s)://` (stock gates them behind Telegram Premium)

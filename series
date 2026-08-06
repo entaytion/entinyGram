@@ -281,3 +281,4 @@ entiny/translator-without-premium.patch
 entiny/mutual-contact-icon.patch
 entiny/gore-ui-fixes.patch
 entiny/build-optimizations.patch
+entiny/fix-url-parsing.patch

@@ -180,7 +180,7 @@ function formatRanges(lines: number[]) {
 
 const args = new Set(process.argv.slice(2))
 if (args.delete('--help')) {
-  console.log('Usage: pnpm run lint-patches [--check]')
+  console.log('Usage: bun run lint-patches [--check]')
   console.log('  --check  exit non-zero when findings exist')
   process.exit(0)
 }

@@ -44,7 +44,7 @@ if (result.exitCode !== 0) {
     console.error(result.stderr.trim())
   }
 
-  warn('Run `pnpm run setup` once conflicts are resolved to sync submodules')
+  warn('Run `bun run setup` once conflicts are resolved to sync submodules')
   process.exit(result.exitCode)
 }
 

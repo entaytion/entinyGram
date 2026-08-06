@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 6 Aug 2026 09:44:52 +0300
+Subject: Fix link parsing and clickability
+
+- stock linkify absorbs Cyrillic text before an ASCII domain into the URL match (марний.entaytion.is-a.dev matched whole); trim leading non-ASCII labels in a post-processing pass so the ASCII domain stays clickable
+- keep multi-component TLDs (is-a.dev, github.io, co.uk) and hyphenated subdomains working
+- bio and channel/group description links were gated behind Telegram Premium (non-premium accounts got no links at all); always parse them now
+---
+ .../main/java/org/telegram/messenger/AndroidUtilities.java  | 1 +
+ .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+@@ -1327,6 +1327,7 @@ public class AndroidUtilities {
+             for (int i = 0; i < newSpans.length; ++i) {
+                 text.setSpan(newSpans[i], newText.getSpanStart(newSpans[i]), newText.getSpanEnd(newSpans[i]), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+             }
++            desu.inugram.helpers.text.LinkHelper.fixUrlSpans(text);
+         }
+         return success;
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -13730,19 +13730,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     AboutLinkCell aboutLinkCell = (AboutLinkCell) holder.itemView;
+                     if (position == userInfoRow) {
+                         TLRPC.User user = userInfo.user != null ? userInfo.user : getMessagesController().getUser(userInfo.id);
+-                        boolean addlinks = isBot || (user != null && user.premium && userInfo.about != null);
++                        boolean addlinks = isBot || (user != null && userInfo.about != null);
+                         aboutLinkCell.setTextAndValue(userInfo.about, LocaleController.getString(R.string.UserBio), addlinks);
+                     } else if (position == channelInfoRow) {
+                         String text = chatInfo.about;
+                         while (text.contains("\n\n\n")) {
+                             text = text.replace("\n\n\n", "\n\n");
+                         }
+-                        aboutLinkCell.setTextAndValue(text, LocaleController.getString(R.string.DescriptionPlaceholder), ChatObject.isChannel(currentChat) && !currentChat.megagroup);
++                        aboutLinkCell.setTextAndValue(text, LocaleController.getString(R.string.DescriptionPlaceholder), true);
+                     } else if (position == bioRow) {
+                         String value;
+                         if (userInfo == null || !TextUtils.isEmpty(userInfo.about)) {
+                             value = userInfo == null ? LocaleController.getString(R.string.Loading) : userInfo.about;
+-                            aboutLinkCell.setTextAndValue(value, LocaleController.getString(R.string.UserBio), getUserConfig().isPremium());
++                            aboutLinkCell.setTextAndValue(value, LocaleController.getString(R.string.UserBio), true);
+                             currentBio = userInfo != null ? userInfo.about : null;
+                         } else {
+                             aboutLinkCell.setTextAndValue(LocaleController.getString(R.string.UserBio), LocaleController.getString(R.string.UserBioDetail), false);

@@ -19,7 +19,7 @@ Base strings: `src/res/values/strings_inu.xml`. Each locale is a sibling
 Always start here:
 
 ```bash
-pnpm tsx scripts/find-missing-translations.ts <iso>
+bun tsx scripts/find-missing-translations.ts <iso>
 ```
 
 Outputs three sections:

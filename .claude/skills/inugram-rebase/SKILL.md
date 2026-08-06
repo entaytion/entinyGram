@@ -2,7 +2,7 @@
 name: inugram-rebase
 description: >
   Use when rebasing the inugram stgit patchset onto newer upstream Telegram and
-  resolving the conflicts it produces. Trigger whenever `pnpm run rebase
+  resolving the conflicts it produces. Trigger whenever `bun run rebase
   latest`/`<ref>` reports merge conflicts, when worktree files show `<<<<<<<
   current` / `>>>>>>> patched` markers, or the user says "rebase the patchset",
   "fix the rebase conflict", "continue the rebase". Covers the per-conflict loop
@@ -20,7 +20,7 @@ description: >
 Rebasing = replaying the whole stgit stack onto a newer stock Telegram. Read
 `CLAUDE.md` first — this covers only the rebase loop.
 
-`pnpm run rebase latest` (or `pnpm run rebase <sha>`) fetches upstream and
+`bun run rebase latest` (or `bun run rebase <sha>`) fetches upstream and
 rebases the stack, stopping at the first conflicting patch. The rebase target
 sha is printed (`Rebasing to <sha> (upstream/master)`) — **note it**; you'll
 `git show <sha>:<path>` to see exactly what stock changed.
@@ -29,9 +29,9 @@ sha is printed (`Rebasing to <sha> (upstream/master)`) — **note it**; you'll
 
 Rebasing IS the task, so running `git add`, `stg refresh`, `stg push -a` is
 expected here — this skill is the explicit exception to CLAUDE.md's "never
-run stg/git". **Still never `stg export` / `pnpm run export`** (the user does
+run stg/git". **Still never `stg export` / `bun run export`** (the user does
 that at the very end). When the user asks for a rebase, that means end-to-end:
-run `pnpm run rebase latest` (or the given ref) yourself and drive the whole
+run `bun run rebase latest` (or the given ref) yourself and drive the whole
 conflict loop to completion — don't wait for them to kick it off.
 
 ## The conflict loop
@@ -191,4 +191,4 @@ done and what to re-check.
 `stg series 2>/dev/null | rg -c '^-'` (unapplied count = 0) and
 `git diff --name-only --diff-filter=U` (empty). Final sweep for stray markers:
 `rg -l -a '^(<<<<<<<|>>>>>>>)' TMessagesProj/src/main/java`. Then hand back — the
-user runs `pnpm run export`. Don't commit or push.
+user runs `bun run export`. Don't commit or push.
