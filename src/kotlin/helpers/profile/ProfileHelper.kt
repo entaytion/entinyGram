@@ -7,7 +7,6 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.View
-import android.widget.Toast
 import androidx.collection.LongSparseArray
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
@@ -18,15 +17,12 @@ import org.json.JSONArray
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
-import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
-import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
-import org.telegram.messenger.support.LongSparseLongArray
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
@@ -36,15 +32,12 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.ProfileGalleryBlurView
 import org.telegram.ui.Components.ProfileGalleryView
-import org.telegram.ui.Stars.StarsController
-import org.telegram.ui.Stories.StoriesController
 import java.util.Date
 
 object ProfileHelper {
     const val ACTION_TOGGLE_HIDE_WALLPAPER = 505
     const val ACTION_TOGGLE_HIDE_THEME = 506
     const val ACTION_TOGGLE_HIDE_MESSAGES = 507
-    const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
     private val fadePaint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -232,13 +225,6 @@ object ProfileHelper {
                 LocaleController.getString(label),
             )
         }
-        if (BuildVars.DEBUG_PRIVATE_VERSION) {
-            otherItem.addSubItem(
-                ACTION_DEBUG_CLEAR_CACHE,
-                R.drawable.msg_delete,
-                "Debug: clear profile cache",
-            )
-        }
     }
 
     private fun canHideMessagesFrom(currentAccount: Int, dialogId: Long): Boolean {
@@ -253,71 +239,9 @@ object ProfileHelper {
             ACTION_TOGGLE_HIDE_WALLPAPER -> ChatHelper.toggleRemoveWallpaper(currentAccount, dialogId)
             ACTION_TOGGLE_HIDE_THEME -> ChatHelper.toggleRemoveTheme(currentAccount, dialogId)
             ACTION_TOGGLE_HIDE_MESSAGES -> BlockedMessagesHelper.toggleExtraHidden(currentAccount, dialogId)
-            ACTION_DEBUG_CLEAR_CACHE -> debugClearProfileCache(currentAccount, dialogId)
             else -> return false
         }
         return true
-    }
-
-    private fun debugClearProfileCache(currentAccount: Int, dialogId: Long) {
-        val mc = MessagesController.getInstance(currentAccount)
-        val mcCls = MessagesController::class.java
-        val isUser = dialogId > 0
-        val keyAbs = if (isUser) dialogId else -dialogId
-
-        runCatching {
-            val mapName = if (isUser) "fullUsers" else "fullChats"
-            val loadedName = if (isUser) "loadedFullUsers" else "loadedFullChats"
-
-            mcCls.getDeclaredField(mapName).apply { isAccessible = true }.let { f ->
-                val map = f.get(mc) as LongSparseArray<*>
-                map.remove(keyAbs)
-            }
-            mcCls.getDeclaredField(loadedName).apply { isAccessible = true }.let { f ->
-                val arr = f.get(mc) as LongSparseLongArray
-                arr.delete(keyAbs)
-            }
-        }.onFailure { it.printStackTrace() }
-
-        runCatching {
-            mcCls.getDeclaredField("dialogPhotos").apply { isAccessible = true }.let { f ->
-                val map = f.get(mc) as LongSparseArray<*>
-                map.remove(dialogId)
-            }
-        }.onFailure { it.printStackTrace() }
-
-        runCatching {
-            val sc = mc.storiesController
-            StoriesController::class.java.getDeclaredField("allStoriesMap").apply { isAccessible = true }.let { f ->
-                val map = f.get(sc) as LongSparseArray<*>
-                map.remove(dialogId)
-            }
-            sc.dialogIdToMaxReadId.delete(dialogId)
-        }.onFailure { it.printStackTrace() }
-
-        runCatching {
-            StarsController.getInstance(currentAccount).invalidateProfileGifts(dialogId)
-        }.onFailure { it.printStackTrace() }
-
-        val storage = MessagesStorage.getInstance(currentAccount)
-        storage.storageQueue.postRunnable {
-            runCatching {
-                val db = storage.database
-                val settingsTable = if (isUser) "user_settings" else "chat_settings_v2"
-                db.executeFast("DELETE FROM $settingsTable WHERE uid = $keyAbs").stepThis().dispose()
-                db.executeFast("DELETE FROM media_v4 WHERE uid = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM media_counts_v2 WHERE uid = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM dialog_photos WHERE uid = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM dialog_photos_count WHERE uid = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM stories WHERE dialog_id = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM stories_counter WHERE dialog_id = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM profile_stories WHERE dialog_id = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM profile_stories_albums WHERE dialog_id = $dialogId").stepThis().dispose()
-                db.executeFast("DELETE FROM profile_stories_albums_links WHERE dialog_id = $dialogId").stepThis().dispose()
-            }.onFailure { it.printStackTrace() }
-        }
-
-        Toast.makeText(ApplicationLoader.applicationContext, "Profile cache cleared — close & reopen profile", Toast.LENGTH_LONG).show()
     }
 
     @JvmStatic
