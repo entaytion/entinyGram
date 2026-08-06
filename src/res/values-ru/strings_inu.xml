@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Открыть в обсуждении</string>
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
@@ -780,6 +780,9 @@
     <string name="InuSaveDeletedMessagesInfo">Сохраняет удаленные сообщения в чатах с пометкой 🗑️</string>
     <string name="InuSaveEditedMessages">Сохранять историю редактирования</string>
     <string name="InuSaveEditedMessagesInfo">Сохраняет предыдущие версии сообщений и позволяет просматривать историю ✏️</string>
+
+    <string name="InuSaveUserInfo">Сохранять данные о пользователе</string>
+    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и даты смены имени/фото, когда сервер перестаёт их присылать (бета)</string>
     <string name="InuEditHistory">История редактирования</string>
     <string name="InuNoEditHistory">История редактирования отсутствует</string>
     <string name="InuEditedAt">Изменено %1$s</string>

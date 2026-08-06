@@ -270,6 +270,19 @@ object InuDatabaseHelper {
         }
     }
 
+    fun readKvByPrefix(db: SQLiteDatabase, prefix: String): Map<String, String> {
+        val map = HashMap<String, String>()
+        val cursor = db.queryFinalized("select key, value from inu_kv where key like ?", "$prefix%")
+        try {
+            while (cursor.next()) {
+                map[cursor.stringValue(0)] = cursor.stringValue(1)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return map
+    }
+
     fun writeKv(db: SQLiteDatabase, key: String, value: String): Unit {
         val query = db.executeFast("INSERT OR REPLACE INTO inu_kv VALUES(?, ?)");
         query.bindString(1, key)

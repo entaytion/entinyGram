@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Tartışmada aç</string>
     <string name="InuBanUserConfirm">%1$s bu gruptan yasaklansın mı?</string>
@@ -800,6 +800,9 @@
     <string name="InuSaveDeletedMessagesInfo">Silinen mesajları sohbetlerde 🗑️ işaretiyle tutar</string>
     <string name="InuSaveEditedMessages">Düzenleme geçmişini kaydet</string>
     <string name="InuSaveEditedMessagesInfo">Önceki mesaj sürümlerini kaydeder ve düzenleme geçmişini ✏️ görüntülemeyi sağlar</string>
+
+    <string name="InuSaveUserInfo">Kullanıcı bilgilerini kaydet</string>
+    <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesi, kayıt ayı ve ad/fotoğraf değişiklik tarihlerini saklar (beta)</string>
     <string name="InuSaveSelfDestruct">Süreli medyayı kaydet</string>
     <string name="InuSaveSelfDestructInfo">Tek seferlik fotoğraflar, videolar ve video mesajları normal medya olarak görünür ve kaydedilebilir veya iletilebilir.</string>
     <string name="InuSelfDestructMedia">Süreli medya</string>

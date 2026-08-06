@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Відкрити в обговоренні</string>
     <string name="InuBanUserConfirm">Заблокувати %1$s у цій групі?</string>
@@ -677,6 +677,9 @@
     <string name="InuSaveDeletedMessagesInfo">Зберігає видалені співрозмовниками повідомлення у чаті з позначкою 🗑️</string>
     <string name="InuSaveEditedMessages">Зберігати історію редагувань</string>
     <string name="InuSaveEditedMessagesInfo">Записує попередні версії повідомлень і дозволяє переглядати їх історію ✏️</string>
+
+    <string name="InuSaveUserInfo">Зберігати дані про користувача</string>
+    <string name="InuSaveUserInfoInfo">Зберігає країну телефону, місяць реєстрації та дати зміни імені/фото, коли сервер перестає їх надсилати (бета)</string>
     <string name="InuCacheTtl">Авто-очищення кешу повідомлень</string>
     <string name="InuCacheTtlInfo">Автоматично видаляє збережені видалені/відредаговані повідомлення, старші за обраний період</string>
     <string name="InuCacheTtlNever">Ніколи (зберігати назавжди)</string>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">ディスカッションで開く</string>
     <string name="InuBanUserConfirm">%1$s をこのグループから BAN しますか？</string>
@@ -801,6 +801,9 @@
     <string name="InuSaveDeletedMessagesInfo">削除されたメッセージをチャット内に 🗑️ 付きで保持します</string>
     <string name="InuSaveEditedMessages">編集履歴を保存</string>
     <string name="InuSaveEditedMessagesInfo">メッセージの過去のバージョンを保存し、編集履歴 ✏️ を表示できるようにします</string>
+
+    <string name="InuSaveUserInfo">ユーザー情報を保存</string>
+    <string name="InuSaveUserInfoInfo">サーバーが返さなくなった電話番号の国、登録月、名前/写真の変更日を保存します (ベータ)</string>
     <string name="InuSaveSelfDestruct">消えるメディアを保存</string>
     <string name="InuSaveSelfDestructInfo">1回表示の画像・動画・ビデオメッセージを通常のメディアとして表示し、保存や転送を可能にします。</string>
     <string name="InuSelfDestructMedia">消えるメディア</string>

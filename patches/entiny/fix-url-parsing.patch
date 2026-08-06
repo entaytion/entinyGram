@@ -2,6 +2,9 @@ From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 6 Aug 2026 09:44:52 +0300
 Subject: Fix link parsing and clickability
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 - stock linkify absorbs Cyrillic text before an ASCII domain into the URL match (марний.entaytion.is-a.dev matched whole); trim leading non-ASCII labels in a post-processing pass so the ASCII domain stays clickable
 - keep multi-component TLDs (is-a.dev, github.io, co.uk) and hyphenated subdomains working

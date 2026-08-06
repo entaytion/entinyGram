@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">在讨论中打开</string>
     <string name="InuBanUserConfirm">将 %1$s 从本群封禁？</string>
@@ -801,6 +801,9 @@
     <string name="InuSaveDeletedMessagesInfo">在聊天中保留标有 🗑️ 的已删除消息</string>
     <string name="InuSaveEditedMessages">保存编辑历史</string>
     <string name="InuSaveEditedMessagesInfo">保存以前的消息版本并允许查看编辑历史 ✏️</string>
+
+    <string name="InuSaveUserInfo">保存用户信息</string>
+    <string name="InuSaveUserInfoInfo">在服务器停止返回后保留电话号码国家/地区、注册月份以及姓名/头像更改日期（测试版）</string>
     <string name="InuSaveSelfDestruct">保存阅后即焚媒体</string>
     <string name="InuSaveSelfDestructInfo">一次性照片、视频和视频消息将显示为普通媒体，可以保存或转发。</string>
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>

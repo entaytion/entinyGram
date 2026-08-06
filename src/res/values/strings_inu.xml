@@ -728,6 +728,8 @@
     <string name="InuSaveDeletedMessagesInfo">Keeps deleted messages in chats marked with 🗑️</string>
     <string name="InuSaveEditedMessages">Save edit history</string>
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
+    <string name="InuSaveUserInfo">Save user info</string>
+    <string name="InuSaveUserInfoInfo">Keeps phone country, registration month and name/photo change dates after the server stops returning them (beta)</string>
     <string name="InuCacheTtl">Auto-clear message cache</string>
     <string name="InuCacheTtlInfo">Automatically deletes saved deleted/edited messages older than the chosen period</string>
     <string name="InuCacheTtlNever">Never (keep forever)</string>

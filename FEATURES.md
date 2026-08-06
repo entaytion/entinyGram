@@ -219,6 +219,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 📡 **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
 - 📡 **save edit history**: view previous message versions (marked with ✏️) in a message bubble view with media support
 - 📡 **edit history diff mode**: toggle text diff highlighting in edit history
+- 📡 **save user info** (beta): keeps phone country, registration month and name/photo change dates after the server stops returning them
 - 📡 **forward as own message**: when enabled, every forward is downloaded and re-sent as your own new message (no "Forwarded from" header) — also bypasses content protection in chats with forwarding disabled; text, stickers and captions carry over (disabled by default)
 - 📡 **hide sponsored messages (AdBlock)**: disables channel sponsored ads and prevents loading promotional messages
 - 📡 **AdBlock & Regex Content Filter** (experimental): filter out ad posts, spam, or messages matching custom regular expressions / keywords (hide completely or cover with spoiler)

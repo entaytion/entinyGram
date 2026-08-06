@@ -268,6 +268,15 @@ class ChatsSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
+                TOGGLE_SAVE_USER_INFO,
+                R.string.InuSaveUserInfo,
+                R.string.InuSaveUserInfoInfo,
+                InuConfig.SAVE_USER_INFO.value,
+                experimental = true
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN,
                 R.string.InuSendToDiscussWithoutJoin,
                 R.string.InuSendToDiscussWithoutJoinInfo,
@@ -332,6 +341,7 @@ class ChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
+            TOGGLE_SAVE_USER_INFO -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SAVE_USER_INFO.toggle()
             BUTTON_CHAT_MENU_ORDER -> presentFragment(ChatMenuOrderActivity())
         }
     }
@@ -361,6 +371,7 @@ class ChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH = InuUtils.generateId()
         private val TOGGLE_SEARCH_FROM_GLOBAL = InuUtils.generateId()
         private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
+        private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val BUTTON_CHAT_MENU_ORDER = InuUtils.generateId()
         private val SECTION_HIDE_BOTTOM_BAR = InuUtils.generateId()
         private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
@@ -408,6 +419,7 @@ class ChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("emoji-panel-keyword-search", R.string.InuEmojiPanelKeywordSearch, TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH),
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),
                 SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
+                SearchRegistry.Entry("save-user-info", R.string.InuSaveUserInfo, TOGGLE_SAVE_USER_INFO),
                 SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
                 SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
                 SearchRegistry.Entry("chat-menu-order", R.string.InuChatMenuOrder, BUTTON_CHAT_MENU_ORDER),
