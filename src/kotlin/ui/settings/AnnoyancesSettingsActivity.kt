@@ -52,10 +52,20 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asHeader(addExperimentalSpan("AdBlock")))
         items.add(
-            UItem.asButton(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_SPONSORED_MESSAGES,
+                R.string.InuHideSponsoredMessages,
+                R.string.InuHideSponsoredMessagesInfo,
+                InuConfig.HIDE_SPONSORED_MESSAGES.value,
+                experimental = true,
+            )
+        )
+        items.add(
+            mkSubPageButton(
                 BUTTON_REGEX_FILTER,
-                R.drawable.msg_permissions,
+                R.drawable.msg_block2,
                 LocaleController.getString(R.string.InuRegexFilter)
             )
         )
@@ -165,6 +175,11 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         if (aiFeaturesGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         if (hideSuggestionsGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
+            TOGGLE_HIDE_SPONSORED_MESSAGES -> {
+                val new = InuConfig.HIDE_SPONSORED_MESSAGES.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_HIDE_STORIES -> {
                 val new = InuConfig.HIDE_STORIES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -315,6 +330,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val TOGGLE_HIDE_SPONSORED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_HIDE_STORIES = InuUtils.generateId()
         private val TOGGLE_HIDE_TRENDING_STICKERS = InuUtils.generateId()
         private val TOGGLE_HIDE_REPOST_TO_STORY = InuUtils.generateId()

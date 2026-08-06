@@ -2,11 +2,12 @@ package desu.inugram
 
 import android.content.Intent
 import desu.inugram.helpers.security.ParanoiaHelper
-import desu.inugram.ui.settings.AnnoyancesSettingsActivity
+import desu.inugram.ui.settings.AdditionalSettingsActivity
 import desu.inugram.ui.settings.AiSettingsActivity
+import desu.inugram.ui.settings.AnnoyancesSettingsActivity
 import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
-import desu.inugram.ui.settings.ChatsSettingsActivity
+import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
@@ -40,18 +41,19 @@ object SearchRegistry {
 
     private val pages: List<Page> by lazy {
         listOf(
+            AdditionalSettingsActivity.PAGE,
             InuSettingsActivity.PAGE,
             AppearanceSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
-            ChatsSettingsActivity.PAGE,
+            CategoryChatsSettingsActivity.PAGE,
             MessagesSettingsActivity.PAGE,
+            AiSettingsActivity.PAGE,
             DialogsSettingsActivity.PAGE,
             UserProfileSettingsActivity.PAGE,
             AnnoyancesSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,
-            AiSettingsActivity.PAGE,
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
@@ -81,7 +83,7 @@ object SearchRegistry {
     }
 
     fun deepLinkForItemId(itemId: Int): String? =
-        slugByItemId[itemId]?.let { "tg://settings/entiny/$it" }
+        slugByItemId[itemId]?.let { "tg://entinySettings/$it" }
 
     @JvmStatic
     fun extendSearchArray(
@@ -99,7 +101,7 @@ object SearchRegistry {
                     pageTitle,
                     LocaleController.getString(R.string.InuSettings),
                     page.iconRes,
-                ) { f.presentFragment(page.factory()) }.withLink("tg://settings/entiny/${page.slug}")
+                ) { f.presentFragment(page.factory()) }.withLink("tg://entinySettings/${page.slug}")
             )
             for (entry in page.entries) {
                 val title = LocaleController.getString(entry.titleRes)
@@ -111,7 +113,7 @@ object SearchRegistry {
                         page.iconRes,
                     ) {
                         f.presentFragment(page.factory().withHighlight(entry.itemId))
-                    }.withLink("tg://settings/entiny/${entry.slug}")
+                    }.withLink("tg://entinySettings/${entry.slug}")
                 )
             }
         }
@@ -123,18 +125,27 @@ object SearchRegistry {
         if (ParanoiaHelper.shouldHideSettings()) return false
         val uri = intent?.data ?: return false
         if (uri.scheme != "tg") return false
-        // accept both `tg://settings/inu/<slug>` (host=settings) and `tg:settings/inu/<slug>` (opaque)
+        // canonical: `tg://entinySettings/<slug>` (host=entinySettings) or `tg:entinySettings/<slug>` (opaque)
+        // legacy: `tg://settings/{inu,entiny}/<slug>` (host=settings) or `tg:settings/{inu,entiny}/<slug>` (opaque)
         val segs = when (uri.host) {
-            "settings" -> uri.pathSegments
-            null -> uri.schemeSpecificPart?.removePrefix("//")
-                ?.removePrefix("settings/")?.split('/')
-                ?: return false
+            "entinySettings", "settings" -> uri.pathSegments
+            null -> uri.schemeSpecificPart?.removePrefix("//")?.let { ssp ->
+                when {
+                    ssp.startsWith("entinySettings/") -> ssp.removePrefix("entinySettings/").split('/')
+                    ssp.startsWith("settings/") -> ssp.removePrefix("settings/").split('/')
+                    else -> null
+                }
+            } ?: return false
 
             else -> return false
         }
-        if (segs.size < 2 || (segs[0] != "inu" && segs[0] != "entiny")) return false
-        val target = targetBySlug[segs[1]] ?: return false
-        if (segs[0] == "inu") {
+        val legacy = when (segs.size) {
+            1 -> false
+            2 -> if (segs[0] == "inu" || segs[0] == "entiny") true else return false
+            else -> return false
+        }
+        val target = targetBySlug[segs.last()] ?: return false
+        if (legacy) {
             val fragment = activity.actionBarLayout?.lastFragment ?: return false
             org.telegram.ui.Components.BulletinFactory.of(fragment)
                 .createSimpleBulletin(

@@ -17,7 +17,7 @@ import android.widget.Toast
 import androidx.core.graphics.ColorUtils
 import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
-import desu.inugram.ui.settings.AiSettingsActivity
+import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -98,7 +98,7 @@ object AiComposeHelper {
                 .setMessage(LocaleController.getString(R.string.InuAiPremiumRequired))
                 .setPositiveButton(LocaleController.getString(R.string.InuAiOpenSettings)) { _, _ ->
                     org.telegram.ui.LaunchActivity.instance?.presentFragment(
-                        desu.inugram.ui.settings.AiSettingsActivity()
+                        CategoryChatsSettingsActivity()
                     )
                 }
                 .setNegativeButton(LocaleController.getString(R.string.Cancel),
@@ -121,7 +121,7 @@ object AiComposeHelper {
             var result: String? = null
             var error: String? = null
             try {
-                val body = JSONObject()
+                val json = JSONObject()
                     .put("model", endpoint.model.ifBlank { "gpt-4o-mini" })
                     .put(
                         "messages",
@@ -129,7 +129,16 @@ object AiComposeHelper {
                             .put(JSONObject().put("role", "system").put("content", systemPrompt))
                             .put(JSONObject().put("role", "user").put("content", userText))
                     )
-                    .toString()
+
+                if (InuConfig.AI_REASONING_ENABLED.value) {
+                    val effort = InuConfig.AI_REASONING_EFFORT.value
+                    json.put("reasoning_effort", effort)
+                    if (endpoint.url.contains("openrouter")) {
+                        json.put("include_reasoning", true)
+                    }
+                }
+
+                val body = json.toString()
                 val conn = (URL(endpoint.url).openConnection() as HttpURLConnection).apply {
                     requestMethod = "POST"
                     connectTimeout = 20_000
@@ -146,12 +155,19 @@ object AiComposeHelper {
                     ?.bufferedReader()?.use { it.readText() } ?: ""
                 conn.disconnect()
                 if (code !in 200..299) throw IOException("HTTP $code: ${resp.take(300)}")
-                result = JSONObject(resp)
+                val msgObj = JSONObject(resp)
                     .getJSONArray("choices")
                     .getJSONObject(0)
                     .getJSONObject("message")
-                    .getString("content")
-                    .trim()
+                
+                val content = msgObj.optString("content", "").trim()
+                val reasoning = msgObj.optString("reasoning_content", "").ifBlank { msgObj.optString("reasoning", "") }.trim()
+
+                result = if (reasoning.isNotBlank() && content.isNotBlank()) {
+                    "💭 $reasoning\n\n$content"
+                } else {
+                    content.ifBlank { reasoning }
+                }
             } catch (e: Exception) {
                 error = e.message ?: e.javaClass.simpleName
             }
@@ -741,7 +757,7 @@ private class AiComposeSheet(
         )
         val settingsBtn = roundedButton(LocaleController.getString(R.string.InuAiOpenSettings)) {
             dismiss()
-            LaunchActivity.instance?.presentFragment(AiSettingsActivity())
+            LaunchActivity.instance?.presentFragment(CategoryChatsSettingsActivity())
         }
         box.addView(settingsBtn, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 44, 0, 20, 0, 20, 10))
         return box

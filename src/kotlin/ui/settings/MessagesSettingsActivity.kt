@@ -20,20 +20,16 @@ import org.telegram.ui.GroupCreateActivity
 
 class MessagesSettingsActivity : SettingsPageActivity() {
 
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMessages)
+
     private var stickerSizePreview: StickerSizePreviewMessagesCell? = null
     private var miscPreview: MiscPreviewMessagesCell? = null
     private var stickerSizeSlider: SliderCell? = null
     private var reactionsInRowSlider: SliderCell? = null
     private var doubleTapDelaySlider: SliderCell? = null
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMessages)
-
-    override fun onResume() {
-        super.onResume()
-        listView?.adapter?.update(true)
-    }
-
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        // Stickers
         if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(this.context, this)
         if (stickerSizeSlider == null) {
             stickerSizeSlider = SliderCell(
@@ -75,10 +71,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Reactions
         if (reactionsInRowSlider == null) reactionsInRowSlider = SliderCell(
             context,
             min = 6f,
-            max = 15f,
+            max = 30f,
             defaultValue = InuConfig.REACTIONS_IN_ROW.default.toFloat(),
             initialValue = InuConfig.REACTIONS_IN_ROW.value.toFloat(),
             step = 1f,
@@ -132,6 +129,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Spoilers
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSpoilers)))
         items.add(
             UItem.asButton(
@@ -165,6 +163,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Miscellaneous
         if (miscPreview == null) miscPreview = MiscPreviewMessagesCell(this.context, this)
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
         items.add(UItem.asCustom(miscPreview))
@@ -221,6 +220,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
+        // Double Tap
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDoubleTapActions)))
         items.add(
             UItem.asButton(
@@ -323,12 +323,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 miscPreview?.invalidate()
             }
 
-            TOGGLE_BUBBLE_TAILS -> {
-                val new = InuConfig.BUBBLE_TAILS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
-            }
-
             TOGGLE_SPOILER_EXTEND_TO_LINE_END -> {
                 val new = InuConfig.SPOILER_EXTEND_TO_LINE_END.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -380,11 +374,8 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_BLOCKED_MESSAGES_EXTRA -> openBlockedExtraPicker()
-
             BUTTON_PINNED_REACTIONS -> presentFragment(PinnedReactionsActivity())
-
             BUTTON_MESSAGE_MENU_ORDER -> presentFragment(MessageMenuOrderActivity())
-
             BUTTON_DOUBLE_TAP_INCOMING -> showDoubleTapSelector(view, DoubleTapContext.INCOMING)
             BUTTON_DOUBLE_TAP_OUTGOING -> showDoubleTapSelector(view, DoubleTapContext.OUTGOING)
             BUTTON_DOUBLE_TAP_CHANNEL -> showDoubleTapSelector(view, DoubleTapContext.CHANNEL)
@@ -481,9 +472,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_FORWARD_TIME = InuUtils.generateId()
         private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
-        private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
-        private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
-        private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
@@ -522,7 +510,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "messages",
             titleRes = R.string.InuMessages,
-            iconRes = R.drawable.msg_discuss,
+            iconRes = R.drawable.msg_discussion,
             factory = ::MessagesSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("sticker-time-mode", R.string.InuStickerTimeMode, BUTTON_STICKER_TIME_MODE),
@@ -537,7 +525,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-forward-time", R.string.InuShowForwardTime, TOGGLE_SHOW_FORWARD_TIME),
                 SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
-                SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
                 SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),

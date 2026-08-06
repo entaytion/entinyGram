@@ -774,7 +774,7 @@
     <string name="InuEditedAt">%1$s düzenlendi</string>
     <string name="InuHideSponsoredMessages">Sponsorlu mesajları gizle (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Kanal reklamlarını devre dışı bırakır ve tanıtım mesajlarının yüklenmesini engeller</string>
-    <string name="InuLegacySettingsLink">Bu ayar bağlantısı biçimi eskidi. tg://settings/entiny/&lt;slug&gt; kullanın.</string>
+    <string name="InuLegacySettingsLink">Bu ayar bağlantısı biçimi eskidi. tg://entinySettings/&lt;slug&gt; kullanın.</string>
     <string name="InuLinks">Bağlantılar</string>
     <string name="InuMaterial3NavigationAnimation">Gezinme animasyonu</string>
     <string name="InuNoEditHistory">Düzenleme geçmişi yok</string>
@@ -806,7 +806,7 @@
     <string name="InuSaveSelfDestruct">Süreli medyayı kaydet</string>
     <string name="InuSaveSelfDestructInfo">Tek seferlik fotoğraflar, videolar ve video mesajları normal medya olarak görünür ve kaydedilebilir veya iletilebilir.</string>
     <string name="InuSelfDestructMedia">Süreli medya</string>
-    <string name="InuSettingsPrefixHint">Ayar bağlantıları tg://settings/entiny/&lt;slug&gt; kullanır</string>
+    <string name="InuSettingsPrefixHint">Ayar bağlantıları tg://entinySettings/&lt;slug&gt; kullanır</string>
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuTOS">Hizmet Şartları</string>

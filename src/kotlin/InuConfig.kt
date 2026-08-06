@@ -333,6 +333,12 @@ object InuConfig {
     val AI_COMPOSE_ENDPOINTS = desu.inugram.helpers.ai.AiEndpointsConfig("ai_compose_endpoints")
 
     @JvmField
+    val AI_REASONING_ENABLED = BoolItem("ai_reasoning_enabled", false)
+
+    @JvmField
+    val AI_REASONING_EFFORT = StringItem("ai_reasoning_effort", "medium")
+
+    @JvmField
     val HIDE_MESSAGE_SUMMARY = BoolItem("hide_message_summary", false)
 
     @JvmField

@@ -21,9 +21,25 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuLookAndFeel)
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryAppearance)
+
+    private val m3Group by lazy {
+        ExpandableBoolGroup(
+            addExperimentalSpan(LocaleController.getString(R.string.InuMaterial3)),
+            listOf(
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Switches, InuConfig.MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_SWITCHES),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Avatars, InuConfig.MATERIAL3_AVATARS, TOGGLE_MATERIAL3_AVATARS),
+                ExpandableBoolGroup.Option(R.string.InuMaterialProfileActions, InuConfig.MATERIAL_PROFILE_ACTIONS, TOGGLE_MATERIAL_PROFILE_ACTIONS),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3NavigationAnimation, InuConfig.M3_NAVIGATION_ANIMATION, TOGGLE_M3_NAVIGATION_ANIMATION),
+            ),
+            sectionId = SECTION_MATERIAL3,
+        )
+    }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        // Design Header
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
         items.add(
@@ -36,12 +52,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CENTER_TITLE_CHATS,
-                LocaleController.getString(R.string.InuCenterTitleChats),
-            ).setChecked(InuConfig.CENTER_TITLE_CHATS.value)
-        )
+
         items.add(
             UItem.asButton(
                 BUTTON_NOTIFICATION_ICON,
@@ -54,43 +65,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuMaterial3))))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_MATERIAL3_SWITCHES,
-                LocaleController.getString(R.string.InuMaterial3Switches)
-            ).setChecked(InuConfig.MATERIAL3_SWITCHES.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_MATERIAL3_FABS,
-                LocaleController.getString(R.string.InuMaterial3Fabs)
-            ).setChecked(InuConfig.MATERIAL3_FABS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_M3_SECTIONS_STYLE,
-                LocaleController.getString(R.string.InuMaterial3Sections)
-            ).setChecked(InuConfig.M3_SECTIONS_STYLE.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_MATERIAL3_AVATARS,
-                LocaleController.getString(R.string.InuMaterial3Avatars)
-            ).setChecked(InuConfig.MATERIAL3_AVATARS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_MATERIAL_PROFILE_ACTIONS,
-                LocaleController.getString(R.string.InuMaterialProfileActions),
-            ).setChecked(InuConfig.MATERIAL_PROFILE_ACTIONS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_M3_NAVIGATION_ANIMATION,
-                LocaleController.getString(R.string.InuMaterial3NavigationAnimation),
-            ).setChecked(InuConfig.M3_NAVIGATION_ANIMATION.value)
-        )
+        // Material 3 (Collapsible Group)
+        m3Group.addTo(items) { changed ->
+            invalidateVisibleRows()
+            softRebuild()
+            listView.adapter.update(true)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             items.add(
                 UItem.asButton(
@@ -111,6 +91,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
+        // Classic UI / Non-Island UI (Flat section, NOT expandable!)
         items.add(
             UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuNonIslandUI)))
         )
@@ -222,11 +203,9 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (m3Group.handleClick(item, view) { listView.adapter.update(true) }) return
+
         when (item.id) {
-            TOGGLE_CENTER_TITLE_CHATS -> {
-                val new = InuConfig.CENTER_TITLE_CHATS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
 
             TOGGLE_HIDE_FADE_VIEW -> {
                 val new = InuConfig.HIDE_FADE_VIEW.toggle()
@@ -245,7 +224,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.ICON_REPLACEMENT.value = which
                 showRestartBulletin()
             }
-
 
             BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
                 this, view,
@@ -273,41 +251,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_REDUCE_MENU_MOTION -> {
                 val new = InuConfig.REDUCE_MENU_MOTION.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_MATERIAL3_SWITCHES -> {
-                val new = InuConfig.MATERIAL3_SWITCHES.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                invalidateVisibleRows()
-                softRebuild()
-            }
-
-            TOGGLE_MATERIAL3_FABS -> {
-                val new = InuConfig.MATERIAL3_FABS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                softRebuild()
-            }
-
-            TOGGLE_M3_SECTIONS_STYLE -> {
-                val new = InuConfig.M3_SECTIONS_STYLE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                softRebuild()
-                inu_rebuildSelf()
-            }
-
-            TOGGLE_MATERIAL3_AVATARS -> {
-                val new = InuConfig.MATERIAL3_AVATARS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_MATERIAL_PROFILE_ACTIONS -> {
-                val new = InuConfig.MATERIAL_PROFILE_ACTIONS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_M3_NAVIGATION_ANIMATION -> {
-                val new = InuConfig.M3_NAVIGATION_ANIMATION.toggle()
-                (view as? TextCheckCell)?.isChecked = new
             }
 
             TOGGLE_NAVIGATION_DRAWER -> {
@@ -386,6 +329,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val SECTION_MATERIAL3 = InuUtils.generateId()
         private val TOGGLE_HIDE_FADE_VIEW = InuUtils.generateId()
         private val TOGGLE_NAVIGATION_DRAWER = InuUtils.generateId()
         private val TOGGLE_DRAWER_BACK_GESTURE = InuUtils.generateId()
@@ -405,7 +349,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
-        private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
@@ -429,7 +372,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         @JvmField
         val PAGE = SearchRegistry.Page(
             slug = "appearance",
-            titleRes = R.string.InuLookAndFeel,
+            titleRes = R.string.InuCategoryAppearance,
             iconRes = R.drawable.msg_settings_old,
             factory = ::AppearanceSettingsActivity,
             entries = listOf(
@@ -444,7 +387,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
-                SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),

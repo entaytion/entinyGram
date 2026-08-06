@@ -1,375 +1,155 @@
 package desu.inugram.ui.settings
 
-import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
+import android.content.Context
 import android.view.View
-import androidx.collection.LongSparseArray
+import android.widget.EditText
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.cloud.SettingsBackupHelper
+import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.DialogObject
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import org.telegram.messenger.SendMessagesHelper
-import org.telegram.messenger.Utilities
-import org.telegram.tgnet.TLRPC
-import org.telegram.ui.ChatActivity
+import org.telegram.messenger.UserConfig
+import org.telegram.messenger.browser.Browser
+import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.Components.BulletinFactory
-import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import org.telegram.ui.ProfileActivity
 
 class InuSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuSettings)
 
-    private var topHeaderView: View? = null
+    private var searchAdapter: ProfileActivity.SearchAdapter? = null
+
+    override fun createView(context: Context): View {
+        return super.createView(context).also {
+            listView.overScrollMode = View.OVER_SCROLL_NEVER
+            listView.isVerticalScrollBarEnabled = false
+
+            val originalAdapter = listView.adapter
+            val sAdapter = ProfileActivity.SearchAdapter(this, context)
+            searchAdapter = sAdapter
+            val menu = actionBar.createMenu()
+            val searchItem = menu.addItem(0, R.drawable.outline_header_search)
+                .setIsSearchField(true)
+            searchItem.setSearchFieldHint(LocaleController.getString(R.string.Search))
+            searchItem.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+                override fun onSearchExpand() {
+                    (listView as org.telegram.ui.Components.RecyclerListView).setAdapter(sAdapter)
+                }
+
+                override fun onSearchCollapse() {
+                    (listView as org.telegram.ui.Components.RecyclerListView).setAdapter(originalAdapter)
+                    sAdapter.search(null)
+                }
+
+                override fun onTextChanged(searchField: EditText) {
+                    sAdapter.search(searchField.text.toString())
+                }
+            })
+        }
+    }
 
     private fun createHeaderView(): View {
         val context = context ?: return View(org.telegram.messenger.ApplicationLoader.applicationContext)
-        val linear = android.widget.LinearLayout(context).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            gravity = android.view.Gravity.CENTER_HORIZONTAL
-            setPadding(0, AndroidUtilities.dp(24f), 0, AndroidUtilities.dp(16f))
+        return InuSettingsHeader(context).apply {
+            onHeaderClick = { checkForUpdates() }
         }
-
-        val imageView = android.widget.ImageView(context).apply {
-            setImageResource(R.drawable.icon_settings_inu)
-            setColorFilter(
-                org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText)
-            )
-        }
-        linear.addView(
-            imageView,
-            org.telegram.ui.Components.LayoutHelper.createLinear(
-                72,
-                72,
-                android.view.Gravity.CENTER_HORIZONTAL,
-                0,
-                0,
-                0,
-                10
-            )
-        )
-
-        val titleView = android.widget.TextView(context).apply {
-            text = "entinyGram"
-            setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 22f)
-            setTypeface(AndroidUtilities.bold())
-            setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText))
-            gravity = android.view.Gravity.CENTER_HORIZONTAL
-        }
-        linear.addView(
-            titleView,
-            org.telegram.ui.Components.LayoutHelper.createLinear(
-                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
-                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
-                android.view.Gravity.CENTER_HORIZONTAL,
-                0,
-                0,
-                0,
-                4
-            )
-        )
-
-        val subtitleView = android.widget.TextView(context).apply {
-            text = "${desu.inugram.helpers.update.UpdateHelper.stockVersionName} (${org.telegram.messenger.BuildConfig.STOCK_VERSION_CODE})"
-            setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 14f)
-            setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteGrayText2))
-            gravity = android.view.Gravity.CENTER_HORIZONTAL
-        }
-        linear.addView(
-            subtitleView,
-            org.telegram.ui.Components.LayoutHelper.createLinear(
-                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
-                org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT,
-                android.view.Gravity.CENTER_HORIZONTAL
-            )
-        )
-
-        return linear
-    }
-
-    private fun updateHeaderViewColors(view: View) {
-        val linear = view as? android.widget.LinearLayout ?: return
-        val imageView = linear.getChildAt(0) as? android.widget.ImageView
-        val titleView = linear.getChildAt(1) as? android.widget.TextView
-        val subtitleView = linear.getChildAt(2) as? android.widget.TextView
-
-        imageView?.setColorFilter(
-            org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText)
-        )
-        titleView?.setTextColor(
-            org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText)
-        )
-        subtitleView?.setTextColor(
-            org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteGrayText2)
-        )
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val headerView = topHeaderView ?: createHeaderView().also { topHeaderView = it }
-        updateHeaderViewColors(headerView)
-        items.add(UItem.asCustom(headerView))
+        items.add(UItem.asCustomShadow(createHeaderView()))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuCategories)))
-        items.add(
-            UItem.asButton(
-                BUTTON_GENERAL,
-                R.drawable.msg_palette,
-                LocaleController.getString(R.string.InuLookAndFeel)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_CHATS,
-                R.drawable.msg_discussion,
-                LocaleController.getString(R.string.MainTabsChats)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_MESSAGES,
-                R.drawable.msg_discuss,
-                LocaleController.getString(R.string.InuMessages)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_DIALOGS,
-                R.drawable.msg_viewchats,
-                LocaleController.getString(R.string.InuMainPage)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_USER_PROFILE,
-                R.drawable.msg_openprofile,
-                LocaleController.getString(R.string.InuUserProfile)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_ANNOYANCES,
-                R.drawable.menu_hide_gift,
-                LocaleController.getString(R.string.InuAnnoyances)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_BEHAVIOR,
-                R.drawable.avd_speed,
-                LocaleController.getString(R.string.InuBehavior)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_TRANSLATOR,
-                R.drawable.msg_translate,
-                LocaleController.getString(R.string.InuTranslator)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_PRIVACY,
-                R.drawable.msg_permissions,
-                LocaleController.getString(R.string.InuPrivacySecurity)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_TOS,
-                R.drawable.msg_autodelete,
-                LocaleController.getString(R.string.InuTOS)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_AI,
-                R.drawable.input_ai_star,
-                LocaleController.getString(R.string.InuAiCompose)
-            )
-        )
+        items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.msg_palette, LocaleController.getString(R.string.InuCategoryAppearance)))
+        items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.Chats)))
+        items.add(mkSubPageButton(CAT_MESSAGES, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessages)))
+        items.add(mkSubPageButton(CAT_AI, R.drawable.input_ai_star, LocaleController.getString(R.string.InuAiCompose)))
+        items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.avd_speed, LocaleController.getString(R.string.InuCategoryBehavior)))
+        items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.msg_permissions, LocaleController.getString(R.string.InuCategoryPrivacy)))
+        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.menu_hide_gift, LocaleController.getString(R.string.InuAnnoyances)))
+        items.add(mkSubPageButton(BUTTON_TOS, R.drawable.msg_autodelete, LocaleController.getString(R.string.InuTOS)))
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
+        // Channel & GitHub links without "Links" header, formatted cleanly
         items.add(
             UItem.asButton(
-                BUTTON_EXPORT,
-                R.drawable.msg_shareout,
-                LocaleController.getString(R.string.InuBackupExport)
+                BUTTON_CHANNEL_LINK,
+                R.drawable.msg_channel,
+                "Channel",
+                "@entinyGram"
             )
         )
         items.add(
             UItem.asButton(
-                BUTTON_IMPORT,
-                R.drawable.msg_download,
-                LocaleController.getString(R.string.InuBackupImport)
+                BUTTON_GITHUB,
+                R.drawable.msg_link,
+                "GitHub",
+                "Entaytion/entinyGram"
             )
         )
-        items.add(
-            UItem.asButton(
-                BUTTON_CLOUD_SYNC,
-                R.drawable.inu_tabler_cloud,
-                LocaleController.getString(R.string.InuCloudSync)
-            )
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLinks)))
-        items.add(
-            UItem.asButton(
-                BUTTON_ABOUT,
-                R.drawable.msg_info,
-                LocaleController.getString(R.string.InuAbout)
-            )
-        )
-
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        val ctx = context ?: return
         when (item.id) {
-            BUTTON_GENERAL -> presentFragment(AppearanceSettingsActivity())
-            BUTTON_CHATS -> presentFragment(ChatsSettingsActivity())
-            BUTTON_MESSAGES -> presentFragment(MessagesSettingsActivity())
-            BUTTON_DIALOGS -> presentFragment(DialogsSettingsActivity())
-            BUTTON_USER_PROFILE -> presentFragment(UserProfileSettingsActivity())
-            BUTTON_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
-            BUTTON_BEHAVIOR -> presentFragment(BehaviorSettingsActivity())
-            BUTTON_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
-            BUTTON_PRIVACY -> presentFragment(PrivacySecurityActivity())
+            CAT_APPEARANCE -> presentFragment(AppearanceSettingsActivity())
+            CAT_CHATS -> presentFragment(CategoryChatsSettingsActivity())
+            CAT_MESSAGES -> presentFragment(MessagesSettingsActivity())
+            CAT_AI -> presentFragment(AiSettingsActivity())
+            CAT_BEHAVIOR -> presentFragment(BehaviorSettingsActivity())
+            CAT_PRIVACY -> presentFragment(PrivacySecurityActivity())
+            CAT_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
             BUTTON_TOS -> presentFragment(TosSettingsActivity())
-            BUTTON_AI -> presentFragment(AiSettingsActivity())
-            BUTTON_ABOUT -> presentFragment(AboutActivity())
-            BUTTON_EXPORT -> launchExport()
-            BUTTON_IMPORT -> launchImport()
-            BUTTON_CLOUD_SYNC -> presentFragment(CloudSyncActivity())
+            BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/entinyGram")
+            BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/Entaytion/EntinyGram")
         }
     }
 
-    private fun launchExport() {
-        Utilities.globalQueue.postRunnable {
-            val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
-            val file = File(AndroidUtilities.getCacheDir(), "$date.inu-settings.json")
-            val err: String? = try {
-                file.parentFile?.mkdirs()
-                file.writeText(SettingsBackupHelper.export(), Charsets.UTF_8)
-                null
-            } catch (e: Exception) {
-                e.message ?: e.javaClass.simpleName
-            }
+    private fun checkForUpdates() {
+        BulletinFactory.of(this).createSimpleBulletin(
+            R.raw.chats_infotip,
+            LocaleController.getString(R.string.Checking)
+        ).show()
+        UpdateHelper.check { result ->
             AndroidUtilities.runOnUIThread {
-                if (err != null) {
-                    BulletinFactory.of(this).createErrorBulletin(
-                        LocaleController.formatString(R.string.InuBackupExportError, err)
-                    ).show()
-                    return@runOnUIThread
-                }
-                openSharePicker(file)
-            }
-        }
-    }
+                val msg: CharSequence = when (result) {
+                    UpdateHelper.CheckResult.InFlight ->
+                        LocaleController.getString(R.string.Checking)
 
-    private fun openSharePicker(file: File) {
-        val ctx = parentActivity ?: return
-        val account = accountInstance
-        val sheet = object : ShareAlert(ctx, null, null, false, null, false) {
-            override fun onSend(
-                dids: LongSparseArray<TLRPC.Dialog>,
-                count: Int,
-                topic: TLRPC.TL_forumTopic?,
-                showToast: Boolean
-            ) {
-                for (i in 0 until dids.size()) {
-                    val did = dids.keyAt(i)
-                    SendMessagesHelper.prepareSendingDocument(
-                        account, file.absolutePath, file.absolutePath, null, null,
-                        "application/json", did,
-                        null, null, null, null, null,
-                        true, 0, null, null, 0, false,
-                    )
-                }
-                if (dids.size() == 1) openChat(dids.keyAt(0))
-            }
-        }
-        showDialog(sheet)
-    }
+                    UpdateHelper.CheckResult.UpToDate ->
+                        LocaleController.getString(R.string.InuUpdateUpToDate)
 
-    private fun openChat(did: Long) {
-        val args = Bundle().apply {
-            putBoolean("scrollToTopOnResume", true)
-            when {
-                DialogObject.isEncryptedDialog(did) -> putInt("enc_id", DialogObject.getEncryptedChatId(did))
-                DialogObject.isUserDialog(did) -> putLong("user_id", did)
-                else -> putLong("chat_id", -did)
-            }
-        }
-        if (messagesController.checkCanOpenChat(args, this)) {
-            presentFragment(ChatActivity(args))
-        }
-    }
-
-    private fun launchImport() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/json", "text/plain", "*/*"))
-        }
-        try {
-            startActivityForResult(intent, REQ_IMPORT)
-        } catch (e: Exception) {
-            BulletinFactory.of(this).createErrorBulletin(e.message ?: "").show()
-        }
-    }
-
-    override fun onActivityResultFragment(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK) return
-        val uri = data?.data ?: return
-        val ctx = context ?: parentActivity ?: return
-        if (requestCode == REQ_IMPORT) {
-            Utilities.globalQueue.postRunnable {
-                val text = try {
-                    ctx.contentResolver.openInputStream(uri)?.use { it.readBytes().toString(Charsets.UTF_8) }
-                } catch (_: Exception) {
-                    null
-                }
-                AndroidUtilities.runOnUIThread {
-                    if (text == null) {
-                        BulletinFactory.of(this).createErrorBulletin(
-                            LocaleController.getString(R.string.InuBackupImportBadFormat)
-                        ).show()
+                    is UpdateHelper.CheckResult.Updated -> {
+                        val ctx = context ?: return@runOnUIThread
+                        ApplicationLoader.applicationLoaderInstance?.showUpdateAppPopup(
+                            ctx, result.update, UserConfig.selectedAccount,
+                        )
                         return@runOnUIThread
                     }
-                    SettingsBackupHelper.showImportConfirm(this, text)
+
+                    is UpdateHelper.CheckResult.Error ->
+                        LocaleController.formatString(R.string.InuUpdateError, result.message)
                 }
+                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, msg).show()
             }
         }
     }
 
     companion object {
-        private val BUTTON_GENERAL = InuUtils.generateId()
-        private val BUTTON_CHATS = InuUtils.generateId()
-        private val BUTTON_MESSAGES = InuUtils.generateId()
-        private val BUTTON_DIALOGS = InuUtils.generateId()
-        private val BUTTON_USER_PROFILE = InuUtils.generateId()
-        private val BUTTON_ANNOYANCES = InuUtils.generateId()
-        private val BUTTON_BEHAVIOR = InuUtils.generateId()
-        private val BUTTON_TRANSLATOR = InuUtils.generateId()
-        private val BUTTON_PRIVACY = InuUtils.generateId()
+        private val CAT_APPEARANCE = InuUtils.generateId()
+        private val CAT_CHATS = InuUtils.generateId()
+        private val CAT_MESSAGES = InuUtils.generateId()
+        private val CAT_AI = InuUtils.generateId()
+        private val CAT_BEHAVIOR = InuUtils.generateId()
+        private val CAT_PRIVACY = InuUtils.generateId()
+        private val CAT_ANNOYANCES = InuUtils.generateId()
         private val BUTTON_TOS = InuUtils.generateId()
-        private val BUTTON_AI = InuUtils.generateId()
-        private val BUTTON_ABOUT = InuUtils.generateId()
-        private val BUTTON_EXPORT = InuUtils.generateId()
-        private val BUTTON_IMPORT = InuUtils.generateId()
-        private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
-
-        private const val REQ_IMPORT = 31002
+        private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
+        private val BUTTON_GITHUB = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -378,10 +158,8 @@ class InuSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.icon_settings_inu,
             factory = ::InuSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("about", R.string.InuAbout, BUTTON_ABOUT),
-                SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
-                SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
-                SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
+                SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),
+                SearchRegistry.Entry("github", R.string.InuAboutGitHub, BUTTON_GITHUB),
             ),
         )
     }

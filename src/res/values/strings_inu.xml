@@ -12,8 +12,8 @@
     <string name="InuDrawerM3SectionsInfo">Groups the navigation drawer menu rows into rounded Material 3 cards.</string>
     <string name="InuSettings">entinyGram Settings</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
-    <string name="InuSettingsPrefixHint">Settings links use tg://settings/entiny/&lt;slug&gt;</string>
-    <string name="InuLegacySettingsLink">This settings link format is obsolete. Use tg://settings/entiny/&lt;slug&gt;.</string>
+    <string name="InuSettingsPrefixHint">Settings links use tg://entinySettings/&lt;slug&gt;</string>
+    <string name="InuLegacySettingsLink">This settings link format is obsolete. Use tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>
     <string name="InuAppearance">Appearance</string>
@@ -517,6 +517,7 @@
     <string name="InuAppIconLicenseTelegram">Icon by **Telegram**. All rights reserved.</string>
     <string name="InuJumpToBeginning">Jump to the beginning</string>
 
+    <string name="InuAdditional">Additional</string>
     <string name="InuAbout">About</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Updates channel</string>
@@ -809,10 +810,19 @@
     <string name="InuAiTranslateFrom">From</string>
     <string name="InuAiTranslateTo">To</string>
     <string name="InuAiTranslateRun">Translate</string>
+    <string name="InuAiReasoning">AI Reasoning Mode</string>
+    <string name="InuAiReasoningInfo">Passes reasoning_effort &amp; thinking tokens for reasoning models (o1, o3-mini, DeepSeek R1, Gemini Thinking)</string>
+    <string name="InuAiReasoningEffort">Reasoning Effort</string>
     <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
     <string name="InuShowMutualContactIcon">Mutual Contact Icon</string>
     <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
     <string name="InuShowMutualContactInChatsInfo">Display mutual contact icon in group and channel member lists</string>
+    <string name="InuCategoryAppearance">Appearance &amp; Layout</string>
+    <string name="InuCategoryChats">Chats &amp; Messaging</string>
+    <string name="InuCategoryProfile">Profile &amp; Navigation</string>
+    <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
+    <string name="InuCategoryPrivacy">Privacy &amp; Security</string>
+    <string name="InuCategoryBackup">Backup &amp; System</string>
 </resources>

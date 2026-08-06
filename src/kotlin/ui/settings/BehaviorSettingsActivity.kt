@@ -28,7 +28,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         sectionId = SECTION_DELETE_FOR_BOTH,
     )
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuBehavior)
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryBehavior)
 
     override fun onResume() {
         super.onResume()
@@ -36,6 +36,51 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        // User Profile (Merged into Behavior & Profile)
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuUserProfile)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_PROFILE_PHOTO_GRADIENT_FADE,
+                LocaleController.getString(R.string.InuProfilePhotoGradientFade),
+            ).setChecked(InuConfig.PROFILE_PHOTO_GRADIENT_FADE.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_REDUCE_PROFILE_MOTION,
+                LocaleController.getString(R.string.InuReduceProfileMotion),
+            ).setChecked(InuConfig.REDUCE_PROFILE_MOTION.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_DISABLE_PROFILE_SCROLL_SNAP,
+                LocaleController.getString(R.string.InuDisableProfileScrollSnap),
+            ).setChecked(InuConfig.DISABLE_PROFILE_SCROLL_SNAP.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_PROFILE_PREFER_MEDIA_TAB,
+                LocaleController.getString(R.string.InuProfilePreferMediaTab),
+            ).setChecked(InuConfig.PROFILE_PREFER_MEDIA_TAB.value)
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_PROFILE_ID_MODE,
+                LocaleController.getString(R.string.InuProfileIdMode),
+                when (InuConfig.PROFILE_ID_MODE.value) {
+                    InuConfig.ProfileIdModeItem.TELEGRAM_ID -> LocaleController.getString(R.string.InuProfileIdModeTelegram)
+                    InuConfig.ProfileIdModeItem.BOT_API_ID -> LocaleController.getString(R.string.InuProfileIdModeBotApi)
+                    else -> LocaleController.getString(R.string.InuProfileIdModeOff)
+                }
+            )
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_DISABLE_CHAT_TITLE_PHONE,
+                LocaleController.getString(R.string.InuDisableChatTitlePhone),
+            ).setChecked(InuConfig.DISABLE_CHAT_TITLE_PHONE.value)
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFormatting)))
         items.add(
             UItem.asCheck(
@@ -184,6 +229,43 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (deleteForBothGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
+            TOGGLE_PROFILE_PHOTO_GRADIENT_FADE -> {
+                val new = InuConfig.PROFILE_PHOTO_GRADIENT_FADE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_REDUCE_PROFILE_MOTION -> {
+                val new = InuConfig.REDUCE_PROFILE_MOTION.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_DISABLE_PROFILE_SCROLL_SNAP -> {
+                val new = InuConfig.DISABLE_PROFILE_SCROLL_SNAP.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_PROFILE_PREFER_MEDIA_TAB -> {
+                val new = InuConfig.PROFILE_PREFER_MEDIA_TAB.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            BUTTON_PROFILE_ID_MODE -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuProfileIdModeOff),
+                    LocaleController.getString(R.string.InuProfileIdModeTelegram),
+                    LocaleController.getString(R.string.InuProfileIdModeBotApi),
+                ),
+                InuConfig.PROFILE_ID_MODE.value,
+            ) { which ->
+                InuConfig.PROFILE_ID_MODE.value = which
+            }
+
+            TOGGLE_DISABLE_CHAT_TITLE_PHONE -> {
+                val new = InuConfig.DISABLE_CHAT_TITLE_PHONE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             TOGGLE_DISABLE_CHAT_BUBBLES -> {
                 val new = InuConfig.DISABLE_CHAT_BUBBLES.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -334,6 +416,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val TOGGLE_PROFILE_PHOTO_GRADIENT_FADE = InuUtils.generateId()
+        private val TOGGLE_REDUCE_PROFILE_MOTION = InuUtils.generateId()
+        private val TOGGLE_DISABLE_PROFILE_SCROLL_SNAP = InuUtils.generateId()
+        private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
+        private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
+        private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_TEXT_CLASSIFIER_MODE = InuUtils.generateId()
@@ -366,10 +454,16 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
 
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "behavior",
-            titleRes = R.string.InuBehavior,
+            titleRes = R.string.InuCategoryBehavior,
             iconRes = R.drawable.avd_speed,
             factory = ::BehaviorSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("profile-photo-gradient-fade", R.string.InuProfilePhotoGradientFade, TOGGLE_PROFILE_PHOTO_GRADIENT_FADE),
+                SearchRegistry.Entry("reduce-profile-motion", R.string.InuReduceProfileMotion, TOGGLE_REDUCE_PROFILE_MOTION),
+                SearchRegistry.Entry("disable-profile-scroll-snap", R.string.InuDisableProfileScrollSnap, TOGGLE_DISABLE_PROFILE_SCROLL_SNAP),
+                SearchRegistry.Entry("profile-prefer-media-tab", R.string.InuProfilePreferMediaTab, TOGGLE_PROFILE_PREFER_MEDIA_TAB),
+                SearchRegistry.Entry("profile-id-mode", R.string.InuProfileIdMode, BUTTON_PROFILE_ID_MODE),
+                SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),

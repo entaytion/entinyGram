@@ -1,5 +1,6 @@
 package desu.inugram.ui.settings
 
+import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
@@ -28,12 +29,30 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiCompose)))
         items.add(
             mkTwoLineCheckItem(
-                TOGGLE_ENABLED,
+                TOGGLE_AI_ENABLED,
                 R.string.InuAiCompose,
                 R.string.InuAiComposeInfo,
                 InuConfig.AI_COMPOSE_ENABLED.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_AI_REASONING,
+                R.string.InuAiReasoning,
+                R.string.InuAiReasoningInfo,
+                InuConfig.AI_REASONING_ENABLED.value,
+                experimental = true,
+            )
+        )
+        if (InuConfig.AI_REASONING_ENABLED.value) {
+            items.add(
+                UItem.asButton(
+                    BUTTON_AI_REASONING_EFFORT,
+                    LocaleController.getString(R.string.InuAiReasoningEffort),
+                    InuConfig.AI_REASONING_EFFORT.value.replaceFirstChar { it.uppercase() }
+                )
+            )
+        }
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiEndpoints)))
@@ -55,34 +74,43 @@ class AiSettingsActivity : SettingsPageActivity() {
                 }
             }
             items.add(
-                UItem.asButtonCheck(ITEM_BASE + i, name, subtitle).also { it.checked = active }
+                UItem.asButtonCheck(AI_ITEM_BASE + i, name, subtitle).also { it.checked = active }
             )
         }
         items.add(
             UItem.asButton(
-                BUTTON_SETUP,
-                R.drawable.input_ai_star,
-                LocaleController.getString(R.string.InuAiSetupTitle)
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_ADD,
+                BUTTON_AI_SETUP,
                 R.drawable.msg_add,
                 LocaleController.getString(R.string.InuAiEndpointAdd)
             )
         )
-        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            TOGGLE_ENABLED -> {
+            TOGGLE_AI_ENABLED -> {
                 val new = InuConfig.AI_COMPOSE_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
-            BUTTON_SETUP -> {
+            TOGGLE_AI_REASONING -> {
+                val new = InuConfig.AI_REASONING_ENABLED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                listView.adapter.update(true)
+            }
+
+            BUTTON_AI_REASONING_EFFORT -> {
+                val efforts = listOf("low", "medium", "high")
+                RadioItemOptions.show(
+                    this, view,
+                    efforts.map { it.replaceFirstChar { c -> c.uppercase() } },
+                    efforts.indexOf(InuConfig.AI_REASONING_EFFORT.value).coerceAtLeast(0)
+                ) { which ->
+                    InuConfig.AI_REASONING_EFFORT.value = efforts[which]
+                }
+            }
+
+            BUTTON_AI_SETUP -> {
                 val ctx = context ?: return
                 AiSetupSheet(
                     context = ctx,
@@ -91,10 +119,8 @@ class AiSettingsActivity : SettingsPageActivity() {
                 ).show()
             }
 
-            BUTTON_ADD -> showEndpointDialog(null)
-
             else -> {
-                val idx = item.id - ITEM_BASE
+                val idx = item.id - AI_ITEM_BASE
                 val endpoints = AiComposeHelper.endpoints()
                 if (idx in endpoints.indices) {
                     showEndpointDialog(endpoints[idx])
@@ -104,7 +130,7 @@ class AiSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean {
-        val idx = item.id - ITEM_BASE
+        val idx = item.id - AI_ITEM_BASE
         val endpoints = AiComposeHelper.endpoints()
         if (idx !in endpoints.indices) return super.onLongClick(item, view, position, x, y)
         val ep = endpoints[idx]
@@ -128,7 +154,7 @@ class AiSettingsActivity : SettingsPageActivity() {
 
         val container = LinearLayout(ctx).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(24), dp(8), dp(24), 0)
+            setPadding(dp(20), dp(8), dp(20), dp(8))
         }
 
         val nameInput = fieldInput(
@@ -148,7 +174,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         val keyInput = fieldInput(
             LocaleController.getString(R.string.InuAiEndpointApiKey),
             existing?.apiKey ?: "",
-            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         )
         container.addView(keyInput, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(8) })
 
@@ -213,13 +239,14 @@ class AiSettingsActivity : SettingsPageActivity() {
             )
         }
 
-    companion object {
-        private val TOGGLE_ENABLED = InuUtils.generateId()
-        private val BUTTON_SETUP = InuUtils.generateId()
-        private val BUTTON_ADD = InuUtils.generateId()
-        private const val ITEM_BASE = 20000
+    private fun dp(value: Int) = AndroidUtilities.dp(value.toFloat())
 
-        private fun dp(value: Int) = AndroidUtilities.dp(value.toFloat())
+    companion object {
+        private val TOGGLE_AI_ENABLED = InuUtils.generateId()
+        private val TOGGLE_AI_REASONING = InuUtils.generateId()
+        private val BUTTON_AI_REASONING_EFFORT = InuUtils.generateId()
+        private val BUTTON_AI_SETUP = InuUtils.generateId()
+        private const val AI_ITEM_BASE = 20000
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -228,8 +255,9 @@ class AiSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.input_ai_star,
             factory = ::AiSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("ai-compose-enabled", R.string.InuAiCompose, TOGGLE_ENABLED),
-                SearchRegistry.Entry("ai-endpoints", R.string.InuAiEndpoints, BUTTON_ADD),
+                SearchRegistry.Entry("ai-compose-enabled", R.string.InuAiCompose, TOGGLE_AI_ENABLED),
+                SearchRegistry.Entry("ai-reasoning", R.string.InuAiReasoning, TOGGLE_AI_REASONING),
+                SearchRegistry.Entry("ai-endpoints", R.string.InuAiEndpoints, BUTTON_AI_SETUP),
             ),
         )
     }

@@ -775,7 +775,7 @@
     <string name="InuEditedAt">編集済み %1$s</string>
     <string name="InuHideSponsoredMessages">スポンサーメッセージを非表示（AdBlock）</string>
     <string name="InuHideSponsoredMessagesInfo">チャンネルの広告を無効化し、プロモーションメッセージの読み込みを防ぎます</string>
-    <string name="InuLegacySettingsLink">この設定リンク形式は古い形式です。tg://settings/entiny/&lt;slug&gt; を使用してください。</string>
+    <string name="InuLegacySettingsLink">この設定リンク形式は古い形式です。tg://entinySettings/&lt;slug&gt; を使用してください。</string>
     <string name="InuLinks">リンク</string>
     <string name="InuMaterial3NavigationAnimation">ナビゲーションアニメーション</string>
     <string name="InuNoEditHistory">編集履歴はありません</string>
@@ -807,7 +807,7 @@
     <string name="InuSaveSelfDestruct">消えるメディアを保存</string>
     <string name="InuSaveSelfDestructInfo">1回表示の画像・動画・ビデオメッセージを通常のメディアとして表示し、保存や転送を可能にします。</string>
     <string name="InuSelfDestructMedia">消えるメディア</string>
-    <string name="InuSettingsPrefixHint">設定リンクには tg://settings/entiny/&lt;slug&gt; を使用します</string>
+    <string name="InuSettingsPrefixHint">設定リンクには tg://entinySettings/&lt;slug&gt; を使用します</string>
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
     <string name="InuTOS">利用規約</string>

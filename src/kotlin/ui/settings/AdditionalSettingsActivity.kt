@@ -2,25 +2,33 @@ package desu.inugram.ui.settings
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Outline
 import android.graphics.PorterDuff
-import android.graphics.drawable.LayerDrawable
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import desu.inugram.InuConfig
+import desu.inugram.SearchRegistry
 import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
 import desu.inugram.helpers.SystemInfo
-import desu.inugram.helpers.update.UpdateHelper
+import desu.inugram.helpers.cloud.SettingsBackupHelper
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import androidx.collection.LongSparseArray
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import org.telegram.messenger.DialogObject
+import org.telegram.messenger.SendMessagesHelper
+import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ChatActivity
+import org.telegram.ui.Components.ShareAlert
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.AndroidUtilities.dp
@@ -33,7 +41,6 @@ import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
-import org.telegram.messenger.browser.Browser
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.TextCheckCell
@@ -46,45 +53,19 @@ import org.telegram.ui.IUpdateLayout
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.UpdateLayoutWrapper
 
-class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAbout)
+class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAdditional)
 
     private var updateLayout: IUpdateLayout? = null
     private var updateWrapper: UpdateLayoutWrapper? = null
     private var bottomInset: Int = 0
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asCustomShadow(getOrCreateLogoHeader()))
-        items.add(
-            UItem.asButton(
-                BUTTON_GITHUB,
-                LocaleController.getString(R.string.InuAboutGitHub),
-                "Entaytion/entinyGram",
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_CHANNEL_LINK,
-                LocaleController.getString(R.string.InuAboutChannel),
-                "@" + UpdateHelper.USERNAME,
-            )
-        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
+        items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuBackupExport)))
+        items.add(UItem.asButton(BUTTON_IMPORT, R.drawable.msg_download, LocaleController.getString(R.string.InuBackupImport)))
+        items.add(UItem.asButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
         items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuUpdates)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_UPDATES_ENABLED,
-                LocaleController.getString(R.string.InuUpdatesEnabled),
-            ).setChecked(InuConfig.UPDATES_ENABLED.value)
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_CHECK_NOW,
-                LocaleController.getString(R.string.InuUpdateCheckNow),
-            )
-        )
-        items.add(UItem.asShadow(lastCheckLabel()))
 
         if (BuildVars.DEBUG_VERSION) {
             items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
@@ -136,29 +117,8 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         lv.setPadding(lv.paddingLeft, lv.paddingTop, lv.paddingRight, bottomInset + barHeight)
     }
 
-    private var isChecking = false
-    private fun lastCheckLabel(): String {
-        val ms = InuConfig.UPDATE_LAST_CHECK_MS.value
-        val text = when {
-            isChecking -> LocaleController.getString(R.string.Checking)
-            ms == 0L -> LocaleController.getString(R.string.MessageScheduledRepeatOptionNever)
-            else -> LocaleController.formatDateTime(ms / 1000, true)
-        }
-        return LocaleController.formatString(R.string.InuUpdateLastChecked, text)
-    }
-
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        val ctx = context ?: return
         when (item.id) {
-            BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/Entaytion/entinyGram")
-            BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/" + UpdateHelper.USERNAME)
-            TOGGLE_UPDATES_ENABLED -> {
-                val new = InuConfig.UPDATES_ENABLED.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                if (!new) UpdateHelper.clearPending()
-            }
-
-            BUTTON_CHECK_NOW -> runManualCheck()
             TOGGLE_LOGS_ENABLED -> {
                 val new = !LogsHelper.isEnabled()
                 LogsHelper.setEnabled(new)
@@ -173,36 +133,10 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
                     LocaleController.getString(R.string.InuLogsSystemInfoCopied)
                 ).show()
             }
-        }
-    }
 
-    private fun runManualCheck() {
-        isChecking = true
-        listView.adapter.update(true)
-        UpdateHelper.check { result ->
-            AndroidUtilities.runOnUIThread {
-                isChecking = false
-                listView?.adapter?.update(true)
-                val msg: CharSequence = when (result) {
-                    UpdateHelper.CheckResult.InFlight ->
-                        LocaleController.getString(R.string.Checking)
-
-                    UpdateHelper.CheckResult.UpToDate ->
-                        LocaleController.getString(R.string.InuUpdateUpToDate)
-
-                    is UpdateHelper.CheckResult.Updated -> {
-                        val ctx = context ?: return@runOnUIThread
-                        ApplicationLoader.applicationLoaderInstance?.showUpdateAppPopup(
-                            ctx, result.update, UserConfig.selectedAccount,
-                        )
-                        return@runOnUIThread
-                    }
-
-                    is UpdateHelper.CheckResult.Error ->
-                        LocaleController.formatString(R.string.InuUpdateError, result.message)
-                }
-                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, msg).show()
-            }
+            BUTTON_EXPORT -> launchExport()
+            BUTTON_IMPORT -> launchImport()
+            BUTTON_CLOUD_SYNC -> presentFragment(CloudSyncActivity())
         }
     }
 
@@ -444,89 +378,125 @@ class AboutActivity : SettingsPageActivity(), NotificationCenter.NotificationCen
         }
     }
 
-    private val ripplePos = IntArray(2)
-    private var lastRippleTime = 0L
-    private var rippleStreak = 0
-
-    private fun rippleFrom(view: View, x: Float, y: Float) {
-        val now = System.currentTimeMillis()
-        rippleStreak = if (now - lastRippleTime < 800L) rippleStreak + 1 else 0
-        lastRippleTime = now
-
-        view.getLocationInWindow(ripplePos)
-        LaunchActivity.makeRipple(
-            ripplePos[0] + x,
-            ripplePos[1] + y,
-            1f + minOf(rippleStreak, 9),
-        )
-        try {
-            view.performHapticFeedback(
-                HapticFeedbackConstants.KEYBOARD_TAP,
-                HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING,
-            )
-        } catch (ignore: Exception) {
+    private fun launchExport() {
+        Utilities.globalQueue.postRunnable {
+            val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+            val file = File(AndroidUtilities.getCacheDir(), "$date.inu-settings.json")
+            val err: String? = try {
+                file.parentFile?.mkdirs()
+                file.writeText(SettingsBackupHelper.export(), Charsets.UTF_8)
+                null
+            } catch (e: Exception) {
+                e.message ?: e.javaClass.simpleName
+            }
+            AndroidUtilities.runOnUIThread {
+                if (err != null) {
+                    BulletinFactory.of(this).createErrorBulletin(
+                        LocaleController.formatString(R.string.InuBackupExportError, err)
+                    ).show()
+                    return@runOnUIThread
+                }
+                openSharePicker(file)
+            }
         }
     }
 
-    private var logoHeader: View? = null
-    private fun getOrCreateLogoHeader(): View {
-        logoHeader?.let { return it }
-        val ctx = context!!
-        val container = LinearLayout(ctx).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(0, dp(20f), 0, dp(16f))
+    private fun openSharePicker(file: File) {
+        val ctx = parentActivity ?: return
+        val account = accountInstance
+        val sheet = object : ShareAlert(ctx, null, null, false, null, false) {
+            override fun onSend(
+                dids: LongSparseArray<TLRPC.Dialog>,
+                count: Int,
+                topic: TLRPC.TL_forumTopic?,
+                showToast: Boolean
+            ) {
+                for (i in 0 until dids.size()) {
+                    val did = dids.keyAt(i)
+                    SendMessagesHelper.prepareSendingDocument(
+                        account, file.absolutePath, file.absolutePath, null, null,
+                        "application/json", did,
+                        null, null, null, null, null,
+                        true, 0, null, null, 0, false,
+                    )
+                }
+                if (dids.size() == 1) openChat(dids.keyAt(0))
+            }
         }
+        showDialog(sheet)
+    }
 
-        // Layer the background + foreground manually to bypass the AdaptiveIconDrawable
-        // system mask, which would otherwise force a circle/squircle shape regardless
-        // of our outline clip. Negative inset scales the foreground glyph up beyond the
-        // adaptive-icon safe zone; the outline clip trims the overflow.
-        val bg = ctx.getDrawable(R.drawable.icon_background_inu)
-        val fg = ctx.getDrawable(R.drawable.icon_foreground_inu)
-        val layered = LayerDrawable(arrayOf(bg, fg))
-        val fgOverscan = -dp(18f)
-        layered.setLayerInset(1, fgOverscan, fgOverscan, fgOverscan, fgOverscan)
-        val icon = ImageView(ctx).apply {
-            setImageDrawable(layered)
-            clipToOutline = true
-            outlineProvider = object : ViewOutlineProvider() {
-                override fun getOutline(view: View, outline: Outline) {
-                    outline.setRoundRect(0, 0, view.width, view.height, dp(28f).toFloat())
+    private fun openChat(did: Long) {
+        val args = Bundle().apply {
+            putBoolean("scrollToTopOnResume", true)
+            when {
+                DialogObject.isEncryptedDialog(did) -> putInt("enc_id", DialogObject.getEncryptedChatId(did))
+                DialogObject.isUserDialog(did) -> putLong("user_id", did)
+                else -> putLong("chat_id", -did)
+            }
+        }
+        if (messagesController.checkCanOpenChat(args, this)) {
+            presentFragment(ChatActivity(args))
+        }
+    }
+
+    private fun launchImport() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/json", "text/plain", "*/*"))
+        }
+        try {
+            startActivityForResult(intent, REQ_IMPORT)
+        } catch (e: Exception) {
+            BulletinFactory.of(this).createErrorBulletin(e.message ?: "").show()
+        }
+    }
+
+    override fun onActivityResultFragment(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) return
+        val uri = data?.data ?: return
+        val ctx = context ?: parentActivity ?: return
+        if (requestCode == REQ_IMPORT) {
+            Utilities.globalQueue.postRunnable {
+                val text = try {
+                    ctx.contentResolver.openInputStream(uri)?.use { it.readBytes().toString(Charsets.UTF_8) }
+                } catch (_: Exception) {
+                    null
+                }
+                AndroidUtilities.runOnUIThread {
+                    if (text == null) {
+                        BulletinFactory.of(this).createErrorBulletin(
+                            LocaleController.getString(R.string.InuBackupImportBadFormat)
+                        ).show()
+                        return@runOnUIThread
+                    }
+                    SettingsBackupHelper.showImportConfirm(this, text)
                 }
             }
-            setOnTouchListener { v, event ->
-                if (event.action == MotionEvent.ACTION_DOWN) rippleFrom(v, event.x, event.y)
-                false
-            }
         }
-        container.addView(icon, LinearLayout.LayoutParams(dp(120f), dp(120f)).apply {
-            gravity = Gravity.CENTER_HORIZONTAL
-            bottomMargin = dp(14f)
-        })
-        val version = TextView(ctx).apply {
-            text = UpdateHelper.getVersionInfoString()
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-            gravity = Gravity.CENTER
-            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4))
-        }
-        container.addView(
-            version, LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                leftMargin = dp(48f)
-                rightMargin = dp(48f)
-            })
-        logoHeader = container
-        return container
     }
 
     companion object {
-        private val BUTTON_GITHUB = InuUtils.generateId()
-        private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
-        private val TOGGLE_UPDATES_ENABLED = InuUtils.generateId()
-        private val BUTTON_CHECK_NOW = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
+        private val BUTTON_EXPORT = InuUtils.generateId()
+        private val BUTTON_IMPORT = InuUtils.generateId()
+        private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
+
+        private const val REQ_IMPORT = 31002
+
+        @JvmField
+        val PAGE = SearchRegistry.Page(
+            slug = "additional",
+            titleRes = R.string.InuAdditional,
+            iconRes = R.drawable.msg_settings_old,
+            factory = ::AdditionalSettingsActivity,
+            entries = listOf(
+                SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
+                SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
+                SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
+            ),
+        )
     }
 }

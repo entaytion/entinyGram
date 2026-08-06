@@ -33,12 +33,28 @@ object AiSetupHelper {
         modelsUrl = { key -> "https://generativelanguage.googleapis.com/v1beta/models?key=$key" },
     )
 
-    val PROVIDERS: List<Provider> = listOf(GOOGLE)
+    val OPENAI = Provider(
+        id = "openai",
+        displayName = "OpenAI",
+        endpointUrl = "https://api.openai.com/v1/chat/completions",
+        authHeader = "Bearer",
+        modelsUrl = { _ -> "https://api.openai.com/v1/models" },
+    )
+
+    val OPENROUTER = Provider(
+        id = "openrouter",
+        displayName = "OpenRouter",
+        endpointUrl = "https://openrouter.ai/api/v1/chat/completions",
+        authHeader = "Bearer",
+        modelsUrl = { _ -> "https://openrouter.ai/api/v1/models" },
+    )
+
+    val PROVIDERS: List<Provider> = listOf(GOOGLE, OPENAI, OPENROUTER)
 
     // ---- Model fetch ----
 
     data class AiModel(
-        val id: String,       // e.g. "gemini-2.5-flash"
+        val id: String,       // e.g. "gemini-2.5-flash", "gpt-4o", "anthropic/claude-3.7-sonnet"
         val displayName: String,
     )
 
@@ -99,6 +115,8 @@ object AiSetupHelper {
     private fun parseModels(provider: Provider, body: String): List<AiModel> {
         return when (provider.id) {
             "google" -> parseGeminiModels(body)
+            "openai" -> parseOpenAiModels(body)
+            "openrouter" -> parseOpenRouterModels(body)
             else -> emptyList()
         }
     }
@@ -112,7 +130,6 @@ object AiSetupHelper {
         val result = mutableListOf<AiModel>()
         for (i in 0 until arr.length()) {
             val obj = arr.getJSONObject(i)
-            // only include models that support generateContent (i.e. chat)
             val methods = obj.optJSONArray("supportedGenerationMethods") ?: continue
             var supportsChat = false
             for (j in 0 until methods.length()) {
@@ -123,7 +140,6 @@ object AiSetupHelper {
             }
             if (!supportsChat) continue
 
-            // full name is like "models/gemini-2.5-flash" → strip prefix
             val fullName = obj.optString("name", "")
             val id = fullName.removePrefix("models/")
             if (id.isBlank()) continue
@@ -131,6 +147,43 @@ object AiSetupHelper {
             val display = obj.optString("displayName", id)
             result.add(AiModel(id = id, displayName = display))
         }
+        return result
+    }
+
+    private fun parseOpenAiModels(body: String): List<AiModel> {
+        val arr: JSONArray = try {
+            JSONObject(body).getJSONArray("data")
+        } catch (_: Exception) {
+            return emptyList()
+        }
+        val result = mutableListOf<AiModel>()
+        for (i in 0 until arr.length()) {
+            val obj = arr.getJSONObject(i)
+            val id = obj.optString("id", "")
+            if (id.isBlank()) continue
+            if (id.startsWith("gpt-") || id.startsWith("o1") || id.startsWith("o3") || id.startsWith("chatgpt")) {
+                result.add(AiModel(id = id, displayName = id))
+            }
+        }
+        result.sortBy { it.id }
+        return result
+    }
+
+    private fun parseOpenRouterModels(body: String): List<AiModel> {
+        val arr: JSONArray = try {
+            JSONObject(body).getJSONArray("data")
+        } catch (_: Exception) {
+            return emptyList()
+        }
+        val result = mutableListOf<AiModel>()
+        for (i in 0 until arr.length()) {
+            val obj = arr.getJSONObject(i)
+            val id = obj.optString("id", "")
+            if (id.isBlank()) continue
+            val display = obj.optString("name", id)
+            result.add(AiModel(id = id, displayName = display))
+        }
+        result.sortBy { it.displayName }
         return result
     }
 }

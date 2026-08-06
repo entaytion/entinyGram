@@ -775,7 +775,7 @@
     <string name="InuEditedAt">已编辑 %1$s</string>
     <string name="InuHideSponsoredMessages">隐藏赞助消息 (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">禁用频道赞助广告并防止加载推广消息</string>
-    <string name="InuLegacySettingsLink">此设置链接格式已废弃。请使用 tg://settings/entiny/&lt;slug&gt;</string>
+    <string name="InuLegacySettingsLink">此设置链接格式已废弃。请使用 tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuLinks">链接</string>
     <string name="InuMaterial3NavigationAnimation">导航动画</string>
     <string name="InuNoEditHistory">没有可用的编辑历史</string>
@@ -807,7 +807,7 @@
     <string name="InuSaveSelfDestruct">保存阅后即焚媒体</string>
     <string name="InuSaveSelfDestructInfo">一次性照片、视频和视频消息将显示为普通媒体，可以保存或转发。</string>
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>
-    <string name="InuSettingsPrefixHint">设置链接使用 tg://settings/entiny/&lt;slug&gt;</string>
+    <string name="InuSettingsPrefixHint">设置链接使用 tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
     <string name="InuTOS">服务条款</string>

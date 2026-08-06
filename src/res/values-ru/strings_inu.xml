@@ -817,8 +817,8 @@
     <string name="InuPerformanceClassAverage">Средний</string>
     <string name="InuPerformanceClassHigh">Высокий</string>
     <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
-    <string name="InuLegacySettingsLink">Этот формат ссылки устарел. Используйте tg://settings/entiny/&lt;slug&gt;.</string>
-    <string name="InuSettingsPrefixHint">Ссылки настроек используют tg://settings/entiny/&lt;slug&gt;</string>
+    <string name="InuLegacySettingsLink">Этот формат ссылки устарел. Используйте tg://entinySettings/&lt;slug&gt;.</string>
+    <string name="InuSettingsPrefixHint">Ссылки настроек используют tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuBetaFeatureTitle">Бета-функция</string>
     <string name="InuBetaFeatureInfo">Эта функция находится в активной разработке (бета/экспериментальная).</string>
     <string name="InuTOS">Условия использования</string>

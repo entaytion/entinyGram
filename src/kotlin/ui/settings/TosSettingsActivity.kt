@@ -30,6 +30,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Anti-deletion Section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)))
         items.add(
             mkTwoLineCheckItem(
@@ -81,8 +82,11 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.ALLOW_FORWARD_RESTRICTED.value,
             )
         )
+        items.add(UItem.asShadow(null))
 
+        // Cache & Storage Section
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuCacheTtl)))
             items.add(UItem.asButton(BUTTON_CACHE_TTL, LocaleController.getString(R.string.InuCacheTtl)).also {
                 it.subtext = ttlLabel(InuConfig.DELETED_MESSAGES_TTL.value)
             })
@@ -92,16 +96,6 @@ class TosSettingsActivity : SettingsPageActivity() {
                 }
             })
         }
-
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_SPONSORED_MESSAGES,
-                R.string.InuHideSponsoredMessages,
-                R.string.InuHideSponsoredMessagesInfo,
-                InuConfig.HIDE_SPONSORED_MESSAGES.value,
-            )
-        )
-        items.add(UItem.asShadow(null))
     }
 
     private fun ttlLabel(days: Int): String = when (days) {
@@ -306,10 +300,6 @@ class TosSettingsActivity : SettingsPageActivity() {
             }
             BUTTON_CACHE_TTL -> showTtlDialog()
             BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
-            TOGGLE_HIDE_SPONSORED_MESSAGES -> {
-                val new = InuConfig.HIDE_SPONSORED_MESSAGES.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
         }
     }
 
@@ -323,7 +313,6 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
         private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
-        private val TOGGLE_HIDE_SPONSORED_MESSAGES = InuUtils.generateId()
 
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "tos",
@@ -337,7 +326,6 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
                 SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_CACHE_TTL),
-                SearchRegistry.Entry("hide-sponsored-messages", R.string.InuHideSponsoredMessages, TOGGLE_HIDE_SPONSORED_MESSAGES),
             ),
         )
     }

@@ -12,8 +12,8 @@
     <string name="InuDrawerM3SectionsInfo">Групує пункти бічного меню в картки Material 3.</string>
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
-    <string name="InuSettingsPrefixHint">Посилання на налаштування використовують tg://settings/entiny/&lt;slug&gt;</string>
-    <string name="InuLegacySettingsLink">Цей формат посилання застарів. Використовуйте tg://settings/entiny/&lt;slug&gt;.</string>
+    <string name="InuSettingsPrefixHint">Посилання на налаштування використовують tg://entinySettings/&lt;slug&gt;</string>
+    <string name="InuLegacySettingsLink">Цей формат посилання застарів. Використовуйте tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">Загальні</string>
     <string name="InuMiscellaneous">Різне</string>
     <string name="InuAppearance">Зовнішній вигляд</string>
