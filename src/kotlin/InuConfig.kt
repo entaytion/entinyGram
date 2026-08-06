@@ -768,6 +768,9 @@ object InuConfig {
     @JvmField
     val SHOW_MUTUAL_CONTACT_IN_CHATS = BoolItem("show_mutual_contact_in_chats", true)
 
+    @JvmField
+    val SHOW_POST_FORWARDS_COUNT = BoolItem("show_post_forwards_count", false)
+
     // Days to keep deleted/edited message cache. 0 = never auto-clear.
     class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
         companion object {

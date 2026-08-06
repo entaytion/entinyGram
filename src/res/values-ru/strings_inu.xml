@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Открыть в обсуждении</string>
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
@@ -826,4 +826,18 @@
     <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
     <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>
     <string name="InuShowMutualContactInChatsInfo">Показывать значок взаимного контакта в списках участников групп и каналов</string>
+    <string name="InuShowPostForwardsCount">Показывать количество репостов на постах</string>
+    <string name="InuShowPostForwardsCountInfo">Отображает количество пересылок/репостов между временем и количеством просмотров на постах</string>
+    <string name="InuCategoryAppearance">Внешний вид и дизайн</string>
+    <string name="InuCategoryBackup">Резервное копирование и система</string>
+    <string name="InuCategoryBehavior">Поведение и инструменты</string>
+    <string name="InuCategoryChats">Чаты и сообщения</string>
+    <string name="InuCategoryPrivacy">Конфиденциальность и безопасность</string>
+    <string name="InuCategoryProfile">Профиль и навигация</string>
+    <string name="InuAiReasoning">Режим рассуждений ИИ</string>
+    <string name="InuAiReasoningEffort">Уровень усилий ИИ</string>
+    <string name="InuAiReasoningInfo">Передает reasoning_effort и токены размышлений для логических моделей (o1, o3-mini, DeepSeek R1, Gemini Thinking)</string>
+    <string name="InuAdditional">Дополнительно</string>
+    <string name="InuEditHistoryDiff">Подсвечивать изменения текста (Diff)</string>
+    <string name="InuEditHistoryDiffInfo">Отображать удаленный текст красным зачеркиванием, а добавленный зеленым в истории изменений</string>
 </resources>

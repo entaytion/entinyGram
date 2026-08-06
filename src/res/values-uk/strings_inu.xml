@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Відкрити в обговоренні</string>
     <string name="InuBanUserConfirm">Заблокувати %1$s у цій групі?</string>
@@ -823,4 +823,16 @@
     <string name="InuShowMutualContactIconInfo">Показувати значок взаємного контакту у списку контактів</string>
     <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>
     <string name="InuShowMutualContactInChatsInfo">Показувати значок взаємного контакту у списках учасників груп та каналів</string>
+    <string name="InuShowPostForwardsCount">Показати кількість репостів на постах</string>
+    <string name="InuShowPostForwardsCountInfo">Показує кількість пересилань/репостів між часом і кількістю переглядів на постах</string>
+    <string name="InuCategoryAppearance">Вигляд і дизайн</string>
+    <string name="InuCategoryBackup">Резервне копіювання та система</string>
+    <string name="InuCategoryBehavior">Поведінка та інструменти</string>
+    <string name="InuCategoryChats">Чати та повідомлення</string>
+    <string name="InuCategoryPrivacy">Конфіденційність і безпека</string>
+    <string name="InuCategoryProfile">Профіль та навігація</string>
+    <string name="InuAiReasoning">Режим логічних міркувань ШІ</string>
+    <string name="InuAiReasoningEffort">Рівень зусиль ШІ</string>
+    <string name="InuAiReasoningInfo">Передає reasoning_effort та токени міркувань для логічних моделей (o1, o3-mini, DeepSeek R1, Gemini Thinking)</string>
+    <string name="InuAdditional">Додатково</string>
 </resources>

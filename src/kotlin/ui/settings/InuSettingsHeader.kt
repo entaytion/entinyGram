@@ -82,7 +82,7 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
         setPadding(
             AndroidUtilities.dp(16f),
             AndroidUtilities.dp(4f),
-            AndroidUtilities.dp(16f),
+            AndroidUtilities.dp(42f),
             AndroidUtilities.dp(10f)
         )
         addView(icon, LayoutHelper.createLinear(56, 56))

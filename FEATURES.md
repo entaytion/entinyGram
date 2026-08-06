@@ -81,6 +81,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - sticker time overlay modes: show / 🐶 hide time / 🐶 hide on incoming / hide completely
 - "Refresh" in the sticker/emoji pack menu
 - compact edited indicator: pencil icon instead of the "edited" label
+- 📡 show repost count on posts: displays the number of forwards/reposts between the timestamp and view count (toggleable, default off)
 - toggleable message bubble tails
 - 🐶 jump-to-discussion button from comments
 - jump-to-beginning button in calendar popup - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
