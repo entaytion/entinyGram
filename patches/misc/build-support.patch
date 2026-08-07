@@ -4,19 +4,22 @@ Date: Tue, 21 Apr 2026 07:47:50 +0300
 Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
 
 ---
- TMessagesProj/build.gradle                    | 110 ++++------------
+ TMessagesProj/build.gradle                    | 110 ++++----------
  TMessagesProj/proguard-rules.pro              |  13 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
  .../telegram/tgnet/ConnectionsManager.java    |   2 +-
  .../org/telegram/ui/PaymentFormActivity.java  |  28 ++--
  .../org/telegram/ui/SettingsActivity.java     |  24 +---
- TMessagesProj_App/build.gradle                | 121 ++++--------------
- TMessagesProj_AppTests/build.gradle           |   5 +-
- build.gradle                                  |  22 +++-
+ TMessagesProj_App/build.gradle                | 135 +++++-------------
+ TMessagesProj_AppHockeyApp/build.gradle       |  26 ++--
+ TMessagesProj_AppHuawei/build.gradle          |  26 ++--
+ TMessagesProj_AppStandalone/build.gradle      |  26 ++--
+ TMessagesProj_AppTests/build.gradle           |  31 ++--
+ build.gradle                                  |  22 ++-
  gradle.properties                             |   2 +-
  settings.gradle                               |   5 +-
- 14 files changed, 147 insertions(+), 356 deletions(-)
+ 17 files changed, 231 insertions(+), 390 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -468,13 +471,22 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -37,20 +44,11 @@ android {
+@@ -37,23 +44,24 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
--
++    }
+ 
 -        coreLibraryDesugaringEnabled true
++    def keystorePropsFile = rootProject.file('keystore.properties')
++    def keystoreProps = new Properties()
++    if (keystorePropsFile.exists()) {
++        keystoreProps.load(new FileInputStream(keystorePropsFile))
      }
++    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
++    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
++    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
++    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
  
      signingConfigs {
 -        debug {
@@ -486,11 +498,17 @@ index 0000000..0000000 100644
 -
          release {
 -            storeFile file("../TMessagesProj/config/release.keystore")
-+            storeFile file(System.getenv('RELEASE_KEYSTORE_PATH') ?: "../TMessagesProj/config/release.keystore")
-             storePassword RELEASE_STORE_PASSWORD
-             keyAlias RELEASE_KEY_ALIAS
-             keyPassword RELEASE_KEY_PASSWORD
-@@ -61,7 +59,7 @@ android {
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+     }
+ 
+@@ -61,7 +69,7 @@ android {
          debug {
              debuggable true
              jniDebuggable true
@@ -499,7 +517,7 @@ index 0000000..0000000 100644
              applicationIdSuffix ".beta"
              minifyEnabled false
              shrinkResources false
-@@ -70,18 +68,6 @@ android {
+@@ -70,18 +78,6 @@ android {
              ndk.debugSymbolLevel = 'FULL'
          }
  
@@ -518,7 +536,7 @@ index 0000000..0000000 100644
          release {
              debuggable false
              jniDebuggable false
-@@ -95,95 +81,38 @@ android {
+@@ -95,95 +91,38 @@ android {
      }
  
      sourceSets.debug {
@@ -532,9 +550,8 @@ index 0000000..0000000 100644
  
      sourceSets.release {
 -        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
-+        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
-     }
- 
+-    }
+-
 -    flavorDimensions "minApi"
 -
 -    productFlavors {
@@ -581,8 +598,9 @@ index 0000000..0000000 100644
 -            }
 -            buildConfigField "boolean", "BUNDLE", "false"
 -        }
--    }
--
++        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
+     }
+ 
 -    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
 +    defaultConfig.versionCode = rootProject.ext.verCode
  
@@ -626,7 +644,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -196,6 +125,10 @@ android {
+@@ -196,6 +135,10 @@ android {
      lintOptions {
          checkReleaseBuilds false
      }
@@ -637,6 +655,132 @@ index 0000000..0000000 100644
  }
  
  apply plugin: 'com.google.gms.google-services'
+diff --git a/TMessagesProj_AppHockeyApp/build.gradle b/TMessagesProj_AppHockeyApp/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_AppHockeyApp/build.gradle
++++ b/TMessagesProj_AppHockeyApp/build.gradle
+@@ -54,19 +54,29 @@ android {
+         coreLibraryDesugaringEnabled true
+     }
+ 
++    def keystorePropsFile = rootProject.file('keystore.properties')
++    def keystoreProps = new Properties()
++    if (keystorePropsFile.exists()) {
++        keystoreProps.load(new FileInputStream(keystorePropsFile))
++    }
++    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
++    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
++    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
++    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
++
+     signingConfigs {
+         debug {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+ 
+         release {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+     }
+ 
+diff --git a/TMessagesProj_AppHuawei/build.gradle b/TMessagesProj_AppHuawei/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_AppHuawei/build.gradle
++++ b/TMessagesProj_AppHuawei/build.gradle
+@@ -49,19 +49,29 @@ android {
+         coreLibraryDesugaringEnabled true
+     }
+ 
++    def keystorePropsFile = rootProject.file('keystore.properties')
++    def keystoreProps = new Properties()
++    if (keystorePropsFile.exists()) {
++        keystoreProps.load(new FileInputStream(keystorePropsFile))
++    }
++    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
++    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
++    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
++    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
++
+     signingConfigs {
+         debug {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+ 
+         release {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+     }
+ 
+diff --git a/TMessagesProj_AppStandalone/build.gradle b/TMessagesProj_AppStandalone/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_AppStandalone/build.gradle
++++ b/TMessagesProj_AppStandalone/build.gradle
+@@ -43,19 +43,29 @@ android {
+         coreLibraryDesugaringEnabled true
+     }
+ 
++    def keystorePropsFile = rootProject.file('keystore.properties')
++    def keystoreProps = new Properties()
++    if (keystorePropsFile.exists()) {
++        keystoreProps.load(new FileInputStream(keystorePropsFile))
++    }
++    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
++    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
++    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
++    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
++
+     signingConfigs {
+         debug {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+ 
+         release {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+     }
+ 
 diff --git a/TMessagesProj_AppTests/build.gradle b/TMessagesProj_AppTests/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_AppTests/build.gradle
@@ -652,7 +796,45 @@ index 0000000..0000000 100644
      androidTestImplementation "com.appmattus.fixture:fixture:1.2.0"
  }
  
-@@ -162,4 +162,3 @@ android {
+@@ -54,19 +54,29 @@ android {
+         jvmTarget = "1.8"
+     }
+ 
++    def keystorePropsFile = rootProject.file('keystore.properties')
++    def keystoreProps = new Properties()
++    if (keystorePropsFile.exists()) {
++        keystoreProps.load(new FileInputStream(keystorePropsFile))
++    }
++    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
++    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
++    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
++    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
++
+     signingConfigs {
+         debug {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+ 
+         release {
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
++            storeFile file(releaseKeystorePath)
++            storePassword releaseKeystorePassword
++            keyAlias releaseKeystoreAlias
++            keyPassword releaseKeystoreKeyPassword
+         }
+     }
+ 
+@@ -162,4 +172,3 @@ android {
          checkReleaseBuilds false
      }
  }

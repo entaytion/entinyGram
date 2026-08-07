@@ -30,7 +30,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -103,7 +103,12 @@ android {
+@@ -113,7 +113,12 @@ android {
          ndkVersion "27.2.12479018"
  
          ndk {

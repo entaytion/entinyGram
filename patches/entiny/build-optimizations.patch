@@ -65,7 +65,7 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -76,7 +87,7 @@ android {
+@@ -86,7 +97,7 @@ android {
              shrinkResources false
              multiDexEnabled true
              proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
