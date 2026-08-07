@@ -29,7 +29,7 @@ object MapsHelper {
     fun syncMapProvider(messagesController: MessagesController) {
         messagesController.mapProvider = overrideMapProvider(messagesController.mainSettings.getInt("mapProvider", 0));
         if (messagesController.mapProvider == 101) {
-            messagesController.mapKey = "AIzaSyB0y3zA4LbA04ZPaHKsr_Xt5ZQWbMftj8I" // google maps api key from TL_config in official apps
+            messagesController.mapKey = "AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" // entinygram google maps api key
         }
     }
 }
