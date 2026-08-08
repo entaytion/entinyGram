@@ -186,6 +186,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - optionally collapse folder tabs (show only All Chats) while enabled
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
 
 ## behavior
 

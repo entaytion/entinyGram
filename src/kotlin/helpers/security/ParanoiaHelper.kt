@@ -5,11 +5,14 @@ import android.content.Context
 import androidx.core.content.edit
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.LauncherIconController
 import org.telegram.ui.LauncherIconController.LauncherIcon
+import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 
 // "Hidden chats" aka "Paranoia mode": a per-account set of dialogs that vanishes from every surface while
@@ -126,6 +129,17 @@ object ParanoiaHelper {
     // constant per process (toggling restarts the app), so cache it for animation hot-path callers.
     @JvmStatic
     fun isDisguised(): Boolean = disguisedCache ?: (isParanoia() && disguiseIcon).also { disguisedCache = it }
+
+    // The server names this client by its registered api_id title (currently "Inugram"), so the
+    // session list in Settings > Devices shows the wrong app name. Surface the real one instead.
+    @JvmStatic
+    fun getSessionAppName(serverName: String): String {
+        if (!InuConfig.MASK_SERVER_APP_NAME.value) return serverName
+        if (serverName.contains("inugram", ignoreCase = true)) {
+            return runCatching { LocaleController.getString(R.string.AppName) }.getOrElse { serverName }
+        }
+        return serverName
+    }
 
     @JvmStatic
     fun filterLauncherIcons(icons: MutableList<LauncherIcon>) {

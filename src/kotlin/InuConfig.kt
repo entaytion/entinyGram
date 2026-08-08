@@ -771,6 +771,9 @@ object InuConfig {
     @JvmField
     val SHOW_POST_FORWARDS_COUNT = BoolItem("show_post_forwards_count", false)
 
+    @JvmField
+    val MASK_SERVER_APP_NAME = BoolItem("mask_server_app_name", true)
+
     // Days to keep deleted/edited message cache. 0 = never auto-clear.
     class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
         companion object {
