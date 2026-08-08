@@ -102,7 +102,7 @@ object CrashReporter {
     fun shareCrashLog(activity: LaunchActivity) {
         val src = getLogFile()
         if (!src.exists()) return
-        val shareable = File(AndroidUtilities.getCacheDir().apply { mkdirs() }, "inugram-crash.log")
+        val shareable = File(AndroidUtilities.getCacheDir().apply { mkdirs() }, "entinygram-crash.log")
         src.copyTo(shareable, overwrite = true)
         SharePicker.shareFile(activity, shareable, "text/plain", onSent = ::deleteCrashLog)
     }
@@ -114,7 +114,7 @@ object CrashReporter {
     }
 
     fun dumpAndSaveHeap(activity: LaunchActivity) {
-        val tmp = File(AndroidUtilities.getCacheDir().apply { mkdirs() }, "inugram-heap-dump.hprof")
+        val tmp = File(AndroidUtilities.getCacheDir().apply { mkdirs() }, "entinygram-heap-dump.hprof")
         Debug.dumpHprofData(tmp.absolutePath)
         saveHprofFile(activity, tmp) { tmp.delete() }
     }
@@ -148,7 +148,7 @@ object CrashReporter {
         val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/octet-stream"
-            putExtra(Intent.EXTRA_TITLE, "inugram-heap-dump.hprof")
+            putExtra(Intent.EXTRA_TITLE, "entinygram-heap-dump.hprof")
         }
         @Suppress("DEPRECATION")
         activity.startActivityForResult(intent, SAVE_HEAP_DUMP_REQUEST)

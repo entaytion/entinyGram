@@ -135,7 +135,7 @@ object ParanoiaHelper {
     @JvmStatic
     fun getSessionAppName(serverName: String): String {
         if (!InuConfig.MASK_SERVER_APP_NAME.value) return serverName
-        if (serverName.contains("inugram", ignoreCase = true)) {
+        if (serverName.contains("inugram", ignoreCase = true) || serverName.contains("entinygram", ignoreCase = true)) {
             return runCatching { LocaleController.getString(R.string.AppName) }.getOrElse { serverName }
         }
         return serverName
