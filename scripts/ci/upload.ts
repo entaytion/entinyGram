@@ -1,8 +1,9 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { html, MemoryStorage, TelegramClient } from '@mtcute/node'
+import { BotKeyboard, html, MemoryStorage, TelegramClient } from '@mtcute/node'
 import { joinTextWithEntities } from '@mtcute/node/utils.js'
+import sharp from 'sharp'
 
 interface BuildInfo {
   verName: string
@@ -94,13 +95,23 @@ try {
     apkPosts.push({ file, id: msg.id })
   }
 
-  const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.png')
+  const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.svg')
+  let bannerFile: string | Buffer = `file:${bannerPath}`
+  if (bannerPath.endsWith('.svg')) {
+    try {
+      bannerFile = await sharp(bannerPath).png().toBuffer()
+    } catch (e) {
+      console.warn('Failed to convert SVG banner to PNG (is sharp installed?), falling back to raw file', e)
+    }
+  }
 
-  // 2) Full release message with download links + bilingual changelog.
-  const downloadLinks = apkPosts.map(p => {
-    const url = postUrl(p.id)
-    return html`• <b><a href="${url}">Download ${abiOf(p.file)} APK</a></b>`
-  })
+  // 2) Create inline download buttons for the release post.
+  const replyMarkup = BotKeyboard.inline(
+    apkPosts.map(p => [
+      BotKeyboard.url(`📥 Download ${abiOf(p.file)} APK`, postUrl(p.id))
+    ])
+  )
+
   const enBlock = en ? joinTextWithEntities(bullets(en), '\n') : html`• See the channel`
   const ukBlock = uk ? joinTextWithEntities(bullets(uk), '\n') : html`• Дивіться канал`
   const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
@@ -109,16 +120,13 @@ try {
     #release
     <br/>
     📡 entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
-    <br/><br/>
-    ${joinTextWithEntities(downloadLinks, '\n')}
-    ${extra ? html`<br/>${extra}` : ''}
+    ${extra ? html`<br/><br/>${extra}` : ''}
     <br/><br/>
     🇺🇸 EN:
     <br/>
     <blockquote expandable>
     ${enBlock}
     </blockquote>
-    <br/><br/>
     🇺🇦 UK:
     <br/>
     <blockquote expandable>
@@ -128,32 +136,29 @@ try {
     @entinyGram
   `
 
-  // 3) Send the banner photo with the release text as caption to the main channel.
-  // If the caption exceeds 1024 characters, Telegram will throw MEDIA_CAPTION_TOO_LONG.
-  // We'll calculate length manually to avoid API errors and fallback to separate messages.
+  // 3) Send the banner photo with the release text as caption and inline download buttons to the main channel.
   const releaseText = release.text
   if (releaseText.length <= 1024) {
     try {
-      await tg.sendMedia(channelMain, { 
-        type: 'photo', 
-        file: `file:${bannerPath}`, 
-        caption: release 
+      await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile }, {
+        caption: release,
+        replyMarkup,
       })
     } catch (e: any) {
       if (e?.message?.includes('CAPTION_TOO_LONG')) {
-        await tg.sendMedia(channelMain, { type: 'photo', file: `file:${bannerPath}` })
-        await tg.sendText(channelMain, release)
+        await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
+        await tg.sendText(channelMain, release, { replyMarkup })
       } else {
         throw e
       }
     }
   } else {
     try {
-      await tg.sendMedia(channelMain, { type: 'photo', file: `file:${bannerPath}` })
+      await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
     } catch (e) {
       console.warn('release: banner post failed (continuing):', e)
     }
-    await tg.sendText(channelMain, release)
+    await tg.sendText(channelMain, release, { replyMarkup })
   }
 } finally {
   const exported = await tg.exportSession()

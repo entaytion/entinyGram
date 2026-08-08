@@ -63,8 +63,9 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
     'Instead, prefix EACH bullet point directly with a hacker-style tag:',
     'Use "[+] " for new features/additions, "[-] " for removals, "[*] " for bug fixes/optimizations, and "[=] " for other changes.',
     'Extract the actual meaning from the detailed commit bodies. Paraphrase the technical details into clear benefits or changes for the end user. Do NOT just copy-paste the commit subjects or generate generic boilerplate.',
-    'IMPORTANT: Differentiate between our own (entinyGram) changes and upstream (inugram) updates. If you see commits about syncing with upstream inugram or merging upstream, group them into a single line like "[=] Synced with upstream inugram" or "[=] Синхронізовано з inugram".',
-    'Focus your detailed "[+]", "[-]", and "[*]" bullet points EXCLUSIVELY on our own entinyGram specific features, fixes, and improvements (like entiny/ patches or custom UI changes).',
+    'IMPORTANT 1: Differentiate between our own (entinyGram) changes and upstream (inugram) updates. If you see commits about syncing with upstream inugram or merging upstream, group them into a single line like "[=] Synced with upstream inugram" or "[=] Синхронізовано з inugram".',
+    'IMPORTANT 2: If there are multiple bug fixes or optimizations, DO NOT list them separately. Group ALL of them into exactly one line: "[*] Bug fixes and app optimizations" (in English) or "[*] Виправлено баги та оптимізовано роботу застосунку" (in Ukrainian). Never generate more than one [*] line.',
+    'Focus your detailed "[+]", "[-]", and "[*]" bullet points EXCLUSIVELY on major entinyGram specific features, fixes, and improvements (like entiny/ patches or custom UI changes).',
     'Start every line with its prefix (e.g., "[+] Implemented..."). Do NOT use bullet symbols like "•". Keep each language version SHORT (under ~1000 chars).',
     'Do NOT mention commit hashes or the word "commit". Do not mention the repo name.',
     '',
@@ -147,7 +148,7 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string } {
 
   const en: string[] = []
   const uk: string[] = []
-  
+
   if (sections.feature.length) {
     en.push(...sections.feature.map(l => `[+] ${l}`))
     uk.push(...sections.feature.map(l => `[+] ${l}`))
@@ -160,7 +161,7 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string } {
     en.push(...sections.other.map(l => `[=] ${l}`))
     uk.push(...sections.other.map(l => `[=] ${l}`))
   }
-  
+
   return { en: en.join('\n'), uk: uk.join('\n') }
 }
 

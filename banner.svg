@@ -1,0 +1,27 @@
+<svg width="1900" height="500" viewBox="0 0 1900 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Nata+Sans:wght@500;700&amp;display=swap');
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1900" height="500" fill="#000000" />
+
+  <!-- App Icon Circle -->
+  <circle cx="450" cy="250" r="180" fill="#F20C3C" />
+  
+  <!-- App Icon (from src/res/launcher/icon.svg) -->
+  <g transform="translate(342, 142) scale(9)">
+    <g fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+      <path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0" fill="#000000"/>
+      <path d="M16.616 13.924a5 5 0 1 0-9.23 0" opacity="0.85"/>
+      <path d="M20.307 15.469a9 9 0 1 0-16.615 0" opacity="0.6"/>
+      <path d="m9 21l3-9l3 9m-5-2h4"/>
+    </g>
+  </g>
+
+  <!-- Texts -->
+  <text x="700" y="240" font-family="'Nata Sans', sans-serif" font-weight="700" font-size="100" fill="#F20C3C">Update available</text>
+  <text x="705" y="340" font-family="'Nata Sans', sans-serif" font-weight="500" font-size="55" fill="#F20C3C" opacity="0.8">entinyGram • 12.9.2</text>
+</svg>
