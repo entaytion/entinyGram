@@ -285,3 +285,4 @@ entiny/fix-url-parsing.patch
 entiny/save-user-info.patch
 entiny/post-forwards-count.patch
 entiny/session-app-name.patch
+entiny/api-credentials.patch

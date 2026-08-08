@@ -4,9 +4,9 @@ Date: Sat, 8 Aug 2026 00:49:34 +0300
 Subject: Show real app name in the session list
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java   | 2 +-
- TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java | 2 +-
- TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java  | 2 +-
+ .../src/main/java/org/telegram/ui/Cells/SessionCell.java        | 2 +-
+ .../src/main/java/org/telegram/ui/Components/UndoView.java      | 2 +-
+ .../src/main/java/org/telegram/ui/SessionBottomSheet.java       | 2 +-
  3 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java

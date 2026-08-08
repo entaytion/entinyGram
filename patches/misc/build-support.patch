@@ -285,8 +285,8 @@ index 0000000..0000000 100644
  
 -    public static int APP_ID = 4;
 -    public static String APP_HASH = "014b35b6184100b085b0d0572f9b5103";
-+    public static int APP_ID = 38159064;
-+    public static String APP_HASH = "d0372642fc663849324f887acf9a64c5";
++    public static int APP_ID = 24432768;
++    public static String APP_HASH = "081555aafce571f3e4c4b3f9fe653dc1";
  
      // SafetyNet key for Google Identity SDK, set it to empty to disable
 -    public static String SAFETYNET_KEY = "AIzaSyDqt8P-7F7CPCseMkOiVRgb1LY8RN1bvH8";
