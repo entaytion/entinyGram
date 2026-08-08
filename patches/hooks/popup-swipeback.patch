@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          private boolean startAnimationPending = false;
          private int backAlpha = 255;
          private int lastStartedChild = 0;
-@@ -492,7 +493,8 @@ public class ActionBarPopupWindow extends PopupWindow {
+@@ -488,7 +489,8 @@ public class ActionBarPopupWindow extends PopupWindow {
                          canvas.clipRect(0, bgPaddings.top, getMeasuredWidth(), getMeasuredHeight());
                      }
                      backgroundDrawable.setAlpha(applyAlpha ? backAlpha : 255);
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
                          final int height = getMeasuredHeight();
                          AndroidUtilities.rectTmp2.set(0, (int) (height * (1.0f - backScaleY)), (int) (getMeasuredWidth() * backScaleX), height);
                      } else {
-@@ -532,6 +534,7 @@ public class ActionBarPopupWindow extends PopupWindow {
+@@ -528,6 +530,7 @@ public class ActionBarPopupWindow extends PopupWindow {
                          rect.set(AndroidUtilities.rectTmp2.right, AndroidUtilities.rectTmp2.top, AndroidUtilities.rectTmp2.right, AndroidUtilities.rectTmp2.top);
                          AndroidUtilities.lerp(rect, AndroidUtilities.rectTmp2, reactionsEnterProgress, AndroidUtilities.rectTmp2);
                      }

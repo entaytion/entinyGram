@@ -436,7 +436,7 @@ index 0000000..0000000 100644
                  } else if (pinnedMessageObject.type == MessageObject.TYPE_POLL) {
                      if (pinnedMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                          TLRPC.TL_messageMediaPoll poll = (TLRPC.TL_messageMediaPoll) pinnedMessageObject.messageOwner.media;
-@@ -40234,15 +40239,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -40164,15 +40169,16 @@ public class ChatActivity extends BaseFragment implements
                  userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
                  final TextView titleText = new TextView(getContext());
@@ -738,7 +738,7 @@ index 0000000..0000000 100644
          } else {
              if (peerIds.size() == 0) {
                  titleView.setText(LocaleController.getString(R.string.NobodyViewed));
-@@ -375,6 +377,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -370,6 +372,7 @@ public class MessageSeenView extends FrameLayout {
              nameView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
              nameView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
              nameView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -746,7 +746,7 @@ index 0000000..0000000 100644
  
              statusBadgeComponent = new StatusBadgeComponent(this);
              nameView.setDrawablePadding(AndroidUtilities.dp(3));
-@@ -415,7 +418,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -410,7 +413,7 @@ public class MessageSeenView extends FrameLayout {
                  avatarDrawable.setInfo(currentAccount, object);
                  ImageLocation imageLocation = ImageLocation.getForUserOrChat(currentAccount, object, ImageLocation.TYPE_SMALL);
                  avatarImageView.setImage(imageLocation, "50_50", avatarDrawable, object);

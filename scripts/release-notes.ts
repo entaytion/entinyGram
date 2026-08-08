@@ -2,22 +2,22 @@ import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
 /**
- * Generates pretty bilingual (en + uk) release notes for a build.
+ * Generates bilingual (en + uk) release notes for a build.
  *
- * Reads `build-info.json` (produced by scripts/ci/version.ts + the apk.yml
- * "stage artifacts" step), asks Google Gemini to summarize the commit list into
- * concise user-facing notes, and writes `release-notes.json`:
- *   { "en": "...", "uk": "..." }
+ * Writes `release-notes.json`:
+ *   {
+ *     "en":  "...full github markdown notes...",
+ *     "uk":  "...повні нотатки для github...",
+ *     "tg":  "...short bilingual telegram post (en + uk, [+]/[*]/[-]/[=] style)..."
+ *   }
  *
  * Config:
- *   GEMINI_API_KEY  - required for AI mode (Google Generative Language API).
+ *   GEMINI_API_KEY  - required for AI mode.
  *   GEMINI_MODEL    - optional, defaults to `gemini-3.1-flash-lite`.
  *   GEMINI_BASE_URL - optional; OpenAI-compatible chat/completions endpoint.
- *                     Defaults to the OpenAI-compatible Google endpoint.
  *   artifactDir     - argv[2], defaults to `out`.
  *
- * If no key is present — or the API call fails — a tiny rule-based fallback is
- * used so the CI pipeline (and local testing) never breaks.
+ * If no key is present — or the API call fails — a rule-based fallback is used.
  */
 
 interface Commit { sha: string, message: string }
@@ -56,22 +56,45 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
     '',
     `Release: v${info.verName} (build ${info.buildNum}, repo ${info.repo})`,
     '',
-    'Commits since the last release (these contain technical subjects and detailed bullet points of what changed):',
+    'Commits since the last release (technical subjects + detailed bullet points of changes):',
     list || '(no commits)',
     '',
-    'Write concise, polished, user-friendly release notes without any section headings.',
-    'Instead, prefix EACH bullet point directly with a hacker-style tag:',
-    'Use "[+] " for new features/additions, "[-] " for removals, "[*] " for bug fixes/optimizations, and "[=] " for other changes.',
-    'Extract the actual meaning from the detailed commit bodies. Paraphrase the technical details into clear benefits or changes for the end user. Do NOT just copy-paste the commit subjects or generate generic boilerplate.',
-    'IMPORTANT 1: Differentiate between our own (entinyGram) changes and upstream (inugram) updates. If you see commits about syncing with upstream inugram or merging upstream, group them into a single line like "[=] Synced with upstream inugram" or "[=] Синхронізовано з inugram".',
-    'IMPORTANT 2: If there are multiple bug fixes or optimizations, DO NOT list them separately. Group ALL of them into exactly one line: "[*] Bug fixes and app optimizations" (in English) or "[*] Виправлено баги та оптимізовано роботу застосунку" (in Ukrainian). Never generate more than one [*] line.',
-    'Focus your detailed "[+]", "[-]", and "[*]" bullet points EXCLUSIVELY on major entinyGram specific features, fixes, and improvements (like entiny/ patches or custom UI changes).',
-    'Start every line with its prefix (e.g., "[+] Implemented..."). Do NOT use bullet symbols like "•". Keep each language version SHORT (under ~1000 chars).',
-    'Do NOT mention commit hashes or the word "commit". Do not mention the repo name.',
+    '=== OUTPUT FORMAT ===',
+    'Return ONLY valid JSON with exactly 3 keys: "en", "uk", "tg". No markdown fences.',
+    '{',
+    '  "en": "...full GitHub release notes in English...",',
+    '  "uk": "...повні нотатки для GitHub українською...",',
+    '  "tg": "...short Telegram post, bilingual (EN + UK), see format below..."',
+    '}',
     '',
-    'Write the notes in TWO languages (natural, idiomatic copy). Return ONLY valid JSON,',
-    'no markdown fences, exactly this shape:',
-    '{"en":"...english notes, \\n separated...","uk":"...українські нотатки, розділені \\n..."}',
+    '=== "en" and "uk" keys (GitHub release notes) ===',
+    'Write detailed, well-structured Markdown release notes.',
+    'Group changes into sections: ### New Features, ### Bug Fixes, ### Changes, ### Upstream Sync.',
+    'Each item should be a Markdown list item starting with `-`.',
+    'Explain each change clearly for developers and advanced users.',
+    'Differentiate entinyGram-specific changes from upstream inugram syncs.',
+    'Aim for 500-1200 chars per language.',
+    '',
+    '=== "tg" key (Telegram post) ===',
+    'Write a SHORT bilingual post for a Telegram channel. Target ~600-900 chars total.',
+    'Format:',
+    '🇺🇸 EN:',
+    '[+] Most important new feature',
+    '[+] Second important feature',
+    '[*] Bug fixes, UI improvements and optimizations',
+    '',
+    '🇺🇦 UK:',
+    '[+] Найважливіша нова функція',
+    '[+] Друга важлива функція',
+    '[*] Виправлено баги, покращення UI та оптимізації',
+    '',
+    'Rules for "tg":',
+    '- Use "[+] " for new features, "[-] " for removals, "[*] " for bug fixes/optimizations, "[=] " for neutral changes.',
+    '- Keep 4-7 lines per language block. Group ALL bug fixes into exactly ONE [*] line.',
+    '- Highlight the MOST IMPORTANT user-facing entinyGram changes only.',
+    '- Separate EN and UK blocks with a blank line. Do NOT add @username mentions or extra decorations.',
+    '- Upstream sync: one line max, e.g. "[=] Synced with upstream inugram" / "[=] Синхронізовано з inugram".',
+    '- Do NOT copy commit subjects verbatim. Rewrite into human-readable benefits.',
   ].join('\n')
 }
 
@@ -100,14 +123,16 @@ async function callGemini(key: string, model: string, prompt: string): Promise<s
   return text
 }
 
-function parseNotes(raw: string): { en: string, uk: string } {
+function parseNotes(raw: string): { en: string, uk: string, tg: string } {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   const parsed = JSON.parse(cleaned)
   return {
     en: String(parsed.en ?? '').trim(),
     uk: String(parsed.uk ?? '').trim(),
+    tg: String(parsed.tg ?? '').trim(),
   }
 }
+
 async function aiNotes(key: string, info: BuildInfo, commits: Commit[]) {
   const prompt = buildPrompt(info, commits)
   let lastErr: unknown
@@ -116,7 +141,7 @@ async function aiNotes(key: string, info: BuildInfo, commits: Commit[]) {
       console.log(`==> release-notes: calling ${model}`)
       const raw = await callGemini(key, model, prompt)
       const notes = parseNotes(raw)
-      if (!notes.en && !notes.uk) throw new Error('empty ai notes')
+      if (!notes.en && !notes.uk && !notes.tg) throw new Error('empty ai notes')
       return notes
     } catch (e) {
       lastErr = e
@@ -133,12 +158,12 @@ function categorize(message: string): 'fix' | 'feature' | 'other' {
   return 'other'
 }
 
-function bulletize(lines: string[]): string {
-  return lines.map(l => `• ${l}`).join('\n') || ''
-}
-
-function ruleFallback(commits: Commit[]): { en: string, uk: string } {
-  if (commits.length === 0) return { en: 'No changes in this build.', uk: 'У цьому збірці змін немає.' }
+function ruleFallback(commits: Commit[]): { en: string, uk: string, tg: string } {
+  if (commits.length === 0) return {
+    en: 'No changes in this build.',
+    uk: 'У цьому збірці змін немає.',
+    tg: '🇺🇸 EN:\n[=] No changes\n\n🇺🇦 UK:\n[=] Змін немає',
+  }
 
   const sections: Record<string, string[]> = { feature: [], fix: [], other: [] }
   for (const c of commits) {
@@ -148,27 +173,27 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string } {
 
   const en: string[] = []
   const uk: string[] = []
+  if (sections.feature.length) en.push(...sections.feature.map(l => `[+] ${l}`))
+  if (sections.fix.length) en.push(`[*] Bug fixes and app optimizations`)
+  if (sections.other.length) en.push(...sections.other.map(l => `[=] ${l}`))
 
-  if (sections.feature.length) {
-    en.push(...sections.feature.map(l => `[+] ${l}`))
-    uk.push(...sections.feature.map(l => `[+] ${l}`))
-  }
-  if (sections.fix.length) {
-    en.push(...sections.fix.map(l => `[*] ${l}`))
-    uk.push(...sections.fix.map(l => `[*] ${l}`))
-  }
-  if (sections.other.length) {
-    en.push(...sections.other.map(l => `[=] ${l}`))
-    uk.push(...sections.other.map(l => `[=] ${l}`))
-  }
+  if (sections.feature.length) uk.push(...sections.feature.map(l => `[+] ${l}`))
+  if (sections.fix.length) uk.push(`[*] Виправлено баги та оптимізовано роботу застосунку`)
+  if (sections.other.length) uk.push(...sections.other.map(l => `[=] ${l}`))
 
-  return { en: en.join('\n'), uk: uk.join('\n') }
+  const tgEn = en.slice(0, 5).join('\n')
+  const tgUk = uk.slice(0, 5).join('\n')
+  const tg = `🇺🇸 EN:\n${tgEn}\n\n🇺🇦 UK:\n${tgUk}`
+
+  const enFull = en.join('\n')
+  const ukFull = uk.join('\n')
+  return { en: enFull, uk: ukFull, tg }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
 const commits = cleanCommits(info.commits ?? [])
 
-let notes: { en: string, uk: string }
+let notes: { en: string, uk: string, tg: string }
 const key = process.env.GEMINI_API_KEY
 if (key && commits.length > 0) {
   try {
@@ -185,4 +210,3 @@ if (key && commits.length > 0) {
 await fs.mkdir(artifactDir, { recursive: true })
 await fs.writeFile(join(artifactDir, 'release-notes.json'), JSON.stringify(notes, null, 2))
 console.log(JSON.stringify(notes, null, 2))
-

@@ -17,6 +17,10 @@ interface BuildInfo {
 }
 
 const artifactDir = resolve(process.argv[2] ?? 'out')
+
+// --ci-only flag: upload APKs to CI channel only, skip main channel release post
+const ciOnly = process.argv.includes('--ci-only')
+
 const info: BuildInfo = JSON.parse(await fs.readFile(join(artifactDir, 'build-info.json'), 'utf8'))
 for (const file of info.apkFiles) {
   await fs.access(join(artifactDir, file))
@@ -66,24 +70,20 @@ async function persistSession(session: string) {
 }
 
 try {
-  const commits = info.commits.filter(c => !c.message.startsWith('infra:')).reverse()
-
   // Bilingual release notes from scripts/release-notes.ts (may be absent).
-  let en = ''
-  let uk = ''
+  let tgNotes = ''
+  let enNotes = ''
   try {
     const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
-    en = String(notes.en ?? '')
-    uk = String(notes.uk ?? '')
+    tgNotes = String(notes.tg ?? '')  // short bilingual post for Telegram
+    enNotes = String(notes.en ?? '')  // full notes (used as fallback if tg is empty)
   } catch { }
 
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const abiOf = (file: string) => /universal/i.test(file) ? 'Universal' : 'ARM64'
   const postUrl = (id: number) => `https://t.me/${channelCI}/${id}`
-  const bullets = (text: string) =>
-    text.split('\n').map(l => l.trim()).filter(Boolean).map(l => html`${esc(l)}`)
 
-  // 1) Upload the APK documents first to the CI channel.
+  // 1) Upload the APK documents to the CI channel — always happens.
   const apkPosts: { file: string, id: number }[] = []
   for (const file of info.apkFiles) {
     const msg = await tg.sendMedia(channelCI, {
@@ -95,70 +95,75 @@ try {
     apkPosts.push({ file, id: msg.id })
   }
 
-  const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.svg')
-  let bannerFile: string | Buffer = `file:${bannerPath}`
-  if (bannerPath.endsWith('.svg')) {
-    try {
-      bannerFile = await sharp(bannerPath).png().toBuffer()
-    } catch (e) {
-      console.warn('Failed to convert SVG banner to PNG (is sharp installed?), falling back to raw file', e)
+  // 2) If --ci-only, stop here — no main channel post.
+  if (ciOnly) {
+    console.log('CI-only mode: APKs uploaded to CI channel, skipping main channel post.')
+  } else {
+    // 3) Create inline download buttons.
+    const replyMarkup = BotKeyboard.inline(
+      apkPosts.map(p => [
+        BotKeyboard.url(`📥 Download ${abiOf(p.file)} APK`, postUrl(p.id))
+      ])
+    )
+
+    // Use short tg notes; fall back to first ~600 chars of EN notes if missing.
+    const postBody = tgNotes || enNotes.slice(0, 600) || '• See the channel'
+    const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
+
+    // Convert [+]/[*]/[-]/[=] prefixed lines into HTML for Telegram.
+    function notesToHtml(text: string) {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+      return lines.map(l => html`${esc(l)}`)
     }
-  }
 
-  // 2) Create inline download buttons for the release post.
-  const replyMarkup = BotKeyboard.inline(
-    apkPosts.map(p => [
-      BotKeyboard.url(`📥 Download ${abiOf(p.file)} APK`, postUrl(p.id))
-    ])
-  )
+    const bodyLines = notesToHtml(postBody)
+    const bodyHtml = joinTextWithEntities(bodyLines, '\n')
 
-  const enBlock = en ? joinTextWithEntities(bullets(en), '\n') : html`• See the channel`
-  const ukBlock = uk ? joinTextWithEntities(bullets(uk), '\n') : html`• Дивіться канал`
-  const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
-
-  const release = html`
-    #release
-    <br/>
-    📡 entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
-    ${extra ? html`<br/><br/>${extra}` : ''}
-    <br/><br/>
-    🇺🇸 EN:
-    <br/>
-    <blockquote expandable>
-    ${enBlock}
-    </blockquote>
-    🇺🇦 UK:
-    <br/>
-    <blockquote expandable>
-    ${ukBlock}
-    </blockquote>
-    <br/><br/>
-    @entinyGram
-  `
-
-  // 3) Send the banner photo with the release text as caption and inline download buttons to the main channel.
-  const releaseText = release.text
-  if (releaseText.length <= 1024) {
-    try {
-      await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile }, {
-        caption: release,
-        replyMarkup,
-      })
-    } catch (e: any) {
-      if (e?.message?.includes('CAPTION_TOO_LONG')) {
-        await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
-        await tg.sendText(channelMain, release, { replyMarkup })
-      } else {
-        throw e
+    const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.svg')
+    let bannerFile: string | Buffer = `file:${bannerPath}`
+    if (bannerPath.endsWith('.svg')) {
+      try {
+        bannerFile = await sharp(bannerPath).png().toBuffer()
+      } catch (e) {
+        console.warn('Failed to convert SVG banner to PNG (sharp?), falling back to raw file', e)
       }
     }
-  } else {
-    try {
-      await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
-    } catch (e) {
-      console.warn('release: banner post failed (continuing):', e)
+
+    const release = html`
+      #release
+      <br/>
+      📡 entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
+      ${extra ? html`<br/><br/>${extra}` : ''}
+      <br/><br/>
+      ${bodyHtml}
+      <br/><br/>
+      @entinyGram
+    `
+
+    // 4) Send banner + release text to main channel.
+    const releaseText = release.text
+    if (releaseText.length <= 1024) {
+      try {
+        await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile }, {
+          caption: release,
+          replyMarkup,
+        })
+      } catch (e: any) {
+        if (e?.message?.includes('CAPTION_TOO_LONG')) {
+          await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
+          await tg.sendText(channelMain, release, { replyMarkup })
+        } else {
+          throw e
+        }
+      }
+    } else {
+      try {
+        await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
+      } catch (e) {
+        console.warn('release: banner post failed (continuing):', e)
+      }
+      await tg.sendText(channelMain, release, { replyMarkup })
     }
-    await tg.sendText(channelMain, release, { replyMarkup })
   }
 } finally {
   const exported = await tg.exportSession()

@@ -88,7 +88,8 @@ object SettingsBackupHelper {
             is InuConfig.LongItem -> raw is Number && raw.toLong() != prefs.getLong(key, item.default)
             is InuConfig.FloatItem -> raw is Number && raw.toFloat() != prefs.getFloat(key, item.default)
             is InuConfig.StringItem -> raw is String && raw != prefs.getString(key, item.default)
-            else -> false
+            // custom string-backed items (e.g. MenuOrderConfig) serialize to a JSON string in prefs
+            else -> raw is String && raw != prefs.getString(key, null)
         }
     }
 
@@ -154,6 +155,9 @@ object SettingsBackupHelper {
                         item is InuConfig.LongItem && raw is Number -> { putLong(key, raw.toLong()); true }
                         item is InuConfig.FloatItem && raw is Number -> { putFloat(key, raw.toFloat()); true }
                         item is InuConfig.StringItem && raw is String -> { putString(key, raw); true }
+                        // custom string-backed items (e.g. MenuOrderConfig) — write raw string;
+                        // item.load() below will parse it back through the item's own read()
+                        raw is String -> { putString(key, raw); true }
                         else -> false
                     }
                     if (ok) applied++

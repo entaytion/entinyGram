@@ -3,16 +3,17 @@ name: Build APK
 on:
   workflow_dispatch:
     inputs:
-      post-to-telegram:
-        description: Post the APK to the Telegram channel
+      mode:
+        description: |
+          Build mode:
+            release         — GitHub release only (APKs also go to @entinyGramCI)
+            release+tg      — GitHub release + post to @entinyGram main channel
         required: false
-        default: true
-        type: boolean
-      create-release:
-        description: Also create a GitHub release for this build
-        required: false
-        default: false
-        type: boolean
+        default: release
+        type: choice
+        options:
+          - release
+          - release+tg
 
 concurrency:
   group: build-apk-${{ github.ref }}
@@ -300,26 +301,31 @@ jobs:
           path: out
 
       - name: Create GitHub release
-        if: ${{ inputs.create-release }}
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           tag='${{ needs.build.outputs.tag }}'
           apk_arm64="out/${{ needs.build.outputs.apk-arm64 }}"
           apk_univ="out/${{ needs.build.outputs.apk-universal }}"
-          
-          # Use AI-generated English notes if available
+
+          # Use AI-generated English notes for GitHub (full markdown); guard against null
+          notes_en=''
           if [ -f "out/release-notes.json" ]; then
-            jq -r '.en' out/release-notes.json > release_body.md
+            notes_en=$(jq -r '.en // empty' out/release-notes.json)
+          fi
+          if [ -n "$notes_en" ]; then
+            printf '%s' "$notes_en" > release_body.md
           else
-            echo "Release $tag" > release_body.md
+            printf 'Release %s\n' "$tag" > release_body.md
           fi
-          
-          prev_tag=$(gh release view --json tagName -q .tagName 2>/dev/null || echo "")
-          if [ -n "$prev_tag" ]; then
-            echo -e "\n\n**Full Changelog**: https://github.com/entaytion/entinyGram/compare/${prev_tag}...${tag}" >> release_body.md
+
+          # Append compare link using the previous release tag
+          prev_tag=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+          if [ -n "$prev_tag" ] && [ "$prev_tag" != "$tag" ]; then
+            printf '\n\n**Full Changelog**: https://github.com/%s/compare/%s...%s\n' \
+              "$GITHUB_REPOSITORY" "$prev_tag" "$tag" >> release_body.md
           fi
-          
+
           gh release create "$tag" \
             --target "$GITHUB_SHA" \
             --title  "$tag" \
@@ -329,8 +335,7 @@ jobs:
             --clobber \
             "$apk_arm64" "$apk_univ"
 
-      - name: Upload to Telegram
-        if: ${{ inputs.post-to-telegram }}
+      - name: Upload to Telegram (CI channel + optional main channel)
         env:
           TELEGRAM_API_ID:       ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH:     ${{ secrets.TELEGRAM_API_HASH }}
@@ -339,7 +344,14 @@ jobs:
           TELEGRAM_CI_CHANNEL:   ${{ vars.TELEGRAM_CI_CHANNEL || vars.TELEGRAM_CHANNEL }}
           MTPROTO_SESSION:       ${{ secrets.MTPROTO_SESSION }}
           GH_VARS_TOKEN:         ${{ secrets.GH_VARS_TOKEN }}
-        run: bun run tsx scripts/ci/upload.ts out
+        run: |
+          # Always upload to CI channel.
+          # Only post to main channel when mode is "release+tg".
+          if [ '${{ inputs.mode }}' = 'release+tg' ]; then
+            bun run tsx scripts/ci/upload.ts out
+          else
+            bun run tsx scripts/ci/upload.ts out --ci-only
+          fi
 
       - name: Bump build variables
         if: ${{ vars.INU_BUILD != '' }}

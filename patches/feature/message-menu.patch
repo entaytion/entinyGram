@@ -5,19 +5,19 @@ Subject: visual tweaks for the message menu
 
 ---
  .../ui/ActionBar/ActionBarPopupWindow.java    |   4 +
- .../java/org/telegram/ui/ChatActivity.java    | 116 ++++++++++++++----
+ .../java/org/telegram/ui/ChatActivity.java    | 120 ++++++++++++++----
  .../ChatScrimPopupContainerLayout.java        |  18 ++-
  .../Reactions/CustomEmojiReactionsWindow.java |  13 +-
- .../Components/ReactionsContainerLayout.java  |  21 +++-
+ .../Components/ReactionsContainerLayout.java  |  21 ++-
  .../java/org/telegram/ui/MessageSeenView.java |   9 +-
  .../ui/SelectAnimatedEmojiDialog.java         |  10 +-
- 7 files changed, 152 insertions(+), 39 deletions(-)
+ 7 files changed, 154 insertions(+), 41 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
-@@ -416,6 +416,10 @@ public class ActionBarPopupWindow extends PopupWindow {
+@@ -421,6 +421,10 @@ public class ActionBarPopupWindow extends PopupWindow {
              linearLayout.addView(child, layoutParams);
          }
  
@@ -32,7 +32,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -30894,6 +30894,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -31114,6 +31114,10 @@ public class ChatActivity extends BaseFragment implements
              if (isReactionsViewAvailable || showMessageSeen || showSponsorInfo) {
                  flags |= ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK;
              }
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
  
              ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getParentActivity(), R.drawable.popup_fixed_alert4, themeDelegate, flags);
              popupLayout.setMinimumWidth(AndroidUtilities.dp(200));
-@@ -30902,6 +30906,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -31122,6 +31126,8 @@ public class ChatActivity extends BaseFragment implements
              shadowDrawable.getPadding(backgroundPaddings);
              popupLayout.setBackgroundColor(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground));
              MessageSeenView messageSeenView = null;
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
  
              boolean addGap = false;
  
-@@ -30933,12 +30939,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -31153,12 +31159,14 @@ public class ChatActivity extends BaseFragment implements
                      linearLayout.hasHeader = hasHeader;
                      linearLayout.setOrientation(LinearLayout.VERTICAL);
                      linearLayout.setLayoutParams(new FrameLayout.LayoutParams(AndroidUtilities.dp(200), AndroidUtilities.dp(6 * ReactedUsersListView.ITEM_HEIGHT_DP + (hasHeader ? 44 * 2 + 8 : 44)) + (!hasHeader ? 1 : 0)));
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
  
                      int[] foregroundIndex = new int[1];
                      ReactedUsersListView reactedUsersListView = null;
-@@ -30986,14 +30994,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -31206,14 +31214,16 @@ public class ChatActivity extends BaseFragment implements
                          }
                          tabsScrollView.setHorizontalScrollBarEnabled(false);
                          tabsScrollView.addView(tabsView);
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                          SparseIntArray cachedHeights = new SparseIntArray();
                          for (int i = 0; i < counters.size() + 1; i++) {
                              cachedHeights.put(i, head + AndroidUtilities.dp(ReactedUsersListView.ITEM_HEIGHT_DP * ReactedUsersListView.VISIBLE_ITEMS));
-@@ -31063,9 +31073,15 @@ public class ChatActivity extends BaseFragment implements
+@@ -31283,9 +31293,15 @@ public class ChatActivity extends BaseFragment implements
                                      reactedView.setSeenCallback(v::setSeenUsers);
                                  }
  
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                              }
  
                              @Override
-@@ -31112,8 +31128,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -31332,8 +31348,14 @@ public class ChatActivity extends BaseFragment implements
                              }
                          });
                          linearLayout.addView(pager, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
  
                          reactedUsersListView = new ReactedUsersListView(contentView.getContext(), themeDelegate, currentAccount, primaryMessage, null, false, true)
                                  .setSeenUsers(reactedView.getSeenUsers())
-@@ -31200,6 +31222,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -31420,6 +31442,11 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
  
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
                      foregroundIndex[0] = popupLayout.addViewToSwipeBack(linearLayout);
  
                      ReactedUsersListView finalReactedUsersListView = reactedUsersListView;
-@@ -31208,8 +31235,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -31428,8 +31455,12 @@ public class ChatActivity extends BaseFragment implements
                              popupLayout.getSwipeBack().openForeground(foregroundIndex[0]);
                          }
                      });
@@ -152,7 +152,7 @@ index 0000000..0000000 100644
                  }
  
                  if (message.messageOwner != null && message.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
-@@ -31243,7 +31274,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31463,7 +31494,7 @@ public class ChatActivity extends BaseFragment implements
                      messageSeenLayout.addView(messageSeenView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
                      MessageSeenView finalMessageSeenView = messageSeenView;
  
@@ -161,7 +161,7 @@ index 0000000..0000000 100644
                      cell.setItemHeight(44);
                      cell.setTextAndIcon(LocaleController.getString(R.string.Back), R.drawable.msg_arrow_back);
                      cell.getTextView().setPadding(LocaleController.isRTL ? 0 : AndroidUtilities.dp(40), 0, LocaleController.isRTL ? AndroidUtilities.dp(40) : 0, 0);
-@@ -31255,8 +31286,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -31475,8 +31506,10 @@ public class ChatActivity extends BaseFragment implements
                      linearLayout.setOrientation(LinearLayout.VERTICAL);
                      RecyclerListView listView2 = finalMessageSeenView.createListView();
                      backContainer.addView(cell);
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
                      backContainer.setOnClickListener(new View.OnClickListener() {
                          @Override
                          public void onClick(View view) {
-@@ -31302,7 +31335,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -31522,7 +31555,11 @@ public class ChatActivity extends BaseFragment implements
                              popupLayout.getSwipeBack().openForeground(foregroundIndex[0]);
                          }
                      });
@@ -187,7 +187,7 @@ index 0000000..0000000 100644
  
                      listView2.setOnItemClickListener((view1, position) -> {
                          TLObject object = finalMessageSeenView.users.get(position);
-@@ -31320,10 +31357,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -31540,10 +31577,19 @@ public class ChatActivity extends BaseFragment implements
                          presentFragment(fragment);
                      });
  
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
                  } else if (showPrivateMessageSeen) {
                      MessagePrivateSeenView messagePrivateSeenView = new MessagePrivateSeenView(getContext(), MessagePrivateSeenView.TYPE_SEEN, message, () -> {
                          closeMenu(true);
-@@ -31641,6 +31687,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -31861,6 +31907,8 @@ public class ChatActivity extends BaseFragment implements
                          popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
                      }
                  }
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
                  scrimPopupWindowItems = new ActionBarMenuSubItem[items.size()];
                  for (int a = 0, N = items.size(); a < N; a++) {
                      ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getParentActivity(), a == 0, a == N - 1, themeDelegate);
-@@ -31870,6 +31918,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31928,6 +31976,7 @@ public class ChatActivity extends BaseFragment implements
                      layout.addView(infoText, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.FILL));
                      popupLayout.addView(layout);
                  }
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
              }
  
              if (selectedObject != null && selectedObject.isEphemeral()) {
-@@ -31940,7 +31989,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -31999,7 +32048,9 @@ public class ChatActivity extends BaseFragment implements
                  if (isReactionsAvailable && (!tags || !getMessagesController().premiumFeaturesBlocked())) {
                      int pad = 22;
                      int sPad = 24;
@@ -237,7 +237,7 @@ index 0000000..0000000 100644
  
                      ReactionsContainerLayout finalReactionsLayout = reactionsLayout;
                      reactionsLayout.setDelegate(new ReactionsContainerLayout.ReactionsContainerDelegate() {
-@@ -31977,8 +32028,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32036,8 +32087,11 @@ public class ChatActivity extends BaseFragment implements
                          }
                      });
  
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.setReactionsLayout(reactionsLayout);
                      scrimPopupContainerLayout.setClipChildren(false);
                      MessageObject messageWithReactions = message;
-@@ -32012,6 +32066,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32071,6 +32125,9 @@ public class ChatActivity extends BaseFragment implements
  
                  boolean showNoForwards = (isPeerNoForwards() || message.messageOwner.noforwards && currentUser != null && currentUser.bot) && message.messageOwner.action == null && message.isSent() && !message.isEditing() && chatMode != MODE_SCHEDULED && chatMode != MODE_SAVED && getDialogId() != UserObject.VERIFY;
                  scrimPopupContainerLayout.addView(popupLayout, LayoutHelper.createLinearRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT, isReactionsAvailable ? 16 : 0, 0, isReactionsAvailable ? 36 : 0, 0));
@@ -261,7 +261,7 @@ index 0000000..0000000 100644
                  scrimPopupContainerLayout.setPopupWindowLayout(popupLayout);
                  if (showNoForwards) {
                      popupLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-@@ -32045,7 +32102,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32104,7 +32161,11 @@ public class ChatActivity extends BaseFragment implements
                      FrameLayout fl = new FrameLayout(contentView.getContext());
                      fl.setBackground(shadowDrawable2);
                      fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
@@ -274,7 +274,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.applyViewBottom(fl);
                  }
  
-@@ -32068,7 +32129,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32127,7 +32188,11 @@ public class ChatActivity extends BaseFragment implements
                      FrameLayout fl = new FrameLayout(contentView.getContext());
                      fl.setBackground(shadowDrawable2);
                      fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.applyViewBottom(fl);
                  }
  
-@@ -32103,9 +32168,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32162,9 +32227,11 @@ public class ChatActivity extends BaseFragment implements
                          }
  
                          if (stickerSets.size() > 0 && !getMessagesController().premiumFeaturesBlocked()) {
@@ -299,7 +299,7 @@ index 0000000..0000000 100644
  
                              View button = new MessageContainsEmojiButton(currentAccount, contentView.getContext(), themeDelegate, stickerSets, MessageContainsEmojiButton.EMOJI_TYPE);
                              button.setOnClickListener(e -> {
-@@ -32176,6 +32243,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32235,6 +32302,9 @@ public class ChatActivity extends BaseFragment implements
              }
              scrimPopupWindow.setFocusable(true);
              scrimPopupContainerLayout.measure(View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST));
@@ -309,11 +309,29 @@ index 0000000..0000000 100644
              scrimPopupWindow.setInputMethodMode(ActionBarPopupWindow.INPUT_METHOD_NOT_NEEDED);
              scrimPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
              scrimPopupWindow.getContentView().setFocusableInTouchMode(true);
+@@ -36389,7 +36459,7 @@ public class ChatActivity extends BaseFragment implements
+ 
+     private void processExternalUrl(int type, String url, CharacterStyle span, ChatMessageCell cell, boolean forceAlert, boolean forceNoIV) {
+         LaunchActivity launchActivity = getParentActivity() instanceof LaunchActivity ? (LaunchActivity) getParentActivity() : LaunchActivity.instance;
+-        if (url != null && (url.startsWith("tg://settings/") || url.startsWith("tg:settings/")) && launchActivity != null && desu.inugram.SearchRegistry.tryHandleDeepLink(launchActivity, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) {
++        if (url != null && launchActivity != null && desu.inugram.SearchRegistry.tryHandleDeepLink(launchActivity, new Intent(Intent.ACTION_VIEW, Uri.parse(url)))) {
+             return;
+         }
+         try {
+@@ -42010,7 +42080,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     private boolean openLinkInternally(String urlFinal, ChatMessageCell cell, CharacterStyle span, int fromMessageId, int fromMessageProgressType) {
+-        if (urlFinal != null && (urlFinal.startsWith("tg://settings/") || urlFinal.startsWith("tg:settings/")) && getParentActivity() instanceof LaunchActivity) {
++        if (urlFinal != null && getParentActivity() instanceof LaunchActivity) {
+             if (desu.inugram.SearchRegistry.tryHandleDeepLink((LaunchActivity) getParentActivity(), new Intent(Intent.ACTION_VIEW, Uri.parse(urlFinal)))) {
+                 return true;
+             }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatScrimPopupContainerLayout.java
-@@ -163,9 +163,19 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -164,9 +164,19 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
          }
      }
  
@@ -335,7 +353,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -174,7 +184,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -175,7 +185,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
      }
  
      public void setExpandSize(float expandSize) {
@@ -344,7 +362,7 @@ index 0000000..0000000 100644
          this.expandSize = expandSize;
          updateBottomViewPosition();
      }
-@@ -192,7 +202,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
+@@ -193,7 +203,7 @@ public class ChatScrimPopupContainerLayout extends LinearLayout {
              bottomView.setAlpha(v);
              float scale = 0.5f + v * 0.5f;
              bottomView.setPivotX(bottomView.getMeasuredWidth());
@@ -411,7 +429,7 @@ index 0000000..0000000 100644
  
      private boolean mirrorX;
      private boolean isFlippedVertically;
-@@ -444,6 +444,15 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -446,6 +446,15 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
          MediaDataController.getInstance(currentAccount).preloadDefaultReactions();
      }
  
@@ -427,7 +445,7 @@ index 0000000..0000000 100644
      public boolean showExpandableReactions() {
          return showExpandableReactions;
      }
-@@ -581,8 +590,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -583,8 +592,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
          if (showCustomEmojiReaction()) {
              int i = 0;
              int n = (AndroidUtilities.displaySize.x - dp(36)) / dp(34);
@@ -439,7 +457,7 @@ index 0000000..0000000 100644
              }
              if (n < 1) {
                  n = 1;
-@@ -2459,7 +2469,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -2474,7 +2484,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
              canvas.restore();
  
              canvas.save();
@@ -448,7 +466,7 @@ index 0000000..0000000 100644
              super.dispatchDraw(canvas);
              canvas.restore();
          }
-@@ -2515,6 +2525,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -2530,6 +2540,9 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                      customEmojiReactionsIconView = new InternalImageView(getContext());
                      customEmojiReactionsIconView.setImageResource(R.drawable.msg_reactions_expand);
                      customEmojiReactionsIconView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -462,7 +480,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSeenView.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSeenView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSeenView.java
-@@ -296,7 +296,8 @@ public class MessageSeenView extends FrameLayout {
+@@ -298,7 +298,8 @@ public class MessageSeenView extends FrameLayout {
              @Override
              protected void onMeasure(int widthSpec, int heightSpec) {
                  int height = MeasureSpec.getSize(heightSpec);
@@ -472,7 +490,7 @@ index 0000000..0000000 100644
  
                  if (listViewTotalHeight > height) {
                      listViewTotalHeight = height;
-@@ -310,7 +311,11 @@ public class MessageSeenView extends FrameLayout {
+@@ -312,7 +313,11 @@ public class MessageSeenView extends FrameLayout {
              @Override
              public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                  int p = parent.getChildAdapterPosition(view);
