@@ -1,4 +1,4 @@
-package desu.inugram.ui
+﻿package desu.inugram.ui
 
 import android.app.Activity
 import android.content.Context
@@ -6,12 +6,11 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.widget.FrameLayout
+import desu.inugram.helpers.update.ApkInstaller
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
-import org.telegram.messenger.FileLoader
-import org.telegram.messenger.ImageLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
@@ -89,69 +88,74 @@ class UpdateRowView(context: Context) : FrameLayout(context) {
 
     private fun handleClick() {
         if (!SharedConfig.isAppUpdateAvailable()) return
-        val account = UserConfig.selectedAccount
         when (iconProgress.icon) {
             MediaActionDrawable.ICON_DOWNLOAD -> {
-                UpdateHelper.startDownload(account)
+                UpdateHelper.startDownload()
                 refresh(true)
             }
             MediaActionDrawable.ICON_CANCEL -> {
-                UpdateHelper.cancelDownload(account)
+                UpdateHelper.cancelDownload()
                 refresh(true)
             }
             else -> {
                 val activity = (context as? Activity) ?: return
-                ApplicationLoader.applicationLoaderInstance
-                    ?.openApkInstall(activity, SharedConfig.pendingAppUpdate.document)
+                val apkFile = UpdateHelper.getCompletedApkFile()
+                if (apkFile != null) {
+                    val doc = SharedConfig.pendingAppUpdate?.document
+                    if (doc != null) {
+                        ApplicationLoader.applicationLoaderInstance?.openApkInstall(activity, doc)
+                    } else {
+                        ApkInstaller.installFromFile(activity, apkFile)
+                    }
+                }
             }
         }
     }
 
     fun refresh(animated: Boolean) {
         if (!SharedConfig.isAppUpdateAvailable()) return
-        val account = UserConfig.selectedAccount
-        val doc = SharedConfig.pendingAppUpdate.document
-        val fileName = FileLoader.getAttachFileName(doc)
-        val path = FileLoader.getInstance(account).getPathToAttach(doc, true)
+        val apkFile = UpdateHelper.getCompletedApkFile()
         val showSize: Boolean
-        if (path != null && path.exists()) {
-            iconProgress.setIcon(MediaActionDrawable.ICON_UPDATE, true, animated)
-            textView.setText(LocaleController.getString(R.string.AppUpdateNow), animated)
-            showSize = false
-        } else if (UpdateHelper.isPendingStart || FileLoader.getInstance(account).isLoadingFile(fileName)) {
-            iconProgress.setIcon(MediaActionDrawable.ICON_CANCEL, true, animated)
-            iconProgress.setProgress(0f, false)
-            val p = ImageLoader.getInstance().getFileProgress(fileName) ?: 0f
-            textView.setText(
-                LocaleController.formatString(R.string.AppUpdateDownloading, (p * 100).toInt()),
-                animated,
-            )
-            showSize = false
-        } else {
-            iconProgress.setIcon(MediaActionDrawable.ICON_DOWNLOAD, true, animated)
-            textView.setText(LocaleController.getString(R.string.AppUpdate), animated)
-            showSize = true
+
+        when {
+            apkFile != null -> {
+                iconProgress.setIcon(MediaActionDrawable.ICON_UPDATE, true, animated)
+                textView.setText(LocaleController.getString(R.string.AppUpdateNow), animated)
+                showSize = false
+            }
+            UpdateHelper.isPendingStart || UpdateHelper.isDownloading() -> {
+                iconProgress.setIcon(MediaActionDrawable.ICON_CANCEL, true, animated)
+                iconProgress.setProgress(0f, false)
+                val p = UpdateHelper.getDownloadProgress() ?: 0f
+                textView.setText(
+                    LocaleController.formatString(R.string.AppUpdateDownloading, (p * 100).toInt()),
+                    animated,
+                )
+                showSize = false
+            }
+            else -> {
+                iconProgress.setIcon(MediaActionDrawable.ICON_DOWNLOAD, true, animated)
+                textView.setText(LocaleController.getString(R.string.AppUpdate), animated)
+                showSize = true
+            }
         }
+
+        val sizeBytes = SharedConfig.pendingAppUpdate?.document?.size
+            ?: if (UpdateHelper.pendingApkSize > 0) UpdateHelper.pendingApkSize else 0L
         sizeText.setText(
-            if (showSize) AndroidUtilities.formatFileSize(doc.size) else null,
+            if (showSize && sizeBytes > 0) AndroidUtilities.formatFileSize(sizeBytes) else null,
             animated,
         )
     }
 
+    /** Called periodically to refresh progress during an active download */
     fun applyProgress(args: Array<out Any?>?) {
-        if (args == null) return
         if (!SharedConfig.isAppUpdateAvailable()) return
-        val location = args.getOrNull(0) as? String ?: return
-        val fileName = FileLoader.getAttachFileName(SharedConfig.pendingAppUpdate.document)
-        if (fileName != null && fileName == location) {
-            val loadedSize = (args.getOrNull(1) as? Long) ?: return
-            val totalSize = (args.getOrNull(2) as? Long) ?: return
-            val loadProgress = loadedSize / totalSize.toFloat()
-            iconProgress.setProgress(loadProgress, true)
-            textView.setText(
-                LocaleController.formatString(R.string.AppUpdateDownloading, (loadProgress * 100).toInt()),
-                true,
-            )
-        }
+        val p = UpdateHelper.getDownloadProgress() ?: return
+        iconProgress.setProgress(p, true)
+        textView.setText(
+            LocaleController.formatString(R.string.AppUpdateDownloading, (p * 100).toInt()),
+            true,
+        )
     }
 }

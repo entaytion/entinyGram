@@ -311,11 +311,9 @@ object DrawerHelper {
         val type: Int
         val downloadProgress: Float
         if (SharedConfig.isAppUpdateAvailable()) {
-            val doc = SharedConfig.pendingAppUpdate.document
-            val fileName = FileLoader.getAttachFileName(doc)
-            if (UpdateHelper.isPendingStart || FileLoader.getInstance(UserConfig.selectedAccount).isLoadingFile(fileName)) {
+            if (UpdateHelper.isPendingStart || UpdateHelper.isDownloading()) {
                 type = MenuDrawable.TYPE_UDPATE_DOWNLOADING
-                downloadProgress = ImageLoader.getInstance().getFileProgress(fileName) ?: 0f
+                downloadProgress = UpdateHelper.getDownloadProgress() ?: 0f
             } else {
                 type = MenuDrawable.TYPE_UDPATE_AVAILABLE
                 downloadProgress = 0f

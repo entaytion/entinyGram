@@ -21,7 +21,6 @@ import org.telegram.messenger.FileLoader
 import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
-import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.BottomSheet
@@ -183,11 +182,16 @@ class UpdateAppAlertDialog(
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
             movementMethod = AndroidUtilities.LinkMovementMethodMy()
             setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink))
-            text = LocaleController.formatString(
-                R.string.AppUpdateVersionAndSize,
-                appUpdate.version,
-                AndroidUtilities.formatFileSize(appUpdate.document.size)
-            )
+            val sizeBytes = appUpdate.document?.size ?: UpdateHelper.pendingApkSize
+            text = if (sizeBytes > 0) {
+                LocaleController.formatString(
+                    R.string.AppUpdateVersionAndSize,
+                    appUpdate.version,
+                    AndroidUtilities.formatFileSize(sizeBytes)
+                )
+            } else {
+                LocaleController.formatString(R.string.AppUpdate)
+            }
             gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
         }
         linearLayout.addView(
@@ -238,11 +242,7 @@ class UpdateAppAlertDialog(
             textColor = Theme.getColor(Theme.key_featuredStickers_buttonText),
             bold = true,
         ) {
-            FileLoader.getInstance(accountNum).loadFile(
-                appUpdate.document, "update", FileLoader.PRIORITY_NORMAL, 1,
-            )
-            NotificationCenter.getGlobalInstance()
-                .postNotificationName(NotificationCenter.appUpdateLoading)
+            UpdateHelper.startDownload()
             dismiss()
         }
         val buttonRow = LinearLayout(context).apply {

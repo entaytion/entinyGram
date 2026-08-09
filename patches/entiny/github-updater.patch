@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 10 Aug 2026 00:43:19 +0300
+Subject: Switch in-app updater to GitHub Releases API
+
+---
+ .../src/main/java/org/telegram/messenger/SharedConfig.java  | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+@@ -768,7 +768,11 @@ public class SharedConfig {
+     }
+ 
+     public static boolean isAppUpdateAvailable() {
+-        if (pendingAppUpdate == null || pendingAppUpdate.document == null || !ApplicationLoader.isStandaloneBuild()) {
++        if (pendingAppUpdate == null || !ApplicationLoader.isStandaloneBuild()) {
++            return false;
++        }
++        // Accept both document-based (TG) and url-based (GitHub) updates.
++        if (pendingAppUpdate.document == null && (pendingAppUpdate.url == null || pendingAppUpdate.url.isEmpty())) {
+             return false;
+         }
+         int currentVersion;

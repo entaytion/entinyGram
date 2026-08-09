@@ -68,6 +68,12 @@ object ApkInstaller {
             AndroidUtilities.openForView(document, false, activity)
             return
         }
+        installFromFile(activity, apk)
+    }
+
+    /** Install an APK from a local File (used when downloaded via DownloadManager, no TLRPC.Document) */
+    fun installFromFile(activity: Activity, apk: File) {
+        if (!apk.exists()) return
         if (dialog?.isShowing == true) return
 
         val progressBar = buildProgressBar(activity)
@@ -90,7 +96,6 @@ object ApkInstaller {
                         activity,
                         LocaleController.getString(R.string.ErrorOccurred) + "\n" + (err.localizedMessage ?: ""),
                     ).show()
-                    AndroidUtilities.openForView(document, false, activity)
                 }
                 runCatching { activity.unregisterReceiver(receiver) }
                 return@postRunnable
