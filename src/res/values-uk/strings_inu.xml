@@ -240,6 +240,7 @@
     <string name="InuAlreadyInTargetLanguage">Це повідомлення вже мовою %1$s.</string>
     <string name="InuTranslateInstantViewSkipped">Мову джерела додано до списку виключень.</string>
     <string name="InuTranslateInstantViewPartial">Деякі розділи не вдалося перекласти.</string>
+    <string name="InuTranslation">Переклад</string>
     <string name="InuTranslator">Перекладач</string>
     <string name="InuTranslationTarget">Цільова мова</string>
     <string name="InuTranslationTargetFollowApp">Як у додатку</string>

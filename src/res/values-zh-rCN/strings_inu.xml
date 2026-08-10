@@ -169,6 +169,7 @@
     <string name="InuTranslating">翻译中…</string>
     <string name="InuTranslateInstantViewSkipped">源语言在你的「不翻译」列表中。</string>
     <string name="InuTranslateInstantViewPartial">部分段落无法翻译。</string>
+    <string name="InuTranslation">翻译</string>
     <string name="InuTranslator">翻译</string>
     <string name="InuTranslationTarget">目标语言</string>
     <string name="InuTranslationTargetFollowApp">跟随应用</string>

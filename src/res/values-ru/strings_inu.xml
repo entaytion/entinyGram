@@ -169,6 +169,7 @@
     <string name="InuTranslating">Перевод…</string>
     <string name="InuTranslateInstantViewSkipped">Язык оригинала указан в вашем списке «Не переводить».</string>
     <string name="InuTranslateInstantViewPartial">Некоторые разделы не удалось перевести.</string>
+    <string name="InuTranslation">Перевод</string>
     <string name="InuTranslator">Переводчик</string>
     <string name="InuTranslationTarget">Язык перевода</string>
     <string name="InuTranslationTargetFollowApp">Как в приложении</string>

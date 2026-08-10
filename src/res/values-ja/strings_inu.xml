@@ -170,6 +170,7 @@
     <string name="InuAlreadyInTargetLanguage">このメッセージはすでに %1$s です。</string>
     <string name="InuTranslateInstantViewSkipped">元の言語は「翻訳しない」リストに含まれています。</string>
     <string name="InuTranslateInstantViewPartial">一部のセクションを翻訳できませんでした。</string>
+    <string name="InuTranslation">翻訳</string>
     <string name="InuTranslator">翻訳</string>
     <string name="InuTranslationTarget">翻訳先の言語</string>
     <string name="InuTranslationTargetFollowApp">アプリに合わせる</string>

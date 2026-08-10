@@ -250,6 +250,7 @@
     <string name="InuAlreadyInTargetLanguage">This message is already in %1$s.</string>
     <string name="InuTranslateInstantViewSkipped">Source language is in your Do Not Translate list.</string>
     <string name="InuTranslateInstantViewPartial">Some sections could not be translated.</string>
+    <string name="InuTranslation">Translation</string>
     <string name="InuTranslator">Translator</string>
     <string name="InuTranslationTarget">Target language</string>
     <string name="InuTranslationTargetFollowApp">Follow app</string>

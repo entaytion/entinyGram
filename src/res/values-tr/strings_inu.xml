@@ -241,6 +241,7 @@
     <string name="InuAlreadyInTargetLanguage">Bu mesaj zaten %1$s dilinde.</string>
     <string name="InuTranslateInstantViewSkipped">Kaynak dil, Çevirme listenizde yer alıyor.</string>
     <string name="InuTranslateInstantViewPartial">Bazı bölümler çevrilemedi.</string>
+    <string name="InuTranslation">Çeviri</string>
     <string name="InuTranslator">Çevirmen</string>
     <string name="InuTranslationTarget">Hedef dil</string>
     <string name="InuTranslationTargetFollowApp">Uygulama dilini takip et</string>
