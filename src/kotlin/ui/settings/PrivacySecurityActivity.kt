@@ -34,7 +34,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         if (!PasscodeHelper.isSettingsHidden()) {
             items.add(
-                UItem.asButton(
+                mkSubPageButton(
                     BUTTON_PASSCODE,
                     R.drawable.msg_permissions,
                     LocaleController.getString(R.string.InuPerAccountPasscode)
@@ -43,7 +43,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         }
         if (!ParanoiaHelper.isParanoia()) {
             items.add(
-                UItem.asButton(
+                mkSubPageButton(
                     BUTTON_PARANOIA,
                     R.drawable.menu_hide_gift,
                     LocaleController.getString(R.string.InuParanoiaMode)

@@ -53,7 +53,7 @@ class PasscodeSettingsActivity : SettingsPageActivity() {
             return
         }
         items.add(
-            UItem.asButton(
+            mkSubPageButton(
                 OPEN_STOCK,
                 R.drawable.msg_permissions,
                 LocaleController.getString(R.string.InuPasscodeOpenStockSettings)

@@ -30,6 +30,16 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Ghost Mode Section
+        items.add(
+            mkSubPageButton(
+                BUTTON_GHOST,
+                R.drawable.inu_ghost,
+                LocaleController.getString(R.string.InuGhostMode)
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         // Anti-deletion Section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)))
         items.add(
@@ -272,6 +282,7 @@ class TosSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
             BUTTON_BETA_INFO -> showBetaBottomSheet()
+            BUTTON_GHOST -> presentFragment(GhostModeActivity())
             TOGGLE_SAVE_SELF_DESTRUCT -> {
                 val new = InuConfig.SAVE_SELF_DESTRUCT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -305,6 +316,7 @@ class TosSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val BUTTON_BETA_INFO = InuUtils.generateId()
+        private val BUTTON_GHOST = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()

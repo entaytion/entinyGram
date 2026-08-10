@@ -912,4 +912,24 @@ object InuConfig {
     @JvmField
     val BIOMETRIC_ALLOW_DEVICE_CREDENTIAL = BoolItem("biometric_allow_device_credential", false)
 
+    // --- ghost mode (invisible mode) ---
+    // Sub-toggles default to "hide everything" so enabling the master switch is a full ghost.
+    @JvmField
+    val GHOST_MODE = BoolItem("ghost_mode", false)
+
+    @JvmField
+    val GHOST_HIDE_READ = BoolItem("ghost_hide_read", true)
+
+    @JvmField
+    val GHOST_HIDE_STORY_READ = BoolItem("ghost_hide_story_read", true)
+
+    @JvmField
+    val GHOST_HIDE_ONLINE = BoolItem("ghost_hide_online", true)
+
+    @JvmField
+    val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", true)
+
+    @JvmField
+    val GHOST_OFFLINE_AFTER_ONLINE = BoolItem("ghost_offline_after_online", false)
+
 }

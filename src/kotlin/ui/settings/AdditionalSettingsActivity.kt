@@ -64,7 +64,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuBackupExport)))
         items.add(UItem.asButton(BUTTON_IMPORT, R.drawable.msg_download, LocaleController.getString(R.string.InuBackupImport)))
-        items.add(UItem.asButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
+        items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
         items.add(UItem.asShadow(null))
 
         if (BuildVars.DEBUG_VERSION) {

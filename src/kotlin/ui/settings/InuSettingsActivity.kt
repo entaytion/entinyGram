@@ -65,7 +65,7 @@ class InuSettingsActivity : SettingsPageActivity() {
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuCategories)))
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.msg_palette, LocaleController.getString(R.string.InuCategoryAppearance)))
-        items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.Chats)))
+        items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.InuCategoryChats)))
         items.add(mkSubPageButton(CAT_MESSAGES, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessages)))
         items.add(mkSubPageButton(CAT_AI, R.drawable.input_ai_star, LocaleController.getString(R.string.InuAiCompose)))
         items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.avd_speed, LocaleController.getString(R.string.InuCategoryBehavior)))

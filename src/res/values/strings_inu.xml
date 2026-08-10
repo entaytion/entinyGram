@@ -827,4 +827,21 @@
     <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
     <string name="InuCategoryPrivacy">Privacy &amp; Security</string>
     <string name="InuCategoryBackup">Backup &amp; System</string>
+
+    <string name="InuGhostMode">Ghost Mode</string>
+    <string name="InuGhostModeMaster">Ghost Mode</string>
+    <string name="InuGhostModeInfo">Hide your activity: incoming messages are not marked as read, and your online status, typing indicator and story views stay hidden.</string>
+    <string name="InuGhostFeatures">Hidden Activity</string>
+    <string name="InuGhostHideRead">Do not send read receipts</string>
+    <string name="InuGhostHideReadInfo">Messages are not marked as read on the server, so the other side never sees blue checkmarks.</string>
+    <string name="InuGhostHideStoryRead">Do not send story views</string>
+    <string name="InuGhostHideStoryReadInfo">Story reads and view counts are not reported to the author.</string>
+    <string name="InuGhostHideOnline">Hide online status</string>
+    <string name="InuGhostHideOnlineInfo">Always appear offline; your last seen stays frozen.</string>
+    <string name="InuGhostHideTyping">Hide typing and upload progress</string>
+    <string name="InuGhostHideTypingInfo">The typing, recording and upload progress states are never sent to the other side.</string>
+    <string name="InuGhostOfflineAfterOnline">Go offline right after going online</string>
+    <string name="InuGhostOfflineAfterOnlineInfo">While in ghost mode, your online status is replaced with an offline one a few seconds after going online, so last seen stays fresh but you never stay online.</string>
+    <string name="InuGhostEnabled">Ghost Mode enabled</string>
+    <string name="InuGhostDisabled">Ghost Mode disabled</string>
 </resources>

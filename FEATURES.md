@@ -187,6 +187,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
+- 📡 ghost mode: master switch plus per-feature toggles to hide your activity — no read receipts (incl. secret chats/media), no story reads/views, no online status, no typing/recording/upload progress; optional "go offline right after going online" — *modeled after [AyuGram](https://github.com/AyuGram)*
 
 ## behavior
 

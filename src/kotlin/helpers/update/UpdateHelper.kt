@@ -1,4 +1,4 @@
-﻿package desu.inugram.helpers.update
+package desu.inugram.helpers.update
 
 import android.app.DownloadManager
 import android.content.Context
@@ -284,7 +284,7 @@ object UpdateHelper {
         val conn = (URL(urlStr).openConnection() as java.net.HttpURLConnection).apply {
             setRequestProperty("Accept", "application/vnd.github+json")
             setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
-            setRequestProperty("User-Agent", "entinyGram/${BuildConfig.VERSION_NAME}")
+            setRequestProperty("User-Agent", "entinyGram/${BuildConfig.BUILD_VERSION_STRING}")
             connectTimeout = 15_000
             readTimeout    = 15_000
         }

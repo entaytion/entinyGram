@@ -434,7 +434,6 @@
     <string name="InuOldMentionIndicator">Класичний індикатор згадок</string>
 
     <string name="InuShowForwardTime">Показувати час пересилання</string>
-    <string name="InuCompactForwarded">Компактне інформування про пересилання</string>
     <string name="InuCompactEdited">Компактне інформування про редагування</string>
 
     <string name="InuAddToStickersGifs">Додати до Наліпок/GIF</string>
@@ -652,13 +651,9 @@
     <string name="InuCrashNotifText">Натисніть для перезапуску</string>
 
     <string name="InuLogs">Відладка</string>
-    <string name="InuLogsDesc">Журнали роботи клієнта</string>
-    <string name="InuLogsEnable">Увімкнути відладку</string>
-    <string name="InuLogsEnableInfo">Записує розширені журнали роботи додатка на диск</string>
     <string name="InuLogsShare">Поділитися логами</string>
     <string name="InuLogsClear">Очистити логи</string>
     <string name="InuLogsCleared">Логи очищено</string>
-    <string name="InuLogsEmpty">Логи відсутні</string>
 
     <string name="InuTOS">TOS (Обхід обмежень)</string>
     <string name="InuSelfDestructMedia">Самознищуване медіа</string>
@@ -835,4 +830,21 @@
     <string name="InuAiReasoningEffort">Рівень зусиль ШІ</string>
     <string name="InuAiReasoningInfo">Передає reasoning_effort та токени міркувань для логічних моделей (o1, o3-mini, DeepSeek R1, Gemini Thinking)</string>
     <string name="InuAdditional">Додатково</string>
+
+    <string name="InuGhostMode">Режим примари</string>
+    <string name="InuGhostModeMaster">Режим примари</string>
+    <string name="InuGhostModeInfo">Сховати активність: повідомлення не відмічаються як прочитані, ваш статус онлайн, стан набору тексту та перегляди історій залишаються прихованими.</string>
+    <string name="InuGhostFeatures">Прихована активність</string>
+    <string name="InuGhostHideRead">Не надсилати підтвердження прочитання</string>
+    <string name="InuGhostHideReadInfo">Повідомлення не позначаються як прочитані на сервері — співрозмовник не бачить синіх галочок.</string>
+    <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
+    <string name="InuGhostHideStoryReadInfo">Перегляди сторіс та лічильник не передаються автору.</string>
+    <string name="InuGhostHideOnline">Приховати статус онлайн</string>
+    <string name="InuGhostHideOnlineInfo">Завжди відображатись як офлайн; час останнього перебування зафіксовано.</string>
+    <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>
+    <string name="InuGhostHideTypingInfo">Стани набору тексту, запису аудіо та завантаження файлів не надсилаються співрозмовнику.</string>
+    <string name="InuGhostOfflineAfterOnline">Переходити офлайн одразу після входу в мережу</string>
+    <string name="InuGhostOfflineAfterOnlineInfo">У режимі примари ваш статус онлайн замінюється офлайн через кілька секунд після підключення — час останнього перебування оновлюється, але ви ніколи не залишаєтесь онлайн.</string>
+    <string name="InuGhostEnabled">Режим примари увімкнено</string>
+    <string name="InuGhostDisabled">Режим примари вимкнено</string>
 </resources>

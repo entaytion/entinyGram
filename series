@@ -288,3 +288,4 @@ entiny/api-credentials.patch
 feature/message-menu.patch
 entiny/adblock.patch
 entiny/github-updater.patch
+entiny/ghost-mode.patch

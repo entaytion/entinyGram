@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 10 Aug 2026 08:11:28 +0300
+Subject: Add ghost mode (invisible mode) for read receipts, typing and online status
+
+---
+ .../src/main/java/org/telegram/tgnet/ConnectionsManager.java   | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -386,6 +386,9 @@ public class ConnectionsManager extends BaseController {
+         if (BuildVars.LOGS_ENABLED) {
+             FileLog.d("send request " + object + " with token = " + requestToken);
+         }
++        if (desu.inugram.helpers.security.GhostHelper.processSendRequest(object, currentAccount, onComplete, onCompleteTimestamp)) {
++            return;
++        }
+         try {
+             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
+             object.serializeToStream(buffer);
