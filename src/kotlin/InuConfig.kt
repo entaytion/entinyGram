@@ -932,4 +932,10 @@ object InuConfig {
     @JvmField
     val GHOST_OFFLINE_AFTER_ONLINE = BoolItem("ghost_offline_after_online", false)
 
+    // --- unreader (read messages without marking them as read) ---
+    // Standalone toggle, independent of ghost mode: chats stay unread locally and no
+    // read receipts reach the other side.
+    @JvmField
+    val UNREADER = BoolItem("unreader", false)
+
 }

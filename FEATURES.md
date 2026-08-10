@@ -218,6 +218,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 ## TOS
 
 - 📡 **save self-destructing media**: view-once photos, videos and video messages show as normal media and can be saved or forwarded (disabled by default)
+- 📡 **unreader**: messages are never marked as read — opening a chat keeps the unread badge and no read receipts reach the other side; standalone toggle in Settings > TOS, independent of ghost mode
 - 📡 allow saving any story to gallery directly, bypassing Telegram Premium requirements and download restrictions
 - 📡 **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
 - 📡 **save edit history**: view previous message versions (marked with ✏️) in a message bubble view with media support

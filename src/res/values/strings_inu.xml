@@ -844,4 +844,7 @@
     <string name="InuGhostOfflineAfterOnlineInfo">While in ghost mode, your online status is replaced with an offline one a few seconds after going online, so last seen stays fresh but you never stay online.</string>
     <string name="InuGhostEnabled">Ghost Mode enabled</string>
     <string name="InuGhostDisabled">Ghost Mode disabled</string>
+
+    <string name="InuUnreader">Unreader</string>
+    <string name="InuUnreaderInfo">Messages are never marked as read: opening a chat keeps the unread badge, and no read receipts reach the other side.</string>
 </resources>

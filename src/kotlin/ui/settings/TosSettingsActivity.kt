@@ -40,6 +40,18 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Unreader Section
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuUnreader)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_UNREADER,
+                R.string.InuUnreader,
+                R.string.InuUnreaderInfo,
+                InuConfig.UNREADER.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         // Anti-deletion Section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)))
         items.add(
@@ -283,6 +295,10 @@ class TosSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_BETA_INFO -> showBetaBottomSheet()
             BUTTON_GHOST -> presentFragment(GhostModeActivity())
+            TOGGLE_UNREADER -> {
+                val new = InuConfig.UNREADER.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_SAVE_SELF_DESTRUCT -> {
                 val new = InuConfig.SAVE_SELF_DESTRUCT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -317,6 +333,7 @@ class TosSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_BETA_INFO = InuUtils.generateId()
         private val BUTTON_GHOST = InuUtils.generateId()
+        private val TOGGLE_UNREADER = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
@@ -332,6 +349,7 @@ class TosSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_autodelete,
             factory = ::TosSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("unreader", R.string.InuUnreader, TOGGLE_UNREADER),
                 SearchRegistry.Entry("save-self-destruct", R.string.InuSaveSelfDestruct, TOGGLE_SAVE_SELF_DESTRUCT),
                 SearchRegistry.Entry("save-any-story", R.string.InuSaveAnyStory, TOGGLE_SAVE_ANY_STORY),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),

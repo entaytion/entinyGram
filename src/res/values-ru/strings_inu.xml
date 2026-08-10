@@ -840,4 +840,7 @@
     <string name="InuAdditional">Дополнительно</string>
     <string name="InuEditHistoryDiff">Подсвечивать изменения текста (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Отображать удаленный текст красным зачеркиванием, а добавленный зеленым в истории изменений</string>
+
+    <string name="InuUnreader">Нечиталка</string>
+    <string name="InuUnreaderInfo">Сообщения не помечаются прочитанными: при открытии чата значок непрочитанного сохраняется, а отчёты о прочтении не отправляются собеседнику.</string>
 </resources>

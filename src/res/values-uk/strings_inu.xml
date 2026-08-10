@@ -847,4 +847,7 @@
     <string name="InuGhostOfflineAfterOnlineInfo">У режимі примари ваш статус онлайн замінюється офлайн через кілька секунд після підключення — час останнього перебування оновлюється, але ви ніколи не залишаєтесь онлайн.</string>
     <string name="InuGhostEnabled">Режим примари увімкнено</string>
     <string name="InuGhostDisabled">Режим примари вимкнено</string>
+
+    <string name="InuUnreader">Антипрочитання</string>
+    <string name="InuUnreaderInfo">Повідомлення ніколи не позначаються як прочитані: відкриття чату зберігає лічильник непрочитаних і не надсилає підтвердження прочитання іншій стороні.</string>
 </resources>
