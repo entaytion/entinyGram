@@ -20,6 +20,28 @@ class TosSettingsActivity : SettingsPageActivity() {
 
     private var cachedSizeText: String? = null
 
+    private val selfDestructGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuSelfDestructMedia),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuSaveSelfDestruct, InuConfig.SAVE_SELF_DESTRUCT, TOGGLE_SAVE_SELF_DESTRUCT),
+            ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructMedia, InuConfig.SAVE_SELF_DESTRUCT_MEDIA, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
+            ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructText, InuConfig.SAVE_SELF_DESTRUCT_TEXT, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
+            ExpandableBoolGroup.Option(R.string.InuSaveSecretChatContent, InuConfig.SAVE_SECRET_CHAT_CONTENT, TOGGLE_SAVE_SECRET_CHAT_CONTENT),
+            ExpandableBoolGroup.Option(R.string.InuSaveViewOnceMedia, InuConfig.SAVE_VIEW_ONCE_MEDIA, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
+            ExpandableBoolGroup.Option(R.string.InuSaveTimedMessages, InuConfig.SAVE_TIMED_MESSAGES, TOGGLE_SAVE_TIMED_MESSAGES),
+        ),
+        sectionId = SECTION_SELF_DESTRUCT_SAVE,
+    ).apply { expanded = true }
+
+    private val deletedEditedGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuDeletedEditedSave),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuSaveDeletedMessages, InuConfig.SAVE_DELETED_MESSAGES, TOGGLE_SAVE_DELETED_MESSAGES),
+            ExpandableBoolGroup.Option(R.string.InuSaveEditedMessages, InuConfig.SAVE_EDITED_MESSAGES, TOGGLE_SAVE_EDITED_MESSAGES),
+        ),
+        sectionId = SECTION_DELETED_EDITED_SAVE,
+    ).apply { expanded = true }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(
             UItem.asButton(
@@ -53,39 +75,9 @@ class TosSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         // Anti-deletion Section
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuSelfDestructMedia)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SAVE_SELF_DESTRUCT,
-                R.string.InuSaveSelfDestruct,
-                R.string.InuSaveSelfDestructInfo,
-                InuConfig.SAVE_SELF_DESTRUCT.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SAVE_ANY_STORY,
-                R.string.InuSaveAnyStory,
-                R.string.InuSaveAnyStoryInfo,
-                InuConfig.SAVE_ANY_STORY.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SAVE_DELETED_MESSAGES,
-                R.string.InuSaveDeletedMessages,
-                R.string.InuSaveDeletedMessagesInfo,
-                InuConfig.SAVE_DELETED_MESSAGES.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SAVE_EDITED_MESSAGES,
-                R.string.InuSaveEditedMessages,
-                R.string.InuSaveEditedMessagesInfo,
-                InuConfig.SAVE_EDITED_MESSAGES.value,
-            )
-        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAntiDeletion)))
+        selfDestructGroup.addTo(items) { listView?.adapter?.update(true) }
+        deletedEditedGroup.addTo(items) { listView?.adapter?.update(true) }
         if (InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(
                 mkTwoLineCheckItem(
@@ -96,6 +88,14 @@ class TosSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SAVE_ANY_STORY,
+                R.string.InuSaveAnyStory,
+                R.string.InuSaveAnyStoryInfo,
+                InuConfig.SAVE_ANY_STORY.value,
+            )
+        )
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_ALLOW_FORWARD_RESTRICTED,
@@ -292,30 +292,14 @@ class TosSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (selfDestructGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
+        if (deletedEditedGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         when (item.id) {
             BUTTON_BETA_INFO -> showBetaBottomSheet()
             BUTTON_GHOST -> presentFragment(GhostModeActivity())
             TOGGLE_UNREADER -> {
                 val new = InuConfig.UNREADER.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-            TOGGLE_SAVE_SELF_DESTRUCT -> {
-                val new = InuConfig.SAVE_SELF_DESTRUCT.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-            TOGGLE_SAVE_ANY_STORY -> {
-                val new = InuConfig.SAVE_ANY_STORY.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-            TOGGLE_SAVE_DELETED_MESSAGES -> {
-                val new = InuConfig.SAVE_DELETED_MESSAGES.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                listView?.adapter?.update(true)
-            }
-            TOGGLE_SAVE_EDITED_MESSAGES -> {
-                val new = InuConfig.SAVE_EDITED_MESSAGES.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                listView?.adapter?.update(true)
             }
             TOGGLE_SHOW_EDIT_HISTORY_DIFF -> {
                 val new = InuConfig.SHOW_EDIT_HISTORY_DIFF.toggle()
@@ -335,11 +319,18 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val BUTTON_GHOST = InuUtils.generateId()
         private val TOGGLE_UNREADER = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT = InuUtils.generateId()
+        private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
+        private val TOGGLE_SAVE_SELF_DESTRUCT_TEXT = InuUtils.generateId()
+        private val TOGGLE_SAVE_SECRET_CHAT_CONTENT = InuUtils.generateId()
+        private val TOGGLE_SAVE_VIEW_ONCE_MEDIA = InuUtils.generateId()
+        private val TOGGLE_SAVE_TIMED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
+        private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
+        private val SECTION_DELETED_EDITED_SAVE = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
         private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
 
@@ -350,10 +341,18 @@ class TosSettingsActivity : SettingsPageActivity() {
             factory = ::TosSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("unreader", R.string.InuUnreader, TOGGLE_UNREADER),
+                SearchRegistry.Entry("self-destruct-save", R.string.InuSelfDestructMedia, SECTION_SELF_DESTRUCT_SAVE),
                 SearchRegistry.Entry("save-self-destruct", R.string.InuSaveSelfDestruct, TOGGLE_SAVE_SELF_DESTRUCT),
+                SearchRegistry.Entry("save-self-destruct-media", R.string.InuSaveSelfDestructMedia, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
+                SearchRegistry.Entry("save-self-destruct-text", R.string.InuSaveSelfDestructText, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
+                SearchRegistry.Entry("save-secret-chat-content", R.string.InuSaveSecretChatContent, TOGGLE_SAVE_SECRET_CHAT_CONTENT),
+                SearchRegistry.Entry("save-view-once-media", R.string.InuSaveViewOnceMedia, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
+                SearchRegistry.Entry("save-timed-messages", R.string.InuSaveTimedMessages, TOGGLE_SAVE_TIMED_MESSAGES),
                 SearchRegistry.Entry("save-any-story", R.string.InuSaveAnyStory, TOGGLE_SAVE_ANY_STORY),
+                SearchRegistry.Entry("deleted-edited-save", R.string.InuDeletedEditedSave, SECTION_DELETED_EDITED_SAVE),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
+                SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_SHOW_EDIT_HISTORY_DIFF),
                 SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_CACHE_TTL),
             ),

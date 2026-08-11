@@ -30,6 +30,7 @@ import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
+import desu.inugram.helpers.security.SelfDestructHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.ui.MessageDetailsActivity
 import desu.inugram.ui.showInputDialog
@@ -110,7 +111,7 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             hash = hash * 31 + 2
         }
-        if (SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)) {
+        if (isDeletedOrPreserved(msg)) {
             hash = hash * 31 + 3
         }
         return hash
@@ -125,7 +126,7 @@ object ChatHelper {
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             width += AndroidUtilities.dp(13f)
         }
-        val isDeleted = msg != null && SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
+        val isDeleted = isDeletedOrPreserved(msg)
         if (isDeleted) {
             width += AndroidUtilities.dp(13f)
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
@@ -143,7 +144,7 @@ object ChatHelper {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
         }
-        val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
+        val isDeleted = isDeletedOrPreserved(msg)
         if (isDeleted) {
             appendTimeIcon(sb, R.drawable.msg_delete, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
@@ -152,6 +153,13 @@ object ChatHelper {
             sb.append(" ")
         }
         return if (sb.isEmpty()) time else sb.append(time)
+    }
+
+    @JvmStatic
+    fun isDeletedOrPreserved(msg: MessageObject?): Boolean {
+        if (msg == null) return false
+        return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id) ||
+            SelfDestructHelper.isPreserved(msg.currentAccount, msg.getDialogId(), msg.id)
     }
 
     @JvmStatic

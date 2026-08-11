@@ -51,6 +51,13 @@ object InuDatabaseHelper {
             version = 4
         }
 
+        if (version == 4) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_preserved_messages(dialog_id INTEGER, msg_id INTEGER, PRIMARY KEY(dialog_id, msg_id))")
+                .stepThis().dispose();
+            writeKv(db, "version", "5")
+            version = 5
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 
@@ -74,6 +81,27 @@ object InuDatabaseHelper {
                 val dialogId = cursor.longValue(0)
                 val msgId = cursor.intValue(1)
                 map.getOrPut(dialogId) { HashSet() }.add(msgId)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return map
+    }
+
+    fun savePreservedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_preserved_messages VALUES(?, ?)")
+        query.bindLong(1, dialogId)
+        query.bindInteger(2, msgId)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadPreservedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
+        val map = HashMap<Long, HashSet<Int>>()
+        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_preserved_messages")
+        try {
+            while (cursor.next()) {
+                map.getOrPut(cursor.longValue(0)) { HashSet() }.add(cursor.intValue(1))
             }
         } finally {
             cursor.dispose()

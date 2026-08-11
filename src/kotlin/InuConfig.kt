@@ -741,6 +741,22 @@ object InuConfig {
     @JvmField
     val SAVE_SELF_DESTRUCT = BoolItem("save_self_destruct", false)
 
+    // Per-category local preservation of self-destruct content. All default off = stock behavior.
+    @JvmField
+    val SAVE_SELF_DESTRUCT_MEDIA = BoolItem("save_self_destruct_media", false)
+
+    @JvmField
+    val SAVE_SELF_DESTRUCT_TEXT = BoolItem("save_self_destruct_text", false)
+
+    @JvmField
+    val SAVE_SECRET_CHAT_CONTENT = BoolItem("save_secret_chat_content", false)
+
+    @JvmField
+    val SAVE_VIEW_ONCE_MEDIA = BoolItem("save_view_once_media", false)
+
+    @JvmField
+    val SAVE_TIMED_MESSAGES = BoolItem("save_timed_messages", false)
+
     @JvmField
     val SAVE_ANY_STORY = BoolItem("save_any_story", true)
 
