@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Tartışmada aç</string>
     <string name="InuBanUserConfirm">%1$s bu gruptan yasaklansın mı?</string>
@@ -17,6 +17,12 @@
     <string name="InuAppearance">Görünüm</string>
     <string name="InuLookAndFeel">Tasarım &amp; His</string>
     <string name="InuBehavior">Davranış</string>
+    <string name="InuPerformanceClass">Performans sınıfı</string>
+    <string name="InuPerformanceClassInfo">Bu ayarı değiştirmeniz önerilmez, düşük performanslı bütçe dostu cihazlarda performansı ciddi ölçüde düşürebilir</string>
+    <string name="InuPerformanceClassMeasured">Ölçülen</string>
+    <string name="InuPerformanceClassLow">Düşük</string>
+    <string name="InuPerformanceClassAverage">Orta</string>
+    <string name="InuPerformanceClassHigh">Yüksek</string>
     <string name="InuAnnoyances">Rahatsız Edici Ögeler</string>
     <string name="InuMessages">Mesajlar</string>
     <string name="InuOther">Diğer</string>
@@ -25,7 +31,16 @@
     <string name="InuUserProfileHeader">Üst bilgi</string>
     <string name="InuUserProfileInformation">Bilgi</string>
     <string name="InuChatList">Sohbet listesi</string>
-    <string name="InuOpenArchiveOnPull">Aşağı çekince arşivi aç</string>
+    <string name="InuTitleText">Başlık metni</string>
+    <string name="InuPullDownAction">Aşağı çekme eylemi</string>
+    <string name="InuPullDownActionDisabled">Devre dışı</string>
+    <string name="InuPullDownActionDisabledInfo">Arşiv menüye taşınır</string>
+    <string name="InuPullDownActionRevealArchive">Arşivi göster</string>
+    <string name="InuPullDownActionOpenArchive">Arşivi aç</string>
+    <string name="InuSwipeForSavedMessages">Kaydedilen Mesajlar için aşağı kaydırın</string>
+    <string name="InuReleaseForSavedMessages">Kaydedilen Mesajlar için bırakın</string>
+    <string name="InuSwipeForSearch">Arama için aşağı kaydırın</string>
+    <string name="InuReleaseForSearch">Arama için bırakın</string>
     <string name="InuDoubleTapActions">Çift dokunma eylemleri</string>
     <string name="InuDoubleTapDelay">Çift dokunma gecikmesi</string>
     <string name="InuIncomingMessages">Gelen mesajlar</string>
@@ -45,6 +60,7 @@
     <string name="InuMaterial3Fabs">Yüzen düğmeler</string>
     <string name="InuMaterial3Sections">Liste ögeleri</string>
     <string name="InuMaterial3Avatars">Profil resimleri</string>
+    <string name="InuMaterial3NavigationAnimation">Gezinme animasyonu</string>
     <string name="InuMaterialProfileActions">Profil eylem düğmeleri</string>
     <string name="InuMonetTheme">Monet teması</string>
     <string name="InuMonetThemeDisabled">Devre dışı</string>
@@ -69,6 +85,8 @@
     <string name="InuDisableSensitive">Hassas içerik filtresini devre dışı bırak</string>
     <string name="InuDisableQuickShare">Hızlı paylaşımı devre dışı bırak</string>
     <string name="InuDisableQuickShareInfo">Paylaş düğmesine (kanal mesajlarının yanında) uzun basıldığında sık görüşülen kişileri göstermez; onay almadan gönderir</string>
+    <string name="InuDisableProfileMusicAutoplay">Profil müziğinin otomatik oynatılmasını devre dışı bırak</string>
+    <string name="InuDisableProfileMusicAutoplayInfo">Bir profildeki sabitlenmiş müzik oynatıcı açıldığında oynatmayı otomatik olarak başlatmaz</string>
     <string name="InuDisableChatBackgrounds">Özel sohbet arka planlarını devre dışı bırak</string>
     <string name="InuDisableChatThemes">Özel sohbet temalarını devre dışı bırak</string>
     <string name="InuDisableBgParallax">Arka plan paralaks efektini devre dışı bırak</string>
@@ -214,6 +232,8 @@
     <string name="InuCallConfirmation">Aramadan önce sor</string>
     <string name="InuCallConfirmationTitle">Aramayı onayla</string>
     <string name="InuCallConfirmationText">**%1$s** aransın mı?</string>
+    <string name="InuHdBluetoothCallAudio">Bluetooth\'ta HD arama sesi</string>
+    <string name="InuHdBluetoothCallAudioInfo">Kulaklığı düşük kaliteli kulaklık profiline geçirmek yerine arama sesini medya olarak oynatır ve telefonun mikrofonunu kullanır. Arama başladığında bir Bluetooth cihazı bağlıysa uygulanır</string>
     <string name="InuConfirmInternalLinks">Dahili bağlantıları açmayı onayla</string>
     <string name="InuConfirmInternalLinksInfo">tg:// ve t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">Tarayıcıyı küçültmek için aşağı kaydırmayı devre dışı bırak</string>
@@ -316,6 +336,7 @@
     <string name="InuIconReplacement">Simge paketi</string>
     <string name="InuIconReplacementOff">Varsayılan</string>
     <string name="InuIconReplacementSolar">@Design480 tarafından Solar</string>
+    <string name="InuIconReplacementVkui">VK tarafından VKUI</string>
 
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
@@ -442,6 +463,7 @@
     <string name="InuForwardHeaderModeIcon">Simge</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">&quot;İletilme zamanını göster&quot; kapalıyken Kompakt ile aynıdır</string>
     <string name="InuForwardHeaderModeCompact">Kompakt</string>
+    <string name="InuShowForwardsCount">Yönlendirme sayısını göster</string>
     <string name="InuCompactEdited">Küçük düzenlendi göstergesi</string>
 
     <string name="InuAddToStickersGifs">Çıkartmalara/GIF\'lere ekle</string>
@@ -811,4 +833,7 @@
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuTOS">Hizmet Şartları</string>
+    <string name="InuRefreshStickerSet">Yenile</string>
+    <string name="InuStickerSetRefreshed">Paket güncellendi</string>
+    <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
 </resources>

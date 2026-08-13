@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 13 Aug 2026 03:11:57 +0400
+Subject: make the video bubble progress bar follow inline playback
+
+---
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -29240,7 +29240,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     public void drawVideoTimestamps(Canvas canvas, int color) {
+         if (currentMessageObject == null || currentMessageObject.isLivePhoto() || controlsAlpha <= 0 || !photoImage.getVisible()) return;
+         float progress;
+-        if (!currentMessageObject.openedInViewer && currentMessageObject.getVideoStartsTimestamp() != -1) {
++        AnimatedFileDrawable inu_playingAnimation = documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && autoPlayingMedia ? photoImage.getAnimation() : null;
++        if (documentAttachType == DOCUMENT_ATTACH_TYPE_VIDEO && MediaController.getInstance().isPlayingMessage(currentMessageObject)) {
++            progress = currentMessageObject.audioProgress;
++        } else if (inu_playingAnimation != null && inu_playingAnimation.getDurationMs() > 0 && inu_playingAnimation.getCurrentProgressMs() > 0) {
++            progress = inu_playingAnimation.getCurrentProgressMs() / (float) inu_playingAnimation.getDurationMs();
++        } else if (!currentMessageObject.openedInViewer && currentMessageObject.getVideoStartsTimestamp() != -1) {
+             progress = currentMessageObject.getVideoStartsTimestamp() / (float) currentMessageObject.getDuration();
+         } else {
+             progress = currentMessageObject.getVideoSavedProgress();

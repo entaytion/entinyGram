@@ -9,9 +9,10 @@ Subject: fix hardcoded usage of white color instead of theme colors
  .../ui/Cells/SharedPhotoVideoCell.java        |  3 +-
  .../ui/Cells/SharedPhotoVideoCell2.java       |  8 +++--
  .../Components/Premium/LimitPreviewView.java  | 31 ++++++++++++-------
+ .../ui/Components/RLottieDrawable.java        |  4 +++
  .../org/telegram/ui/ManageLinksActivity.java  |  2 ++
  .../org/telegram/ui/SettingsActivity.java     |  1 +
- 7 files changed, 34 insertions(+), 16 deletions(-)
+ 8 files changed, 38 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/PhotoAttachPhotoCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/PhotoAttachPhotoCell.java
 index 0000000..0000000 100644
@@ -212,6 +213,21 @@ index 0000000..0000000 100644
  
                  setIconValue((int) to.stars, (int) to.next_level_stars, true, false);
              }, 600);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
+@@ -799,6 +799,10 @@ public class RLottieDrawable extends BitmapDrawable implements Animatable, Bitma
+     }
+ 
+     public final void setLayerColor(String layerName, int color) {
++        if (isSingleChannel) {
++            setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
++            return;
++        }
+         newColorUpdates.put(layerName, color);
+         requestRedrawColors();
+     }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java

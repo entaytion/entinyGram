@@ -4,65 +4,32 @@ Date: Tue, 23 Jun 2026 17:19:08 +0400
 Subject: fix photo viewer dismissing keyboard (and also breaking close animation target), by essentially reverting to its pre-12.8 behavior
 
 ---
- .../java/org/telegram/ui/LaunchActivity.java  | 27 +++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/ui/LaunchActivity.java  | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -467,7 +467,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
-         AndroidUtilities.fillStatusBarHeight(this, false);
-         actionBarLayout = new ActionBarLayout(this, true);
- 
--        frameLayout = new ActivityContentLayout(this);
-+        frameLayout = new FrameLayout(this) {
-+            @Override
-+            protected void dispatchDraw(@NonNull Canvas canvas) {
-+                if (inu_mainContentHidden) {
-+                    return;
-+                }
-+                super.dispatchDraw(canvas);
-+                drawRippleAbove(canvas, this);
-+            }
-+
-+            @Override
-+            public WindowInsets dispatchApplyWindowInsets(WindowInsets insets) {
-+                return AndroidUtilities.fixedDispatchApplyWindowInsets(insets, this);
-+            }
-+        };
-         frameLayout.setClipToPadding(false);
-         frameLayout.setClipChildren(false);
-         setContentView(frameLayout);
-@@ -9170,6 +9184,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
- 
+@@ -9174,14 +9174,18 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      private int reasonsToHideMainContent = 0;
      private int reasonsToHideDecorView = 0;
-+    // inugram: suppress drawing instead of setting GONE — GONE freezes the view tree's layout,
-+    // which dismisses the keyboard and breaks PhotoViewer close-animation target positions
+ 
++    // inugram: keep the main content VISIBLE and drawing instead of setting GONE — GONE freezes
++    // the view tree's layout, which dismisses the keyboard and breaks PhotoViewer close-animation
++    // target positions. drawing must keep running too: link-preview photo positions inside
++    // ChatMessageCell are only assigned at draw time, so suppressing draws leaves stale
++    // ImageReceiver coords for the close-animation target (visual jump at the end).
 +    // rebase note: this is more of a workaround (revert to old behavior) than an actual bugfix.
 +    // if future upstream updates fixes those, our workaround should be removed.
-+    private boolean inu_mainContentHidden = false;
- 
      private void updateReasonsToHideMainContent(boolean increment, boolean withDecorView) {
          reasonsToHideMainContent += (increment ? 1 : -1);
-@@ -9177,7 +9196,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+         if (withDecorView) {
              reasonsToHideDecorView += (increment ? 1 : -1);
          }
-         if (frameLayout != null) {
+-        if (frameLayout != null) {
 -            frameLayout.setVisibility(reasonsToHideMainContent > 0 ? View.GONE : View.VISIBLE);
-+            inu_mainContentHidden = reasonsToHideMainContent > 0;
-+            frameLayout.invalidate();
-         }
+-        }
          checkDecorViewVisibility();
      }
-@@ -9249,6 +9269,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
-         @Override
-         protected void dispatchDraw(@NonNull Canvas canvas) {
-+            if (inu_mainContentHidden) {
-+                return;
-+            }
-             super.dispatchDraw(canvas);
-             drawRippleAbove(canvas, this);
-         }

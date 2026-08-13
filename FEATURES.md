@@ -18,6 +18,8 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - notification icon: Telegram (default) or entinyGram
 - 📡 title alignment options: selective centering for chats, settings, profiles, and main list (dialogs) — *adapted from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - 📡 emulation of official Telegram app (APP_ID 4): unlocks direct purchases, Telegram Premium bot/web checkout without "Official app needed" blocks
+- icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
+- notification icon: Telegram (default) or Inugram
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
@@ -62,11 +64,14 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - folder display modes: titles / titles+icons / icons-only
 - folder unread counter modes: hide / regular / exclude muted / 🐶 exclude muted non-dms
 - hide "all chats" folder tab
+- custom title text: Inugram / @username / first name / "Chats"
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation
 - 🐶 deeplink / username quick-open from global search
 - 📡 mutual contact icon in user lists and chats with auto-shifted role tags & toggle in settings (entinyGram updated)
 - open archive directly on pull-down (🐶 done right, without revealing the cell)
+- mutual contact icon in contacts list
+- customizable dialogs list pull-down action: reveal archive (stock), open archive directly (🐶 done right, without revealing the cell), open saved messages, open search, or disabled entirely. when the pull-down no longer leads to the archive, the archive row is hidden from the list and an "Archived Chats" entry appears in the drawer/overflow menu instead
 - interactive chat preview (long-tap avatar): tappable bubbles, no tap-to-expand
 - 🐶 community display modes: regular / open on avatar long-tap / invisible
 - "select all" in the chat selection three-dot menu (selects all loaded chats in the current folder tab)
@@ -120,10 +125,12 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - Delete my messages
   - Statistics / Administrators / Permissions / Invite links (admin shortcuts)
 - 🐶 disable custom wallpaper and theme per chat
+- per-forum client-side topics layout override (tabs/list) from the profile menu
 - read-only chat "admin" page for non-admins
 - split media restriction toggles for stickers / gifs / games / inline
 - show id in profile, show user json
 - long-tap the name in profile to copy it
+- 🐶 drag the pinned-music sheet by its header to scroll/expand the playlist
 - long-tap inline callback button to copy text or callback data
 - "select between messages" (🐶 done right)
 - 🐶 lift 100-message selection cap (forwards/saves/deletes are auto-chunked)
@@ -133,6 +140,8 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 📡 whole-chat translation (the "translate this chat" top bar and its menu) without premium
 - instant view pages translator
 - show original time/date in "forwarded from" header, optionally collapsing it to a single line with an icon instead of the "forwarded from" label
+- show original time/date in the forwarded header, with regular, icon-only label, and compact one-line modes
+- show forward count next to the view count on channel posts
 - long-tap forward bar (above input) to cycle between regular / without sender / without caption
 - long-tap a mention in a message to insert a name-mention into the input with custom text
 - 🐶 restrict/ban menu items the avatar long-tap menu
@@ -192,6 +201,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 ## behavior
 
 - call confirmation
+- HD call audio on Bluetooth
 - 🐶 reaction confirmation in non-joined chats
 - 🐶 internal link confirmation (tg://, t.me/…)
 - support `tg://user?id=…` links (opens the profile; user must be known locally)
@@ -214,6 +224,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - auto-disable the configured proxy while a VPN is active
 - send MP4 files attached through Files as playable videos without conversion
 - original video quality option in quality picker when sending videos
+- remember last used settings in polls + reasonable defaults
 
 ## TOS
 
@@ -248,9 +259,12 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - disable notification bubbles
 - disable volume keys playing visible video with sound in chat
 - disable quick share (long-tap share button → send to frequent contact without confirmation)
+- disable auto-play when opening the pinned music player on a profile
 
 ## 🐶 bugfixes (vs stock)
 
+- "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
+- cancelling a video download kept restarting it after streaming the video in PhotoViewer (the player's loader thread swallowed its shutdown interrupt, survived the viewer close, and re-requested the file on every cancel; also a file-reference refresh landing mid-cancel resurrected the operation into an uncancellable zombie)
 - "Save to Downloads" preserves the original filename on Android 10+
 - gboard image paste no longer skips PhotoViewer
 - reordering an attach-panel album preserves per-photo captions and no longer duplicates its album caption
@@ -259,15 +273,18 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - sticker creator output sent as photo when high-quality default is on
 - non-square webm stickers rendered off-center in the emoji panel (precached frames were blitted top-left and scaled by width only)
 - webm sticker permanently stuck blank until the app is restarted (an image load cancelled mid-flight published a decoder-less drawable into the animation cache, whose stream stayed cancelled and which never retried decoding)
+- webm stickers played too fast (frame pacing was driven by the container's declared fps instead of frame timestamps, so variable-rate or mis-probed webm ran at up to 2x)
 - recyclerlistview double-tap requires same view
 - list ripple left behind when the pressed row moves because another row changed height (selector was only re-synced on scroll)
 - dead zones in list rows where a hidden clickable child kept stale bounds from a previous binding (e.g. top-right corner of a member row in profile after a tagged member was recycled)
 - chat list crash while flinging when RecyclerView exposes a stale child without a ViewHolder
 - dialogs list pull-to-reveal-archive glitches
 - inline code in dialog previews no longer inherits chat-bubble colors
+- big emoji jumping around in emoji-only messages when a visible reply preview shared its spans (stock bug: per-span draw-position cache fought over by both layouts), plus oversized animated emoji in reply previews (stock bug: `cloneSpan` overwrote the resized value with the old size)
 - pinned dialog reorder scrolling/glitching mid-drag in the archive (stock bug: async list diffing dispatched the move after the drag swap)
 - forwards from users with hidden forward privacy: the optimistic message shows the anonymized name right away (when their profile is cached), and the server-confirmed hidden header is applied in place instead of showing the linked author until chat reopen
 - shared media player visual glitches
+- profile pinned-music sheet bugfixes
 - shared media pager: fling mid-animation to chain tabs or reverse (was ignored until settled); at the edge tab the fling falls through to swipe-to-close
 - attach panel: better perf, safe close before fully open
 - paid reaction animation respects litemode
@@ -275,6 +292,8 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - reactions silently disappearing right after being sent (stale server read race)
 - sticky date pill jump and color shift when replacing an inline date separator
 - bubble jump when ime height changes mid send-animation
+- out-of-bubble panels (reply/forward/name) on custom wallpapers jumping tint when the keyboard opens (wallpaper-sampling offset flipped by the action bar height via a stale keyboard-layout conditional)
+- markdown `__`/`**`/`~~`/`||` no longer parsed inside auto-detected links on send
 - "regular" formatting option with mixed-span selections
 - applying a style over a mixed-span selection smearing one span (e.g. mono) across the whole range
 - photo viewer ui respects litemode blur
@@ -284,6 +303,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - stale video seekbar leaking onto photos in photo viewer
 - fix photo zoom/video progress resetting on message edit
 - photo viewer no longer dismissing the keyboard / jumping at end of close animation (12.8 regression)
+- fix edge-to-edge for instant view
 - missing action bar title/date and open/close animation when viewing a photo of a user who hid theirs from you (stock bug: profile photo locations carried no dc id)
 - text spoilers jittering/blinking while scrolling on high-refresh displays (12.8 regression)
 - revealed spoilers in album captions re-hiding themselves after a scroll (reveal flag was set on the drawing cell's message instead of the group's primary one)
@@ -300,11 +320,13 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - stale unread mention pointer after reading mention on another device (mention button jumping to old message)
 - folder pins silently missing when the pinned dialog isn't in the local dialogs cache (now fetched from server)
 - photo/video gallery performance improvements
+- edits (incl. crop) silently lost when the gallery refreshed under an open photo editor (fresh screenshots); also fixes fresh screenshots sometimes not appearing in the attach sheet or making it flash
 - messages consisting of only 2 or 3 emojis are huge in chat search results
 - admin logs scroll jumping when loading events
 - fix glitch when quickly dismissing photo editor after cropping
 - persist crop when rotating photo in photo editor
 - chat preview no longer marks visible reactions/poll votes as read
+- dialogs list briefly flashing over the lockscreen after ending/declining a call
 - fix camera2api a/v sync issue in round messages
 - forward bar showing stale message count/senders after deselecting messages in the forward options sheet
 - cross-peer reply: clear stale quote so a leftover quote-reply target doesn't override the new one at send
@@ -330,6 +352,8 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - opt out of android media resumption, so a phantom telegram player chip no longer reappears in quick settings after a reboot or once the app process is gone
 - fix profile crash when a contact's note is removed server-side while the open animation is running (note row built from stale user info, bound against fresh)
 - notifications for chats read on another device no longer linger forever when the app process was killed in between (stock only tracked posted notifications in memory)
+- more stale notification fixes: reaction, "scheduled message sent", story and forum-topic notifications now clear when read/seen on another device while the app is connected (stock only cleared these via FCM pushes, which aren't delivered to online sessions, or on opening the chat locally); notification refresh is no longer skipped when unread counts happen to stay equal (forums, communities, muted chats)
+- unchanged notifications are no longer re-posted on every update (stock re-notifies every chat each time anything changes, making notification bridges like Mi Fitness re-forward the whole stack to the wearable)
 - crash long-pressing a sticker set while off-screen rows are cached (reorder update bound null item on cached/hidden holders)
 - crash cutting out a sticker after the photo editor recycled the source image mid-segmentation
 - crash after transferring channel ownership (admin sort comparator overflowed on 64-bit peer ids)
@@ -342,3 +366,5 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - URL parsing: multi-component TLDs (`.is-a.dev`, `.github.io`, `.co.uk`) and hyphens in subdomains work; Cyrillic text before a domain (e.g. `слово.entaytion.is-a.dev`) is no longer swallowed into the link — the ASCII domain stays clickable; bio and channel/group description links are clickable for everyone, with or without `http(s)://` (stock gates them behind Telegram Premium)
+- crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
+- fix bottom progress bar on video bubbles now following inline playback (autoplay & play-with-sound)

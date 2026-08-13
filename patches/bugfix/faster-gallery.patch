@@ -4,11 +4,11 @@ Date: Sat, 16 May 2026 17:07:55 +0400
 Subject: faster gallery handling in attach sheet
 
 ---
- .../telegram/messenger/MediaController.java   | 44 +++++++++++++++----
+ .../telegram/messenger/MediaController.java   | 42 +++++++++++++++----
  .../ui/Cells/PhotoAttachPhotoCell.java        |  1 +
- .../ChatAttachAlertPhotoLayout.java           |  1 +
- .../java/org/telegram/ui/PhotoViewer.java     | 14 ++++++
- 4 files changed, 52 insertions(+), 8 deletions(-)
+ .../ChatAttachAlertPhotoLayout.java           |  3 +-
+ .../java/org/telegram/ui/PhotoViewer.java     | 26 ++++++++++++
+ 4 files changed, 64 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
@@ -31,13 +31,7 @@ index 0000000..0000000 100644
                      if (motionPhoto != null) {
                          MotionPhotoDescription.ContainerItem photo = null, video = null;
                          for (int i = 0; i < motionPhoto.items.size(); ++i) {
-@@ -1241,13 +1240,15 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
- 
-         private void scheduleReloadRunnable() {
-             AndroidUtilities.runOnUIThread(refreshGalleryRunnable = () -> {
--                if (PhotoViewer.getInstance().isVisible()) {
-+                if (PhotoViewer.getInstance().isVisible() && !desu.inugram.helpers.media.GalleryHelper.shouldRefreshVisiblePhotoViewer()) {
-                     scheduleReloadRunnable();
+@@ -1246,8 +1245,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      return;
                  }
                  refreshGalleryRunnable = null;
@@ -99,7 +93,7 @@ index 0000000..0000000 100644
          }
          AndroidUtilities.runOnUIThread(broadcastPhotosRunnable = () -> {
 -            if (PhotoViewer.getInstance().isVisible() && !forceBroadcastNewPhotos) {
-+            if (PhotoViewer.getInstance().isVisible() && !forceBroadcastNewPhotos && !desu.inugram.helpers.media.GalleryHelper.shouldRefreshVisiblePhotoViewer()) {
++            if (PhotoViewer.getInstance().isVisible() && (!forceBroadcastNewPhotos || desu.inugram.helpers.media.GalleryHelper.isPhotoViewerEditing())) {
                  broadcastNewPhotos(guid, mediaAlbumsSorted, photoAlbumsSorted, cameraAlbumIdFinal, allMediaAlbumFinal, allPhotosAlbumFinal, allVideosAlbumFinal, 1000);
                  return;
              }
@@ -127,6 +121,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -529,7 +529,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         @Override
+         public void sendButtonPressed(int index, VideoEditedInfo videoEditedInfo, boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean forceDocument) {
+             parentAlert.sent = true;
+-            MediaController.PhotoEntry photoEntry = getPhotoEntryAtPosition(index);
++            MediaController.PhotoEntry photoEntry = desu.inugram.helpers.media.GalleryHelper.reconcileSendEntry(index, getPhotoEntryAtPosition(index));
+             if (photoEntry != null) {
+                 photoEntry.editedInfo = videoEditedInfo;
+             }
 @@ -4269,6 +4269,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                          }
                      }
@@ -139,22 +142,34 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -19454,6 +19454,20 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -19454,6 +19454,32 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          return imagesArrLocals;
      }
  
-+    public void inu_reloadCurrentPhoto(MediaController.PhotoEntry entry) {
++    public boolean inu_isInEditMode() {
++        return currentEditMode != EDIT_MODE_NONE || switchingToMode != -1;
++    }
++
++    public void inu_reloadCurrentPhoto(MediaController.PhotoEntry entry, boolean reloadImage) {
 +        if (currentEditMode != EDIT_MODE_NONE || currentIndex < 0 || currentIndex >= imagesArrLocals.size() || !(imagesArrLocals.get(currentIndex) instanceof MediaController.PhotoEntry)) {
++            android.util.Log.d("inu-gallery", "inu_reloadCurrentPhoto: skipped, editMode=" + currentEditMode + " index=" + currentIndex);
 +            return;
 +        }
-+        entry.copyFrom((MediaController.PhotoEntry) imagesArrLocals.get(currentIndex));
-+        imagesArrLocals.set(currentIndex, entry);
-+        String key = centerImage.getImageKey();
-+        if (key != null) {
-+            ImageLoader.getInstance().removeImage(key);
++        android.util.Log.d("inu-gallery", "inu_reloadCurrentPhoto: entry id=" + entry.imageId + " reloadImage=" + reloadImage);
++        applyCaption();
++        MediaController.PhotoEntry previous = (MediaController.PhotoEntry) imagesArrLocals.get(currentIndex);
++        if (entry != previous) {
++            entry.copyFrom(previous);
++            imagesArrLocals.set(currentIndex, entry);
 +        }
-+        centerImage.clearImage();
-+        setImageIndex(currentIndex, false, false, true);
++        if (reloadImage) {
++            String key = centerImage.getImageKey();
++            if (key != null) {
++                ImageLoader.getInstance().removeImage(key);
++            }
++            centerImage.clearImage();
++            setImageIndex(currentIndex, false, false, true);
++        }
 +    }
 +
      @Keep

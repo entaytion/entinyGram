@@ -24,6 +24,7 @@ class MiscPreviewMessagesCell(context: Context?, fragment: BaseFragment) :
                 dialog_id = -1
                 flags = 259 or TLRPC.MESSAGE_FLAG_FWD
                 id = 1
+                forwards = 12
                 fwd_from = TLRPC.TL_messageFwdHeader().apply {
                     flags = flags or 32
                     from_name = getString(R.string.InuMiscPreviewForwardedFrom)

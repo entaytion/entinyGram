@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 12 Aug 2026 22:30:08 +0400
+Subject: Dont auto-play music when opening the profile music player
+
+---
+ .../java/org/telegram/messenger/MediaController.java     | 9 +++++++++
+ .../src/main/java/org/telegram/ui/ProfileActivity.java   | 3 +++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -1043,6 +1043,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+     private Timer progressTimer = null;
+     private final Object progressTimerSync = new Object();
+     private boolean downloadingCurrentMessage;
++    public MessageObject inu_pauseOncePlayingMessage;
+     private boolean playMusicAgain;
+     private PlaylistGlobalSearchParams playlistGlobalSearchParams;
+     private AudioInfo audioInfo;
+@@ -4188,6 +4189,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+             FileLog.e(e);
+         }
+ 
++        if (inu_pauseOncePlayingMessage != null) {
++            final boolean inu_pause = inu_pauseOncePlayingMessage == messageObject;
++            inu_pauseOncePlayingMessage = null;
++            if (inu_pause) {
++                pauseMessage(messageObject, false);
++            }
++        }
++
+         return true;
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -3883,6 +3883,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     MediaController.getInstance().currentSavedMusicList = savedMusicList;
+                     MediaController.getInstance().getPlaylist().clear();
+                     MediaController.getInstance().getPlaylist().addAll(savedMusicList.list);
++                    if (!sameList && desu.inugram.InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.getValue()) {
++                        MediaController.getInstance().inu_pauseOncePlayingMessage = savedMusicList.list.get(0);
++                    }
+                     if (!sameList) MediaController.getInstance().playMessage(savedMusicList.list.get(0));
+                     showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()));
+                 }

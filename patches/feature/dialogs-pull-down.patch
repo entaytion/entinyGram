@@ -1,0 +1,134 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 6 May 2026 15:34:00 +0200
+Subject: customizable dialogs list pull down action
+
+---
+ .../telegram/ui/Adapters/DialogsAdapter.java  |  2 +-
+ .../java/org/telegram/ui/DialogsActivity.java | 48 ++++++++++++++++++-
+ 2 files changed, 48 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsAdapter.java
+@@ -1465,7 +1465,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
+ 
+         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+             int size = itemInternals.size();
+-            boolean hasArchive = folderId == 0 && dialogsType == 0 && MessagesController.getInstance(currentAccount).dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
++            boolean hasArchive = folderId == 0 && dialogsType == 0 && MessagesController.getInstance(currentAccount).dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null && !desu.inugram.helpers.dialogs.PullActionHelper.hideArchiveRow();
+             View parent = (View) getParent();
+             int height;
+             int blurOffset = 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2257,6 +2257,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+             }
+             boolean result = super.onTouchEvent(e);
++            if (parentPage.dialogsType == DIALOGS_TYPE_DEFAULT && (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && inu_hasStandalonePull()) {
++                desu.inugram.helpers.dialogs.PullActionHelper.onRelease(DialogsActivity.this, parentPage.pullForegroundDrawable);
++            }
+             if (parentPage.dialogsType == DIALOGS_TYPE_DEFAULT && (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && parentPage.archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN && hasHiddenArchive()) {
+                 LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
+                 int currentPosition = layoutManager.findFirstVisibleItemPosition();
+@@ -2272,6 +2275,23 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                             disableActionBarScrolling = true;
+                             smoothScrollBy(0, diff, CubicBezierInterpolator.EASE_OUT_QUINT);
+                             parentPage.archivePullViewState = ARCHIVE_ITEM_STATE_HIDDEN;
++                        } else if (desu.inugram.helpers.dialogs.PullActionHelper.openArchiveOnPull() && !onlySelect) {
++                            Bundle args = new Bundle();
++                            args.putInt("folderId", view.getCurrentDialogFolderId());
++                            presentFragment(new DialogsActivity(args));
++                            AndroidUtilities.runOnUIThread(() -> {
++                                parentPage.layoutManager.scrollToPositionWithOffset(1, (int) scrollYOffset);
++                                parentPage.archivePullViewState = ARCHIVE_ITEM_STATE_HIDDEN;
++                                setViewsOffset(0);
++                                startArchivePullingTime = 0;
++                                canShowHiddenArchive = false;
++                                if (parentPage.pullForegroundDrawable != null) {
++                                    parentPage.pullForegroundDrawable.colorize(false);
++                                    parentPage.pullForegroundDrawable.resetText();
++                                    parentPage.pullForegroundDrawable.setPullProgress(0f);
++                                }
++                            }, 300);
++                            return result;
+                         } else {
+                             if (parentPage.archivePullViewState != ARCHIVE_ITEM_STATE_SHOWED) {
+                                 if (getViewOffset() == 0) {
+@@ -4223,7 +4243,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     if (hasStories && !rightSlidingDialogContainer.hasFragment() && !fixScrollYAfterArchiveOpened) {
+                         pTop -= dp(DialogStoriesCell.HEIGHT_IN_DP);
+                     }
+-                    boolean hasHiddenArchive = !fixScrollYAfterArchiveOpened && viewPage.dialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect && folderId == 0 && communityId == 0 && getMessagesController().hasHiddenArchive() && viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN;
++                    boolean hasHiddenArchive = !fixScrollYAfterArchiveOpened && viewPage.dialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect && folderId == 0 && communityId == 0 && getMessagesController().hasHiddenArchive() && viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN && !desu.inugram.helpers.dialogs.PullActionHelper.hideArchiveRow();
+                     if ((hasHiddenArchive || (hasStories && !rightSlidingDialogContainer.hasFragment())) && dy < 0) {
+                         viewPage.listView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+                         int currentPosition = viewPage.layoutManager.findFirstVisibleItemPosition();
+@@ -4368,6 +4388,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         return usedDy;
+                     }
+ 
++                    if (viewPage.dialogsType == DIALOGS_TYPE_DEFAULT && inu_hasStandalonePull()) {
++                        int usedDy = super.scrollVerticallyBy(measuredDy, recycler, state);
++                        desu.inugram.helpers.dialogs.PullActionHelper.onScrolled(viewPage.pullForegroundDrawable, measuredDy, usedDy, dy, isDragging);
++                        return usedDy;
++                    }
++
+                     int scrolled = super.scrollVerticallyBy(measuredDy, recycler, state);
+                     if (scrolled == 0 && dy < 0 && isDragging && !rightSlidingDialogContainer.hasFragment() && hasStories && progressToActionMode == 0) {
+                         float newOverScroll = storiesOverscroll - dy * dialogStoriesCell.getOverScrollCoef();
+@@ -4647,6 +4673,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             });
+ 
+             viewPage.archivePullViewState = SharedConfig.archiveHidden ? ARCHIVE_ITEM_STATE_HIDDEN : ARCHIVE_ITEM_STATE_PINNED;
++            if (viewPage.pullForegroundDrawable == null && inu_hasStandalonePull()) {
++                viewPage.pullForegroundDrawable = desu.inugram.helpers.dialogs.PullActionHelper.createDrawable(viewPage.listView);
++            }
+             if (viewPage.pullForegroundDrawable == null && folderId == 0 && communityId == 0) {
+                 viewPage.pullForegroundDrawable = new PullForegroundDrawable(LocaleController.getString(R.string.AccSwipeForArchive), LocaleController.getString(R.string.AccReleaseForArchive)) {
+                     @Override
+@@ -8990,9 +9019,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     public boolean hasHiddenArchive() {
++        if (desu.inugram.helpers.dialogs.PullActionHelper.hideArchiveRow()) {
++            return false;
++        }
+         return !onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT && communityId == 0 && folderId == 0 && getMessagesController().hasHiddenArchive();
+     }
+ 
++    public boolean inu_hasStandalonePull() {
++        return !onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT && communityId == 0 && folderId == 0 && desu.inugram.helpers.dialogs.PullActionHelper.isStandalonePull();
++    }
++
+     private boolean waitingForDialogsAnimationEnd(ViewPage viewPage) {
+         return viewPage.dialogsItemAnimator.isRunning();
+     }
+@@ -11106,6 +11142,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+         MessagesController messagesController = AccountInstance.getInstance(currentAccount).getMessagesController();
+         if (dialogsType == DIALOGS_TYPE_DEFAULT) {
++            if (folderId == 0 && desu.inugram.helpers.dialogs.PullActionHelper.hideArchiveRow()) {
++                return desu.inugram.helpers.dialogs.PullActionHelper.filterArchiveRow(messagesController.getDialogs(folderId));
++            }
+             return messagesController.getDialogs(folderId);
+         } else if (dialogsType == DIALOGS_TYPE_WIDGET || dialogsType == DIALOGS_TYPE_IMPORT_HISTORY) {
+             return messagesController.dialogsServerOnly;
+@@ -13851,6 +13890,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
+             presentFragment(new ChatActivity(args));
+         });
++        if (desu.inugram.helpers.dialogs.PullActionHelper.shouldShowArchiveEntry(currentAccount)) {
++            io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats), () -> {
++                Bundle args = new Bundle();
++                args.putInt("folderId", 1);
++                presentFragment(new DialogsActivity(args));
++            });
++        }
+         if (ApplicationLoader.applicationLoaderInstance != null) {
+             ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
+         }

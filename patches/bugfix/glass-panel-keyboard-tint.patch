@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 13 Aug 2026 03:14:21 +0400
+Subject: Fix out-of-bubble panel tint jumping when the keyboard opens
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -5716,7 +5716,7 @@ public class ChatActivity extends BaseFragment implements
+                                             backgroundPaint = Theme.chat_replyLinePaint;
+                                             backgroundPaint.setColor(getThemedColor(Theme.key_chat_selectedBackground));
+                                         } else {
+-                                            float viewTop = (isKeyboardVisible() ? chatListView.getTop() : actionBar.getMeasuredHeight()) - contentView.getBackgroundTranslationY();
++                                            float viewTop = actionBar.getMeasuredHeight() - contentView.getBackgroundTranslationY();
+                                             int backgroundHeight = contentView.getBackgroundSizeY();
+                                             if (themeDelegate != null) {
+                                                 themeDelegate.applyServiceShaderMatrix(getMeasuredWidth(), backgroundHeight, cell.getX(), viewTop);
+@@ -5768,7 +5768,7 @@ public class ChatActivity extends BaseFragment implements
+                                     Paint selectedBackgroundPaint = getThemedPaint(Theme.key_paint_chatMessageBackgroundSelected);
+                                     if (themeDelegate != null && !themeDelegate.isDark && selectedBackgroundPaint != null) {
+                                         backgroundDrawable.setCustomPaint(selectedBackgroundPaint);
+-                                        float viewTop = (isKeyboardVisible() ? chatListView.getTop() : actionBar.getMeasuredHeight()) - contentView.getBackgroundTranslationY();
++                                        float viewTop = actionBar.getMeasuredHeight() - contentView.getBackgroundTranslationY();
+                                         int backgroundHeight = contentView.getBackgroundSizeY();
+                                         if (themeDelegate != null) {
+                                             themeDelegate.applyServiceShaderMatrix(getMeasuredWidth(), backgroundHeight, cell.getX(), viewTop);
+@@ -16072,7 +16072,7 @@ public class ChatActivity extends BaseFragment implements
+                     viewBottom - viewTop,
+                     recyclerChatViewHeight,
+                     0,
+-                    view.getY() + (isKeyboardVisible() ? chatListView.getTop() : actionBar.getMeasuredHeight()) - contentView.getBackgroundTranslationY() - (1f - contentPanTranslationT) * chatListViewPaddingTop,
++                    view.getY() + actionBar.getMeasuredHeight() - contentView.getBackgroundTranslationY() - (1f - contentPanTranslationT) * chatListViewPaddingTop,
+                     chatListView.getMeasuredWidth(),
+                     contentView.getBackgroundSizeY(),
+                     blurredViewTopOffset,

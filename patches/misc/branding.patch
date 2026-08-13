@@ -234,7 +234,7 @@ index 0000000..0000000 100644
                  ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                  actionBar.setTitle(ssb, statusDrawable);
 +                } else {
-+                    actionBar.setTitle(getString(R.string.AppName), statusDrawable);
++                    actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
 +                }
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
@@ -285,12 +285,12 @@ index 0000000..0000000 100644
                  }
              } else {
 -                currentTitle = menuItemsOffset < dp(50) ? null :
-+                currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : LocaleController.getString(R.string.AppName)) :
++                currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
                      LocaleController.getString(R.string.MyStory);
              }
          } else {
 -            currentTitle = menuItemsOffset < dp(50) ? null :
-+            currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : LocaleController.getString(R.string.AppName)) :
++            currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
                  LocaleController.formatPluralString("Stories", totalCount);
          }
  

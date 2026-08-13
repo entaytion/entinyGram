@@ -13,6 +13,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.chat.BlockedMessagesHelper
 import desu.inugram.helpers.chat.ChatHelper
+import desu.inugram.helpers.chat.ForumDisplayHelper
 import org.json.JSONArray
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -196,7 +197,7 @@ object ProfileHelper {
     }
 
     @JvmStatic
-    fun addMenuItems(otherItem: ActionBarMenuItem?, currentAccount: Int, dialogId: Long, resourcesProvider: Theme.ResourcesProvider?) {
+    fun addMenuItems(fragment: BaseFragment, otherItem: ActionBarMenuItem?, currentAccount: Int, dialogId: Long, resourcesProvider: Theme.ResourcesProvider?) {
         if (otherItem == null) return
         if (!InuConfig.DISABLE_CHAT_BACKGROUNDS.value && getRawDialogWallpaper(currentAccount, dialogId) != null) {
             val hidden = ChatHelper.isRemoveWallpaperSetForDialog(currentAccount, dialogId)
@@ -225,12 +226,28 @@ object ProfileHelper {
                 LocaleController.getString(label),
             )
         }
+        if (isRegularForum(currentAccount, dialogId)) {
+            ForumDisplayHelper.addProfileMenuItem(fragment, otherItem, currentAccount, -dialogId, resourcesProvider)
+        }
+        if (BuildVars.DEBUG_PRIVATE_VERSION) {
+            otherItem.addSubItem(
+                ACTION_DEBUG_CLEAR_CACHE,
+                R.drawable.msg_delete,
+                "Debug: clear profile cache",
+            )
+        }
     }
 
     private fun canHideMessagesFrom(currentAccount: Int, dialogId: Long): Boolean {
         if (dialogId > 0) return dialogId != UserConfig.getInstance(currentAccount).clientUserId
         val chat = MessagesController.getInstance(currentAccount).getChat(-dialogId)
         return ChatObject.isChannelAndNotMegaGroup(chat)
+    }
+
+    private fun isRegularForum(currentAccount: Int, dialogId: Long): Boolean {
+        if (dialogId >= 0) return false
+        val chat = MessagesController.getInstance(currentAccount).getChat(-dialogId)
+        return ChatObject.isForum(chat) && !ChatObject.isMonoForum(chat)
     }
 
     @JvmStatic

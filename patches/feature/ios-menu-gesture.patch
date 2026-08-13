@@ -4,32 +4,15 @@ Date: Mon, 20 Apr 2026 12:50:31 +0300
 Subject: improved ios-style release-to-activate gestures: plain backgrounds, gesture detection
 
 ---
- .../telegram/ui/Components/ItemOptions.java   | 23 +++++--------------
- .../org/telegram/ui/MainTabsActivity.java     |  7 +++---
- 2 files changed, 9 insertions(+), 21 deletions(-)
+ .../org/telegram/ui/Components/ItemOptions.java     | 13 ++++---------
+ .../main/java/org/telegram/ui/MainTabsActivity.java |  7 +++----
+ 2 files changed, 7 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
-@@ -1476,14 +1476,8 @@ public class ItemOptions {
-             }
-         }
- 
--        if (!longPressSelectionEnabled) {
--            // End the gesture that opened the menu so its source view cannot keep scrolling.
--            if (fragment != null && fragment.getFragmentView() != null) {
--                fragment.getFragmentView().getRootView().dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
--            } else if (this.container != null) {
--                container.dispatchTouchEvent(AndroidUtilities.emptyMotionEvent());
--            }
--        }
-+        // stock discarded the in-flight gesture here, but that cancels the press-hold-drag-release
-+        // started by installHoverReleaseListener() — keep the gesture alive instead
- 
-         if (blurForMenu && scrimBlur3SourceBitmap != null) {
-             setGapBackgroundColor(Theme.multAlpha(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem, resourcesProvider), 0.06f));
-@@ -1811,7 +1805,6 @@ public class ItemOptions {
+@@ -1811,7 +1811,6 @@ public class ItemOptions {
  
      private View.OnTouchListener hoverReleaseListener;
      private View hoveredItem;
@@ -37,7 +20,7 @@ index 0000000..0000000 100644
  
      private void installHoverReleaseListener() {
          if (scrimView == null) return;
-@@ -1856,17 +1849,13 @@ public class ItemOptions {
+@@ -1856,17 +1855,13 @@ public class ItemOptions {
          View hit = findItemAt(layout, rawX, rawY);
          if (hit != hoveredItem) {
              if (hoveredItem != null) {
@@ -57,7 +40,7 @@ index 0000000..0000000 100644
      }
  
      private void releaseHover(int rawX, int rawY) {
-@@ -1874,14 +1863,14 @@ public class ItemOptions {
+@@ -1874,14 +1869,14 @@ public class ItemOptions {
          if (hoveredItem != null) {
              View target = hoveredItem;
              hoveredItem = null;

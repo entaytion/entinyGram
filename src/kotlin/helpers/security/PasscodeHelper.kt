@@ -81,6 +81,7 @@ object PasscodeHelper {
 
     // raw per-account passcode "hide" state, independent of paranoia. used by the passcode
     // settings UI so the toggle reflects the actual stored pref, not a paranoia override.
+    @JvmStatic
     fun isAccountHiddenByPasscode(account: Int): Boolean =
         hasPasscodeForAccount(account) && prefs.getBoolean("hide$account", false)
 
@@ -88,6 +89,19 @@ object PasscodeHelper {
     fun isAccountHidden(account: Int): Boolean {
         if (ParanoiaHelper.hidesOtherAccounts() && account != UserConfig.selectedAccount) return true
         return isAccountHiddenByPasscode(account)
+    }
+
+    // last visible account logged out, but hidden ones remain: lock so the passcode screen is the
+    // only way back in, otherwise they'd be silently switched to (or left unreachable).
+    @JvmStatic
+    fun lockIfHiddenAccountsLeft(): Boolean {
+        val hasHidden = (0 until UserConfig.MAX_ACCOUNT_COUNT).any {
+            UserConfig.getInstance(it).isClientActivated && isAccountHiddenByPasscode(it)
+        }
+        if (!hasHidden) return false
+        SharedConfig.appLocked = true
+        SharedConfig.saveConfig()
+        return true
     }
 
     fun setAccountHidden(account: Int, hide: Boolean) {

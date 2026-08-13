@@ -24,10 +24,13 @@ import desu.inugram.ui.drawer.SideMenultItemAnimator
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.ImageLoader
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.tgnet.ConnectionsManager
+import org.telegram.tgnet.TLRPC
+import org.telegram.tgnet.tl.TL_stars
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
@@ -41,7 +44,9 @@ import org.telegram.ui.ActionBar.MenuDrawable
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.CallLogActivity
 import org.telegram.ui.ChatActivity
+import org.telegram.ui.Components.AnimatedEmojiDrawable
 import org.telegram.ui.Components.ItemOptions
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.ContactsActivity
 import org.telegram.ui.DialogsActivity
@@ -52,7 +57,10 @@ import org.telegram.ui.LoginActivity
 import org.telegram.ui.MainTabsActivity
 import org.telegram.ui.ProfileActivity
 import org.telegram.ui.ProxyListActivity
+import org.telegram.ui.SelectAnimatedEmojiDialog
 import org.telegram.ui.SettingsActivity
+import org.telegram.ui.Stars.StarGiftSheet
+import org.telegram.ui.Stars.StarsController
 import org.telegram.ui.UpdateLayoutWrapper
 
 @SuppressLint("StaticFieldLeak")
@@ -67,6 +75,7 @@ object DrawerHelper {
     private var updateObserver: NotificationCenter.NotificationCenterDelegate? = null
     private var updateObserverAccount: Int = -1
     private var menuDrawableRef: MenuDrawable? = null
+    private var statusPopup: SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow? = null
 
     @JvmStatic
     @JvmOverloads
@@ -393,6 +402,120 @@ object DrawerHelper {
         adapter?.profileCell?.updateSunDrawable(Theme.isCurrentThemeDark())
     }
 
+    fun dismissStatusPopup() {
+        statusPopup?.dismiss()
+        statusPopup = null
+    }
+
+    /**
+     * Emoji status selector anchored to the drawer profile cell. Ported from
+     * 11.14.1 stock LaunchActivity.showSelectStatusDialog, selection handling
+     * mirrors 12.x DialogsActivity.showSelectStatusDialog (gift statuses).
+     */
+    fun showSelectStatusDialog(cell: DrawerProfileCell, drawerLayoutContainer: DrawerLayoutContainer) {
+        if (statusPopup != null || SharedConfig.appLocked) return
+        val fragment = drawerLayoutContainer.parentActionBarLayout?.lastFragment ?: return
+        val account = UserConfig.selectedAccount
+        val user = UserConfig.getInstance(account).getCurrentUser() ?: return
+        val scrimDrawable = cell.status
+        scrimDrawable.play()
+        cell.getEmojiStatusLocation(AndroidUtilities.rectTmp2)
+        val yoff = -(cell.height - AndroidUtilities.rectTmp2.centerY()) - dp(16f)
+        var xoff = AndroidUtilities.rectTmp2.centerX()
+        (cell.context as? Activity)?.window?.decorView?.rootWindowInsets?.let {
+            xoff -= it.stableInsetLeft
+        }
+        val popupLayout = object : SelectAnimatedEmojiDialog(
+            fragment,
+            cell.context,
+            true,
+            xoff,
+            SelectAnimatedEmojiDialog.TYPE_EMOJI_STATUS,
+            null,
+        ) {
+            override fun onSettings() {
+                drawerLayoutContainer.inu_drawer?.closeDrawer(false)
+            }
+
+            override fun willApplyEmoji(
+                view: View?,
+                documentId: Long?,
+                document: TLRPC.Document?,
+                gift: TL_stars.TL_starGiftUnique?,
+                until: Int?,
+            ): Boolean {
+                if (gift != null) {
+                    val savedStarGift = StarsController.getInstance(account).findUserStarGift(gift.id)
+                    return savedStarGift == null || MessagesController.getGlobalMainSettings().getInt("statusgiftpage", 0) >= 2
+                }
+                return true
+            }
+
+            override fun onEmojiSelected(
+                emojiView: View?,
+                documentId: Long?,
+                document: TLRPC.Document?,
+                gift: TL_stars.TL_starGiftUnique?,
+                until: Int?,
+            ) {
+                val emojiStatus: TLRPC.EmojiStatus
+                if (documentId == null) {
+                    emojiStatus = TLRPC.TL_emojiStatusEmpty()
+                } else if (gift != null) {
+                    val savedStarGift = StarsController.getInstance(account).findUserStarGift(gift.id)
+                    if (savedStarGift != null && MessagesController.getGlobalMainSettings().getInt("statusgiftpage", 0) < 2) {
+                        MessagesController.getGlobalMainSettings().edit()
+                            .putInt("statusgiftpage", MessagesController.getGlobalMainSettings().getInt("statusgiftpage", 0) + 1)
+                            .apply()
+                        StarGiftSheet(cell.context, account, UserConfig.getInstance(account).getClientUserId(), null)
+                            .set(savedStarGift, null)
+                            .setupWearPage()
+                            .show()
+                        dismissStatusPopup()
+                        return
+                    }
+                    val status = TLRPC.TL_inputEmojiStatusCollectible()
+                    status.collectible_id = gift.id
+                    if (until != null) {
+                        status.flags = status.flags or 1
+                        status.until = until
+                    }
+                    emojiStatus = status
+                } else {
+                    val status = TLRPC.TL_emojiStatus()
+                    status.document_id = documentId
+                    if (until != null) {
+                        status.flags = status.flags or 1
+                        status.until = until
+                    }
+                    emojiStatus = status
+                }
+                MessagesController.getInstance(account).updateEmojiStatus(emojiStatus, gift)
+                dismissStatusPopup()
+            }
+        }
+        if (DialogObject.getEmojiStatusUntil(user.emoji_status) > 0) {
+            popupLayout.setExpireDateHint(DialogObject.getEmojiStatusUntil(user.emoji_status))
+        }
+        val giftId = (user.emoji_status as? TLRPC.TL_emojiStatusCollectible)?.collectible_id
+        popupLayout.setSelected(giftId ?: (scrimDrawable.drawable as? AnimatedEmojiDrawable)?.documentId)
+        popupLayout.setSaveState(2)
+        popupLayout.setScrimDrawable(scrimDrawable, cell.getEmojiStatusDrawableParent())
+        val popup = object : SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow(
+            popupLayout,
+            LayoutHelper.WRAP_CONTENT,
+            LayoutHelper.WRAP_CONTENT,
+        ) {
+            override fun dismiss() {
+                super.dismiss()
+                statusPopup = null
+            }
+        }
+        statusPopup = popup
+        popup.showAsDropDown(cell, 0, yoff, Gravity.TOP)
+        popup.dimBehind()
+    }
+
     @JvmStatic
     fun handleItemClick(
         position: Int,
@@ -484,6 +607,13 @@ object DrawerHelper {
                 close()
             }
 
+            ITEM_ARCHIVE -> {
+                val args = Bundle()
+                args.putInt("folderId", 1)
+                nav.presentFragment(DialogsActivity(args))
+                close()
+            }
+
             ITEM_SETTINGS -> {
                 nav.presentFragment(SettingsActivity())
                 close()
@@ -507,6 +637,7 @@ object DrawerHelper {
     private const val ITEM_SAVED_MESSAGES = 11
     private const val ITEM_SETTINGS = 8
     private const val ITEM_PROXY = DrawerLayoutAdapter.ITEM_PROXY
+    private const val ITEM_ARCHIVE = DrawerLayoutAdapter.ITEM_ARCHIVE
 
     @JvmStatic
     fun notifyDataChanged() {

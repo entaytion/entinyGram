@@ -20,7 +20,6 @@ import org.telegram.messenger.Utilities
 import org.telegram.ui.PhotoViewer
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
 
 object GalleryHelper {
     private class Entry(val dateModified: Long, val description: MotionPhotoDescription?)
@@ -76,14 +75,17 @@ object GalleryHelper {
     // ---------------- incremental updates ----------------
 
     private val pendingInserts = HashSet<Long>()
+    private val pendingUpdates = HashSet<Long>()
     private val pendingLock = Any()
     @Volatile
     private var forceFullRescan = false
     @Volatile
     private var incrementalEligible = false
+    private var incrementalRetryScheduled = false
+    private var missingRowRetryAttempts = 0
+    private val invalidatedThumbIds = HashSet<Int>()
     @Volatile
     private var cachedCameraAlbumId: Int? = null
-    private val visiblePhotoViewerRefreshVersion = AtomicLong()
 
     private val IMAGE_URI_RE = Regex("""^content://media/[^/]+/images/media/(\d+)$""")
     private val VIDEO_URI_RE = Regex("""^content://media/[^/]+/video/media/(\d+)$""")
@@ -94,7 +96,12 @@ object GalleryHelper {
         previous: MediaController.PhotoEntry?,
         current: MediaController.PhotoEntry,
     ) {
-        if (!hasMediaChanged(previous, current)) return
+        val invalidated = if (previous === current) {
+            invalidatedThumbIds.remove(current.imageId)
+        } else {
+            hasMediaChanged(previous, current)
+        }
+        if (!invalidated) return
         receiver.imageKey?.let { ImageLoader.getInstance().removeImage(it) }
         receiver.clearImage()
     }
@@ -109,13 +116,31 @@ object GalleryHelper {
         if (index !in photos.indices) return
         val previous = photos[index] as? MediaController.PhotoEntry ?: return
         val current = album.photosByIds[previous.imageId] ?: return
-        if (!hasMediaChanged(previous, current)) return
-        viewer.inu_reloadCurrentPhoto(current)
+        if (previous === current) return
+        android.util.Log.d("inu-gallery", "refreshPhotoViewer id=${previous.imageId} changed=${hasMediaChanged(previous, current)} editing=${viewer.inu_isInEditMode()}")
+        viewer.inu_reloadCurrentPhoto(current, hasMediaChanged(previous, current))
     }
 
     @JvmStatic
-    fun shouldRefreshVisiblePhotoViewer(): Boolean {
-        return visiblePhotoViewerRefreshVersion.get() != 0L
+    fun isPhotoViewerEditing(): Boolean {
+        return PhotoViewer.hasInstance() && PhotoViewer.getInstance().inu_isInEditMode()
+    }
+
+    @JvmStatic
+    fun reconcileSendEntry(index: Int, resolved: MediaController.PhotoEntry?): MediaController.PhotoEntry? {
+        if (!PhotoViewer.hasInstance()) return resolved
+        val viewer = PhotoViewer.getInstance()
+        if (!viewer.isVisible) return resolved
+        val photos = viewer.imagesArrLocals
+        if (index !in photos.indices) return resolved
+        val shown = photos[index] as? MediaController.PhotoEntry ?: return resolved
+        if (shown === resolved) return resolved
+        android.util.Log.e("inu-gallery", "reconcileSendEntry: mismatch at index=$index shown=${shown.imageId} resolved=${resolved?.imageId}")
+        if (resolved != null && resolved.imageId == shown.imageId) {
+            resolved.copyFrom(shown)
+            return resolved
+        }
+        return shown
     }
 
     private fun hasMediaChanged(
@@ -133,6 +158,7 @@ object GalleryHelper {
 
     @JvmStatic
     fun recordEvent(uri: Uri?, flags: Int) {
+        android.util.Log.d("inu-gallery", "recordEvent uri=$uri flags=$flags")
         if (uri == null) {
             forceFullRescan = true; return
         }
@@ -145,10 +171,6 @@ object GalleryHelper {
             return
         }
         val isImage = imageMatch != null
-        if (isImage && (flags and ContentResolver.NOTIFY_DELETE) == 0 && isShowingPhoto(id.toInt())) {
-            visiblePhotoViewerRefreshVersion.incrementAndGet()
-            forceFullRescan = true
-        }
         when {
             (flags and ContentResolver.NOTIFY_DELETE) != 0 -> forceFullRescan = true
             (flags and ContentResolver.NOTIFY_INSERT) != 0 -> {
@@ -170,14 +192,7 @@ object GalleryHelper {
                     if (existingPhoto == null) {
                         synchronized(pendingLock) { pendingInserts.add(id) }
                     } else {
-                        cache.remove(id.toInt())
-                        val path = existingPhoto.path
-                        if (path != null) {
-                            AndroidUtilities.runOnUIThread {
-                                ImageLoader.getInstance().removeImage(Utilities.MD5("thumb://$id:$path"))
-                            }
-                        }
-                        forceFullRescan = true
+                        synchronized(pendingLock) { pendingUpdates.add(id) }
                     }
                 }
             }
@@ -186,26 +201,32 @@ object GalleryHelper {
         }
     }
 
-    private fun isShowingPhoto(imageId: Int): Boolean {
+    private fun isPhotoViewerBlockingGalleryUpdate(): Boolean {
         if (!PhotoViewer.hasInstance()) return false
-        val viewer = PhotoViewer.getInstance()
-        val index = viewer.currentIndex
-        val photos = viewer.imagesArrLocals
-        return viewer.isVisible && index in photos.indices &&
-            (photos[index] as? MediaController.PhotoEntry)?.imageId == imageId
+        return PhotoViewer.getInstance().isVisible
     }
 
     @JvmStatic
     fun markFullScanComplete(cameraAlbumId: Int?) {
-        // do NOT clear pendingInserts — events that arrived during the scan stay queued
-        // so the next debounce picks them up incrementally; merge dedupes via photosByIds.
+        // do NOT clear pendingInserts/pendingUpdates: events that arrived during the scan stay
+        // queued so the next debounce picks them up incrementally; apply dedupes via photosByIds.
         cachedCameraAlbumId = cameraAlbumId
         incrementalEligible = true
-        val refreshVersion = visiblePhotoViewerRefreshVersion.get()
-        if (refreshVersion != 0L) {
+        invalidatedThumbIds.clear()
+        missingRowRetryAttempts = 0
+        android.util.Log.d("inu-gallery", "markFullScanComplete")
+    }
+
+    private fun scheduleIncrementalRetry(guid: Int, delay: Int) {
+        AndroidUtilities.runOnUIThread {
+            if (incrementalRetryScheduled) return@runOnUIThread
+            incrementalRetryScheduled = true
             AndroidUtilities.runOnUIThread({
-                visiblePhotoViewerRefreshVersion.compareAndSet(refreshVersion, 0)
-            }, 1000)
+                incrementalRetryScheduled = false
+                if (!tryConsumeIncremental(guid)) {
+                    MediaController.loadGalleryPhotosAlbums(guid)
+                }
+            }, delay.toLong())
         }
     }
 
@@ -216,40 +237,36 @@ object GalleryHelper {
     fun tryConsumeIncremental(guid: Int): Boolean {
         if (Build.VERSION.SDK_INT < 30) return false
         if (!incrementalEligible || forceFullRescan) {
-            synchronized(pendingLock) { pendingInserts.clear() }
+            android.util.Log.d("inu-gallery", "tryConsumeIncremental: full rescan (eligible=$incrementalEligible force=$forceFullRescan)")
+            synchronized(pendingLock) {
+                pendingInserts.clear()
+                pendingUpdates.clear()
+            }
             forceFullRescan = false
             return false
         }
-        val ids = synchronized(pendingLock) {
-            val snapshot = pendingInserts.toLongArray()
-            pendingInserts.clear()
-            snapshot
+        // inserting into album photo lists shifts positions that an open PhotoViewer's
+        // placeProvider maps back via getPhotoEntryAtPosition(index); merging now would make it
+        // resolve a different photo than the one on screen. Defer inserts until it closes.
+        // In-place updates keep object identity and positions, so they are always safe to apply.
+        val blocked = isPhotoViewerBlockingGalleryUpdate()
+        val inserts: LongArray
+        val updates: LongArray
+        synchronized(pendingLock) {
+            inserts = if (blocked) LongArray(0) else pendingInserts.toLongArray().also { pendingInserts.clear() }
+            updates = pendingUpdates.toLongArray().also { pendingUpdates.clear() }
         }
-        if (ids.isEmpty()) return true
-        val allMediaEntry = MediaController.allMediaAlbumEntry
-        val allPhotosEntry = MediaController.allPhotosAlbumEntry
-        if (allMediaEntry == null || allPhotosEntry == null) return false
+        if (blocked && synchronized(pendingLock) { pendingInserts.isNotEmpty() }) {
+            android.util.Log.d("inu-gallery", "tryConsumeIncremental: inserts deferred, viewer visible")
+            scheduleIncrementalRetry(guid, 200)
+        }
+        if (inserts.isEmpty() && updates.isEmpty()) return true
+        if (MediaController.allMediaAlbumEntry == null || MediaController.allPhotosAlbumEntry == null) return false
 
         Thread {
             try {
-                val rows = queryRowsByIds(ids)
-                if (rows.isEmpty()) return@Thread
-                val knownBuckets = HashSet<Int>()
-                for (a in MediaController.allMediaAlbums) knownBuckets.add(a.bucketId)
-                if (rows.any { it.bucketId !in knownBuckets }) {
-                    AndroidUtilities.runOnUIThread { MediaController.loadGalleryPhotosAlbums(guid) }
-                    return@Thread
-                }
-                AndroidUtilities.runOnUIThread {
-                    mergeIntoAlbums(rows)
-                    NotificationCenter.getGlobalInstance().postNotificationName(
-                        NotificationCenter.albumsDidLoad,
-                        guid,
-                        MediaController.allMediaAlbums,
-                        MediaController.allPhotoAlbums,
-                        cachedCameraAlbumId,
-                    )
-                }
+                val rows = queryRowsByIds(inserts + updates)
+                AndroidUtilities.runOnUIThread { applyIncrementalRows(guid, inserts, updates, rows) }
             } catch (e: Throwable) {
                 FileLog.e(e)
                 AndroidUtilities.runOnUIThread { MediaController.loadGalleryPhotosAlbums(guid) }
@@ -259,6 +276,115 @@ object GalleryHelper {
             start()
         }
         return true
+    }
+
+    private fun applyIncrementalRows(guid: Int, inserts: LongArray, updates: LongArray, rows: List<MediaController.PhotoEntry>) {
+        val allMediaEntry = MediaController.allMediaAlbumEntry
+        val allPhotosEntry = MediaController.allPhotosAlbumEntry
+        if (allMediaEntry == null || allPhotosEntry == null) {
+            MediaController.loadGalleryPhotosAlbums(guid)
+            return
+        }
+
+        val foundIds = rows.mapTo(HashSet()) { it.imageId.toLong() }
+        val missing = (inserts + updates).filter { it !in foundIds }
+        if (missing.isEmpty()) {
+            missingRowRetryAttempts = 0
+        } else if (missingRowRetryAttempts < 5) {
+            // IS_PENDING rows are hidden from default queries, and events can arrive before the
+            // row becomes visible to other processes. Requeue instead of silently dropping,
+            // otherwise a fresh screenshot may never show up until an unrelated full rescan.
+            missingRowRetryAttempts++
+            android.util.Log.d("inu-gallery", "applyIncrementalRows: ${missing.size} rows not visible yet, retrying (attempt $missingRowRetryAttempts)")
+            val updateIds = updates.toHashSet()
+            synchronized(pendingLock) {
+                for (id in missing) {
+                    if (id in updateIds) pendingUpdates.add(id) else pendingInserts.add(id)
+                }
+            }
+            scheduleIncrementalRetry(guid, 1000)
+        } else {
+            android.util.Log.d("inu-gallery", "applyIncrementalRows: giving up on ${missing.size} missing rows")
+            missingRowRetryAttempts = 0
+        }
+        if (rows.isEmpty()) return
+
+        val toInsert = ArrayList<MediaController.PhotoEntry>()
+        var changed = false
+        for (row in rows) {
+            val existing = allPhotosEntry.photosByIds[row.imageId] ?: allMediaEntry.photosByIds[row.imageId]
+            if (existing == null) {
+                toInsert.add(row)
+            } else if (row.bucketId != existing.bucketId) {
+                android.util.Log.d("inu-gallery", "applyIncrementalRows: id=${row.imageId} moved buckets, full rescan")
+                MediaController.loadGalleryPhotosAlbums(guid)
+                return
+            } else if (hasMediaChanged(existing, row)) {
+                android.util.Log.d("inu-gallery", "applyIncrementalRows: updating id=${row.imageId} in place")
+                applyUpdateInPlace(existing, row)
+                changed = true
+            }
+        }
+
+        if (toInsert.isNotEmpty()) {
+            if (isPhotoViewerBlockingGalleryUpdate()) {
+                synchronized(pendingLock) { toInsert.forEach { pendingInserts.add(it.imageId.toLong()) } }
+                scheduleIncrementalRetry(guid, 200)
+            } else {
+                val knownBuckets = HashSet<Int>()
+                for (a in MediaController.allMediaAlbums) knownBuckets.add(a.bucketId)
+                if (toInsert.any { it.bucketId !in knownBuckets }) {
+                    MediaController.loadGalleryPhotosAlbums(guid)
+                    return
+                }
+                android.util.Log.d("inu-gallery", "applyIncrementalRows: inserting ${toInsert.size} rows")
+                mergeIntoAlbums(toInsert)
+                changed = true
+            }
+        }
+
+        if (changed) {
+            NotificationCenter.getGlobalInstance().postNotificationName(
+                NotificationCenter.albumsDidLoad,
+                guid,
+                MediaController.allMediaAlbums,
+                MediaController.allPhotoAlbums,
+                cachedCameraAlbumId,
+            )
+        }
+    }
+
+    private fun applyUpdateInPlace(existing: MediaController.PhotoEntry, fresh: MediaController.PhotoEntry) {
+        cache.remove(existing.imageId)
+        ImageLoader.getInstance().removeImage(Utilities.MD5("thumb://${existing.imageId}:${existing.path}"))
+        existing.path = fresh.path
+        existing.dateTaken = fresh.dateTaken
+        existing.size = fresh.size
+        existing.width = fresh.width
+        existing.height = fresh.height
+        existing.orientation = fresh.orientation
+        existing.invert = fresh.invert
+        existing.thumb = null
+        if (existing.isLivePhoto != fresh.isLivePhoto) {
+            existing.discardLivePhoto = fresh.discardLivePhoto
+        }
+        existing.isVideo = fresh.isVideo
+        existing.isLivePhoto = fresh.isLivePhoto
+        existing.livePhotoVideoOffset = fresh.livePhotoVideoOffset
+        existing.livePhotoTimestampUs = fresh.livePhotoTimestampUs
+        invalidatedThumbIds.add(existing.imageId)
+        refreshViewerIfShowing(existing)
+    }
+
+    private fun refreshViewerIfShowing(entry: MediaController.PhotoEntry) {
+        if (!PhotoViewer.hasInstance()) return
+        val viewer = PhotoViewer.getInstance()
+        if (!viewer.isVisible || viewer.inu_isInEditMode()) return
+        val index = viewer.currentIndex
+        val photos = viewer.imagesArrLocals
+        if (index in photos.indices && photos[index] === entry) {
+            viewer.inu_reloadCurrentPhoto(entry, true)
+        }
     }
 
     private fun queryRowsByIds(ids: LongArray): List<MediaController.PhotoEntry> {

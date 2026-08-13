@@ -33,7 +33,16 @@
     <string name="InuUserProfileHeader">Header</string>
     <string name="InuUserProfileInformation">Information</string>
     <string name="InuChatList">Chat list</string>
-    <string name="InuOpenArchiveOnPull">Open archive on pull</string>
+    <string name="InuTitleText">Title text</string>
+    <string name="InuPullDownAction">Pull-down action</string>
+    <string name="InuPullDownActionDisabled">Disabled</string>
+    <string name="InuPullDownActionDisabledInfo">The archive is moved to the menu</string>
+    <string name="InuPullDownActionRevealArchive">Reveal archive</string>
+    <string name="InuPullDownActionOpenArchive">Open archive</string>
+    <string name="InuSwipeForSavedMessages">Swipe down for Saved Messages</string>
+    <string name="InuReleaseForSavedMessages">Release for Saved Messages</string>
+    <string name="InuSwipeForSearch">Swipe down for search</string>
+    <string name="InuReleaseForSearch">Release for search</string>
     <string name="InuDoubleTapActions">Double tap actions</string>
     <string name="InuDoubleTapDelay">Double tap delay</string>
     <string name="InuIncomingMessages">Incoming messages</string>
@@ -78,6 +87,8 @@
     <string name="InuDisableSensitive">Disable sensitive filter</string>
     <string name="InuDisableQuickShare">Disable quick share</string>
     <string name="InuDisableQuickShareInfo">Don\'t show frequent contacts on long-tapping the share button (next to channel messages); it sends without confirmation</string>
+    <string name="InuDisableProfileMusicAutoplay">Disable profile music auto-play</string>
+    <string name="InuDisableProfileMusicAutoplayInfo">Don\'t start playback automatically when opening the pinned music player on a profile</string>
     <string name="InuDisableChatBackgrounds">Disable custom chat backgrounds</string>
     <string name="InuDisableChatThemes">Disable custom chat themes</string>
     <string name="InuDisableBgParallax">Disable background parallax</string>
@@ -223,6 +234,8 @@
     <string name="InuCallConfirmation">Ask before calling</string>
     <string name="InuCallConfirmationTitle">Confirm calling</string>
     <string name="InuCallConfirmationText">Call **%1$s**?</string>
+    <string name="InuHdBluetoothCallAudio">HD call audio on Bluetooth</string>
+    <string name="InuHdBluetoothCallAudioInfo">Play call audio as media instead of switching headphones to the low-quality headset profile, using the phone\'s microphone. Applies when a Bluetooth device is connected at call start</string>
     <string name="InuConfirmInternalLinks">Confirm opening internal links</string>
     <string name="InuConfirmInternalLinksInfo">tg:// and t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">Disable swipe-down to minimize browser</string>
@@ -325,6 +338,7 @@
     <string name="InuIconReplacement">Icon pack</string>
     <string name="InuIconReplacementOff">Default</string>
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
+    <string name="InuIconReplacementVkui">VKUI by VK</string>
 
     <string name="InuMapsHeader">Maps</string>
     <string name="InuMapProvider">Map view provider</string>
@@ -450,6 +464,7 @@
     <string name="InuForwardHeaderModeIcon">Icon</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">Same as Compact with &quot;Show forward time&quot; off</string>
     <string name="InuForwardHeaderModeCompact">Compact</string>
+    <string name="InuShowForwardsCount">Show forward count</string>
     <string name="InuCompactEdited">Compact edit indicator</string>
 
     <string name="InuAddToStickersGifs">Add to Stickers/GIFs</string>

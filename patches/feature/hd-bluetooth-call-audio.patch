@@ -1,0 +1,217 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 13 Aug 2026 03:02:26 +0400
+Subject: Play call audio as media on Bluetooth to avoid the low-quality HFP profile
+
+---
+ .../telegram/messenger/voip/VoIPService.java  | 37 +++++++++++++++----
+ .../java/org/telegram/ui/VoIPFragment.java    |  4 +-
+ .../webrtc/voiceengine/WebRtcAudioTrack.java  | 32 ++++++++++++++++
+ 3 files changed, 63 insertions(+), 10 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+index 0000000..0000000 100755
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+@@ -492,7 +492,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 				if (BuildVars.LOGS_ENABLED) {
+ 					FileLog.e("Bluetooth SCO state updated: " + state);
+ 				}
+-				if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED && isBtHeadsetConnected) {
++				if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED && isBtHeadsetConnected && !desu.inugram.helpers.CallAudioHelper.isActive()) {
+ 					if (!btAdapter.isEnabled() || !PermissionRequest.hasPermission(Manifest.permission.BLUETOOTH_CONNECT) || btAdapter.getProfileConnectionState(BluetoothProfile.HEADSET) != BluetoothProfile.STATE_CONNECTED) {
+ 						updateBluetoothHeadsetState(false);
+ 						return;
+@@ -3859,6 +3859,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 					break;
+ 			}
+ 		} else if (audioConfigured && !USE_CONNECTION_SERVICE) {
++			if (desu.inugram.helpers.CallAudioHelper.handleSetAudioOutput(this, which)) {
++				audioRouteToSet = desu.inugram.helpers.CallAudioHelper.getCurrentRoute();
++				for (StateListener l : stateListeners) {
++					l.onAudioSettingsChanged();
++				}
++				return;
++			}
+ 			switch (which) {
+ 				case 2:
+ 					if (!bluetoothScoActive) {
+@@ -3924,6 +3931,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 			int route = systemCallConnection.getCallAudioState().getRoute();
+ 			return hasEarpiece() ? route == CallAudioState.ROUTE_SPEAKER : route == CallAudioState.ROUTE_BLUETOOTH;
+ 		} else if (audioConfigured && !USE_CONNECTION_SERVICE) {
++			if (desu.inugram.helpers.CallAudioHelper.isActive()) {
++				return desu.inugram.helpers.CallAudioHelper.getCurrentRoute() == AUDIO_ROUTE_SPEAKER;
++			}
+ 			AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+ 			VoipAudioManager vam = VoipAudioManager.get();
+ 			return hasEarpiece() ? vam.isSpeakerphoneOn() : am.isBluetoothScoOn();
+@@ -3947,6 +3957,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 			return audioRouteToSet;
+ 		}
+ 		if (audioConfigured) {
++			if (desu.inugram.helpers.CallAudioHelper.isActive()) {
++				return desu.inugram.helpers.CallAudioHelper.getCurrentRoute();
++			}
+ 			AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+ 			VoipAudioManager vam = VoipAudioManager.get();
+ 			if (am.isBluetoothScoOn()) {
+@@ -4759,11 +4772,12 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 	}
+ 
+ 	private void loadResources() {
++		final boolean inu_mediaAudio = desu.inugram.helpers.CallAudioHelper.evaluate(this);
+ 		if (Build.VERSION.SDK_INT >= 21) {
+ 			WebRtcAudioTrack.setAudioTrackUsageAttribute(AudioAttributes.USAGE_VOICE_COMMUNICATION);
+ 		}
+ 		Utilities.globalQueue.postRunnable(() -> {
+-			soundPool = new SoundPool(1, AudioManager.STREAM_VOICE_CALL, 0);
++			soundPool = new SoundPool(1, inu_mediaAudio ? AudioManager.STREAM_MUSIC : AudioManager.STREAM_VOICE_CALL, 0);
+ 			spConnectingId = soundPool.load(this, R.raw.voip_connecting, 1);
+ 			spRingbackID = soundPool.load(this, R.raw.voip_ringback, 1);
+ 			spFailedID = soundPool.load(this, R.raw.voip_failed, 1);
+@@ -4824,10 +4838,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 		if (BuildVars.LOGS_ENABLED) {
+ 			FileLog.d("configureDeviceForCall, route to set = " + audioRouteToSet);
+ 		}
++		final boolean inu_mediaAudio = desu.inugram.helpers.CallAudioHelper.onConfigureCall(this);
+ 
+ 		if (Build.VERSION.SDK_INT >= 21) {
+-			WebRtcAudioTrack.setAudioTrackUsageAttribute(hasRtmpStream() ? AudioAttributes.USAGE_MEDIA : AudioAttributes.USAGE_VOICE_COMMUNICATION);
+-			WebRtcAudioTrack.setAudioStreamType(hasRtmpStream() ? AudioManager.USE_DEFAULT_STREAM_TYPE : AudioManager.STREAM_VOICE_CALL);
++			WebRtcAudioTrack.setAudioTrackUsageAttribute(hasRtmpStream() || inu_mediaAudio ? AudioAttributes.USAGE_MEDIA : AudioAttributes.USAGE_VOICE_COMMUNICATION);
++			WebRtcAudioTrack.setAudioStreamType(hasRtmpStream() || inu_mediaAudio ? AudioManager.USE_DEFAULT_STREAM_TYPE : AudioManager.STREAM_VOICE_CALL);
+ 		}
+ 
+ 		needPlayEndSound = true;
+@@ -4846,7 +4861,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 						return;
+ 					}
+ 
+-					am.setMode(AudioManager.MODE_IN_COMMUNICATION);
++					am.setMode(inu_mediaAudio ? AudioManager.MODE_NORMAL : AudioManager.MODE_IN_COMMUNICATION);
+ 				} catch (Exception e) {
+ 					FileLog.e(e);
+ 				}
+@@ -4854,7 +4869,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 					int focusResult = am.requestAudioFocus(VoIPService.this, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+ 					hasAudioFocus = focusResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+ 					final VoipAudioManager vam = VoipAudioManager.get();
+-					if (isBluetoothHeadsetConnected() && hasEarpiece()) {
++					if (inu_mediaAudio) {
++						am.setBluetoothScoOn(false);
++						audioRouteToSet = AUDIO_ROUTE_BLUETOOTH;
++					} else if (isBluetoothHeadsetConnected() && hasEarpiece()) {
+ 						switch (audioRouteToSet) {
+ 							case AUDIO_ROUTE_BLUETOOTH:
+ 								if (!bluetoothScoActive) {
+@@ -5004,7 +5022,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 				if (BuildVars.LOGS_ENABLED) {
+ 					FileLog.d("SCO already active, setting audio routing");
+ 				}
+-				if (!hasRtmpStream()) {
++				if (!hasRtmpStream() && !desu.inugram.helpers.CallAudioHelper.isActive()) {
+ 					am.setSpeakerphoneOn(false);
+ 					am.setBluetoothScoOn(true);
+ 				}
+@@ -5012,7 +5030,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 				if (BuildVars.LOGS_ENABLED) {
+ 					FileLog.d("startBluetoothSco");
+ 				}
+-				if (!hasRtmpStream()) {
++				if (!hasRtmpStream() && !desu.inugram.helpers.CallAudioHelper.isActive()) {
+ 					needSwitchToBluetoothAfterScoActivates = true;
+ 					AndroidUtilities.runOnUIThread(() -> {
+ 						try {
+@@ -5501,6 +5519,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 	}
+ 
+ 	public boolean isBluetoothOn() {
++		if (desu.inugram.helpers.CallAudioHelper.isActive()) {
++			return desu.inugram.helpers.CallAudioHelper.getCurrentRoute() == AUDIO_ROUTE_BLUETOOTH;
++		}
+ 		final AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+ 		return am.isBluetoothScoOn();
+ 	}
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
+@@ -2768,7 +2768,7 @@ public class VoIPFragment implements
+         final int icon;
+         if (service.isBluetoothOn()) {
+             icon = R.drawable.calls_bluetooth;
+-        } else if (VoipAudioManager.get().isSpeakerphoneOn()) {
++        } else if (desu.inugram.helpers.CallAudioHelper.isActive() ? service.isSpeakerphoneOn() : VoipAudioManager.get().isSpeakerphoneOn()) {
+             icon = R.drawable.calls_speaker;
+         } else {
+             if (service.isHeadsetPlugged()) {
+@@ -2792,7 +2792,7 @@ public class VoIPFragment implements
+         if (service.isBluetoothOn()) {
+             selectedSpeaker = 2;
+             bottomButton.setType(VoIpSwitchLayout.Type.BLUETOOTH, false);
+-        } else if (vam.isSpeakerphoneOn()) {
++        } else if (desu.inugram.helpers.CallAudioHelper.isActive() ? service.isSpeakerphoneOn() : vam.isSpeakerphoneOn()) {
+             selectedSpeaker = 0;
+             bottomButton.setType(VoIpSwitchLayout.Type.SPEAKER, true);
+         } else {
+diff --git a/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java b/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
++++ b/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
+@@ -13,6 +13,7 @@ package org.webrtc.voiceengine;
+ import android.annotation.TargetApi;
+ import android.content.Context;
+ import android.media.AudioAttributes;
++import android.media.AudioDeviceInfo;
+ import android.media.AudioFormat;
+ import android.media.AudioManager;
+ import android.media.AudioTrack;
+@@ -326,6 +327,7 @@ public class WebRtcAudioTrack {
+       releaseAudioResources();
+       return -1;
+     }
++    inu_onAudioTrackCreated(audioTrack);
+     logMainParameters();
+     logMainParametersExtended();
+     return minBufferSizeInBytes;
+@@ -543,9 +545,39 @@ public class WebRtcAudioTrack {
+     return speakerMute;
+   }
+ 
++  private static @Nullable AudioDeviceInfo inu_preferredDevice;
++  private static @Nullable AudioTrack inu_currentTrack;
++
++  public static synchronized void inu_setPreferredDevice(@Nullable AudioDeviceInfo device) {
++    inu_preferredDevice = device;
++    if (Build.VERSION.SDK_INT >= 23 && inu_currentTrack != null) {
++      try {
++        inu_currentTrack.setPreferredDevice(device);
++      } catch (Throwable e) {
++        Logging.e(TAG, "inu_setPreferredDevice failed", e);
++      }
++    }
++  }
++
++  private static synchronized void inu_onAudioTrackCreated(AudioTrack track) {
++    inu_currentTrack = track;
++    if (Build.VERSION.SDK_INT >= 23 && inu_preferredDevice != null) {
++      try {
++        track.setPreferredDevice(inu_preferredDevice);
++      } catch (Throwable e) {
++        Logging.e(TAG, "inu_setPreferredDevice failed", e);
++      }
++    }
++  }
++
++  private static synchronized void inu_onAudioTrackReleased() {
++    inu_currentTrack = null;
++  }
++
+   // Releases the native AudioTrack resources.
+   private void releaseAudioResources() {
+     Logging.e(TAG, "releaseAudioResources", new Exception());
++    inu_onAudioTrackReleased();
+     if (audioTrack != null) {
+       AudioTrack track = audioTrack;
+       audioTrack = null;

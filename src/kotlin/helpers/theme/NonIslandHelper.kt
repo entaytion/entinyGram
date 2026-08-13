@@ -113,6 +113,14 @@ object NonIslandHelper {
     const val FOLDERS_BAR_OVERLAP_DP = 10
     const val FOLDERS_BAR_VISIBLE_HEIGHT_DP = FOLDERS_BAR_HEIGHT_DP - FOLDERS_BAR_OVERLAP_DP
 
+    // the classic folders bar tucks under the classic search bar; with the island search
+    // pill there is nothing to tuck under, so the overlap must not be applied
+    @JvmStatic
+    fun foldersBarOverlapDp(): Int = if (globalSearch()) FOLDERS_BAR_OVERLAP_DP else 0
+
+    @JvmStatic
+    fun foldersBarVisibleHeightDp(): Int = FOLDERS_BAR_HEIGHT_DP - foldersBarOverlapDp()
+
     @JvmStatic
     fun applyMd3TabsStyle(indicator: GradientDrawable, listView: RecyclerListView, selectorColor: Int) {
         val rad = AndroidUtilities.dpf2(3f)

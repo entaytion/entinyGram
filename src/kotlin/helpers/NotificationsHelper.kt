@@ -10,6 +10,7 @@ import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
+import java.util.concurrent.ConcurrentHashMap
 
 object NotificationsHelper {
     private val prefs by lazy {
@@ -49,6 +50,48 @@ object NotificationsHelper {
             val notificationId = entry.substring(separator + 1).toIntOrNull() ?: continue
             into.put(dialogId, notificationId)
         }
+    }
+
+    // Every showOrUpdateNotification re-notify()s ALL per-chat notifications, and notification bridges
+    // (Mi Fitness etc.) re-forward every onNotificationPosted without deduping by key or respecting
+    // FLAG_ONLY_ALERT_ONCE — so unchanged reposts must be skipped on our side. Signatures are keyed by
+    // notification id; per-account maps are only touched from that account's notificationsQueue.
+    private val postedSignatures = ConcurrentHashMap<Int, MutableMap<Int, String>>()
+
+    @JvmStatic
+    fun computeNotificationSignature(
+        channelId: String?,
+        name: String?,
+        messages: List<MessageObject>?,
+        storyCount: Int,
+        maxId: Int,
+        locked: Boolean,
+        hasAvatar: Boolean,
+    ): String = buildString {
+        append(channelId).append('|').append(name).append('|').append(storyCount).append('|')
+        append(maxId).append('|').append(locked).append('|').append(hasAvatar)
+        messages?.forEach {
+            append('|').append(it.id).append(':').append(it.messageOwner?.edit_date ?: 0)
+        }
+    }
+
+    @JvmStatic
+    fun shouldSkipNotify(account: Int, notificationId: Int, signature: String?): Boolean {
+        if (signature == null) return false
+        val map = postedSignatures.getOrPut(account) { HashMap() }
+        if (map[notificationId] == signature) return true
+        map[notificationId] = signature
+        return false
+    }
+
+    @JvmStatic
+    fun removePostedSignature(account: Int, notificationId: Int) {
+        postedSignatures[account]?.remove(notificationId)
+    }
+
+    @JvmStatic
+    fun clearPostedSignatures(account: Int) {
+        postedSignatures[account]?.clear()
     }
 
     @JvmStatic

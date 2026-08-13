@@ -4,10 +4,10 @@ Date: Fri, 17 Jul 2026 04:16:05 +0400
 Subject: fix various scroll-related issues in ChatActivity
 
 ---
- .../java/org/telegram/ui/ChatActivity.java    | 23 +++++++++---
- .../chat/ChatListViewPaddingsAnimator.java    | 12 ++++++-
- .../inset/WindowInsetsStateHolder.java        | 35 ++++++++++++++++---
- 3 files changed, 60 insertions(+), 10 deletions(-)
+ .../java/org/telegram/ui/ChatActivity.java    | 43 ++++++++++++++++---
+ .../chat/ChatListViewPaddingsAnimator.java    | 12 +++++-
+ .../inset/WindowInsetsStateHolder.java        | 35 +++++++++++++--
+ 3 files changed, 80 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -62,7 +62,34 @@ index 0000000..0000000 100644
                                  chatAdapter.notifyItemChanged(p);
                                  adjustPanLayoutHelper.delayAnimation();
                                  waitingChatListItemAnimator = true;
-@@ -22953,7 +22966,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -21449,6 +21462,26 @@ public class ChatActivity extends BaseFragment implements
+                     createUnreadMessageAfterId = 0;
+                     if (!universalNotify && !chatAdapter.isFiltered) {
+                         chatAdapter.notifyItemRemoved(chatAdapter.loadingDownRow);
++                        int top = 0;
++                        MessageObject scrollToMessageObject = null;
++                        for (int i = 0; i < chatListView.getChildCount(); i++) {
++                            View v = chatListView.getChildAt(i);
++                            if (v instanceof ChatMessageCell) {
++                                scrollToMessageObject = ((ChatMessageCell) v).getMessageObject();
++                                top = getScrollingOffsetForView(v);
++                                break;
++                            } else if (v instanceof ChatActionCell) {
++                                scrollToMessageObject = ((ChatActionCell) v).getMessageObject();
++                                top = getScrollingOffsetForView(v);
++                                break;
++                            }
++                        }
++                        if (scrollToMessageObject != null) {
++                            int scrollToIndex = messages.indexOf(scrollToMessageObject);
++                            if (scrollToIndex >= 0) {
++                                chatLayoutManager.scrollToPositionWithOffset(chatAdapter.messagesStartRow + scrollToIndex, top);
++                            }
++                        }
+                     }
+                 }
+                 startLoadFromMessageId = 0;
+@@ -22953,7 +22986,7 @@ public class ChatActivity extends BaseFragment implements
                                  if (MediaController.getInstance().isPlayingMessage(messageObject1)) {
                                      boolean keyboardIsVisible = contentView.getKeyboardHeight() >= AndroidUtilities.dp(20);
                                      float topPadding = chatListViewPaddingTop - (contentPanTranslation);

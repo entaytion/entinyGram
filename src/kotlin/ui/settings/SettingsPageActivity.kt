@@ -19,6 +19,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.graphics.withTranslation
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
@@ -30,6 +31,7 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
+import org.telegram.ui.ActionBar.SimpleTextView
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCell
@@ -267,9 +269,52 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
     override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean {
         val opts = ItemOptions.makeOptions(this, view)
-        if (!addCopyLinkOption(opts, item)) return false
+        val hasText = hasTruncatedText(view) && addFullTextOption(opts, item)
+        opts.addGapIf(hasText && SearchRegistry.deepLinkForItemId(item.id) != null)
+        val hasLink = addCopyLinkOption(opts, item)
+        if (!hasText && !hasLink) return false
         opts.show()
         return true
+    }
+
+    protected fun hasTruncatedText(view: View): Boolean {
+        when (view) {
+            is TextView -> {
+                val layout = view.layout ?: return false
+                val text = view.text ?: return false
+                for (i in 0 until layout.lineCount) {
+                    if (layout.getEllipsisCount(i) > 0) return true
+                }
+                return layout.lineCount == 1 &&
+                    Layout.getDesiredWidth(text, view.paint) > layout.width + 1
+            }
+            is SimpleTextView -> {
+                val text = view.text ?: return false
+                val shownWidth = view.textWidth
+                if (shownWidth > view.width - view.paddingLeft - view.paddingRight) return true
+                return Layout.getDesiredWidth(text, view.textPaint) > shownWidth + AndroidUtilities.dp(1f)
+            }
+            is ViewGroup -> {
+                for (i in 0 until view.childCount) {
+                    if (hasTruncatedText(view.getChildAt(i))) return true
+                }
+            }
+        }
+        return false
+    }
+
+    protected fun addFullTextOption(opts: ItemOptions, item: UItem): Boolean {
+        val maxWidth = AndroidUtilities.dp(280f)
+        var added = false
+        if (!item.text.isNullOrEmpty()) {
+            opts.addText(item.text, 14, maxWidth)
+            added = true
+        }
+        if (!item.subtext.isNullOrEmpty()) {
+            opts.addText(item.subtext, 13, maxWidth)
+            added = true
+        }
+        return added
     }
 
     protected fun addCopyLinkOption(opts: ItemOptions, item: UItem): Boolean {

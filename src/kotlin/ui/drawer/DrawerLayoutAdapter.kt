@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.helpers.dialogs.AccountOrderHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
+import desu.inugram.helpers.dialogs.PullActionHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -241,12 +242,16 @@ class DrawerLayoutAdapter(
         items.add(Item(6, LocaleController.getString(R.string.Contacts), R.drawable.msg_contacts))
         items.add(Item(10, LocaleController.getString(R.string.Calls), R.drawable.msg_calls))
         items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
+        if (PullActionHelper.shouldShowArchiveEntry(UserConfig.selectedAccount)) {
+            items.add(Item(ITEM_ARCHIVE, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive))
+        }
         items.add(Item(ITEM_PROXY, LocaleController.getString(R.string.ProxySettings), R.drawable.outline_shield_check))
         items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings))
     }
 
     companion object {
         const val ITEM_PROXY = 9
+        const val ITEM_ARCHIVE = 18
     }
 
     class Item private constructor(

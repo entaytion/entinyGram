@@ -100,6 +100,11 @@ object ChatHelper {
     const val OPTION_EDIT_HISTORY = 518
     const val OPTION_SAVE_STICKER_TO_DOWNLOADS = 521
 
+    private fun getForwardsCount(msg: MessageObject?): Int {
+        if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
+        return msg.messageOwner?.forwards ?: 0
+    }
+
     @JvmStatic
     fun timeAdditionsHash(msg: MessageObject?): Int {
         if (msg == null) return 0
@@ -113,6 +118,10 @@ object ChatHelper {
         }
         if (isDeletedOrPreserved(msg)) {
             hash = hash * 31 + 3
+        val forwards = getForwardsCount(msg)
+        if (forwards > 0) {
+            hash = hash * 31 + 3
+            hash = hash * 31 + forwards
         }
         return hash
     }
@@ -124,13 +133,18 @@ object ChatHelper {
             width += TranslateHelper.extraTimeWidth(msg)
         }
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
-            width += AndroidUtilities.dp(13f)
+            width += AndroidUtilities.dp(11f)
         }
         val isDeleted = isDeletedOrPreserved(msg)
         if (isDeleted) {
             width += AndroidUtilities.dp(13f)
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(13f)
+        if (edited && InuConfig.COMPACT_EDITED.value) {
+            width += AndroidUtilities.dp(11f)
+        }
+        if (getForwardsCount(msg) > 0) {
+            width += AndroidUtilities.dp(11f)
         }
         return width
     }
@@ -140,6 +154,11 @@ object ChatHelper {
         if (time == null || msg == null) return time
         val sb = SpannableStringBuilder()
         TranslateHelper.appendTimePrefix(sb, msg)
+        val forwards = getForwardsCount(msg)
+        if (forwards > 0) {
+            appendTimeIcon(sb, R.drawable.mini_forwarded, sizeDp = 11f, translateYDp = 0f)
+            sb.append(" ").append(LocaleController.formatShortNumber(forwards, null)).append("  ")
+        }
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
@@ -813,6 +832,7 @@ object ChatHelper {
         }
 
         val chat = fragment.currentChat ?: return false
+        if (ChatObject.isChannelAndNotMegaGroup(chat)) return false
         if (!ChatObject.isNotInChat(chat)) return false
         if (message.hasChosenReaction(visibleReaction)) return false
         // skip for auto-forwarded messages
@@ -1527,5 +1547,26 @@ object ChatHelper {
             }
             .show()
         return true
+    }
+
+    @JvmStatic
+    fun getDialogsTitle(account: Int): String {
+        val user = UserConfig.getInstance(account).getCurrentUser()
+        return when (InuConfig.DIALOGS_TITLE_TEXT.value) {
+            InuConfig.DialogsTitleTextItem.USERNAME -> {
+                val username = UserObject.getPublicUsername(user)
+                if (username.isNullOrEmpty()) getFirstNameOrDefault(user) else "@$username"
+            }
+
+            InuConfig.DialogsTitleTextItem.FIRST_NAME -> getFirstNameOrDefault(user)
+            InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.Chats)
+            else -> LocaleController.getString(R.string.AppName)
+        }
+    }
+
+    private fun getFirstNameOrDefault(user: TLRPC.User?): String {
+        if (user == null) return LocaleController.getString(R.string.AppName)
+        val name = UserObject.getFirstName(user)
+        return if (name.isNullOrBlank()) LocaleController.getString(R.string.AppName) else name
     }
 }

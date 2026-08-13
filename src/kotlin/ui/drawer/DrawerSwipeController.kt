@@ -19,6 +19,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.Keep
 import androidx.core.graphics.ColorUtils
+import desu.inugram.helpers.dialogs.DrawerHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.DrawerLayoutContainer
@@ -105,6 +106,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         allowOpenDrawer = value
         if (!allowOpenDrawer && drawerPosition != 0f) {
             if (!animated) {
+                DrawerHelper.dismissStatusPopup()
                 setDrawerPosition(0f); onDrawerAnimationEnd(false)
             } else closeDrawer(true)
         }
@@ -143,6 +145,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
 
     fun closeDrawer(fast: Boolean) {
         val layout = drawerLayout ?: return
+        DrawerHelper.dismissStatusPopup()
         cancelCurrentAnimation()
         val animatorSet = AnimatorSet()
         animatorSet.playTogether(ObjectAnimator.ofFloat(this, DRAWER_POSITION, 0f))

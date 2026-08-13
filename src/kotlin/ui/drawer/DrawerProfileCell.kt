@@ -25,6 +25,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
+import desu.inugram.helpers.dialogs.DrawerHelper
 import org.telegram.PhoneFormat.PhoneFormat
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
@@ -54,7 +55,7 @@ import org.telegram.ui.Components.SnowflakesEffect
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.ThemeActivity
 
-class DrawerProfileCell(context: Context, drawerLayoutContainer: DrawerLayoutContainer) :
+class DrawerProfileCell(context: Context, private val drawerLayoutContainer: DrawerLayoutContainer) :
     FrameLayout(context), NotificationCenter.NotificationCenterDelegate {
 
     private val avatarImageView: BackupImageView
@@ -264,7 +265,25 @@ class DrawerProfileCell(context: Context, drawerLayoutContainer: DrawerLayoutCon
 
         status = AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(this, AndroidUtilities.dp(20f))
         nameTextView.setRightDrawable(status)
+        nameTextView.setRightDrawableOnClick {
+            val user = lastUser ?: return@setRightDrawableOnClick
+            if (user.premium || UserObject.getEmojiStatusDocumentId(user) != null) {
+                DrawerHelper.showSelectStatusDialog(this, drawerLayoutContainer)
+            }
+        }
     }
+
+    fun getEmojiStatusLocation(rect: Rect) {
+        val rightDrawable = nameTextView.rightDrawable
+        if (rightDrawable == null) {
+            rect.set(nameTextView.width - 1, nameTextView.height / 2 - 1, nameTextView.width + 1, nameTextView.height / 2 + 1)
+        } else {
+            rect.set(rightDrawable.bounds)
+        }
+        rect.offset(nameTextView.x.toInt(), nameTextView.y.toInt())
+    }
+
+    fun getEmojiStatusDrawableParent(): View = nameTextView
 
     private fun startIconColorCrossfade(from: Int, to: Int) {
         iconColorAnimator?.cancel()

@@ -1,0 +1,47 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 12 Aug 2026 22:55:15 +0400
+Subject: local overrides for forum topics view
+
+---
+ .../src/main/java/org/telegram/messenger/ChatObject.java      | 4 ++++
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java
+@@ -2625,6 +2625,10 @@ public class ChatObject {
+     }
+ 
+     public static boolean areTabsEnabled(TLRPC.Chat chat) {
++        final int inuOverride = chat == null ? 0 : desu.inugram.helpers.chat.ForumDisplayHelper.getOverride(chat.id);
++        if (inuOverride != 0) {
++            return inuOverride == desu.inugram.helpers.chat.ForumDisplayHelper.MODE_TABS;
++        }
+         return SharedConfig.forceForumTabs || chat != null && chat.forum_tabs;
+     }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -18553,7 +18553,7 @@ public class MessagesStorage extends BaseController {
+                 TLRPC.Chat chat = getChat(-dialogId);
+                 if (chat != null && chat.forum) {
+                     value |= FORUM_TYPE_CHAT;
+-                    if (chat.forum_tabs) {
++                    if (ChatObject.areTabsEnabled(chat)) {
+                         value |= FORUM_TYPE_CHAT_TABS;
+                     }
+                 }
+@@ -18585,7 +18585,7 @@ public class MessagesStorage extends BaseController {
+         return (value & type) != 0;
+     }
+ 
+-    private void isForumCacheInvalidate(long dialogId) {
++    public void isForumCacheInvalidate(long dialogId) {
+         dialogIsForumTyped.delete(dialogId);
+     }
+ 

@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 13 Aug 2026 02:07:27 +0400
+Subject: Fix big emoji glitching and sizing when shown in reply previews
+
+---
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 6 ++----
+ .../java/org/telegram/ui/Components/AnimatedEmojiSpan.java  | 6 +++++-
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -19489,9 +19489,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         if (mess.length() > 150) {
+                             mess = mess.subSequence(0, 150);
+                         }
+-                        if (!(mess instanceof SpannableStringBuilder)) {
+-                            mess = new SpannableStringBuilder(mess);
+-                        }
++                        mess = new SpannableStringBuilder(mess);
+                         mess = AndroidUtilities.removeSpans(mess, QuoteSpan.class);
+                         mess = AndroidUtilities.removeSpans(mess, QuoteSpan.QuoteStyleSpan.class);
+                         mess = AndroidUtilities.replaceNewLines(mess);
+@@ -19607,7 +19605,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 try {
+                     replyTextWidth = dp(4) + (needReplyImage ? dp(33) : 0);
+                     if (stringFinalText != null) {
+-                        SpannableStringBuilder sb = new SpannableStringBuilder(stringFinalText);
++                        SpannableStringBuilder sb = new SpannableStringBuilder(AnimatedEmojiSpan.cloneSpans(stringFinalText, -1, textPaint.getFontMetricsInt()));
+                         boolean changed = false;
+                         for (TextStyleSpan span : sb.getSpans(0, sb.length(), TextStyleSpan.class)) {
+                             if ((span.getTextStyleRun().flags & TextStyleSpan.FLAG_STYLE_MONO) != 0) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
+@@ -992,10 +992,14 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
+         } else {
+             animatedEmojiSpan = new AnimatedEmojiSpan(span.documentId, span.scale, fontMetricsInt != null ? fontMetricsInt : span.fontMetrics);
+         }
+-        if (fontMetricsInt != null) {
++        if (fontMetricsInt == null) {
+             animatedEmojiSpan.size = span.size;
+         }
++        animatedEmojiSpan.top = span.top;
++        animatedEmojiSpan.full = span.full;
+         animatedEmojiSpan.fromEmojiKeyboard = span.fromEmojiKeyboard;
++        animatedEmojiSpan.standard = span.standard;
++        animatedEmojiSpan.invert = span.invert;
+         animatedEmojiSpan.isAdded = span.isAdded;
+         animatedEmojiSpan.isRemoved = span.isRemoved;
+         return animatedEmojiSpan;

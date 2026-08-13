@@ -48,6 +48,7 @@ class IconsResources(private val resources: Resources) : Resources(resources.ass
     private fun getConversion(icon: Int): Int {
         return when (InuConfig.ICON_REPLACEMENT.value) {
             InuConfig.IconReplacementItem.SOLAR -> SolarIconPack.map(icon)
+            InuConfig.IconReplacementItem.VKUI -> VkIconPack.map(icon)
             else -> icon
         }
     }

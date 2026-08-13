@@ -120,7 +120,7 @@ index 0000000..0000000 100644
      private boolean searchWasFullyShowed;
      public boolean whiteActionBar;
      private boolean searchFiltersWasShowed;
-@@ -3480,7 +3480,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3483,7 +3483,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          });
          fragmentSearchFieldWatcher.setDoNotCloseAfterFieldEmpty();
  
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
              optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
              optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
              optionsItem.setOnClickListener(v -> {
-@@ -3541,6 +3541,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3544,6 +3544,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              if (searchString != null || folderId != 0 || communityId != 0) {
                  actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -141,11 +141,11 @@ index 0000000..0000000 100644
              }
              if (folderId != 0) {
                  actionBar.setTitle(getString(R.string.ArchivedChats));
-@@ -3919,6 +3924,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3922,6 +3927,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      return;
                  }
                  if (id == -1) {
-+                    if (!hasMainTabs && !actionBar.isActionModeShowed() && desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue()
++                    if (!hasMainTabs && !onlySelect && !actionBar.isActionModeShowed() && desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue()
 +                            && folderId == 0 && communityId == 0 && searchString == null
 +                            && desu.inugram.helpers.dialogs.DrawerHelper.INSTANCE.toggleDrawer(parentLayout)) {
 +                        return;
@@ -153,7 +153,7 @@ index 0000000..0000000 100644
                      if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                          if (actionBar.isActionModeShowed()) {
                              if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
-@@ -5379,7 +5389,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5391,7 +5401,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          };
          dialogStoriesCell.setActionBar(actionBar);
@@ -162,7 +162,7 @@ index 0000000..0000000 100644
          dialogStoriesCell.allowGlobalUpdates = false;
          dialogStoriesCell.setVisibility(View.GONE);
          animateToHasStories = false;
-@@ -5938,6 +5948,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5950,6 +5960,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              yoff = -(actionBar.getHeight() - AndroidUtilities.rectTmp2.centerY()) - dp(16);
              xoff = AndroidUtilities.rectTmp2.centerX() - dp(16);
              xoff += dp(4);
@@ -172,7 +172,7 @@ index 0000000..0000000 100644
              if (animatedStatusView != null) {
                  animatedStatusView.translate(AndroidUtilities.rectTmp2.centerX(), AndroidUtilities.rectTmp2.centerY());
              }
-@@ -9141,6 +9154,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9160,6 +9173,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogs.clear();
          if (backDrawable != null) {
              backDrawable.setRotation(0, true);
@@ -181,7 +181,7 @@ index 0000000..0000000 100644
          }
          if (filterTabsView != null) {
              filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
-@@ -10228,6 +10243,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10247,6 +10262,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              if (backDrawable != null) {
                  backDrawable.setRotation(1, true);

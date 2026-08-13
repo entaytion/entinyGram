@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">ディスカッションで開く</string>
     <string name="InuBanUserConfirm">%1$s をこのグループから BAN しますか？</string>
@@ -8,6 +8,12 @@
     <string name="InuMiscellaneous">その他</string>
     <string name="InuAppearance">外観</string>
     <string name="InuBehavior">動作</string>
+    <string name="InuPerformanceClass">パフォーマンスクラス</string>
+    <string name="InuPerformanceClassInfo">この設定の変更はおすすめしません。低性能な端末ではパフォーマンスが大きく低下する可能性があります</string>
+    <string name="InuPerformanceClassMeasured">実測値</string>
+    <string name="InuPerformanceClassLow">低</string>
+    <string name="InuPerformanceClassAverage">中</string>
+    <string name="InuPerformanceClassHigh">高</string>
     <string name="InuAnnoyances">煩わしい要素</string>
     <string name="InuMessages">メッセージ</string>
     <string name="InuOther">その他</string>
@@ -16,7 +22,16 @@
     <string name="InuUserProfileHeader">ヘッダー</string>
     <string name="InuUserProfileInformation">情報</string>
     <string name="InuChatList">チャットリスト</string>
-    <string name="InuOpenArchiveOnPull">引き下げでアーカイブを開く</string>
+    <string name="InuTitleText">タイトルテキスト</string>
+    <string name="InuPullDownAction">プルダウン操作</string>
+    <string name="InuPullDownActionDisabled">無効</string>
+    <string name="InuPullDownActionDisabledInfo">アーカイブはメニューに移動します</string>
+    <string name="InuPullDownActionRevealArchive">アーカイブを表示</string>
+    <string name="InuPullDownActionOpenArchive">アーカイブを開く</string>
+    <string name="InuSwipeForSavedMessages">下にスワイプして保存済みメッセージを開く</string>
+    <string name="InuReleaseForSavedMessages">指を離して保存済みメッセージを開く</string>
+    <string name="InuSwipeForSearch">下にスワイプして検索</string>
+    <string name="InuReleaseForSearch">指を離して検索</string>
     <string name="InuDoubleTapActions">ダブルタップ動作</string>
     <string name="InuDoubleTapDelay">ダブルタップの遅延</string>
     <string name="InuIncomingMessages">受信メッセージ</string>
@@ -158,6 +173,8 @@
     <string name="InuCallConfirmation">通話前に確認</string>
     <string name="InuCallConfirmationTitle">通話の確認</string>
     <string name="InuCallConfirmationText">**%1$s** に発信しますか？</string>
+    <string name="InuHdBluetoothCallAudio">Bluetooth で高音質通話音声</string>
+    <string name="InuHdBluetoothCallAudioInfo">ヘッドホンを低音質のヘッドセットプロファイルに切り替える代わりに、通話音声をメディアとして再生し、マイクは端末のものを使用します。通話開始時に Bluetooth デバイスが接続されている場合に適用されます</string>
     <string name="InuDisableChatBubbles">Android の通知バブルを無効化</string>
     <string name="InuInPlaceTranslation">その場で翻訳</string>
     <string name="InuTranslateWebPreviews">ウェブプレビューを翻訳</string>
@@ -244,6 +261,7 @@
     <string name="InuIconReplacement">アイコンパック</string>
     <string name="InuIconReplacementOff">デフォルト</string>
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
+    <string name="InuIconReplacementVkui">VKUI by VK</string>
 
     <string name="InuMapsHeader">地図</string>
     <string name="InuMapProvider">地図ビューのプロバイダー</string>
@@ -356,6 +374,7 @@
     <string name="InuForwardHeaderModeIcon">アイコン</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">「転送時刻を表示」がオフの場合はコンパクトと同じです</string>
     <string name="InuForwardHeaderModeCompact">コンパクト</string>
+    <string name="InuShowForwardsCount">転送数を表示</string>
     <string name="InuCompactEdited">コンパクトな編集インジケーター</string>
 
     <string name="InuAddToStickersGifs">ステッカー/GIFに追加</string>
@@ -656,6 +675,7 @@
     <string name="InuMaterial3Fabs">フローティングボタン</string>
     <string name="InuMaterial3Sections">リスト項目</string>
     <string name="InuMaterial3Avatars">アバター</string>
+    <string name="InuMaterial3NavigationAnimation">ナビゲーションアニメーション</string>
     <string name="InuMaterialProfileActions">プロフィールの操作ボタン</string>
     <string name="InuTypographyAndIcons">タイポグラフィとアイコン</string>
     <string name="InuMotion">モーション</string>
@@ -668,6 +688,8 @@
 
     <string name="InuDisableQuickShare">クイック共有を無効化</string>
     <string name="InuDisableQuickShareInfo">共有ボタン（チャンネルメッセージの横）を長押ししたときに頻繁な連絡先を表示しない；確認なしで送信されます</string>
+    <string name="InuDisableProfileMusicAutoplay">プロフィール音楽の自動再生を無効化</string>
+    <string name="InuDisableProfileMusicAutoplayInfo">プロフィールでピン留めされた音楽プレーヤーを開いたときに自動的に再生を開始しません</string>
     <string name="InuDisableBrowserSwipeCollapse">下スワイプでのブラウザ最小化を無効化</string>
     <string name="InuGifSeekbar">GIF のシークバー</string>
     <string name="InuGifSeekbarInfo">注：「新しい」GIF（つまり無音 MP4）にのみ対応</string>
@@ -812,4 +834,7 @@
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
     <string name="InuTOS">利用規約</string>
+    <string name="InuRefreshStickerSet">更新</string>
+    <string name="InuStickerSetRefreshed">パックを更新しました</string>
+    <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
 </resources>

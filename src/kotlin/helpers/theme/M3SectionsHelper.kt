@@ -73,6 +73,11 @@ object M3SectionsHelper {
         return view?.getTag(R.id.inu_merge_with_next) == TRUE
     }
 
+    @JvmStatic
+    fun isDetachedHeaderCell(view: View): Boolean {
+        return isEnabled() && view is HeaderCell && !isMergedWithPrev(view) && !isMergedWithNext(view)
+    }
+
     private val outerR get() = AndroidUtilities.dp(20f).toFloat()
     private val innerR get() = AndroidUtilities.dp(4f).toFloat()
     private val gap get() = AndroidUtilities.dp(2f)
@@ -293,6 +298,27 @@ object M3SectionsHelper {
     /** MD3 circle fill: midpoint hue, clamped saturation, light tone (L 0.82). */
     @JvmStatic
     fun circleColor(topColor: Int, bottomColor: Int): Int {
+        resizeSquare(iconView, 22)
+        val (bg, fg) = computeIconColors(topColor, bottomColor)
+        iconView.setColorFilter(fg)
+        cellBackground.inu_monetColor = bg
+    }
+
+    @JvmStatic
+    fun applyTextCellColorfulIcon(
+        iconView: ImageView,
+        topColor: Int,
+        bottomColor: Int,
+        cellBackground: SettingsActivity.SettingCell.Background,
+    ) {
+        if (!isEnabled()) return
+        iconView.translationX = 0f
+        val (bg, fg) = computeIconColors(topColor, bottomColor)
+        iconView.setColorFilter(fg)
+        cellBackground.inu_monetColor = bg
+    }
+
+    private fun computeIconColors(topColor: Int, bottomColor: Int): Pair<Int, Int> {
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(flat, hsl)
@@ -309,6 +335,7 @@ object M3SectionsHelper {
         ColorUtils.colorToHSL(flat, hsl)
         hsl[2] = 0.32f
         return ColorUtils.HSLToColor(hsl)
+        return bg to ColorUtils.HSLToColor(hsl)
     }
 
     @JvmStatic

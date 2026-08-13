@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 12 Aug 2026 22:26:48 +0400
+Subject: Don't re-spoiler revealed spoilers in the reply bar.
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -15161,7 +15161,7 @@ public class ChatActivity extends BaseFragment implements
+                 }
+                 if (replyObjectText != null) {
+                     if (replyObjectText instanceof Spannable && sourceText != null) {
+-                        MediaDataController.addTextStyleRuns(entities, sourceText, (Spannable) replyObjectText);
++                        MediaDataController.addTextStyleRuns(entities, sourceText, (Spannable) replyObjectText, messageObjectToReply != null && messageObjectToReply.isSpoilersRevealed ? ~TextStyleSpan.FLAG_STYLE_SPOILER : -1);
+                     }
+ 
+                     replyObjectTextView.setText(AnimatedEmojiSpan.cloneSpans(replyObjectText, -1, replyObjectTextView.getPaint().getFontMetricsInt()));

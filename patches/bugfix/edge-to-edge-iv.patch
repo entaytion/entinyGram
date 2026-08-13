@@ -1,0 +1,137 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 13 Aug 2026 00:50:48 +0400
+Subject: proper edge-to-edge for instant view
+
+---
+ .../telegram/ui/ActionBar/ActionBarLayout.java | 12 ++++++++++--
+ .../telegram/ui/ActionBar/BaseFragment.java    |  6 +++++-
+ .../java/org/telegram/ui/ArticleViewer.java    | 18 ++++++++++++++++--
+ 3 files changed, 31 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -266,6 +266,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                 drawerLayoutContainer.getInternalNavbarPaint().getColor() :
+                 Theme.getColor(Theme.key_windowBackgroundGray);
+ 
++            boolean inu_drawNavbarOverChildren = false;
+             if (this == sheetContainer) {
+                 final float hasSheets = hasSheetsAnimator.set(sheetFragment != null && sheetFragment.hasSheet());
+                 if (hasSheets > 0) {
+@@ -275,20 +276,27 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                 final BaseFragment fragment = getLastFragment();
+                 if (fragment != null && !fragment.inPreviewMode) {
+                     boolean drawNavbar = false;
++                    boolean inu_hasNonOccupyingSheet = false;
+                     if (this == containerView && edgeToEdgeSupportMode != EdgeToEdgeSupportMode.NONE) {
+                         for (int a = 0, N = getChildCount(); a < N; a++) {
+                             View child2 = getChildAt(a);
+                             if (child2 instanceof BaseFragment.AttachedSheetWindow) {
+                                 drawNavbar = true;
+-                                break;
++                                if (!((BaseFragment.AttachedSheetWindow) child2).inu_occupyNavigationBar()) {
++                                    inu_hasNonOccupyingSheet = true;
++                                }
+                             }
+                         }
+                     }
+ 
+                     drawInsets(canvas, color, drawNavbar);
++                    inu_drawNavbarOverChildren = inu_hasNonOccupyingSheet && getPaddingBottom() <= 0;
+                 }
+             }
+             super.dispatchDraw(canvas);
++            if (inu_drawNavbarOverChildren && systemAndDisplayInsets.bottom > 0) {
++                canvas.drawRect(0, getHeight() - systemAndDisplayInsets.bottom, getWidth(), getHeight(), Theme.fillingPaint(color));
++            }
+         }
+ 
+         private void drawInsets(Canvas canvas, int color, boolean drawNavigationBar) {
+@@ -345,7 +353,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                 View child = getChildAt(a);
+                 if (!(child instanceof ActionBar)) {
+                     if (child instanceof BaseFragment.AttachedSheetWindow) {
+-                        measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, getBottomTabsHeight(false) > 0 || !isSupportEdgeToEdge ? 0 : systemAndDisplayInsets.bottom);
++                        measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, getBottomTabsHeight(false) > 0 || !isSupportEdgeToEdge || ((BaseFragment.AttachedSheetWindow) child).inu_occupyNavigationBar() ? 0 : systemAndDisplayInsets.bottom);
+                     } else if (child.getTag(R.id.sheet_attached_to_fragment_tag) != null || child.getFitsSystemWindows()) {
+                         int addHeight = isSupportEdgeToEdge ? systemAndDisplayInsets.bottom : 0;
+                         measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, addHeight);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BaseFragment.java
+@@ -125,7 +125,11 @@ public abstract class BaseFragment {
+         }
+     }
+ 
+-    public static interface AttachedSheetWindow {}
++    public static interface AttachedSheetWindow {
++        default boolean inu_occupyNavigationBar() {
++            return false;
++        }
++    }
+ 
+     @Nullable
+     public StoryViewer getLastStoryViewer() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+@@ -4339,6 +4339,9 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+         }
+         bulletinContainer = new FrameLayout(activity);
+         containerView.addView(bulletinContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL, 0, !BOTTOM_ACTION_BAR && sheet != null && !sheet.halfSize() ? 56 : 0, 0, BOTTOM_ACTION_BAR && sheet != null && !sheet.halfSize() ? 24 : 0));
++        if (sheet != null) {
++            ((FrameLayout.LayoutParams) bulletinContainer.getLayoutParams()).bottomMargin += AndroidUtilities.navigationBarHeight;
++        }
+ 
+         headerPaint.setColor(0xff000000);
+         statusBarPaint.setColor(0xff000000);
+@@ -4978,8 +4981,14 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+         searchPanel.setClickable(true);
+         searchPanel.setPadding(0, dp(3), 0, 0);
+         containerView.addView(searchPanel, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 51, Gravity.BOTTOM));
++        if (sheet != null) {
++            ((FrameLayout.LayoutParams) searchPanel.getLayoutParams()).bottomMargin = AndroidUtilities.navigationBarHeight;
++        }
+ 
+         new KeyboardNotifier(windowView, (keyboardHeight) -> {
++            if (sheet != null && keyboardHeight > 0) {
++                keyboardHeight = Math.max(0, keyboardHeight - AndroidUtilities.navigationBarHeight);
++            }
+             searchPanel.setTranslationY((searchPanelTranslation = -keyboardHeight) + dp(51) * (1f - searchPanelAlpha));
+         });
+ 
+@@ -14836,7 +14845,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+             if (BOTTOM_ACTION_BAR) {
+                 listView.setPadding(0, (int) (AndroidUtilities.statusBarHeight * 1.25f), 0, dp(24));
+             } else {
+-                listView.setPadding(0, dp(56), 0, 0);
++                listView.setPadding(0, dp(56), 0, sheet != null ? AndroidUtilities.navigationBarHeight : 0);
+                 listView.setTopGlowOffset(dp(56));
+             }
+             ((DefaultItemAnimator) listView.getItemAnimator()).setDelayAnimations(false);
+@@ -14874,7 +14883,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+                     ignoreLayout = true;
+                     setOffsetY(MeasureSpec.getSize(heightMeasureSpec) * .4f);
+                     ignoreLayout = false;
+-                    super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) - dp(sheet != null && !sheet.halfSize() ? 0 : 56) - AndroidUtilities.statusBarHeight, MeasureSpec.EXACTLY));
++                    super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec) - dp(sheet != null && !sheet.halfSize() ? 0 : 56) - AndroidUtilities.statusBarHeight - (sheet != null ? AndroidUtilities.navigationBarHeight : 0), MeasureSpec.EXACTLY));
+                 }
+                 @Override
+                 public void requestLayout() {
+@@ -16116,6 +16125,11 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+                 super(context);
+             }
+ 
++            @Override
++            public boolean inu_occupyNavigationBar() {
++                return true;
++            }
++
+             private final Paint scrimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+             private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+             private final Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

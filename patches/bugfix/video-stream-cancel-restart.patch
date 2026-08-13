@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 13 Aug 2026 02:20:47 +0400
+Subject: Fix cancelled video downloads restarting forever after streaming
+
+---
+ .../main/java/org/telegram/messenger/FileLoadOperation.java    | 3 ---
+ .../java/org/telegram/messenger/FileStreamLoadOperation.java   | 2 ++
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+@@ -2258,9 +2258,6 @@ public class FileLoadOperation {
+         if (BuildVars.LOGS_ENABLED && FULL_LOGS) {
+             FileLog.d(fileName + " startDownloadRequest");
+         }
+-        if (state == stateCancelling) {
+-            state = stateDownloading;
+-        }
+         if (paused || reuploadingCdn || state != stateDownloading || requestingReference ||
+                 (!isStory && streamPriorityStartOffset == 0 && (!nextPartWasPreloaded && (requestInfos.size() + delayedRequestInfos.size() >= currentMaxDownloadRequests))) ||
+                 (isPreloadVideoOperation && (requestedBytesCount > preloadMaxBytes || moovFound != 0 && requestInfos.size() > 0))) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
+@@ -222,6 +222,8 @@ public class FileStreamLoadOperation extends BaseDataSource implements FileLoadO
+                 }
+             } catch (InterruptedException e) {
+                 FileLog.e(e);
++                // restore the flag so ExoPlayer's Loader sees the cancellation and closes this source
++                Thread.currentThread().interrupt();
+                 return C.RESULT_NOTHING_READ;
+             } catch (Exception e) {
+                 throw new IOException(e);

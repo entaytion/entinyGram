@@ -8,6 +8,12 @@
     <string name="InuMiscellaneous">Прочее</string>
     <string name="InuAppearance">Внешний вид</string>
     <string name="InuBehavior">Поведение</string>
+    <string name="InuPerformanceClass">Класс производительности</string>
+    <string name="InuPerformanceClassInfo">Не рекомендуется менять эту настройку: на слабых бюджетных устройствах это может сильно снизить производительность</string>
+    <string name="InuPerformanceClassMeasured">Измеренный</string>
+    <string name="InuPerformanceClassLow">Низкий</string>
+    <string name="InuPerformanceClassAverage">Средний</string>
+    <string name="InuPerformanceClassHigh">Высокий</string>
     <string name="InuAnnoyances">Раздражители</string>
     <string name="InuMessages">Сообщения</string>
     <string name="InuOther">Другое</string>
@@ -16,7 +22,16 @@
     <string name="InuUserProfileHeader">Шапка</string>
     <string name="InuUserProfileInformation">Информация</string>
     <string name="InuChatList">Список чатов</string>
-    <string name="InuOpenArchiveOnPull">Открывать архив при вытягивании</string>
+    <string name="InuTitleText">Текст заголовка</string>
+    <string name="InuPullDownAction">Действие при потягивании вниз</string>
+    <string name="InuPullDownActionDisabled">Отключено</string>
+    <string name="InuPullDownActionDisabledInfo">Архив переносится в меню</string>
+    <string name="InuPullDownActionRevealArchive">Показать архив</string>
+    <string name="InuPullDownActionOpenArchive">Открыть архив</string>
+    <string name="InuSwipeForSavedMessages">Потяните вниз, чтобы открыть «Избранное»</string>
+    <string name="InuReleaseForSavedMessages">Отпустите, чтобы открыть «Избранное»</string>
+    <string name="InuSwipeForSearch">Потяните вниз, чтобы открыть поиск</string>
+    <string name="InuReleaseForSearch">Отпустите, чтобы открыть поиск</string>
     <string name="InuDoubleTapActions">Действия на двойной тап</string>
     <string name="InuDoubleTapDelay">Задержка двойного тапа</string>
     <string name="InuIncomingMessages">Входящие сообщения</string>
@@ -158,6 +173,8 @@
     <string name="InuCallConfirmation">Спрашивать перед звонком</string>
     <string name="InuCallConfirmationTitle">Подтверждение звонка</string>
     <string name="InuCallConfirmationText">Позвонить **%1$s**?</string>
+    <string name="InuHdBluetoothCallAudio">HD-звук звонков по Bluetooth</string>
+    <string name="InuHdBluetoothCallAudioInfo">Воспроизводить звук звонка как медиа вместо переключения наушников на низкокачественный профиль гарнитуры, используя микрофон телефона. Применяется, если Bluetooth-устройство подключено в момент начала звонка</string>
     <string name="InuDisableChatBubbles">Отключить пузыри уведомлений Android</string>
     <string name="InuInPlaceTranslation">Перевод на месте</string>
     <string name="InuTranslateWebPreviews">Переводить превью ссылок</string>
@@ -243,6 +260,7 @@
     <string name="InuIconReplacement">Набор иконок</string>
     <string name="InuIconReplacementOff">По умолчанию</string>
     <string name="InuIconReplacementSolar">Solar от @Design480</string>
+    <string name="InuIconReplacementVkui">VKUI от VK</string>
 
     <string name="InuMapsHeader">Карты</string>
     <string name="InuMapProvider">Источник карт</string>
@@ -355,6 +373,7 @@
     <string name="InuForwardHeaderModeIcon">Значок</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">Совпадает с компактным режимом, когда «Показывать время пересылки» выключено</string>
     <string name="InuForwardHeaderModeCompact">Компактный</string>
+    <string name="InuShowForwardsCount">Число пересылок</string>
     <string name="InuCompactEdited">Компактный индикатор изменения</string>
 
     <string name="InuAddToStickersGifs">Добавить в стикеры/GIF</string>
@@ -568,6 +587,7 @@
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Переключатели</string>
     <string name="InuMaterial3Avatars">Аватары</string>
+    <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
     <string name="InuMaterialProfileActions">Кнопки действий в профиле</string>
     <string name="InuMonetTheme">Monet тема</string>
     <string name="InuMonetThemeDisabled">Отключено</string>
@@ -641,7 +661,7 @@
 
     <string name="InuCrashTitle">entinyGram упал в прошлый раз</string>
     <string name="InuCrashDesc">Извиняемся. Вы можете поделиться логом краша с разработчиком, чтобы помочь его исправить.</string>
-    <string name="InuCrashShare">Поделиться логом краша</string>
+    <string name="InuCrashShare">Поделиться логом</string>
     <string name="InuCrashDiscard">Отбросить</string>
     <string name="InuCrashChannel">Восстановление после краша</string>
     <string name="InuCrashNotifTitle">entinyGram упал</string>
@@ -677,6 +697,8 @@
 
     <string name="InuDisableQuickShare">Отключить быструю отправку</string>
     <string name="InuDisableQuickShareInfo">Не показывать частые контакты при долгом нажатии кнопки «Поделиться» (рядом с сообщениями каналов); отправка без подтверждения</string>
+    <string name="InuDisableProfileMusicAutoplay">Отключить автовоспроизведение музыки в профиле</string>
+    <string name="InuDisableProfileMusicAutoplayInfo">Не начинать воспроизведение автоматически при открытии закреплённого музыкального плеера в профиле</string>
     <string name="InuDisableBrowserSwipeCollapse">Отключить свайп вниз для сворачивания браузера</string>
     <string name="InuGifSeekbar">Полоса перемотки для GIF</string>
     <string name="InuGifSeekbarInfo">Работает только для «новых» GIF (т.е. беззвучных MP4)</string>
@@ -856,4 +878,7 @@
 
     <string name="InuUnreader">Нечиталка</string>
     <string name="InuUnreaderInfo">Сообщения не помечаются прочитанными: при открытии чата значок непрочитанного сохраняется, а отчёты о прочтении не отправляются собеседнику.</string>
+    <string name="InuRefreshStickerSet">Обновить</string>
+    <string name="InuStickerSetRefreshed">Набор обновлён</string>
+    <string name="InuStickerSetRefreshFailed">Не удалось обновить набор</string>
 </resources>

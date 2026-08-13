@@ -81,7 +81,7 @@ index 0000000..0000000 100644
      public static void show(BaseFragment baseFragment, ReactionsContainerLayout reactionsLayout, View cell, View fromAnimationView, float x, float y, ReactionsLayoutInBubble.VisibleReaction visibleReaction, int currentAccount, int animationType) {
          if (cell == null || visibleReaction == null || baseFragment == null || baseFragment.getParentActivity() == null) {
              return;
-@@ -792,6 +814,7 @@ public class ReactionsEffectOverlay {
+@@ -795,6 +817,7 @@ public class ReactionsEffectOverlay {
              reactionsEffectOverlay.decorView = (FrameLayout) baseFragment.getParentActivity().getWindow().getDecorView();
              reactionsEffectOverlay.decorView.addView(reactionsEffectOverlay.windowView);
          }

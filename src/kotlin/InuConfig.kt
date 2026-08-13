@@ -271,8 +271,30 @@ object InuConfig {
     @JvmField
     val DISABLE_SWIPE_TO_HIDE_GENERAL_TOPIC = BoolItem("disable_swipe_to_hide_general_topic", true)
 
+    class PullDownActionItem : IntItem("pull_down_action", REVEAL_ARCHIVE) {
+        // Migrate the old `open_archive_on_pull` boolean toggle: on → open archive, off → reveal (stock).
+        override fun read(prefs: SharedPreferences): Int {
+            if (prefs.contains(key)) return prefs.getInt(key, default)
+            if (!prefs.contains("open_archive_on_pull")) return default
+            val migrated = if (prefs.getBoolean("open_archive_on_pull", false)) OPEN_ARCHIVE else REVEAL_ARCHIVE
+            prefs.edit {
+                putInt(key, migrated)
+                remove("open_archive_on_pull")
+            }
+            return migrated
+        }
+
+        companion object {
+            const val DISABLED = 0
+            const val REVEAL_ARCHIVE = 1
+            const val OPEN_ARCHIVE = 2
+            const val SAVED_MESSAGES = 3
+            const val SEARCH = 4
+        }
+    }
+
     @JvmField
-    val OPEN_ARCHIVE_ON_PULL = BoolItem("open_archive_on_pull", false)
+    val PULL_DOWN_ACTION = PullDownActionItem()
 
     @JvmField
     val CHAT_ALWAYS_SHOW_DOWN = BoolItem("chat_always_show_down", true)
@@ -372,6 +394,9 @@ object InuConfig {
     val DISABLE_QUICK_SHARE = BoolItem("disable_quick_share", true)
 
     @JvmField
+    val DISABLE_PROFILE_MUSIC_AUTOPLAY = BoolItem("disable_profile_music_autoplay", true)
+
+    @JvmField
     val HIDE_REACTIONS_ENTRY = BoolItem("hide_reactions_entry", false)
 
     @JvmField
@@ -456,6 +481,18 @@ object InuConfig {
     @JvmField
     val COMMUNITY_DISPLAY_MODE = CommunityDisplayModeItem()
 
+    class DialogsTitleTextItem : IntItem("dialogs_title_text", INUGRAM) {
+        companion object {
+            const val INUGRAM = 1
+            const val USERNAME = 2
+            const val FIRST_NAME = 3
+            const val CHATS = 4
+        }
+    }
+
+    @JvmField
+    val DIALOGS_TITLE_TEXT = DialogsTitleTextItem()
+
     class StickerTimeModeItem : IntItem("sticker_time_mode", SHOW) {
         companion object {
             const val SHOW = 1;
@@ -474,6 +511,9 @@ object InuConfig {
 
     @JvmField
     val CALL_CONFIRMATION = BoolItem("call_confirmation", true)
+
+    @JvmField
+    val HD_BLUETOOTH_CALL_AUDIO = BoolItem("hd_bluetooth_call_audio", true)
 
     @JvmField
     val CONFIRM_INTERNAL_LINKS = BoolItem("confirm_internal_links", false)
@@ -637,6 +677,9 @@ object InuConfig {
     val COMPACT_EDITED = BoolItem("compact_edited", false)
 
     @JvmField
+    val SHOW_FORWARDS_COUNT = BoolItem("show_forwards_count", false)
+
+    @JvmField
     val BUBBLE_TAILS = BoolItem("bubble_tails", true)
 
     @JvmField
@@ -720,6 +763,7 @@ object InuConfig {
         companion object {
             const val OFF = 0
             const val SOLAR = 1
+            const val VKUI = 2
         }
     }
 

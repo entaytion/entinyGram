@@ -4,24 +4,25 @@ Date: Thu, 28 May 2026 22:18:07 +0400
 Subject: md3-style sections redesign
 
 ---
- .../ui/ActionBar/ThemeDescription.java        |  7 +++-
- .../java/org/telegram/ui/BoostsActivity.java  |  5 +++
- .../java/org/telegram/ui/Cells/TextCell.java  | 27 ++++++++++---
+ .../ui/ActionBar/ThemeDescription.java        |  7 ++-
+ .../java/org/telegram/ui/BoostsActivity.java  |  5 ++
+ .../java/org/telegram/ui/Cells/TextCell.java  | 35 ++++++++++--
  .../org/telegram/ui/Cells/TextCheckCell.java  |  6 ++-
- .../ui/Cells/TextDetailSettingsCell.java      |  8 ++--
+ .../ui/Cells/TextDetailSettingsCell.java      |  8 +--
  .../telegram/ui/Cells/TextSettingsCell.java   |  2 +-
- .../org/telegram/ui/ChannelBoostLayout.java   |  5 +++
+ .../org/telegram/ui/ChannelBoostLayout.java   |  5 ++
  .../telegram/ui/ChatRightsEditActivity.java   |  3 ++
  .../org/telegram/ui/ChatUsersActivity.java    |  6 +++
- .../telegram/ui/Components/ItemOptions.java   |  8 ++++
- .../ui/Components/RecyclerListView.java       | 39 +++++++++++++++----
- .../ui/Components/UniversalAdapter.java       | 15 ++++++-
- .../telegram/ui/LiteModeSettingsActivity.java |  7 ++++
- .../org/telegram/ui/PeerColorActivity.java    |  9 +++--
- .../org/telegram/ui/ProxyListActivity.java    |  5 ---
- .../org/telegram/ui/SettingsActivity.java     | 18 +++++++++
+ .../telegram/ui/Components/ItemOptions.java   |  8 +++
+ .../ui/Components/RecyclerListView.java       | 54 ++++++++++++++++---
+ .../ui/Components/UniversalAdapter.java       | 15 +++++-
+ .../telegram/ui/LiteModeSettingsActivity.java |  7 +++
+ .../telegram/ui/MessageStatisticActivity.java |  2 +
+ .../org/telegram/ui/PeerColorActivity.java    |  9 ++--
+ .../org/telegram/ui/ProxyListActivity.java    |  5 --
+ .../org/telegram/ui/SettingsActivity.java     | 18 +++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 17 files changed, 143 insertions(+), 28 deletions(-)
+ 18 files changed, 168 insertions(+), 28 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
 index 0000000..0000000 100644
@@ -115,23 +116,29 @@ index 0000000..0000000 100644
          addView(valueTextView);
  
          valueSpoilersTextView = new SimpleTextView(context);
-@@ -202,7 +203,15 @@ public class TextCell extends FrameLayout {
+@@ -202,7 +203,21 @@ public class TextCell extends FrameLayout {
              subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
          }
          if (imageView.getVisibility() == VISIBLE) {
 +            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
-+                imageView.setPadding(0, 0, 0, 0);
 +                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-+                final boolean autoSizeLottie = inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
-+                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(autoSizeLottie ? 48 : inu_m3IconSize), autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
-+                imageView.measure(iconMeasureSpec, iconMeasureSpec);
++                if (imageView.getBackground() instanceof SettingsActivity.SettingCell.Background) {
++                    imageView.setPadding(dp(7), dp(7), dp(7), dp(7));
++                    final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(36), MeasureSpec.EXACTLY);
++                    imageView.measure(iconMeasureSpec, iconMeasureSpec);
++                } else {
++                    imageView.setPadding(0, 0, 0, 0);
++                    final boolean autoSizeLottie = inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
++                    final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(autoSizeLottie ? 48 : inu_m3IconSize), autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
++                    imageView.measure(iconMeasureSpec, iconMeasureSpec);
++                }
 +            } else {
              imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
 +            }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
              valueImageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
-@@ -265,7 +274,7 @@ public class TextCell extends FrameLayout {
+@@ -265,7 +280,7 @@ public class TextCell extends FrameLayout {
          } else {
              viewLeft = dp(imageView.getVisibility() == VISIBLE ? offsetFromImage : leftPadding);
          }
@@ -140,7 +147,7 @@ index 0000000..0000000 100644
              int margin = heightDp > 50 ? 4 : 2;
              viewTop = (height - textView.getTextHeight() - subtitleView.getTextHeight() - dp(margin)) / 2 + dp(1);
              textView.layout(viewLeft, viewTop, viewLeft + textView.getMeasuredWidth(), viewTop + textView.getMeasuredHeight());
-@@ -273,11 +282,18 @@ public class TextCell extends FrameLayout {
+@@ -273,11 +288,19 @@ public class TextCell extends FrameLayout {
              subtitleView.layout(viewLeft, viewTop, viewLeft + subtitleView.getMeasuredWidth(), viewTop + subtitleView.getMeasuredHeight());
          } else {
              viewTop = (height - textView.getTextHeight()) / 2 + dp(1);
@@ -155,12 +162,21 @@ index 0000000..0000000 100644
 +            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
 +                viewTop = (height - imageView.getMeasuredHeight()) / 2;
 +            }
-+            final int inu_imageLeft = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && imageLeft == 16 ? 21 : imageLeft;
++            final boolean inu_colorful = imageView.getBackground() instanceof SettingsActivity.SettingCell.Background;
++            final int inu_imageLeft = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && imageLeft == 16 ? (inu_colorful ? 14 : 21) : imageLeft;
 +            viewLeft = !LocaleController.isRTL ? dp(inu_imageLeft) : width - imageView.getMeasuredWidth() - dp(inu_imageLeft);
              imageView.layout(viewLeft, viewTop, viewLeft + imageView.getMeasuredWidth(), viewTop + imageView.getMeasuredHeight());
          }
  
-@@ -822,6 +838,7 @@ public class TextCell extends FrameLayout {
+@@ -628,6 +651,7 @@ public class TextCell extends FrameLayout {
+         drawable.setColor(colorTop, colorBottom);
+         drawable.setDrawBorder(border);
+         imageView.setBackground(drawable);
++        desu.inugram.helpers.theme.M3SectionsHelper.applyTextCellColorfulIcon(imageView, colorTop, colorBottom, drawable);
+     }
+ 
+     public void setTextAndCheck(CharSequence text, boolean checked, boolean divider) {
+@@ -822,6 +846,7 @@ public class TextCell extends FrameLayout {
      }
  
      protected int getOffsetFromImage(boolean colourful) {
@@ -342,7 +358,7 @@ index 0000000..0000000 100644
          ViewGroup container = pointContainer = this.container == null ? fragment.getParentLayout().getOverlayContainerView() : this.container;
  
          if (context == null || container == null) {
-@@ -2152,6 +2159,7 @@ public class ItemOptions {
+@@ -2158,6 +2165,7 @@ public class ItemOptions {
                      } else {
                          canvas.save();
                      }
@@ -363,13 +379,16 @@ index 0000000..0000000 100644
  
      private boolean accessibilityEnabled = true;
  
-@@ -2679,15 +2679,20 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -2679,14 +2679,34 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
  
      @Override
      public boolean drawChild(Canvas canvas, View child, long drawingTime) {
 +        final boolean inu_m3 = hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled();
 +        final int inu_oldDividerAlpha = inu_m3 ? Theme.dividerPaint.getAlpha() : 0;
 +        if (inu_m3) Theme.dividerPaint.setAlpha(0);
++        final Paint inu_providerDivider = inu_m3 && resourcesProvider != null ? resourcesProvider.getPaint(Theme.key_paint_divider) : null;
++        final int inu_oldProviderDividerAlpha = inu_providerDivider != null ? inu_providerDivider.getAlpha() : 0;
++        if (inu_providerDivider != null) inu_providerDivider.setAlpha(0);
 +        final boolean r;
          if (hasSections() && !ignoreClipChild) {
              canvas.save();
@@ -381,13 +400,24 @@ index 0000000..0000000 100644
          } else {
 -            return super.drawChild(canvas, child, drawingTime);
 +            r = super.drawChild(canvas, child, drawingTime);
-         }
++        }
 +        if (inu_m3) Theme.dividerPaint.setAlpha(inu_oldDividerAlpha);
++        if (inu_providerDivider != null) inu_providerDivider.setAlpha(inu_oldProviderDividerAlpha);
 +        return r;
++    }
++
++    @Override
++    public void onDescendantInvalidated(@NonNull View child, @NonNull View target) {
++        super.onDescendantInvalidated(child, target);
++        if (hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
++            // since API 26 a dirty child re-records its display list without going through the
++            // parent's drawChild, escaping the divider paint suppression above — dirty ourselves
++            // so the re-record happens inside drawChild
++            invalidate();
+         }
      }
  
-     @Override
-@@ -3257,12 +3262,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3257,12 +3277,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
          return sectionsItemDecoration != null;
      }
  
@@ -403,16 +433,16 @@ index 0000000..0000000 100644
      public boolean applyPaddingToSections = false;
  
      public static final int TAG_NOT_SECTION = -33024;
-@@ -3288,7 +3293,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3288,7 +3308,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      }
      public void setSections(int padding, float roundRadius, boolean topPadding) {
          setSections(
 -            view -> !(view instanceof TextInfoPrivacyCell || view instanceof ShadowSectionCell || view instanceof FiltersSetupActivity.HintInnerCell || view instanceof GraySectionCell || view instanceof CollapseTextCell) && !Objects.equals(view.getTag(), TAG_NOT_SECTION),
-+            view -> !(view instanceof TextInfoPrivacyCell || view instanceof ShadowSectionCell || view instanceof FiltersSetupActivity.HintInnerCell || view instanceof GraySectionCell || view instanceof CollapseTextCell) && !(desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && view instanceof org.telegram.ui.Cells.HeaderCell) && !Objects.equals(view.getTag(), TAG_NOT_SECTION),
++            view -> !(view instanceof TextInfoPrivacyCell || view instanceof ShadowSectionCell || view instanceof FiltersSetupActivity.HintInnerCell || view instanceof GraySectionCell || view instanceof CollapseTextCell) && !desu.inugram.helpers.theme.M3SectionsHelper.isDetachedHeaderCell(view) && !Objects.equals(view.getTag(), TAG_NOT_SECTION),
              padding,
              roundRadius,
              this::drawBackgroundRect,
-@@ -3405,6 +3410,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3405,6 +3425,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                          if (last) outRect.bottom = padding;
                      }
                  }
@@ -422,7 +452,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -3476,6 +3484,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3476,6 +3499,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      public void drawSectionsBackgrounds(Canvas canvas) {
          if (drawSectionBackground == null) return;
  
@@ -434,7 +464,7 @@ index 0000000..0000000 100644
          if (isAnimating()) {
              if (sections == null) {
                  sections = new ArrayList<>();
-@@ -3622,6 +3635,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3622,6 +3650,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
          if (child == null || !sectionsItemDecoration.isSectionItem.run(child))
              return;
  
@@ -446,7 +476,7 @@ index 0000000..0000000 100644
          boolean prev, next;
          int position = getChildAdapterPosition(child);
          if (position == RecyclerView.NO_POSITION) {
-@@ -3682,6 +3700,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3682,6 +3715,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      public Drawable getClipBackground(View child, boolean forceRound) {
          if (child.getParent() != this || !hasSections() || !sectionsItemDecoration.isSectionItem.run(child)) return null;
  
@@ -536,6 +566,23 @@ index 0000000..0000000 100644
              } else if (viewType == VIEW_TYPE_SWITCH2) {
                  TextCell textCell = (TextCell) holder.itemView;
                  if (item.type == SWITCH_TYPE_SMOOTH_TRANSITIONS) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
+@@ -1002,10 +1002,12 @@ public class MessageStatisticActivity extends BaseFragment implements Notificati
+                         headerCell.setTopMargin(9);
+                         headerCell.setPadding(0, 0, 0, AndroidUtilities.dp(8));
+                         headerCell.setText(LocaleController.formatString("StatisticOverview", R.string.StatisticOverview));
++                        desu.inugram.helpers.theme.M3SectionsHelper.markMerged(headerCell, false, true);
+                     } else {
+                         headerCell.setTopMargin(11);
+                         headerCell.setPadding(0, 0, 0, 0);
+                         headerCell.setText(LocaleController.formatString("PublicShares", R.string.PublicShares));
++                        desu.inugram.helpers.theme.M3SectionsHelper.markMerged(headerCell, false, false);
+                     }
+                     break;
+                 case 4:
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java

@@ -1,0 +1,99 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 12 Aug 2026 23:17:45 +0400
+Subject: music sheet bugfixes
+
+---
+ .../ui/Components/AudioPlayerAlert.java       | 56 ++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
+@@ -311,8 +311,32 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+             private int lastMeasturedHeight;
+             private int lastMeasturedWidth;
+ 
++            private float inu_headerDownX, inu_headerDownY;
++            private boolean inu_headerTracking, inu_headerForwarding;
++
++            private void inu_forwardToListView(MotionEvent e, int action) {
++                MotionEvent forwarded = MotionEvent.obtain(e);
++                if (action != -1) {
++                    forwarded.setAction(action);
++                }
++                forwarded.offsetLocation(-listView.getX(), -listView.getY());
++                listView.dispatchTouchEvent(forwarded);
++                forwarded.recycle();
++            }
++
+             @Override
+             public boolean onTouchEvent(MotionEvent e) {
++                if (inu_headerForwarding) {
++                    if (!isDismissed()) {
++                        inu_forwardToListView(e, -1);
++                    }
++                    int action = e.getActionMasked();
++                    if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
++                        inu_headerForwarding = false;
++                        inu_headerTracking = false;
++                    }
++                    return true;
++                }
+                 return !isDismissed() && super.onTouchEvent(e);
+             }
+ 
+@@ -344,6 +368,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+                 int contentSize = dp(179 + (!isMyList() && !noforwards ? 52 : 0));
+                 if (playlist.size() > 1) {
+                     contentSize += backgroundPaddingTop + playlist.size() * dp(56);
++                    if (isProfilePlaylist) {
++                        contentSize += ActionBar.getCurrentActionBarHeight();
++                    }
+                 }
+                 int padding;
+                 if (searching || keyboardVisible) {
+@@ -380,6 +407,30 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+ 
+             @Override
+             public boolean onInterceptTouchEvent(MotionEvent ev) {
++                switch (ev.getActionMasked()) {
++                    case MotionEvent.ACTION_DOWN:
++                        inu_headerTracking = isProfilePlaylist && !searching && !keyboardVisible
++                            && ev.getY() >= actionBar.getY() + AndroidUtilities.statusBarHeight
++                            && ev.getY() <= actionBar.getY() + actionBar.getMeasuredHeight();
++                        inu_headerDownX = ev.getX();
++                        inu_headerDownY = ev.getY();
++                        break;
++                    case MotionEvent.ACTION_MOVE:
++                        if (inu_headerTracking && !inu_headerForwarding) {
++                            float dx = ev.getX() - inu_headerDownX;
++                            float dy = ev.getY() - inu_headerDownY;
++                            if (Math.abs(dy) > ViewConfiguration.get(getContext()).getScaledTouchSlop() && Math.abs(dy) > Math.abs(dx)) {
++                                inu_headerForwarding = true;
++                                inu_forwardToListView(ev, MotionEvent.ACTION_DOWN);
++                                return true;
++                            }
++                        }
++                        break;
++                    case MotionEvent.ACTION_UP:
++                    case MotionEvent.ACTION_CANCEL:
++                        inu_headerTracking = false;
++                        break;
++                }
+                 if (ev.getAction() == MotionEvent.ACTION_DOWN && scrollOffsetY != 0 && actionBar.getAlpha() == 0.0f) {
+                     boolean dismiss;
+                     if (listAdapter.getItemCount() > 0) {
+@@ -463,8 +514,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+ 
+                     if (isProfilePlaylist) {
+                         actionBar.setVisibility(View.VISIBLE);
+-                        actionBar.setTranslationY(Math.max(0, top - backgroundPaddingTop - dp(10) + dp(6) * (1.0f - actionBarSlide) - actionBar.getTop()));
+-                        actionBarShadow.setTranslationY(Math.max(0, top - backgroundPaddingTop - dp(10) + dp(6) * (1.0f - actionBarSlide) - actionBar.getTop()));
++                        final float actionBarTranslation = Math.max(0, top + backgroundPaddingTop - AndroidUtilities.statusBarHeight + dp(6) * (1.0f - actionBarSlide) - actionBar.getTop());
++                        actionBar.setTranslationY(actionBarTranslation);
++                        actionBarShadow.setTranslationY(actionBarTranslation);
+                     }
+                 }
+             }
