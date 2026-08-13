@@ -196,8 +196,8 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
-    fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null) {
-        if (!isSaveDeletedEnabled()) return
+    fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
+        if (!isSaveDeletedEnabled() && !forceSave) return
         ensureAccountLoaded(account)
         var dialogs = deletedMessageIds.get(account.toLong())
         if (dialogs == null) {

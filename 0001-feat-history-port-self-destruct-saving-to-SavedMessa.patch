@@ -1,0 +1,338 @@
+From 9c1adfe2eb257b8dfe98eeee500ce2aa4c211205 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Thu, 13 Aug 2026 14:41:59 +0300
+Subject: [PATCH] feat(history): port self-destruct saving to
+ SavedMessagesHelper
+
+---
+ patches/entiny/save-self-destruct.patch       | 109 ------------------
+ patches/entiny/tos-per-category-save.patch    |  64 ----------
+ .../helpers/chat/SavedMessagesHelper.kt       |   4 +-
+ .../helpers/security/SelfDestructHelper.kt    | 100 ++--------------
+ 4 files changed, 9 insertions(+), 268 deletions(-)
+ delete mode 100644 patches/entiny/save-self-destruct.patch
+ delete mode 100644 patches/entiny/tos-per-category-save.patch
+
+diff --git a/patches/entiny/save-self-destruct.patch b/patches/entiny/save-self-destruct.patch
+deleted file mode 100644
+index 4a22cbd..0000000
+--- a/patches/entiny/save-self-destruct.patch
++++ /dev/null
+@@ -1,109 +0,0 @@
+-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+-From: Oleksii Kulinich <entaytion@gmail.com>
+-Date: Sun, 26 Jul 2026 01:24:46 +0300
+-Subject: allow saving self-destructing media
+-
+----
+- .../java/org/telegram/messenger/FileLoader.java  | 14 ++++++++++++--
+- .../org/telegram/messenger/MessageObject.java    |  2 ++
+- .../main/java/org/telegram/ui/ChatActivity.java  | 16 ++++++++++++++--
+- 3 files changed, 28 insertions(+), 4 deletions(-)
+-
+-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+-index 0000000..0000000 100644
+---- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+-@@ -1289,13 +1289,23 @@ public class FileLoader extends BaseController {
+-             }
+-         } else {
+-             if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaDocument) {
+--                return getPathToAttach(MessageObject.getMedia(message).document, null, forceCache || MessageObject.getMedia(message).ttl_seconds != 0, useFileDatabaseQueue);
+-+                File res = getPathToAttach(MessageObject.getMedia(message).document, null, forceCache || (MessageObject.getMedia(message).ttl_seconds != 0 && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()), useFileDatabaseQueue);
+-+                if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && !res.exists()) {
+-+                    File cacheRes = getPathToAttach(MessageObject.getMedia(message).document, null, true, useFileDatabaseQueue);
+-+                    if (cacheRes.exists()) return cacheRes;
+-+                }
+-+                return res;
+-             } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaPhoto) {
+-                 ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).photo.sizes;
+-                 if (sizes.size() > 0) {
+-                     TLRPC.PhotoSize sizeFull = getClosestPhotoSizeWithSize(sizes, AndroidUtilities.getPhotoSize(true), false, null, true);
+-                     if (sizeFull != null) {
+--                        return getPathToAttach(sizeFull, null, forceCache || MessageObject.getMedia(message).ttl_seconds != 0, useFileDatabaseQueue);
+-+                        File res = getPathToAttach(sizeFull, null, forceCache || (MessageObject.getMedia(message).ttl_seconds != 0 && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()), useFileDatabaseQueue);
+-+                        if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && !res.exists()) {
+-+                            File cacheRes = getPathToAttach(sizeFull, null, true, useFileDatabaseQueue);
+-+                            if (cacheRes.exists()) return cacheRes;
+-+                        }
+-+                        return res;
+-                     }
+-                 }
+-             } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaWebPage) {
+-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+-index 0000000..0000000 100644
+---- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+-@@ -9951,6 +9951,7 @@ public class MessageObject {
+-     }
+- 
+-     public boolean needDrawBluredPreview() {
+-+        if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && isSecretMedia()) return false;
+-         if (isRepostPreview) {
+-             return false;
+-         }
+-@@ -11563,6 +11564,7 @@ public class MessageObject {
+-     }
+- 
+-     public boolean canForwardMessage() {
+-+        if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && isSecretMedia()) return true;
+-         if (isQuickReply() || isEphemeral()) return false;
+-         if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
+-         return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && !messageOwner.noforwards;
+-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+-index 0000000..0000000 100644
+---- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+-+++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+-@@ -19121,6 +19121,12 @@ public class ChatActivity extends BaseFragment implements
+-                             canSave = true;
+-                         }
+-                     }
+-+                    if (!canSave && desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && messageObject.isSecretMedia()) {
+-+                        File f = FileLoader.getInstance(currentAccount).getPathToMessage(messageObject.messageOwner, true, true);
+-+                        if (f.exists()) {
+-+                            canSave = true;
+-+                        }
+-+                    }
+-                     if (canSave) {
+-                         if (messageObject.getDocument() != null) {
+-                             String mime = messageObject.getDocument().mime_type;
+-@@ -19128,7 +19134,7 @@ public class ChatActivity extends BaseFragment implements
+-                                 return 5;
+-                             }
+-                         }
+--                        if (messageObject.messageOwner.ttl <= 0) {
+-+                        if (messageObject.messageOwner.ttl <= 0 || (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && messageObject.isSecretMedia())) {
+-                             return 4;
+-                         }
+-                     }
+-@@ -33308,6 +33314,12 @@ public class ChatActivity extends BaseFragment implements
+-                 path = f.getPath();
+-             }
+-         }
+-+        if (TextUtils.isEmpty(path) && desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue() && messageObject.isSecretMedia()) {
+-+            File f = FileLoader.getInstance(currentAccount).getPathToMessage(messageObject.messageOwner, true, true);
+-+            if (f != null && f.exists()) {
+-+                path = f.getPath();
+-+            }
+-+        }
+-         if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
+-             File f = new File(messageObject.cachedQuality.uri.getPath());
+-             if (f != null && f.exists()) {
+-@@ -45634,7 +45646,7 @@ public class ChatActivity extends BaseFragment implements
+-             allowPin = false;
+-         }
+-         allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
+--        boolean noforwards = isEphemeral || isPeerNoForwards() || message.messageOwner.noforwards || getDialogId() == UserObject.VERIFY;
+-+        boolean noforwards = (isEphemeral && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT.getValue()) || isPeerNoForwards() || message.messageOwner.noforwards || getDialogId() == UserObject.VERIFY;
+-         boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
+-         boolean allowUnpin = !isEphemeral && message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();
+-         boolean allowEdit = !isEphemeral && message.canEditMessage(currentChat) && !chatActivityEnterView.hasAudioToSend() && message.getDialogId() != mergeDialogId && message.type != MessageObject.TYPE_STORY && message.type != MessageObject.TYPE_POLL;
+diff --git a/patches/entiny/tos-per-category-save.patch b/patches/entiny/tos-per-category-save.patch
+deleted file mode 100644
+index 96fe16d..0000000
+--- a/patches/entiny/tos-per-category-save.patch
++++ /dev/null
+@@ -1,64 +0,0 @@
+-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+-From: Oleksii Kulinich <entaytion@gmail.com>
+-Date: Tue, 11 Aug 2026 11:28:49 +0300
+-Subject: preserve self-destructing content and timed messages per-category
+-
+----
+- .../org/telegram/messenger/MessagesController.java | 14 +++++++++++++-
+- .../org/telegram/messenger/MessagesStorage.java    |  4 ++++
+- 2 files changed, 17 insertions(+), 1 deletion(-)
+-
+-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+-index 0000000..0000000 100644
+---- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+-@@ -8315,7 +8315,13 @@ public class MessagesController extends BaseController implements NotificationCe
+-                 if (task != null) {
+-                     for (int a = 0, N = task.size(); a < N; a++) {
+-                         ArrayList<Integer> mids = task.valueAt(a);
+--                        deleteMessages(mids, null, null, task.keyAt(a), 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
+-+                        long dialogId = task.keyAt(a);
+-+                        TLRPC.Dialog dialog = dialogs_dict.get(dialogId);
+-+                        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMessage(dialogId, dialog != null ? dialog.ttl_period : 0)) {
+-+                            desu.inugram.helpers.security.SelfDestructHelper.markPreserved(currentAccount, dialogId, mids);
+-+                            continue;
+-+                        }
+-+                        deleteMessages(mids, null, null, dialogId, 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
+-                     }
+-                 }
+-                 if (taskMedia != null) {
+-@@ -21079,6 +21085,9 @@ public class MessagesController extends BaseController implements NotificationCe
+-                     getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
+-                 }
+-             }
+-+            if (deletedMessagesFinal != null && deletedMessagesFinal.get(0) != null) {
+-+                deletedMessagesFinal.put(0, desu.inugram.helpers.security.SelfDestructHelper.filterTimedDeletions(currentAccount, deletedMessagesFinal.get(0), dialogMessagesByIds));
+-+            }
+-             if (deletedMessagesFinal != null) {
+-                 for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
+-                     long dialogId = deletedMessagesFinal.keyAt(a);
+-@@ -21203,6 +21212,9 @@ public class MessagesController extends BaseController implements NotificationCe
+-             for (int a = 0, size = deletedMessages.size(); a < size; a++) {
+-                 long key = deletedMessages.keyAt(a);
+-                 ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
+-+                if (arrayList == null || arrayList.isEmpty()) {
+-+                    continue;
+-+                }
+-                 if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() && arrayList != null) {
+-                     for (int i = 0; i < arrayList.size(); i++) {
+-                         desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, key, arrayList.get(i), 0L, "", 0);
+-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+-index 0000000..0000000 100644
+---- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+-@@ -4754,6 +4754,10 @@ public class MessagesStorage extends BaseController {
+-     }
+- 
+-     public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
+-+        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialogId)) {
+-+            desu.inugram.helpers.security.SelfDestructHelper.markPreserved(currentAccount, dialogId, mids);
+-+            return;
+-+        }
+-         storageQueue.postRunnable(() -> {
+-             SQLiteCursor cursor = null;
+-             SQLitePreparedStatement state = null;
+diff --git a/src/kotlin/helpers/chat/SavedMessagesHelper.kt b/src/kotlin/helpers/chat/SavedMessagesHelper.kt
+index a0abc61..9ab0ac4 100644
+--- a/src/kotlin/helpers/chat/SavedMessagesHelper.kt
++++ b/src/kotlin/helpers/chat/SavedMessagesHelper.kt
+@@ -196,8 +196,8 @@ object SavedMessagesHelper {
+     }
+ 
+     @JvmStatic
+-    fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null) {
+-        if (!isSaveDeletedEnabled()) return
++    fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
++        if (!isSaveDeletedEnabled() && !forceSave) return
+         ensureAccountLoaded(account)
+         var dialogs = deletedMessageIds.get(account.toLong())
+         if (dialogs == null) {
+diff --git a/src/kotlin/helpers/security/SelfDestructHelper.kt b/src/kotlin/helpers/security/SelfDestructHelper.kt
+index d9d151a..6633c86 100644
+--- a/src/kotlin/helpers/security/SelfDestructHelper.kt
++++ b/src/kotlin/helpers/security/SelfDestructHelper.kt
+@@ -49,108 +49,22 @@ object SelfDestructHelper {
+         }
+     }
+ 
+-    // Preserved self-destruct messages (account -> dialogId -> Set<msgId>). The message
+-    // rows themselves stay in the stock DB (the deletion is skipped), so only the id pair
+-    // is recorded here — it drives the "deleted" icon next to the timestamp.
+-    private val preservedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
+-    private val preservedLoadedAccounts = HashSet<Int>()
++    // Preserved message IDs logic removed in favor of SavedMessagesHelper
+ 
+     @JvmStatic
+-    fun markPreserved(account: Int, dialogId: Long, mids: ArrayList<Int>) {
+-        if (mids.isEmpty()) return
+-        ensurePreservedLoaded(account)
+-        var dialogs = preservedMessageIds.get(account.toLong())
+-        if (dialogs == null) {
+-            dialogs = LongSparseArray()
+-            preservedMessageIds.put(account.toLong(), dialogs)
+-        }
+-        var set = dialogs.get(dialogId)
+-        if (set == null) {
+-            set = HashSet()
+-            dialogs.put(dialogId, set)
+-        }
+-        val toSave = ArrayList<Int>()
+-        for (i in 0 until mids.size) {
+-            val id = mids[i]
+-            if (set.add(id)) toSave.add(id)
+-        }
+-        if (toSave.isEmpty()) return
+-        val storage = MessagesStorage.getInstance(account) ?: return
+-        storage.storageQueue.postRunnable {
+-            val db = storage.database ?: return@postRunnable
+-            for (id in toSave) {
+-                InuDatabaseHelper.savePreservedMessage(db, dialogId, id)
+-            }
+-        }
+-    }
+-
+-    @JvmStatic
+-    fun markPreserved(account: Int, dialogId: Long, msgId: Int) {
+-        val single = ArrayList<Int>(1)
+-        single.add(msgId)
+-        markPreserved(account, dialogId, single)
+-    }
+-
+-    @JvmStatic
+-    fun isPreserved(account: Int, dialogId: Long, msgId: Int): Boolean {
+-        ensurePreservedLoaded(account)
+-        return preservedMessageIds.get(account.toLong())?.get(dialogId)?.contains(msgId) == true
+-    }
+-
+-    @JvmStatic
+-    fun ensurePreservedLoaded(account: Int) {
+-        if (preservedLoadedAccounts.contains(account)) return
+-        val storage = MessagesStorage.getInstance(account) ?: return
+-        val db = storage.database
+-        if (db != null) {
+-            loadPreservedFromDb(account, db)
+-        } else {
+-            storage.storageQueue.postRunnable {
+-                val asyncDb = storage.database ?: return@postRunnable
+-                loadPreservedFromDb(account, asyncDb)
+-            }
+-        }
+-    }
+-
+-    private fun loadPreservedFromDb(account: Int, db: org.telegram.SQLite.SQLiteDatabase) {
+-        if (preservedLoadedAccounts.contains(account)) return
+-        val loaded = InuDatabaseHelper.loadPreservedMessageIds(db)
+-        AndroidUtilities.runOnUIThread {
+-            if (preservedLoadedAccounts.contains(account)) return@runOnUIThread
+-            var dialogs = preservedMessageIds.get(account.toLong())
+-            if (dialogs == null) {
+-                dialogs = LongSparseArray()
+-                preservedMessageIds.put(account.toLong(), dialogs)
+-            }
+-            for ((dialogId, set) in loaded) {
+-                val existing = dialogs.get(dialogId)
+-                if (existing == null) dialogs.put(dialogId, set) else existing.addAll(set)
+-            }
+-            preservedLoadedAccounts.add(account)
+-        }
+-    }
+-
+-    /**
+-     * Filters server-pushed deletions (`TL_updateDeleteMessages` accumulated under key 0)
+-     * for auto-delete chats: mids whose in-memory message carries `ttl_period` are kept
+-     * locally. Returns a new list, or the original when the toggle is off or nothing can
+-     * be resolved.
+-     */
+-    @JvmStatic
+-    fun filterTimedDeletions(account: Int, mids: ArrayList<Int>, dialogMessagesByIds: SparseArray<MessageObject>?): ArrayList<Int> {
++    fun filterTimedDeletions(account: Int, mids: ArrayList<Int>, dialogMessagesByIds: SparseArray<MessageObject>?) {
+         if (!InuConfig.SAVE_TIMED_MESSAGES.value || mids.isEmpty() || dialogMessagesByIds == null) {
+-            return mids
++            return
+         }
+-        val result = ArrayList<Int>(mids.size)
+         for (i in 0 until mids.size) {
+             val id = mids[i]
+             val obj = dialogMessagesByIds.get(id)
+             if (obj != null && obj.messageOwner.ttl_period != 0) {
+-                markPreserved(account, obj.getDialogId(), id)
+-                continue
++                val fromId = if (obj.messageOwner.from_id != null) org.telegram.messenger.DialogObject.getPeerDialogId(obj.messageOwner.from_id) else 0L
++                val text = obj.messageOwner.message ?: ""
++                val date = obj.messageOwner.date
++                desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(account, obj.getDialogId(), id, fromId, text, date, obj.messageOwner, true)
+             }
+-            result.add(id)
+         }
+-        return result
+     }
+ }
+-- 
+2.55.0.windows.2
+

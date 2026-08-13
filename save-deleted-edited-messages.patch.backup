@@ -1,0 +1,93 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 26 Jul 2026 01:48:18 +0300
+Subject: save deleted and edited messages history
+
+---
+ .../messenger/MessagesController.java         | 31 +++++++++++++++++++
+ .../telegram/messenger/MessagesStorage.java   | 11 +++++--
+ 2 files changed, 39 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -9302,6 +9302,32 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
++        if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) {
++            if (messages != null) {
++                ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
++                for (int a = 0; a < messages.size(); a++) {
++                    int id = messages.get(a);
++                    MessageObject found = null;
++                    if (objs != null) {
++                        for (int i = 0; i < objs.size(); ++i) {
++                            MessageObject obj = objs.get(i);
++                            if (obj != null && obj.getId() == id) {
++                                found = obj;
++                                break;
++                            }
++                        }
++                    }
++                    if (found != null) {
++                        long fromId = found.messageOwner != null && found.messageOwner.from_id != null ? org.telegram.messenger.DialogObject.getPeerDialogId(found.messageOwner.from_id) : 0;
++                        String text = found.messageOwner != null ? found.messageOwner.message : "";
++                        int date = found.messageOwner != null ? found.messageOwner.date : 0;
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, fromId, text, date);
++                    } else {
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, 0L, "", 0);
++                    }
++                }
++            }
++        }
+         ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
+         if (objs != null) {
+             for (int i = 0; i < objs.size(); ++i) {
+@@ -21162,6 +21188,11 @@ public class MessagesController extends BaseController implements NotificationCe
+             for (int a = 0, size = deletedMessages.size(); a < size; a++) {
+                 long key = deletedMessages.keyAt(a);
+                 ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
++                if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() && arrayList != null) {
++                    for (int i = 0; i < arrayList.size(); i++) {
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, key, arrayList.get(i), 0L, "", 0);
++                    }
++                }
+                 getMessagesStorage().getStorageQueue().postRunnable(() -> {
+                     ArrayList<Long> dialogIds = getMessagesStorage().markMessagesAsDeleted(key, arrayList, false, true, 0, 0);
+                     getMessagesStorage().updateDialogsWithDeletedMessages(key, -key, arrayList, dialogIds);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -14492,8 +14492,10 @@ public class MessagesStorage extends BaseController {
+                         cursor.dispose();
+                         cursor = null;
+                     }
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+-                    database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
++                    if (!desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) {
++                        database.executeFast(String.format(Locale.US, "DELETE FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
++                        database.executeFast(String.format(Locale.US, "DELETE FROM messages_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
++                    }
+                     database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+                     database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+                     database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
+@@ -15850,12 +15852,15 @@ public class MessagesStorage extends BaseController {
+                                     TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
+                                     oldMessage.readAttachPath(data, getUserConfig().clientUserId);
+                                     data.reuse();
++                                    if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && oldMessage != null && oldMessage.message != null && !android.text.TextUtils.isEmpty(oldMessage.message) && !oldMessage.message.equals(message.message)) {
++                                         desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, oldMessage.message, oldMessage.date);
++                                     }
+                                     if (reactionUpdates != null) {
+                                         reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
+                                     }
+                                     int send_state = cursor.intValue(5);
+                                     if (send_state != 3) {
+-                                        if (MessageObject.getFileName(oldMessage).equals(MessageObject.getFileName(message))) {
++                                        if (FileLoader.getAttachFileName(oldMessage).equals(FileLoader.getAttachFileName(message))) {
+                                             message.attachPath = oldMessage.attachPath;
+                                         }
+                                         message.ttl = cursor.intValue(2);
