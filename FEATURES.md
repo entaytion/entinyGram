@@ -86,7 +86,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - sticker time overlay modes: show / 🐶 hide time / 🐶 hide on incoming / hide completely
 - "Refresh" in the sticker/emoji pack menu
 - compact edited indicator: pencil icon instead of the "edited" label
-- 📡 show repost count on posts: displays the number of forwards/reposts between the timestamp and view count (toggleable, default off)
 - toggleable message bubble tails
 - 🐶 jump-to-discussion button from comments
 - jump-to-beginning button in calendar popup - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
@@ -139,7 +138,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - in-place message translation, with optional web preview translation, original-text appending and on-device source-language auto-detection (hides Translate when already in your language)
 - 📡 whole-chat translation (the "translate this chat" top bar and its menu) without premium
 - instant view pages translator
-- show original time/date in "forwarded from" header, optionally collapsing it to a single line with an icon instead of the "forwarded from" label
 - show original time/date in the forwarded header, with regular, icon-only label, and compact one-line modes
 - show forward count next to the view count on channel posts
 - long-tap forward bar (above input) to cycle between regular / without sender / without caption

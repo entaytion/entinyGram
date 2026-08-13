@@ -373,7 +373,7 @@
     <string name="InuForwardHeaderModeIcon">Значок</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">Совпадает с компактным режимом, когда «Показывать время пересылки» выключено</string>
     <string name="InuForwardHeaderModeCompact">Компактный</string>
-    <string name="InuShowForwardsCount">Число пересылок</string>
+    <string name="InuShowForwardsCount">Показывать число пересылок</string>
     <string name="InuCompactEdited">Компактный индикатор изменения</string>
 
     <string name="InuAddToStickersGifs">Добавить в стикеры/GIF</string>
@@ -845,13 +845,6 @@
     <string name="InuRefreshStickerSet">Обновить</string>
     <string name="InuStickerSetRefreshed">Набор обновлен</string>
     <string name="InuStickerSetRefreshFailed">Не удалось обновить набор</string>
-    <string name="InuPerformanceClass">Клас производительности</string>
-    <string name="InuPerformanceClassInfo">Не рекомендуется менять эту настройку, так как это может ухудшить производительность на слабых устройствах</string>
-    <string name="InuPerformanceClassMeasured">Измеренный</string>
-    <string name="InuPerformanceClassLow">Низкий</string>
-    <string name="InuPerformanceClassAverage">Средний</string>
-    <string name="InuPerformanceClassHigh">Высокий</string>
-    <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
     <string name="InuLegacySettingsLink">Этот формат ссылки устарел. Используйте tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuSettingsPrefixHint">Ссылки настроек используют tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuBetaFeatureTitle">Бета-функция</string>
@@ -861,8 +854,6 @@
     <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
     <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>
     <string name="InuShowMutualContactInChatsInfo">Показывать значок взаимного контакта в списках участников групп и каналов</string>
-    <string name="InuShowPostForwardsCount">Показывать количество репостов на постах</string>
-    <string name="InuShowPostForwardsCountInfo">Отображает количество пересылок/репостов между временем и количеством просмотров на постах</string>
     <string name="InuCategoryAppearance">Внешний вид и дизайн</string>
     <string name="InuCategoryBackup">Резервное копирование и система</string>
     <string name="InuCategoryBehavior">Поведение и инструменты</string>
@@ -878,7 +869,4 @@
 
     <string name="InuUnreader">Нечиталка</string>
     <string name="InuUnreaderInfo">Сообщения не помечаются прочитанными: при открытии чата значок непрочитанного сохраняется, а отчёты о прочтении не отправляются собеседнику.</string>
-    <string name="InuRefreshStickerSet">Обновить</string>
-    <string name="InuStickerSetRefreshed">Набор обновлён</string>
-    <string name="InuStickerSetRefreshFailed">Не удалось обновить набор</string>
 </resources>

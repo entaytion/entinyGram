@@ -847,8 +847,6 @@
     <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
     <string name="InuShowMutualContactInChatsInfo">Display mutual contact icon in group and channel member lists</string>
-    <string name="InuShowPostForwardsCount">Show Repost Count on Posts</string>
-    <string name="InuShowPostForwardsCountInfo">Display the number of forwards/reposts between the time and views count on posts</string>
     <string name="InuCategoryAppearance">Appearance &amp; Layout</string>
     <string name="InuCategoryChats">Chats &amp; Messaging</string>
     <string name="InuCategoryProfile">Profile &amp; Navigation</string>

@@ -800,14 +800,7 @@
     <string name="InuHideSponsoredMessagesInfo">禁用频道赞助广告并防止加载推广消息</string>
     <string name="InuLegacySettingsLink">此设置链接格式已废弃。请使用 tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuLinks">链接</string>
-    <string name="InuMaterial3NavigationAnimation">导航动画</string>
     <string name="InuNoEditHistory">没有可用的编辑历史</string>
-    <string name="InuPerformanceClass">性能等级</string>
-    <string name="InuPerformanceClassAverage">中等</string>
-    <string name="InuPerformanceClassHigh">高等</string>
-    <string name="InuPerformanceClassInfo">不建议更改此设置，因为在低性能设备上可能会降低流畅度</string>
-    <string name="InuPerformanceClassLow">低等</string>
-    <string name="InuPerformanceClassMeasured">已测量</string>
     <string name="InuRefreshStickerSet">刷新</string>
     <string name="InuRegexFilter">AdBlock 与正则表达式过滤器</string>
     <string name="InuRegexFilterEnabled">启用内容过滤器</string>
@@ -834,7 +827,4 @@
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
     <string name="InuTOS">服务条款</string>
-    <string name="InuRefreshStickerSet">刷新</string>
-    <string name="InuStickerSetRefreshed">贴纸包已更新</string>
-    <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
 </resources>

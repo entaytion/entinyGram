@@ -799,14 +799,7 @@
     <string name="InuHideSponsoredMessagesInfo">Kanal reklamlarını devre dışı bırakır ve tanıtım mesajlarının yüklenmesini engeller</string>
     <string name="InuLegacySettingsLink">Bu ayar bağlantısı biçimi eskidi. tg://entinySettings/&lt;slug&gt; kullanın.</string>
     <string name="InuLinks">Bağlantılar</string>
-    <string name="InuMaterial3NavigationAnimation">Gezinme animasyonu</string>
     <string name="InuNoEditHistory">Düzenleme geçmişi yok</string>
-    <string name="InuPerformanceClass">Performans sınıfı</string>
-    <string name="InuPerformanceClassAverage">Ortalama</string>
-    <string name="InuPerformanceClassHigh">Yüksek</string>
-    <string name="InuPerformanceClassInfo">Düşük performanslı cihazlarda kasmalara yol açabileceği için bu ayarın değiştirilmesi önerilmez</string>
-    <string name="InuPerformanceClassLow">Düşük</string>
-    <string name="InuPerformanceClassMeasured">Ölçülen</string>
     <string name="InuRefreshStickerSet">Yenile</string>
     <string name="InuRegexFilter">AdBlock ve Regex Filtresi</string>
     <string name="InuRegexFilterEnabled">İçerik filtresini etkinleştir</string>
@@ -833,7 +826,4 @@
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuTOS">Hizmet Şartları</string>
-    <string name="InuRefreshStickerSet">Yenile</string>
-    <string name="InuStickerSetRefreshed">Paket güncellendi</string>
-    <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
 </resources>

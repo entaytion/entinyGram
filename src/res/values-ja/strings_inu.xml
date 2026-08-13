@@ -800,14 +800,7 @@
     <string name="InuHideSponsoredMessagesInfo">チャンネルの広告を無効化し、プロモーションメッセージの読み込みを防ぎます</string>
     <string name="InuLegacySettingsLink">この設定リンク形式は古い形式です。tg://entinySettings/&lt;slug&gt; を使用してください。</string>
     <string name="InuLinks">リンク</string>
-    <string name="InuMaterial3NavigationAnimation">ナビゲーションアニメーション</string>
     <string name="InuNoEditHistory">編集履歴はありません</string>
-    <string name="InuPerformanceClass">パフォーマンスの分類</string>
-    <string name="InuPerformanceClassAverage">標準</string>
-    <string name="InuPerformanceClassHigh">高性能</string>
-    <string name="InuPerformanceClassInfo">低スペック端末でのパフォーマンスに影響を与える可能性があるため、変更は推奨されません</string>
-    <string name="InuPerformanceClassLow">低性能</string>
-    <string name="InuPerformanceClassMeasured">測定済み</string>
     <string name="InuRefreshStickerSet">更新</string>
     <string name="InuRegexFilter">AdBlock ＆ 正規表現フィルター</string>
     <string name="InuRegexFilterEnabled">コンテンツフィルターを有効化</string>
@@ -834,7 +827,4 @@
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
     <string name="InuTOS">利用規約</string>
-    <string name="InuRefreshStickerSet">更新</string>
-    <string name="InuStickerSetRefreshed">パックを更新しました</string>
-    <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
 </resources>

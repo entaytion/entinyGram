@@ -298,10 +298,12 @@ object M3SectionsHelper {
     /** MD3 circle fill: midpoint hue, clamped saturation, light tone (L 0.82). */
     @JvmStatic
     fun circleColor(topColor: Int, bottomColor: Int): Int {
-        resizeSquare(iconView, 22)
-        val (bg, fg) = computeIconColors(topColor, bottomColor)
-        iconView.setColorFilter(fg)
-        cellBackground.inu_monetColor = bg
+        val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(flat, hsl)
+        hsl[1] = hsl[1].coerceIn(0.55f, 1f)
+        hsl[2] = 0.82f
+        return ColorUtils.HSLToColor(hsl)
     }
 
     @JvmStatic
@@ -319,12 +321,7 @@ object M3SectionsHelper {
     }
 
     private fun computeIconColors(topColor: Int, bottomColor: Int): Pair<Int, Int> {
-        val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(flat, hsl)
-        hsl[1] = hsl[1].coerceIn(0.55f, 1f)
-        hsl[2] = 0.82f
-        return ColorUtils.HSLToColor(hsl)
+        return circleColor(topColor, bottomColor) to iconColor(topColor, bottomColor)
     }
 
     /** MD3 icon tint: same hue family as [circleColor] but dark (L 0.32). */
@@ -335,7 +332,6 @@ object M3SectionsHelper {
         ColorUtils.colorToHSL(flat, hsl)
         hsl[2] = 0.32f
         return ColorUtils.HSLToColor(hsl)
-        return bg to ColorUtils.HSLToColor(hsl)
     }
 
     @JvmStatic

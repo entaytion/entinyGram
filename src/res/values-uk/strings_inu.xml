@@ -806,6 +806,7 @@
     <string name="InuForwardHeaderModeCompact">Компактний</string>
     <string name="InuForwardHeaderModeIcon">Іконка</string>
     <string name="InuForwardHeaderModeIconNoTimeInfo">Те саме, що й компактний з вимкненим «Показувати час пересилання»</string>
+    <string name="InuShowForwardsCount">Показувати кількість пересилань</string>
     <string name="InuPerformanceClass">Клас продуктивності</string>
     <string name="InuPerformanceClassInfo">Не рекомендується змінювати цей параметр, оскільки це може погіршити продуктивність на слабких пристроях</string>
     <string name="InuPerformanceClassMeasured">Виміряний</string>
@@ -819,8 +820,6 @@
     <string name="InuShowMutualContactIconInfo">Показувати значок взаємного контакту у списку контактів</string>
     <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>
     <string name="InuShowMutualContactInChatsInfo">Показувати значок взаємного контакту у списках учасників груп та каналів</string>
-    <string name="InuShowPostForwardsCount">Показати кількість репостів на постах</string>
-    <string name="InuShowPostForwardsCountInfo">Показує кількість пересилань/репостів між часом і кількістю переглядів на постах</string>
     <string name="InuCategoryAppearance">Вигляд і дизайн</string>
     <string name="InuCategoryBackup">Резервне копіювання та система</string>
     <string name="InuCategoryBehavior">Поведінка та інструменти</string>

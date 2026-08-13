@@ -261,6 +261,8 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 } else {
                     presentFragment(RegexFilterSettingsActivity())
                 }
+            }
+
             TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY -> {
                 val new = InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new

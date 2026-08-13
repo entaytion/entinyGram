@@ -44,7 +44,7 @@ the patchset is managed using `stgit` and supporting scripts in `scripts/`.
 
 - `src/kotlin`: our custom Kotlin code
 - `src/res`: our custom resources
-- `patches/`: stock patches
+- `patches/`: stgit patches. `bugfix` / `feature` / `debloat` / `hooks` / `misc` = inherited inugram base. `patches/entiny/` = **ours** (entinyGram-only; not in origin)
 - `series`: patch apply order
 - `upstream-commit`: pinned Telegram commit
 - `worktree/`: local Telegram checkout, gitignored
@@ -58,6 +58,9 @@ patches are grouped by their type:
 | `debloat` | hides stock "features" behind a toggle |
 | `hooks` | small hooks into various parts of the app to jump into custom Kotlin code |
 | `misc` | build support, branding, and infrastructure |
+| `entiny` | **our patches** — entinyGram-only work (ghost mode, adblock, save-deleted, branding, updater, …). Not present in inugram. Do not omit this folder when listing patches. |
+
+`src/kotlin`, `src/res`, and `patches/entiny/` are entinyGram files. Everything else under `patches/` is the inugram patchset we apply on top of stock Telegram.
 
 ## contributing
 

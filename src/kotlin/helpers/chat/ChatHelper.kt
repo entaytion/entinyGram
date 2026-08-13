@@ -118,9 +118,10 @@ object ChatHelper {
         }
         if (isDeletedOrPreserved(msg)) {
             hash = hash * 31 + 3
+        }
         val forwards = getForwardsCount(msg)
         if (forwards > 0) {
-            hash = hash * 31 + 3
+            hash = hash * 31 + 4
             hash = hash * 31 + forwards
         }
         return hash
@@ -139,8 +140,6 @@ object ChatHelper {
         if (isDeleted) {
             width += AndroidUtilities.dp(13f)
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
-            width += AndroidUtilities.dp(13f)
-        if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(11f)
         }
         if (getForwardsCount(msg) > 0) {

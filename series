@@ -298,7 +298,6 @@ entiny/sverklo-gitignore.patch
 entiny/build-optimizations.patch
 entiny/fix-url-parsing.patch
 entiny/save-user-info.patch
-entiny/post-forwards-count.patch
 entiny/branding.patch
 feature/message-menu.patch
 entiny/adblock.patch

@@ -14,7 +14,7 @@ the same change.
 2. **Do not run `stg` or `git` yourself** unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
 3. **Stock patches stay tiny & code-only.** Only Java wiring/hooks/guards in `TMessagesProj/src/main/java/...`. Real logic goes in `src/kotlin`. **NEVER include XML resources, drawables, or non-Java assets in stgit patches.** New icons, drawables, and XML resources MUST be placed in `src/res/drawable/` or `src/res/`, NOT tracked inside `patches/*.patch`. A patch touching only `src/**` or resource XMLs is WRONG.
 4. **Default off = stock-identical.** Every behavior change gated behind an `InuConfig.*.getValue()` check. Verify every call site is gated.
-5. **Check if stock already does it** before implementing a toggle (e.g. Lite Mode often has it). Tell the user, don't silently re-implement.
+5. **Check if stock or origin (inugram) already does it** before implementing a toggle (Lite Mode, `InuConfig`, `src/kotlin` helpers, `series`). Tell the user, don't silently re-implement. Duplicating origin is a hard error — see rule 19.
 6. **Confirm bug repro in unpatched worktree** before treating a visual/behavior issue as a patch regression.
 7. **No renames in stock. No removing stock imports** (except `desu.inugram.*`).
 8. **Prefer data-layer patches over UI-layer** — one hook in a controller beats fifteen hooks in views.
@@ -39,6 +39,7 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 16. **Check stgit Stack Before Patch Operations:** Always check `stg top` and `stg series` BEFORE creating, modifying, or refreshing patches. Verify if a patch for the feature already exists in `patches/` or `series`. Never run `stg refresh` blindly on whatever patch happens to be at the top of the stack.
 17. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
 18. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
+19. **Never duplicate origin. Never rewrite a hotspot for a feature origin already has.** If inugram already has the feature, take theirs — do not add a parallel `entiny/` patch, a second toggle, or a rewrite of `ChatMessageCell` / other 10k+ stock files. Bubble metadata (time, views, forwards, edited) goes through `ChatHelper.timePrefix` / `extraTimeWidth` / `timeAdditionsHash`, not a new cell patch. Checklist: `.claude/skills/write-patches/SKILL.md`. Code comparison: `.claude/skills/write-patches/dont-reinvent.md`.
 
 ## Patch groups & naming
 
@@ -51,9 +52,11 @@ Format: `group__name` → `patches/<group>/<name>.patch`. Commit subject = plain
 | `debloat` | hides/disables stock behavior behind a toggle |
 | `hooks` | thin stock hooks for fork code to attach to; no user-visible change alone |
 | `misc` | build, branding, infra |
-| `entiny` | your own overlay patches (authored by you). Kept in `patches/entiny/`, separate from the inugram base, so upstream (inugram) merges never touch them |
+| `entiny` | **entinyGram-owned patches** — our work, not inugram's. Ghost mode, adblock, save-deleted, branding, updater, etc. Live in `patches/entiny/`. Inugram merges never touch this folder. **Always include this group** when listing, searching, auditing, or exporting patches; skipping it means you are looking at origin's fork, not ours. |
 
 `debloat` vs `feature`: only *removes/toggles off* stock → `debloat`. Adds new capability → `feature`. `visual__`, `ui__`, etc. are **not** valid groups.
+
+The first five groups (`bugfix`, `feature`, `debloat`, `hooks`, `misc`) are the **inherited inugram base**. `entiny` is **this fork**. A complete patch list is `series` (or `patches/*/` including `patches/entiny/`). If your search or table omits `entiny/`, you missed our patches.
 
 **Ownership boundary:** everything under `patches/<bugfix|feature|debloat|hooks|misc>/` is the inherited inugram base — don't rename it. When you *take over* a patch (meaningfully modify it for entinygram), move it into `entiny/` via `stg rename <old> entiny__<name>`; at that point you own its maintenance (upstream fixes won't auto-apply). `entiny/` is your layer, so merging upstream stays clean.
 
@@ -108,6 +111,14 @@ public void doSomething() {
 - Bugfix in a specific stock class → write the fix **inline in that Java class**. `EditTextBoldCursor` bugs get fixed in `EditTextBoldCursor.java`. Don't detour through a Kotlin helper just to keep the patch "clean".
 - Non-trivial feature logic → Kotlin helper.
 - Pure config toggle with no Java wiring → don't write a stock patch at all.
+
+## Do not reinvent origin
+
+If inugram already has the feature, use it. Do not add a parallel `entiny/` patch, a second toggle, or a `ChatMessageCell` rewrite.
+
+**Code comparison (ours vs origin, forward count):** `.claude/skills/write-patches/dont-reinvent.md`
+
+Checklist: `.claude/skills/write-patches/SKILL.md`. Rule 19 above.
 
 ## Commonly touched stock files
 
@@ -289,6 +300,8 @@ Don't overuse `@JvmStatic`, only add it if the method/field is actually accessed
 10. **Java using `.value`.** It's `.getValue()`. Kotlin `.value` is a property; `@JvmField` only exposes the wrapper.
 11. **Forgetting `inu_` prefix** when adding fields/methods/overloads to stock classes. Including Java fields.
 12. **Re-indenting stock** to wrap it in an `if`. Kills rebases. Use early returns, add-after-stock, or keep indentation the same.
+13. **Reimplementing an origin feature** as a parallel `entiny/` patch (second toggle, second drawable, `ChatMessageCell` rewrite). Search origin first. See write-patches skill / forward-count case study.
+14. **Opening `ChatMessageCell.java` for bubble metadata.** Time, forwards, views, edited, deleted icons go through `ChatHelper.timePrefix` and friends. If that hook is missing, add a 1-line call there — do not patch the cell.
 
 ## stgit workflow (user-initiated only)
 
@@ -353,7 +366,7 @@ Golden merge attitude:
 
 ## Self-maintenance
 
-When adding a new `InuHooks` method, settings page, or shared `hooks/` patch — update this file. Tribal knowledge rots.
+When adding a new `InuHooks` method, settings page, or shared `hooks/` patch — update this file. When a feature is dropped because origin already had a cleaner version, add it to the write-patches case studies. Tribal knowledge rots.
 
 ## Commit convention
 

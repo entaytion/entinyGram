@@ -214,14 +214,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuCompactEdited),
             ).setChecked(InuConfig.COMPACT_EDITED.value)
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SHOW_POST_FORWARDS_COUNT,
-                R.string.InuShowPostForwardsCount,
-                R.string.InuShowPostForwardsCountInfo,
-                InuConfig.SHOW_POST_FORWARDS_COUNT.value,
-            )
-        )
         items.add(UItem.asShadow(null))
         items.add(
             UItem.asButton(
@@ -353,11 +345,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.COMPACT_EDITED.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 miscPreview?.invalidate()
-            }
-
-            TOGGLE_SHOW_POST_FORWARDS_COUNT -> {
-                val new = InuConfig.SHOW_POST_FORWARDS_COUNT.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_SPOILER_EXTEND_TO_LINE_END -> {
@@ -511,7 +498,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_FORWARDS_COUNT = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
-        private val TOGGLE_SHOW_POST_FORWARDS_COUNT = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
@@ -566,7 +552,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
-                SearchRegistry.Entry("show-post-forwards-count", R.string.InuShowPostForwardsCount, TOGGLE_SHOW_POST_FORWARDS_COUNT),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
                 SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),
