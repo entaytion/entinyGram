@@ -92,6 +92,15 @@ object InuConfig {
         }
     }
 
+    open class StringSetItem(key: String, default: Set<String> = emptySet(), exportable: Boolean = true) :
+        Item<Set<String>>(key, default, exportable) {
+        override fun read(prefs: SharedPreferences): Set<String> =
+            prefs.getStringSet(key, default)?.toSet() ?: default
+        override fun SharedPreferences.Editor.write() {
+            putStringSet(key, value)
+        }
+    }
+
     class LongItem(key: String, default: Long, exportable: Boolean = true) : Item<Long>(key, default, exportable) {
         override fun read(prefs: SharedPreferences): Long = prefs.getLong(key, default)
         override fun SharedPreferences.Editor.write() {
@@ -808,7 +817,22 @@ object InuConfig {
     val SAVE_DELETED_MESSAGES = BoolItem("save_deleted_messages", true)
 
     @JvmField
+    val SAVE_DELETED_PRIVATE = BoolItem("save_deleted_private", true)
+
+    @JvmField
+    val SAVE_DELETED_GROUPS = BoolItem("save_deleted_groups", true)
+
+    @JvmField
+    val SAVE_DELETED_CHANNELS = BoolItem("save_deleted_channels", true)
+
+    @JvmField
+    val SAVE_DELETED_BOTS = BoolItem("save_deleted_bots", true)
+
+    @JvmField
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
+
+    @JvmField
+    val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)
 
     @JvmField
     val HIDE_SPONSORED_MESSAGES = BoolItem("hide_sponsored_messages", true)
@@ -978,6 +1002,12 @@ object InuConfig {
     val GHOST_HIDE_READ = BoolItem("ghost_hide_read", true)
 
     @JvmField
+    val GHOST_READ_ON_SEND = BoolItem("ghost_read_on_send", false)
+
+    @JvmField
+    val GHOST_HIDE_VOICE_READ = BoolItem("ghost_hide_voice_read", true)
+
+    @JvmField
     val GHOST_HIDE_STORY_READ = BoolItem("ghost_hide_story_read", true)
 
     @JvmField
@@ -989,10 +1019,11 @@ object InuConfig {
     @JvmField
     val GHOST_OFFLINE_AFTER_ONLINE = BoolItem("ghost_offline_after_online", false)
 
-    // --- unreader (read messages without marking them as read) ---
-    // Standalone toggle, independent of ghost mode: chats stay unread locally and no
-    // read receipts reach the other side.
     @JvmField
-    val UNREADER = BoolItem("unreader", false)
+    val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
+
+    // Backwards-compatibility alias with MessagesController Java patch
+    @JvmField
+    val UNREADER = GHOST_HIDE_READ
 
 }

@@ -9,7 +9,6 @@ import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
-import desu.inugram.ui.settings.GhostModeActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
@@ -58,7 +57,6 @@ object SearchRegistry {
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
-            GhostModeActivity.PAGE,
         )
     }
 

@@ -770,8 +770,15 @@
     <string name="InuClearDeletedCacheDone">Deleted messages cache cleared</string>
     <string name="InuClearDeletedCacheEmpty">Deleted messages cache is empty</string>
     <string name="InuEditHistory">Edit history</string>
-    <string name="InuNoEditHistory">No edit history available</string>
     <string name="InuEditedAt">Edited %1$s</string>
+    <string name="InuDeletedAt">Deleted %1$s</string>
+    <string name="InuAllowScreenshots">Allow screenshots</string>
+    <string name="InuAllowScreenshotsInfo">Allows taking screenshots and screen recording in secret chats, view-once media, and protected channels.</string>
+    <string name="InuSaveDeletedCategories">Save deleted in</string>
+    <string name="InuSaveDeletedPrivate">Private chats</string>
+    <string name="InuSaveDeletedGroups">Groups</string>
+    <string name="InuSaveDeletedChannels">Channels</string>
+    <string name="InuSaveDeletedBots">Bots</string>
     <string name="InuHideSponsoredMessages">Hide sponsored messages (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
     <string name="InuBetaFeatureTitle">Beta feature</string>
@@ -843,6 +850,7 @@
     <string name="InuAiReasoningEffort">Reasoning Effort</string>
     <string name="InuEditHistoryDiff">Highlight Text Changes (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Show red strikethrough for deleted text and green for added text in edit history</string>
+    <string name="InuNoEditHistory">No edit history recorded for this message</string>
     <string name="InuShowMutualContactIcon">Mutual Contact Icon</string>
     <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
@@ -860,6 +868,11 @@
     <string name="InuGhostFeatures">Hidden Activity</string>
     <string name="InuGhostHideRead">Do not send read receipts</string>
     <string name="InuGhostHideReadInfo">Messages are not marked as read on the server, so the other side never sees blue checkmarks.</string>
+    <string name="InuGhostReadOnSend">Mark as read when sending</string>
+    <string name="InuGhostReadOnSendInfo">Automatically mark previous messages as read when you send a message or reply in the chat.</string>
+    <string name="InuContentProtectionBypass">Content Protection &amp; Profile</string>
+    <string name="InuGhostHideVoiceRead">Do not mark voice and video messages as played</string>
+    <string name="InuGhostHideVoiceReadInfo">Voice messages and video notes will not show as played to the sender.</string>
     <string name="InuGhostHideStoryRead">Do not send story views</string>
     <string name="InuGhostHideStoryReadInfo">Story reads and view counts are not reported to the author.</string>
     <string name="InuGhostHideOnline">Hide online status</string>
@@ -870,6 +883,13 @@
     <string name="InuGhostOfflineAfterOnlineInfo">While in ghost mode, your online status is replaced with an offline one a few seconds after going online, so last seen stays fresh but you never stay online.</string>
     <string name="InuGhostEnabled">Ghost Mode enabled</string>
     <string name="InuGhostDisabled">Ghost Mode disabled</string>
+    <string name="InuGhostModeForChat">Ghost mode for this chat</string>
+    <string name="InuGhostModeEnableForChat">Enable Ghost Mode for this chat</string>
+    <string name="InuGhostModeDisableForChat">Disable Ghost Mode for this chat</string>
+    <string name="InuGhostModeEnabledForChatDone">Ghost Mode enabled for this chat</string>
+    <string name="InuGhostModeDisabledForChatDone">Ghost Mode disabled for this chat</string>
+    <string name="InuMarkChatAsRead">Mark as read</string>
+    <string name="InuMarkChatAsReadDone">Chat marked as read</string>
 
     <string name="InuUnreader">Unreader</string>
     <string name="InuUnreaderInfo">Messages are never marked as read: opening a chat keeps the unread badge, and no read receipts reach the other side.</string>

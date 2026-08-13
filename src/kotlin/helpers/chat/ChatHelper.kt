@@ -30,6 +30,7 @@ import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
+import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.SelfDestructHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.ui.MessageDetailsActivity
@@ -99,6 +100,7 @@ object ChatHelper {
     const val OPTION_SHOW_JSON = 517
     const val OPTION_EDIT_HISTORY = 518
     const val OPTION_SAVE_STICKER_TO_DOWNLOADS = 521
+    const val OPTION_MARK_AS_READ = 522
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -177,6 +179,39 @@ object ChatHelper {
     fun isDeletedOrPreserved(msg: MessageObject?): Boolean {
         if (msg == null) return false
         return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
+    }
+
+    @JvmStatic
+    fun canClickTime(msg: MessageObject?): Boolean {
+        if (msg == null) return false
+        val dialogId = msg.getDialogId()
+        val msgId = msg.id
+        val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
+        if (isDeleted) return true
+        val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
+        return isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)
+    }
+
+    @JvmStatic
+    fun onTimeClick(cell: ChatMessageCell): Boolean {
+        val msg = cell.messageObject ?: return false
+        val dialogId = msg.getDialogId()
+        val msgId = msg.id
+        val delegate = cell.delegate
+        val parentFragment = if (delegate is ChatActivity) delegate else null
+
+        val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
+        if (isDeleted) {
+            SavedMessagesHelper.showDeletionTimeBulletin(cell.context, parentFragment, dialogId, msgId)
+            return true
+        }
+
+        val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
+        if (isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)) {
+            SavedMessagesHelper.showEditHistoryDialog(cell.context, parentFragment, msg)
+            return true
+        }
+        return false
     }
 
     @JvmStatic
@@ -353,6 +388,12 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuEditHistory))
             options.add(OPTION_EDIT_HISTORY)
             icons.add(R.drawable.group_edit)
+        }
+
+        if (GhostHelper.isGhostActive() && InuConfig.GHOST_HIDE_READ.value && !GhostHelper.isDialogWhitelisted(activity.dialogId)) {
+            items.add(LocaleController.getString(R.string.InuMarkChatAsRead))
+            options.add(OPTION_MARK_AS_READ)
+            icons.add(R.drawable.msg_markread)
         }
 
         items.add(LocaleController.getString(R.string.InuMessageDetails))
@@ -662,6 +703,14 @@ object ChatHelper {
                         .createCopyBulletin(LocaleController.getString(bulletinRes))
                         .show()
                 }
+            }
+
+            OPTION_MARK_AS_READ -> {
+                GhostHelper.markDialogAsRead(activity.currentAccount, activity.dialogId, selectedObject.id)
+                BulletinFactory.of(activity).createSimpleBulletin(
+                    R.raw.contact_check,
+                    LocaleController.getString(R.string.InuMarkChatAsReadDone),
+                ).show()
             }
 
             OPTION_EDIT_HISTORY -> {

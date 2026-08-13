@@ -55,6 +55,7 @@ object SavedMessagesHelper {
 
     // In-memory cache for deleted message IDs per account (account -> (dialogId -> Set<msgId>))
     private val deletedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
+    private val deletedMessageDates = LongSparseArray<LongSparseArray<LongSparseArray<Long>>>()
     private val loadedAccounts = HashSet<Int>()
 
     // In-memory cache for edit history (account -> (dialogId -> (msgId -> List<EditEntry>)))
@@ -71,6 +72,26 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun isSaveEditedEnabled(): Boolean = InuConfig.SAVE_EDITED_MESSAGES.value
+
+    @JvmStatic
+    fun shouldSaveForDialog(account: Int, dialogId: Long): Boolean {
+        if (!isSaveDeletedEnabled()) return false
+        val controller = MessagesController.getInstance(account) ?: return true
+        if (org.telegram.messenger.DialogObject.isUserDialog(dialogId)) {
+            val user = controller.getUser(dialogId)
+            if (user != null && user.bot) {
+                return InuConfig.SAVE_DELETED_BOTS.value
+            }
+            return InuConfig.SAVE_DELETED_PRIVATE.value
+        } else if (org.telegram.messenger.DialogObject.isChatDialog(dialogId)) {
+            val chat = controller.getChat(-dialogId)
+            if (chat != null && org.telegram.messenger.ChatObject.isChannel(chat) && !chat.megagroup) {
+                return InuConfig.SAVE_DELETED_CHANNELS.value
+            }
+            return InuConfig.SAVE_DELETED_GROUPS.value
+        }
+        return true
+    }
 
     @JvmStatic
     fun ensureAccountLoaded(account: Int) {
@@ -98,7 +119,7 @@ object SavedMessagesHelper {
             InuDatabaseHelper.pruneEditHistory(db, cutoff)
         }
 
-        val deletedMap = InuDatabaseHelper.loadDeletedMessageIds(db)
+        val (deletedMap, datesMap) = InuDatabaseHelper.loadDeletedMessageInfo(db)
         org.telegram.messenger.AndroidUtilities.runOnUIThread {
             if (loadedAccounts.contains(account)) return@runOnUIThread
             var dialogArray = deletedMessageIds.get(account.toLong())
@@ -108,6 +129,21 @@ object SavedMessagesHelper {
             }
             for ((dialogId, set) in deletedMap) {
                 dialogArray.put(dialogId, set)
+            }
+            var dateArray = deletedMessageDates.get(account.toLong())
+            if (dateArray == null) {
+                dateArray = LongSparseArray()
+                deletedMessageDates.put(account.toLong(), dateArray)
+            }
+            for ((dialogId, dMap) in datesMap) {
+                var dSparse = dateArray.get(dialogId)
+                if (dSparse == null) {
+                    dSparse = LongSparseArray()
+                    dateArray.put(dialogId, dSparse)
+                }
+                for ((mId, dVal) in dMap) {
+                    dSparse.put(mId.toLong(), dVal)
+                }
             }
             loadedAccounts.add(account)
         }
@@ -130,6 +166,7 @@ object SavedMessagesHelper {
             // Invalidate in-memory cache so it's reloaded fresh on next access
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
                 deletedMessageIds.remove(account.toLong())
+                deletedMessageDates.remove(account.toLong())
                 editHistoryCache.remove(account.toLong())
                 loadedAccounts.remove(account)
             }
@@ -188,6 +225,7 @@ object SavedMessagesHelper {
                     }
                 }
                 deletedMessageIds.remove(account.toLong())
+                deletedMessageDates.remove(account.toLong())
                 editHistoryCache.remove(account.toLong())
                 loadedAccounts.remove(account)
                 onDone?.run()
@@ -198,7 +236,7 @@ object SavedMessagesHelper {
     @JvmStatic
     @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
-        if (!isSaveDeletedEnabled() && !forceSave) return
+        if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
         ensureAccountLoaded(account)
         var dialogs = deletedMessageIds.get(account.toLong())
         if (dialogs == null) {
@@ -212,11 +250,24 @@ object SavedMessagesHelper {
         }
         set.add(msgId)
 
+        val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
+        var dateAcc = deletedMessageDates.get(account.toLong())
+        if (dateAcc == null) {
+            dateAcc = LongSparseArray()
+            deletedMessageDates.put(account.toLong(), dateAcc)
+        }
+        var dateDialog = dateAcc.get(dialogId)
+        if (dateDialog == null) {
+            dateDialog = LongSparseArray()
+            dateAcc.put(dialogId, dateDialog)
+        }
+        dateDialog.put(msgId.toLong(), deletionTime)
+
         val mediaPath = copyMediaFile(account, message)
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, text ?: "", date, mediaPath)
+            InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, text ?: "", deletionTime.toInt(), mediaPath)
         }
     }
 
@@ -233,10 +284,43 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
+    fun getDeletedDate(account: Int, dialogId: Long, msgId: Int): Long {
+        ensureAccountLoaded(account)
+        return deletedMessageDates.get(account.toLong())?.get(dialogId)?.get(msgId.toLong()) ?: 0L
+    }
+
+    @JvmStatic
+    fun getDeletedDate(dialogId: Long, msgId: Int): Long {
+        return getDeletedDate(UserConfig.selectedAccount, dialogId, msgId)
+    }
+
+    @JvmStatic
+    fun showDeletionTimeBulletin(context: android.content.Context?, activity: org.telegram.ui.ChatActivity?, dialogId: Long, msgId: Int) {
+        if (context == null) return
+        val date = getDeletedDate(dialogId, msgId)
+        val timeStr = if (date > 0) {
+            LocaleController.formatDateAudio(date, true)
+        } else {
+            null
+        }
+        val text = if (timeStr != null) {
+            LocaleController.formatString("InuDeletedAt", R.string.InuDeletedAt, timeStr)
+        } else {
+            LocaleController.getString(R.string.InuSaveDeletedMessages)
+        }
+        val bulletinFactory = if (activity != null) org.telegram.ui.Components.BulletinFactory.of(activity) else org.telegram.ui.Components.BulletinFactory.global()
+        bulletinFactory?.createSimpleBulletin(
+            R.drawable.msg_delete,
+            text
+        )?.show()
+    }
+
+    @JvmStatic
     fun recordEditHistory(account: Int, dialogId: Long, msgId: Int, oldText: String, date: Int, message: TLRPC.Message? = null) {
         if (!isSaveEditedEnabled()) return
         val mediaPath = copyMediaFile(account, message)
-        if (oldText.isBlank() && mediaPath.isNullOrBlank()) return
+        val trimmed = oldText.trim()
+        if (trimmed.isBlank() && mediaPath.isNullOrBlank()) return
         val now = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000
         
         var accMap = editHistoryCache.get(account.toLong())
@@ -254,15 +338,18 @@ object SavedMessagesHelper {
             list = ArrayList()
             dialogMap.put(msgId.toLong(), list)
         }
-        if (list.isNotEmpty() && list.last().text == oldText && list.last().mediaPath == mediaPath) {
+        if (list.isNotEmpty() && list.last().text.trim() == trimmed && list.last().mediaPath == mediaPath) {
             return
         }
-        list.add(EditEntry(now, oldText, mediaPath))
+        if (list.any { it.text.trim() == trimmed && it.mediaPath == mediaPath }) {
+            return
+        }
+        list.add(EditEntry(now, trimmed, mediaPath))
 
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.saveEditHistory(db, dialogId, msgId, oldText, now.toInt(), mediaPath)
+            InuDatabaseHelper.saveEditHistory(db, dialogId, msgId, trimmed, now.toInt(), mediaPath)
         }
     }
 
@@ -305,91 +392,51 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
+    fun hasEditHistory(account: Int, dialogId: Long, msgId: Int): Boolean {
+        return getEditHistory(account, dialogId, msgId).isNotEmpty()
+    }
+
+    @JvmStatic
     fun hasEditHistory(dialogId: Long, msgId: Int): Boolean {
-        return getEditHistory(dialogId, msgId).isNotEmpty()
+        return hasEditHistory(UserConfig.selectedAccount, dialogId, msgId)
     }
 
     @JvmStatic
     fun showEditHistoryDialog(context: android.content.Context?, activity: org.telegram.ui.ChatActivity?, dialogId: Long, msgId: Int) {
+        val controller = MessagesController.getInstance(UserConfig.selectedAccount)
+        var msgObj: MessageObject? = controller.dialogMessagesByIds.get(msgId)
+        if (msgObj == null) {
+            val dummyMsg = TLRPC.TL_message().apply {
+                id = msgId
+                dialog_id = dialogId
+            }
+            msgObj = MessageObject(UserConfig.selectedAccount, dummyMsg, false, true)
+        }
+        showEditHistoryDialog(context, activity, msgObj)
+    }
+
+    @JvmStatic
+    fun showEditHistoryDialog(context: android.content.Context?, activity: org.telegram.ui.ChatActivity?, msgObj: MessageObject) {
         if (context == null) return
-        val history = getEditHistory(dialogId, msgId)
-        if (history.isEmpty()) {
+        val dialogId = msgObj.getDialogId()
+        val msgId = msgObj.id
+        val account = msgObj.currentAccount
+        val history = getEditHistory(account, dialogId, msgId)
+        val isEdited = (msgObj.messageOwner != null && (msgObj.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msgObj.messageOwner?.edit_date ?: 0) != 0
+        if (history.isEmpty() && !isEdited) {
             val bulletinFactory = if (activity != null) org.telegram.ui.Components.BulletinFactory.of(activity) else org.telegram.ui.Components.BulletinFactory.global()
             bulletinFactory?.createSimpleBulletin(
-                R.drawable.group_edit,
+                R.raw.info,
                 LocaleController.getString(R.string.InuNoEditHistory)
             )?.show()
             return
         }
 
+        val frag = desu.inugram.ui.AyuMessageHistoryActivity(msgObj)
         if (activity != null) {
-            val controller = MessagesController.getInstance(UserConfig.selectedAccount)
-            var msgObj: MessageObject? = controller.dialogMessagesByIds.get(msgId)
-            if (msgObj == null) {
-                val dummyMsg = TLRPC.TL_message().apply {
-                    id = msgId
-                    dialog_id = dialogId
-                }
-                msgObj = MessageObject(UserConfig.selectedAccount, dummyMsg, false, true)
-            }
-            activity.presentFragment(desu.inugram.ui.AyuMessageHistoryActivity(msgObj))
-            return
-        }
-
-        val builder = org.telegram.ui.ActionBar.BottomSheet.Builder(context)
-        builder.setTitle(LocaleController.getString(R.string.InuEditHistory))
-
-        val linear = android.widget.LinearLayout(context).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            setPadding(org.telegram.messenger.AndroidUtilities.dp(18f), org.telegram.messenger.AndroidUtilities.dp(8f), org.telegram.messenger.AndroidUtilities.dp(18f), org.telegram.messenger.AndroidUtilities.dp(20f))
-        }
-
-        history.forEachIndexed { index, entry ->
-            val itemLayout = android.widget.LinearLayout(context).apply {
-                orientation = android.widget.LinearLayout.VERTICAL
-                setPadding(0, org.telegram.messenger.AndroidUtilities.dp(10f), 0, org.telegram.messenger.AndroidUtilities.dp(10f))
-            }
-
-            val dateStr = LocaleController.formatDateTime(entry.timestamp, false)
-            val headerText = LocaleController.formatString(R.string.InuEditedAt, dateStr)
-
-            val headerView = android.widget.TextView(context).apply {
-                text = headerText
-                setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 13f)
-                setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteGrayText))
-                setPadding(0, 0, 0, org.telegram.messenger.AndroidUtilities.dp(4f))
-            }
-
-            val contentView = android.widget.TextView(context).apply {
-                text = entry.text
-                setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 16f)
-                setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_windowBackgroundWhiteBlackText))
-                setTextIsSelectable(true)
-            }
-
-            itemLayout.addView(headerView)
-            itemLayout.addView(contentView)
-
-            if (index > 0) {
-                val divider = android.view.View(context).apply {
-                    setBackgroundColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_divider))
-                }
-                linear.addView(divider, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, 1, 0f, 4f, 0f, 4f))
-            }
-
-            linear.addView(itemLayout)
-        }
-
-        val scrollView = android.widget.ScrollView(context).apply {
-            addView(linear)
-        }
-
-        builder.setCustomView(scrollView)
-        val sheet = builder.create()
-        if (activity != null) {
-            activity.showDialog(sheet)
-        } else {
-            sheet.show()
+            activity.presentFragment(frag)
+        } else if (context is org.telegram.ui.LaunchActivity) {
+            context.actionBarLayout?.presentFragment(frag)
         }
     }
 }

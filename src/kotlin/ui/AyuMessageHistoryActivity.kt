@@ -49,17 +49,32 @@ class AyuMessageHistoryActivity(
         historyEntries.clear()
         
         for (entry in list) {
-            if (historyEntries.isEmpty() || historyEntries.last().text != entry.text || historyEntries.last().mediaPath != entry.mediaPath) {
-                historyEntries.add(entry)
+            val text = entry.text.trim()
+            val media = entry.mediaPath
+            if (text.isEmpty() && media.isNullOrBlank()) continue
+            if (historyEntries.isEmpty() || historyEntries.last().text.trim() != text || historyEntries.last().mediaPath != media) {
+                historyEntries.add(EditEntry(entry.timestamp, text, media))
             }
         }
 
-        // Include current version if available and different
-        val currentText = targetMessageObject.messageOwner?.message ?: ""
-        val currentDate = targetMessageObject.messageOwner?.date?.toLong() ?: (System.currentTimeMillis() / 1000)
+        // Include current version if available and not already in history
+        val currentText = (targetMessageObject.messageText?.toString() ?: targetMessageObject.messageOwner?.message ?: "").trim()
+        val currentDate = if (targetMessageObject.messageOwner?.edit_date != null && targetMessageObject.messageOwner.edit_date != 0) {
+            targetMessageObject.messageOwner.edit_date.toLong()
+        } else {
+            targetMessageObject.messageOwner?.date?.toLong() ?: (System.currentTimeMillis() / 1000)
+        }
         val currentMedia = targetMessageObject.messageOwner?.attachPath
-        if (historyEntries.isEmpty() || historyEntries.last().text != currentText || historyEntries.last().mediaPath != currentMedia) {
-            historyEntries.add(EditEntry(currentDate, currentText, currentMedia))
+
+        if (currentText.isNotEmpty() || !currentMedia.isNullOrBlank()) {
+            val isDuplicateOfLast = historyEntries.isNotEmpty() &&
+                historyEntries.last().text.trim() == currentText &&
+                historyEntries.last().mediaPath == currentMedia
+            val alreadyPresent = historyEntries.any { it.text.trim() == currentText && it.mediaPath == currentMedia }
+
+            if (!isDuplicateOfLast && !alreadyPresent) {
+                historyEntries.add(EditEntry(currentDate, currentText, currentMedia))
+            }
         }
     }
 
@@ -136,7 +151,7 @@ class AyuMessageHistoryActivity(
                 id = targetMessageObject.id
                 dialog_id = targetMessageObject.getDialogId()
                 date = entry.timestamp.toInt()
-                message = formattedMessage.toString()
+                message = entry.text
                 from_id = targetMessageObject.messageOwner?.from_id
                 peer_id = targetMessageObject.messageOwner?.peer_id
                 edit_hide = true
@@ -247,19 +262,34 @@ class AyuMessageHistoryActivity(
                     i++
                     j++
                     k++
-                } else if (i < oldWords.size && (k >= lcs.size || oldWords[i] != lcs[k])) {
-                    val start = builder.length
-                    builder.append(oldWords[i])
-                    val end = builder.length
-                    builder.setSpan(ForegroundColorSpan(0xFFE53935.toInt()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    builder.setSpan(StrikethroughSpan(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    i++
-                } else if (j < newWords.size && (k >= lcs.size || newWords[j] != lcs[k])) {
-                    val start = builder.length
-                    builder.append(newWords[j])
-                    val end = builder.length
-                    builder.setSpan(ForegroundColorSpan(0xFF4CAF50.toInt()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                    j++
+                } else {
+                    val delStart = builder.length
+                    val delBuffer = StringBuilder()
+                    while (i < oldWords.size && (k >= lcs.size || oldWords[i] != lcs[k])) {
+                        delBuffer.append(oldWords[i])
+                        i++
+                    }
+                    if (delBuffer.isNotEmpty()) {
+                        builder.append(delBuffer)
+                        val delEnd = builder.length
+                        builder.setSpan(ForegroundColorSpan(0xFFE53935.toInt()), delStart, delEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        builder.setSpan(StrikethroughSpan(), delStart, delEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+
+                    val insBuffer = StringBuilder()
+                    while (j < newWords.size && (k >= lcs.size || newWords[j] != lcs[k])) {
+                        insBuffer.append(newWords[j])
+                        j++
+                    }
+                    if (insBuffer.isNotEmpty()) {
+                        if (delBuffer.isNotEmpty() && !delBuffer.last().isWhitespace() && !insBuffer.first().isWhitespace()) {
+                            builder.append(" ")
+                        }
+                        val insStart = builder.length
+                        builder.append(insBuffer)
+                        val insEnd = builder.length
+                        builder.setSpan(ForegroundColorSpan(0xFF4CAF50.toInt()), insStart, insEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
                 }
             }
             return builder

@@ -15,6 +15,7 @@ import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.chat.BlockedMessagesHelper
 import desu.inugram.helpers.chat.ChatHelper
 import desu.inugram.helpers.chat.ForumDisplayHelper
+import desu.inugram.helpers.security.GhostHelper
 import org.json.JSONArray
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -45,6 +46,8 @@ object ProfileHelper {
     const val ACTION_TOGGLE_HIDE_WALLPAPER = 505
     const val ACTION_TOGGLE_HIDE_THEME = 506
     const val ACTION_TOGGLE_HIDE_MESSAGES = 507
+    const val ACTION_TOGGLE_GHOST_DIALOG = 508
+    const val ACTION_MARK_AS_READ = 509
     const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
@@ -236,6 +239,27 @@ object ProfileHelper {
         if (isRegularForum(currentAccount, dialogId)) {
             ForumDisplayHelper.addProfileMenuItem(fragment, otherItem, currentAccount, -dialogId, resourcesProvider)
         }
+        if (GhostHelper.isGhostActive()) {
+            val whitelisted = GhostHelper.isDialogWhitelisted(dialogId)
+            val ghostLabel = if (whitelisted) {
+                LocaleController.getString(R.string.InuGhostModeEnableForChat)
+            } else {
+                LocaleController.getString(R.string.InuGhostModeDisableForChat)
+            }
+            otherItem.addSubItem(
+                ACTION_TOGGLE_GHOST_DIALOG,
+                R.drawable.msg_autodelete,
+                ghostLabel,
+            )
+
+            if (InuConfig.GHOST_HIDE_READ.value && !whitelisted) {
+                otherItem.addSubItem(
+                    ACTION_MARK_AS_READ,
+                    R.drawable.msg_markread,
+                    LocaleController.getString(R.string.InuMarkChatAsRead),
+                )
+            }
+        }
         if (BuildVars.DEBUG_PRIVATE_VERSION) {
             otherItem.addSubItem(
                 ACTION_DEBUG_CLEAR_CACHE,
@@ -263,6 +287,19 @@ object ProfileHelper {
             ACTION_TOGGLE_HIDE_WALLPAPER -> ChatHelper.toggleRemoveWallpaper(currentAccount, dialogId)
             ACTION_TOGGLE_HIDE_THEME -> ChatHelper.toggleRemoveTheme(currentAccount, dialogId)
             ACTION_TOGGLE_HIDE_MESSAGES -> BlockedMessagesHelper.toggleExtraHidden(currentAccount, dialogId)
+            ACTION_TOGGLE_GHOST_DIALOG -> {
+                val whitelisted = GhostHelper.toggleDialogWhitelist(dialogId)
+                val msg = if (whitelisted) {
+                    LocaleController.getString(R.string.InuGhostModeDisabledForChatDone)
+                } else {
+                    LocaleController.getString(R.string.InuGhostModeEnabledForChatDone)
+                }
+                BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, msg).show()
+            }
+            ACTION_MARK_AS_READ -> {
+                GhostHelper.markDialogAsRead(currentAccount, dialogId)
+                BulletinFactory.global().createSimpleBulletin(R.raw.contact_check, LocaleController.getString(R.string.InuMarkChatAsReadDone)).show()
+            }
             ACTION_DEBUG_CLEAR_CACHE -> debugClearProfileCache(currentAccount, dialogId)
             else -> return false
         }

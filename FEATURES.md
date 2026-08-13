@@ -145,6 +145,14 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 restrict/ban menu items the avatar long-tap menu
 - hide messages from blocked users: with a spoiler or completely - *partially ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
   - also hide messages from a custom list of users/channels without blocking them (via settings picker or profile menu)
+- 📡 ghost mode: hide read receipts, stealth voice/video playback, hide story views, hide typing/recording indicators, hide online status, offline after online
+- 📡 per-chat ghost mode whitelist toggle in profile menu + manual mark as read in message menu
+- 📡 save deleted messages with per-category toggles (private chats, groups, channels, bots)
+- 📡 save message edit history with inline diff viewer and time badge tap action
+- 📡 preserve self-destructing and expiring media / timed messages
+- 📡 bypass `noforwards` content protection
+- 📡 save stories even with download restrictions
+- 📡 track user profile changes (name, bio, username)
 
 ## message input / formatting
 

@@ -67,25 +67,34 @@ object InuDatabaseHelper {
         query.bindInteger(2, msgId)
         query.bindLong(3, fromId)
         query.bindString(4, text)
-        query.bindInteger(5, date)
+        query.bindInteger(5, if (date > 0) date else (System.currentTimeMillis() / 1000L).toInt())
         if (mediaPath != null) query.bindString(6, mediaPath) else query.bindNull(6)
         query.step()
         query.dispose()
     }
 
-    fun loadDeletedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
-        val map = HashMap<Long, HashSet<Int>>()
-        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_deleted_messages")
+    fun loadDeletedMessageInfo(db: SQLiteDatabase): Pair<Map<Long, HashSet<Int>>, Map<Long, HashMap<Int, Long>>> {
+        val idsMap = HashMap<Long, HashSet<Int>>()
+        val datesMap = HashMap<Long, HashMap<Int, Long>>()
+        val cursor = db.queryFinalized("SELECT dialog_id, msg_id, date FROM inu_deleted_messages")
         try {
             while (cursor.next()) {
                 val dialogId = cursor.longValue(0)
                 val msgId = cursor.intValue(1)
-                map.getOrPut(dialogId) { HashSet() }.add(msgId)
+                val date = cursor.longValue(2)
+                idsMap.getOrPut(dialogId) { HashSet() }.add(msgId)
+                if (date > 0) {
+                    datesMap.getOrPut(dialogId) { HashMap() }[msgId] = date
+                }
             }
         } finally {
             cursor.dispose()
         }
-        return map
+        return Pair(idsMap, datesMap)
+    }
+
+    fun loadDeletedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
+        return loadDeletedMessageInfo(db).first
     }
 
     fun savePreservedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
@@ -125,17 +134,29 @@ object InuDatabaseHelper {
     }
 
     fun saveEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int, text: String, date: Int, mediaPath: String? = null) {
+        val trimmed = text.trim()
         val check = db.queryFinalized("SELECT text, media_path FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date DESC LIMIT 1", dialogId, msgId)
         try {
             if (check.next()) {
-                val lastText = check.stringValue(0)
+                val lastText = check.stringValue(0)?.trim()
                 val lastMedia = if (check.isNull(1)) null else check.stringValue(1)
-                if (lastText == text && lastMedia == mediaPath) {
+                if (lastText == trimmed && lastMedia == mediaPath) {
                     return
                 }
             }
         } finally {
             check.dispose()
+        }
+
+        if (trimmed.isNotEmpty()) {
+            val exists = db.queryFinalized("SELECT 1 FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? AND text = ? LIMIT 1", dialogId, msgId, trimmed)
+            try {
+                if (exists.next()) {
+                    return
+                }
+            } finally {
+                exists.dispose()
+            }
         }
 
         val query = db.executeFast("INSERT INTO inu_edit_history VALUES(?, ?, ?, ?, ?)");

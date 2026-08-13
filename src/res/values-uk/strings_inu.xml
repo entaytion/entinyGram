@@ -683,8 +683,15 @@
     <string name="InuCacheTtlWeek">Старші за 1 тиждень</string>
     <string name="InuCacheTtlMonth">Старші за 1 місяць</string>
     <string name="InuEditHistory">Історія редагувань</string>
-    <string name="InuNoEditHistory">Історія редагувань відсутня</string>
     <string name="InuEditedAt">Змінено %1$s</string>
+    <string name="InuDeletedAt">Видалено: %1$s</string>
+    <string name="InuAllowScreenshots">Дозволити скріншоти</string>
+    <string name="InuAllowScreenshotsInfo">Дозволяє робити знімки екрана та запис відео в секретних чатах, одноразових медіа та захищених каналах.</string>
+    <string name="InuSaveDeletedCategories">Зберігати видалені в</string>
+    <string name="InuSaveDeletedPrivate">Особистих чатах</string>
+    <string name="InuSaveDeletedGroups">Групах</string>
+    <string name="InuSaveDeletedChannels">Каналах</string>
+    <string name="InuSaveDeletedBots">Ботах</string>
     <string name="InuHideSponsoredMessages">Приховати спонсорську рекламу (Адблок)</string>
     <string name="InuHideSponsoredMessagesInfo">Вимикає рекламні дописи в каналах та повністю блокує їх завантаження</string>
 
@@ -816,6 +823,7 @@
     <string name="InuMaterial3NavigationAnimation">Анімація навігації</string>
     <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
+    <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
     <string name="InuShowMutualContactIcon">Значок взаємного контакту</string>
     <string name="InuShowMutualContactIconInfo">Показувати значок взаємного контакту у списку контактів</string>
     <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>
@@ -837,6 +845,11 @@
     <string name="InuGhostFeatures">Прихована активність</string>
     <string name="InuGhostHideRead">Не надсилати підтвердження прочитання</string>
     <string name="InuGhostHideReadInfo">Повідомлення не позначаються як прочитані на сервері — співрозмовник не бачить синіх галочок.</string>
+    <string name="InuGhostReadOnSend">Позначати прочитаним при відправці</string>
+    <string name="InuGhostReadOnSendInfo">Автоматично позначати попередні повідомлення прочитаними при надсиланні нового повідомлення або відповіді в чат.</string>
+    <string name="InuContentProtectionBypass">Обхід захисту контенту та профілі</string>
+    <string name="InuGhostHideVoiceRead">Не позначати голосові та відеоповідомлення прослуханими</string>
+    <string name="InuGhostHideVoiceReadInfo">Голосові повідомлення та кружечки не відмічаються як прослухані для співрозмовника.</string>
     <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
     <string name="InuGhostHideStoryReadInfo">Перегляди сторіс та лічильник не передаються автору.</string>
     <string name="InuGhostHideOnline">Приховати статус онлайн</string>
@@ -847,6 +860,13 @@
     <string name="InuGhostOfflineAfterOnlineInfo">У режимі примари ваш статус онлайн замінюється офлайн через кілька секунд після підключення — час останнього перебування оновлюється, але ви ніколи не залишаєтесь онлайн.</string>
     <string name="InuGhostEnabled">Режим примари увімкнено</string>
     <string name="InuGhostDisabled">Режим примари вимкнено</string>
+    <string name="InuGhostModeForChat">Режим примари для цього чату</string>
+    <string name="InuGhostModeEnableForChat">Увімкнути режим примари для цього чату</string>
+    <string name="InuGhostModeDisableForChat">Вимкнути режим примари для цього чату</string>
+    <string name="InuGhostModeEnabledForChatDone">Режим примари увімкнено для цього чату</string>
+    <string name="InuGhostModeDisabledForChatDone">Режим примари вимкнено для цього чату</string>
+    <string name="InuMarkChatAsRead">Позначити прочитаним</string>
+    <string name="InuMarkChatAsReadDone">Чат позначено прочитаним</string>
 
     <string name="InuUnreader">Антипрочитання</string>
     <string name="InuUnreaderInfo">Повідомлення ніколи не позначаються як прочитані: відкриття чату зберігає лічильник непрочитаних і не надсилає підтвердження прочитання іншій стороні.</string>
