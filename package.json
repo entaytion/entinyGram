@@ -9,7 +9,6 @@
     "export": "bun scripts/export.ts",
     "rebase": "bun scripts/rebase.ts",
     "find-patches": "bun scripts/find-patches.ts",
-    "own-patches": "bun scripts/own-patches.ts",
     "lint-patches": "bun scripts/lint-patches.ts",
     "push-theme": "bun scripts/push-theme.ts",
     "prepare": "husky"

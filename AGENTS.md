@@ -31,7 +31,7 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 
 ...it-history stats crash, remove premium translation lock, and harden media-session lifecycle
 
-- migrate 16 authored patches into patches/entiny/ via own-patches.ts --apply
+- migrate 16 authored patches into patches/entiny/
 - document entiny/ ownership and merge behavior in AGENTS.md
 - fix InuDatabaseHelper SQLite crash: old_text -> text in inu_edit_history stats
 ```
@@ -67,7 +67,6 @@ git show upstream/HEAD:series | grep <name>
 
 As of writing, all `entiny__*` patches are **new** (not in inugram) — only `feature__translator` and `misc__branding` remain shared inugram base patches.
 
-**`bun run own-patches [--apply]`** (scripts/own-patches.ts): finds your patches by author email (see `OWN_AUTHORS` in the script) and renames them into the `entiny__*` namespace. Dry-run by default; add `--apply` to perform. Run `bun run export` afterwards.
 
 Propose a patch name (and comment) for every newly made patch — don't touch stgit yourself.
 
