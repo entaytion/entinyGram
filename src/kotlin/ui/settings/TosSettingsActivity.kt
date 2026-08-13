@@ -104,6 +104,14 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.ALLOW_FORWARD_RESTRICTED.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SAVE_USER_INFO,
+                R.string.InuSaveUserInfo,
+                R.string.InuSaveUserInfoInfo,
+                InuConfig.SAVE_USER_INFO.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         // Cache & Storage Section
@@ -309,6 +317,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.ALLOW_FORWARD_RESTRICTED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_SAVE_USER_INFO -> {
+                val new = InuConfig.SAVE_USER_INFO.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             BUTTON_CACHE_TTL -> showTtlDialog()
             BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
         }
@@ -329,6 +341,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
+        private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
         private val SECTION_DELETED_EDITED_SAVE = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
@@ -354,6 +367,7 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
                 SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_SHOW_EDIT_HISTORY_DIFF),
                 SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),
+                SearchRegistry.Entry("save-user-info", R.string.InuSaveUserInfo, TOGGLE_SAVE_USER_INFO),
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_CACHE_TTL),
             ),
         )

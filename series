@@ -279,6 +279,7 @@ entiny/rebase-leftover-fixes.patch
 entiny/translator-without-premium.patch
 entiny/mutual-contact-icon.patch
 entiny/gore-ui-fixes.patch
+entiny/sverklo-gitignore.patch
 entiny/build-optimizations.patch
 entiny/fix-url-parsing.patch
 entiny/save-user-info.patch

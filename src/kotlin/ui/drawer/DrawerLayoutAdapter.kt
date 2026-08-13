@@ -242,7 +242,7 @@ class DrawerLayoutAdapter(
         items.add(Item(10, LocaleController.getString(R.string.Calls), R.drawable.msg_calls))
         items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
         items.add(Item(ITEM_PROXY, LocaleController.getString(R.string.ProxySettings), R.drawable.outline_shield_check))
-        items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings_old))
+        items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings))
     }
 
     companion object {

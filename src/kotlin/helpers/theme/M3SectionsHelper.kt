@@ -36,6 +36,14 @@ object M3SectionsHelper {
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.M3_SECTIONS_STYLE.value
 
+    /**
+     * Round M3 tiles for colorful list/settings icons are only valid on a Monet theme. On any
+     * other (regular) theme the stock square tiles must stay intact even when the M3 sections
+     * toggle is on — otherwise the icons turn into "quasi-monet" circles with wrong colors.
+     */
+    @JvmStatic
+    fun isCircleIconsEnabled(): Boolean = isEnabled() && Theme.getActiveTheme()?.inu_isMonet() == true
+
     @JvmStatic
     fun shadowHeightDp(nextItem: UItem?, stockDp: Int): Int {
         if (!isEnabled()) return stockDp
@@ -256,8 +264,6 @@ object M3SectionsHelper {
         bottomColor: Int,
         cellBackground: SettingsActivity.SettingCell.Background,
     ) {
-        if (!isEnabled()) return
-
         fun resizeSquare(view: View, dp: Int) {
             val size = AndroidUtilities.dp(dp.toFloat())
             val lp = view.layoutParams ?: return
@@ -268,19 +274,41 @@ object M3SectionsHelper {
             }
         }
 
+        if (!isCircleIconsEnabled()) {
+            // Restore the stock square tile and clear any stale M3 circle state on recycled cells.
+            resizeSquare(iconLayout, 28)
+            iconView.clearColorFilter()
+            cellBackground.inu_monetColor = 0
+            return
+        }
+
         resizeSquare(iconLayout, 36)
         // Keep the stock drawable viewport: forcing 22dp clips several list icons and makes
         // their strokes look flattened. The 36dp container still provides the M3 visual size.
         resizeSquare(iconView, 24)
+        iconView.setColorFilter(iconColor(topColor, bottomColor))
+        cellBackground.inu_monetColor = circleColor(topColor, bottomColor)
+    }
+
+    /** MD3 circle fill: midpoint hue, clamped saturation, light tone (L 0.82). */
+    @JvmStatic
+    fun circleColor(topColor: Int, bottomColor: Int): Int {
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(flat, hsl)
         hsl[1] = hsl[1].coerceIn(0.55f, 1f)
         hsl[2] = 0.82f
-        val bg = ColorUtils.HSLToColor(hsl)
+        return ColorUtils.HSLToColor(hsl)
+    }
+
+    /** MD3 icon tint: same hue family as [circleColor] but dark (L 0.32). */
+    @JvmStatic
+    fun iconColor(topColor: Int, bottomColor: Int): Int {
+        val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(flat, hsl)
         hsl[2] = 0.32f
-        iconView.setColorFilter(ColorUtils.HSLToColor(hsl))
-        cellBackground.inu_monetColor = bg
+        return ColorUtils.HSLToColor(hsl)
     }
 
     @JvmStatic

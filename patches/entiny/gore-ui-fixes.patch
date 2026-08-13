@@ -4,23 +4,27 @@ Date: Wed, 5 Aug 2026 10:20:40 +0300
 Subject: feat(ui): adapt colorful icons, Monet theme transitions, dialog inputs, and popups
 
 ---
- .../java/org/telegram/ui/Cells/TextCell.java  | 31 ++++++++++++++-----
- .../telegram/ui/Components/ItemOptions.java   |  4 +--
- 2 files changed, 26 insertions(+), 9 deletions(-)
+ .../java/org/telegram/ui/Cells/TextCell.java  | 41 +++++++++++++++----
+ .../ui/Components/IconBackgroundColors.java   |  3 +-
+ .../telegram/ui/Components/ItemOptions.java   |  4 +-
+ .../org/telegram/ui/SettingsActivity.java     |  2 +-
+ 4 files changed, 39 insertions(+), 11 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -204,13 +204,20 @@ public class TextCell extends FrameLayout {
+@@ -203,14 +203,27 @@ public class TextCell extends FrameLayout {
+             subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
          }
          if (imageView.getVisibility() == VISIBLE) {
-             if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
+-            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
 -                imageView.setPadding(0, 0, 0, 0);
++            if (desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) {
 +                final boolean isColorful = imageView.getBackground() != null;
-+                final int targetSize = isColorful ? dp(28) : dp(inu_m3IconSize);
++                final int targetSize = isColorful ? dp(36) : dp(inu_m3IconSize);
 +                if (isColorful) {
-+                    int p = dp(5);
++                    int p = dp(6);
 +                    imageView.setPadding(p, p, p, p);
 +                } else {
 +                    imageView.setPadding(0, 0, 0, 0);
@@ -31,41 +35,63 @@ index 0000000..0000000 100644
 +                final boolean autoSizeLottie = !isColorful && inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
 +                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(autoSizeLottie ? dp(48) : targetSize, autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
                  imageView.measure(iconMeasureSpec, iconMeasureSpec);
++            } else if (imageView.getBackground() != null) {
++                // Colorful rows in non-M3 modes render the stock gradient square at the settings
++                // size (28dp) with the 24dp glyph, so every list icon matches the settings screen.
++                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
++                final int tileSpec = MeasureSpec.makeMeasureSpec(dp(28), MeasureSpec.EXACTLY);
++                imageView.measure(tileSpec, tileSpec);
              } else {
 -            imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
 +                imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -634,15 +641,25 @@ public class TextCell extends FrameLayout {
+@@ -634,14 +647,28 @@ public class TextCell extends FrameLayout {
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
          offsetFromImage = getOffsetFromImage(true);
          imageView.setVisibility(VISIBLE);
 -        imageView.setPadding(dp(2), dp(2), dp(2), dp(2));
-+        imageView.setPadding(dp(5), dp(5), dp(5), dp(5));
++        final boolean isM3 = desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled();
++        // Match the settings screen exactly: M3 round tiles are a 36dp circle with a 24dp glyph
++        // (6dp inset); every non-M3 mode is a 28dp stock gradient square with a 24dp glyph (2dp inset).
++        final int iconPadding = isM3 ? dp(6) : dp(2);
++        imageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
++        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
          imageView.setTranslationX(dp(LocaleController.isRTL ? 0 : -3));
          imageView.setImageResource(resId);
 -        imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
 +
-+        boolean isMonet = Theme.getActiveTheme() != null && Theme.getActiveTheme().inu_isMonet();
-+        if (isMonet) {
-+            int baseColor = desu.inugram.helpers.theme.MonetHelper.maybeHarmonizePeerColor(colorTop);
-+            int windowBg = Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider);
-+            int bgColor = androidx.core.graphics.ColorUtils.blendARGB(baseColor, windowBg, Theme.isCurrentThemeDark() ? 0.78f : 0.84f);
-+            colorTop = colorBottom = bgColor;
-+            imageView.setColorFilter(new PorterDuffColorFilter(baseColor, PorterDuff.Mode.SRC_IN));
-+        } else {
++        // Stock Telegram look in every non-M3 mode: white glyph on the top→bottom gradient tile
++        // with a subtle border on dark themes. No per-theme "quasi-monet" flat squares.
++        if (!isM3) {
 +            imageView.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
 +        }
  
          final boolean border = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
          SettingsActivity.SettingCell.Background drawable = new SettingsActivity.SettingCell.Background();
          drawable.setColor(colorTop, colorBottom);
--        drawable.setDrawBorder(border);
-+        drawable.setDrawBorder(border && !isMonet);
++        if (isM3) {
++            drawable.inu_monetColor = desu.inugram.helpers.theme.M3SectionsHelper.circleColor(colorTop, colorBottom);
++            imageView.setColorFilter(new PorterDuffColorFilter(desu.inugram.helpers.theme.M3SectionsHelper.iconColor(colorTop, colorBottom), PorterDuff.Mode.SRC_IN));
++        }
+         drawable.setDrawBorder(border);
          imageView.setBackground(drawable);
      }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
+@@ -13,7 +13,8 @@ public enum IconBackgroundColors {
+     RED(0xFFF45255, 0xFFDF3955),
+     CYAN(0xFF32C0CE, 0xFF1D9CC6),
+     PURPLE(0xFFC46EF4, 0xFF9F55DF),
+-    GRAY(0xFF8699AA, 0xFF6E8397);
++    GRAY(0xFF8699AA, 0xFF6E8397),
++    ENTINY(0xFFF20C3C, 0xFFF20C3C);
  
+     public final int top;
+     public final int bottom;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
@@ -88,3 +114,16 @@ index 0000000..0000000 100644
          this.swipeback = swipeback;
          this.shownFromBottom = shownFromBottom;
          this.useScrollView = useScrollView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -695,7 +695,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         }
+ 
+         if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
+-            items.add(SettingCell.Factory.of(99, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
++            items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
+             items.add(UItem.asShadow(null));
+         }
+ 

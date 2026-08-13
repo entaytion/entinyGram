@@ -278,15 +278,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
-                TOGGLE_SAVE_USER_INFO,
-                R.string.InuSaveUserInfo,
-                R.string.InuSaveUserInfoInfo,
-                InuConfig.SAVE_USER_INFO.value,
-                experimental = true
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
                 TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN,
                 R.string.InuSendToDiscussWithoutJoin,
                 R.string.InuSendToDiscussWithoutJoinInfo,
@@ -353,7 +344,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
-            TOGGLE_SAVE_USER_INFO -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SAVE_USER_INFO.toggle()
             BUTTON_CHAT_MENU_ORDER -> presentFragment(ChatMenuOrderActivity())
         }
     }
@@ -386,7 +376,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
         private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
-        private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN = InuUtils.generateId()
 
         @JvmField
@@ -423,7 +412,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
                 SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
                 SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
-                SearchRegistry.Entry("save-user-info", R.string.InuSaveUserInfo, TOGGLE_SAVE_USER_INFO),
                 SearchRegistry.Entry("send-to-discuss-without-join", R.string.InuSendToDiscussWithoutJoin, TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN),
             ),
         )

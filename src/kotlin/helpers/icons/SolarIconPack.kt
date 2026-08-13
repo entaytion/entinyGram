@@ -119,6 +119,7 @@ object SolarIconPack : IconPack() {
         R.drawable.msg_calendar2 to R.drawable.msg_calendar2_solar,
         R.drawable.msg_callback to R.drawable.msg_calls_solar,
         R.drawable.msg_calls to R.drawable.msg_calls_solar,
+        R.drawable.settings_calls to R.drawable.msg_calls_solar,
         R.drawable.msg_calls_regular to R.drawable.msg_calls_regular_solar,
         R.drawable.msg_camera to R.drawable.msg_camera_solar,
         R.drawable.msg_cancel to R.drawable.msg_cancel_solar,
