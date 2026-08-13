@@ -158,22 +158,24 @@ export async function hasLocalBranch(repoDir: string, branch: string) {
 }
 
 async function isTrackedPath(repoDir: string, repoRelativePath: string) {
-  const result = await $({ cwd: repoDir, nothrow: true })`git ls-files --error-unmatch -- ${repoRelativePath}`
+  const gitPath = repoRelativePath.replaceAll('\\', '/')
+  const result = await $({ cwd: repoDir, nothrow: true })`git ls-files --error-unmatch -- ${gitPath}`
   return result.exitCode === 0
 }
 
 async function ensureSkipWorktree(repoDir: string, repoRelativePath: string) {
-  if (!await isTrackedPath(repoDir, repoRelativePath)) {
+  const gitPath = repoRelativePath.replaceAll('\\', '/')
+  if (!await isTrackedPath(repoDir, gitPath)) {
     return false
   }
 
-  const status = (await $({ cwd: repoDir })`git ls-files -v -- ${repoRelativePath}`).stdout.trim()
+  const status = (await $({ cwd: repoDir })`git ls-files -v -- ${gitPath}`).stdout.trim()
   if (status.startsWith('S ')) {
     return true
   }
 
-  step(`Marking ${repoRelativePath} as skip-worktree`)
-  await $({ cwd: repoDir })`git update-index --skip-worktree -- ${repoRelativePath}`
+  step(`Marking ${gitPath} as skip-worktree`)
+  await $({ cwd: repoDir })`git update-index --skip-worktree -- ${gitPath}`
   return true
 }
 
