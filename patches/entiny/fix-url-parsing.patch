@@ -6,6 +6,10 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
 - stock linkify absorbs Cyrillic text before an ASCII domain into the URL match (марний.entaytion.is-a.dev matched whole); trim leading non-ASCII labels in a post-processing pass so the ASCII domain stays clickable
 - keep multi-component TLDs (is-a.dev, github.io, co.uk) and hyphenated subdomains working
 - bio and channel/group description links were gated behind Telegram Premium (non-premium accounts got no links at all); always parse them now

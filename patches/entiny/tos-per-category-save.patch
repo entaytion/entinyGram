@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 11 Aug 2026 11:28:49 +0300
+Subject: preserve self-destructing content and timed messages per-category
+
+---
+ .../org/telegram/messenger/MessagesController.java | 14 +++++++++++++-
+ .../org/telegram/messenger/MessagesStorage.java    |  4 ++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -8315,7 +8315,13 @@ public class MessagesController extends BaseController implements NotificationCe
+                 if (task != null) {
+                     for (int a = 0, N = task.size(); a < N; a++) {
+                         ArrayList<Integer> mids = task.valueAt(a);
+-                        deleteMessages(mids, null, null, task.keyAt(a), 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
++                        long dialogId = task.keyAt(a);
++                        TLRPC.Dialog dialog = dialogs_dict.get(dialogId);
++                        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMessage(dialogId, dialog != null ? dialog.ttl_period : 0)) {
++                            desu.inugram.helpers.security.SelfDestructHelper.markPreserved(currentAccount, dialogId, mids);
++                            continue;
++                        }
++                        deleteMessages(mids, null, null, dialogId, 0, true, 0, !mids.isEmpty() && mids.get(0) > 0);
+                     }
+                 }
+                 if (taskMedia != null) {
+@@ -21079,6 +21085,9 @@ public class MessagesController extends BaseController implements NotificationCe
+                     getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
+                 }
+             }
++            if (deletedMessagesFinal != null && deletedMessagesFinal.get(0) != null) {
++                deletedMessagesFinal.put(0, desu.inugram.helpers.security.SelfDestructHelper.filterTimedDeletions(currentAccount, deletedMessagesFinal.get(0), dialogMessagesByIds));
++            }
+             if (deletedMessagesFinal != null) {
+                 for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
+                     long dialogId = deletedMessagesFinal.keyAt(a);
+@@ -21203,6 +21212,9 @@ public class MessagesController extends BaseController implements NotificationCe
+             for (int a = 0, size = deletedMessages.size(); a < size; a++) {
+                 long key = deletedMessages.keyAt(a);
+                 ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
++                if (arrayList == null || arrayList.isEmpty()) {
++                    continue;
++                }
+                 if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() && arrayList != null) {
+                     for (int i = 0; i < arrayList.size(); i++) {
+                         desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, key, arrayList.get(i), 0L, "", 0);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -4754,6 +4754,10 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
++        if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialogId)) {
++            desu.inugram.helpers.security.SelfDestructHelper.markPreserved(currentAccount, dialogId, mids);
++            return;
++        }
+         storageQueue.postRunnable(() -> {
+             SQLiteCursor cursor = null;
+             SQLitePreparedStatement state = null;
