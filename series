@@ -1,5 +1,5 @@
-bugfix/photo-viewer-crop.patch
 misc/build-support.patch
+bugfix/photo-viewer-crop.patch
 misc/branding.patch
 misc/remove-play.patch
 misc/settings-ui.patch
@@ -284,8 +284,7 @@ entiny/build-optimizations.patch
 entiny/fix-url-parsing.patch
 entiny/save-user-info.patch
 entiny/post-forwards-count.patch
-entiny/session-app-name.patch
-entiny/api-credentials.patch
+entiny/branding.patch
 feature/message-menu.patch
 entiny/adblock.patch
 entiny/github-updater.patch

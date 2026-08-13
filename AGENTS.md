@@ -330,13 +330,10 @@ Golden merge attitude:
 2. **Never leave a merge unfinished.** Any `<<<<<<<`, `=======`, `>>>>>>>` marker — even a
    lone marker with no matching pair (which still kills XML parsing) — is a hard error.
    Resolve all of them before moving on. Do not "commit" around them.
-3. **Verify branding survived the merge.** The fork identity must be restored every time:
-   - `TMessagesProj_App/build.gradle`: `defaultConfig.applicationId = "ua.entaytion.entinygram"`
-     (debug suffix `.beta` → `ua.entaytion.entinygram.beta`).
-   - Must match `google-services.json` `package_name` values **exactly** (case-sensitive);
-     otherwise `:TMessagesProj_App:processDebugGoogleServices` fails with
-     "No matching client found for package name ...". Upstream overwrites this to
-     `desu.inugram` on merge — check & restore.
+3. **Verify branding survived the merge.** The fork identity must be restored every time by running `bun run scripts/apply-branding.ts`. This script automatically:
+   - Updates `google-services.json` `package_name` values to `ua.entaytion.entinygram` and applies `skip-worktree` so Git ignores them in the future.
+   - Restores the `entiny__branding` patch (which changes `TMessagesProj_App/build.gradle` `applicationId`).
+   Do NOT manually edit `misc/build-support.patch` to hardcode `ua.entaytion.entinygram`, as this causes merge conflicts with upstream. Use `entiny__branding` instead.
 4. **Post-merge static scan (all must come back empty)** across fork-relevant code:
    - `<<<<<<<` / `=======` / `>>>>>>>` markers anywhere (`*.xml`, `*.kt`, `*.java`, `*.gradle`).
    - Well-formedness of every touched `res/values/*.xml` (malformed XML is a silent

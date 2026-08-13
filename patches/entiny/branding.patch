@@ -1,0 +1,150 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 8 Aug 2026 00:49:34 +0300
+Subject: Enforce entinygram package name, api keys, and session app name
+
+---
+ TMessagesProj/config/debug/AndroidManifest.xml                | 2 +-
+ TMessagesProj/config/debug/AndroidManifest_SDK23.xml          | 2 +-
+ TMessagesProj/config/release/AndroidManifest.xml              | 2 +-
+ TMessagesProj/config/release/AndroidManifest_SDK23.xml        | 2 +-
+ TMessagesProj/config/release/AndroidManifest_standalone.xml   | 2 +-
+ .../src/main/java/org/telegram/messenger/BuildVars.java       | 4 ++--
+ .../src/main/java/org/telegram/ui/Cells/SessionCell.java      | 2 +-
+ .../src/main/java/org/telegram/ui/Components/UndoView.java    | 2 +-
+ .../src/main/java/org/telegram/ui/SessionBottomSheet.java     | 2 +-
+ TMessagesProj_App/build.gradle                                | 2 +-
+ 10 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/config/debug/AndroidManifest.xml b/TMessagesProj/config/debug/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/config/debug/AndroidManifest.xml
++++ b/TMessagesProj/config/debug/AndroidManifest.xml
+@@ -30,7 +30,7 @@
+         android:requestLegacyExternalStorage="true"
+         tools:replace="android:supportsRtl">
+ 
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
++        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
+ 
+         <service
+             android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
+diff --git a/TMessagesProj/config/debug/AndroidManifest_SDK23.xml b/TMessagesProj/config/debug/AndroidManifest_SDK23.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/config/debug/AndroidManifest_SDK23.xml
++++ b/TMessagesProj/config/debug/AndroidManifest_SDK23.xml
+@@ -37,7 +37,7 @@
+         android:requestLegacyExternalStorage="true"
+         tools:replace="android:supportsRtl">
+ 
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
++        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
+ 
+         <service
+             android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
+diff --git a/TMessagesProj/config/release/AndroidManifest.xml b/TMessagesProj/config/release/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/config/release/AndroidManifest.xml
++++ b/TMessagesProj/config/release/AndroidManifest.xml
+@@ -30,7 +30,7 @@
+         android:requestLegacyExternalStorage="true"
+         tools:replace="android:supportsRtl">
+ 
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
++        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
+ 
+         <service
+             android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
+diff --git a/TMessagesProj/config/release/AndroidManifest_SDK23.xml b/TMessagesProj/config/release/AndroidManifest_SDK23.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/config/release/AndroidManifest_SDK23.xml
++++ b/TMessagesProj/config/release/AndroidManifest_SDK23.xml
+@@ -38,7 +38,7 @@
+         android:requestLegacyExternalStorage="true"
+         tools:replace="android:supportsRtl">
+ 
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
++        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
+ 
+         <service
+             android:name="org.telegram.messenger.GcmPushListenerService"
+diff --git a/TMessagesProj/config/release/AndroidManifest_standalone.xml b/TMessagesProj/config/release/AndroidManifest_standalone.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/config/release/AndroidManifest_standalone.xml
++++ b/TMessagesProj/config/release/AndroidManifest_standalone.xml
+@@ -124,7 +124,7 @@
+             </intent-filter>
+         </activity-alias>
+ 
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
++        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
+ 
+         <service
+             android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+@@ -28,8 +28,8 @@ public class BuildVars {
+     public static String BUILD_DATE = BuildConfig.BUILD_DATE;
+     public static int STOCK_VERSION_CODE = BuildConfig.STOCK_VERSION_CODE;
+ 
+-    public static int APP_ID = 24432768;
+-    public static String APP_HASH = "081555aafce571f3e4c4b3f9fe653dc1";
++    public static int APP_ID = 38159064;
++    public static String APP_HASH = "d0372642fc663849324f887acf9a64c5";
+ 
+     // SafetyNet key for Google Identity SDK, set it to empty to disable
+     public static String SAFETYNET_KEY = "";
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
+@@ -248,7 +248,7 @@ public class SessionCell extends FrameLayout {
+             detailExTextView.setText(spannableStringBuilder);
+ 
+             stringBuilder = new StringBuilder();
+-            stringBuilder.append(session.app_name);
++            stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
+             stringBuilder.append(" ").append(session.app_version);
+ 
+             if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
+@@ -1208,7 +1208,7 @@ public class UndoView extends FrameLayout {
+ 
+             layoutParams.leftMargin = AndroidUtilities.dp(58);
+             layoutParams.topMargin = AndroidUtilities.dp(6);
+-            subinfoTextView.setText(authorization.app_name);
++            subinfoTextView.setText(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(authorization.app_name));
+             subinfoTextView.setVisibility(VISIBLE);
+             infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+             infoTextView.setTypeface(AndroidUtilities.bold());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
+@@ -110,7 +110,7 @@ public class SessionBottomSheet extends BottomSheet {
+ 
+         ItemView applicationItemView = new ItemView(context, false);
+         stringBuilder = new StringBuilder();
+-        stringBuilder.append(session.app_name);
++        stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
+         stringBuilder.append(" ").append(session.app_version);
+         if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+             stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
+diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_App/build.gradle
++++ b/TMessagesProj_App/build.gradle
+@@ -25,7 +25,7 @@ android {
+     compileSdkVersion 35
+     buildToolsVersion '35.0.0'
+ 
+-    defaultConfig.applicationId = "desu.inugram"
++    defaultConfig.applicationId = "ua.entaytion.entinygram"
+ 
+     sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
+ 

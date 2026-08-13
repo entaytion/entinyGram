@@ -196,6 +196,7 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
+    @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
         if (!isSaveDeletedEnabled() && !forceSave) return
         ensureAccountLoaded(account)
@@ -217,16 +218,6 @@ object SavedMessagesHelper {
             val db = storage.database ?: return@postRunnable
             InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, text ?: "", date, mediaPath)
         }
-    }
-
-    @JvmStatic
-    fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int) {
-        markMessageDeleted(account, dialogId, msgId, fromId, text, date, null)
-    }
-
-    @JvmStatic
-    fun markMessageDeleted(dialogId: Long, msgId: Int) {
-        markMessageDeleted(UserConfig.selectedAccount, dialogId, msgId, 0L, "", 0)
     }
 
     @JvmStatic

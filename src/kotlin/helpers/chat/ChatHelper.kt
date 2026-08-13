@@ -158,8 +158,7 @@ object ChatHelper {
     @JvmStatic
     fun isDeletedOrPreserved(msg: MessageObject?): Boolean {
         if (msg == null) return false
-        return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id) ||
-            SelfDestructHelper.isPreserved(msg.currentAccount, msg.getDialogId(), msg.id)
+        return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
     }
 
     @JvmStatic
