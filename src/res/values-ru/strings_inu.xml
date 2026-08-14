@@ -917,4 +917,34 @@
     <string name="InuDeselectAll">Снять выделение</string>
     <string name="InuMainPhoto">Главное</string>
     <string name="InuProfilePhotosSelected">Выбрано: %1$d</string>
+
+    <string name="InuDeletedAt">Удалено %1$s</string>
+    <string name="InuAllowScreenshots">Разрешить скриншоты</string>
+    <string name="InuAllowScreenshotsInfo">Разрешает делать скриншоты и запись экрана в секретных чатах, исчезающих медиа и защищенных каналах.</string>
+    <string name="InuSaveDeletedCategories">Сохранять удаленные в</string>
+    <string name="InuSaveDeletedPrivate">Личных чатах</string>
+    <string name="InuSaveDeletedGroups">Группах</string>
+    <string name="InuSaveDeletedChannels">Каналах</string>
+    <string name="InuSaveDeletedBots">Ботах</string>
+    <string name="InuAiTranscribe">Распознавание речи (Voice-to-Text)</string>
+    <string name="InuAiTranscribeInfo">Расшифровка голосовых и видеосообщений без Telegram Premium с помощью сервисов ИИ.</string>
+    <string name="InuAiTranscribeSection">Voice-to-Text</string>
+    <string name="InuAiTranscribeProvider">Провайдер распознавания</string>
+    <string name="InuAiTranscribeProviderGroq">Groq Whisper (Быстро &amp; Бесплатно)</string>
+    <string name="InuAiTranscribeProviderGemini">Google Gemini Flash</string>
+    <string name="InuAiTranscribeProviderOpenAI">OpenAI Whisper</string>
+    <string name="InuAiTranscribeProviderCF">Cloudflare Workers AI</string>
+    <string name="InuAiTranscribeProviderCustom">Пользовательский OpenAI-совместимый</string>
+    <string name="InuAiTranscribeSettings">Настройки провайдера</string>
+    <string name="InuAiTranscribeModel">Модель</string>
+    <string name="InuAiTranscribeApiKey">API ключ</string>
+    <string name="InuAiTranscribeAccountId">Account ID</string>
+    <string name="InuAiTranscribeApiToken">API токен</string>
+    <string name="InuAiTranscribePrompt">Пользовательский промпт / Контекст (Опционально)</string>
+    <string name="InuAiTranscribePromptHint">например, дословно на языке оригинала с пунктуацией</string>
+    <string name="InuAiTranscribeGetApiKey">Получить бесплатный API ключ</string>
+    <string name="InuAiTranscribeNoKey">API ключ не указан. Укажите его в Настройках &gt; AI.</string>
+    <string name="InuAiTranscribeDownloading">Загрузка аудио…</string>
+    <string name="InuAiTranscribeTranscribing">Распознавание…</string>
+    <string name="InuAiTranscribeFailed">Ошибка распознавания: %1$s</string>
 </resources>

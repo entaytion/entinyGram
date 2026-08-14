@@ -369,6 +369,46 @@ object InuConfig {
     @JvmField
     val AI_REASONING_EFFORT = StringItem("ai_reasoning_effort", "medium")
 
+    // AI Transcription (Voice-to-Text)
+    const val TRANSCRIBE_PROVIDER_GROQ = 0
+    const val TRANSCRIBE_PROVIDER_GEMINI = 1
+    const val TRANSCRIBE_PROVIDER_OPENAI = 2
+    const val TRANSCRIBE_PROVIDER_CF = 3
+    const val TRANSCRIBE_PROVIDER_CUSTOM = 4
+
+    @JvmField
+    val AI_TRANSCRIBE_ENABLED = BoolItem("ai_transcribe_enabled", false)
+
+    @JvmField
+    val AI_TRANSCRIBE_PROVIDER = IntItem("ai_transcribe_provider", TRANSCRIBE_PROVIDER_GROQ)
+
+    @JvmField
+    val AI_TRANSCRIBE_GROQ_KEY = StringItem("ai_transcribe_groq_key", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_GEMINI_KEY = StringItem("ai_transcribe_gemini_key", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_OPENAI_KEY = StringItem("ai_transcribe_openai_key", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CF_ACCOUNT_ID = StringItem("ai_transcribe_cf_account_id", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CF_API_TOKEN = StringItem("ai_transcribe_cf_api_token", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CUSTOM_URL = StringItem("ai_transcribe_custom_url", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CUSTOM_KEY = StringItem("ai_transcribe_custom_key", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CUSTOM_MODEL = StringItem("ai_transcribe_custom_model", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_PROMPT = StringItem("ai_transcribe_prompt", "")
+
     @JvmField
     val HIDE_MESSAGE_SUMMARY = BoolItem("hide_message_summary", false)
 

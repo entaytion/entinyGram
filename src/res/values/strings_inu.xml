@@ -912,4 +912,27 @@
     <string name="InuDeselectAll">Deselect all</string>
     <string name="InuMainPhoto">Main</string>
     <string name="InuProfilePhotosSelected">Selected: %1$d</string>
+
+    <!-- AI Voice-to-Text Transcription -->
+    <string name="InuAiTranscribe">Voice-to-Text (Transcription)</string>
+    <string name="InuAiTranscribeInfo">Transcribe voice and video messages without Telegram Premium using AI services.</string>
+    <string name="InuAiTranscribeSection">Voice-to-Text</string>
+    <string name="InuAiTranscribeProvider">Transcription Provider</string>
+    <string name="InuAiTranscribeProviderGroq">Groq Whisper (Fast &amp; Free)</string>
+    <string name="InuAiTranscribeProviderGemini">Google Gemini Flash</string>
+    <string name="InuAiTranscribeProviderOpenAI">OpenAI Whisper</string>
+    <string name="InuAiTranscribeProviderCF">Cloudflare Workers AI</string>
+    <string name="InuAiTranscribeProviderCustom">Custom OpenAI-compatible</string>
+    <string name="InuAiTranscribeSettings">Provider Settings</string>
+    <string name="InuAiTranscribeModel">Model</string>
+    <string name="InuAiTranscribeApiKey">API key</string>
+    <string name="InuAiTranscribeAccountId">Account ID</string>
+    <string name="InuAiTranscribeApiToken">API token</string>
+    <string name="InuAiTranscribePrompt">Custom prompt / Context (Optional)</string>
+    <string name="InuAiTranscribePromptHint">e.g. verbatim transcription in original language</string>
+    <string name="InuAiTranscribeGetApiKey">Get free API key</string>
+    <string name="InuAiTranscribeNoKey">API key is missing. Configure it in Settings &gt; AI.</string>
+    <string name="InuAiTranscribeDownloading">Downloading audio…</string>
+    <string name="InuAiTranscribeTranscribing">Transcribing…</string>
+    <string name="InuAiTranscribeFailed">Transcription failed: %1$s</string>
 </resources>

@@ -137,6 +137,8 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - more bulk actions in message selection mode (save, translate, gallery, pin/unpin, no-quote forward)
 - in-place message translation, with optional web preview translation, original-text appending and on-device source-language auto-detection (hides Translate when already in your language)
 - 📡 whole-chat translation (the "translate this chat" top bar and its menu) without premium
+- 📡 Free AI Voice-to-Text: transcribe voice messages (.oga/.ogg) and video circles (.mp4) without Telegram Premium via Groq Whisper (ultra-fast & free), Google Gemini Flash, OpenAI Whisper, Cloudflare Workers AI, or custom endpoints - *ported from [NagramX](https://github.com/risin42/NagramX)*
+- 📡 AI Compose & Draft Rewrite: rewrite, continue, and format drafts with custom OpenAI-compatible endpoints & reasoning mode support
 - instant view pages translator
 - show original time/date in the forwarded header, with regular, icon-only label, and compact one-line modes
 - show forward count next to the view count on channel posts
