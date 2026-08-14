@@ -55,7 +55,17 @@ index 0000000..0000000 100644
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -633,14 +640,28 @@ public class TextCell extends FrameLayout {
+@@ -298,8 +305,7 @@ public class TextCell extends FrameLayout {
+             if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
+                 viewTop = (height - imageView.getMeasuredHeight()) / 2;
+             }
+-            final boolean inu_colorful = imageView.getBackground() instanceof SettingsActivity.SettingCell.Background;
+-            final int inu_imageLeft = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && imageLeft == 16 ? (inu_colorful ? 14 : 21) : imageLeft;
++            final int inu_imageLeft = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() && imageLeft == 16 ? 21 : imageLeft;
+             viewLeft = !LocaleController.isRTL ? dp(inu_imageLeft) : width - imageView.getMeasuredWidth() - dp(inu_imageLeft);
+             imageView.layout(viewLeft, viewTop, viewLeft + imageView.getMeasuredWidth(), viewTop + imageView.getMeasuredHeight());
+         }
+@@ -641,17 +647,30 @@ public class TextCell extends FrameLayout {
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
          offsetFromImage = getOffsetFromImage(true);
          imageView.setVisibility(VISIBLE);
@@ -85,7 +95,10 @@ index 0000000..0000000 100644
 +        }
          drawable.setDrawBorder(border);
          imageView.setBackground(drawable);
+-        desu.inugram.helpers.theme.M3SectionsHelper.applyTextCellColorfulIcon(imageView, colorTop, colorBottom, drawable);
      }
+ 
+     public void setTextAndCheck(CharSequence text, boolean checked, boolean divider) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
