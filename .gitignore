@@ -13,7 +13,3 @@ src/res/assets/adguard_url_tracking.txt
 TODO.md
 CLAUDE.local.md
 .local_build_number
-
-# sverklo per-project state (memory journal, etc.)
-.sverklo/
-.mcp.json

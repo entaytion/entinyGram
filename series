@@ -277,7 +277,6 @@ entiny/night-theme-colors.patch
 entiny/rebase-leftover-fixes.patch
 entiny/translator-without-premium.patch
 entiny/gore-ui-fixes.patch
-entiny/sverklo-gitignore.patch
 entiny/build-optimizations.patch
 entiny/fix-url-parsing.patch
 entiny/save-user-info.patch
