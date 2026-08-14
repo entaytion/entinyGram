@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -203,19 +203,27 @@ public class TextCell extends FrameLayout {
+@@ -203,20 +203,27 @@ public class TextCell extends FrameLayout {
              subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
          }
          if (imageView.getVisibility() == VISIBLE) {
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -634,14 +642,28 @@ public class TextCell extends FrameLayout {
+@@ -634,14 +641,28 @@ public class TextCell extends FrameLayout {
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
          offsetFromImage = getOffsetFromImage(true);
          imageView.setVisibility(VISIBLE);
