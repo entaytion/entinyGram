@@ -8,6 +8,7 @@ import desu.inugram.helpers.dialogs.AccountOrderHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import desu.inugram.helpers.dialogs.PullActionHelper
+import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -28,6 +29,7 @@ class DrawerLayoutAdapter(
     private val itemAnimator: SideMenultItemAnimator,
     private val mDrawerLayoutContainer: DrawerLayoutContainer,
     private val onProxySwitchToggled: ((Boolean) -> Unit)? = null,
+    private val onGhostSwitchToggled: ((Boolean) -> Unit)? = null,
 ) : RecyclerListView.SelectionAdapter() {
 
     private val items = ArrayList<Item?>(11)
@@ -86,7 +88,7 @@ class DrawerLayoutAdapter(
 
     override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean {
         val t = holder.itemViewType
-        return t == 3 || t == 4 || t == 5 || t == 6 || t == 7
+        return t == 3 || t == 4 || t == 5 || t == 6 || t == 7 || t == 8
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -97,6 +99,7 @@ class DrawerLayoutAdapter(
             4 -> DrawerUserCell(mContext)
             5 -> DrawerAddCell(mContext)
             7 -> DrawerProxyCell(mContext)
+            8 -> DrawerGhostCell(mContext)
             else -> EmptyCell(mContext, AndroidUtilities.dp(8f))
         }
         view.layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -150,6 +153,21 @@ class DrawerLayoutAdapter(
                     DrawerM3SectionsHelper.resetMenuRow(cell)
                 }
             }
+
+            8 -> {
+                val cell = holder.itemView as DrawerGhostCell
+                var pos = position - 2
+                if (accountsShown) pos -= getAccountRowsCount()
+                val item = items[pos]
+                if (item != null) cell.bind(item.text ?: "", item.icon)
+                cell.setChecked(GhostHelper.isGhostActive())
+                cell.onSwitchToggled = onGhostSwitchToggled
+                if (DrawerM3SectionsHelper.isEnabled()) {
+                    m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }
+                } else {
+                    DrawerM3SectionsHelper.resetMenuRow(cell)
+                }
+            }
         }
     }
 
@@ -181,6 +199,7 @@ class DrawerLayoutAdapter(
         if (idx < 0 || idx >= items.size) return 2
         val id = items[idx]?.id ?: return 2
         if (id == ITEM_PROXY) return 7
+        if (id == ITEM_GHOST) return 8
         return 3
     }
 
@@ -246,12 +265,14 @@ class DrawerLayoutAdapter(
             items.add(Item(ITEM_ARCHIVE, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive))
         }
         items.add(Item(ITEM_PROXY, LocaleController.getString(R.string.ProxySettings), R.drawable.outline_shield_check))
+        items.add(Item(ITEM_GHOST, LocaleController.getString(R.string.InuGhostMode), R.drawable.inu_ghost))
         items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings))
     }
 
     companion object {
         const val ITEM_PROXY = 9
         const val ITEM_ARCHIVE = 18
+        const val ITEM_GHOST = 19
     }
 
     class Item private constructor(

@@ -1,10 +1,16 @@
 package desu.inugram.helpers.security
 
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import androidx.core.content.ContextCompat
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.RequestDelegate
@@ -13,6 +19,8 @@ import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_account
 import org.telegram.tgnet.tl.TL_stories
+import org.telegram.ui.ActionBar.SimpleTextView
+import org.telegram.ui.ChatActivity
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
@@ -36,13 +44,44 @@ object GhostHelper {
     private val manualReadRequests: MutableSet<TLObject> = Collections.newSetFromMap(ConcurrentHashMap())
 
     @JvmStatic
-    fun isGhostActive(): Boolean = InuConfig.GHOST_MODE.value ||
-        InuConfig.GHOST_HIDE_READ.value ||
-        InuConfig.GHOST_HIDE_VOICE_READ.value ||
-        InuConfig.GHOST_HIDE_STORY_READ.value ||
-        InuConfig.GHOST_HIDE_ONLINE.value ||
-        InuConfig.GHOST_HIDE_TYPING.value ||
-        InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value
+    fun isGhostActive(): Boolean = InuConfig.GHOST_MODE.value
+
+    @JvmStatic
+    fun setGhostMode(enabled: Boolean) {
+        InuConfig.GHOST_MODE.value = enabled
+        InuConfig.GHOST_HIDE_READ.value = enabled
+        InuConfig.GHOST_READ_ON_SEND.value = enabled
+        InuConfig.GHOST_HIDE_VOICE_READ.value = enabled
+        InuConfig.GHOST_HIDE_STORY_READ.value = enabled
+        InuConfig.GHOST_HIDE_ONLINE.value = enabled
+        InuConfig.GHOST_HIDE_TYPING.value = enabled
+        if (!enabled) InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value = false
+        syncPresence(UserConfig.selectedAccount)
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
+    }
+
+    @JvmStatic
+    fun toggleGhostMode(): Boolean {
+        val newState = !isGhostActive()
+        setGhostMode(newState)
+        return newState
+    }
+
+    @JvmStatic
+    fun applyChatTitleGhost(parentFragment: ChatActivity?, titleTextView: SimpleTextView?) {
+        if (titleTextView == null) return
+        val dialogId = parentFragment?.dialogId ?: 0L
+        if (dialogId != 0L && isGhostActiveForDialog(dialogId)) {
+            val ghost = ContextCompat.getDrawable(titleTextView.context, R.drawable.inu_ghost)?.mutate()
+            if (ghost != null) {
+                ghost.setBounds(0, 0, AndroidUtilities.dp(15f), AndroidUtilities.dp(15f))
+                ghost.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))
+            }
+            titleTextView.setLeftDrawable(ghost)
+        } else {
+            titleTextView.setLeftDrawable(null)
+        }
+    }
 
     @JvmStatic
     fun isUnreaderActive(): Boolean = InuConfig.GHOST_HIDE_READ.value

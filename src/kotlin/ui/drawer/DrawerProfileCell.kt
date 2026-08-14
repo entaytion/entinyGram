@@ -26,6 +26,8 @@ import android.widget.TextView
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper
+import desu.inugram.helpers.security.GhostHelper
+import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.PhoneFormat.PhoneFormat
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
@@ -64,6 +66,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
     private val shadowView: ImageView
     private val arrowView: ImageView
     private val darkThemeView: RLottieImageView
+    private val ghostView: ImageView
 
     private val srcRect = Rect()
     private val destRect = Rect()
@@ -258,6 +261,42 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         }
         addView(darkThemeView, LayoutHelper.createFrame(48, 48f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 6f, 90f))
 
+        ghostView = object : ImageView(context) {
+            override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+                super.onInitializeAccessibilityNodeInfo(info)
+                info.text = if (GhostHelper.isGhostActive())
+                    LocaleController.getString(R.string.InuGhostMode) + ": ON"
+                else
+                    LocaleController.getString(R.string.InuGhostMode) + ": OFF"
+            }
+        }
+        ghostView.isFocusable = true
+        ghostView.scaleType = ImageView.ScaleType.CENTER
+        ghostView.setImageResource(R.drawable.inu_ghost)
+        if (Build.VERSION.SDK_INT >= 21) {
+            ghostView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17f)))
+            Theme.setRippleDrawableForceSoftware(ghostView.background as RippleDrawable)
+        }
+        ghostView.setOnClickListener {
+            val isGhost = GhostHelper.toggleGhostMode()
+            updateGhostIcon()
+            val lastFragment: BaseFragment? = drawerLayoutContainer.parentActionBarLayout?.lastFragment
+            if (lastFragment is DialogsActivity) {
+                lastFragment.updateStatus(UserConfig.getInstance(lastFragment.currentAccount).currentUser, true)
+            }
+            if (lastFragment != null) {
+                val str = LocaleController.getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
+                BulletinFactory.of(lastFragment).createImageBulletin(R.drawable.inu_ghost, str).show()
+            }
+        }
+        ghostView.setOnLongClickListener {
+            drawerLayoutContainer.inu_drawer?.closeDrawer(false)
+            drawerLayoutContainer.parentActionBarLayout.presentFragment(TosSettingsActivity())
+            true
+        }
+        addView(ghostView, LayoutHelper.createFrame(48, 48f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 54f, 90f))
+        updateGhostIcon()
+
         if (Theme.getEventType() == 0) {
             snowflakesEffect = SnowflakesEffect(0)
             snowflakesEffect!!.setColorKey(Theme.key_chats_menuName)
@@ -317,8 +356,10 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         super.onAttachedToWindow()
         status.attach()
         updateColors()
+        updateGhostIcon()
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded)
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.needSetDayNightTheme)
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.mainUserInfoChanged)
         for (i in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
             NotificationCenter.getInstance(i).addObserver(this, NotificationCenter.currentUserPremiumStatusChanged)
         }
@@ -329,6 +370,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         status.detach()
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded)
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.needSetDayNightTheme)
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.mainUserInfoChanged)
         for (i in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
             NotificationCenter.getInstance(i).removeObserver(this, NotificationCenter.currentUserPremiumStatusChanged)
         }
@@ -400,6 +442,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
                 sunDrawable!!.colorFilter = PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
             }
             arrowView.setColorFilter(PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN))
+            updateGhostIcon()
         }
         nameTextView.setTextColor(Theme.getColor(Theme.key_chats_menuName))
         if (useImageBackground) {
@@ -523,6 +566,19 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
     fun updateColors() {
         snowflakesEffect?.updateColors()
         status.setColor(Theme.getColor(if (Theme.isCurrentThemeDark()) Theme.key_chats_verifiedBackground else Theme.key_chats_menuPhoneCats))
+        updateGhostIcon()
+    }
+
+    fun updateGhostIcon() {
+        val active = GhostHelper.isGhostActive()
+        val iconColor = currentIconColor ?: Theme.getColor(Theme.key_chats_menuName)
+        if (active) {
+            ghostView.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))
+            ghostView.alpha = 1.0f
+        } else {
+            ghostView.setColorFilter(PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN))
+            ghostView.alpha = 0.55f
+        }
     }
 
     private fun setArrowState(animated: Boolean) {
@@ -549,6 +605,8 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
                 updateColors()
                 invalidate()
             }
+
+            NotificationCenter.mainUserInfoChanged -> updateGhostIcon()
 
             NotificationCenter.userEmojiStatusUpdated -> setUser(args[0] as TLRPC.User, accountsShown)
             NotificationCenter.currentUserPremiumStatusChanged -> setUser(

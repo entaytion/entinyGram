@@ -1598,9 +1598,9 @@ object ChatHelper {
     }
 
     @JvmStatic
-    fun getDialogsTitle(account: Int): String {
+    fun getDialogsTitle(account: Int): CharSequence {
         val user = UserConfig.getInstance(account).getCurrentUser()
-        return when (InuConfig.DIALOGS_TITLE_TEXT.value) {
+        val baseTitle = when (InuConfig.DIALOGS_TITLE_TEXT.value) {
             InuConfig.DialogsTitleTextItem.USERNAME -> {
                 val username = UserObject.getPublicUsername(user)
                 if (username.isNullOrEmpty()) getFirstNameOrDefault(user) else "@$username"
@@ -1610,6 +1610,17 @@ object ChatHelper {
             InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.Chats)
             else -> LocaleController.getString(R.string.AppName)
         }
+        if (GhostHelper.isGhostActive()) {
+            val ssb = SpannableStringBuilder("  ").append(baseTitle)
+            val span = ColoredImageSpan(R.drawable.inu_ghost, ColoredImageSpan.ALIGN_CENTER).apply {
+                setSize(AndroidUtilities.dp(20f))
+                setTranslateX(AndroidUtilities.dp(-2f).toFloat())
+                setOverrideColor(0xFFF20C3C.toInt())
+            }
+            ssb.setSpan(span, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            return ssb
+        }
+        return baseTitle
     }
 
     private fun getFirstNameOrDefault(user: TLRPC.User?): String {

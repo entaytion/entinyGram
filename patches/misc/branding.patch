@@ -8,7 +8,7 @@ Subject: change app name to Inugram
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
  .../telegram/messenger/LocaleController.java  | 10 +++---
  .../telegram/messenger/MediaController.java   | 22 ++++++-------
- .../java/org/telegram/ui/DialogsActivity.java |  6 +++-
+ .../java/org/telegram/ui/DialogsActivity.java |  9 ++++-
  .../telegram/ui/LauncherIconController.java   |  6 ++--
  .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
@@ -25,7 +25,7 @@ Subject: change app name to Inugram
  .../src/main/res/values-uk/strings.xml        |  6 ++--
  .../src/main/res/values-v31/styles.xml        |  2 +-
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
- 21 files changed, 123 insertions(+), 65 deletions(-)
+ 21 files changed, 126 insertions(+), 65 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -222,7 +222,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3517,12 +3517,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3006,6 +3006,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     private Drawable premiumStar;
+ 
+     public void updateStatus(TLRPC.User user, boolean animated) {
++        if (!desu.inugram.helpers.security.ParanoiaHelper.isDisguised() && actionBar != null) {
++            actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
++        }
+         if (dialogStoriesCell != null) {
+             dialogStoriesCell.updateStatus(user, animated);
+         }
+@@ -3517,12 +3520,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                  statusDrawable.center = true;
@@ -239,7 +249,7 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
-@@ -14433,4 +14437,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14433,4 +14440,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          return true;
      }
  

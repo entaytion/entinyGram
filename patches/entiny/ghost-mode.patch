@@ -5,7 +5,8 @@ Subject: Add ghost mode (invisible mode) for read receipts, typing and online st
 
 ---
  .../src/main/java/org/telegram/tgnet/ConnectionsManager.java   | 3 +++
- 1 file changed, 3 insertions(+)
+ .../java/org/telegram/ui/Components/ChatAvatarContainer.java   | 1 +
+ 2 files changed, 4 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 index 0000000..0000000 100644
@@ -21,3 +22,15 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -1005,6 +1005,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             titleTextView.setRightDrawable(null);
+             rightDrawableContentDescription = null;
+         }
++        desu.inugram.helpers.security.GhostHelper.applyChatTitleGhost(parentFragment, titleTextView);
+         checkActionBar(animated);
+     }
+ 

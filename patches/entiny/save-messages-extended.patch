@@ -6,9 +6,11 @@ Subject: entiny(core): refactor tos saving to use SavedMessagesHelper
 - Replaces custom SelfDestructHelper logic with SavedMessagesHelper integration
 - Preserves self-destructing messages in edit history
 ---
- .../org/telegram/messenger/MessagesController.java | 14 +++++++++++---
- .../org/telegram/messenger/MessagesStorage.java    |  1 -
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ .../messenger/MessagesController.java         | 14 ++++++--
+ .../telegram/messenger/MessagesStorage.java   |  3 +-
+ .../telegram/ui/Cells/ChatMessageCell.java    |  6 ++--
+ .../webrtc/voiceengine/WebRtcAudioTrack.java  | 32 +++++++++++++++++++
+ 4 files changed, 48 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -54,3 +56,96 @@ index 0000000..0000000 100644
              return;
          }
          storageQueue.postRunnable(() -> {
+@@ -18599,7 +18598,7 @@ public class MessagesStorage extends BaseController {
+         return (value & type) != 0;
+     }
+ 
+-    private void isForumCacheInvalidate(long dialogId) {
++    public void isForumCacheInvalidate(long dialogId) {
+         dialogIsForumTyped.delete(dialogId);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -4168,7 +4168,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     }
+ 
+     private boolean checkDateMotionEvent(MotionEvent event) {
+-        if (!currentMessageObject.isImportedForward()) {
++        if (!currentMessageObject.isImportedForward() && !desu.inugram.helpers.chat.ChatHelper.canClickTime(currentMessageObject)) {
+             return false;
+         }
+         int x = (int) getEventX(event);
+@@ -4186,7 +4186,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 if (timePressed) {
+                     timePressed = false;
+                     playSoundEffect(SoundEffectConstants.CLICK);
+-                    delegate.didPressTime(this);
++                    if (!desu.inugram.helpers.chat.ChatHelper.onTimeClick(this) && delegate != null) {
++                        delegate.didPressTime(this);
++                    }
+                     invalidate();
+                     result = true;
+                 }
+diff --git a/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java b/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
++++ b/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
+@@ -13,6 +13,7 @@ package org.webrtc.voiceengine;
+ import android.annotation.TargetApi;
+ import android.content.Context;
+ import android.media.AudioAttributes;
++import android.media.AudioDeviceInfo;
+ import android.media.AudioFormat;
+ import android.media.AudioManager;
+ import android.media.AudioTrack;
+@@ -326,6 +327,7 @@ public class WebRtcAudioTrack {
+       releaseAudioResources();
+       return -1;
+     }
++    inu_onAudioTrackCreated(audioTrack);
+     logMainParameters();
+     logMainParametersExtended();
+     return minBufferSizeInBytes;
+@@ -543,9 +545,39 @@ public class WebRtcAudioTrack {
+     return speakerMute;
+   }
+ 
++  private static @Nullable AudioDeviceInfo inu_preferredDevice;
++  private static @Nullable AudioTrack inu_currentTrack;
++
++  public static synchronized void inu_setPreferredDevice(@Nullable AudioDeviceInfo device) {
++    inu_preferredDevice = device;
++    if (Build.VERSION.SDK_INT >= 23 && inu_currentTrack != null) {
++      try {
++        inu_currentTrack.setPreferredDevice(device);
++      } catch (Throwable e) {
++        Logging.e(TAG, "inu_setPreferredDevice failed", e);
++      }
++    }
++  }
++
++  private static synchronized void inu_onAudioTrackCreated(AudioTrack track) {
++    inu_currentTrack = track;
++    if (Build.VERSION.SDK_INT >= 23 && inu_preferredDevice != null) {
++      try {
++        track.setPreferredDevice(inu_preferredDevice);
++      } catch (Throwable e) {
++        Logging.e(TAG, "inu_setPreferredDevice failed", e);
++      }
++    }
++  }
++
++  private static synchronized void inu_onAudioTrackReleased() {
++    inu_currentTrack = null;
++  }
++
+   // Releases the native AudioTrack resources.
+   private void releaseAudioResources() {
+     Logging.e(TAG, "releaseAudioResources", new Exception());
++    inu_onAudioTrackReleased();
+     if (audioTrack != null) {
+       AudioTrack track = audioTrack;
+       audioTrack = null;

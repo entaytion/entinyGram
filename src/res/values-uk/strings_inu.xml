@@ -831,7 +831,7 @@
     <string name="InuCategoryAppearance">Вигляд і дизайн</string>
     <string name="InuCategoryBackup">Резервне копіювання та система</string>
     <string name="InuCategoryBehavior">Поведінка та інструменти</string>
-    <string name="InuCategoryChats">Чати та повідомлення</string>
+    <string name="InuCategoryChats">Чати</string>
     <string name="InuCategoryPrivacy">Конфіденційність і безпека</string>
     <string name="InuCategoryProfile">Профіль та навігація</string>
     <string name="InuAiReasoning">Режим логічних міркувань ШІ</string>
@@ -853,11 +853,11 @@
     <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
     <string name="InuGhostHideStoryReadInfo">Перегляди сторіс та лічильник не передаються автору.</string>
     <string name="InuGhostHideOnline">Приховати статус онлайн</string>
-    <string name="InuGhostHideOnlineInfo">Завжди відображатись як офлайн; час останнього перебування зафіксовано.</string>
+    <string name="InuGhostHideOnlineInfo">Завжди відображатись як офлайн; час останнього перебування зафіксовано (взаємовиключний з «Переходити офлайн одразу після входу»).</string>
     <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>
     <string name="InuGhostHideTypingInfo">Стани набору тексту, запису аудіо та завантаження файлів не надсилаються співрозмовнику.</string>
     <string name="InuGhostOfflineAfterOnline">Переходити офлайн одразу після входу в мережу</string>
-    <string name="InuGhostOfflineAfterOnlineInfo">У режимі примари ваш статус онлайн замінюється офлайн через кілька секунд після підключення — час останнього перебування оновлюється, але ви ніколи не залишаєтесь онлайн.</string>
+    <string name="InuGhostOfflineAfterOnlineInfo">Статус онлайн замінюється на офлайн через кілька секунд — час останнього перебування оновлюється, але ви не висите в онлайні (взаємовиключний з «Приховати статус онлайн»).</string>
     <string name="InuGhostEnabled">Режим примари увімкнено</string>
     <string name="InuGhostDisabled">Режим примари вимкнено</string>
     <string name="InuGhostModeForChat">Режим примари для цього чату</string>

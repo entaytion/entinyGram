@@ -229,6 +229,9 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 ## TOS
 
 - 📡 **ghost mode (stealth)**: comprehensive privacy suite with granular toggles:
+  - **quick toggle in drawer & chat list**: 1-tap Ghost toggle button in navigation drawer header (next to dark theme button), drawer menu list item with switch, and chat list overflow menu
+  - **active status indicator**: ghost icon displayed before app title in main dialogs list and next to chat name in active chat header when ghost mode is enabled
+  - **quick access**: long-press drawer ghost button to open full TOS & Ghost settings
   - hide read receipts for messages, voice notes and video messages
   - read on send: automatically mark incoming messages as read only when sending a reply
   - hide story views (watch stories completely anonymously)

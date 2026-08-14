@@ -857,7 +857,7 @@
     <string name="InuCategoryAppearance">Внешний вид и дизайн</string>
     <string name="InuCategoryBackup">Резервное копирование и система</string>
     <string name="InuCategoryBehavior">Поведение и инструменты</string>
-    <string name="InuCategoryChats">Чаты и сообщения</string>
+    <string name="InuCategoryChats">Чаты</string>
     <string name="InuCategoryPrivacy">Конфиденциальность и безопасность</string>
     <string name="InuCategoryProfile">Профиль и навигация</string>
     <string name="InuAiReasoning">Режим рассуждений ИИ</string>
@@ -866,6 +866,35 @@
     <string name="InuAdditional">Дополнительно</string>
     <string name="InuEditHistoryDiff">Подсвечивать изменения текста (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Отображать удаленный текст красным зачеркиванием, а добавленный зеленым в истории изменений</string>
+
+    <string name="InuGhostMode">Режим призрака</string>
+    <string name="InuGhostModeMaster">Режим призрака</string>
+    <string name="InuGhostModeInfo">Скрыть активность: входящие сообщения не помечаются как прочитанные, статус онлайн, индикатор набора текста и просмотры историй остаются скрытыми.</string>
+    <string name="InuGhostFeatures">Скрытая активность</string>
+    <string name="InuGhostHideRead">Не отправлять отчеты о прочтении</string>
+    <string name="InuGhostHideReadInfo">Сообщения не помечаются прочитанными на сервере, собеседник не видит синих галочек.</string>
+    <string name="InuGhostReadOnSend">Помечать прочитанным при отправке</string>
+    <string name="InuGhostReadOnSendInfo">Автоматически помечать предыдущие сообщения как прочитанные при отправке нового сообщения или ответа.</string>
+    <string name="InuContentProtectionBypass">Защита контента и профиль</string>
+    <string name="InuGhostHideVoiceRead">Не помечать голосовые и видео как прослушанные</string>
+    <string name="InuGhostHideVoiceReadInfo">Голосовые и видеосообщения не будут отображаться прослушанными для отправителя.</string>
+    <string name="InuGhostHideStoryRead">Не отправлять просмотры историй</string>
+    <string name="InuGhostHideStoryReadInfo">Просмотры историй не отображаются у автора.</string>
+    <string name="InuGhostHideOnline">Скрывать статус онлайн</string>
+    <string name="InuGhostHideOnlineInfo">Всегда отображать офлайн; время последнего захода замораживается.</string>
+    <string name="InuGhostHideTyping">Скрывать набор текста и загрузку</string>
+    <string name="InuGhostHideTypingInfo">Индикаторы набора текста, записи голоса и загрузки файлов не отправляются собеседнику.</string>
+    <string name="InuGhostOfflineAfterOnline">Переходить в офлайн сразу после онлайна</string>
+    <string name="InuGhostOfflineAfterOnlineInfo">В режиме призрака статус онлайн заменяется на офлайн через несколько секунд, время захода обновляется, но вы не остаетесь онлайн.</string>
+    <string name="InuGhostEnabled">Режим призрака включен</string>
+    <string name="InuGhostDisabled">Режим призрака выключен</string>
+    <string name="InuGhostModeForChat">Режим призрака для этого чата</string>
+    <string name="InuGhostModeEnableForChat">Включить режим призрака для этого чата</string>
+    <string name="InuGhostModeDisableForChat">Выключить режим призрака для этого чата</string>
+    <string name="InuGhostModeEnabledForChatDone">Режим призрака включен для этого чата</string>
+    <string name="InuGhostModeDisabledForChatDone">Режим призрака выключен для этого чата</string>
+    <string name="InuMarkChatAsRead">Пометить как прочитанное</string>
+    <string name="InuMarkChatAsReadDone">Чат помечен как прочитанный</string>
 
     <string name="InuUnreader">Нечиталка</string>
     <string name="InuUnreaderInfo">Сообщения не помечаются прочитанными: при открытии чата значок непрочитанного сохраняется, а отчёты о прочтении не отправляются собеседнику.</string>

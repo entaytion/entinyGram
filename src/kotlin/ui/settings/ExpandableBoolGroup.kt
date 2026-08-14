@@ -26,12 +26,13 @@ class ExpandableBoolGroup(
     fun addTo(items: ArrayList<UItem>, onChange: (options: List<Option>) -> Unit) {
         val checkedCount = options.count { it.config.value }
         val total = options.size
+        val isChecked = checkedCount > 0
         items.add(
             UItem.asExpandableSwitch(sectionId, title, "$checkedCount/$total")
-                .setChecked(checkedCount == total)
+                .setChecked(isChecked)
                 .setCollapsed(!expanded)
                 .setClickCallback {
-                    val enable = checkedCount != total
+                    val enable = !isChecked
                     val changed = arrayListOf<Option>()
                     for (opt in options) {
                         if (opt.config.value != enable) {

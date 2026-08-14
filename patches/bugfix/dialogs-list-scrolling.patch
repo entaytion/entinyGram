@@ -41,7 +41,7 @@ index 0000000..0000000 100644
                          pos = Math.max(1, pos);
                      }
                      ignoreLayout = true;
-@@ -9073,11 +9072,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9076,11 +9075,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              public void onAnimationEnd(Animator animation) {
                  super.onAnimationEnd(animation);
                  actionBarColorAnimator = null;
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                  viewPages[0].setTranslationY(0);
                  for (int i = 0; i < viewPages.length; i++) {
                      if (viewPages[i] != null) {
-@@ -10091,8 +10094,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10094,8 +10097,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                      super.onAnimationEnd(animation);
                      actionBarColorAnimator = null;
                      actionModeAdditionalHeight = 0;

@@ -4,24 +4,9 @@ Date: Fri, 17 Apr 2026 04:44:17 +0300
 Subject: hide animation when sending a reaction
 
 ---
- .../ui/Components/Reactions/ReactionsEffectOverlay.java        | 3 +++
- .../ui/Components/Reactions/ReactionsLayoutInBubble.java       | 1 +
- 2 files changed, 4 insertions(+)
+ .../ui/Components/Reactions/ReactionsLayoutInBubble.java         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
-@@ -758,6 +758,9 @@ public class ReactionsEffectOverlay {
-         if (!animationEnabled) {
-             return;
-         }
-+        if (animationType == SHORT_ANIMATION && desu.inugram.InuConfig.HIDE_REACTIONS_ENTRY.getValue()) {
-+            return;
-+        }
-         if (animationType == ONLY_MOVE_ANIMATION || animationType == LONG_ANIMATION) {
-             show(baseFragment, null, cell, fromAnimationView, 0, 0, visibleReaction, currentAccount, SHORT_ANIMATION);
-         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java

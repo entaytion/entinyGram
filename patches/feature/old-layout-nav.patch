@@ -145,7 +145,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  if (id == -1) {
-+                    if (!hasMainTabs && !onlySelect && !actionBar.isActionModeShowed() && desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue()
++                    if (!hasMainTabs && !actionBar.isActionModeShowed() && desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue()
 +                            && folderId == 0 && communityId == 0 && searchString == null
 +                            && desu.inugram.helpers.dialogs.DrawerHelper.INSTANCE.toggleDrawer(parentLayout)) {
 +                        return;
@@ -153,7 +153,7 @@ index 0000000..0000000 100644
                      if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                          if (actionBar.isActionModeShowed()) {
                              if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
-@@ -5391,7 +5401,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5382,7 +5392,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          };
          dialogStoriesCell.setActionBar(actionBar);
@@ -162,7 +162,7 @@ index 0000000..0000000 100644
          dialogStoriesCell.allowGlobalUpdates = false;
          dialogStoriesCell.setVisibility(View.GONE);
          animateToHasStories = false;
-@@ -5950,6 +5960,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5941,6 +5951,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              yoff = -(actionBar.getHeight() - AndroidUtilities.rectTmp2.centerY()) - dp(16);
              xoff = AndroidUtilities.rectTmp2.centerX() - dp(16);
              xoff += dp(4);
@@ -172,7 +172,7 @@ index 0000000..0000000 100644
              if (animatedStatusView != null) {
                  animatedStatusView.translate(AndroidUtilities.rectTmp2.centerX(), AndroidUtilities.rectTmp2.centerY());
              }
-@@ -9160,6 +9173,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9144,6 +9157,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogs.clear();
          if (backDrawable != null) {
              backDrawable.setRotation(0, true);
@@ -181,7 +181,7 @@ index 0000000..0000000 100644
          }
          if (filterTabsView != null) {
              filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
-@@ -10247,6 +10262,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10231,6 +10246,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              if (backDrawable != null) {
                  backDrawable.setRotation(1, true);

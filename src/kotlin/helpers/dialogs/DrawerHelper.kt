@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
+import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.update.UpdateHelper
 import desu.inugram.ui.drawer.DrawerAddCell
 import desu.inugram.ui.drawer.DrawerLayoutAdapter
@@ -21,6 +22,7 @@ import desu.inugram.ui.drawer.DrawerProxyCell
 import desu.inugram.ui.drawer.DrawerSwipeController
 import desu.inugram.ui.drawer.DrawerUserCell
 import desu.inugram.ui.drawer.SideMenultItemAnimator
+import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -45,6 +47,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.CallLogActivity
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AnimatedEmojiDrawable
+import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
@@ -138,7 +141,13 @@ object DrawerHelper {
         val sm = RecyclerListView(context)
         sm.layoutManager = LinearLayoutManager(context)
         val itemAnimator = SideMenultItemAnimator(sm)
-        val newAdapter = DrawerLayoutAdapter(context, itemAnimator, drawerLayoutContainer, ::applyProxyEnabled)
+        val newAdapter = DrawerLayoutAdapter(
+            context,
+            itemAnimator,
+            drawerLayoutContainer,
+            ::applyProxyEnabled,
+            ::applyGhostEnabled,
+        )
         adapter = newAdapter
         sideMenu = sm
         sm.setItemAnimator(itemAnimator)
@@ -393,6 +402,19 @@ object DrawerHelper {
             .postNotificationName(NotificationCenter.proxySettingsChanged)
     }
 
+    private fun applyGhostEnabled(enabled: Boolean) {
+        GhostHelper.setGhostMode(enabled)
+        adapter?.profileCell?.updateGhostIcon()
+        val lastFragment = LaunchActivity.instance?.actionBarLayout?.lastFragment
+        if (lastFragment is DialogsActivity) {
+            lastFragment.updateStatus(UserConfig.getInstance(lastFragment.currentAccount).currentUser, true)
+        }
+        if (lastFragment != null) {
+            val str = getString(if (enabled) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
+            BulletinFactory.of(lastFragment).createImageBulletin(R.drawable.inu_ghost, str).show()
+        }
+    }
+
     private fun refreshTheme() {
         sideMenuContainer?.setBackgroundColor(Theme.getColor(Theme.key_chats_menuBackground))
         sideMenu?.let { applySideMenuColors(it) }
@@ -624,6 +646,11 @@ object DrawerHelper {
                 close()
             }
 
+            ITEM_GHOST -> {
+                nav.presentFragment(TosSettingsActivity())
+                close()
+            }
+
             else -> close()
         }
     }
@@ -638,6 +665,7 @@ object DrawerHelper {
     private const val ITEM_SETTINGS = 8
     private const val ITEM_PROXY = DrawerLayoutAdapter.ITEM_PROXY
     private const val ITEM_ARCHIVE = DrawerLayoutAdapter.ITEM_ARCHIVE
+    private const val ITEM_GHOST = DrawerLayoutAdapter.ITEM_GHOST
 
     @JvmStatic
     fun notifyDataChanged() {
@@ -671,6 +699,13 @@ object DrawerHelper {
                 args.putBoolean("needPhonebook", true)
                 instance.presentFragment(ContactsActivity(args))
             }
+        }
+
+        io.add(R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
+            val isGhost = GhostHelper.toggleGhostMode()
+            val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
+            instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
+            BulletinFactory.of(instance).createImageBulletin(R.drawable.inu_ghost, str).show()
         }
 
         if (bottomTabsHidden) {

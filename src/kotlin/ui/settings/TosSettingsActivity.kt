@@ -10,6 +10,7 @@ import desu.inugram.helpers.chat.SavedMessagesHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -75,8 +76,12 @@ class TosSettingsActivity : SettingsPageActivity() {
         // 1. Ghost Mode & Stealth
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGhostMode)))
         ghostGroup.addTo(items) {
+            if (InuConfig.GHOST_HIDE_ONLINE.value && InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value) {
+                InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value = false
+            }
             InuConfig.GHOST_MODE.value = ghostGroup.options.any { it.config.value }
             GhostHelper.syncPresence(currentAccount)
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }
         items.add(UItem.asShadow(null))
@@ -344,6 +349,7 @@ class TosSettingsActivity : SettingsPageActivity() {
                     GhostHelper.syncPresence(currentAccount)
                 }
             }
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }) return
         if (deletedCategoriesGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return

@@ -856,7 +856,7 @@
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
     <string name="InuShowMutualContactInChatsInfo">Display mutual contact icon in group and channel member lists</string>
     <string name="InuCategoryAppearance">Appearance &amp; Layout</string>
-    <string name="InuCategoryChats">Chats &amp; Messaging</string>
+    <string name="InuCategoryChats">Chats</string>
     <string name="InuCategoryProfile">Profile &amp; Navigation</string>
     <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
     <string name="InuCategoryPrivacy">Privacy &amp; Security</string>
@@ -876,11 +876,11 @@
     <string name="InuGhostHideStoryRead">Do not send story views</string>
     <string name="InuGhostHideStoryReadInfo">Story reads and view counts are not reported to the author.</string>
     <string name="InuGhostHideOnline">Hide online status</string>
-    <string name="InuGhostHideOnlineInfo">Always appear offline; your last seen stays frozen.</string>
+    <string name="InuGhostHideOnlineInfo">Always appear offline; your last seen stays frozen (mutually exclusive with \"Go offline right after going online\").</string>
     <string name="InuGhostHideTyping">Hide typing and upload progress</string>
     <string name="InuGhostHideTypingInfo">The typing, recording and upload progress states are never sent to the other side.</string>
     <string name="InuGhostOfflineAfterOnline">Go offline right after going online</string>
-    <string name="InuGhostOfflineAfterOnlineInfo">While in ghost mode, your online status is replaced with an offline one a few seconds after going online, so last seen stays fresh but you never stay online.</string>
+    <string name="InuGhostOfflineAfterOnlineInfo">While in ghost mode, online status is replaced with offline after a few seconds, keeping last seen fresh (mutually exclusive with \"Hide online status\").</string>
     <string name="InuGhostEnabled">Ghost Mode enabled</string>
     <string name="InuGhostDisabled">Ghost Mode disabled</string>
     <string name="InuGhostModeForChat">Ghost mode for this chat</string>
