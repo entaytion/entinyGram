@@ -308,6 +308,11 @@
     <string name="InuProfileIdModeBotApi">Bot API ID</string>
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID скопійовано в буфер обміну</string>
+    <string name="InuShowProfileRegDate">Показувати дату реєстрації та DC</string>
+    <string name="InuShowProfileRegDateInfo">Показувати приблизну дату реєстрації та дата-центр у блоці інфо профілю</string>
+    <string name="InuProfileRegDate">Дата реєстрації</string>
+    <string name="InuProfileCreatedDate">Дата створення</string>
+    <string name="InuProfileRegDateCopied">Дату реєстрації та DC скопійовано</string>
     <string name="InuMessageInput">Введення повідомлення</string>
     <string name="InuAttachmentSheet">Панель вкладень</string>
     <string name="InuVoiceRecorder">Запис голосових / відеоповідомлень</string>

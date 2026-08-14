@@ -14,7 +14,7 @@ import {
 // run manually after changing src/res/launcher SVGs; output is committed
 
 const ADAPTIVE_SIZE = 108
-const FG_SAFE = 72
+const FG_SAFE = 58
 // settings-list icon: 24dp render in a 72dp viewport, tinted white by
 // SettingCell — mirrors stock settings_account/settings_chat/settings_privacy
 const SETTINGS_DP = 24

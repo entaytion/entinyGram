@@ -188,6 +188,7 @@ object ChatHelper {
         val msgId = msg.id
         val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
         if (isDeleted) return true
+        if (!InuConfig.SAVE_EDITED_MESSAGES.value) return false
         val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
         return isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)
     }
@@ -206,10 +207,12 @@ object ChatHelper {
             return true
         }
 
-        val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
-        if (isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)) {
-            SavedMessagesHelper.showEditHistoryDialog(cell.context, parentFragment, msg)
-            return true
+        if (InuConfig.SAVE_EDITED_MESSAGES.value) {
+            val isEdited = (msg.messageOwner != null && (msg.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0) || (msg.messageOwner?.edit_date ?: 0) != 0
+            if (isEdited || SavedMessagesHelper.hasEditHistory(msg.currentAccount, dialogId, msgId)) {
+                SavedMessagesHelper.showEditHistoryDialog(cell.context, parentFragment, msg)
+                return true
+            }
         }
         return false
     }
@@ -382,9 +385,10 @@ object ChatHelper {
             }
         }
 
-        if (SavedMessagesHelper.hasEditHistory(selectedObject.dialogId, selectedObject.id) ||
+        if (InuConfig.SAVE_EDITED_MESSAGES.value && (
+            SavedMessagesHelper.hasEditHistory(selectedObject.dialogId, selectedObject.id) ||
             (selectedObject.messageOwner != null && (selectedObject.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0)
-        ) {
+        )) {
             items.add(LocaleController.getString(R.string.InuEditHistory))
             options.add(OPTION_EDIT_HISTORY)
             icons.add(R.drawable.group_edit)
@@ -1612,10 +1616,10 @@ object ChatHelper {
         }
         if (GhostHelper.isGhostActive()) {
             val ssb = SpannableStringBuilder("  ").append(baseTitle)
-            val span = ColoredImageSpan(R.drawable.inu_ghost, ColoredImageSpan.ALIGN_CENTER).apply {
+            val span = ColoredImageSpan(R.drawable.inu_ghost_filled, ColoredImageSpan.ALIGN_CENTER).apply {
                 setSize(AndroidUtilities.dp(20f))
                 setTranslateX(AndroidUtilities.dp(-2f).toFloat())
-                setOverrideColor(0xFFF20C3C.toInt())
+                setOverrideColor(Theme.getColor(Theme.key_actionBarDefaultSubtitle))
             }
             ssb.setSpan(span, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             return ssb

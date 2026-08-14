@@ -75,6 +75,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             UItem.asCheck(
+                TOGGLE_SHOW_PROFILE_REG_DATE,
+                LocaleController.getString(R.string.InuShowProfileRegDate),
+            ).setChecked(InuConfig.SHOW_PROFILE_REG_DATE.value)
+        )
+        items.add(
+            UItem.asCheck(
                 TOGGLE_DISABLE_CHAT_TITLE_PHONE,
                 LocaleController.getString(R.string.InuDisableChatTitlePhone),
             ).setChecked(InuConfig.DISABLE_CHAT_TITLE_PHONE.value)
@@ -269,6 +275,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.PROFILE_ID_MODE.value = which
             }
 
+            TOGGLE_SHOW_PROFILE_REG_DATE -> {
+                val new = InuConfig.SHOW_PROFILE_REG_DATE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             TOGGLE_DISABLE_CHAT_TITLE_PHONE -> {
                 val new = InuConfig.DISABLE_CHAT_TITLE_PHONE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -434,6 +445,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_PROFILE_SCROLL_SNAP = InuUtils.generateId()
         private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
         private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
+        private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
@@ -472,7 +484,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.avd_speed,
             factory = ::BehaviorSettingsActivity,
             entries = listOf(
-
+                SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),

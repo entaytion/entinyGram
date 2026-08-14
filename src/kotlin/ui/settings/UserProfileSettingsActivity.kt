@@ -61,6 +61,14 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SHOW_PROFILE_REG_DATE,
+                R.string.InuShowProfileRegDate,
+                R.string.InuShowProfileRegDateInfo,
+                InuConfig.SHOW_PROFILE_REG_DATE.value
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_DISABLE_CHAT_TITLE_PHONE,
                 LocaleController.getString(R.string.InuDisableChatTitlePhone)
@@ -109,6 +117,11 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
                 InuConfig.PROFILE_ID_MODE.value = which
             }
 
+            TOGGLE_SHOW_PROFILE_REG_DATE -> {
+                val new = InuConfig.SHOW_PROFILE_REG_DATE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_DISABLE_CHAT_TITLE_PHONE -> {
                 val new = InuConfig.DISABLE_CHAT_TITLE_PHONE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -127,6 +140,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_PROFILE_SCROLL_SNAP = InuUtils.generateId()
         private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
         private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
+        private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val BUTTON_DELETE_PROFILE_PHOTOS = InuUtils.generateId()
 
@@ -141,6 +155,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-profile-scroll-snap", R.string.InuDisableProfileScrollSnap, TOGGLE_DISABLE_PROFILE_SCROLL_SNAP),
                 SearchRegistry.Entry("profile-prefer-media-tab", R.string.InuProfilePreferMediaTab, TOGGLE_PROFILE_PREFER_MEDIA_TAB),
                 SearchRegistry.Entry("profile-id-mode", R.string.InuProfileIdMode, BUTTON_PROFILE_ID_MODE),
+                SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
                 SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
                 SearchRegistry.Entry("delete-profile-photos", R.string.InuDeleteProfilePhotos, BUTTON_DELETE_PROFILE_PHOTOS),
             ),

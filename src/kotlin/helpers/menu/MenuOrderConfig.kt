@@ -223,6 +223,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         DELETE("delete", listOf(ChatActivity.OPTION_DELETE), R.string.Delete, R.drawable.msg_delete),
         DETAILS("details", listOf(ChatHelper.OPTION_DETAILS), R.string.InuMessageDetails, R.drawable.msg_info),
         MARK_AS_READ("mark_as_read", listOf(ChatHelper.OPTION_MARK_AS_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
+        EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.group_edit),
 
         // bottom-row "smart slots" — no real option id; resolved via fallback chains at render
         // (see ChatHelper.resolveSlot). Default to the bottom row, NagramX-style.

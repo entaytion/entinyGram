@@ -65,6 +65,7 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
     }
 
     private fun updateIconColor(checked: Boolean) {
+        imageView.setImageResource(if (checked) R.drawable.inu_ghost_filled else R.drawable.inu_ghost)
         if (checked) {
             imageView.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))
         } else {

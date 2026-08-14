@@ -249,9 +249,10 @@ object ProfileHelper {
             } else {
                 LocaleController.getString(R.string.InuGhostModeDisableForChat)
             }
+            val ghostIcon = if (whitelisted) R.drawable.inu_ghost else R.drawable.inu_ghost_filled
             otherItem.addSubItem(
                 ACTION_TOGGLE_GHOST_DIALOG,
-                R.drawable.msg_autodelete,
+                ghostIcon,
                 ghostLabel,
             )
 
@@ -493,5 +494,88 @@ object ProfileHelper {
         }
         if (userId <= list.first().id) return formatShortDate(list.first().date * 1000L)
         return ">" + formatShortDate(list.last().date * 1000L)
+    }
+
+    @JvmStatic
+    fun shouldShowRegDateRow(userId: Long, chat: TLRPC.Chat?): Boolean {
+        if (!InuConfig.SHOW_PROFILE_REG_DATE.value) return false
+        if (userId != 0L) return true
+        return chat != null && chat.date != 0
+    }
+
+    @JvmStatic
+    fun getDc(user: TLRPC.User?, chat: TLRPC.Chat?): Int {
+        if (user?.photo is TLRPC.TL_userProfilePhoto) {
+            return (user.photo as TLRPC.TL_userProfilePhoto).dc_id
+        }
+        if (chat?.photo is TLRPC.TL_chatPhoto) {
+            return (chat.photo as TLRPC.TL_chatPhoto).dc_id
+        }
+        return 0
+    }
+
+    @JvmStatic
+    fun getDcString(user: TLRPC.User?, chat: TLRPC.Chat?): String {
+        return when (getDc(user, chat)) {
+            1 -> "DC 1 (Miami)"
+            2 -> "DC 2 (Amsterdam)"
+            3 -> "DC 3 (Miami)"
+            4 -> "DC 4 (Amsterdam)"
+            5 -> "DC 5 (Singapore)"
+            else -> ""
+        }
+    }
+
+    @JvmStatic
+    fun getRegDateValue(userId: Long, chat: TLRPC.Chat?): String {
+        if (userId != 0L) {
+            return getRegDate(userId) ?: ""
+        }
+        if (chat != null && chat.date != 0) {
+            return formatDateTime(chat.date * 1000L)
+        }
+        return ""
+    }
+
+    @JvmStatic
+    fun getRegDateSubtitle(userId: Long, chat: TLRPC.Chat?, user: TLRPC.User?): String {
+        val base = if (userId != 0L) {
+            LocaleController.getString(R.string.InuProfileRegDate)
+        } else if (chat != null && ChatObject.isChannel(chat) && !ChatObject.isNotInChat(chat)) {
+            LocaleController.getString(R.string.InuJoinDate)
+        } else {
+            LocaleController.getString(R.string.InuProfileCreatedDate)
+        }
+        val dc = getDcString(user, chat)
+        return if (dc.isNotEmpty()) "$base • $dc" else base
+    }
+
+    @JvmStatic
+    fun onRegDateRowClick(
+        fragment: BaseFragment,
+        clipBackground: Drawable,
+        view: View,
+        userId: Long,
+        chatId: Long,
+        accountInstance: AccountInstance,
+    ) {
+        val messagesController = accountInstance.messagesController
+        val user = if (userId != 0L) messagesController.getUser(userId) else null
+        val chat = if (chatId != 0L) messagesController.getChat(chatId) else null
+        val dateVal = getRegDateValue(userId, chat)
+        val dc = getDcString(user, chat)
+        val textToCopy = if (dc.isNotEmpty()) "$dateVal ($dc)" else dateVal
+        if (textToCopy.isEmpty()) return
+
+        ItemOptions.makeOptions(fragment, view)
+            .setScrimViewBackground(clipBackground)
+            .add(R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
+                AndroidUtilities.addToClipboard(textToCopy)
+                if (AndroidUtilities.shouldShowClipboardToast()) {
+                    BulletinFactory.of(fragment).createCopyBulletin(
+                        LocaleController.getString(R.string.InuProfileRegDateCopied)
+                    ).show()
+                }
+            }.show()
     }
 }

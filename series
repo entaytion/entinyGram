@@ -44,7 +44,6 @@ debloat/simple-attachalert-anim.patch
 debloat/hide-suggestions.patch
 feature/double-tap-action.patch
 debloat/disable-chat-title-phone.patch
-feature/id-in-profile.patch
 feature/hide-spoiler-pending.patch
 bugfix/paid-reaction-animation.patch
 feature/folders-display-mode.patch
@@ -277,7 +276,6 @@ feature/translator.patch
 entiny/night-theme-colors.patch
 entiny/rebase-leftover-fixes.patch
 entiny/translator-without-premium.patch
-entiny/mutual-contact-icon.patch
 entiny/gore-ui-fixes.patch
 entiny/sverklo-gitignore.patch
 entiny/build-optimizations.patch
@@ -291,3 +289,5 @@ entiny/ghost-mode.patch
 entiny/unreader.patch
 entiny/tos-per-category-save.patch
 entiny/save-messages-extended.patch
+entiny/mutual-contact-icon.patch
+entiny/id-in-profile.patch

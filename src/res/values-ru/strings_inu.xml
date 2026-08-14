@@ -255,6 +255,11 @@
     <string name="InuProfileIdModeBotApi">Bot API ID</string>
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID скопирован в буфер обмена</string>
+    <string name="InuShowProfileRegDate">Показывать дату регистрации и DC</string>
+    <string name="InuShowProfileRegDateInfo">Показывать примерную дату регистрации и дата-центр в блоке информации профиля</string>
+    <string name="InuProfileRegDate">Дата регистрации</string>
+    <string name="InuProfileCreatedDate">Дата создания</string>
+    <string name="InuProfileRegDateCopied">Дата регистрации и DC скопированы</string>
     <string name="InuMessageInput">Поле ввода</string>
     <string name="InuAttachmentSheet">Панель вложений</string>
     <string name="InuIconReplacement">Набор иконок</string>

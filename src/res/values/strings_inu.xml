@@ -332,6 +332,11 @@
     <string name="InuProfileIdModeBotApi">Bot API ID</string>
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID copied to clipboard</string>
+    <string name="InuShowProfileRegDate">Show registration date &amp; DC</string>
+    <string name="InuShowProfileRegDateInfo">Display estimated registration date and data center in profile info</string>
+    <string name="InuProfileRegDate">Registration Date</string>
+    <string name="InuProfileCreatedDate">Creation Date</string>
+    <string name="InuProfileRegDateCopied">Registration date &amp; DC copied</string>
     <string name="InuMessageInput">Message input</string>
     <string name="InuAttachmentSheet">Attachment sheet</string>
     <string name="InuVoiceRecorder">Voice / round recorder</string>

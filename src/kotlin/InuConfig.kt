@@ -548,6 +548,9 @@ object InuConfig {
     val PROFILE_ID_MODE = ProfileIdModeItem()
 
     @JvmField
+    val SHOW_PROFILE_REG_DATE = BoolItem("show_profile_reg_date", true)
+
+    @JvmField
     val DISABLE_CHAT_BUBBLES = BoolItem("disable_chat_bubbles", true)
 
     @JvmField
@@ -838,7 +841,7 @@ object InuConfig {
     val HIDE_SPONSORED_MESSAGES = BoolItem("hide_sponsored_messages", true)
 
     @JvmField
-    val SAVE_EDITED_MESSAGES = BoolItem("save_edited_messages", true)
+    val SAVE_EDITED_MESSAGES = BoolItem("save_edited_messages", false)
 
     @JvmField
     val SAVE_USER_INFO = BoolItem("save_user_info", false)

@@ -23,7 +23,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
-- estimated registration date in profile - *ported & datapoints from [NagramX](https://github.com/risin42/NagramX)*
+- 📡 estimated registration date & DC in profile info card (with fast copy & DC location resolution) - *adapted from [NagramX](https://github.com/risin42/NagramX)*
 - join/creation date in group & channel profiles
 - show linked channel in discussion group profile similar to personal channel
 - hide own phone number from ui

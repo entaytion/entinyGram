@@ -417,7 +417,7 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun showEditHistoryDialog(context: android.content.Context?, activity: org.telegram.ui.ChatActivity?, msgObj: MessageObject) {
-        if (context == null) return
+        if (context == null || !isSaveEditedEnabled()) return
         val dialogId = msgObj.getDialogId()
         val msgId = msgObj.id
         val account = msgObj.currentAccount

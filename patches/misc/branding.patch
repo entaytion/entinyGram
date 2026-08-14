@@ -574,7 +574,7 @@ index 0000000..0000000 100644
 +    <string name="Page1Title">entinyGram</string>
      <string name="Page2Title">Быстрый</string>
      <string name="Page3Title">Бесплатный</string>
-     <string name="Page4Title">Безопасный</string>
+     <string name="Page4Title">Бе��опасный</string>
 diff --git a/TMessagesProj/src/main/res/values-uk/strings.xml b/TMessagesProj/src/main/res/values-uk/strings.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values-uk/strings.xml

@@ -20,6 +20,7 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_account
 import org.telegram.tgnet.tl.TL_stories
 import org.telegram.ui.ActionBar.SimpleTextView
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
@@ -72,10 +73,11 @@ object GhostHelper {
         if (titleTextView == null) return
         val dialogId = parentFragment?.dialogId ?: 0L
         if (dialogId != 0L && isGhostActiveForDialog(dialogId)) {
-            val ghost = ContextCompat.getDrawable(titleTextView.context, R.drawable.inu_ghost)?.mutate()
+            val ghost = ContextCompat.getDrawable(titleTextView.context, R.drawable.inu_ghost_filled)?.mutate()
             if (ghost != null) {
                 ghost.setBounds(0, 0, AndroidUtilities.dp(15f), AndroidUtilities.dp(15f))
-                ghost.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))
+                val color = Theme.getColor(Theme.key_actionBarDefaultSubtitle, parentFragment?.resourceProvider)
+                ghost.setColorFilter(PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN))
             }
             titleTextView.setLeftDrawable(ghost)
         } else {

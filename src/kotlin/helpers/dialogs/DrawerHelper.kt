@@ -701,11 +701,12 @@ object DrawerHelper {
             }
         }
 
-        io.add(R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
+        val isGhostActive = GhostHelper.isGhostActive()
+        io.add(if (isGhostActive) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
             val isGhost = GhostHelper.toggleGhostMode()
             val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
             instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
-            BulletinFactory.of(instance).createImageBulletin(R.drawable.inu_ghost, str).show()
+            BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, str).show()
         }
 
         if (bottomTabsHidden) {

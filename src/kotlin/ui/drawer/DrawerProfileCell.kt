@@ -571,6 +571,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
 
     fun updateGhostIcon() {
         val active = GhostHelper.isGhostActive()
+        ghostView.setImageResource(if (active) R.drawable.inu_ghost_filled else R.drawable.inu_ghost)
         val iconColor = currentIconColor ?: Theme.getColor(Theme.key_chats_menuName)
         if (active) {
             ghostView.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))

@@ -98,7 +98,7 @@ index 0000000..0000000 100644
          nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
 +        if (inu_mutualView != null) {
 +            boolean enabled = inu_isContactsList ? desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_ICON.getValue() : desu.inugram.InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.getValue();
-+            boolean visible = currentUser != null && currentUser.mutual_contact && enabled;
++            boolean visible = currentUser != null && !UserObject.isUserSelf(currentUser) && currentUser.mutual_contact && enabled;
 +            inu_mutualView.setVisibility(visible ? VISIBLE : GONE);
 +            inu_updateAdminTextViewMargin();
 +        }
