@@ -51,11 +51,21 @@ object InuHooks {
             MonetHelper.registerOverlayChangeReceiver(context)
             MonetHelper.registerThemeReloadReceiver(context)
         }
-        UpdateHelper.clearPendingIfInstalled()
-        ApkInstaller.dismissInstalledNotification()
-        CloudSettingsHelper.attachAutoSyncListener()
-        ProxyVpnHelper.init(context)
-        Utilities.globalQueue.postRunnable { UrlCleanerHelper.preload() }
+        // APK housekeeping is not needed to render the first frame. Keep it off
+        // Application.onCreate's critical path; the work is independent and safe
+        // to perform after core config/theme wiring has started.
+        Utilities.globalQueue.postRunnable {
+            UpdateHelper.clearPendingIfInstalled()
+            ApkInstaller.dismissInstalledNotification()
+        }
+        // Listener registration and VPN reconciliation do not affect the first
+        // frame. Keep them off Application.onCreate's critical path; both
+        // helpers marshal user-visible work back to the appropriate queue.
+        Utilities.globalQueue.postRunnable {
+            CloudSettingsHelper.attachAutoSyncListener()
+            ProxyVpnHelper.init(context)
+            UrlCleanerHelper.preload()
+        }
     }
 
     @JvmStatic

@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 15 Aug 2026 00:19:40 +0300
+Subject: Add send message persistence and forwarding hooks
+
+---
+ .../java/org/telegram/messenger/SendMessagesHelper.java   | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2075,7 +2075,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (messages == null || messages.isEmpty()) {
+             return 0;
+         }
+-        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
++        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() && desu.inugram.helpers.chat.ForwardProtectedHelper.needsBypass(currentAccount, messages)) {
+             desu.inugram.helpers.chat.ForwardProtectedHelper.resendMessages(
+                 currentAccount, messages, peer, forwardFromMyName, hideCaption, notify,
+                 scheduleDate, scheduleRepeatPeriod, replyToTopMsg, payStars,
+@@ -2912,6 +2912,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 messageObject.editingMessageEntities = newMsg.entities;
+                 path = newMsg.attachPath;
+             } else {
++                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && newMsg != null && newMsg.message != null && !android.text.TextUtils.isEmpty(newMsg.message)) {
++                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++                }
+                 messageObject.previousMedia = newMsg.media;
+                 messageObject.previousMessage = newMsg.message;
+                 messageObject.previousMessageEntities = newMsg.entities;
+@@ -3414,6 +3417,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 req.flags |= TLObject.FLAG_18;
+             }
+         }
++        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && !messageObject.messageOwner.message.equals(message)) {
++            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++        }
+         return getConnectionsManager().sendRequest(req, (response, error) -> {
+             if (error == null) {
+                 getMessagesController().processUpdates((TLRPC.Updates) response, false);

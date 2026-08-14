@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 15 Aug 2026 00:19:41 +0300
+Subject: Respect compact edited message display
+
+---
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -18480,9 +18480,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         } else if (currentMessageObject.isRepostPreview) {
+             timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+         } else if (edited) {
+-            timeString = AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
+-                LocaleController.formatPmEditedDate(currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date) :
+-                ((desu.inugram.InuConfig.COMPACT_EDITED.getValue() ? "" : getString(R.string.EditedMessage) + " ") + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
++            timeString = desu.inugram.InuConfig.COMPACT_EDITED.getValue() ?
++                LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000) :
++                AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
++                    LocaleController.formatPmEditedDate(currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date) :
++                    (getString(R.string.EditedMessage) + " " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
+         } else if (currentMessageObject.isSaved && currentMessageObject.messageOwner.fwd_from != null && (currentMessageObject.messageOwner.fwd_from.date != 0 || currentMessageObject.messageOwner.fwd_from.saved_date != 0)) {
+             int date = currentMessageObject.messageOwner.fwd_from.saved_date;
+             if (date == 0) {

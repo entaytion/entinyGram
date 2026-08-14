@@ -50,13 +50,6 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 )
             )
         }
-        items.add(
-            mkSubPageButton(
-                BUTTON_BACKUP,
-                R.drawable.msg_settings_old,
-                LocaleController.getString(R.string.InuCategoryBackup)
-            )
-        )
         if (items.isNotEmpty()) items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacyTitle)))
@@ -126,8 +119,6 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_PASSCODE -> presentFragment(PasscodeSettingsActivity())
             BUTTON_PARANOIA -> presentFragment(ParanoiaActivity())
-            BUTTON_BACKUP -> presentFragment(AdditionalSettingsActivity())
-
             TOGGLE_HIDE_MY_PHONE_NUMBER -> {
                 val new = InuConfig.HIDE_MY_PHONE_NUMBER.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -235,7 +226,6 @@ class PrivacySecurityActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_PASSCODE = InuUtils.generateId()
         private val BUTTON_PARANOIA = InuUtils.generateId()
-        private val BUTTON_BACKUP = InuUtils.generateId()
         private val TOGGLE_HIDE_MY_PHONE_NUMBER = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE = InuUtils.generateId()

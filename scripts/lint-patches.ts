@@ -196,6 +196,26 @@ const patchContents = await Promise.all(
 )
 const patchIndexes = new Map(patches.map((patch, index) => [patch, index]))
 
+const structuralFindings: string[] = []
+const seenSeriesEntries = new Set<string>()
+for (let index = 0; index < seriesEntries.length; index++) {
+  const entry = seriesEntries[index]
+  const content = patchContents[index]
+  if (seenSeriesEntries.has(entry)) {
+    structuralFindings.push(`duplicate series entry: ${entry}`)
+  }
+  seenSeriesEntries.add(entry)
+  if (!/^diff --git /m.test(content)) {
+    structuralFindings.push(`empty patch: ${entry}`)
+  }
+}
+
+if (structuralFindings.length > 0) {
+  console.log(chalk.red('Structural patch problems:'))
+  for (const finding of structuralFindings) console.log(`  ${finding}`)
+  if (check) process.exitCode = 1
+}
+
 const deltas: PatchDelta[] = []
 const overwrites = new Map<string, Overwrite>()
 const fileOwners = new Map<string, Array<string | null>>()

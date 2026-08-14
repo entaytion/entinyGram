@@ -119,32 +119,31 @@ object SavedMessagesHelper {
             InuDatabaseHelper.pruneEditHistory(db, cutoff)
         }
 
-        val (deletedMap, datesMap) = InuDatabaseHelper.loadDeletedMessageInfo(db)
+        // Build the final sparse caches directly while reading the cursor. The old
+        // path materialized HashMaps first and copied them into LongSparseArrays,
+        // briefly keeping two complete representations of the cache in memory.
+        val deletedArray = LongSparseArray<HashSet<Int>>()
+        val dateArray = LongSparseArray<LongSparseArray<Long>>()
+        InuDatabaseHelper.forEachDeletedMessageInfo(db) { dialogId, msgId, date ->
+            var ids = deletedArray.get(dialogId)
+            if (ids == null) {
+                ids = HashSet()
+                deletedArray.put(dialogId, ids)
+            }
+            ids.add(msgId)
+            if (date > 0) {
+                var dates = dateArray.get(dialogId)
+                if (dates == null) {
+                    dates = LongSparseArray()
+                    dateArray.put(dialogId, dates)
+                }
+                dates.put(msgId.toLong(), date)
+            }
+        }
         org.telegram.messenger.AndroidUtilities.runOnUIThread {
             if (loadedAccounts.contains(account)) return@runOnUIThread
-            var dialogArray = deletedMessageIds.get(account.toLong())
-            if (dialogArray == null) {
-                dialogArray = LongSparseArray()
-                deletedMessageIds.put(account.toLong(), dialogArray)
-            }
-            for ((dialogId, set) in deletedMap) {
-                dialogArray.put(dialogId, set)
-            }
-            var dateArray = deletedMessageDates.get(account.toLong())
-            if (dateArray == null) {
-                dateArray = LongSparseArray()
-                deletedMessageDates.put(account.toLong(), dateArray)
-            }
-            for ((dialogId, dMap) in datesMap) {
-                var dSparse = dateArray.get(dialogId)
-                if (dSparse == null) {
-                    dSparse = LongSparseArray()
-                    dateArray.put(dialogId, dSparse)
-                }
-                for ((mId, dVal) in dMap) {
-                    dSparse.put(mId.toLong(), dVal)
-                }
-            }
+            deletedMessageIds.put(account.toLong(), deletedArray)
+            deletedMessageDates.put(account.toLong(), dateArray)
             loadedAccounts.add(account)
         }
     }
@@ -440,4 +439,3 @@ object SavedMessagesHelper {
         }
     }
 }
-

@@ -661,7 +661,7 @@
     <string name="InuLogsClear">Очистити логи</string>
     <string name="InuLogsCleared">Логи очищено</string>
 
-    <string name="InuTOS">TOS (Обхід обмежень)</string>
+    <string name="InuTOS">Анти-видалення та сховище</string>
     <string name="InuSelfDestructMedia">Самознищуване медіа</string>
     <string name="InuSaveSelfDestruct">Зберігати самознищуване медіа</string>
     <string name="InuSaveSelfDestructInfo">Одноразові фото, відео та відеоповідомлення відображатимуться як звичайне медіа, їх можна зберігати або пересилати.</string>
@@ -759,8 +759,8 @@
     <string name="InuRefreshStickerSet">Оновити</string>
     <string name="InuStickerSetRefreshed">Пакунок оновлено</string>
     <string name="InuStickerSetRefreshFailed">Не вдалося оновити пакунок</string>
-    <string name="InuAiCompose">ШІ-редактор</string>
-    <string name="InuAiComposeInfo">Переписуйте або продовжуйте чернетки через власний AI-ендпоінт. Замінює вбудований серверний AI-редактор.</string>
+    <string name="InuAiCompose">Штучний інтелект (AI)</string>
+    <string name="InuAiComposeInfo">AI Compose, розпізнавання голосу та інші AI-інструменти.</string>
     <string name="InuAiEndpoints">API-ендпоінти</string>
     <string name="InuAiEndpointAdd">Додати ендпоінт</string>
     <string name="InuAiEndpointEdit">Редагувати ендпоінт</string>
@@ -834,7 +834,7 @@
     <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>
     <string name="InuShowMutualContactInChatsInfo">Показувати значок взаємного контакту у списках учасників груп та каналів</string>
     <string name="InuCategoryAppearance">Вигляд і дизайн</string>
-    <string name="InuCategoryBackup">Резервне копіювання та система</string>
+    <string name="InuCategoryBackup">Система та резервні копії</string>
     <string name="InuCategoryBehavior">Поведінка та інструменти</string>
     <string name="InuCategoryChats">Чати</string>
     <string name="InuCategoryPrivacy">Конфіденційність і безпека</string>

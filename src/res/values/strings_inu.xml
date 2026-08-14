@@ -736,7 +736,7 @@
     <string name="InuBiometricAllowDeviceCredential">Allow device PIN/pattern</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Fall back to the device PIN, pattern or password when no biometric is enrolled.</string>
 
-    <string name="InuTOS">TOS</string>
+    <string name="InuTOS">Anti-Deletion &amp; Storage</string>
     <string name="InuSelfDestructMedia">Self-destructing media</string>
     <string name="InuSaveSelfDestruct">Save self-destructing media</string>
     <string name="InuSaveSelfDestructInfo">View-once photos, videos and video messages will show as normal media and can be saved or forwarded.</string>
@@ -800,8 +800,8 @@
     <string name="InuRefreshStickerSet">Refresh</string>
     <string name="InuStickerSetRefreshed">Pack updated</string>
     <string name="InuStickerSetRefreshFailed">Couldn\'t refresh the pack</string>
-    <string name="InuAiCompose">AI Compose</string>
-    <string name="InuAiComposeInfo">Rewrite or continue drafts with your own AI endpoint. Replaces the built-in server-side AI editor.</string>
+    <string name="InuAiCompose">Artificial intelligence (AI)</string>
+    <string name="InuAiComposeInfo">AI Compose, voice transcription, and other AI tools.</string>
     <string name="InuAiEndpoints">API endpoints</string>
     <string name="InuAiEndpointAdd">Add endpoint</string>
     <string name="InuAiEndpointEdit">Edit endpoint</string>
@@ -865,7 +865,7 @@
     <string name="InuCategoryProfile">Profile &amp; Navigation</string>
     <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
     <string name="InuCategoryPrivacy">Privacy &amp; Security</string>
-    <string name="InuCategoryBackup">Backup &amp; System</string>
+    <string name="InuCategoryBackup">System &amp; Backup</string>
 
     <string name="InuGhostMode">Ghost Mode</string>
     <string name="InuGhostModeMaster">Ghost Mode</string>

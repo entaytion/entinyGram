@@ -745,8 +745,8 @@
     <string name="InuBiometricConfirmLogoutInfo">Запрашивать биометрическое подтверждение перед выходом из аккаунта.</string>
     <string name="InuBiometricAllowDeviceCredential">Разрешить PIN/графический ключ устройства</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Использовать PIN, графический ключ или пароль устройства, если биометрия не настроена.</string>
-    <string name="InuAiCompose">AI Compose</string>
-    <string name="InuAiComposeInfo">Переписывайте или продолжайте черновики через собственный AI-эндпоинт. Заменяет встроенный серверный AI-редактор.</string>
+    <string name="InuAiCompose">Искусственный интеллект (AI)</string>
+    <string name="InuAiComposeInfo">AI Compose, расшифровка голосовых сообщений и другие AI-инструменты.</string>
     <string name="InuAiEndpoints">API-эндпоинты</string>
     <string name="InuAiEndpointAdd">Добавить эндпоинт</string>
     <string name="InuAiEndpointEdit">Изменить эндпоинт</string>
@@ -854,13 +854,13 @@
     <string name="InuSettingsPrefixHint">Ссылки настроек используют tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuBetaFeatureTitle">Бета-функция</string>
     <string name="InuBetaFeatureInfo">Эта функция находится в активной разработке (бета/экспериментальная).</string>
-    <string name="InuTOS">Условия использования</string>
+    <string name="InuTOS">Анти-удаление и хранилище</string>
     <string name="InuShowMutualContactIcon">Значок взаимного контакта</string>
     <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
     <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>
     <string name="InuShowMutualContactInChatsInfo">Показывать значок взаимного контакта в списках участников групп и каналов</string>
     <string name="InuCategoryAppearance">Внешний вид и дизайн</string>
-    <string name="InuCategoryBackup">Резервное копирование и система</string>
+    <string name="InuCategoryBackup">Система и резервные копии</string>
     <string name="InuCategoryBehavior">Поведение и инструменты</string>
     <string name="InuCategoryChats">Чаты</string>
     <string name="InuCategoryPrivacy">Конфиденциальность и безопасность</string>

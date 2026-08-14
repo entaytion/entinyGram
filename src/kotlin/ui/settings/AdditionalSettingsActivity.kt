@@ -54,7 +54,7 @@ import org.telegram.ui.LaunchActivity
 import org.telegram.ui.UpdateLayoutWrapper
 
 class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAdditional)
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryBackup)
 
     private var updateLayout: IUpdateLayout? = null
     private var updateWrapper: UpdateLayoutWrapper? = null

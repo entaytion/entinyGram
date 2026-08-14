@@ -195,7 +195,7 @@ index 0000000..0000000 100644
      private float selectedBackgroundProgress;
      private boolean lastTranslated;
  
-@@ -6773,7 +6776,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6775,7 +6778,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  lastPostAuthor != messageObject.messageOwner.post_author ||
                  wasPinned != isPinned ||
                  newReply != lastReplyMessage ||
@@ -205,7 +205,7 @@ index 0000000..0000000 100644
          boolean groupChanged = groupedMessages != currentMessagesGroup;
          boolean pollChanged = false;
  
-@@ -6915,6 +6919,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6917,6 +6921,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              linkPreviewY = 0;
              factCheckY = 0;
              lastTranslated = messageObject.translated;
@@ -213,7 +213,7 @@ index 0000000..0000000 100644
              lastSendState = messageObject.messageOwner.send_state;
              lastDeleteDate = messageObject.messageOwner.destroyTime;
              lastViewsCount = messageObject.messageOwner.views;
-@@ -7881,7 +7886,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -7883,7 +7888,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          isSmallImage = false;
                          linkPreviewAbove = currentMessageObject.messageOwner != null && currentMessageObject.messageOwner.invert_media;
                      } else if (hasLinkPreview) {
@@ -222,7 +222,7 @@ index 0000000..0000000 100644
                          site_name = webPage.site_name;
                          title = drawInstantViewType != 6 && drawInstantViewType != 7 ? webPage.title : null;
                          if (instantViewTypeIsGiftAuction != null) {
-@@ -12437,6 +12442,27 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -12439,6 +12444,27 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          }
      }
  
@@ -250,7 +250,7 @@ index 0000000..0000000 100644
      @Override
      public void invalidate() {
          if (currentMessageObject == null) {
-@@ -15522,7 +15548,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15524,7 +15550,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              restore = true;
  
              AndroidUtilities.rectTmp.set(linkX, linkPreviewY - dp(6), linkX + width, linkPreviewY + linkPreviewHeight + (drawInstantButtonInside && drawInstantView ? dp(42) : 0));
@@ -259,7 +259,7 @@ index 0000000..0000000 100644
              float rad = (float) Math.floor(SharedConfig.bubbleRadius / (currentMessageObject.isSponsored() ? 2f : 3f));
              linkLine
                  .offsetEmoji(0, drawPhotoImageBefore ? (1f - isSmallImage()) * (dp(18) + photoImage.getImageHeight() + (siteNameLayout != null ? siteNameLayout.getLineBottom(siteNameLayout.getLineCount() - 1) : 0)) : 0)
-@@ -15899,7 +15925,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15901,7 +15927,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  photoImage.setImageY(smallImageStartY);
              } else {
                  photoImage.setImageX(linkX + (hasInvoicePreview ? -dp(6.3f) : dp(10)));
@@ -268,7 +268,7 @@ index 0000000..0000000 100644
              }
              if (transitionParams != null && transitionParams.animateSmallImage) {
                  if (!isSmallImage && documentAttachType != DOCUMENT_ATTACH_TYPE_DOCUMENT) {
-@@ -16773,7 +16799,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -16775,7 +16801,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
          final TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
          final boolean translating = translateController.isTranslating(currentMessageObject);
@@ -277,7 +277,7 @@ index 0000000..0000000 100644
          final boolean shouldSummarize = currentMessageObject != null && currentMessageObject.messageOwner.summarizedOpen;
          final boolean isFinal = shouldTranslate == (currentMessageObject != null && currentMessageObject.translated) && shouldSummarize == (currentMessageObject != null && currentMessageObject.summarized);
          if (origin == !isFinal) {
-@@ -18452,7 +18478,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18454,7 +18480,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else if (edited) {
              timeString = AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
                  LocaleController.formatPmEditedDate(currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date) :
@@ -286,7 +286,7 @@ index 0000000..0000000 100644
          } else if (currentMessageObject.isSaved && currentMessageObject.messageOwner.fwd_from != null && (currentMessageObject.messageOwner.fwd_from.date != 0 || currentMessageObject.messageOwner.fwd_from.saved_date != 0)) {
              int date = currentMessageObject.messageOwner.fwd_from.saved_date;
              if (date == 0) {
-@@ -18505,7 +18531,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18507,7 +18533,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentTimeString = TextUtils.concat(formatString(R.string.MessageScheduledRepeatSeconds, period), ", ", currentTimeString);
              }
          }

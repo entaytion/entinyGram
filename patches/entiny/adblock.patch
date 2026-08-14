@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -24312,6 +24312,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -24332,6 +24332,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isSponsoredDisabled() {

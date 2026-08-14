@@ -299,7 +299,11 @@ object UpdateHelper {
 
     private fun finish(callback: ((CheckResult) -> Unit)?, result: CheckResult) {
         inflight = false
-        InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+        // Do not suppress future checks after a transient GitHub/network error.
+        // The interval is a successful-check throttle, not a failure backoff.
+        if (result is CheckResult.UpToDate || result is CheckResult.Updated) {
+            InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+        }
         callback?.invoke(result)
     }
 

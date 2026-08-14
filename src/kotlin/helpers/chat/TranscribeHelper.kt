@@ -20,20 +20,42 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.TranscribeButton
 import java.io.File
 import java.io.IOException
+import java.io.FileInputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Semaphore
 
 object TranscribeHelper {
 
     private val inFlight = ConcurrentHashMap<String, Boolean>()
+    private val cancelled = ConcurrentHashMap.newKeySet<String>()
+    private val requestSlots = Semaphore(2)
+
+    // Keep transcription off the general memory cliff. Gemini additionally needs
+    // a Base64 copy, so its effective peak is higher than multipart providers.
+    private const val MAX_TRANSCRIPTION_BYTES = 32L * 1024L * 1024L
 
     @JvmStatic
     fun isTranscribing(messageObject: MessageObject?): Boolean {
         if (messageObject == null) return false
         val key = reqKey(messageObject)
         return inFlight[key] == true
+    }
+
+    /**
+     * Invalidates a pending transcription. A provider request already blocked in
+     * HttpURLConnection is allowed to finish, but its result is discarded.
+     */
+    @JvmStatic
+    fun cancel(messageObject: MessageObject?) {
+        if (messageObject == null) return
+        val key = reqKey(messageObject)
+        cancelled.add(key)
+        if (inFlight.remove(key) != null) {
+            notifyStateChange(messageObject.currentAccount, messageObject)
+        }
     }
 
     @JvmStatic
@@ -60,6 +82,7 @@ object TranscribeHelper {
 
         val key = reqKey(messageObject)
         if (inFlight[key] == true) return
+        cancelled.remove(key)
 
         val provider = InuConfig.AI_TRANSCRIBE_PROVIDER.value
         val apiKey = when (provider) {
@@ -101,8 +124,8 @@ object TranscribeHelper {
     }
 
     private fun pollFileDownload(account: Int, messageObject: MessageObject, doc: TLRPC.Document, attempts: Int = 0) {
+        val key = reqKey(messageObject)
         if (attempts > 60) {
-            val key = reqKey(messageObject)
             inFlight.remove(key)
             notifyStateChange(account, messageObject)
             showError("Download timeout")
@@ -110,6 +133,7 @@ object TranscribeHelper {
         }
 
         Utilities.globalQueue.postRunnable({
+            if (isCancelled(key)) return@postRunnable
             val file = FileLoader.getInstance(account).getPathToAttach(doc, true)
             if (file != null && file.exists() && file.length() > 0) {
                 processAudioFile(account, messageObject, file)
@@ -124,9 +148,18 @@ object TranscribeHelper {
     private fun processAudioFile(account: Int, messageObject: MessageObject, file: File) {
         val key = reqKey(messageObject)
         Utilities.globalQueue.postRunnable {
+            if (!requestSlots.tryAcquire()) {
+                inFlight.remove(key)
+                notifyStateChange(account, messageObject)
+                showError("Too many transcription requests")
+                return@postRunnable
+            }
             try {
+                if (isCancelled(key)) return@postRunnable
+                if (file.length() > MAX_TRANSCRIPTION_BYTES) {
+                    throw IOException("Audio file is too large")
+                }
                 val isRound = messageObject.isRoundVideo
-                val bytes = file.readBytes()
                 val mime = if (isRound) "video/mp4" else "audio/ogg"
                 val fileName = if (isRound) "video.mp4" else "voice.ogg"
 
@@ -134,15 +167,16 @@ object TranscribeHelper {
                 val customPrompt = InuConfig.AI_TRANSCRIBE_PROMPT.value.trim()
 
                 val transcribedText = when (provider) {
-                    InuConfig.TRANSCRIBE_PROVIDER_GROQ -> transcribeGroq(bytes, fileName, mime, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> transcribeGemini(bytes, mime, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> transcribeOpenAI(bytes, fileName, mime, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_CF -> transcribeCloudflare(bytes, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> transcribeCustom(bytes, fileName, mime, customPrompt)
+                    InuConfig.TRANSCRIBE_PROVIDER_GROQ -> transcribeGroq(file, fileName, mime, customPrompt)
+                    InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> transcribeGemini(file.readBytes(), mime, customPrompt)
+                    InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> transcribeOpenAI(file, fileName, mime, customPrompt)
+                    InuConfig.TRANSCRIBE_PROVIDER_CF -> transcribeCloudflare(file, customPrompt)
+                    InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> transcribeCustom(file, fileName, mime, customPrompt)
                     else -> throw IllegalStateException("Unknown provider: $provider")
                 }
 
                 AndroidUtilities.runOnUIThread {
+                    if (isCancelled(key)) return@runOnUIThread
                     inFlight.remove(key)
                     if (!TextUtils.isEmpty(transcribedText)) {
                         val owner = messageObject.messageOwner
@@ -170,15 +204,21 @@ object TranscribeHelper {
                     }
                 }
             } catch (e: Exception) {
+                if (isCancelled(key)) return@postRunnable
                 FileLog.e("TranscribeHelper error", e)
                 AndroidUtilities.runOnUIThread {
                     inFlight.remove(key)
                     notifyStateChange(account, messageObject)
                     showError(e.message ?: "Transcription error")
                 }
+            } finally {
+                requestSlots.release()
+                cancelled.remove(key)
             }
         }
     }
+
+    private fun isCancelled(key: String): Boolean = cancelled.contains(key)
 
     private fun notifyStateChange(account: Int, messageObject: MessageObject) {
         AndroidUtilities.runOnUIThread {
@@ -201,7 +241,7 @@ object TranscribeHelper {
 
     // ------------------------------------------------------------------ Providers
 
-    private fun transcribeGroq(bytes: ByteArray, fileName: String, mime: String, prompt: String): String {
+    private fun transcribeGroq(file: File, fileName: String, mime: String, prompt: String): String {
         val apiKey = InuConfig.AI_TRANSCRIBE_GROQ_KEY.value.trim()
         val url = "https://api.groq.com/openai/v1/audio/transcriptions"
         val parts = mutableMapOf(
@@ -212,7 +252,7 @@ object TranscribeHelper {
         if (prompt.isNotBlank()) parts["prompt"] = prompt
 
         val headers = mapOf("Authorization" to "Bearer $apiKey")
-        val resp = postMultipart(url, headers, parts, "file", fileName, mime, bytes)
+        val resp = postMultipart(url, headers, parts, "file", fileName, mime, file)
         val json = JSONObject(resp)
         if (json.has("error")) {
             throw IOException(json.getJSONObject("error").optString("message", "Groq error"))
@@ -220,7 +260,7 @@ object TranscribeHelper {
         return json.optString("text", "").trim()
     }
 
-    private fun transcribeOpenAI(bytes: ByteArray, fileName: String, mime: String, prompt: String): String {
+    private fun transcribeOpenAI(file: File, fileName: String, mime: String, prompt: String): String {
         val apiKey = InuConfig.AI_TRANSCRIBE_OPENAI_KEY.value.trim()
         val url = "https://api.openai.com/v1/audio/transcriptions"
         val parts = mutableMapOf(
@@ -231,7 +271,7 @@ object TranscribeHelper {
         if (prompt.isNotBlank()) parts["prompt"] = prompt
 
         val headers = mapOf("Authorization" to "Bearer $apiKey")
-        val resp = postMultipart(url, headers, parts, "file", fileName, mime, bytes)
+        val resp = postMultipart(url, headers, parts, "file", fileName, mime, file)
         val json = JSONObject(resp)
         if (json.has("error")) {
             throw IOException(json.getJSONObject("error").optString("message", "OpenAI error"))
@@ -239,7 +279,7 @@ object TranscribeHelper {
         return json.optString("text", "").trim()
     }
 
-    private fun transcribeCustom(bytes: ByteArray, fileName: String, mime: String, prompt: String): String {
+    private fun transcribeCustom(file: File, fileName: String, mime: String, prompt: String): String {
         var rawUrl = InuConfig.AI_TRANSCRIBE_CUSTOM_URL.value.trim()
         if (rawUrl.isEmpty()) throw IOException("Custom endpoint URL is empty")
         if (!rawUrl.endsWith("/audio/transcriptions")) {
@@ -257,7 +297,7 @@ object TranscribeHelper {
         val headers = mutableMapOf<String, String>()
         if (apiKey.isNotBlank()) headers["Authorization"] = "Bearer $apiKey"
 
-        val resp = postMultipart(rawUrl, headers, parts, "file", fileName, mime, bytes)
+        val resp = postMultipart(rawUrl, headers, parts, "file", fileName, mime, file)
         val json = JSONObject(resp)
         if (json.has("error")) {
             throw IOException(json.getJSONObject("error").optString("message", "Custom API error"))
@@ -323,7 +363,7 @@ object TranscribeHelper {
         return ""
     }
 
-    private fun transcribeCloudflare(bytes: ByteArray, prompt: String): String {
+    private fun transcribeCloudflare(file: File, prompt: String): String {
         val accountId = InuConfig.AI_TRANSCRIBE_CF_ACCOUNT_ID.value.trim()
         val apiToken = InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value.trim()
         if (accountId.isEmpty() || apiToken.isEmpty()) {
@@ -339,7 +379,9 @@ object TranscribeHelper {
             setRequestProperty("Authorization", "Bearer $apiToken")
             setRequestProperty("Content-Type", "application/octet-stream")
         }
-        conn.outputStream.use { it.write(bytes) }
+        FileInputStream(file).use { input ->
+            conn.outputStream.use { output -> input.copyTo(output) }
+        }
         val code = conn.responseCode
         val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
             ?.bufferedReader()?.use { it.readText() } ?: ""
@@ -368,7 +410,7 @@ object TranscribeHelper {
         fileField: String,
         fileName: String,
         fileMime: String,
-        fileBytes: ByteArray
+        file: File
     ): String {
         val boundary = "Boundary-" + UUID.randomUUID().toString()
         val lineEnd = "\r\n"
@@ -392,7 +434,7 @@ object TranscribeHelper {
             out.write(("$twoHyphens$boundary$lineEnd").toByteArray())
             out.write(("Content-Disposition: form-data; name=\"$fileField\"; filename=\"$fileName\"$lineEnd").toByteArray())
             out.write(("Content-Type: $fileMime$lineEnd$lineEnd").toByteArray())
-            out.write(fileBytes)
+            FileInputStream(file).use { input -> input.copyTo(out) }
             out.write(lineEnd.toByteArray())
             out.write(("$twoHyphens$boundary$twoHyphens$lineEnd").toByteArray())
         }

@@ -58,6 +58,20 @@ object InuDatabaseHelper {
             version = 5
         }
 
+        if (version == 5) {
+            // These columns are used by dialog-scoped loads and TTL pruning. Without
+            // dedicated indexes both operations degrade to full table scans as the
+            // deleted-message cache grows.
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_dialog ON inu_deleted_messages(dialog_id)")
+                .stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_date ON inu_deleted_messages(date)")
+                .stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_edit_history_date ON inu_edit_history(date)")
+                .stepThis().dispose()
+            writeKv(db, "version", "6")
+            version = 6
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 
@@ -73,28 +87,23 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
-    fun loadDeletedMessageInfo(db: SQLiteDatabase): Pair<Map<Long, HashSet<Int>>, Map<Long, HashMap<Int, Long>>> {
-        val idsMap = HashMap<Long, HashSet<Int>>()
-        val datesMap = HashMap<Long, HashMap<Int, Long>>()
+    fun forEachDeletedMessageInfo(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int, date: Long) -> Unit) {
         val cursor = db.queryFinalized("SELECT dialog_id, msg_id, date FROM inu_deleted_messages")
         try {
             while (cursor.next()) {
-                val dialogId = cursor.longValue(0)
-                val msgId = cursor.intValue(1)
-                val date = cursor.longValue(2)
-                idsMap.getOrPut(dialogId) { HashSet() }.add(msgId)
-                if (date > 0) {
-                    datesMap.getOrPut(dialogId) { HashMap() }[msgId] = date
-                }
+                consumer(cursor.longValue(0), cursor.intValue(1), cursor.longValue(2))
             }
         } finally {
             cursor.dispose()
         }
-        return Pair(idsMap, datesMap)
     }
 
     fun loadDeletedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
-        return loadDeletedMessageInfo(db).first
+        val idsMap = HashMap<Long, HashSet<Int>>()
+        forEachDeletedMessageInfo(db) { dialogId, msgId, _ ->
+            idsMap.getOrPut(dialogId) { HashSet() }.add(msgId)
+        }
+        return idsMap
     }
 
     fun savePreservedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
@@ -190,12 +199,14 @@ object InuDatabaseHelper {
      * Returns the number of rows deleted.
      */
     fun pruneDeletedMessages(db: SQLiteDatabase, cutoffUnixSec: Long): Int {
+        val mediaPaths = getMediaPaths(db, "inu_deleted_messages", "date < ?", cutoffUnixSec)
         db.executeFast("DELETE FROM inu_deleted_messages WHERE date > 0 AND date < ?")
             .also {
                 it.bindLong(1, cutoffUnixSec)
                 it.step()
                 it.dispose()
             }
+        deleteUnreferencedMediaFiles(db, mediaPaths)
         // SQLite doesn't give us rows-affected easily via this API, that's fine
         return 0
     }
@@ -204,12 +215,14 @@ object InuDatabaseHelper {
      * Removes edit history entries older than [cutoffUnixSec] from the DB.
      */
     fun pruneEditHistory(db: SQLiteDatabase, cutoffUnixSec: Long) {
+        val mediaPaths = getMediaPaths(db, "inu_edit_history", "date < ?", cutoffUnixSec)
         db.executeFast("DELETE FROM inu_edit_history WHERE date > 0 AND date < ?")
             .also {
                 it.bindLong(1, cutoffUnixSec)
                 it.step()
                 it.dispose()
             }
+        deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 
     data class DialogCacheStat(
@@ -255,15 +268,7 @@ object InuDatabaseHelper {
     }
 
     fun clearDeletedMessages(db: SQLiteDatabase, dialogIds: Collection<Long>? = null) {
-        try {
-            val paths = getDeletedMediaPaths(db, dialogIds)
-            for (path in paths) {
-                try {
-                    val file = java.io.File(path)
-                    if (file.exists()) file.delete()
-                } catch (e: Throwable) { }
-            }
-        } catch (e: Throwable) { }
+        val mediaPaths = try { getMediaPathsForTables(db, dialogIds) } catch (_: Throwable) { emptyList() }
 
         if (dialogIds == null) {
             db.executeFast("DELETE FROM inu_deleted_messages").stepThis().dispose()
@@ -274,6 +279,59 @@ object InuDatabaseHelper {
             db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id IN ($idsStr)").stepThis().dispose()
             db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id IN ($idsStr)").stepThis().dispose()
             db.executeFast("DELETE FROM inu_deleted_reactions WHERE dialog_id IN ($idsStr)").stepThis().dispose()
+        }
+        deleteUnreferencedMediaFiles(db, mediaPaths)
+    }
+
+    private fun getMediaPathsForTables(db: SQLiteDatabase, dialogIds: Collection<Long>?): List<String> {
+        val paths = ArrayList<String>()
+        if (dialogIds != null && dialogIds.isEmpty()) return paths
+        for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
+            val where = if (dialogIds == null) {
+                "media_path IS NOT NULL"
+            } else {
+                "media_path IS NOT NULL AND dialog_id IN (${dialogIds.joinToString(",")})"
+            }
+            val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE $where")
+            try {
+                while (cursor.next()) {
+                    cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
+                }
+            } finally {
+                cursor.dispose()
+            }
+        }
+        return paths
+    }
+
+    private fun getMediaPaths(db: SQLiteDatabase, table: String, condition: String, value: Long): List<String> {
+        val paths = ArrayList<String>()
+        val cursor = db.queryFinalized("SELECT media_path FROM $table WHERE media_path IS NOT NULL AND date > 0 AND $condition", value)
+        try {
+            while (cursor.next()) {
+                cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return paths
+    }
+
+    private fun deleteUnreferencedMediaFiles(db: SQLiteDatabase, paths: Collection<String>) {
+        for (path in paths.distinct()) {
+            val cursor = db.queryFinalized(
+                "SELECT 1 FROM inu_deleted_messages WHERE media_path = ? UNION ALL SELECT 1 FROM inu_edit_history WHERE media_path = ? LIMIT 1",
+                path,
+                path,
+            )
+            try {
+                if (cursor.next()) continue
+                val file = java.io.File(path)
+                if (file.exists()) file.delete()
+            } catch (_: Throwable) { }
+            finally {
+                cursor.dispose()
+            }
         }
     }
 

@@ -72,6 +72,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.msg_permissions, LocaleController.getString(R.string.InuCategoryPrivacy)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.menu_hide_gift, LocaleController.getString(R.string.InuAnnoyances)))
         items.add(mkSubPageButton(BUTTON_TOS, R.drawable.msg_autodelete, LocaleController.getString(R.string.InuTOS)))
+        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.msg_settings_old, LocaleController.getString(R.string.InuCategoryBackup)))
         items.add(UItem.asShadow(null))
 
         // Channel & GitHub links without "Links" header, formatted cleanly
@@ -104,6 +105,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             CAT_PRIVACY -> presentFragment(PrivacySecurityActivity())
             CAT_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
             BUTTON_TOS -> presentFragment(TosSettingsActivity())
+            CAT_SYSTEM -> presentFragment(AdditionalSettingsActivity())
             BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/entinyGram")
             BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/Entaytion/EntinyGram")
         }
@@ -148,6 +150,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val CAT_PRIVACY = InuUtils.generateId()
         private val CAT_ANNOYANCES = InuUtils.generateId()
         private val BUTTON_TOS = InuUtils.generateId()
+        private val CAT_SYSTEM = InuUtils.generateId()
         private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
         private val BUTTON_GITHUB = InuUtils.generateId()
 

@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6952,7 +6952,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6954,7 +6954,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  drawSideButton = checkNeedDrawShareButton(messageObject) ? 2 : 0;
              } else if (messageObject.searchType == ChatActivity.SEARCH_MY_MESSAGES) {
                  drawSideButton = 0;
