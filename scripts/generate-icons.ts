@@ -14,26 +14,23 @@ import {
 // run manually after changing src/res/launcher SVGs; output is committed
 
 const ADAPTIVE_SIZE = 108
-const FG_SAFE = 60
+const FG_SAFE = 72
 // settings-list icon: 24dp render in a 72dp viewport, tinted white by
 // SettingCell — mirrors stock settings_account/settings_chat/settings_privacy
 const SETTINGS_DP = 24
 const SETTINGS_VIEWPORT = 72
 const SETTINGS_SAFE = 80
-// notification small icon: 24dp white silhouette. icon-mono.svg only fills
-// ~56% of its viewBox, so safe overshoots the viewport to bring the glyph up
-// to ~22dp (the Material small-icon target inside a 24dp canvas).
+// notification small icon: 24dp white silhouette.
 const NOTIFICATION_DP = 24
 const NOTIFICATION_VIEWPORT = 24
-const NOTIFICATION_SAFE = 39
-const BG_GRADIENT_FROM = '#FFF20C3C'
-const BG_GRADIENT_TO = '#FFA00320'
+const NOTIFICATION_SAFE = 24
+const BG_COLOR = '#FFF20C3C'
 // debug badge: a small white square (only its top-left corner rounded) tucked
 // into the bottom-right corner, holding a β. the white fill is framed with a
 // background-coloured outline so it doesn't clash with the icon underneath.
 const DEBUG_BADGE_COLOR = '#FFFFFFFF'
 // the β fill and the badge outline both use the icon background colour
-const DEBUG_MARK_COLOR = BG_GRADIENT_FROM
+const DEBUG_MARK_COLOR = BG_COLOR
 // β glyph from Material Design Icons (Apache-2.0), viewBox 0 0 24 24
 const BETA_PATH = 'M9.23 17.59v5.53H6.88V6.72c0-1.45.43-2.59 1.28-3.44C9 2.43 10.17 2 11.61 2c1.39 0 2.46.34 3.26 1c.79.68 1.18 1.62 1.18 2.81c0 .82-.26 1.59-.78 2.3s-1.19 1.2-2.02 1.47v.04c1.25.2 2.22.65 2.88 1.38c.66.71.99 1.62.99 2.74c0 1.32-.46 2.4-1.37 3.23c-.92.83-2.12 1.24-3.62 1.24c-1.06 0-2.03-.21-2.9-.62m1.49-6.84V8.83c.87-.11 1.58-.43 2.15-.97c.56-.55.84-1.16.84-1.86c0-1.38-.71-2.08-2.11-2.08c-.76 0-1.35.24-1.76.73s-.61 1.17-.61 2.06v8.79c.91.53 1.8.79 2.66.79c.84 0 1.5-.22 1.97-.65c.47-.44.7-1.06.7-1.85c0-1.79-1.28-2.79-3.84-3.04'
 const GLYPH_VIEWBOX = 24
@@ -174,24 +171,13 @@ function buildAdaptiveIcon(foreground = 'icon_foreground_inu'): string {
 function buildBackgroundVector(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="${ADAPTIVE_SIZE}dp"
     android:height="${ADAPTIVE_SIZE}dp"
     android:viewportWidth="${ADAPTIVE_SIZE}"
     android:viewportHeight="${ADAPTIVE_SIZE}">
-    <path android:pathData="M0,0h${ADAPTIVE_SIZE}v${ADAPTIVE_SIZE}h-${ADAPTIVE_SIZE}z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:type="linear"
-                android:startX="0"
-                android:startY="0"
-                android:endX="0"
-                android:endY="${ADAPTIVE_SIZE}">
-                <item android:offset="0" android:color="${BG_GRADIENT_FROM}" />
-                <item android:offset="1" android:color="${BG_GRADIENT_TO}" />
-            </gradient>
-        </aapt:attr>
-    </path>
+    <path
+        android:pathData="M0,0h${ADAPTIVE_SIZE}v${ADAPTIVE_SIZE}h-${ADAPTIVE_SIZE}z"
+        android:fillColor="${BG_COLOR}" />
 </vector>
 `
 }

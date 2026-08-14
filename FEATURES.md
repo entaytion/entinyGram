@@ -224,20 +224,33 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - send MP4 files attached through Files as playable videos without conversion
 - original video quality option in quality picker when sending videos
 - remember last used settings in polls + reasonable defaults
+- strip tracking parameters from URLs (UTM, fbclid, etc.) on open and paste using AdGuard tracking rules
 
 ## TOS
 
-- 📡 **save self-destructing media**: view-once photos, videos and video messages show as normal media and can be saved or forwarded (disabled by default)
-- 📡 **keep self-destruct content per-category**: separate toggles keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages in the local database after their timers expire — media files and message rows are never removed locally; preserved messages are marked with the deleted-message icon next to their timestamp; all disabled by default (stock behavior unchanged)
-- 📡 **unreader**: messages are never marked as read — opening a chat keeps the unread badge and no read receipts reach the other side; standalone toggle in Settings > TOS, independent of ghost mode
-- 📡 allow saving any story to gallery directly, bypassing Telegram Premium requirements and download restrictions
-- 📡 **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
-- 📡 **save edit history**: view previous message versions (marked with ✏️) in a message bubble view with media support
-- 📡 **edit history diff mode**: toggle text diff highlighting in edit history
-- 📡 **save user info** (beta): keeps phone country, registration month and name/photo change dates after the server stops returning them
-- 📡 **forward as own message**: when enabled, every forward is downloaded and re-sent as your own new message (no "Forwarded from" header) — also bypasses content protection in chats with forwarding disabled; text, stickers and captions carry over (disabled by default)
-- 📡 **hide sponsored messages (AdBlock)**: disables channel sponsored ads and prevents loading promotional messages
-- 📡 **AdBlock & Regex Content Filter** (experimental): filter out ad posts, spam, or messages matching custom regular expressions / keywords (hide completely or cover with spoiler)
+- 📡 **ghost mode (stealth)**: comprehensive privacy suite with granular toggles:
+  - hide read receipts for messages, voice notes and video messages
+  - read on send: automatically mark incoming messages as read only when sending a reply
+  - hide story views (watch stories completely anonymously)
+  - hide online status + optional "go offline right after going online"
+  - hide typing, audio recording, and media upload indicators
+- 📡 **anti-deletion & edit history**:
+  - **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
+  - **per-category deleted message saving**: granular toggles for private chats, groups, channels, and bots
+  - **save edit history**: view full edit history (marked with ✏️) in an interactive message bubble sheet
+  - **edit history text diff mode**: inline color-coded diff highlighting of edited text changes
+  - **deleted cache TTL & storage manager**: automatic cache expiration (never / 1 day / 1 week / 1 month) and interactive cleanup sheet with per-dialog size breakdown
+- 📡 **self-destructing & expiring media**:
+  - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
+  - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
+- 📡 **content protection & forward bypass**:
+  - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
+  - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
+  - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
+- 📡 **unreader**: standalone mode where incoming messages are never marked as read, keeping the unread counter intact
+- 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
+- 📡 **hide sponsored messages (AdBlock)**: completely disables Telegram sponsored channel ads
+- 📡 **AdBlock & Regex Content Filter** (experimental): block or spoiler-cover ads, spam, or messages matching custom regex patterns and keywords
 
 ## annoyances
 

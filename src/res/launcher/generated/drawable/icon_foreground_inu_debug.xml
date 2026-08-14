@@ -5,31 +5,30 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
     <group
-        android:translateX="24"
-        android:translateY="24"
-        android:scaleX="2.5"
-        android:scaleY="2.5">
+        android:translateX="18"
+        android:translateY="18"
+        android:scaleX="3"
+        android:scaleY="3">
         <path
-            android:pathData="M11 12a1 1 0 1 0 2 0a1 1 0 1 0-2 0"
-            android:fillColor="#FFFFFFFF"
+            android:pathData="M4 10a7.31 7.31 0 0 0 10 10Z"
             android:strokeColor="#FFFFFFFF"
             android:strokeWidth="1.8"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />
         <path
-            android:pathData="M16.616 13.924a5 5 0 1 0-9.23 0"
+            android:pathData="m9 15 3-3"
             android:strokeColor="#FFFFFFFF"
             android:strokeWidth="1.8"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />
         <path
-            android:pathData="M20.307 15.469a9 9 0 1 0-16.615 0"
+            android:pathData="M17 13a6 6 0 0 0-6-6"
             android:strokeColor="#FFFFFFFF"
             android:strokeWidth="1.8"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />
         <path
-            android:pathData="m9 21l3-9l3 9m-5-2h4"
+            android:pathData="M21 13A10 10 0 0 0 11 3"
             android:strokeColor="#FFFFFFFF"
             android:strokeWidth="1.8"
             android:strokeLineCap="round"

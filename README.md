@@ -10,7 +10,7 @@ this fork is primarily intended for long-term Telegram users who want a clean, f
 
 you can expect:
 - removed annoyances
-- *a lot* of QoL and privacy features (story downloads without Premium, TOS self-destruct media bypass, deleted/edited messages history)
+- *a lot* of QoL and privacy features (Ghost Mode, deleted/edited message history, TOS self-destruct media bypass, story downloads without Premium, AdBlock)
 - UI tweaks to make it look prettier, cleaner, and customized
 - opinionated defaults with full user control
 - maps use a custom Google Maps API key (entinygram), so no personal key lives in the repo

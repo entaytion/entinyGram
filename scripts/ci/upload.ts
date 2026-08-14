@@ -123,7 +123,9 @@ try {
     let bannerFile: string | Buffer = `file:${bannerPath}`
     if (bannerPath.endsWith('.svg')) {
       try {
-        bannerFile = await sharp(bannerPath).png().toBuffer()
+        let svgText = await fs.readFile(bannerPath, 'utf8')
+        svgText = svgText.replace(/entinyGram • [^<]+/, `entinyGram • ${info.verName}`)
+        bannerFile = await sharp(Buffer.from(svgText)).png().toBuffer()
       } catch (e) {
         console.warn('Failed to convert SVG banner to PNG (sharp?), falling back to raw file', e)
       }
