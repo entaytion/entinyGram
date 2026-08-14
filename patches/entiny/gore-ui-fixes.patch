@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -647,14 +647,28 @@ public class TextCell extends FrameLayout {
+@@ -633,14 +640,28 @@ public class TextCell extends FrameLayout {
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
          offsetFromImage = getOffsetFromImage(true);
          imageView.setVisibility(VISIBLE);
