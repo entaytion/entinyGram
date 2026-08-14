@@ -16,6 +16,7 @@ import desu.inugram.helpers.chat.BlockedMessagesHelper
 import desu.inugram.helpers.chat.ChatHelper
 import desu.inugram.helpers.chat.ForumDisplayHelper
 import desu.inugram.helpers.security.GhostHelper
+import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.json.JSONArray
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -40,6 +41,7 @@ import org.telegram.ui.Components.ProfileGalleryBlurView
 import org.telegram.ui.Components.ProfileGalleryView
 import org.telegram.ui.Stars.StarsController
 import org.telegram.ui.Stories.StoriesController
+import org.telegram.ui.LaunchActivity
 import java.util.Date
 
 object ProfileHelper {
@@ -48,6 +50,7 @@ object ProfileHelper {
     const val ACTION_TOGGLE_HIDE_MESSAGES = 507
     const val ACTION_TOGGLE_GHOST_DIALOG = 508
     const val ACTION_MARK_AS_READ = 509
+    const val ACTION_DELETE_PROFILE_PHOTOS = 510
     const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
@@ -260,6 +263,13 @@ object ProfileHelper {
                 )
             }
         }
+        if (dialogId > 0 && dialogId == UserConfig.getInstance(currentAccount).clientUserId) {
+            otherItem.addSubItem(
+                ACTION_DELETE_PROFILE_PHOTOS,
+                R.drawable.msg_delete,
+                LocaleController.getString(R.string.InuDeleteProfilePhotos),
+            )
+        }
         if (BuildVars.DEBUG_PRIVATE_VERSION) {
             otherItem.addSubItem(
                 ACTION_DEBUG_CLEAR_CACHE,
@@ -299,6 +309,10 @@ object ProfileHelper {
             ACTION_MARK_AS_READ -> {
                 GhostHelper.markDialogAsRead(currentAccount, dialogId)
                 BulletinFactory.global().createSimpleBulletin(R.raw.contact_check, LocaleController.getString(R.string.InuMarkChatAsReadDone)).show()
+            }
+            ACTION_DELETE_PROFILE_PHOTOS -> {
+                val activity = LaunchActivity.getLastFragment()?.parentActivity ?: LaunchActivity.instance ?: return true
+                DeleteProfilePhotosSheet(activity, currentAccount).show()
             }
             ACTION_DEBUG_CLEAR_CACHE -> debugClearProfileCache(currentAccount, dialogId)
             else -> return false

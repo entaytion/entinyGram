@@ -869,4 +869,18 @@
 
     <string name="InuUnreader">Нечиталка</string>
     <string name="InuUnreaderInfo">Сообщения не помечаются прочитанными: при открытии чата значок непрочитанного сохраняется, а отчёты о прочтении не отправляются собеседнику.</string>
+
+    <string name="InuDeleteProfilePhotos">Удалить фото профиля</string>
+    <string name="InuDeleteProfilePhotosInfo">Удаление всех фото профиля или только выбранных в одно нажатие</string>
+    <string name="InuDeleteAllProfilePhotos">Удалить все фото</string>
+    <string name="InuDeleteSelectedProfilePhotos">Удалить выбранные (%1$d)</string>
+    <string name="InuDeleteAllProfilePhotosConfirm">Вы уверены, что хотите удалить все фотографии профиля? Это действие нельзя отменить.</string>
+    <string name="InuDeleteSelectedProfilePhotosConfirm">Вы уверены, что хотите удалить %1$d выбранных фото?</string>
+    <string name="InuProfilePhotosDeleted">Все фото профиля удалены</string>
+    <string name="InuProfilePhotosDeletedCount">Удалено %1$d фото профиля</string>
+    <string name="InuNoProfilePhotos">Фотографии профиля не найдены</string>
+    <string name="InuSelectAll">Выбрать все</string>
+    <string name="InuDeselectAll">Снять выделение</string>
+    <string name="InuMainPhoto">Главное</string>
+    <string name="InuProfilePhotosSelected">Выбрано: %1$d</string>
 </resources>

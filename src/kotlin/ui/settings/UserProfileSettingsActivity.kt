@@ -4,6 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -65,6 +66,13 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableChatTitlePhone)
             ).setChecked(InuConfig.DISABLE_CHAT_TITLE_PHONE.value)
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_DELETE_PROFILE_PHOTOS,
+                LocaleController.getString(R.string.InuDeleteProfilePhotos),
+                LocaleController.getString(R.string.InuDeleteProfilePhotosInfo)
+            )
+        )
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -105,6 +113,11 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.DISABLE_CHAT_TITLE_PHONE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
+
+            BUTTON_DELETE_PROFILE_PHOTOS -> {
+                val activity = parentActivity ?: return
+                DeleteProfilePhotosSheet(activity, currentAccount).show()
+            }
         }
     }
 
@@ -115,6 +128,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
         private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
+        private val BUTTON_DELETE_PROFILE_PHOTOS = InuUtils.generateId()
 
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "user-profile",
@@ -128,6 +142,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("profile-prefer-media-tab", R.string.InuProfilePreferMediaTab, TOGGLE_PROFILE_PREFER_MEDIA_TAB),
                 SearchRegistry.Entry("profile-id-mode", R.string.InuProfileIdMode, BUTTON_PROFILE_ID_MODE),
                 SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
+                SearchRegistry.Entry("delete-profile-photos", R.string.InuDeleteProfilePhotos, BUTTON_DELETE_PROFILE_PHOTOS),
             ),
         )
     }

@@ -870,4 +870,18 @@
 
     <string name="InuUnreader">Антипрочитання</string>
     <string name="InuUnreaderInfo">Повідомлення ніколи не позначаються як прочитані: відкриття чату зберігає лічильник непрочитаних і не надсилає підтвердження прочитання іншій стороні.</string>
+
+    <string name="InuDeleteProfilePhotos">Видалити фото профілю</string>
+    <string name="InuDeleteProfilePhotosInfo">Видалення всіх фото профілю або лише вибраних в один дотик</string>
+    <string name="InuDeleteAllProfilePhotos">Видалити всі фото</string>
+    <string name="InuDeleteSelectedProfilePhotos">Видалити вибрані (%1$d)</string>
+    <string name="InuDeleteAllProfilePhotosConfirm">Ви впевнені, що хочете видалити всі фотографії профілю? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteSelectedProfilePhotosConfirm">Ви впевнені, що хочете видалити %1$d вибраних фото?</string>
+    <string name="InuProfilePhotosDeleted">Всі фото профілю видалено</string>
+    <string name="InuProfilePhotosDeletedCount">Видалено %1$d фото профілю</string>
+    <string name="InuNoProfilePhotos">Фотографій профілю не знайдено</string>
+    <string name="InuSelectAll">Вибрати всі</string>
+    <string name="InuDeselectAll">Зняти виділення</string>
+    <string name="InuMainPhoto">Головне</string>
+    <string name="InuProfilePhotosSelected">Вибрано: %1$d</string>
 </resources>

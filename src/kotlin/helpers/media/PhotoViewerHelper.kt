@@ -17,11 +17,13 @@ import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.PhotoViewer
+import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.ui.Stories.recorder.StoryEntry
 import java.io.File
 import java.io.FileInputStream
@@ -33,9 +35,11 @@ object PhotoViewerHelper {
     private const val MENU_COPY_PHOTO = 100
     private const val MENU_COPY_FRAME = 101
     private const val MENU_FOOTER = 102
+    private const val MENU_DELETE_PROFILE_PHOTOS = 103
 
     private var footerGap: View? = null
     private var footerItem: ActionBarMenuSubItem? = null
+    private var lastAvatarsDialogId: Long = 0L
 
     @JvmStatic
     fun gifAsVideo(msg: MessageObject?): Boolean = msg != null && msg.isNewGif && InuConfig.GIF_SEEKBAR.value
@@ -54,6 +58,7 @@ object PhotoViewerHelper {
 
     @JvmStatic
     fun getAvatarSubtitle(location: ImageLocation?, dialogId: Long, account: Int): CharSequence? {
+        lastAvatarsDialogId = dialogId
         if (location == null) return null
         val userFull = if (dialogId > 0) MessagesController.getInstance(account).getUserFull(dialogId) else null
         val photo = location.photo ?: findUserPhotoById(userFull, location.photoId) ?: return null
@@ -85,6 +90,34 @@ object PhotoViewerHelper {
             detectPlatform(file, isPfp = true)
         }
         applyFooter(dc, platform)
+    }
+
+    @JvmStatic
+    fun setFooter(photo: TLRPC.Photo, account: Int) {
+        val dc = photo.dc_id.takeIf { it != 0 } ?: return applyFooter(null)
+        val hasVideo = photo.video_sizes?.isEmpty() == false
+        val platform = if (hasVideo) null else {
+            val size = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, 1280)
+            val location = ImageLocation.getForPhoto(size, photo)
+            val file = runCatching {
+                FileLoader.getInstance(account).getPathToAttach(
+                    PhotoViewer.getFileLocation(location), PhotoViewer.getFileLocationExt(location), true,
+                )
+            }.getOrNull()
+            detectPlatform(file, isPfp = true)
+        }
+        applyFooter(dc, platform)
+    }
+
+    @JvmStatic
+    fun setFooter(botApp: TLRPC.TL_botApp) {
+        val dc = botApp.photo?.dc_id?.takeIf { it != 0 } ?: return applyFooter(null)
+        applyFooter(dc, null)
+    }
+
+    @JvmStatic
+    fun resetFooter() {
+        applyFooter(null)
     }
 
     private fun applyFooter(dc: Int, platform: String?) =
@@ -153,6 +186,8 @@ object PhotoViewerHelper {
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
         menuItem.addSubItem(MENU_COPY_FRAME, R.drawable.msg_copy, LocaleController.getString(R.string.InuCopyFrame))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
+        menuItem.addSubItem(MENU_DELETE_PROFILE_PHOTOS, R.drawable.msg_delete, LocaleController.getString(R.string.InuDeleteProfilePhotos))
+            .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
     }
 
     @JvmStatic
@@ -172,13 +207,22 @@ object PhotoViewerHelper {
 
     @JvmStatic
     fun resetMenuItems(menuItem: ActionBarMenuItem) {
+        lastAvatarsDialogId = 0L
         menuItem.hideSubItem(MENU_COPY_PHOTO)
         menuItem.hideSubItem(MENU_COPY_FRAME)
+        menuItem.hideSubItem(MENU_DELETE_PROFILE_PHOTOS)
         applyFooter(null)
     }
 
     @JvmStatic
     fun updateMenuItems(menuItem: ActionBarMenuItem, allowShare: Boolean, isVideo: Boolean, isGif: Boolean) {
+        val isOwnAvatar = lastAvatarsDialogId > 0 && lastAvatarsDialogId == UserConfig.getInstance(UserConfig.selectedAccount).clientUserId
+        if (isOwnAvatar) {
+            menuItem.showSubItem(MENU_DELETE_PROFILE_PHOTOS)
+        } else {
+            menuItem.hideSubItem(MENU_DELETE_PROFILE_PHOTOS)
+        }
+
         if (!allowShare) return
         if (isVideo || isGif) {
             menuItem.showSubItem(MENU_COPY_FRAME)
@@ -202,6 +246,11 @@ object PhotoViewerHelper {
             MENU_COPY_FRAME -> {
                 val bitmap = viewer.pipCreatePrimaryWindowViewBitmap() ?: viewer.centerImage.bitmap
                 if (bitmap != null) copyBitmapToClipboard(bitmap, viewer.containerView)
+            }
+
+            MENU_DELETE_PROFILE_PHOTOS -> {
+                val activity = viewer.parentActivity ?: return true
+                DeleteProfilePhotosSheet(activity, UserConfig.selectedAccount).show()
             }
 
             else -> return false

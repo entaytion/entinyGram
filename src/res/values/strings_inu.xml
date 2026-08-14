@@ -893,4 +893,18 @@
 
     <string name="InuUnreader">Unreader</string>
     <string name="InuUnreaderInfo">Messages are never marked as read: opening a chat keeps the unread badge, and no read receipts reach the other side.</string>
+
+    <string name="InuDeleteProfilePhotos">Delete profile photos</string>
+    <string name="InuDeleteProfilePhotosInfo">Delete all profile photos or only selected ones with one tap</string>
+    <string name="InuDeleteAllProfilePhotos">Delete all photos</string>
+    <string name="InuDeleteSelectedProfilePhotos">Delete selected (%1$d)</string>
+    <string name="InuDeleteAllProfilePhotosConfirm">Are you sure you want to delete all profile photos? This action cannot be undone.</string>
+    <string name="InuDeleteSelectedProfilePhotosConfirm">Are you sure you want to delete %1$d selected profile photos?</string>
+    <string name="InuProfilePhotosDeleted">All profile photos deleted</string>
+    <string name="InuProfilePhotosDeletedCount">Deleted %1$d profile photos</string>
+    <string name="InuNoProfilePhotos">No profile photos found</string>
+    <string name="InuSelectAll">Select all</string>
+    <string name="InuDeselectAll">Deselect all</string>
+    <string name="InuMainPhoto">Main</string>
+    <string name="InuProfilePhotosSelected">Selected: %1$d</string>
 </resources>
