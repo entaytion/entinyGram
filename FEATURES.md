@@ -111,7 +111,7 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
 - tap a web preview photo to open it in the photo viewer
-- message details from menu (+ show json)
+- 📡 extended message details from message menu (+ show json): comprehensive technical metadata for audio, video, round video notes, stickers, custom emojis, polls, service actions, delete/read dates, and datacenter with instant copy and file launcher - *enhanced port of extended_message_details.plugin by @thrzxd • @kotilnya*
 - per-message statistics from message menu
 - remove single message's file from cache from the message menu
 - "Repeat" in message menu - re-send the same message to the same chat

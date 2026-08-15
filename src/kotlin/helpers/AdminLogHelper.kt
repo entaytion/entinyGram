@@ -7,7 +7,7 @@ import desu.inugram.InuConfig
 import desu.inugram.core.diff.DiffKind
 import desu.inugram.core.diff.WordDiff
 import desu.inugram.helpers.InuUtils
-import desu.inugram.ui.MessageDetailsActivity
+import desu.inugram.helpers.WebAppHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ContactsController
 import org.telegram.messenger.Emoji
@@ -45,7 +45,7 @@ object AdminLogHelper {
     @JvmStatic
     fun processMenuOption(option: Int, fragment: ChannelAdminLogActivity, selected: MessageObject): Boolean {
         when (option) {
-            OPTION_DETAILS -> fragment.presentFragment(MessageDetailsActivity(selected, null))
+            OPTION_DETAILS -> WebAppHelper.openTlViewer(fragment, selected.currentEvent ?: selected.messageOwner)
             ChannelAdminLogActivity.OPTION_BAN -> {
                 if (selected == approvedBanForMessage) return false; // continue to default impl
 

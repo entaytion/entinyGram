@@ -35,7 +35,6 @@ import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.SelfDestructHelper
 import desu.inugram.helpers.translate.TranslateHelper
-import desu.inugram.ui.MessageDetailsActivity
 import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildVars
@@ -394,10 +393,7 @@ object ChatHelper {
             }
         }
 
-        if (InuConfig.SAVE_EDITED_MESSAGES.value && (
-            SavedMessagesHelper.hasEditHistory(selectedObject.dialogId, selectedObject.id) ||
-            (selectedObject.messageOwner != null && (selectedObject.messageOwner.flags and TLRPC.MESSAGE_FLAG_EDITED) != 0)
-        )) {
+        if (InuConfig.SAVE_EDITED_MESSAGES.value && SavedMessagesHelper.hasEditHistory(activity.currentAccount, selectedObject.dialogId, selectedObject.id)) {
             items.add(LocaleController.getString(R.string.InuEditHistory))
             options.add(OPTION_EDIT_HISTORY)
             icons.add(R.drawable.group_edit)
@@ -652,7 +648,7 @@ object ChatHelper {
             }
 
             OPTION_DETAILS -> {
-                activity.presentFragment(MessageDetailsActivity(selectedObject, selectedObjectGroup))
+                WebAppHelper.openTlViewer(activity, selectedObject.currentEvent ?: selectedObject.messageOwner)
             }
 
             OPTION_SHOW_JSON -> {
@@ -1388,6 +1384,9 @@ object ChatHelper {
         group: MessageObject.GroupedMessages?,
     ): Boolean {
         if (message == null) return false
+        if (option == OPTION_DETAILS) {
+            return MessageDetailsHelper.openDetailsSubmenu(activity, popupLayout, cell, message, group)
+        }
         if (option != OPTION_REPEAT) return false
         if (InuConfig.REPEAT_MODE.value != InuConfig.RepeatModeItem.ASK) return false
         // with a single mode available there's nothing to ask about

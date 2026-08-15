@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33308,6 +33314,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33311,6 +33317,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -98,7 +98,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -45634,7 +45646,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45637,7 +45649,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
