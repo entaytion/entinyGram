@@ -25,6 +25,8 @@ import android.widget.ScrollView
 import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.ai.AiComposeHelper
+import desu.inugram.helpers.ai.AiSummaryHelper
 import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
@@ -101,6 +103,7 @@ object ChatHelper {
     const val OPTION_EDIT_HISTORY = 518
     const val OPTION_SAVE_STICKER_TO_DOWNLOADS = 521
     const val OPTION_MARK_AS_READ = 522
+    const val OPTION_AI_SUMMARIZE = 523
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -313,6 +316,12 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.TranslateMessage))
             options.add(ChatActivity.OPTION_TRANSLATE)
             icons.add(R.drawable.msg_translate)
+        }
+
+        if (InuConfig.AI_SUMMARY_ENABLED.value && AiComposeHelper.activeEndpoint()?.apiKey?.isNotBlank() == true && TranslateController.isSummarizable(selectedObject)) {
+            items.add(LocaleController.getString(R.string.InuAiSummary))
+            options.add(OPTION_AI_SUMMARIZE)
+            icons.add(R.drawable.magic_stick_solar)
         }
 
         if (!selectedObject.messageOwner.summarizedOpen && InuConfig.HIDE_MESSAGE_SUMMARY.value && TranslateController.isSummarizable(selectedObject)) {
@@ -668,6 +677,11 @@ object ChatHelper {
             OPTION_SUMMARIZE -> {
                 val cell = activity.findMessageCell(selectedObject.id, false) as? ChatMessageCell ?: return true
                 cell.delegate?.didPressSummarize(cell, false)
+            }
+
+            OPTION_AI_SUMMARIZE -> {
+                val context = activity.parentActivity ?: return true
+                AiSummaryHelper.summarize(context, selectedObject)
             }
 
             OPTION_REMOVE_FROM_CACHE -> {

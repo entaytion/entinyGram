@@ -364,10 +364,31 @@ object InuConfig {
     val AI_COMPOSE_ENDPOINTS = desu.inugram.helpers.ai.AiEndpointsConfig("ai_compose_endpoints")
 
     @JvmField
+    val AI_SUMMARY_ENABLED = BoolItem("ai_summary_enabled", false)
+
+    @JvmField
     val AI_REASONING_ENABLED = BoolItem("ai_reasoning_enabled", false)
 
     @JvmField
     val AI_REASONING_EFFORT = StringItem("ai_reasoning_effort", "medium")
+
+    @JvmField
+    val AI_ROLE = StringItem("ai_role", "Assistant")
+
+    @JvmField
+    val AI_HISTORY_ENABLED = BoolItem("ai_history_enabled", true)
+
+    @JvmField
+    val AI_STREAM_ENABLED = BoolItem("ai_stream_enabled", true)
+
+    @JvmField
+    val AI_ONLY_ANSWER = BoolItem("ai_only_answer", false)
+
+    @JvmField
+    val AI_INSERT_QUOTE = BoolItem("ai_insert_quote", true)
+
+    @JvmField
+    val AI_TEMPERATURE = FloatItem("ai_temperature", 1.0f)
 
     // AI Transcription (Voice-to-Text)
     const val TRANSCRIBE_PROVIDER_GROQ = 0
@@ -387,6 +408,9 @@ object InuConfig {
 
     @JvmField
     val AI_TRANSCRIBE_GEMINI_KEY = StringItem("ai_transcribe_gemini_key", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_GEMINI_MODEL = StringItem("ai_transcribe_gemini_model", "gemini-2.0-flash", exportable = false)
 
     @JvmField
     val AI_TRANSCRIBE_OPENAI_KEY = StringItem("ai_transcribe_openai_key", "", exportable = false)

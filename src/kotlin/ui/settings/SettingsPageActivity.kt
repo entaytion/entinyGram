@@ -18,6 +18,7 @@ import android.text.style.ReplacementSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.graphics.withTranslation
@@ -53,6 +54,9 @@ abstract class SettingsPageActivity : UniversalFragment() {
     fun withHighlight(itemId: Int) = apply { highlightItemId = itemId }
 
     override fun createView(context: Context): View {
+        // Settings use editable inline fields. Resize the content when the IME opens so the
+        // focused field remains reachable instead of letting the keyboard cover the page.
+        parentActivity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return super.createView(context).also {
             if (actionBar.backButtonImageView == null) {
                 actionBar.setBackButtonImage(R.drawable.ic_ab_back)

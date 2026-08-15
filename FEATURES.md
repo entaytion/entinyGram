@@ -385,3 +385,9 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - URL parsing: multi-component TLDs (`.is-a.dev`, `.github.io`, `.co.uk`) and hyphens in subdomains work; Cyrillic text before a domain (e.g. `слово.entaytion.is-a.dev`) is no longer swallowed into the link — the ASCII domain stays clickable; bio and channel/group description links are clickable for everyone, with or without `http(s)://` (stock gates them behind Telegram Premium)
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
 - fix bottom progress bar on video bubbles now following inline playback (autoplay & play-with-sound)
+
+## AI / smart features
+
+- 📡 **AI Chat settings**: redesigned settings interface with centered 3D emoji headers, role presets, conversation history toggles, streaming response controls, answer-only mode, quote insertion, and discrete temperature slider (0.0 to 2.0)
+- 📡 **Multi-provider AI Compose**: client-side AI text rewrite, grammar fixing, style transformation and translation via Gemini, OpenAI, OpenRouter or custom OpenAI-compatible endpoints
+- 📡 **AI Voice Transcription (Speech-to-Text)**: voice messages transcription using Groq, Gemini, OpenAI Whisper, Cloudflare Workers AI or custom whisper endpoints

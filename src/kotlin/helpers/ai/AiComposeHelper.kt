@@ -62,17 +62,15 @@ object AiComposeHelper {
     @JvmStatic
     fun upsertEndpoint(endpoint: AiEndpoint) {
         val list = endpoints().toMutableList()
-        val idx = list.indexOfFirst { it.id == endpoint.id }
-        if (idx >= 0) list[idx] = endpoint else list.add(endpoint)
+        val index = list.indexOfFirst { it.id == endpoint.id }
+        if (index >= 0) list[index] = endpoint else list.add(endpoint)
         InuConfig.AI_COMPOSE_ENDPOINTS.value = list
     }
 
     @JvmStatic
     fun deleteEndpoint(id: String) {
         InuConfig.AI_COMPOSE_ENDPOINTS.value = endpoints().filterNot { it.id == id }
-        if (InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value == id) {
-            InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value = ""
-        }
+        if (InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value == id) InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value = ""
     }
 
     @JvmStatic
@@ -130,6 +128,11 @@ object AiComposeHelper {
                             .put(JSONObject().put("role", "user").put("content", userText))
                     )
 
+                val temp = InuConfig.AI_TEMPERATURE.value
+                if (temp != 1.0f) {
+                    json.put("temperature", temp.toDouble())
+                }
+
                 if (InuConfig.AI_REASONING_ENABLED.value) {
                     val effort = InuConfig.AI_REASONING_EFFORT.value
                     json.put("reasoning_effort", effort)
@@ -163,7 +166,9 @@ object AiComposeHelper {
                 val content = msgObj.optString("content", "").trim()
                 val reasoning = msgObj.optString("reasoning_content", "").ifBlank { msgObj.optString("reasoning", "") }.trim()
 
-                result = if (reasoning.isNotBlank() && content.isNotBlank()) {
+                result = if (InuConfig.AI_ONLY_ANSWER.value) {
+                    content.ifBlank { reasoning }
+                } else if (reasoning.isNotBlank() && content.isNotBlank()) {
                     "💭 $reasoning\n\n$content"
                 } else {
                     content.ifBlank { reasoning }
@@ -220,6 +225,7 @@ object AiComposeHelper {
         TranslateLang("ja", "Japanese", "日本語"),
     )
 }
+
 
 // ==================== AiComposeSheet ====================
 

@@ -23,7 +23,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     private val aiFeaturesGroup = ExpandableBoolGroup(
         LocaleController.getString(R.string.InuHideAiFeatures),
         listOf(
-            ExpandableBoolGroup.Option(R.string.InuHideAiEditor, InuConfig.HIDE_AI_EDITOR),
             ExpandableBoolGroup.Option(R.string.InuHideMessageSummary, InuConfig.HIDE_MESSAGE_SUMMARY),
             ExpandableBoolGroup.Option(R.string.InuHideIvSummary, InuConfig.HIDE_IV_SUMMARY),
         ),

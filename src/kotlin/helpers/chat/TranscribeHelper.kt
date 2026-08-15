@@ -307,7 +307,8 @@ object TranscribeHelper {
 
     private fun transcribeGemini(bytes: ByteArray, mime: String, prompt: String): String {
         val apiKey = InuConfig.AI_TRANSCRIBE_GEMINI_KEY.value.trim()
-        val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey"
+        val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-2.0-flash" }
+        val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
         val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
 
         val sysInstruction = if (prompt.isNotBlank()) prompt else "Transcribe the audio verbatim in its original language. Output ONLY the transcription text without speaker labels, introductions, or commentary."
