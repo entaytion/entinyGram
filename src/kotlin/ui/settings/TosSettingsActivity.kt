@@ -170,6 +170,14 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_USER_INFO.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDDEN_STAR_GIFTS,
+                R.string.InuHiddenStarGifts,
+                R.string.InuHiddenStarGiftsInfo,
+                InuConfig.HIDDEN_STAR_GIFTS.value,
+            )
+        )
     }
 
     private fun ttlLabel(days: Int): String = when (days) {
@@ -394,6 +402,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.SAVE_USER_INFO.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_HIDDEN_STAR_GIFTS -> {
+                val new = InuConfig.HIDDEN_STAR_GIFTS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             BUTTON_CACHE_TTL -> showTtlDialog()
             BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
         }
@@ -426,6 +438,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
         private val TOGGLE_ALLOW_SCREENSHOTS = InuUtils.generateId()
         private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
+        private val TOGGLE_HIDDEN_STAR_GIFTS = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()

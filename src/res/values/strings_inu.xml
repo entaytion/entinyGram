@@ -1028,4 +1028,6 @@
     <string name="InuAiTranscribeFailed">Transcription failed: %1$s</string>
     <string name="InuLocalPremium">Local Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Unlocks local Premium features on client side (star badge, app icons, emoji statuses, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require official subscription.</string>
+    <string name="InuHiddenStarGifts">Hidden &amp; Archived Star Gifts</string>
+    <string name="InuHiddenStarGiftsInfo">Restores removed, archived and limited Star Gifts in the Telegram gifts catalog.</string>
 </resources>

@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 16 Aug 2026 22:38:26 +0300
+Subject: Add hidden star gifts support in gifts catalog
+
+---
+ .../src/main/java/org/telegram/ui/Stars/StarsController.java    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
+@@ -2395,7 +2395,7 @@ public class StarsController {
+         req.hash = hash;
+         ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+            if (res instanceof TL_stars.StarGifts) {
+-               whenDone.run((TL_stars.StarGifts) res);
++               whenDone.run(desu.inugram.helpers.media.StarGiftsHelper.patchStarGifts((TL_stars.StarGifts) res));
+            } else {
+                whenDone.run(null);
+            }

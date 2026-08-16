@@ -1095,4 +1095,7 @@ object InuConfig {
 
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)
+
+    @JvmField
+    val HIDDEN_STAR_GIFTS = BoolItem("hidden_star_gifts", false)
 }

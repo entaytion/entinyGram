@@ -1031,4 +1031,6 @@
     <string name="InuAiTranscribeFailed">Помилка розпізнавання: %1$s</string>
     <string name="InuLocalPremium">Локальний Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Розблоковує локальні функції Premium на рівні клієнта (зірочка біля профілю, емодзі-статуси, безлімітна панель перекладу, преміум-реакції та анімації). Серверні фічі (4 ГБ завантаження, ліміти хмари) вимагають офіційної підписки.</string>
+    <string name="InuHiddenStarGifts">Приховані та архівні подарунки</string>
+    <string name="InuHiddenStarGiftsInfo">Повертає видалені, архівні та лімітовані зіркові подарунки (Star Gifts) у каталог Telegram.</string>
 </resources>

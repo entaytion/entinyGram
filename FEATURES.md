@@ -50,6 +50,7 @@ our own layer on top of the inugram patchset. we keep syncing with inugram upstr
 - 📡 **whole-chat translation without telegram premium**: unlock translation bar and real-time chat translation without subscription
 - 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare)
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
+- 📡 **hidden & archived star gifts**: restores removed, archived, and limited Star Gifts in the Telegram gifts catalog
 
 ### power-user tools
 

@@ -289,3 +289,5 @@ entiny/send-message-hooks.patch
 entiny/edited-time-display.patch
 entiny/local-premium.patch
 entiny/allow-screenshots-and-copy.patch
+bugfix/profile-actionbar-lifecycle.patch
+entiny/hidden-star-gifts.patch
