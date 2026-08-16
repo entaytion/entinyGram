@@ -8,6 +8,59 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 🐶 - Inugram-exclusive (as far as i know, as of writing)
 📡 - entinyGram-exclusive
 
+## entinyGram additions
+
+our own layer on top of the inugram patchset. we keep syncing with inugram upstream, while adding restricted telegram features, privacy tools, power-user controls, and experiments.
+
+### privacy & protection
+
+- 📡 **ghost mode (stealth)**: comprehensive privacy suite with granular toggles:
+  - **quick toggle in drawer & chat list**: 1-tap Ghost toggle button in navigation drawer header (next to dark theme button), drawer menu list item with switch, and chat list overflow menu
+  - **active status indicator**: ghost icon displayed before app title in main dialogs list and next to chat name in active chat header when ghost mode is enabled
+  - **quick access**: long-press drawer ghost button to open full TOS & Ghost settings
+  - hide read receipts for messages, voice notes and video messages
+  - read on send: automatically mark incoming messages as read only when sending a reply
+  - hide story views (watch stories completely anonymously)
+  - hide online status + optional "go offline right after going online"
+  - hide typing, audio recording, and media upload indicators
+- 📡 **anti-deletion & edit history**:
+  - **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
+  - **per-category deleted message saving**: granular toggles for private chats, groups, channels, and bots
+  - **save edit history**: view full edit history (marked with ✏️) in an interactive message bubble sheet
+  - **edit history text diff mode**: inline color-coded diff highlighting of edited text changes
+  - **deleted cache TTL & storage manager**: automatic cache expiration (never / 1 day / 1 week / 1 month) and interactive cleanup sheet with per-dialog size breakdown
+- 📡 **self-destructing & expiring media**:
+  - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
+  - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
+- 📡 **unreader mode**: standalone mode where incoming messages are never marked as read, keeping the unread counter intact
+- 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
+- 📡 **adblock & content filtering**:
+  - **hide sponsored messages**: completely disables Telegram sponsored channel ads and video ads
+  - **regex content filter** (experimental): block or spoiler-cover ads, spam, or messages matching custom regex patterns and keywords
+
+### restricted features
+
+- 📡 **local telegram premium**: unlock client-side premium features (star badges, custom app icons, emoji statuses, unlimited chat translation bar, premium reactions and animations)
+- 📡 **content protection & forward bypass**:
+  - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
+  - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
+  - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
+- 📡 **whole-chat translation without telegram premium**: unlock translation bar and real-time chat translation without subscription
+- 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare)
+- 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
+
+### power-user tools
+
+- 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags & toggle in settings
+- 📡 **estimated registration date & DC**: profile info card with fast copy and DC location resolution
+- 📡 **delete profile photos**: one-tap delete all or selected profile photos from profile menu, photo viewer, or settings
+- 📡 **extended message details & JSON view**: inspect raw message objects and properties
+- 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
+- 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
+- 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs, modular M3 drawer cards
+
+the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
+
 ## appearance & general
 
 - navigation drawer instead of bottom tabs, like in older Telegram versions
@@ -16,14 +69,11 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
 - icon replacement (currently: solar pack, [480 Design](https://t.me/Design480)) - *ported from [NagramX](https://github.com/risin42/NagramX)*
 - notification icon: Telegram (default) or entinyGram
-- 📡 title alignment options: selective centering for chats, settings, profiles, and main list (dialogs) — *adapted from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
-- 📡 emulation of official Telegram app (APP_ID 4): unlocks direct purchases, Telegram Premium bot/web checkout without "Official app needed" blocks
 - icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
 - notification icon: Telegram (default) or Inugram
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
-- 📡 estimated registration date & DC in profile info card (with fast copy & DC location resolution) - *adapted from [NagramX](https://github.com/risin42/NagramX)*
 - join/creation date in group & channel profiles
 - show linked channel in discussion group profile similar to personal channel
 - hide own phone number from ui
@@ -44,7 +94,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - lists & sections
   - avatars (tonal on-container initials instead of white)
   - profile action buttons
-  - 📡 modular sections in the navigation drawer - menu rows as rounded M3 cards, ported from the Modular Sections plugin by @RnPlugins
 - 🐶 toggle to replace profile photo bottom blur with a plain gradient fade
 - disable number rounding
 - export/import settings to/from json file
@@ -68,7 +117,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation
 - 🐶 deeplink / username quick-open from global search
-- 📡 mutual contact icon in user lists and chats with auto-shifted role tags & toggle in settings (entinyGram updated)
 - open archive directly on pull-down (🐶 done right, without revealing the cell)
 - mutual contact icon in contacts list
 - customizable dialogs list pull-down action: reveal archive (stock), open archive directly (🐶 done right, without revealing the cell), open saved messages, open search, or disabled entirely. when the pull-down no longer leads to the archive, the archive row is hidden from the list and an "Archived Chats" entry appears in the drawer/overflow menu instead
@@ -111,7 +159,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
 - tap a web preview photo to open it in the photo viewer
-- 📡 extended message details from message menu (+ show json): comprehensive technical metadata for audio, video, round video notes, stickers, custom emojis, polls, service actions, delete/read dates, and datacenter with instant copy and file launcher - *enhanced port of extended_message_details.plugin by @thrzxd • @kotilnya*
 - per-message statistics from message menu
 - remove single message's file from cache from the message menu
 - "Repeat" in message menu - re-send the same message to the same chat
@@ -136,9 +183,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - 🐶 two-finger swipe over messages to select/deselect them
 - more bulk actions in message selection mode (save, translate, gallery, pin/unpin, no-quote forward)
 - in-place message translation, with optional web preview translation, original-text appending and on-device source-language auto-detection (hides Translate when already in your language)
-- 📡 whole-chat translation (the "translate this chat" top bar and its menu) without premium
-- 📡 Free AI Voice-to-Text: transcribe voice messages (.oga/.ogg) and video circles (.mp4) without Telegram Premium via Groq Whisper (ultra-fast & free), Google Gemini Flash, OpenAI Whisper, Cloudflare Workers AI, or custom endpoints - *ported from [NagramX](https://github.com/risin42/NagramX)*
-- 📡 AI Compose & Draft Rewrite: rewrite, continue, and format drafts with custom OpenAI-compatible endpoints & reasoning mode support
 - instant view pages translator
 - show original time/date in the forwarded header, with regular, icon-only label, and compact one-line modes
 - show forward count next to the view count on channel posts
@@ -171,7 +215,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - seek bar for mp4 gifs
 - always use the modern speed-control rewind on long-press
 - mark public (fallback) / personal profile photos next to the date
-- 📡 delete profile photos: one-tap delete all profile photos or batch-delete selected photos from profile menu, photo viewer, or settings
 
 ## admin / event log
 
@@ -197,7 +240,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
-- 📡 ghost mode: master switch plus per-feature toggles to hide your activity — no read receipts (incl. secret chats/media), no story reads/views, no online status, no typing/recording/upload progress; optional "go offline right after going online" — *modeled after [AyuGram](https://github.com/AyuGram)*
 
 ## behavior
 
@@ -227,35 +269,6 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - original video quality option in quality picker when sending videos
 - remember last used settings in polls + reasonable defaults
 - strip tracking parameters from URLs (UTM, fbclid, etc.) on open and paste using AdGuard tracking rules
-
-## TOS
-
-- 📡 **ghost mode (stealth)**: comprehensive privacy suite with granular toggles:
-  - **quick toggle in drawer & chat list**: 1-tap Ghost toggle button in navigation drawer header (next to dark theme button), drawer menu list item with switch, and chat list overflow menu
-  - **active status indicator**: ghost icon displayed before app title in main dialogs list and next to chat name in active chat header when ghost mode is enabled
-  - **quick access**: long-press drawer ghost button to open full TOS & Ghost settings
-  - hide read receipts for messages, voice notes and video messages
-  - read on send: automatically mark incoming messages as read only when sending a reply
-  - hide story views (watch stories completely anonymously)
-  - hide online status + optional "go offline right after going online"
-  - hide typing, audio recording, and media upload indicators
-- 📡 **anti-deletion & edit history**:
-  - **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
-  - **per-category deleted message saving**: granular toggles for private chats, groups, channels, and bots
-  - **save edit history**: view full edit history (marked with ✏️) in an interactive message bubble sheet
-  - **edit history text diff mode**: inline color-coded diff highlighting of edited text changes
-  - **deleted cache TTL & storage manager**: automatic cache expiration (never / 1 day / 1 week / 1 month) and interactive cleanup sheet with per-dialog size breakdown
-- 📡 **self-destructing & expiring media**:
-  - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
-  - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
-- 📡 **content protection & forward bypass**:
-  - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
-  - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
-  - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
-- 📡 **unreader**: standalone mode where incoming messages are never marked as read, keeping the unread counter intact
-- 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
-- 📡 **hide sponsored messages (AdBlock)**: completely disables Telegram sponsored channel ads
-- 📡 **AdBlock & Regex Content Filter** (experimental): block or spoiler-cover ads, spam, or messages matching custom regex patterns and keywords
 
 ## annoyances
 
@@ -382,12 +395,5 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 - crash expanding/loading more votes in poll results (sections adapter diffed against an empty hash list on the first update, re-inserting every already-laid-out item)
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
-- URL parsing: multi-component TLDs (`.is-a.dev`, `.github.io`, `.co.uk`) and hyphens in subdomains work; Cyrillic text before a domain (e.g. `слово.entaytion.is-a.dev`) is no longer swallowed into the link — the ASCII domain stays clickable; bio and channel/group description links are clickable for everyone, with or without `http(s)://` (stock gates them behind Telegram Premium)
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
 - fix bottom progress bar on video bubbles now following inline playback (autoplay & play-with-sound)
-
-## AI / smart features
-
-- 📡 **AI Chat settings**: redesigned settings interface with centered 3D emoji headers, role presets, conversation history toggles, streaming response controls, answer-only mode, quote insertion, and discrete temperature slider (0.0 to 2.0)
-- 📡 **Multi-provider AI Compose**: client-side AI text rewrite, grammar fixing, style transformation and translation via Gemini, OpenAI, OpenRouter or custom OpenAI-compatible endpoints
-- 📡 **AI Voice Transcription (Speech-to-Text)**: voice messages transcription using Groq, Gemini, OpenAI Whisper, Cloudflare Workers AI or custom whisper endpoints

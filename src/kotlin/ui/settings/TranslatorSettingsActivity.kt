@@ -78,10 +78,22 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.TRANSLATE_AUTO_DETECT_LANG.value)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateAutoDetectLangInfo)))
+
+        items.add(
+            UItem.asButton(
+                BUTTON_AI_SETTINGS,
+                R.drawable.input_ai_star,
+                LocaleController.getString(R.string.InuAiCompose),
+                LocaleController.getString(R.string.InuAiComposeInfo)
+            )
+        )
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            BUTTON_AI_SETTINGS -> presentFragment(AiSettingsActivity())
+
             TOGGLE_IN_PLACE_TRANSLATION -> {
                 val new = InuConfig.IN_PLACE_TRANSLATION.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -144,6 +156,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val BUTTON_AI_SETTINGS = InuUtils.generateId()
         private val TOGGLE_IN_PLACE_TRANSLATION = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_WEB_PREVIEWS = InuUtils.generateId()
         private val TOGGLE_KEEP_ORIGINAL = InuUtils.generateId()
@@ -159,6 +172,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_translate,
             factory = ::TranslatorSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("ai-settings", R.string.InuAiCompose, BUTTON_AI_SETTINGS),
                 SearchRegistry.Entry("show-translate-button", R.string.ShowTranslateButton, TOGGLE_SHOW_TRANSLATE_BUTTON),
                 SearchRegistry.Entry("show-translate-chat-button", R.string.ShowTranslateChatButton, TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON),
                 SearchRegistry.Entry("translation-target", R.string.InuTranslationTarget, BUTTON_TARGET_LANG),

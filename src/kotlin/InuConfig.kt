@@ -1093,4 +1093,6 @@ object InuConfig {
     @JvmField
     val UNREADER = GHOST_HIDE_READ
 
+    @JvmField
+    val LOCAL_PREMIUM = BoolItem("local_premium", false)
 }

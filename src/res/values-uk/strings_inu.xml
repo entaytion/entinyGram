@@ -1029,4 +1029,6 @@
     <string name="InuAiTranscribeDownloading">Завантаження аудіо…</string>
     <string name="InuAiTranscribeTranscribing">Розпізнавання…</string>
     <string name="InuAiTranscribeFailed">Помилка розпізнавання: %1$s</string>
+    <string name="InuLocalPremium">Локальний Telegram Premium</string>
+    <string name="InuLocalPremiumInfo">Розблоковує локальні функції Premium на рівні клієнта (зірочка біля профілю, емодзі-статуси, безлімітна панель перекладу, преміум-реакції та анімації). Серверні фічі (4 ГБ завантаження, ліміти хмари) вимагають офіційної підписки.</string>
 </resources>

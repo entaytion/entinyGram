@@ -1,0 +1,65 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 16 Aug 2026 13:59:50 +0300
+Subject: Unlock local premium features and client restrictions
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java   | 2 +-
+ .../src/main/java/org/telegram/messenger/UserConfig.java       | 3 +++
+ .../java/org/telegram/ui/Components/StatusBadgeComponent.java  | 2 +-
+ .../src/main/java/org/telegram/ui/SettingsActivity.java        | 2 +-
+ 4 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -922,7 +922,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public boolean isPremiumUser(TLRPC.User currentUser) {
+-        return currentUser != null && currentUser.premium && !isSupportUser(currentUser);
++        return currentUser != null && (currentUser.premium || (currentUser.self && desu.inugram.InuConfig.LOCAL_PREMIUM.getValue())) && !isSupportUser(currentUser);
+     }
+ 
+     public boolean didPressTranscribeButtonEnough() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
+@@ -572,6 +572,9 @@ public class UserConfig extends BaseController {
+     }
+ 
+     public boolean isPremium() {
++        if (desu.inugram.InuConfig.LOCAL_PREMIUM.getValue()) {
++            return true;
++        }
+         TLRPC.User user = currentUser;
+         if (user == null) {
+             return false;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/StatusBadgeComponent.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/StatusBadgeComponent.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/StatusBadgeComponent.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/StatusBadgeComponent.java
+@@ -45,7 +45,7 @@ public class StatusBadgeComponent {
+         } else if (user != null && DialogObject.getEmojiStatusDocumentId(user.emoji_status) != 0) {
+             statusDrawable.set(DialogObject.getEmojiStatusDocumentId(user.emoji_status), animated);
+             statusDrawable.setColor(colorFilter);
+-        } else if (user != null && user.premium) {
++        } else if (user != null && (user.premium || (user.self && desu.inugram.InuConfig.LOCAL_PREMIUM.getValue()))) {
+             statusDrawable.set(PremiumGradient.getInstance().premiumStarDrawableMini, animated);
+             statusDrawable.setColor(colorFilter);
+         } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -1059,7 +1059,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             emojiStatusDrawable.setColor(Theme.getColor(Theme.key_profile_verifiedBackground, resourcesProvider));
+             if (emojiStatusId != null) {
+                 emojiStatusDrawable.set(emojiStatusId, false);
+-            } else if (user != null && user.premium) {
++            } else if (user != null && (user.premium || (user.self && desu.inugram.InuConfig.LOCAL_PREMIUM.getValue()))) {
+                 emojiStatusDrawable.set(getContext().getResources().getDrawable(R.drawable.msg_premium_liststar).mutate(), false);
+             } else {
+                 emojiStatusDrawable.set((Drawable) null, false);

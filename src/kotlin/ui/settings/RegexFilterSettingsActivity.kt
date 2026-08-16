@@ -9,6 +9,8 @@ import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -64,6 +66,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
             TOGGLE_REGEX_FILTER_ENABLED -> {
                 val new = InuConfig.REGEX_FILTER_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                refreshDialogs()
             }
 
             BUTTON_REGEX_FILTER_MODE -> RadioItemOptions.show(
@@ -76,6 +79,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
             ) { which ->
                 InuConfig.REGEX_FILTER_MODE.value = which
                 softRebuild()
+                refreshDialogs()
             }
 
             BUTTON_REGEX_PATTERNS -> openPatternsDialog()
@@ -100,6 +104,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
             .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->
                 InuConfig.REGEX_FILTER_PATTERNS.value = editText.text.toString().trim()
                 softRebuild()
+                refreshDialogs()
             }
             .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
 
@@ -110,6 +115,13 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
         org.telegram.ui.Components.BulletinFactory.of(this)
             .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuBetaFeatureInfo))
             .show()
+    }
+
+    private fun refreshDialogs() {
+        NotificationCenter.getInstance(currentAccount).postNotificationName(
+            NotificationCenter.updateInterfaces,
+            MessagesController.UPDATE_MASK_ALL,
+        )
     }
 
     companion object {

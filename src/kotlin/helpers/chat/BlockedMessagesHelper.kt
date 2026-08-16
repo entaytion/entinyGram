@@ -51,6 +51,13 @@ object BlockedMessagesHelper {
         return InuConfig.BLOCKED_MESSAGES_MODE.value == InuConfig.BlockedMessagesModeItem.HIDE
     }
 
+    private fun hasHideFilter(): Boolean {
+        return isHideMode() || (
+            RegexFilterHelper.isEnabled() &&
+                RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE
+            )
+    }
+
     @JvmStatic
     fun ensureBlockedPeersLoaded(currentAccount: Int) {
         if (!isEnabled()) return
@@ -103,7 +110,7 @@ object BlockedMessagesHelper {
     @JvmStatic
     fun refreshVisible(adapter: ChatActivity.ChatActivityAdapter): ArrayList<MessageObject> {
         val source = adapter.inu_getSourceMessages()
-        if (!isHideMode()) return source
+        if (!hasHideFilter()) return source
         val buffer = adapter.inu_visibleMessages
         buffer.clear()
         for (i in 0 until source.size) {
@@ -139,7 +146,7 @@ object BlockedMessagesHelper {
 
     @JvmStatic
     fun filterGroup(group: MessageObject.GroupedMessages?): MessageObject.GroupedMessages? {
-        if (group == null || !isHideMode()) return group
+        if (group == null || !hasHideFilter()) return group
         for (i in 0 until group.messages.size) {
             if (shouldHide(group.messages[i])) return null
         }

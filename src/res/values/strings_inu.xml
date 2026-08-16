@@ -1026,4 +1026,6 @@
     <string name="InuAiTranscribeDownloading">Downloading audio…</string>
     <string name="InuAiTranscribeTranscribing">Transcribing…</string>
     <string name="InuAiTranscribeFailed">Transcription failed: %1$s</string>
+    <string name="InuLocalPremium">Local Telegram Premium</string>
+    <string name="InuLocalPremiumInfo">Unlocks local Premium features on client side (star badge, app icons, emoji statuses, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require official subscription.</string>
 </resources>

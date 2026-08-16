@@ -36,15 +36,12 @@ class AiSettingsActivity : SettingsPageActivity() {
         )
         val composeConfigured = hasComposeCredentials()
         items.add(
-            UItem.asCheck(BUTTON_AI_EDITOR, LocaleController.getString(R.string.InuHideAiEditor))
-                .setChecked(composeConfigured && !InuConfig.HIDE_AI_EDITOR.value)
-        )
-        items.add(
-            UItem.asShadow(
-                LocaleController.getString(
-                    if (composeConfigured) R.string.InuAiEditorButtonInfo
-                    else R.string.InuAiEditorButtonSetupInfo
-                )
+            mkTwoLineCheckItem(
+                BUTTON_AI_EDITOR,
+                R.string.InuHideAiEditor,
+                if (composeConfigured) R.string.InuAiEditorButtonInfo
+                else R.string.InuAiEditorButtonSetupInfo,
+                composeConfigured && !InuConfig.HIDE_AI_EDITOR.value
             )
         )
         items.add(
