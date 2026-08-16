@@ -267,9 +267,16 @@ object GhostHelper {
      */
     @JvmStatic
     fun syncPresence(account: Int) {
+        val controller = MessagesController.getInstance(account)
         if (isGhostActive()) {
-            if (InuConfig.GHOST_HIDE_ONLINE.value) sendStatus(account, offline = true)
+            if (InuConfig.GHOST_HIDE_ONLINE.value || InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value) {
+                controller?.ignoreSetOnline = true
+                sendStatus(account, offline = true)
+            } else {
+                controller?.ignoreSetOnline = false
+            }
         } else {
+            controller?.ignoreSetOnline = false
             sendStatus(account, offline = false)
         }
     }
@@ -293,6 +300,6 @@ object GhostHelper {
             if (isGhostActive() && !InuConfig.GHOST_HIDE_ONLINE.value && InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value) {
                 sendStatus(account, offline = true)
             }
-        }, 4000L)
+        }, 1500L)
     }
 }

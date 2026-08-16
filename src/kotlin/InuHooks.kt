@@ -71,6 +71,7 @@ object InuHooks {
     @JvmStatic
     fun onMessagesControllerCreated(messagesController: MessagesController, account: Int) {
         MapsHelper.syncMapProvider(messagesController)
+        desu.inugram.helpers.security.GhostHelper.syncPresence(account)
         AndroidUtilities.runOnUIThread {
             NotificationCenter.getInstance(account).addObserver(
                 NotificationCenter.NotificationCenterDelegate { id, acc, args ->
@@ -154,6 +155,7 @@ object InuHooks {
         CrashReporter.maybeShowReportSheet(launchActivity)
         ProxyVpnHelper.reconcile()
         DrawerHelper.refreshUpdateState()
+        desu.inugram.helpers.security.GhostHelper.syncPresence(org.telegram.messenger.UserConfig.selectedAccount)
     }
 
     @JvmStatic

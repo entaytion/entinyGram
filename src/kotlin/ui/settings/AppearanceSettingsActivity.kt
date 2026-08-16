@@ -310,7 +310,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 MonetHelper.getThemeMode().ordinal,
             ) { which ->
                 MonetHelper.setThemeMode(MonetHelper.ThemeMode.entries[which])
-                softRebuild()
+                listView.adapter.update(true)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
 

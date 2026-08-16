@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 16 Aug 2026 19:48:50 +0300
+Subject: Prevent profile row updates from crashing during fragment teardown
+
+---
+ .../src/main/java/org/telegram/ui/ProfileActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -11134,7 +11134,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             avatarsViewPager.setPadding(0, 0, 0, getActionsExtraHeight());
+         }
+         if (isPulledDown && listView != null) {
+-            final int abh = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
++            final int abh = actionBar != null ? ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) : 0;
+             final int target = listView.getMeasuredWidth() + getActionsExtraHeight() - abh;
+             if (target > 0 && extraHeight != target) {
+                 extraHeight = target;

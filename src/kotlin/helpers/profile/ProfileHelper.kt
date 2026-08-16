@@ -242,7 +242,8 @@ object ProfileHelper {
         if (isRegularForum(currentAccount, dialogId)) {
             ForumDisplayHelper.addProfileMenuItem(fragment, otherItem, currentAccount, -dialogId, resourcesProvider)
         }
-        if (GhostHelper.isGhostActive()) {
+        val isSelf = dialogId > 0 && dialogId == UserConfig.getInstance(currentAccount).clientUserId
+        if (GhostHelper.isGhostActive() && !isSelf) {
             val whitelisted = GhostHelper.isDialogWhitelisted(dialogId)
             val ghostLabel = if (whitelisted) {
                 LocaleController.getString(R.string.InuGhostModeEnableForChat)
@@ -264,18 +265,11 @@ object ProfileHelper {
                 )
             }
         }
-        if (dialogId > 0 && dialogId == UserConfig.getInstance(currentAccount).clientUserId) {
+        if (isSelf) {
             otherItem.addSubItem(
                 ACTION_DELETE_PROFILE_PHOTOS,
                 R.drawable.msg_delete,
                 LocaleController.getString(R.string.InuDeleteProfilePhotos),
-            )
-        }
-        if (BuildVars.DEBUG_PRIVATE_VERSION) {
-            otherItem.addSubItem(
-                ACTION_DEBUG_CLEAR_CACHE,
-                R.drawable.msg_delete,
-                "Debug: clear profile cache",
             )
         }
     }

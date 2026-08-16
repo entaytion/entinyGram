@@ -564,6 +564,10 @@ object MonetHelper {
 
     private fun applySingle(name: String, dark: Boolean) {
         Theme.selectedAutoNightType = Theme.AUTO_NIGHT_TYPE_NONE
+        // Telegram restores the active theme from lastDayTheme on process start,
+        // even when the selected theme is dark. Keep both slots in sync so a
+        // manually selected Monet Dark/AMOLED theme survives a restart.
+        rememberLastTheme(name, dark = false)
         Theme.saveAutoNightThemeConfig()
         rememberLastTheme(name, dark = dark)
         val theme = Theme.getTheme(name) ?: return

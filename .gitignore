@@ -4,6 +4,9 @@ worktree/
 .idea/
 .vscode/
 .gradle/
+.gradle-local/
+build/
+.cxx/
 *.apk
 *.aab
 out/
