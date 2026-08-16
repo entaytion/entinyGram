@@ -1,0 +1,178 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 2 Aug 2026 13:44:28 +0300
+Subject: Configure ABI filters, R8 rules, and local builds
+
+---
+ TMessagesProj/build.gradle       | 11 +++++++++--
+ TMessagesProj/proguard-rules.pro | 10 +++++++---
+ TMessagesProj_App/build.gradle   | 27 ++++++++++++++++++++++++---
+ build.gradle                     | 29 +++++++++++++++++++++++++++--
+ 4 files changed, 67 insertions(+), 10 deletions(-)
+
+diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj/build.gradle
++++ b/TMessagesProj/build.gradle
+@@ -47,7 +47,9 @@ dependencies {
+     implementation 'com.google.android.gms:play-services-location:21.0.1'
+     implementation 'com.google.android.gms:play-services-wallet:19.1.0'
+     implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
+-    implementation 'com.stripe:stripe-android:11.3.0'
++    implementation('com.stripe:stripe-android:11.3.0') {
++        exclude group: 'org.bouncycastle'
++    }
+     implementation 'com.google.mlkit:language-id:17.0.6'
+     implementation 'com.android.billingclient:billing:7.1.1'
+     implementation 'com.google.code.gson:gson:2.11.0'
+@@ -117,7 +119,12 @@ android {
+         targetSdkVersion 35
+ 
+         ndk {
+-            abiFilters "arm64-v8a"
++            def filters = System.getenv('ABI_FILTERS')
++            if (filters == null || filters.isEmpty()) {
++                abiFilters "arm64-v8a"
++            } else if (filters != 'all') {
++                abiFilters filters.split(',') as String[]
++            }
+         }
+ 
+         externalNativeBuild {
+diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
+index 0000000..0000000 100644
+--- a/TMessagesProj/proguard-rules.pro
++++ b/TMessagesProj/proguard-rules.pro
+@@ -1,8 +1,13 @@
+--keep public class com.google.android.gms.* { public *; }
++# Google Play Services: keep only annotated classes (KeepName) instead of wildcard keeping all gms classes
+ -keepnames @com.google.android.gms.common.annotation.KeepName class *
+ -keepclassmembernames class * {
+     @com.google.android.gms.common.annotation.KeepName *;
+ }
++
++# NagramX R8 UI allowshrinking rules
++-keepclassmembernames,allowshrinking class org.telegram.ui.* { <fields>; }
++-keepclassmembernames,allowshrinking class org.telegram.ui.Cells.* { <fields>; }
++-keepclassmembernames,allowshrinking class org.telegram.ui.Components.* { <fields>; }
+ -keep class org.webrtc.* { *; }
+ -keep class org.webrtc.audio.* { *; }
+ -keep class org.webrtc.voiceengine.* { *; }
+@@ -10,7 +15,6 @@
+ -keep class org.telegram.messenger.camera.* { *; }
+ -keep class org.telegram.messenger.secretmedia.* { *; }
+ -keep class org.telegram.messenger.support.* { *; }
+--keep class org.telegram.messenger.support.* { *; }
+ -keep class org.telegram.messenger.time.* { *; }
+ -keep class org.telegram.messenger.video.* { *; }
+ -keep class org.telegram.messenger.voip.* { *; }
+@@ -126,4 +130,4 @@
+ 
+ # Use -keep to explicitly keep any other classes shrinking would remove
+ -dontoptimize
+--dontobfuscate
+\ No newline at end of file
++-dontobfuscate
+diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_App/build.gradle
++++ b/TMessagesProj_App/build.gradle
+@@ -24,15 +24,31 @@ dependencies {
+ android {
+     compileSdkVersion 35
+     buildToolsVersion '35.0.0'
++    ndkVersion "27.2.12479018"
+ 
+     defaultConfig.applicationId = "desu.inugram"
+ 
+-    sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
++    externalNativeBuild {
++        cmake {
++            path '../TMessagesProj/jni/CMakeLists.txt'
++        }
++    }
+ 
+     packaging {
+         jniLibs {
+             useLegacyPackaging = true
+         }
++        resources {
++            excludes += [
++                'META-INF/*.kotlin_module',
++                'META-INF/*.version',
++                'META-INF/DEPENDENCIES',
++                'META-INF/LICENSE*',
++                'META-INF/NOTICE*',
++                'META-INF/AL2.0',
++                'META-INF/LGPL2.1'
++            ]
++        }
+     }
+ 
+     lintOptions {
+@@ -86,7 +102,7 @@ android {
+             shrinkResources false
+             multiDexEnabled true
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
+-            ndk.debugSymbolLevel = 'FULL'
++            ndk.debugSymbolLevel = 'SYMBOL_TABLE'
+         }
+     }
+ 
+@@ -113,7 +129,12 @@ android {
+         ndkVersion "27.2.12479018"
+ 
+         ndk {
+-            abiFilters "arm64-v8a"
++            def filters = System.getenv('ABI_FILTERS')
++            if (filters == null || filters.isEmpty()) {
++                abiFilters "arm64-v8a"
++            } else if (filters != 'all') {
++                abiFilters filters.split(',') as String[]
++            }
+         }
+ 
+         externalNativeBuild {
+diff --git a/build.gradle b/build.gradle
+index 0000000..0000000 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -17,11 +17,36 @@ repositories {
+     google()
+ }
+ 
+-def commitId = System.getenv('COMMIT_ID')
++def getGitCommitSha = {
++    try {
++        def process = ['git', 'rev-parse', '--short', 'HEAD'].execute(null, rootDir)
++        process.waitFor()
++        if (process.exitValue() == 0) return process.text.trim()
++    } catch (Exception ignored) {}
++    return null
++}
++
++def getNextLocalBuildNumber = {
++    def file = new File(rootDir, '.local_build_number')
++    int current = 1000000
++    if (file.exists()) {
++        try {
++            current = file.text.trim().toInteger()
++        } catch (Exception ignored) {}
++    }
++    int next = current + 1
++    try {
++        file.text = next.toString()
++    } catch (Exception ignored) {}
++    return current
++}
++
++def commitId = System.getenv('COMMIT_ID') ?: getGitCommitSha()
++def currentVerCode = System.getenv('INU_BUILD') ? Integer.parseInt(System.getenv('INU_BUILD')) : getNextLocalBuildNumber()
+ 
+ ext {
+   verName = "${APP_VERSION_NAME}${commitId != null ? "-${commitId.take(7)}" : ''}"
+-  verCode = Integer.parseInt(System.getenv('INU_BUILD') ?: '1000000')
++  verCode = currentVerCode
+   stockVerCode = Integer.parseInt(APP_VERSION_CODE)
+   buildDate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_DATE)
+   ccachePath = null

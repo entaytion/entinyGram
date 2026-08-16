@@ -156,6 +156,14 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
+                TOGGLE_ALLOW_SCREENSHOTS,
+                R.string.InuAllowScreenshots,
+                R.string.InuAllowScreenshotsInfo,
+                InuConfig.ALLOW_SCREENSHOTS.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_SAVE_USER_INFO,
                 R.string.InuSaveUserInfo,
                 R.string.InuSaveUserInfoInfo,
@@ -378,6 +386,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.ALLOW_FORWARD_RESTRICTED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_ALLOW_SCREENSHOTS -> {
+                val new = InuConfig.ALLOW_SCREENSHOTS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_SAVE_USER_INFO -> {
                 val new = InuConfig.SAVE_USER_INFO.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -412,6 +424,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
+        private val TOGGLE_ALLOW_SCREENSHOTS = InuUtils.generateId()
         private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
@@ -447,6 +460,7 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
                 SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_SHOW_EDIT_HISTORY_DIFF),
                 SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),
+                SearchRegistry.Entry("allow-screenshots", R.string.InuAllowScreenshots, TOGGLE_ALLOW_SCREENSHOTS),
                 SearchRegistry.Entry("save-user-info", R.string.InuSaveUserInfo, TOGGLE_SAVE_USER_INFO),
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_CACHE_TTL),
             ),

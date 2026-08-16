@@ -40,6 +40,8 @@ our own layer on top of the inugram patchset. we keep syncing with inugram upstr
 
 ### restricted features
 
+- 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories
+- 📡 copy text and select messages in protected chats when restricted forwarding bypass is enabled
 - 📡 **local telegram premium**: unlock client-side premium features (star badges, custom app icons, emoji statuses, unlimited chat translation bar, premium reactions and animations)
 - 📡 **content protection & forward bypass**:
   - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions

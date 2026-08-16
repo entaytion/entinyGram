@@ -57,6 +57,7 @@ object SavedMessagesHelper {
     private val deletedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
     private val deletedMessageDates = LongSparseArray<LongSparseArray<LongSparseArray<Long>>>()
     private val loadedAccounts = HashSet<Int>()
+    private val cacheLock = Any()
 
     // In-memory cache for edit history (account -> (dialogId -> (msgId -> List<EditEntry>)))
     private val editHistoryCache = LongSparseArray<LongSparseArray<LongSparseArray<ArrayList<EditEntry>>>>()
@@ -95,7 +96,9 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun ensureAccountLoaded(account: Int) {
-        if (loadedAccounts.contains(account)) return
+        synchronized(cacheLock) {
+            if (loadedAccounts.contains(account)) return
+        }
         val storage = MessagesStorage.getInstance(account) ?: return
         val db = storage.database
         if (db != null) {
@@ -109,7 +112,9 @@ object SavedMessagesHelper {
     }
 
     private fun loadFromDb(account: Int, db: org.telegram.SQLite.SQLiteDatabase) {
-        if (loadedAccounts.contains(account)) return
+        synchronized(cacheLock) {
+            if (loadedAccounts.contains(account)) return
+        }
 
         // Prune stale entries before loading into memory
         val ttlDays = InuConfig.DELETED_MESSAGES_TTL.value
@@ -141,10 +146,12 @@ object SavedMessagesHelper {
             }
         }
         org.telegram.messenger.AndroidUtilities.runOnUIThread {
-            if (loadedAccounts.contains(account)) return@runOnUIThread
-            deletedMessageIds.put(account.toLong(), deletedArray)
-            deletedMessageDates.put(account.toLong(), dateArray)
-            loadedAccounts.add(account)
+            synchronized(cacheLock) {
+                if (loadedAccounts.contains(account)) return@synchronized
+                deletedMessageIds.put(account.toLong(), deletedArray)
+                deletedMessageDates.put(account.toLong(), dateArray)
+                loadedAccounts.add(account)
+            }
         }
     }
 
@@ -164,10 +171,12 @@ object SavedMessagesHelper {
             InuDatabaseHelper.pruneEditHistory(db, cutoff)
             // Invalidate in-memory cache so it's reloaded fresh on next access
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                deletedMessageIds.remove(account.toLong())
-                deletedMessageDates.remove(account.toLong())
-                editHistoryCache.remove(account.toLong())
-                loadedAccounts.remove(account)
+                synchronized(cacheLock) {
+                    deletedMessageIds.remove(account.toLong())
+                    deletedMessageDates.remove(account.toLong())
+                    editHistoryCache.remove(account.toLong())
+                    loadedAccounts.remove(account)
+                }
             }
         }
     }
@@ -223,10 +232,12 @@ object SavedMessagesHelper {
                             )
                     }
                 }
-                deletedMessageIds.remove(account.toLong())
-                deletedMessageDates.remove(account.toLong())
-                editHistoryCache.remove(account.toLong())
-                loadedAccounts.remove(account)
+                synchronized(cacheLock) {
+                    deletedMessageIds.remove(account.toLong())
+                    deletedMessageDates.remove(account.toLong())
+                    editHistoryCache.remove(account.toLong())
+                    loadedAccounts.remove(account)
+                }
                 onDone?.run()
             }
         }
@@ -237,30 +248,32 @@ object SavedMessagesHelper {
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
         if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
         ensureAccountLoaded(account)
-        var dialogs = deletedMessageIds.get(account.toLong())
-        if (dialogs == null) {
-            dialogs = LongSparseArray()
-            deletedMessageIds.put(account.toLong(), dialogs)
-        }
-        var set = dialogs.get(dialogId)
-        if (set == null) {
-            set = HashSet()
-            dialogs.put(dialogId, set)
-        }
-        set.add(msgId)
-
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
-        var dateAcc = deletedMessageDates.get(account.toLong())
-        if (dateAcc == null) {
-            dateAcc = LongSparseArray()
-            deletedMessageDates.put(account.toLong(), dateAcc)
+        synchronized(cacheLock) {
+            var dialogs = deletedMessageIds.get(account.toLong())
+            if (dialogs == null) {
+                dialogs = LongSparseArray()
+                deletedMessageIds.put(account.toLong(), dialogs)
+            }
+            var set = dialogs.get(dialogId)
+            if (set == null) {
+                set = HashSet()
+                dialogs.put(dialogId, set)
+            }
+            set.add(msgId)
+
+            var dateAcc = deletedMessageDates.get(account.toLong())
+            if (dateAcc == null) {
+                dateAcc = LongSparseArray()
+                deletedMessageDates.put(account.toLong(), dateAcc)
+            }
+            var dateDialog = dateAcc.get(dialogId)
+            if (dateDialog == null) {
+                dateDialog = LongSparseArray()
+                dateAcc.put(dialogId, dateDialog)
+            }
+            dateDialog.put(msgId.toLong(), deletionTime)
         }
-        var dateDialog = dateAcc.get(dialogId)
-        if (dateDialog == null) {
-            dateDialog = LongSparseArray()
-            dateAcc.put(dialogId, dateDialog)
-        }
-        dateDialog.put(msgId.toLong(), deletionTime)
 
         val mediaPath = copyMediaFile(account, message)
         val storage = MessagesStorage.getInstance(account) ?: return
@@ -274,7 +287,9 @@ object SavedMessagesHelper {
     fun isMessageDeleted(account: Int, dialogId: Long, msgId: Int): Boolean {
         if (!isSaveDeletedEnabled()) return false
         ensureAccountLoaded(account)
-        return deletedMessageIds.get(account.toLong())?.get(dialogId)?.contains(msgId) == true
+        return synchronized(cacheLock) {
+            deletedMessageIds.get(account.toLong())?.get(dialogId)?.contains(msgId) == true
+        }
     }
 
     @JvmStatic
@@ -285,7 +300,9 @@ object SavedMessagesHelper {
     @JvmStatic
     fun getDeletedDate(account: Int, dialogId: Long, msgId: Int): Long {
         ensureAccountLoaded(account)
-        return deletedMessageDates.get(account.toLong())?.get(dialogId)?.get(msgId.toLong()) ?: 0L
+        return synchronized(cacheLock) {
+            deletedMessageDates.get(account.toLong())?.get(dialogId)?.get(msgId.toLong()) ?: 0L
+        }
     }
 
     @JvmStatic
@@ -322,28 +339,26 @@ object SavedMessagesHelper {
         if (trimmed.isBlank() && mediaPath.isNullOrBlank()) return
         val now = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000
         
-        var accMap = editHistoryCache.get(account.toLong())
-        if (accMap == null) {
-            accMap = LongSparseArray()
-            editHistoryCache.put(account.toLong(), accMap)
+        synchronized(cacheLock) {
+            var accMap = editHistoryCache.get(account.toLong())
+            if (accMap == null) {
+                accMap = LongSparseArray()
+                editHistoryCache.put(account.toLong(), accMap)
+            }
+            var dialogMap = accMap.get(dialogId)
+            if (dialogMap == null) {
+                dialogMap = LongSparseArray()
+                accMap.put(dialogId, dialogMap)
+            }
+            var list = dialogMap.get(msgId.toLong())
+            if (list == null) {
+                list = ArrayList()
+                dialogMap.put(msgId.toLong(), list)
+            }
+            if (list.isNotEmpty() && list.last().text.trim() == trimmed && list.last().mediaPath == mediaPath) return
+            if (list.any { it.text.trim() == trimmed && it.mediaPath == mediaPath }) return
+            list.add(EditEntry(now, trimmed, mediaPath))
         }
-        var dialogMap = accMap.get(dialogId)
-        if (dialogMap == null) {
-            dialogMap = LongSparseArray()
-            accMap.put(dialogId, dialogMap)
-        }
-        var list = dialogMap.get(msgId.toLong())
-        if (list == null) {
-            list = ArrayList()
-            dialogMap.put(msgId.toLong(), list)
-        }
-        if (list.isNotEmpty() && list.last().text.trim() == trimmed && list.last().mediaPath == mediaPath) {
-            return
-        }
-        if (list.any { it.text.trim() == trimmed && it.mediaPath == mediaPath }) {
-            return
-        }
-        list.add(EditEntry(now, trimmed, mediaPath))
 
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
@@ -364,25 +379,27 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun getEditHistory(account: Int, dialogId: Long, msgId: Int): List<EditEntry> {
-        var accMap = editHistoryCache.get(account.toLong())
-        if (accMap == null) {
-            accMap = LongSparseArray()
-            editHistoryCache.put(account.toLong(), accMap)
+        return synchronized(cacheLock) {
+            var accMap = editHistoryCache.get(account.toLong())
+            if (accMap == null) {
+                accMap = LongSparseArray()
+                editHistoryCache.put(account.toLong(), accMap)
+            }
+            var dialogMap = accMap.get(dialogId)
+            if (dialogMap == null) {
+                dialogMap = LongSparseArray()
+                accMap.put(dialogId, dialogMap)
+            }
+            var list = dialogMap.get(msgId.toLong())
+            if (list == null) {
+                val storage = MessagesStorage.getInstance(account) ?: return@synchronized emptyList()
+                val db = storage.database ?: return@synchronized emptyList()
+                val loaded = InuDatabaseHelper.loadEditHistory(db, dialogId, msgId)
+                list = ArrayList(loaded.map { EditEntry(it.first, it.second, it.third) })
+                dialogMap.put(msgId.toLong(), list)
+            }
+            list.toList()
         }
-        var dialogMap = accMap.get(dialogId)
-        if (dialogMap == null) {
-            dialogMap = LongSparseArray()
-            accMap.put(dialogId, dialogMap)
-        }
-        var list = dialogMap.get(msgId.toLong())
-        if (list == null) {
-            val storage = MessagesStorage.getInstance(account) ?: return emptyList()
-            val db = storage.database ?: return emptyList()
-            val loaded = InuDatabaseHelper.loadEditHistory(db, dialogId, msgId)
-            list = ArrayList(loaded.map { EditEntry(it.first, it.second, it.third) })
-            dialogMap.put(msgId.toLong(), list)
-        }
-        return list
     }
 
     @JvmStatic

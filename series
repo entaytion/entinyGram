@@ -259,7 +259,7 @@ entiny/enable-premium-purchase.patch
 entiny/ai-compose.patch
 feature/faster-file-load.patch
 entiny/bypass-noforwards.patch
-entiny/abi-toggle.patch
+entiny/build-configuration.patch
 bugfix/album-caption-spoiler-reset.patch
 bugfix/story-privacy-hint-npe.patch
 bugfix/preview-rotation-black-screen.patch
@@ -269,12 +269,10 @@ feature/unified-video-rewind.patch
 feature/user-deeplink.patch
 entiny/unlock-chat-translation.patch
 entiny/chat-ai-deeplink.patch
-entiny/local-build-number.patch
 feature/translator.patch
 entiny/night-theme-colors.patch
 entiny/translator-without-premium.patch
 entiny/colorful-icons-and-popups.patch
-entiny/build-optimizations.patch
 entiny/fix-url-parsing.patch
 entiny/branding.patch
 feature/message-menu.patch
@@ -289,5 +287,5 @@ entiny/webrtc-audio-fix.patch
 entiny/settings-api-compat.patch
 entiny/send-message-hooks.patch
 entiny/edited-time-display.patch
-entiny/r8-rule-cleanup.patch
 entiny/local-premium.patch
+entiny/allow-screenshots-and-copy.patch

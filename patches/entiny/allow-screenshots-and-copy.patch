@@ -1,0 +1,120 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 16 Aug 2026 18:34:08 +0300
+Subject: Allow screenshots and copying in protected chats
+
+---
+ .../main/java/org/telegram/messenger/FlagSecureReason.java  | 5 +++++
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 4 ++--
+ .../java/org/telegram/ui/Components/PasscodeViewDialog.java | 6 ++++--
+ .../src/main/java/org/telegram/ui/PhotoViewer.java          | 6 ++++--
+ .../src/main/java/org/telegram/ui/SecretMediaViewer.java    | 6 ++++--
+ .../src/main/java/org/telegram/ui/SecretVoicePlayer.java    | 6 ++++--
+ 6 files changed, 23 insertions(+), 10 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java b/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java
+@@ -64,6 +64,11 @@ public class FlagSecureReason {
+             return;
+         }
+ 
++        if (desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
++            return;
++        }
++
+         if (isSecuredNow(window)) {
+             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+             AndroidUtilities.logFlagSecure();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -10315,7 +10315,7 @@ public class ChatActivity extends BaseFragment implements
+         }
+         ChatActionsHelper.addActionModeItems(this, actionMode, edit);
+         actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
+-        actionMode.setItemVisibility(copy, !isPeerNoForwards() && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
++        actionMode.setItemVisibility(copy, (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() || !isPeerNoForwards()) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
+         actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
+         actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
+         actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
+@@ -19304,7 +19304,7 @@ public class ChatActivity extends BaseFragment implements
+                 int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
+                 if (copyItem != null) {
+                     copyVisible = copyItem.getVisibility();
+-                    copyItem.setVisibility(!noforwards && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
++                    copyItem.setVisibility((desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() || !noforwards) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
+                     newCopyVisible = copyItem.getVisibility();
+                 }
+                 if (starItem != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java
+@@ -82,8 +82,10 @@ public class PasscodeViewDialog extends Dialog {
+         params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE;
+ //        params.flags |= WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+         if (!BuildVars.DEBUG_PRIVATE_VERSION) {
+-            params.flags |= WindowManager.LayoutParams.FLAG_SECURE;
+-            AndroidUtilities.logFlagSecure();
++            if (!desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++                params.flags |= WindowManager.LayoutParams.FLAG_SECURE;
++                AndroidUtilities.logFlagSecure();
++            }
+         }
+         params.flags |= WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |
+                 WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -17574,8 +17574,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 messageObject != null && (MessagesController.getInstance(currentAccount).isPeerNoForwards(messageObject.getDialogId()) ||
+                 (messageObject.messageOwner != null && messageObject.messageOwner.noforwards)) || messageObject != null && messageObject.hasRevealedExtendedMedia()
+             ) {
+-                windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
+-                AndroidUtilities.logFlagSecure();
++                if (!desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++                    windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
++                    AndroidUtilities.logFlagSecure();
++                }
+             } else {
+                 windowLayoutParams.flags &=~ WindowManager.LayoutParams.FLAG_SECURE;
+                 AndroidUtilities.logFlagSecure();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SecretMediaViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/SecretMediaViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SecretMediaViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SecretMediaViewer.java
+@@ -977,8 +977,10 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
+                 WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
+                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                 WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
+-        windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
+-        AndroidUtilities.logFlagSecure();
++        if (!desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++            windowLayoutParams.flags |= WindowManager.LayoutParams.FLAG_SECURE;
++            AndroidUtilities.logFlagSecure();
++        }
+         centerImage.setParentView(containerView);
+         centerImage.setForceCrossfade(true);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SecretVoicePlayer.java
+@@ -239,8 +239,10 @@ public class SecretVoicePlayer extends Dialog {
+             WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS |
+             WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+         if (!BuildVars.DEBUG_PRIVATE_VERSION) {
+-            params.flags |= WindowManager.LayoutParams.FLAG_SECURE;
+-            AndroidUtilities.logFlagSecure();
++            if (!desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++                params.flags |= WindowManager.LayoutParams.FLAG_SECURE;
++                AndroidUtilities.logFlagSecure();
++            }
+         }
+         params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+         params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
