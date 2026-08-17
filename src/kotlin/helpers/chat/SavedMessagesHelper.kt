@@ -147,9 +147,39 @@ object SavedMessagesHelper {
         }
         org.telegram.messenger.AndroidUtilities.runOnUIThread {
             synchronized(cacheLock) {
-                if (loadedAccounts.contains(account)) return@synchronized
-                deletedMessageIds.put(account.toLong(), deletedArray)
-                deletedMessageDates.put(account.toLong(), dateArray)
+                var existingDialogs = deletedMessageIds.get(account.toLong())
+                if (existingDialogs == null) {
+                    deletedMessageIds.put(account.toLong(), deletedArray)
+                } else {
+                    for (i in 0 until deletedArray.size()) {
+                        val k = deletedArray.keyAt(i)
+                        val v = deletedArray.valueAt(i)
+                        val targetSet = existingDialogs.get(k)
+                        if (targetSet == null) {
+                            existingDialogs.put(k, v)
+                        } else {
+                            targetSet.addAll(v)
+                        }
+                    }
+                }
+
+                var existingDates = deletedMessageDates.get(account.toLong())
+                if (existingDates == null) {
+                    deletedMessageDates.put(account.toLong(), dateArray)
+                } else {
+                    for (i in 0 until dateArray.size()) {
+                        val k = dateArray.keyAt(i)
+                        val v = dateArray.valueAt(i)
+                        val targetDates = existingDates.get(k)
+                        if (targetDates == null) {
+                            existingDates.put(k, v)
+                        } else {
+                            for (j in 0 until v.size()) {
+                                targetDates.put(v.keyAt(j), v.valueAt(j))
+                            }
+                        }
+                    }
+                }
                 loadedAccounts.add(account)
             }
         }
@@ -288,7 +318,11 @@ object SavedMessagesHelper {
         if (!isSaveDeletedEnabled()) return false
         ensureAccountLoaded(account)
         return synchronized(cacheLock) {
-            deletedMessageIds.get(account.toLong())?.get(dialogId)?.contains(msgId) == true
+            val accMap = deletedMessageIds.get(account.toLong()) ?: return@synchronized false
+            val dialogSet = accMap.get(dialogId)
+            if (dialogSet?.contains(msgId) == true) return@synchronized true
+            if (dialogId != 0L && accMap.get(0L)?.contains(msgId) == true) return@synchronized true
+            false
         }
     }
 
@@ -301,7 +335,13 @@ object SavedMessagesHelper {
     fun getDeletedDate(account: Int, dialogId: Long, msgId: Int): Long {
         ensureAccountLoaded(account)
         return synchronized(cacheLock) {
-            deletedMessageDates.get(account.toLong())?.get(dialogId)?.get(msgId.toLong()) ?: 0L
+            val accMap = deletedMessageDates.get(account.toLong()) ?: return@synchronized 0L
+            val date = accMap.get(dialogId)?.get(msgId.toLong()) ?: 0L
+            if (date > 0L) return@synchronized date
+            if (dialogId != 0L) {
+                return@synchronized accMap.get(0L)?.get(msgId.toLong()) ?: 0L
+            }
+            0L
         }
     }
 

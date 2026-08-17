@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 17 Aug 2026 00:24:10 +0300
+Subject: Prevent ChatActivity layout inconsistency crash in debug builds
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java  | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -6606,15 +6606,11 @@ public class ChatActivity extends BaseFragment implements
+ 
+             @Override
+             public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+-                if (BuildVars.DEBUG_PRIVATE_VERSION) {
++                try {
+                     super.onLayoutChildren(recycler, state);
+-                } else {
+-                    try {
+-                        super.onLayoutChildren(recycler, state);
+-                    } catch (Exception e) {
+-                        FileLog.e(e);
+-                        AndroidUtilities.runOnUIThread(() -> chatAdapter.notifyDataSetChanged(false));
+-                    }
++                } catch (Exception e) {
++                    FileLog.e(e);
++                    AndroidUtilities.runOnUIThread(() -> chatAdapter.notifyDataSetChanged(false));
+                 }
+             }
+ 

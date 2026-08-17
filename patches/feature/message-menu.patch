@@ -32,7 +32,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -31114,6 +31114,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -31129,6 +31129,10 @@ public class ChatActivity extends BaseFragment implements
              if (isReactionsViewAvailable || showMessageSeen || showSponsorInfo) {
                  flags |= ActionBarPopupWindow.ActionBarPopupWindowLayout.FLAG_USE_SWIPEBACK;
              }
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
  
              ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getParentActivity(), R.drawable.popup_fixed_alert4, themeDelegate, flags);
              popupLayout.setMinimumWidth(AndroidUtilities.dp(200));
-@@ -31122,6 +31126,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -31137,6 +31141,8 @@ public class ChatActivity extends BaseFragment implements
              shadowDrawable.getPadding(backgroundPaddings);
              popupLayout.setBackgroundColor(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground));
              MessageSeenView messageSeenView = null;
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
  
              boolean addGap = false;
  
-@@ -31153,12 +31159,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -31168,12 +31174,14 @@ public class ChatActivity extends BaseFragment implements
                      linearLayout.hasHeader = hasHeader;
                      linearLayout.setOrientation(LinearLayout.VERTICAL);
                      linearLayout.setLayoutParams(new FrameLayout.LayoutParams(AndroidUtilities.dp(200), AndroidUtilities.dp(6 * ReactedUsersListView.ITEM_HEIGHT_DP + (hasHeader ? 44 * 2 + 8 : 44)) + (!hasHeader ? 1 : 0)));
@@ -69,7 +69,7 @@ index 0000000..0000000 100644
  
                      int[] foregroundIndex = new int[1];
                      ReactedUsersListView reactedUsersListView = null;
-@@ -31206,14 +31214,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -31221,14 +31229,16 @@ public class ChatActivity extends BaseFragment implements
                          }
                          tabsScrollView.setHorizontalScrollBarEnabled(false);
                          tabsScrollView.addView(tabsView);
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                          SparseIntArray cachedHeights = new SparseIntArray();
                          for (int i = 0; i < counters.size() + 1; i++) {
                              cachedHeights.put(i, head + AndroidUtilities.dp(ReactedUsersListView.ITEM_HEIGHT_DP * ReactedUsersListView.VISIBLE_ITEMS));
-@@ -31283,9 +31293,15 @@ public class ChatActivity extends BaseFragment implements
+@@ -31298,9 +31308,15 @@ public class ChatActivity extends BaseFragment implements
                                      reactedView.setSeenCallback(v::setSeenUsers);
                                  }
  
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                              }
  
                              @Override
-@@ -31332,8 +31348,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -31347,8 +31363,14 @@ public class ChatActivity extends BaseFragment implements
                              }
                          });
                          linearLayout.addView(pager, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
  
                          reactedUsersListView = new ReactedUsersListView(contentView.getContext(), themeDelegate, currentAccount, primaryMessage, null, false, true)
                                  .setSeenUsers(reactedView.getSeenUsers())
-@@ -31420,6 +31442,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -31435,6 +31457,11 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
  
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
                      foregroundIndex[0] = popupLayout.addViewToSwipeBack(linearLayout);
  
                      ReactedUsersListView finalReactedUsersListView = reactedUsersListView;
-@@ -31428,8 +31455,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -31443,8 +31470,12 @@ public class ChatActivity extends BaseFragment implements
                              popupLayout.getSwipeBack().openForeground(foregroundIndex[0]);
                          }
                      });
@@ -152,7 +152,7 @@ index 0000000..0000000 100644
                  }
  
                  if (message.messageOwner != null && message.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
-@@ -31463,7 +31494,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31478,7 +31509,7 @@ public class ChatActivity extends BaseFragment implements
                      messageSeenLayout.addView(messageSeenView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
                      MessageSeenView finalMessageSeenView = messageSeenView;
  
@@ -161,7 +161,7 @@ index 0000000..0000000 100644
                      cell.setItemHeight(44);
                      cell.setTextAndIcon(LocaleController.getString(R.string.Back), R.drawable.msg_arrow_back);
                      cell.getTextView().setPadding(LocaleController.isRTL ? 0 : AndroidUtilities.dp(40), 0, LocaleController.isRTL ? AndroidUtilities.dp(40) : 0, 0);
-@@ -31475,8 +31506,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -31490,8 +31521,10 @@ public class ChatActivity extends BaseFragment implements
                      linearLayout.setOrientation(LinearLayout.VERTICAL);
                      RecyclerListView listView2 = finalMessageSeenView.createListView();
                      backContainer.addView(cell);
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
                      backContainer.setOnClickListener(new View.OnClickListener() {
                          @Override
                          public void onClick(View view) {
-@@ -31522,7 +31555,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -31537,7 +31570,11 @@ public class ChatActivity extends BaseFragment implements
                              popupLayout.getSwipeBack().openForeground(foregroundIndex[0]);
                          }
                      });
@@ -187,7 +187,7 @@ index 0000000..0000000 100644
  
                      listView2.setOnItemClickListener((view1, position) -> {
                          TLObject object = finalMessageSeenView.users.get(position);
-@@ -31540,10 +31577,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -31555,10 +31592,19 @@ public class ChatActivity extends BaseFragment implements
                          presentFragment(fragment);
                      });
  
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
                  } else if (showPrivateMessageSeen) {
                      MessagePrivateSeenView messagePrivateSeenView = new MessagePrivateSeenView(getContext(), MessagePrivateSeenView.TYPE_SEEN, message, () -> {
                          closeMenu(true);
-@@ -31861,6 +31907,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -31876,6 +31922,8 @@ public class ChatActivity extends BaseFragment implements
                          popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
                      }
                  }
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
                  scrimPopupWindowItems = new ActionBarMenuSubItem[items.size()];
                  for (int a = 0, N = items.size(); a < N; a++) {
                      ActionBarMenuSubItem cell = new ActionBarMenuSubItem(getParentActivity(), a == 0, a == N - 1, themeDelegate);
-@@ -31931,6 +31979,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31946,6 +31994,7 @@ public class ChatActivity extends BaseFragment implements
                      layout.addView(infoText, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.FILL));
                      popupLayout.addView(layout);
                  }
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
              }
  
              if (selectedObject != null && selectedObject.isEphemeral()) {
-@@ -32002,7 +32051,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32017,7 +32066,9 @@ public class ChatActivity extends BaseFragment implements
                  if (isReactionsAvailable && (!tags || !getMessagesController().premiumFeaturesBlocked())) {
                      int pad = 22;
                      int sPad = 24;
@@ -237,7 +237,7 @@ index 0000000..0000000 100644
  
                      ReactionsContainerLayout finalReactionsLayout = reactionsLayout;
                      reactionsLayout.setDelegate(new ReactionsContainerLayout.ReactionsContainerDelegate() {
-@@ -32039,8 +32090,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32054,8 +32105,11 @@ public class ChatActivity extends BaseFragment implements
                          }
                      });
  
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.setReactionsLayout(reactionsLayout);
                      scrimPopupContainerLayout.setClipChildren(false);
                      MessageObject messageWithReactions = message;
-@@ -32074,6 +32128,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32089,6 +32143,9 @@ public class ChatActivity extends BaseFragment implements
  
                  boolean showNoForwards = (isPeerNoForwards() || message.messageOwner.noforwards && currentUser != null && currentUser.bot) && message.messageOwner.action == null && message.isSent() && !message.isEditing() && chatMode != MODE_SCHEDULED && chatMode != MODE_SAVED && getDialogId() != UserObject.VERIFY;
                  scrimPopupContainerLayout.addView(popupLayout, LayoutHelper.createLinearRelatively(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT, isReactionsAvailable ? 16 : 0, 0, isReactionsAvailable ? 36 : 0, 0));
@@ -261,7 +261,7 @@ index 0000000..0000000 100644
                  scrimPopupContainerLayout.setPopupWindowLayout(popupLayout);
                  if (showNoForwards) {
                      popupLayout.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-@@ -32107,7 +32164,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32122,7 +32179,11 @@ public class ChatActivity extends BaseFragment implements
                      FrameLayout fl = new FrameLayout(contentView.getContext());
                      fl.setBackground(shadowDrawable2);
                      fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
@@ -274,7 +274,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.applyViewBottom(fl);
                  }
  
-@@ -32130,7 +32191,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32145,7 +32206,11 @@ public class ChatActivity extends BaseFragment implements
                      FrameLayout fl = new FrameLayout(contentView.getContext());
                      fl.setBackground(shadowDrawable2);
                      fl.addView(tv, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 11, 11, 11, 11));
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                      scrimPopupContainerLayout.applyViewBottom(fl);
                  }
  
-@@ -32165,9 +32230,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -32180,9 +32245,11 @@ public class ChatActivity extends BaseFragment implements
                          }
  
                          if (stickerSets.size() > 0 && !getMessagesController().premiumFeaturesBlocked()) {
@@ -299,7 +299,7 @@ index 0000000..0000000 100644
  
                              View button = new MessageContainsEmojiButton(currentAccount, contentView.getContext(), themeDelegate, stickerSets, MessageContainsEmojiButton.EMOJI_TYPE);
                              button.setOnClickListener(e -> {
-@@ -32238,6 +32305,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -32253,6 +32320,9 @@ public class ChatActivity extends BaseFragment implements
              }
              scrimPopupWindow.setFocusable(true);
              scrimPopupContainerLayout.measure(View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST), View.MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(1000), View.MeasureSpec.AT_MOST));
@@ -309,7 +309,7 @@ index 0000000..0000000 100644
              scrimPopupWindow.setInputMethodMode(ActionBarPopupWindow.INPUT_METHOD_NOT_NEEDED);
              scrimPopupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
              scrimPopupWindow.getContentView().setFocusableInTouchMode(true);
-@@ -36392,7 +36462,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -36407,7 +36477,7 @@ public class ChatActivity extends BaseFragment implements
  
      private void processExternalUrl(int type, String url, CharacterStyle span, ChatMessageCell cell, boolean forceAlert, boolean forceNoIV) {
          LaunchActivity launchActivity = getParentActivity() instanceof LaunchActivity ? (LaunchActivity) getParentActivity() : LaunchActivity.instance;
@@ -318,7 +318,7 @@ index 0000000..0000000 100644
              return;
          }
          try {
-@@ -42013,7 +42083,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -42028,7 +42098,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean openLinkInternally(String urlFinal, ChatMessageCell cell, CharacterStyle span, int fromMessageId, int fromMessageProgressType) {

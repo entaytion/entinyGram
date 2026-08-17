@@ -366,7 +366,7 @@ index 0000000..0000000 100644
                      cell.setMessageObject(cellMessageObject, cell.getCurrentMessagesGroup(), cell.isPinnedBottom(), cell.isPinnedTop(), cell.isFirstInChat(), cell.isLastInChatList());
                      if (group != null) {
                          if (chatListItemAnimator != null) {
-@@ -31889,169 +31897,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -31904,169 +31912,7 @@ public class ChatActivity extends BaseFragment implements
                      });
                      cell.setOnLongClickListener(v1 -> ChatHelper.onMenuOptionLongClick(this, popupLayout, cell, options, i, selectedObject, selectedObjectGroup));
                      if (option == OPTION_TRANSLATE) {
@@ -537,7 +537,7 @@ index 0000000..0000000 100644
                      }
                      if (option == desu.inugram.helpers.chat.ChatHelper.OPTION_DETAILS) {
                          cell.setRightIcon(R.drawable.msg_arrowright);
-@@ -45755,7 +45601,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45770,7 +45616,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }
@@ -546,7 +546,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
-@@ -46079,7 +45925,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46094,7 +45940,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }

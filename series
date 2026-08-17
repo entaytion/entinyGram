@@ -291,3 +291,5 @@ entiny/local-premium.patch
 entiny/allow-screenshots-and-copy.patch
 bugfix/profile-actionbar-lifecycle.patch
 entiny/hidden-star-gifts.patch
+entiny/deleted-message-styling.patch
+bugfix/chat-activity-layout-crash.patch

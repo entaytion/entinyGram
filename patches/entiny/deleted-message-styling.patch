@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 16 Aug 2026 23:04:54 +0300
+Subject: Make deleted messages semi-transparent
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -6880,6 +6880,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 currentMessageObject.richLayout.detach(this);
+             }
+             currentMessageObject = messageObject;
++            if (desu.inugram.InuConfig.DELETED_MESSAGES_TRANSPARENT.getValue() && desu.inugram.helpers.chat.ChatHelper.isDeletedOrPreserved(currentMessageObject)) {
++                setAlpha(0.65f);
++            } else {
++                setAlpha(1.0f);
++            }
+             currentMessagesGroup = groupedMessages;
+             wasAllChats = isAllChats;
+             lastTime = -2;

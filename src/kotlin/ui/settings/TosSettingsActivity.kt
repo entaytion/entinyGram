@@ -98,6 +98,14 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         if (InuConfig.SAVE_DELETED_MESSAGES.value) {
             deletedCategoriesGroup.addTo(items) { listView?.adapter?.update(true) }
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_DELETED_MESSAGES_TRANSPARENT,
+                    R.string.InuDeletedMessagesTransparent,
+                    R.string.InuDeletedMessagesTransparentInfo,
+                    InuConfig.DELETED_MESSAGES_TRANSPARENT.value,
+                )
+            )
         }
 
         items.add(
@@ -406,6 +414,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.HIDDEN_STAR_GIFTS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_DELETED_MESSAGES_TRANSPARENT -> {
+                val new = InuConfig.DELETED_MESSAGES_TRANSPARENT.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             BUTTON_CACHE_TTL -> showTtlDialog()
             BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
         }
@@ -439,6 +451,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ALLOW_SCREENSHOTS = InuUtils.generateId()
         private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val TOGGLE_HIDDEN_STAR_GIFTS = InuUtils.generateId()
+        private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()

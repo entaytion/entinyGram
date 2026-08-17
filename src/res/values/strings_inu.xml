@@ -1030,4 +1030,6 @@
     <string name="InuLocalPremiumInfo">Unlocks local Premium features on client side (star badge, app icons, emoji statuses, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require official subscription.</string>
     <string name="InuHiddenStarGifts">Hidden &amp; Archived Star Gifts</string>
     <string name="InuHiddenStarGiftsInfo">Restores removed, archived and limited Star Gifts in the Telegram gifts catalog.</string>
+    <string name="InuDeletedMessagesTransparent">Semi-transparent deleted messages</string>
+    <string name="InuDeletedMessagesTransparentInfo">Display preserved deleted messages with slight transparency to clearly distinguish them in chat.</string>
 </resources>

@@ -180,6 +180,8 @@ object ChatHelper {
     @JvmStatic
     fun isDeletedOrPreserved(msg: MessageObject?): Boolean {
         if (msg == null) return false
+        if (!InuConfig.SAVE_DELETED_MESSAGES.value) return false
+        if (msg.deleted) return true
         return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
     }
 

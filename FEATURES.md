@@ -28,6 +28,7 @@ our own layer on top of the inugram patchset. we keep syncing with inugram upstr
   - **per-category deleted message saving**: granular toggles for private chats, groups, channels, and bots
   - **save edit history**: view full edit history (marked with ✏️) in an interactive message bubble sheet
   - **edit history text diff mode**: inline color-coded diff highlighting of edited text changes
+  - **semi-transparent deleted messages**: display preserved deleted message bubbles with subtle alpha transparency for instant visual distinction
   - **deleted cache TTL & storage manager**: automatic cache expiration (never / 1 day / 1 week / 1 month) and interactive cleanup sheet with per-dialog size breakdown
 - 📡 **self-destructing & expiring media**:
   - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
