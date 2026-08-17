@@ -157,7 +157,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1821,7 +1821,6 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1824,7 +1824,6 @@ public class MessagesController extends BaseController implements NotificationCe
              }
          }
          scheduleTranscriptionUpdate();
@@ -165,7 +165,7 @@ index 0000000..0000000 100644
          if (mainPreferences.contains("dcDomainName2")) {
              dcDomainName = mainPreferences.getString("dcDomainName2", "apv3.stel.com");
          } else {
-@@ -2818,17 +2817,6 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2821,17 +2820,6 @@ public class MessagesController extends BaseController implements NotificationCe
                      }
                      break;
                  }

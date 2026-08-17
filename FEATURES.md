@@ -28,7 +28,7 @@ our own layer on top of the inugram patchset. we keep syncing with inugram upstr
   - **per-category deleted message saving**: granular toggles for private chats, groups, channels, and bots
   - **save edit history**: view full edit history (marked with ✏️) in an interactive message bubble sheet
   - **edit history text diff mode**: inline color-coded diff highlighting of edited text changes
-  - **semi-transparent deleted messages**: display preserved deleted message bubbles with subtle alpha transparency for instant visual distinction
+  - **semi-transparent deleted messages & customizable deleted mark**: display preserved deleted message bubbles with subtle alpha transparency and pick the deleted mark style ("deleted" text / trash bin / cross / eye crossed) plus its accent color, with live bubble preview in settings showing your own avatar and name
   - **deleted cache TTL & storage manager**: automatic cache expiration (never / 1 day / 1 week / 1 month) and interactive cleanup sheet with per-dialog size breakdown
 - 📡 **self-destructing & expiring media**:
   - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
@@ -43,12 +43,13 @@ our own layer on top of the inugram patchset. we keep syncing with inugram upstr
 
 - 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories
 - 📡 copy text and select messages in protected chats when restricted forwarding bypass is enabled
-- 📡 **local telegram premium**: unlock client-side premium features (star badges, custom app icons, emoji statuses, unlimited chat translation bar, premium reactions and animations)
+- 📡 **local telegram premium**: unlock client-side premium features (star badges, custom app icons, emoji statuses, unlimited chat translation bar, premium reactions, animations, instant runtime toggle without restart, and voice transcription bypass without trial nag)
 - 📡 **content protection & forward bypass**:
   - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
   - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
   - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
-- 📡 **whole-chat translation without telegram premium**: unlock translation bar and real-time chat translation without subscription
+- 📡 **whole-chat translation without telegram premium**: unlock translation bar and real-time chat translation without subscription — pick a third-party provider below; the stock Telegram API provider still requires Telegram Premium
+- 📡 **third-party translation providers**: route chat auto-translate and in-place message translation through Google Translate, DeepL, Yandex, Microsoft Translator (free Bing endpoint), Microsoft Azure, MyMemory, Lingo (Caiyun), or TranSmart (Tencent) instead of the Telegram server API — Google, Microsoft, MyMemory, Lingo and TranSmart need no key, the rest have free tiers; failed messages retry automatically (a provider switch resets them immediately), failures show a bulletin instead of silently stopping, and if the chosen provider lacks the target language (e.g. Lingo/TranSmart have no Ukrainian) the engine silently falls back to Google/Bing; language pickers (translate popup and translate dialogs) only list languages the selected provider actually supports, and the provider settings mark each provider that supports your app language; the translator settings live right next to the Languages entry in the main Settings page (no separate AI entry — custom LLM endpoints are configured via the translation provider); a "force translation" toggle shows the translate bar and translates messages even when Telegram considers them to be in your own language or on the do-not-translate list (it also bypasses the "already in target language" guards in the message menu, selection translate and Instant View); web-link previews (title/description/site name) are translated by the selected third-party provider instead of the stock Telegram API
 - 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare)
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
 - 📡 **hidden & archived star gifts**: restores removed, archived, and limited Star Gifts in the Telegram gifts catalog

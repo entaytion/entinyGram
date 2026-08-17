@@ -431,10 +431,11 @@ object ChatActionsHelper {
             }
             val target = group?.captionMessage?.takeIf { !it.messageOwner?.message.isNullOrEmpty() } ?: msg
             val fromLang = target.messageOwner?.originalLanguage
-            if (fromLang != null && restricted.contains(fromLang)) continue
+            val force = InuConfig.FORCE_TRANSLATE.value
+            if (!force && fromLang != null && restricted.contains(fromLang)) continue
             // mirror the message menu: a message already in the target language is translated to the app locale
             val toLangValue = if (fromLang == toLang) toLangDefault else toLang
-            if (fromLang != null && fromLang == toLangValue) continue
+            if (!force && fromLang != null && fromLang == toLangValue) continue
             if (TranslateHelper.startTranslate(activity, msg, group, fromLang, toLangValue)) {
                 anyStarted = true
             }

@@ -13,6 +13,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.StaticLayout
+import android.text.style.ForegroundColorSpan
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
@@ -122,6 +123,8 @@ object ChatHelper {
         }
         if (isDeletedOrPreserved(msg)) {
             hash = hash * 31 + 3
+            hash = hash * 31 + InuConfig.DELETED_MARK_COLOR.value
+            hash = hash * 31 + InuConfig.DELETED_MARK_STYLE.value
         }
         val forwards = getForwardsCount(msg)
         if (forwards > 0) {
@@ -142,7 +145,9 @@ object ChatHelper {
         }
         val isDeleted = isDeletedOrPreserved(msg)
         if (isDeleted) {
-            width += AndroidUtilities.dp(13f)
+            if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
+                width += AndroidUtilities.dp(13f)
+            }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(11f)
         }
@@ -168,13 +173,43 @@ object ChatHelper {
         }
         val isDeleted = isDeletedOrPreserved(msg)
         if (isDeleted) {
-            appendTimeIcon(sb, R.drawable.msg_delete, sizeDp = 11f, translateYDp = 1f)
-            sb.append(" ")
+            if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
+                val markColor = InuConfig.DELETED_MARK_COLOR.value
+                appendTimeIcon(sb, deletedMarkIconRes(), sizeDp = 11f, translateYDp = 1f, overrideColor = markColor)
+                sb.append(" ")
+            } else {
+                appendDeletedMarkText(sb)
+                sb.append(" ")
+            }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             appendTimeIcon(sb, R.drawable.group_edit, sizeDp = 11f)
             sb.append(" ")
         }
         return if (sb.isEmpty()) time else sb.append(time)
+    }
+
+    @JvmStatic
+    fun deletedMarkIconRes(): Int = when (InuConfig.DELETED_MARK_STYLE.value) {
+        InuConfig.DeletedMarkStyleItem.CROSS -> R.drawable.ic_deleted_mark_cross
+        InuConfig.DeletedMarkStyleItem.EYE_CROSSED -> R.drawable.ic_deleted_mark_eye_off
+        else -> R.drawable.msg_delete
+    }
+
+    /**
+     * When no mark icon is selected (DELETED_MARK_STYLE == NOTHING), render the localized
+     * "deleted" word in the message footer instead, tinted with the chosen mark color.
+     */
+    @JvmStatic
+    fun appendDeletedMarkText(sb: SpannableStringBuilder) {
+        val text = LocaleController.getString(R.string.InuDeletedMarkText)
+        val markColor = InuConfig.DELETED_MARK_COLOR.value
+        if (markColor == 0) {
+            sb.append(text)
+        } else {
+            val span = SpannableString(text)
+            span.setSpan(ForegroundColorSpan(markColor), 0, span.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            sb.append(span)
+        }
     }
 
     @JvmStatic
@@ -222,17 +257,20 @@ object ChatHelper {
     }
 
     @JvmStatic
+    @JvmOverloads
     fun appendTimeIcon(
         sb: SpannableStringBuilder,
         icon: Int,
         sizeDp: Float = -1f,
         translateYDp: Float = 0f,
         align: Int = ColoredImageSpan.ALIGN_DEFAULT,
+        overrideColor: Int = 0,
     ) {
         sb.append("​")
         sb.setSpan(ColoredImageSpan(icon, align).apply {
             if (sizeDp > 0f) setSize(AndroidUtilities.dp(sizeDp))
             if (translateYDp != 0f) setTranslateY(AndroidUtilities.dpf2(translateYDp))
+            if (overrideColor != 0) setOverrideColor(overrideColor)
         }, sb.length - 1, sb.length, 0)
     }
 

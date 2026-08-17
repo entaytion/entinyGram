@@ -21,6 +21,8 @@ class TosSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuTOS)
 
     private var cachedSizeText: String? = null
+    private var deletedPreview: DeletedMessagePreviewCell? = null
+    private var deletedMarkColorCell: DeletedMarkColorCell? = null
 
     override fun onResume() {
         super.onResume()
@@ -97,7 +99,14 @@ class TosSettingsActivity : SettingsPageActivity() {
             )
         )
         if (InuConfig.SAVE_DELETED_MESSAGES.value) {
-            deletedCategoriesGroup.addTo(items) { listView?.adapter?.update(true) }
+            if (deletedPreview == null) deletedPreview = DeletedMessagePreviewCell(this.context, this)
+            if (deletedMarkColorCell == null) {
+                deletedMarkColorCell = DeletedMarkColorCell(this.context) {
+                    deletedPreview?.invalidate()
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                }
+            }
+            items.add(UItem.asCustom(deletedPreview))
             items.add(
                 mkTwoLineCheckItem(
                     TOGGLE_DELETED_MESSAGES_TRANSPARENT,
@@ -106,6 +115,17 @@ class TosSettingsActivity : SettingsPageActivity() {
                     InuConfig.DELETED_MESSAGES_TRANSPARENT.value,
                 )
             )
+            items.add(
+                UItem.asButton(
+                    BUTTON_DELETED_MARK_STYLE,
+                    LocaleController.getString(R.string.InuDeletedMark),
+                    deletedMarkStyleLabel(InuConfig.DELETED_MARK_STYLE.value),
+                )
+            )
+            if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
+                items.add(UItem.asCustom(deletedMarkColorCell))
+            }
+            deletedCategoriesGroup.addTo(items) { listView?.adapter?.update(true) }
         }
 
         items.add(
@@ -417,10 +437,44 @@ class TosSettingsActivity : SettingsPageActivity() {
             TOGGLE_DELETED_MESSAGES_TRANSPARENT -> {
                 val new = InuConfig.DELETED_MESSAGES_TRANSPARENT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                deletedPreview?.invalidate()
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
+            BUTTON_DELETED_MARK_STYLE -> showDeletedMarkStyleSelector()
             BUTTON_CACHE_TTL -> showTtlDialog()
             BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
         }
+    }
+
+    private fun deletedMarkStyleLabel(style: Int): String = when (style) {
+        InuConfig.DeletedMarkStyleItem.NOTHING -> LocaleController.getString(R.string.InuDeletedMarkStyleNothing)
+        InuConfig.DeletedMarkStyleItem.CROSS -> LocaleController.getString(R.string.InuDeletedMarkStyleCross)
+        InuConfig.DeletedMarkStyleItem.EYE_CROSSED -> LocaleController.getString(R.string.InuDeletedMarkStyleEyeCrossed)
+        else -> LocaleController.getString(R.string.InuDeletedMarkStyleTrashBin)
+    }
+
+    private fun showDeletedMarkStyleSelector() {
+        val context = context ?: return
+        val values = intArrayOf(
+            InuConfig.DeletedMarkStyleItem.NOTHING,
+            InuConfig.DeletedMarkStyleItem.TRASH_BIN,
+            InuConfig.DeletedMarkStyleItem.CROSS,
+            InuConfig.DeletedMarkStyleItem.EYE_CROSSED,
+        )
+        val items = values.map { RadioDialogBuilder.Item(deletedMarkStyleLabel(it)) }
+        showDialog(
+            RadioDialogBuilder(context, getResourceProvider())
+                .setTitle(LocaleController.getString(R.string.InuDeletedMark))
+                .setItems(items, values.indexOf(InuConfig.DELETED_MARK_STYLE.value).coerceAtLeast(0)) { _, which ->
+                    val newValue = values[which]
+                    if (InuConfig.DELETED_MARK_STYLE.value == newValue) return@setItems
+                    InuConfig.DELETED_MARK_STYLE.value = newValue
+                    deletedMarkColorCell?.refreshIcon()
+                    deletedPreview?.invalidate()
+                    listView?.adapter?.update(true)
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                }.create()
+        )
     }
 
     companion object {
@@ -441,6 +495,8 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_TIMED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
+        private val BUTTON_DELETED_MARK_STYLE = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_PRIVATE = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_GROUPS = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_CHANNELS = InuUtils.generateId()
@@ -451,7 +507,6 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ALLOW_SCREENSHOTS = InuUtils.generateId()
         private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val TOGGLE_HIDDEN_STAR_GIFTS = InuUtils.generateId()
-        private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
@@ -479,6 +534,8 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-any-story", R.string.InuSaveAnyStory, TOGGLE_SAVE_ANY_STORY),
                 SearchRegistry.Entry("save-deleted-categories", R.string.InuSaveDeletedCategories, SECTION_DELETED_CATEGORIES),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
+                SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),
+                SearchRegistry.Entry("deleted-mark-style", R.string.InuDeletedMark, BUTTON_DELETED_MARK_STYLE),
                 SearchRegistry.Entry("save-deleted-private", R.string.InuSaveDeletedPrivate, TOGGLE_SAVE_DELETED_PRIVATE),
                 SearchRegistry.Entry("save-deleted-groups", R.string.InuSaveDeletedGroups, TOGGLE_SAVE_DELETED_GROUPS),
                 SearchRegistry.Entry("save-deleted-channels", R.string.InuSaveDeletedChannels, TOGGLE_SAVE_DELETED_CHANNELS),

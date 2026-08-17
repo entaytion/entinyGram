@@ -258,11 +258,18 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_LOCAL_PREMIUM -> {
                 val new = InuConfig.LOCAL_PREMIUM.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                // Runtime refresh — no restart needed (AyuGram approach)
+                org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
+                    .postNotificationName(org.telegram.messenger.NotificationCenter.currentUserPremiumStatusChanged)
+                org.telegram.messenger.NotificationCenter.getGlobalInstance()
+                    .postNotificationName(org.telegram.messenger.NotificationCenter.premiumStatusChangedGlobal)
                 org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
                     .postNotificationName(org.telegram.messenger.NotificationCenter.updateInterfaces, 0)
                 org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
                     .postNotificationName(org.telegram.messenger.NotificationCenter.mainUserInfoChanged)
-                showRestartBulletin()
+                val mdc = org.telegram.messenger.MediaDataController.getInstance(currentAccount)
+                mdc.loadPremiumPromo(false)
+                mdc.loadReactions(false, null)
             }
 
             TOGGLE_PROFILE_PHOTO_GRADIENT_FADE -> {

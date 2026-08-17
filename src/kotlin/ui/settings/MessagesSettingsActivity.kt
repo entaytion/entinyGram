@@ -29,16 +29,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     private var doubleTapDelaySlider: SliderCell? = null
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // Translation
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslation)))
-        items.add(
-            mkSubPageButton(
-                BUTTON_TRANSLATOR,
-                LocaleController.getString(R.string.InuTranslator),
-            )
-        )
-        items.add(UItem.asShadow(null))
-
         // Stickers
         if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(this.context, this)
         if (stickerSizeSlider == null) {
@@ -280,8 +270,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
-
             BUTTON_STICKER_TIME_MODE -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -484,7 +472,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val BUTTON_TRANSLATOR = InuUtils.generateId()
         private val BUTTON_STICKER_TIME_MODE = InuUtils.generateId()
         private val TOGGLE_NO_STICKER_EXTRA_PADDING = InuUtils.generateId()
         private val BUTTON_PINNED_REACTIONS = InuUtils.generateId()

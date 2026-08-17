@@ -21,9 +21,8 @@ Subject: Unlock and extend built-in translator
  .../ui/Components/TranslateAlert2.java        |   4 +
  .../ui/Components/TranslateAlert3.java        |  11 +-
  .../ui/Components/TranslateButton.java        |  32 ++-
- .../telegram/ui/LanguageSelectActivity.java   | 260 ++----------------
- .../org/telegram/ui/SettingsActivity.java     |   4 +
- 9 files changed, 159 insertions(+), 278 deletions(-)
+ .../telegram/ui/LanguageSelectActivity.java   | 259 ++----------------
+ 8 files changed, 154 insertions(+), 278 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -430,7 +429,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
-@@ -211,91 +211,17 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -46,6 +46,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
+ import org.telegram.ui.Cells.HeaderCell;
+ import org.telegram.ui.Cells.LanguageCell;
+ import org.telegram.ui.Cells.ShadowSectionCell;
++import org.telegram.ui.Cells.TextCell;
+ import org.telegram.ui.Cells.TextCheckCell;
+ import org.telegram.ui.Cells.TextInfoPrivacyCell;
+ import org.telegram.ui.Cells.TextRadioCell;
+@@ -211,91 +212,17 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
  
          listView.setOnItemClickListener((view, position) -> {
              try {
@@ -516,7 +523,7 @@ index 0000000..0000000 100644
 -                    presentFragment(new RestrictedLanguagesSelectActivity());
 +                }
 +                boolean search = listView.getAdapter() == searchListViewAdapter;
-+                if (!search && view instanceof org.telegram.ui.SettingsActivity.SettingCell) {
++                if (!search && view instanceof TextCell) {
 +                    presentFragment(new desu.inugram.ui.settings.TranslatorSettingsActivity());
                      return;
                  }
@@ -528,7 +535,7 @@ index 0000000..0000000 100644
                  if (!search) {
                      position -= languagesStartsPosition; // (7 - (!(getChatValue() || getContextValue()) ? 1 : 0) - (getMessagesController().premiumFeaturesBlocked() ? 1 : 0));
                  }
-@@ -569,6 +495,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -569,6 +496,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
      public static final int VIEW_TYPE_SETTINGS = 4;
      public static final int VIEW_TYPE_SETTINGS_2 = 5;
      public static final int VIEW_TYPE_INFO = 6;
@@ -536,7 +543,7 @@ index 0000000..0000000 100644
  
      private int settingsFromPosition = -1;
      private int settingsToPosition = -1;
-@@ -594,7 +521,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -594,7 +522,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
          @Override
          public boolean isEnabled(RecyclerView.ViewHolder holder) {
              final int viewType = holder.getItemViewType();
@@ -545,7 +552,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -605,24 +532,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -605,24 +533,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                  }
                  return searchResult.size();
              } else {
@@ -571,7 +578,7 @@ index 0000000..0000000 100644
                  count++;
                  count += sortedLanguages.size();
                  if (!unofficialLanguages.isEmpty()) {
-@@ -640,23 +550,15 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -640,23 +551,15 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                      view = new TextRadioCell(mContext);
                      break;
                  }
@@ -585,7 +592,7 @@ index 0000000..0000000 100644
 -                    view = settingsCell;
 +                case VIEW_TYPE_TRANSLATOR: {
 +                    // entinyGram: "Translator" row at the top of the language picker
-+                    view = new org.telegram.ui.SettingsActivity.SettingCell(mContext, null);
++                    view = new TextCell(mContext);
                      break;
 +                }
                  case VIEW_TYPE_HEADER:
@@ -599,7 +606,7 @@ index 0000000..0000000 100644
                  case VIEW_TYPE_SHADOW:
                  default: {
                      view = new ShadowSectionCell(mContext);
-@@ -722,85 +624,21 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -722,85 +625,19 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
                      }
                      break;
                  }
@@ -686,19 +693,17 @@ index 0000000..0000000 100644
 +                    break;
 +                }
 +                case VIEW_TYPE_TRANSLATOR: {
-+                    org.telegram.ui.SettingsActivity.SettingCell cell = (org.telegram.ui.SettingsActivity.SettingCell) holder.itemView;
-+                    cell.set(
-+                        org.telegram.ui.Components.IconBackgroundColors.BLUE_ALT.top,
-+                        org.telegram.ui.Components.IconBackgroundColors.BLUE_ALT.bottom,
-+                        R.drawable.msg_translate,
++                    TextCell cell = (TextCell) holder.itemView;
++                    cell.setTextAndValueAndIcon(
 +                        LocaleController.getString(R.string.InuTranslator),
 +                        desu.inugram.helpers.translate.engine.EntinyTranslate.currentProviderName(),
-+                        null
++                        R.drawable.msg_translate,
++                        true
 +                    );
                      break;
                  }
              }
-@@ -812,49 +650,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+@@ -812,49 +649,9 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
              if (search) {
                  return VIEW_TYPE_LANGUAGE;
              } else {
@@ -751,25 +756,3 @@ index 0000000..0000000 100644
                  if (i-- == 0) return VIEW_TYPE_HEADER;
                  if (!unofficialLanguages.isEmpty() && (i == unofficialLanguages.size() || i == unofficialLanguages.size() + sortedLanguages.size() + 1) || unofficialLanguages.isEmpty() && i == sortedLanguages.size()) {
                      return VIEW_TYPE_SHADOW;
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -708,6 +708,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
-         items.add(SettingCell.Factory.of(8, IconBackgroundColors.CYAN.top, IconBackgroundColors.CYAN.bottom, R.drawable.settings_devices, getString(R.string.SettingsDevices), getString(R.string.SettingsDevicesInfo)));
-         items.add(SettingCell.Factory.of(9, IconBackgroundColors.ORANGE_DEEP.top, IconBackgroundColors.ORANGE_DEEP.bottom, R.drawable.settings_power, getString(R.string.SettingsPowerSaving), getString(R.string.SettingsPowerSavingInfo)));
-         items.add(SettingCell.Factory.of(10, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_language, getString(R.string.SettingsLanguage), LocaleController.getCurrentLanguageName()));
-+        items.add(SettingCell.Factory.of(98, IconBackgroundColors.BLUE_ALT.top, IconBackgroundColors.BLUE_ALT.bottom, R.drawable.msg_translate, getString(R.string.InuTranslator), getString(R.string.InuTranslatorInfo)));
- 
-         items.add(UItem.asShadow(null));
- 
-@@ -847,6 +848,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
-             case 10:
-                 presentSettingFragment(new LanguageSelectActivity());
-                 break;
-+            case 98:
-+                presentSettingFragment(new desu.inugram.ui.settings.TranslatorSettingsActivity());
-+                break;
- 
-             case 11:
-                 presentSettingFragment(new PremiumPreviewFragment("settings"));

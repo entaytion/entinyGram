@@ -4,17 +4,17 @@ Date: Sun, 16 Aug 2026 13:59:50 +0300
 Subject: Unlock local premium features and client restrictions
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java   | 2 +-
- .../src/main/java/org/telegram/messenger/UserConfig.java       | 3 +++
- .../java/org/telegram/ui/Components/StatusBadgeComponent.java  | 2 +-
- .../src/main/java/org/telegram/ui/SettingsActivity.java        | 2 +-
- 4 files changed, 6 insertions(+), 3 deletions(-)
+ .../main/java/org/telegram/messenger/MessagesController.java | 5 ++++-
+ .../src/main/java/org/telegram/messenger/UserConfig.java     | 3 +++
+ .../org/telegram/ui/Components/StatusBadgeComponent.java     | 2 +-
+ .../src/main/java/org/telegram/ui/SettingsActivity.java      | 2 +-
+ 4 files changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -922,7 +922,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -922,10 +922,13 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isPremiumUser(TLRPC.User currentUser) {
@@ -23,6 +23,12 @@ index 0000000..0000000 100644
      }
  
      public boolean didPressTranscribeButtonEnough() {
++        if (desu.inugram.InuConfig.LOCAL_PREMIUM.getValue()) {
++            return true;
++        }
+         return transcribeButtonPressed >= 2;
+     }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
@@ -54,7 +60,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1059,7 +1059,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1065,7 +1065,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              emojiStatusDrawable.setColor(Theme.getColor(Theme.key_profile_verifiedBackground, resourcesProvider));
              if (emojiStatusId != null) {
                  emojiStatusDrawable.set(emojiStatusId, false);

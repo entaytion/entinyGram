@@ -1042,6 +1042,38 @@ object InuConfig {
     @JvmField
     val TRANSLATE_AUTO_DETECT_LANG = BoolItem("translate_auto_detect_lang", true)
 
+    // Force translation even for messages Telegram considers to be in the user's own language
+    @JvmField
+    val FORCE_TRANSLATE = BoolItem("force_translate", false)
+
+    // Third-party translation providers (0 = Telegram API, stock behavior)
+    @JvmField
+    val TRANSLATE_PROVIDER = IntItem("translate_provider", 0)
+
+    @JvmField
+    val TRANSLATE_DEEPL_KEY = StringItem("translate_deepl_key", "", exportable = false)
+
+    @JvmField
+    val TRANSLATE_YANDEX_KEY = StringItem("translate_yandex_key", "", exportable = false)
+
+    @JvmField
+    val TRANSLATE_MICROSOFT_KEY = StringItem("translate_microsoft_key", "", exportable = false)
+
+    @JvmField
+    val TRANSLATE_MICROSOFT_REGION = StringItem("translate_microsoft_region", "", exportable = false)
+
+    @JvmField
+    val TRANSLATE_LLM_URL = StringItem("translate_llm_url", "", exportable = false)
+
+    @JvmField
+    val TRANSLATE_LLM_KEY = StringItem("translate_llm_key", "", exportable = false)
+
+    @JvmField
+    val TRANSLATE_LLM_MODEL = StringItem("translate_llm_model", "")
+
+    @JvmField
+    val TRANSLATE_LLM_PROMPT = StringItem("translate_llm_prompt", "")
+
     @JvmField
     val ACCOUNT_ORDER = StringItem("account_order", "", exportable = false)
 
@@ -1101,4 +1133,19 @@ object InuConfig {
 
     @JvmField
     val DELETED_MESSAGES_TRANSPARENT = BoolItem("deleted_messages_transparent", false)
+
+    @JvmField
+    val DELETED_MARK_COLOR = IntItem("deleted_mark_color", 0)
+
+    class DeletedMarkStyleItem : IntItem("deleted_mark_style", TRASH_BIN) {
+        companion object {
+            const val NOTHING = 0
+            const val TRASH_BIN = 1
+            const val CROSS = 2
+            const val EYE_CROSSED = 3
+        }
+    }
+
+    @JvmField
+    val DELETED_MARK_STYLE = DeletedMarkStyleItem()
 }

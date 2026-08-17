@@ -48,7 +48,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6709,6 +6709,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6712,6 +6712,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isChatNoForwards(TLRPC.Chat chat) {
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
          if (chat == null) {
              return false;
          }
-@@ -6734,6 +6735,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6737,6 +6738,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isUserNoForwards(TLRPC.UserFull userFull) {
@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6954,7 +6954,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6952,7 +6952,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  drawSideButton = checkNeedDrawShareButton(messageObject) ? 2 : 0;
              } else if (messageObject.searchType == ChatActivity.SEARCH_MY_MESSAGES) {
                  drawSideButton = 0;
