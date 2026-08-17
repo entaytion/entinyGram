@@ -120,6 +120,7 @@ object InstantViewHelper {
         detectLanguage(state) { src ->
             val toLang = TranslateAlert2.getToLanguage()
             if (src == null || toLang == null) return@detectLanguage
+            if (InuConfig.FORCE_TRANSLATE.value) return@detectLanguage
             val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
             if (src in dnt || src == toLang) state.unavailable = true
         }
@@ -208,6 +209,7 @@ object InstantViewHelper {
     }
 
     private fun checkDnt(viewer: ArticleViewer, state: State, src: String, toLang: String): Boolean {
+        if (InuConfig.FORCE_TRANSLATE.value) return false
         val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
         if (src !in dnt && src != toLang) return false
         state.loading = false

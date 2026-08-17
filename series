@@ -1,3 +1,4 @@
+entiny/local-premium.patch
 misc/build-support.patch
 bugfix/photo-viewer-crop.patch
 misc/branding.patch
@@ -254,7 +255,6 @@ entiny/title-alignment.patch
 entiny/save-stories.patch
 entiny/save-self-destruct.patch
 entiny/unlock-icons.patch
-entiny/message-persistence.patch
 entiny/enable-premium-purchase.patch
 entiny/ai-compose.patch
 feature/faster-file-load.patch
@@ -267,11 +267,9 @@ bugfix/dead-animated-drawable.patch
 bugfix/community-admin-list-spam.patch
 feature/unified-video-rewind.patch
 feature/user-deeplink.patch
-entiny/unlock-chat-translation.patch
 entiny/chat-ai-deeplink.patch
 feature/translator.patch
 entiny/night-theme-colors.patch
-entiny/translator-without-premium.patch
 entiny/colorful-icons-and-popups.patch
 entiny/fix-url-parsing.patch
 entiny/branding.patch
@@ -287,9 +285,10 @@ entiny/webrtc-audio-fix.patch
 entiny/settings-api-compat.patch
 entiny/send-message-hooks.patch
 entiny/edited-time-display.patch
-entiny/local-premium.patch
 entiny/allow-screenshots-and-copy.patch
 bugfix/profile-actionbar-lifecycle.patch
 entiny/hidden-star-gifts.patch
 entiny/deleted-message-styling.patch
 bugfix/chat-activity-layout-crash.patch
+entiny/message-persistence.patch
+entiny/translator.patch

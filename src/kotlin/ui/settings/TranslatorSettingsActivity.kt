@@ -4,7 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.ui.settings.TranslationTargetActivity
+import desu.inugram.helpers.translate.engine.EntinyTranslate
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
@@ -26,6 +26,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslation)))
         items.add(
             UItem.asCheck(
                 TOGGLE_SHOW_TRANSLATE_BUTTON,
@@ -38,6 +39,9 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.ShowTranslateChatButton),
             ).setChecked(translateController.isChatTranslateEnabled)
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLanguages)))
         items.add(
             UItem.asButton(
                 BUTTON_TARGET_LANG,
@@ -53,6 +57,26 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslateProviderSection)))
+        items.add(
+            UItem.asButton(
+                BUTTON_PROVIDER,
+                R.drawable.msg_translate,
+                LocaleController.getString(R.string.InuTranslateProvider),
+                EntinyTranslate.currentProviderName()
+            )
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateProviderInfo)))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAdvanced)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FORCE_TRANSLATE,
+                LocaleController.getString(R.string.InuForceTranslate),
+            ).setChecked(InuConfig.FORCE_TRANSLATE.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
         items.add(
             UItem.asCheck(
                 TOGGLE_IN_PLACE_TRANSLATION,
@@ -78,21 +102,16 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.TRANSLATE_AUTO_DETECT_LANG.value)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateAutoDetectLangInfo)))
-
-        items.add(
-            UItem.asButton(
-                BUTTON_AI_SETTINGS,
-                R.drawable.input_ai_star,
-                LocaleController.getString(R.string.InuAiCompose),
-                LocaleController.getString(R.string.InuAiComposeInfo)
-            )
-        )
-        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_AI_SETTINGS -> presentFragment(AiSettingsActivity())
+            BUTTON_PROVIDER -> presentFragment(TranslateProviderSettingsActivity())
+
+            TOGGLE_FORCE_TRANSLATE -> {
+                val new = InuConfig.FORCE_TRANSLATE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
 
             TOGGLE_IN_PLACE_TRANSLATION -> {
                 val new = InuConfig.IN_PLACE_TRANSLATION.toggle()
@@ -156,7 +175,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val BUTTON_AI_SETTINGS = InuUtils.generateId()
+        private val BUTTON_PROVIDER = InuUtils.generateId()
+        private val TOGGLE_FORCE_TRANSLATE = InuUtils.generateId()
         private val TOGGLE_IN_PLACE_TRANSLATION = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_WEB_PREVIEWS = InuUtils.generateId()
         private val TOGGLE_KEEP_ORIGINAL = InuUtils.generateId()
@@ -172,7 +192,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_translate,
             factory = ::TranslatorSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("ai-settings", R.string.InuAiCompose, BUTTON_AI_SETTINGS),
+                SearchRegistry.Entry("translate-provider", R.string.InuTranslateProvider, BUTTON_PROVIDER),
+                SearchRegistry.Entry("force-translate", R.string.InuForceTranslate, TOGGLE_FORCE_TRANSLATE),
                 SearchRegistry.Entry("show-translate-button", R.string.ShowTranslateButton, TOGGLE_SHOW_TRANSLATE_BUTTON),
                 SearchRegistry.Entry("show-translate-chat-button", R.string.ShowTranslateChatButton, TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON),
                 SearchRegistry.Entry("translation-target", R.string.InuTranslationTarget, BUTTON_TARGET_LANG),

@@ -192,7 +192,7 @@ object TranslateHelper {
         fun perform(fromLang: String?) {
             val toLangValue = if (fromLang != null && fromLang == toLang) toLangDefault else toLang
             val srcLang = fromLang?.takeIf { it != "und" } ?: selected.messageOwner?.originalLanguage
-            if (srcLang != null && srcLang == toLangValue && !hasTranslatableWebPage(selected)) {
+            if (!InuConfig.FORCE_TRANSLATE.value && srcLang != null && srcLang == toLangValue && !hasTranslatableWebPage(selected)) {
                 val langName = TranslateAlert2.languageName(srcLang)?.let(TranslateAlert2::capitalFirst) ?: srcLang.uppercase()
                 BulletinFactory.of(activity)
                     .createErrorBulletin(LocaleController.formatString(R.string.InuAlreadyInTargetLanguage, langName))
@@ -245,8 +245,10 @@ object TranslateHelper {
         val respectDnt = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
 
         fun shouldShowTranslateRow(fromLang: String): Boolean {
+            if (InuConfig.FORCE_TRANSLATE.value) return true
             if (respectDnt && RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
-            return fromLang != toLang || fromLang != toLangDefault || fromLang == TranslateController.UNKNOWN_LANGUAGE
+            // hide when the message is already in the target language (or the app language)
+            return fromLang != toLang && fromLang != toLangDefault || fromLang == TranslateController.UNKNOWN_LANGUAGE
         }
 
         val originalLanguage = selected.messageOwner?.originalLanguage
@@ -287,7 +289,7 @@ object TranslateHelper {
         toLang: String,
     ) {
         val srcLang = fromLang?.takeIf { it != "und" } ?: owner.originalLanguage
-        if (srcLang != null && srcLang == toLang) return
+        if (!InuConfig.FORCE_TRANSLATE.value && srcLang != null && srcLang == toLang) return
         val account = activity.currentAccount
         val controller = MessagesController.getInstance(account).translateController
         val dialogId = target.dialogId
@@ -346,7 +348,7 @@ object TranslateHelper {
             AndroidUtilities.runOnUIThread {
                 val srcLang = src?.split("_")?.firstOrNull()
                 val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
-                if (srcLang != null && (dnt.contains(srcLang) || srcLang == toLang)) {
+                if (srcLang != null && !InuConfig.FORCE_TRANSLATE.value && (dnt.contains(srcLang) || srcLang == toLang)) {
                     markLoading(target, false)
                     NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
                     return@runOnUIThread
@@ -382,6 +384,23 @@ object TranslateHelper {
         if (parts.isEmpty()) {
             markLoading(target, false)
             NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
+            return
+        }
+
+        // entinyGram: route the web preview through the selected third-party provider; only fall
+        // back to the stock Telegram API when no provider is active.
+        if (desu.inugram.helpers.translate.engine.EntinyTranslate.handleWebPage(
+                target.dialogId, target.id, original, parts, toLang, { _, _, translated, lang ->
+                    markLoading(target, false)
+                    if (translated != null) {
+                        webPages.computeIfAbsent(target.dialogId) { ConcurrentHashMap() }[target.id] = translated
+                        webPagesLangs.computeIfAbsent(target.dialogId) { ConcurrentHashMap() }[target.id] = srcLang to lang
+                        target.linkDescription = null
+                    }
+                    NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
+                }
+            )
+        ) {
             return
         }
 

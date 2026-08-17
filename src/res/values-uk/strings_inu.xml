@@ -246,6 +246,12 @@
     <string name="InuTranslateInstantViewPartial">Деякі розділи не вдалося перекласти.</string>
     <string name="InuTranslation">Переклад</string>
     <string name="InuTranslator">Перекладач</string>
+    <string name="InuTranslatorInfo">Автопереклад чатів, провайдери та мовні налаштування</string>
+    <string name="InuLanguages">Мови</string>
+    <string name="InuAdvanced">Додатково</string>
+    <string name="InuForceTranslate">Примусовий переклад</string>
+    <string name="InuForceTranslateInfo">Показувати кнопку перекладу та перекладати повідомлення, навіть якщо Telegram вважає, що вони вже вашою мовою або у списку «Не перекладати».</string>
+    <string name="InuTranslateSupportsYourLanguage">Підтримує вашу мову</string>
     <string name="InuTranslationTarget">Цільова мова</string>
     <string name="InuTranslationTargetFollowApp">Як у додатку</string>
     <string name="InuHideReactionEntry">Приховати анімацію появи реакцій</string>
@@ -1035,4 +1041,14 @@
     <string name="InuHiddenStarGiftsInfo">Повертає видалені, архівні та лімітовані зіркові подарунки (Star Gifts) у каталог Telegram.</string>
     <string name="InuDeletedMessagesTransparent">Напівпрозорі видалені повідомлення</string>
     <string name="InuDeletedMessagesTransparentInfo">Відображати збережені видалені повідомлення напівпрозорими для кращої візуальної відмінності в чаті.</string>
+    <string name="InuDeletedMark">Позначка видаленого</string>
+    <string name="InuDeletedMarkColor">Колір позначки видаленого</string>
+    <string name="InuDeletedMarkStyleNothing">Нічого</string>
+    <string name="InuDeletedMarkText">видалено</string>
+    <string name="InuDeletedMarkStyleTrashBin">Кошик</string>
+    <string name="InuDeletedMarkStyleCross">Хрестик</string>
+    <string name="InuDeletedMarkStyleEyeCrossed">Перекреслене око</string>
+    <string name="InuDeletedMarkPreviewText">do they really have to keep changing the UI every update..?</string>
+    <string name="InuDeletedMarkPreviewSender">DARK DEVIL</string>
+    <string name="InuCustomization">Кастомізація</string>
 </resources>
