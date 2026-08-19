@@ -25,6 +25,8 @@ const NOTIFICATION_DP = 24
 const NOTIFICATION_VIEWPORT = 24
 const NOTIFICATION_SAFE = 24
 const BG_COLOR = '#FFF20C3C'
+const OLD_BG_TOP_COLOR = '#FFF20C3C'
+const OLD_BG_BOTTOM_COLOR = '#FFA00320'
 // debug badge: a small white square (only its top-left corner rounded) tucked
 // into the bottom-right corner, holding a β. the white fill is framed with a
 // background-coloured outline so it doesn't clash with the icon underneath.
@@ -158,12 +160,12 @@ function buildNotificationVector(shapes: SvgShape[], srcW: number, srcH: number)
   })
 }
 
-function buildAdaptiveIcon(foreground = 'icon_foreground_inu'): string {
+function buildAdaptiveIcon(foreground = 'icon_foreground_inu', background = 'icon_background_inu', monochrome = 'icon_plane_inu'): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-    <background android:drawable="@drawable/icon_background_inu" />
+    <background android:drawable="@drawable/${background}" />
     <foreground android:drawable="@drawable/${foreground}" />
-    <monochrome android:drawable="@drawable/icon_plane_inu" />
+    <monochrome android:drawable="@drawable/${monochrome}" />
 </adaptive-icon>
 `
 }
@@ -179,6 +181,17 @@ function buildBackgroundVector(): string {
         android:pathData="M0,0h${ADAPTIVE_SIZE}v${ADAPTIVE_SIZE}h-${ADAPTIVE_SIZE}z"
         android:fillColor="${BG_COLOR}" />
 </vector>
+`
+}
+
+function buildOldBackground(): string {
+  return `<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:startColor="${OLD_BG_TOP_COLOR}"
+        android:endColor="${OLD_BG_BOTTOM_COLOR}" />
+</shape>
 `
 }
 
@@ -202,15 +215,24 @@ async function loadSvg(relPath: string): Promise<{ shapes: SvgShape[], srcW: num
 
 const fg = await loadSvg('src/res/launcher/icon.svg')
 const mono = await loadSvg('src/res/launcher/icon-mono.svg')
+const oldFg = await loadSvg('src/res/launcher/icon-old.svg')
+const oldMono = await loadSvg('src/res/launcher/icon-old-mono.svg')
 
 const foreground = buildForegroundVector(fg.shapes, fg.srcW, fg.srcH, false)
 const foregroundDebug = buildForegroundVector(fg.shapes, fg.srcW, fg.srcH, false, true)
 const monochrome = buildForegroundVector(mono.shapes, mono.srcW, mono.srcH, true)
 const settingsIcon = buildSettingsVector(mono.shapes, mono.srcW, mono.srcH)
 const notificationIcon = buildNotificationVector(mono.shapes, mono.srcW, mono.srcH)
+const oldForeground = buildForegroundVector(oldFg.shapes, oldFg.srcW, oldFg.srcH, false)
+const oldForegroundDebug = buildForegroundVector(oldFg.shapes, oldFg.srcW, oldFg.srcH, false, true)
+const oldMonochrome = buildForegroundVector(oldMono.shapes, oldMono.srcW, oldMono.srcH, true)
+const oldNotificationIcon = buildNotificationVector(oldMono.shapes, oldMono.srcW, oldMono.srcH)
 const background = buildBackgroundVector()
+const oldBackground = buildOldBackground()
 const releaseIcon = buildAdaptiveIcon('icon_foreground_inu')
 const debugIcon = buildAdaptiveIcon('icon_foreground_inu_debug')
+const oldIcon = buildAdaptiveIcon('icon_foreground_old_inu', 'icon_background_old_inu', 'icon_plane_old_inu')
+const oldDebugIcon = buildAdaptiveIcon('icon_foreground_old_inu_debug', 'icon_background_old_inu', 'icon_plane_old_inu')
 
 const GEN_MIPMAP = 'src/res/launcher/generated/mipmap'
 
@@ -224,10 +246,17 @@ const targets: [string, string][] = [
   [`${GEN_DRAWABLE}/icon_foreground_inu_debug.xml`, foregroundDebug],
   [`${GEN_DRAWABLE}/icon_settings_inu.xml`, settingsIcon],
   [`${GEN_DRAWABLE}/icon_notification_inu.xml`, notificationIcon],
+  [`${GEN_DRAWABLE}/icon_background_old_inu.xml`, oldBackground],
+  [`${GEN_DRAWABLE}/icon_foreground_old_inu.xml`, oldForeground],
+  [`${GEN_DRAWABLE}/icon_foreground_old_inu_debug.xml`, oldForegroundDebug],
+  [`${GEN_DRAWABLE}/icon_plane_old_inu.xml`, oldMonochrome],
+  [`${GEN_DRAWABLE}/icon_notification_old_inu.xml`, oldNotificationIcon],
   [`${GEN_MIPMAP}/ic_launcher.xml`, releaseIcon],
   [`${GEN_MIPMAP}/ic_launcher_round.xml`, releaseIcon],
+  [`${GEN_MIPMAP}/ic_launcher_old.xml`, oldIcon],
   [`${GEN_DEBUG_MIPMAP}/ic_launcher.xml`, debugIcon],
   [`${GEN_DEBUG_MIPMAP}/ic_launcher_round.xml`, debugIcon],
+  [`${GEN_DEBUG_MIPMAP}/ic_launcher_old.xml`, oldDebugIcon],
 ]
 
 let dirty = false

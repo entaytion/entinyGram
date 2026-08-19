@@ -79,6 +79,13 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
         items.add(
             UItem.asCheck(
+                TOGGLE_TRANSLATE_OUTGOING,
+                LocaleController.getString(R.string.InuTranslateOutgoing),
+            ).setChecked(InuConfig.TRANSLATE_OUTGOING.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateOutgoingInfo)))
+        items.add(
+            UItem.asCheck(
                 TOGGLE_IN_PLACE_TRANSLATION,
                 LocaleController.getString(R.string.InuInPlaceTranslation),
             ).setChecked(InuConfig.IN_PLACE_TRANSLATION.value)
@@ -110,6 +117,11 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_FORCE_TRANSLATE -> {
                 val new = InuConfig.FORCE_TRANSLATE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_TRANSLATE_OUTGOING -> {
+                val new = InuConfig.TRANSLATE_OUTGOING.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
 
@@ -177,6 +189,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_PROVIDER = InuUtils.generateId()
         private val TOGGLE_FORCE_TRANSLATE = InuUtils.generateId()
+        private val TOGGLE_TRANSLATE_OUTGOING = InuUtils.generateId()
         private val TOGGLE_IN_PLACE_TRANSLATION = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_WEB_PREVIEWS = InuUtils.generateId()
         private val TOGGLE_KEEP_ORIGINAL = InuUtils.generateId()
@@ -194,6 +207,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("translate-provider", R.string.InuTranslateProvider, BUTTON_PROVIDER),
                 SearchRegistry.Entry("force-translate", R.string.InuForceTranslate, TOGGLE_FORCE_TRANSLATE),
+                SearchRegistry.Entry("translate-outgoing", R.string.InuTranslateOutgoing, TOGGLE_TRANSLATE_OUTGOING),
                 SearchRegistry.Entry("show-translate-button", R.string.ShowTranslateButton, TOGGLE_SHOW_TRANSLATE_BUTTON),
                 SearchRegistry.Entry("show-translate-chat-button", R.string.ShowTranslateChatButton, TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON),
                 SearchRegistry.Entry("translation-target", R.string.InuTranslationTarget, BUTTON_TARGET_LANG),

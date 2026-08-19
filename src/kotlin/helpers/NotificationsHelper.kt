@@ -20,6 +20,7 @@ object NotificationsHelper {
     @JvmStatic
     fun smallIconRes(): Int = when (InuConfig.NOTIFICATION_ICON.value) {
         InuConfig.NotificationIconItem.TELEGRAM -> R.drawable.notification
+        InuConfig.NotificationIconItem.OLD_ENTINYGRAM -> R.drawable.icon_notification_old_inu
         else -> R.drawable.icon_notification_inu
     }
 

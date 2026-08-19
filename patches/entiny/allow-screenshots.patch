@@ -1,16 +1,16 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sun, 16 Aug 2026 18:34:08 +0300
-Subject: Allow screenshots and copying in protected chats
+Date: Tue, 18 Aug 2026 01:41:50 +0300
+Subject: feat(privacy): allow screenshots when enabled
 
+- remove secure-window protection only behind the screenshots setting
 ---
  .../main/java/org/telegram/messenger/FlagSecureReason.java  | 5 +++++
- .../src/main/java/org/telegram/ui/ChatActivity.java         | 4 ++--
  .../java/org/telegram/ui/Components/PasscodeViewDialog.java | 6 ++++--
  .../src/main/java/org/telegram/ui/PhotoViewer.java          | 6 ++++--
  .../src/main/java/org/telegram/ui/SecretMediaViewer.java    | 6 ++++--
  .../src/main/java/org/telegram/ui/SecretVoicePlayer.java    | 6 ++++--
- 6 files changed, 23 insertions(+), 10 deletions(-)
+ 5 files changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java b/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java
 index 0000000..0000000 100644
@@ -28,28 +28,6 @@ index 0000000..0000000 100644
          if (isSecuredNow(window)) {
              window.addFlags(WindowManager.LayoutParams.FLAG_SECURE);
              AndroidUtilities.logFlagSecure();
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -10326,7 +10326,7 @@ public class ChatActivity extends BaseFragment implements
-         }
-         ChatActionsHelper.addActionModeItems(this, actionMode, edit);
-         actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
--        actionMode.setItemVisibility(copy, !isPeerNoForwards() && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-+        actionMode.setItemVisibility(copy, (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() || !isPeerNoForwards()) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-         actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-         actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
-         actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -19315,7 +19315,7 @@ public class ChatActivity extends BaseFragment implements
-                 int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
-                 if (copyItem != null) {
-                     copyVisible = copyItem.getVisibility();
--                    copyItem.setVisibility(!noforwards && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-+                    copyItem.setVisibility((desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue() || !noforwards) && selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() != 0 ? View.VISIBLE : View.GONE);
-                     newCopyVisible = copyItem.getVisibility();
-                 }
-                 if (starItem != null) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeViewDialog.java

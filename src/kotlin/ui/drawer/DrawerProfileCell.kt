@@ -306,7 +306,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         nameTextView.setRightDrawable(status)
         nameTextView.setRightDrawableOnClick {
             val user = lastUser ?: return@setRightDrawableOnClick
-            if (user.premium || UserObject.getEmojiStatusDocumentId(user) != null) {
+            if (MessagesController.getInstance(lastAccount).isPremiumUser(user) || UserObject.getEmojiStatusDocumentId(user) != null) {
                 DrawerHelper.showSelectStatusDialog(this, drawerLayoutContainer)
             }
         }
@@ -514,7 +514,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4f))
             status.set(emojiStatusId, true)
             status.setParticles(isCollectible, true)
-        } else if (user.premium) {
+        } else if (MessagesController.getInstance(lastAccount).isPremiumUser(user)) {
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4f))
             if (premiumStar == null) {
                 premiumStar = resources.getDrawable(R.drawable.msg_premium_liststar).mutate()

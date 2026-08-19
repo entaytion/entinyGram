@@ -14,15 +14,15 @@ Subject: Unlock and extend built-in translator
 - add Translator settings row to SettingsActivity and LanguageSelectActivity
 - add isFeatureAvailable gate tied to premium OR active third-party provider
 ---
- .../telegram/messenger/LanguageDetector.java  |  51 ++++
- .../messenger/TranslateController.java        |  52 +++-
+ .../telegram/messenger/LanguageDetector.java  |  54 ++++
+ .../messenger/TranslateController.java        |  54 +++-
  .../java/org/telegram/ui/ChatActivity.java    |  19 +-
  .../telegram/ui/Components/AIEditorAlert.java |   4 +
  .../ui/Components/TranslateAlert2.java        |   4 +
  .../ui/Components/TranslateAlert3.java        |  11 +-
  .../ui/Components/TranslateButton.java        |  32 ++-
  .../telegram/ui/LanguageSelectActivity.java   | 259 ++----------------
- 8 files changed, 154 insertions(+), 278 deletions(-)
+ 8 files changed, 158 insertions(+), 279 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -36,14 +36,13 @@ index 0000000..0000000 100644
  public class LanguageDetector {
      public interface StringCallback {
          void run(String str);
-@@ -9,9 +11,58 @@ public class LanguageDetector {
+@@ -9,9 +11,61 @@ public class LanguageDetector {
      }
  
      public static boolean hasSupport() {
-+        // MLKit's language-id native lib crashes (SIGABRT) when the app's ARM native libs
-+        // run on an x86 emulator under ARM translation. Only skip detection in that case;
-+        // real devices and native x86_64 emulator builds (ABI_FILTERS=x86_64) are safe.
-+        if (isEmulator() && !isNativeX86()) {
++        // MLKit's language-id native library can abort the whole process on emulators,
++        // including x86_64 images using ARM translation. Never enter it on an emulator.
++        if (isEmulator() || isX86Abi()) {
 +            return false;
 +        }
          return true;
@@ -84,10 +83,14 @@ index 0000000..0000000 100644
 +        return host != null && host.toLowerCase().contains("emulator");
 +    }
 +
-+    private static boolean isNativeX86() {
++    private static boolean isX86Abi() {
 +        String[] abis = Build.SUPPORTED_ABIS;
 +        if (abis != null && abis.length > 0) {
-+            return abis[0].startsWith("x86");
++            for (String abi : abis) {
++                if (abi != null && abi.startsWith("x86")) {
++                    return true;
++                }
++            }
 +        }
 +        return false;
 +    }
@@ -132,6 +135,15 @@ index 0000000..0000000 100644
          if (chatTranslateEnabled == null) {
              chatTranslateEnabled = messagesController.getMainSettings().getBoolean("translate_chat_button", true);
          }
+@@ -165,7 +158,7 @@ public class TranslateController extends BaseController {
+         return (
+             messageObject != null &&
+             messageObject.messageOwner != null &&
+-            !messageObject.isOutOwner() &&
++            (!messageObject.isOutOwner() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) &&
+             !messageObject.isRestrictedMessage &&
+             !messageObject.isSponsored() &&
+             (
 @@ -237,6 +230,7 @@ public class TranslateController extends BaseController {
          if (value && !currentValue) {
              translatingDialogs.put(dialogId, true);
@@ -245,7 +257,7 @@ index 0000000..0000000 100644
  
      private boolean isLanguageRestricted(String lng) {
 +        // entinyGram: force-translate mode overrides the "own language" / do-not-translate gate
-+        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue()) {
++        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) {
 +            return false;
 +        }
          if (getUserConfig().isPremium()) {

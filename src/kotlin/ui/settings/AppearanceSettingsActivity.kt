@@ -25,7 +25,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private val m3Group by lazy {
         ExpandableBoolGroup(
-            addExperimentalSpan(LocaleController.getString(R.string.InuMaterial3)),
+            LocaleController.getString(R.string.InuMaterial3),
             listOf(
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Switches, InuConfig.MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_SWITCHES),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
@@ -60,6 +60,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuNotificationIcon),
                 when (InuConfig.NOTIFICATION_ICON.value) {
                     InuConfig.NotificationIconItem.INUGRAM -> LocaleController.getString(R.string.InuNotificationIconInugram)
+                    InuConfig.NotificationIconItem.OLD_ENTINYGRAM -> LocaleController.getString(R.string.InuNotificationIconOldEntinygram)
                     else -> LocaleController.getString(R.string.InuNotificationIconTelegram)
                 }
             )
@@ -121,6 +122,14 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     R.string.InuDrawerM3Sections,
                     R.string.InuDrawerM3SectionsInfo,
                     InuConfig.DRAWER_M3_SECTIONS.value,
+                )
+            )
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_SHOW_DRAWER_ACCOUNTS,
+                    R.string.InuShowDrawerAccounts,
+                    R.string.InuShowDrawerAccountsInfo,
+                    InuConfig.SHOW_DRAWER_ACCOUNTS.value,
                 )
             )
         }
@@ -232,6 +241,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 listOf(
                     LocaleController.getString(R.string.InuNotificationIconTelegram),
                     LocaleController.getString(R.string.InuNotificationIconInugram),
+                    LocaleController.getString(R.string.InuNotificationIconOldEntinygram),
                 ),
                 InuConfig.NOTIFICATION_ICON.value,
             ) { which ->
@@ -270,6 +280,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_DRAWER_M3_SECTIONS -> {
                 val new = InuConfig.DRAWER_M3_SECTIONS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
+
+            TOGGLE_SHOW_DRAWER_ACCOUNTS -> {
+                val new = InuConfig.SHOW_DRAWER_ACCOUNTS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
@@ -336,6 +352,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_NAVIGATION_DRAWER = InuUtils.generateId()
         private val TOGGLE_DRAWER_BACK_GESTURE = InuUtils.generateId()
         private val TOGGLE_DRAWER_M3_SECTIONS = InuUtils.generateId()
+        private val TOGGLE_SHOW_DRAWER_ACCOUNTS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_FOLDERS_BAR = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_GLOBAL_SEARCH = InuUtils.generateId()
@@ -395,6 +412,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
                 SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),
+                SearchRegistry.Entry("show-drawer-accounts", R.string.InuShowDrawerAccounts, TOGGLE_SHOW_DRAWER_ACCOUNTS),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),

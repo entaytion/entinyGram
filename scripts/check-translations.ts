@@ -41,6 +41,11 @@ for (const e of entries) {
   if (!m || !e.isDirectory()) continue
   const iso = m[1]
   const file = join(resDir, e.name, 'strings_inu.xml')
+  try {
+    await fs.access(file)
+  } catch {
+    continue
+  }
   const strings = await parseStrings(file)
   allLocales.push({ iso, file, strings })
 }

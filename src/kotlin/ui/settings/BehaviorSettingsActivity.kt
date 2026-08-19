@@ -36,18 +36,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // Local Premium
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLocalPremium)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_LOCAL_PREMIUM,
-                R.string.InuLocalPremium,
-                R.string.InuLocalPremiumInfo,
-                InuConfig.LOCAL_PREMIUM.value,
-            )
-        )
-        items.add(UItem.asShadow(null))
-
         // User Profile (Merged into Behavior & Profile)
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuUserProfile)))
         items.add(
@@ -258,6 +246,10 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_LOCAL_PREMIUM -> {
                 val new = InuConfig.LOCAL_PREMIUM.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                if (new) {
+                    val userConfig = org.telegram.messenger.UserConfig.getInstance(currentAccount)
+                    desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(userConfig.getCurrentUser(), currentAccount)
+                }
                 // Runtime refresh — no restart needed (AyuGram approach)
                 org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
                     .postNotificationName(org.telegram.messenger.NotificationCenter.currentUserPremiumStatusChanged)
@@ -514,7 +506,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.avd_speed,
             factory = ::BehaviorSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("local-premium", R.string.InuLocalPremium, TOGGLE_LOCAL_PREMIUM),
                 SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),

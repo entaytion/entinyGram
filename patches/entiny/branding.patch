@@ -1,20 +1,24 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 8 Aug 2026 00:49:34 +0300
-Subject: Enforce entinygram package name, api keys, and session app name
+Subject: chore(branding): consolidate entinyGram identity and launcher icons
 
+- preserve package, API, and in-app branding overrides
+- add the selectable old entinyGram launcher icon alias
 ---
- TMessagesProj/config/debug/AndroidManifest.xml                | 2 +-
- TMessagesProj/config/debug/AndroidManifest_SDK23.xml          | 2 +-
- TMessagesProj/config/release/AndroidManifest.xml              | 2 +-
- TMessagesProj/config/release/AndroidManifest_SDK23.xml        | 2 +-
- TMessagesProj/config/release/AndroidManifest_standalone.xml   | 2 +-
- .../src/main/java/org/telegram/messenger/BuildVars.java       | 4 ++--
- .../src/main/java/org/telegram/ui/Cells/SessionCell.java      | 2 +-
- .../src/main/java/org/telegram/ui/Components/UndoView.java    | 2 +-
- .../src/main/java/org/telegram/ui/SessionBottomSheet.java     | 2 +-
- TMessagesProj_App/build.gradle                                | 2 +-
- 10 files changed, 11 insertions(+), 11 deletions(-)
+ TMessagesProj/config/debug/AndroidManifest.xml |  2 +-
+ .../config/debug/AndroidManifest_SDK23.xml     |  2 +-
+ .../config/release/AndroidManifest.xml         |  2 +-
+ .../config/release/AndroidManifest_SDK23.xml   |  2 +-
+ .../release/AndroidManifest_standalone.xml     |  2 +-
+ TMessagesProj/src/main/AndroidManifest.xml     | 18 ++++++++++++++++++
+ .../java/org/telegram/messenger/BuildVars.java |  4 ++--
+ .../org/telegram/ui/Cells/SessionCell.java     |  2 +-
+ .../org/telegram/ui/Components/UndoView.java   |  2 +-
+ .../telegram/ui/LauncherIconController.java    |  1 +
+ .../org/telegram/ui/SessionBottomSheet.java    |  2 +-
+ TMessagesProj_App/build.gradle                 |  2 +-
+ 12 files changed, 30 insertions(+), 11 deletions(-)
 
 diff --git a/TMessagesProj/config/debug/AndroidManifest.xml b/TMessagesProj/config/debug/AndroidManifest.xml
 index 0000000..0000000 100644
@@ -81,6 +85,35 @@ index 0000000..0000000 100644
  
          <service
              android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -119,6 +119,24 @@
+             android:enabled="true"
+             android:name="org.telegram.messenger.DefaultIcon"
+             android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:theme="@style/Theme.TMessages.Start"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++            <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.OldIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:theme="@style/Theme.TMessages.Start.Old"
++            android:icon="@mipmap/ic_launcher_old"
++            android:roundIcon="@mipmap/ic_launcher_old"
+             android:exported="true">
+ 
+             <intent-filter>
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java b/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
@@ -122,6 +155,18 @@ index 0000000..0000000 100644
              subinfoTextView.setVisibility(VISIBLE);
              infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
              infoTextView.setTypeface(AndroidUtilities.bold());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+@@ -35,6 +35,7 @@ public class LauncherIconController {
+ 
+     public enum LauncherIcon {
+         DEFAULT("DefaultIcon", R.drawable.icon_background_inu, R.drawable.icon_foreground_inu, R.string.AppIconDefault),
++        OLD("OldIcon", R.drawable.icon_background_old_inu, R.drawable.icon_foreground_old_inu, R.string.InuAppIconOldEntinygram),
+         STOCK("StockIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.InuAppIconStock),
+         VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
+         AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java

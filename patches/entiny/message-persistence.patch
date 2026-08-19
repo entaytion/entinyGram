@@ -1,20 +1,24 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sun, 26 Jul 2026 01:48:18 +0300
-Subject: Consolidate message persistence hooks
+Date: Sun, 16 Aug 2026 23:04:54 +0300
+Subject: feat(history): preserve message history and saved deletions
 
+- preserve deleted and edited message history behind existing settings
+- capture outgoing edits before stock state changes
+- render preserved deletions with the configured transparent style
 ---
  .../messenger/MessagesController.java         | 66 ++++++++++++++++++-
  .../telegram/messenger/MessagesStorage.java   | 21 ++++--
- .../telegram/ui/Cells/ChatMessageCell.java    |  6 +-
+ .../messenger/SendMessagesHelper.java         |  6 ++
+ .../telegram/ui/Cells/ChatMessageCell.java    | 11 +++-
  .../java/org/telegram/ui/ChatActivity.java    | 15 +++++
- 4 files changed, 99 insertions(+), 9 deletions(-)
+ 5 files changed, 110 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8123,16 +8123,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8118,16 +8118,20 @@ public class MessagesController extends BaseController implements NotificationCe
              settings.business_bot_manage_url = "https://telegram.org/";
          }
          editor.apply();
@@ -37,7 +41,7 @@ index 0000000..0000000 100644
      }
  
      public void loadPeerSettings(TLRPC.User currentUser, TLRPC.Chat currentChat) {
-@@ -8314,7 +8318,19 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8309,7 +8313,19 @@ public class MessagesController extends BaseController implements NotificationCe
                  if (task != null) {
                      for (int a = 0, N = task.size(); a < N; a++) {
                          ArrayList<Integer> mids = task.valueAt(a);
@@ -58,7 +62,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (taskMedia != null) {
-@@ -9312,6 +9328,31 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9307,6 +9323,31 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
@@ -90,7 +94,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -9383,6 +9424,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9378,6 +9419,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, false, ChatActivity.MODE_QUICK_REPLIES, topicId);
              } else {
                  if (channelId == 0) {
@@ -98,7 +102,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -21051,6 +21093,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21046,6 +21088,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -109,7 +113,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21175,6 +21221,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21170,6 +21216,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -188,6 +192,30 @@ index 0000000..0000000 100644
          dialogIsForumTyped.delete(dialogId);
      }
  
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2905,6 +2905,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 messageObject.editingMessageEntities = newMsg.entities;
+                 path = newMsg.attachPath;
+             } else {
++                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && newMsg != null && newMsg.message != null && !android.text.TextUtils.isEmpty(newMsg.message)) {
++                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++                }
+                 messageObject.previousMedia = newMsg.media;
+                 messageObject.previousMessage = newMsg.message;
+                 messageObject.previousMessageEntities = newMsg.entities;
+@@ -3407,6 +3410,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 req.flags |= TLObject.FLAG_18;
+             }
+         }
++        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && !messageObject.messageOwner.message.equals(message)) {
++            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++        }
+         return getConnectionsManager().sendRequest(req, (response, error) -> {
+             if (error == null) {
+                 getMessagesController().processUpdates((TLRPC.Updates) response, false);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
@@ -212,11 +240,23 @@ index 0000000..0000000 100644
                      invalidate();
                      result = true;
                  }
+@@ -6878,6 +6880,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 currentMessageObject.richLayout.detach(this);
+             }
+             currentMessageObject = messageObject;
++            if (desu.inugram.InuConfig.DELETED_MESSAGES_TRANSPARENT.getValue() && desu.inugram.helpers.chat.ChatHelper.isDeletedOrPreserved(currentMessageObject)) {
++                setAlpha(0.65f);
++            } else {
++                setAlpha(1.0f);
++            }
+             currentMessagesGroup = groupedMessages;
+             wasAllChats = isAllChats;
+             lastTime = -2;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -26440,6 +26440,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26444,6 +26444,8 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
                  obj.deleted = true;
@@ -225,7 +265,7 @@ index 0000000..0000000 100644
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26448,6 +26450,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -26452,6 +26454,18 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
@@ -244,7 +284,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26555,6 +26569,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26559,6 +26573,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;

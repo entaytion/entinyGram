@@ -192,7 +192,7 @@ object TranslateHelper {
         fun perform(fromLang: String?) {
             val toLangValue = if (fromLang != null && fromLang == toLang) toLangDefault else toLang
             val srcLang = fromLang?.takeIf { it != "und" } ?: selected.messageOwner?.originalLanguage
-            if (!InuConfig.FORCE_TRANSLATE.value && srcLang != null && srcLang == toLangValue && !hasTranslatableWebPage(selected)) {
+            if (!InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && selected.isOutOwner()) && srcLang != null && srcLang == toLangValue && !hasTranslatableWebPage(selected)) {
                 val langName = TranslateAlert2.languageName(srcLang)?.let(TranslateAlert2::capitalFirst) ?: srcLang.uppercase()
                 BulletinFactory.of(activity)
                     .createErrorBulletin(LocaleController.formatString(R.string.InuAlreadyInTargetLanguage, langName))
@@ -289,7 +289,7 @@ object TranslateHelper {
         toLang: String,
     ) {
         val srcLang = fromLang?.takeIf { it != "und" } ?: owner.originalLanguage
-        if (!InuConfig.FORCE_TRANSLATE.value && srcLang != null && srcLang == toLang) return
+        if (!InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && target.isOutOwner()) && srcLang != null && srcLang == toLang) return
         val account = activity.currentAccount
         val controller = MessagesController.getInstance(account).translateController
         val dialogId = target.dialogId
@@ -348,7 +348,7 @@ object TranslateHelper {
             AndroidUtilities.runOnUIThread {
                 val srcLang = src?.split("_")?.firstOrNull()
                 val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
-                if (srcLang != null && !InuConfig.FORCE_TRANSLATE.value && (dnt.contains(srcLang) || srcLang == toLang)) {
+                if (srcLang != null && !InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && target.isOutOwner()) && (dnt.contains(srcLang) || srcLang == toLang)) {
                     markLoading(target, false)
                     NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.messageTranslated, target)
                     return@runOnUIThread

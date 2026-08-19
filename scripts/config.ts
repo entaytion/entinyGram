@@ -73,6 +73,11 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/values-tr',
   },
   {
+    source: 'src/res/values-night/styles.xml',
+    target: 'TMessagesProj/src/main/res/values-night',
+    replace: true,
+  },
+  {
     source: 'src/res/drawable/icplaceholder.jpg',
     target: 'TMessagesProj/src/main/res/drawable',
     replace: true,
@@ -96,6 +101,16 @@ export const forkSyncFiles: ForkSyncFile[] = [
   {
     source: 'src/res/drawable/*.xml',
     target: 'TMessagesProj/src/main/res/drawable',
+  },
+  {
+    source: 'src/res/drawable/input_ai_star.xml',
+    target: 'TMessagesProj/src/main/res/drawable',
+    replace: true,
+  },
+  {
+    source: 'src/res/drawable/inu_splash_old_320.xml',
+    target: 'TMessagesProj/src/main/res/drawable',
+    replace: true,
   },
   {
     source: 'src/res/assets/*',

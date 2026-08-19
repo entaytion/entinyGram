@@ -10,6 +10,8 @@
     <string name="InuDrawerBackGestureInfo">Swiping back from the left edge of the chat list opens the drawer instead of leaving the app.</string>
     <string name="InuDrawerM3Sections">Modular sections in navigation drawer</string>
     <string name="InuDrawerM3SectionsInfo">Groups the navigation drawer menu rows into rounded Material 3 cards.</string>
+    <string name="InuShowDrawerAccounts">Show accounts in drawer</string>
+    <string name="InuShowDrawerAccountsInfo">Show the expandable account switcher below your profile.</string>
     <string name="InuSettings">entinyGram Settings</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuSettingsPrefixHint">Settings links use tg://entinySettings/&lt;slug&gt;</string>
@@ -27,6 +29,7 @@
     <string name="InuPerformanceClassHigh">High</string>
     <string name="InuAnnoyances">Annoyances</string>
     <string name="InuMessages">Messages</string>
+    <string name="InuChats">Chats</string>
     <string name="InuOther">Other</string>
     <string name="InuMainPage">Dialogs list</string>
     <string name="InuUserProfile">User profile</string>
@@ -254,6 +257,8 @@
     <string name="InuNotificationIcon">Notification icon</string>
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
+    <string name="InuNotificationIconOldEntinygram">Old entinyGram</string>
+    <string name="InuAppIconOldEntinygram">Old entinyGram</string>
     <string name="InuDisableChatBubbles">Disable Android notification bubbles</string>
     <string name="InuInPlaceTranslation">In-place translation</string>
     <string name="InuTranslateWebPreviews">Translate web previews</string>
@@ -274,6 +279,8 @@
     <string name="InuAdvanced">Advanced</string>
     <string name="InuForceTranslate">Force translation</string>
     <string name="InuForceTranslateInfo">Show the translate bar and translate messages even when Telegram thinks they are already in your language or in the "Do not translate" list.</string>
+    <string name="InuTranslateOutgoing">Translate my messages</string>
+    <string name="InuTranslateOutgoingInfo">Include messages sent by you in automatic chat translation.</string>
     <string name="InuTranslationTarget">Target language</string>
     <string name="InuTranslationTargetFollowApp">Follow app</string>
     <string name="InuTranslateProviderSection">Translation providers</string>
@@ -832,7 +839,7 @@
     <string name="InuBiometricAllowDeviceCredential">Allow device PIN/pattern</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Fall back to the device PIN, pattern or password when no biometric is enrolled.</string>
 
-    <string name="InuTOS">Anti-Deletion &amp; Storage</string>
+    <string name="InuTOS">Restricted features</string>
     <string name="InuSelfDestructMedia">Self-destructing media</string>
     <string name="InuSaveSelfDestruct">Save self-destructing media</string>
     <string name="InuSaveSelfDestructInfo">View-once photos, videos and video messages will show as normal media and can be saved or forwarded.</string>
@@ -853,7 +860,14 @@
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>
     <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>
-    <string name="InuCenterTitleChats">Center title in chats/channels</string>
+    <string name="InuTitleAlignmentSection">Title &amp; Header</string>
+    <string name="InuCenterTitleChats">Center in chats/channels</string>
+    <string name="InuCenterTitleRightAvatar">Move avatar to the right</string>
+    <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>
+    <string name="InuCenterTitleMarquee">Text marquee for long titles</string>
+    <string name="InuChatTitleMarquee">Text marquee for long titles</string>
+    <string name="InuFloatingAvatar">Floating avatar in chat header</string>
+    <string name="InuFloatingAvatarInfo">Separates the avatar from the title and positions it as a floating element on the right</string>
     <string name="InuSaveDeletedMessages">Save deleted messages</string>
     <string name="InuSaveDeletedMessagesInfo">Keeps deleted messages in chats marked with 🗑️</string>
     <string name="InuSaveEditedMessages">Save edit history</string>
@@ -1057,8 +1071,9 @@
     <string name="InuAiTranscribeTranscribing">Transcribing…</string>
     <string name="InuAiTranscribeFailed">Transcription failed: %1$s</string>
     <string name="InuLocalPremium">Local Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">Unlocks local Premium features on client side (star badge, app icons, emoji statuses, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require official subscription.</string>
+    <string name="InuLocalPremiumInfo">Unlocks client-side Premium features (star badge, app icons, emoji statuses and profile colors persisted locally, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require an official subscription.</string>
     <string name="InuHiddenStarGifts">Hidden &amp; Archived Star Gifts</string>
+    <string name="InuStarGiftsSection">Star Gifts</string>
     <string name="InuHiddenStarGiftsInfo">Restores removed, archived and limited Star Gifts in the Telegram gifts catalog.</string>
     <string name="InuDeletedMessagesTransparent">Semi-transparent deleted messages</string>
     <string name="InuDeletedMessagesTransparentInfo">Display preserved deleted messages with slight transparency to clearly distinguish them in chat.</string>
@@ -1072,4 +1087,15 @@
     <string name="InuDeletedMarkPreviewText">do they really have to keep changing the UI every update..?</string>
     <string name="InuDeletedMarkPreviewSender">DARK DEVIL</string>
     <string name="InuCustomization">Customization</string>
+    <string name="InuHideDevBadges">Disable developer badges</string>
+    <string name="InuHideDevBadgesInfo">Hide badges next to the names of entinyGram and inuGram developers and official channels</string>
+    <string name="InuDevBadgeEntiny">EntinyGram developer</string>
+    <string name="InuDevBadgeEntinyInfo">This user creates and develops entinyGram</string>
+    <string name="InuDevBadgeInu">inuGram developer</string>
+    <string name="InuDevBadgeInuInfo">This user is the author of inuGram, the fork entinyGram is based on</string>
+    <string name="InuDevBadgeChannel">Official entinyGram channel</string>
+    <string name="InuDevBadgeChannelInfo">Official channel with entinyGram news and updates</string>
+    <string name="InuDevBadgeInuChannel">Official inuGram channel</string>
+    <string name="InuDevBadgeInuChannelInfo">Original inuGram fork that entinyGram is based on</string>
+    <string name="InuDevBadgeAccess">Developer badge</string>
 </resources>

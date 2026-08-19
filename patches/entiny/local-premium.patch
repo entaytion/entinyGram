@@ -4,11 +4,12 @@ Date: Sun, 16 Aug 2026 13:59:50 +0300
 Subject: Unlock local premium features and client restrictions
 
 ---
- .../main/java/org/telegram/messenger/MessagesController.java | 5 ++++-
- .../src/main/java/org/telegram/messenger/UserConfig.java     | 3 +++
- .../org/telegram/ui/Components/StatusBadgeComponent.java     | 2 +-
- .../src/main/java/org/telegram/ui/SettingsActivity.java      | 2 +-
- 4 files changed, 9 insertions(+), 3 deletions(-)
+ .../java/org/telegram/messenger/MessagesController.java     | 6 +++++-
+ .../src/main/java/org/telegram/messenger/UserConfig.java    | 4 ++++
+ .../org/telegram/ui/Components/StatusBadgeComponent.java    | 2 +-
+ .../src/main/java/org/telegram/ui/PeerColorActivity.java    | 4 +++-
+ .../src/main/java/org/telegram/ui/SettingsActivity.java     | 2 +-
+ 5 files changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -29,11 +30,27 @@ index 0000000..0000000 100644
          return transcribeButtonPressed >= 2;
      }
  
+@@ -6869,6 +6872,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (user == null) {
+             return false;
+         }
++        desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
+         fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
+         TLRPC.User oldUser = users.get(user.id);
+         if (oldUser == user && !force) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java
-@@ -572,6 +572,9 @@ public class UserConfig extends BaseController {
+@@ -261,6 +261,7 @@ public class UserConfig extends BaseController {
+     public void setCurrentUser(TLRPC.User user) {
+         synchronized (sync) {
+             TLRPC.User oldUser = currentUser;
++            desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
+             currentUser = user;
+             clientUserId = user.id;
+             checkPremiumSelf(oldUser, user);
+@@ -572,6 +573,9 @@ public class UserConfig extends BaseController {
      }
  
      public boolean isPremium() {
@@ -56,11 +73,31 @@ index 0000000..0000000 100644
              statusDrawable.set(PremiumGradient.getInstance().premiumStarDrawableMini, animated);
              statusDrawable.setColor(colorFilter);
          } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
+@@ -1893,6 +1893,8 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+                 }
+                 getMessagesController().updateEmojiStatus(0, new_emoji_status, gift);
+             }
++            desu.inugram.helpers.LocalPremiumHelper.onSelfColorsApplied(me, currentAccount);
++            desu.inugram.helpers.LocalPremiumHelper.persistEmojiStatus(me.emoji_status, currentAccount);
+             getMessagesController().putUser(me, false);
+             getUserConfig().saveConfig(true);
+             finishFragment();
+@@ -3621,4 +3623,4 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+         if (a == null || b == null) return false;
+         return a.collectible_id == b.collectible_id;
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1065,7 +1065,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1059,7 +1059,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              emojiStatusDrawable.setColor(Theme.getColor(Theme.key_profile_verifiedBackground, resourcesProvider));
              if (emojiStatusId != null) {
                  emojiStatusDrawable.set(emojiStatusId, false);

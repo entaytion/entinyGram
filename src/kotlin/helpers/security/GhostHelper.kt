@@ -50,12 +50,6 @@ object GhostHelper {
     @JvmStatic
     fun setGhostMode(enabled: Boolean) {
         InuConfig.GHOST_MODE.value = enabled
-        InuConfig.GHOST_HIDE_READ.value = enabled
-        InuConfig.GHOST_READ_ON_SEND.value = enabled
-        InuConfig.GHOST_HIDE_VOICE_READ.value = enabled
-        InuConfig.GHOST_HIDE_STORY_READ.value = enabled
-        InuConfig.GHOST_HIDE_ONLINE.value = enabled
-        InuConfig.GHOST_HIDE_TYPING.value = enabled
         if (!enabled) InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value = false
         syncPresence(UserConfig.selectedAccount)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)

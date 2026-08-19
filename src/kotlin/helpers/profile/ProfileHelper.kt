@@ -533,13 +533,9 @@ object ProfileHelper {
 
     @JvmStatic
     fun getRegDateSubtitle(userId: Long, chat: TLRPC.Chat?, user: TLRPC.User?): String {
-        val base = if (userId != 0L) {
-            LocaleController.getString(R.string.InuProfileRegDate)
-        } else if (chat != null && ChatObject.isChannel(chat) && !ChatObject.isNotInChat(chat)) {
-            LocaleController.getString(R.string.InuJoinDate)
-        } else {
-            LocaleController.getString(R.string.InuProfileCreatedDate)
-        }
+        // The date itself is already shown in the primary value row. Keep this
+        // subtitle to a label only and append the useful server/DC information.
+        val base = LocaleController.getString(R.string.InuProfileRegDate)
         val dc = getDcString(user, chat)
         return if (dc.isNotEmpty()) "$base • $dc" else base
     }

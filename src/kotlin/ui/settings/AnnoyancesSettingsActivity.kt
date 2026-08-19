@@ -51,14 +51,13 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asHeader(addExperimentalSpan("AdBlock")))
+        items.add(UItem.asHeader("AdBlock"))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_HIDE_SPONSORED_MESSAGES,
                 R.string.InuHideSponsoredMessages,
                 R.string.InuHideSponsoredMessagesInfo,
                 InuConfig.HIDE_SPONSORED_MESSAGES.value,
-                experimental = true,
             )
         )
         items.add(
@@ -255,11 +254,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_REGEX_FILTER -> {
-                if (x > view.width - AndroidUtilities.dp(48f)) {
-                    BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuBetaFeatureInfo)).show()
-                } else {
-                    presentFragment(RegexFilterSettingsActivity())
-                }
+                presentFragment(RegexFilterSettingsActivity())
             }
 
             TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY -> {

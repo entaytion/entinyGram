@@ -16,6 +16,8 @@
     <string name="InuPerformanceClassHigh">Высокий</string>
     <string name="InuAnnoyances">Раздражители</string>
     <string name="InuMessages">Сообщения</string>
+    <string name="InuChats">Чаты</string>
+    <string name="InuStarGiftsSection">Звёздные подарки</string>
     <string name="InuOther">Другое</string>
     <string name="InuMainPage">Список диалогов</string>
     <string name="InuUserProfile">Профиль пользователя</string>
@@ -845,7 +847,14 @@
     <string name="InuDownloadingStory">Загрузка истории…</string>
     <string name="InuSaveAnyStory">Сохранять любые истории</string>
     <string name="InuSaveAnyStoryInfo">Позволяет скачивать любые истории в галерею без Premium и ограничений автора.</string>
+    <string name="InuTitleAlignmentSection">Шапка чата и заголовок</string>
     <string name="InuCenterTitleChats">Центрирование в чатах/каналах</string>
+    <string name="InuCenterTitleRightAvatar">Переместить аватар вправо</string>
+    <string name="InuCenterTitleAdaptiveSize">Адаптивный размер названия (iOS-style)</string>
+    <string name="InuCenterTitleMarquee">Бегущая строка для длинного текста</string>
+    <string name="InuChatTitleMarquee">Бегущая строка для длинных названий</string>
+    <string name="InuFloatingAvatar">Плавающий аватар в шапке чата</string>
+    <string name="InuFloatingAvatarInfo">Отделяет аватар от заголовка и располагает его как плавающий элемент справа</string>
     <string name="InuSaveDeletedMessages">Сохранять удаленные сообщения</string>
     <string name="InuSaveDeletedMessagesInfo">Сохраняет удаленные сообщения в чатах с пометкой 🗑️</string>
     <string name="InuSaveEditedMessages">Сохранять историю редактирования</string>
@@ -884,7 +893,9 @@
     <string name="InuSettingsPrefixHint">Ссылки настроек используют tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuBetaFeatureTitle">Бета-функция</string>
     <string name="InuBetaFeatureInfo">Эта функция находится в активной разработке (бета/экспериментальная).</string>
-    <string name="InuTOS">Анти-удаление и хранилище</string>
+    <string name="InuTOS">Запрещённые функции</string>
+    <string name="InuTranslateOutgoing">Переводить мои сообщения</string>
+    <string name="InuTranslateOutgoingInfo">Добавлять отправленные вами сообщения в автоматический перевод чата.</string>
     <string name="InuShowMutualContactIcon">Значок взаимного контакта</string>
     <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
     <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>
@@ -978,7 +989,7 @@
     <string name="InuAiTranscribeTranscribing">Распознавание…</string>
     <string name="InuAiTranscribeFailed">Ошибка распознавания: %1$s</string>
     <string name="InuLocalPremium">Локальный Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">Разблокирует локальные функции Premium на уровне клиента (звёздочка у профиля, эмодзи-статусы, безлимитная панель перевода, премиум-реакции и анимации). Серверные фичи (4 ГБ загрузка, лимиты облака) требуют официальной подписки.</string>
+    <string name="InuLocalPremiumInfo"> Разблокирует локальные функции Premium на уровне клиента (звёздочка у профиля, эмодзи-статусы и цвета профиля с локальным сохранением, безлимитная панель перевода, премиум-реакции и анимации). Серверные фичи (4 ГБ загрузка, лимиты облака) требуют официальной подписки.</string>
     <string name="InuHiddenStarGifts">Скрытые и архивные подарки</string>
     <string name="InuHiddenStarGiftsInfo">Возвращает удалённые, архивные и лимитированные подарки (Star Gifts) в каталог Telegram.</string>
     <string name="InuDeletedMessagesTransparent">Полупрозрачные удалённые сообщения</string>
@@ -993,4 +1004,15 @@
     <string name="InuDeletedMarkPreviewText">do they really have to keep changing the UI every update..?</string>
     <string name="InuDeletedMarkPreviewSender">DARK DEVIL</string>
     <string name="InuCustomization">Кастомизация</string>
+    <string name="InuHideDevBadges">Отключить бейджи разработчиков</string>
+    <string name="InuHideDevBadgesInfo">Скрывает бейджи у имён разработчиков entinyGram и inuGram и у официальных каналов</string>
+    <string name="InuDevBadgeEntiny">Разработчик entinyGram</string>
+    <string name="InuDevBadgeEntinyInfo">Этот пользователь создаёт и развивает entinyGram</string>
+    <string name="InuDevBadgeInu">Разработчица inuGram</string>
+    <string name="InuDevBadgeInuInfo">Авторка inuGram — форка, на котором основан entinyGram</string>
+    <string name="InuDevBadgeChannel">Официальный канал entinyGram</string>
+    <string name="InuDevBadgeChannelInfo">Новости и обновления entinyGram</string>
+    <string name="InuDevBadgeInuChannel">Официальный канал inuGram</string>
+    <string name="InuDevBadgeInuChannelInfo">Оригинальный форк inuGram, на котором основан entinyGram</string>
+    <string name="InuDevBadgeAccess">Значок разработчика</string>
 </resources>

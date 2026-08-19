@@ -10,26 +10,24 @@ most things are toggleable in `Settings → entinyGram`, with sensible opinionat
 
 ## entinyGram additions
 
-our own layer on top of the inugram patchset. we keep syncing with inugram upstream, while adding restricted telegram features, privacy tools, power-user controls, and experiments.
+our own layer on top of the inugram patchset: restricted Telegram features, privacy tools, power-user controls, and experiments.
 
 ### privacy & protection
 
-- 📡 **ghost mode (stealth)**: comprehensive privacy suite with granular toggles:
-  - **quick toggle in drawer & chat list**: 1-tap Ghost toggle button in navigation drawer header (next to dark theme button), drawer menu list item with switch, and chat list overflow menu
-  - **active status indicator**: ghost icon displayed before app title in main dialogs list and next to chat name in active chat header when ghost mode is enabled
-  - **quick access**: long-press drawer ghost button to open full TOS & Ghost settings
-  - hide read receipts for messages, voice notes and video messages
-  - read on send: automatically mark incoming messages as read only when sending a reply
-  - hide story views (watch stories completely anonymously)
-  - hide online status + optional "go offline right after going online"
-  - hide typing, audio recording, and media upload indicators
+- 📡 **ghost mode (stealth)**: privacy suite with granular toggles:
+  - **quick toggle** in the drawer header, drawer menu, and chat-list menu
+  - **status indicator** with a ghost icon in the dialogs list and active chat header
+  - **quick access** to full Ghost settings by long-pressing the drawer button
+  - hide read receipts for messages, voice notes, and video messages
+  - **read on send**: mark incoming messages read only when replying
+  - hide story views, online status, typing, recording, and upload indicators
 - 📡 **anti-deletion & edit history**:
-  - **save deleted messages**: keep deleted messages (marked with 🗑️) & save media to `Downloads/entinyGram/media/`
-  - **per-category deleted message saving**: granular toggles for private chats, groups, channels, and bots
-  - **save edit history**: view full edit history (marked with ✏️) in an interactive message bubble sheet
-  - **edit history text diff mode**: inline color-coded diff highlighting of edited text changes
-  - **semi-transparent deleted messages & customizable deleted mark**: display preserved deleted message bubbles with subtle alpha transparency and pick the deleted mark style ("deleted" text / trash bin / cross / eye crossed) plus its accent color, with live bubble preview in settings showing your own avatar and name
-  - **deleted cache TTL & storage manager**: automatic cache expiration (never / 1 day / 1 week / 1 month) and interactive cleanup sheet with per-dialog size breakdown
+  - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
+  - **per-category controls** for private chats, groups, channels, and bots
+  - **save edit history** (marked with ✏️) in an interactive message sheet
+  - **text diff mode** with inline color-coded changes
+  - **deleted-message styling** with transparency, custom mark and accent color, plus a live settings preview
+  - **cache TTL and storage manager** with automatic expiration and per-dialog cleanup
 - 📡 **self-destructing & expiring media**:
   - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
   - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
@@ -43,26 +41,27 @@ our own layer on top of the inugram patchset. we keep syncing with inugram upstr
 
 - 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories
 - 📡 copy text and select messages in protected chats when restricted forwarding bypass is enabled
-- 📡 **local telegram premium**: unlock client-side premium features (star badges, custom app icons, emoji statuses, unlimited chat translation bar, premium reactions, animations, instant runtime toggle without restart, and voice transcription bypass without trial nag)
+- 📡 **local Telegram Premium**: unlock client-side premium UI and limits, including badges, custom icons, emoji statuses, colors, translation bar, reactions, animations, and transcription. The toggle applies instantly; server-side premium-only writes remain unavailable.
 - 📡 **content protection & forward bypass**:
   - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
   - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
   - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
 - 📡 **whole-chat translation without telegram premium**: unlock translation bar and real-time chat translation without subscription — pick a third-party provider below; the stock Telegram API provider still requires Telegram Premium
-- 📡 **third-party translation providers**: route chat auto-translate and in-place message translation through Google Translate, DeepL, Yandex, Microsoft Translator (free Bing endpoint), Microsoft Azure, MyMemory, Lingo (Caiyun), or TranSmart (Tencent) instead of the Telegram server API — Google, Microsoft, MyMemory, Lingo and TranSmart need no key, the rest have free tiers; failed messages retry automatically (a provider switch resets them immediately), failures show a bulletin instead of silently stopping, and if the chosen provider lacks the target language (e.g. Lingo/TranSmart have no Ukrainian) the engine silently falls back to Google/Bing; language pickers (translate popup and translate dialogs) only list languages the selected provider actually supports, and the provider settings mark each provider that supports your app language; the translator settings live right next to the Languages entry in the main Settings page (no separate AI entry — custom LLM endpoints are configured via the translation provider); a "force translation" toggle shows the translate bar and translates messages even when Telegram considers them to be in your own language or on the do-not-translate list (it also bypasses the "already in target language" guards in the message menu, selection translate and Instant View); web-link previews (title/description/site name) are translated by the selected third-party provider instead of the stock Telegram API
+- 📡 **third-party translation providers**: use Google, DeepL, Yandex, Bing/Azure, MyMemory, Lingo, or TranSmart for chat and message translation. Providers expose supported-language pickers, retries, fallback, force-translate mode, optional translation of your own messages, and translated link previews.
 - 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare)
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
 - 📡 **hidden & archived star gifts**: restores removed, archived, and limited Star Gifts in the Telegram gifts catalog
 
 ### power-user tools
 
+- 📡 **developer badges**: show entinyGram, inuGram, and official-channel badges in chat headers and profiles. Tap a badge for details or disable them in Settings → Chats.
 - 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags & toggle in settings
 - 📡 **estimated registration date & DC**: profile info card with fast copy and DC location resolution
 - 📡 **delete profile photos**: one-tap delete all or selected profile photos from profile menu, photo viewer, or settings
 - 📡 **extended message details & JSON view**: inspect raw message objects and properties
 - 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
-- 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs, modular M3 drawer cards
+- 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; in chats the avatar moves to the right edge and long titles shrink to fit (iOS-style) instead of ellipsizing; modular M3 drawer cards
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 
@@ -392,7 +391,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - crash long-pressing a sticker set while off-screen rows are cached (reorder update bound null item on cached/hidden holders)
 - crash cutting out a sticker after the photo editor recycled the source image mid-segmentation
 - crash after transferring channel ownership (admin sort comparator overflowed on 64-bit peer ids)
-- premium app icons available for all users (no subscription required)
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
 - link ripples in album captions work across the entire group
 - duplicate edit-info and profile-photo actions in the standalone self-profile overflow menu

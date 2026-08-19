@@ -75,6 +75,18 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
+        // Local Premium is a restricted client-side feature and belongs here.
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLocalPremium)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_LOCAL_PREMIUM,
+                R.string.InuLocalPremium,
+                R.string.InuLocalPremiumInfo,
+                InuConfig.LOCAL_PREMIUM.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         // 1. Ghost Mode & Stealth
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGhostMode)))
         ghostGroup.addTo(items) {
@@ -166,6 +178,7 @@ class TosSettingsActivity : SettingsPageActivity() {
 
         // 4. Content Protection & Profile
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuContentProtectionBypass)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStarGiftsSection)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SAVE_ANY_STORY,
@@ -400,6 +413,16 @@ class TosSettingsActivity : SettingsPageActivity() {
         if (selfDestructGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         when (item.id) {
             BUTTON_BETA_INFO -> showBetaBottomSheet()
+            TOGGLE_LOCAL_PREMIUM -> {
+                val new = InuConfig.LOCAL_PREMIUM.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                if (new) {
+                    val userConfig = UserConfig.getInstance(currentAccount)
+                    desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(userConfig.getCurrentUser(), currentAccount)
+                }
+                NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.currentUserPremiumStatusChanged)
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal)
+            }
             TOGGLE_SAVE_DELETED_MESSAGES -> {
                 val new = InuConfig.SAVE_DELETED_MESSAGES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -507,6 +530,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ALLOW_SCREENSHOTS = InuUtils.generateId()
         private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val TOGGLE_HIDDEN_STAR_GIFTS = InuUtils.generateId()
+        private val TOGGLE_LOCAL_PREMIUM = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val BUTTON_CACHE_TTL = InuUtils.generateId()
@@ -519,6 +543,7 @@ class TosSettingsActivity : SettingsPageActivity() {
             factory = ::TosSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ghost-mode", R.string.InuGhostMode, SECTION_GHOST_MODE),
+                SearchRegistry.Entry("local-premium", R.string.InuLocalPremium, TOGGLE_LOCAL_PREMIUM),
                 SearchRegistry.Entry("ghost-hide-read", R.string.InuGhostHideRead, TOGGLE_HIDE_READ),
                 SearchRegistry.Entry("ghost-read-on-send", R.string.InuGhostReadOnSend, TOGGLE_READ_ON_SEND),
                 SearchRegistry.Entry("ghost-hide-voice-read", R.string.InuGhostHideVoiceRead, TOGGLE_HIDE_VOICE_READ),

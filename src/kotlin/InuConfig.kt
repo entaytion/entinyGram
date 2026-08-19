@@ -233,6 +233,9 @@ object InuConfig {
     val DRAWER_M3_SECTIONS = BoolItem("drawer_m3_sections", false)
 
     @JvmField
+    val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)
+
+    @JvmField
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
     @JvmField
@@ -850,6 +853,21 @@ object InuConfig {
     val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
 
     @JvmField
+    val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
+
+    @JvmField
+    val CENTER_TITLE_ADAPTIVE_SIZE = BoolItem("center_title_adaptive_size", true)
+
+    @JvmField
+    val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
+
+    @JvmField
+    val CENTER_TITLE_MARQUEE = CHAT_TITLE_MARQUEE
+
+    @JvmField
+    val FLOATING_AVATAR = BoolItem("floating_avatar", false)
+
+    @JvmField
     val CENTER_TITLE_SETTINGS = BoolItem("center_title_settings", false)
 
     @JvmField
@@ -955,15 +973,13 @@ object InuConfig {
     val REGEX_FILTER_MODE = RegexFilterModeItem()
 
     @JvmField
-    val UNLOCK_ICONS = BoolItem("unlock_icons", true)
-
-    @JvmField
     val TITLE_ALIGNMENT = IntItem("title_alignment", 0)
 
     class NotificationIconItem : IntItem("notification_icon", TELEGRAM) {
         companion object {
             const val TELEGRAM = 0
             const val INUGRAM = 1
+            const val OLD_ENTINYGRAM = 2
         }
     }
 
@@ -1046,6 +1062,9 @@ object InuConfig {
     @JvmField
     val FORCE_TRANSLATE = BoolItem("force_translate", false)
 
+    @JvmField
+    val TRANSLATE_OUTGOING = BoolItem("translate_outgoing", false)
+
     // Third-party translation providers (0 = Telegram API, stock behavior)
     @JvmField
     val TRANSLATE_PROVIDER = IntItem("translate_provider", 0)
@@ -1127,6 +1146,9 @@ object InuConfig {
 
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)
+
+    @JvmField
+    val HIDE_DEV_BADGES = BoolItem("hide_dev_badges", false)
 
     @JvmField
     val HIDDEN_STAR_GIFTS = BoolItem("hidden_star_gifts", false)

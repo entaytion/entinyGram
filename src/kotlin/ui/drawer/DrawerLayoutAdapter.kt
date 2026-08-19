@@ -1,5 +1,6 @@
 package desu.inugram.ui.drawer
 
+import desu.inugram.InuConfig
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +41,7 @@ class DrawerLayoutAdapter(
     var profileCell: DrawerProfileCell? = null
 
     init {
-        accountsShown = UserConfig.getActivatedAccountsCount() > 1 &&
+        accountsShown = InuConfig.SHOW_DRAWER_ACCOUNTS.value && UserConfig.getActivatedAccountsCount() > 1 &&
             MessagesController.getGlobalMainSettings().getBoolean("accountsShown", true)
         Theme.createCommonDialogResources(mContext)
         resetItems()
