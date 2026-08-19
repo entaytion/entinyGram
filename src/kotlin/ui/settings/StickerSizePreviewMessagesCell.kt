@@ -6,7 +6,6 @@ import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
-import org.telegram.messenger.UserObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.BaseFragment
 
@@ -19,21 +18,12 @@ class StickerSizePreviewMessagesCell(context: Context?, fragment: BaseFragment) 
             val now = (System.currentTimeMillis() / 1000).toInt() - 60 * 60
             val selfAccount = UserConfig.selectedAccount
             val selfId = UserConfig.getInstance(selfAccount).clientUserId
-            val selfUser = UserConfig.getInstance(selfAccount).currentUser
-            val senderName = UserObject.getUserName(selfUser).takeIf { !it.isNullOrBlank() }
-                ?: getString(R.string.InuMiscPreviewForwardedFrom)
-
             val textTlMessage = TLRPC.TL_message().apply {
                 message = getString(R.string.InuStickerSizeDialogMessage)
                 date = now
                 dialog_id = -1
-                flags = 259 or TLRPC.MESSAGE_FLAG_FWD
+                flags = 259
                 id = 1
-                fwd_from = TLRPC.TL_messageFwdHeader().apply {
-                    flags = flags or 32
-                    from_name = senderName
-                    date = now - 60 * 60 * 20
-                }
                 media = TLRPC.TL_messageMediaEmpty()
                 out = false
                 peer_id = TLRPC.TL_peerUser().apply { user_id = 1 }

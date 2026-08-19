@@ -75,12 +75,12 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.msg_settings_old, LocaleController.getString(R.string.InuCategoryBackup)))
         items.add(UItem.asShadow(null))
 
-        // Channel & GitHub links without "Links" header, formatted cleanly
+        // Channel & GitHub links
         items.add(
             UItem.asButton(
                 BUTTON_CHANNEL_LINK,
                 R.drawable.msg_channel,
-                "Channel",
+                LocaleController.getString(R.string.InuAboutChannel),
                 "@entinyGram"
             )
         )
@@ -88,7 +88,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             UItem.asButton(
                 BUTTON_GITHUB,
                 R.drawable.msg_link,
-                "GitHub",
+                LocaleController.getString(R.string.InuAboutGitHub),
                 "Entaytion/entinyGram"
             )
         )

@@ -181,9 +181,9 @@
     <string name="InuStickerTimeModeHideCompletely">Hide completely</string>
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">Bubble tails</string>
-    <string name="InuMiscPreviewForwardedFrom">doggo</string>
-    <string name="InuMiscPreviewForwardedMessage">woof!! did you see this?</string>
-    <string name="InuMiscPreviewEditedMessage">pawsitively, no more typos</string>
+    <string name="InuMiscPreviewForwardedFrom">inu</string>
+    <string name="InuMiscPreviewForwardedMessage">woof! entinyGram or inuGram? 🐶</string>
+    <string name="InuMiscPreviewEditedMessage">both are the best, doggo base 🐶⚡</string>
     <string name="InuDeleteForBoth">\"Delete for both\" by default</string>
     <string name="InuDeleteForBothMessages">Messages</string>
     <string name="InuDeleteForBothDms">DM dialogs</string>
@@ -1073,7 +1073,7 @@
     <string name="InuLocalPremium">Local Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Unlocks client-side Premium features (star badge, app icons, emoji statuses and profile colors persisted locally, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require an official subscription.</string>
     <string name="InuHiddenStarGifts">Hidden &amp; Archived Star Gifts</string>
-    <string name="InuStarGiftsSection">Star Gifts</string>
+    <string name="InuStarGiftsSection">Gifts</string>
     <string name="InuHiddenStarGiftsInfo">Restores removed, archived and limited Star Gifts in the Telegram gifts catalog.</string>
     <string name="InuDeletedMessagesTransparent">Semi-transparent deleted messages</string>
     <string name="InuDeletedMessagesTransparentInfo">Display preserved deleted messages with slight transparency to clearly distinguish them in chat.</string>
@@ -1084,8 +1084,8 @@
     <string name="InuDeletedMarkStyleTrashBin">Trash Bin</string>
     <string name="InuDeletedMarkStyleCross">Cross</string>
     <string name="InuDeletedMarkStyleEyeCrossed">Eye Crossed</string>
-    <string name="InuDeletedMarkPreviewText">do they really have to keep changing the UI every update..?</string>
-    <string name="InuDeletedMarkPreviewSender">DARK DEVIL</string>
+    <string name="InuDeletedMarkPreviewText">Hey! This is a secret 🤫</string>
+    <string name="InuDeletedMarkPreviewSender">Alina</string>
     <string name="InuCustomization">Customization</string>
     <string name="InuHideDevBadges">Disable developer badges</string>
     <string name="InuHideDevBadgesInfo">Hide badges next to the names of entinyGram and inuGram developers and official channels</string>

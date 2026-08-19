@@ -896,22 +896,22 @@ object InuConfig {
     val SAVE_TIMED_MESSAGES = BoolItem("save_timed_messages", false)
 
     @JvmField
-    val SAVE_ANY_STORY = BoolItem("save_any_story", true)
+    val SAVE_ANY_STORY = BoolItem("save_any_story", false)
 
     @JvmField
-    val SAVE_DELETED_MESSAGES = BoolItem("save_deleted_messages", true)
+    val SAVE_DELETED_MESSAGES = BoolItem("save_deleted_messages", false)
 
     @JvmField
-    val SAVE_DELETED_PRIVATE = BoolItem("save_deleted_private", true)
+    val SAVE_DELETED_PRIVATE = BoolItem("save_deleted_private", false)
 
     @JvmField
-    val SAVE_DELETED_GROUPS = BoolItem("save_deleted_groups", true)
+    val SAVE_DELETED_GROUPS = BoolItem("save_deleted_groups", false)
 
     @JvmField
-    val SAVE_DELETED_CHANNELS = BoolItem("save_deleted_channels", true)
+    val SAVE_DELETED_CHANNELS = BoolItem("save_deleted_channels", false)
 
     @JvmField
-    val SAVE_DELETED_BOTS = BoolItem("save_deleted_bots", true)
+    val SAVE_DELETED_BOTS = BoolItem("save_deleted_bots", false)
 
     @JvmField
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)

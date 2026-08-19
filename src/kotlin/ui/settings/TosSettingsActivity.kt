@@ -178,7 +178,6 @@ class TosSettingsActivity : SettingsPageActivity() {
 
         // 4. Content Protection & Profile
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuContentProtectionBypass)))
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStarGiftsSection)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SAVE_ANY_STORY,
@@ -211,6 +210,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_USER_INFO.value,
             )
         )
+        items.add(UItem.asShadow(null))
+
+        // 5. Gifts
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStarGiftsSection)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_HIDDEN_STAR_GIFTS,

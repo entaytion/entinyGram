@@ -9,14 +9,22 @@ import { rootDir } from './config.js'
 //                      base English text (i.e. a placeholder, not a translation)
 //   - extra          : key present only in the locale
 //
-// Strings whose value is identical in every locale that has them are assumed to be
-// brand names / shared terms and are reported separately, not as "untranslated".
-//
 // Usage:
-//   bun scripts/check-translations.ts          # all locales
-//   bun scripts/check-translations.ts ru       # single locale
+//   bun scripts/check-translations.ts                  # summary + breakdown for all locales
+//   bun scripts/check-translations.ts ru               # single locale
+//   bun scripts/check-translations.ts --matrix         # matrix of which keys are missing where
+//   bun scripts/check-translations.ts --missing [iso]  # only missing XML strings
+//   bun scripts/check-translations.ts --summary        # only summary table
+//   bun scripts/check-translations.ts --fill [iso]     # append missing keys with base text into locale files
 
-const onlyIso = process.argv[2]
+const args = process.argv.slice(2)
+const showMatrix = args.includes('--matrix') || args.includes('-m')
+const showSummaryOnly = args.includes('--summary') || args.includes('-s')
+const fillMissing = args.includes('--fill') || args.includes('-f')
+const onlyMissing = args.includes('--missing')
+const onlyUntranslated = args.includes('--untranslated') || args.includes('-u')
+const onlyExtra = args.includes('--extra') || args.includes('-e')
+const onlyIso = args.find(a => !a.startsWith('-'))
 
 const stringRe = /<string\s+name="([^"]+)">([\s\S]*?)<\/string>/g
 
@@ -56,8 +64,6 @@ if (allLocales.length === 0) {
   process.exit(1)
 }
 
-// all locales are always loaded so that "identical everywhere" is classified
-// consistently regardless of the output filter
 const locales = onlyIso ? allLocales.filter(l => l.iso === onlyIso) : allLocales
 
 if (locales.length === 0) {
@@ -102,7 +108,7 @@ interface LocaleReport {
 }
 
 const reports = new Map<string, LocaleReport>()
-for (const l of locales) {
+for (const l of allLocales) {
   const missing: string[] = []
   const untranslated: string[] = []
   const shared: string[] = []
@@ -143,25 +149,72 @@ const pad = (s: string, w: number) => s.padEnd(w)
 console.log(`# Inu translation check (${relative(rootDir, baseFile)})`)
 console.log()
 console.log(`Base strings: ${base.size}`)
-console.log(`Locales: ${locales.map(l => l.iso).join(', ') || '(none)'}`)
+console.log(`Locales: ${allLocales.map(l => l.iso).join(', ')}`)
 console.log()
 
-const header = `| locale | total | missing | untranslated | extra |`
-const sep = `|--------|------:|--------:|-------------:|------:|`
+const header = `| locale | total | missing | untranslated | extra | coverage |`
+const sep = `|--------|------:|--------:|-------------:|------:|---------:|`
 console.log(header)
 console.log(sep)
 for (const l of locales) {
   const r = reports.get(l.iso)!
+  const totalBase = base.size
+  const translated = totalBase - r.missing.length - r.untranslated.length
+  const pct = ((translated / totalBase) * 100).toFixed(1) + '%'
   console.log(
-    `| ${pad(l.iso, 6)} | ${fmt(l.strings.size).padStart(5)} | ${fmt(r.missing.length).padStart(7)} | ${fmt(r.untranslated.length).padStart(12)} | ${fmt(r.extra.length).padStart(5)} |`,
+    `| ${pad(l.iso, 6)} | ${fmt(l.strings.size).padStart(5)} | ${fmt(r.missing.length).padStart(7)} | ${fmt(r.untranslated.length).padStart(12)} | ${fmt(r.extra.length).padStart(5)} | ${pct.padStart(8)} |`,
   )
 }
 console.log()
 
 const totalMissing = locales.reduce((n, l) => n + reports.get(l.iso)!.missing.length, 0)
 const totalUntranslated = locales.reduce((n, l) => n + reports.get(l.iso)!.untranslated.length, 0)
-console.log(`Totals across locales: ${totalMissing} missing, ${totalUntranslated} untranslated copies`)
+console.log(`Totals across inspected locales: ${totalMissing} missing, ${totalUntranslated} untranslated copies`)
 console.log()
+
+if (showSummaryOnly) {
+  process.exit(0)
+}
+
+if (fillMissing) {
+  for (const l of locales) {
+    const r = reports.get(l.iso)!
+    if (r.missing.length === 0) {
+      console.log(`[${l.iso}] All keys already present, nothing to fill.`)
+      continue
+    }
+    const linesToAdd = r.missing.map(k => `    <string name="${k}">${base.get(k)}</string>`)
+    const fileContent = await fs.readFile(l.file, 'utf8')
+    const updated = fileContent.replace('</resources>', linesToAdd.join('\n') + '\n</resources>')
+    await fs.writeFile(l.file, updated, 'utf8')
+    console.log(`[${l.iso}] Added ${r.missing.length} missing keys from base.`)
+  }
+  console.log()
+  process.exit(0)
+}
+
+if (showMatrix) {
+  console.log(`## Missing Keys Matrix (${allLocales.map(l => l.iso).join(', ')})`)
+  console.log()
+  const matrix: Array<{ key: string, missingIn: string[] }> = []
+  for (const key of base.keys()) {
+    const missingIn = allLocales.filter(l => reports.get(l.iso)!.missing.includes(key)).map(l => l.iso)
+    if (missingIn.length > 0) {
+      matrix.push({ key, missingIn })
+    }
+  }
+  if (matrix.length === 0) {
+    console.log('All locales have 100% keys translated!')
+  } else {
+    console.log(`| String Key | Missing in Locales (${matrix.length} keys) |`)
+    console.log(`|------------|---------------------------------------------|`)
+    for (const item of matrix) {
+      console.log(`| \`${item.key}\` | ${item.missingIn.join(', ')} |`)
+    }
+  }
+  console.log()
+  process.exit(0)
+}
 
 const dump = (title: string, keys: string[], get: (k: string) => string) => {
   if (keys.length === 0) {
@@ -179,8 +232,17 @@ const dump = (title: string, keys: string[], get: (k: string) => string) => {
 
 for (const l of locales) {
   const r = reports.get(l.iso)!
-  dump(`${l.iso} — missing (present in values/, absent in values-${l.iso}/)`, r.missing, k => base.get(k)!)
-  dump(`${l.iso} — untranslated copy (value equals base English text)`, r.untranslated, k => base.get(k)!)
-  dump(`${l.iso} — identical everywhere (brand terms, usually fine)`, r.shared, k => base.get(k)!)
-  dump(`${l.iso} — extra (present in values-${l.iso}/, absent in values/)`, r.extra, k => l.strings.get(k)!)
+  if (!onlyUntranslated && !onlyExtra) {
+    dump(`${l.iso} — missing (present in values/, absent in values-${l.iso}/)`, r.missing, k => base.get(k)!)
+  }
+  if (!onlyMissing && !onlyExtra) {
+    dump(`${l.iso} — untranslated copy (value equals base English text)`, r.untranslated, k => base.get(k)!)
+  }
+  if (!onlyMissing && !onlyUntranslated && !onlyExtra && onlyIso) {
+    dump(`${l.iso} — identical everywhere (brand terms, usually fine)`, r.shared, k => base.get(k)!)
+  }
+  if (!onlyMissing && !onlyUntranslated) {
+    dump(`${l.iso} — extra (present in values-${l.iso}/, absent in values/)`, r.extra, k => l.strings.get(k)!)
+  }
 }
+
