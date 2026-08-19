@@ -8,9 +8,16 @@ Subject: feat(chat): centered actionbar titles with right-side avatar and adapti
 - shrink the centered chat title font to fit long names (iOS-style), ellipsizing only below the minimum size
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 112 ++++++++---
+ .../telegram/ui/ActionBar/SimpleTextView.java | 101 +++++-----
+ .../telegram/ui/Cells/ChatMessageCell.java    |   2 +-
+ .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
+ .../telegram/ui/Cells/ManageChatUserCell.java |   8 +-
+ .../telegram/ui/Cells/ProfileSearchCell.java  |   2 +-
+ .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
  .../java/org/telegram/ui/ChatActivity.java    |  29 ++-
- .../ui/Components/ChatAvatarContainer.java    | 181 +++++++++++++++---
- 3 files changed, 268 insertions(+), 54 deletions(-)
+ .../ui/Components/ChatAvatarContainer.java    | 190 +++++++++++++++---
+ .../java/org/telegram/ui/ProfileActivity.java |  14 +-
+ 10 files changed, 360 insertions(+), 112 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -256,6 +263,249 @@ index 0000000..0000000 100644
  
          if (blurredBackground && actionBarColor != Color.TRANSPARENT) {
              rectTmp.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+@@ -98,6 +98,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     private int textHeight;
+     public int rightDrawableX;
+     public int rightDrawableY;
++    public int rightDrawable2X;
++    public int rightDrawable2Y;
+     private boolean wasLayout;
+ 
+     private boolean leftDrawableOutside, rightDrawableOutside;
+@@ -129,6 +131,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     private boolean rightDrawableHidden;
+     private OnClickListener rightDrawableOnClickListener;
+     private boolean maybeClick;
++    private OnClickListener rightDrawable2OnClickListener;
++    private boolean maybeClick2;
+     private float touchDownX, touchDownY;
+ 
+     private AnimatedEmojiSpan.EmojiGroupedSpans emojiStack;
+@@ -1341,14 +1345,6 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         return rightDrawableOutside;
+     }
+ 
+-    private int rightDrawableX, rightDrawableY;
+-    private OnClickListener rightDrawableOnClickListener;
+-    private boolean maybeClick;
+-
+-    private int rightDrawable2X, rightDrawable2Y;
+-    private OnClickListener rightDrawable2OnClickListener;
+-    private boolean maybeClick2;
+-
+     public void setRightDrawableOnClick(OnClickListener onClickListener) {
+         rightDrawableOnClickListener = onClickListener;
+     }
+@@ -1359,9 +1355,27 @@ public class SimpleTextView extends View implements Drawable.Callback {
+ 
+     @Override
+     public boolean onTouchEvent(MotionEvent event) {
+-        if (rightDrawableOnClickListener != null && rightDrawable != null) {
+-            AndroidUtilities.rectTmp.set(rightDrawableX - dp(16), rightDrawableY - dp(16), rightDrawableX + dp(16), rightDrawableY + dp(16));
+-            if (event.getAction() == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
++        if (event.getAction() == MotionEvent.ACTION_DOWN) {
++            boolean in1 = false;
++            boolean in2 = false;
++            if (rightDrawableOnClickListener != null && rightDrawable != null) {
++                AndroidUtilities.rectTmp.set(rightDrawableX - dp(16), rightDrawableY - dp(16), rightDrawableX + dp(16), rightDrawableY + dp(16));
++                in1 = AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY());
++            }
++            if (rightDrawable2OnClickListener != null && rightDrawable2 != null) {
++                AndroidUtilities.rectTmp.set(rightDrawable2X - dp(16), rightDrawable2Y - dp(16), rightDrawable2X + dp(16), rightDrawable2Y + dp(16));
++                in2 = AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY());
++            }
++            if (in1 && in2) {
++                float dist1 = Math.abs(event.getX() - rightDrawableX);
++                float dist2 = Math.abs(event.getX() - rightDrawable2X);
++                if (dist1 <= dist2) {
++                    in2 = false;
++                } else {
++                    in1 = false;
++                }
++            }
++            if (in1) {
+                 maybeClick = true;
+                 touchDownX = event.getX();
+                 touchDownY = event.getY();
+@@ -1369,28 +1383,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 if (rightDrawable instanceof PressableDrawable) {
+                     ((PressableDrawable) rightDrawable).setPressed(true);
+                 }
+-            } else if (event.getAction() == MotionEvent.ACTION_MOVE && maybeClick) {
+-                if (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop) {
+-                    maybeClick = false;
+-                    getParent().requestDisallowInterceptTouchEvent(false);
+-                    if (rightDrawable instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable).setPressed(false);
+-                    }
+-                }
+-            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+-                if (maybeClick && event.getAction() == MotionEvent.ACTION_UP) {
+-                    rightDrawableOnClickListener.onClick(this);
+-                    if (rightDrawable instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable).setPressed(false);
+-                    }
+-                }
+-                maybeClick = false;
+-                getParent().requestDisallowInterceptTouchEvent(false);
+-            }
+-        }
+-        if (rightDrawable2OnClickListener != null && rightDrawable2 != null) {
+-            AndroidUtilities.rectTmp.set(rightDrawable2X - dp(16), rightDrawable2Y - dp(16), rightDrawable2X + dp(16), rightDrawable2Y + dp(16));
+-            if (event.getAction() == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
++            } else if (in2) {
+                 maybeClick2 = true;
+                 touchDownX = event.getX();
+                 touchDownY = event.getY();
+@@ -1398,24 +1391,38 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 if (rightDrawable2 instanceof PressableDrawable) {
+                     ((PressableDrawable) rightDrawable2).setPressed(true);
+                 }
+-            } else if (event.getAction() == MotionEvent.ACTION_MOVE && maybeClick2) {
+-                if (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop) {
+-                    maybeClick2 = false;
+-                    getParent().requestDisallowInterceptTouchEvent(false);
+-                    if (rightDrawable2 instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable2).setPressed(false);
+-                    }
+-                }
+-            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+-                if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
+-                    rightDrawable2OnClickListener.onClick(this);
+-                    if (rightDrawable2 instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable2).setPressed(false);
+-                    }
++            }
++        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
++            if (maybeClick && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
++                maybeClick = false;
++                getParent().requestDisallowInterceptTouchEvent(false);
++                if (rightDrawable instanceof PressableDrawable) {
++                    ((PressableDrawable) rightDrawable).setPressed(false);
+                 }
++            }
++            if (maybeClick2 && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
+                 maybeClick2 = false;
+                 getParent().requestDisallowInterceptTouchEvent(false);
++                if (rightDrawable2 instanceof PressableDrawable) {
++                    ((PressableDrawable) rightDrawable2).setPressed(false);
++                }
++            }
++        } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
++            if (maybeClick && event.getAction() == MotionEvent.ACTION_UP) {
++                rightDrawableOnClickListener.onClick(this);
++            }
++            if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
++                rightDrawable2OnClickListener.onClick(this);
++            }
++            if (rightDrawable instanceof PressableDrawable) {
++                ((PressableDrawable) rightDrawable).setPressed(false);
++            }
++            if (rightDrawable2 instanceof PressableDrawable) {
++                ((PressableDrawable) rightDrawable2).setPressed(false);
+             }
++            maybeClick = false;
++            maybeClick2 = false;
++            getParent().requestDisallowInterceptTouchEvent(false);
+         }
+         return super.onTouchEvent(event) || maybeClick || maybeClick2;
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -22101,7 +22101,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             );
+             if (inuBadge != null) {
+                 // Shift past the premium/emoji status icon drawn right after the name.
+-                int statusWidth = (currentNameStatus != null && currentNameStatus.getIntrinsicWidth() > 0) ? currentNameStatus.getIntrinsicWidth() + dp(4) : (currentNameStatus != null ? dp(20) : 0);
++                int statusWidth = (currentNameStatusDrawable != null && !currentNameStatusDrawable.isEmpty()) ? currentNameStatusDrawable.getIntrinsicWidth() + dp(4) : 0;
+                 int badgeX = (int) (nx + nameLayout.getLineRight(0) + dp(4) + statusWidth);
+                 int badgeY = (int) (ny + (nameLayout.getHeight() - inuBadge.getIntrinsicHeight()) / 2f);
+                 setDrawableBounds(inuBadge, badgeX, badgeY);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -2383,9 +2383,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+         if (drawBotVerified) {
+             nameWidth -= dp(21);
+         }
+-        long inuBadgeUserId = user != null ? user.id : (currentDialogId > 0 ? currentDialogId : 0L);
+-        long inuBadgeChatId = chat != null ? chat.id : (currentDialogId < 0 ? currentDialogId : 0L);
+-        inuDevBadge = desu.inugram.helpers.DevBadgesHelper.badgeDrawable(getContext(), inuBadgeUserId, inuBadgeChatId);
++        if (!DialogObject.isFolderDialogId(currentDialogId)) {
++            long inuBadgeUserId = user != null ? user.id : (currentDialogId > 0 ? currentDialogId : 0L);
++            long inuBadgeChatId = chat != null ? chat.id : (currentDialogId < 0 ? currentDialogId : 0L);
++            inuDevBadge = desu.inugram.helpers.DevBadgesHelper.badgeDrawable(getContext(), inuBadgeUserId, inuBadgeChatId);
++        } else {
++            inuDevBadge = null;
++        }
+         if (inuDevBadge != null) {
+             int w = inuDevBadge.getIntrinsicWidth() + dp(4);
+             nameWidth -= w;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ManageChatUserCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ManageChatUserCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ManageChatUserCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ManageChatUserCell.java
+@@ -282,7 +282,9 @@ public class ManageChatUserCell extends FrameLayout {
+                 lastName = newName == null ? UserObject.getUserName(currentUser) : newName;
+                 nameTextView.setText(Emoji.replaceEmoji(lastName, nameTextView.getPaint().getFontMetricsInt(), false));
+             }
+-            desu.inugram.helpers.DevBadgesHelper.applyRightBadge(nameTextView, currentUser.id, 0L, desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP);
++            boolean hasStatus = currentUser.premium || MessagesController.getInstance(currentAccount).isPremiumUser(currentUser) || DialogObject.getEmojiStatusDocumentId(currentUser.emoji_status) != 0;
++            boolean hasVerified = currentUser.verified || currentUser.scam || currentUser.fake;
++            desu.inugram.helpers.DevBadgesHelper.applyRightBadge(nameTextView, currentUser.id, 0L, hasStatus, hasVerified, desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP);
+             if (currentStatus != null) {
+                 statusTextView.setTextColor(statusColor);
+                 statusTextView.setText(currentStatus);
+@@ -348,7 +350,9 @@ public class ManageChatUserCell extends FrameLayout {
+                 lastName = newName == null ? currentChat.title : newName;
+                 nameTextView.setText(lastName);
+             }
+-            desu.inugram.helpers.DevBadgesHelper.applyRightBadge(nameTextView, 0L, currentChat.id, desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP);
++            boolean hasStatus = DialogObject.getEmojiStatusDocumentId(currentChat.emoji_status) != 0;
++            boolean hasVerified = currentChat.verified || currentChat.scam || currentChat.fake;
++            desu.inugram.helpers.DevBadgesHelper.applyRightBadge(nameTextView, 0L, currentChat.id, hasStatus, hasVerified, desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP);
+             if (currentStatus != null) {
+                 statusTextView.setTextColor(statusColor);
+                 statusTextView.setText(currentStatus);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
+@@ -986,7 +986,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
+             nameLayout.draw(canvas);
+             canvas.restore();
+ 
+-            boolean hasStatus = statusDrawable != null && statusDrawable.getIntrinsicWidth() > 0;
++            boolean hasStatus = statusDrawable != null && !statusDrawable.isEmpty();
+             float textW = nameLayout.getLineWidth(0);
+             if (LocaleController.isRTL) {
+                 x = (int) (nameLeft + nameWidth - Math.ceil(textW) - dp(4));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/UserCell.java
+@@ -734,10 +734,14 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+             nameTextView.setRightDrawableTopPadding(0);
+         }
+         if (currentUser != null) {
++            boolean hasStatus = (MessagesController.getInstance(currentAccount).isPremiumUser(currentUser) && !MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) || DialogObject.getEmojiStatusDocumentId(currentUser.emoji_status) != 0;
++            boolean hasVerified = currentUser.verified || currentUser.scam || currentUser.fake;
+             desu.inugram.helpers.DevBadgesHelper.applyRightBadge(
+                 nameTextView,
+                 currentUser.id,
+                 0L,
++                hasStatus,
++                hasVerified,
+                 desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP
+             );
+         } else {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
@@ -557,7 +807,21 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -935,6 +1038,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -909,10 +1012,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
+             if (mutedIcon != null) {
+                 rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
+-            } else {
++                titleTextView.setRightDrawable2(mutedIcon);
++            } else if (!desu.inugram.helpers.DevBadgesHelper.isBadgeDrawable(titleTextView.getRightDrawable2())) {
+                 rightDrawable2ContentDescription = null;
++                titleTextView.setRightDrawable2(null);
+             }
+-            titleTextView.setRightDrawable2(mutedIcon);
+         }
+         checkActionBar(true);
+     }
+@@ -935,6 +1039,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
@@ -567,7 +831,22 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1531,6 +1637,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -985,10 +1092,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         }
+         if (parentFragment != null) {
+             long dialogId = parentFragment.getDialogId();
++            boolean hasStatus = premium || DialogObject.getEmojiStatusDocumentId(emojiStatus) != 0;
++            boolean hasVerified = verified || scam || fake;
+             desu.inugram.helpers.DevBadgesHelper.applyRightBadge(
+                 titleTextView,
+                 dialogId > 0 ? dialogId : 0L,
+                 dialogId < 0 ? dialogId : 0L,
++                hasStatus,
++                hasVerified,
+                 desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
+             );
+         }
+@@ -1531,6 +1642,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -575,7 +854,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1723,8 +1830,26 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1723,8 +1835,26 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
      }
  
@@ -603,7 +882,7 @@ index 0000000..0000000 100644
      }
  
      public int getVisualWidth() {
-@@ -1737,9 +1862,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1737,9 +1867,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
          }
          if (hasVisibleAvatar()) {
@@ -615,3 +894,43 @@ index 0000000..0000000 100644
          }
          return (int) width;
      }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -11673,11 +11673,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                         showDialog(premiumPreviewBottomSheet);
+                     });
+                 }
++                boolean hasStatus = (user != null && DialogObject.getEmojiStatusDocumentId(user.emoji_status) != 0) || (user != null && MessagesController.getInstance(currentAccount).isPremiumUser(user));
++                boolean hasVerified = (user != null && (user.verified || user.scam || user.fake));
+                 desu.inugram.helpers.DevBadgesHelper.applyRightBadge(
+                     nameTextView[a],
+                     user.id,
+                     0L,
+-                    a == 0 ? desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP : desu.inugram.helpers.DevBadgesHelper.PROFILE_BADGE_SIZE_DP
++                    hasStatus,
++                    hasVerified,
++                    a == 0 ? desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP : desu.inugram.helpers.DevBadgesHelper.PROFILE_BADGE_SIZE_DP,
++                    a == 1
+                 );
+             }
+ 
+@@ -11938,11 +11943,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 } else {
+                     nameTextView[a].setLeftDrawable(null);
+                 }
++                boolean hasStatus = currentChat != null && DialogObject.getEmojiStatusDocumentId(currentChat.emoji_status) != 0;
++                boolean hasVerified = currentChat != null && (currentChat.verified || currentChat.scam || currentChat.fake);
+                 desu.inugram.helpers.DevBadgesHelper.applyRightBadge(
+                     nameTextView[a],
+                     0L,
+                     chatId != 0 ? chatId : (currentChat != null ? currentChat.id : 0L),
+-                    a == 0 ? desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP : desu.inugram.helpers.DevBadgesHelper.PROFILE_BADGE_SIZE_DP
++                    hasStatus,
++                    hasVerified,
++                    a == 0 ? desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP : desu.inugram.helpers.DevBadgesHelper.PROFILE_BADGE_SIZE_DP,
++                    a == 1
+                 );
+                 if (a == 0 && onlineTextOverride != null) {
+                     onlineTextView[a].setText(onlineTextOverride);

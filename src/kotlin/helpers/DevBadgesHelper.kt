@@ -35,11 +35,12 @@ object DevBadgesHelper {
     const val ID_ENTINY_DEV = 650849996L
     const val ID_INU_DEV = 1787945512L
 
-    private val ENTINY_CHANNELS = setOf(4346771715L, 4319600055L, 4296417802L)
-    private val INU_CHANNELS = setOf(3968318575L)
+    private val ENTINY_USERS = setOf(ID_ENTINY_DEV, 8926481003L)
+    private val ENTINY_CHANNELS = setOf(4346771715L, 4319600055L, 4296417802L, 3915376475L)
+    private val INU_CHANNELS = setOf(3968318575L, 3752050109L, 3705403809L)
 
     /** Inline/list badges (message names, dialogs, search rows) — matches Telegram's inline premium star. */
-    const val BADGE_SIZE_DP = 12
+    const val BADGE_SIZE_DP = 14
     /** Chat header title badge. */
     const val HEADER_BADGE_SIZE_DP = 16
     /** Profile name badge — matches the profile name row icon scale. */
@@ -58,7 +59,7 @@ object DevBadgesHelper {
     fun isEntiny(id: Long): Boolean {
         if (id == 0L) return false
         val norm = normalizeId(id)
-        return norm == ID_ENTINY_DEV || norm in ENTINY_CHANNELS
+        return norm in ENTINY_USERS || norm in ENTINY_CHANNELS
     }
 
     @JvmStatic
@@ -66,6 +67,37 @@ object DevBadgesHelper {
         if (id == 0L) return false
         val norm = normalizeId(id)
         return norm == ID_INU_DEV || norm in INU_CHANNELS
+    }
+
+    /**
+     * Custom ReplacementSpan for developer badges inside text.
+     * Unlike standard Android ImageSpan (which aligns to the baseline causing jumpy icons),
+     * this span centers the badge vertically around the font's cap-height/line center,
+     * perfectly matching how AnimatedEmojiSpan aligns custom emojis.
+     */
+    class BadgeSpan(
+        private val drawable: Drawable,
+        private val sizePx: Int
+    ) : android.text.style.ReplacementSpan() {
+        override fun getSize(paint: android.graphics.Paint, text: CharSequence, start: Int, end: Int, fm: android.graphics.Paint.FontMetricsInt?): Int {
+            if (fm != null) {
+                val paintFm = paint.fontMetricsInt
+                fm.ascent = paintFm.ascent
+                fm.descent = paintFm.descent
+                fm.top = paintFm.top
+                fm.bottom = paintFm.bottom
+            }
+            return sizePx + AndroidUtilities.dp(8f)
+        }
+
+        override fun draw(canvas: android.graphics.Canvas, text: CharSequence, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: android.graphics.Paint) {
+            val cy = top + (bottom - top) / 2f
+            val halfSide = sizePx / 2f
+            val badgeY = (cy - halfSide).toInt()
+            val badgeX = x.toInt() + AndroidUtilities.dp(4f)
+            drawable.setBounds(badgeX, badgeY, badgeX + sizePx, badgeY + sizePx)
+            drawable.draw(canvas)
+        }
     }
 
     /**
@@ -113,27 +145,42 @@ object DevBadgesHelper {
 
     @JvmStatic
     fun badgeDrawable(context: Context, id: Long): Drawable? =
-        badgeDrawable(context, id, 0L, BADGE_SIZE_DP)
+        badgeDrawable(context, id, 0L, BADGE_SIZE_DP, false)
 
     @JvmStatic
     fun badgeDrawable(context: Context, userId: Long, chatId: Long): Drawable? =
-        badgeDrawable(context, userId, chatId, BADGE_SIZE_DP)
+        badgeDrawable(context, userId, chatId, BADGE_SIZE_DP, false)
 
     @JvmStatic
-    fun badgeDrawable(context: Context, userId: Long, chatId: Long, sizeDp: Int): Drawable? {
+    fun badgeDrawable(context: Context, userId: Long, chatId: Long, sizeDp: Int): Drawable? =
+        badgeDrawable(context, userId, chatId, sizeDp, false)
+
+    @JvmStatic
+    fun badgeDrawable(
+        context: Context,
+        userId: Long,
+        chatId: Long,
+        sizeDp: Int,
+        forceLight: Boolean
+    ): Drawable? {
         val res = badgeResFor(userId, chatId)
         if (res == 0) return null
         val icon = ContextCompat.getDrawable(context, res) ?: return null
-        val dark = Theme.isCurrentThemeDark()
-        icon.setTint(if (dark) 0xFFFFFFFF.toInt() else 0xFF202124.toInt())
+        val isLightContent = forceLight || Theme.isCurrentThemeDark()
+        icon.setTint(if (isLightContent) 0xFFFFFFFF.toInt() else 0xFF202124.toInt())
         val sizePx = AndroidUtilities.dp(sizeDp.toFloat())
         val background = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = sizePx * 0.22f
-            setColor(if (dark) 0x59FFFFFF.toInt() else 0x2E000000.toInt())
+            cornerRadius = sizePx * 0.25f
+            setColor(
+                when {
+                    forceLight -> 0x66000000.toInt()
+                    isLightContent -> 0x4DFFFFFF.toInt()
+                    else -> 0x24000000.toInt()
+                }
+            )
         }
-        // Icon fills the pill — a small relative inset keeps it crisp without shrinking the glyph.
-        val insetPx = (AndroidUtilities.dp(1f) + sizePx / 8).coerceAtLeast(1)
+        val insetPx = (sizePx * 0.16f).toInt().coerceAtLeast(AndroidUtilities.dp(1.5f))
         val drawable = BadgeDrawable(background, icon, insetPx, sizePx)
         drawable.setBounds(0, 0, sizePx, sizePx)
         return drawable
@@ -152,9 +199,11 @@ object DevBadgesHelper {
     fun clearBadge(titleTextView: SimpleTextView) {
         if (titleTextView.getRightDrawable() is BadgeDrawable) {
             titleTextView.setRightDrawable(null)
+            titleTextView.setRightDrawableOnClick(null)
         }
         if (titleTextView.getRightDrawable2() is BadgeDrawable) {
             titleTextView.setRightDrawable2(null)
+            titleTextView.setRightDrawable2OnClick(null)
         }
     }
 
@@ -167,7 +216,7 @@ object DevBadgesHelper {
         if (res == 0) return
         val targetId = if (userId != 0L) userId else chatId
         val isInu = res == R.drawable.inu_badge_inu
-        val isChannel = normalizeId(targetId) in ENTINY_CHANNELS || normalizeId(targetId) in INU_CHANNELS || targetId < 0
+        val isChannel = (normalizeId(targetId) in ENTINY_CHANNELS || normalizeId(targetId) in INU_CHANNELS || targetId < 0) && normalizeId(targetId) !in ENTINY_USERS
         val title = when {
             isChannel && isInu -> LocaleController.getString(R.string.InuDevBadgeInuChannel)
             isChannel -> LocaleController.getString(R.string.InuDevBadgeChannel)
@@ -236,42 +285,109 @@ object DevBadgesHelper {
     }
 
     /**
-     * Appends the developer badge as an inline ImageSpan to the chat header title so it
-     * renders right after the name without conflicting with premium/verified drawables.
+     * Appends the developer badge as an inline BadgeSpan to the text view,
+     * maintaining exact vertical centering alongside normal text and AnimatedEmojiSpans.
      */
     @JvmStatic
-    fun applyTitleBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long) {
-        val badge = badgeDrawable(titleTextView.context, userId, chatId) ?: return
+    fun appendInlineBadge(
+        titleTextView: SimpleTextView,
+        userId: Long,
+        chatId: Long,
+        sizeDp: Int,
+        forceLight: Boolean
+    ) {
+        val badge = badgeDrawable(titleTextView.context, userId, chatId, sizeDp, forceLight) ?: return
         val base = titleTextView.text ?: return
         val sb = SpannableStringBuilder(base)
-        sb.append(' ')
+        val spans = sb.getSpans(0, sb.length, BadgeSpan::class.java)
+        for (span in spans) {
+            val s = sb.getSpanStart(span)
+            val e = sb.getSpanEnd(span)
+            sb.removeSpan(span)
+            if (s >= 0 && e <= sb.length && e > s) {
+                sb.delete(s, e)
+            }
+        }
         val start = sb.length
-        sb.append(' ')
-        sb.setSpan(ImageSpan(badge, ImageSpan.ALIGN_BASELINE), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        sb.append(" ")
+        val sizePx = AndroidUtilities.dp(sizeDp.toFloat())
+        sb.setSpan(BadgeSpan(badge, sizePx), start, sb.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         titleTextView.setText(sb)
     }
 
     @JvmStatic
-    fun applyRightBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long, premium: Boolean) {
-        applyRightBadge(titleTextView, userId, chatId, premium, HEADER_BADGE_SIZE_DP)
+    fun appendInlineBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long, sizeDp: Int) {
+        appendInlineBadge(titleTextView, userId, chatId, sizeDp, false)
     }
 
     @JvmStatic
-    fun applyRightBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long, premium: Boolean, sizeDp: Int) {
-        val badge = badgeDrawable(titleTextView.context, userId, chatId, sizeDp)
-        if (badge == null) {
-            clearBadge(titleTextView)
-            return
+    fun appendInlineBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long) {
+        appendInlineBadge(titleTextView, userId, chatId, BADGE_SIZE_DP, false)
+    }
+
+    @JvmStatic
+    fun applyTitleBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long) {
+        appendInlineBadge(titleTextView, userId, chatId, HEADER_BADGE_SIZE_DP, false)
+    }
+
+    /**
+     * Deterministic slot allocation with strict priority:
+     * - dev-badge NEVER evicts stock verified check, emoji status or premium star.
+     * - If both slots are occupied by stock drawables (hasStatus && hasVerified),
+     *   the badge is rendered inline after the name using [appendInlineBadge].
+     * - If only status is occupied, badge goes to Slot 2 (rightDrawable2).
+     * - If only verified is occupied (or both free), badge goes to Slot 1 (rightDrawable).
+     */
+    @JvmStatic
+    fun applyRightBadge(
+        titleTextView: SimpleTextView,
+        userId: Long,
+        chatId: Long,
+        hasStatus: Boolean,
+        hasVerified: Boolean,
+        sizeDp: Int,
+        forceLight: Boolean
+    ) {
+        clearBadge(titleTextView)
+        val badge = badgeDrawable(titleTextView.context, userId, chatId, sizeDp, forceLight) ?: return
+
+        when {
+            hasStatus && hasVerified -> {
+                appendInlineBadge(titleTextView, userId, chatId, sizeDp, forceLight)
+            }
+            hasStatus -> {
+                titleTextView.setRightDrawable2(badge)
+                titleTextView.setRightDrawable2OnClick { showDevInfo(titleTextView.context, userId, chatId) }
+            }
+            hasVerified -> {
+                titleTextView.setRightDrawable(badge)
+                titleTextView.setRightDrawableOnClick { showDevInfo(titleTextView.context, userId, chatId) }
+            }
+            else -> {
+                titleTextView.setRightDrawable(badge)
+                titleTextView.setRightDrawableOnClick { showDevInfo(titleTextView.context, userId, chatId) }
+            }
         }
-        if (premium) {
-            titleTextView.setRightDrawable2(badge)
-        } else {
-            // A recycled action-bar title can retain the previous premium/right-2 drawable.
-            // Clear it before placing the developer badge in the primary slot.
-            titleTextView.setRightDrawable2(null)
-            titleTextView.setRightDrawable(badge)
-        }
-        titleTextView.setRightDrawableOnClick { showDevInfo(titleTextView.context, userId, chatId) }
+    }
+
+    @JvmStatic
+    fun applyRightBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long, hasStatus: Boolean, hasVerified: Boolean, sizeDp: Int) {
+        applyRightBadge(titleTextView, userId, chatId, hasStatus, hasVerified, sizeDp, false)
+    }
+
+    @JvmStatic
+    fun applyRightBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long, hasStatus: Boolean, hasVerified: Boolean) {
+        applyRightBadge(titleTextView, userId, chatId, hasStatus, hasVerified, BADGE_SIZE_DP, false)
+    }
+
+    @JvmStatic
+    fun applyRightBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long, sizeDp: Int) {
+        applyRightBadge(titleTextView, userId, chatId, false, false, sizeDp, false)
+    }
+
+    @JvmStatic
+    fun applyRightBadge(titleTextView: SimpleTextView, userId: Long, chatId: Long) {
+        applyRightBadge(titleTextView, userId, chatId, false, false, BADGE_SIZE_DP, false)
     }
 
     @JvmStatic
@@ -280,12 +396,12 @@ object DevBadgesHelper {
 
     @JvmStatic
     fun appendBadge(context: Context, text: CharSequence, userId: Long, chatId: Long, sizeDp: Int): CharSequence {
-        val badge = badgeDrawable(context, userId, chatId, sizeDp) ?: return text
+        val badge = badgeDrawable(context, userId, chatId, sizeDp, false) ?: return text
         val result = SpannableStringBuilder(text)
-        result.append(' ')
         val start = result.length
-        result.append(' ')
-        result.setSpan(ImageSpan(badge, ImageSpan.ALIGN_BASELINE), start, result.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        result.append(" ")
+        val sizePx = AndroidUtilities.dp(sizeDp.toFloat())
+        result.setSpan(BadgeSpan(badge, sizePx), start, result.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         return result
     }
 
