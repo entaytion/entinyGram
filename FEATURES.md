@@ -61,6 +61,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **extended message details & JSON view**: inspect raw message objects and properties
 - 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
+- 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
 - 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; in chats the avatar moves to the right edge and long titles shrink to fit (iOS-style) instead of ellipsizing; modular M3 drawer cards
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.

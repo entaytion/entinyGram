@@ -1,0 +1,281 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 19 Aug 2026 15:21:58 +0300
+Subject: feat(profile): add emoji picker to name and surname fields in account settings
+
+---
+ .../org/telegram/ui/UserInfoActivity.java     | 184 ++++++++++++++++--
+ 1 file changed, 173 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/UserInfoActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/UserInfoActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/UserInfoActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/UserInfoActivity.java
+@@ -19,7 +19,9 @@ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+ import android.view.View;
++import android.view.ViewGroup;
+ import android.widget.EditText;
++import android.widget.FrameLayout;
+ import android.widget.ImageView;
+ import android.widget.LinearLayout;
+ import android.widget.TextView;
+@@ -52,15 +54,19 @@ import org.telegram.ui.Business.BusinessChatbotController;
+ import org.telegram.ui.Business.ChatbotsActivity;
+ import org.telegram.ui.Business.LocationActivity;
+ import org.telegram.ui.Business.OpeningHoursActivity;
++import org.telegram.ui.Cells.EditEmojiTextCell;
+ import org.telegram.ui.Cells.EditTextCell;
+ import org.telegram.ui.Components.AlertsCreator;
+ import org.telegram.ui.Components.BulletinFactory;
+ import org.telegram.ui.Components.CircularProgressDrawable;
+ import org.telegram.ui.Components.CrossfadeDrawable;
++import org.telegram.ui.Components.EditTextEmoji;
++import org.telegram.ui.Components.EmojiView;
+ import org.telegram.ui.Components.IconBackgroundColors;
+ import org.telegram.ui.Components.LayoutHelper;
+ import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
+ import org.telegram.ui.Components.RecyclerListView;
++import org.telegram.ui.Components.SizeNotifierFrameLayout;
+ import org.telegram.ui.Components.UItem;
+ import org.telegram.ui.Components.UniversalAdapter;
+ import org.telegram.ui.Components.UniversalFragment;
+@@ -73,8 +79,8 @@ import java.util.Objects;
+ 
+ public class UserInfoActivity extends UniversalFragment implements NotificationCenter.NotificationCenterDelegate {
+ 
+-    private EditTextCell firstNameEdit;
+-    private EditTextCell lastNameEdit;
++    private EditEmojiTextCell firstNameEdit;
++    private EditEmojiTextCell lastNameEdit;
+     private EditTextCell bioEdit;
+ 
+     private int bioInfoHash = Integer.MIN_VALUE;
+@@ -107,6 +113,12 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
+ 
+     @Override
+     public void onFragmentDestroy() {
++        if (firstNameEdit != null && firstNameEdit.editTextEmoji != null) {
++            firstNameEdit.editTextEmoji.onDestroy();
++        }
++        if (lastNameEdit != null && lastNameEdit.editTextEmoji != null) {
++            lastNameEdit.editTextEmoji.onDestroy();
++        }
+         getNotificationCenter().removeObserver(this, NotificationCenter.userInfoDidLoad);
+         getNotificationCenter().removeObserver(this, NotificationCenter.privacyRulesUpdated);
+         getNotificationCenter().removeObserver(this, NotificationCenter.updateInterfaces);
+@@ -117,6 +129,30 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
+         }
+     }
+ 
++    @Override
++    public void onPause() {
++        super.onPause();
++        if (firstNameEdit != null && firstNameEdit.editTextEmoji != null) {
++            firstNameEdit.editTextEmoji.hidePopup(true);
++        }
++        if (lastNameEdit != null && lastNameEdit.editTextEmoji != null) {
++            lastNameEdit.editTextEmoji.hidePopup(true);
++        }
++    }
++
++    @Override
++    public boolean onBackPressed(boolean invoked) {
++        if (firstNameEdit != null && firstNameEdit.editTextEmoji != null && firstNameEdit.editTextEmoji.isPopupShowing()) {
++            if (invoked) firstNameEdit.editTextEmoji.hidePopup(true);
++            return false;
++        }
++        if (lastNameEdit != null && lastNameEdit.editTextEmoji != null && lastNameEdit.editTextEmoji.isPopupShowing()) {
++            if (invoked) lastNameEdit.editTextEmoji.hidePopup(true);
++            return false;
++        }
++        return super.onBackPressed(invoked);
++    }
++
+     private void openBioSettings() {
+         presentFragment(new PrivacyControlActivity(ContactsController.PRIVACY_RULES_TYPE_BIO, true));
+     }
+@@ -225,22 +261,146 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
+ 
+     @Override
+     public View createView(Context context) {
+-        firstNameEdit = new EditTextCell(context, getString(R.string.EditProfileFirstName), false, false, -1, resourceProvider) {
++        actionBar.setBackButtonDrawable(new BackDrawable(false));
++        actionBar.setAllowOverlayTitle(true);
++        actionBar.setTitle(getTitle());
++        if (parentLayout != null && parentLayout.isRightLayout()) {
++            actionBar.setBackButtonImage(R.drawable.ic_ab_close);
++        }
++
++        SizeNotifierFrameLayout contentView = new SizeNotifierFrameLayout(context) {
++            @Override
++            public void addView(View child) {
++                if (child instanceof EmojiView) {
++                    ViewGroup.LayoutParams lp = ((EmojiView) child).getLayoutParams();
++                    if (lp == null) {
++                        lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
++                    }
++                    if (lp instanceof FrameLayout.LayoutParams) {
++                        ((LayoutParams) lp).gravity = Gravity.BOTTOM | Gravity.FILL_HORIZONTAL;
++                    }
++                    child.setLayoutParams(lp);
++                }
++                super.addView(child);
++            }
++
++            @Override
++            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
++                super.onMeasure(
++                    MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
++                    MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.EXACTLY)
++                );
++            }
++
++            @Override
++            protected void onLayout(boolean changed, int l, int t, int r, int b) {
++                final int count = getChildCount();
++
++                int keyboardSize = measureKeyboardHeight();
++                final int parentLeft = getPaddingLeft();
++                final int parentRight = r - l - getPaddingRight();
++
++                final int parentTop = getPaddingTop();
++                final int parentBottom = b - t - getPaddingBottom();
++
++                for (int i = 0; i < count; i++) {
++                    final View child = getChildAt(i);
++                    if (child.getVisibility() != GONE) {
++                        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
++
++                        final int width = child.getMeasuredWidth();
++                        final int height = child.getMeasuredHeight();
++
++                        int childLeft;
++                        int childTop;
++
++                        int gravity = lp.gravity;
++                        if (gravity == -1) {
++                            gravity = Gravity.TOP | Gravity.LEFT;
++                        }
++
++                        final int layoutDirection = getLayoutDirection();
++                        final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
++                        final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
++
++                        switch (absoluteGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
++                            case Gravity.CENTER_HORIZONTAL:
++                                childLeft = parentLeft + (parentRight - parentLeft - width) / 2 +
++                                        lp.leftMargin - lp.rightMargin;
++                                break;
++                            case Gravity.RIGHT:
++                                childLeft = parentRight - width - lp.rightMargin;
++                                break;
++                            case Gravity.LEFT:
++                            default:
++                                childLeft = parentLeft + lp.leftMargin;
++                        }
++
++                        switch (verticalGravity) {
++                            case Gravity.TOP:
++                                childTop = parentTop + lp.topMargin;
++                                break;
++                            case Gravity.CENTER_VERTICAL:
++                                childTop = parentTop + (parentBottom - parentTop - height) / 2 +
++                                        lp.topMargin - lp.bottomMargin;
++                                break;
++                            case Gravity.BOTTOM:
++                                childTop = parentBottom - height - lp.bottomMargin;
++                                break;
++                            default:
++                                childTop = parentTop + lp.topMargin;
++                        }
++
++                        if (child instanceof EmojiView) {
++                            if (AndroidUtilities.isTablet()) {
++                                childTop = b - t - height;
++                            } else {
++                                childTop = b - t + keyboardSize - height;
++                            }
++                        }
++
++                        child.layout(childLeft, childTop, childLeft + width, childTop + height);
++                    }
++                }
++            }
++        };
++        contentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
++        fragmentView = contentView;
++
++        firstNameEdit = new EditEmojiTextCell(context, contentView, getString(R.string.EditProfileFirstName), false, -1, EditTextEmoji.STYLE_GIFT, resourceProvider) {
+             @Override
+             protected void onTextChanged(CharSequence newText) {
+                 super.onTextChanged(newText);
+                 checkDone(true);
+             }
++
++            @Override
++            protected void onFocusChanged(boolean focused) {
++                super.onFocusChanged(focused);
++                if (focused && lastNameEdit != null && lastNameEdit.editTextEmoji != null && lastNameEdit.editTextEmoji.isPopupShowing()) {
++                    lastNameEdit.editTextEmoji.hidePopup(true);
++                }
++            }
+         };
++        firstNameEdit.setAllowEntities(false);
+         firstNameEdit.setDivider(true);
+         firstNameEdit.hideKeyboardOnEnter();
+-        lastNameEdit = new EditTextCell(context, getString(R.string.EditProfileLastName), false, false, -1, resourceProvider) {
++        lastNameEdit = new EditEmojiTextCell(context, contentView, getString(R.string.EditProfileLastName), false, -1, EditTextEmoji.STYLE_GIFT, resourceProvider) {
+             @Override
+             protected void onTextChanged(CharSequence newText) {
+                 super.onTextChanged(newText);
+                 checkDone(true);
+             }
++
++            @Override
++            protected void onFocusChanged(boolean focused) {
++                super.onFocusChanged(focused);
++                if (focused && firstNameEdit != null && firstNameEdit.editTextEmoji != null && firstNameEdit.editTextEmoji.isPopupShowing()) {
++                    firstNameEdit.editTextEmoji.hidePopup(true);
++                }
++            }
+         };
++        lastNameEdit.setAllowEntities(false);
+         lastNameEdit.hideKeyboardOnEnter();
+         bioEdit = new EditTextCell(context, getString(R.string.EditProfileBioHint2), true, false, getMessagesController().getAboutLimit(), resourceProvider) {
+             @Override
+@@ -254,14 +414,12 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
+         updateBioInfo();
+         bioInfo = AndroidUtilities.replaceSingleTag(getString(R.string.EditProfileBioInfo2), this::openBioSettings);
+ 
+-        super.createView(context);
+-        this.listView = super.listView;
++        listView = new UniversalRecyclerView(this, this::fillItems, this::onClick, this::onLongClick);
+         listView.setSections();
+         listView.setClipToPadding(false);
++        contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
++
+         actionBar.setAdaptiveBackground(listView);
+-        if (parentLayout != null && parentLayout.isRightLayout()) {
+-            actionBar.setBackButtonImage(R.drawable.ic_ab_close);
+-        }
+ 
+         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+             @Override
+@@ -345,9 +503,13 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
+ 
+         items.add(UItem.asHeader(getString(R.string.EditProfileName)));
+         firstNameRow = items.size();
+-        items.add(UItem.asCustom(firstNameEdit));
++        if (firstNameEdit != null) {
++            items.add(UItem.asCustom(firstNameEdit));
++        }
+         lastNameRow = items.size();
+-        items.add(UItem.asCustom(lastNameEdit));
++        if (lastNameEdit != null) {
++            items.add(UItem.asCustom(lastNameEdit));
++        }
+         items.add(UItem.asShadow(-1, null));
+         bioRow = items.size();
+         items.add(UItem.asCustom(bioEdit));
