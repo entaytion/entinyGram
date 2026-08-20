@@ -1131,7 +1131,7 @@
     <string name="InuShowProfileRegDate">Kayıt tarihini ve DC\'yi göster</string>
     <string name="InuShowProfileRegDateInfo">Profil bilgilerinde tahmini kayıt tarihini ve veri merkezini görüntüler</string>
     <string name="InuStarGiftsSection">Hediyeler</string>
-    <string name="InuTitleAlignmentSection">Başlık ve Üst Çubuk</string>
+    <string name="InuCenteringSection">Ortalama</string>
     <string name="InuTranslateDeepLApiKey">DeepL API anahtarı</string>
     <string name="InuTranslateLlmApiKey">API anahtarı (isteğe bağlı)</string>
     <string name="InuTranslateLlmEndpointUrl">API uç nokta URL\'si</string>

@@ -885,6 +885,8 @@ object InuConfig {
     @JvmField
     val FLOATING_AVATAR = BoolItem("floating_avatar", false)
 
+    // TODO: Unused centering toggles — declared but never wired into UI. Intended for Settings, Profile, and Dialogs list title centering.
+    // Requires new hooks or extension points in their respective Activities. Consider implementing or removing in future refactoring.
     @JvmField
     val CENTER_TITLE_SETTINGS = BoolItem("center_title_settings", false)
 

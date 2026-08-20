@@ -4,10 +4,10 @@ Date: Thu, 23 Jul 2026 12:29:15 +0400
 Subject: non-island ui in various parts of the app
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  |  45 +++---
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  47 +++---
  .../ui/ActionBar/ActionBarLayout.java         |   2 +-
  .../telegram/ui/ChannelAdminLogActivity.java  |  21 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 127 +++++++++------
+ .../java/org/telegram/ui/ChatActivity.java    | 131 ++++++++++------
  .../ui/Components/ChatActivityEnterView.java  |  66 +++++---
  ...ChatActivityEnterViewAnimatedIconView.java |  17 +-
  .../ChatActivityTopPanelLayout.java           |  16 +-
@@ -38,7 +38,7 @@ Subject: non-island ui in various parts of the app
  .../ui/bots/BotCommandsMenuContainer.java     |   4 +-
  .../bots/ChatAttachAlertBotWebViewLayout.java |   5 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   4 +-
- 34 files changed, 643 insertions(+), 245 deletions(-)
+ 34 files changed, 646 insertions(+), 248 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -100,6 +100,15 @@ index 0000000..0000000 100644
          }
          if (backButtonImageView != null) {
              backButtonImageView.setTranslationX(dp(2));
+@@ -703,7 +706,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     }
+ 
+     public float getActionModeFactor() {
+-        return actionMode != null ? actionMode.getAlpha() : 0;
++        return actionMode != null && actionModeVisible ? actionMode.getAlpha() : 0;
+     }
+ 
+     public ActionBarMenu createActionMode(boolean needTop, String tag) {
 @@ -759,8 +762,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  }
              }
@@ -254,7 +263,7 @@ index 0000000..0000000 100644
                  glassBackgroundSourceRenderNode = new BlurredBackgroundSourceRenderNode(navbarContentSourceWallpaper);
                  glassBackgroundSourceRenderNode.setOnDrawablesRelativePositionChangeListener(this::invalidateMergedVisibleBlurredPositionsAndSourcesPositions);
                  glassBackgroundSourceRenderNode.setScrollableNoiseSuppressor(scrollableViewNoiseSuppressor, DownscaleScrollableNoiseSuppressor.DRAW_GLASS);
-@@ -4554,6 +4555,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -4554,12 +4555,13 @@ public class ChatActivity extends BaseFragment implements
  
          contentView.setOccupyStatusBar(!inBubbleMode && !isInsideContainer && !inPreviewMode);
  
@@ -262,6 +271,14 @@ index 0000000..0000000 100644
          actionBar.setupGlass(
              glassBackgroundDrawableFactory,
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
+             ChatObject.isForum(currentChat));
+-        //actionBar.setChatAvatarContainer(avatarContainer);
+-        //avatarContainer.setActionBar(actionBar);
++        actionBar.setChatAvatarContainer(avatarContainer);
++        avatarContainer.setActionBar(actionBar);
+ 
+         chatInputViewsContainer = new ChatInputViewsContainer(context);
+         chatInputViewsContainer.setClipChildren(false);
 @@ -5403,7 +5405,7 @@ public class ChatActivity extends BaseFragment implements
                              j++;
                          }

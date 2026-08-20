@@ -867,7 +867,7 @@
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>
     <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>
-    <string name="InuTitleAlignmentSection">Title &amp; Header</string>
+    <string name="InuCenteringSection">Centering</string>
     <string name="InuCenterTitleChats">Center in chats/channels</string>
     <string name="InuCenterTitleRightAvatar">Move avatar to the right</string>
     <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>

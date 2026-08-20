@@ -4,7 +4,7 @@ Date: Thu, 20 Aug 2026 00:00:00 +0300
 Subject: Allow opening user profile by numeric ID from message numbers
 
 ---
- .../main/java/org/telegram/ui/ChatActivity.java    | 7 +++++++
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 7 +++++++
  1 file changed, 7 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java

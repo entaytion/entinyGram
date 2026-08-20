@@ -750,7 +750,7 @@
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
-    <string name="InuTitleAlignmentSection">Шапка чату та заголовок</string>
+    <string name="InuCenteringSection">Центрування</string>
     <string name="InuCenterTitleChats">Центрування в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Перемістити аватар праворуч</string>
     <string name="InuCenterTitleAdaptiveSize">Адаптивний розмір назви (iOS-style)</string>

@@ -1132,7 +1132,7 @@
     <string name="InuShowProfileRegDate">登録日と DC を表示</string>
     <string name="InuShowProfileRegDateInfo">プロフィール情報に推定登録日とデータセンターを表示します</string>
     <string name="InuStarGiftsSection">ギフト</string>
-    <string name="InuTitleAlignmentSection">タイトルとヘッダー</string>
+    <string name="InuCenteringSection">中央揃え</string>
     <string name="InuTranslateDeepLApiKey">DeepL API キー</string>
     <string name="InuTranslateLlmApiKey">API キー (任意)</string>
     <string name="InuTranslateLlmEndpointUrl">API エンドポイント URL</string>

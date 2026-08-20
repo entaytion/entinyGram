@@ -854,7 +854,7 @@
     <string name="InuDownloadingStory">Загрузка истории…</string>
     <string name="InuSaveAnyStory">Сохранять любые истории</string>
     <string name="InuSaveAnyStoryInfo">Позволяет скачивать любые истории в галерею без Premium и ограничений автора.</string>
-    <string name="InuTitleAlignmentSection">Шапка чата и заголовок</string>
+    <string name="InuCenteringSection">Центрирование</string>
     <string name="InuCenterTitleChats">Центрирование в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Переместить аватар вправо</string>
     <string name="InuCenterTitleAdaptiveSize">Адаптивный размер названия (iOS-style)</string>

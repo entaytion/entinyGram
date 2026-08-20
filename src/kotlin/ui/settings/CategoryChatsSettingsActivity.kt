@@ -69,7 +69,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.DISABLE_PULL_TO_NEXT.value)
         )
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuTitleAlignmentSection)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCenteringSection)))
         items.add(
             UItem.asCheck(
                 TOGGLE_CENTER_TITLE_CHATS,

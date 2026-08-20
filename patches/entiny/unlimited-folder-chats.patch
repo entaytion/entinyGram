@@ -2,13 +2,13 @@ From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 20 Aug 2026 00:00:00 +0300
 Subject: Allow folders to include more chats than Telegram's server-side
- limit
 
+limit
 ---
- .../org/telegram/messenger/MessagesController.java |  3 ++
- .../main/java/org/telegram/ui/DialogsActivity.java | 15 ++++++++--
- .../java/org/telegram/ui/FilterCreateActivity.java | 32 +++++++++++++++++++++-
- .../java/org/telegram/ui/UsersSelectActivity.java  |  2 +-
+ .../messenger/MessagesController.java         |  3 ++
+ .../java/org/telegram/ui/DialogsActivity.java | 15 +++++++--
+ .../org/telegram/ui/FilterCreateActivity.java | 32 ++++++++++++++++++-
+ .../org/telegram/ui/UsersSelectActivity.java  |  2 +-
  4 files changed, 48 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
              items.add(ItemInner.asHeader(LocaleController.getString(R.string.FilterExclude)));
 @@ -866,7 +871,13 @@ public class FilterCreateActivity extends BaseFragment {
      }
-
+ 
      private void selectChatsFor(boolean include) {
 -        ArrayList<Long> arrayList = include ? newAlwaysShow : newNeverShow;
 +        ArrayList<Long> arrayList;

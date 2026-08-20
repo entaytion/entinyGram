@@ -1132,7 +1132,7 @@
     <string name="InuShowProfileRegDate">显示注册日期和数据中心</string>
     <string name="InuShowProfileRegDateInfo">在个人资料信息中显示估计的注册日期和数据中心</string>
     <string name="InuStarGiftsSection">礼物</string>
-    <string name="InuTitleAlignmentSection">标题与顶栏</string>
+    <string name="InuCenteringSection">居中</string>
     <string name="InuTranslateDeepLApiKey">DeepL API 密钥</string>
     <string name="InuTranslateLlmApiKey">API 密钥（可选）</string>
     <string name="InuTranslateLlmEndpointUrl">API 终端 URL</string>
