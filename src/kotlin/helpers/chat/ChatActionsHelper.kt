@@ -61,6 +61,8 @@ object ChatActionsHelper {
     const val ACTION_ADMINISTRATORS = 518
     const val ACTION_PERMISSIONS = 519
     const val ACTION_INVITE_LINKS = 520
+    const val ACTION_TYPING_SPOOF = 521
+    const val ACTION_REGEX_CHAT_FILTERS = 522
 
     // selection action mode
     const val ACTION_SELECT_RANGE = 1500
@@ -133,6 +135,16 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InviteLinks),
             )
         }
+        if (activity.currentEncryptedChat == null) {
+            headerItem.lazilyAddSubItem(
+                ACTION_TYPING_SPOOF, R.drawable.input_mic,
+                LocaleController.getString(R.string.InuTypingSpoof),
+            )
+            headerItem.lazilyAddSubItem(
+                ACTION_REGEX_CHAT_FILTERS, R.drawable.msg_block2,
+                LocaleController.getString(R.string.InuRegexChatFilters),
+            )
+        }
     }
 
     @JvmStatic
@@ -177,6 +189,8 @@ object ChatActionsHelper {
 
             ACTION_PINNED_UNPIN_ALL -> activity.bottomOverlayChatText?.callOnClick()
             ACTION_OPEN_IN_DISCUSSION -> openInDiscussionGroup(activity)
+            ACTION_TYPING_SPOOF -> showTypingSpoofSelector(activity)
+            ACTION_REGEX_CHAT_FILTERS -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
 
             ACTION_SELECT_RANGE -> fillSelectionGaps(activity)
             ACTION_SEL_SAVE -> saveSelectionToSavedMessages(activity)
@@ -224,6 +238,10 @@ object ChatActionsHelper {
         val fragment = ChatUsersActivity(args)
         fragment.setInfo(activity.currentChatInfo)
         activity.presentFragment(fragment)
+    }
+
+    private fun showTypingSpoofSelector(activity: ChatActivity) {
+        TypingSpoofHelper.showPicker(activity, activity.currentAccount, activity.dialogId, activity.threadId)
     }
 
     private fun showGoToMessageDialog(activity: ChatActivity) {

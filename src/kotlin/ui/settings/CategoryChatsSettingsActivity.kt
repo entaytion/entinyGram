@@ -165,6 +165,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_ROUND_DEFAULT_CAMERA,
+                R.drawable.inu_tabler_camera_rotate,
                 LocaleController.getString(R.string.InuRoundDefaultCamera),
                 when (InuConfig.ROUND_DEFAULT_CAMERA.value) {
                     2 -> LocaleController.getString(R.string.InuRoundCameraRear)
@@ -288,6 +289,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         items.add(
             mkSubPageButton(
                 BUTTON_CHAT_MENU_ORDER,
+                R.drawable.inu_tabler_menu_2,
                 LocaleController.getString(R.string.InuChatMenuOrder),
             )
         )

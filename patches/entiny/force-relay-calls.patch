@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 20 Aug 2026 00:45:08 +0300
+Subject: Force calls to relay through Telegram's servers instead of P2P
+
+---
+ .../src/main/java/org/telegram/messenger/voip/VoIPService.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+index 0000000..0000000 100755
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+@@ -3417,6 +3417,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 			final boolean enableNs = !(sysNsAvailable && serverConfig.useSystemNs);
+ 			final String logFilePath = BuildVars.DEBUG_VERSION ? VoIPHelper.getLogFilePath("voip" + privateCall.id) : VoIPHelper.getLogFilePath("" + privateCall.id, false);
+ 			final String statsLogFilePath = VoIPHelper.getLogFilePath("" + privateCall.id, true);
++			if (desu.inugram.InuConfig.FORCE_RELAY_CALLS.getValue()) {
++				privateCall.p2p_allowed = false;
++			}
+ 			final Instance.Config config = new Instance.Config(initializationTimeout, receiveTimeout, voipDataSaving, privateCall.p2p_allowed, enableAec, enableNs, true, false, serverConfig.enableStunMarking, logFilePath, statsLogFilePath, privateCall.protocol.max_layer, privateCall.custom_parameters == null ? "" : privateCall.custom_parameters.data);
+ 			lastLogFilePath = logFilePath;
+ 

@@ -132,10 +132,10 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             "delete_own_messages",
             listOf(ChatActionsHelper.ACTION_DELETE_OWN_MESSAGES),
             R.string.InuDeleteOwnMessages,
-            R.drawable.msg_delete
+            R.drawable.inu_tabler_message_x
         ),
         DELETE_CHAT("delete_chat", listOf(ChatActivity.delete_chat), R.string.DeleteChatUser, R.drawable.msg_delete),
-        BOT_SETTINGS("bot_settings", listOf(ChatActivity.bot_settings), R.string.InuBotSettings, R.drawable.msg_settings_old),
+        BOT_SETTINGS("bot_settings", listOf(ChatActivity.bot_settings), R.string.InuBotSettings, R.drawable.inu_tabler_adjustments_horizontal),
         BOT_HELP("bot_help", listOf(ChatActivity.bot_help), R.string.InuBotHelp, R.drawable.msg_help),
         OPEN_FORUM("open_forum", listOf(ChatActivity.open_forum), R.string.OpenAllTopics, R.drawable.msg_discussion),
         CLOSE_TOPIC("close_topic", listOf(ChatActivity.topic_close), R.string.CloseTopic, R.drawable.msg_topic_close),
@@ -213,7 +213,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
             R.string.TranslateMessage,
             R.drawable.msg_translate
         ),
-        SUMMARIZE("summarize", listOf(ChatHelper.OPTION_SUMMARIZE), R.string.InuSummarize, R.drawable.magic_stick_solar),
+        SUMMARIZE("summarize", listOf(ChatHelper.OPTION_SUMMARIZE), R.string.InuSummarize, R.drawable.inu_tabler_sparkles),
         EDIT("edit", listOf(ChatActivity.OPTION_EDIT), R.string.Edit, R.drawable.msg_edit),
         REPORT("report", listOf(ChatActivity.OPTION_REPORT_CHAT), R.string.ReportChat, R.drawable.msg_report),
         SHARE("share", listOf(ChatActivity.OPTION_SHARE), R.string.ShareFile, R.drawable.msg_share),
@@ -223,7 +223,8 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         DELETE("delete", listOf(ChatActivity.OPTION_DELETE), R.string.Delete, R.drawable.msg_delete),
         DETAILS("details", listOf(ChatHelper.OPTION_DETAILS), R.string.InuMessageDetails, R.drawable.msg_info),
         MARK_AS_READ("mark_as_read", listOf(ChatHelper.OPTION_MARK_AS_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
-        EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.group_edit),
+        EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.inu_tabler_file_diff),
+        ADD_FILTER("add_filter", listOf(ChatHelper.OPTION_ADD_FILTER), R.string.InuRegexFilterAddFromMessage, R.drawable.inu_tabler_filter),
 
         // bottom-row "smart slots" — no real option id; resolved via fallback chains at render
         // (see ChatHelper.resolveSlot). Default to the bottom row, NagramX-style.
@@ -249,6 +250,6 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT)
+        private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT, Item.ADD_FILTER)
     }
 }

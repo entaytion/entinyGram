@@ -25,6 +25,7 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLObject
+import org.telegram.tgnet.tl.TL_update
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AnimatedFloat
 import org.telegram.ui.Components.BulletinFactory
@@ -71,6 +72,9 @@ object InuHooks {
     @JvmStatic
     fun onMessagesControllerCreated(messagesController: MessagesController, account: Int) {
         MapsHelper.syncMapProvider(messagesController)
+        desu.inugram.helpers.dialogs.PinHelper.load(account)
+        desu.inugram.helpers.dialogs.FolderMembershipHelper.load(account)
+        desu.inugram.helpers.security.PresenceHelper.load(account)
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
         AndroidUtilities.runOnUIThread {
             NotificationCenter.getInstance(account).addObserver(
@@ -102,6 +106,9 @@ object InuHooks {
 
     @JvmStatic
     fun onUpdate(update: TLObject?, account: Int) {
+        if (update is TL_update.TL_updateUserStatus) {
+            desu.inugram.helpers.security.PresenceHelper.onStatusUpdate(update, account)
+        }
         LoginHelper.onUpdate(update, account)
     }
 

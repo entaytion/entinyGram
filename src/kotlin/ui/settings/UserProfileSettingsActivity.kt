@@ -7,6 +7,8 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.UserConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
@@ -52,6 +54,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_PROFILE_ID_MODE,
+                R.drawable.inu_tabler_id,
                 LocaleController.getString(R.string.InuProfileIdMode),
                 when (InuConfig.PROFILE_ID_MODE.value) {
                     InuConfig.ProfileIdModeItem.TELEGRAM_ID -> LocaleController.getString(R.string.InuProfileIdModeTelegram)
@@ -77,6 +80,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_DELETE_PROFILE_PHOTOS,
+                R.drawable.inu_tabler_photo_x,
                 LocaleController.getString(R.string.InuDeleteProfilePhotos),
                 LocaleController.getString(R.string.InuDeleteProfilePhotosInfo)
             )
@@ -147,7 +151,7 @@ class UserProfileSettingsActivity : SettingsPageActivity() {
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "user-profile",
             titleRes = R.string.InuUserProfile,
-            iconRes = R.drawable.msg_openprofile,
+            iconRes = R.drawable.inu_tabler_user_circle,
             factory = ::UserProfileSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("profile-photo-gradient-fade", R.string.InuProfilePhotoGradientFade, TOGGLE_PROFILE_PHOTO_GRADIENT_FADE),

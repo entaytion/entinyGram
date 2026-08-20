@@ -67,19 +67,19 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.msg_palette, LocaleController.getString(R.string.InuCategoryAppearance)))
         items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.InuCategoryChats)))
         items.add(mkSubPageButton(CAT_MESSAGES, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessages)))
-        items.add(mkSubPageButton(CAT_AI, R.drawable.input_ai_star, LocaleController.getString(R.string.InuAiCompose)))
-        items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.avd_speed, LocaleController.getString(R.string.InuCategoryBehavior)))
-        items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.msg_permissions, LocaleController.getString(R.string.InuCategoryPrivacy)))
-        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.menu_hide_gift, LocaleController.getString(R.string.InuAnnoyances)))
-        items.add(mkSubPageButton(BUTTON_TOS, R.drawable.msg_autodelete, LocaleController.getString(R.string.InuTOS)))
-        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.msg_settings_old, LocaleController.getString(R.string.InuCategoryBackup)))
+        items.add(mkSubPageButton(CAT_AI, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiCompose)))
+        items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.inu_tabler_adjustments_horizontal, LocaleController.getString(R.string.InuCategoryBehavior)))
+        items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuCategoryPrivacy)))
+        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
+        items.add(mkSubPageButton(BUTTON_TOS, R.drawable.inu_tabler_lock_open, LocaleController.getString(R.string.InuTOS)))
+        items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuCategoryBackup)))
         items.add(UItem.asShadow(null))
 
         // Channel & GitHub links
         items.add(
             UItem.asButton(
                 BUTTON_CHANNEL_LINK,
-                R.drawable.msg_channel,
+                R.drawable.inu_tabler_brand_telegram,
                 LocaleController.getString(R.string.InuAboutChannel),
                 "@entinyGram"
             )
@@ -87,7 +87,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_GITHUB,
-                R.drawable.msg_link,
+                R.drawable.inu_tabler_brand_github,
                 LocaleController.getString(R.string.InuAboutGitHub),
                 "Entaytion/entinyGram"
             )

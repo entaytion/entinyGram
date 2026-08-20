@@ -25,24 +25,25 @@ import org.telegram.ui.ChatActivity
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
+enum class SuppressKind {
+    READ,
+    TYPING,
+    ONLINE,
+    VOICE_READ,
+    STORY_READ,
+}
+
 /**
  * Ghost mode ("invisible mode"), modeled after AyuGram's ghost mode.
  *
- * Hooks into [ConnectionsManager.sendRequestInternal] — the single choke point for every
- * outgoing MTProto request — and silently drops or rewrites the requests that would leak
- * activity to the other side:
- *  - `messages.*read*` → no read receipts (blue checkmarks)
- *  - `messages.readMessageContents` → no voice / round played indicator
- *  - `stories.readStories` / `stories.incrementStoryViews` → no story views
- *  - `messages.setTyping` / `messages.setEncryptedTyping` → no typing / recording / upload states
- *  - `account.updateStatus` → rewritten to offline (hide online), or followed by an offline
- *    packet shortly after going online (offline-after-online)
- *
- * Supports per-dialog whitelisting so specific conversations can bypass ghost mode.
+ * Unified single source of truth for both network packet filtering
+ * ([ConnectionsManager.sendRequestInternal]) and local UI/DB suppression
+ * ([MessagesController.markDialogAsRead]).
  */
 object GhostHelper {
 
-    private val manualReadRequests: MutableSet<TLObject> = Collections.newSetFromMap(ConcurrentHashMap())
+    private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
+    private var offlineRunnable: Runnable? = null
 
     @JvmStatic
     fun isGhostActive(): Boolean = InuConfig.GHOST_MODE.value
@@ -50,7 +51,6 @@ object GhostHelper {
     @JvmStatic
     fun setGhostMode(enabled: Boolean) {
         InuConfig.GHOST_MODE.value = enabled
-        if (!enabled) InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value = false
         syncPresence(UserConfig.selectedAccount)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
     }
@@ -80,9 +80,6 @@ object GhostHelper {
     }
 
     @JvmStatic
-    fun isUnreaderActive(): Boolean = InuConfig.GHOST_HIDE_READ.value
-
-    @JvmStatic
     fun isDialogWhitelisted(dialogId: Long): Boolean {
         return InuConfig.GHOST_WHITELIST_DIALOGS.value.contains(dialogId.toString())
     }
@@ -102,16 +99,60 @@ object GhostHelper {
         return isNowWhitelisted
     }
 
+    /**
+     * All whitelisted dialogs still known to this account, pruning stale ids (deleted dialogs)
+     * lazily — avoids the whitelist growing unboundedly with dialogs that no longer exist.
+     */
+    @JvmStatic
+    fun getWhitelistedDialogs(account: Int): List<Long> {
+        val current = InuConfig.GHOST_WHITELIST_DIALOGS.value
+        val controller = MessagesController.getInstance(account)
+        val valid = HashSet<String>()
+        val result = ArrayList<Long>()
+        for (key in current) {
+            val id = key.toLongOrNull() ?: continue
+            if (controller?.dialogs_dict?.get(id) != null) {
+                valid.add(key)
+                result.add(id)
+            }
+        }
+        if (valid.size != current.size) {
+            InuConfig.GHOST_WHITELIST_DIALOGS.value = valid
+        }
+        return result
+    }
+
     @JvmStatic
     fun isGhostActiveForDialog(dialogId: Long): Boolean {
-        if (isDialogWhitelisted(dialogId)) return false
+        if (dialogId != 0L && isDialogWhitelisted(dialogId)) return false
         return isGhostActive()
     }
 
     /**
-     * Choke-point filter for outgoing MTProto requests.
-     *
-     * @return `true` when the request was consumed by ghost mode and stock must not send it.
+     * Single source of truth for checking if an action should be suppressed by Ghost Mode.
+     */
+    @JvmStatic
+    fun shouldSuppress(dialogId: Long, kind: SuppressKind): Boolean {
+        if (dialogId != 0L && temporarilyAllowedDialogs.contains(dialogId)) {
+            return false
+        }
+        if (!isGhostActiveForDialog(dialogId)) {
+            return false
+        }
+        return when (kind) {
+            SuppressKind.READ -> InuConfig.GHOST_HIDE_READ.value
+            SuppressKind.TYPING -> InuConfig.GHOST_HIDE_TYPING.value
+            SuppressKind.ONLINE -> InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.HIDDEN
+            SuppressKind.VOICE_READ -> InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value
+            SuppressKind.STORY_READ -> InuConfig.GHOST_HIDE_STORY_READ.value
+        }
+    }
+
+    @JvmStatic
+    fun shouldSuppressRead(dialogId: Long): Boolean = shouldSuppress(dialogId, SuppressKind.READ)
+
+    /**
+     * Choke-point filter for outgoing MTProto requests in ConnectionsManager.sendRequestInternal.
      */
     @JvmStatic
     fun processSendRequest(
@@ -120,27 +161,12 @@ object GhostHelper {
         onComplete: RequestDelegate?,
         onCompleteTimestamp: RequestDelegateTimestamp?,
     ): Boolean {
-        if (manualReadRequests.remove(request)) {
-            return false
-        }
-        if (!isGhostActive()) return false
+        val dialogId = extractDialogId(request)
 
         return when (request) {
-            is TLRPC.TL_messages_setTyping -> {
-                val dialogId = request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                if (dialogId != 0L && isDialogWhitelisted(dialogId)) return false
-                if (InuConfig.GHOST_HIDE_TYPING.value) {
-                    if (onComplete != null) onComplete.run(null, null)
-                    else onCompleteTimestamp?.run(null, null, 0L)
-                    true
-                } else {
-                    false
-                }
-            }
+            is TLRPC.TL_messages_setTyping,
             is TLRPC.TL_messages_setEncryptedTyping -> {
-                val dialogId = request.peer?.chat_id?.toLong() ?: 0L
-                if (dialogId != 0L && isDialogWhitelisted(dialogId)) return false
-                if (InuConfig.GHOST_HIDE_TYPING.value) {
+                if (shouldSuppress(dialogId, SuppressKind.TYPING)) {
                     if (onComplete != null) onComplete.run(null, null)
                     else onCompleteTimestamp?.run(null, null, 0L)
                     true
@@ -152,31 +178,22 @@ object GhostHelper {
             is TLRPC.TL_messages_readEncryptedHistory,
             is TLRPC.TL_messages_readDiscussion,
             is TLRPC.TL_messages_readSavedHistory,
-            is TLRPC.TL_messages_markDialogUnread -> {
-                val dialogId = when (request) {
-                    is TLRPC.TL_messages_readHistory -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                    is TLRPC.TL_messages_readDiscussion -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                    else -> 0L
-                }
-                if (dialogId != 0L && isDialogWhitelisted(dialogId)) return false
-                InuConfig.GHOST_HIDE_READ.value
-            }
+            is TLRPC.TL_messages_markDialogUnread,
             is TLRPC.TL_channels_readHistory -> {
-                val channelId = request.channel?.channel_id?.toLong() ?: 0L
-                val dialogId = if (channelId != 0L) -channelId else 0L
-                if (dialogId != 0L && isDialogWhitelisted(dialogId)) return false
-                InuConfig.GHOST_HIDE_READ.value
+                shouldSuppress(dialogId, SuppressKind.READ)
             }
             is TLRPC.TL_messages_readMessageContents,
             is TLRPC.TL_channels_readMessageContents -> {
-                InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value
+                shouldSuppress(dialogId, SuppressKind.VOICE_READ)
             }
             is TL_stories.TL_stories_readStories,
-            is TL_stories.TL_stories_incrementStoryViews -> InuConfig.GHOST_HIDE_STORY_READ.value
+            is TL_stories.TL_stories_incrementStoryViews -> {
+                shouldSuppress(dialogId, SuppressKind.STORY_READ)
+            }
             is TL_account.updateStatus -> {
-                if (InuConfig.GHOST_HIDE_ONLINE.value) {
+                if (shouldSuppress(0L, SuppressKind.ONLINE)) {
                     request.offline = true
-                } else if (InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value && !request.offline) {
+                } else if (isGhostActive() && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED && !request.offline) {
                     scheduleOffline(account)
                 }
                 false
@@ -189,27 +206,40 @@ object GhostHelper {
             is TLRPC.TL_messages_forwardMessages,
             is TLRPC.TL_messages_sendVote,
             is TLRPC.TL_messages_sendQuickReplyMessages -> {
-                if (InuConfig.GHOST_READ_ON_SEND.value && InuConfig.GHOST_HIDE_READ.value) {
-                    val dialogId = when (request) {
-                        is TLRPC.TL_messages_sendMessage -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_sendMedia -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_sendMultiMedia -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_sendInlineBotResult -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_sendReaction -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_forwardMessages -> request.to_peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_sendVote -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        is TLRPC.TL_messages_sendQuickReplyMessages -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
-                        else -> 0L
-                    }
-                    if (dialogId != 0L && !isDialogWhitelisted(dialogId)) {
-                        AndroidUtilities.runOnUIThread {
-                            markDialogAsRead(account, dialogId)
-                        }
+                if (dialogId != 0L && InuConfig.GHOST_READ_ON_SEND.value && shouldSuppress(dialogId, SuppressKind.READ)) {
+                    AndroidUtilities.runOnUIThread {
+                        markDialogAsRead(account, dialogId)
                     }
                 }
                 false
             }
             else -> false
+        }
+    }
+
+    private fun extractDialogId(request: TLObject): Long {
+        return when (request) {
+            is TLRPC.TL_messages_setTyping -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_setEncryptedTyping -> request.peer?.chat_id?.toLong() ?: 0L
+            is TLRPC.TL_messages_readHistory -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_readDiscussion -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_channels_readHistory -> {
+                val channelId = request.channel?.channel_id ?: 0L
+                if (channelId != 0L) -channelId else 0L
+            }
+            is TLRPC.TL_channels_readMessageContents -> {
+                val channelId = request.channel?.channel_id ?: 0L
+                if (channelId != 0L) -channelId else 0L
+            }
+            is TLRPC.TL_messages_sendMessage -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_sendMedia -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_sendMultiMedia -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_sendInlineBotResult -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_sendReaction -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_forwardMessages -> request.to_peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_sendVote -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TLRPC.TL_messages_sendQuickReplyMessages -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            else -> 0L
         }
     }
 
@@ -239,18 +269,21 @@ object GhostHelper {
             }
         }
 
-        manualReadRequests.add(req)
+        temporarilyAllowedDialogs.add(dialogId)
         try {
             ConnectionsManager.getInstance(account).sendRequest(req) { _, error ->
-                manualReadRequests.remove(req)
-                if (error == null) {
-                    AndroidUtilities.runOnUIThread {
-                        controller.markDialogAsRead(dialogId, effectiveMaxId, 0, 0, false, 0, 0, true, 0)
+                try {
+                    if (error == null) {
+                        AndroidUtilities.runOnUIThread {
+                            controller.markDialogAsRead(dialogId, effectiveMaxId, 0, 0, false, 0, 0, true, 0)
+                        }
                     }
+                } finally {
+                    temporarilyAllowedDialogs.remove(dialogId)
                 }
             }
         } catch (_: Exception) {
-            manualReadRequests.remove(req)
+            temporarilyAllowedDialogs.remove(dialogId)
         }
     }
 
@@ -263,7 +296,7 @@ object GhostHelper {
     fun syncPresence(account: Int) {
         val controller = MessagesController.getInstance(account)
         if (isGhostActive()) {
-            if (InuConfig.GHOST_HIDE_ONLINE.value || InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value) {
+            if (InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL) {
                 controller?.ignoreSetOnline = true
                 sendStatus(account, offline = true)
             } else {
@@ -290,10 +323,13 @@ object GhostHelper {
     }
 
     private fun scheduleOffline(account: Int) {
-        Utilities.stageQueue.postRunnable({
-            if (isGhostActive() && !InuConfig.GHOST_HIDE_ONLINE.value && InuConfig.GHOST_OFFLINE_AFTER_ONLINE.value) {
+        offlineRunnable?.let { Utilities.stageQueue.cancelRunnable(it) }
+        val runnable = Runnable {
+            if (isGhostActive() && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED) {
                 sendStatus(account, offline = true)
             }
-        }, 1500L)
+        }
+        offlineRunnable = runnable
+        Utilities.stageQueue.postRunnable(runnable, 1500L)
     }
 }

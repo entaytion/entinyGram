@@ -503,7 +503,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "behavior",
             titleRes = R.string.InuCategoryBehavior,
-            iconRes = R.drawable.avd_speed,
+            iconRes = R.drawable.inu_tabler_adjustments_horizontal,
             factory = ::BehaviorSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),

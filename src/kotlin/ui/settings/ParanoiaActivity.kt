@@ -34,7 +34,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 SET_CODE,
-                R.drawable.msg_permissions,
+                R.drawable.inu_tabler_password,
                 LocaleController.getString(
                     if (ParanoiaHelper.hasExitCode()) R.string.InuParanoiaExitCodeChange
                     else R.string.InuParanoiaExitCodeSet
@@ -52,7 +52,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 SELECT_CHATS,
-                R.drawable.menu_hide_gift,
+                R.drawable.inu_tabler_eye_off,
                 LocaleController.getString(
                     if (whitelist) R.string.InuParanoiaSelectWhitelist
                     else R.string.InuParanoiaSelect

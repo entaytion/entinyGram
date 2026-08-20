@@ -51,6 +51,7 @@ object ProfileHelper {
     const val ACTION_TOGGLE_GHOST_DIALOG = 508
     const val ACTION_MARK_AS_READ = 509
     const val ACTION_DELETE_PROFILE_PHOTOS = 510
+    const val ACTION_TOGGLE_PRESENCE_WATCH = 511
     const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
@@ -243,6 +244,15 @@ object ProfileHelper {
             ForumDisplayHelper.addProfileMenuItem(fragment, otherItem, currentAccount, -dialogId, resourcesProvider)
         }
         val isSelf = dialogId > 0 && dialogId == UserConfig.getInstance(currentAccount).clientUserId
+        if (dialogId > 0 && !isSelf) {
+            val watching = desu.inugram.helpers.security.PresenceHelper.isWatched(currentAccount, dialogId)
+            val label = if (watching) R.string.InuPresenceUnwatchUser else R.string.InuPresenceWatchUser
+            otherItem.addSubItem(
+                ACTION_TOGGLE_PRESENCE_WATCH,
+                R.drawable.inu_tabler_user_scan,
+                LocaleController.getString(label),
+            )
+        }
         if (GhostHelper.isGhostActive() && !isSelf) {
             val whitelisted = GhostHelper.isDialogWhitelisted(dialogId)
             val ghostLabel = if (whitelisted) {
@@ -268,7 +278,7 @@ object ProfileHelper {
         if (isSelf) {
             otherItem.addSubItem(
                 ACTION_DELETE_PROFILE_PHOTOS,
-                R.drawable.msg_delete,
+                R.drawable.inu_tabler_photo_x,
                 LocaleController.getString(R.string.InuDeleteProfilePhotos),
             )
         }
@@ -304,6 +314,15 @@ object ProfileHelper {
             ACTION_MARK_AS_READ -> {
                 GhostHelper.markDialogAsRead(currentAccount, dialogId)
                 BulletinFactory.global().createSimpleBulletin(R.raw.contact_check, LocaleController.getString(R.string.InuMarkChatAsReadDone)).show()
+            }
+            ACTION_TOGGLE_PRESENCE_WATCH -> {
+                val watching = desu.inugram.helpers.security.PresenceHelper.toggleWatch(currentAccount, dialogId)
+                val msg = if (watching) {
+                    LocaleController.getString(R.string.InuPresenceWatchEnabledDone)
+                } else {
+                    LocaleController.getString(R.string.InuPresenceWatchDisabledDone)
+                }
+                BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, msg).show()
             }
             ACTION_DELETE_PROFILE_PHOTOS -> {
                 val activity = LaunchActivity.getLastFragment()?.parentActivity ?: LaunchActivity.instance ?: return true

@@ -29,7 +29,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_SERVICES,
-                R.drawable.msg_language,
+                R.drawable.inu_tabler_cpu,
                 LocaleController.getString(R.string.InuAiServices),
                 activeServiceSummary()
             )
@@ -77,7 +77,7 @@ class AiSettingsActivity : SettingsPageActivity() {
             items.add(
                 UItem.asButton(
                     BUTTON_TRANSCRIBE_SETTINGS,
-                    R.drawable.msg_settings,
+                    R.drawable.inu_tabler_microphone,
                     LocaleController.getString(R.string.InuAiTranscribeSettings)
                 )
             )
@@ -130,7 +130,7 @@ class AiSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "ai-compose",
             titleRes = R.string.InuAiChatTitle,
-            iconRes = R.drawable.input_ai_star,
+            iconRes = R.drawable.inu_tabler_sparkles,
             factory = ::AiSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ai-services", R.string.InuAiServices, BUTTON_SERVICES),

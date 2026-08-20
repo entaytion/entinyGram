@@ -21,6 +21,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - hide read receipts for messages, voice notes, and video messages
   - **read on send**: mark incoming messages read only when replying
   - hide story views, online status, typing, recording, and upload indicators
+  - **whitelist management**: dedicated screen listing every chat exempt from Ghost Mode, with one-tap add/remove
 - 📡 **anti-deletion & edit history**:
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
   - **per-category controls** for private chats, groups, channels, and bots
@@ -28,18 +29,23 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **text diff mode** with inline color-coded changes
   - **deleted-message styling** with transparency, custom mark and accent color, plus a live settings preview
   - **cache TTL and storage manager** with automatic expiration and per-dialog cleanup
+  - **search the local archive**: full-text search across saved deleted messages and edit history
 - 📡 **self-destructing & expiring media**:
   - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
   - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
-- 📡 **unreader mode**: standalone mode where incoming messages are never marked as read, keeping the unread counter intact
 - 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
+- 📡 **stalker pack**:
+  - **presence logger**: opt-in per-contact online/offline tracking — pick who to watch from their profile menu or a dedicated watch-list screen (which also shows each contact's local status-change log), every status change is logged locally, with an optional popup notification the moment they come online or go offline
+  - **anti-P2P call IP leak**: force voice/video calls through Telegram's relay servers so the other party can never learn your real IP
+  - **typing status spoofing**: loop a fake typing/recording/uploading indicator in any chat, reachable from the chat header menu or a quick-launch list in settings
 - 📡 **adblock & content filtering**:
   - **hide sponsored messages**: completely disables Telegram sponsored channel ads and video ads
-  - **regex content filter** (experimental): block or spoiler-cover ads, spam, or messages matching custom regex patterns and keywords
+  - **regex content filter**: manage multiple named filters (not just one combined pattern) with per-filter enable/case-insensitive/allow-list toggles, global or scoped to a single chat, with per-chat exclusions for global filters. Add a filter straight from a message's long-press menu, or manage the full list from settings. Hides or spoiler-covers matches; caches match results locally so scrolling stays fast even with many filters. Export/import the full filter set as JSON.
 
 ### restricted features
 
-- 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories
+- 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories (now including no-forwards stories)
+- 📡 **hide screenshot notifications**: taking a screenshot in a secret chat no longer alerts the other person
 - 📡 copy text and select messages in protected chats when restricted forwarding bypass is enabled
 - 📡 **local Telegram Premium**: unlock client-side premium UI and limits, including badges, custom icons, emoji statuses, colors, translation bar, reactions, animations, and transcription. The toggle applies instantly; server-side premium-only writes remain unavailable.
 - 📡 **content protection & forward bypass**:
@@ -51,6 +57,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare)
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
 - 📡 **hidden & archived star gifts**: restores removed, archived, and limited Star Gifts in the Telegram gifts catalog
+- 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings — pinned chats and folder chats beyond the server limit (5/10 pins, 100/200 folder chats with Premium) are tracked client-only and never revert on resync; favorite stickers/GIFs simply stop being trimmed from the local cache
+- 📡 **force relay calls**: always route voice/video calls through Telegram's relay servers, never peer-to-peer, so the other party's client can never learn your real IP address
 
 ### power-user tools
 
@@ -63,6 +71,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
 - 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
 - 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; in chats the avatar moves to the right edge and long titles shrink to fit (iOS-style) instead of ellipsizing; modular M3 drawer cards
+- 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 

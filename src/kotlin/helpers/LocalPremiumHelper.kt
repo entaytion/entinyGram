@@ -114,6 +114,22 @@ public object LocalPremiumHelper {
         }
     }
 
+    /**
+     * Reverts the spoofed fields on the self user object when local premium is turned off.
+     * Without this, a user who set an emoji status/color while spoofed stays stuck showing
+     * fake premium in the UI until the next full account refetch or app restart, since
+     * [applyToSelfUser] no-ops (rather than reverting) once the toggle is off.
+     */
+    @JvmStatic
+    fun clearSelfUser(user: TLRPC.User?) {
+        if (user == null || !user.self) return
+        user.premium = false
+        user.emoji_status = null
+        user.color = null
+        user.profile_color = null
+        user.flags2 = user.flags2 and 256.inv() and 512.inv()
+    }
+
     /** Persists the emoji status the user just picked so it survives reloads. */
     @JvmStatic
     fun persistEmojiStatus(status: TLRPC.EmojiStatus?, accountId: Int) {

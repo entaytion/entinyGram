@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 20 Aug 2026 01:29:46 +0300
+Subject: Fix Allow Screenshots not applying to the story viewer
+
+---
+ .../src/main/java/org/telegram/ui/Stories/PeerStoriesView.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -7138,6 +7138,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+         }
+ 
+         public boolean allowScreenshots() {
++            if (desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++                return true;
++            }
+             if (uploadingStory != null) {
+                 return uploadingStory.entry.allowScreenshots;
+             }

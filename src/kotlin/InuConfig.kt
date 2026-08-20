@@ -221,6 +221,18 @@ object InuConfig {
     val SHOW_ALL_RECENT_STICKERS = BoolItem("show_all_recent_stickers", true)
 
     @JvmField
+    val UNLIMITED_FAVORITE_STICKERS = BoolItem("unlimited_favorite_stickers", false)
+
+    @JvmField
+    val UNLIMITED_PINNED_CHATS = BoolItem("unlimited_pinned_chats", false)
+
+    @JvmField
+    val UNLIMITED_FOLDER_CHATS = BoolItem("unlimited_folder_chats", false)
+
+    @JvmField
+    val UNLIMITED_PINNED_CHATS_COUNT = IntItem("unlimited_pinned_chats_count", 20)
+
+    @JvmField
     val HIDE_TRENDING_STICKERS = BoolItem("hide_trending_stickers", true)
 
     @JvmField
@@ -592,6 +604,12 @@ object InuConfig {
     val HD_BLUETOOTH_CALL_AUDIO = BoolItem("hd_bluetooth_call_audio", true)
 
     @JvmField
+    val FORCE_RELAY_CALLS = BoolItem("force_relay_calls", false)
+
+    @JvmField
+    val PRESENCE_LOGGER_NOTIFY = BoolItem("presence_logger_notify", false)
+
+    @JvmField
     val CONFIRM_INTERNAL_LINKS = BoolItem("confirm_internal_links", false)
 
     @JvmField
@@ -876,18 +894,12 @@ object InuConfig {
     @JvmField
     val CENTER_TITLE_DIALOGS = BoolItem("center_title_dialogs", false)
 
-    @JvmField
-    val SAVE_SELF_DESTRUCT = BoolItem("save_self_destruct", false)
-
     // Per-category local preservation of self-destruct content. All default off = stock behavior.
     @JvmField
     val SAVE_SELF_DESTRUCT_MEDIA = BoolItem("save_self_destruct_media", false)
 
     @JvmField
     val SAVE_SELF_DESTRUCT_TEXT = BoolItem("save_self_destruct_text", false)
-
-    @JvmField
-    val SAVE_SECRET_CHAT_CONTENT = BoolItem("save_secret_chat_content", false)
 
     @JvmField
     val SAVE_VIEW_ONCE_MEDIA = BoolItem("save_view_once_media", false)
@@ -918,6 +930,9 @@ object InuConfig {
 
     @JvmField
     val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)
+
+    @JvmField
+    val SUPPRESS_SCREENSHOT_NOTIFICATION = BoolItem("suppress_screenshot_notification", false)
 
     @JvmField
     val HIDE_SPONSORED_MESSAGES = BoolItem("hide_sponsored_messages", true)
@@ -961,6 +976,15 @@ object InuConfig {
         "regex_filter_patterns",
         "(?i)(реклама|промокод|казино|знижка|ставк|підпишись|referral|crypto|binance|buy now)"
     )
+
+    @JvmField
+    val REGEX_FILTERS_JSON = StringItem("regex_filters_json", "[]")
+
+    @JvmField
+    val REGEX_FILTER_EXCLUSIONS_JSON = StringItem("regex_filter_exclusions_json", "[]")
+
+    @JvmField
+    val REGEX_FILTERS_MIGRATED = BoolItem("regex_filters_migrated", false, exportable = false)
 
     class RegexFilterModeItem : IntItem("regex_filter_mode", HIDE) {
         companion object {
@@ -1129,20 +1153,21 @@ object InuConfig {
     val GHOST_HIDE_STORY_READ = BoolItem("ghost_hide_story_read", true)
 
     @JvmField
-    val GHOST_HIDE_ONLINE = BoolItem("ghost_hide_online", true)
-
-    @JvmField
     val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", true)
 
+    class GhostPresenceModeItem : IntItem("ghost_presence_mode", HIDDEN) {
+        companion object {
+            const val NORMAL = 0
+            const val HIDDEN = 1
+            const val DELAYED = 2
+        }
+    }
+
     @JvmField
-    val GHOST_OFFLINE_AFTER_ONLINE = BoolItem("ghost_offline_after_online", false)
+    val GHOST_PRESENCE_MODE = GhostPresenceModeItem()
 
     @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
-
-    // Backwards-compatibility alias with MessagesController Java patch
-    @JvmField
-    val UNREADER = GHOST_HIDE_READ
 
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)
@@ -1165,6 +1190,7 @@ object InuConfig {
             const val TRASH_BIN = 1
             const val CROSS = 2
             const val EYE_CROSSED = 3
+            const val TRASH_BIN_OUTLINE = 4
         }
     }
 

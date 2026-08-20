@@ -1,0 +1,151 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 20 Aug 2026 00:00:00 +0300
+Subject: Allow folders to include more chats than Telegram's server-side
+ limit
+
+---
+ .../org/telegram/messenger/MessagesController.java |  3 ++
+ .../main/java/org/telegram/ui/DialogsActivity.java | 15 ++++++++--
+ .../java/org/telegram/ui/FilterCreateActivity.java | 32 +++++++++++++++++++++-
+ .../java/org/telegram/ui/UsersSelectActivity.java  |  2 +-
+ 4 files changed, 48 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -1313,6 +1313,9 @@ public class MessagesController extends BaseController implements NotificationCe
+             if (alwaysShow.contains(dialogId)) {
+                 return true;
+             }
++            if (desu.inugram.helpers.dialogs.FolderMembershipHelper.isLocallyIncluded(accountInstance.getCurrentAccount(), id, dialogId)) {
++                return true;
++            }
+             if (d.folder_id != 0 && (flags & DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED) != 0) {
+                 return false;
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3990,7 +3990,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     FiltersListBottomSheet sheet = new FiltersListBottomSheet(DialogsActivity.this, selectedDialogs);
+                     sheet.setDelegate((filter, checked) -> {
+                         ArrayList<Long> alwaysShow = FiltersListBottomSheet.getDialogsCount(DialogsActivity.this, filter, selectedDialogs, true, false);
+-                        if (!checked) {
++                        boolean unlimitedFolderChats = filter != null && desu.inugram.InuConfig.UNLIMITED_FOLDER_CHATS.getValue();
++                        int folderChatsLimit = getUserConfig().isPremium() ? getMessagesController().dialogFiltersChatsLimitPremium : getMessagesController().dialogFiltersChatsLimitDefault;
++                        if (!checked && !unlimitedFolderChats) {
+                             int currentCount;
+                             if (filter != null) {
+                                 currentCount = filter.alwaysShow.size();
+@@ -4008,6 +4010,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                 for (int a = 0; a < selectedDialogs.size(); a++) {
+                                     filter.neverShow.add(selectedDialogs.get(a));
+                                     filter.alwaysShow.remove(selectedDialogs.get(a));
++                                    desu.inugram.helpers.dialogs.FolderMembershipHelper.removeLocal(currentAccount, filter.id, selectedDialogs.get(a));
+                                 }
+                                 FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
+                                 long did;
+@@ -4025,7 +4028,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                     for (int a = 0; a < alwaysShow.size(); a++) {
+                                         filter.neverShow.remove(alwaysShow.get(a));
+                                     }
+-                                    filter.alwaysShow.addAll(alwaysShow);
++                                    int remainingSlots = unlimitedFolderChats ? Math.max(0, folderChatsLimit - filter.alwaysShow.size()) : alwaysShow.size();
++                                    for (int a = 0; a < alwaysShow.size(); a++) {
++                                        if (a < remainingSlots) {
++                                            filter.alwaysShow.add(alwaysShow.get(a));
++                                        } else {
++                                            desu.inugram.helpers.dialogs.FolderMembershipHelper.addLocal(currentAccount, filter.id, alwaysShow.get(a));
++                                        }
++                                    }
+                                     FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.entities, filter.title_noanimate, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, DialogsActivity.this, null);
+                                 }
+                                 long did;
+@@ -4065,6 +4075,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                             Long did = neverShow.get(a);
+                             filter.alwaysShow.remove(did);
+                             filter.pinnedDialogs.delete(did);
++                            desu.inugram.helpers.dialogs.FolderMembershipHelper.removeLocal(currentAccount, filter.id, did);
+                         }
+                         if (filter.isChatlist()) {
+                             filter.neverShow.clear();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
+@@ -326,6 +326,11 @@ public class FilterCreateActivity extends BaseFragment {
+                 );
+             }
+         }
++        if (!creatingNew) {
++            for (long localDialogId : desu.inugram.helpers.dialogs.FolderMembershipHelper.getLocal(currentAccount, filter.id)) {
++                items.add(ItemInner.asChat(true, localDialogId));
++            }
++        }
+         items.add(ItemInner.asShadow(LocaleController.getString(R.string.FilterIncludeInfo)));
+         if (!filter.isChatlist()) {
+             items.add(ItemInner.asHeader(LocaleController.getString(R.string.FilterExclude)));
+@@ -866,7 +871,13 @@ public class FilterCreateActivity extends BaseFragment {
+     }
+
+     private void selectChatsFor(boolean include) {
+-        ArrayList<Long> arrayList = include ? newAlwaysShow : newNeverShow;
++        ArrayList<Long> arrayList;
++        if (include && !creatingNew) {
++            arrayList = new ArrayList<>(newAlwaysShow);
++            arrayList.addAll(desu.inugram.helpers.dialogs.FolderMembershipHelper.getLocal(currentAccount, filter.id));
++        } else {
++            arrayList = include ? newAlwaysShow : newNeverShow;
++        }
+         UsersSelectActivity fragment = new UsersSelectActivity(include, arrayList, newFilterFlags);
+         fragment.noChatTypes = filter.isChatlist();
+         fragment.setDelegate((ids, flags) -> {
+@@ -877,6 +888,22 @@ public class FilterCreateActivity extends BaseFragment {
+                 for (int a = 0; a < newAlwaysShow.size(); a++) {
+                     newNeverShow.remove(newAlwaysShow.get(a));
+                 }
++                if (!creatingNew) {
++                    java.util.Set<Long> previousOverlay = desu.inugram.helpers.dialogs.FolderMembershipHelper.getLocal(currentAccount, filter.id);
++                    for (long localId : previousOverlay) {
++                        if (!newAlwaysShow.contains(localId)) {
++                            desu.inugram.helpers.dialogs.FolderMembershipHelper.removeLocal(currentAccount, filter.id, localId);
++                        }
++                    }
++                    int limit = getUserConfig().isPremium() ? getMessagesController().dialogFiltersChatsLimitPremium : getMessagesController().dialogFiltersChatsLimitDefault;
++                    if (desu.inugram.InuConfig.UNLIMITED_FOLDER_CHATS.getValue() && newAlwaysShow.size() > limit) {
++                        ArrayList<Long> overflow = new ArrayList<>(newAlwaysShow.subList(limit, newAlwaysShow.size()));
++                        newAlwaysShow = new ArrayList<>(newAlwaysShow.subList(0, limit));
++                        for (Long overflowId : overflow) {
++                            desu.inugram.helpers.dialogs.FolderMembershipHelper.addLocal(currentAccount, filter.id, overflowId);
++                        }
++                    }
++                }
+                 ArrayList<Long> toRemove = new ArrayList<>();
+                 for (int a = 0, N = newPinned.size(); a < N; a++) {
+                     Long did = newPinned.keyAt(a);
+@@ -1025,6 +1052,9 @@ public class FilterCreateActivity extends BaseFragment {
+                 newFilterFlags &=~ item.flags;
+             } else {
+                 (include ? newAlwaysShow : newNeverShow).remove((Long) item.did);
++                if (include && !creatingNew) {
++                    desu.inugram.helpers.dialogs.FolderMembershipHelper.removeLocal(currentAccount, filter.id, item.did);
++                }
+             }
+             fillFilterName();
+             updateRows();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/UsersSelectActivity.java
+@@ -781,7 +781,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
+                     GroupCreateSpan span = selectedContacts.get(id);
+                     spansContainer.removeSpan(span);
+                 } else {
+-                    if (!(object instanceof String) && (!getUserConfig().isPremium() && selectedCount >= MessagesController.getInstance(currentAccount).dialogFiltersChatsLimitDefault) || selectedCount >= MessagesController.getInstance(currentAccount).dialogFiltersChatsLimitPremium) {
++                    if (!(type == TYPE_FILTER && desu.inugram.InuConfig.UNLIMITED_FOLDER_CHATS.getValue()) && (!(object instanceof String) && (!getUserConfig().isPremium() && selectedCount >= MessagesController.getInstance(currentAccount).dialogFiltersChatsLimitDefault) || selectedCount >= MessagesController.getInstance(currentAccount).dialogFiltersChatsLimitPremium)) {
+                         LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(this, context, LimitReachedBottomSheet.TYPE_CHATS_IN_FOLDER, currentAccount, null);
+                         limitReachedBottomSheet.setCurrentValue(selectedCount);
+                         showDialog(limitReachedBottomSheet);

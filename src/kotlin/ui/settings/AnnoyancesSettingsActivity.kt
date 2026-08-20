@@ -51,24 +51,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asHeader("AdBlock"))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_SPONSORED_MESSAGES,
-                R.string.InuHideSponsoredMessages,
-                R.string.InuHideSponsoredMessagesInfo,
-                InuConfig.HIDE_SPONSORED_MESSAGES.value,
-            )
-        )
-        items.add(
-            mkSubPageButton(
-                BUTTON_REGEX_FILTER,
-                R.drawable.msg_block2,
-                LocaleController.getString(R.string.InuRegexFilter)
-            )
-        )
-        items.add(UItem.asShadow(null))
-
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_HIDE_STORIES,
@@ -181,11 +163,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         if (aiFeaturesGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         if (hideSuggestionsGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
-            TOGGLE_HIDE_SPONSORED_MESSAGES -> {
-                val new = InuConfig.HIDE_SPONSORED_MESSAGES.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
             TOGGLE_HIDE_STORIES -> {
                 val new = InuConfig.HIDE_STORIES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -251,10 +228,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_QUICK_SHARE -> {
                 val new = InuConfig.DISABLE_QUICK_SHARE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            BUTTON_REGEX_FILTER -> {
-                presentFragment(RegexFilterSettingsActivity())
             }
 
             TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY -> {
@@ -337,7 +310,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val TOGGLE_HIDE_SPONSORED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_HIDE_STORIES = InuUtils.generateId()
         private val TOGGLE_HIDE_TRENDING_STICKERS = InuUtils.generateId()
         private val TOGGLE_HIDE_REPOST_TO_STORY = InuUtils.generateId()
@@ -351,7 +323,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
         private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
         private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
-        private val BUTTON_REGEX_FILTER = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
         private val SECTION_HIDE_AI_FEATURES = InuUtils.generateId()
@@ -361,7 +332,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         val PAGE = SearchRegistry.Page(
             slug = "annoyances",
             titleRes = R.string.InuAnnoyances,
-            iconRes = R.drawable.menu_hide_gift,
+            iconRes = R.drawable.inu_tabler_shield_cancel,
             factory = ::AnnoyancesSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("hide-stories", R.string.InuHideStories, TOGGLE_HIDE_STORIES),
@@ -377,7 +348,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
-                SearchRegistry.Entry("annoyances-regex-filter", R.string.InuRegexFilter, BUTTON_REGEX_FILTER),
                 SearchRegistry.Entry("disable-profile-music-autoplay", R.string.InuDisableProfileMusicAutoplay, TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY),
                 SearchRegistry.Entry("clear-hints", R.string.InuClearHints, BUTTON_CLEAR_HINTS),
                 SearchRegistry.Entry("hide-ai-features", R.string.InuHideAiFeatures, SECTION_HIDE_AI_FEATURES),

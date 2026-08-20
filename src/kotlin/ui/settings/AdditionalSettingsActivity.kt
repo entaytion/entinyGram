@@ -62,8 +62,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
-        items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuBackupExport)))
-        items.add(UItem.asButton(BUTTON_IMPORT, R.drawable.msg_download, LocaleController.getString(R.string.InuBackupImport)))
+        items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.inu_tabler_file_export, LocaleController.getString(R.string.InuBackupExport)))
+        items.add(UItem.asButton(BUTTON_IMPORT, R.drawable.inu_tabler_file_import, LocaleController.getString(R.string.InuBackupImport)))
         items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
         items.add(UItem.asShadow(null))
 
@@ -80,7 +80,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 items.add(UItem.asCustom(getOrCreateHeapRow()))
             }
         }
-        items.add(UItem.asButton(BUTTON_COPY_SYSINFO, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
+        items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_terminal_2, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))
     }
 
@@ -490,7 +490,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         val PAGE = SearchRegistry.Page(
             slug = "additional",
             titleRes = R.string.InuAdditional,
-            iconRes = R.drawable.msg_settings_old,
+            iconRes = R.drawable.inu_tabler_device_floppy,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),

@@ -72,7 +72,130 @@ object InuDatabaseHelper {
             version = 6
         }
 
+        if (version == 6) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_local_pins(scope INTEGER NOT NULL, dialog_id INTEGER NOT NULL, pin_order INTEGER NOT NULL, PRIMARY KEY(scope, dialog_id))")
+                .stepThis().dispose()
+            writeKv(db, "version", "7")
+            version = 7
+        }
+
+        if (version == 7) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_presence_watch(user_id INTEGER PRIMARY KEY)")
+                .stepThis().dispose()
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_presence_logs(user_id INTEGER NOT NULL, status_type TEXT NOT NULL, timestamp INTEGER NOT NULL)")
+                .stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_presence_logs_user ON inu_presence_logs(user_id)")
+                .stepThis().dispose()
+            writeKv(db, "version", "8")
+            version = 8
+        }
+
+        if (version == 8) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_local_folder_chats(filter_id INTEGER NOT NULL, dialog_id INTEGER NOT NULL, PRIMARY KEY(filter_id, dialog_id))")
+                .stepThis().dispose()
+            writeKv(db, "version", "9")
+            version = 9
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
+    }
+
+    fun saveLocalFolderChat(db: SQLiteDatabase, filterId: Int, dialogId: Long) {
+        val query = db.executeFast("INSERT OR IGNORE INTO inu_local_folder_chats VALUES(?, ?)")
+        query.bindInteger(1, filterId)
+        query.bindLong(2, dialogId)
+        query.step()
+        query.dispose()
+    }
+
+    fun removeLocalFolderChat(db: SQLiteDatabase, filterId: Int, dialogId: Long) {
+        db.executeFast("DELETE FROM inu_local_folder_chats WHERE filter_id = $filterId AND dialog_id = $dialogId").stepThis().dispose()
+    }
+
+    /** filterId -> set of locally-overlaid dialog ids */
+    fun loadLocalFolderChats(db: SQLiteDatabase): Map<Int, Set<Long>> {
+        val map = HashMap<Int, HashSet<Long>>()
+        val cursor = db.queryFinalized("SELECT filter_id, dialog_id FROM inu_local_folder_chats")
+        try {
+            while (cursor.next()) {
+                map.getOrPut(cursor.intValue(0)) { HashSet() }.add(cursor.longValue(1))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return map
+    }
+
+    fun saveWatch(db: SQLiteDatabase, userId: Long) {
+        val query = db.executeFast("INSERT OR IGNORE INTO inu_presence_watch VALUES(?)")
+        query.bindLong(1, userId)
+        query.step()
+        query.dispose()
+    }
+
+    fun removeWatch(db: SQLiteDatabase, userId: Long) {
+        db.executeFast("DELETE FROM inu_presence_watch WHERE user_id = $userId").stepThis().dispose()
+    }
+
+    fun loadWatchedUsers(db: SQLiteDatabase): Set<Long> {
+        val set = HashSet<Long>()
+        val cursor = db.queryFinalized("SELECT user_id FROM inu_presence_watch")
+        try {
+            while (cursor.next()) set.add(cursor.longValue(0))
+        } finally {
+            cursor.dispose()
+        }
+        return set
+    }
+
+    fun appendPresenceLog(db: SQLiteDatabase, userId: Long, statusType: String, timestamp: Int) {
+        val query = db.executeFast("INSERT INTO inu_presence_logs VALUES(?, ?, ?)")
+        query.bindLong(1, userId)
+        query.bindString(2, statusType)
+        query.bindInteger(3, timestamp)
+        query.step()
+        query.dispose()
+    }
+
+    /** most recent entries first */
+    fun loadPresenceLogs(db: SQLiteDatabase, userId: Long, limit: Int = 200): List<Triple<Long, String, Int>> {
+        val list = ArrayList<Triple<Long, String, Int>>()
+        val cursor = db.queryFinalized("SELECT user_id, status_type, timestamp FROM inu_presence_logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT ?", userId, limit)
+        try {
+            while (cursor.next()) {
+                list.add(Triple(cursor.longValue(0), cursor.stringValue(1), cursor.intValue(2)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun saveLocalPin(db: SQLiteDatabase, scope: Int, dialogId: Long, order: Int) {
+        val query = db.executeFast("REPLACE INTO inu_local_pins VALUES(?, ?, ?)")
+        query.bindInteger(1, scope)
+        query.bindLong(2, dialogId)
+        query.bindInteger(3, order)
+        query.step()
+        query.dispose()
+    }
+
+    fun removeLocalPin(db: SQLiteDatabase, scope: Int, dialogId: Long) {
+        db.executeFast("DELETE FROM inu_local_pins WHERE scope = $scope AND dialog_id = $dialogId").stepThis().dispose()
+    }
+
+    /** scope -> (dialogId -> pin_order), ordered ascending by pin_order within each scope */
+    fun loadLocalPins(db: SQLiteDatabase): Map<Int, LinkedHashMap<Long, Int>> {
+        val map = HashMap<Int, LinkedHashMap<Long, Int>>()
+        val cursor = db.queryFinalized("SELECT scope, dialog_id, pin_order FROM inu_local_pins ORDER BY pin_order ASC")
+        try {
+            while (cursor.next()) {
+                map.getOrPut(cursor.intValue(0)) { LinkedHashMap() }[cursor.longValue(1)] = cursor.intValue(2)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return map
     }
 
     fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, mediaPath: String? = null) {
@@ -125,6 +248,40 @@ object InuDatabaseHelper {
             cursor.dispose()
         }
         return map
+    }
+
+    data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean)
+
+    fun searchDeletedMessages(db: SQLiteDatabase, query: String, limit: Int = 100): List<MessageSearchResult> {
+        val list = ArrayList<MessageSearchResult>()
+        val cursor = db.queryFinalized(
+            "SELECT dialog_id, msg_id, text, date FROM inu_deleted_messages WHERE text LIKE ? ORDER BY date DESC LIMIT ?",
+            "%$query%", limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2), cursor.intValue(3), isEdit = false))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun searchEditHistory(db: SQLiteDatabase, query: String, limit: Int = 100): List<MessageSearchResult> {
+        val list = ArrayList<MessageSearchResult>()
+        val cursor = db.queryFinalized(
+            "SELECT dialog_id, msg_id, text, date FROM inu_edit_history WHERE text LIKE ? ORDER BY date DESC LIMIT ?",
+            "%$query%", limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2), cursor.intValue(3), isEdit = true))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
     }
 
     fun getDeletedMediaPaths(db: SQLiteDatabase, dialogIds: Collection<Long>? = null): List<String> {

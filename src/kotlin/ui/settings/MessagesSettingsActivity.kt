@@ -89,6 +89,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         items.add(
             mkSubPageButton(
                 BUTTON_PINNED_REACTIONS,
+                R.drawable.inu_tabler_mood_smile,
                 LocaleController.getString(R.string.InuPinnedReactions),
             )
         )
@@ -170,6 +171,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         items.add(
             mkSubPageButton(
                 BUTTON_MESSAGE_MENU_ORDER,
+                R.drawable.inu_tabler_list,
                 LocaleController.getString(R.string.InuMessageMenuOrder),
             )
         )
@@ -216,6 +218,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             items.add(
                 UItem.asButton(
                     BUTTON_BLOCKED_MESSAGES_EXTRA,
+                    R.drawable.inu_tabler_user_x,
                     LocaleController.getString(R.string.InuBlockedMessagesExtra),
                     LocaleController.formatString(
                         R.string.InuBlockedMessagesExtraCount,

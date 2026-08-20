@@ -41,7 +41,7 @@ object GalleryHelper {
             return cached.description
         }
         if (!containsSignature(xmpBlob)) {
-            cache[imageId] = Entry(dateModified, null)
+            put(imageId, Entry(dateModified, null))
             return null
         }
         val description = try {
@@ -49,8 +49,15 @@ object GalleryHelper {
         } catch (_: Exception) {
             null
         }
-        cache[imageId] = Entry(dateModified, description)
+        put(imageId, Entry(dateModified, description))
         return description
+    }
+
+    // unbounded growth would otherwise track one entry per gallery photo forever;
+    // mirrors PhotoViewerHelper.platformCache's threshold-clear.
+    private fun put(imageId: Int, entry: Entry) {
+        if (cache.size >= 5000) cache.clear()
+        cache[imageId] = entry
     }
 
     private fun containsSignature(blob: ByteArray): Boolean {

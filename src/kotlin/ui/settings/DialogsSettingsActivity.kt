@@ -25,6 +25,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_FOLDERS_DISPLAY_MODE,
+                R.drawable.inu_tabler_folder,
                 LocaleController.getString(R.string.InuFoldersDisplayMode),
                 when (InuConfig.FOLDERS_DISPLAY_MODE.value) {
                     InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS -> LocaleController.getString(R.string.InuFoldersDisplayModeTitlesAndIcons)
@@ -103,6 +104,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_COMMUNITY_DISPLAY_MODE,
+                R.drawable.inu_tabler_users_group,
                 LocaleController.getString(R.string.InuCommunityDisplayMode),
                 communityDisplayModeLabel(InuConfig.COMMUNITY_DISPLAY_MODE.value),
             )
@@ -147,6 +149,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_FAB_MAIN_ACTION,
+                R.drawable.inu_tabler_circle_plus,
                 LocaleController.getString(R.string.InuDialogsFabMainAction),
                 mainAction.label(),
             )

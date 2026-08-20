@@ -1,0 +1,160 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 20 Aug 2026 00:29:19 +0300
+Subject: Allow pinning chats beyond Telegram's server limit locally
+
+---
+ .../messenger/MessagesController.java         |  1 +
+ .../org/telegram/ui/Cells/DialogCell.java     |  4 +-
+ .../java/org/telegram/ui/DialogsActivity.java | 51 +++++++++++++------
+ 3 files changed, 39 insertions(+), 17 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -22541,6 +22541,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         }
+ 
+         hasArchivedChats = dialogsByFolder.get(1, null) != null;
++        desu.inugram.helpers.dialogs.PinHelper.reorderLocalPins(this, currentAccount);
+     }
+ 
+     private boolean addDialogToItsCommunity(TLRPC.Dialog dialog) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -3306,9 +3306,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                         lastMessageDate = dialog.last_message_date;
+                         if (dialogsType == 7 || dialogsType == 8) {
+                             MessagesController.DialogFilter filter = MessagesController.getInstance(currentAccount).selectedDialogFilter[dialogsType == 8 ? 1 : 0];
+-                            drawPin = filter != null && filter.pinnedDialogs.indexOfKey(dialog.id) >= 0;
++                            drawPin = filter != null && (filter.pinnedDialogs.indexOfKey(dialog.id) >= 0 || desu.inugram.helpers.dialogs.PinHelper.isLocallyPinned(currentAccount, currentDialogFolderId, filter, dialog.id));
+                         } else {
+-                            drawPin = currentDialogFolderId == 0 && dialog.pinned;
++                            drawPin = currentDialogFolderId == 0 && (dialog.pinned || desu.inugram.helpers.dialogs.PinHelper.isLocallyPinned(currentAccount, currentDialogFolderId, null, dialog.id));
+                         }
+                         if (message != null) {
+                             lastSendState = message.messageOwner.send_state;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -8797,6 +8797,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+         final boolean[] hasPinAction = new boolean[1];
+         hasPinAction[0] = true;
++        final boolean[] useLocalPin = new boolean[1];
+         TLRPC.Dialog dialog = getMessagesController().dialogs_dict.get(dialogId);
+         boolean containsFilter;
+         final MessagesController.DialogFilter filter = (
+@@ -8854,7 +8855,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             int newFilterAlwaysShowCount = newPinnedCount + newPinnedSecretCount - alreadyAdded;
+             boolean secretLimitReached = containsFilter && filter != null ? false : newPinnedSecretCount + pinnedSecretCount > maxPinnedCount;
+             boolean dialogsLimitReached = containsFilter && filter != null ? newFilterAlwaysShowCount > 0 && filter.alwaysShow.size() + newFilterAlwaysShowCount > maxPinnedCount : newPinnedCount + pinnedCount - alreadyAdded > maxPinnedCount;
+-            hasPinAction[0] = !(secretLimitReached || dialogsLimitReached);
++            if ((secretLimitReached || dialogsLimitReached) && desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue() && !DialogObject.isEncryptedDialog(dialogId)) {
++                useLocalPin[0] = true;
++                hasPinAction[0] = true;
++            } else {
++                hasPinAction[0] = !(secretLimitReached || dialogsLimitReached);
++            }
+         }
+ 
+         if (hasPinAction[0]) {
+@@ -8884,20 +8890,25 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         return;
+                     }
+                     if (!isDialogPinned(dialog)) {
+-                        pinDialog(dialogId, true, filter, minPinnedNum, true);
+-                        undoView.showWithAction(0, UndoView.ACTION_PIN_DIALOGS, 1, 1600, null, null);
+-                        if (filter != null) {
+-                            if (encryptedChat != null) {
+-                                if (!filter.alwaysShow.contains(encryptedChat.user_id)) {
+-                                    filter.alwaysShow.add(encryptedChat.user_id);
+-                                }
+-                            } else {
+-                                if (!filter.alwaysShow.contains(dialogId)) {
+-                                    filter.alwaysShow.add(dialogId);
++                        if (useLocalPin[0]) {
++                            desu.inugram.helpers.dialogs.PinHelper.addLocalPin(currentAccount, folderId, filter, dialogId);
++                        } else {
++                            pinDialog(dialogId, true, filter, minPinnedNum, true);
++                            if (filter != null) {
++                                if (encryptedChat != null) {
++                                    if (!filter.alwaysShow.contains(encryptedChat.user_id)) {
++                                        filter.alwaysShow.add(encryptedChat.user_id);
++                                    }
++                                } else {
++                                    if (!filter.alwaysShow.contains(dialogId)) {
++                                        filter.alwaysShow.add(dialogId);
++                                    }
+                                 }
+                             }
+                         }
++                        undoView.showWithAction(0, UndoView.ACTION_PIN_DIALOGS, 1, 1600, null, null);
+                     } else {
++                        desu.inugram.helpers.dialogs.PinHelper.removeLocalPin(currentAccount, folderId, filter, dialogId);
+                         pinDialog(dialogId, false, filter, minPinnedNum, true);
+                         undoView.showWithAction(0, UndoView.ACTION_UNPIN_DIALOGS, 1, 1600, null, null);
+                     }
+@@ -9306,9 +9317,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             filter = null;
+         }
+         if (filter != null) {
+-            return filter.pinnedDialogs.indexOfKey(dialog.id) >= 0;
++            return filter.pinnedDialogs.indexOfKey(dialog.id) >= 0 || desu.inugram.helpers.dialogs.PinHelper.isLocallyPinned(currentAccount, dialog.folder_id, filter, dialog.id);
+         }
+-        return dialog.pinned;
++        return dialog.pinned || desu.inugram.helpers.dialogs.PinHelper.isLocallyPinned(currentAccount, dialog.folder_id, null, dialog.id);
+     }
+ 
+     private boolean filterAlwaysShowsDialog(MessagesController.DialogFilter filter, long dialogId) {
+@@ -9339,6 +9350,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+         int count = selectedDialogs.size();
+         int pinnedActionCount = 0;
++        boolean bulkUseLocalPin = false;
+         if (action == archive || action == archive2) {
+             ArrayList<Long> copy = new ArrayList<>(selectedDialogs);
+             getMessagesController().addDialogToFolder(copy, canUnarchiveCount == 0 ? 1 : 0, -1, null, 0);
+@@ -9421,13 +9433,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             boolean secretLimitReached = containsFilter && filter != null ? false : newPinnedSecretCount + pinnedSecretCount > maxPinnedCount;
+             boolean dialogsLimitReached = containsFilter && filter != null ? newFilterAlwaysShowCount > 0 && filter.alwaysShow.size() + newFilterAlwaysShowCount > maxPinnedCount : newPinnedCount + pinnedCount - alreadyAdded > maxPinnedCount;
+             if (secretLimitReached || dialogsLimitReached) {
+-                if (folderId != 0 || filter != null) {
++                boolean anySecret = newPinnedSecretCount > 0;
++                if (desu.inugram.InuConfig.UNLIMITED_PINNED_CHATS.getValue() && !anySecret) {
++                    bulkUseLocalPin = true;
++                } else if (folderId != 0 || filter != null) {
+                     AlertsCreator.showSimpleAlert(DialogsActivity.this, LocaleController.formatString("PinFolderLimitReached", R.string.PinFolderLimitReached, LocaleController.formatPluralString("Chats", maxPinnedCount)));
++                    return;
+                 } else {
+                     LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(this, getParentActivity(), LimitReachedBottomSheet.TYPE_PIN_DIALOGS, currentAccount, null);
+                     showDialog(limitReachedBottomSheet);
++                    return;
+                 }
+-                return;
+             }
+         } else if (action == community_ungroup) {
+             if (alert) {
+@@ -9564,6 +9580,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         continue;
+                     }
+                     pinnedActionCount++;
++                    if (bulkUseLocalPin) {
++                        desu.inugram.helpers.dialogs.PinHelper.addLocalPin(currentAccount, folderId, filter, selectedDialog);
++                        continue;
++                    }
+                     pinDialog(selectedDialog, true, filter, minPinnedNum, count == 1);
+                     if (filter != null) {
+                         minPinnedNum++;
+@@ -9582,6 +9602,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         continue;
+                     }
+                     pinnedActionCount++;
++                    desu.inugram.helpers.dialogs.PinHelper.removeLocalPin(currentAccount, folderId, filter, selectedDialog);
+                     pinDialog(selectedDialog, false, filter, minPinnedNum, count == 1);
+                 }
+             } else if (action == read) {

@@ -18,17 +18,15 @@ import org.telegram.messenger.MessagesStorage
 object SelfDestructHelper {
 
     /**
-     * Guard for `MessagesStorage.emptyMessagesMedia` (the media-wipe choke point).
+     * Guard for `MessagesStorage.emptyMessagesMedia` (the media-wipe choke point), and for the
+     * file-cache/redisplay checks in ChatActivity/FileLoader/MessageObject (which read
+     * [InuConfig.SAVE_SELF_DESTRUCT_MEDIA] directly — same flag, single source of truth).
      * Encrypted dialogs: secret self-destructing media. Regular dialogs: view-once media.
-     * Legacy [InuConfig.SAVE_SELF_DESTRUCT] (file-level preservation) is OR-ed in for
-     * secret media so enabling it keeps the media row as well.
      */
     @JvmStatic
     fun shouldPreserveMedia(dialogId: Long): Boolean {
         return if (DialogObject.isEncryptedDialog(dialogId)) {
-            InuConfig.SAVE_SECRET_CHAT_CONTENT.value ||
-                InuConfig.SAVE_SELF_DESTRUCT_MEDIA.value ||
-                InuConfig.SAVE_SELF_DESTRUCT.value
+            InuConfig.SAVE_SELF_DESTRUCT_MEDIA.value
         } else {
             InuConfig.SAVE_VIEW_ONCE_MEDIA.value
         }
@@ -43,7 +41,7 @@ object SelfDestructHelper {
     @JvmStatic
     fun shouldPreserveMessage(dialogId: Long, ttlPeriod: Int): Boolean {
         return if (DialogObject.isEncryptedDialog(dialogId)) {
-            InuConfig.SAVE_SECRET_CHAT_CONTENT.value || InuConfig.SAVE_SELF_DESTRUCT_TEXT.value
+            InuConfig.SAVE_SELF_DESTRUCT_TEXT.value
         } else {
             InuConfig.SAVE_TIMED_MESSAGES.value && ttlPeriod != 0
         }

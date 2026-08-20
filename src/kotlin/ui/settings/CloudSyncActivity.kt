@@ -149,14 +149,14 @@ class CloudSyncActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_RESTORE,
-                R.drawable.msg_download,
+                R.drawable.inu_tabler_cloud_download,
                 LocaleController.getString(R.string.InuCloudRestore),
             ).setEnabled(opsEnabled)
         )
         items.add(
             UItem.asButton(
                 BUTTON_DELETE,
-                R.drawable.msg_delete,
+                R.drawable.inu_tabler_cloud_x,
                 LocaleController.getString(R.string.InuCloudDelete),
             ).red().setEnabled(opsEnabled)
         )

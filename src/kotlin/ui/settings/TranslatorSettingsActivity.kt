@@ -45,6 +45,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_TARGET_LANG,
+                R.drawable.inu_tabler_language,
                 LocaleController.getString(R.string.InuTranslationTarget),
                 targetLangLabel(),
             )
@@ -52,6 +53,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_DO_NOT_TRANSLATE,
+                R.drawable.inu_tabler_language_off,
                 LocaleController.getString(R.string.DoNotTranslate),
                 doNotTranslateLabel(),
             )
@@ -62,7 +64,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asButton(
                 BUTTON_PROVIDER,
-                R.drawable.msg_translate,
+                R.drawable.inu_tabler_world,
                 LocaleController.getString(R.string.InuTranslateProvider),
                 EntinyTranslate.currentProviderName()
             )

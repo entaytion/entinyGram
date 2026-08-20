@@ -182,11 +182,11 @@ object PhotoViewerHelper {
 
     @JvmStatic
     fun addMenuItems(menuItem: ActionBarMenuItem) {
-        menuItem.addSubItem(MENU_COPY_PHOTO, R.drawable.msg_copy, LocaleController.getString(R.string.InuCopyPhoto))
+        menuItem.addSubItem(MENU_COPY_PHOTO, R.drawable.inu_tabler_copy, LocaleController.getString(R.string.InuCopyPhoto))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
-        menuItem.addSubItem(MENU_COPY_FRAME, R.drawable.msg_copy, LocaleController.getString(R.string.InuCopyFrame))
+        menuItem.addSubItem(MENU_COPY_FRAME, R.drawable.inu_tabler_copy, LocaleController.getString(R.string.InuCopyFrame))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
-        menuItem.addSubItem(MENU_DELETE_PROFILE_PHOTOS, R.drawable.msg_delete, LocaleController.getString(R.string.InuDeleteProfilePhotos))
+        menuItem.addSubItem(MENU_DELETE_PROFILE_PHOTOS, R.drawable.inu_tabler_photo_x, LocaleController.getString(R.string.InuDeleteProfilePhotos))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
     }
 

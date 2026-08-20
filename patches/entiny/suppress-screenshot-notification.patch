@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 20 Aug 2026 01:29:27 +0300
+Subject: Don't notify the other side when you screenshot a secret chat
+
+---
+ .../src/main/java/org/telegram/messenger/MediaController.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -1842,7 +1842,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+         }
+         if (send) {
+             if (lastSecretChat != null) {
+-                SecretChatHelper.getInstance(lastChatAccount).sendScreenshotMessage(lastSecretChat, lastChatVisibleMessages, null);
++                if (!desu.inugram.InuConfig.SUPPRESS_SCREENSHOT_NOTIFICATION.getValue()) {
++                    SecretChatHelper.getInstance(lastChatAccount).sendScreenshotMessage(lastSecretChat, lastChatVisibleMessages, null);
++                }
+             } else {
+                 SendMessagesHelper.getInstance(lastChatAccount).sendScreenshotMessage(lastUser, lastMessageId, null);
+             }

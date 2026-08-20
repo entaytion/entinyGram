@@ -161,11 +161,7 @@ object BlockedMessagesHelper {
     }
 
     private fun isRegexFilteredMessage(messageObject: MessageObject?): Boolean {
-        if (messageObject?.messageOwner == null || !RegexFilterHelper.isEnabled()) return false
-        val text = messageObject.messageText
-        if (RegexFilterHelper.shouldFilter(text)) return true
-        val caption = messageObject.caption
-        return RegexFilterHelper.shouldFilter(caption)
+        return RegexFilterHelper.isMessageFiltered(messageObject)
     }
 
     private fun isBlockedPeer(currentAccount: Int, peerId: Long): Boolean {

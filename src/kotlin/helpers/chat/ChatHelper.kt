@@ -104,6 +104,7 @@ object ChatHelper {
     const val OPTION_SAVE_STICKER_TO_DOWNLOADS = 521
     const val OPTION_MARK_AS_READ = 522
     const val OPTION_AI_SUMMARIZE = 523
+    const val OPTION_ADD_FILTER = 524
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -190,9 +191,10 @@ object ChatHelper {
 
     @JvmStatic
     fun deletedMarkIconRes(): Int = when (InuConfig.DELETED_MARK_STYLE.value) {
+        InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE -> R.drawable.inu_tabler_trash
         InuConfig.DeletedMarkStyleItem.CROSS -> R.drawable.ic_deleted_mark_cross
         InuConfig.DeletedMarkStyleItem.EYE_CROSSED -> R.drawable.ic_deleted_mark_eye_off
-        else -> R.drawable.msg_delete
+        else -> R.drawable.inu_tabler_trash_filled
     }
 
     /**
@@ -408,6 +410,14 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuRemoveFromCache))
             options.add(OPTION_REMOVE_FROM_CACHE)
             icons.add(R.drawable.msg_clear)
+        }
+
+        if (isMenuItemEnabled(MessageMenuConfig.Item.ADD_FILTER) &&
+            (!selectedObject.messageText.isNullOrBlank() || !selectedObject.caption.isNullOrBlank())
+        ) {
+            items.add(LocaleController.getString(R.string.InuRegexFilterAddFromMessage))
+            options.add(OPTION_ADD_FILTER)
+            icons.add(R.drawable.msg_block2)
         }
 
         // stock OPTION_COPY only covers text/caption — add a fallback that copies the media file URI
@@ -693,6 +703,14 @@ object ChatHelper {
 
             OPTION_SHOW_JSON -> {
                 WebAppHelper.openTlViewer(activity, selectedObject.currentEvent ?: selectedObject.messageOwner)
+            }
+
+            OPTION_ADD_FILTER -> {
+                val text = selectedObject.messageText?.toString()?.takeIf { it.isNotBlank() }
+                    ?: selectedObject.caption?.toString().orEmpty()
+                activity.presentFragment(
+                    desu.inugram.ui.settings.RegexFilterEditActivity(null, null, java.util.regex.Pattern.quote(text))
+                )
             }
 
             OPTION_FORWARD_NO_QUOTE -> {
@@ -1346,6 +1364,7 @@ object ChatHelper {
     @JvmStatic
     fun onFragmentDestroy(activity: ChatActivity) {
         TranslateHelper.resetForDialog(activity.dialogId)
+        TypingSpoofHelper.stop(activity.dialogId)
     }
 
     @JvmField

@@ -36,7 +36,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
             items.add(
                 mkSubPageButton(
                     BUTTON_PASSCODE,
-                    R.drawable.msg_permissions,
+                    R.drawable.inu_tabler_key,
                     LocaleController.getString(R.string.InuPerAccountPasscode)
                 )
             )
@@ -45,7 +45,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
             items.add(
                 mkSubPageButton(
                     BUTTON_PARANOIA,
-                    R.drawable.menu_hide_gift,
+                    R.drawable.inu_tabler_spy,
                     LocaleController.getString(R.string.InuParanoiaMode)
                 )
             )
@@ -238,7 +238,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "privacy-security",
             titleRes = R.string.InuPrivacySecurity,
-            iconRes = R.drawable.msg_permissions,
+            iconRes = R.drawable.inu_tabler_shield_check,
             factory = ::PrivacySecurityActivity,
             entries = listOf(
                 SearchRegistry.Entry("hide-my-phone-number", R.string.InuHideMyPhoneNumber, TOGGLE_HIDE_MY_PHONE_NUMBER),

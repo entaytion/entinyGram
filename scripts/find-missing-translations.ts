@@ -26,7 +26,7 @@ async function parseStrings(file: string) {
 }
 
 async function blameKeyTimes(file: string) {
-  const rel = relative(rootDir, file)
+  const rel = relative(rootDir, file).split('\\').join('/')
   // blame the working tree (not HEAD) so uncommitted edits count as touched-now
   const out = (await $({ cwd: rootDir })`git blame --line-porcelain -w -M -C -- ${rel}`).stdout
   const map = new Map<string, number>()
