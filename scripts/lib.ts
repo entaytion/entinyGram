@@ -159,7 +159,7 @@ export async function hasLocalBranch(repoDir: string, branch: string) {
 
 async function isTrackedPath(repoDir: string, repoRelativePath: string) {
   const gitPath = repoRelativePath.replaceAll('\\', '/')
-  const result = await $({ cwd: repoDir, nothrow: true })`git ls-files --error-unmatch -- ${gitPath}`
+  const result = await $({ cwd: repoDir, nothrow: true, quiet: true })`git ls-files --error-unmatch -- ${gitPath}`.nothrow().quiet()
   return result.exitCode === 0
 }
 

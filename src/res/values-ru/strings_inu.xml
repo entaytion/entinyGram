@@ -528,7 +528,13 @@
     <string name="InuCloudSyncAccountInactive">Аккаунт больше не активен. Выберите другой, чтобы продолжить синхронизацию.</string>
     <string name="InuCloudSyncAuto">Автозагрузка</string>
     <string name="InuSearchOpenUsername">Открыть %1$s</string>
+    <string name="InuSearchOpenUserId">Открыть ID %1$s</string>
     <string name="InuSearchOpenLink">Открыть %1$s</string>
+    <string name="InuOpenAsUserId">Открыть как ID пользователя</string>
+    <string name="InuOpenById">Открыть по ID</string>
+    <string name="InuOpenByIdPrompt">Введите числовой ID пользователя или чата</string>
+    <string name="InuOpenByUserId">Открытие по ID в поиске и чатах</string>
+    <string name="InuOpenByUserIdInfo">Показывать прямой переход в профиль при вводе чисел в поиске или нажатии на цифры в сообщениях.</string>
     <string name="InuReorderAccounts">Изменить порядок аккаунтов</string>
     <string name="InuReorderAccountsInfo">Зажмите аккаунт и перетащите, чтобы изменить порядок. Порядок применяется к списку настроек и переключателю аккаунтов.</string>
     <string name="InuCreateAsSupergroup">Создать как супергруппу</string>

@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 20 Aug 2026 00:00:00 +0300
+Subject: Allow opening user profile by numeric ID from message numbers
+
+---
+ .../main/java/org/telegram/ui/ChatActivity.java    | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -44890,6 +44890,13 @@ public class ChatActivity extends BaseFragment implements
+                     AndroidUtilities.addToClipboard(phone);
+                     BulletinFactory.of(this).createCopyBulletin(LocaleController.getString(R.string.PhoneCopied)).show();
+                 });
++                Long inuUserId = desu.inugram.helpers.search.UserIdOpenHelper.parseUserId(phone);
++                if (inuUserId != null && inuUserId > 0 && desu.inugram.InuConfig.OPEN_BY_USER_ID.getValue()) {
++                    options.add(R.drawable.inu_tabler_id, LocaleController.getString(R.string.InuOpenAsUserId), () -> {
++                        dialog.dismiss();
++                        desu.inugram.helpers.search.UserIdOpenHelper.openProfile(ChatActivity.this, inuUserId, currentAccount);
++                    });
++                }
+                 options.addGap();
+                 options.addText(getString(R.string.NumberNotOnTelegram), 13);
+             } else {

@@ -23,7 +23,6 @@ import desu.inugram.ui.settings.TosProfileActivity
 import desu.inugram.ui.settings.TosSettingsActivity
 import desu.inugram.ui.settings.TranslatorSettingsActivity
 import desu.inugram.ui.settings.UnlimitedLimitsSettingsActivity
-import desu.inugram.ui.settings.UserProfileSettingsActivity
 import desu.inugram.ui.settings.fonts.FontStackActivity
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.LocaleController
@@ -57,7 +56,6 @@ object SearchRegistry {
             MessagesSettingsActivity.PAGE,
             AiSettingsActivity.PAGE,
             DialogsSettingsActivity.PAGE,
-            UserProfileSettingsActivity.PAGE,
             AnnoyancesSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,

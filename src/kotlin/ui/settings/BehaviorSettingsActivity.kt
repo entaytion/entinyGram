@@ -8,6 +8,8 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ProxyVpnHelper
 import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.maps.MapsHelper
+import desu.inugram.helpers.search.UserIdOpenHelper
+import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
@@ -84,6 +86,28 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 TOGGLE_DISABLE_CHAT_TITLE_PHONE,
                 LocaleController.getString(R.string.InuDisableChatTitlePhone),
             ).setChecked(InuConfig.DISABLE_CHAT_TITLE_PHONE.value)
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_OPEN_BY_USER_ID,
+                R.string.InuOpenByUserId,
+                R.string.InuOpenByUserIdInfo,
+                InuConfig.OPEN_BY_USER_ID.value,
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_OPEN_BY_ID,
+                R.drawable.inu_tabler_id,
+                LocaleController.getString(R.string.InuOpenById),
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_DELETE_PROFILE_PHOTOS,
+                R.drawable.inu_tabler_photo_x,
+                LocaleController.getString(R.string.InuDeleteProfilePhotos),
+            )
         )
         items.add(UItem.asShadow(null))
 
@@ -306,6 +330,21 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            TOGGLE_OPEN_BY_USER_ID -> {
+                val new = InuConfig.OPEN_BY_USER_ID.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            BUTTON_OPEN_BY_ID -> {
+                val ctx = context ?: return
+                UserIdOpenHelper.showOpenByIdDialog(ctx, this, currentAccount)
+            }
+
+            BUTTON_DELETE_PROFILE_PHOTOS -> {
+                val activity = parentActivity ?: return
+                DeleteProfilePhotosSheet(activity, currentAccount).show()
+            }
+
             TOGGLE_DISABLE_CHAT_BUBBLES -> {
                 val new = InuConfig.DISABLE_CHAT_BUBBLES.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -469,6 +508,9 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_LOCAL_PREMIUM = InuUtils.generateId()
         private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
+        private val TOGGLE_OPEN_BY_USER_ID = InuUtils.generateId()
+        private val BUTTON_OPEN_BY_ID = InuUtils.generateId()
+        private val BUTTON_DELETE_PROFILE_PHOTOS = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_TEXT_CLASSIFIER_MODE = InuUtils.generateId()
@@ -506,7 +548,16 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_adjustments_horizontal,
             factory = ::BehaviorSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("profile-photo-gradient-fade", R.string.InuProfilePhotoGradientFade, TOGGLE_PROFILE_PHOTO_GRADIENT_FADE),
+                SearchRegistry.Entry("reduce-profile-motion", R.string.InuReduceProfileMotion, TOGGLE_REDUCE_PROFILE_MOTION),
+                SearchRegistry.Entry("disable-profile-scroll-snap", R.string.InuDisableProfileScrollSnap, TOGGLE_DISABLE_PROFILE_SCROLL_SNAP),
+                SearchRegistry.Entry("profile-prefer-media-tab", R.string.InuProfilePreferMediaTab, TOGGLE_PROFILE_PREFER_MEDIA_TAB),
+                SearchRegistry.Entry("profile-id-mode", R.string.InuProfileIdMode, BUTTON_PROFILE_ID_MODE),
                 SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
+                SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
+                SearchRegistry.Entry("open-by-user-id", R.string.InuOpenByUserId, TOGGLE_OPEN_BY_USER_ID),
+                SearchRegistry.Entry("open-by-id", R.string.InuOpenById, BUTTON_OPEN_BY_ID),
+                SearchRegistry.Entry("delete-profile-photos", R.string.InuDeleteProfilePhotos, BUTTON_DELETE_PROFILE_PHOTOS),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),

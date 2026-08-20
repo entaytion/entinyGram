@@ -483,7 +483,13 @@
     <string name="InuCloudSyncAccountInactive">账号已退出登录。请选择另一个账号以继续同步。</string>
     <string name="InuCloudSyncAuto">自动上传</string>
     <string name="InuSearchOpenUsername">打开 %1$s</string>
+    <string name="InuSearchOpenUserId">打开 ID %1$s</string>
     <string name="InuSearchOpenLink">打开 %1$s</string>
+    <string name="InuOpenAsUserId">作为用户 ID 打开</string>
+    <string name="InuOpenById">按 ID 打开</string>
+    <string name="InuOpenByIdPrompt">输入 Telegram 用户或聊天 ID</string>
+    <string name="InuOpenByUserId">在搜索和消息中按 ID 打开</string>
+    <string name="InuOpenByUserIdInfo">在搜索中输入数字或点击消息中的数字时显示直接个人资料快捷方式。</string>
     <string name="InuReorderAccounts">重排账号</string>
     <string name="InuReorderAccountsInfo">长按账号并拖动来重新排序。该顺序应用于设置列表和账号切换器。</string>
     <string name="InuCreateAsSupergroup">创建为超级群</string>

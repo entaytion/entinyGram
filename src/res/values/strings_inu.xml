@@ -693,7 +693,13 @@
     <string name="InuCloudSyncAccountInactive">Account no longer signed in. Pick another to resume sync.</string>
     <string name="InuCloudSyncAuto">Auto-upload</string>
     <string name="InuSearchOpenUsername">Open %1$s</string>
+    <string name="InuSearchOpenUserId">Open ID %1$s</string>
     <string name="InuSearchOpenLink">Open %1$s</string>
+    <string name="InuOpenAsUserId">Open as User ID</string>
+    <string name="InuOpenById">Open by ID</string>
+    <string name="InuOpenByIdPrompt">Enter Telegram User or Chat ID</string>
+    <string name="InuOpenByUserId">Open by ID in search and messages</string>
+    <string name="InuOpenByUserIdInfo">Show a direct profile shortcut when typing numeric IDs in search or tapping numbers in chats.</string>
     <string name="InuReorderAccounts">Reorder accounts</string>
     <string name="InuReorderAccountsInfo">Long-press an account and drag to reorder. The order applies to the settings list and the account picker.</string>
     <string name="InuCreateAsSupergroup">Create as supergroup</string>

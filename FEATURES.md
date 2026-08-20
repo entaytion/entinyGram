@@ -72,6 +72,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
 - 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; in chats the avatar moves to the right edge and long titles shrink to fit (iOS-style) instead of ellipsizing; modular M3 drawer cards
 - 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
+- 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 

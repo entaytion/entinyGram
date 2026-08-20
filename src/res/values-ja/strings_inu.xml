@@ -484,7 +484,13 @@
     <string name="InuCloudSyncAccountInactive">アカウントがログアウトされました。同期を再開するには別のアカウントを選択してください。</string>
     <string name="InuCloudSyncAuto">自動アップロード</string>
     <string name="InuSearchOpenUsername">%1$s を開く</string>
+    <string name="InuSearchOpenUserId">ID %1$s を開く</string>
     <string name="InuSearchOpenLink">%1$s を開く</string>
+    <string name="InuOpenAsUserId">ユーザーIDとして開く</string>
+    <string name="InuOpenById">IDで開く</string>
+    <string name="InuOpenByIdPrompt">TelegramユーザーまたはチャットIDを入力</string>
+    <string name="InuOpenByUserId">検索とメッセージでIDから開く</string>
+    <string name="InuOpenByUserIdInfo">検索で数値を入力した際やメッセージ内の数字をタップした際に直接プロフィールを表示します。</string>
     <string name="InuReorderAccounts">アカウントの並び替え</string>
     <string name="InuReorderAccountsInfo">アカウントを長押ししてドラッグで並び替えます。順序は設定リストとアカウント切り替えに反映されます。</string>
     <string name="InuCreateAsSupergroup">スーパーグループとして作成</string>

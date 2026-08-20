@@ -103,16 +103,6 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/drawable',
   },
   {
-    source: 'src/res/drawable/input_ai_star.xml',
-    target: 'TMessagesProj/src/main/res/drawable',
-    replace: true,
-  },
-  {
-    source: 'src/res/drawable/inu_splash_old_320.xml',
-    target: 'TMessagesProj/src/main/res/drawable',
-    replace: true,
-  },
-  {
     source: 'src/res/assets/*',
     target: 'TMessagesProj/src/main/assets',
   },
@@ -225,6 +215,7 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'trash-x',
       'clock-hour-4',
       'user-circle',
+      'user-search',
       'gift',
       'crown',
       'star',

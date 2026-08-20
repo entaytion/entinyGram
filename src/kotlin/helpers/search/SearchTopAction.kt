@@ -43,6 +43,16 @@ sealed class SearchTopAction {
         }
     }
 
+    class UserId(val id: Long) : SearchTopAction() {
+        override val iconRes: Int = R.drawable.inu_tabler_id
+        override val label: CharSequence
+            get() = LocaleController.formatString(R.string.InuSearchOpenUserId, id.toString())
+
+        override fun execute(fragment: BaseFragment) {
+            UserIdOpenHelper.openProfile(fragment, id, fragment.currentAccount)
+        }
+    }
+
     companion object {
         const val VIEW_TYPE = 100;
         private val USERNAME = Regex("^@?([A-Za-z0-9_]{5,32})$")
@@ -54,6 +64,9 @@ sealed class SearchTopAction {
         fun parse(query: String?): SearchTopAction? {
             if (query.isNullOrEmpty()) return null
             if (ParanoiaHelper.matchesExitCode(query)) return ExitParanoia()
+            if (desu.inugram.InuConfig.OPEN_BY_USER_ID.value) {
+                UserIdOpenHelper.parseUserId(query)?.let { return UserId(it) }
+            }
             USERNAME.matchEntire(query)?.let { return Username(it.groupValues[1]) }
             if (TG_LINK.matches(query)) return Link(query, query)
             TME_LINK.matchEntire(query)?.let {

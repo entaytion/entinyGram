@@ -22,14 +22,20 @@ class InuSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuSettings)
 
     private var searchAdapter: ProfileActivity.SearchAdapter? = null
+    private var isSearchOpen = false
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
             listView.overScrollMode = View.OVER_SCROLL_NEVER
             listView.isVerticalScrollBarEnabled = false
 
-            val originalAdapter = listView.adapter
-            val sAdapter = ProfileActivity.SearchAdapter(this, context)
+            val sAdapter = object : ProfileActivity.SearchAdapter(this, context) {
+                override fun notifyDataSetChanged() {
+                    if (isSearchOpen) {
+                        listView.adapter.update(true)
+                    }
+                }
+            }
             searchAdapter = sAdapter
             val menu = actionBar.createMenu()
             val searchItem = menu.addItem(0, R.drawable.outline_header_search)
@@ -37,12 +43,15 @@ class InuSettingsActivity : SettingsPageActivity() {
             searchItem.setSearchFieldHint(LocaleController.getString(R.string.Search))
             searchItem.setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
                 override fun onSearchExpand() {
-                    (listView as org.telegram.ui.Components.RecyclerListView).setAdapter(sAdapter)
+                    isSearchOpen = true
+                    sAdapter.search("")
+                    listView.adapter.update(false)
                 }
 
                 override fun onSearchCollapse() {
-                    (listView as org.telegram.ui.Components.RecyclerListView).setAdapter(originalAdapter)
+                    isSearchOpen = false
                     sAdapter.search(null)
+                    listView.adapter.update(false)
                 }
 
                 override fun onTextChanged(searchField: EditText) {
@@ -60,6 +69,11 @@ class InuSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        if (isSearchOpen) {
+            searchAdapter?.fillItems(items)
+            return
+        }
+
         items.add(UItem.asCustomShadow(createHeaderView()))
         items.add(UItem.asShadow(null))
 
@@ -95,6 +109,14 @@ class InuSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.instanceOf(org.telegram.ui.Cells.SettingsSearchCell.Factory::class.java)) {
+            val result = item.`object` as? ProfileActivity.SearchAdapter.SearchResult
+            if (result != null) {
+                result.open(parentLayout)
+                searchAdapter?.addRecent(result)
+            }
+            return
+        }
         val ctx = context ?: return
         when (item.id) {
             CAT_APPEARANCE -> presentFragment(AppearanceSettingsActivity())

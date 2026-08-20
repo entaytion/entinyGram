@@ -1196,4 +1196,7 @@ object InuConfig {
 
     @JvmField
     val DELETED_MARK_STYLE = DeletedMarkStyleItem()
+
+    @JvmField
+    val OPEN_BY_USER_ID = BoolItem("open_by_user_id", true)
 }
