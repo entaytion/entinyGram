@@ -183,7 +183,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -18913,6 +18913,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18906,6 +18906,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (currentNameBotVerificationId != 0) {
                  nameWidth -= dp(4 + 12 + 4);
              }
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
              if (adminString != null) {
                  nameWidth -= dp(8);
              }
-@@ -19002,6 +19006,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18995,6 +18999,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  if (currentNameBotVerificationId != 0) {
                      nameWidth += dp(4 + 12 + 4);
                  }
@@ -204,7 +204,7 @@ index 0000000..0000000 100644
                  nameWidth -= additionalWidth;
                  if (adminString != null) {
                      adminLayout = new StaticLayout(adminString, Theme.chat_adminPaint, adminWidth + dp(2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-@@ -22090,6 +22097,20 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22083,6 +22090,20 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              Theme.chat_namePaint.setAlpha(oldAlpha);
              canvas.restore();
  

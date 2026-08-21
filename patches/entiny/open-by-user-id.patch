@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -44863,6 +44863,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -44848,6 +44848,13 @@ public class ChatActivity extends BaseFragment implements
                      AndroidUtilities.addToClipboard(phone);
                      BulletinFactory.of(this).createCopyBulletin(LocaleController.getString(R.string.PhoneCopied)).show();
                  });

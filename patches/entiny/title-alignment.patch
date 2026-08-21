@@ -441,7 +441,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -22103,9 +22103,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22096,9 +22096,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentChat != null ? currentChat.id : 0L
              );
              if (inuBadge != null) {

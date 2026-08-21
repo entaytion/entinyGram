@@ -20,6 +20,7 @@ import org.telegram.ui.Components.UniversalAdapter
 class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
+    private var avatarCornerPreview: AvatarCornerPreviewCell? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryAppearance)
 
@@ -91,6 +92,23 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(UItem.asShadow(null))
+
+        // Avatar corners
+        if (avatarCornerPreview == null) {
+            avatarCornerPreview = AvatarCornerPreviewCell(this.context)
+        } else {
+            avatarCornerPreview?.updatePreview()
+        }
+        items.add(UItem.asCustom(avatarCornerPreview))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_UNIFIED_CORNER_RADIUS,
+                R.string.InuUnifiedCornerRadius,
+                R.string.InuUnifiedCornerRadiusInfo,
+                InuConfig.UNIFIED_AVATAR_RADIUS.value
+            )
+        )
         items.add(UItem.asShadow(null))
 
         // Classic UI / Non-Island UI (Flat section, NOT expandable!)
@@ -221,6 +239,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.HIDE_FADE_VIEW.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 softRebuild()
+            }
+
+            TOGGLE_UNIFIED_CORNER_RADIUS -> {
+                val new = InuConfig.UNIFIED_AVATAR_RADIUS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                avatarCornerPreview?.updatePreview()
             }
 
             BUTTON_ICON_REPLACEMENT -> RadioItemOptions.show(
@@ -367,6 +391,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
+        private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
@@ -404,6 +429,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
                 SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
+                SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),

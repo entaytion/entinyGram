@@ -7,18 +7,19 @@ Subject: feat(history): preserve message history and saved deletions
 - capture outgoing edits before stock state changes
 - render preserved deletions with the configured transparent style
 ---
- .../messenger/MessagesController.java         | 66 ++++++++++++++++++-
- .../telegram/messenger/MessagesStorage.java   | 21 ++++--
+ .../messenger/MessagesController.java         | 77 ++++++++++++++++++-
+ .../telegram/messenger/MessagesStorage.java   | 21 ++++-
  .../messenger/SendMessagesHelper.java         |  6 ++
- .../telegram/ui/Cells/ChatMessageCell.java    | 11 +++-
- .../java/org/telegram/ui/ChatActivity.java    | 15 +++++
- 5 files changed, 110 insertions(+), 9 deletions(-)
+ .../telegram/ui/Cells/ChatMessageCell.java    | 11 ++-
+ .../java/org/telegram/ui/ChatActivity.java    | 15 ++++
+ .../org/telegram/ui/MainTabsActivity.java     | 11 +--
+ 6 files changed, 125 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -8118,16 +8118,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8127,16 +8127,20 @@ public class MessagesController extends BaseController implements NotificationCe
              settings.business_bot_manage_url = "https://telegram.org/";
          }
          editor.apply();
@@ -41,7 +42,7 @@ index 0000000..0000000 100644
      }
  
      public void loadPeerSettings(TLRPC.User currentUser, TLRPC.Chat currentChat) {
-@@ -8309,7 +8313,19 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8318,7 +8322,19 @@ public class MessagesController extends BaseController implements NotificationCe
                  if (task != null) {
                      for (int a = 0, N = task.size(); a < N; a++) {
                          ArrayList<Integer> mids = task.valueAt(a);
@@ -62,7 +63,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (taskMedia != null) {
-@@ -9307,6 +9323,31 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9316,6 +9332,31 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
@@ -94,7 +95,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -9378,6 +9419,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9387,6 +9428,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, false, ChatActivity.MODE_QUICK_REPLIES, topicId);
              } else {
                  if (channelId == 0) {
@@ -102,7 +103,25 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -21046,6 +21088,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19486,6 +19528,17 @@ public class MessagesController extends BaseController implements NotificationCe
+                 ImageLoader.saveMessageThumbs(message);
+                 AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
+ 
++                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue()) {
++                    MessageObject inu_cachedMessage = dialogMessagesByIds.get(message.id);
++                    if (inu_cachedMessage != null && inu_cachedMessage.messageOwner != null) {
++                        boolean inu_textChanged = inu_cachedMessage.messageOwner.message != null && !inu_cachedMessage.messageOwner.message.equals(message.message);
++                        boolean inu_mediaChanged = inu_cachedMessage.messageOwner.media != null || message.media != null;
++                        if (inu_textChanged || inu_mediaChanged) {
++                            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, message.dialog_id, message.id, inu_cachedMessage.messageOwner.message != null ? inu_cachedMessage.messageOwner.message : "", inu_cachedMessage.messageOwner.date, inu_cachedMessage.messageOwner);
++                        }
++                    }
++                }
++
+                 boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
+                 MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
+                 getTranslateController().invalidateTranslation(obj);
+@@ -21055,6 +21108,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -113,7 +132,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21170,6 +21216,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21179,6 +21236,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -256,7 +275,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -26444,6 +26444,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26429,6 +26429,8 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
                  obj.deleted = true;
@@ -265,7 +284,7 @@ index 0000000..0000000 100644
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26452,6 +26454,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -26437,6 +26439,18 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
@@ -284,7 +303,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26559,6 +26573,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26544,6 +26558,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;
@@ -292,3 +311,32 @@ index 0000000..0000000 100644
                  }
              }
          }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -103,12 +103,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     private static final int INDEX_PROFILE = 4;
+ 
+     private static int indexToPosition(int index) {
+-        int position = index > 2 ? index - 1 : index;
+-        if (MainTabsHelper.isContactsTabHidden()) {
+-            if (position == POSITION_CONTACTS) return -1;
+-            if (position > POSITION_CONTACTS) position--;
+-        }
+-        return position;
++        return MainTabsHelper.indexToPosition(index);
+     }
+ 
+     private static final int ANIMATOR_ID_TABS_VISIBLE = 0;
+@@ -353,7 +348,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             tab.setMainTabsCompact(compact);
+         }
+ 
+-        for (int index = 0; index < tabs.length; index++) {
++        final int[] inu_visualOrder = MainTabsHelper.visualOrder();
++        for (int inu_oi = 0; inu_oi < inu_visualOrder.length; inu_oi++) {
++            final int index = inu_visualOrder[inu_oi];
+             final GlassTabView view = tabs[index];
+ 
+             final int position = indexToPosition(index);

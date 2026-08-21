@@ -73,10 +73,13 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; modular M3 drawer cards
 - 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
 - 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
+- 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator (`SHARP`, `ROUND`, or radius), live interactive dialog mock preview card with squareness-aware online dot cutout, and `Unified corner radius` toggle for regular and forum avatars - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 
-## appearance & general
+## inuGram additions
+
+### appearance & general
 
 - navigation drawer instead of bottom tabs, like in older Telegram versions
   - 🐶 an option to (ab)use predictive back to open the drawer
@@ -120,7 +123,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 crash report sheet: catches uncaught exceptions, offers to share the log on next launch, posts a tap-to-restart notification
 - keep search query after picking a result in peer selection screens
 
-## dialogs list / main page
+### dialogs list / main page
 
 - bottom tabs: 🐶 compact mode, hide contacts tab, hide bar entirely
 - double-tap account tab to switch to next account
@@ -139,7 +142,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 community display modes: regular / open on avatar long-tap / invisible
 - "select all" in the chat selection three-dot menu (selects all loaded chats in the current folder tab)
 
-## chats
+### chats
 
 - customizable sticker size - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 remove extra bottom padding under stickers
@@ -207,7 +210,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - hide messages from blocked users: with a spoiler or completely - *partially ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
   - also hide messages from a custom list of users/channels without blocking them (via settings picker or profile menu)
 
-## message input / formatting
+### message input / formatting
 
 - 🐶 customizable max input lines (and bumped default)
 - 🐶 voice recorder moved into attachments drawer
@@ -222,7 +225,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - gentler exponential zoom curve (like in normal camera apps)
   - toggle to disable dual-camera mode
 
-## photo viewer
+### photo viewer
 
 - "hide with spoiler" toggle
 - "copy photo" / "copy frame" menu actions
@@ -231,13 +234,13 @@ the sections below contain the broader feature set: inugram functionality, featu
 - always use the modern speed-control rewind on long-press
 - mark public (fallback) / personal profile photos next to the date
 
-## admin / event log
+### admin / event log
 
 - 🐶 inline diff for message edits
 - 🐶 "ban member" confirmation
 - 🐶 expanded message details
 
-## accounts
+### accounts
 
 - passkey login
 - qr login
@@ -257,12 +260,12 @@ the sections below contain the broader feature set: inugram functionality, featu
 - optional biometric lock on Archived Chats — ask once per app session or every time you open the archive
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
 
-## behavior
+### behavior
 
 - call confirmation
 - HD call audio on Bluetooth
 - 🐶 reaction confirmation in non-joined chats
-- 🐶 internal link confirmation (tg://, t.me/…)
+- 🐶 internal link confirmation (tg://, t.me/...)
 - support `tg://user?id=…` links (opens the profile; user must be known locally)
 - 🐶 disable swipe-down to minimize the in-app browser (only the minimize button collapses it)
 - predictive back mode selector
@@ -286,7 +289,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - remember last used settings in polls + reasonable defaults
 - strip tracking parameters from URLs (UTM, fbclid, etc.) on open and paste using AdGuard tracking rules
 
-## annoyances
+### annoyances
 
 - hide trending stickers/emoji in egs
 - 🐶 hide ai features
@@ -307,7 +310,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - disable quick share (long-tap share button → send to frequent contact without confirmation)
 - disable auto-play when opening the pinned music player on a profile
 
-## 🐶 bugfixes (vs stock)
+### 🐶 bugfixes (vs stock)
 
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
 - cancelling a video download kept restarting it after streaming the video in PhotoViewer (the player's loader thread swallowed its shutdown interrupt, survived the viewer close, and re-requested the file on every cancel; also a file-reference refresh landing mid-cancel resurrected the operation into an uncancellable zombie)

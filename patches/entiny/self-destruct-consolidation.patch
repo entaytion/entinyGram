@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33229,7 +33229,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33214,7 +33214,7 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
              File f = FileLoader.getInstance(currentAccount).getPathToMessage(messageObject.messageOwner, true, true);
              if (f != null && f.exists()) {
                  path = f.getPath();
-@@ -45570,7 +45570,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45555,7 +45555,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

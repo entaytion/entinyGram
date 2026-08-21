@@ -67,6 +67,11 @@
     <string name="InuMaterial3Avatars">Avatars</string>
     <string name="InuMaterial3NavigationAnimation">Navigation animation</string>
     <string name="InuMaterialProfileActions">Profile action buttons</string>
+    <string name="InuAvatarCorners">Avatar corners</string>
+    <string name="InuAvatarCornersLeft">Sharp</string>
+    <string name="InuAvatarCornersRight">Round</string>
+    <string name="InuUnifiedCornerRadius">Unified corner radius</string>
+    <string name="InuUnifiedCornerRadiusInfo">Apply the same corner radius to all avatars, including forum topics</string>
     <string name="InuMonetTheme">Monet theme</string>
     <string name="InuMonetThemeDisabled">Disabled</string>
     <string name="InuMonetThemeLight">Light</string>
@@ -123,6 +128,8 @@
     <string name="InuHideContactsTab">Hide contacts tab</string>
     <string name="InuCompactMode">Compact mode</string>
     <string name="InuCompactModeInfo">Hides titles and make the tabs smaller</string>
+    <string name="InuSwapContactsCallsTab">Swap contacts and calls tab</string>
+    <string name="InuSwapContactsCallsTabInfo">Moves the contacts tab next to the profile tab instead of next to chats</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>

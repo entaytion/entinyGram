@@ -46,6 +46,28 @@ object MainTabsHelper {
         get() = InuConfig.BOTTOM_TABS_HIDE_CONTACTS.value
 
     @JvmStatic
+    val isContactsAfterCalls: Boolean
+        get() = InuConfig.BOTTOM_TABS_SWAP_CONTACTS_CALLS.value
+
+    // index scheme matches MainTabsActivity's INDEX_* constants: 0=Chats,1=Contacts,2=Settings,3=Calls,4=Profile
+    @JvmStatic
+    fun indexToPosition(index: Int): Int {
+        if (index == 0) return 0
+        if (index == 4) return 3
+        val isContactsIndex = index == 1
+        if (isContactsIndex && isContactsTabHidden) return -1
+        val contactsPosition = if (isContactsAfterCalls) 2 else 1
+        val callsPosition = if (isContactsAfterCalls) 1 else 2
+        var position = if (isContactsIndex) contactsPosition else callsPosition
+        if (isContactsTabHidden && position > contactsPosition) position--
+        return position
+    }
+
+    @JvmStatic
+    fun visualOrder(): IntArray =
+        if (isContactsAfterCalls) intArrayOf(0, 2, 3, 1, 4) else intArrayOf(0, 1, 2, 3, 4)
+
+    @JvmStatic
     val mainTabsHeight: Int
         get() = if (isCompact) MAIN_TABS_HEIGHT_COMPACT else DialogsActivity.MAIN_TABS_HEIGHT
 

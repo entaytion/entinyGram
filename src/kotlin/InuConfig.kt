@@ -131,6 +131,12 @@ object InuConfig {
     val MATERIAL3_AVATARS = BoolItem("material3_avatars", false)
 
     @JvmField
+    val AVATAR_CORNERS = FloatItem("avatar_corners", 28.0f)
+
+    @JvmField
+    val UNIFIED_AVATAR_RADIUS = BoolItem("unified_avatar_radius", false)
+
+    @JvmField
     val MATERIAL_PROFILE_ACTIONS = BoolItem("material_profile_actions", false)
 
     @JvmField
@@ -255,6 +261,9 @@ object InuConfig {
 
     @JvmField
     val BOTTOM_TABS_COMPACT_MODE = BoolItem("bottom_tabs_hide_compact_mode", false)
+
+    @JvmField
+    val BOTTOM_TABS_SWAP_CONTACTS_CALLS = BoolItem("bottom_tabs_swap_contacts_calls", false)
 
     @JvmField
     val DIALOGS_FAB_MAIN_ACTION = IntItem("dialogs_fab_main_action", 1)

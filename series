@@ -280,7 +280,6 @@ entiny/settings-api-compat.patch
 entiny/edited-time-display.patch
 bugfix/profile-actionbar-lifecycle.patch
 entiny/hidden-star-gifts.patch
-entiny/message-persistence.patch
 bugfix/chat-activity-layout-crash.patch
 entiny/translator.patch
 entiny/local-premium.patch
@@ -300,3 +299,5 @@ entiny/self-destruct-consolidation.patch
 entiny/open-by-user-id.patch
 bugfix/reply-icon-span-width.patch
 entiny/archive-biometric-lock.patch
+entiny/message-persistence.patch
+entiny/avatar-corners.patch

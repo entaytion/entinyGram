@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -22541,6 +22541,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22481,6 +22481,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
  
          hasArchivedChats = dialogsByFolder.get(1, null) != null;
