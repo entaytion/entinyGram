@@ -172,6 +172,36 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
     }
 }
 
+class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
+    // Chats is always first and mandatory, handled separately by MainTabsActivity/MainTabsHelper — not a member here.
+    enum class Item(
+        override val key: String,
+        val index: Int,
+        override val labelRes: Int,
+        override val iconRes: Int,
+    ) : MenuOrderItem {
+        CONTACTS("contacts", 1, R.string.MainTabsContacts, R.drawable.msg_contacts),
+        SETTINGS("settings", 2, R.string.Settings, R.drawable.msg_settings),
+        CALLS("calls", 3, R.string.MainTabsCalls, R.drawable.msg_calls),
+        PROFILE("profile", 4, R.string.MainTabsProfile, R.drawable.msg_openprofile);
+
+        companion object {
+            private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
+            private val byIndex: Map<Int, Item> by lazy { entries.associateBy { it.index } }
+
+            fun forKey(k: String): Item? = byKey[k]
+            fun forIndex(i: Int): Item? = byIndex[i]
+        }
+    }
+
+    override fun itemByKey(key: String): Item? = Item.forKey(key)
+
+    companion object {
+        // matches stock's showCallsTab default (off)
+        private val OFF_BY_DEFAULT = setOf(Item.CALLS)
+    }
+}
+
 class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,

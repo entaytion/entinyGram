@@ -23,6 +23,7 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.MainTabsActivity
 import desu.inugram.helpers.icons.ScaledIconDrawable
+import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.security.PasscodeHelper
 
 
@@ -42,30 +43,62 @@ object MainTabsHelper {
         get() = InuConfig.BOTTOM_TABS_HIDE.value || InuConfig.NAVIGATION_DRAWER.value
 
     @JvmStatic
-    val isContactsTabHidden: Boolean
-        get() = InuConfig.BOTTOM_TABS_HIDE_CONTACTS.value
-
-    @JvmStatic
-    val isContactsAfterCalls: Boolean
-        get() = InuConfig.BOTTOM_TABS_SWAP_CONTACTS_CALLS.value
+    val showTitles: Boolean
+        get() = InuConfig.BOTTOM_TABS_SHOW_TITLES.value
 
     // index scheme matches MainTabsActivity's INDEX_* constants: 0=Chats,1=Contacts,2=Settings,3=Calls,4=Profile
+
+    // snapshotted once per process: MainTabsActivity builds its tab bar/ViewPager positions once at
+    // creation and never rebuilds them live, so re-reading InuConfig on every call would let a mid-session
+    // toggle (from MainTabsCustomizeActivity, before the user actually restarts) desync the ViewPager's
+    // position count from the already-built tab bar and crash in ViewPagerFixed.scrollToPosition with a
+    // null fragment. Changes to BOTTOM_TABS_ORDER only take effect on the next process restart anyway
+    // (see MainTabsCustomizeActivity.showRestartBulletin), so a process-lifetime cache is exactly correct.
+    private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {
+        InuConfig.BOTTOM_TABS_ORDER.value.filter { it.enabled }.map { it.item }
+    }
+
+    /** ordered list of enabled non-Chats tabs from [InuConfig.BOTTOM_TABS_ORDER]. Chats is always first and implicit. */
     @JvmStatic
-    fun indexToPosition(index: Int): Int {
-        if (index == 0) return 0
-        if (index == 4) return 3
-        val isContactsIndex = index == 1
-        if (isContactsIndex && isContactsTabHidden) return -1
-        val contactsPosition = if (isContactsAfterCalls) 2 else 1
-        val callsPosition = if (isContactsAfterCalls) 1 else 2
-        var position = if (isContactsIndex) contactsPosition else callsPosition
-        if (isContactsTabHidden && position > contactsPosition) position--
-        return position
+    fun enabledOrder(): List<MainTabsMenuConfig.Item> = cachedEnabledOrder
+
+    @JvmStatic
+    fun setEnabled(index: Int, enabled: Boolean) {
+        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return // Chats can't be disabled
+        val entries = InuConfig.BOTTOM_TABS_ORDER.value
+        InuConfig.BOTTOM_TABS_ORDER.value = entries.map { if (it.item == type) it.copy(enabled = enabled) else it }
     }
 
     @JvmStatic
-    fun visualOrder(): IntArray =
-        if (isContactsAfterCalls) intArrayOf(0, 2, 3, 1, 4) else intArrayOf(0, 1, 2, 3, 4)
+    fun isEnabled(index: Int): Boolean {
+        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return true // Chats (index 0) is always enabled
+        return enabledOrder().contains(type)
+    }
+
+    @JvmStatic
+    fun indexToPosition(index: Int): Int {
+        if (index == 0) return 0
+        val type = MainTabsMenuConfig.Item.forIndex(index) ?: return -1
+        val pos = enabledOrder().indexOf(type)
+        return if (pos < 0) -1 else pos + 1
+    }
+
+    /** reverse of [indexToPosition]: tab type index visible at ViewPager [position], or -1 */
+    @JvmStatic
+    fun indexAtPosition(position: Int): Int {
+        if (position == 0) return 0
+        val order = enabledOrder()
+        val i = position - 1
+        return if (i in order.indices) order[i].index else -1
+    }
+
+    /** view-add order for [tabs] array: enabled types first (in user order), disabled ones appended (hidden but still instantiated) */
+    @JvmStatic
+    fun visualOrder(): IntArray {
+        val enabled = enabledOrder()
+        val disabled = MainTabsMenuConfig.Item.entries.filterNot { it in enabled }
+        return (listOf(0) + enabled.map { it.index } + disabled.map { it.index }).toIntArray()
+    }
 
     @JvmStatic
     val mainTabsHeight: Int
@@ -81,11 +114,7 @@ object MainTabsHelper {
 
     @JvmStatic
     val fragmentsCount: Int
-        get() = if (isContactsTabHidden) 3 else 4
-
-    @JvmStatic
-    fun positionOffset(stockPosition: Int): Int =
-        if (isContactsTabHidden && stockPosition > 1) stockPosition - 1 else stockPosition
+        get() = 1 + enabledOrder().size
 
     @JvmStatic
     val tabWidth: Int

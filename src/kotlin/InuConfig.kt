@@ -7,6 +7,7 @@ import desu.inugram.helpers.chat.DoubleTapActionHelper
 import desu.inugram.helpers.chat.PinnedReactionsHelper
 import desu.inugram.helpers.font.FontConfig
 import desu.inugram.helpers.menu.ChatMenuConfig
+import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.ui.FormattingPopupConfig
 
@@ -257,13 +258,14 @@ object InuConfig {
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
     @JvmField
-    val BOTTOM_TABS_HIDE_CONTACTS = BoolItem("bottom_tabs_hide_contacts", false)
-
-    @JvmField
     val BOTTOM_TABS_COMPACT_MODE = BoolItem("bottom_tabs_hide_compact_mode", false)
 
+    /** order + enabled state for non-Chats bottom tabs; Chats is always first and mandatory */
     @JvmField
-    val BOTTOM_TABS_SWAP_CONTACTS_CALLS = BoolItem("bottom_tabs_swap_contacts_calls", false)
+    val BOTTOM_TABS_ORDER = MainTabsMenuConfig("bottom_tabs_order")
+
+    @JvmField
+    val BOTTOM_TABS_SHOW_TITLES = BoolItem("bottom_tabs_show_titles", true)
 
     @JvmField
     val DIALOGS_FAB_MAIN_ACTION = IntItem("dialogs_fab_main_action", 1)

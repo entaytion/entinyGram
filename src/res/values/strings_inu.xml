@@ -125,11 +125,13 @@
     <string name="InuBottomTabs">Bottom tabs</string>
     <string name="InuBottomTabsHide">Hide bottom tabs</string>
     <string name="InuBottomTabsHideInfo">Items are moved into the hamburger menu of the main screen</string>
-    <string name="InuHideContactsTab">Hide contacts tab</string>
     <string name="InuCompactMode">Compact mode</string>
     <string name="InuCompactModeInfo">Hides titles and make the tabs smaller</string>
-    <string name="InuSwapContactsCallsTab">Swap contacts and calls tab</string>
-    <string name="InuSwapContactsCallsTabInfo">Moves the contacts tab next to the profile tab instead of next to chats</string>
+    <string name="InuShowTabTitles">Show tab titles</string>
+    <string name="InuCustomizeBottomTabs">Customize bottom tabs</string>
+    <string name="InuMainTabsCustomizeInfo">Reorder or hide tabs in the bottom bar. Drag the handle to rearrange, toggle the switch to hide. The Chats tab is always first and can\'t be hidden. Requires a restart.</string>
+    <string name="InuMainTabsItems">Tabs</string>
+    <string name="InuMainTabsCustomizeReset">Reset to default</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>

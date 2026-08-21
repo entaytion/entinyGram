@@ -1,0 +1,251 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 22 Aug 2026 01:30:15 +0300
+Subject: Add customizable bottom tabs: independent Contacts/Settings/Calls/Profile reorder and show/hide
+
+- Settings and Calls no longer share one ViewPager slot via stock showCallsTab swap; each is its own independent, always-instantiated tab like Contacts/Profile
+- new MainTabsMenuConfig (MenuOrderConfig-based, same infra as ChatMenuOrderActivity) drives order + enabled state, exposed via a new "Customize bottom tabs" screen (drag to reorder, tap to show/hide); Chats stays first and mandatory
+- Calls defaults off to match stock showCallsTab default; rewired the CallLogActivity quick-toggle menu/hint and the DialogsActivity overflow Settings fallback onto the new config instead of the orphaned stock showCallsTab/callTabsVisibleToggled path
+- added a standalone "Show tab titles" toggle (GlassTabView.setMainTabsCompact already supported hiding just the title, previously only reachable via compact mode)
+- MainTabsHelper.enabledOrder() is snapshotted for the process lifetime: MainTabsActivity builds its ViewPager positions once at creation, so a live re-read after a mid-session toggle (before the user restarts) desynced the tab bar from the ViewPager position count and crashed in ViewPagerFixed.scrollToPosition with a null fragment
+---
+ .../java/org/telegram/ui/CallLogActivity.java | 12 ++--
+ .../java/org/telegram/ui/DialogsActivity.java |  2 +-
+ .../org/telegram/ui/MainTabsActivity.java     | 72 ++++---------------
+ 3 files changed, 21 insertions(+), 65 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CallLogActivity.java
+@@ -958,7 +958,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
+ 
+ 		if (hasActiveCalls || hasCalls) {
+ 			items.add(UItem.asButton(ID_CREATE_CALL, R.drawable.menu_call_create, getString(R.string.GroupCallCreate2)).accent());
+-			if (!MainTabsHelper.isHidden() && !getUserConfig().showCallsTab) {
++			if (!MainTabsHelper.isHidden() && !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CALLS.getIndex())) {
+ 				items.add(UItem.asButton(ID_SHOW_IN_MAIN_TABS, R.drawable.menu_add_tab_24, getString(R.string.GroupCallShowInMainTabs)).accent());
+ 			}
+ 			items.add(UItem.asShadow(null));
+@@ -1118,7 +1118,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
+ 	public void onBecomeFullyVisible() {
+ 		super.onBecomeFullyVisible();
+ 
+-		if (!hideCallTabsHintWasShown && getUserConfig().showCallsTab && !MainTabsHelper.isHidden() && MessagesController.getGlobalMainSettings().getInt("hidecallshint", 0) < 2) {
++		if (!hideCallTabsHintWasShown && MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CALLS.getIndex()) && !MainTabsHelper.isHidden() && MessagesController.getGlobalMainSettings().getInt("hidecallshint", 0) < 2) {
+ 			hideCallTabsHintView = new HintView2(getContext(), HintView2.DIRECTION_TOP);
+ 			hideCallTabsHintView.setDuration(3000);
+ 			hideCallTabsHintView.setJoint(1, -(12 + 13));
+@@ -2024,7 +2024,7 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
+ 		ItemOptions io = ItemOptions.makeOptions(this, otherItem);
+ 		// io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));
+ 		io.setDimAlpha(0x08);
+-		if (!MainTabsHelper.isHidden() && getUserConfig().showCallsTab) {
++		if (!MainTabsHelper.isHidden() && MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CALLS.getIndex())) {
+ 			io.add(R.drawable.msg_archive_hide, getString(R.string.HideCallTab), () -> {
+ 				setCallsTabVisible(false);
+ 				final BulletinFactory factory = hasMainTabs ? BulletinFactory.global() : BulletinFactory.of(CallLogActivity.this);
+@@ -2040,13 +2040,13 @@ public class CallLogActivity extends BaseFragment implements NotificationCenter.
+ 	}
+ 
+ 	private void setCallsTabVisible(boolean visible) {
+-		if (visible == getUserConfig().showCallsTab) {
++		final int index = desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CALLS.getIndex();
++		if (visible == MainTabsHelper.isEnabled(index)) {
+ 			return;
+ 		}
+ 
+-		getUserConfig().setShowCallsTab(visible);
++		MainTabsHelper.setEnabled(index, visible);
+ 		listView.adapter.update(true);
+-		NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.callTabsVisibleToggled);
+ 	}
+ 
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14007,7 +14007,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+             }
+         }
+-        if (getUserConfig().showCallsTab) {
++        if (!MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.SETTINGS.getIndex())) {
+             io.add(R.drawable.msg_settings_old, getString(R.string.Settings), () -> {
+                 presentFragment(new SettingsActivity());
+             });
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -92,9 +92,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+     public static final int TABS_COUNT = 4;
+     private static final int POSITION_CHATS = 0;
+-    private static final int POSITION_CONTACTS = 1;
+-    private static final int POSITION_CALLS_OR_SETTINGS = 2;
+-    private static final int POSITION_PROFILE = 3;
+ 
+     private static final int INDEX_CHATS = 0;
+     private static final int INDEX_CONTACTS = 1;
+@@ -112,7 +109,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+ 
+     private IUpdateLayout updateLayout;
+-    private boolean dropCallsFragmentAfterPageScroll;
+ 
+     private UpdateLayoutWrapper updateLayoutWrapper;
+     private FrameLayout tabsViewWrapper;
+@@ -319,7 +315,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+         final boolean compact = MainTabsHelper.isCompact();
+         final int mainTabsMargin = MainTabsHelper.getMainTabsMargin();
+-        final boolean hideContacts = MainTabsHelper.isContactsTabHidden();
+         final int tabsViewWidth = MainTabsHelper.getTabsViewWidth();
+ 
+         tabsView = new MainTabsLayout(context, resourceProvider);
+@@ -345,7 +340,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView.addTabToIgnoreClick(tabs[INDEX_PROFILE]);
+         tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
+         for (GlassTabView tab : tabs) {
+-            tab.setMainTabsCompact(compact);
++            tab.setMainTabsCompact(compact || !MainTabsHelper.getShowTitles());
+         }
+ 
+         final int[] inu_visualOrder = MainTabsHelper.visualOrder();
+@@ -376,10 +371,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             });
+ 
+             tabsView.addView(tabs[index]);
+-            tabsView.setViewVisible(view, true, false);
++            tabsView.setViewVisible(view, MainTabsHelper.isEnabled(index), false);
+         }
+-        checkUi_callTabVisible(getUserConfig().showCallsTab, false);
+-        tabsView.setViewVisible(tabs[INDEX_CONTACTS], !hideContacts, false);
+ 
+         selectTab(viewPager.getCurrentPosition(), false);
+ 
+@@ -470,19 +463,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (getContext() == null || getParentActivity() == null) return false;
+         final ItemOptions o = ItemOptions.makeOptions(this, anchor);
+         o.add(R.drawable.menu_call_create, getString(R.string.GroupCallCreate2), () -> CallLogActivity.openCreateCall(this));
+-        if (getUserConfig().showCallsTab) {
+-            o.add(R.drawable.msg_archive_hide, getString(R.string.HideCallTab), () -> {
+-                getUserConfig().setShowCallsTab(false);
+-                checkUi_callTabVisible(false, true);
+-                NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.callTabsVisibleToggled);
+-            });
+-        } else {
+-            o.add(R.drawable.menu_add_tab_24, getString(R.string.GroupCallShowInMainTabs), () -> {
+-                getUserConfig().setShowCallsTab(true);
+-                checkUi_callTabVisible(true, true);
+-                NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.callTabsVisibleToggled);
+-            });
+-        }
+         o.setBlur(true);
+         o.translate(0, -dp(4));
+         final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
+@@ -758,12 +738,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+         if (viewPager != null) {
+             final int currentPosition = viewPager.getCurrentPosition();
+-            final int callsOrSettings = MainTabsHelper.positionOffset(POSITION_CALLS_OR_SETTINGS);
+-            final int profile = MainTabsHelper.positionOffset(POSITION_PROFILE);
+-            if (currentPosition != callsOrSettings && dropCallsFragmentAfterPageScroll) {
+-                dropFragmentAtPosition(callsOrSettings);
+-                dropCallsFragmentAfterPageScroll = false;
+-            }
++            final int profile = MainTabsHelper.indexToPosition(INDEX_PROFILE);
+             if (currentPosition != profile) {
+                 dropFragmentAtPosition(profile);
+             }
+@@ -834,29 +809,29 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+     @Override
+     protected BaseFragment createBaseFragmentAt(int position) {
+-        if (!MainTabsHelper.isContactsTabHidden() && position == POSITION_CONTACTS) {
++        final int index = MainTabsHelper.indexAtPosition(position);
++        if (index == INDEX_CONTACTS) {
+             Bundle args = new Bundle();
+             args.putBoolean("needPhonebook", true);
+             args.putBoolean("needFinishFragment", false);
+             args.putBoolean("hasMainTabs", true);
+             return new ContactsActivity(args);
+-        } else if (position == MainTabsHelper.positionOffset(POSITION_CALLS_OR_SETTINGS)) {
+-            if (getUserConfig().showCallsTab) {
+-                Bundle args = new Bundle();
+-                args.putBoolean("needFinishFragment", false);
+-                args.putBoolean("hasMainTabs", true);
+-                return new CallLogActivity(args);
+-            }
++        } else if (index == INDEX_SETTINGS) {
+             Bundle args = new Bundle();
+             args.putBoolean("hasMainTabs", true);
+             return new SettingsActivity(args);
+-        } else if (position == POSITION_CHATS) {
++        } else if (index == INDEX_CALLS) {
++            Bundle args = new Bundle();
++            args.putBoolean("needFinishFragment", false);
++            args.putBoolean("hasMainTabs", true);
++            return new CallLogActivity(args);
++        } else if (index == INDEX_CHATS) {
+             Bundle args = new Bundle();
+             args.putBoolean("hasMainTabs", true);
+             dialogsActivity = new DialogsActivity(args);
+             dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
+             return dialogsActivity;
+-        } else if (position == MainTabsHelper.positionOffset(POSITION_PROFILE)) {
++        } else if (index == INDEX_PROFILE) {
+             Bundle args = new Bundle();
+             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
+             args.putBoolean("my_profile", true);
+@@ -1030,17 +1005,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             }
+         } else if (id == NotificationCenter.needSetDayNightTheme) {
+             clearAllHiddenFragments();
+-        } else if (id == NotificationCenter.callTabsVisibleToggled) {
+-            final boolean callTabsVisible = getUserConfig().showCallsTab;
+-            checkUi_callTabVisible(callTabsVisible, true);
+-            final int callsOrSettings = MainTabsHelper.positionOffset(POSITION_CALLS_OR_SETTINGS);
+-            if (viewPager != null && viewPager.getCurrentPosition() == callsOrSettings) {
+-                viewPager.scrollToPosition(POSITION_CHATS);
+-                selectTab(POSITION_CHATS, true);
+-                dropCallsFragmentAfterPageScroll = true;
+-            } else {
+-                dropFragmentAtPosition(callsOrSettings);
+-            }
+         } else if (id == NotificationCenter.mainUserInfoChanged) {
+             if (tabs != null && tabs[INDEX_PROFILE] != null) {
+                 tabs[INDEX_PROFILE].updateUserAvatar(currentAccount);
+@@ -1062,7 +1026,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             .add(NotificationCenter.fileLoadFailed)
+             .add(NotificationCenter.notificationsCountUpdated)
+             .add(NotificationCenter.updateInterfaces)
+-            .add(NotificationCenter.callTabsVisibleToggled)
+             .add(NotificationCenter.mainUserInfoChanged)
+             .add(NotificationCenter.contactsPermissionBadgeCheck);
+ 
+@@ -1108,7 +1071,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         }
+ 
+         final float animatedPosition = viewPager.getPositionAnimated();
+-        final float isProfile = 1f - MathUtils.clamp(Math.abs(MainTabsHelper.positionOffset(POSITION_PROFILE) - animatedPosition), 0, 1);
++        final float isProfile = 1f - MathUtils.clamp(Math.abs(MainTabsHelper.indexToPosition(INDEX_PROFILE) - animatedPosition), 0, 1);
+         final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
+         float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
+         if (tabletLayout) {
+@@ -1141,13 +1104,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
+     }
+ 
+-    private void checkUi_callTabVisible(boolean callTabsVisible, boolean animated) {
+-        if (tabsView != null) {
+-            tabsView.setViewVisible(tabs[INDEX_SETTINGS], !callTabsVisible, animated);
+-            tabsView.setViewVisible(tabs[INDEX_CALLS], callTabsVisible, animated);
+-        }
+-    }
+-
+     @Override
+     public ArrayList<ThemeDescription> getThemeDescriptions() {
+         ArrayList<ThemeDescription> themeDescriptions = super.getThemeDescriptions();

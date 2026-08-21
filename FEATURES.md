@@ -74,6 +74,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
 - 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator (`SHARP`, `ROUND`, or radius), live interactive dialog mock preview card with squareness-aware online dot cutout, and `Unified corner radius` toggle for regular and forum avatars - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
+- 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, and Profile tabs in MainTabsActivity, with separate tab title visibility toggle
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 

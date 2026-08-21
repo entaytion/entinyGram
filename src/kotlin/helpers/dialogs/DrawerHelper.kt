@@ -693,7 +693,7 @@ object DrawerHelper {
             }
         }
 
-        if (bottomTabsHidden || MainTabsHelper.isContactsTabHidden) {
+        if (bottomTabsHidden || !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CONTACTS.index)) {
             io.add(R.drawable.msg_contacts, getString(R.string.Contacts)) {
                 val args = Bundle()
                 args.putBoolean("needPhonebook", true)
