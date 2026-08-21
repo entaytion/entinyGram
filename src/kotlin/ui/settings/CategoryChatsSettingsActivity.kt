@@ -68,34 +68,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisablePullToNext),
             ).setChecked(InuConfig.DISABLE_PULL_TO_NEXT.value)
         )
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCenteringSection)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CENTER_TITLE_CHATS,
-                addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleChats)),
-            ).setChecked(InuConfig.CENTER_TITLE_CHATS.value)
-        )
-        if (InuConfig.CENTER_TITLE_CHATS.value) {
-            items.add(
-                UItem.asCheck(
-                    TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
-                    addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleRightAvatar)),
-                ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
-            )
-            items.add(
-                UItem.asCheck(
-                    TOGGLE_CENTER_TITLE_ADAPTIVE_SIZE,
-                    addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleAdaptiveSize)),
-                ).setChecked(InuConfig.CENTER_TITLE_ADAPTIVE_SIZE.value)
-            )
-        }
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CHAT_TITLE_MARQUEE,
-                addExperimentalSpan(LocaleController.getString(R.string.InuChatTitleMarquee)),
-            ).setChecked(InuConfig.CHAT_TITLE_MARQUEE.value)
-        )
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_CHAT_ALWAYS_SHOW_DOWN,
@@ -133,6 +105,29 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 R.string.InuShowMutualContactInChatsInfo,
                 InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
             )
+        )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCenteringSection)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CENTER_TITLE_CHATS,
+                addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleChats)),
+            ).setChecked(InuConfig.CENTER_TITLE_CHATS.value)
+        )
+        if (InuConfig.CENTER_TITLE_CHATS.value) {
+            items.add(
+                UItem.asCheck(
+                    TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
+                    addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleRightAvatar)),
+                ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
+            )
+        }
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CHAT_TITLE_MARQUEE,
+                addExperimentalSpan(LocaleController.getString(R.string.InuChatTitleMarquee)),
+            ).setChecked(InuConfig.CHAT_TITLE_MARQUEE.value)
         )
         items.add(UItem.asShadow(null))
 
@@ -331,7 +326,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
             TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
-            TOGGLE_CENTER_TITLE_ADAPTIVE_SIZE -> (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_ADAPTIVE_SIZE.toggle()
             TOGGLE_CHAT_TITLE_MARQUEE -> (view as? TextCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
             TOGGLE_FLOATING_AVATAR -> (view as? TextCheckCell)?.isChecked = InuConfig.FLOATING_AVATAR.toggle()
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
@@ -393,7 +387,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
-        private val TOGGLE_CENTER_TITLE_ADAPTIVE_SIZE = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val TOGGLE_FLOATING_AVATAR = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
@@ -434,7 +427,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
-                SearchRegistry.Entry("center-title-adaptive-size", R.string.InuCenterTitleAdaptiveSize, TOGGLE_CENTER_TITLE_ADAPTIVE_SIZE),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("floating-avatar", R.string.InuFloatingAvatar, TOGGLE_FLOATING_AVATAR),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),

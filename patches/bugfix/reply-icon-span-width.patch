@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 21 Aug 2026 14:35:53 +0300
+Subject: Fix reply-header icon span reserving less width than it draws
+
+---
+ .../src/main/java/org/telegram/messenger/MessageObject.java  | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -12562,7 +12562,10 @@ public class MessageObject {
+         if (userSpan[a] == null) {
+             userSpan[a] = new SpannableStringBuilder("u");
+             ColoredImageSpan span = new ColoredImageSpan(R.drawable.mini_reply_user);
+-            span.spaceScaleX = .9f;
++            // spaceScaleX only shrinks the width RESERVED in the text layout (ColoredImageSpan.getSize());
++            // draw() never applies it (only scaleX/scaleY do, and those are left at 1f here), so the icon
++            // always rendered at full size while 10% less room was reserved for it — overlapping whatever
++            // text followed. Reserve the width that's actually drawn instead of under-reserving it.
+             if (a == 0) {
+                 span.translate(0, AndroidUtilities.dp(1));
+             }

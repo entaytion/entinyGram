@@ -174,12 +174,20 @@ object GhostHelper {
                     false
                 }
             }
-            is TLRPC.TL_messages_readHistory,
+            is TLRPC.TL_messages_readHistory -> {
+                val suppress = shouldSuppress(dialogId, SuppressKind.READ)
+                if (suppress) markDialogReadLocallyOnly(account, dialogId, request.max_id)
+                suppress
+            }
+            is TLRPC.TL_channels_readHistory -> {
+                val suppress = shouldSuppress(dialogId, SuppressKind.READ)
+                if (suppress) markDialogReadLocallyOnly(account, dialogId, request.max_id)
+                suppress
+            }
             is TLRPC.TL_messages_readEncryptedHistory,
             is TLRPC.TL_messages_readDiscussion,
             is TLRPC.TL_messages_readSavedHistory,
-            is TLRPC.TL_messages_markDialogUnread,
-            is TLRPC.TL_channels_readHistory -> {
+            is TLRPC.TL_messages_markDialogUnread -> {
                 shouldSuppress(dialogId, SuppressKind.READ)
             }
             is TLRPC.TL_messages_readMessageContents,
@@ -285,6 +293,33 @@ object GhostHelper {
         } catch (_: Exception) {
             temporarilyAllowedDialogs.remove(dialogId)
         }
+    }
+
+    /**
+     * Clears the local unread counter/badge for a dialog without sending a read receipt
+     * to the server — used when Ghost Mode swallows the readHistory request outright, so
+     * opening/exiting a chat still updates our own UI even though the peer isn't notified.
+     */
+    private fun markDialogReadLocallyOnly(account: Int, dialogId: Long, maxId: Int) {
+        val controller = MessagesController.getInstance(account) ?: return
+        val effectiveMaxId = if (maxId > 0) maxId else {
+            controller.dialogs_dict.get(dialogId)?.top_message ?: 0
+        }
+        if (effectiveMaxId <= 0) return
+        AndroidUtilities.runOnUIThread {
+            controller.markDialogAsRead(dialogId, effectiveMaxId, 0, 0, false, 0, 0, true, 0)
+        }
+    }
+
+    /**
+     * Whether stock's "reset ignoreSetOnline on pause" (LaunchActivity.onPause) should be
+     * skipped — Ghost Mode's hidden/delayed presence relies on ignoreSetOnline staying true
+     * across background/foreground cycles, otherwise every resume silently re-enables the
+     * stock auto-online logic and undoes the "always hidden" setting.
+     */
+    @JvmStatic
+    fun shouldKeepIgnoringOnline(): Boolean {
+        return isGhostActive() && InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
     }
 
     /**

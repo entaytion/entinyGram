@@ -241,14 +241,12 @@ object TranslateHelper {
         }
 
         val toLang = TranslateAlert2.getToLanguage()
-        val toLangDefault = LocaleController.getInstance().currentLocale.language
         val respectDnt = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
 
         fun shouldShowTranslateRow(fromLang: String): Boolean {
             if (InuConfig.FORCE_TRANSLATE.value) return true
             if (respectDnt && RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
-            // hide when the message is already in the target language (or the app language)
-            return fromLang != toLang && fromLang != toLangDefault || fromLang == TranslateController.UNKNOWN_LANGUAGE
+            return fromLang != toLang || fromLang == TranslateController.UNKNOWN_LANGUAGE
         }
 
         val originalLanguage = selected.messageOwner?.originalLanguage

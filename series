@@ -289,7 +289,6 @@ entiny/content-protection-bypass.patch
 entiny/allow-screenshots.patch
 entiny/developer-badges.patch
 entiny/title-alignment.patch
-entiny/adaptive-title-font-size.patch
 entiny/name-emoji-picker.patch
 entiny/unlimited-fav-stickers.patch
 entiny/unlimited-pinned-chats.patch
@@ -299,3 +298,5 @@ entiny/suppress-screenshot-notification.patch
 entiny/allow-screenshots-stories-fix.patch
 entiny/self-destruct-consolidation.patch
 entiny/open-by-user-id.patch
+bugfix/reply-icon-span-width.patch
+entiny/archive-biometric-lock.patch

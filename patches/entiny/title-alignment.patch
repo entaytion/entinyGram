@@ -7,17 +7,17 @@ Subject: feat(chat): centered actionbar titles with right-side avatar and adapti
 - move the chat avatar to the right edge so the centered title is truly centered
 - shrink the centered chat title font to fit long names (iOS-style), ellipsizing only below the minimum size
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 113 +++++++---
- .../telegram/ui/ActionBar/SimpleTextView.java | 101 +++++----
- .../telegram/ui/Cells/ChatMessageCell.java    |   2 +-
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 110 +++++++++----
+ .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++-------
+ .../telegram/ui/Cells/ChatMessageCell.java    |  13 +-
  .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
  .../telegram/ui/Cells/ManageChatUserCell.java |   8 +-
  .../telegram/ui/Cells/ProfileSearchCell.java  |   2 +-
  .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
- .../java/org/telegram/ui/ChatActivity.java    |  29 ++-
- .../ui/Components/ChatAvatarContainer.java    | 203 +++++++++++++++---
+ .../java/org/telegram/ui/ChatActivity.java    |   2 +-
+ .../ui/Components/ChatAvatarContainer.java    | 147 ++++++++++++++----
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
- 10 files changed, 371 insertions(+), 115 deletions(-)
+ 10 files changed, 296 insertions(+), 127 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -166,13 +166,14 @@ index 0000000..0000000 100644
  
          final int width = Math.min(getMeasuredWidth() - dp(6 + 46 + 6 + 6 + 46 + 6), visualWidth);
          if (animated) {
-@@ -2152,44 +2184,62 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2152,44 +2184,47 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
 +    public int inu_getMenuWidth() {
 +        return hasForcedMenuWidth ? forcedMenuWidth : (int) animatorMenuItemsWidth.getFactor();
 +    }
++
 +    public void updateGlassBounds(int width, int height) {
 +        final int p = dp(6);
 +        final int s = dp(46);
@@ -183,21 +184,12 @@ index 0000000..0000000 100644
 +        final int b = t + s + p * 2;
 +
 +        final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
-+        final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
-+        final int leftDefault = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
++        final int rightOffset = menuWidthWithPadding;
++        final int leftDefault = hasBackButton ? s + p : 0;
 +        final int rightDefault = width - rightOffset;
-+        final int widthDefault = rightDefault - leftDefault;
-+        final int left, right;
-+        if (chatAvatarContainer != null) {
-+            final int w = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, getActionModeFactor()));
-+            left = (rightDefault + leftDefault - w) / 2;
-+            right = left + w;
-+        } else {
-+            left = leftDefault;
-+            right = rightDefault;
-+        }
-+        inu_glassTitleLeft = left;
-+        inu_glassTitleRight = right;
++
++        inu_glassTitleLeft = leftDefault;
++        inu_glassTitleRight = rightDefault;
 +        inu_glassTop = t;
 +        inu_glassBottom = b;
 +    }
@@ -226,20 +218,19 @@ index 0000000..0000000 100644
 -            final int rightDefault = getWidth() - rightOffset;
 -            final int widthDefault = rightDefault - leftDefault;
 -            final int left, right;
-             if (chatAvatarContainer != null) {
+-            if (chatAvatarContainer != null) {
 -                final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
 -                left = (rightDefault + leftDefault - width) / 2;
 -                right = left + width;
 -                chatAvatarContainer.setTranslationX(left
-+                chatAvatarContainer.setTranslationX(inu_glassTitleLeft
-                     - ((MarginLayoutParams)(chatAvatarContainer.getLayoutParams())).leftMargin
-                     - chatAvatarContainer.getLeftPadding()
-                     + p + dp(3));
+-                    - ((MarginLayoutParams)(chatAvatarContainer.getLayoutParams())).leftMargin
+-                    - chatAvatarContainer.getLeftPadding()
+-                    + p + dp(3));
 -            } else {
 -                left = leftDefault;
 -                right = rightDefault;
-             }
- 
+-            }
+-
              if (inu_nonIsland) {
                  glassDrawable.setBounds(0, 0, getWidth(), getHeight());
              } else {
@@ -248,7 +239,7 @@ index 0000000..0000000 100644
              }
              glassDrawable.draw(canvas);
          }
-@@ -2202,6 +2252,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2202,6 +2237,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              glassDrawableMenu.setAlpha(hasForcedMenuWidth ? 255 : (int) (255 * animatorHasMenuItems.getFloatValue()));
              glassDrawableMenu.draw(canvas);
          }
@@ -286,6 +277,37 @@ index 0000000..0000000 100644
      private float touchDownX, touchDownY;
  
      private AnimatedEmojiSpan.EmojiGroupedSpans emojiStack;
+@@ -339,7 +343,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+             }
+ 
+             if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
+-                offsetX = Math.max(0, (width - textWidth) / 2) - (int) layout.getLineLeft(0);
++                int totalContentWidth = textWidth + getSideDrawablesSize();
++                offsetX = Math.max(0, (width - totalContentWidth) / 2) - (int) layout.getLineLeft(0);
+             } else if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT) {
+                 if (firstLineLayout != null) {
+                     offsetX = -(int) firstLineLayout.getLineLeft(0);
+@@ -1180,16 +1185,15 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     }
+ 
+     public float getExactWidth() {
+-        return getPaint().measureText(getText().toString())
++        CharSequence t = getText();
++        return (t != null ? getPaint().measureText(t.toString()) : 0f)
+                 + getSideDrawablesSize()
+                 - (leftDrawable != null || rightDrawable != null || rightDrawable2 != null ? drawablePadding : 0);
+     }
+ 
+     public float getExactWidthIncludeDrawables() {
+-        return getExactWidth()
+-            + (leftDrawable != null ? leftDrawable.getIntrinsicWidth() : 0)
+-            + (rightDrawable != null ? rightDrawable.getIntrinsicWidth() : 0)
+-            + (rightDrawable2 != null ? rightDrawable2.getIntrinsicWidth() : 0);
++        CharSequence t = getText();
++        return (t != null ? getPaint().measureText(t.toString()) : 0f) + getSideDrawablesSize();
+     }
+ 
+     private void drawLayout(Canvas canvas) {
 @@ -1341,14 +1345,6 @@ public class SimpleTextView extends View implements Drawable.Callback {
          return rightDrawableOutside;
      }
@@ -419,15 +441,26 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -22101,7 +22101,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22103,9 +22103,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 currentChat != null ? currentChat.id : 0L
              );
              if (inuBadge != null) {
-                 // Shift past the premium/emoji status icon drawn right after the name.
+-                // Shift past the premium/emoji status icon drawn right after the name.
 -                int statusWidth = (currentNameStatus != null && currentNameStatus.getIntrinsicWidth() > 0) ? currentNameStatus.getIntrinsicWidth() + dp(4) : (currentNameStatus != null ? dp(20) : 0);
-+                int statusWidth = (currentNameStatusDrawable != null && !currentNameStatusDrawable.isEmpty()) ? currentNameStatusDrawable.getIntrinsicWidth() + dp(4) : 0;
-                 int badgeX = (int) (nx + nameLayout.getLineRight(0) + dp(4) + statusWidth);
+-                int badgeX = (int) (nx + nameLayout.getLineRight(0) + dp(4) + statusWidth);
++                boolean hasNameStatus = currentNameStatusDrawable != null && !currentNameStatusDrawable.isEmpty();
++                int badgeX;
++                if (hasNameStatus) {
++                    // Match the exact anchor used for currentNameStatusDrawable's own bounds above,
++                    // since nameLayoutWidth/viaNameWidth can differ from the actual rendered text
++                    // width (e.g. short names), which would otherwise let the badge overlap it.
++                    badgeX = (int) (Math.abs(nx) + (viaNameWidth > 0 ? viaNameWidth - dp(4 + 28) : nameLayoutWidth) + dp(22) + dp(4));
++                } else {
++                    badgeX = (int) (nx + nameLayout.getLineRight(0) + dp(4));
++                }
                  int badgeY = (int) (ny + (nameLayout.getHeight() - inuBadge.getIntrinsicHeight()) / 2f);
                  setDrawableBounds(inuBadge, badgeX, badgeY);
+                 inuBadge.draw(canvas);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
@@ -520,66 +553,12 @@ index 0000000..0000000 100644
                  if (currentUser != null && currentUser.linked_community_id != 0) {
                      showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
                      return true;
-@@ -4512,6 +4512,33 @@ public class ChatActivity extends BaseFragment implements
-         if (headerItem != null && chatMode == 0) {
-             ChatActionsHelper.addItems(this, headerItem);
-         }
-+        if (headerItem != null) {
-+            boolean isIosStyle = !desu.inugram.helpers.theme.NonIslandHelper.chatElements()
-+                    && desu.inugram.helpers.InuUtils.shouldCenterTitle(this)
-+                    && desu.inugram.InuConfig.CENTER_TITLE_ADAPTIVE_SIZE.getValue();
-+            boolean hideDots = isIosStyle && desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.getValue();
-+            if (headerItem.getIconView() != null) {
-+                headerItem.getIconView().setVisibility(hideDots ? View.GONE : View.VISIBLE);
-+                headerItem.getIconView().setAlpha(hideDots ? 0f : 1f);
-+            }
-+            if (otherIcon != null) {
-+                otherIcon.setAlpha(hideDots ? 0 : 255);
-+            }
-+            if (hideDots) {
-+                headerItem.setOnLongClickListener(v -> {
-+                    if (avatarContainer != null) {
-+                        if (avatarContainer.onAvatarClick()) {
-+                            return true;
-+                        }
-+                        avatarContainer.openProfile(true);
-+                        return true;
-+                    }
-+                    return false;
-+                });
-+            } else {
-+                headerItem.setOnLongClickListener(null);
-+            }
-+        }
-         menu.setVisibility(inMenuMode ? View.GONE : View.VISIBLE);
- 
-         updateTitle(false);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -264,21 +264,39 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-                 ScaleStateListAnimator.apply(avatarImageView, .05f, 1.2f);
-             }
-             avatarImageView.setOnClickListener(v -> {
-+                if (isRightAvatar() && isIosStyle() && parentFragment != null && parentFragment.headerItem != null && parentFragment.headerItem.getIconView() != null && parentFragment.headerItem.getIconView().getVisibility() == GONE) {
-+                    parentFragment.headerItem.toggleSubMenu();
-+                    return;
-+                }
-                 if (!onAvatarClick()) {
-                     openProfile(true);
-                 }
+@@ -270,15 +270,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              });
-+            avatarImageView.setOnLongClickListener(v -> {
-+                if (isRightAvatar() && isIosStyle() && parentFragment != null && parentFragment.headerItem != null && parentFragment.headerItem.getIconView() != null && parentFragment.headerItem.getIconView().getVisibility() == GONE) {
-+                    if (onAvatarClick()) {
-+                        return true;
-+                    }
-+                    openProfile(true);
-+                    return true;
-+                }
-+                return false;
-+            });
          }
  
 +        boolean centerChatTitle = isCenteredTitle();
@@ -601,7 +580,7 @@ index 0000000..0000000 100644
          titleTextView.setPadding(0, dp(6), 0, dp(12));
          addView(titleTextView);
  
-@@ -289,7 +307,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -289,7 +293,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              animatedSubtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              animatedSubtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              animatedSubtitleTextView.setTextSize(dp(14));
@@ -610,7 +589,7 @@ index 0000000..0000000 100644
              animatedSubtitleTextView.setPadding(0, 0, dp(10), 0);
              animatedSubtitleTextView.setTranslationY(-dp(1));
              addView(animatedSubtitleTextView);
-@@ -299,7 +317,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -299,7 +303,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              subtitleTextView.setTextSize(14);
@@ -619,7 +598,7 @@ index 0000000..0000000 100644
              subtitleTextView.setPadding(0, 0, dp(10), 0);
              addView(subtitleTextView);
          }
-@@ -463,7 +481,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -463,7 +467,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      }
  
@@ -628,15 +607,18 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -657,12 +675,23 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -657,12 +661,26 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 -        final int width = MeasureSpec.getSize(widthMeasureSpec);
 -        final int availableWidth = width - dp((avatarImageView.getVisibility() == VISIBLE ? 54 : 0) + 16);
 +        int width = MeasureSpec.getSize(widthMeasureSpec);
-+        if (isCenteredTitle() && actionBar != null && actionBar.inu_glassTitleRight > actionBar.inu_glassTitleLeft) {
-+            width = Math.min(width, actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft);
++        if (isCenteredTitle() && actionBar != null) {
++            int targetPill = actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft;
++            if (targetPill > 0) {
++                width = Math.min(width, targetPill);
++            }
 +        }
 +        final int availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
 +        boolean centerChatTitle = isCenteredTitle();
@@ -656,16 +638,7 @@ index 0000000..0000000 100644
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          }
-@@ -737,7 +766,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-             if (subtitleTextLargerCopyView2 != null) {
-                 removeView(subtitleTextLargerCopyView2);
-                 this.subtitleTextLargerCopyView.set(null);
--                if (!allowDrawStories) {
-+                if (!allowDrawStories && !(isRightAvatar() && isIosStyle())) {
-                     setClipChildren(true);
-                 }
-             }
-@@ -759,55 +788,140 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -759,55 +777,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -682,16 +655,8 @@ index 0000000..0000000 100644
 +                && parentFragment.getDialogId() != UserObject.REPLY_BOT;
 +    }
 +
-+    private boolean inu_shouldAdaptTitle() {
-+        return glassMode && inu_isRealChatHeader() && desu.inugram.InuConfig.CENTER_TITLE_ADAPTIVE_SIZE.getValue();
-+    }
-+
 +    public boolean isRightAvatar() {
 +        return glassMode && isCenteredTitle() && desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.getValue();
-+    }
-+
-+    public boolean isIosStyle() {
-+        return glassMode && isCenteredTitle() && desu.inugram.InuConfig.CENTER_TITLE_ADAPTIVE_SIZE.getValue();
 +    }
 +
      @Override
@@ -715,42 +680,27 @@ index 0000000..0000000 100644
 +        int textRightBound;
 +
 +        if (rightAvatar) {
-+            if (isIosStyle()) {
-+                setClipChildren(false);
-+                setClipToPadding(false);
-+                int screenW = (actionBar != null ? actionBar.getMeasuredWidth() : (getParent() instanceof View ? ((View) getParent()).getMeasuredWidth() : AndroidUtilities.displaySize.x));
-+                int targetScreenX = screenW - dp(46 + 6) + (dp(46) - avatarW) / 2;
-+                int avatarLeft = targetScreenX - getLeft();
-+                avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
-+                avatarImageView.setTranslationX(-getTranslationX());
-+
-+                int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
-+                if (pillWidth <= 0) {
-+                    pillWidth = getVisualWidth() + dp(12);
-+                }
-+                textLeftBound = leftPadding + dp(glassMode ? 14 : 10) + rightAvatarPadding;
-+                textRightBound = Math.max(textLeftBound, pillWidth - dp(14) - dp(9));
-+            } else {
-+                int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
-+                if (pillWidth <= 0) {
-+                    pillWidth = getVisualWidth() + dp(12);
-+                }
-+                int avatarRight = pillWidth - dp(19);
-+                int avatarLeft = avatarRight - avatarW;
-+                if (avatarLeft < dp(10)) {
-+                    avatarLeft = (right - left) - avatarW - dp(16);
-+                }
-+                avatarImageView.setTranslationX(0);
-+                avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
-+
-+                textLeftBound = leftPadding + dp(glassMode ? 14 : 10) + rightAvatarPadding;
-+                textRightBound = Math.max(textLeftBound, avatarLeft - dp(6));
++            int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
++            if (pillWidth <= 0) {
++                pillWidth = getVisualWidth() + dp(12);
 +            }
++            int avatarRight = pillWidth - (1 + leftPadding);
++            int avatarLeft = avatarRight - avatarW;
++            if (avatarLeft < dp(10)) {
++                avatarLeft = (right - left) - avatarW - (1 + leftPadding);
++            }
++            avatarImageView.setTranslationX(0);
++            avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
++
++            int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 14 : 10);
++            textLeftBound = (centerChatTitle ? inset : dp(glassMode ? 14 : 10)) + rightAvatarPadding;
++            textRightBound = Math.max(textLeftBound, pillWidth - inset);
 +        } else {
 +            avatarImageView.setTranslationX(0);
 +            avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarW, 1 + viewTop + avatarH);
-+            textLeftBound = leftPadding + (avatarImageView.getVisibility() == VISIBLE ? dp(glassMode ? 49.66f : 55) : dp(glassMode ? 20 : 1)) + rightAvatarPadding;
-+            textRightBound = (right - left) - dp(glassMode ? 20 : 16);
++            int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);
++            textLeftBound = (centerChatTitle ? inset : (1 + leftPadding + avatarW + dp(8))) + rightAvatarPadding;
++            textRightBound = (right - left) - (centerChatTitle ? inset : dp(glassMode ? 20 : 16));
 +        }
 +        int availableWidth = Math.max(0, textRightBound - textLeftBound);
 +
@@ -773,7 +723,7 @@ index 0000000..0000000 100644
              }
          }
 +        int avatarLeftPos = avatarImageView.getLeft();
-+        float transX = (rightAvatar && isIosStyle()) ? -getTranslationX() : 0;
++        float transX = 0;
          if (communityItem != null) {
 +            communityItem.setTranslationX(transX);
              communityItem.layout(
@@ -821,7 +771,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -909,10 +1023,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -909,10 +989,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -835,7 +785,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -935,6 +1050,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -935,6 +1016,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
@@ -845,7 +795,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -985,10 +1103,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -985,10 +1069,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          if (parentFragment != null) {
              long dialogId = parentFragment.getDialogId();
@@ -860,7 +810,7 @@ index 0000000..0000000 100644
                  desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
              );
          }
-@@ -1531,6 +1653,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1531,6 +1619,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -868,35 +818,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1723,8 +1846,26 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-         }
-     }
- 
-+    @Override
-+    public void setTranslationX(float translationX) {
-+        super.setTranslationX(translationX);
-+        if (isRightAvatar() && isIosStyle() && avatarImageView != null) {
-+            avatarImageView.setTranslationX(-translationX);
-+            if (communityItem != null) communityItem.setTranslationX(-translationX);
-+            if (timeItem != null) timeItem.setTranslationX(-translationX);
-+            if (starBgItem != null) starBgItem.setTranslationX(-translationX);
-+            if (starFgItem != null) starFgItem.setTranslationX(-translationX);
-+        } else if (avatarImageView != null && avatarImageView.getTranslationX() != 0) {
-+            avatarImageView.setTranslationX(0);
-+            if (communityItem != null) communityItem.setTranslationX(0);
-+            if (timeItem != null) timeItem.setTranslationX(0);
-+            if (starBgItem != null) starBgItem.setTranslationX(0);
-+            if (starFgItem != null) starFgItem.setTranslationX(0);
-+        }
-+    }
-+
-     public boolean hasVisibleAvatar() {
--        return avatarImageView != null && avatarImageView.getVisibility() == VISIBLE;
-+        return avatarImageView != null && avatarImageView.getVisibility() == VISIBLE && !(isRightAvatar() && isIosStyle());
-     }
- 
-     public int getVisualWidth() {
-@@ -1737,9 +1878,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1737,9 +1826,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
          }
          if (hasVisibleAvatar()) {

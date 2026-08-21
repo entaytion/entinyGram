@@ -8,8 +8,9 @@ Subject: Add ghost mode (invisible mode) for read receipts, typing and online st
  .../java/org/telegram/messenger/MessagesController.java     | 3 +++
  .../main/java/org/telegram/tgnet/ConnectionsManager.java    | 3 +++
  .../org/telegram/ui/Components/ChatAvatarContainer.java     | 1 +
+ .../src/main/java/org/telegram/ui/LaunchActivity.java       | 2 +-
  .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++++-
- 5 files changed, 18 insertions(+), 1 deletion(-)
+ 6 files changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 index 0000000..0000000 100644
@@ -68,6 +69,19 @@ index 0000000..0000000 100644
          checkActionBar(animated);
      }
  
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -6806,7 +6806,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+         Utilities.stageQueue.postRunnable(() -> {
+             ApplicationLoader.mainInterfacePausedStageQueue = true;
+             ApplicationLoader.mainInterfacePausedStageQueueTime = 0;
+-            if (VoIPService.getSharedInstance() == null) {
++            if (VoIPService.getSharedInstance() == null && !desu.inugram.helpers.security.GhostHelper.shouldKeepIgnoringOnline()) {
+                 MessagesController.getInstance(account).ignoreSetOnline = false;
+             }
+         });
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java

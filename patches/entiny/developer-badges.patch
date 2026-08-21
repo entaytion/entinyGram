@@ -8,14 +8,14 @@ Subject: feat(chat): render developer badges in chat headers, message names, dia
 - hideable via InuConfig.HIDE_DEV_BADGES (badges shown by default)
 ---
  .../telegram/ui/ActionBar/SimpleTextView.java | 74 +++++++++++++++++--
- .../telegram/ui/Cells/ChatMessageCell.java    | 20 ++++-
+ .../telegram/ui/Cells/ChatMessageCell.java    | 21 ++++++
  .../org/telegram/ui/Cells/DialogCell.java     | 21 ++++++
  .../telegram/ui/Cells/ManageChatUserCell.java |  2 +
  .../telegram/ui/Cells/ProfileSearchCell.java  | 34 +++++++--
  .../java/org/telegram/ui/Cells/UserCell.java  | 10 +++
  .../ui/Components/ChatAvatarContainer.java    |  9 +++
  .../java/org/telegram/ui/ProfileActivity.java | 36 ++++++++-
- 8 files changed, 185 insertions(+), 21 deletions(-)
+ 8 files changed, 187 insertions(+), 20 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
 index 0000000..0000000 100644
@@ -183,27 +183,28 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -3152,7 +3152,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-                             }
-                         }
-                         return true;
--                    } else {
-+                    } else if (drawPhotoImage && photoImage.isInsideImage(x, y)) {
-                         instantPressed = true;
-                         selectorDrawableMaskType[0] = 0;
-                         if (selectorDrawable[0] != null && selectorDrawable[0].getBounds().contains(x, y)) {
-@@ -3169,6 +3169,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-                         }
-                         invalidate();
-                         return true;
-+                    } else {
-+                        // Text/title/forwarded header clicks must fall through to the
-+                        // message-cell menu instead of being treated as image taps.
-+                        return false;
-                     }
- //                    else if (documentAttachType != DOCUMENT_ATTACH_TYPE_DOCUMENT && drawPhotoImage && photoImage.isInsideImage(x, y)) {
- //                        linkPreviewPressed = true;
-@@ -22090,6 +22094,20 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18913,6 +18913,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             if (currentNameBotVerificationId != 0) {
+                 nameWidth -= dp(4 + 12 + 4);
+             }
++            int inuBadgeRes = desu.inugram.helpers.DevBadgesHelper.badgeResFor(currentUser != null ? currentUser.id : 0L, currentChat != null ? currentChat.id : 0L);
++            if (inuBadgeRes != 0) {
++                nameWidth -= dp(4 + desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP);
++            }
+             if (adminString != null) {
+                 nameWidth -= dp(8);
+             }
+@@ -19002,6 +19006,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 if (currentNameBotVerificationId != 0) {
+                     nameWidth += dp(4 + 12 + 4);
+                 }
++                if (inuBadgeRes != 0) {
++                    nameWidth += dp(4 + desu.inugram.helpers.DevBadgesHelper.BADGE_SIZE_DP);
++                }
+                 nameWidth -= additionalWidth;
+                 if (adminString != null) {
+                     adminLayout = new StaticLayout(adminString, Theme.chat_adminPaint, adminWidth + dp(2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+@@ -22090,6 +22097,20 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              Theme.chat_namePaint.setAlpha(oldAlpha);
              canvas.restore();
  

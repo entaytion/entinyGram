@@ -70,7 +70,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
 - 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
-- 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; in chats the avatar moves to the right edge and long titles shrink to fit (iOS-style) instead of ellipsizing; modular M3 drawer cards
+- 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; modular M3 drawer cards
 - 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
 - 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
 
@@ -254,6 +254,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - optionally collapse folder tabs (show only All Chats) while enabled
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- optional biometric lock on Archived Chats — ask once per app session or every time you open the archive
 - session list in Settings > Devices shows the real app name (entinyGram) instead of the registered api_id title ("Inugram")
 
 ## behavior

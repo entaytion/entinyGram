@@ -701,6 +701,12 @@ object DrawerHelper {
             }
         }
 
+        io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
+            val args = Bundle()
+            args.putInt("folderId", 1)
+            instance.presentFragment(DialogsActivity(args))
+        }
+
         val isGhostActive = GhostHelper.isGhostActive()
         io.add(if (isGhostActive) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
             val isGhost = GhostHelper.toggleGhostMode()

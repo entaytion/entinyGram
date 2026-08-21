@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 21 Aug 2026 19:48:20 +0300
+Subject: Gate opening Archived Chats behind biometric auth
+
+---
+ .../main/java/org/telegram/ui/DialogsActivity.java  | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -7160,6 +7160,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public void onResume() {
+         super.onResume();
++        if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(folderId)) {
++            if (fragmentView != null) {
++                fragmentView.setAlpha(0f);
++            }
++            desu.inugram.helpers.security.ArchiveLockHelper.gate(getParentActivity(),
++                () -> {
++                    if (fragmentView != null) {
++                        fragmentView.animate().alpha(1f).setDuration(150).start();
++                    }
++                },
++                this::finishFragment
++            );
++        }
+         if (dialogStoriesCell != null) {
+             dialogStoriesCell.onResume();
+         }

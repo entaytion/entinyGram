@@ -874,9 +874,6 @@ object InuConfig {
     val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
 
     @JvmField
-    val CENTER_TITLE_ADAPTIVE_SIZE = BoolItem("center_title_adaptive_size", true)
-
-    @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
     @JvmField
@@ -1136,6 +1133,12 @@ object InuConfig {
 
     @JvmField
     val BIOMETRIC_ALLOW_DEVICE_CREDENTIAL = BoolItem("biometric_allow_device_credential", false)
+
+    @JvmField
+    val BIOMETRIC_LOCK_ARCHIVE = BoolItem("biometric_lock_archive", false)
+
+    @JvmField
+    val BIOMETRIC_LOCK_ARCHIVE_EVERY_TIME = BoolItem("biometric_lock_archive_every_time", false)
 
     // --- ghost mode (invisible mode) ---
     // Sub-toggles default to "hide everything" so enabling the master switch is a full ghost.

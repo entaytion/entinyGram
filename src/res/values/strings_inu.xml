@@ -844,6 +844,10 @@
     <string name="InuBiometricConfirmLogoutInfo">Ask for biometric confirmation before logging out of an account.</string>
     <string name="InuBiometricAllowDeviceCredential">Allow device PIN/pattern</string>
     <string name="InuBiometricAllowDeviceCredentialInfo">Fall back to the device PIN, pattern or password when no biometric is enrolled.</string>
+    <string name="InuBiometricLockArchive">Lock archived chats</string>
+    <string name="InuBiometricLockArchiveInfo">Ask for biometric confirmation before opening Archived Chats.</string>
+    <string name="InuBiometricLockArchiveEveryTime">Ask every time</string>
+    <string name="InuBiometricLockArchiveEveryTimeInfo">Off asks once per app session; on asks every time you open the archive.</string>
 
     <string name="InuTOS">Restricted features</string>
     <string name="InuTosProfile">Profile &amp; Premium</string>

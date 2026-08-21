@@ -38,6 +38,13 @@ object BiometricHelper {
 
     @JvmStatic
     fun gate(context: Context?, enabled: Boolean, onSuccess: Runnable) {
+        gate(context, enabled, onSuccess, null)
+    }
+
+    /** [onCancel] fires on explicit dismissal/failure — use when the caller must not silently
+     * proceed as if authenticated (e.g. gating visibility of content, not just confirming an action). */
+    @JvmStatic
+    fun gate(context: Context?, enabled: Boolean, onSuccess: Runnable, onCancel: Runnable?) {
         val activity = context as? Activity
         if (!enabled || activity !is FragmentActivity || !canAuthenticate()) {
             onSuccess.run()
@@ -47,6 +54,10 @@ object BiometricHelper {
         val prompt = BiometricPrompt(activity, executor, object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 onSuccess.run()
+            }
+
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                onCancel?.run()
             }
         })
         val allowCredential = InuConfig.BIOMETRIC_ALLOW_DEVICE_CREDENTIAL.value
