@@ -126,6 +126,9 @@
     <string name="InuHidePaidReactionUpsell">隐藏付费回应推销</string>
     <string name="InuHideHashtagSuggestions">隐藏话题标签建议</string>
     <string name="InuHideAllChatsTab">隐藏「所有聊天」标签</string>
+    <string name="InuHideAllChatsTabInfo">长按聊天列表中的标题即可显示「所有聊天」。</string>
+    <string name="InuFoldersAtBottom">将文件夹移到底部</string>
+    <string name="InuHideArchive">从聊天列表中移除「已归档聊天」</string>
     <string name="InuHideCallActionButton">隐藏标题中的通话按钮</string>
     <string name="InuDisableProfileScrollSnap">禁用资料滚动吸附</string>
     <string name="InuDisableProfileScrollSnapInfo">滚动时不让资料头部吸附到固定位置</string>
@@ -149,10 +152,11 @@
     <string name="InuHideSuggestionPremium">Premium 推销</string>
     <string name="InuHideSuggestionCustom">服务端自定义</string>
     <string name="InuFolders">文件夹</string>
-    <string name="InuFoldersDisplayMode">显示模式</string>
-    <string name="InuFoldersDisplayModeTitles">仅标题</string>
-    <string name="InuFoldersDisplayModeTitlesAndIcons">标题和图标</string>
-    <string name="InuFoldersDisplayModeIconsOnly">仅图标</string>
+    <string name="InuShowOnTabs">标签显示方式</string>
+    <string name="InuShowOnTabsTitles">标题</string>
+    <string name="InuShowOnTabsIcons">图标</string>
+    <string name="InuShowOnTabsMix">图标和标题</string>
+    <string name="InuTabIndicatorStroke">标签指示器描边</string>
     <string name="InuFoldersUnreadCounter">未读计数</string>
     <string name="InuFoldersUnreadCounterHide">隐藏</string>
     <string name="InuFoldersUnreadCounterRegular">常规</string>

@@ -17,23 +17,39 @@ import org.telegram.ui.Components.UniversalAdapter
 
 class DialogsSettingsActivity : SettingsPageActivity() {
 
+    private var filterTabsPreview: FilterTabsPreviewCell? = null
+
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         // folders section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFolders)))
+        if (filterTabsPreview == null) {
+            filterTabsPreview = FilterTabsPreviewCell(this.context)
+        } else {
+            filterTabsPreview?.refresh()
+        }
+        items.add(UItem.asCustom(filterTabsPreview))
+
         items.add(
             UItem.asButton(
                 BUTTON_FOLDERS_DISPLAY_MODE,
-                R.drawable.inu_tabler_folder,
-                LocaleController.getString(R.string.InuFoldersDisplayMode),
+                LocaleController.getString(R.string.InuShowOnTabs),
                 when (InuConfig.FOLDERS_DISPLAY_MODE.value) {
-                    InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS -> LocaleController.getString(R.string.InuFoldersDisplayModeTitlesAndIcons)
-                    InuConfig.FoldersDisplayModeItem.ICONS_ONLY -> LocaleController.getString(R.string.InuFoldersDisplayModeIconsOnly)
-                    else -> LocaleController.getString(R.string.InuFoldersDisplayModeTitles)
+                    InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS -> LocaleController.getString(R.string.InuShowOnTabsMix)
+                    InuConfig.FoldersDisplayModeItem.ICONS_ONLY -> LocaleController.getString(R.string.InuShowOnTabsIcons)
+                    else -> LocaleController.getString(R.string.InuShowOnTabsTitles)
                 }
             )
         )
+
+        items.add(
+            UItem.asCheck(
+                TOGGLE_TAB_INDICATOR_STROKE,
+                LocaleController.getString(R.string.InuTabIndicatorStroke),
+            ).setChecked(InuConfig.TAB_INDICATOR_STROKE.value)
+        )
+
         items.add(
             UItem.asButton(
                 BUTTON_FOLDERS_UNREAD_COUNTER_MODE,
@@ -46,12 +62,30 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
+
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_ALL_CHATS_TAB,
+                R.string.InuHideAllChatsTab,
+                R.string.InuHideAllChatsTabInfo,
+                InuConfig.HIDE_ALL_CHATS_TAB.value
+            )
+        )
+
         items.add(
             UItem.asCheck(
-                TOGGLE_HIDE_ALL_CHATS_TAB,
-                LocaleController.getString(R.string.InuHideAllChatsTab),
-            ).setChecked(InuConfig.HIDE_ALL_CHATS_TAB.value)
+                TOGGLE_FOLDERS_AT_BOTTOM,
+                LocaleController.getString(R.string.InuFoldersAtBottom),
+            ).setChecked(InuConfig.FOLDERS_AT_BOTTOM.value)
         )
+
+        items.add(
+            UItem.asCheck(
+                TOGGLE_HIDE_ARCHIVE,
+                LocaleController.getString(R.string.InuHideArchive),
+            ).setChecked(InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST.value)
+        )
+
         items.add(UItem.asShadow(null))
         // end folders section
 
@@ -200,14 +234,30 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             BUTTON_FOLDERS_DISPLAY_MODE -> RadioItemOptions.show(
                 this, view,
                 listOf(
-                    LocaleController.getString(R.string.InuFoldersDisplayModeTitles),
-                    LocaleController.getString(R.string.InuFoldersDisplayModeTitlesAndIcons),
-                    LocaleController.getString(R.string.InuFoldersDisplayModeIconsOnly),
+                    LocaleController.getString(R.string.InuShowOnTabsTitles),
+                    LocaleController.getString(R.string.InuShowOnTabsIcons),
+                    LocaleController.getString(R.string.InuShowOnTabsMix),
                 ),
-                InuConfig.FOLDERS_DISPLAY_MODE.value - 1,
+                when (InuConfig.FOLDERS_DISPLAY_MODE.value) {
+                    InuConfig.FoldersDisplayModeItem.ICONS_ONLY -> 1
+                    InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS -> 2
+                    else -> 0
+                },
             ) { which ->
-                InuConfig.FOLDERS_DISPLAY_MODE.value = which + 1
+                InuConfig.FOLDERS_DISPLAY_MODE.value = when (which) {
+                    1 -> InuConfig.FoldersDisplayModeItem.ICONS_ONLY
+                    2 -> InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS
+                    else -> InuConfig.FoldersDisplayModeItem.TITLES
+                }
+                filterTabsPreview?.refresh()
                 softRebuild()
+            }
+
+            TOGGLE_TAB_INDICATOR_STROKE -> {
+                val new = InuConfig.TAB_INDICATOR_STROKE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                filterTabsPreview?.invalidate()
+                postNotificationForAllAccounts(NotificationCenter.dialogFiltersUpdated)
             }
 
             BUTTON_FOLDERS_UNREAD_COUNTER_MODE -> RadioItemOptions.show(
@@ -221,18 +271,34 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 InuConfig.FOLDERS_UNREAD_COUNTER_MODE.value,
             ) { which ->
                 InuConfig.FOLDERS_UNREAD_COUNTER_MODE.value = which
+                filterTabsPreview?.refreshCounters()
+                filterTabsPreview?.refresh()
                 // resetAllUnreadCounters dispatches updateInterfaces; DialogsActivity/MainTabsActivity listen.
                 for (i in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
                     if (!UserConfig.getInstance(i).isClientActivated) continue
                     val storage = MessagesStorage.getInstance(i)
                     storage.storageQueue.postRunnable { storage.resetAllUnreadCounters(false) }
                 }
+                softRebuild()
             }
 
             TOGGLE_HIDE_ALL_CHATS_TAB -> {
                 val new = InuConfig.HIDE_ALL_CHATS_TAB.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                (view as? NotificationsCheckCell)?.isChecked = new
+                filterTabsPreview?.refresh()
                 postNotificationForAllAccounts(NotificationCenter.dialogFiltersUpdated)
+            }
+
+            TOGGLE_FOLDERS_AT_BOTTOM -> {
+                val new = InuConfig.FOLDERS_AT_BOTTOM.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                showRestartBulletin()
+            }
+
+            TOGGLE_HIDE_ARCHIVE -> {
+                val new = InuConfig.HIDE_ARCHIVE_FROM_CHAT_LIST.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                softRebuild()
             }
 
             TOGGLE_BOT_WEBVIEW_BUTTON -> {
@@ -405,7 +471,10 @@ class DialogsSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val BUTTON_FOLDERS_DISPLAY_MODE = InuUtils.generateId()
+        private val TOGGLE_TAB_INDICATOR_STROKE = InuUtils.generateId()
         private val BUTTON_FOLDERS_UNREAD_COUNTER_MODE = InuUtils.generateId()
+        private val TOGGLE_FOLDERS_AT_BOTTOM = InuUtils.generateId()
+        private val TOGGLE_HIDE_ARCHIVE = InuUtils.generateId()
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
         private val TOGGLE_OLD_MENTION_INDICATOR = InuUtils.generateId()
         private val BUTTON_PULL_DOWN_ACTION = InuUtils.generateId()
@@ -453,9 +522,12 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_viewchats,
             factory = ::DialogsSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("folders-display-mode", R.string.InuFoldersDisplayMode, BUTTON_FOLDERS_DISPLAY_MODE),
+                SearchRegistry.Entry("folders-display-mode", R.string.InuShowOnTabs, BUTTON_FOLDERS_DISPLAY_MODE),
+                SearchRegistry.Entry("tab-indicator-stroke", R.string.InuTabIndicatorStroke, TOGGLE_TAB_INDICATOR_STROKE),
                 SearchRegistry.Entry("folders-unread-counter", R.string.InuFoldersUnreadCounter, BUTTON_FOLDERS_UNREAD_COUNTER_MODE),
                 SearchRegistry.Entry("hide-all-chats-tab", R.string.InuHideAllChatsTab, TOGGLE_HIDE_ALL_CHATS_TAB),
+                SearchRegistry.Entry("folders-at-bottom", R.string.InuFoldersAtBottom, TOGGLE_FOLDERS_AT_BOTTOM),
+                SearchRegistry.Entry("hide-archive", R.string.InuHideArchive, TOGGLE_HIDE_ARCHIVE),
                 SearchRegistry.Entry("title-text", R.string.InuTitleText, BUTTON_TITLE_TEXT),
                 SearchRegistry.Entry("old-mention-indicator", R.string.InuOldMentionIndicator, TOGGLE_OLD_MENTION_INDICATOR),
                 SearchRegistry.Entry("pull-down-action", R.string.InuPullDownAction, BUTTON_PULL_DOWN_ACTION),

@@ -128,9 +128,10 @@ the sections below contain the broader feature set: inugram functionality, featu
 - bottom tabs: 🐶 compact mode, hide contacts tab, hide bar entirely
 - double-tap account tab to switch to next account
 - long-tap "chats" tab to pick folder from menu
-- folder display modes: titles / titles+icons / icons-only
+- folder tabs: display mode (titles / titles+icons / icons-only), optional indicator stroke style, move to bottom of the screen
 - folder unread counter modes: hide / regular / exclude muted / 🐶 exclude muted non-dms
 - hide "all chats" folder tab
+- remove "Archived Chats" from the chat list entirely
 - custom title text: Inugram / @username / first name / "Chats"
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation

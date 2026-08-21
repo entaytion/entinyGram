@@ -126,6 +126,9 @@
     <string name="InuHidePaidReactionUpsell">有料リアクションの宣伝を非表示</string>
     <string name="InuHideHashtagSuggestions">ハッシュタグ候補を非表示</string>
     <string name="InuHideAllChatsTab">「すべてのチャット」タブを非表示</string>
+    <string name="InuHideAllChatsTabInfo">チャットリストのタイトルを長押しすると「すべてのチャット」が表示されます。</string>
+    <string name="InuFoldersAtBottom">フォルダーを下部に移動</string>
+    <string name="InuHideArchive">チャットリストから「アーカイブ」を削除</string>
     <string name="InuHideCallActionButton">タイトルの通話ボタンを非表示</string>
     <string name="InuDisableProfileScrollSnap">プロフィールのスクロールスナップを無効化</string>
     <string name="InuDisableProfileScrollSnapInfo">スクロール時にプロフィールヘッダーを固定位置にスナップしない</string>
@@ -149,10 +152,11 @@
     <string name="InuHideSuggestionPremium">Premium の宣伝</string>
     <string name="InuHideSuggestionCustom">サーバー側カスタム</string>
     <string name="InuFolders">フォルダー</string>
-    <string name="InuFoldersDisplayMode">表示モード</string>
-    <string name="InuFoldersDisplayModeTitles">タイトルのみ</string>
-    <string name="InuFoldersDisplayModeTitlesAndIcons">タイトルとアイコン</string>
-    <string name="InuFoldersDisplayModeIconsOnly">アイコンのみ</string>
+    <string name="InuShowOnTabs">タブの表示</string>
+    <string name="InuShowOnTabsTitles">タイトル</string>
+    <string name="InuShowOnTabsIcons">アイコン</string>
+    <string name="InuShowOnTabsMix">アイコンとタイトル</string>
+    <string name="InuTabIndicatorStroke">タブインジケーターの縁取り</string>
     <string name="InuFoldersUnreadCounter">未読カウンター</string>
     <string name="InuFoldersUnreadCounterHide">非表示</string>
     <string name="InuFoldersUnreadCounterRegular">通常</string>

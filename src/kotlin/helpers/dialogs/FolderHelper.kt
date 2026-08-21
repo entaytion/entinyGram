@@ -261,4 +261,37 @@ object FolderHelper {
         if (InuConfig.FOLDERS_DISPLAY_MODE.value == InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS) return 8f
         return FilterTabsView.TAB_INTERNAL_PADDING
     }
+
+    /** height (dp) of the pill row itself, matches the 36+7+7 addView height used both top and bottom */
+    const val TAB_BAR_HEIGHT_DP = 36 + 7 + 7
+
+    /** bottom margin (dp) reserved for the pill when anchored to the bottom of the screen */
+    const val TAB_BAR_BOTTOM_MARGIN_DP = 14
+
+    /** extra clearance (dp) between the bottom-anchored pill and the floating button row above it */
+    private const val BOTTOM_CLEARANCE_DP = 52 + 35
+
+    @JvmStatic
+    fun atBottom(): Boolean = InuConfig.FOLDERS_AT_BOTTOM.value
+
+    /** total vertical space (dp) the bottom-anchored pill reserves above the nav bar / FAB */
+    @JvmStatic
+    fun bottomReservedHeightDp(): Int = TAB_BAR_HEIGHT_DP + TAB_BAR_BOTTOM_MARGIN_DP
+
+    /**
+     * translationY for [filterTabsView] when [atBottom] is on. Reuses the same base
+     * (navigationBarHeight, additionFloatingButtonOffset, additionalFloatingTranslation,
+     * floatingButtonPanOffset) DialogsActivity already computes for the floating button row,
+     * so the pill tracks it 1:1 instead of carrying its own scroll/offset bookkeeping.
+     */
+    @JvmStatic
+    fun bottomTabsTranslationY(
+        navigationBarHeight: Int,
+        additionFloatingButtonOffset: Int,
+        additionalFloatingTranslation: Float,
+        floatingButtonPanOffset: Float
+    ): Float {
+        return -navigationBarHeight - additionFloatingButtonOffset - additionalFloatingTranslation -
+            floatingButtonPanOffset - AndroidUtilities.dp(BOTTOM_CLEARANCE_DP.toFloat())
+    }
 }

@@ -301,3 +301,4 @@ bugfix/reply-icon-span-width.patch
 entiny/archive-biometric-lock.patch
 entiny/message-persistence.patch
 entiny/avatar-corners.patch
+entiny/folder-tabs-customization.patch

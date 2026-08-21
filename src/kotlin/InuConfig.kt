@@ -567,6 +567,15 @@ object InuConfig {
     @JvmField
     val HIDE_ALL_CHATS_TAB = BoolItem("hide_all_chats_tab", false)
 
+    @JvmField
+    val TAB_INDICATOR_STROKE = BoolItem("tab_indicator_stroke", false)
+
+    @JvmField
+    val FOLDERS_AT_BOTTOM = BoolItem("folders_at_bottom", false)
+
+    @JvmField
+    val HIDE_ARCHIVE_FROM_CHAT_LIST = BoolItem("hide_archive_from_chat_list", false)
+
     class CommunityDisplayModeItem : IntItem("community_display_mode", REGULAR) {
         companion object {
             const val REGULAR = 1

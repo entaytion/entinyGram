@@ -283,6 +283,13 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
         items.add(
             mkSubPageButton(
+                BUTTON_MAIN_PAGE,
+                R.drawable.msg_viewchats,
+                LocaleController.getString(R.string.InuMainPage),
+            )
+        )
+        items.add(
+            mkSubPageButton(
                 BUTTON_CHAT_MENU_ORDER,
                 R.drawable.inu_tabler_menu_2,
                 LocaleController.getString(R.string.InuChatMenuOrder),
@@ -379,6 +386,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
+            BUTTON_MAIN_PAGE -> presentFragment(DialogsSettingsActivity())
             BUTTON_CHAT_MENU_ORDER -> presentFragment(ChatMenuOrderActivity())
         }
     }
@@ -409,6 +417,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH = InuUtils.generateId()
         private val BUTTON_FORMATTING_POPUP = InuUtils.generateId()
         private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
+        private val BUTTON_MAIN_PAGE = InuUtils.generateId()
         private val BUTTON_CHAT_MENU_ORDER = InuUtils.generateId()
         private val SECTION_HIDE_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_SEARCH_FROM_GLOBAL = InuUtils.generateId()
@@ -449,6 +458,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("emoji-panel-keyword-search", R.string.InuEmojiPanelKeywordSearch, TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH),
                 SearchRegistry.Entry("formatting-popup", R.string.InuFormattingPopup, BUTTON_FORMATTING_POPUP),
                 SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
+                SearchRegistry.Entry("main-page", R.string.InuMainPage, BUTTON_MAIN_PAGE),
                 SearchRegistry.Entry("chat-menu-order", R.string.InuChatMenuOrder, BUTTON_CHAT_MENU_ORDER),
                 SearchRegistry.Entry("hide-bottom-bar", R.string.InuHideBottomBar, SECTION_HIDE_BOTTOM_BAR),
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),

@@ -128,6 +128,9 @@
     <string name="InuHidePaidReactionUpsell">Скрыть продвижение платных реакций</string>
     <string name="InuHideHashtagSuggestions">Скрыть подсказки хэштегов</string>
     <string name="InuHideAllChatsTab">Скрыть вкладку «Все чаты»</string>
+    <string name="InuHideAllChatsTabInfo">Долгое нажатие на заголовок в списке чатов покажет «Все чаты».</string>
+    <string name="InuFoldersAtBottom">Перенести папки вниз</string>
+    <string name="InuHideArchive">Убрать «Архив» из списка чатов</string>
     <string name="InuHideCallActionButton">Скрыть кнопку звонка в заголовке</string>
     <string name="InuDisableProfileScrollSnap">Отключить прилипание прокрутки профиля</string>
     <string name="InuDisableProfileScrollSnapInfo">Не привязывать шапку профиля к фиксированным позициям при прокрутке</string>
@@ -151,10 +154,11 @@
     <string name="InuHideSuggestionPremium">Продвижение Premium</string>
     <string name="InuHideSuggestionCustom">Серверные кастомные подсказки</string>
     <string name="InuFolders">Папки</string>
-    <string name="InuFoldersDisplayMode">Режим отображения</string>
-    <string name="InuFoldersDisplayModeTitles">Только названия</string>
-    <string name="InuFoldersDisplayModeTitlesAndIcons">Названия и значки</string>
-    <string name="InuFoldersDisplayModeIconsOnly">Только значки</string>
+    <string name="InuShowOnTabs">Показ на вкладках</string>
+    <string name="InuShowOnTabsTitles">Названия</string>
+    <string name="InuShowOnTabsIcons">Значки</string>
+    <string name="InuShowOnTabsMix">Значки с названиями</string>
+    <string name="InuTabIndicatorStroke">Обводка индикатора вкладки</string>
     <string name="InuFoldersUnreadCounter">Счётчик непрочитанных</string>
     <string name="InuFoldersUnreadCounterHide">Скрыть</string>
     <string name="InuFoldersUnreadCounterRegular">Обычный</string>
