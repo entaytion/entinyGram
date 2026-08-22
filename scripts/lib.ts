@@ -15,7 +15,7 @@ import {
 $.verbose = false
 if (process.platform === 'win32') {
   $.shell = 'cmd.exe'
-  $.prefix = ''
+  $.prefix = 'chcp 65001 >nul & '
 }
 
 export function step(message: string) {
@@ -318,8 +318,12 @@ export async function getPatchSubject(repoDir: string, patchName: string) {
 }
 
 export async function generateStablePatchFromCommit(repoDir: string, commitId: string) {
-  const patch = await cd(repoDir)`git format-patch --stdout --zero-commit --no-signature --subject-prefix= -1 ${commitId}`
-  let clean = patch.stdout
+  const stdout = execSync(`git format-patch --stdout --zero-commit --no-signature --subject-prefix= -1 ${commitId}`, {
+    cwd: repoDir,
+    encoding: 'utf8',
+    maxBuffer: 50 * 1024 * 1024,
+  })
+  let clean = stdout
     .replace(/^index [0-9a-f]+\.\.[0-9a-f]+( \d+)?$/gm, 'index 0000000..0000000$1')
     .replace(/^Subject:.*(?:\n[ \t].*)+/m, m => m.replace(/\n[ \t]+/g, ' '))
 

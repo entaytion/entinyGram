@@ -54,7 +54,7 @@ object LinkHelper {
                 continue
             }
             text.removeSpan(span)
-            text.setSpan(URLSpan("http://" + remainder), start + match.value.length, end, text.getSpanFlags(span))
+            text.setSpan(URLSpan("http://" + remainder), start + match.value.length, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 }

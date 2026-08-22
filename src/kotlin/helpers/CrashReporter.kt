@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import desu.inugram.ui.CrashReportBottomSheet
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.Utilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.BuildVars
@@ -34,6 +35,7 @@ object CrashReporter {
     private const val SAVE_HEAP_DUMP_REQUEST = 0x1e76
     private val installed = AtomicBoolean(false)
     private val sheetShown = AtomicBoolean(false)
+    @Volatile
     private var previousCrashMtime = 0L
 
     fun install() {
@@ -131,7 +133,7 @@ object CrashReporter {
                     onDone(false)
                     return
                 }
-                Thread {
+                Utilities.globalQueue.postRunnable {
                     var ok = false
                     try {
                         activity.contentResolver.openOutputStream(uri)?.use { out ->
@@ -140,7 +142,7 @@ object CrashReporter {
                         ok = true
                     } catch (_: Throwable) {}
                     AndroidUtilities.runOnUIThread { onDone(ok) }
-                }.start()
+                }
             }
         }
         NotificationCenter.getGlobalInstance().addObserver(observer, NotificationCenter.onActivityResultReceived)

@@ -28,7 +28,9 @@ object CloudSettingsHelper {
     @Volatile
     var restoring: Boolean = false
 
+    @Volatile
     private var syncInFlight = false
+    @Volatile
     private var dirtyDuringSync = false
 
     private val exportableInuKeys: Set<String> by lazy {

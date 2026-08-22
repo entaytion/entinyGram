@@ -7,19 +7,13 @@ import android.graphics.drawable.LayerDrawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
-import android.view.Gravity
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import org.telegram.ui.ActionBar.BottomSheet
 import org.telegram.ui.ActionBar.SimpleTextView
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Components.LayoutHelper
 
 /**
  * Developer badges: entinyGram dev (self), inuGram dev (credit to origin author)
@@ -232,56 +226,6 @@ object DevBadgesHelper {
         org.telegram.ui.Components.BulletinFactory.global()
             .createSimpleBulletin(R.raw.info, title, info)
             .show()
-    }
-
-    @JvmStatic
-    private fun showDevInfoSheet(context: Context, badgeRes: Int, title: CharSequence, info: CharSequence) {
-        val sheet = BottomSheet(context, false)
-        val container = LinearLayout(context)
-        container.orientation = LinearLayout.VERTICAL
-
-        val image = ImageView(context)
-        image.setImageResource(badgeRes)
-        container.addView(
-            image,
-            LayoutHelper.createLinear(56, 56, Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0f, 20f, 0f, 0f)
-        )
-
-        val titleView = TextView(context)
-        titleView.text = title
-        titleView.textSize = 16f
-        titleView.setTypeface(AndroidUtilities.bold())
-        titleView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
-        titleView.gravity = Gravity.CENTER
-        container.addView(
-            titleView,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 20f, 12f, 20f, 0f)
-        )
-
-        val infoView = TextView(context)
-        infoView.text = info
-        infoView.textSize = 14f
-        infoView.setTextColor(Theme.getColor(Theme.key_dialogTextGray2))
-        infoView.gravity = Gravity.CENTER
-        container.addView(
-            infoView,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 20f, 6f, 20f, 0f)
-        )
-
-        val okView = TextView(context)
-        okView.text = LocaleController.getString(R.string.OK)
-        okView.textSize = 14f
-        okView.setTextColor(Theme.getColor(Theme.key_dialogTextBlue2))
-        okView.gravity = Gravity.CENTER
-        okView.setPadding(0, AndroidUtilities.dp(10f), 0, AndroidUtilities.dp(14f))
-        okView.setOnClickListener { sheet.dismiss() }
-        container.addView(
-            okView,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 0f, 0f, 0f, 0f)
-        )
-
-        sheet.setCustomView(container)
-        sheet.show()
     }
 
     /**

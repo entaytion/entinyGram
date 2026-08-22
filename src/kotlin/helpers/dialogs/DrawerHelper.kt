@@ -404,7 +404,7 @@ object DrawerHelper {
 
     private fun applyGhostEnabled(enabled: Boolean) {
         GhostHelper.setGhostMode(enabled)
-        adapter?.profileCell?.updateGhostIcon()
+        adapter?.notifyDataSetChanged()
         val lastFragment = LaunchActivity.instance?.actionBarLayout?.lastFragment
         if (lastFragment is DialogsActivity) {
             lastFragment.updateStatus(UserConfig.getInstance(lastFragment.currentAccount).currentUser, true)

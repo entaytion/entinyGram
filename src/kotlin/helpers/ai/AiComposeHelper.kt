@@ -152,12 +152,16 @@ object AiComposeHelper {
                         setRequestProperty("Authorization", "Bearer ${endpoint.apiKey}")
                     }
                 }
-                conn.outputStream.use { it.write(body.toByteArray()) }
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                    ?.bufferedReader()?.use { it.readText() } ?: ""
-                conn.disconnect()
-                if (code !in 200..299) throw IOException("HTTP $code: ${resp.take(300)}")
+                val resp = try {
+                    conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+                    val code = conn.responseCode
+                    val body2 = (if (code in 200..299) conn.inputStream else conn.errorStream)
+                        ?.bufferedReader(Charsets.UTF_8)?.use { it.readText() } ?: ""
+                    if (code !in 200..299) throw IOException("HTTP $code: ${body2.take(300)}")
+                    body2
+                } finally {
+                    conn.disconnect()
+                }
                 val msgObj = JSONObject(resp)
                     .getJSONArray("choices")
                     .getJSONObject(0)

@@ -135,11 +135,13 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InviteLinks),
             )
         }
-        if (activity.currentEncryptedChat == null) {
+        if (activity.currentEncryptedChat == null && TypingSpoofHelper.canSpoofTyping(activity.currentAccount, activity.dialogId)) {
             headerItem.lazilyAddSubItem(
                 ACTION_TYPING_SPOOF, R.drawable.input_mic,
                 LocaleController.getString(R.string.InuTypingSpoof),
             )
+        }
+        if (activity.currentEncryptedChat == null) {
             headerItem.lazilyAddSubItem(
                 ACTION_REGEX_CHAT_FILTERS, R.drawable.msg_block2,
                 LocaleController.getString(R.string.InuRegexChatFilters),

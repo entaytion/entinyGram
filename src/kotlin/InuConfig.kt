@@ -629,6 +629,19 @@ object InuConfig {
     @JvmField
     val PRESENCE_LOGGER_NOTIFY = BoolItem("presence_logger_notify", false)
 
+    // Days to keep local presence logs. 0 = never auto-clear. Mirrors DeletedMessagesTtlItem.
+    class PresenceLogsTtlItem : IntItem("presence_logs_ttl", NEVER) {
+        companion object {
+            const val NEVER = 0
+            const val ONE_DAY = 1
+            const val ONE_WEEK = 7
+            const val ONE_MONTH = 30
+        }
+    }
+
+    @JvmField
+    val PRESENCE_LOGS_TTL = PresenceLogsTtlItem()
+
     @JvmField
     val CONFIRM_INTERNAL_LINKS = BoolItem("confirm_internal_links", false)
 
@@ -897,21 +910,7 @@ object InuConfig {
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
     @JvmField
-    val CENTER_TITLE_MARQUEE = CHAT_TITLE_MARQUEE
-
-    @JvmField
     val FLOATING_AVATAR = BoolItem("floating_avatar", false)
-
-    // TODO: Unused centering toggles — declared but never wired into UI. Intended for Settings, Profile, and Dialogs list title centering.
-    // Requires new hooks or extension points in their respective Activities. Consider implementing or removing in future refactoring.
-    @JvmField
-    val CENTER_TITLE_SETTINGS = BoolItem("center_title_settings", false)
-
-    @JvmField
-    val CENTER_TITLE_PROFILE = BoolItem("center_title_profile", false)
-
-    @JvmField
-    val CENTER_TITLE_DIALOGS = BoolItem("center_title_dialogs", false)
 
     // Per-category local preservation of self-destruct content. All default off = stock behavior.
     @JvmField
@@ -1014,9 +1013,6 @@ object InuConfig {
 
     @JvmField
     val REGEX_FILTER_MODE = RegexFilterModeItem()
-
-    @JvmField
-    val TITLE_ALIGNMENT = IntItem("title_alignment", 0)
 
     class NotificationIconItem : IntItem("notification_icon", TELEGRAM) {
         companion object {
@@ -1161,26 +1157,25 @@ object InuConfig {
     val BIOMETRIC_LOCK_ARCHIVE_EVERY_TIME = BoolItem("biometric_lock_archive_every_time", false)
 
     // --- ghost mode (invisible mode) ---
-    // Sub-toggles default to "hide everything" so enabling the master switch is a full ghost.
+    // No stored master switch (mirrors AyuGram/NagramX): "active" is a computed OR of
+    // these sub-toggles, and shouldSuppress() reads each one directly. All default off
+    // so a fresh install stays stock-identical without needing a gate.
     @JvmField
-    val GHOST_MODE = BoolItem("ghost_mode", false)
-
-    @JvmField
-    val GHOST_HIDE_READ = BoolItem("ghost_hide_read", true)
+    val GHOST_HIDE_READ = BoolItem("ghost_hide_read", false)
 
     @JvmField
     val GHOST_READ_ON_SEND = BoolItem("ghost_read_on_send", false)
 
     @JvmField
-    val GHOST_HIDE_VOICE_READ = BoolItem("ghost_hide_voice_read", true)
+    val GHOST_HIDE_VOICE_READ = BoolItem("ghost_hide_voice_read", false)
 
     @JvmField
-    val GHOST_HIDE_STORY_READ = BoolItem("ghost_hide_story_read", true)
+    val GHOST_HIDE_STORY_READ = BoolItem("ghost_hide_story_read", false)
 
     @JvmField
-    val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", true)
+    val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", false)
 
-    class GhostPresenceModeItem : IntItem("ghost_presence_mode", HIDDEN) {
+    class GhostPresenceModeItem : IntItem("ghost_presence_mode", NORMAL) {
         companion object {
             const val NORMAL = 0
             const val HIDDEN = 1

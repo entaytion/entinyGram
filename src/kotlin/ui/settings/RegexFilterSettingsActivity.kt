@@ -104,8 +104,11 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
             item.id == BUTTON_IMPORT_FILTERS -> importFilters()
 
             item.id in FILTER_BASE until FILTER_BASE + RegexFilterHelper.getGlobalFilters().size -> {
-                val filter = RegexFilterHelper.getGlobalFilters()[item.id - FILTER_BASE]
-                presentFragment(RegexFilterEditActivity(filter.id, null))
+                val filters = RegexFilterHelper.getGlobalFilters()
+                val filter = filters.getOrNull(item.id - FILTER_BASE)
+                if (filter != null) {
+                    presentFragment(RegexFilterEditActivity(filter.id, null))
+                }
             }
         }
     }

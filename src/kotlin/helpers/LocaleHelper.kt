@@ -13,7 +13,9 @@ import desu.inugram.helpers.security.ParanoiaHelper
 object LocaleHelper {
     @Volatile
     private var cachedKey: String? = null
+    @Volatile
     private var cachedDefault: Resources? = null
+    @Volatile
     private var cachedCandidates: List<Resources> = emptyList()
 
     @JvmStatic

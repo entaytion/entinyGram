@@ -84,23 +84,26 @@ object AiSetupHelper {
                         setRequestProperty("Authorization", "${provider.authHeader} $apiKey")
                     }
                 }
-                val code = conn.responseCode
-                val body = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                    ?.bufferedReader()?.use { it.readText() } ?: ""
-                conn.disconnect()
+                try {
+                    val code = conn.responseCode
+                    val body = (if (code in 200..299) conn.inputStream else conn.errorStream)
+                        ?.bufferedReader()?.use { it.readText() } ?: ""
 
-                if (code !in 200..299) {
-                    val msg = try {
-                        val errJson = JSONObject(body.trim().removePrefix("[").removeSuffix("]").trim())
-                        errJson.optJSONObject("error")?.optString("message") ?: "HTTP $code"
-                    } catch (_: Exception) {
-                        "HTTP $code"
+                    if (code !in 200..299) {
+                        val msg = try {
+                            val errJson = JSONObject(body.trim().removePrefix("[").removeSuffix("]").trim())
+                            errJson.optJSONObject("error")?.optString("message") ?: "HTTP $code"
+                        } catch (_: Exception) {
+                            "HTTP $code"
+                        }
+                        FetchResult.Error(msg)
+                    } else {
+                        val models = parseModels(provider, body)
+                        if (models.isEmpty()) FetchResult.Error("No models found")
+                        else FetchResult.Success(models)
                     }
-                    FetchResult.Error(msg)
-                } else {
-                    val models = parseModels(provider, body)
-                    if (models.isEmpty()) FetchResult.Error("No models found")
-                    else FetchResult.Success(models)
+                } finally {
+                    conn.disconnect()
                 }
             } catch (e: IOException) {
                 FetchResult.Error(e.message ?: e.javaClass.simpleName)

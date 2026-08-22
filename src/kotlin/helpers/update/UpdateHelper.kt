@@ -200,14 +200,14 @@ object UpdateHelper {
         if (inflight && now - inflightSince < INFLIGHT_TIMEOUT_MS) { callback?.invoke(CheckResult.InFlight); return }
         inflight = true
         inflightSince = now
-        Thread {
+        org.telegram.messenger.Utilities.globalQueue.postRunnable {
             try {
                 val json = fetchJson(GH_API_URL)
                 AndroidUtilities.runOnUIThread { processRelease(json, callback) }
             } catch (e: Exception) {
                 AndroidUtilities.runOnUIThread { finish(callback, CheckResult.Error(e.message ?: "network error")) }
             }
-        }.apply { isDaemon = true; name = "inu-update-check" }.start()
+        }
     }
 
     @JvmStatic

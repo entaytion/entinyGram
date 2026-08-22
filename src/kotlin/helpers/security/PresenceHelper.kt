@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private fun newTimeFormat() = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
 /**
  * Opt-in per-contact online/offline logger. Never watches everyone by default — logging every
  * status update for hundreds of contacts is noisy and wasteful; users pick who to watch from
@@ -22,7 +24,6 @@ import java.util.Locale
  */
 object PresenceHelper {
     private val watched = SparseArray<MutableSet<Long>>()
-    private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
     @JvmStatic
     fun load(account: Int) {
@@ -78,10 +79,60 @@ object PresenceHelper {
         if (!InuConfig.PRESENCE_LOGGER_NOTIFY.value) return
         val user = MessagesController.getInstance(account).getUser(update.user_id) ?: return
         val name = UserObject.getFirstName(user)
-        val time = timeFormat.format(Date(nowSeconds * 1000L))
-        val text = if (statusType == "online") "$name online [$time]" else "$name offline [$time]"
         AndroidUtilities.runOnUIThread {
+            // formatted on the UI thread — SimpleDateFormat isn't thread-safe and onStatusUpdate can
+            // be invoked concurrently from update-dispatch threads across multiple accounts
+            val time = newTimeFormat().format(Date(nowSeconds * 1000L))
+            val text = if (statusType == "online") "$name online [$time]" else "$name offline [$time]"
             Toast.makeText(ApplicationLoader.applicationContext, text, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /** Clears the local status-change log for [userId], or every watched user's log if null. */
+    @JvmStatic
+    fun clearLog(account: Int, userId: Long, onDone: Runnable? = null) = clearLogs(account, listOf(userId), onDone)
+
+    /** Clears logs for [userIds] (or every logged user if null). */
+    @JvmStatic
+    fun clearLogs(account: Int, userIds: Collection<Long>? = null, onDone: Runnable? = null) {
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            InuDatabaseHelper.clearPresenceLogs(db, userIds)
+            onDone?.let { AndroidUtilities.runOnUIThread(it) }
+        }
+    }
+
+    /** Prunes logs older than [InuConfig.PRESENCE_LOGS_TTL] days. No-op when TTL is NEVER. */
+    @JvmStatic
+    fun pruneIfNeeded(account: Int) {
+        val ttlDays = InuConfig.PRESENCE_LOGS_TTL.value
+        if (ttlDays == 0) return
+        val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            InuDatabaseHelper.prunePresenceLogs(db, cutoff)
+        }
+    }
+
+    @JvmStatic
+    fun getLogsStats(account: Int, callback: (count: Int, size: Long) -> Unit) {
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            val stat = InuDatabaseHelper.getPresenceLogsStats(db)
+            AndroidUtilities.runOnUIThread { callback(stat.count, stat.estimatedSize) }
+        }
+    }
+
+    @JvmStatic
+    fun getLogsStatsByUser(account: Int, callback: (List<InuDatabaseHelper.DialogCacheStat>) -> Unit) {
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            val stats = InuDatabaseHelper.getPresenceLogsStatsByUser(db)
+            AndroidUtilities.runOnUIThread { callback(stats) }
         }
     }
 

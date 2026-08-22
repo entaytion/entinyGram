@@ -1,6 +1,6 @@
 package desu.inugram.helpers
 
-import com.google.android.exoplayer2.util.Log
+import android.util.Log
 import org.telegram.SQLite.SQLiteDatabase
 import org.telegram.messenger.MessagesStorage
 
@@ -101,7 +101,7 @@ object InuDatabaseHelper {
     }
 
     fun saveLocalFolderChat(db: SQLiteDatabase, filterId: Int, dialogId: Long) {
-        val query = db.executeFast("INSERT OR IGNORE INTO inu_local_folder_chats VALUES(?, ?)")
+        val query = db.executeFast("INSERT OR IGNORE INTO inu_local_folder_chats(filter_id, dialog_id) VALUES(?, ?)")
         query.bindInteger(1, filterId)
         query.bindLong(2, dialogId)
         query.step()
@@ -109,7 +109,11 @@ object InuDatabaseHelper {
     }
 
     fun removeLocalFolderChat(db: SQLiteDatabase, filterId: Int, dialogId: Long) {
-        db.executeFast("DELETE FROM inu_local_folder_chats WHERE filter_id = $filterId AND dialog_id = $dialogId").stepThis().dispose()
+        val query = db.executeFast("DELETE FROM inu_local_folder_chats WHERE filter_id = ? AND dialog_id = ?")
+        query.bindInteger(1, filterId)
+        query.bindLong(2, dialogId)
+        query.step()
+        query.dispose()
     }
 
     /** filterId -> set of locally-overlaid dialog ids */
@@ -127,14 +131,17 @@ object InuDatabaseHelper {
     }
 
     fun saveWatch(db: SQLiteDatabase, userId: Long) {
-        val query = db.executeFast("INSERT OR IGNORE INTO inu_presence_watch VALUES(?)")
+        val query = db.executeFast("INSERT OR IGNORE INTO inu_presence_watch(user_id) VALUES(?)")
         query.bindLong(1, userId)
         query.step()
         query.dispose()
     }
 
     fun removeWatch(db: SQLiteDatabase, userId: Long) {
-        db.executeFast("DELETE FROM inu_presence_watch WHERE user_id = $userId").stepThis().dispose()
+        val query = db.executeFast("DELETE FROM inu_presence_watch WHERE user_id = ?")
+        query.bindLong(1, userId)
+        query.step()
+        query.dispose()
     }
 
     fun loadWatchedUsers(db: SQLiteDatabase): Set<Long> {
@@ -149,7 +156,7 @@ object InuDatabaseHelper {
     }
 
     fun appendPresenceLog(db: SQLiteDatabase, userId: Long, statusType: String, timestamp: Int) {
-        val query = db.executeFast("INSERT INTO inu_presence_logs VALUES(?, ?, ?)")
+        val query = db.executeFast("INSERT INTO inu_presence_logs(user_id, status_type, timestamp) VALUES(?, ?, ?)")
         query.bindLong(1, userId)
         query.bindString(2, statusType)
         query.bindInteger(3, timestamp)
@@ -171,8 +178,57 @@ object InuDatabaseHelper {
         return list
     }
 
+    /** Row count + a rough byte estimate (fixed per-row overhead + status string length). */
+    fun getPresenceLogsStats(db: SQLiteDatabase): DialogCacheStat {
+        val cursor = db.queryFinalized("SELECT COUNT(*), SUM(LENGTH(status_type)) FROM inu_presence_logs")
+        try {
+            if (cursor.next()) {
+                val count = cursor.intValue(0)
+                val textLen = cursor.longValue(1)
+                return DialogCacheStat(0L, count, count * 24L + textLen)
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return DialogCacheStat(0L, 0, 0L)
+    }
+
+    /** Per-user breakdown (dialogId field repurposed as userId) — most logged first. */
+    fun getPresenceLogsStatsByUser(db: SQLiteDatabase): List<DialogCacheStat> {
+        val list = ArrayList<DialogCacheStat>()
+        val cursor = db.queryFinalized("SELECT user_id, COUNT(*), SUM(LENGTH(status_type)) FROM inu_presence_logs GROUP BY user_id")
+        try {
+            while (cursor.next()) {
+                val userId = cursor.longValue(0)
+                val count = cursor.intValue(1)
+                val textLen = cursor.longValue(2)
+                list.add(DialogCacheStat(userId, count, count * 24L + textLen))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list.sortedByDescending { it.estimatedSize }
+    }
+
+    /** Clears presence logs for [userIds] (or every logged user if null). */
+    fun clearPresenceLogs(db: SQLiteDatabase, userIds: Collection<Long>? = null) {
+        if (userIds == null) {
+            db.executeFast("DELETE FROM inu_presence_logs").stepThis().dispose()
+        } else if (userIds.isNotEmpty()) {
+            db.executeFast("DELETE FROM inu_presence_logs WHERE user_id IN (${userIds.joinToString(",")})").stepThis().dispose()
+        }
+    }
+
+    /** Removes presence log entries older than [cutoffUnixSec]. */
+    fun prunePresenceLogs(db: SQLiteDatabase, cutoffUnixSec: Long) {
+        val query = db.executeFast("DELETE FROM inu_presence_logs WHERE timestamp < ?")
+        query.bindLong(1, cutoffUnixSec)
+        query.step()
+        query.dispose()
+    }
+
     fun saveLocalPin(db: SQLiteDatabase, scope: Int, dialogId: Long, order: Int) {
-        val query = db.executeFast("REPLACE INTO inu_local_pins VALUES(?, ?, ?)")
+        val query = db.executeFast("REPLACE INTO inu_local_pins(scope, dialog_id, pin_order) VALUES(?, ?, ?)")
         query.bindInteger(1, scope)
         query.bindLong(2, dialogId)
         query.bindInteger(3, order)
@@ -181,7 +237,11 @@ object InuDatabaseHelper {
     }
 
     fun removeLocalPin(db: SQLiteDatabase, scope: Int, dialogId: Long) {
-        db.executeFast("DELETE FROM inu_local_pins WHERE scope = $scope AND dialog_id = $dialogId").stepThis().dispose()
+        val query = db.executeFast("DELETE FROM inu_local_pins WHERE scope = ? AND dialog_id = ?")
+        query.bindInteger(1, scope)
+        query.bindLong(2, dialogId)
+        query.step()
+        query.dispose()
     }
 
     /** scope -> (dialogId -> pin_order), ordered ascending by pin_order within each scope */
@@ -199,7 +259,7 @@ object InuDatabaseHelper {
     }
 
     fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, mediaPath: String? = null) {
-        val query = db.executeFast("INSERT OR REPLACE INTO inu_deleted_messages VALUES(?, ?, ?, ?, ?, ?)");
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_deleted_messages(dialog_id, msg_id, from_id, text, date, media_path) VALUES(?, ?, ?, ?, ?, ?)");
         query.bindLong(1, dialogId)
         query.bindInteger(2, msgId)
         query.bindLong(3, fromId)
@@ -230,7 +290,7 @@ object InuDatabaseHelper {
     }
 
     fun savePreservedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
-        val query = db.executeFast("INSERT OR REPLACE INTO inu_preserved_messages VALUES(?, ?)")
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_preserved_messages(dialog_id, msg_id) VALUES(?, ?)")
         query.bindLong(1, dialogId)
         query.bindInteger(2, msgId)
         query.step()
@@ -325,7 +385,7 @@ object InuDatabaseHelper {
             }
         }
 
-        val query = db.executeFast("INSERT INTO inu_edit_history VALUES(?, ?, ?, ?, ?)");
+        val query = db.executeFast("INSERT INTO inu_edit_history(dialog_id, msg_id, text, date, media_path) VALUES(?, ?, ?, ?, ?)");
         query.bindLong(1, dialogId)
         query.bindInteger(2, msgId)
         query.bindString(3, text)
@@ -421,7 +481,34 @@ object InuDatabaseHelper {
             cursor.dispose()
         }
 
-        return map.map { (id, pair) -> DialogCacheStat(id, pair.first, pair.second) }.sortedByDescending { it.estimatedSize }
+        val mediaByDialog = getMediaSizeByDialog(db)
+        return map.map { (id, pair) ->
+            DialogCacheStat(id, pair.first, pair.second + (mediaByDialog[id] ?: 0L))
+        }.sortedByDescending { it.estimatedSize }
+    }
+
+    /**
+     * Actual on-disk size of media files referenced by [inu_deleted_messages]/[inu_edit_history],
+     * grouped by dialog. The text-length estimate in [getDeletedMessagesStats] alone badly
+     * undercounts dialogs with saved photos/videos — this fills that gap for the cache-management UI.
+     */
+    private fun getMediaSizeByDialog(db: SQLiteDatabase): Map<Long, Long> {
+        val pathsByDialog = HashMap<Long, MutableSet<String>>()
+        for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
+            val cursor = db.queryFinalized("SELECT dialog_id, media_path FROM $table WHERE media_path IS NOT NULL")
+            try {
+                while (cursor.next()) {
+                    val dialogId = cursor.longValue(0)
+                    val path = cursor.stringValue(1)
+                    if (!path.isNullOrBlank()) pathsByDialog.getOrPut(dialogId) { HashSet() }.add(path)
+                }
+            } finally {
+                cursor.dispose()
+            }
+        }
+        return pathsByDialog.mapValues { (_, paths) ->
+            paths.sumOf { path -> try { java.io.File(path).length() } catch (_: Throwable) { 0L } }
+        }
     }
 
     fun clearDeletedMessages(db: SQLiteDatabase, dialogIds: Collection<Long>? = null) {
@@ -548,7 +635,7 @@ object InuDatabaseHelper {
     }
 
     fun writeKv(db: SQLiteDatabase, key: String, value: String): Unit {
-        val query = db.executeFast("INSERT OR REPLACE INTO inu_kv VALUES(?, ?)");
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_kv(key, value) VALUES(?, ?)");
         query.bindString(1, key)
         query.bindString(2, value)
         query.step()

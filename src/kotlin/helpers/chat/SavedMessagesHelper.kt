@@ -251,8 +251,8 @@ object SavedMessagesHelper {
                         }
                         val list = controller.dialogMessage.get(dialogId)
                         if (list != null) {
-                            val toRemove = ArrayList(list.filter { it?.id != null && it.id in mids })
-                            list.removeAll(toRemove)
+                            val midSet = mids.toHashSet()
+                            list.removeAll { it?.id != null && it.id in midSet }
                         }
                         val channelId = getChannelId(account, dialogId)
                         org.telegram.messenger.NotificationCenter.getInstance(account)

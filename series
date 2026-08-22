@@ -295,7 +295,6 @@ entiny/unlimited-folder-chats.patch
 entiny/force-relay-calls.patch
 entiny/suppress-screenshot-notification.patch
 entiny/allow-screenshots-stories-fix.patch
-entiny/self-destruct-consolidation.patch
 entiny/open-by-user-id.patch
 bugfix/reply-icon-span-width.patch
 entiny/archive-biometric-lock.patch

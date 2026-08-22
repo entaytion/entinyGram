@@ -108,9 +108,8 @@ class RadioDialogBuilder(
                 Theme.RIPPLE_MASK_ALL
             )
             cell.setOnClickListener {
-                val dialog = create()
                 dismiss.run()
-                onClick?.invoke(dialog, index)
+                onClick?.invoke(create(), index)
             }
             container.addView(cell)
         }

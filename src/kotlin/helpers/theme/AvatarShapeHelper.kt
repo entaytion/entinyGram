@@ -104,11 +104,13 @@ object AvatarShapeHelper {
     }
 
     @JvmStatic
-    fun resolveRadius(requestedRadius: Int): Int {
+    @JvmOverloads
+    fun resolveRadius(requestedRadius: Int, maxRadius: Int = requestedRadius): Int {
         if (requestedRadius <= 0) return requestedRadius
         val corners = InuConfig.AVATAR_CORNERS.value
         if (corners >= 28.0f) return requestedRadius
         if (corners <= 0.0f) return 0
-        return (requestedRadius * (corners / 28.0f)).toInt()
+        val base = if (maxRadius > 0) Math.min(requestedRadius, maxRadius) else requestedRadius
+        return (base * (corners / 28.0f)).toInt()
     }
 }

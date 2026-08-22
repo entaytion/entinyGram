@@ -19,7 +19,7 @@ object TextClassifierHelper {
 
     @JvmStatic
     fun configure(view: TextView) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return
         when (InuConfig.TEXT_CLASSIFIER_MODE.value) {
             InuConfig.TextClassifierModeItem.IMPROVED -> {
                 val system = view.context.getSystemService(TextClassificationManager::class.java)?.textClassifier

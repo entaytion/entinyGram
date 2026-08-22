@@ -15,7 +15,7 @@ import java.io.File
 import kotlin.system.exitProcess
 
 public object InuUtils {
-    private var _nextId = 1;
+    private var _nextId = 1
     fun generateId(): Int {
         return _nextId++
     }

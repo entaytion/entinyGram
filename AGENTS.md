@@ -207,7 +207,7 @@ Currently exposed (update this table when adding):
 | `onUpdate(TLObject?, Int)` | update dispatch | fork `LoginHelper` hook; also feeds `TL_updateUserStatus` to `PresenceHelper.onStatusUpdate` |
 | `onDeepLink(LaunchActivity, Intent?)` | deeplink handling | passcode + settings deeplinks |
 | `onAuthSuccess(Int)` | login flow | clear per-account passcode |
-| `onMessagesControllerCreated(MessagesController, Int)` | `MessagesController.<init>` | per-account setup (maps provider; loads `PinHelper`'s local-pins cache and `PresenceHelper`'s watch-list cache; registers the `didReceiveNewMessages` → `onNewMessage` observer) |
+| `onMessagesControllerCreated(MessagesController, Int)` | `MessagesController.<init>` | per-account setup (maps provider; loads `PinHelper`'s local-pins cache and `PresenceHelper`'s watch-list cache; registers the `didReceiveNewMessages` → `onNewMessage` observer; runs `SavedMessagesHelper`/`PresenceHelper` TTL pruning) |
 | `onNewMessage(TLRPC.Message, Int)` | `didReceiveNewMessages` observer | generic new-message dispatch (all arrival paths incl. difference catch-up); fans out to `UpdateHelper` etc. |
 | `syncDoubleTapDelay()` | fork + `init` | propagate `DOUBLE_TAP_DELAY` into stock gesture detectors |
 | `syncAnimationSpeed()` | fork + `init` | propagate `ANIMATION_SPEED` into stock animators |

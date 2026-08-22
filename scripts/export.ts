@@ -60,6 +60,18 @@ async function exportPatchFile(repoDir: string, patchName: string, commitId: str
 
   step(`Exporting ${patchName} -> ${relative(rootDir, targetFile)}`)
   const stable = await generateStablePatchFromCommit(repoDir, commitId)
+  // Rare race under concurrent export (Windows cmd.exe subprocess piping) can hand back a
+  // truncated/garbled multi-byte read that decodes with U+FFFD. Never let that land silently
+  // on disk — one retry clears it in practice since the corruption isn't deterministic.
+  if (stable.includes('�')) {
+    warn(`Detected corrupted output while exporting ${patchName}, retrying once`)
+    const retry = await generateStablePatchFromCommit(repoDir, commitId)
+    if (retry.includes('�')) {
+      throw new Error(`Corrupted (U+FFFD) output persisted for ${patchName} after retry - aborting export`)
+    }
+    await fs.writeFile(targetFile, retry)
+    return parsed
+  }
   await fs.writeFile(targetFile, stable)
 
   return parsed

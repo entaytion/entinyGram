@@ -132,8 +132,9 @@ internal fun httpJson(
         contentType?.let { setRequestProperty("Content-Type", it) }
         for ((k, v) in headers) setRequestProperty(k, v)
         if (body != null) {
-            setFixedLengthStreamingMode(body.toByteArray().size)
-            outputStream.use { it.write(body.toByteArray()) }
+            val bytes = body.toByteArray(Charsets.UTF_8)
+            setFixedLengthStreamingMode(bytes.size)
+            outputStream.use { it.write(bytes) }
         }
     }
     return try {

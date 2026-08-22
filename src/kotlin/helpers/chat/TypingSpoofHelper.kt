@@ -1,6 +1,7 @@
 package desu.inugram.helpers.chat
 
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ChatObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
@@ -37,8 +38,22 @@ object TypingSpoofHelper {
 
     private val active = HashMap<Long, Loop>()
 
+    /**
+     * Stock's [MessagesController.sendTyping] silently no-ops `messages.setTyping` for
+     * broadcast channels (non-megagroup) — subscribers never see a "typing" indicator on a
+     * channel post, so there's nothing to spoof there. Megagroups (channel-flagged but with
+     * `megagroup = true`) behave like regular groups and are unaffected.
+     */
+    @JvmStatic
+    fun canSpoofTyping(account: Int, dialogId: Long): Boolean {
+        if (dialogId >= 0) return true
+        val chat = MessagesController.getInstance(account).getChat(-dialogId) ?: return true
+        return !ChatObject.isChannel(chat) || chat.megagroup
+    }
+
     @JvmStatic
     fun start(account: Int, dialogId: Long, threadId: Long, action: Int) {
+        if (!canSpoofTyping(account, dialogId)) return
         stop(dialogId)
         val loop = Loop(account, dialogId, threadId, action)
         active[dialogId] = loop
@@ -67,6 +82,12 @@ object TypingSpoofHelper {
     @JvmStatic
     fun showPicker(fragment: BaseFragment, account: Int, dialogId: Long, threadId: Long) {
         val parent = fragment.parentActivity ?: return
+        if (!canSpoofTyping(account, dialogId)) {
+            org.telegram.ui.Components.BulletinFactory.of(fragment)
+                .createErrorBulletin(LocaleController.getString(R.string.InuTypingSpoofUnsupportedChannel))
+                .show()
+            return
+        }
         val values = intArrayOf(-1, ACTION_TYPING, ACTION_RECORD_AUDIO, ACTION_RECORD_ROUND, ACTION_UPLOAD_DOCUMENT)
         val items = listOf(
             desu.inugram.ui.settings.RadioDialogBuilder.Item(LocaleController.getString(R.string.InuTypingSpoofOff)),

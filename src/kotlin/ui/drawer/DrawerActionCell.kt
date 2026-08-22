@@ -133,11 +133,10 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
 
     override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
         super.onInitializeAccessibilityNodeInfo(info)
-        info.className = "android.widget.Button"
+        info.className = TextView::class.java.name
         info.addAction(AccessibilityNodeInfo.ACTION_CLICK)
         info.addAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
         info.text = textView.text
-        info.className = TextView::class.java.name
     }
 
     companion object {

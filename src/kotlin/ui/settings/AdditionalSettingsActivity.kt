@@ -67,6 +67,10 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCacheManagement)))
+        items.add(mkSubPageButton(BUTTON_CACHE_MANAGEMENT, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheManagement)))
+        items.add(UItem.asShadow(null))
+
         if (BuildVars.DEBUG_VERSION) {
             items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
             items.add(
@@ -137,6 +141,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             BUTTON_EXPORT -> launchExport()
             BUTTON_IMPORT -> launchImport()
             BUTTON_CLOUD_SYNC -> presentFragment(CloudSyncActivity())
+            BUTTON_CACHE_MANAGEMENT -> presentFragment(CacheManagementSettingsActivity())
         }
     }
 
@@ -483,6 +488,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_EXPORT = InuUtils.generateId()
         private val BUTTON_IMPORT = InuUtils.generateId()
         private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
+        private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
 
         private const val REQ_IMPORT = 31002
 
@@ -496,6 +502,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
                 SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
                 SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
+                SearchRegistry.Entry("cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
             ),
         )
     }

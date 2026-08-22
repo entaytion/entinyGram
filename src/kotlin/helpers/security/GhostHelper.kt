@@ -34,7 +34,14 @@ enum class SuppressKind {
 }
 
 /**
- * Ghost mode ("invisible mode"), modeled after AyuGram's ghost mode.
+ * Ghost mode ("invisible mode"), modeled after AyuGram/NagramX's ghost mode.
+ *
+ * No stored master flag — "active" is a computed OR of the individual sub-toggles,
+ * and [shouldSuppress] reads each sub-toggle directly instead of gating through a
+ * separate on/off flag. This mirrors AyuGram's `NekoConfig.isGhostModeActive()` /
+ * `AyuGhostUtils.interceptRequest`, which never gate on a master flag either — it
+ * avoids the desync a stored master flag creates when multiple UI entry points
+ * (drawer icon, settings page, presence picker) can all write to it independently.
  *
  * Unified single source of truth for both network packet filtering
  * ([ConnectionsManager.sendRequestInternal]) and local UI/DB suppression
@@ -45,12 +52,24 @@ object GhostHelper {
     private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
     private var offlineRunnable: Runnable? = null
 
+    /** True if any suppression behavior is currently enabled. Display-only — never gates [shouldSuppress]. */
     @JvmStatic
-    fun isGhostActive(): Boolean = InuConfig.GHOST_MODE.value
+    fun isGhostActive(): Boolean =
+        InuConfig.GHOST_HIDE_READ.value ||
+            InuConfig.GHOST_HIDE_VOICE_READ.value ||
+            InuConfig.GHOST_HIDE_STORY_READ.value ||
+            InuConfig.GHOST_HIDE_TYPING.value ||
+            InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
 
+    /** Mass-sets the sub-toggles together (mirrors AyuGram's `setGhostMode`). */
     @JvmStatic
     fun setGhostMode(enabled: Boolean) {
-        InuConfig.GHOST_MODE.value = enabled
+        InuConfig.GHOST_HIDE_READ.value = enabled
+        InuConfig.GHOST_HIDE_VOICE_READ.value = enabled
+        InuConfig.GHOST_HIDE_STORY_READ.value = enabled
+        InuConfig.GHOST_HIDE_TYPING.value = enabled
+        InuConfig.GHOST_PRESENCE_MODE.value =
+            if (enabled) InuConfig.GhostPresenceModeItem.HIDDEN else InuConfig.GhostPresenceModeItem.NORMAL
         syncPresence(UserConfig.selectedAccount)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
     }
@@ -130,13 +149,14 @@ object GhostHelper {
 
     /**
      * Single source of truth for checking if an action should be suppressed by Ghost Mode.
+     * Reads each sub-toggle directly — no master-flag gate (see class doc).
      */
     @JvmStatic
     fun shouldSuppress(dialogId: Long, kind: SuppressKind): Boolean {
         if (dialogId != 0L && temporarilyAllowedDialogs.contains(dialogId)) {
             return false
         }
-        if (!isGhostActiveForDialog(dialogId)) {
+        if (dialogId != 0L && isDialogWhitelisted(dialogId)) {
             return false
         }
         return when (kind) {
@@ -201,7 +221,7 @@ object GhostHelper {
             is TL_account.updateStatus -> {
                 if (shouldSuppress(0L, SuppressKind.ONLINE)) {
                     request.offline = true
-                } else if (isGhostActive() && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED && !request.offline) {
+                } else if (InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED && !request.offline) {
                     scheduleOffline(account)
                 }
                 false
@@ -247,6 +267,8 @@ object GhostHelper {
             is TLRPC.TL_messages_forwardMessages -> request.to_peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
             is TLRPC.TL_messages_sendVote -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
             is TLRPC.TL_messages_sendQuickReplyMessages -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TL_stories.TL_stories_readStories -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
+            is TL_stories.TL_stories_incrementStoryViews -> request.peer?.let { DialogObject.getPeerDialogId(it) } ?: 0L
             else -> 0L
         }
     }
@@ -319,24 +341,20 @@ object GhostHelper {
      */
     @JvmStatic
     fun shouldKeepIgnoringOnline(): Boolean {
-        return isGhostActive() && InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
+        return InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
     }
 
     /**
      * Re-asserts the desired presence right after a settings change:
-     *  - ghost on + hide-online → send offline immediately (drop the stale "online")
-     *  - ghost off → send online to restore stock presence
+     *  - hide/delay presence → send offline immediately (drop the stale "online")
+     *  - normal presence → send online to restore stock presence
      */
     @JvmStatic
     fun syncPresence(account: Int) {
         val controller = MessagesController.getInstance(account)
-        if (isGhostActive()) {
-            if (InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL) {
-                controller?.ignoreSetOnline = true
-                sendStatus(account, offline = true)
-            } else {
-                controller?.ignoreSetOnline = false
-            }
+        if (InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL) {
+            controller?.ignoreSetOnline = true
+            sendStatus(account, offline = true)
         } else {
             controller?.ignoreSetOnline = false
             sendStatus(account, offline = false)
@@ -360,7 +378,7 @@ object GhostHelper {
     private fun scheduleOffline(account: Int) {
         offlineRunnable?.let { Utilities.stageQueue.cancelRunnable(it) }
         val runnable = Runnable {
-            if (isGhostActive() && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED) {
+            if (InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED) {
                 sendStatus(account, offline = true)
             }
         }

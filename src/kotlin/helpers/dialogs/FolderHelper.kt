@@ -79,10 +79,13 @@ object FolderHelper {
         val db = storage.database ?: return
         val map = HashMap<Int, String>()
         val cursor = db.queryFinalized("SELECT filter_id, emoticon FROM inu_folder_meta")
-        while (cursor.next()) {
-            map[cursor.intValue(0)] = cursor.stringValue(1)
+        try {
+            while (cursor.next()) {
+                map[cursor.intValue(0)] = cursor.stringValue(1)
+            }
+        } finally {
+            cursor.dispose()
         }
-        cursor.dispose()
         var hasMissing = false
         for (filter in filters) {
             val cached = map[filter.id]
@@ -268,9 +271,6 @@ object FolderHelper {
     /** bottom margin (dp) reserved for the pill when anchored to the bottom of the screen */
     const val TAB_BAR_BOTTOM_MARGIN_DP = 14
 
-    /** extra clearance (dp) between the bottom-anchored pill and the floating button row above it */
-    private const val BOTTOM_CLEARANCE_DP = 52 + 35
-
     @JvmStatic
     fun atBottom(): Boolean = InuConfig.FOLDERS_AT_BOTTOM.value
 
@@ -282,7 +282,7 @@ object FolderHelper {
      * translationY for [filterTabsView] when [atBottom] is on. Reuses the same base
      * (navigationBarHeight, additionFloatingButtonOffset, additionalFloatingTranslation,
      * floatingButtonPanOffset) DialogsActivity already computes for the floating button row,
-     * so the pill tracks it 1:1 instead of carrying its own scroll/offset bookkeeping.
+     * placing the tabs pill right above the bottom navigation bar / main tabs.
      */
     @JvmStatic
     fun bottomTabsTranslationY(
@@ -291,7 +291,7 @@ object FolderHelper {
         additionalFloatingTranslation: Float,
         floatingButtonPanOffset: Float
     ): Float {
-        return -navigationBarHeight - additionFloatingButtonOffset - additionalFloatingTranslation -
-            floatingButtonPanOffset - AndroidUtilities.dp(BOTTOM_CLEARANCE_DP.toFloat())
+        val baseOffset = additionFloatingButtonOffset - AndroidUtilities.dp(bottomReservedHeightDp().toFloat())
+        return -navigationBarHeight - baseOffset - additionalFloatingTranslation - floatingButtonPanOffset
     }
 }

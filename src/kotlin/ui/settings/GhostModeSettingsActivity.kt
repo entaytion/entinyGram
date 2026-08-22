@@ -10,6 +10,7 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
+import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -21,7 +22,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         LocaleController.getString(R.string.InuGhostMode),
         listOf(
             ExpandableBoolGroup.Option(R.string.InuGhostHideRead, InuConfig.GHOST_HIDE_READ, TOGGLE_HIDE_READ),
-            ExpandableBoolGroup.Option(R.string.InuGhostReadOnSend, InuConfig.GHOST_READ_ON_SEND, TOGGLE_READ_ON_SEND),
             ExpandableBoolGroup.Option(R.string.InuGhostHideVoiceRead, InuConfig.GHOST_HIDE_VOICE_READ, TOGGLE_HIDE_VOICE_READ),
             ExpandableBoolGroup.Option(R.string.InuGhostHideStoryRead, InuConfig.GHOST_HIDE_STORY_READ, TOGGLE_HIDE_STORY_READ),
             ExpandableBoolGroup.Option(R.string.InuGhostHideTyping, InuConfig.GHOST_HIDE_TYPING, TOGGLE_HIDE_TYPING),
@@ -32,7 +32,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGhostMode)))
         ghostGroup.addTo(items) {
-            InuConfig.GHOST_MODE.value = ghostGroup.options.any { it.config.value } || InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
             GhostHelper.syncPresence(currentAccount)
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
@@ -46,6 +45,15 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         )
         items.add(mkSubPageButton(BUTTON_MANAGE_WHITELIST, LocaleController.getString(R.string.InuGhostWhitelist)))
         items.add(UItem.asShadow(null))
+        // Independent of the group above — not part of "is ghost active" (same as
+        // AyuGram/NagramX's markReadAfterSend, which lives outside ghostToggleItems).
+        items.add(
+            UItem.asCheck(
+                TOGGLE_READ_ON_SEND,
+                LocaleController.getString(R.string.InuGhostReadOnSend),
+            ).setChecked(InuConfig.GHOST_READ_ON_SEND.value)
+        )
+        items.add(UItem.asShadow(null))
     }
 
     private fun presenceModeLabel(): String = when (InuConfig.GHOST_PRESENCE_MODE.value) {
@@ -56,7 +64,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (ghostGroup.handleClick(item, view) { _ ->
-            InuConfig.GHOST_MODE.value = ghostGroup.options.any { it.config.value } || InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }) return
@@ -71,12 +78,15 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 InuConfig.GHOST_PRESENCE_MODE.value,
             ) { which ->
                 InuConfig.GHOST_PRESENCE_MODE.value = which
-                InuConfig.GHOST_MODE.value = ghostGroup.options.any { it.config.value } || which != InuConfig.GhostPresenceModeItem.NORMAL
                 GhostHelper.syncPresence(currentAccount)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
                 listView?.adapter?.update(true)
             }
             BUTTON_MANAGE_WHITELIST -> presentFragment(GhostWhitelistSettingsActivity())
+            TOGGLE_READ_ON_SEND -> {
+                val new = InuConfig.GHOST_READ_ON_SEND.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
         }
     }
 

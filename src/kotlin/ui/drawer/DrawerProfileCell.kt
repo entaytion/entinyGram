@@ -27,6 +27,7 @@ import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper
 import desu.inugram.helpers.security.GhostHelper
+import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.PhoneFormat.PhoneFormat
 import org.telegram.messenger.AndroidUtilities
@@ -66,7 +67,6 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
     private val shadowView: ImageView
     private val arrowView: ImageView
     private val darkThemeView: RLottieImageView
-    private val ghostView: ImageView
 
     private val srcRect = Rect()
     private val destRect = Rect()
@@ -197,30 +197,47 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         darkThemeView.setOnClickListener {
             if (DialogsActivity.switchingTheme) return@setOnClickListener
             DialogsActivity.switchingTheme = true
-            val preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
-            var dayThemeName = preferences.getString("lastDayTheme", "Blue")!!
-            if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark) {
-                dayThemeName = "Blue"
-            }
-            var nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue")!!
-            if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark) {
-                nightThemeName = "Dark Blue"
-            }
-            var themeInfo = Theme.getActiveTheme()
-            if (dayThemeName == nightThemeName) {
-                if (themeInfo.isDark || dayThemeName == "Dark Blue" || dayThemeName == "Night") {
-                    dayThemeName = "Blue"
+            val isMonet = MonetHelper.isMonetActive()
+            val themeInfo: Theme.ThemeInfo
+            val toDark: Boolean
+
+            if (isMonet) {
+                val result = MonetHelper.getToggleTheme()
+                if (result != null) {
+                    themeInfo = result.themeInfo
+                    toDark = result.toDark
                 } else {
+                    toDark = !Theme.isCurrentThemeDark()
+                    themeInfo = if (toDark) (Theme.getTheme("Monet Dark") ?: Theme.getTheme("Dark Blue")) else (Theme.getTheme("Monet Light") ?: Theme.getTheme("Blue"))
+                }
+                val preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
+                preferences.edit().putString(if (toDark) "lastDarkTheme" else "lastDayTheme", themeInfo.key).apply()
+            } else {
+                val preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
+                var dayThemeName = preferences.getString("lastDayTheme", "Blue")!!
+                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark || dayThemeName.startsWith("Monet")) {
+                    dayThemeName = "Blue"
+                }
+                var nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue")!!
+                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark || nightThemeName.startsWith("Monet")) {
                     nightThemeName = "Dark Blue"
                 }
+                val cur = Theme.getActiveTheme()
+                if (dayThemeName == nightThemeName) {
+                    if (cur.isDark || dayThemeName == "Dark Blue" || dayThemeName == "Night") {
+                        dayThemeName = "Blue"
+                    } else {
+                        nightThemeName = "Dark Blue"
+                    }
+                }
+
+                toDark = dayThemeName == cur.key
+                themeInfo = if (toDark) Theme.getTheme(nightThemeName) else Theme.getTheme(dayThemeName)
             }
 
-            val toDark = dayThemeName == themeInfo.key
             if (toDark) {
-                themeInfo = Theme.getTheme(nightThemeName)
                 sunDrawable!!.setCustomEndFrame(36)
             } else {
-                themeInfo = Theme.getTheme(dayThemeName)
                 sunDrawable!!.setCustomEndFrame(0)
             }
             if (!toDark) {
@@ -260,42 +277,6 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
             true
         }
         addView(darkThemeView, LayoutHelper.createFrame(48, 48f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 6f, 90f))
-
-        ghostView = object : ImageView(context) {
-            override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
-                super.onInitializeAccessibilityNodeInfo(info)
-                info.text = if (GhostHelper.isGhostActive())
-                    LocaleController.getString(R.string.InuGhostMode) + ": ON"
-                else
-                    LocaleController.getString(R.string.InuGhostMode) + ": OFF"
-            }
-        }
-        ghostView.isFocusable = true
-        ghostView.scaleType = ImageView.ScaleType.CENTER
-        ghostView.setImageResource(R.drawable.inu_ghost)
-        if (Build.VERSION.SDK_INT >= 21) {
-            ghostView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17f)))
-            Theme.setRippleDrawableForceSoftware(ghostView.background as RippleDrawable)
-        }
-        ghostView.setOnClickListener {
-            val isGhost = GhostHelper.toggleGhostMode()
-            updateGhostIcon()
-            val lastFragment: BaseFragment? = drawerLayoutContainer.parentActionBarLayout?.lastFragment
-            if (lastFragment is DialogsActivity) {
-                lastFragment.updateStatus(UserConfig.getInstance(lastFragment.currentAccount).currentUser, true)
-            }
-            if (lastFragment != null) {
-                val str = LocaleController.getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
-                BulletinFactory.of(lastFragment).createImageBulletin(R.drawable.inu_ghost, str).show()
-            }
-        }
-        ghostView.setOnLongClickListener {
-            drawerLayoutContainer.inu_drawer?.closeDrawer(false)
-            drawerLayoutContainer.parentActionBarLayout.presentFragment(TosSettingsActivity())
-            true
-        }
-        addView(ghostView, LayoutHelper.createFrame(48, 48f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 54f, 90f))
-        updateGhostIcon()
 
         if (Theme.getEventType() == 0) {
             snowflakesEffect = SnowflakesEffect(0)
@@ -356,7 +337,6 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         super.onAttachedToWindow()
         status.attach()
         updateColors()
-        updateGhostIcon()
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded)
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.needSetDayNightTheme)
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.mainUserInfoChanged)
@@ -442,7 +422,6 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
                 sunDrawable!!.colorFilter = PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
             }
             arrowView.setColorFilter(PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN))
-            updateGhostIcon()
         }
         nameTextView.setTextColor(Theme.getColor(Theme.key_chats_menuName))
         if (useImageBackground) {
@@ -566,20 +545,6 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
     fun updateColors() {
         snowflakesEffect?.updateColors()
         status.setColor(Theme.getColor(if (Theme.isCurrentThemeDark()) Theme.key_chats_verifiedBackground else Theme.key_chats_menuPhoneCats))
-        updateGhostIcon()
-    }
-
-    fun updateGhostIcon() {
-        val active = GhostHelper.isGhostActive()
-        ghostView.setImageResource(if (active) R.drawable.inu_ghost_filled else R.drawable.inu_ghost)
-        val iconColor = currentIconColor ?: Theme.getColor(Theme.key_chats_menuName)
-        if (active) {
-            ghostView.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))
-            ghostView.alpha = 1.0f
-        } else {
-            ghostView.setColorFilter(PorterDuffColorFilter(iconColor, PorterDuff.Mode.SRC_IN))
-            ghostView.alpha = 0.55f
-        }
     }
 
     private fun setArrowState(animated: Boolean) {
@@ -606,8 +571,6 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
                 updateColors()
                 invalidate()
             }
-
-            NotificationCenter.mainUserInfoChanged -> updateGhostIcon()
 
             NotificationCenter.userEmojiStatusUpdated -> setUser(args[0] as TLRPC.User, accountsShown)
             NotificationCenter.currentUserPremiumStatusChanged -> setUser(

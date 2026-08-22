@@ -229,12 +229,11 @@ object MessageDetailsHelper {
             }
 
             if (item.itemId == 0 && item.ownerId > 0) {
+                // the sender of a message already visible in this chat is virtually always in
+                // MessagesController's in-memory cache; avoid a synchronous DB hit on the UI thread
+                // for the rare miss instead of blocking the click on storage.getUserSync.
                 val mc = MessagesController.getInstance(activity.currentAccount)
-                var user = mc?.getUser(item.ownerId)
-                if (user == null) {
-                    val storage = MessagesStorage.getInstance(activity.currentAccount)
-                    user = storage?.getUserSync(item.ownerId)
-                }
+                val user = mc?.getUser(item.ownerId)
 
                 val isValidUser = user != null && (user.access_hash != 0L || !user.username.isNullOrEmpty() || user.contact || user.id == UserConfig.getInstance(activity.currentAccount).clientUserId)
                 if (isValidUser) {

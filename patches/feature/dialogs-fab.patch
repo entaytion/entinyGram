@@ -110,7 +110,7 @@ index 0000000..0000000 100644
          if (!storiesEnabled) {
              if (storyPremiumHint != null) {
                  if (storyPremiumHint.shown()) {
-@@ -13760,10 +13772,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13768,10 +13780,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              });
          });
          io.addGap();

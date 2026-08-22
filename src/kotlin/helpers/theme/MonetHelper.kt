@@ -518,6 +518,33 @@ object MonetHelper {
 
     enum class ThemeMode { DISABLED, LIGHT, DARK, AMOLED, AUTO, AUTO_AMOLED }
 
+    class ToggleThemeResult(val themeInfo: Theme.ThemeInfo, val toDark: Boolean)
+
+    @JvmStatic
+    fun isMonetActive(): Boolean =
+        getThemeMode() != ThemeMode.DISABLED || Theme.getActiveTheme()?.inu_isMonet() == true
+
+    @JvmStatic
+    fun getToggleTheme(): ToggleThemeResult? {
+        if (!isMonetActive()) return null
+        val active = Theme.getActiveTheme() ?: return null
+        val isDark = active.inu_isMonetNight() || active.isDark || Theme.isCurrentThemeDark()
+        val prefs = themeConfigPrefs()
+        return if (isDark) {
+            val lightTheme = Theme.getTheme("Monet Light") ?: return null
+            ToggleThemeResult(lightTheme, false)
+        } else {
+            val lastDark = prefs.getString("lastDarkTheme", "Monet Dark")
+            val darkName = if (lastDark == "Monet AMOLED" || active.inu_isMonetAmoled() || getThemeMode() == ThemeMode.AMOLED || getThemeMode() == ThemeMode.AUTO_AMOLED) {
+                "Monet AMOLED"
+            } else {
+                "Monet Dark"
+            }
+            val darkTheme = Theme.getTheme(darkName) ?: Theme.getTheme("Monet Dark") ?: return null
+            ToggleThemeResult(darkTheme, true)
+        }
+    }
+
     fun getThemeMode(): ThemeMode {
         if (Theme.selectedAutoNightType == Theme.AUTO_NIGHT_TYPE_SYSTEM &&
             Theme.getCurrentTheme()?.inu_isMonetLight() == true

@@ -113,32 +113,25 @@ object BlockedMessagesHelper {
         if (!hasHideFilter()) return source
         val buffer = adapter.inu_visibleMessages
         buffer.clear()
+        val activeDays = HashSet<Int>()
         for (i in 0 until source.size) {
             val msg = source[i]
-            if (msg != null && !shouldHide(msg)) buffer.add(msg)
+            if (msg != null && !shouldHide(msg)) {
+                buffer.add(msg)
+                if (!msg.isDateObject && msg.contentType != 2) activeDays.add(msg.dateKeyInt)
+            }
         }
+        // single reverse pass: drop date headers with no message left in their day, and drop the
+        // unread divider if nothing real follows it — replaces the previous O(n^2) nested scans.
+        var hasMessageAfter = false
         for (i in buffer.indices.reversed()) {
             val msg = buffer[i]
             if (msg.isDateObject) {
-                var hasInDay = false
-                for (j in 0 until buffer.size) {
-                    val other = buffer[j]
-                    if (!other.isDateObject && other.dateKeyInt == msg.dateKeyInt) {
-                        hasInDay = true
-                        break
-                    }
-                }
-                if (!hasInDay) buffer.removeAt(i)
+                if (!activeDays.contains(msg.dateKeyInt)) buffer.removeAt(i)
             } else if (msg.contentType == 2) {
-                var hasAfter = false
-                for (j in i - 1 downTo 0) {
-                    val other = buffer[j]
-                    if (!other.isDateObject && other.contentType != 2) {
-                        hasAfter = true
-                        break
-                    }
-                }
-                if (!hasAfter) buffer.removeAt(i)
+                if (!hasMessageAfter) buffer.removeAt(i)
+            } else {
+                hasMessageAfter = true
             }
         }
         return buffer

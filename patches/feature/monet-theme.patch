@@ -12,8 +12,8 @@ Subject: monet theme, almost directly ported from NagramX
  .../telegram/ui/ActionBar/ThemeColors.java    | 14 ++++
  .../telegram/ui/Cells/ChatMessageCell.java    |  4 +-
  .../ui/Components/AvatarDrawable.java         |  2 +-
- .../java/org/telegram/ui/DialogsActivity.java |  4 +
- 9 files changed, 133 insertions(+), 28 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 48 +++++++-----
+ 9 files changed, 159 insertions(+), 46 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java b/TMessagesProj/src/main/java/org/telegram/messenger/CodeHighlighting.java
 index 0000000..0000000 100644
@@ -437,3 +437,58 @@ index 0000000..0000000 100644
          io.setDimAlpha(0x08);
  
          final Activity activity = getParentActivity();
+@@ -13727,28 +13731,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+             switchingTheme = true;
+             SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
+-            String dayThemeName = preferences.getString("lastDayTheme", "Blue");
+-            if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark()) {
+-                dayThemeName = "Blue";
+-            }
+-            String nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue");
+-            if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark()) {
+-                nightThemeName = "Dark Blue";
+-            }
+-            Theme.ThemeInfo themeInfo = Theme.getActiveTheme();
+-            if (dayThemeName.equals(nightThemeName)) {
+-                if (themeInfo.isDark() || dayThemeName.equals("Dark Blue") || dayThemeName.equals("Night")) {
++            Theme.ThemeInfo themeInfo;
++            boolean toDark;
++            desu.inugram.helpers.theme.MonetHelper.ToggleThemeResult monetToggle = desu.inugram.helpers.theme.MonetHelper.getToggleTheme();
++            if (monetToggle != null) {
++                themeInfo = monetToggle.getThemeInfo();
++                toDark = monetToggle.getToDark();
++                preferences.edit().putString(toDark ? "lastDarkTheme" : "lastDayTheme", themeInfo.getKey()).apply();
++            } else {
++                String dayThemeName = preferences.getString("lastDayTheme", "Blue");
++                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark() || dayThemeName.startsWith("Monet")) {
+                     dayThemeName = "Blue";
+-                } else {
++                }
++                String nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue");
++                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark() || nightThemeName.startsWith("Monet")) {
+                     nightThemeName = "Dark Blue";
+                 }
+-            }
++                themeInfo = Theme.getActiveTheme();
++                if (dayThemeName.equals(nightThemeName)) {
++                    if (themeInfo.isDark() || dayThemeName.equals("Dark Blue") || dayThemeName.equals("Night")) {
++                        dayThemeName = "Blue";
++                    } else {
++                        nightThemeName = "Dark Blue";
++                    }
++                }
+ 
+-            boolean toDark;
+-            if (toDark = dayThemeName.equals(themeInfo.getKey())) {
+-                themeInfo = Theme.getTheme(nightThemeName);
+-            } else {
+-                themeInfo = Theme.getTheme(dayThemeName);
++                if (toDark = dayThemeName.equals(themeInfo.getKey())) {
++                    themeInfo = Theme.getTheme(nightThemeName);
++                } else {
++                    themeInfo = Theme.getTheme(dayThemeName);
++                }
+             }
+             switchTheme(themeInfo, toDark);
+             Theme.turnOffAutoNight(BulletinFactory.of(this), () -> {

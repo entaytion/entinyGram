@@ -56,17 +56,24 @@ object RegexFilterHelper {
     @JvmStatic
     fun isMessageFiltered(messageObject: MessageObject?): Boolean {
         if (!isEnabled() || messageObject?.messageOwner == null) return false
+        val msgText = messageObject.messageText
+        val caption = messageObject.caption
+        val hasText = !msgText.isNullOrEmpty()
+        val hasCaption = !caption.isNullOrEmpty()
+        if (!hasText && !hasCaption) return false
+
+        // called on every cell bind while a filter is active — hash without allocating the
+        // concatenated string; only build it on a cache miss.
+        val textHash = 31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)
         val dialogId = messageObject.dialogId
-        val text = buildString {
-            messageObject.messageText?.let { if (it.isNotEmpty()) append(it).append('\n') }
-            messageObject.caption?.let { if (it.isNotEmpty()) append(it) }
-        }
-        if (text.isEmpty()) return false
-        val textHash = text.hashCode()
         synchronized(lock) {
             matchCache[dialogId]?.get(messageObject.id)?.let {
                 if (it.textHash == textHash) return it.matched
             }
+        }
+        val text = buildString {
+            if (hasText) append(msgText).append('\n')
+            if (hasCaption) append(caption)
         }
         val result = matches(text, dialogId)
         synchronized(lock) {

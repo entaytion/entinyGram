@@ -20,7 +20,7 @@ object WebAppHelper {
     // using a bot seems to be the the easiest way to force a webview
     const val HELPER_BOT_USERNAME = "inu_helper_bot"
     const val HELPER_BOT_ID = 8589894659L
-    const val TYPE_TLV = 1;
+    const val TYPE_TLV = 1
 
     @JvmStatic
     fun getInternalBotName(props: WebViewRequestProps): String? {
@@ -68,21 +68,21 @@ object WebAppHelper {
 
     @JvmStatic
     fun openTlViewer(fragment: BaseFragment, obj: TLObject) {
-        var serialized = "";
+        var serialized = ""
         try {
-            val data = CleanSerializedData(obj.getObjectSize());
-            obj.serializeToStream(data);
+            val data = CleanSerializedData(obj.getObjectSize())
+            obj.serializeToStream(data)
             serialized =
                 Base64.encodeToString(data.toByteArray(), Base64.NO_PADDING or Base64.NO_WRAP or Base64.URL_SAFE)
-            data.cleanup();
+            data.cleanup()
         } catch (e: Exception) {
-            FileLog.e(e);
+            FileLog.e(e)
         }
         if (TextUtils.isEmpty(serialized)) {
-            return;
+            return
         }
-        val url = "https://schema.jppgr.am/embed#data=" + serialized + "&layer=" + TLRPC.LAYER + "&hide-toolbar=1";
-        openInternalWebApp(fragment, url, TYPE_TLV);
+        val url = "https://schema.jppgr.am/embed#data=" + serialized + "&layer=" + TLRPC.LAYER + "&hide-toolbar=1"
+        openInternalWebApp(fragment, url, TYPE_TLV)
     }
 
     private fun openInternalWebApp(fragment: BaseFragment, url: String, type: Int, allowResolve: Boolean = true) {
@@ -104,7 +104,7 @@ object WebAppHelper {
             BotWebViewAttachedSheet.TYPE_WEB_VIEW_BUTTON,
             0, 0, false, null, false, null, null, 0, false, false
         )
-        props.inu_internalType = type;
+        props.inu_internalType = type
         val context = fragment.getParentActivity() ?: return
         if (context is LaunchActivity) {
             if (context.getBottomSheetTabs() != null && context.getBottomSheetTabs().tryReopenTab(props) != null) {

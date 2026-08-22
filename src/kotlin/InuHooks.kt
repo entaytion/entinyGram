@@ -69,6 +69,13 @@ object InuHooks {
         }
     }
 
+    private val newMessagesObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
+        if (id != NotificationCenter.didReceiveNewMessages) return@NotificationCenterDelegate
+        @Suppress("UNCHECKED_CAST")
+        val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
+        for (msg in messages) onNewMessage(msg, acc)
+    }
+
     @JvmStatic
     fun onMessagesControllerCreated(messagesController: MessagesController, account: Int) {
         MapsHelper.syncMapProvider(messagesController)
@@ -76,16 +83,18 @@ object InuHooks {
         desu.inugram.helpers.dialogs.FolderMembershipHelper.load(account)
         desu.inugram.helpers.security.PresenceHelper.load(account)
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
+        // TTL-based cache pruning only ran when the TTL setting itself was changed — accounts
+        // that never touch the setting (or just leave the app running for weeks) never got
+        // pruned. Run it once per account on every cold start instead.
+        desu.inugram.helpers.chat.SavedMessagesHelper.pruneIfNeeded(account)
+        desu.inugram.helpers.security.PresenceHelper.pruneIfNeeded(account)
         AndroidUtilities.runOnUIThread {
-            NotificationCenter.getInstance(account).addObserver(
-                NotificationCenter.NotificationCenterDelegate { id, acc, args ->
-                    if (id != NotificationCenter.didReceiveNewMessages) return@NotificationCenterDelegate
-                    @Suppress("UNCHECKED_CAST")
-                    val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
-                    for (msg in messages) onNewMessage(msg, acc)
-                },
-                NotificationCenter.didReceiveNewMessages,
-            )
+            val nc = NotificationCenter.getInstance(account)
+            // MessagesController (and thus its NotificationCenter instance) can be recreated for the
+            // same account (relogin, account reset) — drop any stale observer before re-adding so
+            // onNewMessage doesn't fire multiple times per message.
+            nc.removeObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
+            nc.addObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
         }
     }
 

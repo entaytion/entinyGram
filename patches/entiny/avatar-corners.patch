@@ -7,11 +7,14 @@ Subject: Add customizable avatar corner radius
 - applies to ImageReceiver-drawn avatars (dialog list, chat header, forum topics), AvatarDrawable placeholder backgrounds, and the profile screen expanded avatar (ProfileActivity/ProfileActivity2)
 - optional "unified corner radius" mode applies the same radius to forum avatars instead of their own multiplier
 ---
- .../org/telegram/messenger/ImageReceiver.java  | 14 +++++++++-----
- .../telegram/ui/Components/AvatarDrawable.java | 10 +++++++++-
- .../java/org/telegram/ui/ProfileActivity.java  | 18 ++++++++++++++++++
- .../java/org/telegram/ui/ProfileActivity2.java |  5 ++++-
- 4 files changed, 40 insertions(+), 7 deletions(-)
+ .../org/telegram/messenger/ImageReceiver.java | 14 +++++--
+ .../ui/Components/AvatarDrawable.java         | 10 ++++-
+ .../Components/Premium/FeaturesPageView.java  | 40 +++++++++++++++----
+ .../java/org/telegram/ui/ProfileActivity.java | 18 +++++++++
+ .../org/telegram/ui/ProfileActivity2.java     |  5 ++-
+ .../ui/Stories/ProfileStoriesView.java        |  8 ++--
+ .../telegram/ui/Stories/StoriesUtilities.java |  9 +++--
+ 7 files changed, 82 insertions(+), 22 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
 index 0000000..0000000 100644
@@ -33,21 +36,13 @@ index 0000000..0000000 100644
          if (parentObject == null) {
              parentObject = object;
          }
-@@ -1076,7 +1078,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
-             ((ClipRoundedDrawable) drawable).setRadii(r[0], r[1], r[2], r[3]);
-         } else if ((hasRoundRadius() || gradientShader != null) && (drawable instanceof BitmapDrawable || drawable instanceof AvatarDrawable)) {
-             if (drawable instanceof AvatarDrawable) {
--                ((AvatarDrawable) drawable).setRoundRadius(r[0]);
-+                ((AvatarDrawable) drawable).setRoundRadius(inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(r[0]) : r[0]);
-             } else {
-                 BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-                 if (bitmapDrawable instanceof RLottieDrawable) {
-@@ -1398,10 +1400,11 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1398,10 +1400,12 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                          if (isRoundRect && useRoundRadius) {
                              try {
                                  if (canvas != null) {
 -                                    if (roundRadius[0] == 0) {
-+                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius[0]) : roundRadius[0];
++                                    final int maxR = (int) (Math.min(roundRect.width(), roundRect.height()) / 2f);
++                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius[0], maxR) : roundRadius[0];
 +                                    if (inu_r == 0) {
                                          canvas.drawRect(roundRect, roundPaint);
                                      } else {
@@ -56,17 +51,18 @@ index 0000000..0000000 100644
                                      }
                                  }
                              } catch (Exception e) {
-@@ -1508,7 +1511,8 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1508,7 +1512,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                          if (isRoundRect && useRoundRadius) {
                              try {
                                  if (canvas != null) {
 -                                    if (roundRadius[0] == 0) {
-+                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius[0]) : roundRadius[0];
++                                    final int maxR = (int) (Math.min(roundRect.width(), roundRect.height()) / 2f);
++                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius[0], maxR) : roundRadius[0];
 +                                    if (inu_r == 0) {
                                          if (reactionLastFrame) {
                                              AndroidUtilities.rectTmp.set(roundRect);
                                              AndroidUtilities.rectTmp.inset(-(drawRegion.width() * ReactionLastFrame.LAST_FRAME_SCALE - drawRegion.width()) / 2f, -(drawRegion.height() * ReactionLastFrame.LAST_FRAME_SCALE - drawRegion.height()) / 2f);
-@@ -1517,7 +1521,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1517,7 +1523,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                                              canvas.drawRect(roundRect, roundPaint);
                                          }
                                      } else {
@@ -85,7 +81,7 @@ index 0000000..0000000 100644
              }
 -            if (roundRadius > 0) {
 +            if (desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
-+                int r = desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius > 0 ? roundRadius : size / 2);
++                int r = desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius > 0 ? roundRadius : size / 2, size / 2);
 +                AndroidUtilities.rectTmp.set(0, 0, size, size);
 +                if (r <= 0) {
 +                    canvas.drawRect(AndroidUtilities.rectTmp, backgroundPaint);
@@ -96,6 +92,64 @@ index 0000000..0000000 100644
                  AndroidUtilities.rectTmp.set(0, 0, size, size);
                  canvas.drawRoundRect(AndroidUtilities.rectTmp, roundRadius, roundRadius, backgroundPaint);
              } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/FeaturesPageView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/FeaturesPageView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/FeaturesPageView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/FeaturesPageView.java
+@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
+ import android.graphics.Canvas;
+ import android.graphics.LinearGradient;
+ import android.graphics.Paint;
++import android.graphics.Path;
++import android.graphics.PathMeasure;
+ import android.graphics.PorterDuff;
+ import android.graphics.PorterDuffColorFilter;
+ import android.graphics.Shader;
+@@ -371,14 +373,36 @@ public class FeaturesPageView extends BaseListPageView {
+                 AndroidUtilities.rectTmp.inset(-dp(5), -dp(5));
+                 gradientTools.setBounds(AndroidUtilities.rectTmp);
+                 int storiesCount = 7;
+-                float step = 360 / (float) storiesCount;
+-                int gapLen = 5;
+-                for (int i = 0; i < storiesCount; i++) {
+-                    float startAngle = step * i - 90;
+-                    float endAngle = startAngle + step;
+-                    startAngle += gapLen;
+-                    endAngle -= gapLen;
+-                    canvas.drawArc(AndroidUtilities.rectTmp, startAngle, (endAngle - startAngle), false, gradientTools.paint);
++                float r = AndroidUtilities.rectTmp.height() / 2f;
++                if (desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++                    r = desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) r, (int) r);
++                }
++                if (r < AndroidUtilities.rectTmp.height() / 2f) {
++                    Path path = new Path();
++                    path.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CW);
++                    PathMeasure pm = new PathMeasure(path, false);
++                    float len = pm.getLength();
++                    float step = len / (float) storiesCount;
++                    float gap = dp(3.5f);
++                    Path segment = new Path();
++                    for (int i = 0; i < storiesCount; i++) {
++                        float start = step * i + gap / 2f;
++                        float end = step * (i + 1) - gap / 2f;
++                        segment.reset();
++                        pm.getSegment(start, end, segment, true);
++                        segment.rLineTo(0, 0);
++                        canvas.drawPath(segment, gradientTools.paint);
++                    }
++                } else {
++                    float step = 360 / (float) storiesCount;
++                    int gapLen = 5;
++                    for (int i = 0; i < storiesCount; i++) {
++                        float startAngle = step * i - 90;
++                        float endAngle = startAngle + step;
++                        startAngle += gapLen;
++                        endAngle -= gapLen;
++                        canvas.drawArc(AndroidUtilities.rectTmp, startAngle, (endAngle - startAngle), false, gradientTools.paint);
++                    }
+                 }
+             }
+             super.dispatchDraw(canvas);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
@@ -169,3 +223,58 @@ index 0000000..0000000 100644
              imageReceiver.setImageCoords(avatarRect);
              imageReceiver.setRoundRadius((int) avatarRadius);
              imageReceiver.draw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
+@@ -609,8 +609,8 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
+                 paint.setStrokeWidth(AndroidUtilities.dp(2));
+                 paint.setAlpha((int) (255 * segmentsAlpha));
+                 boolean isForum = ChatObject.isForum(UserConfig.selectedAccount, dialogId);
+-                if (isForum) {
+-                    float r = rect2.height() * 0.32f;
++                if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++                    float r = isForum ? rect2.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rect2.height() / 2f), (int) (rect2.height() / 2f));
+                     canvas.drawRoundRect(rect2, r, r, paint);
+                 } else {
+                     canvas.drawCircle(rect2.centerX(), rect2.centerY(), rect2.width() / 2f, paint);
+@@ -902,8 +902,8 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
+ 
+     private void drawArc(Canvas canvas, RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint) {
+         boolean isForum = ChatObject.isForum(UserConfig.selectedAccount, dialogId);
+-        if (isForum) {
+-            float r = oval.height() * 0.32f;
++        if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++            float r = isForum ? oval.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (oval.height() / 2f), (int) (oval.height() / 2f));
+             if (Math.abs(sweepAngle) == 360) {
+                 canvas.drawRoundRect(oval, r, r, paint);
+                 return;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
+@@ -662,10 +662,11 @@ public class StoriesUtilities {
+     private static final RectF forumRect = new RectF();
+ 
+     private static void drawCircleInternal(Canvas canvas, View view, AvatarStoryParams params, Paint paint, boolean isForum) {
+-        if (isForum) {
++        if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++            float r = isForum ? dp(18) : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rectTmp.height() / 2f), (int) (rectTmp.height() / 2f));
+             forumRect.set(rectTmp);
+             forumRect.inset(dp(0.5f), dp(0.5f));
+-            canvas.drawRoundRect(forumRect, dp(18), dp(18), paint);
++            canvas.drawRoundRect(forumRect, r, r, paint);
+             return;
+         }
+         if (params.progressToArc == 0) {
+@@ -681,8 +682,8 @@ public class StoriesUtilities {
+     private static final Path forumSegmentPath = new Path();
+ 
+     private static void drawSegment(Canvas canvas, RectF rectTmp, Paint paint, float startAngle, float endAngle, AvatarStoryParams params, boolean isForum) {
+-        if (isForum) {
+-            float r = rectTmp.height() * 0.32f;
++        if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++            float r = isForum ? rectTmp.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rectTmp.height() / 2f), (int) (rectTmp.height() / 2f));
+             float rotateAngle = (((int)(startAngle)) / 90) * 90 + 90;
+             float pathAngleStart = -199 + rotateAngle;
+             float percentFrom = (startAngle - pathAngleStart) / 360;

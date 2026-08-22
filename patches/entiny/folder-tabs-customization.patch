@@ -8,10 +8,10 @@ Subject: Add folder tab customization: indicator stroke, bottom placement, hide 
 - fix actionbar blur height and search field positioning still reserving top space for the tabs bar after it moved to the bottom
 - reserve list bottom padding for the bottom-anchored tabs bar so future content cannot render underneath it
 ---
- .../messenger/MessagesController.java         |  3 +++
- .../ui/Components/FilterTabsView.java         | 11 ++++++++--
- .../java/org/telegram/ui/DialogsActivity.java | 21 ++++++++++++++-----
- 3 files changed, 28 insertions(+), 7 deletions(-)
+ .../messenger/MessagesController.java         |  3 ++
+ .../ui/Components/FilterTabsView.java         | 11 ++++--
+ .../java/org/telegram/ui/DialogsActivity.java | 35 +++++++++++++------
+ 3 files changed, 36 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -76,7 +76,42 @@ index 0000000..0000000 100644
                      }
                  }
              } else if (!inPreviewMode) {
-@@ -5261,7 +5261,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1326,7 +1326,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     childTop = actionBar.getMeasuredHeight();
+                 } else if (child instanceof ViewPage) {
+                     childTop = 0;
+-                } else if (child == topPanelLayout || child == topBubblesFadeView || child == filterTabsView) {
++                } else if (child == topPanelLayout || child == topBubblesFadeView || (child == filterTabsView && !FolderHelper.atBottom())) {
+                     childTop += actionBar.getMeasuredHeight();
+                     childTop += NonIslandHelper.globalSearch() ? 0 : dp(SEARCH_FIELD_HEIGHT);
+                 } else if (dialogStoriesCell != null && dialogStoriesCell.getPremiumHint() == child) {
+@@ -2092,8 +2092,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             final float filterTabsVisibility = getFilterTabsVisibilityFactor(false);
+             final float topPanelsVisibility = topPanelLayout != null ? topPanelLayout.getMetadata().getTotalVisibility() : 0f;
+ 
+-            t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
+-            additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
++            if (!FolderHelper.atBottom()) {
++                t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
++                additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
++            }
+ 
+             if (topPanelLayout != null) {
+                 final int h = (int) topPanelLayout.getAnimatedHeightWithPadding(NonIslandHelper.foldersBar() ? 0f : lerp((float) dp(14), dp(7), filterTabsVisibility));
+@@ -2101,9 +2103,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 additionalPadding += h;
+             }
+ 
+-            if (!NonIslandHelper.foldersBar()) {
+-            t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+-            additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
++            if (!NonIslandHelper.foldersBar() && !FolderHelper.atBottom()) {
++                t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
++                additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+             }
+ 
+             final int b = calculateListViewPaddingBottom();
+@@ -5261,7 +5263,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterTabsViewBackground.setPadding(dp(6.666f));
              filterTabsView.setPadding(0, dp(7), 0, dp(7));
              filterTabsView.setBlurredBackground(filterTabsViewBackground);
@@ -89,7 +124,7 @@ index 0000000..0000000 100644
              NonIslandHelper.applyFilterTabBar(filterTabsView, contentView);
          }
  
-@@ -6708,7 +6712,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6708,7 +6714,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          float topPanelsVisibility = 0;
          float fadeViewT = totalOffset;
  
@@ -98,7 +133,7 @@ index 0000000..0000000 100644
              filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? dp(NonIslandHelper.FOLDERS_BAR_OVERLAP_DP) * getFilterTabsVisibilityFactor(false) : 0));
              filtersTabVisibility = filterTabsView.getAlpha();
              filtersTabHeight = dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 7) * filtersTabVisibility;
-@@ -9056,6 +9060,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9056,6 +9062,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  storyHint.setTranslationY(baseTranslationY - dp(52));
              }
          }
@@ -108,7 +143,7 @@ index 0000000..0000000 100644
      }
  
      public boolean storiesEnabled = true;
-@@ -14424,7 +14431,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14432,7 +14441,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          final int actionBarHeight = actionBar.getMeasuredHeight()
              + dp(DialogsActivity.SEARCH_FIELD_HEIGHT)
              + dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0)
@@ -117,7 +152,7 @@ index 0000000..0000000 100644
              + (topPanelLayout != null && topPanelLayout.getVisibility() == View.VISIBLE ? topPanelLayout.getSumHeightOfAllVisibleChild() : 0)
              + ((int) scrollYOffset);
  
-@@ -14468,7 +14475,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14476,7 +14485,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {

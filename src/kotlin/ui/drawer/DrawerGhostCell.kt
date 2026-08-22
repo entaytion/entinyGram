@@ -32,6 +32,7 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
     init {
         imageView = BackupImageView(context)
         imageView.setImageResource(R.drawable.inu_ghost)
+        imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
 
         textView = TextView(context)
         textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
@@ -53,6 +54,13 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
         setClipChildren(false)
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(48f), MeasureSpec.EXACTLY)
+        )
+    }
+
     fun bind(text: CharSequence, iconRes: Int) {
         textView.text = text
         if (iconRes != 0) imageView.setImageResource(iconRes)
@@ -60,17 +68,13 @@ class DrawerGhostCell(context: Context) : FrameLayout(context) {
     }
 
     fun setChecked(checked: Boolean) {
-        checkBox.setChecked(checked, false)
+        checkBox.setChecked(checked, isAttachedToWindow)
         updateIconColor(checked)
     }
 
     private fun updateIconColor(checked: Boolean) {
         imageView.setImageResource(if (checked) R.drawable.inu_ghost_filled else R.drawable.inu_ghost)
-        if (checked) {
-            imageView.setColorFilter(PorterDuffColorFilter(0xFFF20C3C.toInt(), PorterDuff.Mode.SRC_IN))
-        } else {
-            imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
-        }
+        imageView.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.SRC_IN))
     }
 
     private fun updateColors() {

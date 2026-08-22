@@ -449,7 +449,7 @@ object ChatHelper {
             icons.add(R.drawable.group_edit)
         }
 
-        if (GhostHelper.isGhostActive() && InuConfig.GHOST_HIDE_READ.value && !GhostHelper.isDialogWhitelisted(activity.dialogId)) {
+        if (InuConfig.GHOST_HIDE_READ.value && !GhostHelper.isDialogWhitelisted(activity.dialogId)) {
             items.add(LocaleController.getString(R.string.InuMarkChatAsRead))
             options.add(OPTION_MARK_AS_READ)
             icons.add(R.drawable.msg_markread)

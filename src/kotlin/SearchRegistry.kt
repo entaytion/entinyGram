@@ -8,6 +8,7 @@ import desu.inugram.ui.settings.AnnoyancesSettingsActivity
 import desu.inugram.ui.settings.AntiDeletionSettingsActivity
 import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
+import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.ContentProtectionSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
@@ -48,6 +49,7 @@ object SearchRegistry {
     private val pages: List<Page> by lazy {
         listOf(
             AdditionalSettingsActivity.PAGE,
+            CacheManagementSettingsActivity.PAGE,
             InuSettingsActivity.PAGE,
             AppearanceSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,

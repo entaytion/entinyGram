@@ -192,7 +192,7 @@ object UrlCleanerHelper {
         return object : InputConnectionWrapper(ic, true) {
             override fun commitText(text: CharSequence?, newCursorPosition: Int): Boolean {
                 val cleaned = if (text != null && InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.value
-                    && text.toString().contains("https://")
+                    && (text.contains("https://") || text.contains("http://"))
                 ) cleanText(text) else text
                 return super.commitText(cleaned, newCursorPosition)
             }
