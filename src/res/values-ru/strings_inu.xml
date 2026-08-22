@@ -660,6 +660,8 @@
     <string name="InuRoundRecorderDualCameraInfo">Открывать одновременно фронтальную и основную камеры для мгновенного переключения во время записи. Расходует больше батареи.</string>
     <string name="InuRoundRecorderCameraApi">Запись кружочков использует %1$s API. **Переключиться на %2$s >**</string>
     <string name="InuHideBottomBarNonJoinedGroups">В группах без участия</string>
+    <string name="InuShowSpoilersDirectly">Показывать спойлеры сразу</string>
+    <string name="InuShowSpoilersDirectlyInfo">Пропускает шаг «нажмите, чтобы раскрыть» — текстовые спойлеры сразу показывают содержимое, везде.</string>
     <string name="InuTextSpoilerMode">Стиль текстового спойлера</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Простой</string>

@@ -606,6 +606,8 @@
     <string name="InuRoundRecorderDualCameraInfo">フロントとリアのカメラを同時に開き、録画中に瞬時に切り替えできます。電池消費が増えます。</string>
     <string name="InuRoundRecorderCameraApi">丸メッセージの録画は %1$s API を使用しています。**%2$s に切り替える >**</string>
     <string name="InuHideBottomBarNonJoinedGroups">未参加のグループ</string>
+    <string name="InuShowSpoilersDirectly">スポイラーを直接表示</string>
+    <string name="InuShowSpoilersDirectlyInfo">タップして表示する手順を省略します — テキストスポイラーの内容がどこでもすぐに表示されます。</string>
     <string name="InuTextSpoilerMode">テキストスポイラーのスタイル</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">シンプル</string>

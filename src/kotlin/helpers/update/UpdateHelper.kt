@@ -46,7 +46,10 @@ object UpdateHelper {
     @JvmStatic
     fun getFullVersionInfo(): String {
         if (ParanoiaHelper.isDisguised()) {
-            return "Telegram for Android v${stockVersionName} (${BuildConfig.STOCK_VERSION_CODE})\ndirect ${Build.CPU_ABI} ${Build.CPU_ABI2}"
+            // Build.CPU_ABI/CPU_ABI2 are deprecated (API 21+) in favor of SUPPORTED_ABIS,
+            // which lists the same primary/secondary ABIs in preference order.
+            val abis = Build.SUPPORTED_ABIS
+            return "Telegram for Android v${stockVersionName} (${BuildConfig.STOCK_VERSION_CODE})\ndirect ${abis.getOrNull(0)} ${abis.getOrNull(1)}"
         }
         return "${getVersionInfoString()}\nBuilt on: ${BuildVars.BUILD_DATE}"
     }
@@ -310,12 +313,12 @@ object UpdateHelper {
     @Suppress("DEPRECATION")
     private fun currentVersionCode(): Int = pInfo.versionCode
 
+    // Build.SUPPORTED_ABIS (API 21+) has fully replaced the deprecated Build.CPU_ABI fallback —
+    // minSdk is 26, so it's always populated here.
     private fun isArm64Device(): Boolean =
-        Build.SUPPORTED_ABIS?.any {
+        Build.SUPPORTED_ABIS.any {
             it.contains("arm64", ignoreCase = true) || it.contains("aarch64", ignoreCase = true)
-        } == true
-            || Build.CPU_ABI?.contains("arm64", ignoreCase = true) == true
-            || Build.CPU_ABI?.contains("aarch64", ignoreCase = true) == true
+        }
 
     sealed class CheckResult {
         object InFlight : CheckResult()

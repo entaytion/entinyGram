@@ -360,7 +360,7 @@ object SavedMessagesHelper {
             null
         }
         val text = if (timeStr != null) {
-            LocaleController.formatString("InuDeletedAt", R.string.InuDeletedAt, timeStr)
+            LocaleController.formatString(R.string.InuDeletedAt, timeStr)
         } else {
             LocaleController.getString(R.string.InuSaveDeletedMessages)
         }

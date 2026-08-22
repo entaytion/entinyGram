@@ -124,6 +124,8 @@
     <string name="InuPredictiveBackOff">Вимкнено</string>
     <string name="InuPredictiveBackStock">Стандартний</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuShowSpoilersDirectly">Показувати спойлери одразу</string>
+    <string name="InuShowSpoilersDirectlyInfo">Пропускає крок «торкніться, щоб розкрити» — текстові спойлери одразу показують вміст, скрізь.</string>
     <string name="InuTextSpoilerMode">Стиль текстового спойлера</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Простий</string>

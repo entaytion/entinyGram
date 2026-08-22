@@ -142,6 +142,8 @@
     <string name="InuPredictiveBackOff">Kapalı</string>
     <string name="InuPredictiveBackStock">Varsayılan</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuShowSpoilersDirectly">Spoiler\'ları doğrudan göster</string>
+    <string name="InuShowSpoilersDirectlyInfo">Dokunup açma adımını atlar — metin spoiler\'ları içeriğini her yerde hemen gösterir.</string>
     <string name="InuTextSpoilerMode">Metin sürpriz (spoiler) stili</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Basit</string>

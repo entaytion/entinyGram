@@ -161,7 +161,7 @@ class DeleteProfilePhotosSheet(
 
         deleteSelectedBtn = makeButton(
             context = context,
-            text = LocaleController.formatString("InuDeleteSelectedProfilePhotos", R.string.InuDeleteSelectedProfilePhotos, 0),
+            text = LocaleController.formatString(R.string.InuDeleteSelectedProfilePhotos, 0),
             background = Theme.createSimpleSelectorRoundRectDrawable(
                 AndroidUtilities.dp(10f),
                 Theme.getColor(Theme.key_text_RedBold),
@@ -201,14 +201,14 @@ class DeleteProfilePhotosSheet(
         val selected = selectedIds.size
 
         if (count > 0) {
-            subtitleView.text = LocaleController.formatString("InuProfilePhotosSelected", R.string.InuProfilePhotosSelected, selected)
+            subtitleView.text = LocaleController.formatString(R.string.InuProfilePhotosSelected, selected)
             selectAllBtn.visibility = View.VISIBLE
             selectAllBtn.text = LocaleController.getString(
                 if (selected == count) R.string.InuDeselectAll else R.string.InuSelectAll
             )
             deleteAllBtn.visibility = View.VISIBLE
             deleteSelectedBtn.visibility = View.VISIBLE
-            deleteSelectedBtn.text = LocaleController.formatString("InuDeleteSelectedProfilePhotos", R.string.InuDeleteSelectedProfilePhotos, selected)
+            deleteSelectedBtn.text = LocaleController.formatString(R.string.InuDeleteSelectedProfilePhotos, selected)
             deleteSelectedBtn.isEnabled = selected > 0
             deleteSelectedBtn.alpha = if (selected > 0) 1f else 0.4f
         } else {
@@ -293,7 +293,7 @@ class DeleteProfilePhotosSheet(
         val count = selectedIds.size
         val builder = AlertDialog.Builder(context).apply {
             setTitle(LocaleController.getString(R.string.InuDeleteProfilePhotos))
-            setMessage(LocaleController.formatString("InuDeleteSelectedProfilePhotosConfirm", R.string.InuDeleteSelectedProfilePhotosConfirm, count))
+            setMessage(LocaleController.formatString(R.string.InuDeleteSelectedProfilePhotosConfirm, count))
             setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ ->
                 val toDelete = photosList.filter { selectedIds.contains(it.id) }
                 performDelete(toDelete, isAll = toDelete.size == photosList.size)
@@ -393,7 +393,7 @@ class DeleteProfilePhotosSheet(
                         val toastMsg = if (isAll) {
                             LocaleController.getString(R.string.InuProfilePhotosDeleted)
                         } else {
-                            LocaleController.formatString("InuProfilePhotosDeletedCount", R.string.InuProfilePhotosDeletedCount, toDelete.size)
+                            LocaleController.formatString(R.string.InuProfilePhotosDeletedCount, toDelete.size)
                         }
                         BulletinFactory.global().createSimpleBulletin(R.raw.ic_delete, toastMsg).show()
                     }

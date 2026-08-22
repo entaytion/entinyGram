@@ -605,6 +605,8 @@
     <string name="InuRoundRecorderDualCameraInfo">同时打开前后摄像头，可在录制中即时切换。耗电更多。</string>
     <string name="InuRoundRecorderCameraApi">圆形录制使用 %1$s API。**切换到 %2$s >**</string>
     <string name="InuHideBottomBarNonJoinedGroups">未加入的群组</string>
+    <string name="InuShowSpoilersDirectly">直接显示剧透</string>
+    <string name="InuShowSpoilersDirectlyInfo">跳过点击展开的步骤——文本剧透内容将随时随地直接显示。</string>
     <string name="InuTextSpoilerMode">文本剧透样式</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">简单</string>

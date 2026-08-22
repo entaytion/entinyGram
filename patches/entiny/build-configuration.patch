@@ -25,7 +25,7 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:7.1.1'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -117,7 +119,12 @@ android {
+@@ -120,7 +122,12 @@ android {
          targetSdkVersion 35
  
          ndk {

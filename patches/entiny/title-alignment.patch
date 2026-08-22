@@ -7,17 +7,17 @@ Subject: feat(chat): centered actionbar titles with right-side avatar and adapti
 - move the chat avatar to the right edge so the centered title is truly centered
 - shrink the centered chat title font to fit long names (iOS-style), ellipsizing only below the minimum size
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 110 +++++++++----
- .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++-------
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 110 ++++++++----
+ .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++------
  .../telegram/ui/Cells/ChatMessageCell.java    |  13 +-
  .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
  .../telegram/ui/Cells/ManageChatUserCell.java |   8 +-
  .../telegram/ui/Cells/ProfileSearchCell.java  |   2 +-
  .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
- .../ui/Components/ChatAvatarContainer.java    | 147 ++++++++++++++----
+ .../ui/Components/ChatAvatarContainer.java    | 156 ++++++++++++++----
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
- 10 files changed, 296 insertions(+), 127 deletions(-)
+ 10 files changed, 304 insertions(+), 128 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -580,7 +580,7 @@ index 0000000..0000000 100644
          titleTextView.setPadding(0, dp(6), 0, dp(12));
          addView(titleTextView);
  
-@@ -289,7 +293,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -289,17 +293,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              animatedSubtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              animatedSubtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              animatedSubtitleTextView.setTextSize(dp(14));
@@ -589,7 +589,11 @@ index 0000000..0000000 100644
              animatedSubtitleTextView.setPadding(0, 0, dp(10), 0);
              animatedSubtitleTextView.setTranslationY(-dp(1));
              addView(animatedSubtitleTextView);
-@@ -299,7 +303,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         } else {
+             subtitleTextView = new SimpleTextConnectedView(context, subtitleTextLargerCopyView);
+-            subtitleTextView.setEllipsizeByGradient(true);
++            subtitleTextView.setScrollNonFitText(marquee);
++            subtitleTextView.setEllipsizeByGradient(!marquee);
              subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              subtitleTextView.setTextSize(14);
@@ -598,7 +602,7 @@ index 0000000..0000000 100644
              subtitleTextView.setPadding(0, 0, dp(10), 0);
              addView(subtitleTextView);
          }
-@@ -463,7 +467,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -463,7 +468,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      }
  
@@ -607,7 +611,7 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -657,12 +661,26 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -657,12 +662,29 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -629,16 +633,19 @@ index 0000000..0000000 100644
 +        }
          avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY));
 -        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
-+        titleTextView.setWidthWrapContent(!centerChatTitle);
++        // wrap_content sizing shrinks the view down to the actual text width, which is fine for
++        // static ellipsis but leaves the marquee scrolling inside a window only as wide as the
++        // text itself instead of the full row — force full width while marquee is active.
++        titleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
 +        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
          if (subtitleTextView != null) {
 -            subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
-+            subtitleTextView.setWidthWrapContent(!centerChatTitle);
++            subtitleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
 +            subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          }
-@@ -759,55 +777,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -759,55 +781,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -771,7 +778,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -909,10 +989,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -909,10 +993,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -785,7 +792,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -935,6 +1016,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -935,6 +1020,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
@@ -795,7 +802,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -985,10 +1069,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -985,10 +1073,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          if (parentFragment != null) {
              long dialogId = parentFragment.getDialogId();
@@ -810,7 +817,17 @@ index 0000000..0000000 100644
                  desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
              );
          }
-@@ -1531,6 +1619,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1004,6 +1096,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     public void setSubtitle(CharSequence value) {
+         if (lastSubtitle == null) {
+             if (subtitleTextView != null) {
++                boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
++                subtitleTextView.setScrollNonFitText(marquee);
++                subtitleTextView.setEllipsizeByGradient(!marquee);
+                 subtitleTextView.setText(value);
+             } else if (animatedSubtitleTextView != null) {
+                 animatedSubtitleTextView.setText(value);
+@@ -1531,6 +1626,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -818,7 +835,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1737,9 +1826,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1737,9 +1833,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
          }
          if (hasVisibleAvatar()) {

@@ -147,6 +147,8 @@
     <string name="InuPredictiveBackOff">Off</string>
     <string name="InuPredictiveBackStock">Stock</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuShowSpoilersDirectly">Show spoilers directly</string>
+    <string name="InuShowSpoilersDirectlyInfo">Skip the tap-to-reveal step — text spoilers show their content right away, everywhere.</string>
     <string name="InuTextSpoilerMode">Text spoiler style</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Simple</string>
@@ -683,8 +685,12 @@
     <string name="InuBackupImportSheetTitle">Are you sure you want to apply these settings?</string>
     <string name="InuBackupImportNoChanges">This file matches your current settings</string>
     <string name="InuBackupImportSheetChanges_one">**%1$d** change will be applied to the current settings.</string>
+    <string name="InuBackupImportSheetChanges_few">**%1$d** changes will be applied to the current settings.</string>
+    <string name="InuBackupImportSheetChanges_many">**%1$d** changes will be applied to the current settings.</string>
     <string name="InuBackupImportSheetChanges_other">**%1$d** changes will be applied to the current settings.</string>
     <string name="InuFontStyles_one">%1$d style</string>
+    <string name="InuFontStyles_few">%1$d styles</string>
+    <string name="InuFontStyles_many">%1$d styles</string>
     <string name="InuFontStyles_other">%1$d styles</string>
     <string name="InuBackupImportSheetApply">Yes, apply</string>
     <string name="InuBackupImportSheetCancel">No, leave as is</string>
@@ -843,9 +849,13 @@
     <string name="InuDeleteOwnMessagesFoundProgress">Found %1$d / %2$d</string>
     <string name="InuDeleteOwnMessagesNone">No messages from you in this chat</string>
     <string name="InuDeleteOwnMessagesConfirm_one">Delete %d message from yourself? This cannot be undone.</string>
+    <string name="InuDeleteOwnMessagesConfirm_few">Delete %d messages from yourself? This cannot be undone.</string>
+    <string name="InuDeleteOwnMessagesConfirm_many">Delete %d messages from yourself? This cannot be undone.</string>
     <string name="InuDeleteOwnMessagesConfirm_other">Delete %d messages from yourself? This cannot be undone.</string>
     <string name="InuDeleteOwnMessagesDeleting">Deleted %1$d / %2$d</string>
     <string name="InuDeleteOwnMessagesDone_one">%d message deleted</string>
+    <string name="InuDeleteOwnMessagesDone_few">%d messages deleted</string>
+    <string name="InuDeleteOwnMessagesDone_many">%d messages deleted</string>
     <string name="InuDeleteOwnMessagesDone_other">%d messages deleted</string>
     <string name="InuDeleteOwnMessagesError">Error: %1$s</string>
     <string name="InuDeleteOwnMessagesFloodWait">Rate limited, waiting for %ds…</string>

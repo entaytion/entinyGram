@@ -11,6 +11,7 @@ import desu.inugram.helpers.chat.DoubleTapAction
 import desu.inugram.helpers.chat.DoubleTapActionHelper
 import desu.inugram.helpers.chat.DoubleTapContext
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
@@ -132,6 +133,14 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
         // Spoilers
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSpoilers)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SHOW_SPOILERS_DIRECTLY,
+                R.string.InuShowSpoilersDirectly,
+                R.string.InuShowSpoilersDirectlyInfo,
+                InuConfig.SHOW_SPOILERS_DIRECTLY.value,
+            )
+        )
         items.add(
             UItem.asButton(
                 BUTTON_TEXT_SPOILER_MODE,
@@ -338,6 +347,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 miscPreview?.invalidate()
             }
 
+            TOGGLE_SHOW_SPOILERS_DIRECTLY -> {
+                val new = InuConfig.SHOW_SPOILERS_DIRECTLY.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
+
             TOGGLE_SPOILER_EXTEND_TO_LINE_END -> {
                 val new = InuConfig.SPOILER_EXTEND_TO_LINE_END.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -491,6 +506,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
+        private val TOGGLE_SHOW_SPOILERS_DIRECTLY = InuUtils.generateId()
         private val BUTTON_TEXT_SPOILER_MODE = InuUtils.generateId()
         private val TOGGLE_SPOILER_EXTEND_TO_LINE_END = InuUtils.generateId()
         private val TOGGLE_LINK_PREVIEW_SPOILER = InuUtils.generateId()
@@ -545,6 +561,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
                 SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),
+                SearchRegistry.Entry("show-spoilers-directly", R.string.InuShowSpoilersDirectly, TOGGLE_SHOW_SPOILERS_DIRECTLY),
                 SearchRegistry.Entry("text-spoiler-mode", R.string.InuTextSpoilerMode, BUTTON_TEXT_SPOILER_MODE),
                 SearchRegistry.Entry("spoiler-extend-to-line-end", R.string.InuSpoilerExtendToLineEnd, TOGGLE_SPOILER_EXTEND_TO_LINE_END),
                 SearchRegistry.Entry("link-preview-spoiler", R.string.InuLinkPreviewSpoiler, TOGGLE_LINK_PREVIEW_SPOILER),

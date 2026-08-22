@@ -158,6 +158,11 @@ object InuConfig {
     @JvmField
     val PREDICTIVE_BACK_MODE = PredictiveBackModeItem()
 
+    // Skips SpoilerEffect.addSpoilers()/SpoilersTextView's tap-to-reveal entirely — text spoilers
+    // render already-revealed everywhere, same idea as NagramX's showSpoilersDirectly.
+    @JvmField
+    val SHOW_SPOILERS_DIRECTLY = BoolItem("show_spoilers_directly", false)
+
     class TextSpoilerModeItem : IntItem("text_spoiler_mode", SIMPLE) {
         companion object {
             const val DEFAULT = 0

@@ -578,7 +578,7 @@ object ChatActionsHelper {
         if (showPeerCheckbox || showNotifyCheckbox) {
             val checkIndex = if (showPeerCheckbox) 1 else 0
             val text = if (showPeerCheckbox) {
-                LocaleController.formatString("PinAlsoFor", R.string.PinAlsoFor, UserObject.getFirstName(user!!))
+                LocaleController.formatString(R.string.PinAlsoFor, UserObject.getFirstName(user!!))
             } else {
                 LocaleController.getString(R.string.PinNotify)
             }
@@ -610,7 +610,9 @@ object ChatActionsHelper {
             bulletin.show()
             bulletin.layout.postDelayed({
                 try {
-                    bulletin.layout.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+                    // FLAG_IGNORE_GLOBAL_SETTING is deprecated (API 33+) — respecting the user's
+                    // haptics toggle instead of overriding it is the recommended replacement.
+                    bulletin.layout.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 } catch (_: Exception) {
                 }
             }, 550)

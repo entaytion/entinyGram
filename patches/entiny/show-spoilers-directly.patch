@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 22 Aug 2026 21:28:38 +0300
+Subject: Add auto-reveal spoilers option (show text spoilers without tapping)
+
+- add InuConfig.SHOW_SPOILERS_DIRECTLY (default off)
+- skip SpoilerEffect.addSpoilers() when enabled so text spoilers render already-revealed
+- SpoilersTextView.setText() marks isSpoilersRevealed=true when enabled
+- toggle in Messages settings under Spoilers section, triggers interface reload
+---
+ .../org/telegram/ui/Components/spoilers/SpoilerEffect.java  | 6 ++++++
+ .../telegram/ui/Components/spoilers/SpoilersTextView.java   | 2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java
+@@ -643,12 +643,18 @@ public class SpoilerEffect extends Drawable {
+      * @param spoilers     Spoilers list to populate
+      */
+     public static void addSpoilers(@Nullable View v, Layout textLayout, @Nullable Stack<SpoilerEffect> spoilersPool, List<SpoilerEffect> spoilers) {
++        if (desu.inugram.InuConfig.SHOW_SPOILERS_DIRECTLY.getValue()) {
++            return;
++        }
+         if (textLayout.getText() instanceof Spanned) {
+             addSpoilers(v, textLayout, (Spanned) textLayout.getText(), spoilersPool, spoilers);
+         }
+     }
+ 
+     public static void addSpoilers(@Nullable View v, Layout textLayout, int left, int right, @Nullable Stack<SpoilerEffect> spoilersPool, List<SpoilerEffect> spoilers) {
++        if (desu.inugram.InuConfig.SHOW_SPOILERS_DIRECTLY.getValue()) {
++            return;
++        }
+         if (textLayout.getText() instanceof Spanned) {
+             addSpoilers(v, textLayout, left, right, (Spanned) textLayout.getText(), spoilersPool, spoilers, null);
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilersTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilersTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilersTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilersTextView.java
+@@ -186,7 +186,7 @@ public class SpoilersTextView extends TextView implements TextSelectionHelper.Si
+ 
+     @Override
+     public void setText(CharSequence text, BufferType type) {
+-        isSpoilersRevealed = false;
++        isSpoilersRevealed = desu.inugram.InuConfig.SHOW_SPOILERS_DIRECTLY.getValue();
+         super.setText(text, type);
+     }
+ 
