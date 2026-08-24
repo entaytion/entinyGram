@@ -271,7 +271,10 @@ object UpdateHelper {
         SharedConfig.pendingAppUpdate = updateObj
         SharedConfig.pendingAppUpdateBuildVersion = currentVerCode
         SharedConfig.saveConfig()
-        pendingBetaUpdate = BetaUpdate(tagName, remoteVerCode, updateObj.text)
+        // version must stay a plain integer string — SharedConfig.versionBiggerOrEqual splits it
+        // on "." and Integer.parseInt()s each part, and the raw GitHub tag (e.g. "v12.9.2-<hash>")
+        // crashes on the "v12" / "<hash>" segments.
+        pendingBetaUpdate = BetaUpdate(remoteVerCode.toString(), remoteVerCode, updateObj.text)
 
         finish(callback, CheckResult.Updated(updateObj))
     }
