@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1313,6 +1313,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1310,6 +1310,9 @@ public class MessagesController extends BaseController implements NotificationCe
              if (alwaysShow.contains(dialogId)) {
                  return true;
              }

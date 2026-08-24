@@ -4,8 +4,8 @@ Date: Sun, 26 Jul 2026 01:30:43 +0300
 Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismatch
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 156 ++++++++++++++----
- .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++------
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 207 +++++++++++++++---
+ .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++-----
  .../telegram/ui/Cells/ChatMessageCell.java    |  13 +-
  .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
  .../telegram/ui/Cells/ManageChatUserCell.java |   8 +-
@@ -13,11 +13,11 @@ Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismat
  .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
  .../BottomSheetWithRecyclerListView.java      |   1 +
- .../ui/Components/ChatAvatarContainer.java    | 153 +++++++++++++----
+ .../ui/Components/ChatAvatarContainer.java    | 153 ++++++++++---
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 13 files changed, 365 insertions(+), 129 deletions(-)
+ 13 files changed, 416 insertions(+), 129 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          titleTextView[i] = new SimpleTextView(getContext());
          titleTextView[i].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
          if (titleColorToSet != 0) {
-@@ -547,6 +558,37 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -547,6 +558,41 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
@@ -73,6 +73,10 @@ index 0000000..0000000 100644
 +
 +    private boolean inu_shouldCenterActionBarTitle() {
 +        return !inu_forceDisableCenterTitle && desu.inugram.helpers.InuUtils.shouldCenterTitle(parentFragment);
++    }
++
++    private boolean inu_isRealDialogsMainScreen() {
++        return parentFragment != null && parentFragment.getClass().getSimpleName().equals("DialogsActivity");
 +    }
 +
 +    private void syncInuCenteredGravities() {
@@ -103,7 +107,7 @@ index 0000000..0000000 100644
      public void setTitleRightMargin(int value) {
          titleRightMargin = value;
      }
-@@ -1379,6 +1421,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1379,6 +1425,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int actionBarHeight = getCurrentActionBarHeight();
          int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
  
@@ -117,7 +121,7 @@ index 0000000..0000000 100644
          ignoreLayoutRequest = true;
          if (actionModeTop != null) {
              FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
-@@ -1398,6 +1447,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1398,6 +1451,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -127,7 +131,7 @@ index 0000000..0000000 100644
          // textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1455,6 +1507,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1455,6 +1511,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  }
  
                  if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
@@ -137,7 +141,7 @@ index 0000000..0000000 100644
                      titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
                      if (centerScale) {
                          CharSequence text = titleTextView[i].getText();
-@@ -1502,12 +1557,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1502,12 +1561,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -154,7 +158,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
-@@ -1515,6 +1574,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1515,11 +1578,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -163,33 +167,82 @@ index 0000000..0000000 100644
 +        }
          textLeft += additionalTextLeft;
  
++        // inu: real right edge of the reserved title band for centered-title layout below —
++        // mirrors menuLeft so the overlap guard adapts to however many menu icons are actually
++        // visible, instead of assuming the full action bar width is free on the right.
++        int inu_centerRightBound = (right - left) - titleRightMargin;
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1534,7 +1596,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             int menuLeft = menu.searchFieldVisible() ? dp(menuOccupyBack ? 0 : AndroidUtilities.isTablet() ? 74 : 66) : (getMeasuredWidth()) - menu.getMeasuredWidth();
+             menu.layout(menuLeft, additionalTop, menuLeft + menu.getMeasuredWidth(), additionalTop + menu.getMeasuredHeight());
++            if (!menu.searchFieldVisible()) {
++                inu_centerRightBound = menuLeft;
++            }
++        }
++        // inu: DialogsActivity's title band genuinely changes shape as its search icon
++        // collapses/expands (menu's measured width actually shrinks, not just fades), so it should
++        // react to that. But the left icon (hamburger) reserves far less width than the right menu
++        // icons ever do, so purely centering within that band always sits well left of the true
++        // screen center — no bias can fix that without killing the reactivity entirely (it's the
++        // same asymmetry either way). Split the difference: blend band-center with the true screen
++        // center so the title still shifts with icon count, just anchored closer to the middle of
++        // the screen instead of the middle of the (structurally lopsided) free band.
++        // Everywhere else (settings pages) the left inset is dominated by back-button touch-target
++        // padding with nothing real to balance against, so use the true center outright there.
++        int inu_trueCenter = (right - left) / 2;
++        int inu_centerX;
++        if (inu_isRealDialogsMainScreen()) {
++            int inu_bandCenter = (textLeft + inu_centerRightBound) / 2;
++            inu_centerX = (inu_bandCenter + inu_trueCenter) / 2;
++        } else {
++            inu_centerX = inu_trueCenter;
+         }
+ 
+         for (int i = 0; i < 2; i++) {
+@@ -1534,7 +1625,32 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
 -                titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
 +                if (isCenterTitle) {
 +                    // Port of exteraless/exteraGram centered-title layout: place the view symmetrically
-+                    // around the action bar's horizontal center so its CENTER gravity lands exactly there.
-+                    // The old formula offset the view origin to the *text's* center while the view itself
-+                    // is measured at full available width, double-shifting the visible text right.
++                    // around the screen's true center (inu_centerX). The clamp below must be judged by
++                    // the ACTUAL rendered text width (getTextWidth()), not getMeasuredWidth() — the view
++                    // is measured to the full AT_MOST availableWidth (not shrunk to its content, see
++                    // SimpleTextView#onMeasure), so using the measured width here would clamp far more
++                    // aggressively than the visible text ever needs. The layout box itself must still use
++                    // the full measured width, though: SimpleTextView bakes its internal CENTER-gravity
++                    // offsetX against that width at measure time, so shrinking the box here would throw
++                    // the glyphs off-center inside it.
 +                    int halfWidth = titleTextView[i].getMeasuredWidth() / 2;
-+                    titleTextView[i].layout((right - left) / 2 - halfWidth, additionalTop + textTop - titleTextView[i].getPaddingTop(), (right - left) / 2 + halfWidth, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                    int textHalfWidth = titleTextView[i].getTextWidth() / 2;
++                    // inu: calcOffset() centers (text + side drawables) as one unit against the box's
++                    // own measured width, not the glyph text alone (see getSideDrawablesSize() above).
++                    // When a status/premium badge sits to the right of the title (DialogsActivity's
++                    // account name + emoji-status icon), that drawable's reserved width pulls the whole
++                    // unit's center right of the text's own visual center, making the text alone read as
++                    // shifted left even though the box itself sits exactly at inu_centerX. Push the box
++                    // right by half that drawable width so the TEXT — not the text+badge unit — lands on
++                    // the true center.
++                    int drawableBias = titleTextView[i].getSideDrawablesSize() / 2;
++                    int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX + drawableBias));
++                    titleTextView[i].layout(centerX - halfWidth, additionalTop + textTop - titleTextView[i].getPaddingTop(), centerX + halfWidth, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
 +                } else {
 +                    titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
 +                }
              }
          }
          if (additionalSubTitleOverlayContainer != null) {
-@@ -1543,12 +1614,22 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1543,12 +1659,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
 -            subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
 +            if (isCenterTitle) {
-+                // See the centered-title comment above: symmetric placement around the center.
-+                subtitleTextView.layout((right - left) / 2 - subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, (right - left) / 2 + subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + subtitleTextView.getTextHeight());
++                // See the centered-title comment above: clamp by real text width, layout box by measured width.
++                int halfWidth = subtitleTextView.getMeasuredWidth() / 2;
++                int textHalfWidth = subtitleTextView.getTextWidth() / 2;
++                int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX));
++                subtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + subtitleTextView.getTextHeight());
 +            } else {
 +                subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
 +            }
@@ -199,15 +252,18 @@ index 0000000..0000000 100644
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubtitleTextView.getTextHeight()) / 2 - dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 1);
 -            additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
 +            if (isCenterTitle) {
-+                // See the centered-title comment above: symmetric placement around the center.
-+                additionalSubtitleTextView.layout((right - left) / 2 - additionalSubtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, (right - left) / 2 + additionalSubtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++                // See the centered-title comment above: clamp by real text width, layout box by measured width.
++                int halfWidth = additionalSubtitleTextView.getMeasuredWidth() / 2;
++                int textHalfWidth = additionalSubtitleTextView.getTextWidth() / 2;
++                int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX));
++                additionalSubtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
 +            } else {
 +                additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
 +            }
          }
  
          if (avatarSearchImageView != null) {
-@@ -1606,6 +1687,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1606,6 +1738,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -216,7 +272,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2097,9 +2180,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2097,9 +2231,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasAvatar = chatAvatarContainer.hasVisibleAvatar();
          int visualWidth = chatAvatarContainer.getVisualWidth();
@@ -226,7 +282,7 @@ index 0000000..0000000 100644
  
          final int width = Math.min(getMeasuredWidth() - dp(6 + 46 + 6 + 6 + 46 + 6), visualWidth);
          if (animated) {
-@@ -2152,44 +2232,47 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2152,44 +2283,47 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
@@ -299,7 +355,7 @@ index 0000000..0000000 100644
              }
              glassDrawable.draw(canvas);
          }
-@@ -2202,6 +2285,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2202,6 +2336,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              glassDrawableMenu.setAlpha(hasForcedMenuWidth ? 255 : (int) (255 * animatorHasMenuItems.getFloatValue()));
              glassDrawableMenu.draw(canvas);
          }

@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6712,6 +6712,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6709,6 +6709,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isChatNoForwards(TLRPC.Chat chat) {
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
          if (chat == null) {
              return false;
          }
-@@ -6737,6 +6738,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6734,6 +6735,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isUserNoForwards(TLRPC.UserFull userFull) {

@@ -4,12 +4,12 @@ Date: Sun, 16 Aug 2026 13:59:50 +0300
 Subject: Unlock local premium features and client restrictions
 
 ---
- .../java/org/telegram/messenger/MessagesController.java     | 6 +++++-
- .../src/main/java/org/telegram/messenger/UserConfig.java    | 4 ++++
- .../org/telegram/ui/Components/StatusBadgeComponent.java    | 2 +-
- .../src/main/java/org/telegram/ui/PeerColorActivity.java    | 4 +++-
- .../src/main/java/org/telegram/ui/SettingsActivity.java     | 2 +-
- 5 files changed, 14 insertions(+), 4 deletions(-)
+ .../java/org/telegram/messenger/MessagesController.java   | 8 +++++++-
+ .../src/main/java/org/telegram/messenger/UserConfig.java  | 4 ++++
+ .../org/telegram/ui/Components/StatusBadgeComponent.java  | 2 +-
+ .../src/main/java/org/telegram/ui/PeerColorActivity.java  | 4 +++-
+ .../src/main/java/org/telegram/ui/SettingsActivity.java   | 2 +-
+ 5 files changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -30,7 +30,16 @@ index 0000000..0000000 100644
          return transcribeButtonPressed >= 2;
      }
  
-@@ -6869,6 +6872,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2628,6 +2631,8 @@ public class MessagesController extends BaseController implements NotificationCe
+             TLRPC.User user = getUserConfig().getCurrentUser();
+             if (user != null) {
+                 user.emoji_status = new_emoji_status;
++                desu.inugram.helpers.LocalPremiumHelper.persistEmojiStatus(new_emoji_status, currentAccount);
++                getUserConfig().saveConfig(true);
+                 getNotificationCenter().postNotificationName(NotificationCenter.userEmojiStatusUpdated, user);
+             }
+         } else {
+@@ -6874,6 +6879,7 @@ public class MessagesController extends BaseController implements NotificationCe
          if (user == null) {
              return false;
          }

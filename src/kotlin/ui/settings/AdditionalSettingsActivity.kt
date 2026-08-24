@@ -502,7 +502,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
                 SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
                 SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
-                SearchRegistry.Entry("cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
+                SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
             ),
         )
     }

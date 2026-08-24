@@ -280,7 +280,6 @@ entiny/edited-time-display.patch
 bugfix/profile-actionbar-lifecycle.patch
 bugfix/chat-activity-layout-crash.patch
 entiny/translator.patch
-entiny/local-premium.patch
 entiny/enable-premium-purchase.patch
 entiny/content-protection-bypass.patch
 entiny/allow-screenshots.patch
@@ -306,3 +305,4 @@ entiny/hidden-star-gifts.patch
 entiny/keep-downloads-in-background.patch
 entiny/title-alignment.patch
 entiny/auto-marquee.patch
+entiny/local-premium.patch
