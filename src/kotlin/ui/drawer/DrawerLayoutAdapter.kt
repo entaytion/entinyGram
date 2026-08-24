@@ -161,7 +161,7 @@ class DrawerLayoutAdapter(
                 if (accountsShown) pos -= getAccountRowsCount()
                 val item = items[pos]
                 if (item != null) cell.bind(item.text ?: "", item.icon)
-                cell.setChecked(GhostHelper.isGhostActive())
+                cell.setChecked(GhostHelper.isFullGhost())
                 cell.onSwitchToggled = onGhostSwitchToggled
                 if (DrawerM3SectionsHelper.isEnabled()) {
                     m3GroupFor(position)?.let { DrawerM3SectionsHelper.styleMenuRow(cell, it.first, it.second) }

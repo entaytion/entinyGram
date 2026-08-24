@@ -1021,6 +1021,8 @@
     <string name="InuGhostPresenceModeNormal">Звичайний</string>
     <string name="InuGhostPresenceModeHidden">Завжди прихований</string>
     <string name="InuGhostPresenceModeDelayed">Переходити офлайн невдовзі після входу в мережу</string>
+    <string name="InuGhostLocks">Виключено зі швидкого перемикача</string>
+    <string name="InuGhostLocksInfo">Ці опції зберігають свій стан при перемиканні режиму примари кнопкою в меню чи списку чатів.</string>
     <string name="InuGhostWhitelist">Білий список</string>
     <string name="InuGhostWhitelistInfo">Режим примари вимкнено для цих чатів — торкніться чату, щоб прибрати його з білого списку.</string>
     <string name="InuGhostWhitelistEmpty">У білому списку поки немає чатів.</string>

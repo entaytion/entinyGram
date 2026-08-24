@@ -36,11 +36,16 @@ enum class SuppressKind {
 /**
  * Ghost mode ("invisible mode"), modeled after AyuGram/NagramX's ghost mode.
  *
- * No stored master flag — "active" is a computed OR of the individual sub-toggles,
- * and [shouldSuppress] reads each sub-toggle directly instead of gating through a
- * separate on/off flag. This mirrors AyuGram's `NekoConfig.isGhostModeActive()` /
- * `AyuGhostUtils.interceptRequest`, which never gate on a master flag either — it
- * avoids the desync a stored master flag creates when multiple UI entry points
+ * No stored master flag. Two computed views over the same sub-toggles:
+ *  - [isGhostActive] — OR of the sub-toggles: "any suppression is on". Drives display-only
+ *    indicators (chat-title ghost icon, Invisible status label) so partial setups still show up.
+ *  - [isFullGhost] — AND over every non-locked component being in its ghost state. This is
+ *    exactly AyuGram's `AyuConfig.isGhostModeActive()` / exteraless's locked-pair variant and
+ *    is what the drawer/burger quick toggle flips via [setGhostMode], which skips components
+ *    locked through [InuConfig.GHOST_LOCK_*].
+ *
+ * [shouldSuppress] reads each sub-toggle directly — no master gate — avoiding the
+ * desync a stored master flag creates when multiple UI entry points
  * (drawer icon, settings page, presence picker) can all write to it independently.
  *
  * Unified single source of truth for both network packet filtering
@@ -61,22 +66,41 @@ object GhostHelper {
             InuConfig.GHOST_HIDE_TYPING.value ||
             InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
 
-    /** Mass-sets the sub-toggles together (mirrors AyuGram's `setGhostMode`). */
+    /**
+     * True if every non-locked component is in its ghost state — the state represented
+     * by the quick toggle (`AyuConfig.isGhostModeActive()` / NagramX locked pairs).
+     * Locked components are skipped entirely, like exteraless's `ghostToggleItems`.
+     */
+    @JvmStatic
+    fun isFullGhost(): Boolean {
+        if (!InuConfig.GHOST_LOCK_HIDE_READ.value && !InuConfig.GHOST_HIDE_READ.value) return false
+        if (!InuConfig.GHOST_LOCK_HIDE_VOICE_READ.value && !InuConfig.GHOST_HIDE_VOICE_READ.value) return false
+        if (!InuConfig.GHOST_LOCK_HIDE_STORY_READ.value && !InuConfig.GHOST_HIDE_STORY_READ.value) return false
+        if (!InuConfig.GHOST_LOCK_HIDE_TYPING.value && !InuConfig.GHOST_HIDE_TYPING.value) return false
+        if (!InuConfig.GHOST_LOCK_PRESENCE.value &&
+            InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.HIDDEN
+        ) return false
+        return true
+    }
+
+    /** Mass-sets the unlocked sub-toggles together (mirrors AyuGram/NagramX `setGhostMode`; locked ones keep their state). */
     @JvmStatic
     fun setGhostMode(enabled: Boolean) {
-        InuConfig.GHOST_HIDE_READ.value = enabled
-        InuConfig.GHOST_HIDE_VOICE_READ.value = enabled
-        InuConfig.GHOST_HIDE_STORY_READ.value = enabled
-        InuConfig.GHOST_HIDE_TYPING.value = enabled
-        InuConfig.GHOST_PRESENCE_MODE.value =
-            if (enabled) InuConfig.GhostPresenceModeItem.HIDDEN else InuConfig.GhostPresenceModeItem.NORMAL
+        if (!InuConfig.GHOST_LOCK_HIDE_READ.value) InuConfig.GHOST_HIDE_READ.value = enabled
+        if (!InuConfig.GHOST_LOCK_HIDE_VOICE_READ.value) InuConfig.GHOST_HIDE_VOICE_READ.value = enabled
+        if (!InuConfig.GHOST_LOCK_HIDE_STORY_READ.value) InuConfig.GHOST_HIDE_STORY_READ.value = enabled
+        if (!InuConfig.GHOST_LOCK_HIDE_TYPING.value) InuConfig.GHOST_HIDE_TYPING.value = enabled
+        if (!InuConfig.GHOST_LOCK_PRESENCE.value) {
+            InuConfig.GHOST_PRESENCE_MODE.value =
+                if (enabled) InuConfig.GhostPresenceModeItem.HIDDEN else InuConfig.GhostPresenceModeItem.NORMAL
+        }
         syncPresence(UserConfig.selectedAccount)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
     }
 
     @JvmStatic
     fun toggleGhostMode(): Boolean {
-        val newState = !isGhostActive()
+        val newState = !isFullGhost()
         setGhostMode(newState)
         return newState
     }

@@ -1004,6 +1004,8 @@
     <string name="InuGhostWhitelistRemoved">Beyaz listeden kaldırıldı</string>
     <string name="InuGhostHideVoiceRead">Sesli ve görüntülü mesajları dinlendi olarak işaretleme</string>
     <string name="InuGhostHideVoiceReadInfo">Sesli mesajlar ve görüntülü notlar gönderene dinlendi/oynatıldı olarak gösterilmez.</string>
+    <string name="InuGhostLocks">Hızlı anahtara dahil değil</string>
+    <string name="InuGhostLocksInfo">Kilitli seçenekler, çekmece veya menüdeki Hayalet Modu hızlı anahtarı değiştirildiğinde durumlarını korur.</string>
     <string name="InuGhostMode">Hayalet Modu</string>
     <string name="InuGhostModeDisableForChat">Bu sohbet için Hayalet Modunu devre dışı bırak</string>
     <string name="InuGhostModeDisabledForChatDone">Bu sohbet için Hayalet Modu devre dışı bırakıldı</string>

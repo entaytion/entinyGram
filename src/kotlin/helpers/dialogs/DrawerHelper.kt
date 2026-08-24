@@ -707,8 +707,8 @@ object DrawerHelper {
             instance.presentFragment(DialogsActivity(args))
         }
 
-        val isGhostActive = GhostHelper.isGhostActive()
-        io.add(if (isGhostActive) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
+        val isGhostOn = GhostHelper.isFullGhost()
+        io.add(if (isGhostOn) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
             val isGhost = GhostHelper.toggleGhostMode()
             val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
             instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)

@@ -113,4 +113,19 @@ object AvatarShapeHelper {
         val base = if (maxRadius > 0) Math.min(requestedRadius, maxRadius) else requestedRadius
         return (base * (corners / 28.0f)).toInt()
     }
+
+    /**
+     * Draw-time resolution for avatar images: forum avatars normally keep their squarer
+     * stock shape, but Unified Corner Radius applies the regular avatar radius to them.
+     *
+     * @param requestedRadiusPx radius the caller set on the receiver (forum or circle base)
+     * @param maxRadiusPx       half of the drawn size (full circle)
+     */
+    @JvmStatic
+    fun resolveAvatarRadius(requestedRadiusPx: Int, maxRadiusPx: Int, forum: Boolean): Int {
+        if (forum && InuConfig.UNIFIED_AVATAR_RADIUS.value) {
+            return resolveRadius(maxRadiusPx, maxRadiusPx)
+        }
+        return resolveRadius(requestedRadiusPx, maxRadiusPx)
+    }
 }

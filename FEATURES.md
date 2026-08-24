@@ -15,11 +15,12 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 ### privacy & protection
 
 - 📡 **ghost mode (stealth)**: privacy suite with granular toggles:
-  - **quick toggle** in the drawer header, drawer menu, and chat-list menu
+  - **quick toggle** in the drawer header, drawer menu, and chat-list menu — flips every option to full stealth at once (AyuGram-style); its indicator lights up only in that full state
+  - **quick-toggle locks** 🔒: exclude individual options from the quick toggle, like exteraless/NagramX
   - **status indicator** with a ghost icon in the dialogs list and active chat header
   - **quick access** to full Ghost settings by long-pressing the drawer button
   - hide read receipts for messages, voice notes, and video messages
-  - **read on send**: mark incoming messages read only when replying
+  - **read on send**: mark incoming messages read only when replying (enabled by default)
   - hide story views, online status, typing, recording, and upload indicators
   - **whitelist management**: dedicated screen listing every chat exempt from Ghost Mode, with one-tap add/remove
 - 📡 **anti-deletion & edit history**:

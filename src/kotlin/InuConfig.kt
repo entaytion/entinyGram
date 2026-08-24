@@ -1171,14 +1171,17 @@ object InuConfig {
     val BIOMETRIC_LOCK_ARCHIVE_EVERY_TIME = BoolItem("biometric_lock_archive_every_time", false)
 
     // --- ghost mode (invisible mode) ---
-    // No stored master switch (mirrors AyuGram/NagramX): "active" is a computed OR of
-    // these sub-toggles, and shouldSuppress() reads each one directly. All default off
-    // so a fresh install stays stock-identical without needing a gate.
+    // No stored master switch: the quick toggle represents "full ghost" — every
+    // non-locked component in its ghost state (AyuGram/exteraless isGhostModeActive).
+    // shouldSuppress() still reads each component directly; locks only affect the
+    // quick toggle. All suppression defaults stay off so a fresh install remains
+    // stock-identical without needing a gate. GHOST_READ_ON_SEND defaults to true,
+    // matching AyuGram's markReadAfterSend.
     @JvmField
     val GHOST_HIDE_READ = BoolItem("ghost_hide_read", false)
 
     @JvmField
-    val GHOST_READ_ON_SEND = BoolItem("ghost_read_on_send", false)
+    val GHOST_READ_ON_SEND = BoolItem("ghost_read_on_send", true)
 
     @JvmField
     val GHOST_HIDE_VOICE_READ = BoolItem("ghost_hide_voice_read", false)
@@ -1202,6 +1205,23 @@ object InuConfig {
 
     @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
+
+    // Quick-toggle locks: a locked component keeps its current value when the
+    // drawer/burger Ghost toggle flips everything else (exteraless/NagramX style).
+    @JvmField
+    val GHOST_LOCK_HIDE_READ = BoolItem("ghost_lock_hide_read", false)
+
+    @JvmField
+    val GHOST_LOCK_HIDE_VOICE_READ = BoolItem("ghost_lock_hide_voice_read", false)
+
+    @JvmField
+    val GHOST_LOCK_HIDE_STORY_READ = BoolItem("ghost_lock_hide_story_read", false)
+
+    @JvmField
+    val GHOST_LOCK_HIDE_TYPING = BoolItem("ghost_lock_hide_typing", false)
+
+    @JvmField
+    val GHOST_LOCK_PRESENCE = BoolItem("ghost_lock_presence", false)
 
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)

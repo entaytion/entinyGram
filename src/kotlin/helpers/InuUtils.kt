@@ -68,7 +68,7 @@ public object InuUtils {
 
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
-        if (fragment == null) return true // screens without an attached fragment follow the global toggle
+        if (fragment == null) return false // not attached yet — don't center until we know which screen this is
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
             return desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
         }

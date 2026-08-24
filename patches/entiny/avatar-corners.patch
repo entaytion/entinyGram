@@ -7,42 +7,45 @@ Subject: Add customizable avatar corner radius
 - applies to ImageReceiver-drawn avatars (dialog list, chat header, forum topics), AvatarDrawable placeholder backgrounds, and the profile screen expanded avatar (ProfileActivity/ProfileActivity2)
 - optional "unified corner radius" mode applies the same radius to forum avatars instead of their own multiplier
 ---
- .../org/telegram/messenger/ImageReceiver.java | 14 +++++--
+ .../org/telegram/messenger/ImageReceiver.java | 16 ++++++--
  .../ui/Components/AvatarDrawable.java         | 10 ++++-
  .../Components/Premium/FeaturesPageView.java  | 40 +++++++++++++++----
  .../java/org/telegram/ui/ProfileActivity.java | 18 +++++++++
  .../org/telegram/ui/ProfileActivity2.java     |  5 ++-
- .../ui/Stories/ProfileStoriesView.java        |  8 ++--
- .../telegram/ui/Stories/StoriesUtilities.java |  9 +++--
- 7 files changed, 82 insertions(+), 22 deletions(-)
+ .../ui/Stories/ProfileStoriesView.java        | 10 +++--
+ .../telegram/ui/Stories/StoriesUtilities.java | 11 +++--
+ .../ui/Stories/recorder/StoryRecorder.java    |  3 +-
+ 8 files changed, 90 insertions(+), 23 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
-@@ -326,6 +326,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -326,6 +326,8 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
      private final int[] roundRadius = new int[4];
      private int[] emptyRoundRadius;
      private boolean isRoundRect = true;
 +    public boolean inu_isAvatarImage = false;
++    public boolean inu_isForumAvatar = false;
      private Object mark;
  
      private Paint roundPaint;
-@@ -425,6 +426,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -425,6 +427,8 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
      }
  
      public void setForUserOrChat(TLObject object, Drawable avatarDrawable, Object parentObject, boolean animationEnabled, int vectorType, boolean big) {
 +        inu_isAvatarImage = true;
++        inu_isForumAvatar = object instanceof TLRPC.Chat && ((TLRPC.Chat) object).forum;
          if (parentObject == null) {
              parentObject = object;
          }
-@@ -1398,10 +1400,12 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1398,10 +1402,12 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                          if (isRoundRect && useRoundRadius) {
                              try {
                                  if (canvas != null) {
 -                                    if (roundRadius[0] == 0) {
 +                                    final int maxR = (int) (Math.min(roundRect.width(), roundRect.height()) / 2f);
-+                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius[0], maxR) : roundRadius[0];
++                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveAvatarRadius(roundRadius[0], maxR, inu_isForumAvatar) : roundRadius[0];
 +                                    if (inu_r == 0) {
                                          canvas.drawRect(roundRect, roundPaint);
                                      } else {
@@ -51,18 +54,18 @@ index 0000000..0000000 100644
                                      }
                                  }
                              } catch (Exception e) {
-@@ -1508,7 +1512,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1508,7 +1514,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                          if (isRoundRect && useRoundRadius) {
                              try {
                                  if (canvas != null) {
 -                                    if (roundRadius[0] == 0) {
 +                                    final int maxR = (int) (Math.min(roundRect.width(), roundRect.height()) / 2f);
-+                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius(roundRadius[0], maxR) : roundRadius[0];
++                                    final int inu_r = inu_isAvatarImage ? desu.inugram.helpers.theme.AvatarShapeHelper.resolveAvatarRadius(roundRadius[0], maxR, inu_isForumAvatar) : roundRadius[0];
 +                                    if (inu_r == 0) {
                                          if (reactionLastFrame) {
                                              AndroidUtilities.rectTmp.set(roundRect);
                                              AndroidUtilities.rectTmp.inset(-(drawRegion.width() * ReactionLastFrame.LAST_FRAME_SCALE - drawRegion.width()) / 2f, -(drawRegion.height() * ReactionLastFrame.LAST_FRAME_SCALE - drawRegion.height()) / 2f);
-@@ -1517,7 +1523,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1517,7 +1525,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                                              canvas.drawRect(roundRect, roundPaint);
                                          }
                                      } else {
@@ -227,25 +230,27 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesV
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/ProfileStoriesView.java
-@@ -609,8 +609,8 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
+@@ -609,8 +609,9 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
                  paint.setStrokeWidth(AndroidUtilities.dp(2));
                  paint.setAlpha((int) (255 * segmentsAlpha));
                  boolean isForum = ChatObject.isForum(UserConfig.selectedAccount, dialogId);
 -                if (isForum) {
 -                    float r = rect2.height() * 0.32f;
-+                if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
-+                    float r = isForum ? rect2.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rect2.height() / 2f), (int) (rect2.height() / 2f));
++                boolean inu_treatForum = isForum && !desu.inugram.InuConfig.UNIFIED_AVATAR_RADIUS.getValue();
++                if (inu_treatForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++                    float r = inu_treatForum ? rect2.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rect2.height() / 2f), (int) (rect2.height() / 2f));
                      canvas.drawRoundRect(rect2, r, r, paint);
                  } else {
                      canvas.drawCircle(rect2.centerX(), rect2.centerY(), rect2.width() / 2f, paint);
-@@ -902,8 +902,8 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
+@@ -902,8 +903,9 @@ public class ProfileStoriesView extends View implements NotificationCenter.Notif
  
      private void drawArc(Canvas canvas, RectF oval, float startAngle, float sweepAngle, boolean useCenter, Paint paint) {
          boolean isForum = ChatObject.isForum(UserConfig.selectedAccount, dialogId);
 -        if (isForum) {
 -            float r = oval.height() * 0.32f;
-+        if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
-+            float r = isForum ? oval.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (oval.height() / 2f), (int) (oval.height() / 2f));
++        boolean inu_treatForum = isForum && !desu.inugram.InuConfig.UNIFIED_AVATAR_RADIUS.getValue();
++        if (inu_treatForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++            float r = inu_treatForum ? oval.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (oval.height() / 2f), (int) (oval.height() / 2f));
              if (Math.abs(sweepAngle) == 360) {
                  canvas.drawRoundRect(oval, r, r, paint);
                  return;
@@ -253,13 +258,14 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilitie
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
-@@ -662,10 +662,11 @@ public class StoriesUtilities {
+@@ -662,10 +662,12 @@ public class StoriesUtilities {
      private static final RectF forumRect = new RectF();
  
      private static void drawCircleInternal(Canvas canvas, View view, AvatarStoryParams params, Paint paint, boolean isForum) {
 -        if (isForum) {
-+        if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
-+            float r = isForum ? dp(18) : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rectTmp.height() / 2f), (int) (rectTmp.height() / 2f));
++        boolean inu_treatForum = isForum && !desu.inugram.InuConfig.UNIFIED_AVATAR_RADIUS.getValue();
++        if (inu_treatForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++            float r = inu_treatForum ? dp(18) : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rectTmp.height() / 2f), (int) (rectTmp.height() / 2f));
              forumRect.set(rectTmp);
              forumRect.inset(dp(0.5f), dp(0.5f));
 -            canvas.drawRoundRect(forumRect, dp(18), dp(18), paint);
@@ -267,14 +273,29 @@ index 0000000..0000000 100644
              return;
          }
          if (params.progressToArc == 0) {
-@@ -681,8 +682,8 @@ public class StoriesUtilities {
+@@ -681,8 +683,9 @@ public class StoriesUtilities {
      private static final Path forumSegmentPath = new Path();
  
      private static void drawSegment(Canvas canvas, RectF rectTmp, Paint paint, float startAngle, float endAngle, AvatarStoryParams params, boolean isForum) {
 -        if (isForum) {
 -            float r = rectTmp.height() * 0.32f;
-+        if (isForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
-+            float r = isForum ? rectTmp.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rectTmp.height() / 2f), (int) (rectTmp.height() / 2f));
++        boolean inu_treatForum = isForum && !desu.inugram.InuConfig.UNIFIED_AVATAR_RADIUS.getValue();
++        if (inu_treatForum || desu.inugram.InuConfig.AVATAR_CORNERS.getValue() < 28.0f) {
++            float r = inu_treatForum ? rectTmp.height() * 0.32f : desu.inugram.helpers.theme.AvatarShapeHelper.resolveRadius((int) (rectTmp.height() / 2f), (int) (rectTmp.height() / 2f));
              float rotateAngle = (((int)(startAngle)) / 90) * 90 + 90;
              float pathAngleStart = -199 + rotateAngle;
              float percentFrom = (startAngle - pathAngleStart) / 360;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
+@@ -286,7 +286,8 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
+             }
+             float scale = ((View)avatarImage.getParent()).getScaleX();
+             final float size = avatarImage.getImageReceiver().getImageWidth() * scale;
+-            final float rounding = isForum ? size * 0.32f : size;
++            final boolean inu_treatForum = isForum && !desu.inugram.InuConfig.UNIFIED_AVATAR_RADIUS.getValue();
++            final float rounding = inu_treatForum ? size * 0.32f : size;
+             SourceView src = new SourceView() {
+                 @Override
+                 protected void show(boolean sent) {

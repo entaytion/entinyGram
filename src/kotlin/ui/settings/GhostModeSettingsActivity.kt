@@ -54,6 +54,30 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.GHOST_READ_ON_SEND.value)
         )
         items.add(UItem.asShadow(null))
+        // Quick-toggle locks (exteraless/NagramX style): locked components keep their
+        // state when the drawer/burger Ghost toggle flips everything else.
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuGhostLocks)))
+        items.add(
+            UItem.asCheck(TOGGLE_LOCK_HIDE_READ, LocaleController.getString(R.string.InuGhostHideRead))
+                .setChecked(InuConfig.GHOST_LOCK_HIDE_READ.value)
+        )
+        items.add(
+            UItem.asCheck(TOGGLE_LOCK_HIDE_VOICE_READ, LocaleController.getString(R.string.InuGhostHideVoiceRead))
+                .setChecked(InuConfig.GHOST_LOCK_HIDE_VOICE_READ.value)
+        )
+        items.add(
+            UItem.asCheck(TOGGLE_LOCK_HIDE_STORY_READ, LocaleController.getString(R.string.InuGhostHideStoryRead))
+                .setChecked(InuConfig.GHOST_LOCK_HIDE_STORY_READ.value)
+        )
+        items.add(
+            UItem.asCheck(TOGGLE_LOCK_HIDE_TYPING, LocaleController.getString(R.string.InuGhostHideTyping))
+                .setChecked(InuConfig.GHOST_LOCK_HIDE_TYPING.value)
+        )
+        items.add(
+            UItem.asCheck(TOGGLE_LOCK_PRESENCE, LocaleController.getString(R.string.InuGhostPresenceMode))
+                .setChecked(InuConfig.GHOST_LOCK_PRESENCE.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostLocksInfo)))
     }
 
     private fun presenceModeLabel(): String = when (InuConfig.GHOST_PRESENCE_MODE.value) {
@@ -87,6 +111,26 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.GHOST_READ_ON_SEND.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
+            TOGGLE_LOCK_HIDE_READ -> {
+                val new = InuConfig.GHOST_LOCK_HIDE_READ.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+            TOGGLE_LOCK_HIDE_VOICE_READ -> {
+                val new = InuConfig.GHOST_LOCK_HIDE_VOICE_READ.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+            TOGGLE_LOCK_HIDE_STORY_READ -> {
+                val new = InuConfig.GHOST_LOCK_HIDE_STORY_READ.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+            TOGGLE_LOCK_HIDE_TYPING -> {
+                val new = InuConfig.GHOST_LOCK_HIDE_TYPING.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+            TOGGLE_LOCK_PRESENCE -> {
+                val new = InuConfig.GHOST_LOCK_PRESENCE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
         }
     }
 
@@ -99,6 +143,11 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
         private val BUTTON_MANAGE_WHITELIST = InuUtils.generateId()
+        private val TOGGLE_LOCK_HIDE_READ = InuUtils.generateId()
+        private val TOGGLE_LOCK_HIDE_VOICE_READ = InuUtils.generateId()
+        private val TOGGLE_LOCK_HIDE_STORY_READ = InuUtils.generateId()
+        private val TOGGLE_LOCK_HIDE_TYPING = InuUtils.generateId()
+        private val TOGGLE_LOCK_PRESENCE = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -114,6 +163,11 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-story-read", R.string.InuGhostHideStoryRead, TOGGLE_HIDE_STORY_READ),
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
+                SearchRegistry.Entry("ghost-lock-hide-read", R.string.InuGhostLocks, TOGGLE_LOCK_HIDE_READ),
+                SearchRegistry.Entry("ghost-lock-hide-voice-read", R.string.InuGhostLocks, TOGGLE_LOCK_HIDE_VOICE_READ),
+                SearchRegistry.Entry("ghost-lock-hide-story-read", R.string.InuGhostLocks, TOGGLE_LOCK_HIDE_STORY_READ),
+                SearchRegistry.Entry("ghost-lock-hide-typing", R.string.InuGhostLocks, TOGGLE_LOCK_HIDE_TYPING),
+                SearchRegistry.Entry("ghost-lock-presence", R.string.InuGhostLocks, TOGGLE_LOCK_PRESENCE),
             ),
         )
     }
