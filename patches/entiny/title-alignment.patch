@@ -1,11 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 26 Jul 2026 01:30:43 +0300
-Subject: feat(chat): centered actionbar titles with right-side avatar and adaptive font
+Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismatch
 
-- center chat and actionbar titles behind InuConfig.CENTER_TITLE_CHATS
-- move the chat avatar to the right edge so the centered title is truly centered
-- shrink the centered chat title font to fit long names (iOS-style), ellipsizing only below the minimum size
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 156 ++++++++++++++----
  .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++------
@@ -16,11 +13,11 @@ Subject: feat(chat): centered actionbar titles with right-side avatar and adapti
  .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
  .../BottomSheetWithRecyclerListView.java      |   1 +
- .../ui/Components/ChatAvatarContainer.java    | 139 ++++++++++++----
+ .../ui/Components/ChatAvatarContainer.java    | 153 +++++++++++++----
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 13 files changed, 351 insertions(+), 129 deletions(-)
+ 13 files changed, 365 insertions(+), 129 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -679,21 +676,35 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -657,12 +659,25 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -657,12 +659,39 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 -        final int width = MeasureSpec.getSize(widthMeasureSpec);
 -        final int availableWidth = width - dp((avatarImageView.getVisibility() == VISIBLE ? 54 : 0) + 16);
 +        int width = MeasureSpec.getSize(widthMeasureSpec);
-+        if (isCenteredTitle() && actionBar != null) {
++        boolean centerChatTitle = isCenteredTitle();
++        if (centerChatTitle && actionBar != null) {
 +            int targetPill = actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft;
 +            if (targetPill > 0) {
 +                width = Math.min(width, targetPill);
 +            }
 +        }
-+        final int availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
-+        boolean centerChatTitle = isCenteredTitle();
++        final int availableWidth;
++        if (centerChatTitle) {
++            // Mirror onLayout's textLeftBound/textRightBound math so the EXACTLY-measured
++            // width used for ellipsizing matches the box the text is actually laid out into —
++            // otherwise long subtitles (e.g. member count + online) get visually clipped
++            // instead of ellipsized because the layout box in onLayout is narrower than this.
++            boolean rightAvatar = isRightAvatar();
++            int avatarW = hasVisibleAvatar() ? dp(avatarSizeInDp) - 2 : 0;
++            int inset = hasVisibleAvatar()
++                    ? (1 + leftPadding + avatarW + dp(4))
++                    : dp(rightAvatar ? (glassMode ? 14 : 10) : (glassMode ? 20 : 16));
++            availableWidth = Math.max(0, width - 2 * inset - rightAvatarPadding);
++        } else {
++            availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
++        }
 +        float baseSizePx = dp(glassMode ? 17.5f : 18);
 +        if (Math.abs(titleTextView.getTextPaint().getTextSize() - baseSizePx) > 0.5f) {
 +            titleTextView.setTextSizePx((int) baseSizePx);
@@ -709,7 +720,7 @@ index 0000000..0000000 100644
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          }
-@@ -759,55 +774,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -759,55 +788,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -842,7 +853,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -909,10 +986,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -909,10 +1000,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -856,7 +867,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -985,10 +1063,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -985,10 +1077,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          if (parentFragment != null) {
              long dialogId = parentFragment.getDialogId();
@@ -871,7 +882,7 @@ index 0000000..0000000 100644
                  desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
              );
          }
-@@ -1531,6 +1613,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1531,6 +1627,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -879,7 +890,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1737,9 +1820,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1737,9 +1834,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
          }
          if (hasVisibleAvatar()) {

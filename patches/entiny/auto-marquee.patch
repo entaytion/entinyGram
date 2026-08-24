@@ -51,10 +51,10 @@ index 0000000..0000000 100644
              subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              subtitleTextView.setTextSize(14);
-@@ -668,15 +671,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -682,15 +685,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         } else {
+             availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
          }
-         final int availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
-         boolean centerChatTitle = isCenteredTitle();
 +        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
          float baseSizePx = dp(glassMode ? 17.5f : 18);
          if (Math.abs(titleTextView.getTextPaint().getTextSize() - baseSizePx) > 0.5f) {
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
              subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
-@@ -1013,6 +1020,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1027,6 +1034,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1688,6 +1698,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1702,6 +1712,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (title == null) {
              if (lastSubtitle != null) {
                  if (subtitleTextView != null) {
