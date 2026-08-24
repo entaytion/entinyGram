@@ -1016,6 +1016,8 @@
     <string name="InuGhostModeMaster">Hayalet Modu</string>
     <string name="InuGhostReadOnSend">Gönderirken okundu olarak işaretle</string>
     <string name="InuGhostReadOnSendInfo">Sohbette bir mesaj veya yanıt gönderdiğinizde önceki mesajları otomatik olarak okundu olarak işaretler.</string>
+    <string name="InuGhostMarkReadLocally">Yerel olarak okundu işaretle</string>
+    <string name="InuGhostMarkReadLocallyInfo">Hayalet Modunda bir sohbet açıldığında okunmamış mesaj sayacını sıfırlar, ancak sunucuda okunmamış olarak tutar.</string>
     <string name="InuHiddenStarGifts">Gizli ve Arşivlenmiş Star Hediyeleri</string>
     <string name="InuHiddenStarGiftsInfo">Telegram hediye kataloğundaki kaldırılmış, arşivlenmiş ve sınırlı Star Hediyelerini geri yükler.</string>
     <string name="InuUnlimitedLimits">Sınırsız Limitler</string>

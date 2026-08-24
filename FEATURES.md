@@ -21,6 +21,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **quick access** to full Ghost settings by long-pressing the drawer button
   - hide read receipts for messages, voice notes, and video messages
   - **read on send**: mark incoming messages read only when replying (enabled by default)
+  - **mark as read locally**: clear unread counter badges on open while keeping messages unread on the server (configurable toggle)
   - hide story views, online status, typing, recording, and upload indicators
   - **whitelist management**: dedicated screen listing every chat exempt from Ghost Mode, with one-tap add/remove
 - 📡 **anti-deletion & edit history**:

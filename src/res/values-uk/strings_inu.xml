@@ -791,6 +791,10 @@
     <string name="InuSaveUserInfoInfo">Зберігає країну телефону, місяць реєстрації та дати зміни імені/фото, коли сервер перестає їх надсилати (бета)</string>
     <string name="InuCacheTtl">Авто-очищення кешу повідомлень</string>
     <string name="InuCacheTtlInfo">Автоматично видаляє збережені видалені/відредаговані повідомлення, старші за обраний період</string>
+    <string name="InuGhostReadOnSend">Читати при надсиланні</string>
+    <string name="InuGhostReadOnSendInfo">Вихідні повідомлення та відповіді позначають поточний чат прочитаним на сервері.</string>
+    <string name="InuGhostMarkReadLocally">Позначати прочитаним локально</string>
+    <string name="InuGhostMarkReadLocallyInfo">Скидати лічильник непрочитаних повідомлень при відкритті чату в режимі примари, залишаючи його непрочитаним на сервері.</string>
     <string name="InuCacheTtlNever">Ніколи (зберігати назавжди)</string>
     <string name="InuCacheTtlDay">Старші за 1 день</string>
     <string name="InuCacheTtlWeek">Старші за 1 тиждень</string>
@@ -1008,8 +1012,6 @@
     <string name="InuGhostFeatures">Прихована активність</string>
     <string name="InuGhostHideRead">Не надсилати підтвердження прочитання</string>
     <string name="InuGhostHideReadInfo">Повідомлення не позначаються як прочитані на сервері — співрозмовник не бачить синіх галочок.</string>
-    <string name="InuGhostReadOnSend">Позначати прочитаним при відправці</string>
-    <string name="InuGhostReadOnSendInfo">Автоматично позначати попередні повідомлення прочитаними при надсиланні нового повідомлення або відповіді в чат.</string>
     <string name="InuContentProtectionBypass">Обхід захисту контенту</string>
     <string name="InuGhostHideVoiceRead">Не позначати голосові та відеоповідомлення прослуханими</string>
     <string name="InuGhostHideVoiceReadInfo">Голосові повідомлення та кружечки не відмічаються як прослухані для співрозмовника.</string>

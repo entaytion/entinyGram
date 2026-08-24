@@ -1,9 +1,8 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { BotKeyboard, html, MemoryStorage, TelegramClient } from '@mtcute/node'
+import { html, MemoryStorage, TelegramClient } from '@mtcute/node'
 import { joinTextWithEntities } from '@mtcute/node/utils.js'
-import sharp from 'sharp'
 
 interface BuildInfo {
   verName: string
@@ -70,15 +69,6 @@ async function persistSession(session: string) {
 }
 
 try {
-  // Bilingual release notes from scripts/release-notes.ts (may be absent).
-  let tgNotes = ''
-  let enNotes = ''
-  try {
-    const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
-    tgNotes = String(notes.tg ?? '')  // short bilingual post for Telegram
-    enNotes = String(notes.en ?? '')  // full notes (used as fallback if tg is empty)
-  } catch { }
-
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const abiOf = (file: string) => /universal/i.test(file) ? 'Universal' : 'ARM64'
   const postUrl = (id: number) => `https://t.me/${channelCI}/${id}`
@@ -90,7 +80,7 @@ try {
       type: 'document',
       file: `file:${join(artifactDir, file)}`,
       fileName: file,
-      caption: html`#release <br/> <b>entinyGram v${info.verName}</b> (build ${info.buildNum}, ${abiOf(file)})`,
+      caption: html`#release <br/> <b>entinyGram v${info.verName}</b> (build ${info.buildNum}, ${abiOf(file)})<br/><br/>@entinyGram / @entinyGramChat`,
     })
     apkPosts.push({ file, id: msg.id })
   }
@@ -99,74 +89,62 @@ try {
   if (ciOnly) {
     console.log('CI-only mode: APKs uploaded to CI channel, skipping main channel post.')
   } else {
-    // 3) Create inline download buttons.
-    const replyMarkup = BotKeyboard.inline(
-      apkPosts.map(p => [
-        BotKeyboard.url(`📥 Download ${abiOf(p.file)} APK`, postUrl(p.id))
-      ])
-    )
+    let tgUk = ''
+    let tgEn = ''
+    let enNotes = ''
+    try {
+      const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
+      tgUk = String(notes.tg_uk ?? '').trim()
+      tgEn = String(notes.tg_en ?? '').trim()
+      enNotes = String(notes.en ?? '').trim()
 
-    // Use short tg notes; fall back to first ~600 chars of EN notes if missing.
-    const postBody = tgNotes || enNotes.slice(0, 600) || '• See the channel'
-    const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
-
-    // Convert [+]/[*]/[-]/[=] prefixed lines into HTML for Telegram.
-    function notesToHtml(text: string) {
-      const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
-      return lines.map(l => html`${esc(l)}`)
-    }
-
-    const bodyLines = notesToHtml(postBody)
-    const bodyHtml = joinTextWithEntities(bodyLines, '\n')
-
-    const bannerPath = process.env.BANNER_PATH ?? resolve(process.cwd(), 'banner.svg')
-    let bannerFile: string | Buffer = `file:${bannerPath}`
-    if (bannerPath.endsWith('.svg')) {
-      try {
-        let svgText = await fs.readFile(bannerPath, 'utf8')
-        svgText = svgText.replace(/entinyGram • [^<]+/, `entinyGram • ${info.verName}`)
-        bannerFile = await sharp(Buffer.from(svgText)).png().toBuffer()
-      } catch (e) {
-        console.warn('Failed to convert SVG banner to PNG (sharp?), falling back to raw file', e)
-      }
-    }
-
-    const release = html`
-      #release
-      <br/>
-      📡 entinyGram <b>v${info.verName}</b> (build ${info.buildNum})
-      ${extra ? html`<br/><br/>${extra}` : ''}
-      <br/><br/>
-      ${bodyHtml}
-      <br/><br/>
-      @entinyGram
-    `
-
-    // 4) Send banner + release text to main channel.
-    const releaseText = release.text
-    if (releaseText.length <= 1024) {
-      try {
-        await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile }, {
-          caption: release,
-          replyMarkup,
-        })
-      } catch (e: any) {
-        if (e?.message?.includes('CAPTION_TOO_LONG')) {
-          await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
-          await tg.sendText(channelMain, release, { replyMarkup })
+      if (!tgUk && !tgEn && notes.tg) {
+        const rawTg = String(notes.tg)
+        const ukMatch = rawTg.match(/🇺🇦\s*UK:\s*([\s\S]*?)(?=🇺🇸\s*EN:|🇬🇧\s*Eng:|$)/i)
+        const enMatch = rawTg.match(/(?:🇺🇸\s*EN:|🇬🇧\s*Eng:)\s*([\s\S]*?)(?=🇺🇦\s*UK:|$)/i)
+        if (ukMatch || enMatch) {
+          tgUk = (ukMatch?.[1] ?? '').trim()
+          tgEn = (enMatch?.[1] ?? '').trim()
         } else {
-          throw e
+          tgUk = rawTg.trim()
         }
       }
-    } else {
-      try {
-        await tg.sendMedia(channelMain, { type: 'photo', file: bannerFile })
-      } catch (e) {
-        console.warn('release: banner post failed (continuing):', e)
-      }
-      await tg.sendText(channelMain, release, { replyMarkup })
+    } catch { }
+
+    const postUk = tgUk || '• Оновлення доступне'
+    const postEn = tgEn || (enNotes ? enNotes.slice(0, 500) : '')
+
+    function notesToEntities(text: string) {
+      const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+      return joinTextWithEntities(lines.map(l => html`${esc(l)}`), '\n')
     }
+
+    const ukHtml = notesToEntities(postUk)
+    const enHtml = postEn ? notesToEntities(postEn) : null
+    const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
+
+    const arm64 = apkPosts.find(p => !/universal/i.test(p.file)) ?? apkPosts[0]
+    const univ = apkPosts.find(p => /universal/i.test(p.file))
+    const linksHtml = arm64 && univ
+      ? html`<a href="${postUrl(arm64.id)}">ARM64</a> • <a href="${postUrl(univ.id)}">Universal</a>`
+      : (arm64 ? html`<a href="${postUrl(arm64.id)}">Завантажити APK</a>` : '')
+
+    const release = html`
+      📡 <b>entinyGram v${info.verName}</b> (build ${info.buildNum}) ${linksHtml ? html`— ${linksHtml}` : ''}
+      ${extra ? html`<br/><br/>${extra}` : ''}
+      <br/><br/>
+      ${ukHtml}
+      ${enHtml ? html`<br/><br/>🇬🇧 Eng:<br/><blockquote expandable>${enHtml}</blockquote>` : ''}
+      <br/><br/>
+      #release
+      <br/>
+      @entinyGram / @entinyGramChat
+    `
+
+    // 4) Send clean text release post directly to main channel (no buttons, exteraless style).
+    await tg.sendText(channelMain, release)
   }
+}
 } finally {
   const exported = await tg.exportSession()
   if (exported !== cachedSession) {

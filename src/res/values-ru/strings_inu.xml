@@ -755,6 +755,10 @@
 
     <string name="InuDisableQuickShare">Отключить быструю отправку</string>
     <string name="InuDisableQuickShareInfo">Не показывать частые контакты при долгом нажатии кнопки «Поделиться» (рядом с сообщениями каналов); отправка без подтверждения</string>
+    <string name="InuGhostReadOnSend">Читать при отправке</string>
+    <string name="InuGhostReadOnSendInfo">Исходящие сообщения и ответы отмечают текущий чат прочитанным на сервере.</string>
+    <string name="InuGhostMarkReadLocally">Отмечать прочитанным локально</string>
+    <string name="InuGhostMarkReadLocallyInfo">Сбрасывать счётчик непрочитанных сообщений при открытии чата в режиме призрака, оставляя его непрочитанным на сервере.</string>
     <string name="InuDisableProfileMusicAutoplay">Отключить автовоспроизведение музыки в профиле</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Не начинать воспроизведение автоматически при открытии закреплённого музыкального плеера в профиле</string>
     <string name="InuDisableBrowserSwipeCollapse">Отключить свайп вниз для сворачивания браузера</string>
@@ -969,8 +973,6 @@
     <string name="InuGhostFeatures">Скрытая активность</string>
     <string name="InuGhostHideRead">Не отправлять отчеты о прочтении</string>
     <string name="InuGhostHideReadInfo">Сообщения не помечаются прочитанными на сервере, собеседник не видит синих галочек.</string>
-    <string name="InuGhostReadOnSend">Помечать прочитанным при отправке</string>
-    <string name="InuGhostReadOnSendInfo">Автоматически помечать предыдущие сообщения как прочитанные при отправке нового сообщения или ответа.</string>
     <string name="InuContentProtectionBypass">Защита контента</string>
     <string name="InuGhostHideVoiceRead">Не помечать голосовые и видео как прослушанные</string>
     <string name="InuGhostHideVoiceReadInfo">Голосовые и видеосообщения не будут отображаться прослушанными для отправителя.</string>
