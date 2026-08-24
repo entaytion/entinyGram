@@ -1184,6 +1184,9 @@ object InuConfig {
     val GHOST_READ_ON_SEND = BoolItem("ghost_read_on_send", true)
 
     @JvmField
+    val GHOST_MARK_READ_LOCALLY = BoolItem("ghost_mark_read_locally", true)
+
+    @JvmField
     val GHOST_HIDE_VOICE_READ = BoolItem("ghost_hide_voice_read", false)
 
     @JvmField

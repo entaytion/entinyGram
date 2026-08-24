@@ -1016,7 +1016,9 @@
     <string name="InuGhostModeInfo">隐藏您的活动：传入消息不会被标记为已读，您的在线状态、正在输入提示和故事浏览记录均保持隐藏。</string>
     <string name="InuGhostModeMaster">幽灵模式</string>
     <string name="InuGhostReadOnSend">发送时标记已读</string>
-    <string name="InuGhostReadOnSendInfo">在聊天中发送消息或回复时，自动将先前的消息标记为已读。</string>
+    <string name="InuGhostReadOnSendInfo">发送消息或回复时在服务器上将当前聊天标记为已读。</string>
+    <string name="InuGhostMarkReadLocally">本地标记为已读</string>
+    <string name="InuGhostMarkReadLocallyInfo">在幽灵模式下打开聊天时重置未读消息计数器，同时在服务器上保持未读状态。</string>
     <string name="InuHiddenStarGifts">隐藏与归档的 Star 礼物</string>
     <string name="InuHiddenStarGiftsInfo">在 Telegram 礼物目录中恢复已下架、归档及限量的 Star 礼物。</string>
     <string name="InuUnlimitedLimits">解除限制</string>

@@ -53,7 +53,13 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuGhostReadOnSend),
             ).setChecked(InuConfig.GHOST_READ_ON_SEND.value)
         )
-        items.add(UItem.asShadow(null))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_MARK_READ_LOCALLY,
+                LocaleController.getString(R.string.InuGhostMarkReadLocally),
+            ).setChecked(InuConfig.GHOST_MARK_READ_LOCALLY.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostMarkReadLocallyInfo)))
         // Quick-toggle locks (exteraless/NagramX style): locked components keep their
         // state when the drawer/burger Ghost toggle flips everything else.
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGhostLocks)))
@@ -111,6 +117,10 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.GHOST_READ_ON_SEND.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
+            TOGGLE_MARK_READ_LOCALLY -> {
+                val new = InuConfig.GHOST_MARK_READ_LOCALLY.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
             TOGGLE_LOCK_HIDE_READ -> {
                 val new = InuConfig.GHOST_LOCK_HIDE_READ.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -138,6 +148,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val SECTION_GHOST_MODE = InuUtils.generateId()
         private val TOGGLE_HIDE_READ = InuUtils.generateId()
         private val TOGGLE_READ_ON_SEND = InuUtils.generateId()
+        private val TOGGLE_MARK_READ_LOCALLY = InuUtils.generateId()
         private val TOGGLE_HIDE_VOICE_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_STORY_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
@@ -159,6 +170,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-mode-section", R.string.InuGhostMode, SECTION_GHOST_MODE),
                 SearchRegistry.Entry("ghost-hide-read", R.string.InuGhostHideRead, TOGGLE_HIDE_READ),
                 SearchRegistry.Entry("ghost-read-on-send", R.string.InuGhostReadOnSend, TOGGLE_READ_ON_SEND),
+                SearchRegistry.Entry("ghost-mark-read-locally", R.string.InuGhostMarkReadLocally, TOGGLE_MARK_READ_LOCALLY),
                 SearchRegistry.Entry("ghost-hide-voice-read", R.string.InuGhostHideVoiceRead, TOGGLE_HIDE_VOICE_READ),
                 SearchRegistry.Entry("ghost-hide-story-read", R.string.InuGhostHideStoryRead, TOGGLE_HIDE_STORY_READ),
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),

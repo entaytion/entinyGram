@@ -739,6 +739,10 @@
     <string name="InuDeleteOwnMessagesDone_other">%d 件のメッセージを削除しました</string>
     <string name="InuDeleteOwnMessagesError">エラー: %1$s</string>
     <string name="InuDeleteOwnMessagesFloodWait">レート制限中、%d 秒待機…</string>
+    <string name="InuGhostReadOnSend">送信時に既読にする</string>
+    <string name="InuGhostReadOnSendInfo">メッセージや返信を送信すると、現在のチャットがサーバー上で既読になります。</string>
+    <string name="InuGhostMarkReadLocally">ローカルで既読にする</string>
+    <string name="InuGhostMarkReadLocallyInfo">ゴーストモードでチャットを開いたときに未読メッセージカウンターをリセットしますが、サーバー上では未読のまま維持します。</string>
     <string name="InuBiometricConfirm">生体認証による確認</string>
     <string name="InuBiometricConfirmTitle">本人確認</string>
     <string name="InuBiometricConfirmDeleteChat">チャット削除の確認</string>
@@ -1016,8 +1020,6 @@
     <string name="InuGhostModeForChat">このチャットのゴーストモード</string>
     <string name="InuGhostModeInfo">アクティビティを隠します: 受信メッセージは既読にならず、オンライン状態、入力中、ストーリー閲覧も非表示になります。</string>
     <string name="InuGhostModeMaster">ゴーストモード</string>
-    <string name="InuGhostReadOnSend">送信時に既読にする</string>
-    <string name="InuGhostReadOnSendInfo">チャットでメッセージ送信や返信を行った際、自動的にそれまでのメッセージを既読にします。</string>
     <string name="InuHiddenStarGifts">非表示およびアーカイブされた Star ギフト</string>
     <string name="InuHiddenStarGiftsInfo">Telegram のギフトカタログで削除、アーカイブ、または限定された Star ギフトを復元します。</string>
     <string name="InuUnlimitedLimits">制限解除</string>

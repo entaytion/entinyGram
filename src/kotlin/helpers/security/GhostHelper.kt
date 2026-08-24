@@ -195,6 +195,14 @@ object GhostHelper {
     @JvmStatic
     fun shouldSuppressRead(dialogId: Long): Boolean = shouldSuppress(dialogId, SuppressKind.READ)
 
+    @JvmStatic
+    fun shouldSuppressLocalRead(dialogId: Long): Boolean {
+        if (!InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)) {
+            return true
+        }
+        return false
+    }
+
     /**
      * Choke-point filter for outgoing MTProto requests in ConnectionsManager.sendRequestInternal.
      */
@@ -218,16 +226,8 @@ object GhostHelper {
                     false
                 }
             }
-            is TLRPC.TL_messages_readHistory -> {
-                val suppress = shouldSuppress(dialogId, SuppressKind.READ)
-                if (suppress) markDialogReadLocallyOnly(account, dialogId, request.max_id)
-                suppress
-            }
-            is TLRPC.TL_channels_readHistory -> {
-                val suppress = shouldSuppress(dialogId, SuppressKind.READ)
-                if (suppress) markDialogReadLocallyOnly(account, dialogId, request.max_id)
-                suppress
-            }
+            is TLRPC.TL_messages_readHistory,
+            is TLRPC.TL_channels_readHistory,
             is TLRPC.TL_messages_readEncryptedHistory,
             is TLRPC.TL_messages_readDiscussion,
             is TLRPC.TL_messages_readSavedHistory,
@@ -338,22 +338,6 @@ object GhostHelper {
             }
         } catch (_: Exception) {
             temporarilyAllowedDialogs.remove(dialogId)
-        }
-    }
-
-    /**
-     * Clears the local unread counter/badge for a dialog without sending a read receipt
-     * to the server — used when Ghost Mode swallows the readHistory request outright, so
-     * opening/exiting a chat still updates our own UI even though the peer isn't notified.
-     */
-    private fun markDialogReadLocallyOnly(account: Int, dialogId: Long, maxId: Int) {
-        val controller = MessagesController.getInstance(account) ?: return
-        val effectiveMaxId = if (maxId > 0) maxId else {
-            controller.dialogs_dict.get(dialogId)?.top_message ?: 0
-        }
-        if (effectiveMaxId <= 0) return
-        AndroidUtilities.runOnUIThread {
-            controller.markDialogAsRead(dialogId, effectiveMaxId, 0, 0, false, 0, 0, true, 0)
         }
     }
 

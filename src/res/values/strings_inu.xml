@@ -1067,8 +1067,10 @@
     <string name="InuGhostFeatures">Hidden Activity</string>
     <string name="InuGhostHideRead">Do not send read receipts</string>
     <string name="InuGhostHideReadInfo">Messages are not marked as read on the server, so the other side never sees blue checkmarks.</string>
-    <string name="InuGhostReadOnSend">Mark as read when sending</string>
-    <string name="InuGhostReadOnSendInfo">Automatically mark previous messages as read when you send a message or reply in the chat.</string>
+    <string name="InuGhostReadOnSend">Read on send</string>
+    <string name="InuGhostReadOnSendInfo">Outgoing messages and replies mark the current chat as read on the server.</string>
+    <string name="InuGhostMarkReadLocally">Mark as read locally</string>
+    <string name="InuGhostMarkReadLocallyInfo">Reset the unread message counter when opening a chat in Ghost Mode, while keeping it unread on the server.</string>
     <string name="InuContentProtectionBypass">Content Protection</string>
     <string name="InuGhostHideVoiceRead">Do not mark voice and video messages as played</string>
     <string name="InuGhostHideVoiceReadInfo">Voice messages and video notes will not show as played to the sender.</string>

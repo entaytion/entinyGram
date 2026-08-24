@@ -37,7 +37,7 @@ index 0000000..0000000 100644
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
-+        if (desu.inugram.helpers.security.GhostHelper.shouldSuppressRead(dialogId)) {
++        if (desu.inugram.helpers.security.GhostHelper.shouldSuppressLocalRead(dialogId)) {
 +            return;
 +        }
          boolean createReadTask;

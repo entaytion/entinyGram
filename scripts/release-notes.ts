@@ -52,49 +52,44 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
   }).join('\n\n')
 
   return [
-    'You are writing the release notes for entinyGram, a fork of Telegram for Android.',
+    'You are writing release notes for entinyGram, a customized modern fork of Telegram for Android.',
     '',
     `Release: v${info.verName} (build ${info.buildNum}, repo ${info.repo})`,
     '',
-    'Commits since the last release (technical subjects + detailed bullet points of changes):',
+    'Commits since the last release (technical subjects + detailed bullet points):',
     list || '(no commits)',
     '',
     '=== OUTPUT FORMAT ===',
-    'Return ONLY valid JSON with exactly 3 keys: "en", "uk", "tg". No markdown fences.',
+    'Return ONLY valid JSON with exactly 4 keys: "en", "uk", "tg_uk", "tg_en". No markdown code blocks, fences, or backticks.',
     '{',
-    '  "en": "...full GitHub release notes in English...",',
-    '  "uk": "...повні нотатки для GitHub українською...",',
-    '  "tg": "...short Telegram post, bilingual (EN + UK), see format below..."',
+    '  "en": "...full GitHub release notes in English (Markdown)...",',
+    '  "uk": "...повні нотатки для GitHub українською (Markdown)...",',
+    '  "tg_uk": "...short Ukrainian Telegram changelog lines...",',
+    '  "tg_en": "...short English Telegram changelog lines..."',
     '}',
     '',
     '=== "en" and "uk" keys (GitHub release notes) ===',
-    'Write detailed, well-structured Markdown release notes.',
-    'Group changes into sections: ### New Features, ### Bug Fixes, ### Changes, ### Upstream Sync.',
+    'Write clean, well-structured Markdown release notes.',
+    'Group changes into sections: ### New Features, ### Bug Fixes, ### Improvements & Polish.',
+    'Only include an "### Upstream Sync" section IF commits explicitly mention "sync with upstream inugram" or an upstream rebase. DO NOT mention inugram otherwise.',
     'Each item should be a Markdown list item starting with `-`.',
-    'Explain each change clearly for developers and advanced users.',
-    'Differentiate entinyGram-specific changes from upstream inugram syncs.',
+    'Explain each change clearly for developers and power users.',
     'Aim for 500-1200 chars per language.',
     '',
-    '=== "tg" key (Telegram post) ===',
-    'Write a SHORT bilingual post for a Telegram channel. Target ~600-900 chars total.',
-    'Format:',
-    '🇺🇸 EN:',
-    '[+] Most important new feature',
-    '[+] Second important feature',
-    '[*] Bug fixes, UI improvements and optimizations',
+    '=== "tg_uk" and "tg_en" keys (Telegram post items) ===',
+    'Write concise bullet points for the Telegram channel release post using prefixes:',
+    '- "[+] " for new features and user-facing capabilities.',
+    '- "[*] " for bug fixes, performance improvements, and UI refinements.',
+    '- "[-] " for removals / deprecated behavior.',
     '',
-    '🇺🇦 UK:',
-    '[+] Найважливіша нова функція',
-    '[+] Друга важлива функція',
-    '[*] Виправлено баги, покращення UI та оптимізації',
-    '',
-    'Rules for "tg":',
-    '- Use "[+] " for new features, "[-] " for removals, "[*] " for bug fixes/optimizations, "[=] " for neutral changes.',
-    '- Keep 4-7 lines per language block. Group ALL bug fixes into exactly ONE [*] line.',
-    '- Highlight the MOST IMPORTANT user-facing entinyGram changes only.',
-    '- Separate EN and UK blocks with a blank line. Do NOT add @username mentions or extra decorations.',
-    '- Upstream sync: one line max, e.g. "[=] Synced with upstream inugram" / "[=] Синхронізовано з inugram".',
-    '- Do NOT copy commit subjects verbatim. Rewrite into human-readable benefits.',
+    'CRITICAL RULES FOR TELEGRAM CHANGELOGS ("tg_uk" & "tg_en"):',
+    '1. NEVER mention "upstream inugram" or "sync with inugram" unless the commits explicitly state "sync with upstream inugram". 99% of releases are entinyGram\'s own features/fixes.',
+    '2. ACCURATELY CAPTURE THE BUILD TYPE:',
+    '   - If the commits are primarily bugfixes and polish (e.g. minor point builds like 1000403), describe the concrete fixes and UI polish clearly without hallucinating nonexistent features.',
+    '   - If new features WERE added (even in a bugfix build), list those features first with "[+]" and group bug fixes into "[*]".',
+    '3. CONCISE & USER-FRIENDLY: up to 8 to 12 bullet lines per language if there are many changes (or 3 to 6 for small builds). Rewrite technical commit jargon into human-friendly benefits.',
+    '4. Group all minor bugfixes into 1 or 2 "[*]" lines instead of listing 10 tiny fixes.',
+    '5. Do NOT include headers like "🇺🇦 UK:" or "🇺🇸 EN:" inside tg_uk/tg_en — only the bullet lines separated by newlines.',
   ].join('\n')
 }
 
@@ -123,13 +118,18 @@ async function callGemini(key: string, model: string, prompt: string): Promise<s
   return text
 }
 
-function parseNotes(raw: string): { en: string, uk: string, tg: string } {
+function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string } {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   const parsed = JSON.parse(cleaned)
+  const tgUk = String(parsed.tg_uk ?? '').trim()
+  const tgEn = String(parsed.tg_en ?? '').trim()
+  const tgCombined = tgUk && tgEn ? `🇺🇦 UK:\n${tgUk}\n\n🇺🇸 EN:\n${tgEn}` : String(parsed.tg ?? '').trim()
   return {
     en: String(parsed.en ?? '').trim(),
     uk: String(parsed.uk ?? '').trim(),
-    tg: String(parsed.tg ?? '').trim(),
+    tg_uk: tgUk,
+    tg_en: tgEn,
+    tg: tgCombined,
   }
 }
 
@@ -141,7 +141,7 @@ async function aiNotes(key: string, info: BuildInfo, commits: Commit[]) {
       console.log(`==> release-notes: calling ${model}`)
       const raw = await callGemini(key, model, prompt)
       const notes = parseNotes(raw)
-      if (!notes.en && !notes.uk && !notes.tg) throw new Error('empty ai notes')
+      if (!notes.en && !notes.uk && !notes.tg_uk) throw new Error('empty ai notes')
       return notes
     } catch (e) {
       lastErr = e
@@ -158,11 +158,13 @@ function categorize(message: string): 'fix' | 'feature' | 'other' {
   return 'other'
 }
 
-function ruleFallback(commits: Commit[]): { en: string, uk: string, tg: string } {
+function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string } {
   if (commits.length === 0) return {
     en: 'No changes in this build.',
-    uk: 'У цьому збірці змін немає.',
-    tg: '🇺🇸 EN:\n[=] No changes\n\n🇺🇦 UK:\n[=] Змін немає',
+    uk: 'У цій збірці змін немає.',
+    tg_uk: '[=] Змін немає',
+    tg_en: '[=] No changes',
+    tg: '🇺🇦 UK:\n[=] Змін немає\n\n🇺🇸 EN:\n[=] No changes',
   }
 
   const sections: Record<string, string[]> = { feature: [], fix: [], other: [] }
@@ -174,20 +176,23 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg: string }
   const en: string[] = []
   const uk: string[] = []
   if (sections.feature.length) en.push(...sections.feature.map(l => `[+] ${l}`))
-  if (sections.fix.length) en.push(`[*] Bug fixes and app optimizations`)
+  if (sections.fix.length) en.push(`[*] Bug fixes and UI optimizations`)
   if (sections.other.length) en.push(...sections.other.map(l => `[=] ${l}`))
 
   if (sections.feature.length) uk.push(...sections.feature.map(l => `[+] ${l}`))
-  if (sections.fix.length) uk.push(`[*] Виправлено баги та оптимізовано роботу застосунку`)
+  if (sections.fix.length) uk.push(`[*] Виправлено баги та оптимізовано інтерфейс`)
   if (sections.other.length) uk.push(...sections.other.map(l => `[=] ${l}`))
 
-  const tgEn = en.slice(0, 5).join('\n')
-  const tgUk = uk.slice(0, 5).join('\n')
-  const tg = `🇺🇸 EN:\n${tgEn}\n\n🇺🇦 UK:\n${tgUk}`
+  const tgUk = uk.slice(0, 12).join('\n')
+  const tgEn = en.slice(0, 12).join('\n')
 
-  const enFull = en.join('\n')
-  const ukFull = uk.join('\n')
-  return { en: enFull, uk: ukFull, tg }
+  return {
+    en: en.join('\n'),
+    uk: uk.join('\n'),
+    tg_uk: tgUk,
+    tg_en: tgEn,
+    tg: `🇺🇦 UK:\n${tgUk}\n\n🇺🇸 EN:\n${tgEn}`,
+  }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
