@@ -70,11 +70,14 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
 - 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
-- 📡 **custom title alignment & modular navigation**: selective centering for chats/settings/dialogs; modular M3 drawer cards
+- 📡 **custom title alignment & modular navigation**: selective centering for chat headers and centered status-bar titles across all other screens; modular M3 drawer cards
+- 📡 **auto marquee for long titles**: chat header titles/subtitles, action bar screen titles and profile names smoothly auto-scroll instead of fading out - *inspired by the auto_marquee plugin (@chestertech)*
 - 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
 - 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator (`SHARP`, `ROUND`, or radius), live interactive dialog mock preview card with squareness-aware online dot cutout, and `Unified corner radius` toggle for regular and forum avatars - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, and Profile tabs in MainTabsActivity, with separate tab title visibility toggle
+- 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
+- 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 
@@ -84,6 +87,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 - navigation drawer instead of bottom tabs, like in older Telegram versions
   - 🐶 an option to (ab)use predictive back to open the drawer
+- 📡 **no accounts list in settings**: the redundant accounts block is always hidden from the settings screen - switching happens from the avatar menu or the drawer - *ported from [inugram PR #34](https://github.com/teidesu/inugram/pull/34), made unconditional*
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
 - icon replacement (currently: solar pack, [480 Design](https://t.me/Design480)) - *ported from [NagramX](https://github.com/risin42/NagramX)*

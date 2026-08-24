@@ -97,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1059,7 +1059,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1054,7 +1054,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              emojiStatusDrawable.setColor(Theme.getColor(Theme.key_profile_verifiedBackground, resourcesProvider));
              if (emojiStatusId != null) {
                  emojiStatusDrawable.set(emojiStatusId, false);

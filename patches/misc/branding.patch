@@ -23,9 +23,9 @@ Subject: change app name to Inugram
  .../src/main/res/values-pt-rBR/strings.xml    |  6 ++--
  .../src/main/res/values-ru/strings.xml        |  6 ++--
  .../src/main/res/values-uk/strings.xml        |  6 ++--
- .../src/main/res/values-v31/styles.xml        |  2 +-
+ .../src/main/res/values-v31/styles.xml        |  6 +++-
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
- 21 files changed, 126 insertions(+), 65 deletions(-)
+ 21 files changed, 130 insertions(+), 65 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -602,7 +602,7 @@ diff --git a/TMessagesProj/src/main/res/values-v31/styles.xml b/TMessagesProj/sr
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values-v31/styles.xml
 +++ b/TMessagesProj/src/main/res/values-v31/styles.xml
-@@ -28,7 +28,7 @@
+@@ -28,11 +28,15 @@
          <item name="android:navigationBarColor">#000000</item>
          <item name="android:textViewStyle">@style/MyTextViewStyle</item>
          <item name="android:forceDarkAllowed">false</item>
@@ -611,6 +611,14 @@ index 0000000..0000000 100644
          <item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
          <item name="android:windowSplashScreenBackground">?android:windowBackground</item>
      </style>
+ 
++    <style name="Theme.TMessages.Start.Old" parent="Theme.TMessages.Start">
++        <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_old_320</item>
++    </style>
++
+     <style name="Theme.TMessages" parent="Theme.AppCompat.Light">
+         <item name="android:windowActionBar">false</item>
+         <item name="android:windowNoTitle">true</item>
 diff --git a/TMessagesProj/src/main/res/values/strings.xml b/TMessagesProj/src/main/res/values/strings.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values/strings.xml

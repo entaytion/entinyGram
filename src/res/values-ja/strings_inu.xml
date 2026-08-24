@@ -941,12 +941,15 @@
     <string name="InuCategoryPrivacy">プライバシーとセキュリティ</string>
     <string name="InuCategoryProfile">プロフィールとナビゲーション</string>
     <string name="InuCenterTitleAdaptiveSize">適応型タイトルフォント (iOS スタイル)</string>
-    <string name="InuCenterTitleMarquee">長いタイトルのマーキースクロール</string>
     <string name="InuCenterTitleRightAvatar">アバターを右側に移動</string>
+    <string name="InuCenterTitleMain">画面タイトルを中央揃え</string>
+    <string name="InuCenterTitleMainInfo">チャットを除くすべての画面でアクションバーのタイトルを中央に表示します。チャットは別のトグルで制御されます。</string>
     <string name="InuChatTitleMarquee">長いタイトルのマーキースクロール</string>
+    <string name="InuChatTitleMarqueeInfo">チャットヘッダーのタイトルとサブタイトル、画面タイトル、プロフィール名が収まらない場合に自動でスクロールします</string>
     <string name="InuChats">チャット</string>
     <string name="InuContentProtectionBypass">コンテンツ保護</string>
     <string name="InuCustomization">カスタマイズ</string>
+    <string name="Chats">チャット</string>
     <string name="InuDeleteAllProfilePhotos">すべての写真を削除</string>
     <string name="InuDeleteAllProfilePhotosConfirm">すべてのプロフィール写真を削除してもよろしいですか？この操作は取り消せません。</string>
     <string name="InuDeleteProfilePhotos">プロフィール写真を削除</string>

@@ -733,6 +733,10 @@
     <string name="InuFasterDownloads">Faster downloads</string>
     <string name="InuFasterUploads">Faster uploads</string>
     <string name="InuFasterTransfersInfo">Bumps chunk size and parallel request count. May improve throughput, but may also cause the adverse effect (especially for non-Premium users)</string>
+    <string name="InuKeepDownloadsInBackground">Don\'t kill downloads on scroll/exit</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Keeps in-progress downloads running when the message is scrolled off screen or you leave the chat, instead of cancelling and restarting them later.</string>
+    <string name="InuBlockSleepWhileDownloading">Block sleep while downloading</string>
+    <string name="InuBlockSleepWhileDownloadingInfo">Holds a partial wake lock while a download is active so Android doesn\'t pause it in the background.</string>
     <string name="InuSendMp4DocumentAsVideo">Send MP4 documents as videos</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4 files attached through Files are sent as playable videos without conversion</string>
     <string name="InuMentionInsertTitle">Insert mention</string>
@@ -897,9 +901,11 @@
     <string name="InuCenteringSection">Centering</string>
     <string name="InuCenterTitleChats">Center in chats/channels</string>
     <string name="InuCenterTitleRightAvatar">Move avatar to the right</string>
+    <string name="InuCenterTitleMain">Centered screen titles</string>
+    <string name="InuCenterTitleMainInfo">Centers action bar titles on all screens except chats - chats use their own toggle.</string>
     <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>
-    <string name="InuCenterTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
+    <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuFloatingAvatar">Floating avatar in chat header</string>
     <string name="InuFloatingAvatarInfo">Separates the avatar from the title and positions it as a floating element on the right</string>
     <string name="InuSaveDeletedMessages">Save deleted messages</string>

@@ -912,6 +912,9 @@ object InuConfig {
     val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
 
     @JvmField
+    val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
+
+    @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
     @JvmField
@@ -1145,6 +1148,12 @@ object InuConfig {
 
     @JvmField
     val FASTER_UPLOADS = BoolItem("faster_uploads", true)
+
+    @JvmField
+    val KEEP_DOWNLOADS_IN_BACKGROUND = BoolItem("keep_downloads_in_background", false)
+
+    @JvmField
+    val BLOCK_SLEEP_WHILE_DOWNLOADING = BoolItem("block_sleep_while_downloading", false)
 
     @JvmField
     val BIOMETRIC_CONFIRM_DELETE_CHAT = BoolItem("biometric_confirm_delete_chat", false)

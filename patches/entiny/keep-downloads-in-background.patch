@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 23 Aug 2026 22:49:53 +0300
+Subject: Keep chat downloads alive in the background
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -6735,6 +6735,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     }
+ 
+     private void fileDetach(MessageObject messageObject) {
++        if (desu.inugram.InuConfig.KEEP_DOWNLOADS_IN_BACKGROUND.getValue() && messageObject != null && !messageObject.loadingCancelled) {
++            return;
++        }
+         if (photoImage != null) {
+             photoImage.setFileLoadingPriority(FileLoader.PRIORITY_LOW);
+         }

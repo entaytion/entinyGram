@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
-@@ -3306,9 +3306,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -3302,9 +3302,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                          lastMessageDate = dialog.last_message_date;
                          if (dialogsType == 7 || dialogsType == 8) {
                              MessagesController.DialogFilter filter = MessagesController.getInstance(currentAccount).selectedDialogFilter[dialogsType == 8 ? 1 : 0];

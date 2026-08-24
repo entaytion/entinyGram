@@ -877,8 +877,10 @@
     <string name="InuCenterTitleChats">Центрирование в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Переместить аватар вправо</string>
     <string name="InuCenterTitleAdaptiveSize">Адаптивный размер названия (iOS-style)</string>
-    <string name="InuCenterTitleMarquee">Бегущая строка для длинного текста</string>
+    <string name="InuCenterTitleMain">Центрированные заголовки экранов</string>
+    <string name="InuCenterTitleMainInfo">Центрирует заголовки на всех экранах, кроме чатов — у чатов отдельный переключатель.</string>
     <string name="InuChatTitleMarquee">Бегущая строка для длинных названий</string>
+    <string name="InuChatTitleMarqueeInfo">Названия и подписи в шапке чата, заголовки экранов и имя в профиле прокручиваются бегущей строкой, если не помещаются</string>
     <string name="InuFloatingAvatar">Плавающий аватар в шапке чата</string>
     <string name="InuFloatingAvatarInfo">Отделяет аватар от заголовка и располагает его как плавающий элемент справа</string>
     <string name="InuSaveDeletedMessages">Сохранять удаленные сообщения</string>
@@ -1223,4 +1225,5 @@
     <string name="InuMsgDetailViews">Просмотры</string>
     <string name="InuMsgDetailVoiceNote">Голосовое сообщение</string>
     <string name="InuMsgDetailWaveformLength">Сэмплы волны</string>
+    <string name="Chats">Чаты</string>
 </resources>

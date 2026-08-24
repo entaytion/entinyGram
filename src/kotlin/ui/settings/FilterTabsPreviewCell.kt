@@ -94,7 +94,17 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean = true
 
     fun refresh() {
-        updateTabs(true)
+        (filterTabsView.layoutParams as? FrameLayout.LayoutParams)?.height = AndroidUtilities.dp(50f)
+        filterTabsView.requestLayout()
+        updateTabs(false)
+        refreshVisuals()
+    }
+
+    fun refreshVisuals() {
+        for (i in 0 until filterTabsView.childCount) {
+            filterTabsView.getChildAt(i)?.invalidate()
+        }
+        filterTabsView.invalidate()
     }
 
     fun refreshCounters() {
@@ -104,7 +114,7 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
     fun updateColors() {
         blurSource.setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
         filterTabsView.updateColors()
-        filterTabsView.invalidate()
+        refreshVisuals()
     }
 
     private fun updateTabs(animated: Boolean) {
@@ -190,6 +200,9 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
             }
         }
 
+        (filterTabsView.layoutParams as? FrameLayout.LayoutParams)?.height = AndroidUtilities.dp(50f)
+        filterTabsView.requestLayout()
+
         filterTabsView.finishAddingTabs(animated)
         if (firstId == -1 && filters.isNotEmpty()) {
             firstId = filters[0].id
@@ -215,7 +228,7 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
 
     override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
         if (id == NotificationCenter.dialogFiltersUpdated) {
-            updateTabs(true)
+            refreshVisuals()
         }
     }
 

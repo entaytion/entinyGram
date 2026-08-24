@@ -71,7 +71,8 @@
                             android:pathData="M17 13a6 6 0 0 0-6-6"
                             android:fillColor="#00000000"
                             android:strokeColor="#ffffff"
-                            android:strokeAlpha="0"
+                            android:strokeAlpha="1"
+                            android:trimPathEnd="0"
                             android:strokeWidth="1.8"
                             android:strokeLineCap="round"
                             android:strokeLineJoin="round" />
@@ -80,7 +81,8 @@
                             android:pathData="M21 13A10 10 0 0 0 11 3"
                             android:fillColor="#00000000"
                             android:strokeColor="#ffffff"
-                            android:strokeAlpha="0"
+                            android:strokeAlpha="1"
+                            android:trimPathEnd="0"
                             android:strokeWidth="1.8"
                             android:strokeLineCap="round"
                             android:strokeLineJoin="round" />
@@ -143,9 +145,9 @@
         <aapt:attr name="android:animation">
             <set>
                 <objectAnimator
-                    android:propertyName="strokeAlpha"
-                    android:startOffset="200"
-                    android:duration="100"
+                    android:propertyName="trimPathEnd"
+                    android:startOffset="250"
+                    android:duration="200"
                     android:valueFrom="0"
                     android:valueTo="1"
                     android:valueType="floatType"
@@ -157,9 +159,9 @@
         <aapt:attr name="android:animation">
             <set>
                 <objectAnimator
-                    android:propertyName="strokeAlpha"
-                    android:startOffset="200"
-                    android:duration="100"
+                    android:propertyName="trimPathEnd"
+                    android:startOffset="300"
+                    android:duration="200"
                     android:valueFrom="0"
                     android:valueTo="1"
                     android:valueType="floatType"

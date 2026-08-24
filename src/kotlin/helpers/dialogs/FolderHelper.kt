@@ -268,6 +268,9 @@ object FolderHelper {
     /** height (dp) of the pill row itself, matches the 36+7+7 addView height used both top and bottom */
     const val TAB_BAR_HEIGHT_DP = 36 + 7 + 7
 
+    @JvmStatic
+    fun getTabBarHeightDp(): Int = TAB_BAR_HEIGHT_DP
+
     /** bottom margin (dp) reserved for the pill when anchored to the bottom of the screen */
     const val TAB_BAR_BOTTOM_MARGIN_DP = 14
 
@@ -276,7 +279,7 @@ object FolderHelper {
 
     /** total vertical space (dp) the bottom-anchored pill reserves above the nav bar / FAB */
     @JvmStatic
-    fun bottomReservedHeightDp(): Int = TAB_BAR_HEIGHT_DP + TAB_BAR_BOTTOM_MARGIN_DP
+    fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP
 
     /**
      * translationY for [filterTabsView] when [atBottom] is on. Reuses the same base

@@ -769,8 +769,10 @@
     <string name="InuCenterTitleChats">Центрування в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Перемістити аватар праворуч</string>
     <string name="InuCenterTitleAdaptiveSize">Адаптивний розмір назви (iOS-style)</string>
-    <string name="InuCenterTitleMarquee">Біжучий рядок для довгого тексту</string>
+    <string name="InuCenterTitleMain">Центровані заголовки екранів</string>
+    <string name="InuCenterTitleMainInfo">Центрує заголовки на всіх екранах, крім чатів — у чатах окремий перемикач.</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
+    <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
     <string name="InuFloatingAvatar">Плаваючий аватар у шапці чату</string>
     <string name="InuFloatingAvatarInfo">Відділяє аватар від заголовка і розміщує його як плаваючий елемент справа</string>
     <string name="InuClearDeletedCache">Очистити кеш збережених повідомлень</string>
@@ -1208,4 +1210,5 @@
     <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, безкоштовний)</string>
     <string name="InuTranslateProviderYandex">Yandex Перекладач</string>
     <string name="InuTranslateYandexApiKey">API-ключ Yandex</string>
+    <string name="Chats">Чати</string>
 </resources>

@@ -941,9 +941,11 @@
     <string name="InuCategoryPrivacy">隐私与安全</string>
     <string name="InuCategoryProfile">个人资料与导航</string>
     <string name="InuCenterTitleAdaptiveSize">自适应标题字号 (iOS 风格)</string>
-    <string name="InuCenterTitleMarquee">长标题跑马灯滚动</string>
     <string name="InuCenterTitleRightAvatar">头像移至右侧</string>
+    <string name="InuCenterTitleMain">居中的屏幕标题</string>
+    <string name="InuCenterTitleMainInfo">在聊天以外的所有屏幕上将标题居中显示——聊天使用单独的开关。</string>
     <string name="InuChatTitleMarquee">长标题跑马灯滚动</string>
+    <string name="InuChatTitleMarqueeInfo">聊天页头标题与副标题、屏幕标题和资料名称放不下时自动滚动显示</string>
     <string name="InuChats">聊天</string>
     <string name="InuContentProtectionBypass">内容保护</string>
     <string name="InuCustomization">个性化定制</string>
@@ -1202,4 +1204,5 @@
     <string name="InuUnreader">未读助手</string>
     <string name="InuUnreaderInfo">消息永远不会标记为已读：打开聊天仍保留未读标记，对方不会收到已读回执。</string>
     <string name="InuYes">是</string>
+    <string name="Chats">聊天</string>
 </resources>

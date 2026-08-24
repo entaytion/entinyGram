@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 23 Aug 2026 22:32:39 +0300
+Subject: Remove the debug-only "Dump Canvas" menu entries
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 ------
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java     | 4 ----
+ 2 files changed, 10 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -4071,8 +4071,6 @@ public class ChatActivity extends BaseFragment implements
+                     }
+                 } else if (id == chat_menu_topic_create) {
+                     presentFragment(TopicCreateFragment.create(-dialog_id, 0).setOpenInChatActivity(ChatActivity.this));
+-                } else if (id == 888) {
+-                    dumpCanvas();
+                 } else if (id == 889) {
+                     sendDebugRichMessage();
+                 }
+@@ -4537,10 +4535,6 @@ public class ChatActivity extends BaseFragment implements
+             }
+         }
+ 
+-        if (BuildConfig.DEBUG_PRIVATE_VERSION && headerItem != null) {
+-            headerItem.addSubItem(888, R.drawable.menu_download_round, "Dump Canvas");
+-        }
+-
+         actionModeViews.clear();
+         selectedMessagesCountTextView = null;
+         checkActionBarMenu(false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -650,10 +650,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             });
+         }
+ 
+-        if (BuildConfig.DEBUG_PRIVATE_VERSION) {
+-            o.add(R.drawable.menu_download_round, "Dump Canvas", () -> AndroidUtilities.runOnUIThread(this::dumpCanvas, 1000));
+-        }
+-
+         if (accountNumbers.size() > 0) {
+             if (o.getItemsCount() > 0) o.addGap();
+             for (int acc : accountNumbers) {

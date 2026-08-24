@@ -7,7 +7,7 @@ Subject: feat(chat): centered actionbar titles with right-side avatar and adapti
 - move the chat avatar to the right edge so the centered title is truly centered
 - shrink the centered chat title font to fit long names (iOS-style), ellipsizing only below the minimum size
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 110 ++++++++----
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 156 ++++++++++++++----
  .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++------
  .../telegram/ui/Cells/ChatMessageCell.java    |  13 +-
  .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
@@ -15,9 +15,12 @@ Subject: feat(chat): centered actionbar titles with right-side avatar and adapti
  .../telegram/ui/Cells/ProfileSearchCell.java  |   2 +-
  .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
- .../ui/Components/ChatAvatarContainer.java    | 156 ++++++++++++++----
+ .../BottomSheetWithRecyclerListView.java      |   1 +
+ .../ui/Components/ChatAvatarContainer.java    | 139 ++++++++++++----
+ .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
- 10 files changed, 304 insertions(+), 128 deletions(-)
+ .../ui/Stories/DialogStoriesCell.java         |  14 +-
+ 13 files changed, 351 insertions(+), 129 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -46,7 +49,7 @@ index 0000000..0000000 100644
          if (subtitleTextView != null) {
              return;
          }
-+        if (desu.inugram.helpers.InuUtils.shouldCenterTitle(parentFragment)) {
++        if (inu_shouldCenterActionBarTitle()) {
 +            isCenterTitle = true;
 +        }
          subtitleTextView = new SimpleTextView(getContext());
@@ -59,13 +62,65 @@ index 0000000..0000000 100644
          if (titleTextView[i] != null) {
              return;
          }
-+        if (desu.inugram.helpers.InuUtils.shouldCenterTitle(parentFragment)) {
++        if (inu_shouldCenterActionBarTitle()) {
 +            isCenterTitle = true;
 +        }
          titleTextView[i] = new SimpleTextView(getContext());
          titleTextView[i].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
          if (titleColorToSet != 0) {
-@@ -1398,6 +1409,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -547,6 +558,37 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+     }
+ 
++    private boolean inu_forceDisableCenterTitle;
++
++    private boolean inu_shouldCenterActionBarTitle() {
++        return !inu_forceDisableCenterTitle && desu.inugram.helpers.InuUtils.shouldCenterTitle(parentFragment);
++    }
++
++    private void syncInuCenteredGravities() {
++        if (titleTextView != null) {
++            for (int a = 0; a < titleTextView.length; a++) {
++                if (titleTextView[a] != null) {
++                    titleTextView[a].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
++                }
++            }
++        }
++        if (subtitleTextView != null) {
++            subtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
++        }
++        if (additionalSubtitleTextView != null) {
++            additionalSubtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
++        }
++    }
++
++    public void inu_setForceDisableCenterTitle(boolean value) {
++        if (inu_forceDisableCenterTitle == value) {
++            return;
++        }
++        inu_forceDisableCenterTitle = value;
++        syncInuCenteredGravities();
++        requestLayout();
++    }
++
+     public void setTitleRightMargin(int value) {
+         titleRightMargin = value;
+     }
+@@ -1379,6 +1421,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         int actionBarHeight = getCurrentActionBarHeight();
+         int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
+ 
++        // inu: sync the centered-title flag BEFORE anything is measured so that
++        // widthWrapContent and gravity always agree with the current screen state.
++        // Gravities are re-asserted unconditionally on every pass - a stale LEFT
++        // gravity combined with the symmetric layout throws the title off-center.
++        isCenterTitle = inu_shouldCenterActionBarTitle();
++        syncInuCenteredGravities();
++
+         ignoreLayoutRequest = true;
+         if (actionModeTop != null) {
+             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
+@@ -1398,6 +1447,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -75,7 +130,17 @@ index 0000000..0000000 100644
          // textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1502,12 +1516,17 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1455,6 +1507,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                 }
+ 
+                 if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
++                    // inu: keep stock full-width measuring here - the symmetric placement in
++                    // onLayout plus CENTER gravity does the centering; wrapping the view to the
++                    // text width breaks SimpleTextView's internal offsetX and throws it right.
+                     titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
+                     if (centerScale) {
+                         CharSequence text = titleTextView[i].getText();
+@@ -1502,12 +1557,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -86,14 +151,13 @@ index 0000000..0000000 100644
              checkAvatarContainerWidth(animatorAvatarContainerWidth.isAnimating());
          }
  
-+        if (desu.inugram.helpers.InuUtils.shouldCenterTitle(parentFragment)) {
-+            isCenterTitle = true;
-+        }
++        // inu: centered-title state is synced at the top of onMeasure so that
++        // measure (widthWrapContent) and layout always agree with each other.
 +
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
-@@ -1515,6 +1534,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1515,6 +1574,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -103,51 +167,50 @@ index 0000000..0000000 100644
          textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1522,6 +1544,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-             menu.layout(menuLeft, additionalTop, menuLeft + menu.getMeasuredWidth(), additionalTop + menu.getMeasuredHeight());
-         }
- 
-+        int rightBound = (right - left) - (menu != null && menu.getVisibility() != GONE ? menu.getMeasuredWidth() : 0) - titleRightMargin;
-+
-         for (int i = 0; i < 2; i++) {
-             if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
-                 int textTop;
-@@ -1534,21 +1558,30 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1534,7 +1596,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
 -                titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
-+                float centerTitleWidth = titleTextView[i].getTextPaint().measureText(titleTextView[i].getText(), 0, titleTextView[i].getText().length());
-+                int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - (int) centerTitleWidth) / 2) : textLeft;
-+                int curTextRight = curTextLeft + titleTextView[i].getMeasuredWidth();
-+                titleTextView[i].layout(curTextLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), curTextRight, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                if (isCenterTitle) {
++                    // Port of exteraless/exteraGram centered-title layout: place the view symmetrically
++                    // around the action bar's horizontal center so its CENTER gravity lands exactly there.
++                    // The old formula offset the view origin to the *text's* center while the view itself
++                    // is measured at full available width, double-shifting the visible text right.
++                    int halfWidth = titleTextView[i].getMeasuredWidth() / 2;
++                    titleTextView[i].layout((right - left) / 2 - halfWidth, additionalTop + textTop - titleTextView[i].getPaddingTop(), (right - left) / 2 + halfWidth, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                } else {
++                    titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                }
              }
          }
          if (additionalSubTitleOverlayContainer != null) {
-             int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubTitleOverlayContainer.getMeasuredHeight()) / 2 - dp(2);
--            additionalSubTitleOverlayContainer.layout(textLeft, additionalTop + textTop, textLeft + additionalSubTitleOverlayContainer.getMeasuredWidth(), additionalTop + textTop + additionalSubTitleOverlayContainer.getMeasuredHeight());
-+            int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - additionalSubTitleOverlayContainer.getMeasuredWidth()) / 2) : textLeft;
-+            int curTextRight = curTextLeft + additionalSubTitleOverlayContainer.getMeasuredWidth();
-+            additionalSubTitleOverlayContainer.layout(curTextLeft, additionalTop + textTop, curTextRight, additionalTop + textTop + additionalSubTitleOverlayContainer.getMeasuredHeight());
+@@ -1543,12 +1614,22 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
 -            subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
-+            int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - subtitleTextView.getMeasuredWidth()) / 2) : textLeft;
-+            int curTextRight = curTextLeft + subtitleTextView.getMeasuredWidth();
-+            subtitleTextView.layout(curTextLeft, additionalTop + textTop, curTextRight, additionalTop + textTop + subtitleTextView.getTextHeight());
++            if (isCenterTitle) {
++                // See the centered-title comment above: symmetric placement around the center.
++                subtitleTextView.layout((right - left) / 2 - subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, (right - left) / 2 + subtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + subtitleTextView.getTextHeight());
++            } else {
++                subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
++            }
          }
  
          if (additionalSubtitleTextView != null && additionalSubtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubtitleTextView.getTextHeight()) / 2 - dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 1);
 -            additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
-+            int curTextLeft = isCenterTitle ? Math.max(textLeft, (rightBound - additionalSubtitleTextView.getMeasuredWidth()) / 2) : textLeft;
-+            int curTextRight = curTextLeft + additionalSubtitleTextView.getMeasuredWidth();
-+            additionalSubtitleTextView.layout(curTextLeft, additionalTop + textTop, curTextRight, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++            if (isCenterTitle) {
++                // See the centered-title comment above: symmetric placement around the center.
++                additionalSubtitleTextView.layout((right - left) / 2 - additionalSubtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop, (right - left) / 2 + additionalSubtitleTextView.getMeasuredWidth() / 2, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++            } else {
++                additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++            }
          }
  
          if (avatarSearchImageView != null) {
-@@ -1606,6 +1639,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1606,6 +1687,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -156,7 +219,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2097,9 +2132,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2097,9 +2180,6 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasAvatar = chatAvatarContainer.hasVisibleAvatar();
          int visualWidth = chatAvatarContainer.getVisualWidth();
@@ -166,7 +229,7 @@ index 0000000..0000000 100644
  
          final int width = Math.min(getMeasuredWidth() - dp(6 + 46 + 6 + 6 + 46 + 6), visualWidth);
          if (animated) {
-@@ -2152,44 +2184,47 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2152,44 +2232,47 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
@@ -239,7 +302,7 @@ index 0000000..0000000 100644
              }
              glassDrawable.draw(canvas);
          }
-@@ -2202,6 +2237,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2202,6 +2285,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              glassDrawableMenu.setAlpha(hasForcedMenuWidth ? 255 : (int) (255 * animatorHasMenuItems.getFloatValue()));
              glassDrawableMenu.draw(canvas);
          }
@@ -441,7 +504,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -22096,9 +22096,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22106,9 +22106,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentChat != null ? currentChat.id : 0L
              );
              if (inuBadge != null) {
@@ -544,7 +607,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4136,7 +4136,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -4134,7 +4134,7 @@ public class ChatActivity extends BaseFragment implements
          }
          avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
              @Override
@@ -553,21 +616,30 @@ index 0000000..0000000 100644
                  if (currentUser != null && currentUser.linked_community_id != 0) {
                      showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
                      return true;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
+@@ -407,6 +407,7 @@ public abstract class BottomSheetWithRecyclerListView extends BottomSheet {
+                 }
+             });
+ 
++            actionBar.inu_setForceDisableCenterTitle(true); // inu: sheet titles are left-aligned by design
+             containerView.addView(recyclerListView);
+             containerView.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 6, 0, 6, 0));
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -270,15 +270,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -270,15 +270,17 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              });
          }
  
 +        boolean centerChatTitle = isCenteredTitle();
-+        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
 +
          titleTextView = new SimpleTextConnectedView(context, titleTextLargerCopyView);
--        titleTextView.setEllipsizeByGradient(true);
-+        titleTextView.setScrollNonFitText(marquee);
-+        titleTextView.setEllipsizeByGradient(!marquee, false);
+         titleTextView.setEllipsizeByGradient(true);
          titleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
          titleTextView.setTextSize(18);
 -        titleTextView.setGravity(Gravity.LEFT);
@@ -580,7 +652,7 @@ index 0000000..0000000 100644
          titleTextView.setPadding(0, dp(6), 0, dp(12));
          addView(titleTextView);
  
-@@ -289,17 +293,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -289,7 +291,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              animatedSubtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              animatedSubtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              animatedSubtitleTextView.setTextSize(dp(14));
@@ -589,11 +661,7 @@ index 0000000..0000000 100644
              animatedSubtitleTextView.setPadding(0, 0, dp(10), 0);
              animatedSubtitleTextView.setTranslationY(-dp(1));
              addView(animatedSubtitleTextView);
-         } else {
-             subtitleTextView = new SimpleTextConnectedView(context, subtitleTextLargerCopyView);
--            subtitleTextView.setEllipsizeByGradient(true);
-+            subtitleTextView.setScrollNonFitText(marquee);
-+            subtitleTextView.setEllipsizeByGradient(!marquee);
+@@ -299,7 +301,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              subtitleTextView.setTextSize(14);
@@ -602,7 +670,7 @@ index 0000000..0000000 100644
              subtitleTextView.setPadding(0, 0, dp(10), 0);
              addView(subtitleTextView);
          }
-@@ -463,7 +468,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -463,7 +465,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      }
  
@@ -611,7 +679,7 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -657,12 +662,29 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -657,12 +659,25 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -626,26 +694,22 @@ index 0000000..0000000 100644
 +        }
 +        final int availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
 +        boolean centerChatTitle = isCenteredTitle();
-+        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
 +        float baseSizePx = dp(glassMode ? 17.5f : 18);
 +        if (Math.abs(titleTextView.getTextPaint().getTextSize() - baseSizePx) > 0.5f) {
 +            titleTextView.setTextSizePx((int) baseSizePx);
 +        }
          avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY));
 -        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
-+        // wrap_content sizing shrinks the view down to the actual text width, which is fine for
-+        // static ellipsis but leaves the marquee scrolling inside a window only as wide as the
-+        // text itself instead of the full row — force full width while marquee is active.
-+        titleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
++        titleTextView.setWidthWrapContent(!centerChatTitle);
 +        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
          if (subtitleTextView != null) {
 -            subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
-+            subtitleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
++            subtitleTextView.setWidthWrapContent(!centerChatTitle);
 +            subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          }
-@@ -759,55 +781,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -759,55 +774,117 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -778,7 +842,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -909,10 +993,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -909,10 +986,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -792,17 +856,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -935,6 +1020,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-         if (value != null) {
-             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
-         }
-+        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
-+        titleTextView.setScrollNonFitText(marquee);
-+        titleTextView.setEllipsizeByGradient(!marquee, false);
-         titleTextView.setText(value);
-         rightDrawableIsScam = false;
-         if (scam || fake) {
-@@ -985,10 +1073,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -985,10 +1063,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          if (parentFragment != null) {
              long dialogId = parentFragment.getDialogId();
@@ -817,17 +871,7 @@ index 0000000..0000000 100644
                  desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
              );
          }
-@@ -1004,6 +1096,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-     public void setSubtitle(CharSequence value) {
-         if (lastSubtitle == null) {
-             if (subtitleTextView != null) {
-+                boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
-+                subtitleTextView.setScrollNonFitText(marquee);
-+                subtitleTextView.setEllipsizeByGradient(!marquee);
-                 subtitleTextView.setText(value);
-             } else if (animatedSubtitleTextView != null) {
-                 animatedSubtitleTextView.setText(value);
-@@ -1531,6 +1626,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1531,6 +1613,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -835,7 +879,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1737,9 +1833,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1737,9 +1820,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
          }
          if (hasVisibleAvatar()) {
@@ -847,11 +891,26 @@ index 0000000..0000000 100644
          }
          return (int) width;
      }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3248,6 +3248,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+     }
+ 
++    public boolean inu_isMainDialogsScreen() {
++        return !onlySelect && folderId == 0 && communityId == 0 && initialDialogsType == DIALOGS_TYPE_DEFAULT;
++    }
++
+     @Override
+     public View createView(final Context context) {
+         searching = false;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11673,11 +11673,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11691,11 +11691,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          showDialog(premiumPreviewBottomSheet);
                      });
                  }
@@ -869,7 +928,7 @@ index 0000000..0000000 100644
                  );
              }
  
-@@ -11938,11 +11943,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11956,11 +11961,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  } else {
                      nameTextView[a].setLeftDrawable(null);
                  }
@@ -887,3 +946,28 @@ index 0000000..0000000 100644
                  );
                  if (a == 0 && onlineTextOverride != null) {
                      onlineTextView[a].setText(onlineTextOverride);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+@@ -940,10 +940,16 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             titleView.setTranslationY(bottomY + dp(14) - offset + dp(FAKE_TOP_PADDING) - dp(6) * subtitleOverlayContainer.getTotalVisibility());
+             int cellWidth = dp(72);
+             lastViewRight += -cellWidth + getAvatarRight(cellWidth, collapsedProgress) + dp(12);
+-            titleView.setTranslationX(lastViewRight);
+-            titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
+-
+-            telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
++            if (desu.inugram.InuConfig.CENTER_TITLE_MAIN.getValue()) {
++                float titleX = (getMeasuredWidth() - titleView.getDrawable().getCurrentWidth()) / 2f;
++                titleView.setTranslationX(titleX);
++                titleView.getDrawable().setRightPadding(0);
++                telegramLogoView.setTranslationX((getMeasuredWidth() - telegramLogoView.getMeasuredWidth()) / 2f);
++            } else {
++                titleView.setTranslationX(lastViewRight);
++                titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
++                telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
++            }
+             telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
+ 
+             if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {

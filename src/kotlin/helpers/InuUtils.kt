@@ -68,9 +68,10 @@ public object InuUtils {
 
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
-        if (fragment == null) return false
-        // upstream's status/avatar icon in the main screen title breaks any centering math
-        // (exteraGram/Cherrygram have the exact same bug) - never center here, full stop.
-        return fragment.javaClass.name == "org.telegram.ui.ChatActivity" && desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+        if (fragment == null) return true // screens without an attached fragment follow the global toggle
+        if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
+            return desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+        }
+        return desu.inugram.InuConfig.CENTER_TITLE_MAIN.value
     }
 }

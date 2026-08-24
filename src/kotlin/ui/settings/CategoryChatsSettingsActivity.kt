@@ -47,6 +47,22 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     )
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(
+            mkSubPageButton(
+                BUTTON_MAIN_PAGE,
+                R.drawable.msg_folders,
+                LocaleController.getString(R.string.InuMainPage),
+            )
+        )
+        items.add(
+            mkSubPageButton(
+                BUTTON_CHAT_MENU_ORDER,
+                R.drawable.inu_tabler_menu_2,
+                LocaleController.getString(R.string.InuChatMenuOrder),
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGeneral)))
         items.add(
             mkTwoLineCheckItem(
@@ -124,10 +140,22 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             )
         }
         items.add(
-            UItem.asCheck(
+            mkTwoLineCheckItem(
+                TOGGLE_CENTER_TITLE_MAIN,
+                R.string.InuCenterTitleMain,
+                R.string.InuCenterTitleMainInfo,
+                InuConfig.CENTER_TITLE_MAIN.value,
+                experimental = true,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_CHAT_TITLE_MARQUEE,
-                addExperimentalSpan(LocaleController.getString(R.string.InuChatTitleMarquee)),
-            ).setChecked(InuConfig.CHAT_TITLE_MARQUEE.value)
+                R.string.InuChatTitleMarquee,
+                R.string.InuChatTitleMarqueeInfo,
+                InuConfig.CHAT_TITLE_MARQUEE.value,
+                experimental = true,
+            )
         )
         items.add(UItem.asShadow(null))
 
@@ -278,23 +306,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.EMOJI_PANEL_KEYWORD_SEARCH.value,
             )
         )
-        items.add(UItem.asShadow(null))
-
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
-        items.add(
-            mkSubPageButton(
-                BUTTON_MAIN_PAGE,
-                R.drawable.msg_viewchats,
-                LocaleController.getString(R.string.InuMainPage),
-            )
-        )
-        items.add(
-            mkSubPageButton(
-                BUTTON_CHAT_MENU_ORDER,
-                R.drawable.inu_tabler_menu_2,
-                LocaleController.getString(R.string.InuChatMenuOrder),
-            )
-        )
         hideBottomBarGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
             mkTwoLineCheckItem(
@@ -333,7 +345,15 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
             TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
-            TOGGLE_CHAT_TITLE_MARQUEE -> (view as? TextCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
+            TOGGLE_CENTER_TITLE_MAIN -> {
+                val new = InuConfig.CENTER_TITLE_MAIN.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                showRestartBulletin()
+            }
+            TOGGLE_CHAT_TITLE_MARQUEE -> {
+                val new = InuConfig.CHAT_TITLE_MARQUEE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_FLOATING_AVATAR -> (view as? TextCheckCell)?.isChecked = InuConfig.FLOATING_AVATAR.toggle()
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
@@ -395,6 +415,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val TOGGLE_FLOATING_AVATAR = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
@@ -436,6 +457,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
+                SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("floating-avatar", R.string.InuFloatingAvatar, TOGGLE_FLOATING_AVATAR),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),

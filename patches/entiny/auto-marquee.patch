@@ -1,0 +1,109 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 23 Aug 2026 23:56:36 +0300
+Subject: Add auto-scrolling marquee for long titles across the app
+
+---
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  4 ++++
+ .../ui/Components/ChatAvatarContainer.java    | 21 +++++++++++++++----
+ .../java/org/telegram/ui/ProfileActivity.java |  3 +++
+ 3 files changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -527,6 +527,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             isCenterTitle = true;
+         }
+         titleTextView[i] = new SimpleTextView(getContext());
++        if (desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
++            titleTextView[i].setScrollNonFitText(true);
++            titleTextView[i].setEllipsizeByGradient(false, false);
++        }
+         titleTextView[i].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
+         if (titleColorToSet != 0) {
+             titleTextView[i].setTextColor(titleColorToSet);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -271,9 +271,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         }
+ 
+         boolean centerChatTitle = isCenteredTitle();
++        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
+ 
+         titleTextView = new SimpleTextConnectedView(context, titleTextLargerCopyView);
+-        titleTextView.setEllipsizeByGradient(true);
++        titleTextView.setScrollNonFitText(marquee);
++        titleTextView.setEllipsizeByGradient(!marquee, false);
+         titleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
+         titleTextView.setTextSize(18);
+         titleTextView.setGravity(centerChatTitle ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT);
+@@ -297,7 +299,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             addView(animatedSubtitleTextView);
+         } else {
+             subtitleTextView = new SimpleTextConnectedView(context, subtitleTextLargerCopyView);
+-            subtitleTextView.setEllipsizeByGradient(true);
++            subtitleTextView.setScrollNonFitText(marquee);
++            subtitleTextView.setEllipsizeByGradient(!marquee);
+             subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
+             subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
+             subtitleTextView.setTextSize(14);
+@@ -668,15 +671,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         }
+         final int availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
+         boolean centerChatTitle = isCenteredTitle();
++        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
+         float baseSizePx = dp(glassMode ? 17.5f : 18);
+         if (Math.abs(titleTextView.getTextPaint().getTextSize() - baseSizePx) > 0.5f) {
+             titleTextView.setTextSizePx((int) baseSizePx);
+         }
+         avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY));
+-        titleTextView.setWidthWrapContent(!centerChatTitle);
++        // wrap_content sizing shrinks the view down to the actual text width, which is fine for
++        // static ellipsis but leaves the marquee scrolling inside a window only as wide as the
++        // text itself instead of the full row — force full width while marquee is active.
++        titleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
+         titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
+         if (subtitleTextView != null) {
+-            subtitleTextView.setWidthWrapContent(!centerChatTitle);
++            subtitleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
+             subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
+         } else if (animatedSubtitleTextView != null) {
+             animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
+@@ -1013,6 +1020,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         if (value != null) {
+             value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
+         }
++        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
++        titleTextView.setScrollNonFitText(marquee);
++        titleTextView.setEllipsizeByGradient(!marquee, false);
+         titleTextView.setText(value);
+         rightDrawableIsScam = false;
+         if (scam || fake) {
+@@ -1688,6 +1698,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         if (title == null) {
+             if (lastSubtitle != null) {
+                 if (subtitleTextView != null) {
++                    boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
++                    subtitleTextView.setScrollNonFitText(marquee);
++                    subtitleTextView.setEllipsizeByGradient(!marquee);
+                     subtitleTextView.setText(lastSubtitle);
+                     lastSubtitle = null;
+                     if (overrideSubtitleColor != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -5587,6 +5587,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             nameTextView[a].setPivotX(0);
+             nameTextView[a].setPivotY(0);
+             nameTextView[a].setAlpha(a == 0 ? 0.0f : 1.0f);
++            if (a == 0 && desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
++                nameTextView[a].setScrollNonFitText(true);
++            }
+             if (a == 1) {
+                 nameTextView[a].setScrollNonFitText(true);
+                 nameTextView[a].setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);

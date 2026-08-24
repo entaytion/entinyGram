@@ -254,8 +254,9 @@ class DialogsSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_TAB_INDICATOR_STROKE -> {
                 val new = InuConfig.TAB_INDICATOR_STROKE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
                 (view as? TextCheckCell)?.isChecked = new
-                filterTabsPreview?.invalidate()
+                filterTabsPreview?.refreshVisuals()
                 postNotificationForAllAccounts(NotificationCenter.dialogFiltersUpdated)
             }
 
@@ -311,6 +312,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 softRebuild()
             }
+
 
             BUTTON_PULL_DOWN_ACTION -> showPullDownActionSelector()
 

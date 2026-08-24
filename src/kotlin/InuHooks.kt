@@ -48,6 +48,7 @@ object InuHooks {
         syncDoubleTapDelay()
         syncAnimationSpeed()
         syncChatInputRowHeight()
+        desu.inugram.helpers.media.DownloadKeepAliveHelper.startPolling()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MonetHelper.registerOverlayChangeReceiver(context)
             MonetHelper.registerThemeReloadReceiver(context)
@@ -83,6 +84,8 @@ object InuHooks {
         desu.inugram.helpers.dialogs.FolderMembershipHelper.load(account)
         desu.inugram.helpers.security.PresenceHelper.load(account)
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
+        desu.inugram.helpers.media.StarGiftsHelper.refreshDeletedGiftsList()
+        desu.inugram.helpers.media.StarGiftsHelper.loadStickerPack()
         // TTL-based cache pruning only ran when the TTL setting itself was changed — accounts
         // that never touch the setting (or just leave the app running for weeks) never got
         // pruned. Run it once per account on every cold start instead.

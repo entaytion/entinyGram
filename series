@@ -267,7 +267,6 @@ feature/translator.patch
 entiny/night-theme-colors.patch
 entiny/colorful-icons-and-popups.patch
 entiny/fix-url-parsing.patch
-entiny/branding.patch
 feature/message-menu.patch
 entiny/adblock.patch
 entiny/github-updater.patch
@@ -279,7 +278,6 @@ entiny/webrtc-audio-fix.patch
 entiny/settings-api-compat.patch
 entiny/edited-time-display.patch
 bugfix/profile-actionbar-lifecycle.patch
-entiny/hidden-star-gifts.patch
 bugfix/chat-activity-layout-crash.patch
 entiny/translator.patch
 entiny/local-premium.patch
@@ -287,7 +285,6 @@ entiny/enable-premium-purchase.patch
 entiny/content-protection-bypass.patch
 entiny/allow-screenshots.patch
 entiny/developer-badges.patch
-entiny/title-alignment.patch
 entiny/name-emoji-picker.patch
 entiny/unlimited-fav-stickers.patch
 entiny/unlimited-pinned-chats.patch
@@ -303,3 +300,9 @@ entiny/avatar-corners.patch
 entiny/folder-tabs-customization.patch
 entiny/main-tabs-customize.patch
 entiny/show-spoilers-directly.patch
+entiny/branding.patch
+debloat/remove-dump-canvas.patch
+entiny/hidden-star-gifts.patch
+entiny/keep-downloads-in-background.patch
+entiny/title-alignment.patch
+entiny/auto-marquee.patch

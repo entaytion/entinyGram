@@ -11,14 +11,16 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
  .../config/release/AndroidManifest.xml         |  2 +-
  .../config/release/AndroidManifest_SDK23.xml   |  2 +-
  .../release/AndroidManifest_standalone.xml     |  2 +-
+ TMessagesProj/jni/intro/IntroRenderer.c        |  6 ++++--
  TMessagesProj/src/main/AndroidManifest.xml     | 18 ++++++++++++++++++
  .../java/org/telegram/messenger/BuildVars.java |  4 ++--
  .../org/telegram/ui/Cells/SessionCell.java     |  2 +-
  .../org/telegram/ui/Components/UndoView.java   |  2 +-
+ .../java/org/telegram/ui/IntroActivity.java    | 17 ++++++++++++-----
  .../telegram/ui/LauncherIconController.java    |  1 +
  .../org/telegram/ui/SessionBottomSheet.java    |  2 +-
  TMessagesProj_App/build.gradle                 |  2 +-
- 12 files changed, 30 insertions(+), 11 deletions(-)
+ 14 files changed, 46 insertions(+), 18 deletions(-)
 
 diff --git a/TMessagesProj/config/debug/AndroidManifest.xml b/TMessagesProj/config/debug/AndroidManifest.xml
 index 0000000..0000000 100644
@@ -85,6 +87,23 @@ index 0000000..0000000 100644
  
          <service
              android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
+diff --git a/TMessagesProj/jni/intro/IntroRenderer.c b/TMessagesProj/jni/intro/IntroRenderer.c
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/intro/IntroRenderer.c
++++ b/TMessagesProj/jni/intro/IntroRenderer.c
+@@ -2725,8 +2725,10 @@ JNIEXPORT void Java_org_telegram_messenger_Intro_onSurfaceCreated(JNIEnv *env, j
+ 
+     telegram_sphere = create_textured_rectangle(CSizeMake(150, 150), telegram_sphere_texture);
+     telegram_mask = create_textured_rectangle(CSizeMake(200, 150), telegram_mask_texture);
+-    telegram_plane = create_textured_rectangle(CSizeMake(82, 74), telegram_plane_texture);
+-    telegram_plane.params.anchor = xyzMake(6, -5, 0);
++    telegram_plane = create_textured_rectangle(CSizeMake(120, 108), telegram_plane_texture);
++    // anchor was (6, -5) to compensate for the stock paper-plane art being off-center
++    // in its own bounds; our glyph is symmetric, so no compensation is needed.
++    telegram_plane.params.anchor = xyzMake(0, 0, 0);
+ 
+     fast_body = create_textured_rectangle(CSizeMake(148, 148), fast_body_texture);
+ 
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
@@ -155,6 +174,43 @@ index 0000000..0000000 100644
              subinfoTextView.setVisibility(VISIBLE);
              infoTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
              infoTextView.setTypeface(AndroidUtilities.bold());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
+@@ -156,9 +156,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+     public View createView(Context context) {
+         logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo).mutate();
+         logoDrawable.setBounds(0, dp(8.666f), dp(115), dp(35));
+-        SpannableStringBuilder ssb = new SpannableStringBuilder(LocaleController.getString(R.string.Page1Title));
+-        ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+-        titles[0] = ssb;
++        titles[0] = LocaleController.getString(R.string.Page1Title);
+ 
+ 
+         actionBar.setAddToContainer(false);
+@@ -797,10 +795,19 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+             loadTexture(R.drawable.intro_powerful_star, 18);
+             loadTexture(R.drawable.intro_private_door, 19);
+             loadTexture(R.drawable.intro_private_screw, 20);
+-            loadTexture(R.drawable.intro_tg_plane, 21);
++            loadTexture(v -> {
++                int size = dp(ICON_HEIGHT_DP);
++                Bitmap bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
++                Canvas c = new Canvas(bm);
++                Drawable logo = getParentActivity().getResources().getDrawable(R.drawable.inu_intro_logo).mutate();
++                int inset = (int) (size * 0.04f);
++                logo.setBounds(inset, inset, size - inset, size - inset);
++                logo.draw(c);
++                return bm;
++            }, 21);
+             loadTexture(v -> {
+                 Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+-                paint.setColor(ThemeColors.TELEGRAM_COLOR); // It's logo color, it should not be colored by the theme
++                paint.setColor(0xFFF20C3C); // entinyGram brand color, it should not be colored by the theme
+                 int size = dp(ICON_HEIGHT_DP);
+                 Bitmap bm = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+                 Canvas c = new Canvas(bm);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java

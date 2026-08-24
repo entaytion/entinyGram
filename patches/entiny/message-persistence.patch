@@ -8,12 +8,12 @@ Subject: feat(history): preserve message history and saved deletions
 - render preserved deletions with the configured transparent style
 ---
  .../messenger/MessagesController.java         | 77 ++++++++++++++++++-
- .../telegram/messenger/MessagesStorage.java   | 21 ++++-
+ .../telegram/messenger/MessagesStorage.java   | 28 ++++++-
  .../messenger/SendMessagesHelper.java         |  6 ++
  .../telegram/ui/Cells/ChatMessageCell.java    | 11 ++-
  .../java/org/telegram/ui/ChatActivity.java    | 15 ++++
  .../org/telegram/ui/MainTabsActivity.java     | 11 +--
- 6 files changed, 125 insertions(+), 16 deletions(-)
+ 6 files changed, 132 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -202,7 +202,21 @@ index 0000000..0000000 100644
                                              message.attachPath = oldMessage.attachPath;
                                          }
                                          message.ttl = cursor.intValue(2);
-@@ -18585,7 +18598,7 @@ public class MessagesStorage extends BaseController {
+@@ -15906,6 +15919,13 @@ public class MessagesStorage extends BaseController {
+                             cursor.dispose();
+                             cursor = null;
+                             if (!exist) {
++                                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue()) {
++                                    MessageObject inu_fallbackCached = getMessagesController().dialogMessagesByIds.get(message.id);
++                                    if (inu_fallbackCached != null && inu_fallbackCached.messageOwner != null) {
++                                        String inu_fallbackText = inu_fallbackCached.messageOwner.message != null ? inu_fallbackCached.messageOwner.message : "";
++                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, inu_fallbackText, inu_fallbackCached.messageOwner.date, inu_fallbackCached.messageOwner);
++                                    }
++                                }
+                                 continue;
+                             }
+                         }
+@@ -18585,7 +18605,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  
