@@ -35,6 +35,11 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     protected abstract val headerStringRes: Int
     protected abstract val resetStringRes: Int
 
+    /** override to prepend an interactive live preview above the list (see [MainTabsCustomizeActivity]) */
+    protected open fun buildPreviewCell(context: Context): View? = null
+    protected var previewCell: View? = null
+    protected open fun refreshPreviewCell(cell: View) {}
+
     data class SubCell(
         val label: CharSequence,
         val value: CharSequence,
@@ -55,6 +60,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         entries[idx] = entries[idx].copy(enabled = !entries[idx].enabled)
         config.value = entries
         row?.setChecked(entries[idx].enabled)
+        previewCell?.let { refreshPreviewCell(it) }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -72,6 +78,11 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     }
 
     protected fun fillMainSection(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        val preview = previewCell ?: buildPreviewCell(context).also { previewCell = it }
+        if (preview != null) {
+            refreshPreviewCell(preview)
+            items.add(UItem.asCustom(preview))
+        }
         items.add(UItem.asShadow(LocaleController.getString(infoStringRes)))
         items.add(UItem.asHeader(LocaleController.getString(headerStringRes)))
         openReorderSection(adapter, toBottom = false)
@@ -110,6 +121,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         val others = entries.filter { it.bottom != toBottom }
         entries = (if (toBottom) others + reordered else reordered + others).toMutableList()
         config.value = entries
+        previewCell?.let { refreshPreviewCell(it) }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -148,6 +160,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         if (item.id == BUTTON_RESET) {
             config.resetToDefault()
             entries = config.default.toMutableList()
+            previewCell?.let { refreshPreviewCell(it) }
             listView.adapter.update(true)
             return
         }
