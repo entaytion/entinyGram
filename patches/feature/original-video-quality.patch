@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -11059,6 +11059,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -11063,6 +11063,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                  if (videoEditedInfo.resultWidth != videoEditedInfo.originalWidth) {
                                      originalPath += "_" + videoEditedInfo.resultWidth;
                                  }
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                                  startTime = videoEditedInfo.startTime >= 0 ? videoEditedInfo.startTime : 0;
                              }
                              TLRPC.TL_document document = null;
-@@ -11902,6 +11905,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -11906,6 +11909,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          if (videoEditedInfo.resultWidth != videoEditedInfo.originalWidth) {
                              originalPath += "_" + videoEditedInfo.resultWidth;
                          }

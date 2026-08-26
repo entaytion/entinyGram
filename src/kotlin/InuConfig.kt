@@ -269,6 +269,9 @@ object InuConfig {
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
     @JvmField
+    val BOTTOM_TABS_HIDE_CONTACTS = BoolItem("bottom_tabs_hide_contacts", false)
+
+    @JvmField
     val BOTTOM_TABS_COMPACT_MODE = BoolItem("bottom_tabs_hide_compact_mode", false)
 
     /** order + enabled state for non-Chats bottom tabs; Chats is always first and mandatory */

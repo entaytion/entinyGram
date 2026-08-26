@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -12562,7 +12562,10 @@ public class MessageObject {
+@@ -12620,7 +12620,10 @@ public class MessageObject {
          if (userSpan[a] == null) {
              userSpan[a] = new SpannableStringBuilder("u");
              ColoredImageSpan span = new ColoredImageSpan(R.drawable.mini_reply_user);

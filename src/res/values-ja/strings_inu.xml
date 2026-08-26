@@ -1209,4 +1209,21 @@
     <string name="InuUnreader">未読マネージャー</string>
     <string name="InuUnreaderInfo">メッセージが既読になりません: チャットを開いても未読バッジが残り、相手に既読が送信されません。</string>
     <string name="InuYes">はい</string>
+    <string name="InuAccountSwitchShortcut">アカウント切り替えショートカット</string>
+    <string name="InuAccountSwitchShortcutInfo">アプリアイコン長押し時に開くアカウントを選択するショートカットを追加します</string>
+    <string name="InuBlockSleepWhileDownloading">ダウンロード中のスリープを防止</string>
+    <string name="InuBlockSleepWhileDownloadingInfo">ダウンロード中に部分的なウェイクロックを保持し、Androidがバックグラウンドで停止しないようにします。</string>
+    <string name="InuHideContactsTab">連絡先タブを非表示</string>
+    <string name="InuHideProxySponsorChat">プロキシのスポンサーチャットを非表示</string>
+    <string name="InuHideProxySponsorChatInfo">接続時に一部のMTProtoプロキシがチャット一覧の一番上に固定するプロモーションチャット/チャンネルをブロックします</string>
+    <string name="InuHideRichEditorButton">リッチテキストエディタのボタンを非表示</string>
+    <string name="InuKeepDownloadsInBackground">スクロールや終了時にダウンロードを中断しない</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">メッセージが画面外にスクロールされたりチャットを離れたりしても、ダウンロードをキャンセルして再開するのではなく継続します。</string>
+    <string name="InuMaterial3BottomTabs">ボトムタブ</string>
+    <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
+    <string name="InuRegexFilterStatusEnabled">有効</string>
+    <string name="InuStopBot">ボットを停止</string>
+    <string name="InuStopBotAction">停止</string>
+    <string name="InuStopBotAlert">**%1$s** を停止してもよろしいですか？これ以上メッセージを送信できなくなります。</string>
+    <string name="InuStopBotDone">ボットを停止しました</string>
 </resources>

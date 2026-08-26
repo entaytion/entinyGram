@@ -24,6 +24,14 @@ class IconsResources(private val resources: Resources) : Resources(resources.ass
         return this.resources === resources
     }
 
+    // Pushes the base resources' current configuration/metrics into this instance's own
+    // Android Resources internals (bypassing our updateConfiguration override, which only
+    // delegates to the wrapped `resources`) — otherwise this instance's own config stays
+    // frozen at construction time and drifts after rotation/locale changes.
+    fun syncConfigurationFrom(base: Resources) {
+        super.updateConfiguration(base.configuration, base.displayMetrics)
+    }
+
     override fun getAnimation(id: Int): XmlResourceParser = resources.getAnimation(id)
     override fun getBoolean(id: Int): Boolean = resources.getBoolean(id)
     override fun getColor(id: Int): Int = resources.getColor(id)

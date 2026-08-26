@@ -4,9 +4,9 @@ Date: Mon, 20 Jul 2026 01:39:19 +0400
 Subject: an option to hide bubble tails
 
 ---
- .../ui/ActionBar/MessageDrawable.java         | 42 ++++++++++++++++++-
- .../telegram/ui/Cells/ChatMessageCell.java    | 11 +++--
- 2 files changed, 49 insertions(+), 4 deletions(-)
+ .../ui/ActionBar/MessageDrawable.java         | 54 ++++++++++++++++---
+ .../telegram/ui/Cells/ChatMessageCell.java    | 11 ++--
+ 2 files changed, 55 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
 index 0000000..0000000 100644
@@ -65,15 +65,18 @@ index 0000000..0000000 100644
                  }
              } else {
                  if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
+-                    path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
+-                    rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
+-                    path.arcTo(rect, 180, -83, false);
 +                    if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
 +                        int radToUse = isBottomNear ? nearRad : rad;
 +                        path.lineTo(bounds.right - dp(8), bounds.bottom - padding - radToUse);
 +                        rect.set(bounds.right - dp(8) - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - dp(8), bounds.bottom - padding);
 +                        path.arcTo(rect, 0, 90, false);
 +                    } else {
-                     path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
-                     rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
-                     path.arcTo(rect, 180, -83, false);
++                        path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
++                        rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
++                        path.arcTo(rect, 180, -83, false);
 +                    }
                  } else {
                      path.lineTo(bounds.right - dp(8), top - topY + currentBackgroundHeight);
@@ -91,15 +94,18 @@ index 0000000..0000000 100644
                  }
              } else {
                  if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
+-                    path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
+-                    rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
+-                    path.arcTo(rect, 0, 83, false);
 +                    if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
 +                        int radToUse = isBottomNear || botButtonsBottom ? nearRad : rad;
 +                        path.lineTo(bounds.left + dp(8), bounds.bottom - padding - radToUse);
 +                        rect.set(bounds.left + dp(8), bounds.bottom - padding - radToUse * 2, bounds.left + dp(8) + radToUse * 2, bounds.bottom - padding);
 +                        path.arcTo(rect, 180, -90, false);
 +                    } else {
-                     path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
-                     rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
-                     path.arcTo(rect, 0, 83, false);
++                        path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
++                        rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
++                        path.arcTo(rect, 0, 83, false);
 +                    }
                  } else {
                      path.lineTo(bounds.left + dp(8), top - topY + currentBackgroundHeight);
@@ -125,7 +131,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -13444,7 +13444,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -13418,7 +13418,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          path.addCircle(rect.centerX(), rect.centerY(), dp(selectorDrawableMaskType[num] == 3 ? 16 : 20), Path.Direction.CW);
                      } else if (selectorDrawableMaskType[num] == 2) {
                          boolean out = currentMessageObject != null && currentMessageObject.isOutOwner();
@@ -138,7 +144,7 @@ index 0000000..0000000 100644
                              if (!instantTextNewLine) {
                                  if (a == (out ? 3 : 2)) {
                                      radii[a * 2] = radii[a * 2 + 1] = dp(SharedConfig.bubbleRadius);
-@@ -13457,7 +13462,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -13431,7 +13436,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              }
                              radii[a * 2] = radii[a * 2 + 1] = 0;
                          }
@@ -147,7 +153,7 @@ index 0000000..0000000 100644
                              path.moveTo(rect.left + dp(6), rect.top);
                              path.lineTo(rect.left + dp(6), rect.bottom - dp(6) - dp(2 + 3));
                              AndroidUtilities.rectTmp.set(
-@@ -23342,7 +23347,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -23318,7 +23323,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  buttonX -= dp(10);
              }
              commentButtonRect.set(
@@ -156,7 +162,7 @@ index 0000000..0000000 100644
                      (int) buttonY,
                      endX - dp(14),
                      layoutHeight - dp(h) + 1
-@@ -26070,7 +26075,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -26046,7 +26051,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
                  instantButtonRect.set(textX, instantY, textX + instantWidth, instantY + dp(44));
                  if (selectorDrawable[0] != null && selectorDrawableMaskType[0] == 2) {

@@ -1,12 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
-Date: Wed, 12 Aug 2026 22:55:15 +0400
+Date: Wed, 26 Aug 2026 22:50:49 +0300
 Subject: local overrides for forum topics view
 
 ---
  .../src/main/java/org/telegram/messenger/ChatObject.java      | 4 ++++
- .../src/main/java/org/telegram/messenger/MessagesStorage.java | 4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java
 index 0000000..0000000 100644
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -19058,7 +19058,7 @@ public class MessagesStorage extends BaseController {
+@@ -19078,7 +19078,7 @@ public class MessagesStorage extends BaseController {
                  TLRPC.Chat chat = getChat(-dialogId);
                  if (chat != null && chat.forum) {
                      value |= FORUM_TYPE_CHAT;
@@ -36,12 +36,3 @@ index 0000000..0000000 100644
                          value |= FORUM_TYPE_CHAT_TABS;
                      }
                  }
-@@ -19090,7 +19090,7 @@ public class MessagesStorage extends BaseController {
-         return (value & type) != 0;
-     }
- 
--    private void isForumCacheInvalidate(long dialogId) {
-+    public void isForumCacheInvalidate(long dialogId) {
-         dialogIsForumTyped.delete(dialogId);
-     }
- 

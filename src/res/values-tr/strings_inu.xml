@@ -1209,4 +1209,20 @@
     <string name="InuUnreaderInfo">Mesajlar asla okundu olarak işaretlenmez: bir sohbeti açmak okunmadı rozetini korur ve karşı tarafa okundu bilgisi gitmez.</string>
     <string name="InuYes">Evet</string>
     <string name="Chats">Sohbetler</string>
+    <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
+    <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
+    <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
+    <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
+    <string name="InuHideContactsTab">Kişiler sekmesini gizle</string>
+    <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>
+    <string name="InuHideProxySponsorChatInfo">Bağlıyken bazı MTProto vekil sunucularının sohbet listenizin en üstüne sabitlediği tanıtım sohbetini/kanalını engeller</string>
+    <string name="InuHideRichEditorButton">Zengin metin düzenleyici düğmesini gizle</string>
+    <string name="InuKeepDownloadsInBackground">Kaydırma veya çıkışta indirmeleri sonlandırma</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Mesaj ekrandan çıktığında veya sohbetten ayrıldığınızda indirmeleri iptal edip yeniden başlatmak yerine çalışır durumda tutar.</string>
+    <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
+    <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
+    <string name="InuStopBot">Botu durdur</string>
+    <string name="InuStopBotAction">Durdur</string>
+    <string name="InuStopBotAlert">**%1$s** botunu durdurmak istediğinizden emin misiniz? Artık size mesaj gönderemeyecek.</string>
+    <string name="InuStopBotDone">Bot durduruldu</string>
 </resources>

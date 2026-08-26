@@ -376,7 +376,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -11296,7 +11296,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -11305,7 +11305,7 @@ public class ChatActivity extends BaseFragment implements
          String from = LocaleController.getString(R.string.SearchFrom);
          Spannable spannable = new SpannableString(from + " " + name);
          spannable.setSpan(new ForegroundColorSpan(getThemedColor(Theme.key_actionBarDefaultSubtitle)), from.length() + 1, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -385,7 +385,7 @@ index 0000000..0000000 100644
          mentionContainer.getAdapter().searchUsernameOrHashtag(null, 0, null, false, true);
          searchItem.setSearchFieldHint(null);
          searchItem.clearSearchText();
-@@ -15406,11 +15406,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -15415,11 +15415,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                          if (userNamesCount == 1) {
@@ -399,7 +399,7 @@ index 0000000..0000000 100644
                      }
                  }
                  replyObjectHintTextView.setText(LocaleController.getString(R.string.TapForForwardingOptions));
-@@ -15442,20 +15442,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -15451,20 +15451,20 @@ public class ChatActivity extends BaseFragment implements
                      replyObjectTextView.setText(pendingLinkSearchString);
                  } else {
                      if (webPage.site_name != null) {
@@ -426,7 +426,7 @@ index 0000000..0000000 100644
                      }
                      chatActivityEnterView.setWebPage(webPage, true);
                  }
-@@ -21996,6 +21996,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -22005,6 +22005,10 @@ public class ChatActivity extends BaseFragment implements
              if (chatListView != null) {
                  chatListView.invalidateViews();
              }
@@ -437,7 +437,7 @@ index 0000000..0000000 100644
              if (alertTextView != null) {
                  alertTextView.invalidate();
              }
-@@ -28745,6 +28749,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28771,6 +28775,7 @@ public class ChatActivity extends BaseFragment implements
                  pinnedMessageObject.updateTranslation(false);
                  if (pinnedMessageObject.type == MessageObject.TYPE_MUSIC) {
                      pinnedText = String.format("%s - %s", pinnedMessageObject.getMusicAuthor(), pinnedMessageObject.getMusicTitle());
@@ -445,7 +445,7 @@ index 0000000..0000000 100644
                  } else if (pinnedMessageObject.type == MessageObject.TYPE_POLL) {
                      if (pinnedMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                          TLRPC.TL_messageMediaPoll poll = (TLRPC.TL_messageMediaPoll) pinnedMessageObject.messageOwner.media;
-@@ -40536,15 +40541,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -40494,15 +40499,16 @@ public class ChatActivity extends BaseFragment implements
                  userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
                  final TextView titleText = new TextView(getContext());
@@ -747,7 +747,7 @@ index 0000000..0000000 100644
          } else {
              if (peerIds.size() == 0) {
                  titleView.setText(LocaleController.getString(R.string.NobodyViewed));
-@@ -375,6 +377,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -370,6 +372,7 @@ public class MessageSeenView extends FrameLayout {
              nameView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
              nameView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
              nameView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -755,7 +755,7 @@ index 0000000..0000000 100644
  
              statusBadgeComponent = new StatusBadgeComponent(this);
              nameView.setDrawablePadding(AndroidUtilities.dp(3));
-@@ -415,7 +418,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -410,7 +413,7 @@ public class MessageSeenView extends FrameLayout {
                  avatarDrawable.setInfo(currentAccount, object);
                  ImageLocation imageLocation = ImageLocation.getForUserOrChat(currentAccount, object, ImageLocation.TYPE_SMALL);
                  avatarImageView.setImage(imageLocation, "50_50", avatarDrawable, object);

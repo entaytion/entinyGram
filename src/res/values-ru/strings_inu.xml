@@ -1231,4 +1231,20 @@
     <string name="InuMsgDetailVoiceNote">Голосовое сообщение</string>
     <string name="InuMsgDetailWaveformLength">Сэмплы волны</string>
     <string name="Chats">Чаты</string>
+    <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунтов</string>
+    <string name="InuAccountSwitchShortcutInfo">Добавить ярлык по долгому нажатию на иконку приложения с выбором аккаунта для входа</string>
+    <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
+    <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
+    <string name="InuHideContactsTab">Скрыть вкладку «Контакты»</string>
+    <string name="InuHideProxySponsorChat">Скрыть спонсорский чат прокси</string>
+    <string name="InuHideProxySponsorChatInfo">Блокирует рекламный чат или канал, который некоторые MTProto-прокси закрепляют вверху списка чатов</string>
+    <string name="InuHideRichEditorButton">Скрыть кнопку форматирования текста</string>
+    <string name="InuKeepDownloadsInBackground">Не прерывать загрузки при скролле и выходе</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Продолжает текущие загрузки, когда сообщение уходит с экрана или вы выходите из чата, не отменяя и не перезапуская их заново.</string>
+    <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
+    <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
+    <string name="InuStopBot">Остановить бота</string>
+    <string name="InuStopBotAction">Остановить</string>
+    <string name="InuStopBotAlert">Вы уверены, что хотите остановить **%1$s**? Он больше не сможет отправлять вам сообщения.</string>
+    <string name="InuStopBotDone">Бот остановлен</string>
 </resources>

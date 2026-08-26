@@ -4,12 +4,12 @@ Date: Fri, 10 Apr 2026 06:58:12 +0300
 Subject: dialog folders display mode customizations
 
 ---
- .../messenger/MessagesController.java         |   1 +
- .../telegram/messenger/MessagesStorage.java   |  34 ++++++
- .../ui/Components/FilterTabsView.java         | 100 ++++++++++++------
- .../java/org/telegram/ui/DialogsActivity.java |  17 ++-
- .../org/telegram/ui/FilterCreateActivity.java |   4 +
- 5 files changed, 122 insertions(+), 34 deletions(-)
+ .../messenger/MessagesController.java         |  1 +
+ .../telegram/messenger/MessagesStorage.java   | 34 +++++++
+ .../ui/Components/FilterTabsView.java         | 94 +++++++++++++------
+ .../java/org/telegram/ui/DialogsActivity.java | 17 +++-
+ .../org/telegram/ui/FilterCreateActivity.java |  4 +
+ 5 files changed, 118 insertions(+), 32 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -431,26 +431,18 @@ index 0000000..0000000 100644
          }
          super.onMeasure(widthMeasureSpec, heightMeasureSpec);
      }
-@@ -1716,9 +1750,10 @@ public class FilterTabsView extends FrameLayout {
-                 invalidated = true;
-                 requestLayout();
-                 allTabsWidth = 0;
--                findDefaultTab().setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
-+                Tab defTab = findDefaultTab();
-+                if (defTab != null) defTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+@@ -1721,7 +1755,7 @@ public class FilterTabsView extends FrameLayout {
+                     defaultTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+                 }
                  for (int b = 0; b < N; b++) {
 -                    allTabsWidth += tabs.get(b).getWidth(true) + dp(TAB_PADDING_WIDTH);
 +                    allTabsWidth += tabs.get(b).getWidth(true) + dp(FolderHelper.getTabPadding());
                  }
                  break;
              }
-@@ -1747,9 +1782,10 @@ public class FilterTabsView extends FrameLayout {
-             listView.setItemAnimator(itemAnimator);
-             adapter.notifyDataSetChanged();
-             allTabsWidth = 0;
--            findDefaultTab().setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
-+            Tab defTab = findDefaultTab();
-+            if (defTab != null) defTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+@@ -1757,7 +1791,7 @@ public class FilterTabsView extends FrameLayout {
+                 defaultTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+             }
              for (int b = 0, N = tabs.size(); b < N; b++) {
 -                allTabsWidth += tabs.get(b).getWidth(true) + dp(TAB_PADDING_WIDTH);
 +                allTabsWidth += tabs.get(b).getWidth(true) + dp(FolderHelper.getTabPadding());

@@ -4,37 +4,42 @@ Date: Wed, 5 Aug 2026 10:20:40 +0300
 Subject: feat(ui): adapt colorful icons, Monet theme transitions, dialog inputs, and popups
 
 ---
- .../java/org/telegram/ui/Cells/TextCell.java  | 41 +++++++++++++++----
+ .../java/org/telegram/ui/Cells/TextCell.java  | 46 +++++++++++++------
  .../ui/Components/IconBackgroundColors.java   |  3 +-
  .../telegram/ui/Components/ItemOptions.java   |  4 +-
  .../org/telegram/ui/SettingsActivity.java     |  2 +-
- 4 files changed, 39 insertions(+), 11 deletions(-)
+ 4 files changed, 38 insertions(+), 17 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -203,14 +203,27 @@ public class TextCell extends FrameLayout {
+@@ -203,20 +203,27 @@ public class TextCell extends FrameLayout {
              subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
          }
          if (imageView.getVisibility() == VISIBLE) {
 -            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
--                imageView.setPadding(0, 0, 0, 0);
+-                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+-                if (imageView.getBackground() instanceof SettingsActivity.SettingCell.Background) {
+-                    imageView.setPadding(dp(7), dp(7), dp(7), dp(7));
+-                    final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(36), MeasureSpec.EXACTLY);
+-                    imageView.measure(iconMeasureSpec, iconMeasureSpec);
 +            if (desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) {
 +                final boolean isColorful = imageView.getBackground() != null;
 +                final int targetSize = isColorful ? dp(36) : dp(inu_m3IconSize);
 +                if (isColorful) {
 +                    int p = dp(6);
 +                    imageView.setPadding(p, p, p, p);
-+                } else {
-+                    imageView.setPadding(0, 0, 0, 0);
-+                }
-                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
--                final boolean autoSizeLottie = inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
--                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(autoSizeLottie ? 48 : inu_m3IconSize), autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
+                 } else {
+                     imageView.setPadding(0, 0, 0, 0);
+-                    final boolean autoSizeLottie = inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
+-                    final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(autoSizeLottie ? 48 : inu_m3IconSize), autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
+-                    imageView.measure(iconMeasureSpec, iconMeasureSpec);
+                 }
++                imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 +                final boolean autoSizeLottie = !isColorful && inu_m3IconSize == 22 && imageView.getDrawable() instanceof RLottieDrawable;
 +                final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(autoSizeLottie ? dp(48) : targetSize, autoSizeLottie ? MeasureSpec.AT_MOST : MeasureSpec.EXACTLY);
-                 imageView.measure(iconMeasureSpec, iconMeasureSpec);
++                imageView.measure(iconMeasureSpec, iconMeasureSpec);
 +            } else if (imageView.getBackground() != null) {
 +                // Colorful rows in non-M3 modes render the stock gradient square at the settings
 +                // size (28dp) with the 24dp glyph, so every list icon matches the settings screen.
@@ -47,7 +52,7 @@ index 0000000..0000000 100644
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -634,14 +647,28 @@ public class TextCell extends FrameLayout {
+@@ -641,17 +648,30 @@ public class TextCell extends FrameLayout {
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
          offsetFromImage = getOffsetFromImage(true);
          imageView.setVisibility(VISIBLE);
@@ -77,7 +82,10 @@ index 0000000..0000000 100644
 +        }
          drawable.setDrawBorder(border);
          imageView.setBackground(drawable);
+-        desu.inugram.helpers.theme.M3SectionsHelper.applyTextCellColorfulIcon(imageView, colorTop, colorBottom, drawable);
      }
+ 
+     public void setTextAndCheck(CharSequence text, boolean checked, boolean divider) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/IconBackgroundColors.java

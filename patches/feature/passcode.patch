@@ -103,7 +103,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -1273,7 +1273,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1271,7 +1271,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      private void switchToAvailableAccountOrLogout() {
          int account = -1;
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
                  account = a;
                  break;
              }
-@@ -1292,6 +1292,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1290,6 +1290,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                  rightActionBarLayout.rebuildLogout();
              }
              presentFragment(new IntroActivity().setOnLogout());

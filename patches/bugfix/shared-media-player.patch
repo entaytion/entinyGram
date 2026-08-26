@@ -4,8 +4,8 @@ Date: Wed, 15 Apr 2026 01:39:38 +0300
 Subject: fixed a few visual glitches with the media player inside the shared media view
 
 ---
- .../ui/Components/SharedMediaLayout.java      | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ .../ui/Components/SharedMediaLayout.java      | 20 +++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 index 0000000..0000000 100644
@@ -32,7 +32,15 @@ index 0000000..0000000 100644
                  // SharedMediaLayout.this.setPadding(0, , 0, 0);
              });
              fragmentContextView = new FragmentContextView(context, parent, this, false, resourcesProvider) {
-@@ -7359,7 +7368,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -3732,7 +3741,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+             fragmentContextViewWrapper.addView(fragmentContextView);
+             topPanelLayout.setCallFragmentContextView(fragmentContextView);
+             addView(topPanelLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 0, 48 -14, 0, 0));
+-
+             fragmentContextView.setDelegate((start, show) -> {
+                 if (!start) {
+                     requestLayout();
+@@ -7359,7 +7367,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                  }
                  if (savedMessagesContainer.getParent() != mediaPages[a]) {
                      AndroidUtilities.removeFromParent(savedMessagesContainer);
@@ -43,7 +51,7 @@ index 0000000..0000000 100644
                  }
              } else if (mediaPages[a].selectedType == TAB_BOT_PREVIEWS) {
                  if (currentAdapter != null) {
-@@ -7382,7 +7393,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7382,7 +7392,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                  }
              }
              final boolean photos = mediaPages[a].selectedType == TAB_PHOTOVIDEO || isAnyStoryPageType(mediaPages[a].selectedType);

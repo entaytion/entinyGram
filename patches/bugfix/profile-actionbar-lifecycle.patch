@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11134,7 +11134,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11172,7 +11172,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setPadding(0, 0, 0, getActionsExtraHeight());
          }
          if (isPulledDown && listView != null) {

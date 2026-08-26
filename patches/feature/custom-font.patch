@@ -42,7 +42,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayou
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -222,6 +222,8 @@ public class RichMessageLayout {
+@@ -223,6 +223,8 @@ public class RichMessageLayout {
          density = AndroidUtilities.density;
          textPaint.setTextSize(dp(fontSize));
          numTextPaint.setTextSize(dp(fontSize));
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
      }
  
      /** Uses the message renderer for editable inline buttons without laying out a message. */
-@@ -367,6 +369,8 @@ public class RichMessageLayout {
+@@ -369,6 +371,8 @@ public class RichMessageLayout {
          density = AndroidUtilities.density;
          textPaint.setTextSize(dp(SharedConfig.fontSize));
          numTextPaint.setTextSize(dp(SharedConfig.fontSize));
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
          isPart = false;
  
          richMessage = null;
-@@ -7400,6 +7404,7 @@ public class RichMessageLayout {
+@@ -7452,6 +7456,7 @@ public class RichMessageLayout {
              this.currentMessageObject = root.audioBlocks.get(block);
              this.currentDocument = currentMessageObject != null ? currentMessageObject.getDocument() : null;
              this.observerTag = DownloadController.getInstance(root.currentAccount).generateObserverTag();
@@ -68,7 +68,7 @@ index 0000000..0000000 100644
  
              radialProgress = new RadialProgress2(null);
              radialProgress.setCircleRadius(dp(24));
-@@ -7742,6 +7747,7 @@ public class RichMessageLayout {
+@@ -7794,6 +7799,7 @@ public class RichMessageLayout {
              this.previewX = root.padLeft + dp(10);
              this.hasPreview = MessageObject.isDocumentHasThumb(document);
              observerTag = DownloadController.getInstance(root.currentAccount).generateObserverTag();

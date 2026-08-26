@@ -1210,4 +1210,20 @@
     <string name="InuUnreaderInfo">消息永远不会标记为已读：打开聊天仍保留未读标记，对方不会收到已读回执。</string>
     <string name="InuYes">是</string>
     <string name="Chats">聊天</string>
+    <string name="InuAccountSwitchShortcut">账号切换快捷方式</string>
+    <string name="InuAccountSwitchShortcutInfo">在应用图标长按菜单中添加快捷方式，点击可选择要打开的账号</string>
+    <string name="InuBlockSleepWhileDownloading">下载时阻止休眠</string>
+    <string name="InuBlockSleepWhileDownloadingInfo">在下载进行时保持部分唤醒锁（wake lock），防止 Android 在后台暂停下载。</string>
+    <string name="InuHideContactsTab">隐藏联系人标签页</string>
+    <string name="InuHideProxySponsorChat">隐藏代理赞助商聊天</string>
+    <string name="InuHideProxySponsorChatInfo">屏蔽某些 MTProto 代理在连接时置顶在聊天列表顶部的推广聊天/频道</string>
+    <string name="InuHideRichEditorButton">隐藏富文本编辑器按钮</string>
+    <string name="InuKeepDownloadsInBackground">滑动或退出时不中断下载</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">当消息滑出屏幕或离开聊天时继续后台下载，而不是取消并在稍后重新开始。</string>
+    <string name="InuMaterial3BottomTabs">底部标签栏</string>
+    <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
+    <string name="InuStopBot">停止机器人</string>
+    <string name="InuStopBotAction">停止</string>
+    <string name="InuStopBotAlert">确定要停止 **%1$s** 吗？它将无法再向您发送消息。</string>
+    <string name="InuStopBotDone">机器人已停止</string>
 </resources>

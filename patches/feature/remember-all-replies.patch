@@ -27,7 +27,7 @@ index 0000000..0000000 100644
      private int createUnreadMessageAfterId;
      private boolean createUnreadMessageAfterIdLoading;
      private boolean loadingFromOldPosition;
-@@ -10667,6 +10669,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -10676,6 +10678,11 @@ public class ChatActivity extends BaseFragment implements
          final Runnable inCaseLoading = () -> {
              sideControlsButtonsLayout.setButtonLoading(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, true, true);
          };
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
          if (createUnreadMessageAfterId != 0) {
              scrollToMessageId(createUnreadMessageAfterId, 0, false, returnToLoadIndex, true, 0, null, inCaseLoading);
          } else if (returnToMessageId > 0) {
-@@ -17074,6 +17081,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17083,6 +17090,9 @@ public class ChatActivity extends BaseFragment implements
                  showFloatingTopicView(false);
              }
          }
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
          returnToMessageId = fromMessageId;
          returnToLoadIndex = loadIndex;
          needSelectFromMessageId = select;
-@@ -17111,6 +17121,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -17120,6 +17130,7 @@ public class ChatActivity extends BaseFragment implements
          } else {
              returnToMessageId = 0;
              newUnreadMessageCount = 0;
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
          }
  
          sideControlsButtonsLayout.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, show, animated);
-@@ -46939,6 +46950,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46897,6 +46908,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void goToNextOrPrevSearchMessage(boolean searchUp) {
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          if (chatMode == MODE_SEARCH) {
              HashtagSearchController.getInstance(currentAccount).jumpToMessage(classGuid, hashtagSearchSelectedIndex + (searchUp ? 1 : -1), searchType);
          } else {
-@@ -46999,6 +47011,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -46957,6 +46969,12 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean onSideControlButtonOnLongClick(int buttonId, View view) {

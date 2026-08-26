@@ -1218,4 +1218,18 @@
     <string name="InuTranslateProviderYandex">Yandex Перекладач</string>
     <string name="InuTranslateYandexApiKey">API-ключ Yandex</string>
     <string name="Chats">Чати</string>
+    <string name="InuAccountSwitchShortcut">Ярлик перемикання акаунтів</string>
+    <string name="InuAccountSwitchShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка з вибором акаунта для входу</string>
+    <string name="InuBlockSleepWhileDownloading">Блокувати режим сну під час завантаження</string>
+    <string name="InuBlockSleepWhileDownloadingInfo">Утримує wake lock під час активного завантаження, щоб Android не призупиняв його у фоні.</string>
+    <string name="InuHideContactsTab">Приховати вкладку «Контакти»</string>
+    <string name="InuHideRichEditorButton">Приховати кнопку форматування тексту</string>
+    <string name="InuKeepDownloadsInBackground">Не переривати завантаження під час скролу та виходу</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Продовжує поточні завантаження, коли повідомлення зникає з екрана або ви виходите з чату, не скасовуючи й не перезапускаючи їх знову.</string>
+    <string name="InuMaterial3BottomTabs">Нижні вкладки</string>
+    <string name="InuParanoiaHideMyStories">Приховати мої історії</string>
+    <string name="InuStopBot">Зупинити бота</string>
+    <string name="InuStopBotAction">Зупинити</string>
+    <string name="InuStopBotAlert">Ви впевнені, що хочете зупинити **%1$s**? Він більше не зможе надсилати вам повідомлення.</string>
+    <string name="InuStopBotDone">Бота зупинено</string>
 </resources>

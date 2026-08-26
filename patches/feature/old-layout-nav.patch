@@ -191,7 +191,7 @@ index 0000000..0000000 100644
                      if (rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment()) {
                          if (actionBar.isActionModeShowed()) {
                              if (searchViewPager != null && searchViewPager.getVisibility() == View.VISIBLE && searchViewPager.actionModeShowing()) {
-@@ -5391,7 +5401,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5382,7 +5392,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          };
          dialogStoriesCell.setActionBar(actionBar);
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
          dialogStoriesCell.allowGlobalUpdates = false;
          dialogStoriesCell.setVisibility(View.GONE);
          animateToHasStories = false;
-@@ -5421,7 +5431,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5412,7 +5422,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          undoView[1] = null;
  
          if (hasMainTabs) {
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
              actionBar.setTitleColor(getThemedColor(Theme.key_telegram_color_dialogsLogo));
          }
  
-@@ -5950,6 +5960,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5941,6 +5951,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              yoff = -(actionBar.getHeight() - AndroidUtilities.rectTmp2.centerY()) - dp(16);
              xoff = AndroidUtilities.rectTmp2.centerX() - dp(16);
              xoff += dp(4);
@@ -219,7 +219,7 @@ index 0000000..0000000 100644
              if (animatedStatusView != null) {
                  animatedStatusView.translate(AndroidUtilities.rectTmp2.centerX(), AndroidUtilities.rectTmp2.centerY());
              }
-@@ -9160,6 +9173,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9144,6 +9157,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          selectedDialogs.clear();
          if (backDrawable != null) {
              backDrawable.setRotation(0, true);
@@ -228,7 +228,7 @@ index 0000000..0000000 100644
          }
          if (filterTabsView != null) {
              filterTabsView.animateColorsTo(Theme.key_actionBarTabLine, Theme.key_actionBarTabActiveText, Theme.key_actionBarTabUnactiveText, Theme.key_actionBarTabSelector, Theme.key_windowBackgroundWhite);
-@@ -10247,6 +10262,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10231,6 +10246,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              if (backDrawable != null) {
                  backDrawable.setRotation(1, true);
@@ -241,7 +241,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -598,8 +598,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -596,8 +596,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              if (!UserConfig.getInstance(currentAccount).isClientActivated()) {
                  actionBarLayout.addFragmentToStack(getClientNotActivatedFragment());
              } else {
@@ -251,7 +251,7 @@ index 0000000..0000000 100644
              }
  
              try {
-@@ -748,7 +747,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -746,7 +745,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          final int inuPredictiveMode = desu.inugram.InuConfig.PREDICTIVE_BACK_MODE.getValue();
          if (Build.VERSION.SDK_INT >= 34 && inuPredictiveMode == desu.inugram.InuConfig.PredictiveBackModeItem.MATERIAL3 && actionBarLayout != null) {
              if (onBackAnimationCallback == null) {
@@ -260,7 +260,7 @@ index 0000000..0000000 100644
                      this,
                      actionBarLayout,
                      () -> {
-@@ -759,7 +758,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -757,7 +756,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                          if (!onBackPressed(true)) return;
                          onBackPressed();
                      }
@@ -269,7 +269,7 @@ index 0000000..0000000 100644
              }
              getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                  OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-@@ -767,7 +766,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -765,7 +764,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              );
          } else if (Build.VERSION.SDK_INT >= 34 && inuPredictiveMode == desu.inugram.InuConfig.PredictiveBackModeItem.STOCK) {
              if (onBackAnimationCallback == null) {
@@ -278,7 +278,7 @@ index 0000000..0000000 100644
                      private AnimationNotificationsLocker locker = new AnimationNotificationsLocker();
                      private boolean locked;
  
-@@ -850,7 +849,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -848,7 +847,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                              actionBarLayout.onBackCancelled();
                          }
                      }
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
              }
              getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                  OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-@@ -1221,10 +1220,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1219,10 +1218,10 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
      private boolean switchingAccount;
      public void switchToAccount(int account, boolean removeAll) {
@@ -300,7 +300,7 @@ index 0000000..0000000 100644
          if (account == UserConfig.selectedAccount || !UserConfig.isValidAccount(account)) {
              return;
          }
-@@ -1252,7 +1251,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1250,7 +1249,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          } else {
              actionBarLayout.removeFragmentFromStack(0);
          }
@@ -309,7 +309,7 @@ index 0000000..0000000 100644
          actionBarLayout.addFragmentToStack(mainTabsActivity, INavigationLayout.FORCE_ATTACH_VIEW_AS_FIRST);
          actionBarLayout.rebuildFragments(INavigationLayout.REBUILD_FLAG_REBUILD_LAST);
          if (AndroidUtilities.isTablet()) {
-@@ -1266,6 +1265,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1264,6 +1263,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              showTosActivity(account, UserConfig.getInstance(account).unacceptedTermsOfService);
          }
          updateCurrentConnectionState(currentAccount);
@@ -317,7 +317,7 @@ index 0000000..0000000 100644
  
          switchingAccount = false;
      }
-@@ -3334,12 +3334,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -3332,12 +3332,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                      }
                  } else {
                      if (actionBarLayout.getFragmentStack().isEmpty()) {
@@ -331,7 +331,7 @@ index 0000000..0000000 100644
                      }
                  }
              } else {
-@@ -3347,12 +3342,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -3345,12 +3340,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                      if (!UserConfig.getInstance(currentAccount).isClientActivated()) {
                          actionBarLayout.addFragmentToStack(getClientNotActivatedFragment(), INavigationLayout.FORCE_NOT_ATTACH_VIEW);
                      } else {
@@ -376,7 +376,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3997,6 +3997,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3995,6 +3995,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      case ProfileActionsView.KEY_SETTINGS:
                          presentFragment(new SettingsActivity());
                          break;
@@ -389,7 +389,7 @@ index 0000000..0000000 100644
                  }
              });
          }
-@@ -5753,7 +5759,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5746,7 +5752,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      actionsView.beginApplyingActions();
                      actionsView.addCameraAction();
                      actionsView.addEditInfo();

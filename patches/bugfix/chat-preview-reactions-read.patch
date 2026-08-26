@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -16209,7 +16209,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16218,7 +16218,7 @@ public class ChatActivity extends BaseFragment implements
                      startFromVideoTimestamp = -1;
                  }
  
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                      pollVotesMentionCount--;
                      getMessagesStorage().markMessagePollVotesAsRead(getDialogId(), getTopicId(), messageObject.getId());
                      if (pollVotesMentionCount <= 0) {
-@@ -16223,7 +16223,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16232,7 +16232,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                      updatePollVotesMentionButton(true);
                  }
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
                      reactionsMentionCount--;
                      getMessagesStorage().markMessageReactionsAsRead(getDialogId(), getTopicId(), messageObject.getId());
                      if (reactionsMentionCount <= 0) {
-@@ -16257,7 +16257,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16266,7 +16266,7 @@ public class ChatActivity extends BaseFragment implements
                      maxVisibleId = Math.max(maxVisibleId, messageObject.getId());
                  }
                  hasTopicSeparator = cell.topicSeparator != null;

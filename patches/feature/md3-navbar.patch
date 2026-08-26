@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
-Date: Tue, 25 Aug 2026 17:51:51 +0400
+Date: Wed, 26 Aug 2026 22:54:22 +0300
 Subject: md3-styled bottom navigation bar
 
 ---
@@ -124,7 +124,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
  
-@@ -333,6 +334,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -323,6 +324,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          final int paddingV = dp(mainTabsMargin + 4);
          tabsView.setPadding(paddingH, paddingV, paddingH, paddingV);
          tabsView.setMaxWidth(dp(tabsViewWidth));
@@ -132,15 +132,15 @@ index 0000000..0000000 100644
  
          tabs = new GlassTabView[5];
          tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
-@@ -350,6 +352,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -340,6 +342,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsView.addTabToIgnoreClick(tabs[INDEX_PROFILE]);
          tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
          for (GlassTabView tab : tabs) {
 +            if (MainTabsHelper.isMaterial()) tab.inu_setMaterialTabs();
-             tab.setMainTabsCompact(compact);
+             tab.setMainTabsCompact(compact || !MainTabsHelper.getShowTitles());
          }
  
-@@ -397,6 +400,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -387,6 +390,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsViewBackground = iBlur3FactoryGlass.create(tabsView, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
          tabsViewBackground.setRadius(dp(MainTabsHelper.getMainTabsHeight() / 2f));
          tabsViewBackground.setPadding(dp(mainTabsMargin - 0.334f));
@@ -148,7 +148,7 @@ index 0000000..0000000 100644
          tabsView.setBackground(tabsViewBackground);
  
          BlurredBackgroundDrawableViewFactory iBlur3FactoryFade = new BlurredBackgroundDrawableViewFactory(iBlur3SourceColor);
-@@ -419,6 +423,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -409,6 +413,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsViewWrapper.setOnClickListener(v -> {});
          tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
          tabsViewWrapper.setClipToPadding(false);
@@ -156,7 +156,7 @@ index 0000000..0000000 100644
          contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
  
          updateLayoutWrapper = new UpdateLayoutWrapper(context);
-@@ -462,8 +467,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -452,8 +457,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          o.setBlur(true);
          o.translate(0, -dp(4));
          o.setGravity(Gravity.LEFT);
@@ -166,8 +166,8 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.show();
          return true;
-@@ -488,8 +492,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
-         }
+@@ -465,8 +469,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         o.add(R.drawable.menu_call_create, getString(R.string.GroupCallCreate2), () -> CallLogActivity.openCreateCall(this));
          o.setBlur(true);
          o.translate(0, -dp(4));
 -        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
@@ -176,7 +176,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.show();
          return true;
-@@ -548,8 +551,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -525,8 +528,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  //        o.setBlur(true);
          o.translate(-dp(8), -dp(4));
          o.setMaxHeight(dp(400));
@@ -186,7 +186,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
          o.setGravity(Gravity.LEFT);
          o.show();
-@@ -695,8 +697,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -668,8 +670,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
          o.setBlur(true);
          o.translate(0, -dp(4));
@@ -196,7 +196,7 @@ index 0000000..0000000 100644
          o.setScrimViewBackground(bg);
  
          HintsController.Hint.AccountSwitchHint.doNotShowAgain();
-@@ -987,7 +988,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -955,7 +956,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              }
          }
  

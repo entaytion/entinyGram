@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9900,6 +9900,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9923,6 +9923,9 @@ public class MessagesController extends BaseController implements NotificationCe
          if (dialogs == null) {
              return new ArrayList<>();
          }
@@ -89,11 +89,11 @@ index 0000000..0000000 100644
              final float filterTabsVisibility = getFilterTabsVisibilityFactor(false);
              final float topPanelsVisibility = topPanelLayout != null ? topPanelLayout.getMetadata().getTotalVisibility() : 0f;
  
--            t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
--            additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
+-            t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
+-            additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
 +            if (!FolderHelper.atBottom()) {
-+                t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
-+                additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 14) * filterTabsVisibility);
++                t += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
++                additionalPadding += (int) (dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 14) * filterTabsVisibility);
 +            }
  
              if (topPanelLayout != null) {
@@ -130,9 +130,9 @@ index 0000000..0000000 100644
  
 -        if (filterTabsView != null) {
 +        if (filterTabsView != null && !FolderHelper.atBottom()) {
-             filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? dp(NonIslandHelper.FOLDERS_BAR_OVERLAP_DP) * getFilterTabsVisibilityFactor(false) : 0));
+             filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? dp(NonIslandHelper.foldersBarOverlapDp()) * getFilterTabsVisibilityFactor(false) : 0));
              filtersTabVisibility = filterTabsView.getAlpha();
-             filtersTabHeight = dp(NonIslandHelper.foldersBar() ? NonIslandHelper.FOLDERS_BAR_VISIBLE_HEIGHT_DP : 36 + 7) * filtersTabVisibility;
+             filtersTabHeight = dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 7) * filtersTabVisibility;
 @@ -9056,6 +9062,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  storyHint.setTranslationY(baseTranslationY - dp(52));
              }

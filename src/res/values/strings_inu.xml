@@ -125,6 +125,7 @@
     <string name="InuBottomTabs">Bottom tabs</string>
     <string name="InuBottomTabsHide">Hide bottom tabs</string>
     <string name="InuBottomTabsHideInfo">Items are moved into the hamburger menu of the main screen</string>
+    <string name="InuHideContactsTab">Hide contacts tab</string>
     <string name="InuCompactMode">Compact mode</string>
     <string name="InuCompactModeInfo">Hides titles and make the tabs smaller</string>
     <string name="InuShowTabTitles">Show tab titles</string>
