@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -18478,9 +18478,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18528,9 +18528,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else if (currentMessageObject.isRepostPreview) {
              timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
          } else if (edited) {

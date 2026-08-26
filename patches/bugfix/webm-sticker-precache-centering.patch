@@ -12,12 +12,12 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCac
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
-@@ -96,7 +96,7 @@ public class BitmapsCache {
+@@ -100,7 +100,7 @@ public class BitmapsCache {
              fileTmo.mkdir();
              mkdir = true;
          }
--        file = new File(fileTmo, fileName + "_" + w + "_" + h + (noLimit ? "_nolimit" : " ") + ".pcache2");
-+        file = new File(fileTmo, fileName + "_" + w + "_" + h + (noLimit ? "_nolimit" : " ") + ".pcache2i"); // inu: cache busting for bugfix__webm-sticker-precache-centering
+-        file = new File(fileTmo, fileName + "_" + w + "_" + h + (noLimit ? "_nolimit" : " ") + (fitz != 0 ? "_fitz" + fitz : "") + ".pcache2");
++        file = new File(fileTmo, fileName + "_" + w + "_" + h + (noLimit ? "_nolimit" : " ") + (fitz != 0 ? "_fitz" + fitz : "") + ".pcache2i"); // inu: cache busting for bugfix__webm-sticker-precache-centering
          useSharedBuffers = w < AndroidUtilities.dp(60) && h < AndroidUtilities.dp(60);
  
          // check cache created in file load queue only for high devices

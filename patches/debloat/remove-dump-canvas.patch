@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4071,8 +4071,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -4101,8 +4101,6 @@ public class ChatActivity extends BaseFragment implements
                      }
                  } else if (id == chat_menu_topic_create) {
                      presentFragment(TopicCreateFragment.create(-dialog_id, 0).setOpenInChatActivity(ChatActivity.this));
@@ -21,12 +21,12 @@ index 0000000..0000000 100644
                  } else if (id == 889) {
                      sendDebugRichMessage();
                  }
-@@ -4537,10 +4535,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -4578,10 +4576,6 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  
 -        if (BuildConfig.DEBUG_PRIVATE_VERSION && headerItem != null) {
--            headerItem.addSubItem(888, R.drawable.menu_download_round, "Dump Canvas");
+-            headerItem.lazilyAddSubItem(888, R.drawable.menu_download_round, "Dump Canvas");
 -        }
 -
          actionModeViews.clear();

@@ -114,7 +114,7 @@ index 0000000..0000000 100644
                  }
              }
              mergeImages(entry.thumbPath = getTempFileAbsolutePath(), null, croppedBitmap, paintBitmap, thumbSize, false);
-@@ -16782,7 +16792,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16775,7 +16785,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              imageReceiver.setOrientation(photoEntry.orientation, photoEntry.invert, false);
                              path = photoEntry.path;
                          }

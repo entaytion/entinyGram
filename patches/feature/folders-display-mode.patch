@@ -4,18 +4,18 @@ Date: Fri, 10 Apr 2026 06:58:12 +0300
 Subject: dialog folders display mode customizations
 
 ---
- .../messenger/MessagesController.java         |   1 +
- .../telegram/messenger/MessagesStorage.java   |  26 +++++
- .../ui/Components/FilterTabsView.java         | 100 ++++++++++++------
- .../java/org/telegram/ui/DialogsActivity.java |  17 ++-
- .../org/telegram/ui/FilterCreateActivity.java |   4 +
- 5 files changed, 114 insertions(+), 34 deletions(-)
+ .../messenger/MessagesController.java         |  1 +
+ .../telegram/messenger/MessagesStorage.java   | 26 +++++
+ .../ui/Components/FilterTabsView.java         | 94 +++++++++++++------
+ .../java/org/telegram/ui/DialogsActivity.java | 17 +++-
+ .../org/telegram/ui/FilterCreateActivity.java |  4 +
+ 5 files changed, 110 insertions(+), 32 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -1286,6 +1286,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -1288,6 +1288,7 @@ public class MessagesController extends BaseController implements NotificationCe
          public ArrayList<TLRPC.Dialog> dialogsForward = new ArrayList<>();
          public int color;
          public boolean title_noanimate;
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -72,6 +72,7 @@ import java.util.concurrent.CountDownLatch;
+@@ -73,6 +73,7 @@ import java.util.concurrent.CountDownLatch;
  import java.util.concurrent.atomic.AtomicLong;
  import java.util.concurrent.atomic.AtomicReference;
  import java.util.function.Consumer;
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
  
  import me.vkryl.core.BitwiseUtils;
  
-@@ -2678,6 +2679,8 @@ public class MessagesStorage extends BaseController {
+@@ -2686,6 +2687,8 @@ public class MessagesStorage extends BaseController {
                      return 0;
                  });
  
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  if (updateCounters) {
                      calcUnreadCounters(true);
                  }
-@@ -2772,6 +2775,9 @@ public class MessagesStorage extends BaseController {
+@@ -2780,6 +2783,9 @@ public class MessagesStorage extends BaseController {
              while (cursor.next()) {
                  int folderId = cursor.intValue(1);
                  long did = cursor.longValue(0);
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  int unread;
                  int mentions = 0;
                  if (isForum(did, FORUM_TYPE_CHAT | FORUM_TYPE_BOT | FORUM_TYPE_DIRECT)) {
-@@ -2818,6 +2824,11 @@ public class MessagesStorage extends BaseController {
+@@ -2826,6 +2832,11 @@ public class MessagesStorage extends BaseController {
                  getUsersInternal(usersToLoad, users, true);
                  for (int a = 0, N = users.size(); a < N; a++) {
                      TLRPC.User user = users.get(a);
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                      boolean muted = getMessagesController().isDialogMuted(user.id, 0);
                      int idx1 = dialogsByFolders.get(user.id);
                      int idx2 = muted ? 1 : 0;
-@@ -3329,6 +3340,10 @@ public class MessagesStorage extends BaseController {
+@@ -3337,6 +3348,10 @@ public class MessagesStorage extends BaseController {
                              changed = true;
                              filter.title_noanimate= newFilter.title_noanimate;
                          }
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
                          final int color = (newFilter.flags & 134217728) != 0 ? newFilter.color : -1;
                          if (filter.color != color) {
                              filter.color = color;
-@@ -3470,6 +3485,7 @@ public class MessagesStorage extends BaseController {
+@@ -3478,6 +3493,7 @@ public class MessagesStorage extends BaseController {
                          filter.name = newFilter.title.text;
                          filter.entities = newFilter.title.entities;
                          filter.title_noanimate = newFilter.title_noanimate;
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                          filter.color = (newFilter.flags & 134217728) != 0 ? newFilter.color : -1;
                          filter.pendingUnreadCount = -1;
                          for (int c = 0; c < 2; c++) {
-@@ -3589,6 +3605,7 @@ public class MessagesStorage extends BaseController {
+@@ -3597,6 +3613,7 @@ public class MessagesStorage extends BaseController {
              saveDialogFilterInternal(filtersToSave.get(a), false, true);
              anythingChanged = true;
          }
@@ -93,7 +93,7 @@ index 0000000..0000000 100644
          boolean orderChanged = false;
          for (int a = 0, N = dialogFilters.size(); a < N; a++) {
              MessagesController.DialogFilter filter = dialogFilters.get(a);
-@@ -6061,6 +6078,9 @@ public class MessagesStorage extends BaseController {
+@@ -6072,6 +6089,9 @@ public class MessagesStorage extends BaseController {
                      continue;
                  }
                  long did = array.keyAt(a);
@@ -103,7 +103,7 @@ index 0000000..0000000 100644
                  if (read) {
                      if (b == 0) {
                          dialogsWithUnread.remove(did);
-@@ -6124,6 +6144,11 @@ public class MessagesStorage extends BaseController {
+@@ -6135,6 +6155,11 @@ public class MessagesStorage extends BaseController {
              getUsersInternal(usersToLoad, users);
              for (int a = 0, N = users.size(); a < N; a++) {
                  TLRPC.User user = users.get(a);
@@ -115,7 +115,7 @@ index 0000000..0000000 100644
                  boolean muted = getMessagesController().isDialogMuted(user.id, 0);
                  Integer folderId = dialogsByFolders.get(user.id);
                  int idx1 = folderId == null || folderId < 0 || folderId > 1 ? 0 : folderId;
-@@ -17405,6 +17430,7 @@ public class MessagesStorage extends BaseController {
+@@ -17893,6 +17918,7 @@ public class MessagesStorage extends BaseController {
      }
  
      public void resetAllUnreadCounters(boolean muted) {
@@ -423,26 +423,18 @@ index 0000000..0000000 100644
          }
          super.onMeasure(widthMeasureSpec, heightMeasureSpec);
      }
-@@ -1716,9 +1750,10 @@ public class FilterTabsView extends FrameLayout {
-                 invalidated = true;
-                 requestLayout();
-                 allTabsWidth = 0;
--                findDefaultTab().setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
-+                Tab defTab = findDefaultTab();
-+                if (defTab != null) defTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+@@ -1721,7 +1755,7 @@ public class FilterTabsView extends FrameLayout {
+                     defaultTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+                 }
                  for (int b = 0; b < N; b++) {
 -                    allTabsWidth += tabs.get(b).getWidth(true) + dp(TAB_PADDING_WIDTH);
 +                    allTabsWidth += tabs.get(b).getWidth(true) + dp(FolderHelper.getTabPadding());
                  }
                  break;
              }
-@@ -1747,9 +1782,10 @@ public class FilterTabsView extends FrameLayout {
-             listView.setItemAnimator(itemAnimator);
-             adapter.notifyDataSetChanged();
-             allTabsWidth = 0;
--            findDefaultTab().setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
-+            Tab defTab = findDefaultTab();
-+            if (defTab != null) defTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+@@ -1757,7 +1791,7 @@ public class FilterTabsView extends FrameLayout {
+                 defaultTab.setTitle(LocaleController.getString(R.string.FilterAllChats), null, false);
+             }
              for (int b = 0, N = tabs.size(); b < N; b++) {
 -                allTabsWidth += tabs.get(b).getWidth(true) + dp(TAB_PADDING_WIDTH);
 +                allTabsWidth += tabs.get(b).getWidth(true) + dp(FolderHelper.getTabPadding());

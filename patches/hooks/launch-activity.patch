@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -1505,6 +1505,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1503,6 +1503,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
      @SuppressLint("Range")
      private boolean handleIntent(Intent intent, boolean isNew, boolean restore, boolean fromPassword, Browser.Progress progress, boolean rebuildFragments, boolean openedTelegram) {
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          if (GiftInfoBottomSheet.handleIntent(intent, progress)) {
              return true;
          }
-@@ -6965,6 +6966,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -6969,6 +6970,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          if (Theme.selectedAutoNightType == Theme.AUTO_NIGHT_TYPE_SYSTEM) {
              Theme.checkAutoNightThemeConditions();
          }

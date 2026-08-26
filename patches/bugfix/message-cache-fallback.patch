@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -9874,7 +9874,7 @@ public class MessagesStorage extends BaseController {
+@@ -9999,7 +9999,7 @@ public class MessagesStorage extends BaseController {
                  runnable.run();
              };
          } else {*/

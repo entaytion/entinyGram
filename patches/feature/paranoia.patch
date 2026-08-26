@@ -37,7 +37,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5180,6 +5180,7 @@ public class MediaDataController extends BaseController {
+@@ -5181,6 +5181,7 @@ public class MediaDataController extends BaseController {
                          arrayList.clear();
                      }
                  }
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
              } catch (Throwable ignore) {
  
              }
-@@ -5254,6 +5255,7 @@ public class MediaDataController extends BaseController {
+@@ -5255,6 +5256,7 @@ public class MediaDataController extends BaseController {
                          inlineBots = inlineBotsNew;
                          guestBots = guestsBotsNew;
                          webapps = webappsNew;
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
                          buildShortcuts();
                          getNotificationCenter().postNotificationName(NotificationCenter.reloadHints);
                          getNotificationCenter().postNotificationName(NotificationCenter.reloadInlineHints);
-@@ -5313,6 +5315,7 @@ public class MediaDataController extends BaseController {
+@@ -5314,6 +5316,7 @@ public class MediaDataController extends BaseController {
                          }
                      }
                      getUserConfig().saveConfig(false);
@@ -65,7 +65,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -22038,6 +22038,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22124,6 +22124,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
              final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
              if (d instanceof TLRPC.TL_dialog || isCommunity) {
                  long dialogId = d.id;
-@@ -22251,6 +22252,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22337,6 +22338,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
                  for (int a = 0, N = allDialogs.size(); a < N; a++) {
                      final TLRPC.Dialog d = allDialogs.get(a);
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
                      final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
                      if (d instanceof TLRPC.TL_dialog || isCommunity) {
                          long dialogId = d.id;
-@@ -22290,6 +22292,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22376,6 +22378,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -93,7 +93,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -10058,6 +10058,7 @@ public class MessagesStorage extends BaseController {
+@@ -10183,6 +10183,7 @@ public class MessagesStorage extends BaseController {
                      if (id == -1) {
                          continue;
                      }
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
                      dids.add(id);
                      if (users != null && chats != null) {
                          if (DialogObject.isUserDialog(id)) {
-@@ -10143,6 +10144,7 @@ public class MessagesStorage extends BaseController {
+@@ -10268,6 +10269,7 @@ public class MessagesStorage extends BaseController {
                      if (id == -1) {
                          continue;
                      }
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
                      dids.add(id);
                      if (DialogObject.isUserDialog(id)) {
                          usersToLoad.add(id);
-@@ -10177,6 +10179,7 @@ public class MessagesStorage extends BaseController {
+@@ -10302,6 +10304,7 @@ public class MessagesStorage extends BaseController {
                      if (DialogObject.isFolderDialogId(dialogId)) {
                          continue;
                      }
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
                      if (add) {
                          dids.add(dialogId);
                      }
-@@ -17782,6 +17785,7 @@ public class MessagesStorage extends BaseController {
+@@ -18270,6 +18273,7 @@ public class MessagesStorage extends BaseController {
              }
              while (cursor.next()) {
                  long id = cursor.longValue(0);
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
                  DialogsSearchAdapter.DialogSearchResult dialogSearchResult = new DialogsSearchAdapter.DialogSearchResult();
                  dialogSearchResult.date = cursor.intValue(1);
                  dialogsResult.put(id, dialogSearchResult);
-@@ -18057,6 +18061,9 @@ public class MessagesStorage extends BaseController {
+@@ -18545,6 +18549,9 @@ public class MessagesStorage extends BaseController {
                  cursor = getDatabase().queryFinalized("SELECT u.data, u.status, u.name, u.uid FROM users as u INNER JOIN contacts as c ON u.uid = c.uid");
                  while (cursor.next()) {
                      long uid = cursor.longValue(3);
@@ -139,7 +139,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -1387,6 +1387,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1389,6 +1389,7 @@ public class NotificationsController extends BaseController implements Notificat
              SharedPreferences preferences = getAccountInstance().getNotificationsSettings();
              for (int b = 0; b < dialogsToUpdate.size(); b++) {
                  long dialogId = dialogsToUpdate.keyAt(b);
@@ -147,7 +147,7 @@ index 0000000..0000000 100644
                  Integer currentCount = pushDialogs.get(dialogId);
                  int newCount = dialogsToUpdate.get(dialogId);
                  boolean forum = false;
-@@ -1741,6 +1742,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1743,6 +1744,7 @@ public class NotificationsController extends BaseController implements Notificat
                          final ArrayList<TLRPC.Dialog> dialogs = new ArrayList<>(MessagesController.getInstance(a).allDialogs);
                          for (int i = 0, N = dialogs.size(); i < N; i++) {
                              TLRPC.Dialog dialog = dialogs.get(i);
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
                              if (dialog != null && DialogObject.isChatDialog(dialog.id)) {
                                  TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
                                  if (ChatObject.isNotInChat(chat) || ChatObject.isCommunity(chat)) {
-@@ -1762,6 +1764,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1764,6 +1766,7 @@ public class NotificationsController extends BaseController implements Notificat
                      try {
                          for (int i = 0, N = MessagesController.getInstance(a).allDialogs.size(); i < N; i++) {
                              TLRPC.Dialog dialog = MessagesController.getInstance(a).allDialogs.get(i);

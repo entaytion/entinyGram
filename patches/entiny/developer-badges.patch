@@ -30,7 +30,7 @@ index 0000000..0000000 100644
              } else if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT) {
                  if (firstLineLayout != null) {
                      offsetX = -(int) firstLineLayout.getLineLeft(0);
-@@ -967,7 +967,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -968,7 +968,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  int dh = (int) (rightDrawable2.getIntrinsicHeight() * rightDrawableScale);
                  int x = textOffsetX + textWidth + drawablePadding + (int) -scrollingOffset + nextScrollX;
                  if (rightDrawable != null) {
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
                  }
                  int y;
                  if ((gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.CENTER_VERTICAL) {
-@@ -976,6 +977,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -977,6 +978,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
                      y = getPaddingTop() + (textHeight - dh) / 2 + rightDrawableTopPadding;
                  }
                  rightDrawable2.setBounds(x, y, x + dw, y + dh);
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
                  rightDrawable2.draw(canvas);
              }
          }
-@@ -1138,7 +1141,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1139,7 +1142,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
                      getMaxTextWidth() - paddingRight + drawablePadding
              );
              if (rightDrawable != null) {
@@ -59,7 +59,7 @@ index 0000000..0000000 100644
              }
              int dw = (int) (rightDrawable2.getIntrinsicWidth() * rightDrawableScale);
              int dh = (int) (rightDrawable2.getIntrinsicHeight() * rightDrawableScale);
-@@ -1149,6 +1153,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1150,6 +1154,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  y = getPaddingTop() + (textHeight - dh) / 2 + rightDrawableTopPadding;
              }
              rightDrawable2.setBounds(x, y, x + dw, y + dh);
@@ -68,7 +68,7 @@ index 0000000..0000000 100644
              rightDrawable2.draw(canvas);
          }
      }
-@@ -1161,6 +1167,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1162,6 +1168,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
          return rightDrawableY;
      }
  
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
      public int getMaxTextWidth() {
          return getMeasuredWidth() - (rightDrawableOutside && rightDrawable != null ? rightDrawable.getIntrinsicWidth() + drawablePadding : 0) - (rightDrawableOutside && rightDrawable2 != null ? rightDrawable2.getIntrinsicWidth() + drawablePadding : 0);
      }
-@@ -1228,12 +1242,16 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1229,12 +1243,16 @@ public class SimpleTextView extends View implements Drawable.Callback {
      }
  
      private void updateScrollAnimation() {
@@ -102,7 +102,7 @@ index 0000000..0000000 100644
              dt = 17;
          }
          if (currentScrollDelay > 0) {
-@@ -1250,14 +1268,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1251,14 +1269,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  pixelsPerSecond = PIXELS_PER_SECOND;
              }
              scrollingOffset += dt / 1000.0f * dp(pixelsPerSecond);
@@ -118,7 +118,7 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -1324,10 +1341,22 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1325,10 +1342,22 @@ public class SimpleTextView extends View implements Drawable.Callback {
          return rightDrawableOutside;
      }
  
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
      @Override
      public boolean onTouchEvent(MotionEvent event) {
          if (rightDrawableOnClickListener != null && rightDrawable != null) {
-@@ -1359,7 +1388,36 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1360,7 +1389,36 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  getParent().requestDisallowInterceptTouchEvent(false);
              }
          }
@@ -183,7 +183,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -18906,6 +18906,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18983,6 +18983,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (currentNameBotVerificationId != 0) {
                  nameWidth -= dp(4 + 12 + 4);
              }
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
              if (adminString != null) {
                  nameWidth -= dp(8);
              }
-@@ -18995,6 +18999,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19067,6 +19071,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  if (currentNameBotVerificationId != 0) {
                      nameWidth += dp(4 + 12 + 4);
                  }
@@ -204,7 +204,7 @@ index 0000000..0000000 100644
                  nameWidth -= additionalWidth;
                  if (adminString != null) {
                      adminLayout = new StaticLayout(adminString, Theme.chat_adminPaint, adminWidth + dp(2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
-@@ -22083,6 +22090,20 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -22286,6 +22293,20 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              Theme.chat_namePaint.setAlpha(oldAlpha);
              canvas.restore();
  
@@ -400,7 +400,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -983,6 +983,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -989,6 +989,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              titleTextView.setRightDrawable(null);
              rightDrawableContentDescription = null;
          }
@@ -420,7 +420,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11511,8 +11511,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11539,8 +11539,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      ChatActivity chatActivity = (ChatActivity) prevFragment;
                      SimpleTextView titleTextView = chatActivity.avatarContainer.getTitleTextView();
                      nameTextView[a].setText(titleTextView.getText());
@@ -439,7 +439,7 @@ index 0000000..0000000 100644
                  } else if (a == 0 && user.id != getUserConfig().getClientUserId() && !MessagesController.isSupportUser(user) && user.phone != null && user.phone.length() != 0 && getContactsController().contactsDict.get(user.id) == null &&
                          (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
                      nameTextView[a].setText(PhoneFormat.getInstance().format("+" + user.phone));
-@@ -11665,6 +11673,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11693,6 +11701,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          showDialog(premiumPreviewBottomSheet);
                      });
                  }
@@ -452,7 +452,7 @@ index 0000000..0000000 100644
              }
  
              if (userId == UserConfig.getInstance(currentAccount).clientUserId) {
-@@ -11829,10 +11843,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11857,10 +11871,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (nameTextView[a].setText(titleTextView.getText())) {
                          changed = true;
                      }
@@ -473,7 +473,7 @@ index 0000000..0000000 100644
                          changed = true;
                      }
                  } else if (isTopic) {
-@@ -11916,6 +11938,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11944,6 +11966,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  } else {
                      nameTextView[a].setLeftDrawable(null);
                  }

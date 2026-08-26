@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TextMessageEnterTransit
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/TextMessageEnterTransition.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/TextMessageEnterTransition.java
-@@ -356,9 +356,6 @@ public class TextMessageEnterTransition implements MessageEnterTransitionContain
+@@ -357,9 +357,6 @@ public class TextMessageEnterTransition implements MessageEnterTransitionContain
              drawableFromTop -= dp(46);
          }
  
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          gradientMatrix = new Matrix();
          gradientPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
          gradientPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-@@ -431,7 +428,6 @@ public class TextMessageEnterTransition implements MessageEnterTransitionContain
+@@ -432,7 +429,6 @@ public class TextMessageEnterTransition implements MessageEnterTransitionContain
      private final RectF messageReplySelectorRect = new RectF();
      private Path replyRoundRect;
      private float[] roundRectRadii;
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
  
      public void onDraw(Canvas canvas) {
          if (drawBitmaps && !initBitmaps && crossfadeTextBitmap != null && messageView.getTransitionParams().wasDraw) {
-@@ -461,7 +457,7 @@ public class TextMessageEnterTransition implements MessageEnterTransitionContain
+@@ -462,7 +458,7 @@ public class TextMessageEnterTransition implements MessageEnterTransitionContain
              messageViewX = messageView.getX() + listView.getX() - container.getX();
              messageViewY = messageView.getTop() + messageView.getPaddingTop() + listView.getTop() - container.getY();
  

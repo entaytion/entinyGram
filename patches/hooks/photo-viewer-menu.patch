@@ -119,7 +119,7 @@ index 0000000..0000000 100644
              if (isVideo) {
                  if (allowShare) {
                      menuItem.showSubItem(gallery_menu_openin);
-@@ -23460,6 +23471,26 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -23445,6 +23456,26 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          return pipItem != null && pipItem.isEnabled() && isPlaying;
      }
  

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -2925,6 +2925,9 @@ public class MessageObject {
+@@ -2933,6 +2933,9 @@ public class MessageObject {
                  message.media.webpage.display_url = "";
                  message.media.webpage.url = "";
              }
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          } else if (event.action instanceof TLRPC.TL_channelAdminLogEventActionChangeEmojiStickerSet) {
              TLRPC.InputStickerSet newPack = ((TLRPC.TL_channelAdminLogEventActionChangeEmojiStickerSet) event.action).new_stickerset;
              TLRPC.InputStickerSet oldPack = ((TLRPC.TL_channelAdminLogEventActionChangeEmojiStickerSet) event.action).new_stickerset;
-@@ -3504,6 +3507,7 @@ public class MessageObject {
+@@ -3512,6 +3515,7 @@ public class MessageObject {
                  messageObject.linkDescription = null;
                  messageObject.generateLinkDescription();
              }
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
      private void loadMessages(boolean reset) {
          if (loading) {
              return;
-@@ -931,7 +960,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -934,7 +963,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
              public void onItemClick(final int id) {
                  if (id == -1) {
                      finishFragment();
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
              }
          });
  
-@@ -974,6 +1005,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -977,6 +1008,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
          });
          searchItem.setSearchFieldHint(getString(R.string.Search));
          searchItem.setSearchPaddingStart(7);
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
          avatarContainer.setEnabled(false);
  
          avatarContainer.setTitle(currentChat.title);
-@@ -1642,7 +1678,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -1651,7 +1687,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
      private final static int OPTION_CALL = 17;
      private final static int OPTION_RESTRICT = 33;
      private final static int OPTION_REPORT_FALSE_POSITIVE = 34;
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
  
      private boolean createMenu(View v) {
          return createMenu(v, 0, 0);
-@@ -1856,6 +1892,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -1865,6 +1901,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                  options.add(OPTION_CALL);
              }
          }
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
  
          boolean callbackSent = false;
  
-@@ -2112,11 +2149,14 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -2121,11 +2158,14 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
          roundVideoContainer.setVisibility(View.INVISIBLE);
      }
  

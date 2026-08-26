@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -9951,6 +9951,7 @@ public class MessageObject {
+@@ -10006,6 +10006,7 @@ public class MessageObject {
      }
  
      public boolean needDrawBluredPreview() {
@@ -52,19 +52,19 @@ index 0000000..0000000 100644
          if (isRepostPreview) {
              return false;
          }
-@@ -11563,6 +11564,7 @@ public class MessageObject {
+@@ -11621,6 +11622,7 @@ public class MessageObject {
      }
  
      public boolean canForwardMessage() {
 +        if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT_MEDIA.getValue() && isSecretMedia()) return true;
-         if (isQuickReply() || isEphemeral()) return false;
+         if (isQuickReply()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
          return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && !messageOwner.noforwards;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19121,6 +19121,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19232,6 +19232,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -77,7 +77,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19128,7 +19134,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19239,7 +19245,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33311,6 +33317,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33515,6 +33521,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -99,11 +99,11 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -45637,7 +45649,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -45979,7 +45991,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;
--        boolean noforwards = isEphemeral || isPeerNoForwards() || message.messageOwner.noforwards || getDialogId() == UserObject.VERIFY;
+-        boolean noforwards = isPeerNoForwards() || message.messageOwner.noforwards || getDialogId() == UserObject.VERIFY;
 +        boolean noforwards = (isEphemeral && !desu.inugram.InuConfig.SAVE_SELF_DESTRUCT_MEDIA.getValue()) || isPeerNoForwards() || message.messageOwner.noforwards || getDialogId() == UserObject.VERIFY;
          boolean noforwardsOrPaidMedia = noforwards || message.type == MessageObject.TYPE_PAID_MEDIA;
          boolean allowUnpin = !isEphemeral && message.getDialogId() != mergeDialogId && allowPin && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId())) && !message.isExpiredStory();

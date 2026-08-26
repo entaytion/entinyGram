@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -95,7 +95,7 @@ import java.util.List;
+@@ -97,7 +97,7 @@ import java.util.List;
  import java.util.Locale;
  import java.util.Map;
  import java.util.concurrent.CountDownLatch;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
  
  public class NotificationsController extends BaseController implements NotificationCenter.NotificationCenterDelegate {
  
-@@ -1069,6 +1069,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1071,6 +1071,7 @@ public class NotificationsController extends BaseController implements Notificat
  
              for (int a = 0; a < messageObjects.size(); a++) {
                  MessageObject messageObject = messageObjects.get(a);
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
                  if (messageObject.messageOwner != null && (messageObject.isImportedForward() ||
                          messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSetMessagesTTL ||
                          messageObject.messageOwner.silent && (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionContactSignUp || messageObject.messageOwner.action instanceof TLRPC.TL_messageActionUserJoined)) ||
-@@ -4095,7 +4096,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4097,7 +4098,7 @@ public class NotificationsController extends BaseController implements Notificat
      }
  
      private void showOrUpdateNotification(boolean notifyAboutLast) {
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
              dismissNotification();
              return;
          }
-@@ -4579,7 +4580,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -4581,7 +4582,7 @@ public class NotificationsController extends BaseController implements Notificat
              PendingIntent contentIntent = PendingIntent.getActivity(ApplicationLoader.applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
  
              mBuilder.setContentTitle(name)
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                      .setAutoCancel(true)
                      .setNumber(total_unread_count)
                      .setContentIntent(contentIntent)
-@@ -5579,7 +5580,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5583,7 +5584,7 @@ public class NotificationsController extends BaseController implements Notificat
  
              NotificationCompat.Builder builder = new NotificationCompat.Builder(ApplicationLoader.applicationContext)
                      .setContentTitle(name)

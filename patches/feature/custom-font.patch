@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -8552,6 +8552,7 @@ public class Theme {
+@@ -7973,6 +7973,7 @@ public class Theme {
          dialogs_tagTextPaint.setTextSize(dp(10));
          dialogs_searchNamePaint.setTextSize(dp(16));
          dialogs_searchNameEncryptedPaint.setTextSize(dp(16));
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
      }
  
      public static void applyDialogsTheme() {
-@@ -8804,6 +8805,7 @@ public class Theme {
+@@ -8225,6 +8226,7 @@ public class Theme {
              addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
              addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
          }
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
      }
  
      public static void createChatResources(Context context, boolean fontsOnly) {
-@@ -9511,6 +9513,7 @@ public class Theme {
+@@ -8932,6 +8934,7 @@ public class Theme {
          }
  
          profile_aboutTextPaint.setTextSize(dp(16));
@@ -89,7 +89,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmoj
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
-@@ -1067,6 +1067,7 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
+@@ -1107,6 +1107,7 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
          private int cacheType = AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES;
          public TextViewEmojis(Context context) {
              super(context);

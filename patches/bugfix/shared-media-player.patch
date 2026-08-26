@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -3713,10 +3713,19 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -3717,10 +3717,19 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                              );
                              final int paddingTopNew = page.listView.getPaddingTop();
                              final int scroll = paddingTopOld - paddingTopNew;
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
                  // SharedMediaLayout.this.setPadding(0, , 0, 0);
              });
              fragmentContextView = new FragmentContextView(context, parent, this, false, resourcesProvider) {
-@@ -3728,7 +3737,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -3732,7 +3741,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              fragmentContextViewWrapper.addView(fragmentContextView);
              topPanelLayout.setCallFragmentContextView(fragmentContextView);
              addView(topPanelLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP, 0, 48 -14, 0, 0));
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
              fragmentContextView.setDelegate((start, show) -> {
                  if (!start) {
                      requestLayout();
-@@ -7358,7 +7366,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7359,7 +7367,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                  }
                  if (savedMessagesContainer.getParent() != mediaPages[a]) {
                      AndroidUtilities.removeFromParent(savedMessagesContainer);
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
                  }
              } else if (mediaPages[a].selectedType == TAB_BOT_PREVIEWS) {
                  if (currentAdapter != null) {
-@@ -7381,7 +7391,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7382,7 +7392,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                  }
              }
              final boolean photos = mediaPages[a].selectedType == TAB_PHOTOVIDEO || isAnyStoryPageType(mediaPages[a].selectedType);

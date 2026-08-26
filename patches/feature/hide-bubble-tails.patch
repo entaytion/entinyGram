@@ -4,119 +4,125 @@ Date: Mon, 20 Jul 2026 01:39:19 +0400
 Subject: an option to hide bubble tails
 
 ---
- .../java/org/telegram/ui/ActionBar/Theme.java | 42 ++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+ .../ui/ActionBar/MessageDrawable.java         | 54 ++++++++++++++++---
+ 1 file changed, 47 insertions(+), 7 deletions(-)
 
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
 index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -239,6 +239,8 @@ public class Theme {
-                 {-1, -1, -1, -1}
-         };
-         private Drawable[][] backgroundDrawable = new Drawable[4][4];
-+        private boolean inu_lastBackgroundTails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
-+        private boolean inu_lastShadowTails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
-         private int[][] backgroundDrawableColor = new int[][]{
-                 {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff},
-                 {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff},
-@@ -481,6 +483,16 @@ public class Theme {
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
+@@ -76,6 +76,8 @@ public class MessageDrawable extends Drawable {
+             {-1, -1, -1, -1}
+     };
+     private Drawable[][] backgroundDrawable = new Drawable[4][4];
++    private boolean inu_lastBackgroundTails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
++    private boolean inu_lastShadowTails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
+     private int[][] backgroundDrawableColor = new int[][]{
+             {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff},
+             {0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff},
+@@ -318,6 +320,16 @@ public class MessageDrawable extends Drawable {
+     }
+ 
+     public Drawable getBackgroundDrawable() {
++        boolean inu_tails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
++        if (inu_lastBackgroundTails != inu_tails) {
++            inu_lastBackgroundTails = inu_tails;
++            for (int a = 0; a < backgroundDrawable.length; a++) {
++                for (int b = 0; b < backgroundDrawable[a].length; b++) {
++                    backgroundDrawable[a][b] = null;
++                    currentBackgroundDrawableRadius[a][b] = -1;
++                }
++            }
++        }
+         int newRad;
+         if (overrideRoundRadius != 0) {
+             newRad = overrideRoundRadius;
+@@ -442,6 +454,13 @@ public class MessageDrawable extends Drawable {
+         if (gradientShader == null && !isSelected && crossfadeFromDrawable == null) {
+             return null;
+         }
++        boolean inu_tails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
++        if (inu_lastShadowTails != inu_tails) {
++            inu_lastShadowTails = inu_tails;
++            for (int a = 0; a < currentShadowDrawableRadius.length; a++) {
++                currentShadowDrawableRadius[a] = -1;
++            }
++        }
+         int newRad = dp(SharedConfig.bubbleRadius);
+         int idx;
+         if (isTopNear && isBottomNear) {
+@@ -674,6 +693,8 @@ public class MessageDrawable extends Drawable {
+                 int radToUse = botButtonsBottom ? nearRad : rad;
+                 if (currentType == TYPE_MEDIA) {
+                     path.moveTo(bounds.right - dp(8) - radToUse, bounds.bottom - padding);
++                } else if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
++                    path.moveTo(bounds.right - dp(8) - (isBottomNear ? nearRad : rad), bounds.bottom - padding);
+                 } else {
+                     path.moveTo(bounds.right - dp(2.6f), bounds.bottom - padding);
+                 }
+@@ -724,9 +745,16 @@ public class MessageDrawable extends Drawable {
+                 }
+             } else {
+                 if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
+-                    path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
+-                    rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
+-                    path.arcTo(rect, 180, -83, false);
++                    if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
++                        int radToUse = isBottomNear ? nearRad : rad;
++                        path.lineTo(bounds.right - dp(8), bounds.bottom - padding - radToUse);
++                        rect.set(bounds.right - dp(8) - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - dp(8), bounds.bottom - padding);
++                        path.arcTo(rect, 0, 90, false);
++                    } else {
++                        path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
++                        rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
++                        path.arcTo(rect, 180, -83, false);
++                    }
+                 } else {
+                     path.lineTo(bounds.right - dp(8), top - topY + currentBackgroundHeight);
+                 }
+@@ -737,6 +765,8 @@ public class MessageDrawable extends Drawable {
+ 
+                 if (currentType == TYPE_MEDIA) {
+                     path.moveTo(bounds.left + dp(8) + radToUse, bounds.bottom - padding);
++                } else if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
++                    path.moveTo(bounds.left + dp(8) + (isBottomNear || botButtonsBottom ? nearRad : rad), bounds.bottom - padding);
+                 } else {
+                     path.moveTo(bounds.left + dp(2.6f), bounds.bottom - padding);
+                 }
+@@ -781,9 +811,16 @@ public class MessageDrawable extends Drawable {
+                 }
+             } else {
+                 if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
+-                    path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
+-                    rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
+-                    path.arcTo(rect, 0, 83, false);
++                    if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
++                        int radToUse = isBottomNear || botButtonsBottom ? nearRad : rad;
++                        path.lineTo(bounds.left + dp(8), bounds.bottom - padding - radToUse);
++                        rect.set(bounds.left + dp(8), bounds.bottom - padding - radToUse * 2, bounds.left + dp(8) + radToUse * 2, bounds.bottom - padding);
++                        path.arcTo(rect, 180, -90, false);
++                    } else {
++                        path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
++                        rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
++                        path.arcTo(rect, 0, 83, false);
++                    }
+                 } else {
+                     path.lineTo(bounds.left + dp(8), top - topY + currentBackgroundHeight);
+                 }
+@@ -853,12 +890,15 @@ public class MessageDrawable extends Drawable {
+         Rect lastRect = new Rect();
+         boolean lastDrawFullTop;
+         boolean lastDrawFullBottom;
++        boolean inu_lastTails = true;
+ 
+         public boolean invalidatePath(Rect bounds, boolean drawFullBottom, boolean drawFullTop) {
+-            boolean invalidate = lastRect.isEmpty() || lastRect.top != bounds.top || lastRect.bottom != bounds.bottom || lastRect.right != bounds.right || lastRect.left != bounds.left || lastDrawFullTop != drawFullTop || lastDrawFullBottom != drawFullBottom || !drawFullTop || !drawFullBottom;
++            boolean inu_tails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
++            boolean invalidate = lastRect.isEmpty() || lastRect.top != bounds.top || lastRect.bottom != bounds.bottom || lastRect.right != bounds.right || lastRect.left != bounds.left || lastDrawFullTop != drawFullTop || lastDrawFullBottom != drawFullBottom || !drawFullTop || !drawFullBottom || inu_lastTails != inu_tails;
+             lastDrawFullTop = drawFullTop;
+             lastDrawFullBottom = drawFullBottom;
+             lastRect.set(bounds);
++            inu_lastTails = inu_tails;
+             return invalidate;
          }
  
-         public Drawable getBackgroundDrawable() {
-+            boolean inu_tails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
-+            if (inu_lastBackgroundTails != inu_tails) {
-+                inu_lastBackgroundTails = inu_tails;
-+                for (int a = 0; a < backgroundDrawable.length; a++) {
-+                    for (int b = 0; b < backgroundDrawable[a].length; b++) {
-+                        backgroundDrawable[a][b] = null;
-+                        currentBackgroundDrawableRadius[a][b] = -1;
-+                    }
-+                }
-+            }
-             int newRad;
-             if (overrideRoundRadius != 0) {
-                 newRad = overrideRoundRadius;
-@@ -605,6 +617,13 @@ public class Theme {
-             if (gradientShader == null && !isSelected && crossfadeFromDrawable == null) {
-                 return null;
-             }
-+            boolean inu_tails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
-+            if (inu_lastShadowTails != inu_tails) {
-+                inu_lastShadowTails = inu_tails;
-+                for (int a = 0; a < currentShadowDrawableRadius.length; a++) {
-+                    currentShadowDrawableRadius[a] = -1;
-+                }
-+            }
-             int newRad = dp(SharedConfig.bubbleRadius);
-             int idx;
-             if (isTopNear && isBottomNear) {
-@@ -837,6 +856,8 @@ public class Theme {
-                     int radToUse = botButtonsBottom ? nearRad : rad;
-                     if (currentType == TYPE_MEDIA) {
-                         path.moveTo(bounds.right - dp(8) - radToUse, bounds.bottom - padding);
-+                    } else if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
-+                        path.moveTo(bounds.right - dp(8) - (isBottomNear ? nearRad : rad), bounds.bottom - padding);
-                     } else {
-                         path.moveTo(bounds.right - dp(2.6f), bounds.bottom - padding);
-                     }
-@@ -887,9 +908,16 @@ public class Theme {
-                     }
-                 } else {
-                     if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
-+                        if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
-+                            int radToUse = isBottomNear ? nearRad : rad;
-+                            path.lineTo(bounds.right - dp(8), bounds.bottom - padding - radToUse);
-+                            rect.set(bounds.right - dp(8) - radToUse * 2, bounds.bottom - padding - radToUse * 2, bounds.right - dp(8), bounds.bottom - padding);
-+                            path.arcTo(rect, 0, 90, false);
-+                        } else {
-                         path.lineTo(bounds.right - dp(8), bounds.bottom - padding - smallRad - dp(3));
-                         rect.set(bounds.right - dp(8), bounds.bottom - padding - smallRad * 2 - dp(9), bounds.right - dp(7) + smallRad * 2, bounds.bottom - padding - dp(1));
-                         path.arcTo(rect, 180, -83, false);
-+                        }
-                     } else {
-                         path.lineTo(bounds.right - dp(8), top - topY + currentBackgroundHeight);
-                     }
-@@ -900,6 +928,8 @@ public class Theme {
- 
-                     if (currentType == TYPE_MEDIA) {
-                         path.moveTo(bounds.left + dp(8) + radToUse, bounds.bottom - padding);
-+                    } else if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
-+                        path.moveTo(bounds.left + dp(8) + (isBottomNear || botButtonsBottom ? nearRad : rad), bounds.bottom - padding);
-                     } else {
-                         path.moveTo(bounds.left + dp(2.6f), bounds.bottom - padding);
-                     }
-@@ -944,9 +974,16 @@ public class Theme {
-                     }
-                 } else {
-                     if (drawFullBubble || currentType == TYPE_PREVIEW || customPaint || drawFullBottom) {
-+                        if (!desu.inugram.InuConfig.BUBBLE_TAILS.getValue()) {
-+                            int radToUse = isBottomNear || botButtonsBottom ? nearRad : rad;
-+                            path.lineTo(bounds.left + dp(8), bounds.bottom - padding - radToUse);
-+                            rect.set(bounds.left + dp(8), bounds.bottom - padding - radToUse * 2, bounds.left + dp(8) + radToUse * 2, bounds.bottom - padding);
-+                            path.arcTo(rect, 180, -90, false);
-+                        } else {
-                         path.lineTo(bounds.left + dp(8), bounds.bottom - padding - smallRad - dp(3));
-                         rect.set(bounds.left + dp(7) - smallRad * 2, bounds.bottom - padding - smallRad * 2 - dp(9), bounds.left + dp(8), bounds.bottom - padding - dp(1));
-                         path.arcTo(rect, 0, 83, false);
-+                        }
-                     } else {
-                         path.lineTo(bounds.left + dp(8), top - topY + currentBackgroundHeight);
-                     }
-@@ -1016,12 +1053,15 @@ public class Theme {
-             Rect lastRect = new Rect();
-             boolean lastDrawFullTop;
-             boolean lastDrawFullBottom;
-+            boolean inu_lastTails = true;
- 
-             public boolean invalidatePath(Rect bounds, boolean drawFullBottom, boolean drawFullTop) {
--                boolean invalidate = lastRect.isEmpty() || lastRect.top != bounds.top || lastRect.bottom != bounds.bottom || lastRect.right != bounds.right || lastRect.left != bounds.left || lastDrawFullTop != drawFullTop || lastDrawFullBottom != drawFullBottom || !drawFullTop || !drawFullBottom;
-+                boolean inu_tails = desu.inugram.InuConfig.BUBBLE_TAILS.getValue();
-+                boolean invalidate = lastRect.isEmpty() || lastRect.top != bounds.top || lastRect.bottom != bounds.bottom || lastRect.right != bounds.right || lastRect.left != bounds.left || lastDrawFullTop != drawFullTop || lastDrawFullBottom != drawFullBottom || !drawFullTop || !drawFullBottom || inu_lastTails != inu_tails;
-                 lastDrawFullTop = drawFullTop;
-                 lastDrawFullBottom = drawFullBottom;
-                 lastRect.set(bounds);
-+                inu_lastTails = inu_tails;
-                 return invalidate;
-             }
-             

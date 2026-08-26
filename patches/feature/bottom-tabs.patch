@@ -491,15 +491,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -338,6 +338,7 @@ import java.util.concurrent.atomic.AtomicReference;
+@@ -343,6 +343,7 @@ import java.util.concurrent.atomic.AtomicReference;
  import java.util.zip.ZipEntry;
  import java.util.zip.ZipOutputStream;
  
 +import desu.inugram.helpers.dialogs.MainTabsHelper;
  import me.vkryl.android.animator.BoolAnimator;
+ import me.vkryl.core.reference.ReferenceList;
  
- public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate, MainTabsActivity.TabFragmentDelegate {
-@@ -2287,8 +2288,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -2295,8 +2296,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
  
          setActionsMode();
  
@@ -510,7 +510,7 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -16903,8 +16904,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16947,8 +16948,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int additionalList = dp(48);

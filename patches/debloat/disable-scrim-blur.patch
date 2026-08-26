@@ -76,7 +76,7 @@ index 0000000..0000000 100644
          AndroidUtilities.makeGlobalBlurBitmap(bitmap -> {
              final ColorMatrix colorMatrixBg = new ColorMatrix();
              AndroidUtilities.adjustSaturationColorMatrix(colorMatrixBg, Theme.isCurrentThemeDark() ? .04f : +.25f);
-@@ -366,7 +374,7 @@ public class ScrimOptions extends Dialog {
+@@ -368,7 +376,7 @@ public class ScrimOptions extends Dialog {
      }
  
      public static void makeGlobalBlurBitmaps(View cutToContainer, Utilities.Callback2<Bitmap, Bitmap> bitmaps) {

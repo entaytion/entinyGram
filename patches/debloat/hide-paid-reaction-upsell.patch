@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/Re
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
-@@ -210,7 +210,7 @@ public class ReactionsLayoutInBubble {
+@@ -209,7 +209,7 @@ public class ReactionsLayoutInBubble {
                              }
                          }
                      }
@@ -25,8 +25,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
-@@ -703,7 +703,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
-                 canvas.drawRoundRect(rect, radius, radius, bgPaint);
+@@ -746,7 +746,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+                 }
              }
  
 -            if (hasStar) {
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                  boolean isStarSelected = false;
                  for (ReactionsLayoutInBubble.VisibleReaction r : selectedReactions) {
                      if (r.isStar) {
-@@ -2231,7 +2231,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -2294,7 +2294,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
                      loopImageView.animatedEmojiDrawable.getImageReceiver().setRoundRadius(selected ? dp(6) : 0);
                  }
              }

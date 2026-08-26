@@ -51,7 +51,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.LocaleController;
  import org.telegram.messenger.R;
  import org.telegram.messenger.UserConfig;
-@@ -1525,6 +1527,8 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -1564,6 +1566,8 @@ public class ActionBarMenuItem extends FrameLayout {
                  return false;
              });
              searchField.addTextChangedListener(new TextWatcher() {
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                  @Override
                  public void beforeTextChanged(CharSequence s, int start, int count, int after) {
  
-@@ -1546,11 +1550,21 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -1585,11 +1589,21 @@ public class ActionBarMenuItem extends FrameLayout {
                              onFiltersChanged();
                          }
                      }
@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
-@@ -1728,6 +1728,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+@@ -1733,6 +1733,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
  
              text = Emoji.replaceEmoji(text, paint.getFontMetricsInt(), false, null,
                  DynamicDrawableSpan.ALIGN_BOTTOM, 0.85f, 0);
@@ -376,7 +376,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15312,11 +15312,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -15411,11 +15411,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                          if (userNamesCount == 1) {
@@ -390,7 +390,7 @@ index 0000000..0000000 100644
                      }
                  }
                  replyObjectHintTextView.setText(LocaleController.getString(R.string.TapForForwardingOptions));
-@@ -15348,20 +15348,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -15447,20 +15447,20 @@ public class ChatActivity extends BaseFragment implements
                      replyObjectTextView.setText(pendingLinkSearchString);
                  } else {
                      if (webPage.site_name != null) {
@@ -417,7 +417,7 @@ index 0000000..0000000 100644
                      }
                      chatActivityEnterView.setWebPage(webPage, true);
                  }
-@@ -21881,6 +21881,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -22001,6 +22001,10 @@ public class ChatActivity extends BaseFragment implements
              if (chatListView != null) {
                  chatListView.invalidateViews();
              }
@@ -428,7 +428,7 @@ index 0000000..0000000 100644
              if (alertTextView != null) {
                  alertTextView.invalidate();
              }
-@@ -28593,6 +28597,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28767,6 +28771,7 @@ public class ChatActivity extends BaseFragment implements
                  pinnedMessageObject.updateTranslation(false);
                  if (pinnedMessageObject.type == MessageObject.TYPE_MUSIC) {
                      pinnedText = String.format("%s - %s", pinnedMessageObject.getMusicAuthor(), pinnedMessageObject.getMusicTitle());
@@ -436,7 +436,7 @@ index 0000000..0000000 100644
                  } else if (pinnedMessageObject.type == MessageObject.TYPE_POLL) {
                      if (pinnedMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                          TLRPC.TL_messageMediaPoll poll = (TLRPC.TL_messageMediaPoll) pinnedMessageObject.messageOwner.media;
-@@ -40167,15 +40172,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -40490,15 +40495,16 @@ public class ChatActivity extends BaseFragment implements
                  userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
                  final TextView titleText = new TextView(getContext());
@@ -467,7 +467,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.FileLoader;
  import org.telegram.messenger.FileLog;
  import org.telegram.messenger.FileRefController;
-@@ -3324,6 +3325,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -3367,6 +3368,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                      textViews[i].setAlpha(0f);
                      textViews[i].setVisibility(GONE);
                  }
@@ -475,7 +475,7 @@ index 0000000..0000000 100644
                  addView(textViews[i], LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT));
              }
              gradientMatrix = new Matrix();
-@@ -3427,6 +3429,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -3470,6 +3472,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
          }
  
          public void setText(CharSequence text, boolean animated) {
@@ -759,7 +759,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -15272,6 +15272,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15265,6 +15265,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              navigationBar.setBackgroundColor(fancyShadows ? (sendPhotoType == SELECT_TYPE_STICKER ? 0x66000000 : 0) : (sendPhotoType == SELECT_TYPE_STICKER ? 0xFF000000 : 0x7f000000));
          }
          if (title != null) {

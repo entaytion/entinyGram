@@ -267,7 +267,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9809,18 +9809,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9899,18 +9899,7 @@ public class ChatActivity extends BaseFragment implements
          translateButton = new TranslateButton(getContext(), this, themeDelegate) {
              @Override
              protected void onButtonClick() {
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                  updateTopPanel(true);
              }
          };
-@@ -29186,11 +29175,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29360,11 +29349,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
@@ -304,7 +304,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAler
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAlert.java
-@@ -1145,6 +1145,10 @@ public class AIEditorAlert extends BottomSheetWithRecyclerListView implements No
+@@ -1147,6 +1147,10 @@ public class AIEditorAlert extends BottomSheetWithRecyclerListView implements No
          list.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
  
          for (final TranslateController.Language lng : allLanguages) {

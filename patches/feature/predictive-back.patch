@@ -125,7 +125,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -731,7 +731,27 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -729,7 +729,27 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          BackupAgent.requestBackup();
  
          RestrictedLanguagesSelectActivity.checkRestrictedLanguages(false);

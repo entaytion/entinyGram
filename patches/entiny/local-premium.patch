@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -922,10 +922,13 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -923,10 +923,13 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isPremiumUser(TLRPC.User currentUser) {
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          return transcribeButtonPressed >= 2;
      }
  
-@@ -2628,6 +2631,8 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -2629,6 +2632,8 @@ public class MessagesController extends BaseController implements NotificationCe
              TLRPC.User user = getUserConfig().getCurrentUser();
              if (user != null) {
                  user.emoji_status = new_emoji_status;
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                  getNotificationCenter().postNotificationName(NotificationCenter.userEmojiStatusUpdated, user);
              }
          } else {
-@@ -6874,6 +6879,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6865,6 +6870,7 @@ public class MessagesController extends BaseController implements NotificationCe
          if (user == null) {
              return false;
          }
@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
-@@ -1893,6 +1893,8 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+@@ -1894,6 +1894,8 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
                  }
                  getMessagesController().updateEmojiStatus(0, new_emoji_status, gift);
              }
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
              getMessagesController().putUser(me, false);
              getUserConfig().saveConfig(true);
              finishFragment();
-@@ -3621,4 +3623,4 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+@@ -3619,4 +3621,4 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
          if (a == null || b == null) return false;
          return a.collectible_id == b.collectible_id;
      }

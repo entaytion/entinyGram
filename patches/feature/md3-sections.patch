@@ -290,7 +290,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatRightsEditActivity.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatRightsEditActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatRightsEditActivity.java
-@@ -1918,6 +1918,9 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+@@ -1940,6 +1940,9 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
                  case VIEW_TYPE_HEADER_CELL:
                      view = new HeaderCell(mContext, Theme.key_windowBackgroundWhiteBlueHeader, 21, 15, true);
                      view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
@@ -342,7 +342,7 @@ index 0000000..0000000 100644
          ViewGroup container = pointContainer = this.container == null ? fragment.getParentLayout().getOverlayContainerView() : this.container;
  
          if (context == null || container == null) {
-@@ -2152,6 +2159,7 @@ public class ItemOptions {
+@@ -2167,6 +2174,7 @@ public class ItemOptions {
                      } else {
                          canvas.save();
                      }
@@ -540,7 +540,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
-@@ -2291,10 +2291,13 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+@@ -2289,10 +2289,13 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
  
          @Override
          protected void dispatchDraw(Canvas canvas) {

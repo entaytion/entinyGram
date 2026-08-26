@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -20944,20 +20944,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -20929,20 +20929,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              }
              float x = longPressX;
              int width = getContainerViewWidth();

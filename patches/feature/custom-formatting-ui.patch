@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBold
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
-@@ -1184,8 +1184,10 @@ public class EditTextBoldCursor extends EditTextEffects {
+@@ -1203,8 +1203,10 @@ public class EditTextBoldCursor extends EditTextEffects {
              };
              callback.onCreateActionMode(floatingActionMode, floatingActionMode.getMenu());
              extendActionMode(floatingActionMode, floatingActionMode.getMenu());
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextEffe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextEffects.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextEffects.java
-@@ -449,7 +449,19 @@ public class EditTextEffects extends EditText {
+@@ -450,7 +450,19 @@ public class EditTextEffects extends EditText {
          invalidateSpoilers();
      }
  

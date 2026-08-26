@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -2832,6 +2832,14 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -2844,6 +2844,14 @@ public class ChatActivityEnterView extends FrameLayout implements
          aiButton.setOnClickListener(v -> {
              MessagesController.getGlobalMainSettings().edit().putInt("aihintshown", 3).apply();
              final long dialogId = parentFragment != null ? parentFragment.getDialogId() : dialog_id;
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
              if (richDraftActive) {
                  if (richDraftMessage == null) return;
                  new AIEditorAlert(getContext(), resourcesProvider)
-@@ -6085,11 +6093,13 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6112,11 +6120,13 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private boolean shownAiButton;
      private void showAiButton(boolean show_) {
@@ -42,7 +42,7 @@ index 0000000..0000000 100644
          }
          shownAiButton = show;
          aiButton.setVisibility(View.VISIBLE);
-@@ -6114,6 +6124,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6141,6 +6151,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
  
              if (

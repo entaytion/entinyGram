@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9900,6 +9900,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9915,6 +9915,9 @@ public class MessagesController extends BaseController implements NotificationCe
          if (dialogs == null) {
              return new ArrayList<>();
          }

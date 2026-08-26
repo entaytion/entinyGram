@@ -43,7 +43,7 @@ index 0000000..0000000 100644
              this.initialTab = TAB_GIFTS;
          } else if (initialTab != -1 && topicId == 0) {
              this.initialTab = initialTab;
-@@ -6800,7 +6804,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6801,7 +6805,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              }
          }
          if (info != null && (stories_pinned_available != info.stories_pinned_available)) {
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                  scrollSlidingTextTabStrip.setInitialTabId(isArchivedOnlyStoriesView() ? TAB_ARCHIVED_STORIES : TAB_STORIES);
              }
              updateTabs(true);
-@@ -6812,7 +6816,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6813,7 +6817,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          boolean stories_pinned_available = this.userInfo != null && this.userInfo.stories_pinned_available;
          this.userInfo = userInfo;
          updateTabs(true);

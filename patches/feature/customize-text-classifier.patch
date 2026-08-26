@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBold
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EditTextBoldCursor.java
-@@ -216,6 +216,7 @@ public class EditTextBoldCursor extends EditTextEffects {
+@@ -220,6 +220,7 @@ public class EditTextBoldCursor extends EditTextEffects {
              setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO);
          }
          init();

@@ -337,21 +337,26 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuHooks.syncChatInputRowHeight()
             }
 
-            BUTTON_MONET_THEME -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuMonetThemeDisabled),
-                    LocaleController.getString(R.string.InuMonetThemeLight),
-                    LocaleController.getString(R.string.InuMonetThemeDark),
-                    LocaleController.getString(R.string.InuMonetThemeAmoled),
-                    LocaleController.getString(R.string.InuMonetThemeAuto),
-                    LocaleController.getString(R.string.InuMonetThemeAutoAmoled),
-                ),
-                MonetHelper.getThemeMode().ordinal,
-            ) { which ->
-                MonetHelper.setThemeMode(MonetHelper.ThemeMode.entries[which])
-                listView.adapter.update(true)
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            BUTTON_MONET_THEME -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val context = context ?: return
+                showDialog(
+                    RadioDialogBuilder(context, getResourceProvider())
+                        .setTitle(LocaleController.getString(R.string.InuMonetTheme))
+                        .setItems(
+                            arrayOf(
+                                LocaleController.getString(R.string.InuMonetThemeDisabled),
+                                LocaleController.getString(R.string.InuMonetThemeLight),
+                                LocaleController.getString(R.string.InuMonetThemeDark),
+                                LocaleController.getString(R.string.InuMonetThemeAmoled),
+                                LocaleController.getString(R.string.InuMonetThemeAuto),
+                                LocaleController.getString(R.string.InuMonetThemeAutoAmoled),
+                            ),
+                            MonetHelper.getThemeMode().ordinal,
+                        ) { _, which ->
+                            MonetHelper.setThemeMode(MonetHelper.ThemeMode.entries[which])
+                            listView.adapter.update(true)
+                        }.create()
+                )
             }
 
             BUTTON_PREDICTIVE_BACK_MODE -> RadioItemOptions.show(
