@@ -17,7 +17,7 @@ import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.IUpdateLayout
-import desu.inugram.helpers.maps.MapLibreMapsProvider
+import desu.inugram.helpers.maps.MapsHelper
 
 class ApplicationLoaderImpl : BaseApplicationLoaderImpl() {
     override fun isStandalone(): Boolean = true
@@ -64,9 +64,9 @@ class ApplicationLoaderImpl : BaseApplicationLoaderImpl() {
     }
 
     override fun onCreateMapsProvider(): IMapsProvider? {
-        return when (InuConfig.MAP_PROVIDER.value) {
-            InuConfig.MapProviderItem.OSM -> MapLibreMapsProvider()
-            else -> GoogleMapsProvider()
+        if (InuConfig.MAP_PROVIDER.value == InuConfig.MapProviderItem.OSM && MapsHelper.hasMapLibre) {
+            return MapsHelper.newMapLibreProvider()
         }
+        return GoogleMapsProvider()
     }
 }

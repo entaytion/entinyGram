@@ -125,7 +125,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - export/import settings to/from json file
 - cloud sync of settings via web app storage api
 - search and deeplinks for fork settings
-- MapLibre-based map view
+- MapLibre-based map view (full build only, not compiled into the lite APK variant)
 - customizable map preview provider
 - in-app updater - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 crash report sheet: catches uncaught exceptions, offers to share the log on next launch, posts a tap-to-restart notification

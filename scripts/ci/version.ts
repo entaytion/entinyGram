@@ -16,24 +16,36 @@ const shortSha = sha.slice(0, 7)
 const verName = `${appVerName}-${shortSha}`
 
 const now = new Date()
-const date = [
-  String(now.getUTCFullYear()),
-  String(now.getUTCMonth() + 1).padStart(2, '0'),
-  String(now.getUTCDate()).padStart(2, '0'),
-].join('')
+const y4 = String(now.getUTCFullYear())
+const mm = String(now.getUTCMonth() + 1).padStart(2, '0')
+const dd = String(now.getUTCDate()).padStart(2, '0')
+const date = `${y4}${mm}${dd}`
+const yyyymmdd = Number(date)
 
-const suffix = buildNum > 0 ? `-${buildNum}` : ''
 const tag = buildNum > 0 ? `v${appVerName}-${buildNum}` : `v${appVerName}`
+
+// versionCode = YYYYMMDD (8 digits) * 100 + dailyCounter(1 digit) * 10 + variant(1=full, 0=lite).
+// buildNum is bumped +1 on every release (see apk.yml "Bump build variables"), so a
+// same-day bugfix release still gets a strictly higher code -- as long as fewer than
+// 10 releases land on the same UTC day, which dailyCounter = buildNum % 10 covers.
+// 10 digits total, stays under Play's 2.1B versionCode ceiling until the year 2100.
+const dailyCounter = buildNum % 10
+const verCodeBase = yyyymmdd * 100 + dailyCounter * 10
+const verCodeFull = verCodeBase + 1
+const verCodeLite = verCodeBase + 0
 
 const out = {
   'app-ver-name': appVerName,
   'app-ver-code': appVerCode,
   'build-num': String(buildNum),
   'ver-name': verName,
-  'ver-code': String(buildNum * 100 + 1),
+  'ver-code-full': String(verCodeFull),
+  'ver-code-lite': String(verCodeLite),
   date,
-  'apk-arm64': `entinygram-arm64-${date}${suffix}.apk`,
-  'apk-universal': `entinygram-universal-${date}${suffix}.apk`,
+  // the in-app updater (UpdateHelper.kt) parses the versionCode straight out of the
+  // filename -- it must not re-derive the date-based formula on-device.
+  'apk-arm64-full': `entinygram-arm64-full-${appVerName}-${verCodeFull}.apk`,
+  'apk-arm64-lite': `entinygram-arm64-lite-${appVerName}-${verCodeLite}.apk`,
   tag,
 }
 

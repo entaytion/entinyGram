@@ -33,13 +33,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 180
     outputs:
-      apk-arm64:    ${{ steps.info.outputs.apk-arm64 }}
-      apk-universal: ${{ steps.info.outputs.apk-universal }}
-      ver-name:     ${{ steps.info.outputs.ver-name }}
-      ver-code:     ${{ steps.info.outputs.ver-code }}
-      app-ver-code: ${{ steps.info.outputs.app-ver-code }}
-      build-num:    ${{ steps.info.outputs.build-num }}
-      tag:          ${{ steps.info.outputs.tag }}
+      apk-arm64-full: ${{ steps.info.outputs.apk-arm64-full }}
+      apk-arm64-lite: ${{ steps.info.outputs.apk-arm64-lite }}
+      ver-name:       ${{ steps.info.outputs.ver-name }}
+      ver-code-full:  ${{ steps.info.outputs.ver-code-full }}
+      ver-code-lite:  ${{ steps.info.outputs.ver-code-lite }}
+      app-ver-code:   ${{ steps.info.outputs.app-ver-code }}
+      build-num:      ${{ steps.info.outputs.build-num }}
+      tag:            ${{ steps.info.outputs.tag }}
 
     steps:
       - name: Free disk space
@@ -126,11 +127,11 @@ jobs:
       - name: Reset ccache stats
         run: ccache -z
 
-      - name: Build arm64-v8a
+      - name: Build arm64-v8a Full
         working-directory: worktree
         env:
           COMMIT_ID: ${{ github.sha }}
-          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code-full }}
           INU_BUILD_TYPE: release
           ABI_FILTERS: arm64-v8a
           CCACHE_COMPILERCHECK: content
@@ -139,21 +140,21 @@ jobs:
         run: |
           ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
           mkdir -p "$GITHUB_WORKSPACE/out"
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64-full }}"
 
-      - name: Build universal
+      - name: Build arm64-v8a Lite
         working-directory: worktree
         env:
           COMMIT_ID: ${{ github.sha }}
-          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code-lite }}
           INU_BUILD_TYPE: release
-          ABI_FILTERS: all
+          ABI_FILTERS: arm64-v8a
           CCACHE_COMPILERCHECK: content
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-universal }}"
+          ./gradlew --no-daemon -PNOMAPS :TMessagesProj_App:assembleRelease
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64-lite }}"
 
       - name: Show ccache stats
         if: always()
@@ -164,9 +165,10 @@ jobs:
           LAST_UPLOADED_SHA: ${{ vars.LAST_RELEASE_SHA }}
         run: |
           mkdir -p out
-          apk_arm64='${{ steps.info.outputs.apk-arm64 }}'
-          apk_universal='${{ steps.info.outputs.apk-universal }}'
-          apk_files_json=$(jq -cn --arg a "$apk_arm64" --arg u "$apk_universal" '[$a,$u]')
+          apk_full='${{ steps.info.outputs.apk-arm64-full }}'
+          apk_lite='${{ steps.info.outputs.apk-arm64-lite }}'
+          apk_files_json=$(jq -cn --arg f "$apk_full" --arg l "$apk_lite" \
+            '[{file:$f,variant:"full"},{file:$l,variant:"lite"}]')
 
           base="$LAST_UPLOADED_SHA"
           if [ -n "$base" ] && ! git cat-file -e "$base^{commit}" 2>/dev/null; then
@@ -176,15 +178,16 @@ jobs:
           commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
 
           jq -n \
-            --arg     verName    '${{ steps.info.outputs.ver-name }}'    \
-            --argjson verCode    '${{ steps.info.outputs.ver-code }}'    \
-            --argjson appVerCode '${{ steps.info.outputs.app-ver-code }}' \
-            --argjson buildNum   '${{ steps.info.outputs.build-num }}'   \
-            --argjson apkFiles   "$apk_files_json"                       \
-            --arg     commitSha  "$GITHUB_SHA"                           \
-            --argjson commits    "$commits_json"                         \
-            --arg     repo       "$GITHUB_REPOSITORY"                    \
-            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildNum:$buildNum,apkFiles:$apkFiles,commitSha:$commitSha,commits:$commits,repo:$repo}' \
+            --arg     verName      '${{ steps.info.outputs.ver-name }}'      \
+            --argjson verCodeFull  '${{ steps.info.outputs.ver-code-full }}' \
+            --argjson verCodeLite  '${{ steps.info.outputs.ver-code-lite }}' \
+            --argjson appVerCode   '${{ steps.info.outputs.app-ver-code }}'  \
+            --argjson buildNum     '${{ steps.info.outputs.build-num }}'     \
+            --argjson apkFiles     "$apk_files_json"                        \
+            --arg     commitSha    "$GITHUB_SHA"                            \
+            --argjson commits      "$commits_json"                          \
+            --arg     repo         "$GITHUB_REPOSITORY"                     \
+            '{verName:$verName,verCodeFull:$verCodeFull,verCodeLite:$verCodeLite,appVerCode:$appVerCode,buildNum:$buildNum,apkFiles:$apkFiles,commitSha:$commitSha,commits:$commits,repo:$repo}' \
             > out/build-info.json
 
       - name: Generate release notes
@@ -247,8 +250,8 @@ jobs:
         run: |
           apksigner=$ANDROID_HOME/build-tools/35.0.0/apksigner
           for apk in \
-            '${{ needs.build.outputs.apk-arm64 }}' \
-            '${{ needs.build.outputs.apk-universal }}'; do
+            '${{ needs.build.outputs.apk-arm64-full }}' \
+            '${{ needs.build.outputs.apk-arm64-lite }}'; do
             "$apksigner" sign \
               --ks "$RUNNER_TEMP/release.keystore" \
               --ks-type PKCS12 \
@@ -305,8 +308,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag='${{ needs.build.outputs.tag }}'
-          apk_arm64="out/${{ needs.build.outputs.apk-arm64 }}"
-          apk_univ="out/${{ needs.build.outputs.apk-universal }}"
+          apk_full="out/${{ needs.build.outputs.apk-arm64-full }}"
+          apk_lite="out/${{ needs.build.outputs.apk-arm64-lite }}"
 
           # Use AI-generated English notes for GitHub (full markdown); guard against null
           notes_en=''
@@ -330,10 +333,10 @@ jobs:
             --target "$GITHUB_SHA" \
             --title  "$tag" \
             --notes-file release_body.md \
-            "$apk_arm64" "$apk_univ" || \
+            "$apk_full" "$apk_lite" || \
           gh release upload "$tag" \
             --clobber \
-            "$apk_arm64" "$apk_univ"
+            "$apk_full" "$apk_lite"
 
       - name: Upload to Telegram (CI channel + optional main channel)
         env:

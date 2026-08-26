@@ -1,9 +1,26 @@
 package desu.inugram.helpers.maps
 
 import desu.inugram.InuConfig
+import org.telegram.messenger.IMapsProvider
 import org.telegram.messenger.MessagesController
 
 object MapsHelper {
+    // lite builds (-PNOMAPS) compile without org.maplibre.gl and src/kotlin-maps entirely,
+    // so this class is probed by name rather than referenced directly.
+    @JvmField
+    val hasMapLibre: Boolean = try {
+        Class.forName("org.maplibre.android.MapLibre")
+        true
+    } catch (e: ClassNotFoundException) {
+        false
+    }
+
+    @JvmStatic
+    fun newMapLibreProvider(): IMapsProvider =
+        Class.forName("desu.inugram.helpers.maps.MapLibreMapsProvider")
+            .getDeclaredConstructor()
+            .newInstance() as IMapsProvider
+
     @JvmStatic
     fun isHybridAvailable(): Boolean {
         return InuConfig.MAP_PROVIDER.value != InuConfig.MapProviderItem.OSM

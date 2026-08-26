@@ -6,6 +6,7 @@ import android.app.Activity
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import desu.inugram.helpers.update.UpdateHelper
 import desu.inugram.ui.UpdateRowView
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.SharedConfig
@@ -22,6 +23,14 @@ class UpdateLayout(
     private var row: UpdateRowView? = null
 
     override fun updateFileProgress(args: Array<out Any?>?) {
+        if (args != null && args.size >= 3) {
+            val fileName = args[0] as? String
+            val loadedSize = args[1] as? Long
+            val totalSize = args[2] as? Long
+            if (fileName != null && loadedSize != null && totalSize != null) {
+                UpdateHelper.onFileProgress(fileName, loadedSize, totalSize)
+            }
+        }
         row?.applyProgress(args)
     }
 

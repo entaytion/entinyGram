@@ -6,6 +6,7 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
 - preserve package, API, and in-app branding overrides
 - add the selectable old entinyGram launcher icon alias
 ---
+ TMessagesProj/build.gradle                     | 10 +++++++++-
  TMessagesProj/config/debug/AndroidManifest.xml |  2 +-
  .../config/debug/AndroidManifest_SDK23.xml     |  2 +-
  .../config/release/AndroidManifest.xml         |  2 +-
@@ -20,8 +21,36 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
  .../telegram/ui/LauncherIconController.java    |  1 +
  .../org/telegram/ui/SessionBottomSheet.java    |  2 +-
  TMessagesProj_App/build.gradle                 |  2 +-
- 14 files changed, 46 insertions(+), 18 deletions(-)
+ 15 files changed, 55 insertions(+), 19 deletions(-)
 
+diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj/build.gradle
++++ b/TMessagesProj/build.gradle
+@@ -69,7 +69,9 @@ dependencies {
+     implementation "io.noties.markwon:ext-latex:4.6.2"
+ 
+     // inu
+-    implementation 'org.maplibre.gl:android-sdk:13.1.0'
++    if (!project.hasProperty("NOMAPS")) {
++        implementation 'org.maplibre.gl:android-sdk:13.1.0'
++    }
+     // end inu
+ 
+ //    implementation 'com.google.mlkit:translate:17.0.3'
+@@ -92,6 +94,12 @@ android {
+ 
+     sourceSets.main.jniLibs.srcDirs = ['./jni/']
+ 
++    // inu
++    if (!project.hasProperty("NOMAPS")) {
++        sourceSets.main.java.srcDirs += 'src/main/kotlin-maps'
++    }
++    // end inu
++
+     externalNativeBuild {
+         cmake {
+             path 'jni/CMakeLists.txt'
 diff --git a/TMessagesProj/config/debug/AndroidManifest.xml b/TMessagesProj/config/debug/AndroidManifest.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/config/debug/AndroidManifest.xml

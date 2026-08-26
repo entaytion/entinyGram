@@ -239,16 +239,18 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMapsHeader)))
-        items.add(
-            UItem.asButton(
-                BUTTON_MAP_PROVIDER,
-                LocaleController.getString(R.string.InuMapProvider),
-                when (InuConfig.MAP_PROVIDER.value) {
-                    InuConfig.MapProviderItem.OSM -> LocaleController.getString(R.string.InuMapProviderOsm)
-                    else -> LocaleController.getString(R.string.InuMapProviderGoogle)
-                }
+        if (MapsHelper.hasMapLibre) {
+            items.add(
+                UItem.asButton(
+                    BUTTON_MAP_PROVIDER,
+                    LocaleController.getString(R.string.InuMapProvider),
+                    when (InuConfig.MAP_PROVIDER.value) {
+                        InuConfig.MapProviderItem.OSM -> LocaleController.getString(R.string.InuMapProviderOsm)
+                        else -> LocaleController.getString(R.string.InuMapProviderGoogle)
+                    }
+                )
             )
-        )
+        }
         items.add(
             UItem.asButton(
                 BUTTON_MAP_PREVIEW_PROVIDER,

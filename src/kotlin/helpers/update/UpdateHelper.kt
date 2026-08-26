@@ -1,33 +1,45 @@
 package desu.inugram.helpers.update
 
-import android.app.DownloadManager
-import android.content.Context
-import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import desu.inugram.InuConfig
-import org.json.JSONObject
+import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.maps.MapsHelper
+import desu.inugram.helpers.security.ParanoiaHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BetaUpdate
 import org.telegram.messenger.BuildConfig
 import org.telegram.messenger.BuildVars
+import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
+import org.telegram.messenger.UserConfig
+import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import java.io.File
-import java.net.URL
-import desu.inugram.helpers.security.ParanoiaHelper
+import kotlin.math.max
+import kotlin.math.min
 
 object UpdateHelper {
-    private const val GH_API_URL = "https://api.github.com/repos/entaytion/entinyGram/releases/latest"
+    // CI channel entinygram-ci-upload.ts posts full/lite APK documents to, tagged #release.
+    const val USERNAME = "entinyGramCI"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
-    private val APK_RE = Regex("^entinygram-(arm64|universal)-(\\d+)(?:-(\\d+))?\\.apk$")
-    private val TAG_RE = Regex("^v.+?(?:-(\\d+))?$")
+    // entinygram-arm64-{full|lite}-{appVerName}-{verCode}.apk (see scripts/ci/version.ts)
+    private val APK_RE = Regex("^entinygram-arm64-(full|lite)-(.+)-(\\d+)\\.apk$")
+
+    // the current build's variant, matching the filename tag CI produces for it
+    private val ourVariant: String get() = if (MapsHelper.hasMapLibre) "full" else "lite"
+
+    // bare channel id for USERNAME, cached from the first successful username resolve so we
+    // never have to hardcode entinyGramCI's numeric id (which can differ per-environment/test).
+    @Volatile
+    private var resolvedChannelId: Long? = null
 
     private val pInfo by lazy {
         ApplicationLoader.applicationContext.packageManager.getPackageInfo(
@@ -60,18 +72,24 @@ object UpdateHelper {
     @Volatile var pendingBetaUpdate: BetaUpdate? = null
         private set
 
-    @Volatile var activeDownloadId: Long = -1L
-        private set
+    // cached source message of the current pending update, set by applyUpdate. lets
+    // startDownload skip the resolver+RPC dance when the update was detected this session.
+    @Volatile
+    private var pendingSourceMessage: TLRPC.Message? = null
 
-    @Volatile var pendingApkFile: File? = null
-        private set
-
-    @Volatile var pendingApkSize: Long = 0L
-        private set
-
+    // true between the click on Update and FileLoader.loadFile actually firing. lets the row
+    // show the Downloading state immediately even while the async file-ref refresh dance is
+    // still running.
     @Volatile var isPendingStart: Boolean = false
         private set
 
+    // last known progress for the pending document's download, fed by onFileProgress
+    // (NotificationCenter.fileLoadProgressChanged), since FileLoader has no synchronous getter.
+    @Volatile private var lastProgress: Float = 0f
+
+    // applyUpdate doesn't post appUpdateAvailable itself — the caller does it, via
+    // revealPendingUpdate, once the changelog dialog is on screen (so the bar slides in behind
+    // the dialog instead of visibly popping into the page underneath).
     @JvmStatic
     fun revealPendingUpdate() {
         NotificationCenter.getGlobalInstance()
@@ -88,15 +106,9 @@ object UpdateHelper {
 
     fun clearPending() {
         pendingBetaUpdate = null
+        pendingSourceMessage = null
         isPendingStart = false
-        val prevId = activeDownloadId
-        activeDownloadId = -1L
-        pendingApkFile = null
-        pendingApkSize = 0L
-        if (prevId != -1L) {
-            (ApplicationLoader.applicationContext
-                .getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager)?.remove(prevId)
-        }
+        lastProgress = 0f
         SharedConfig.pendingAppUpdate = null
         SharedConfig.saveConfig()
         NotificationCenter.getGlobalInstance()
@@ -110,105 +122,168 @@ object UpdateHelper {
         if (pendingVer <= currentVersionCode()) clearPending()
     }
 
-    fun startDownload() {
+    fun startDownload(account: Int) {
         val update = SharedConfig.pendingAppUpdate ?: return
-        val url = update.url?.takeIf { it.isNotBlank() } ?: return
-        val fileName = url.substringAfterLast('/').takeIf { it.endsWith(".apk") }
-            ?: "entinygram-update.apk"
+        val doc = update.document ?: return
 
         isPendingStart = true
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading)
 
-        val dm = ApplicationLoader.applicationContext
-            .getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager
-        if (dm == null) { isPendingStart = false; return }
-
-        val destFile = File(
-            ApplicationLoader.applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-            fileName
-        )
-        destFile.delete()
-
-        val req = DownloadManager.Request(Uri.parse(url)).apply {
-            setTitle("entinyGram update")
-            setDescription(fileName)
-            setDestinationUri(Uri.fromFile(destFile))
-            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+        val cached = pendingSourceMessage
+        if (cached != null) {
+            beginLoad(account, doc, MessageObject(account, cached, false, false))
+            return
         }
 
-        pendingApkFile = destFile
-        activeDownloadId = dm.enqueue(req)
+        val messageId = update.id
+        if (messageId <= 0) {
+            refreshPendingAndStart(account)
+            return
+        }
+        val mc = MessagesController.getInstance(account)
+        mc.userNameResolver.resolve(USERNAME) { peerId ->
+            AndroidUtilities.runOnUIThread {
+                if (!isPendingStart) return@runOnUIThread
+                if (peerId == null || peerId == 0L || peerId == Long.MAX_VALUE) {
+                    stopPendingStart()
+                    return@runOnUIThread
+                }
+                resolvedChannelId = -peerId
+                val req = TLRPC.TL_channels_getMessages().apply {
+                    channel = mc.getInputChannel(-peerId)
+                    id.add(messageId)
+                }
+                ConnectionsManager.getInstance(account).sendRequest(req) { resp, _ ->
+                    AndroidUtilities.runOnUIThread {
+                        if (!isPendingStart) return@runOnUIThread
+                        val msg = (resp as? TLRPC.messages_Messages)?.messages
+                            ?.firstOrNull { it.id == messageId }
+                        val freshDoc = msg?.let { extractApkInfo(it)?.document }
+                        if (msg == null || freshDoc == null) {
+                            beginLoad(account, doc, sourceMessageParent(messageId))
+                        } else {
+                            pendingSourceMessage = msg
+                            beginLoad(account, freshDoc, MessageObject(account, msg, false, false))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun cancelDownload(account: Int) {
+        if (isPendingStart) {
+            isPendingStart = false
+        } else {
+            SharedConfig.pendingAppUpdate?.document?.let {
+                FileLoader.getInstance(account).cancelLoadFile(it)
+            }
+        }
+        lastProgress = 0f
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading)
+    }
+
+    private fun refreshPendingAndStart(account: Int) {
+        check {
+            AndroidUtilities.runOnUIThread {
+                if (!isPendingStart) return@runOnUIThread
+                if ((SharedConfig.pendingAppUpdate?.id ?: 0) > 0) {
+                    startDownload(account)
+                } else {
+                    stopPendingStart()
+                }
+            }
+        }
+    }
+
+    private fun sourceMessageParent(messageId: Int) =
+        "sent_${resolvedChannelId ?: 0L}_${messageId}"
+
+    private fun stopPendingStart() {
         isPendingStart = false
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading)
     }
 
-    fun cancelDownload() {
-        val id = activeDownloadId
-        if (id != -1L) {
-            (ApplicationLoader.applicationContext
-                .getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager)?.remove(id)
-            activeDownloadId = -1L
-            pendingApkFile = null
-        }
+    private fun beginLoad(account: Int, document: TLRPC.Document, parent: Any) {
         isPendingStart = false
+        FileLoader.getInstance(account).loadFile(document, parent, FileLoader.PRIORITY_NORMAL, 1)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading)
     }
 
-    fun getDownloadProgress(): Float? {
-        val id = activeDownloadId.takeIf { it != -1L } ?: return null
-        val dm = ApplicationLoader.applicationContext
-            .getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager ?: return null
-        val cursor = dm.query(DownloadManager.Query().setFilterById(id)) ?: return null
-        return try {
-            if (!cursor.moveToFirst()) return null
-            val dl = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-            val total = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-            if (total <= 0) null else (dl.toFloat() / total).coerceIn(0f, 1f)
-        } finally {
-            cursor.close()
-        }
-    }
-
-    fun getCompletedApkFile(): File? {
-        val id = activeDownloadId.takeIf { it != -1L } ?: return null
-        val dm = ApplicationLoader.applicationContext
-            .getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager ?: return null
-        val cursor = dm.query(DownloadManager.Query().setFilterById(id)) ?: return null
-        return try {
-            if (!cursor.moveToFirst()) return null
-            val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-            if (status == DownloadManager.STATUS_SUCCESSFUL) pendingApkFile else null
-        } finally {
-            cursor.close()
-        }
+    /** Feed from NotificationCenter.fileLoadProgressChanged (args = [fileName, loadedSize, totalSize]). */
+    @JvmStatic
+    fun onFileProgress(fileName: String, loadedSize: Long, totalSize: Long) {
+        val doc = SharedConfig.pendingAppUpdate?.document ?: return
+        if (FileLoader.getAttachFileName(doc) != fileName) return
+        if (totalSize <= 0) return
+        lastProgress = (loadedSize.toFloat() / totalSize).coerceIn(0f, 1f)
     }
 
     fun isDownloading(): Boolean {
-        val id = activeDownloadId.takeIf { it != -1L } ?: return false
-        val dm = ApplicationLoader.applicationContext
-            .getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager ?: return false
-        val cursor = dm.query(DownloadManager.Query().setFilterById(id)) ?: return false
-        return try {
-            if (!cursor.moveToFirst()) false
-            else cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-                .let { it == DownloadManager.STATUS_RUNNING || it == DownloadManager.STATUS_PENDING }
-        } finally {
-            cursor.close()
-        }
+        val doc = SharedConfig.pendingAppUpdate?.document ?: return false
+        return FileLoader.getInstance(UserConfig.selectedAccount)
+            .isLoadingFile(FileLoader.getAttachFileName(doc))
+    }
+
+    fun getDownloadProgress(): Float? {
+        if (!isDownloading()) return null
+        return lastProgress
+    }
+
+    fun getCompletedApkFile(): File? {
+        val doc = SharedConfig.pendingAppUpdate?.document ?: return null
+        if (isDownloading()) return null
+        val file = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(doc, true)
+        return file?.takeIf { it.exists() }
     }
 
     fun check(callback: ((CheckResult) -> Unit)?) {
+        val account = UserConfig.selectedAccount
+        if (!UserConfig.getInstance(account).isClientActivated) {
+            callback?.invoke(CheckResult.Error("Not logged in"))
+            return
+        }
         if (BuildConfig.INU_BUILD_TYPE == "debug") { callback?.invoke(CheckResult.UpToDate); return }
         val now = System.currentTimeMillis()
         if (inflight && now - inflightSince < INFLIGHT_TIMEOUT_MS) { callback?.invoke(CheckResult.InFlight); return }
         inflight = true
         inflightSince = now
-        org.telegram.messenger.Utilities.globalQueue.postRunnable {
-            try {
-                val json = fetchJson(GH_API_URL)
-                AndroidUtilities.runOnUIThread { processRelease(json, callback) }
-            } catch (e: Exception) {
-                AndroidUtilities.runOnUIThread { finish(callback, CheckResult.Error(e.message ?: "network error")) }
+        MessagesController.getInstance(account).userNameResolver.resolve(USERNAME) { peerId ->
+            if (peerId == null || peerId == 0L || peerId == Long.MAX_VALUE) {
+                finish(callback, CheckResult.Error("resolve failed"))
+                return@resolve
+            }
+            resolvedChannelId = -peerId
+            performSearch(account, peerId, callback)
+        }
+    }
+
+    private fun performSearch(account: Int, peerId: Long, callback: ((CheckResult) -> Unit)?) {
+        val mc = MessagesController.getInstance(account)
+        val req = TLRPC.TL_messages_search().apply {
+            peer = mc.getInputPeer(peerId)
+            q = "#release"
+            filter = TLRPC.TL_inputMessagesFilterDocument()
+            limit = 10
+        }
+        ConnectionsManager.getInstance(account).sendRequest(req) { resp, err ->
+            AndroidUtilities.runOnUIThread {
+                if (err != null || resp !is TLRPC.messages_Messages) {
+                    finish(callback, CheckResult.Error(err?.text ?: "no response"))
+                    return@runOnUIThread
+                }
+                val match = resp.messages.firstNotNullOfOrNull { msg ->
+                    extractApkInfo(msg)?.let { msg to it }
+                }
+                val currentVerCode = currentVersionCode()
+                if (match == null || match.second.verCode <= currentVerCode) {
+                    clearPending()
+                    finish(callback, CheckResult.UpToDate)
+                    return@runOnUIThread
+                }
+                val (msg, info) = match
+                val updateObj = applyUpdate(msg, info, currentVerCode)
+                finish(callback, CheckResult.Updated(updateObj))
             }
         }
     }
@@ -217,95 +292,68 @@ object UpdateHelper {
     fun onNewMessage(msg: TLRPC.Message) {
         if (!InuConfig.UPDATES_ENABLED.value) return
         if (BuildConfig.INU_BUILD_TYPE == "debug") return
+        val channelId = resolvedChannelId
+        if (channelId != null && msg.peer_id?.channel_id != channelId) return
         if (msg.message?.contains("#release") != true) return
-        if (System.currentTimeMillis() - InuConfig.UPDATE_LAST_CHECK_MS.value < 60_000L) return
-        check { result -> if (result is CheckResult.Updated) revealPendingUpdate() }
+        val info = extractApkInfo(msg) ?: return
+        val currentVerCode = currentVersionCode()
+        if (info.verCode <= currentVerCode) return
+        AndroidUtilities.runOnUIThread {
+            applyUpdate(msg, info, currentVerCode)
+            revealPendingUpdate()
+            InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
+        }
     }
 
-    private fun processRelease(json: JSONObject, callback: ((CheckResult) -> Unit)?) {
-        val tagName = json.optString("tag_name", "")
-        val remoteVerCode = tagToVerCode(tagName)
-        val currentVerCode = currentVersionCode()
-
-        if (remoteVerCode <= currentVerCode) {
-            clearPending()
-            finish(callback, CheckResult.UpToDate)
-            return
-        }
-
-        val assets = json.optJSONArray("assets") ?: run {
-            finish(callback, CheckResult.Error("no assets"))
-            return
-        }
-
-        val isArm64 = isArm64Device()
-        var arm64Asset: JSONObject? = null
-        var universalAsset: JSONObject? = null
-
-        for (i in 0 until assets.length()) {
-            val asset = assets.getJSONObject(i)
-            val m = APK_RE.matchEntire(asset.optString("name", "")) ?: continue
-            when (m.groupValues[1]) {
-                "arm64"     -> if (isArm64) arm64Asset = asset
-                "universal" -> universalAsset = asset
-            }
-        }
-
-        val chosen = (if (isArm64) arm64Asset ?: universalAsset else universalAsset ?: arm64Asset)
-            ?: run { finish(callback, CheckResult.Error("no suitable APK asset")); return }
-
-        val downloadUrl = chosen.optString("browser_download_url", "")
-        if (downloadUrl.isEmpty()) { finish(callback, CheckResult.Error("empty URL")); return }
-
+    private fun applyUpdate(msg: TLRPC.Message, info: ApkInfo, currentVerCode: Int): TLRPC.TL_help_appUpdate {
         val updateObj = TLRPC.TL_help_appUpdate().apply {
-            flags = flags or 4   // FLAG_2 = url present; document stays null
-            id = 0
-            version = remoteVerCode.toString()
-            text = json.optString("body", "")
-            entities = ArrayList()
-            url = downloadUrl
-            document = null
+            flags = flags or 2
+            // stash the source channel message id in the otherwise-unused `id` field
+            id = msg.id
+            version = info.verCode.toString()
+            text = msg.message ?: ""
+            entities = cloneEntities(msg.entities)
+            document = info.document
         }
-        pendingApkSize = chosen.optLong("size", 0L)
+
+        val blockquote = updateObj.entities.firstOrNull { it is TLRPC.TL_messageEntityBlockquote }
+        if (blockquote != null) {
+            val start = blockquote.offset
+            val end = blockquote.offset + blockquote.length
+            val newEntities = arrayListOf<TLRPC.MessageEntity>()
+            for (entity in updateObj.entities) {
+                if (entity === blockquote) continue
+                if (entity.offset + entity.length <= start) continue
+                if (entity.offset >= end) continue
+                val clippedStart = max(entity.offset, start)
+                val clippedEnd = min(entity.offset + entity.length, end)
+                entity.offset = clippedStart - start
+                entity.length = clippedEnd - clippedStart
+                newEntities.add(entity)
+            }
+            updateObj.text = updateObj.text.substring(start, end)
+            updateObj.entities = newEntities
+        }
 
         SharedConfig.pendingAppUpdate = updateObj
         SharedConfig.pendingAppUpdateBuildVersion = currentVerCode
         SharedConfig.saveConfig()
-        // version must stay a plain integer string — SharedConfig.versionBiggerOrEqual splits it
-        // on "." and Integer.parseInt()s each part, and the raw GitHub tag (e.g. "v12.9.2-<hash>")
-        // crashes on the "v12" / "<hash>" segments.
-        pendingBetaUpdate = BetaUpdate(remoteVerCode.toString(), remoteVerCode, updateObj.text)
-
-        finish(callback, CheckResult.Updated(updateObj))
+        pendingBetaUpdate = BetaUpdate(info.appVerName, info.verCode, updateObj.text)
+        pendingSourceMessage = msg
+        return updateObj
     }
 
-    /** v11.8.2-47 -> buildNum=47 -> verCode=4701 (mirrors scripts/ci/version.ts) */
-    private fun tagToVerCode(tag: String): Int {
-        val m = TAG_RE.matchEntire(tag) ?: return 0
-        val buildNum = m.groupValues[1].toIntOrNull() ?: 0
-        return buildNum * 100 + 1
-    }
-
-    private fun fetchJson(urlStr: String): JSONObject {
-        val conn = (URL(urlStr).openConnection() as java.net.HttpURLConnection).apply {
-            setRequestProperty("Accept", "application/vnd.github+json")
-            setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
-            setRequestProperty("User-Agent", "entinyGram/${BuildConfig.BUILD_VERSION_STRING}")
-            connectTimeout = 15_000
-            readTimeout    = 15_000
+    private fun cloneEntities(entities: ArrayList<TLRPC.MessageEntity>?): ArrayList<TLRPC.MessageEntity> {
+        val out = ArrayList<TLRPC.MessageEntity>(entities?.size ?: 0)
+        entities?.forEach { entity ->
+            InuUtils.cloneTLObject(entity, TLRPC.MessageEntity::TLdeserialize)?.let(out::add)
         }
-        return try {
-            val code = conn.responseCode
-            if (code != 200) throw Exception("GitHub API $code")
-            JSONObject(conn.inputStream.bufferedReader().readText())
-        } finally {
-            conn.disconnect()
-        }
+        return out
     }
 
     private fun finish(callback: ((CheckResult) -> Unit)?, result: CheckResult) {
         inflight = false
-        // Do not suppress future checks after a transient GitHub/network error.
+        // Do not suppress future checks after a transient network/resolve error.
         // The interval is a successful-check throttle, not a failure backoff.
         if (result is CheckResult.UpToDate || result is CheckResult.Updated) {
             InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
@@ -316,12 +364,17 @@ object UpdateHelper {
     @Suppress("DEPRECATION")
     private fun currentVersionCode(): Int = pInfo.versionCode
 
-    // Build.SUPPORTED_ABIS (API 21+) has fully replaced the deprecated Build.CPU_ABI fallback —
-    // minSdk is 26, so it's always populated here.
-    private fun isArm64Device(): Boolean =
-        Build.SUPPORTED_ABIS.any {
-            it.contains("arm64", ignoreCase = true) || it.contains("aarch64", ignoreCase = true)
-        }
+    private fun extractApkInfo(msg: TLRPC.Message): ApkInfo? {
+        val media = msg.media as? TLRPC.TL_messageMediaDocument ?: return null
+        val doc = media.document ?: return null
+        val nameAttr = doc.attributes.filterIsInstance<TLRPC.TL_documentAttributeFilename>().firstOrNull()
+            ?: return null
+        val match = APK_RE.matchEntire(nameAttr.file_name) ?: return null
+        if (match.groupValues[1] != ourVariant) return null
+        val appVerName = match.groupValues[2]
+        val verCode = match.groupValues[3].toIntOrNull() ?: return null
+        return ApkInfo(verCode, appVerName, doc)
+    }
 
     sealed class CheckResult {
         object InFlight : CheckResult()
@@ -329,4 +382,10 @@ object UpdateHelper {
         data class Updated(val update: TLRPC.TL_help_appUpdate) : CheckResult()
         data class Error(val message: String) : CheckResult()
     }
+
+    private data class ApkInfo(
+        val verCode: Int,
+        val appVerName: String,
+        val document: TLRPC.Document,
+    )
 }

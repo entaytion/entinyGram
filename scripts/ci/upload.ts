@@ -4,12 +4,18 @@ import { join, resolve } from 'node:path'
 import { html, MemoryStorage, TelegramClient } from '@mtcute/node'
 import { joinTextWithEntities } from '@mtcute/node/utils.js'
 
+interface ApkFile {
+  file: string
+  variant: 'full' | 'lite'
+}
+
 interface BuildInfo {
   verName: string
-  verCode: number
+  verCodeFull: number
+  verCodeLite: number
   appVerCode: number
   buildNum: number
-  apkFiles: string[]
+  apkFiles: ApkFile[]
   commitSha: string
   commits: { sha: string, message: string }[]
   repo: string
@@ -21,7 +27,7 @@ const artifactDir = resolve(process.argv[2] ?? 'out')
 const ciOnly = process.argv.includes('--ci-only')
 
 const info: BuildInfo = JSON.parse(await fs.readFile(join(artifactDir, 'build-info.json'), 'utf8'))
-for (const file of info.apkFiles) {
+for (const { file } of info.apkFiles) {
   await fs.access(join(artifactDir, file))
 }
 
@@ -70,64 +76,70 @@ async function persistSession(session: string) {
 
 try {
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  const abiOf = (file: string) => /universal/i.test(file) ? 'Universal' : 'ARM64'
+  const labelOf = (variant: ApkFile['variant']) => variant === 'full' ? 'ARM64 Full' : 'ARM64 Lite'
   const postUrl = (id: number) => `https://t.me/${channelCI}/${id}`
 
-  // 1) Upload the APK documents to the CI channel — always happens.
-  const apkPosts: { file: string, id: number }[] = []
-  for (const file of info.apkFiles) {
+  // Parse AI-generated release notes up front — the CI channel caption embeds the real
+  // changelog in a <blockquote> too, since UpdateHelper.kt (on-device) reads its update-dialog
+  // text straight from this channel's message, not from the main channel's text-only post.
+  let tgUk = ''
+  let tgEn = ''
+  let enNotes = ''
+  try {
+    const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
+    tgUk = String(notes.tg_uk ?? '').trim()
+    tgEn = String(notes.tg_en ?? '').trim()
+    enNotes = String(notes.en ?? '').trim()
+
+    if (!tgUk && !tgEn && notes.tg) {
+      const rawTg = String(notes.tg)
+      const ukMatch = rawTg.match(/🇺🇦\s*UK:\s*([\s\S]*?)(?=🇺🇸\s*EN:|🇬🇧\s*Eng:|$)/i)
+      const enMatch = rawTg.match(/(?:🇺🇸\s*EN:|🇬🇧\s*Eng:)\s*([\s\S]*?)(?=🇺🇦\s*UK:|$)/i)
+      if (ukMatch || enMatch) {
+        tgUk = (ukMatch?.[1] ?? '').trim()
+        tgEn = (enMatch?.[1] ?? '').trim()
+      } else {
+        tgUk = rawTg.trim()
+      }
+    }
+  } catch { }
+
+  const postUk = tgUk || '• Оновлення доступне'
+  const postEn = tgEn || (enNotes ? enNotes.slice(0, 500) : '')
+
+  function notesToEntities(text: string) {
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+    return joinTextWithEntities(lines.map(l => html`${esc(l)}`), '\n')
+  }
+
+  const ukHtml = notesToEntities(postUk)
+  const enHtml = postEn ? notesToEntities(postEn) : null
+
+  // 1) Upload the APK documents to the CI channel — always happens. The changelog goes in a
+  // <blockquote>: UpdateHelper.kt's extractApkInfo/applyUpdate clips the update-dialog text to
+  // exactly this entity, discarding the #release/label wrapper text around it.
+  const apkPosts: { file: string, variant: ApkFile['variant'], id: number }[] = []
+  for (const { file, variant } of info.apkFiles) {
     const msg = await tg.sendMedia(channelCI, {
       type: 'document',
       file: `file:${join(artifactDir, file)}`,
       fileName: file,
-      caption: html`#release <br/> <b>entinyGram v${info.verName}</b> (build ${info.buildNum}, ${abiOf(file)})<br/><br/>@entinyGram / @entinyGramChat`,
+      caption: html`#release <br/> <b>entinyGram v${info.verName}</b> (build ${info.buildNum}, ${labelOf(variant)})<br/><br/><blockquote>${ukHtml}</blockquote><br/>@entinyGram / @entinyGramChat`,
     })
-    apkPosts.push({ file, id: msg.id })
+    apkPosts.push({ file, variant, id: msg.id })
   }
 
   // 2) If --ci-only, stop here — no main channel post.
   if (ciOnly) {
     console.log('CI-only mode: APKs uploaded to CI channel, skipping main channel post.')
   } else {
-    let tgUk = ''
-    let tgEn = ''
-    let enNotes = ''
-    try {
-      const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
-      tgUk = String(notes.tg_uk ?? '').trim()
-      tgEn = String(notes.tg_en ?? '').trim()
-      enNotes = String(notes.en ?? '').trim()
-
-      if (!tgUk && !tgEn && notes.tg) {
-        const rawTg = String(notes.tg)
-        const ukMatch = rawTg.match(/🇺🇦\s*UK:\s*([\s\S]*?)(?=🇺🇸\s*EN:|🇬🇧\s*Eng:|$)/i)
-        const enMatch = rawTg.match(/(?:🇺🇸\s*EN:|🇬🇧\s*Eng:)\s*([\s\S]*?)(?=🇺🇦\s*UK:|$)/i)
-        if (ukMatch || enMatch) {
-          tgUk = (ukMatch?.[1] ?? '').trim()
-          tgEn = (enMatch?.[1] ?? '').trim()
-        } else {
-          tgUk = rawTg.trim()
-        }
-      }
-    } catch { }
-
-    const postUk = tgUk || '• Оновлення доступне'
-    const postEn = tgEn || (enNotes ? enNotes.slice(0, 500) : '')
-
-    function notesToEntities(text: string) {
-      const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
-      return joinTextWithEntities(lines.map(l => html`${esc(l)}`), '\n')
-    }
-
-    const ukHtml = notesToEntities(postUk)
-    const enHtml = postEn ? notesToEntities(postEn) : null
     const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).replace(/\n/g, '<br/>') : ''
 
-    const arm64 = apkPosts.find(p => !/universal/i.test(p.file)) ?? apkPosts[0]
-    const univ = apkPosts.find(p => /universal/i.test(p.file))
-    const linksHtml = arm64 && univ
-      ? html`<a href="${postUrl(arm64.id)}">ARM64</a> • <a href="${postUrl(univ.id)}">Universal</a>`
-      : (arm64 ? html`<a href="${postUrl(arm64.id)}">Завантажити APK</a>` : '')
+    const full = apkPosts.find(p => p.variant === 'full') ?? apkPosts[0]
+    const lite = apkPosts.find(p => p.variant === 'lite')
+    const linksHtml = full && lite
+      ? html`<a href="${postUrl(full.id)}">Full</a> • <a href="${postUrl(lite.id)}">Lite</a>`
+      : (full ? html`<a href="${postUrl(full.id)}">Завантажити APK</a>` : '')
 
     const release = html`
       📡 <b>entinyGram v${info.verName}</b> (build ${info.buildNum}) ${linksHtml ? html`— ${linksHtml}` : ''}

@@ -34,6 +34,11 @@ export const forkSyncFiles: ForkSyncFile[] = [
     directory: true,
   },
   {
+    source: 'src/kotlin-maps',
+    target: 'TMessagesProj/src/main/kotlin-maps/desu/inugram/helpers/maps',
+    directory: true,
+  },
+  {
     source: 'src/core',
     target: 'InuCore',
     directory: true,

@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.widget.FrameLayout
-import desu.inugram.helpers.update.ApkInstaller
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
@@ -90,23 +89,18 @@ class UpdateRowView(context: Context) : FrameLayout(context) {
         if (!SharedConfig.isAppUpdateAvailable()) return
         when (iconProgress.icon) {
             MediaActionDrawable.ICON_DOWNLOAD -> {
-                UpdateHelper.startDownload()
+                UpdateHelper.startDownload(UserConfig.selectedAccount)
                 refresh(true)
             }
             MediaActionDrawable.ICON_CANCEL -> {
-                UpdateHelper.cancelDownload()
+                UpdateHelper.cancelDownload(UserConfig.selectedAccount)
                 refresh(true)
             }
             else -> {
                 val activity = (context as? Activity) ?: return
-                val apkFile = UpdateHelper.getCompletedApkFile()
-                if (apkFile != null) {
-                    val doc = SharedConfig.pendingAppUpdate?.document
-                    if (doc != null) {
-                        ApplicationLoader.applicationLoaderInstance?.openApkInstall(activity, doc)
-                    } else {
-                        ApkInstaller.installFromFile(activity, apkFile)
-                    }
+                val doc = SharedConfig.pendingAppUpdate?.document ?: return
+                if (UpdateHelper.getCompletedApkFile() != null) {
+                    ApplicationLoader.applicationLoaderInstance?.openApkInstall(activity, doc)
                 }
             }
         }
@@ -140,8 +134,7 @@ class UpdateRowView(context: Context) : FrameLayout(context) {
             }
         }
 
-        val sizeBytes = SharedConfig.pendingAppUpdate?.document?.size
-            ?: if (UpdateHelper.pendingApkSize > 0) UpdateHelper.pendingApkSize else 0L
+        val sizeBytes = SharedConfig.pendingAppUpdate?.document?.size ?: 0L
         sizeText.setText(
             if (showSize && sizeBytes > 0) AndroidUtilities.formatFileSize(sizeBytes) else null,
             animated,

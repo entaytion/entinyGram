@@ -182,7 +182,7 @@ class UpdateAppAlertDialog(
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
             movementMethod = AndroidUtilities.LinkMovementMethodMy()
             setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink))
-            val sizeBytes = appUpdate.document?.size ?: UpdateHelper.pendingApkSize
+            val sizeBytes = appUpdate.document?.size ?: 0L
             text = if (sizeBytes > 0) {
                 LocaleController.formatString(
                     R.string.AppUpdateVersionAndSize,
@@ -242,7 +242,7 @@ class UpdateAppAlertDialog(
             textColor = Theme.getColor(Theme.key_featuredStickers_buttonText),
             bold = true,
         ) {
-            UpdateHelper.startDownload()
+            UpdateHelper.startDownload(accountNum)
             dismiss()
         }
         val buttonRow = LinearLayout(context).apply {

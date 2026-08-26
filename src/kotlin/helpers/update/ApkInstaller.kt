@@ -71,7 +71,7 @@ object ApkInstaller {
         installFromFile(activity, apk)
     }
 
-    /** Install an APK from a local File (used when downloaded via DownloadManager, no TLRPC.Document) */
+    /** Install an APK already resolved to a local file. */
     fun installFromFile(activity: Activity, apk: File) {
         if (!apk.exists()) return
         if (dialog?.isShowing == true) return
