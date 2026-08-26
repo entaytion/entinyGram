@@ -27,8 +27,8 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -86,7 +86,9 @@ dependencies {
-     api project(':jlatexmath')
+@@ -69,7 +69,9 @@ dependencies {
+     implementation "io.noties.markwon:ext-latex:4.6.2"
  
      // inu
 -    implementation 'org.maplibre.gl:android-sdk:13.1.0'
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
      // end inu
  
  //    implementation 'com.google.mlkit:translate:17.0.3'
-@@ -108,6 +110,12 @@ android {
+@@ -92,6 +94,12 @@ android {
  
      sourceSets.main.jniLibs.srcDirs = ['./jni/']
  
@@ -270,7 +270,7 @@ index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
 @@ -26,7 +26,7 @@ android {
-     buildToolsVersion '36.0.0'
+     buildToolsVersion '35.0.0'
      ndkVersion "27.2.12479018"
  
 -    defaultConfig.applicationId = "desu.inugram"

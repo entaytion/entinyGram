@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsController.java
-@@ -2390,10 +2390,10 @@ public class StarsController {
+@@ -2392,10 +2392,10 @@ public class StarsController {
      private void getStarGiftsRemote(int hash, Utilities.Callback<TL_stars.StarGifts> whenDone) {
          if (whenDone == null) return;
          TL_stars.getStarGifts req = new TL_stars.getStarGifts();

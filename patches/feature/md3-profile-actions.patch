@@ -229,7 +229,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -389,6 +389,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -383,6 +383,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private FrameLayout avatarContainer;
      private FrameLayout avatarContainer2;
      private ProfileActionsView actionsView;
@@ -238,7 +238,7 @@ index 0000000..0000000 100644
      private MessagesController.SavedMusicList savedMusicList;
      private ProfileMusicView musicView;
      private AnimatedStatusView animatedStatusView;
-@@ -3899,7 +3901,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3884,7 +3886,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
              });
  
@@ -247,7 +247,7 @@ index 0000000..0000000 100644
              setActionsMode();
              updateNotifications(false);
  
-@@ -5517,7 +5519,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5489,7 +5491,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setChatInfo(chatInfo);
          }
          avatarContainer2.addView(avatarsViewPager);
@@ -256,7 +256,7 @@ index 0000000..0000000 100644
          avatarContainer2.addView(overlaysView);
          if (actionsView != null) {
              avatarsBlurView.setActionsView(actionsView);
-@@ -6078,7 +6080,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6050,7 +6052,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private int getActionsExtraHeight(boolean withMusic) {
          if (userId != 0 && imageUpdater != null && !myProfile)
              return 0;
@@ -265,7 +265,7 @@ index 0000000..0000000 100644
      }
  
      private int getHeaderExtraHeight() {
-@@ -11294,17 +11296,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11266,17 +11268,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
              actionsView.updatePosition(bottom - height + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height);
          }
  
-@@ -11324,22 +11327,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11296,22 +11299,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);

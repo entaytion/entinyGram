@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -1329,7 +1329,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -1309,7 +1309,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      private int buttonY;
      private int videoButtonX;
      private int videoButtonY;
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
      private int buttonPressed;
      private int videoButtonPressed;
      private int miniButtonPressed;
-@@ -15260,6 +15260,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15231,6 +15231,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      }
  
      public void drawBlurredPhotoParticles(Canvas canvas) {
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          if (mediaSpoilerEffect2 == null) {
              if (!LiteMode.isEnabled(LiteMode.FLAG_CHAT_SPOILER)) {
                  if (mediaSpoilerEffect == null) {
-@@ -19635,6 +19638,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19563,6 +19566,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              replyTextWidth -= sz;
                              maxWidth += sz;
                          }
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
                          if (changed || !isReplyQuote) {
                              stringFinalText = TextUtils.ellipsize(sb, textPaint, maxWidth, TextUtils.TruncateAt.END);
                          } else {
-@@ -19662,6 +19666,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19590,6 +19594,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          if (isSideMenued && !drawBackground || (!messageObject.isAnyKindOfSticker() && messageObject.type != MessageObject.TYPE_ROUND_VIDEO || messageObject.type == MessageObject.TYPE_EMOJIS)) {
                              namesOffset += Math.max(0, replyTextHeight - dp(3.66f) - Theme.chat_replyTextPaint.getTextSize());
                          }
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                          if (replyTextLayout.getLineCount() > 0) {
                              int width = 0;
                              replyTextOffset = replyTextLayout.getWidth();
-@@ -19674,13 +19679,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19602,13 +19607,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                                  replyTextOffset = Math.min(replyTextOffset, left);
                              }
                              replyTextWidth += width + dp(18);

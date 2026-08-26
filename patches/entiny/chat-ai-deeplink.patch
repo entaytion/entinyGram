@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -36767,6 +36767,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -36560,6 +36560,10 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void processExternalUrl(int type, String url, CharacterStyle span, ChatMessageCell cell, boolean forceAlert, boolean forceNoIV) {
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
          try {
              String host = AndroidUtilities.getHostAuthority(url);
              if ((currentEncryptedChat == null || getMessagesController().secretWebpagePreview == 1) && getMessagesController().authDomains.contains(host)) {
-@@ -42520,6 +42524,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -42178,6 +42182,11 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private boolean openLinkInternally(String urlFinal, ChatMessageCell cell, CharacterStyle span, int fromMessageId, int fromMessageProgressType) {

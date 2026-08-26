@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -465,7 +465,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -467,7 +467,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          AndroidUtilities.fillStatusBarHeight(this, false);
          actionBarLayout = new ActionBarLayout(this, true);
  
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
          frameLayout.setClipToPadding(false);
          frameLayout.setClipChildren(false);
          setContentView(frameLayout);
-@@ -9174,6 +9188,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -9170,6 +9184,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
      private int reasonsToHideMainContent = 0;
      private int reasonsToHideDecorView = 0;
@@ -46,7 +46,7 @@ index 0000000..0000000 100644
  
      private void updateReasonsToHideMainContent(boolean increment, boolean withDecorView) {
          reasonsToHideMainContent += (increment ? 1 : -1);
-@@ -9181,7 +9200,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -9177,7 +9196,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
              reasonsToHideDecorView += (increment ? 1 : -1);
          }
          if (frameLayout != null) {
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
          }
          checkDecorViewVisibility();
      }
-@@ -9253,6 +9273,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -9249,6 +9269,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
          @Override
          protected void dispatchDraw(@NonNull Canvas canvas) {

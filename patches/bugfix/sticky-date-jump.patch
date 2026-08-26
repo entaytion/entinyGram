@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
-@@ -3487,16 +3487,11 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+@@ -3482,16 +3482,11 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
  
          int oldAlpha = -1;
          int oldAlpha2 = -1;
@@ -36,7 +36,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -7145,7 +7145,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -7079,7 +7079,6 @@ public class ChatActivity extends BaseFragment implements
              protected void onDraw(Canvas canvas) {
                  if (scrimBlurBitmap != null) return;
                  float clipTop = chatListView.getY() + chatListViewPaddingTop - getY();
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  if (clipTop > 0) {
                      if (clipTop < getMeasuredHeight()) {
                          canvas.save();
-@@ -12049,7 +12048,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -11955,7 +11954,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          if (floatingDateView != null) {
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
          }
          updateFloatingTopicView();
  
-@@ -16682,7 +16681,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16575,7 +16574,7 @@ public class ChatActivity extends BaseFragment implements
          }
          if (floatingDateView != null) {
              floatingDateView.setTranslationX(getSideMenuWidth() / 2f);

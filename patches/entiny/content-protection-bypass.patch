@@ -36,9 +36,9 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -11628,7 +11628,7 @@ public class MessageObject {
+@@ -11570,7 +11570,7 @@ public class MessageObject {
          if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT_MEDIA.getValue() && isSecretMedia()) return true;
-         if (isQuickReply()) return false;
+         if (isQuickReply() || isEphemeral()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
 -        return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && !messageOwner.noforwards;
 +        return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && (!messageOwner.noforwards || desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue());
@@ -49,7 +49,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6700,6 +6700,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6709,6 +6709,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isChatNoForwards(TLRPC.Chat chat) {
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
          if (chat == null) {
              return false;
          }
-@@ -6725,6 +6726,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6734,6 +6735,7 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public boolean isUserNoForwards(TLRPC.UserFull userFull) {
@@ -69,7 +69,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6979,7 +6979,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6957,7 +6957,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  drawSideButton = checkNeedDrawShareButton(messageObject) ? 2 : 0;
              } else if (messageObject.searchType == ChatActivity.SEARCH_MY_MESSAGES) {
                  drawSideButton = 0;
@@ -82,7 +82,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3514,7 +3514,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -3484,7 +3484,7 @@ public class ChatActivity extends BaseFragment implements
              if (chatActivity != null && chatActivity.getDialogId() == UserObject.VERIFY) {
                  return false;
              }
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
                  chatActivity != null && chatActivity.isPeerNoForwards() ||
                  selectedView != null && selectedView.getMessageObject() != null && selectedView.getMessageObject().messageOwner != null && selectedView.getMessageObject().messageOwner.noforwards
              );
-@@ -10401,7 +10401,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -10311,7 +10311,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -100,7 +100,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -19411,7 +19411,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19300,7 +19300,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();

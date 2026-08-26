@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -5046,6 +5046,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5080,6 +5080,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          private AlertDialog progressDialog;
          private ArrayList<MessageObject> messageObjects;
          private HashMap<String, MessageObject> loadingMessageObjects = new HashMap<>();
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
          private float finishedProgress;
          private boolean cancelled;
          private boolean finished;
-@@ -5118,16 +5119,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5152,16 +5153,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                                  path = file.toString();
                              }
                              File sourceFile = new File(path);
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                                  FileLog.d("saving file: correcting path from " + path + " to " + (sourceFile == null ? null : sourceFile.getAbsolutePath()));
                              }
                              if (sourceFile != null && sourceFile.exists()) {
-@@ -5191,12 +5194,17 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5225,12 +5228,17 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                                  }
                                  sourceFile = new File(path);
                              }
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
                                  copyFile(sourceFile, destFile, message.getMimeType());
                                  copiedFiles++;
                              }
-@@ -5230,6 +5238,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5264,6 +5272,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  currentAccount.getNotificationCenter().removeObserver(this, NotificationCenter.fileLoaded);
                  currentAccount.getNotificationCenter().removeObserver(this, NotificationCenter.fileLoadProgressChanged);
                  currentAccount.getNotificationCenter().removeObserver(this, NotificationCenter.fileLoadFailed);
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
              });
          }
  
-@@ -5269,6 +5278,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5303,6 +5312,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      }
                  });
                  waitingForFile.await();
@@ -75,7 +75,7 @@ index 0000000..0000000 100644
              }
              if (cancelled) {
                  return true;
-@@ -5449,6 +5460,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5483,6 +5494,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              if (id == NotificationCenter.fileLoaded || id == NotificationCenter.fileLoadFailed) {
                  String fileName = (String) args[0];
                  if (loadingMessageObjects.remove(fileName) != null) {

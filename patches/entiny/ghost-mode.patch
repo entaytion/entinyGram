@@ -33,7 +33,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14712,6 +14712,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14653,6 +14653,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -384,6 +384,9 @@ public class ConnectionsManager extends BaseController {
+@@ -386,6 +386,9 @@ public class ConnectionsManager extends BaseController {
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("send request " + object + " with token = " + requestToken);
          }
@@ -61,7 +61,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -989,6 +989,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -983,6 +983,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              titleTextView.setRightDrawable(null);
              rightDrawableContentDescription = null;
          }
@@ -73,7 +73,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -6804,7 +6804,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -6806,7 +6806,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          Utilities.stageQueue.postRunnable(() -> {
              ApplicationLoader.mainInterfacePausedStageQueue = true;
              ApplicationLoader.mainInterfacePausedStageQueueTime = 0;
@@ -86,7 +86,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11469,7 +11469,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11441,7 +11441,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (userInfo != null && userInfo.stars_rating != null && userInfo.stars_rating.stars < 0) {
                          newString2 = getString(R.string.StarRatingLevelNegative).toLowerCase(Locale.ROOT);
                      } else {

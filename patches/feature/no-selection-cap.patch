@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -9307,6 +9307,15 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9316,6 +9316,15 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void deleteMessages(ArrayList<Integer> messages, ArrayList<Long> randoms, TLRPC.EncryptedChat encryptedChat, long dialogId, boolean forAll, int mode, boolean cacheOnly, long taskId, TLObject taskRequest, int topicId, boolean movedToScheduled, int movedToScheduledMessageId) {
@@ -27,12 +27,12 @@ index 0000000..0000000 100644
 +        }
          final boolean scheduled = mode == ChatActivity.MODE_SCHEDULED;
          final boolean quickReplies = mode == ChatActivity.MODE_QUICK_REPLIES;
-         final boolean welcomeMessages = mode == ChatActivity.MODE_WELCOME_MESSAGES;
+         if ((messages == null || messages.isEmpty()) && taskId == 0) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -1771,11 +1771,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1749,11 +1749,7 @@ public class ChatActivity extends BaseFragment implements
                          return;
                      }
                      if (messageObject.contentType == 0) {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                          RecyclerView.ViewHolder holder = chatListView.findViewHolderForAdapterPosition(position);
                          if (holder != null && holder.itemView instanceof ChatMessageCell) {
                              processRowSelect(holder.itemView, false, x, y);
-@@ -19300,14 +19296,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -19189,14 +19185,6 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
              } else {
