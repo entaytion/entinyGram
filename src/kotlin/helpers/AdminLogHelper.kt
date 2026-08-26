@@ -26,6 +26,7 @@ object AdminLogHelper {
     const val OPTION_DETAILS = 510
 
     private const val MENU_TOGGLE_DIFF = 100
+    private const val MENU_HEADER = 101
 
     @JvmStatic
     fun addMenuItems(
@@ -162,17 +163,15 @@ object AdminLogHelper {
         }
     }
 
-    private var toggleDiffItem: ActionBarMenuSubItem? = null
-
     @JvmStatic
     fun setupHeader(activity: ChannelAdminLogActivity, menu: ActionBarMenu) {
-        val headerItem = menu.addItem(0, R.drawable.ic_ab_other)
+        val headerItem = menu.addItem(MENU_HEADER, R.drawable.ic_ab_other)
         headerItem.contentDescription = LocaleController.getString(R.string.AccDescrMoreOptions)
 
         // this "more options" item sits next to search; the ActionBar doesn't subtract menu
         // width for the custom title view, so reserve room for both items (+ the -9 menu shift)
         (activity.avatarContainer.layoutParams as FrameLayout.LayoutParams).rightMargin = AndroidUtilities.dp(48f + 48f + 9f)
-        toggleDiffItem = headerItem.addSubItem(
+        headerItem.addSubItem(
             MENU_TOGGLE_DIFF,
             R.drawable.inu_tabler_file_diff,
             LocaleController.getString(R.string.InuEventLogShowDiff),
@@ -195,7 +194,8 @@ object AdminLogHelper {
     fun processActionBarMenuItem(id: Int, fragment: ChannelAdminLogActivity): Boolean {
         if (id != MENU_TOGGLE_DIFF) return false
         InuConfig.EVENT_LOG_CHAR_DIFF.toggle()
-        toggleDiffItem?.setChecked(InuConfig.EVENT_LOG_CHAR_DIFF.value)
+        (fragment.actionBar.createMenu().getItem(MENU_HEADER)?.getSubItem(MENU_TOGGLE_DIFF) as? ActionBarMenuSubItem)
+            ?.setChecked(InuConfig.EVENT_LOG_CHAR_DIFF.value)
         fragment.inu_rebuildEvents()
         return true
     }

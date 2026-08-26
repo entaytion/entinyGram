@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -12917,6 +12917,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12998,6 +12998,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showVoiceHint(boolean hide, boolean video) {
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          if (getParentActivity() == null || fragmentView == null || hide && voiceHintTextView == null || chatMode != 0 || chatActivityEnterView == null  || chatActivityEnterView.getAudioVideoButtonContainer() == null || chatActivityEnterView.getAudioVideoButtonContainer().getVisibility() != View.VISIBLE || isInPreviewMode()) {
              return;
          }
-@@ -12941,6 +12942,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13022,6 +13023,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          voiceHintTextView.showForView(chatActivityEnterView.getAudioVideoButtonContainer(), true);

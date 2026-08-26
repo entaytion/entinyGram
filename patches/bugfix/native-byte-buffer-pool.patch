@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 01:39:32 +0400
+Subject: bounded NativeByteBuffer wrapper pool
+
+---
+ .../src/main/java/org/telegram/tgnet/NativeByteBuffer.java | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/NativeByteBuffer.java b/TMessagesProj/src/main/java/org/telegram/tgnet/NativeByteBuffer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/NativeByteBuffer.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/NativeByteBuffer.java
+@@ -16,6 +16,8 @@ public class NativeByteBuffer extends AbstractSerializedData {
+     private int len;
+     public boolean reused = true;
+ 
++    private static final int MAX_POOLED_WRAPPERS = 64;
++
+     private static final ThreadLocal<LinkedList<NativeByteBuffer>> addressWrappers = new ThreadLocal<LinkedList<NativeByteBuffer>>() {
+         @Override
+         protected LinkedList<NativeByteBuffer> initialValue() {
+@@ -649,7 +651,10 @@ public class NativeByteBuffer extends AbstractSerializedData {
+ 
+     public void reuse() {
+         if (address != 0) {
+-            addressWrappers.get().add(this);
++            LinkedList<NativeByteBuffer> queue = addressWrappers.get();
++            if (queue.size() < MAX_POOLED_WRAPPERS) {
++                queue.add(this);
++            }
+             reused = true;
+             native_reuse(address);
+         }

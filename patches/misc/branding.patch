@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -5293,7 +5293,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5259,7 +5259,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              if (Build.VERSION.SDK_INT >= 29) {
                  final ContentValues cv = new ContentValues();
                  final Uri uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
                  cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  cv.put(MediaStore.Downloads.DISPLAY_NAME, filename);
                  cv.put(MediaStore.MediaColumns.MIME_TYPE, outputMime);
-@@ -5315,7 +5315,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5281,7 +5281,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      }
                  }
              } else {
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
                  destDir.mkdirs();
                  File destFile = new File(destDir, filename);
                  if (!destFile.exists()) {
-@@ -5535,11 +5535,11 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5501,11 +5501,11 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      } else {
                          File destFile;
                          if (type == 0) {
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
                              destFile.mkdirs();
                              destFile = new File(destFile, AndroidUtilities.generateFileName(1, FileLoader.getFileExtension(sourceFile)));
                          } else {
-@@ -5549,7 +5549,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5515,7 +5515,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                              } else {
                                  dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
                              }
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
                              dir.mkdirs();
                              destFile = new File(dir, name);
                              if (destFile.exists()) {
-@@ -5694,7 +5694,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5660,7 +5660,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      final String filename = AndroidUtilities.generateFileName(0, "jpg");
                      final ContentValues cv = new ContentValues();
                      final Uri uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -173,7 +173,7 @@ index 0000000..0000000 100644
                      cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                      cv.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                      cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-@@ -5716,7 +5716,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5682,7 +5682,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          }
                      }
                  } else {
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
                      destDir.mkdirs();
                      File destFile = new File(destDir, AndroidUtilities.generateFileName(0, "jpg"));
                      if (!destFile.exists()) {
-@@ -5847,7 +5847,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5813,7 +5813,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      filename = AndroidUtilities.generateFileName(0, extension);
                  }
                  uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                  contentValues.put(MediaStore.Images.Media.MIME_TYPE, mimeType);
-@@ -5855,7 +5855,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5821,7 +5821,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  if (filename == null) {
                      filename = AndroidUtilities.generateFileName(1, extension);
                  }
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, filename);
-@@ -5863,7 +5863,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5829,7 +5829,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  if (filename == null) {
                      filename = sourceFile.getName();
                  }
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-@@ -5871,7 +5871,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5837,7 +5837,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  if (filename == null) {
                      filename = sourceFile.getName();
                  }
@@ -633,7 +633,7 @@ index 0000000..0000000 100644
      <string name="LanguageName">English</string>
      <string name="English">English</string>
      <string name="LanguageNameInEnglish">English</string>
-@@ -2759,8 +2759,8 @@
+@@ -2763,8 +2763,8 @@
      <string name="AuthAnotherClientUrl">This code can be used to allow someone to log in to your Telegram account.\n\nTo confirm Telegram login, please go to Settings &gt; Devices &gt; Scan QR and scan the code.</string>
      <string name="QRCodePermissionNoCameraWithHint">**Telegram** needs camera access so that you can scan QR codes. Tap Settings -> Permissions, and turn **Camera** on.</string>
      <string name="SetProfilePhoto">Set Profile Photo</string>
@@ -644,7 +644,7 @@ index 0000000..0000000 100644
      <string name="AppUpdateVersionAndSize">Version %1$s • %2$s</string>
      <string name="AppBetaUpdateVersion">Version %1$s (%2$s)</string>
      <string name="AppUpdateDownloading">Downloading %1$d%%...</string>
-@@ -4178,7 +4178,7 @@
+@@ -4199,7 +4199,7 @@
      <string name="ViewMessageStatistic">Message Statistic</string>
      <string name="ViewMessage">Open Message</string>
      <!--Intro view-->

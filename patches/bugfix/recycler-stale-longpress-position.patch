@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 24 Aug 2026 02:50:10 +0300
+Subject: fix crash on long tapping a dialog while the list is changing
+
+---
+ .../telegram/ui/Components/RecyclerListView.java  | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
+@@ -1085,6 +1085,10 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+ 
+     }
+ 
++    private int inu_getChildPosition(View child) {
++        return useLayoutPositionOnClick ? getChildLayoutPosition(child) : getChildAdapterPosition(child);
++    }
++
+     private class RecyclerListViewItemClickListener implements OnItemTouchListener {
+ 
+         public RecyclerListViewItemClickListener(Context context) {
+@@ -1184,6 +1188,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+                     if (currentChildView == null || currentChildPosition == -1 || onItemLongClickListener == null && onItemLongClickListenerExtended == null) {
+                         return;
+                     }
++                    int position = inu_getChildPosition(currentChildView);
++                    if (position == NO_POSITION) {
++                        return;
++                    }
++                    currentChildPosition = position;
+                     View child = currentChildView;
+                     if (onItemLongClickListener != null) {
+                         if (onItemLongClickListener.onItemClick(currentChildView, currentChildPosition)) {
+@@ -1254,11 +1263,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+                 }
+                 currentChildPosition = -1;
+                 if (currentChildView != null) {
+-                    if (useLayoutPositionOnClick) {
+-                        currentChildPosition = view.getChildLayoutPosition(currentChildView);
+-                    } else {
+-                        currentChildPosition = view.getChildAdapterPosition(currentChildView);
+-                    }
++                    currentChildPosition = inu_getChildPosition(currentChildView);
+                     MotionEvent childEvent = MotionEvent.obtain(0, 0, event.getActionMasked(), event.getX() - currentChildView.getLeft(), event.getY() - currentChildView.getTop(), 0);
+                     if (currentChildView.onTouchEvent(childEvent)) {
+                         interceptedByChild = true;

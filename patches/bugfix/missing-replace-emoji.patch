@@ -4,32 +4,32 @@ Date: Sun, 19 Apr 2026 05:33:38 +0300
 Subject: added some missing Emoji.replaceEmoji calls in various places
 
 ---
- .../ui/ActionBar/ActionBarMenuItem.java       | 16 +++++++++++-
+ .../ui/ActionBar/ActionBarMenuItem.java       | 16 ++++++++++-
  .../telegram/ui/Cells/AudioPlayerCell.java    |  5 +++-
  .../org/telegram/ui/Cells/ChatActionCell.java |  2 ++
  .../org/telegram/ui/Cells/DialogCell.java     |  1 +
  .../ui/Cells/GroupCallInvitedCell.java        |  5 +++-
  .../telegram/ui/Cells/GroupCallUserCell.java  |  5 +++-
- .../telegram/ui/Cells/ManageChatUserCell.java |  3 ++-
- .../telegram/ui/Cells/MemberRequestCell.java  |  9 +++++--
+ .../telegram/ui/Cells/ManageChatUserCell.java |  3 +-
+ .../telegram/ui/Cells/MemberRequestCell.java  |  9 ++++--
  .../org/telegram/ui/Cells/MentionCell.java    |  2 ++
- .../org/telegram/ui/Cells/SharedLinkCell.java |  6 ++++-
+ .../org/telegram/ui/Cells/SharedLinkCell.java |  6 +++-
  .../ui/Cells/SharingLiveLocationCell.java     |  2 +-
- .../telegram/ui/ChannelAdminLogActivity.java  |  3 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 26 ++++++++++++-------
- .../ui/Components/AudioPlayerAlert.java       |  3 +++
+ .../telegram/ui/ChannelAdminLogActivity.java  |  3 +-
+ .../java/org/telegram/ui/ChatActivity.java    | 28 +++++++++++--------
+ .../ui/Components/AudioPlayerAlert.java       |  3 ++
  .../telegram/ui/Components/EditTextEmoji.java |  2 +-
- .../telegram/ui/Components/ItemOptions.java   | 13 ++++++----
+ .../telegram/ui/Components/ItemOptions.java   | 13 +++++----
  .../ui/Components/MessagePreviewView.java     |  4 ++-
- .../ui/Components/SenderSelectPopup.java      | 12 ++++++---
+ .../ui/Components/SenderSelectPopup.java      | 12 +++++---
  .../org/telegram/ui/LocationActivity.java     |  4 ++-
- .../org/telegram/ui/MainTabsActivity.java     |  3 ++-
+ .../org/telegram/ui/MainTabsActivity.java     |  3 +-
  .../org/telegram/ui/MessageAuthorView.java    |  4 ++-
  .../java/org/telegram/ui/MessageSeenView.java |  7 +++--
  .../java/org/telegram/ui/PhotoViewer.java     |  1 +
- .../org/telegram/ui/SettingsActivity.java     |  6 +++--
- .../recorder/CaptionContainerView.java        | 13 ++++++++++
- 25 files changed, 119 insertions(+), 38 deletions(-)
+ .../org/telegram/ui/SettingsActivity.java     |  6 ++--
+ .../recorder/CaptionContainerView.java        | 13 +++++++++
+ 25 files changed, 120 insertions(+), 39 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
 index 0000000..0000000 100644
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.LocaleController;
  import org.telegram.messenger.R;
  import org.telegram.messenger.UserConfig;
-@@ -1525,6 +1527,8 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -1564,6 +1566,8 @@ public class ActionBarMenuItem extends FrameLayout {
                  return false;
              });
              searchField.addTextChangedListener(new TextWatcher() {
@@ -60,7 +60,7 @@ index 0000000..0000000 100644
                  @Override
                  public void beforeTextChanged(CharSequence s, int start, int count, int after) {
  
-@@ -1546,11 +1550,21 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -1585,11 +1589,21 @@ public class ActionBarMenuItem extends FrameLayout {
                              onFiltersChanged();
                          }
                      }
@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
-@@ -1728,6 +1728,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+@@ -1733,6 +1733,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
  
              text = Emoji.replaceEmoji(text, paint.getFontMetricsInt(), false, null,
                  DynamicDrawableSpan.ALIGN_BOTTOM, 0.85f, 0);
@@ -376,7 +376,16 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15312,11 +15312,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -11296,7 +11296,7 @@ public class ChatActivity extends BaseFragment implements
+         String from = LocaleController.getString(R.string.SearchFrom);
+         Spannable spannable = new SpannableString(from + " " + name);
+         spannable.setSpan(new ForegroundColorSpan(getThemedColor(Theme.key_actionBarDefaultSubtitle)), from.length() + 1, spannable.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+-        searchItem.setSearchFieldCaption(spannable);
++        searchItem.setSearchFieldCaption(Emoji.replaceEmoji(spannable, searchItem.getSearchField().getPaint().getFontMetricsInt(), false));
+         mentionContainer.getAdapter().searchUsernameOrHashtag(null, 0, null, false, true);
+         searchItem.setSearchFieldHint(null);
+         searchItem.clearSearchText();
+@@ -15406,11 +15406,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                          if (userNamesCount == 1) {
@@ -390,7 +399,7 @@ index 0000000..0000000 100644
                      }
                  }
                  replyObjectHintTextView.setText(LocaleController.getString(R.string.TapForForwardingOptions));
-@@ -15348,20 +15348,20 @@ public class ChatActivity extends BaseFragment implements
+@@ -15442,20 +15442,20 @@ public class ChatActivity extends BaseFragment implements
                      replyObjectTextView.setText(pendingLinkSearchString);
                  } else {
                      if (webPage.site_name != null) {
@@ -417,7 +426,7 @@ index 0000000..0000000 100644
                      }
                      chatActivityEnterView.setWebPage(webPage, true);
                  }
-@@ -21881,6 +21881,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -21996,6 +21996,10 @@ public class ChatActivity extends BaseFragment implements
              if (chatListView != null) {
                  chatListView.invalidateViews();
              }
@@ -428,7 +437,7 @@ index 0000000..0000000 100644
              if (alertTextView != null) {
                  alertTextView.invalidate();
              }
-@@ -28593,6 +28597,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28745,6 +28749,7 @@ public class ChatActivity extends BaseFragment implements
                  pinnedMessageObject.updateTranslation(false);
                  if (pinnedMessageObject.type == MessageObject.TYPE_MUSIC) {
                      pinnedText = String.format("%s - %s", pinnedMessageObject.getMusicAuthor(), pinnedMessageObject.getMusicTitle());
@@ -436,7 +445,7 @@ index 0000000..0000000 100644
                  } else if (pinnedMessageObject.type == MessageObject.TYPE_POLL) {
                      if (pinnedMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                          TLRPC.TL_messageMediaPoll poll = (TLRPC.TL_messageMediaPoll) pinnedMessageObject.messageOwner.media;
-@@ -40167,15 +40172,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -40536,15 +40541,16 @@ public class ChatActivity extends BaseFragment implements
                  userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
                  final TextView titleText = new TextView(getContext());
@@ -467,7 +476,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.FileLoader;
  import org.telegram.messenger.FileLog;
  import org.telegram.messenger.FileRefController;
-@@ -3324,6 +3325,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -3367,6 +3368,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
                      textViews[i].setAlpha(0f);
                      textViews[i].setVisibility(GONE);
                  }
@@ -475,7 +484,7 @@ index 0000000..0000000 100644
                  addView(textViews[i], LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT));
              }
              gradientMatrix = new Matrix();
-@@ -3427,6 +3429,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -3470,6 +3472,7 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
          }
  
          public void setText(CharSequence text, boolean animated) {
@@ -738,7 +747,7 @@ index 0000000..0000000 100644
          } else {
              if (peerIds.size() == 0) {
                  titleView.setText(LocaleController.getString(R.string.NobodyViewed));
-@@ -370,6 +372,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -375,6 +377,7 @@ public class MessageSeenView extends FrameLayout {
              nameView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
              nameView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
              nameView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -746,7 +755,7 @@ index 0000000..0000000 100644
  
              statusBadgeComponent = new StatusBadgeComponent(this);
              nameView.setDrawablePadding(AndroidUtilities.dp(3));
-@@ -410,7 +413,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -415,7 +418,7 @@ public class MessageSeenView extends FrameLayout {
                  avatarDrawable.setInfo(currentAccount, object);
                  ImageLocation imageLocation = ImageLocation.getForUserOrChat(currentAccount, object, ImageLocation.TYPE_SMALL);
                  avatarImageView.setImage(imageLocation, "50_50", avatarDrawable, object);
@@ -759,7 +768,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -15272,6 +15272,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15265,6 +15265,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              navigationBar.setBackgroundColor(fancyShadows ? (sendPhotoType == SELECT_TYPE_STICKER ? 0x66000000 : 0) : (sendPhotoType == SELECT_TYPE_STICKER ? 0xFF000000 : 0x7f000000));
          }
          if (title != null) {

@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6956,7 +6956,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6978,7 +6978,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      drawSideButton = 2;
                  }
              }
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -6016,7 +6016,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6043,7 +6043,7 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private boolean shownAiButton;
      private void showAiButton(boolean show_) {
@@ -66,7 +66,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
-@@ -6381,7 +6381,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -6441,7 +6441,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
  
      private boolean shownAiButton;
      private void showAiButton(boolean show_) {

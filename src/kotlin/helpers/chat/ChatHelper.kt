@@ -53,7 +53,9 @@ import org.telegram.messenger.TranslateController
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
 import org.telegram.messenger.Utilities
+import org.telegram.messenger.utils.tlutils.TLKeyboardHelper
 import org.telegram.tgnet.TLRPC
+import org.telegram.tgnet.tl.TL_keyboard
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BottomSheet
@@ -79,12 +81,14 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import java.io.File
 import java.util.Calendar
+import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 object ChatHelper {
     private var skipNextReactionConfirm = false
 
     private const val COMPACT_FORWARD_ICON_SIZE = 12f
+    private const val COMPACT_FORWARD_MIN_NAME_WIDTH = 56f
 
     const val OPTION_SAVE = 501
     const val OPTION_DETAILS = 502
@@ -109,6 +113,12 @@ object ChatHelper {
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
         return msg.messageOwner?.forwards ?: 0
+    }
+
+    private fun formatForwardsCount(msg: MessageObject?): String? {
+        val forwards = getForwardsCount(msg)
+        if (forwards <= 0) return null
+        return " " + LocaleController.formatShortNumber(forwards, null) + "  "
     }
 
     @JvmStatic
@@ -152,8 +162,9 @@ object ChatHelper {
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(11f)
         }
-        if (getForwardsCount(msg) > 0) {
-            width += AndroidUtilities.dp(11f)
+        val forwards = formatForwardsCount(msg)
+        if (forwards != null) {
+            width += AndroidUtilities.dp(11f) + ceil(Theme.chat_timePaint.measureText(forwards)).toInt()
         }
         return width
     }
@@ -163,11 +174,6 @@ object ChatHelper {
         if (time == null || msg == null) return time
         val sb = SpannableStringBuilder()
         TranslateHelper.appendTimePrefix(sb, msg)
-        val forwards = getForwardsCount(msg)
-        if (forwards > 0) {
-            appendTimeIcon(sb, R.drawable.mini_forwarded, sizeDp = 11f, translateYDp = 0f)
-            sb.append(" ").append(LocaleController.formatShortNumber(forwards, null)).append("  ")
-        }
         if (BlockedMessagesHelper.shouldSpoil(msg)) {
             appendTimeIcon(sb, R.drawable.msg_block, sizeDp = 11f, translateYDp = 1f)
             sb.append(" ")
@@ -259,6 +265,16 @@ object ChatHelper {
     }
 
     @JvmStatic
+    fun forwardsPrefix(msg: MessageObject?, time: CharSequence?): CharSequence? {
+        if (time == null || msg == null) return time
+        val forwards = formatForwardsCount(msg) ?: return time
+        val sb = SpannableStringBuilder()
+        appendTimeIcon(sb, R.drawable.mini_forwarded, sizeDp = 11f, translateYDp = 0f)
+        sb.append(forwards)
+        return sb.append(time)
+    }
+
+    @JvmStatic
     @JvmOverloads
     fun appendTimeIcon(
         sb: SpannableStringBuilder,
@@ -334,9 +350,10 @@ object ChatHelper {
         selectedObject: MessageObject,
         selectedObjectGroup: MessageObject.GroupedMessages?,
         dialogId: Long,
-        noforwards: Boolean
+        noforwards: Boolean,
+        allowSendActions: Boolean
     ) {
-        if (!noforwards && activity.currentChat != null && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat)) {
+        if (allowSendActions && !noforwards && activity.currentChat != null && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat)) {
             items.add(LocaleController.getString(R.string.InuReplyIn))
             options.add(OPTION_REPLY_IN)
             icons.add(R.drawable.menu_reply)
@@ -371,7 +388,7 @@ object ChatHelper {
             icons.add(R.drawable.magic_stick_solar)
         }
 
-        if (!noforwards && dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
+        if (allowSendActions && !noforwards && dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
             items.add(LocaleController.getString(R.string.InuSaveToSavedMessages))
             options.add(OPTION_SAVE)
             icons.add(R.drawable.msg_saved)
@@ -383,7 +400,7 @@ object ChatHelper {
             icons.add(R.drawable.msg_forward_noquote)
         }
 
-        if (isMenuItemEnabled(MessageMenuConfig.Item.REPEAT) &&
+        if (allowSendActions && isMenuItemEnabled(MessageMenuConfig.Item.REPEAT) &&
             canRepeatMessage(activity, selectedObject, selectedObjectGroup)
         ) {
             items.add(LocaleController.getString(R.string.InuRepeat))
@@ -453,6 +470,16 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuMarkChatAsRead))
             options.add(OPTION_MARK_AS_READ)
             icons.add(R.drawable.msg_markread)
+        }
+
+        if (!options.contains(ChatActivity.OPTION_COPY_LINK) &&
+            !selectedObject.isEphemeral && !selectedObject.isSponsored && !activity.isInScheduleMode &&
+            ChatObject.isChannel(activity.currentChat) && !ChatObject.isMonoForum(activity.currentChat) &&
+            selectedObject.dialogId == dialogId
+        ) {
+            items.add(LocaleController.getString(R.string.CopyLink))
+            options.add(ChatActivity.OPTION_COPY_LINK)
+            icons.add(R.drawable.msg_link)
         }
 
         items.add(LocaleController.getString(R.string.InuMessageDetails))
@@ -660,7 +687,7 @@ object ChatHelper {
                 if (replyMsg.groupId != 0L) {
                     val group = activity.getGroup(replyMsg.groupId)
                     if (group != null) {
-                        replyMsg = group.captionMessage
+                        replyMsg = group.captionMessage ?: replyMsg
                     }
                 }
                 val args = Bundle().apply {
@@ -839,8 +866,10 @@ object ChatHelper {
         group: MessageObject.GroupedMessages?,
     ): List<Int> {
         val canForward = canForwardRepeat(activity, selected)
+        val hasReply = getPendingReply(activity) != null
+        val hasCopyTarget = repeatCopyTarget(activity, selected, group) != null
         val modes = ArrayList<Int>(2)
-        if (canForward || repeatCopyTarget(activity, selected, group) != null) {
+        if (hasCopyTarget || (canForward && !(hasReply && group != null && !group.isDocuments))) {
             modes.add(InuConfig.RepeatModeItem.COPY)
         }
         if (canForward) modes.add(InuConfig.RepeatModeItem.FORWARD)
@@ -876,28 +905,107 @@ object ChatHelper {
         group: MessageObject.GroupedMessages?,
         copy: Boolean,
     ) {
-        if (copy && !canForwardRepeat(activity, selected)) {
-            val target = repeatCopyTarget(activity, selected, group) ?: return
-            val helper = SendMessagesHelper.getInstance(activity.currentAccount)
-            if (target.isAnyKindOfSticker) {
-                helper.sendSticker(
-                    target.document, null, activity.dialogId, null, activity.threadMessage, null, null, null,
-                    true, 0, 0, false, null, activity.quickReplyShortcut, activity.quickReplyId, 0L,
-                    activity.sendMonoForumPeerId, activity.sendMessageSuggestionParams,
-                )
-            } else {
-                val params = SendMessagesHelper.SendMessageParams.of(
-                    target.messageOwner.message, activity.dialogId, null, activity.threadMessage,
-                    null, false, target.messageOwner.entities, null, null, true, 0, 0, null, false,
-                )
-                params.monoForumPeer = activity.sendMonoForumPeerId
-                params.suggestionParams = activity.sendMessageSuggestionParams
-                helper.sendMessage(params)
-            }
+        val replyTo = if (copy) getPendingReply(activity) else null
+        val quote = if (replyTo != null) activity.replyingQuote else null
+        if (quote != null && quote.outdated) {
+            activity.showQuoteMessageUpdate()
+            return
+        }
+        if (copy && (replyTo != null || !canForwardRepeat(activity, selected))) {
+            val target = repeatCopyTarget(activity, selected, group)
+                ?: selected.takeIf { replyTo != null }
+                ?: return
+            sendAsCopy(activity, target, replyTo, quote)
+            if (replyTo != null) activity.afterMessageSend()
             return
         }
         val messages = group?.messages?.let { ArrayList<MessageObject>(it) } ?: arrayListOf(selected)
         activity.forwardMessages(messages, copy, false, true, 0, 0L)
+    }
+
+    private fun sendAsCopy(
+        activity: ChatActivity,
+        target: MessageObject,
+        replyTo: MessageObject?,
+        quote: ChatActivity.ReplyQuote?,
+    ) {
+        val helper = SendMessagesHelper.getInstance(activity.currentAccount)
+        val did = activity.dialogId
+        val threadMsg = activity.threadMessage
+        val mono = activity.sendMonoForumPeerId
+        val suggest = activity.sendMessageSuggestionParams
+        val msg = target.messageOwner
+
+        if (target.isAnyKindOfSticker) {
+            helper.sendSticker(
+                target.document, null, did, replyTo, threadMsg, null, quote, null,
+                true, 0, 0, false, null, activity.messageChatSendParams, 0L, mono, suggest,
+            )
+            return
+        }
+
+        val media = msg.media
+        if (media != null
+            && media !is TLRPC.TL_messageMediaEmpty
+            && media !is TLRPC.TL_messageMediaWebPage
+            && media !is TLRPC.TL_messageMediaGame
+            && media !is TLRPC.TL_messageMediaInvoice
+        ) {
+            val params: SendMessagesHelper.SendMessageParams? = when {
+                media.photo is TLRPC.TL_photo -> SendMessagesHelper.SendMessageParams.of(
+                    media.photo as TLRPC.TL_photo, null, did, replyTo, threadMsg,
+                    msg.message, msg.entities, null, null, true, 0, 0,
+                    media.ttl_seconds, target, false,
+                )
+                media.document is TLRPC.TL_document -> SendMessagesHelper.SendMessageParams.of(
+                    media.document as TLRPC.TL_document, null, msg.attachPath, did, replyTo, threadMsg,
+                    msg.message, msg.entities, null, null, true, 0, 0,
+                    media.ttl_seconds, target, null, false,
+                )
+                media is TLRPC.TL_messageMediaVenue || media is TLRPC.TL_messageMediaGeo ->
+                    SendMessagesHelper.SendMessageParams.of(media, did, replyTo, threadMsg, null, null, true, 0, 0)
+                media.phone_number != null -> {
+                    val user = TLRPC.TL_userContact_old2()
+                    user.phone = media.phone_number
+                    user.first_name = media.first_name
+                    user.last_name = media.last_name
+                    user.id = media.user_id
+                    SendMessagesHelper.SendMessageParams.of(user, did, replyTo, threadMsg, null, null, true, 0, 0)
+                }
+                else -> null
+            }
+            if (params != null) {
+                params.replyQuote = quote
+                params.monoForumPeer = mono
+                params.suggestionParams = suggest
+                helper.sendMessage(params)
+                return
+            }
+        }
+
+        if (msg.message != null) {
+            var webPage: TLRPC.WebPage? = null
+            if (media is TLRPC.TL_messageMediaWebPage) {
+                webPage = media.webpage
+            }
+            val params = SendMessagesHelper.SendMessageParams.of(
+                msg.message, did, replyTo, threadMsg,
+                webPage, webPage != null, msg.entities, null, null, true, 0, 0, null, false,
+            )
+            params.replyQuote = quote
+            params.monoForumPeer = mono
+            params.suggestionParams = suggest
+            helper.sendMessage(params)
+            return
+        }
+
+        activity.forwardMessages(arrayListOf(target), true, false, true, 0, 0L)
+    }
+
+    private fun getPendingReply(activity: ChatActivity): MessageObject? {
+        val reply = activity.replyingMessageObject ?: return null
+        if (reply === activity.threadMessage || reply.isTopicMainMessage) return null
+        return reply
     }
 
     // photo → full cached photo file; video/gif/round → cached poster thumb (matches photo viewer's "copy frame" intent).
@@ -1145,13 +1253,14 @@ object ChatHelper {
     fun maybeHandleInlineButtonLongTap(
         activity: ChatActivity,
         cell: ChatMessageCell,
-        button: TLRPC.KeyboardButton,
+        button: TL_keyboard.KeyboardButtonProto,
     ): Boolean {
-        if (button !is TLRPC.TL_keyboardButtonCallback) return false
+        val callback = TLKeyboardHelper.getType(button, TL_keyboard.TL_inlineButtonTypeCallback::class.java)
+            ?: return false
         if (activity.parentActivity == null) return false
 
         val text = button.text ?: ""
-        val data = button.data?.let { String(it, Charsets.UTF_8) } ?: ""
+        val data = callback.data?.let { String(it, Charsets.UTF_8) } ?: ""
         runCatching {
             cell.performHapticFeedback(
                 HapticFeedbackConstants.LONG_PRESS,
@@ -1250,9 +1359,13 @@ object ChatHelper {
     @JvmStatic
     fun maybeCompactForwardLine(name: CharSequence, maxWidth: Int, messageObject: MessageObject): CharSequence {
         if (!isCompactForward(messageObject)) return name
-        val suffix = getForwardTimeSuffix(messageObject)?.let { " • $it" } ?: ""
-        val available = maxWidth - getCompactForwardPrefixWidth(messageObject) -
-            Theme.chat_forwardNamePaint.measureText(suffix)
+        val withoutSuffix = maxWidth - getCompactForwardPrefixWidth(messageObject)
+        var suffix = getForwardTimeSuffix(messageObject)?.let { " • $it" } ?: ""
+        var available = withoutSuffix - Theme.chat_forwardNamePaint.measureText(suffix)
+        if (available < AndroidUtilities.dp(COMPACT_FORWARD_MIN_NAME_WIDTH)) {
+            suffix = ""
+            available = withoutSuffix.toFloat()
+        }
         val sb = SpannableStringBuilder()
         appendTimeIcon(sb, R.drawable.mini_forwarded, sizeDp = COMPACT_FORWARD_ICON_SIZE, translateYDp = 1f)
         sb.append(" ")

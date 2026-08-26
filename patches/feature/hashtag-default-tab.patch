@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 07:33:19 +0400
+Subject: default to "this channel" when tapping hashtag
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -35338,7 +35338,7 @@ public class ChatActivity extends BaseFragment implements
+         if (searchUserButton != null) {
+             searchUserButton.setVisibility(View.GONE);
+         }
+-        if (channelHashtags || forcePublic || ChatObject.isChannelAndNotMegaGroup(currentChat) && ChatObject.isPublic(currentChat) && searchingHashtag != null) {
++        if (channelHashtags || forcePublic) {
+             defaultSearchPage = 2;
+         } else {
+             defaultSearchPage = 0;

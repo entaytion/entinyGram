@@ -4,17 +4,32 @@ Date: Wed, 10 Jun 2026 01:14:57 +0400
 Subject: "original" toggle in video quality selector to skip re-encoding
 
 ---
- .../messenger/SendMessagesHelper.java         |  6 ++++
- .../telegram/messenger/VideoEditedInfo.java   | 13 +++++++-
- .../ui/Components/VideoCompressButton.java    |  8 +++++
- .../java/org/telegram/ui/PhotoViewer.java     | 33 ++++++++++++++++---
- 4 files changed, 54 insertions(+), 6 deletions(-)
+ .../telegram/messenger/MediaController.java   |  2 +-
+ .../messenger/SendMessagesHelper.java         |  6 +++
+ .../telegram/messenger/VideoEditedInfo.java   | 16 +++++-
+ .../video/MediaCodecVideoConvertor.java       | 19 ++++---
+ .../ui/Components/VideoCompressButton.java    |  8 +++
+ .../java/org/telegram/ui/PhotoViewer.java     | 54 +++++++++++++++----
+ 6 files changed, 87 insertions(+), 18 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -6796,7 +6796,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+      * Some encoders(e.g. OMX.Exynos) can forcibly raise bitrate during encoder initialization.
+      */
+     public static int extractRealEncoderBitrate(int width, int height, int bitrate, boolean tryHevc) {
+-        String cacheKey = width + "" + height + "" + bitrate;
++        String cacheKey = width + "" + height + "" + bitrate + tryHevc;
+         Integer cachedBitrate = cachedEncoderBitrates.get(cacheKey);
+         if (cachedBitrate != null) return cachedBitrate;
+         try {
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10971,6 +10971,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -11059,6 +11059,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                                  if (videoEditedInfo.resultWidth != videoEditedInfo.originalWidth) {
                                      originalPath += "_" + videoEditedInfo.resultWidth;
                                  }
@@ -24,7 +39,7 @@ index 0000000..0000000 100644
                                  startTime = videoEditedInfo.startTime >= 0 ? videoEditedInfo.startTime : 0;
                              }
                              TLRPC.TL_document document = null;
-@@ -11817,6 +11820,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -11902,6 +11905,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          if (videoEditedInfo.resultWidth != videoEditedInfo.originalWidth) {
                              originalPath += "_" + videoEditedInfo.resultWidth;
                          }
@@ -38,16 +53,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/VideoEditedInfo.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/VideoEditedInfo.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/VideoEditedInfo.java
-@@ -74,6 +74,8 @@ public class VideoEditedInfo {
+@@ -74,6 +74,9 @@ public class VideoEditedInfo {
      public MediaController.CropState cropState;
      public boolean isPhoto;
      public boolean isStory;
 +    public boolean inu_originalQuality;
 +    public boolean inu_originalQualityNeedsConvert;
++    public boolean inu_preferHevc;
      public StoryEntry.HDRInfo hdrInfo;
  
      public CollageLayout collage;
-@@ -418,7 +420,7 @@ public class VideoEditedInfo {
+@@ -418,7 +421,7 @@ public class VideoEditedInfo {
  
      public String getString() {
          String filters;
@@ -56,27 +72,29 @@ index 0000000..0000000 100644
              int len = 10;
              if (filterState != null) {
                  len += 160;
-@@ -540,6 +542,9 @@ public class VideoEditedInfo {
+@@ -540,6 +543,10 @@ public class VideoEditedInfo {
              } else {
                  serializedData.writeInt32(TLRPC.TL_null.constructor);
              }
 +            // fork flags go past the stock v11 fields without claiming a new version: stock parsers ignore trailing bytes
 +            serializedData.writeBool(inu_originalQuality);
 +            serializedData.writeBool(inu_originalQualityNeedsConvert);
++            serializedData.writeBool(inu_preferHevc);
              filters = Utilities.bytesToHex(serializedData.toByteArray());
              serializedData.cleanup();
          } else {
-@@ -689,6 +694,9 @@ public class VideoEditedInfo {
+@@ -689,6 +696,10 @@ public class VideoEditedInfo {
                                  }
                              }
                          }
 +                        // absent in stock-written blobs — readBool(false) silently yields false at EOF
 +                        inu_originalQuality = serializedData.readBool(false);
 +                        inu_originalQualityNeedsConvert = serializedData.readBool(false);
++                        inu_preferHevc = serializedData.readBool(false);
                          serializedData.cleanup();
                      }
                  } else {
-@@ -717,6 +725,9 @@ public class VideoEditedInfo {
+@@ -717,6 +728,9 @@ public class VideoEditedInfo {
              }
              return !mixedSoundInfos.isEmpty() || mediaEntities != null || paintPath != null || blurPath != null || filterState != null || (cropState != null && !cropState.isEmpty()) || startTime > 0 || endTime != -1 && endTime != estimatedDuration || originalHeight != resultHeight || originalWidth != resultWidth;
          }
@@ -86,6 +104,83 @@ index 0000000..0000000 100644
          return !mixedSoundInfos.isEmpty() || mediaEntities != null || paintPath != null || blurPath != null || filterState != null || cropState != null || !roundVideo || startTime > 0 || endTime != -1 && endTime != estimatedDuration;
      }
  
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/video/MediaCodecVideoConvertor.java b/TMessagesProj/src/main/java/org/telegram/messenger/video/MediaCodecVideoConvertor.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/video/MediaCodecVideoConvertor.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/video/MediaCodecVideoConvertor.java
+@@ -49,6 +49,7 @@ public class MediaCodecVideoConvertor {
+     private static final int MEDIACODEC_TIMEOUT_DEFAULT = 2500;
+     private static final int MEDIACODEC_TIMEOUT_INCREASED = 22000;
+     private String outputMimeType;
++    private boolean inu_preferHevc;
+ 
+     public boolean convertVideo(ConvertVideoParams convertVideoParams) {
+         if (convertVideoParams.isSticker) {
+@@ -107,7 +108,8 @@ public class MediaCodecVideoConvertor {
+         String selectedEncoderName = null;
+ 
+         final boolean isWebm = convertVideoParams.isSticker;
+-        boolean shouldUseHevc = isStory;
++        inu_preferHevc = convertVideoParams.inu_preferHevc;
++        boolean shouldUseHevc = isStory || inu_preferHevc;
+         outputMimeType = isWebm ? "video/x-vnd.on2.vp9" : shouldUseHevc ? "video/hevc" : "video/avc";
+ 
+         boolean canBeBrokenEncoder = false;
+@@ -164,7 +166,7 @@ public class MediaCodecVideoConvertor {
+                     }
+ 
+                     if (encoder == null) {
+-                        encoder = createEncoderForMimeType();
++                        encoder = createEncoderForMimeType(resultWidth, resultHeight, 30);
+                     }
+ 
+                     MediaFormat outputFormat = MediaFormat.createVideoFormat(outputMimeType, resultWidth, resultHeight);
+@@ -455,7 +457,7 @@ public class MediaCodecVideoConvertor {
+                             }
+ 
+                             if (encoder == null) {
+-                                encoder = createEncoderForMimeType();
++                                encoder = createEncoderForMimeType(w, h, framerate);
+                             }
+ 
+                             if (BuildVars.LOGS_ENABLED) {
+@@ -980,14 +982,17 @@ public class MediaCodecVideoConvertor {
+         }
+     }
+ 
+-    private MediaCodec createEncoderForMimeType() throws IOException {
++    private MediaCodec createEncoderForMimeType(int width, int height, int framerate) throws IOException {
+         MediaCodec encoder = null;//MediaCodec.createEncoderByType(outputMimeType);
+         if (outputMimeType.equals("video/hevc") && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+-            String encoderName = SharedConfig.findGoodHevcEncoder();
++            String encoderName = inu_preferHevc
++                    ? desu.inugram.helpers.media.OriginalVideoQualityHelper.findHevcEncoderName(width, height, framerate)
++                    : SharedConfig.findGoodHevcEncoder();
+             if (encoderName != null) {
+                 encoder = MediaCodec.createByCodecName(encoderName);
+             }
+-        } else {
++        }
++        if (encoder == null) {
+             if (outputMimeType.equals("video/hevc")) {
+                 outputMimeType = "video/avc";
+             }
+@@ -1570,6 +1575,7 @@ public class MediaCodecVideoConvertor {
+         boolean muted;
+         float volume;
+         boolean isStory;
++        boolean inu_preferHevc;
+         StoryEntry.HDRInfo hdrInfo;
+         public ArrayList<MixedSoundInfo> soundInfos = new ArrayList<MixedSoundInfo>();
+         int account;
+@@ -1623,6 +1629,7 @@ public class MediaCodecVideoConvertor {
+             params.muted = info.muted;
+             params.volume = info.volume;
+             params.isStory = info.isStory;
++            params.inu_preferHevc = info.inu_preferHevc;
+             params.hdrInfo = info.hdrInfo;
+             params.isDark = info.isDark;
+             params.wallpaperPeerId = info.wallpaperPeerId;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoCompressButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoCompressButton.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoCompressButton.java
@@ -133,16 +228,17 @@ index 0000000..0000000 100644
          compressItem.setState(videoConvertSupported && compressionsCount > 1, muteVideo, Math.min(resultWidth, resultHeight));
          compressItem.setContentDescription(getString("AccDescrVideoQuality", R.string.AccDescrVideoQuality));
          itemsLayout.addView(compressItem, LayoutHelper.createLinear(48, 48));
-@@ -9846,6 +9849,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9846,6 +9849,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          videoEditedInfo.start = videoCutStart;
          videoEditedInfo.end = videoCutEnd;
          videoEditedInfo.compressQuality = selectedCompression;
 +        videoEditedInfo.inu_originalQuality = inu_isOriginalVideoQuality();
-+        videoEditedInfo.inu_originalQualityNeedsConvert = videoEditedInfo.inu_originalQuality && !isH264Video;
++        videoEditedInfo.inu_originalQualityNeedsConvert = videoEditedInfo.inu_originalQuality && !inu_canSendVideoAsIs();
++        videoEditedInfo.inu_preferHevc = inu_encodesToHevc();
          videoEditedInfo.rotationValue = rotationValue;
          videoEditedInfo.originalWidth = originalWidth;
          videoEditedInfo.originalHeight = originalHeight;
-@@ -14992,6 +14997,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14992,6 +14998,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      float start = 0.0f;
                      float end = 1.0f;
                      int compressQuality = -1;
@@ -150,7 +246,7 @@ index 0000000..0000000 100644
                      String coverPath = null;
                      TLRPC.Photo coverPhoto = null;
                      Object coverPhotoObject = null;
-@@ -15002,13 +15008,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15002,13 +15009,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              start = photoEntry.editedInfo.start;
                              end = photoEntry.editedInfo.end;
                              compressQuality = photoEntry.editedInfo.compressQuality;
@@ -166,7 +262,7 @@ index 0000000..0000000 100644
                          if (isDocumentsPicker) {
                              showVideoTimeline(false, animated);
                              videoAvatarTooltip.setVisibility(View.GONE);
-@@ -21143,6 +21150,16 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21128,6 +21136,24 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      private volatile int selectedCompression;
      private volatile int compressionsCount = -1;
      private int previousCompression;
@@ -180,10 +276,26 @@ index 0000000..0000000 100644
 +    private boolean inu_isOriginalVideoQuality() {
 +        return inu_originalQualitySelected && inu_originalVideoQualityAvailable();
 +    }
++
++    private boolean inu_canSendVideoAsIs() {
++        return inu_isOriginalVideoQuality() && desu.inugram.helpers.media.OriginalVideoQualityHelper.canSendAsIs(currentPathObject, inu_videoCodecMime);
++    }
++
++    private boolean inu_encodesToHevc() {
++        return inu_isOriginalVideoQuality() && desu.inugram.helpers.media.OriginalVideoQualityHelper.isHevc(inu_videoCodecMime);
++    }
  
      private int rotationValue;
      private volatile int originalWidth;
-@@ -21363,11 +21380,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21140,6 +21166,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+     private int videoFramerate;
+     private volatile boolean videoConvertSupported;
+     private volatile boolean isH264Video;
++    private volatile String inu_videoCodecMime;
+     private long startTime;
+     private long endTime;
+     private float videoCutStart;
+@@ -21348,11 +21375,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
      }
  
@@ -197,7 +309,16 @@ index 0000000..0000000 100644
          updateWidthHeightBitrateForCompression();
          updateVideoInfo();
          if (request) {
-@@ -21404,6 +21422,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21376,7 +21404,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 ? (editState.croppedMediaEntities != null && !editState.croppedMediaEntities.isEmpty() ? editState.croppedMediaEntities : null)
+                 : (editState.mediaEntities != null && !editState.mediaEntities.isEmpty() ? editState.mediaEntities : null);
+         Object paintPath = editState.croppedPaintPath != null ? editState.croppedPaintPath : editState.paintPath;
+-        return !isH264Video || videoCutStart != 0 || rotationValue != 0 || resultWidth != originalWidth || resultHeight != originalHeight
++        return !isH264Video && !inu_canSendVideoAsIs() || videoCutStart != 0 || rotationValue != 0 || resultWidth != originalWidth || resultHeight != originalHeight
+                 || editState.cropState != null || mediaEntities != null || paintPath != null || editState.savedFilterState != null || sendPhotoType == SELECT_TYPE_AVATAR;
+     }
+ 
+@@ -21389,6 +21417,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              return;
          }
          if (!centerImageIsLivePhoto) {
@@ -205,7 +326,7 @@ index 0000000..0000000 100644
              compressItem.setState(videoConvertSupported && compressionsCount > 1, muteVideo, Math.min(resultWidth, resultHeight));
          }
          itemsLayout.requestLayout();
-@@ -21455,7 +21474,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21440,7 +21469,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
      }
  
@@ -214,7 +335,7 @@ index 0000000..0000000 100644
          if (videoPreviewMessageObject != null) {
              MediaController.getInstance().cancelVideoConvert(videoPreviewMessageObject);
          }
-@@ -21534,7 +21553,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21519,7 +21548,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      private Size calculateResultVideoSize() {
@@ -223,7 +344,33 @@ index 0000000..0000000 100644
              return new Size(originalWidth, originalHeight);
          }
          float maxSize;
-@@ -21623,6 +21642,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21559,10 +21588,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+         if (bitrate != 0 && sendPhotoType != SELECT_TYPE_AVATAR) {
+             Size resultSize = calculateResultVideoSize();
+             if (resultSize.getWidth() == originalWidth && resultSize.getHeight() == originalHeight) {
+-                MediaController.extractRealEncoderBitrate(resultSize.getWidth(), resultSize.getHeight(), originalBitrate, false);
++                MediaController.extractRealEncoderBitrate(resultSize.getWidth(), resultSize.getHeight(), originalBitrate, inu_encodesToHevc());
+             } else {
+                 int targetBitrate = MediaController.makeVideoBitrate(originalHeight, originalWidth, originalBitrate, resultSize.getHeight(), resultSize.getWidth());
+-                MediaController.extractRealEncoderBitrate(resultSize.getWidth(), resultSize.getHeight(), targetBitrate, false);
++                MediaController.extractRealEncoderBitrate(resultSize.getWidth(), resultSize.getHeight(), targetBitrate, inu_encodesToHevc());
+             }
+         }
+     }
+@@ -21592,10 +21621,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 encoderBitrate = bitrate;
+             } else if (resultWidth == originalWidth && resultHeight == originalHeight) {
+                 bitrate = originalBitrate;
+-                encoderBitrate = MediaController.extractRealEncoderBitrate(resultWidth, resultHeight, bitrate, false);
++                encoderBitrate = MediaController.extractRealEncoderBitrate(resultWidth, resultHeight, bitrate, inu_encodesToHevc());
+             } else {
+                 bitrate = MediaController.makeVideoBitrate(originalHeight, originalWidth, originalBitrate, resultHeight, resultWidth);
+-                encoderBitrate = MediaController.extractRealEncoderBitrate(resultWidth, resultHeight, bitrate, false);
++                encoderBitrate = MediaController.extractRealEncoderBitrate(resultWidth, resultHeight, bitrate, inu_encodesToHevc());
+             }
+             videoFramesSize = (long) (encoderBitrate / 8 * videoDuration / 1000);
+         }
+@@ -21608,6 +21637,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
          if (show) {
              previousCompression = selectedCompression;
@@ -231,7 +378,7 @@ index 0000000..0000000 100644
          }
          if (qualityChooseViewAnimation != null) {
              qualityChooseViewAnimation.cancel();
-@@ -21738,7 +21758,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21723,7 +21753,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          return new ByteArrayInputStream(output, 0, outPos);
      }
  
@@ -240,7 +387,7 @@ index 0000000..0000000 100644
          if (currentLoadingVideoRunnable != null) {
              Utilities.globalQueue.cancelRunnable(currentLoadingVideoRunnable);
              currentLoadingVideoRunnable = null;
-@@ -21746,6 +21766,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21731,6 +21761,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          videoTimelineView.setVideoPath(videoPath, videoPathOffset, start, end, livePhotoTimestampUs);
          videoPreviewMessageObject = null;
          muteVideo = muted || sendPhotoType == SELECT_TYPE_AVATAR;
@@ -249,7 +396,15 @@ index 0000000..0000000 100644
  
          compressionsCount = -1;
          rotationValue = 0;
-@@ -21799,6 +21821,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21757,6 +21789,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                     resultHeight = originalHeight = params[AnimatedFileInfo.PARAM_NUM_HEIGHT];
+                     updateCompressionsCount(originalWidth, originalHeight);
+                     selectedCompression = compressQuality == -1 ? selectCompression() : compressQuality;
++                    inu_videoCodecMime = desu.inugram.helpers.media.OriginalVideoQualityHelper.getVideoCodecMime(videoPath);
+                     prepareRealEncoderBitrate();
+                     isH264Video = MediaController.isH264Video(videoPath);
+                 }
+@@ -21784,6 +21817,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                          }
  
                          if (!centerImageIsLivePhoto) {

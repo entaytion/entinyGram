@@ -34,7 +34,7 @@ index 0000000..0000000 100644
  import static org.telegram.messenger.AndroidUtilities.dp;
  import static org.telegram.messenger.AndroidUtilities.dpf2;
  import static org.telegram.messenger.AndroidUtilities.lerp;
-@@ -11197,7 +11199,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11242,7 +11244,7 @@ public class ChatActivityEnterView extends FrameLayout implements
      }
  
      public boolean hasBotWebView() {
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
      }
  
      private void updateBotButton(boolean animated) {
-@@ -11208,7 +11210,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11253,7 +11255,8 @@ public class ChatActivityEnterView extends FrameLayout implements
              animated = false;
          }
          boolean hasBotWebView = hasBotWebView();
@@ -53,7 +53,7 @@ index 0000000..0000000 100644
          boolean wasVisible = botButton != null && botButton.getVisibility() == VISIBLE;
          if (hasBotWebView || hasBotCommands || hasQuickReplies || botReplyMarkup != null) {
              if (botReplyMarkup != null) {
-@@ -11226,7 +11229,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -11271,7 +11274,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                      botButton.setContentDescription(getString("AccDescrBotKeyboard", R.string.AccDescrBotKeyboard));
                  }
              } else {

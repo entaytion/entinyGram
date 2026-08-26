@@ -110,6 +110,12 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.HIDE_HASHTAG_SUGGESTIONS.value)
         )
         items.add(
+            UItem.asCheck(
+                TOGGLE_HIDE_RICH_EDITOR_BUTTON,
+                LocaleController.getString(R.string.InuHideRichEditorButton),
+            ).setChecked(InuConfig.HIDE_RICH_EDITOR_BUTTON.value)
+        )
+        items.add(
             mkTwoLineCheckItem(
                 TOGGLE_DISABLE_MOTION_PHOTOS,
                 R.string.InuDisableMotionPhotos,
@@ -207,6 +213,11 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_HIDE_HASHTAG_SUGGESTIONS -> {
                 val new = InuConfig.HIDE_HASHTAG_SUGGESTIONS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_HIDE_RICH_EDITOR_BUTTON -> {
+                val new = InuConfig.HIDE_RICH_EDITOR_BUTTON.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
 
@@ -319,6 +330,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_BG_PARALLAX = InuUtils.generateId()
         private val TOGGLE_HIDE_PAID_REACTION_UPSELL = InuUtils.generateId()
         private val TOGGLE_HIDE_HASHTAG_SUGGESTIONS = InuUtils.generateId()
+        private val TOGGLE_HIDE_RICH_EDITOR_BUTTON = InuUtils.generateId()
         private val TOGGLE_DISABLE_MOTION_PHOTOS = InuUtils.generateId()
         private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
         private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
@@ -344,6 +356,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-bg-parallax", R.string.InuDisableBgParallax, TOGGLE_DISABLE_BG_PARALLAX),
                 SearchRegistry.Entry("hide-paid-reaction-upsell", R.string.InuHidePaidReactionUpsell, TOGGLE_HIDE_PAID_REACTION_UPSELL),
                 SearchRegistry.Entry("hide-hashtag-suggestions", R.string.InuHideHashtagSuggestions, TOGGLE_HIDE_HASHTAG_SUGGESTIONS),
+                SearchRegistry.Entry("hide-rich-editor-button", R.string.InuHideRichEditorButton, TOGGLE_HIDE_RICH_EDITOR_BUTTON),
                 SearchRegistry.Entry("disable-motion-photos", R.string.InuDisableMotionPhotos, TOGGLE_DISABLE_MOTION_PHOTOS),
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),

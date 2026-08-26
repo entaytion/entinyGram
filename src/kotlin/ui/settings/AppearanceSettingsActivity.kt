@@ -32,6 +32,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Avatars, InuConfig.MATERIAL3_AVATARS, TOGGLE_MATERIAL3_AVATARS),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3BottomTabs, InuConfig.M3_BOTTOM_TABS, TOGGLE_M3_BOTTOM_TABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterialProfileActions, InuConfig.MATERIAL_PROFILE_ACTIONS, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3NavigationAnimation, InuConfig.M3_NAVIGATION_ANIMATION, TOGGLE_M3_NAVIGATION_ANIMATION),
             ),
@@ -231,7 +232,16 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (m3Group.handleClick(item, view) { listView.adapter.update(true) }) return
+        if (m3Group.handleClick(item, view) { changed ->
+            when (changed?.id) {
+                TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
+                TOGGLE_M3_SECTIONS_STYLE -> inu_rebuildSelf()
+            }
+            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_BOTTOM_TABS)) {
+                softRebuild()
+            }
+            listView.adapter.update(true)
+        }) return
 
         when (item.id) {
 
@@ -389,6 +399,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
+        private val TOGGLE_M3_BOTTOM_TABS = InuUtils.generateId()
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
@@ -427,6 +438,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-fabs", R.string.InuMaterial3Fabs, TOGGLE_MATERIAL3_FABS),
                 SearchRegistry.Entry("material3-sections", R.string.InuMaterial3Sections, TOGGLE_M3_SECTIONS_STYLE),
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
+                SearchRegistry.Entry("m3-bottom-tabs", R.string.InuMaterial3BottomTabs, TOGGLE_M3_BOTTOM_TABS),
                 SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),

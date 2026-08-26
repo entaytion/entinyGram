@@ -4,14 +4,36 @@ Date: Fri, 17 Jul 2026 01:02:06 +0400
 Subject: hopefully fix stale notifications for chats read on another device
 
 ---
- .../java/org/telegram/messenger/NotificationsController.java | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../messenger/MessagesController.java         |  2 +
+ .../messenger/NotificationsController.java    | 64 +++++++++++++++++--
+ .../ui/Stories/StoriesController.java         |  1 +
+ 3 files changed, 61 insertions(+), 6 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -20648,6 +20648,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     } else if (baseUpdate instanceof TL_update.TL_updateReadChannelDiscussionInbox) {
+                         TL_update.TL_updateReadChannelDiscussionInbox update = (TL_update.TL_updateReadChannelDiscussionInbox) baseUpdate;
+                         getNotificationCenter().postNotificationName(NotificationCenter.threadMessagesRead, -update.channel_id, update.top_msg_id, update.read_max_id, 0);
++                        getNotificationsController().inu_processReadTopic(-update.channel_id, update.top_msg_id, update.read_max_id);
+                         if ((update.flags & 1) != 0) {
+                             getMessagesStorage().updateRepliesMaxReadId(update.broadcast_id, update.broadcast_post, update.read_max_id, 0,true);
+                             getNotificationCenter().postNotificationName(NotificationCenter.commentsRead, update.broadcast_id, update.broadcast_post, update.read_max_id);
+@@ -21292,6 +21293,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public void checkUnreadReactions(long dialogId, long topicId, SparseBooleanArray unreadReactions) {
++        getNotificationsController().inu_processReadReactions(dialogId, unreadReactions);
+         checkUnreadReactionsInternal(dialogId, topicId, unreadReactions, true);
+     }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -248,6 +248,8 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -250,6 +250,8 @@ public class NotificationsController extends BaseController implements Notificat
  
          dialogsNotificationsFacade = new NotificationsSettingsFacade(currentAccount);
  
@@ -20,23 +42,138 @@ index 0000000..0000000 100644
          AndroidUtilities.runOnUIThread(() -> {
              getNotificationCenter().addObserver(this, NotificationCenter.fileLoaded);
          });
-@@ -3277,6 +3279,7 @@ public class NotificationsController extends BaseController implements Notificat
-                 notificationManager.cancel(wearNotificationsIds.valueAt(a));
+@@ -515,6 +517,51 @@ public class NotificationsController extends BaseController implements Notificat
+         });
+     }
+ 
++    public void inu_processReadTopic(long dialogId, long topicId, int maxId) {
++        if (topicId == 0) {
++            return;
++        }
++        notificationsQueue.postRunnable(() -> {
++            ArrayList<Integer> ids = null;
++            for (int a = 0; a < pushMessages.size(); a++) {
++                MessageObject messageObject = pushMessages.get(a);
++                if (messageObject.getDialogId() != dialogId || messageObject.getId() > maxId || messageObject.isStoryReactionPush) {
++                    continue;
++                }
++                if (MessageObject.getTopicId(currentAccount, messageObject.messageOwner, getMessagesController().isForum(messageObject)) != topicId) {
++                    continue;
++                }
++                if (ids == null) {
++                    ids = new ArrayList<>();
++                }
++                ids.add(messageObject.getId());
++            }
++            if (ids != null) {
++                LongSparseArray<ArrayList<Integer>> map = new LongSparseArray<>();
++                map.put(DialogObject.isChatDialog(dialogId) && ChatObject.isChannel(getMessagesController().getChat(-dialogId)) ? dialogId : 0, ids);
++                removeDeletedMessagesFromNotifications(map, false);
++            }
++        });
++    }
++
++    public void inu_processReadReactions(long dialogId, SparseBooleanArray unreadReactions) {
++        ArrayList<Integer> ids = null;
++        for (int i = 0; i < unreadReactions.size(); i++) {
++            if (!unreadReactions.valueAt(i)) {
++                if (ids == null) {
++                    ids = new ArrayList<>();
++                }
++                ids.add(unreadReactions.keyAt(i));
++            }
++        }
++        if (ids == null) {
++            return;
++        }
++        LongSparseArray<ArrayList<Integer>> map = new LongSparseArray<>();
++        map.put(ChatObject.isChannel(getMessagesController().getChat(-dialogId)) ? dialogId : 0, ids);
++        removeDeletedMessagesFromNotifications(map, true);
++    }
++
+     public void removeDeletedMessagesFromNotifications(LongSparseArray<ArrayList<Integer>> deletedMessages, boolean isReactions) {
+         ArrayList<MessageObject> popupArrayRemove = new ArrayList<>(0);
+         notificationsQueue.postRunnable(() -> {
+@@ -584,7 +631,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.pushMessagesUpdated);
+                 });
+             }
+-            if (old_unread_count != total_unread_count) {
++            if (old_unread_count != total_unread_count || !popupArrayRemove.isEmpty()) {
+                 if (!notifyCheck) {
+                     delayedPushMessages.clear();
+                     showOrUpdateNotification(notifyCheck);
+@@ -662,7 +709,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     pushDialogsOverrideMention.remove(dialogId);
+                 }
+             }
+-            if (popupArrayRemove.isEmpty()) {
++            if (!popupArrayRemove.isEmpty()) {
+                 AndroidUtilities.runOnUIThread(() -> {
+                     for (int a = 0, size = popupArrayRemove.size(); a < size; a++) {
+                         popupMessages.remove(popupArrayRemove.get(a));
+@@ -670,7 +717,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.pushMessagesUpdated);
+                 });
+             }
+-            if (old_unread_count != total_unread_count) {
++            if (old_unread_count != total_unread_count || !popupArrayRemove.isEmpty()) {
+                 if (!notifyCheck) {
+                     delayedPushMessages.clear();
+                     showOrUpdateNotification(notifyCheck);
+@@ -842,7 +889,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     int messageId = inbox.get(key);
+                     for (int a = 0; a < pushMessages.size(); a++) {
+                         MessageObject messageObject = pushMessages.get(a);
+-                        if (!messageObject.messageOwner.from_scheduled && messageObject.getDialogId() == key && messageObject.getId() <= messageId && !messageObject.isStoryReactionPush) {
++                        if (messageObject.getDialogId() == key && messageObject.getId() <= messageId && !messageObject.isStoryReactionPush) {
+                             if (isPersonalMessage(messageObject)) {
+                                 personalCount--;
+                             }
+@@ -917,6 +964,8 @@ public class NotificationsController extends BaseController implements Notificat
+                 }
+             }
+             if (!popupArrayRemove.isEmpty()) {
++                delayedPushMessages.clear();
++                showOrUpdateNotification(false);
+                 AndroidUtilities.runOnUIThread(() -> {
+                     for (int a = 0, size = popupArrayRemove.size(); a < size; a++) {
+                         popupMessages.remove(popupArrayRemove.get(a));
+@@ -1448,7 +1497,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     pushDialogsOverrideMention.remove(dialogId);
+                     for (int a = 0; a < pushMessages.size(); a++) {
+                         MessageObject messageObject = pushMessages.get(a);
+-                        if (!messageObject.messageOwner.from_scheduled && messageObject.getDialogId() == dialogId && !messageObject.isStoryReactionPush) {
++                        if (messageObject.getDialogId() == dialogId && !messageObject.isStoryReactionPush) {
+                             if (isPersonalMessage(messageObject)) {
+                                 personalCount--;
+                             }
+@@ -1490,7 +1539,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.pushMessagesUpdated);
+                 });
+             }
+-            if (old_unread_count != total_unread_count) {
++            if (old_unread_count != total_unread_count || !popupArrayToRemove.isEmpty()) {
+                 if (!notifyCheck) {
+                     delayedPushMessages.clear();
+                     showOrUpdateNotification(notifyCheck);
+@@ -3280,6 +3329,7 @@ public class NotificationsController extends BaseController implements Notificat
              }
              wearNotificationsIds.clear();
+             NotificationsHelper.clearPostedSignatures(currentAccount);
 +            NotificationsHelper.saveWearNotificationIds(currentAccount, wearNotificationsIds);
          });
      }
  
-@@ -3295,6 +3298,7 @@ public class NotificationsController extends BaseController implements Notificat
-                 notificationManager.cancel(wearNotificationsIds.valueAt(a));
+@@ -3299,6 +3349,7 @@ public class NotificationsController extends BaseController implements Notificat
              }
              wearNotificationsIds.clear();
+             NotificationsHelper.clearPostedSignatures(currentAccount);
 +            NotificationsHelper.saveWearNotificationIds(currentAccount, wearNotificationsIds);
              AndroidUtilities.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.pushMessagesUpdated));
          } catch (Exception e) {
              FileLog.e(e);
-@@ -5850,6 +5854,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5870,6 +5921,7 @@ public class NotificationsController extends BaseController implements Notificat
                  ShortcutManagerCompat.removeDynamicShortcuts(ApplicationLoader.applicationContext, ids);
              }
          }
@@ -44,3 +181,15 @@ index 0000000..0000000 100644
      }
  
      private String cutLastName(String name) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
+@@ -1341,6 +1341,7 @@ public class StoriesController {
+             int maxStoryReadId = Math.max(dialogIdToMaxReadId.get(dialogId, 0), maxStoryId);
+             dialogIdToMaxReadId.put(dialogId, maxStoryReadId);
+             storiesStorage.updateMaxReadId(dialogId, maxStoryReadId);
++            NotificationsController.getInstance(currentAccount).processReadStories(dialogId, maxStoryReadId);
+             TL_stories.PeerStories userStories = getStories(dialogId);
+             if (userStories == null) {
+                 return;

@@ -4,22 +4,24 @@ Date: Wed, 20 May 2026 22:08:21 +0400
 Subject: paranoia mode (hide chats, accounts, disguise as stock app)
 
 ---
- .../java/org/telegram/messenger/ContactsController.java   | 1 +
- .../java/org/telegram/messenger/MediaDataController.java  | 3 +++
- .../java/org/telegram/messenger/MessagesController.java   | 3 +++
- .../main/java/org/telegram/messenger/MessagesStorage.java | 7 +++++++
- .../org/telegram/messenger/NotificationsController.java   | 3 +++
- .../org/telegram/ui/Adapters/DialogsSearchAdapter.java    | 5 +++++
- .../org/telegram/ui/Adapters/SearchAdapterHelper.java     | 8 ++++----
- .../src/main/java/org/telegram/ui/CallLogActivity.java    | 4 ++++
- .../java/org/telegram/ui/Cells/AppIconsSelectorCell.java  | 1 +
- .../src/main/java/org/telegram/ui/Cells/SessionCell.java  | 4 ++++
- .../main/java/org/telegram/ui/Components/ShareAlert.java  | 1 +
- .../src/main/java/org/telegram/ui/DialogsActivity.java    | 5 +++--
- .../main/java/org/telegram/ui/GroupCreateActivity.java    | 4 +++-
- .../src/main/java/org/telegram/ui/SessionBottomSheet.java | 3 +++
- .../java/org/telegram/ui/Stories/StoriesController.java   | 1 +
- 15 files changed, 46 insertions(+), 7 deletions(-)
+ .../messenger/ContactsController.java         |  3 ++
+ .../messenger/MediaDataController.java        |  3 ++
+ .../messenger/MessagesController.java         | 29 +++++++++++-----
+ .../telegram/messenger/MessagesStorage.java   |  7 ++++
+ .../messenger/NotificationsController.java    |  3 ++
+ .../ui/Adapters/DialogsSearchAdapter.java     |  7 +++-
+ .../ui/Adapters/SearchAdapterHelper.java      |  8 ++---
+ .../java/org/telegram/ui/CallLogActivity.java |  4 +++
+ .../ui/Cells/AppIconsSelectorCell.java        |  1 +
+ .../org/telegram/ui/Cells/SessionCell.java    |  4 +++
+ .../ui/Components/SharedMediaLayout.java      | 12 +++----
+ .../java/org/telegram/ui/DialogsActivity.java |  5 +--
+ .../org/telegram/ui/GroupCreateActivity.java  |  4 ++-
+ .../telegram/ui/PrivacyControlActivity.java   |  4 +++
+ .../java/org/telegram/ui/ProfileActivity.java |  2 +-
+ .../org/telegram/ui/SessionBottomSheet.java   |  3 ++
+ .../ui/Stories/StoriesController.java         | 33 +++++++++++++++++++
+ 17 files changed, 108 insertions(+), 24 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -33,11 +35,27 @@ index 0000000..0000000 100644
  
                  final Collator collator = getLocaleCollator();
                  Collections.sort(contactsArr, (tl_contact, tl_contact2) -> {
+@@ -2728,6 +2729,7 @@ public class ContactsController extends BaseController {
+             getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+                 if (error == null) {
+                     TL_account.privacyRules rules = (TL_account.privacyRules) response;
++                    desu.inugram.helpers.security.ParanoiaHelper.filterPrivacyRules(currentAccount, num, rules.rules);
+                     getMessagesController().putUsers(rules.users, false);
+                     getMessagesController().putChats(rules.chats, false);
+ 
+@@ -2845,6 +2847,7 @@ public class ContactsController extends BaseController {
+     }
+ 
+     public void setPrivacyRules(ArrayList<TLRPC.PrivacyRule> rules, int type) {
++        desu.inugram.helpers.security.ParanoiaHelper.filterPrivacyRules(currentAccount, type, rules);
+         switch (type) {
+             case PRIVACY_RULES_TYPE_LASTSEEN:
+                 lastseenPrivacyRules = rules;
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -5180,6 +5180,7 @@ public class MediaDataController extends BaseController {
+@@ -5181,6 +5181,7 @@ public class MediaDataController extends BaseController {
                          arrayList.clear();
                      }
                  }
@@ -45,7 +63,7 @@ index 0000000..0000000 100644
              } catch (Throwable ignore) {
  
              }
-@@ -5254,6 +5255,7 @@ public class MediaDataController extends BaseController {
+@@ -5255,6 +5256,7 @@ public class MediaDataController extends BaseController {
                          inlineBots = inlineBotsNew;
                          guestBots = guestsBotsNew;
                          webapps = webappsNew;
@@ -53,7 +71,7 @@ index 0000000..0000000 100644
                          buildShortcuts();
                          getNotificationCenter().postNotificationName(NotificationCenter.reloadHints);
                          getNotificationCenter().postNotificationName(NotificationCenter.reloadInlineHints);
-@@ -5313,6 +5315,7 @@ public class MediaDataController extends BaseController {
+@@ -5314,6 +5316,7 @@ public class MediaDataController extends BaseController {
                          }
                      }
                      getUserConfig().saveConfig(false);
@@ -65,7 +83,103 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -22038,6 +22038,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -7811,7 +7811,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         getMediaDataController().putBotInfo(user.id, userFull.bot_info);
+                     }
+                     int index = blockePeers.indexOfKey(user.id);
+-                    if (userFull.blocked) {
++                    if (userFull.blocked && !desu.inugram.helpers.security.ParanoiaHelper.isHidden(currentAccount, user.id)) {
+                         if (index < 0) {
+                             blockePeers.put(user.id, 1);
+                             getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
+@@ -8706,7 +8706,10 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (blockePeers.indexOfKey(id) >= 0) {
+             return;
+         }
+-        blockePeers.put(id, 1);
++        final boolean hiddenFromBlockList = desu.inugram.helpers.security.ParanoiaHelper.skipBlockedPeer(currentAccount, id);
++        if (!hiddenFromBlockList) {
++            blockePeers.put(id, 1);
++        }
+         if (user != null) {
+             if (user.bot) {
+                 getMediaDataController().removeInline(id);
+@@ -8714,7 +8717,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 getMediaDataController().removePeer(id);
+             }
+         }
+-        if (totalBlockedCount >= 0) {
++        if (!hiddenFromBlockList && totalBlockedCount >= 0) {
+             totalBlockedCount++;
+         }
+         getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
+@@ -8899,8 +8902,10 @@ public class MessagesController extends BaseController implements NotificationCe
+                 return;
+             }
+         }
+-        totalBlockedCount--;
+-        blockePeers.delete(id);
++        if (!desu.inugram.helpers.security.ParanoiaHelper.unskipBlockedPeer(currentAccount, id)) {
++            totalBlockedCount--;
++            blockePeers.delete(id);
++        }
+         if (user != null) {
+             req.id = getInputPeer(user);
+         } else {
+@@ -8920,7 +8925,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         }
+         loadingBlockedPeers = true;
+         TLRPC.TL_contacts_getBlocked req = new TLRPC.TL_contacts_getBlocked();
+-        req.offset = reset ? 0 : blockePeers.size();
++        req.offset = reset ? 0 : blockePeers.size() + desu.inugram.helpers.security.ParanoiaHelper.getSkippedBlocked(currentAccount);
+         req.limit = reset ? 20 : 100;
+         getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+             if (response != null) {
+@@ -8930,13 +8935,16 @@ public class MessagesController extends BaseController implements NotificationCe
+                 getMessagesStorage().putUsersAndChats(res.users, res.chats, true, true);
+                 if (reset) {
+                     blockePeers.clear();
++                    desu.inugram.helpers.security.ParanoiaHelper.resetSkippedBlocked(currentAccount);
+                 }
+                 totalBlockedCount = Math.max(res.count, res.blocked.size());
+                 blockedEndReached = res.blocked.size() < req.limit;
+                 for (int a = 0, N = res.blocked.size(); a < N; a++) {
+                     TLRPC.TL_peerBlocked blocked = res.blocked.get(a);
++                    if (desu.inugram.helpers.security.ParanoiaHelper.skipBlockedPeer(currentAccount, MessageObject.getPeerId(blocked.peer_id))) continue;
+                     blockePeers.put(MessageObject.getPeerId(blocked.peer_id), 1);
+                 }
++                totalBlockedCount = desu.inugram.helpers.security.ParanoiaHelper.adjustBlockedTotal(currentAccount, totalBlockedCount);
+                 loadingBlockedPeers = false;
+                 getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
+             }
+@@ -9645,7 +9653,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public ArrayList<TLRPC.Dialog> getAllDialogs() {
+-        return allDialogs;
++        return desu.inugram.helpers.security.ParanoiaHelper.filterDialogs(currentAccount, allDialogs);
+     }
+ 
+     public void putDialogsEndReachedAfterRegistration() {
+@@ -10487,7 +10495,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     StarsController.getInstance(currentAccount).invalidateProfileGifts(info);
+ 
+                     int index = blockePeers.indexOfKey(user.id);
+-                    if (info.blocked) {
++                    if (info.blocked && !desu.inugram.helpers.security.ParanoiaHelper.isHidden(currentAccount, user.id)) {
+                         if (index < 0) {
+                             blockePeers.put(user.id, 1);
+                             getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
+@@ -19174,7 +19182,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 TL_update.TL_updatePeerBlocked finalUpdate = (TL_update.TL_updatePeerBlocked) baseUpdate;
+                 getMessagesStorage().getStorageQueue().postRunnable(() -> AndroidUtilities.runOnUIThread(() -> {
+                     long id = MessageObject.getPeerId(finalUpdate.peer_id);
+-                    if (finalUpdate.blocked) {
++                    if (finalUpdate.blocked && !desu.inugram.helpers.security.ParanoiaHelper.isHidden(currentAccount, id)) {
+                         if (blockePeers.indexOfKey(id) < 0) {
+                             blockePeers.put(id, 1);
+                         }
+@@ -22127,6 +22135,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -73,7 +187,7 @@ index 0000000..0000000 100644
              final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
              if (d instanceof TLRPC.TL_dialog || isCommunity) {
                  long dialogId = d.id;
-@@ -22251,6 +22252,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22340,6 +22349,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  }
                  for (int a = 0, N = allDialogs.size(); a < N; a++) {
                      final TLRPC.Dialog d = allDialogs.get(a);
@@ -81,7 +195,7 @@ index 0000000..0000000 100644
                      final boolean isCommunity = d instanceof TLRPC.TL_dialogCommunity;
                      if (d instanceof TLRPC.TL_dialog || isCommunity) {
                          long dialogId = d.id;
-@@ -22290,6 +22292,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -22379,6 +22389,7 @@ public class MessagesController extends BaseController implements NotificationCe
          }
          for (int a = 0, N = allDialogs.size(); a < N; a++) {
              TLRPC.Dialog d = allDialogs.get(a);
@@ -93,7 +207,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -10058,6 +10058,7 @@ public class MessagesStorage extends BaseController {
+@@ -10193,6 +10193,7 @@ public class MessagesStorage extends BaseController {
                      if (id == -1) {
                          continue;
                      }
@@ -101,7 +215,7 @@ index 0000000..0000000 100644
                      dids.add(id);
                      if (users != null && chats != null) {
                          if (DialogObject.isUserDialog(id)) {
-@@ -10143,6 +10144,7 @@ public class MessagesStorage extends BaseController {
+@@ -10278,6 +10279,7 @@ public class MessagesStorage extends BaseController {
                      if (id == -1) {
                          continue;
                      }
@@ -109,7 +223,7 @@ index 0000000..0000000 100644
                      dids.add(id);
                      if (DialogObject.isUserDialog(id)) {
                          usersToLoad.add(id);
-@@ -10177,6 +10179,7 @@ public class MessagesStorage extends BaseController {
+@@ -10312,6 +10314,7 @@ public class MessagesStorage extends BaseController {
                      if (DialogObject.isFolderDialogId(dialogId)) {
                          continue;
                      }
@@ -117,7 +231,7 @@ index 0000000..0000000 100644
                      if (add) {
                          dids.add(dialogId);
                      }
-@@ -17782,6 +17785,7 @@ public class MessagesStorage extends BaseController {
+@@ -18287,6 +18290,7 @@ public class MessagesStorage extends BaseController {
              }
              while (cursor.next()) {
                  long id = cursor.longValue(0);
@@ -125,7 +239,7 @@ index 0000000..0000000 100644
                  DialogsSearchAdapter.DialogSearchResult dialogSearchResult = new DialogsSearchAdapter.DialogSearchResult();
                  dialogSearchResult.date = cursor.intValue(1);
                  dialogsResult.put(id, dialogSearchResult);
-@@ -18057,6 +18061,9 @@ public class MessagesStorage extends BaseController {
+@@ -18562,6 +18566,9 @@ public class MessagesStorage extends BaseController {
                  cursor = getDatabase().queryFinalized("SELECT u.data, u.status, u.name, u.uid FROM users as u INNER JOIN contacts as c ON u.uid = c.uid");
                  while (cursor.next()) {
                      long uid = cursor.longValue(3);
@@ -139,7 +253,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
-@@ -1387,6 +1387,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1389,6 +1389,7 @@ public class NotificationsController extends BaseController implements Notificat
              SharedPreferences preferences = getAccountInstance().getNotificationsSettings();
              for (int b = 0; b < dialogsToUpdate.size(); b++) {
                  long dialogId = dialogsToUpdate.keyAt(b);
@@ -147,7 +261,7 @@ index 0000000..0000000 100644
                  Integer currentCount = pushDialogs.get(dialogId);
                  int newCount = dialogsToUpdate.get(dialogId);
                  boolean forum = false;
-@@ -1741,6 +1742,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1743,6 +1744,7 @@ public class NotificationsController extends BaseController implements Notificat
                          final ArrayList<TLRPC.Dialog> dialogs = new ArrayList<>(MessagesController.getInstance(a).allDialogs);
                          for (int i = 0, N = dialogs.size(); i < N; i++) {
                              TLRPC.Dialog dialog = dialogs.get(i);
@@ -155,11 +269,11 @@ index 0000000..0000000 100644
                              if (dialog != null && DialogObject.isChatDialog(dialog.id)) {
                                  TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
                                  if (ChatObject.isNotInChat(chat) || ChatObject.isCommunity(chat)) {
-@@ -1762,6 +1764,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -1764,6 +1766,7 @@ public class NotificationsController extends BaseController implements Notificat
                      try {
                          for (int i = 0, N = MessagesController.getInstance(a).allDialogs.size(); i < N; i++) {
                              TLRPC.Dialog dialog = MessagesController.getInstance(a).allDialogs.get(i);
-+                                if (desu.inugram.helpers.security.ParanoiaHelper.isHidden(a, dialog.id)) continue;
++                            if (desu.inugram.helpers.security.ParanoiaHelper.isHidden(a, dialog.id)) continue;
                              if (DialogObject.isChatDialog(dialog.id)) {
                                  TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
                                  if (ChatObject.isNotInChat(chat) || ChatObject.isCommunity(chat)) {
@@ -200,6 +314,15 @@ index 0000000..0000000 100644
  
                      boolean add = false;
                      if (DialogObject.isEncryptedDialog(did)) {
+@@ -1028,7 +1033,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+                                     newDialog.flags = ChatObject.isChannel((TLRPC.Chat) obj) ? 1 : 0;
+                                 }
+                                 MessagesController.getInstance(currentAccount).dialogs_dict.put(finalDialogId, newDialog);
+-                                MessagesController.getInstance(currentAccount).getAllDialogs().add(newDialog);
++                                MessagesController.getInstance(currentAccount).allDialogs.add(newDialog);
+                                 MessagesController.getInstance(currentAccount).sortDialogs(null);
+                             }
+                         });
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/SearchAdapterHelper.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/SearchAdapterHelper.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/SearchAdapterHelper.java
@@ -299,23 +422,64 @@ index 0000000..0000000 100644
              detailTextView.setText(stringBuilder);
          } else if (object instanceof TLRPC.TL_webAuthorization) {
              TLRPC.TL_webAuthorization session = (TLRPC.TL_webAuthorization) object;
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-@@ -2933,6 +2933,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
-                 if (dialog.id == selfUserId) {
-                     continue;
-                 }
-+                if (desu.inugram.helpers.security.ParanoiaHelper.isHidden(currentAccount, dialog.id)) continue;
-                 if (!DialogObject.isEncryptedDialog(dialog.id)) {
-                     if (DialogObject.isUserDialog(dialog.id)) {
-                         if (dialog.folder_id == 1) {
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -1644,7 +1644,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+             this.initialTab = TAB_BOT_PREVIEWS;
+         } else if (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) {
+             this.initialTab = TAB_STORIES;
+-        } else if (main_tab instanceof TLRPC.TL_profileTabPosts && (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
++        } else if (main_tab instanceof TLRPC.TL_profileTabPosts && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(parent.getCurrentAccount(), userInfo.id) || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
+             this.initialTab = TAB_STORIES;
+         } else if (main_tab instanceof TLRPC.TL_profileTabGifts && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
+             this.initialTab = TAB_GIFTS;
+@@ -1658,7 +1658,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+             this.initialTab = TAB_AUDIO;
+         } else if (main_tab instanceof TLRPC.TL_profileTabVoice && (hasMedia[2] == -1 || hasMedia[2] > 0)) {
+             this.initialTab = TAB_VOICE;
+-        } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stories_pinned_available || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
++        } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(parent.getCurrentAccount(), userInfo.id) || chatInfo != null && chatInfo.stories_pinned_available || isStoriesView())) {
+             this.initialTab = getInitialTab();
+         } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
+             this.initialTab = TAB_GIFTS;
+@@ -6819,10 +6819,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+     }
+ 
+     public void setUserInfo(TLRPC.UserFull userInfo) {
+-        boolean stories_pinned_available = this.userInfo != null && this.userInfo.stories_pinned_available;
++        boolean stories_pinned_available = this.userInfo != null && this.userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(profileActivity.getCurrentAccount(), this.userInfo.id);
+         this.userInfo = userInfo;
+         updateTabs(true);
+-        if (userInfo != null && (stories_pinned_available != userInfo.stories_pinned_available) && (!desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() || isStoriesView())) {
++        if (userInfo != null && (stories_pinned_available != (userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(profileActivity.getCurrentAccount(), userInfo.id))) && (!desu.inugram.helpers.profile.ProfileHelper.preferMediaTab() || isStoriesView())) {
+             scrollToPage(TAB_STORIES);
+         }
+     }
+@@ -6922,7 +6922,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+         final TLRPC.User user = dialog_id <= 0 || profileActivity == null ? null : profileActivity.getMessagesController().getUser(dialog_id);
+         boolean hasEditBotPreviews = user != null && user.bot && user.bot_has_main_app && user.bot_can_edit;
+         boolean hasBotPreviews = user != null && user.bot && !user.bot_can_edit && (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) && !hasEditBotPreviews;
+-        boolean hasStories = (DialogObject.isUserDialog(dialog_id) || DialogObject.isChatDialog(dialog_id)) && !DialogObject.isEncryptedDialog(dialog_id) && (userInfo != null && userInfo.stories_pinned_available || info != null && info.stories_pinned_available || isStoriesView()) && includeStories();
++        boolean hasStories = (DialogObject.isUserDialog(dialog_id) || DialogObject.isChatDialog(dialog_id)) && !DialogObject.isEncryptedDialog(dialog_id) && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(profileActivity.getCurrentAccount(), userInfo.id) || info != null && info.stories_pinned_available || isStoriesView()) && includeStories();
+         boolean hasGifts = giftsContainer != null && (userInfo != null && userInfo.stargifts_count > 0 || info != null && info.stargifts_count > 0);
+         final TLRPC.ProfileTab main_tab = info != null ? info.main_tab : userInfo != null ? userInfo.main_tab : null;
+         int changed = 0;
+@@ -7036,7 +7036,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+             }
+             if (hasBotPreviews) {
+                 tabs.add(new Pair(TAB_STORIES, getString(R.string.ProfileBotPreviewTab)));
+-            } else if ((DialogObject.isUserDialog(dialog_id) || DialogObject.isChatDialog(dialog_id)) && !DialogObject.isEncryptedDialog(dialog_id) && (userInfo != null && userInfo.stories_pinned_available || info != null && info.stories_pinned_available || isStoriesView()) && includeStories()) {
++            } else if ((DialogObject.isUserDialog(dialog_id) || DialogObject.isChatDialog(dialog_id)) && !DialogObject.isEncryptedDialog(dialog_id) && (userInfo != null && userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(profileActivity.getCurrentAccount(), userInfo.id) || info != null && info.stories_pinned_available || isStoriesView()) && includeStories()) {
+                 if (isArchivedOnlyStoriesView()) {
+                     tabs.add(new Pair(TAB_ARCHIVED_STORIES, getString(R.string.ProfileArchivedStories)));
+                     scrollSlidingTextTabStrip.animationDuration = 420;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6966,7 +6966,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6975,7 +6975,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -324,7 +488,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8623,7 +8623,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8632,7 +8632,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
@@ -363,6 +527,55 @@ index 0000000..0000000 100644
                              continue;
                          }
                          contacts.add(chat);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PrivacyControlActivity.java
+@@ -930,6 +930,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
+                 Collections.sort(currentPlus);
+                 if (!initialPlus.equals(currentPlus)) {
+                     done[0] = false;
++                    desu.inugram.helpers.security.ParanoiaHelper.restorePrivacyExceptions(currentAccount, ContactsController.PRIVACY_RULES_TYPE_NO_PAID_MESSAGES, currentPlus, currentMinus);
+                     TL_account.setPrivacy req = new TL_account.setPrivacy();
+                     req.key = new TLRPC.TL_inputPrivacyKeyNoPaidMessages();
+                     req.rules.add(new TLRPC.TL_inputPrivacyValueAllowContacts());
+@@ -953,6 +954,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
+                         req.rules.add(usersRule);
+                         req.rules.add(chatsRule);
+                     }
++                    desu.inugram.helpers.security.ParanoiaHelper.stripPrivacyExceptions(currentAccount, currentPlus, currentMinus);
+                     getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+                         if (error == null) {
+                             final TL_account.privacyRules privacyRules = (TL_account.privacyRules) response;
+@@ -1069,6 +1071,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
+         } else {
+             req.key = new TLRPC.TL_inputPrivacyKeyStatusTimestamp();
+         }
++        desu.inugram.helpers.security.ParanoiaHelper.restorePrivacyExceptions(currentAccount, rulesType, currentPlus, currentMinus);
+         if (currentType != 0 && currentPlus.size() > 0) {
+             TLRPC.TL_inputPrivacyValueAllowUsers usersRule = new TLRPC.TL_inputPrivacyValueAllowUsers();
+             TLRPC.TL_inputPrivacyValueAllowChatParticipants chatsRule = new TLRPC.TL_inputPrivacyValueAllowChatParticipants();
+@@ -1109,6 +1112,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
+             req.rules.add(usersRule);
+             req.rules.add(chatsRule);
+         }
++        desu.inugram.helpers.security.ParanoiaHelper.stripPrivacyExceptions(currentAccount, currentPlus, currentMinus);
+         if (currentType == TYPE_EVERYBODY) {
+             req.rules.add(new TLRPC.TL_inputPrivacyValueAllowAll());
+         } else if (currentType == TYPE_NOBODY) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -10633,7 +10633,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             }
+         }
+         if (!hasMedia && userInfo != null) {
+-            hasMedia = userInfo.stories_pinned_available;
++            hasMedia = userInfo.stories_pinned_available && !desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, userInfo.id);
+         }
+         if (!hasMedia && userInfo != null && userInfo.bot_info != null) {
+             hasMedia = userInfo.bot_info.has_preview_medias;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
@@ -381,7 +594,27 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
-@@ -470,6 +470,7 @@ public class StoriesController {
+@@ -252,6 +252,9 @@ public class StoriesController {
+         if (dialogId == 0) {
+             return false;
+         }
++        if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++            return false;
++        }
+         if (hasUploadingStories(dialogId)) {
+             return true;
+         }
+@@ -266,6 +269,9 @@ public class StoriesController {
+     }
+ 
+     public TL_stories.PeerStories getStoriesFromFullPeer(long dialogId) {
++        if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++            return null;
++        }
+         if (dialogId > 0) {
+             TLRPC.UserFull userFull = MessagesController.getInstance(currentAccount).getUserFull(dialogId);
+             if (userFull != null && userFull.stories != null && !userFull.stories.checkedExpired) {
+@@ -470,6 +476,7 @@ public class StoriesController {
          for (int i = 0; i < storiesResponse.peer_stories.size(); i++) {
              TL_stories.PeerStories userStories = storiesResponse.peer_stories.get(i);
              final long dialogId = DialogObject.getPeerDialogId(userStories.peer);
@@ -389,3 +622,85 @@ index 0000000..0000000 100644
              for (int j = 0; j < userStories.stories.size(); j++) {
                  TL_stories.StoryItem story = userStories.stories.get(j);
                  if (story instanceof TL_stories.TL_storyItemDeleted ||
+@@ -681,6 +688,9 @@ public class StoriesController {
+     }
+ 
+     public TL_stories.PeerStories getStories(long peerId) {
++        if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, peerId)) {
++            return null;
++        }
+         return allStoriesMap.get(peerId);
+     }
+ 
+@@ -1072,6 +1082,9 @@ public class StoriesController {
+     }
+ 
+     public boolean hasSelfStories() {
++        if (desu.inugram.helpers.security.ParanoiaHelper.shouldHideMyStories()) {
++            return false;
++        }
+         long clientUserId = UserConfig.getInstance(currentAccount).clientUserId;
+         TL_stories.PeerStories storyItem = allStoriesMap.get(clientUserId);
+         if (storyItem != null && !storyItem.stories.isEmpty()) {
+@@ -1084,6 +1097,9 @@ public class StoriesController {
+     }
+ 
+     public int getSelfStoriesCount() {
++        if (desu.inugram.helpers.security.ParanoiaHelper.shouldHideMyStories()) {
++            return 0;
++        }
+         int count = 0;
+         TL_stories.PeerStories storyItem = allStoriesMap.get(UserConfig.getInstance(currentAccount).clientUserId);
+         if (storyItem != null) {
+@@ -1338,6 +1354,9 @@ public class StoriesController {
+     }
+ 
+     public boolean hasUnreadStories(long dialogId) {
++        if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++            return false;
++        }
+         TL_stories.PeerStories userStories = allStoriesMap.get(dialogId);
+         if (userStories == null) {
+             userStories = getStoriesFromFullPeer(dialogId);
+@@ -3348,6 +3367,10 @@ public class StoriesController {
+         }
+ 
+         public void fill(ArrayList<MessageObject> arrayList, boolean showPhotos, boolean showVideos) {
++            if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++                arrayList.clear();
++                return;
++            }
+             tempArr.clear();
+             if (type == TYPE_PINNED && albumId <= 0) {
+                 for (int id : pinnedIds) {
+@@ -3735,6 +3758,9 @@ public class StoriesController {
+         }
+ 
+         protected boolean canLoad() {
++            if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++                return false;
++            }
+             if (lastLoadTime == null) {
+                 return true;
+             }
+@@ -3796,6 +3822,9 @@ public class StoriesController {
+             if (loading || (done || error || !canLoad()) && !force) {
+                 return false;
+             }
++            if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++                return false;
++            }
+             if (preloading) {
+                 toLoad = i -> load(force, count, ids);
+                 return false;
+@@ -4935,6 +4964,10 @@ public class StoriesController {
+ 
+         public void load() {
+             if (loading || loaded) return;
++            if (desu.inugram.helpers.security.ParanoiaHelper.hidesStoriesOf(currentAccount, dialogId)) {
++                loaded = true;
++                return;
++            }
+ 
+             loading = true;
+ 

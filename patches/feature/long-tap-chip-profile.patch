@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 24 Aug 2026 01:53:10 +0300
+Subject: open profile by long tapping a selected user chip
+
+---
+ .../src/main/java/org/telegram/ui/GroupCreateActivity.java     | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
+@@ -418,6 +418,9 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+             @Override
+             public void addSpan(GroupCreateSpan span) {
+                 super.addSpan(span);
++                if (!span.isFlag) {
++                    span.setOnLongClickListener(v -> desu.inugram.helpers.profile.ProfileHelper.openProfileOrChat(GroupCreateActivity.this, v, span.getUid()));
++                }
+                 updateButtonsVisibility();
+             }
+ 

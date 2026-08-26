@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -780,9 +780,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -788,9 +788,9 @@ public class ChatActivity extends BaseFragment implements
      private AnimatorSet runningAnimation;
      private int runningAnimationIndex = -1;
  
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
      private boolean forbidForwardingWithDismiss;
      public MessagePreviewParams messagePreviewParams;
      public MessageSuggestionParams messageSuggestionParams;
-@@ -1677,6 +1677,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -1699,6 +1699,10 @@ public class ChatActivity extends BaseFragment implements
              if (isTryingTextSelection() || hasTextSelection() || inPreviewMode || isInsideContainer) {
                  return false;
              }
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
              wasManualScroll = true;
              boolean result = true;
              boolean showMenu = true;
-@@ -1870,6 +1874,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -1892,6 +1896,11 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean hasDoubleTap(View view, int position) {
@@ -45,18 +45,18 @@ index 0000000..0000000 100644
 +            if (hasDoubleTap != null) {
 +                return hasDoubleTap;
 +            }
-             if (chatMode == MODE_QUICK_REPLIES) return false;
+             if (isQuickRepliesOrWelcomeMessagesMode()) return false;
              String reactionStringSetting = getMediaDataController().getDoubleTapReaction();
              TLRPC.TL_availableReaction reaction = getMediaDataController().getReactionsMap().get(reactionStringSetting);
-@@ -1896,6 +1905,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -1918,6 +1927,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public void onDoubleTap(View view, int position, float x, float y) {
 +            if (desu.inugram.helpers.chat.DoubleTapActionHelper.onDoubleTap(ChatActivity.this, view, x, y)) return;
-             if (getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || chatMode == MODE_QUICK_REPLIES) {
+             if (getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || isQuickRepliesOrWelcomeMessagesMode()) {
                  return;
              }
-@@ -30588,6 +30598,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -30733,6 +30743,12 @@ public class ChatActivity extends BaseFragment implements
          return createMenu(v, single, listView, x, y, searchGroup, longpress, false);
      }
  
@@ -69,15 +69,15 @@ index 0000000..0000000 100644
      @SuppressLint("ClickableViewAccessibility")
      private boolean createMenu(View v, boolean single, boolean listView, float x, float y, boolean searchGroup, boolean longpress, boolean suggestEdit) {
          if (actionBar.isActionModeShowed() || isReport()) {
-@@ -31999,6 +32015,7 @@ public class ChatActivity extends BaseFragment implements
-             } else {
+@@ -32220,6 +32236,7 @@ public class ChatActivity extends BaseFragment implements
                  final boolean tags = getUserConfig().getClientUserId() == getDialogId();
                  reactionsLayout = new ReactionsContainerLayout(tags ? ReactionsContainerLayout.TYPE_TAGS : ReactionsContainerLayout.TYPE_DEFAULT, ChatActivity.this, contentView.getContext(), currentAccount, getResourceProvider());
+                 reactionsLayout.setBackgroundFactory(scrimBlur3Factory, BlurredBackgroundProviderImpl.messageMenuReactionsBackground(resourceProvider));
 +                reactionsLayout.inu_needExpand = inu_needExpandReactions;
                  if (tags) {
                      reactionsLayout.setHint(getUserConfig().isPremium() ? LocaleController.getString(R.string.SavedTagReactionsHint2) : AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.SavedTagReactionsPremiumHint), Theme.key_windowBackgroundWhiteBlueText2, 0, () -> {
                          closeMenu(false);
-@@ -33193,7 +33210,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33436,7 +33453,7 @@ public class ChatActivity extends BaseFragment implements
          MediaController.saveFile(path, getParentActivity(), messageObject.isVideo() ? 1 : 0, null, null);
      }
  
@@ -90,7 +90,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsCon
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
-@@ -235,6 +235,8 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -238,6 +238,8 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
      public float bubblesOffset;
      private float miniBubblesOffset;
  
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
      public ReactionsContainerLayout(int type, BaseFragment fragment, @NonNull Context context, int currentAccount, Theme.ResourcesProvider resourcesProvider) {
          super(context);
          this.type = type;
-@@ -2324,6 +2326,10 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+@@ -2397,6 +2399,10 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
          if (type == TYPE_MESSAGE_EFFECTS) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.availableEffectsUpdate);
          }

@@ -4,14 +4,15 @@ Date: Wed, 1 Jul 2026 18:33:38 +0400
 Subject: outlined text style for painter + toggle word-wrap for text layers
 
 ---
- .../messenger/video/TextureRenderer.java      |  4 +++
- .../telegram/messenger/video/WebmEncoder.java |  4 +++
- .../Paint/Views/LPhotoPaintView.java          | 13 +++++++-
- .../Paint/Views/PaintTextOptionsView.java     | 17 +++++++++++
- .../Components/Paint/Views/TextPaintView.java | 30 ++++++++++++++++++-
+ .../messenger/video/TextureRenderer.java      |  4 ++
+ .../telegram/messenger/video/WebmEncoder.java |  4 ++
+ .../Paint/Views/EditTextOutline.java          | 46 ++++++++-----------
+ .../Paint/Views/LPhotoPaintView.java          | 13 +++++-
+ .../Paint/Views/PaintTextOptionsView.java     | 17 +++++++
+ .../Components/Paint/Views/TextPaintView.java | 30 +++++++++++-
  .../ui/Components/PaintingOverlay.java        |  3 ++
- .../ui/Stories/recorder/PaintView.java        | 11 +++++++
- 7 files changed, 80 insertions(+), 2 deletions(-)
+ .../ui/Stories/recorder/PaintView.java        | 11 +++++
+ 8 files changed, 99 insertions(+), 29 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/video/TextureRenderer.java b/TMessagesProj/src/main/java/org/telegram/messenger/video/TextureRenderer.java
 index 0000000..0000000 100644
@@ -43,6 +44,97 @@ index 0000000..0000000 100644
              }
  
              editText.measure(View.MeasureSpec.makeMeasureSpec(entity.viewWidth, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(entity.viewHeight, View.MeasureSpec.EXACTLY));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EditTextOutline.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EditTextOutline.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EditTextOutline.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EditTextOutline.java
+@@ -12,6 +12,7 @@ import android.graphics.Paint;
+ import android.graphics.Path;
+ import android.graphics.PorterDuff;
+ import android.graphics.RectF;
++import android.graphics.Typeface;
+ import android.text.InputType;
+ import android.text.Layout;
+ import android.text.StaticLayout;
+@@ -23,10 +24,12 @@ import org.telegram.ui.Components.EditTextBoldCursor;
+ 
+ public class EditTextOutline extends EditTextBoldCursor {
+ 
+-    private Canvas mCanvas = new Canvas();
+     private TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+-    private Bitmap mCache;
++    // inu: anti-aliasing fix for outlined text style
++    private StaticLayout inu_strokeLayout;
++    private Typeface inu_strokeTypeface;
++    private float inu_strokeTextSize;
+     private boolean mUpdateCachedBitmap;
+     private int mStrokeColor;
+     private float mStrokeWidth;
+@@ -64,16 +67,8 @@ public class EditTextOutline extends EditTextBoldCursor {
+ 
+     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+         super.onSizeChanged(w, h, oldw, oldh);
+-        if (w > 0 && h > 0) {
+-            mUpdateCachedBitmap = true;
+-            isFrameDirty = true;
+-            if (mCache != null) {
+-                mCache.recycle();
+-            }
+-            mCache = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+-        } else {
+-            mCache = null;
+-        }
++        mUpdateCachedBitmap = true;
++        isFrameDirty = true;
+     }
+ 
+     @Override
+@@ -125,14 +120,13 @@ public class EditTextOutline extends EditTextBoldCursor {
+ 
+     @SuppressLint("DrawAllocation")
+     protected void onDraw(Canvas canvas) {
+-        if (mCache != null && mStrokeColor != Color.TRANSPARENT) {
+-            if (mUpdateCachedBitmap) {
+-                final int w = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+-                final int h = getMeasuredHeight();
+-                final CharSequence text = getText();
++        if (getMeasuredWidth() > 0 && mStrokeColor != Color.TRANSPARENT) {
++            if (mUpdateCachedBitmap || inu_strokeLayout == null || inu_strokeTypeface != getTypeface() || inu_strokeTextSize != getTextSize()) {
++                inu_strokeTypeface = getTypeface();
++                inu_strokeTextSize = getTextSize();
+ 
+-                mCanvas.setBitmap(mCache);
+-                mCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
++                final int w = Math.max(0, getMeasuredWidth() - getPaddingLeft() - getPaddingRight());
++                final CharSequence text = getText();
+ 
+                 float strokeWidth = mStrokeWidth > 0 ? mStrokeWidth : (float) Math.ceil(getTextSize() / 11.5f);
+                 textPaint.setStrokeWidth(strokeWidth);
+@@ -145,17 +139,15 @@ public class EditTextOutline extends EditTextBoldCursor {
+                 if (getLayout() != null) {
+                     alignment = getLayout().getAlignment();
+                 }
+-                StaticLayout sl = new StaticLayout(text, textPaint, w, alignment, 1, 0, true);
+-
+-                mCanvas.save();
+-                float ty = (h - getPaddingTop() - getPaddingBottom() - sl.getHeight()) / 2.0f;
+-                mCanvas.translate(getPaddingLeft(), ty + getPaddingTop());
+-                sl.draw(mCanvas);
+-                mCanvas.restore();
++                inu_strokeLayout = new StaticLayout(text, textPaint, w, alignment, 1, 0, true);
+ 
+                 mUpdateCachedBitmap = false;
+             }
+-            canvas.drawBitmap(mCache, 0, 0, textPaint);
++            final float ty = (getMeasuredHeight() - getPaddingTop() - getPaddingBottom() - inu_strokeLayout.getHeight()) / 2.0f;
++            canvas.save();
++            canvas.translate(getPaddingLeft(), ty + getPaddingTop());
++            inu_strokeLayout.draw(canvas);
++            canvas.restore();
+         }
+         if (mFrameColor != 0) {
+             canvas.save();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java

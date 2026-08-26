@@ -102,7 +102,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8843,7 +8843,7 @@ public class MessageObject {
+@@ -8882,7 +8882,7 @@ public class MessageObject {
                  if (block.code && !block.quote && textLayout.getText() instanceof Spannable) {
                      SpannableString sb;
                      if (!TextUtils.isEmpty(range.language)) {
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
                      } else {
                          sb = new SpannableString(blockText.toString());
                      }
-@@ -8883,7 +8883,7 @@ public class MessageObject {
+@@ -8922,7 +8922,7 @@ public class MessageObject {
                  try {
                      SpannableString sb;
                      if (block.code && !block.quote) {
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                      } else {
                          sb = SpannableString.valueOf(blockText);
                      }
-@@ -9306,7 +9306,7 @@ public class MessageObject {
+@@ -9345,7 +9345,7 @@ public class MessageObject {
                      if (block.code && !block.quote && textLayout.getText() instanceof Spannable) {
                          SpannableString sb;
                          if (!TextUtils.isEmpty(range.language)) {
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
                          } else {
                              sb = new SpannableString(text.subSequence(range.start, range.end));
                          }
-@@ -9333,7 +9333,7 @@ public class MessageObject {
+@@ -9372,7 +9372,7 @@ public class MessageObject {
                      try {
                          SpannableString sb;
                          if (block.code && !block.quote) {
@@ -138,7 +138,7 @@ index 0000000..0000000 100644
                          } else {
                              sb = SpannableString.valueOf(text.subSequence(startCharacter, endCharacter));
                          }
-@@ -9349,7 +9349,7 @@ public class MessageObject {
+@@ -9388,7 +9388,7 @@ public class MessageObject {
                  }
  
                  if (block.code && block.textLayout.getText() instanceof Spannable && TextUtils.isEmpty(range.language)) {
@@ -151,7 +151,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -5319,43 +5319,43 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -5309,43 +5309,43 @@ public class MessagesController extends BaseController implements NotificationCe
                  return Theme.getColor(Theme.keys_avatar_nameInMessage[id], resourcesProvider);
              }
              final boolean isDark = resourcesProvider != null ? resourcesProvider.isDark() : Theme.isCurrentThemeDark();
@@ -211,7 +211,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayou
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -3693,7 +3693,7 @@ public class RichMessageLayout {
+@@ -5850,7 +5850,7 @@ public class RichMessageLayout {
                      }
                  }
                  if (!TextUtils.isEmpty(block.language)) {
@@ -224,7 +224,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -149,6 +149,7 @@ import java.util.Locale;
+@@ -146,6 +146,7 @@ import java.util.Locale;
  import java.util.Map;
  import java.util.Objects;
  import java.util.concurrent.CountDownLatch;
@@ -232,7 +232,7 @@ index 0000000..0000000 100644
  
  public class Theme {
  
-@@ -2474,13 +2475,33 @@ public class Theme {
+@@ -1642,13 +1643,33 @@ public class Theme {
              return defaultAccentCount != 0;
          }
  
@@ -268,7 +268,7 @@ index 0000000..0000000 100644
                  isDark = LIGHT;
              }
              if (isDark == UNKNOWN) {
-@@ -4205,6 +4226,14 @@ public class Theme {
+@@ -3421,6 +3442,14 @@ public class Theme {
      public static final int key_telegram_color = colorsCount++;
      public static final int key_telegram_color_text = colorsCount++;
  
@@ -283,7 +283,7 @@ index 0000000..0000000 100644
      public static final String key_drawable_botInline = "drawableBotInline";
      public static final String key_drawable_botLink = "drawableBotLink";
      public static final String key_drawable_botWebView = "drawableBotWebView";
-@@ -4727,6 +4756,38 @@ public class Theme {
+@@ -4010,6 +4039,38 @@ public class Theme {
          themes.add(themeInfo);
          themesDict.put("Night", themeInfo);
  
@@ -322,7 +322,7 @@ index 0000000..0000000 100644
          String themesString = themeConfig.getString("themes2", null);
  
          int remoteVersion = themeConfig.getInt("remote_version", 0);
-@@ -4959,6 +5020,8 @@ public class Theme {
+@@ -4242,6 +4303,8 @@ public class Theme {
                      if (accent != null) {
                          info.overrideWallpaper = accent.overrideWallpaper;
                      }
@@ -331,7 +331,7 @@ index 0000000..0000000 100644
                  }
              }
              if (oldEditor != null) {
-@@ -8138,6 +8201,12 @@ public class Theme {
+@@ -7559,6 +7622,12 @@ public class Theme {
              int currentPosition = 0;
              if (assetName != null) {
                  file = getAssetFile(assetName);
@@ -344,7 +344,7 @@ index 0000000..0000000 100644
              }
              stream = new FileInputStream(file);
              int idx;
-@@ -8170,6 +8239,10 @@ public class Theme {
+@@ -7591,6 +7660,10 @@ public class Theme {
                                      } catch (Exception ignore) {
                                          value = Utilities.parseInt(param);
                                      }
@@ -359,7 +359,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeColors.java
-@@ -811,6 +811,13 @@ public class ThemeColors {
+@@ -858,6 +858,13 @@ public class ThemeColors {
          defaultColors[key_code_number] = 0xFF327FE5;
          defaultColors[key_code_comment] = 0x80000000;
          defaultColors[key_code_function] = 0xFFF28C39;
@@ -373,7 +373,7 @@ index 0000000..0000000 100644
  
          defaultColors[key_iv_background] = 0xFFFFFFFF;
          defaultColors[key_iv_backgroundGray] = 0xfff0f0f0;
-@@ -1591,6 +1598,13 @@ public class ThemeColors {
+@@ -1685,6 +1692,13 @@ public class ThemeColors {
          colorKeysMap.put(key_code_number, "code_number");
          colorKeysMap.put(key_code_comment, "code_comment");
          colorKeysMap.put(key_code_function, "code_function");
@@ -391,7 +391,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -23811,7 +23811,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24035,7 +24035,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (currentMessageObject != null && currentMessageObject.sendPreview) {
                  alpha *= effectDrawable == null ? 0f : effectDrawable.isNotEmpty();
              }
@@ -400,7 +400,7 @@ index 0000000..0000000 100644
  
              int r;
              if (documentAttachType != DOCUMENT_ATTACH_TYPE_ROUND && documentAttachType != DOCUMENT_ATTACH_TYPE_STICKER && currentMessageObject.type != MessageObject.TYPE_EMOJIS) {
-@@ -23854,7 +23854,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24078,7 +24078,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      canvas.restore();
                      Paint dimPaint = getThemedPaint(Theme.key_paint_chatTimeBackground);
                      int oldAlpha2 = dimPaint.getAlpha();

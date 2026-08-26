@@ -9,9 +9,10 @@ description: >
   (identify patch → cross-reference its `patches/*.patch` → resolve → `git add
   -f` → `stg refresh` → `stg push -a`), reading `current` (new upstream) vs
   `patched` (the fork's recorded delta), the recurring conflict shapes and their
-  fixes, dispatching a subagent for big multi-file refactors, and logging
-  questionable resolutions to `TODO.md`. NOT for creating or editing a single
-  patch (that's covered by `CLAUDE.md`), and NOT for ordinary git merge
+  fixes, dispatching a subagent for big multi-file refactors, logging
+  questionable resolutions to `TODO.md`, and the finishing checks — export the
+  patches, verify `patches/` matches the stack, and build the app. NOT for
+  creating or editing a single patch (that's covered by `CLAUDE.md`), and NOT for ordinary git merge
   conflicts unrelated to the stgit stack.
 ---
 
@@ -27,12 +28,13 @@ sha is printed (`Rebasing to <sha> (upstream/master)`) — **note it**; you'll
 
 ## Authorization
 
-Rebasing IS the task, so running `git add`, `stg refresh`, `stg push -a` is
-expected here — this skill is the explicit exception to CLAUDE.md's "never
-run stg/git". **Still never `stg export` / `bun run export`** (the user does
-that at the very end). When the user asks for a rebase, that means end-to-end:
-run `bun run rebase latest` (or the given ref) yourself and drive the whole
-conflict loop to completion — don't wait for them to kick it off.
+Rebasing IS the task, so running `git add`, `stg refresh`, `stg push -a` and
+`bun run export` is expected here — this skill is the explicit exception to
+CLAUDE.md's "never run stg/git" and "never `stg export`". When the user asks
+for a rebase, that means end-to-end: run `bun run rebase latest` (or the given
+ref) yourself, drive the whole conflict loop to completion, then run the
+finishing checks below (sync + build) and **export the patches yourself** —
+don't wait for them to kick any of it off. Still don't commit or push.
 
 ## The conflict loop
 
@@ -187,8 +189,62 @@ done and what to re-check.
 
 ## End of rebase
 
-`stg push -a` exits 0 with no conflict when done. Confirm:
-`stg series 2>/dev/null | rg -c '^-'` (unapplied count = 0) and
-`git diff --name-only --diff-filter=U` (empty). Final sweep for stray markers:
-`rg -l -a '^(<<<<<<<|>>>>>>>)' TMessagesProj/src/main/java`. Then hand back — the
-user runs `bun run export`. Don't commit or push.
+`stg push -a` exits 0 with no conflict when done. Then run **all four** checks —
+a rebase is not finished until they pass.
+
+### 1. Stack fully applied, no leftovers
+
+```bash
+stg series 2>/dev/null | rg -c '^-'          # unapplied count = 0 (no output = 0)
+git diff --name-only --diff-filter=U         # empty
+rg -l -a '^(<<<<<<<|>>>>>>>)' TMessagesProj/src/main/java   # empty
+```
+
+### 2. Export the patches yourself
+
+```bash
+bun run export
+```
+
+`patches/` + `series` are regenerated from the stack. Do this *before* the sync
+check — the check compares the two.
+
+### 3. `patches/` matches the stack exactly
+
+Same script the pre-commit hook runs:
+
+```bash
+bun scripts/ci/pre-commit.ts && echo "SYNC OK"
+```
+
+It reports `missing from patches/`, `not in stgit stack` (orphaned files), and
+`content drift`. Any output = the export and the stack disagree; re-export and
+investigate rather than hand-editing `patches/`.
+
+### 4. The app actually builds
+
+Compile errors are the main thing a marker-free resolution still gets wrong:
+upstream renames a class, moves a package, or changes a signature, and both the
+stock patch *and* the fork Kotlin in `src/kotlin` need updating. **`src/kotlin`
+is not touched by the rebase, but it can still break against the new stock API**
+— fix it there, not in the worktree (the symlink makes them the same file).
+
+```bash
+bun run build-debug
+```
+
+Run java/gradle **outside the sandbox**. First build after a rebase:
+
+- **New upstream submodules** — `git submodule update --init --recursive --depth 1`
+  inside `worktree/`. (`bun run setup` also does this, but it refuses to run while
+  the stack diverges from `series`, i.e. before the export.)
+- **New upstream gradle subprojects** — e.g. upstream vendored jlatexmath as a
+  submodule and referenced `project(':jlatexmath')` without adding it to
+  `settings.gradle`. The fork's `settings.gradle` (owned by `misc__build-support`)
+  has to include it:
+  `include ':jlatexmath'` + `project(':jlatexmath').projectDir = file('...')`.
+
+Build fixes belong in the patch that owns the line — `stg refresh -p <patch>`
+after `git add -f`, which edits it in place without replaying the stack.
+
+Then hand back. Don't commit or push.

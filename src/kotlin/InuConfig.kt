@@ -143,6 +143,9 @@ object InuConfig {
     @JvmField
     val M3_NAVIGATION_ANIMATION = BoolItem("m3_navigation_animation", false)
 
+    @JvmField
+    val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
+
     // snapshot of theme state before Monet was enabled, "day|night|autoNightType"; empty = none
     @JvmField
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)
@@ -162,6 +165,9 @@ object InuConfig {
     // render already-revealed everywhere, same idea as NagramX's showSpoilersDirectly.
     @JvmField
     val SHOW_SPOILERS_DIRECTLY = BoolItem("show_spoilers_directly", false)
+
+    @JvmField
+    val HDR_IMAGES = BoolItem("hdr_images", true, exportable = false)
 
     class TextSpoilerModeItem : IntItem("text_spoiler_mode", SIMPLE) {
         companion object {
@@ -463,6 +469,9 @@ object InuConfig {
 
     @JvmField
     val AI_TRANSCRIBE_PROMPT = StringItem("ai_transcribe_prompt", "")
+
+    @JvmField
+    val HIDE_RICH_EDITOR_BUTTON = BoolItem("hide_rich_editor_button", false)
 
     @JvmField
     val HIDE_MESSAGE_SUMMARY = BoolItem("hide_message_summary", false)
@@ -1145,6 +1154,9 @@ object InuConfig {
 
     @JvmField
     val ACCOUNT_ORDER = StringItem("account_order", "", exportable = false)
+
+    @JvmField
+    val ACCOUNT_SWITCH_SHORTCUT = BoolItem("account_switch_shortcut", false)
 
     @JvmField
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)

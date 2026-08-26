@@ -58,10 +58,15 @@ import org.telegram.ui.Components.SnowflakesEffect
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.ThemeActivity
 
-class DrawerProfileCell(context: Context, private val drawerLayoutContainer: DrawerLayoutContainer) :
+class DrawerProfileCell(
+    context: Context,
+    private val drawerLayoutContainer: DrawerLayoutContainer,
+    private val onAccountsToggle: () -> Unit,
+) :
     FrameLayout(context), NotificationCenter.NotificationCenterDelegate {
 
     private val avatarImageView: BackupImageView
+    private val accountRowView: View
     private val nameTextView: SimpleTextView
     private val phoneTextView: TextView
     private val shadowView: ImageView
@@ -96,8 +101,17 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
         shadowView.setImageResource(R.drawable.compose_panel_shadow)
         addView(shadowView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 70, Gravity.LEFT or Gravity.BOTTOM))
 
+        accountRowView = View(context)
+        accountRowView.setOnClickListener {
+            onAccountsToggle()
+        }
+        addView(accountRowView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 59, Gravity.LEFT or Gravity.BOTTOM))
+
         avatarImageView = BackupImageView(context)
         avatarImageView.imageReceiver.setRoundRadius(AndroidUtilities.dp(32f))
+        avatarImageView.setOnClickListener {
+            DrawerHelper.openMyProfile(drawerLayoutContainer)
+        }
         addView(avatarImageView, LayoutHelper.createFrame(64, 64f, Gravity.LEFT or Gravity.BOTTOM, 16f, 0f, 0f, 67f))
 
         nameTextView = object : SimpleTextView(context) {
@@ -537,6 +551,10 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
             Theme.key_chats_menuTopBackgroundCats
         if (force || currentTag == null || backgroundKey != currentTag) {
             setBackgroundColor(Theme.getColor(backgroundKey))
+            accountRowView.background = Theme.createSelectorDrawable(
+                Theme.getColor(Theme.key_listSelector),
+                Theme.RIPPLE_MASK_ALL,
+            )
             tag = backgroundKey
         }
         return backgroundKey
@@ -555,7 +573,7 @@ class DrawerProfileCell(context: Context, private val drawerLayoutContainer: Dra
             arrowView.animate().cancel()
             arrowView.rotation = rotation
         }
-        arrowView.contentDescription = if (accountsShown)
+        accountRowView.contentDescription = if (accountsShown)
             LocaleController.getString(R.string.AccDescrHideAccounts)
         else
             LocaleController.getString(R.string.AccDescrShowAccounts)

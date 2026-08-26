@@ -4,41 +4,35 @@ Date: Tue, 21 Apr 2026 07:47:50 +0300
 Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
 
 ---
- TMessagesProj/build.gradle                    | 113 ++----
- .../config/debug/AndroidManifest.xml          | 130 +++----
- .../config/debug/AndroidManifest_SDK23.xml    | 144 ++++----
- .../config/release/AndroidManifest.xml        | 130 +++----
- .../config/release/AndroidManifest_SDK23.xml  | 148 ++++----
- .../release/AndroidManifest_standalone.xml    | 330 +++++++++---------
- TMessagesProj/proguard-rules.pro              |  13 +
+ TMessagesProj/build.gradle                    | 108 ++++------------
+ TMessagesProj/google-services.json            |  76 ++---------
+ TMessagesProj/proguard-rules.pro              |  13 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
  .../telegram/tgnet/ConnectionsManager.java    |   2 +-
- .../org/telegram/ui/PaymentFormActivity.java  |  28 +-
- .../org/telegram/ui/SettingsActivity.java     |  24 +-
- TMessagesProj_App/build.gradle                | 135 +++----
- TMessagesProj_AppHockeyApp/build.gradle       |  26 +-
- TMessagesProj_AppHuawei/build.gradle          |  26 +-
- TMessagesProj_AppStandalone/build.gradle      |  26 +-
- TMessagesProj_AppTests/build.gradle           |  31 +-
- build.gradle                                  |  22 +-
- gradle.properties                             |   8 +-
- settings.gradle                               |   5 +-
- 20 files changed, 654 insertions(+), 706 deletions(-)
+ .../org/telegram/ui/PaymentFormActivity.java  |  28 ++--
+ .../org/telegram/ui/SettingsActivity.java     |  24 +---
+ TMessagesProj_App/build.gradle                | 121 ++++--------------
+ TMessagesProj_App/google-services.json        |  76 ++---------
+ TMessagesProj_AppTests/build.gradle           |   5 +-
+ build.gradle                                  |  12 +-
+ gradle.properties                             |   2 +-
+ settings.gradle                               |  42 +++++-
+ 14 files changed, 173 insertions(+), 355 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -1,6 +1,7 @@
- import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
- 
- apply plugin: 'com.android.library'
+@@ -15,6 +15,7 @@ idea {
+         ]
+     }
+ }
 +apply plugin: 'kotlin-android'
  
  repositories {
      mavenCentral()
-@@ -17,6 +18,7 @@ configurations.all {
+@@ -31,6 +32,7 @@ configurations.all {
  }
  
  dependencies {
@@ -46,7 +40,7 @@ index 0000000..0000000 100644
      implementation 'androidx.core:core:1.16.0'
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
-@@ -45,7 +47,7 @@ dependencies {
+@@ -59,7 +61,7 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -55,9 +49,9 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:7.1.1'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -66,6 +68,10 @@ dependencies {
-     implementation "io.noties.markwon:inline-parser:4.6.2"
-     implementation "io.noties.markwon:ext-latex:4.6.2"
+@@ -83,6 +85,10 @@ dependencies {
+     }
+     api project(':jlatexmath')
  
 +    // inu
 +    implementation 'org.maplibre.gl:android-sdk:13.1.0'
@@ -66,7 +60,7 @@ index 0000000..0000000 100644
  //    implementation 'com.google.mlkit:translate:17.0.3'
  
      constraints {
-@@ -77,8 +83,6 @@ dependencies {
+@@ -94,8 +100,6 @@ dependencies {
          }
      }
      implementation 'com.google.android.recaptcha:recaptcha:18.7.1'
@@ -74,8 +68,8 @@ index 0000000..0000000 100644
 -    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
  }
  
- def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
-@@ -104,23 +108,31 @@ android {
+ android {
+@@ -120,23 +124,28 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -86,9 +80,6 @@ index 0000000..0000000 100644
 +        jvmTarget = "1.8"
      }
  
-+    buildFeatures {
-+        buildConfig = true
-+    }
  
      defaultConfig {
 -        minSdkVersion 21
@@ -113,21 +104,25 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -133,78 +145,14 @@ android {
+@@ -149,77 +158,13 @@ android {
              multiDexEnabled true
              proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
              ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
 -            buildConfigField "String", "APP_CENTER_HASH", "\"\""
 -            buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_PRIVATE_URL") + "\""
--            buildConfigField "boolean", "DEBUG_VERSION", "true"
--            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
--            buildConfigField "boolean", "BUNDLE", "false"
--            buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
++            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
++            buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
++            buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
++            buildConfigField "int", "STOCK_VERSION_CODE", String.valueOf(rootProject.ext.stockVerCode)
+             buildConfigField "boolean", "DEBUG_VERSION", "true"
+             buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
+             buildConfigField "boolean", "BUNDLE", "false"
 -            buildConfigField "int", "VERSION_NUM", "0"
 -        }
 -
 -        HA_private {
+-            matchingFallbacks = ['release']
 -            jniDebuggable false
 -            minifyEnabled true
 -            multiDexEnabled true
@@ -139,11 +134,11 @@ index 0000000..0000000 100644
 -            buildConfigField "boolean", "DEBUG_VERSION", "true"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
 -            buildConfigField "boolean", "BUNDLE", "false"
--            buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
 -            buildConfigField "int", "VERSION_NUM", "1"
 -        }
 -
 -        HA_public {
+-            matchingFallbacks = ['release']
 -            jniDebuggable false
 -            minifyEnabled true
 -            multiDexEnabled true
@@ -155,11 +150,11 @@ index 0000000..0000000 100644
 -            buildConfigField "boolean", "DEBUG_VERSION", "true"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "false"
 -            buildConfigField "boolean", "BUNDLE", "false"
--            buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
 -            buildConfigField "int", "VERSION_NUM", "4"
 -        }
 -
 -        HA_hardcore {
+-            matchingFallbacks = ['release']
 -            jniDebuggable false
 -            minifyEnabled true
 -            multiDexEnabled true
@@ -168,18 +163,14 @@ index 0000000..0000000 100644
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
 -            buildConfigField "String", "APP_CENTER_HASH", "\"" + getProps("APP_CENTER_HASH_HARDCORE") + "\""
 -            buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_HARDCORE_URL") + "\""
-+            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
-+            buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
-+            buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
-+            buildConfigField "int", "STOCK_VERSION_CODE", String.valueOf(rootProject.ext.stockVerCode)
-             buildConfigField "boolean", "DEBUG_VERSION", "true"
-             buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
-             buildConfigField "boolean", "BUNDLE", "false"
-             buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
+-            buildConfigField "boolean", "DEBUG_VERSION", "true"
+-            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
+-            buildConfigField "boolean", "BUNDLE", "false"
 -            buildConfigField "int", "VERSION_NUM", "5"
 -        }
 -
 -        standalone {
+-            matchingFallbacks = ['release']
 -            jniDebuggable false
 -            minifyEnabled true
 -            multiDexEnabled true
@@ -191,12 +182,11 @@ index 0000000..0000000 100644
 -            buildConfigField "boolean", "DEBUG_VERSION", "false"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "false"
 -            buildConfigField "boolean", "BUNDLE", "false"
--            buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
 -            buildConfigField "int", "VERSION_NUM", "6"
          }
  
          release {
-@@ -214,14 +162,14 @@ android {
+@@ -229,13 +174,13 @@ android {
              multiDexEnabled true
              proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
              ndk.debugSymbolLevel = 'FULL'
@@ -210,12 +200,11 @@ index 0000000..0000000 100644
              buildConfigField "boolean", "DEBUG_VERSION", "false"
              buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "false"
              buildConfigField "boolean", "BUNDLE", "false"
-             buildConfigField "boolean", "BUILD_HOST_IS_WINDOWS", isWindows
 -            buildConfigField "int", "VERSION_NUM", "7"
          }
      }
  
-@@ -239,7 +187,6 @@ def getProps(String propName) {
+@@ -253,7 +198,6 @@ def getProps(String propName) {
          return "";
      }
  }
@@ -223,920 +212,119 @@ index 0000000..0000000 100644
  
  task checkVisibility {
      doFirst {
-@@ -261,4 +208,4 @@ task checkVisibility {
+diff --git a/TMessagesProj/google-services.json b/TMessagesProj/google-services.json
+index 0000000..0000000 100644
+--- a/TMessagesProj/google-services.json
++++ b/TMessagesProj/google-services.json
+@@ -1,95 +1,45 @@
+ {
+   "project_info": {
+-    "project_number": "760348033671",
+-    "firebase_url": "https://tmessages2.firebaseio.com",
+-    "project_id": "tmessages2",
+-    "storage_bucket": "tmessages2.appspot.com"
++    "project_number": "1058545853294",
++    "project_id": "inugram-5dcad",
++    "storage_bucket": "inugram-5dcad.firebasestorage.app"
+   },
+   "client": [
+     {
+       "client_info": {
+-        "mobilesdk_app_id": "1:760348033671:android:f6afd7b67eae3860",
++        "mobilesdk_app_id": "1:1058545853294:android:fd3a66d8c6bde26b45177f",
+         "android_client_info": {
+-          "package_name": "org.telegram.messenger"
++          "package_name": "desu.inugram"
+         }
+       },
+-      "oauth_client": [
+-        {
+-          "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
++      "oauth_client": [],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"
++          "current_key": "AIzaSyBUTDbLj-lMgQkor-hY57AIpB2s033xaB0"
+         }
+       ],
+       "services": {
+         "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
++          "other_platform_oauth_client": []
+         }
+       }
+     },
+     {
+       "client_info": {
+-        "mobilesdk_app_id": "1:760348033671:android:dc022572c167a16c",
++        "mobilesdk_app_id": "1:1058545853294:android:d6b70c9beedf100745177f",
+         "android_client_info": {
+-          "package_name": "org.telegram.messenger.beta"
++          "package_name": "desu.inugram.beta"
+         }
+       },
+-      "oauth_client": [
+-        {
+-          "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"
+-        }
+-      ],
+-      "services": {
+-        "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
+-        }
+-      }
+-    },
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:760348033671:android:7396e651423888c3f66e22",
+-        "android_client_info": {
+-          "package_name": "org.telegram.messenger.web"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
++      "oauth_client": [],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"
++          "current_key": "AIzaSyBUTDbLj-lMgQkor-hY57AIpB2s033xaB0"
+         }
+       ],
+       "services": {
+         "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
++          "other_platform_oauth_client": []
+         }
+       }
      }
- }
- 
--preBuild.dependsOn checkVisibility
-\ No newline at end of file
-+preBuild.dependsOn checkVisibility
-diff --git a/TMessagesProj/config/debug/AndroidManifest.xml b/TMessagesProj/config/debug/AndroidManifest.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/config/debug/AndroidManifest.xml
-+++ b/TMessagesProj/config/debug/AndroidManifest.xml
-@@ -1,65 +1,65 @@
--<?xml version="1.0" encoding="utf-8"?>
--<manifest xmlns:android="http://schemas.android.com/apk/res/android"
--    xmlns:tools="http://schemas.android.com/tools"
--    android:installLocation="auto">
--
--    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
--    <uses-feature android:name="android.hardware.location.network" android:required="false" />
--    <uses-feature android:name="android.hardware.location" android:required="false" />
--    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
--
--    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
--    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
--    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
--    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
--    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
--
--    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
--
--    <application
--        android:icon="@mipmap/ic_launcher"
--        android:roundIcon="@mipmap/ic_launcher_round"
--        android:label="@string/AppNameBeta"
--        android:theme="@style/Theme.TMessages.Start"
--        android:hardwareAccelerated="true"
--        android:largeHeap="true"
--        android:supportsRtl="false"
--        android:requestLegacyExternalStorage="true"
--        tools:replace="android:supportsRtl">
--
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
--
--        <service
--            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
--            <intent-filter>
--                <action android:name="com.google.firebase.MESSAGING_EVENT" />
--            </intent-filter>
--        </service>
--
--        <uses-library android:name="com.google.android.maps" android:required="false"/>
--
--        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
--        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
--
--        <receiver
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
--            android:enabled="false"
--            android:exported="false">
--            <intent-filter>
--                <action android:name="com.google.android.gms.measurement.UPLOAD" />
--            </intent-filter>
--        </receiver>
--
--        <service
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementService"
--            android:enabled="false"
--            android:exported="false" />
--
--    </application>
--
--</manifest>
-+﻿<?xml version="1.0" encoding="utf-8"?>
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    xmlns:tools="http://schemas.android.com/tools"
-+    android:installLocation="auto">
-+
-+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
-+    <uses-feature android:name="android.hardware.location" android:required="false" />
-+    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
-+
-+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
-+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-+
-+    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-+
-+    <application
-+        android:icon="@mipmap/ic_launcher"
-+        android:roundIcon="@mipmap/ic_launcher_round"
-+        android:label="@string/AppNameBeta"
-+        android:theme="@style/Theme.TMessages.Start"
-+        android:hardwareAccelerated="true"
-+        android:largeHeap="true"
-+        android:supportsRtl="false"
-+        android:requestLegacyExternalStorage="true"
-+        tools:replace="android:supportsRtl">
-+
-+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
-+
-+        <service
-+            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
-+            <intent-filter>
-+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-+            </intent-filter>
-+        </service>
-+
-+        <uses-library android:name="com.google.android.maps" android:required="false"/>
-+
-+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
-+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-+
-+        <receiver
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-+            android:enabled="false"
-+            android:exported="false">
-+            <intent-filter>
-+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
-+            </intent-filter>
-+        </receiver>
-+
-+        <service
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementService"
-+            android:enabled="false"
-+            android:exported="false" />
-+
-+    </application>
-+
-+</manifest>
-diff --git a/TMessagesProj/config/debug/AndroidManifest_SDK23.xml b/TMessagesProj/config/debug/AndroidManifest_SDK23.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/config/debug/AndroidManifest_SDK23.xml
-+++ b/TMessagesProj/config/debug/AndroidManifest_SDK23.xml
-@@ -1,72 +1,72 @@
--<?xml version="1.0" encoding="utf-8"?>
--<manifest xmlns:android="http://schemas.android.com/apk/res/android"
--    xmlns:tools="http://schemas.android.com/tools"
--    android:installLocation="auto">
--
--    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
--    <uses-feature android:name="android.hardware.location.network" android:required="false" />
--    <uses-feature android:name="android.hardware.location" android:required="false" />
--    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
--
--    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
--    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
--    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
--    <uses-permission android:name="android.permission.CALL_PHONE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
--    <uses-permission android:name="android.permission.READ_CALL_LOG" />
--    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
--
--
--    <application
--        android:icon="@mipmap/ic_launcher"
--        android:roundIcon="@mipmap/ic_launcher_round"
--        android:label="@string/AppNameBeta"
--        android:theme="@style/Theme.TMessages.Start"
--        android:hardwareAccelerated="true"
--        android:largeHeap="true"
--        android:supportsRtl="false"
--        android:requestLegacyExternalStorage="true"
--        tools:replace="android:supportsRtl">
--
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
--
--        <service
--            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
--            <intent-filter>
--                <action android:name="com.google.firebase.MESSAGING_EVENT" />
--            </intent-filter>
--        </service>
--
--        <uses-library android:name="com.google.android.maps" android:required="false"/>
--
--        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
--        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
--
--        <receiver
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
--            android:enabled="false"
--            android:exported="false">
--            <intent-filter>
--                <action android:name="com.google.android.gms.measurement.UPLOAD" />
--            </intent-filter>
--        </receiver>
--
--        <service
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementService"
--            android:enabled="false"
--            android:exported="false" />
--
--    </application>
--
--</manifest>
-+﻿<?xml version="1.0" encoding="utf-8"?>
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    xmlns:tools="http://schemas.android.com/tools"
-+    android:installLocation="auto">
-+
-+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
-+    <uses-feature android:name="android.hardware.location" android:required="false" />
-+    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
-+
-+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
-+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-+    <uses-permission android:name="android.permission.CALL_PHONE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-+
-+
-+    <application
-+        android:icon="@mipmap/ic_launcher"
-+        android:roundIcon="@mipmap/ic_launcher_round"
-+        android:label="@string/AppNameBeta"
-+        android:theme="@style/Theme.TMessages.Start"
-+        android:hardwareAccelerated="true"
-+        android:largeHeap="true"
-+        android:supportsRtl="false"
-+        android:requestLegacyExternalStorage="true"
-+        tools:replace="android:supportsRtl">
-+
-+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
-+
-+        <service
-+            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
-+            <intent-filter>
-+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-+            </intent-filter>
-+        </service>
-+
-+        <uses-library android:name="com.google.android.maps" android:required="false"/>
-+
-+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
-+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-+
-+        <receiver
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-+            android:enabled="false"
-+            android:exported="false">
-+            <intent-filter>
-+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
-+            </intent-filter>
-+        </receiver>
-+
-+        <service
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementService"
-+            android:enabled="false"
-+            android:exported="false" />
-+
-+    </application>
-+
-+</manifest>
-diff --git a/TMessagesProj/config/release/AndroidManifest.xml b/TMessagesProj/config/release/AndroidManifest.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/config/release/AndroidManifest.xml
-+++ b/TMessagesProj/config/release/AndroidManifest.xml
-@@ -1,65 +1,65 @@
--<?xml version="1.0" encoding="utf-8"?>
--<manifest xmlns:android="http://schemas.android.com/apk/res/android"
--    xmlns:tools="http://schemas.android.com/tools"
--    android:installLocation="auto">
--
--    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
--    <uses-feature android:name="android.hardware.location.network" android:required="false" />
--    <uses-feature android:name="android.hardware.location" android:required="false" />
--    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
--
--    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
--    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
--    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
--    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
--    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
--
--    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
--
--    <application
--        android:icon="@mipmap/ic_launcher"
--        android:roundIcon="@mipmap/ic_launcher_round"
--        android:label="@string/AppName"
--        android:theme="@style/Theme.TMessages.Start"
--        android:hardwareAccelerated="true"
--        android:largeHeap="true"
--        android:supportsRtl="false"
--        android:requestLegacyExternalStorage="true"
--        tools:replace="android:supportsRtl">
--
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
--
--        <service
--            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
--            <intent-filter>
--                <action android:name="com.google.firebase.MESSAGING_EVENT" />
--            </intent-filter>
--        </service>
--
--        <uses-library android:name="com.google.android.maps" android:required="false"/>
--
--        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
--        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
--
--        <receiver
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
--            android:enabled="false"
--            android:exported="false">
--            <intent-filter>
--                <action android:name="com.google.android.gms.measurement.UPLOAD" />
--            </intent-filter>
--        </receiver>
--
--        <service
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementService"
--            android:enabled="false"
--            android:exported="false" />
--
--    </application>
--
--</manifest>
-+﻿<?xml version="1.0" encoding="utf-8"?>
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    xmlns:tools="http://schemas.android.com/tools"
-+    android:installLocation="auto">
-+
-+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
-+    <uses-feature android:name="android.hardware.location" android:required="false" />
-+    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
-+
-+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
-+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-+
-+    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-+
-+    <application
-+        android:icon="@mipmap/ic_launcher"
-+        android:roundIcon="@mipmap/ic_launcher_round"
-+        android:label="@string/AppName"
-+        android:theme="@style/Theme.TMessages.Start"
-+        android:hardwareAccelerated="true"
-+        android:largeHeap="true"
-+        android:supportsRtl="false"
-+        android:requestLegacyExternalStorage="true"
-+        tools:replace="android:supportsRtl">
-+
-+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
-+
-+        <service
-+            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
-+            <intent-filter>
-+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-+            </intent-filter>
-+        </service>
-+
-+        <uses-library android:name="com.google.android.maps" android:required="false"/>
-+
-+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
-+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-+
-+        <receiver
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-+            android:enabled="false"
-+            android:exported="false">
-+            <intent-filter>
-+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
-+            </intent-filter>
-+        </receiver>
-+
-+        <service
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementService"
-+            android:enabled="false"
-+            android:exported="false" />
-+
-+    </application>
-+
-+</manifest>
-diff --git a/TMessagesProj/config/release/AndroidManifest_SDK23.xml b/TMessagesProj/config/release/AndroidManifest_SDK23.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/config/release/AndroidManifest_SDK23.xml
-+++ b/TMessagesProj/config/release/AndroidManifest_SDK23.xml
-@@ -1,74 +1,74 @@
--<?xml version="1.0" encoding="utf-8"?>
--<manifest xmlns:android="http://schemas.android.com/apk/res/android"
--    xmlns:tools="http://schemas.android.com/tools"
--    android:installLocation="auto">
--
--    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
--    <uses-feature android:name="android.hardware.location.network" android:required="false" />
--    <uses-feature android:name="android.hardware.location" android:required="false" />
--    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
--
--    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
--    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
--    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
--    <uses-permission android:name="android.permission.CALL_PHONE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
--    <uses-permission android:name="android.permission.READ_CALL_LOG" />
--    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
--
--    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
--
--    <application
--        android:icon="@mipmap/ic_launcher"
--        android:roundIcon="@mipmap/ic_launcher_round"
--        android:label="@string/AppName"
--        android:theme="@style/Theme.TMessages.Start"
--        android:hardwareAccelerated="true"
--        android:largeHeap="true"
--        android:supportsRtl="false"
--        android:requestLegacyExternalStorage="true"
--        tools:replace="android:supportsRtl">
--
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
--
--        <service
--            android:name="org.telegram.messenger.GcmPushListenerService"
--            android:exported="true">
--            <intent-filter>
--                <action android:name="com.google.firebase.MESSAGING_EVENT" />
--            </intent-filter>
--        </service>
--
--        <uses-library android:name="com.google.android.maps" android:required="false"/>
--
--        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
--        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
--
--        <receiver
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
--            android:enabled="false"
--            android:exported="false">
--            <intent-filter>
--                <action android:name="com.google.android.gms.measurement.UPLOAD" />
--            </intent-filter>
--        </receiver>
--
--        <service
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementService"
--            android:enabled="false"
--            android:exported="false" />
--
--    </application>
--
--</manifest>
-+﻿<?xml version="1.0" encoding="utf-8"?>
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    xmlns:tools="http://schemas.android.com/tools"
-+    android:installLocation="auto">
-+
-+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
-+    <uses-feature android:name="android.hardware.location" android:required="false" />
-+    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
-+
-+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
-+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-+    <uses-permission android:name="android.permission.CALL_PHONE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-+
-+    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-+
-+    <application
-+        android:icon="@mipmap/ic_launcher"
-+        android:roundIcon="@mipmap/ic_launcher_round"
-+        android:label="@string/AppName"
-+        android:theme="@style/Theme.TMessages.Start"
-+        android:hardwareAccelerated="true"
-+        android:largeHeap="true"
-+        android:supportsRtl="false"
-+        android:requestLegacyExternalStorage="true"
-+        tools:replace="android:supportsRtl">
-+
-+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
-+
-+        <service
-+            android:name="org.telegram.messenger.GcmPushListenerService"
-+            android:exported="true">
-+            <intent-filter>
-+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-+            </intent-filter>
-+        </service>
-+
-+        <uses-library android:name="com.google.android.maps" android:required="false"/>
-+
-+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
-+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-+
-+        <receiver
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-+            android:enabled="false"
-+            android:exported="false">
-+            <intent-filter>
-+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
-+            </intent-filter>
-+        </receiver>
-+
-+        <service
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementService"
-+            android:enabled="false"
-+            android:exported="false" />
-+
-+    </application>
-+
-+</manifest>
-diff --git a/TMessagesProj/config/release/AndroidManifest_standalone.xml b/TMessagesProj/config/release/AndroidManifest_standalone.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/config/release/AndroidManifest_standalone.xml
-+++ b/TMessagesProj/config/release/AndroidManifest_standalone.xml
-@@ -1,165 +1,165 @@
--<?xml version="1.0" encoding="utf-8"?>
--<manifest xmlns:android="http://schemas.android.com/apk/res/android"
--    xmlns:tools="http://schemas.android.com/tools"
--    android:installLocation="auto">
--
--    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
--    <uses-feature android:name="android.hardware.location.network" android:required="false" />
--    <uses-feature android:name="android.hardware.location" android:required="false" />
--    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
--
--    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
--    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
--    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
--    <uses-permission android:name="android.permission.CALL_PHONE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
--    <uses-permission android:name="android.permission.READ_CALL_LOG" />
--    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
--
--    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
--
--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
--    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
--    <uses-permission android:name="android.permission.SEND_SMS" />
--
--    <application
--        android:icon="@mipmap/ic_launcher_sa"
--        android:roundIcon="@mipmap/ic_launcher_sa"
--        android:label="@string/AppName"
--        android:theme="@style/Theme.TMessages.Start"
--        android:hardwareAccelerated="true"
--        android:largeHeap="true"
--        android:supportsRtl="false"
--        android:requestLegacyExternalStorage="true"
--        tools:replace="android:supportsRtl">
--
--        <activity-alias
--            android:enabled="false"
--            android:name="org.telegram.messenger.VintageIcon"
--            android:targetActivity="org.telegram.ui.LaunchActivity"
--            android:icon="@mipmap/icon_6_launcher_sa"
--            android:roundIcon="@mipmap/icon_6_launcher_sa"
--            android:exported="true"
--            tools:node="replace">
--
--            <intent-filter>
--                <action android:name="android.intent.action.MAIN" />
--                <category android:name="android.intent.category.LAUNCHER" />
--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
--            </intent-filter>
--        </activity-alias>
--
--        <activity-alias
--            android:enabled="false"
--            android:name="org.telegram.messenger.AquaIcon"
--            android:targetActivity="org.telegram.ui.LaunchActivity"
--            android:icon="@mipmap/icon_4_launcher_sa"
--            android:roundIcon="@mipmap/icon_4_launcher_sa"
--            android:exported="true"
--            tools:node="replace">
--
--            <intent-filter>
--                <action android:name="android.intent.action.MAIN" />
--                <category android:name="android.intent.category.LAUNCHER" />
--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
--            </intent-filter>
--        </activity-alias>
--
--        <activity-alias
--            android:enabled="false"
--            android:name="org.telegram.messenger.PremiumIcon"
--            android:targetActivity="org.telegram.ui.LaunchActivity"
--            android:icon="@mipmap/icon_3_launcher_sa"
--            android:roundIcon="@mipmap/icon_3_launcher_sa"
--            android:exported="true"
--            tools:node="replace">
--
--            <intent-filter>
--                <action android:name="android.intent.action.MAIN" />
--                <category android:name="android.intent.category.LAUNCHER" />
--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
--            </intent-filter>
--        </activity-alias>
--
--        <activity-alias
--            android:enabled="false"
--            android:name="org.telegram.messenger.TurboIcon"
--            android:targetActivity="org.telegram.ui.LaunchActivity"
--            android:icon="@mipmap/icon_5_launcher_sa"
--            android:roundIcon="@mipmap/icon_5_launcher_sa"
--            android:exported="true"
--            tools:node="replace">
--
--            <intent-filter>
--                <action android:name="android.intent.action.MAIN" />
--                <category android:name="android.intent.category.LAUNCHER" />
--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
--            </intent-filter>
--        </activity-alias>
--
--        <activity-alias
--            android:enabled="false"
--            android:name="org.telegram.messenger.NoxIcon"
--            android:targetActivity="org.telegram.ui.LaunchActivity"
--            android:icon="@mipmap/icon_2_launcher_sa"
--            android:roundIcon="@mipmap/icon_2_launcher_sa"
--            android:exported="true"
--            tools:node="replace">
--
--            <intent-filter>
--                <action android:name="android.intent.action.MAIN" />
--                <category android:name="android.intent.category.LAUNCHER" />
--                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
--            </intent-filter>
--        </activity-alias>
--
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
--
--        <service
--            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
--            <intent-filter>
--                <action android:name="com.google.firebase.MESSAGING_EVENT" />
--            </intent-filter>
--        </service>
--
--        <uses-library android:name="com.google.android.maps" android:required="false"/>
--
--        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
--        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
--
--        <receiver
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
--            android:enabled="false"
--            android:exported="false">
--            <intent-filter>
--                <action android:name="com.google.android.gms.measurement.UPLOAD" />
--            </intent-filter>
--        </receiver>
--
--        <receiver
--            android:name="org.telegram.messenger.SMSResultService"
--            android:exported="false">
--        </receiver>
--
--
--        <service
--            tools:replace="android:enabled"
--            android:name="com.google.android.gms.measurement.AppMeasurementService"
--            android:enabled="false"
--            android:exported="false" />
--
--    </application>
--
--</manifest>
-+﻿<?xml version="1.0" encoding="utf-8"?>
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    xmlns:tools="http://schemas.android.com/tools"
-+    android:installLocation="auto">
-+
-+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
-+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
-+    <uses-feature android:name="android.hardware.location" android:required="false" />
-+    <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
-+
-+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-+    <uses-permission android:name="${applicationId}.permission.MAPS_RECEIVE"/>
-+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-+    <uses-permission android:name="android.permission.CALL_PHONE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
-+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL" />
-+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
-+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
-+
-+    <permission android:name="${applicationId}.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-+
-+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-+    <uses-permission android:name="android.permission.SEND_SMS" />
-+
-+    <application
-+        android:icon="@mipmap/ic_launcher_sa"
-+        android:roundIcon="@mipmap/ic_launcher_sa"
-+        android:label="@string/AppName"
-+        android:theme="@style/Theme.TMessages.Start"
-+        android:hardwareAccelerated="true"
-+        android:largeHeap="true"
-+        android:supportsRtl="false"
-+        android:requestLegacyExternalStorage="true"
-+        tools:replace="android:supportsRtl">
-+
-+        <activity-alias
-+            android:enabled="false"
-+            android:name="org.telegram.messenger.VintageIcon"
-+            android:targetActivity="org.telegram.ui.LaunchActivity"
-+            android:icon="@mipmap/icon_6_launcher_sa"
-+            android:roundIcon="@mipmap/icon_6_launcher_sa"
-+            android:exported="true"
-+            tools:node="replace">
-+
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:enabled="false"
-+            android:name="org.telegram.messenger.AquaIcon"
-+            android:targetActivity="org.telegram.ui.LaunchActivity"
-+            android:icon="@mipmap/icon_4_launcher_sa"
-+            android:roundIcon="@mipmap/icon_4_launcher_sa"
-+            android:exported="true"
-+            tools:node="replace">
-+
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:enabled="false"
-+            android:name="org.telegram.messenger.PremiumIcon"
-+            android:targetActivity="org.telegram.ui.LaunchActivity"
-+            android:icon="@mipmap/icon_3_launcher_sa"
-+            android:roundIcon="@mipmap/icon_3_launcher_sa"
-+            android:exported="true"
-+            tools:node="replace">
-+
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:enabled="false"
-+            android:name="org.telegram.messenger.TurboIcon"
-+            android:targetActivity="org.telegram.ui.LaunchActivity"
-+            android:icon="@mipmap/icon_5_launcher_sa"
-+            android:roundIcon="@mipmap/icon_5_launcher_sa"
-+            android:exported="true"
-+            tools:node="replace">
-+
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <activity-alias
-+            android:enabled="false"
-+            android:name="org.telegram.messenger.NoxIcon"
-+            android:targetActivity="org.telegram.ui.LaunchActivity"
-+            android:icon="@mipmap/icon_2_launcher_sa"
-+            android:roundIcon="@mipmap/icon_2_launcher_sa"
-+            android:exported="true"
-+            tools:node="replace">
-+
-+            <intent-filter>
-+                <action android:name="android.intent.action.MAIN" />
-+                <category android:name="android.intent.category.LAUNCHER" />
-+                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
-+            </intent-filter>
-+        </activity-alias>
-+
-+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
-+
-+        <service
-+            android:name="org.telegram.messenger.GcmPushListenerService" android:exported="true">
-+            <intent-filter>
-+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-+            </intent-filter>
-+        </service>
-+
-+        <uses-library android:name="com.google.android.maps" android:required="false"/>
-+
-+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
-+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
-+
-+        <receiver
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
-+            android:enabled="false"
-+            android:exported="false">
-+            <intent-filter>
-+                <action android:name="com.google.android.gms.measurement.UPLOAD" />
-+            </intent-filter>
-+        </receiver>
-+
-+        <receiver
-+            android:name="org.telegram.messenger.SMSResultService"
-+            android:exported="false">
-+        </receiver>
-+
-+
-+        <service
-+            tools:replace="android:enabled"
-+            android:name="com.google.android.gms.measurement.AppMeasurementService"
-+            android:enabled="false"
-+            android:exported="false" />
-+
-+    </application>
-+
-+</manifest>
 diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
 index 0000000..0000000 100644
 --- a/TMessagesProj/proguard-rules.pro
@@ -1223,7 +411,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -1045,7 +1045,7 @@ public class ConnectionsManager extends BaseController {
+@@ -1036,7 +1036,7 @@ public class ConnectionsManager extends BaseController {
          if (Build.VERSION.SDK_INT < 19) {
              return USE_IPV4_ONLY;
          }
@@ -1386,22 +574,13 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -37,23 +44,24 @@ android {
+@@ -37,20 +44,11 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
-+    }
- 
+-
 -        coreLibraryDesugaringEnabled true
-+    def keystorePropsFile = rootProject.file('keystore.properties')
-+    def keystoreProps = new Properties()
-+    if (keystorePropsFile.exists()) {
-+        keystoreProps.load(new FileInputStream(keystorePropsFile))
      }
-+    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
-+    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
-+    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
-+    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
  
      signingConfigs {
 -        debug {
@@ -1413,17 +592,11 @@ index 0000000..0000000 100644
 -
          release {
 -            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
-         }
-     }
- 
-@@ -61,7 +69,7 @@ android {
++            storeFile file(System.getenv('RELEASE_KEYSTORE_PATH') ?: "../TMessagesProj/config/release.keystore")
+             storePassword RELEASE_STORE_PASSWORD
+             keyAlias RELEASE_KEY_ALIAS
+             keyPassword RELEASE_KEY_PASSWORD
+@@ -61,7 +59,7 @@ android {
          debug {
              debuggable true
              jniDebuggable true
@@ -1432,7 +605,7 @@ index 0000000..0000000 100644
              applicationIdSuffix ".beta"
              minifyEnabled false
              shrinkResources false
-@@ -70,18 +78,6 @@ android {
+@@ -70,18 +68,6 @@ android {
              ndk.debugSymbolLevel = 'FULL'
          }
  
@@ -1451,7 +624,7 @@ index 0000000..0000000 100644
          release {
              debuggable false
              jniDebuggable false
-@@ -95,95 +91,38 @@ android {
+@@ -95,95 +81,38 @@ android {
      }
  
      sourceSets.debug {
@@ -1465,8 +638,9 @@ index 0000000..0000000 100644
  
      sourceSets.release {
 -        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
--    }
--
++        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
+     }
+ 
 -    flavorDimensions "minApi"
 -
 -    productFlavors {
@@ -1513,9 +687,8 @@ index 0000000..0000000 100644
 -            }
 -            buildConfigField "boolean", "BUNDLE", "false"
 -        }
-+        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
-     }
- 
+-    }
+-
 -    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
 +    defaultConfig.versionCode = rootProject.ext.verCode
  
@@ -1559,7 +732,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -196,6 +135,10 @@ android {
+@@ -196,6 +125,10 @@ android {
      lintOptions {
          checkReleaseBuilds false
      }
@@ -1570,132 +743,119 @@ index 0000000..0000000 100644
  }
  
  apply plugin: 'com.google.gms.google-services'
-diff --git a/TMessagesProj_AppHockeyApp/build.gradle b/TMessagesProj_AppHockeyApp/build.gradle
+diff --git a/TMessagesProj_App/google-services.json b/TMessagesProj_App/google-services.json
 index 0000000..0000000 100644
---- a/TMessagesProj_AppHockeyApp/build.gradle
-+++ b/TMessagesProj_AppHockeyApp/build.gradle
-@@ -54,19 +54,29 @@ android {
-         coreLibraryDesugaringEnabled true
-     }
- 
-+    def keystorePropsFile = rootProject.file('keystore.properties')
-+    def keystoreProps = new Properties()
-+    if (keystorePropsFile.exists()) {
-+        keystoreProps.load(new FileInputStream(keystorePropsFile))
-+    }
-+    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
-+    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
-+    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
-+    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
-+
-     signingConfigs {
-         debug {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
+--- a/TMessagesProj_App/google-services.json
++++ b/TMessagesProj_App/google-services.json
+@@ -1,95 +1,45 @@
+ {
+   "project_info": {
+-    "project_number": "760348033671",
+-    "firebase_url": "https://tmessages2.firebaseio.com",
+-    "project_id": "tmessages2",
+-    "storage_bucket": "tmessages2.appspot.com"
++    "project_number": "1058545853294",
++    "project_id": "inugram-5dcad",
++    "storage_bucket": "inugram-5dcad.firebasestorage.app"
+   },
+   "client": [
+     {
+       "client_info": {
+-        "mobilesdk_app_id": "1:760348033671:android:f6afd7b67eae3860",
++        "mobilesdk_app_id": "1:1058545853294:android:fd3a66d8c6bde26b45177f",
+         "android_client_info": {
+-          "package_name": "org.telegram.messenger"
++          "package_name": "desu.inugram"
          }
- 
-         release {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
+       },
+-      "oauth_client": [
+-        {
+-          "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
++      "oauth_client": [],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"
++          "current_key": "AIzaSyBUTDbLj-lMgQkor-hY57AIpB2s033xaB0"
          }
-     }
- 
-diff --git a/TMessagesProj_AppHuawei/build.gradle b/TMessagesProj_AppHuawei/build.gradle
-index 0000000..0000000 100644
---- a/TMessagesProj_AppHuawei/build.gradle
-+++ b/TMessagesProj_AppHuawei/build.gradle
-@@ -49,19 +49,29 @@ android {
-         coreLibraryDesugaringEnabled true
-     }
- 
-+    def keystorePropsFile = rootProject.file('keystore.properties')
-+    def keystoreProps = new Properties()
-+    if (keystorePropsFile.exists()) {
-+        keystoreProps.load(new FileInputStream(keystorePropsFile))
-+    }
-+    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
-+    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
-+    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
-+    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
-+
-     signingConfigs {
-         debug {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
+       ],
+       "services": {
+         "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
++          "other_platform_oauth_client": []
          }
- 
-         release {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
+       }
+     },
+     {
+       "client_info": {
+-        "mobilesdk_app_id": "1:760348033671:android:dc022572c167a16c",
++        "mobilesdk_app_id": "1:1058545853294:android:d6b70c9beedf100745177f",
+         "android_client_info": {
+-          "package_name": "org.telegram.messenger.beta"
++          "package_name": "desu.inugram.beta"
          }
-     }
- 
-diff --git a/TMessagesProj_AppStandalone/build.gradle b/TMessagesProj_AppStandalone/build.gradle
-index 0000000..0000000 100644
---- a/TMessagesProj_AppStandalone/build.gradle
-+++ b/TMessagesProj_AppStandalone/build.gradle
-@@ -43,19 +43,29 @@ android {
-         coreLibraryDesugaringEnabled true
-     }
- 
-+    def keystorePropsFile = rootProject.file('keystore.properties')
-+    def keystoreProps = new Properties()
-+    if (keystorePropsFile.exists()) {
-+        keystoreProps.load(new FileInputStream(keystorePropsFile))
-+    }
-+    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
-+    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
-+    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
-+    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
-+
-     signingConfigs {
-         debug {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
+       },
+-      "oauth_client": [
+-        {
+-          "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
+-      "api_key": [
+-        {
+-          "current_key": "AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"
+-        }
+-      ],
+-      "services": {
+-        "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
+-        }
+-      }
+-    },
+-    {
+-      "client_info": {
+-        "mobilesdk_app_id": "1:760348033671:android:7396e651423888c3f66e22",
+-        "android_client_info": {
+-          "package_name": "org.telegram.messenger.web"
+-        }
+-      },
+-      "oauth_client": [
+-        {
+-          "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-          "client_type": 3
+-        }
+-      ],
++      "oauth_client": [],
+       "api_key": [
+         {
+-          "current_key": "AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k"
++          "current_key": "AIzaSyBUTDbLj-lMgQkor-hY57AIpB2s033xaB0"
          }
- 
-         release {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
+       ],
+       "services": {
+         "appinvite_service": {
+-          "other_platform_oauth_client": [
+-            {
+-              "client_id": "760348033671-2hh8ebmuflsnjoc0kldkfells9rhtfni.apps.googleusercontent.com",
+-              "client_type": 3
+-            }
+-          ]
++          "other_platform_oauth_client": []
          }
+       }
      }
- 
 diff --git a/TMessagesProj_AppTests/build.gradle b/TMessagesProj_AppTests/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_AppTests/build.gradle
@@ -1711,45 +871,7 @@ index 0000000..0000000 100644
      androidTestImplementation "com.appmattus.fixture:fixture:1.2.0"
  }
  
-@@ -54,19 +54,29 @@ android {
-         jvmTarget = "1.8"
-     }
- 
-+    def keystorePropsFile = rootProject.file('keystore.properties')
-+    def keystoreProps = new Properties()
-+    if (keystorePropsFile.exists()) {
-+        keystoreProps.load(new FileInputStream(keystorePropsFile))
-+    }
-+    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
-+    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
-+    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
-+    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
-+
-     signingConfigs {
-         debug {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
-         }
- 
-         release {
--            storeFile file("../TMessagesProj/config/release.keystore")
--            storePassword RELEASE_STORE_PASSWORD
--            keyAlias RELEASE_KEY_ALIAS
--            keyPassword RELEASE_KEY_PASSWORD
-+            storeFile file(releaseKeystorePath)
-+            storePassword releaseKeystorePassword
-+            keyAlias releaseKeystoreAlias
-+            keyPassword releaseKeystoreKeyPassword
-         }
-     }
- 
-@@ -162,4 +172,3 @@ android {
+@@ -166,4 +166,3 @@ android {
          checkReleaseBuilds false
      }
  }
@@ -1758,7 +880,7 @@ diff --git a/build.gradle b/build.gradle
 index 0000000..0000000 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -10,9 +10,29 @@ buildscript {
+@@ -10,9 +10,19 @@ buildscript {
          classpath 'com.google.gms:google-services:4.3.15'
          classpath 'com.huawei.agconnect:agcp:1.9.1.301'
          classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.0'
@@ -1777,43 +899,62 @@ index 0000000..0000000 100644
 +  verCode = Integer.parseInt(System.getenv('INU_BUILD') ?: '1000000')
 +  stockVerCode = Integer.parseInt(APP_VERSION_CODE)
 +  buildDate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_DATE)
-+  ccachePath = null
-+  try {
-+    def os = System.getProperty('os.name').toLowerCase()
-+    def cmd = os.contains('win')
-+        ? ['cmd', '/c', 'where ccache']
-+        : ['sh', '-c', 'command -v ccache']
-+    def text = cmd.execute().text.trim()
-+    ccachePath = text ?: null
-+  } catch (Exception ignored) {
-+    ccachePath = null
-+  }
++  ccachePath = ['sh', '-c', 'command -v ccache'].execute().text.trim() ?: null
  }
 \ No newline at end of file
 diff --git a/gradle.properties b/gradle.properties
 index 0000000..0000000 100644
 --- a/gradle.properties
 +++ b/gradle.properties
-@@ -25,8 +25,12 @@ org.gradle.daemon=true
+@@ -25,7 +25,7 @@ org.gradle.daemon=true
  org.gradle.parallel=true
  org.gradle.configureondemand=false
  android.useAndroidX=true
 -android.enableJetifier=true
--android.defaults.buildfeatures.buildconfig=true
 +android.enableJetifier=false
+ android.defaults.buildfeatures.buildconfig=true
  android.nonTransitiveRClass=false
  android.nonFinalResIds=false
- android.enableR8.fullMode=true
-+# TMessagesProj and TMessagesProj_App (the only two modules that need BuildConfig) now declare
-+# buildFeatures.buildConfig=true explicitly — the deprecated global default is no longer needed.
-+# Source/target 8 is intentionally kept (see compileOptions in TMessagesProj*/build.gradle);
-+# this only silences the noisy javac warning about it, no compile-target change.
-+android.javaCompile.suppressSourceTargetDeprecationWarning=true
 diff --git a/settings.gradle b/settings.gradle
 index 0000000..0000000 100644
 --- a/settings.gradle
 +++ b/settings.gradle
-@@ -1,6 +1,3 @@
+@@ -1,6 +1,40 @@
++import java.nio.channels.FileChannel
++import java.nio.channels.FileLock
++import java.nio.file.StandardOpenOption
++
++abstract class InuBuildLock implements BuildService<Params>, AutoCloseable {
++    interface Params extends BuildServiceParameters {
++        Property<String> getLockPath()
++    }
++
++    private final FileChannel channel
++    private final FileLock lock
++
++    InuBuildLock() {
++        def file = new File(parameters.lockPath.get())
++        file.parentFile.mkdirs()
++        channel = FileChannel.open(file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE)
++        def acquired = channel.tryLock()
++        if (acquired == null) {
++            println "> Waiting for another build to release ${file}"
++            acquired = channel.lock()
++        }
++        lock = acquired
++    }
++
++    @Override
++    void close() {
++        lock.release()
++        channel.close()
++    }
++}
++
++gradle.sharedServices.registerIfAbsent('inuBuildLock', InuBuildLock) {
++    parameters.lockPath = new File(settingsDir, '.gradle/inu-build.lock').absolutePath
++}.get()
++
  include ':TMessagesProj'
  include ':TMessagesProj_App'
 -include ':TMessagesProj_AppHuawei'
@@ -1821,3 +962,5 @@ index 0000000..0000000 100644
 -include ':TMessagesProj_AppStandalone'
 -include ':TMessagesProj_AppTests'
 +include ':InuCore'
++include ':jlatexmath'
++project(':jlatexmath').projectDir = file('TMessagesProj/lib/jlatexmath/jlatexmath')

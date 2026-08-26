@@ -11,6 +11,8 @@
     "find-patches": "bun scripts/find-patches.ts",
     "lint-patches": "bun scripts/lint-patches.ts",
     "push-theme": "bun scripts/push-theme.ts",
+    "build-debug": "cd worktree && ./gradlew TMessagesProj_App:assembleDebug",
+    "run-debug": "cd worktree && ./gradlew TMessagesProj_App:installDebug && adb shell am start desu.inugram.beta/org.telegram.ui.LaunchActivity",
     "prepare": "husky"
   },
   "dependencies": {

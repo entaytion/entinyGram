@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 24 Aug 2026 02:18:56 +0300
+Subject: publish album name in media session metadata for streamed music
+
+---
+ .../src/main/java/org/telegram/messenger/MediaController.java  | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -1878,6 +1878,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                         try {
+                             File cacheFile = FileLoader.getInstance(UserConfig.selectedAccount).getPathToMessage(playingMessageObject.messageOwner);
+                             audioInfo = AudioInfo.getAudioInfo(cacheFile);
++                            if (audioInfo != null) {
++                                NotificationCenter.getInstance(playingMessageObject.currentAccount).postNotificationName(NotificationCenter.messagePlayingPlayStateChanged, playingMessageObject.getId());
++                            }
+                         } catch (Exception e) {
+                             FileLog.e(e);
+                         }

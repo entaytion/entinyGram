@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 07:22:06 +0400
+Subject: use low-latency audio stack to avoid crackling artifacts when changing video speed
+
+---
+ .../src/main/java/org/telegram/ui/Components/VideoPlayer.java  | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
+@@ -263,6 +263,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+                 factory = new DefaultRenderersFactory(ApplicationLoader.applicationContext);
+             }
+             factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
++            factory.setEnableAudioTrackPlaybackParams(true);
+             ExoPlayer.Builder builder = new ExoPlayer.Builder(ApplicationLoader.applicationContext).setRenderersFactory(factory)
+                     .setTrackSelector(trackSelector)
+                     .setLoadControl(loadControl);
+@@ -1472,7 +1473,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+     public void setPlaybackSpeed(float speed) {
+         try {
+             if (player != null) {
+-                player.setPlaybackParameters(new PlaybackParameters(speed, speed > 1.0f ? 0.98f : 1.0f));
++                player.setPlaybackParameters(new PlaybackParameters(speed, 1.0f));
+             }
+         } catch (Exception ignore) {}
+     }

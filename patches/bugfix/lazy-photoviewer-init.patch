@@ -166,7 +166,7 @@ index 0000000..0000000 100644
                      });
                  }
              } catch (Exception e) {
-@@ -16066,7 +16090,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16059,7 +16083,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  videoFrameBitmap = null;
              }
          }

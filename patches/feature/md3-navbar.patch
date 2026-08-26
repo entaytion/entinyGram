@@ -1,0 +1,249 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 25 Aug 2026 17:51:51 +0400
+Subject: md3-styled bottom navigation bar
+
+---
+ .../ui/Components/glass/GlassTabView.java     | 35 +++++++++++++++----
+ .../org/telegram/ui/MainTabsActivity.java     | 21 ++++++-----
+ .../java/org/telegram/ui/MainTabsLayout.java  | 15 +++++++-
+ 3 files changed, 55 insertions(+), 16 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -48,6 +48,8 @@ import org.telegram.ui.Components.RLottieImageView;
+ import org.telegram.ui.Components.ScaleStateListAnimator;
+ import org.telegram.ui.MainTabsLayout;
+ 
++import desu.inugram.helpers.theme.M3MainTabsHelper;
++
+ import me.vkryl.android.AnimatorUtils;
+ import me.vkryl.android.animator.BoolAnimator;
+ import me.vkryl.android.animator.FactorAnimator;
+@@ -72,6 +74,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     private int colorDefault;
+     private boolean usePremiumCounter;
+     public float inu_radiusOverride = -1;
++    public boolean inu_materialTabs;
+ 
+     private TabAnimation tabAnimation;
+     private TLRPC.TL_attachMenuBot tabAnimationBot;
+@@ -152,7 +155,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     protected void dispatchDraw(@NonNull Canvas canvas) {
+         final float viewWidth = hasVisualWidth ? visualWidth : getWidth();
+         final float selectedFactor = hasGestureSelectedOverride ? gestureSelectedOverride : isSelectedAnimator.getFloatValue();
+-        if (selectedFactor > 0 && !skipDrawSelector) {
++        if (selectedFactor > 0 && !skipDrawSelector && !inu_materialTabs) {
+             final float alpha = AnimatorUtils.DECELERATE_INTERPOLATOR.getInterpolation(selectedFactor);
+ 
+             paintCounterBackground.setColor(Theme.multAlpha(colorSelected, 0.09f * alpha));
+@@ -165,6 +168,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             canvas.restore();
+         }
+ 
++        if (selectedFactor > 0 && !skipDrawSelector && inu_materialTabs) {
++            M3MainTabsHelper.drawIndicator(canvas, paintCounterBackground, viewWidth, colorSelected, selectedFactor);
++        }
++
+         final float hasCounter = (usePremiumCounter ? 1f : isHasCounterAnimator.getFloatValue()) * attachScale;
+         final boolean saveLayer = hasCounter > 0;
+         if (saveLayer) {
+@@ -177,8 +184,8 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             canvas.save();
+ 
+             final float gap = dpf2(1.33f);
+-            final float cx = viewWidth / 2f + dpf2(11);
+-            final float cy = dpf2(10);
++            final float cx = viewWidth / 2f + dpf2(inu_materialTabs ? M3MainTabsHelper.BADGE_CENTER_X_OFFSET : 11);
++            final float cy = dpf2(inu_materialTabs ? M3MainTabsHelper.getBadgeCenterY() : 10);
+             final float height = dpf2(16);
+             final float width = Math.max(height, counter.getCurrentWidth() + dp(8));
+             final float rOuter = dpf2(9.333f);
+@@ -235,7 +242,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         isSelectedAnimator.setValue(selected, animated);
+         checkPlayAnimation(animated);
+ 
+-        textView.setTypeface(selected ? AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_EXTRA_BOLD) : AndroidUtilities.bold());
++        textView.setTypeface(selected && !inu_materialTabs ? AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_EXTRA_BOLD) : AndroidUtilities.bold());
+     }
+ 
+     public boolean isTabSelected() {
+@@ -270,6 +277,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         colorSelected = Theme.getColor(Theme.key_glass_tabSelected, resourcesProvider);
+         colorSelectedText = Theme.getColor(Theme.key_glass_tabSelectedText, resourcesProvider);
+         updateColors();
++        M3MainTabsHelper.updateTabRipple(this, colorSelected);
+         invalidate();
+     }
+ 
+@@ -683,6 +691,20 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+ 
+     }
+ 
++    public void inu_setMaterialTabs() {
++        inu_materialTabs = true;
++        final int iconSize = (int) M3MainTabsHelper.ICON_SIZE;
++        final float iconTop = M3MainTabsHelper.getIconTopMargin();
++        if (backupImageView != null) {
++            backupImageView.setRoundRadius(dp(iconSize / 2f));
++            backupImageView.setLayoutParams(LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
++        } else {
++            imageView.setLayoutParams(LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
++        }
++        textView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, M3MainTabsHelper.LABEL_HEIGHT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, M3MainTabsHelper.LABEL_TOP_MARGIN, 0, 0));
++        M3MainTabsHelper.applyTabRipple(this, colorSelected);
++    }
++
+     public void setMainTabsCompact(boolean compact) {
+         if (textView.getVisibility() == (compact ? GONE : VISIBLE)) {
+             return;
+@@ -697,9 +719,10 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         }
+ 
+         if (backupImageView != null) {
++            final int avatarSize = inu_materialTabs ? (int) M3MainTabsHelper.ICON_SIZE : 22;
+             backupImageView.setLayoutParams(compact ?
+-                LayoutHelper.createFrame(22, 22, Gravity.CENTER) :
+-                LayoutHelper.createFrame(22, 22, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 5, 0, 0));
++                LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.CENTER) :
++                LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 5, 0, 0));
+         } else {
+             imageView.setLayoutParams(compact ?
+                 LayoutHelper.createFrame(24, 24, Gravity.CENTER) :
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -85,6 +85,7 @@ import java.util.ArrayList;
+ import java.util.Collections;
+ 
+ import desu.inugram.helpers.dialogs.MainTabsHelper;
++import desu.inugram.helpers.theme.M3MainTabsHelper;
+ import me.vkryl.android.animator.BoolAnimator;
+ import me.vkryl.android.animator.FactorAnimator;
+ 
+@@ -333,6 +334,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         final int paddingV = dp(mainTabsMargin + 4);
+         tabsView.setPadding(paddingH, paddingV, paddingH, paddingV);
+         tabsView.setMaxWidth(dp(tabsViewWidth));
++        M3MainTabsHelper.applyTabsLayout(tabsView);
+ 
+         tabs = new GlassTabView[5];
+         tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
+@@ -350,6 +352,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView.addTabToIgnoreClick(tabs[INDEX_PROFILE]);
+         tabsView.addTabToIgnoreClick(tabs[INDEX_CALLS]);
+         for (GlassTabView tab : tabs) {
++            if (MainTabsHelper.isMaterial()) tab.inu_setMaterialTabs();
+             tab.setMainTabsCompact(compact);
+         }
+ 
+@@ -397,6 +400,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsViewBackground = iBlur3FactoryGlass.create(tabsView, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
+         tabsViewBackground.setRadius(dp(MainTabsHelper.getMainTabsHeight() / 2f));
+         tabsViewBackground.setPadding(dp(mainTabsMargin - 0.334f));
++        M3MainTabsHelper.applyTabsBackground(tabsViewBackground);
+         tabsView.setBackground(tabsViewBackground);
+ 
+         BlurredBackgroundDrawableViewFactory iBlur3FactoryFade = new BlurredBackgroundDrawableViewFactory(iBlur3SourceColor);
+@@ -419,6 +423,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsViewWrapper.setOnClickListener(v -> {});
+         tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
+         tabsViewWrapper.setClipToPadding(false);
++        M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
+         contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
+ 
+         updateLayoutWrapper = new UpdateLayoutWrapper(context);
+@@ -462,8 +467,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         o.setBlur(true);
+         o.translate(0, -dp(4));
+         o.setGravity(Gravity.LEFT);
+-        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
+-        bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
++        final android.graphics.drawable.Drawable bg = MainTabsHelper.createTabScrimBackground(anchor, getThemedColor(Theme.key_windowBackgroundWhite));
+         o.setScrimViewBackground(bg);
+         o.show();
+         return true;
+@@ -488,8 +492,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         }
+         o.setBlur(true);
+         o.translate(0, -dp(4));
+-        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
+-        bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
++        final android.graphics.drawable.Drawable bg = MainTabsHelper.createTabScrimBackground(anchor, getThemedColor(Theme.key_windowBackgroundWhite));
+         o.setScrimViewBackground(bg);
+         o.show();
+         return true;
+@@ -548,8 +551,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ //        o.setBlur(true);
+         o.translate(-dp(8), -dp(4));
+         o.setMaxHeight(dp(400));
+-        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
+-        bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
++        final android.graphics.drawable.Drawable bg = MainTabsHelper.createTabScrimBackground(anchor, getThemedColor(Theme.key_windowBackgroundWhite));
+         o.setScrimViewBackground(bg);
+         o.setGravity(Gravity.LEFT);
+         o.show();
+@@ -695,8 +697,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+         o.setBlur(true);
+         o.translate(0, -dp(4));
+-        final ShapeDrawable bg = Theme.createRoundRectDrawable(dp(28), getThemedColor(Theme.key_windowBackgroundWhite));
+-        bg.getPaint().setShadowLayer(dp(6), 0, dp(1), Theme.multAlpha(0xFF000000, 0.15f));
++        final android.graphics.drawable.Drawable bg = MainTabsHelper.createTabScrimBackground(button, getThemedColor(Theme.key_windowBackgroundWhite));
+         o.setScrimViewBackground(bg);
+ 
+         HintsController.Hint.AccountSwitchHint.doNotShowAgain();
+@@ -987,7 +988,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             }
+         }
+ 
+-        tabsViewWrapper.setPadding(systemInsets.left, 0, systemInsets.right, navigationBarHeight);
++        if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
++            tabsViewWrapper.setPadding(systemInsets.left, 0, systemInsets.right, navigationBarHeight);
++        }
+ 
+         final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
+             insets.inset(0, 0, 0, navigationBarHeight) : insets;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
+@@ -47,6 +47,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+     private static final int[] PASS_PADDINGS_DP = {16, 8, 4};
+ 
+     private int maxWidthPx;
++    public boolean inu_materialTabs;
+ 
+     public void setMaxWidth(int maxWidthPx) {
+         if (this.maxWidthPx != maxWidthPx) {
+@@ -132,6 +133,18 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+             }
+         }
+ 
++        if (inu_materialTabs) {
++            final int equalWidth = maxTotalWidthForTabs / Math.max(1, visibleChildCount);
++            int remainder = maxTotalWidthForTabs - equalWidth * visibleChildCount;
++            for (int a = 0, N = getChildCount(); a < N; a++) {
++                if (!isViewVisible(getChildAt(a))) {
++                    tabsTextWidthWithMargin[a] = 0;
++                    continue;
++                }
++                tabsTextWidthWithMargin[a] = equalWidth + (remainder-- > 0 ? 1 : 0);
++            }
++        }
++
+         int l = 0;
+         for (int a = 0, N = getChildCount(); a < N; a++) {
+             if (!isViewVisible(getChildAt(a))) {
+@@ -452,7 +465,7 @@ public class MainTabsLayout extends AnimatedLinearLayout {
+ 
+         @Override
+         public boolean needLongPress(float x, float y) {
+-            return true;
++            return !inu_materialTabs;
+         }
+ 
+         @Override

@@ -88,7 +88,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 ### appearance & general
 
-- navigation drawer instead of bottom tabs, like in older Telegram versions
+- navigation drawer, like in older Telegram versions; can be used alongside or instead of the bottom tabs
   - 🐶 an option to (ab)use predictive back to open the drawer
 - 📡 **no accounts list in settings**: the redundant accounts block is always hidden from the settings screen - switching happens from the avatar menu or the drawer - *ported from [inugram PR #34](https://github.com/teidesu/inugram/pull/34), made unconditional*
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
@@ -134,6 +134,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 ### dialogs list / main page
 
 - bottom tabs: 🐶 compact mode, hide contacts tab, hide bar entirely
+- bottom tabs: material design 3 style with a pill indicator behind the selected icon
 - double-tap account tab to switch to next account
 - long-tap "chats" tab to pick folder from menu
 - folder tabs: display mode (titles / titles+icons / icons-only), optional indicator stroke style, move to bottom of the screen
@@ -173,7 +174,8 @@ the sections below contain the broader feature set: inugram functionality, featu
 - send message to discussion group without joining
 - 🐶 member count on the join request sheet (instead of "private group/channel"; like tdesktop)
 - 🐶 search: media-type filter + "show only matches"
-- 🐶 "from user" picker in search also finds users not in chat (like tdesktop)
+- tapping a hashtag in a public channel defaults to the "This Chat" tab
+- 🐶 "from user" picker in search also finds users not in chat by name, username, or cached user ID (like tdesktop)
 - static pinned reactions in the reaction bar
 - 🐶 reachable reactions bar (moved to the bottom of message menu)
 - 🐶 reachable "seen by" (moved to bottom of message menu)
@@ -203,6 +205,8 @@ the sections below contain the broader feature set: inugram functionality, featu
 - split media restriction toggles for stickers / gifs / games / inline
 - show id in profile, show user json
 - long-tap the name in profile to copy it
+- long-tap a selected user chip (privacy exceptions, add members, etc.) to open their profile (channels open the chat instead)
+- "Stop" button in a bot profile stops (blocks) the bot instead of offering to delete the chat
 - 🐶 drag the pinned-music sheet by its header to scroll/expand the playlist
 - long-tap inline callback button to copy text or callback data
 - "select between messages" (🐶 done right)
@@ -236,6 +240,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 ### photo viewer
 
+- Ultra HDR and PQ/HLG photos with HDR-capable displays - *based on [NagramX](https://github.com/risin42/NagramX)*
 - "hide with spoiler" toggle
 - "copy photo" / "copy frame" menu actions
 - show dc + platform of the photo in menu
@@ -256,6 +261,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - password autofill hints in login (for password managers)
 - account limit raised to 8 (premium gating disabled)
 - 🐶 customizable account order
+- 🐶 launcher shortcut that asks which account to open
 - per-account passcodes, hidden accounts, panic code, hidden settings deeplink - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 paranoia mode: pick chats/channels to hide everywhere; all secret chats hidden too; exit by typing a custom code in chat search
   - optional whitelist mode: hide everything *except* the picked chats (service notifications stay visible)
@@ -264,6 +270,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - optionally silence all notifications while enabled
   - optionally hide all other accounts while enabled
   - optionally collapse folder tabs (show only All Chats) while enabled
+  - optionally hide your own stories (ring, profile tabs, archive) while enabled
   - optional launcher long-press shortcut to enter it quickly (hidden while active)
 - biometric confirmation before deleting/clearing a chat or logging out - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - optional biometric lock on Archived Chats — ask once per app session or every time you open the archive
@@ -306,6 +313,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - hide voice hint
 - hide paid reaction upsell
 - hide hashtag suggestions in chat input
+- hide rich text editor button in chat input
 - hide repost to story
 - 🐶 hide bot commands and webview buttons
 - hide intro greeting + non-clickable custom intro sticker
@@ -321,6 +329,8 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 ### 🐶 bugfixes (vs stock)
 
+- connection status title no longer gets stuck on "Updating..." when its transition animation is cancelled
+- accelerated video playback no longer applies an unnecessary pitch shift; live speed-slider changes use Android's low-latency audio mixer path
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
 - cancelling a video download kept restarting it after streaming the video in PhotoViewer (the player's loader thread swallowed its shutdown interrupt, survived the viewer close, and re-requested the file on every cancel; also a file-reference refresh landing mid-cancel resurrected the operation into an uncancellable zombie)
 - "Save to Downloads" preserves the original filename on Android 10+
@@ -346,6 +356,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - shared media pager: fling mid-animation to chain tabs or reverse (was ignored until settled); at the edge tab the fling falls through to swipe-to-close
 - attach panel: better perf, safe close before fully open
 - paid reaction animation respects litemode
+- custom emoji reaction burst respects litemode (stock only gated the "around" animation of regular emoji)
 - reaction counter shift during long-tap menu
 - reactions silently disappearing right after being sent (stale server read race)
 - sticky date pill jump and color shift when replacing an inline date separator
@@ -377,6 +388,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - stale unread badges on global-search top peers
 - stale unread mention pointer after reading mention on another device (mention button jumping to old message)
 - folder pins silently missing when the pinned dialog isn't in the local dialogs cache (now fetched from server)
+- folder tab unread counters slowly drifting to zero (badge disappearing while the list still shows unread chats) as chats got read
 - photo/video gallery performance improvements
 - edits (incl. crop) silently lost when the gallery refreshed under an open photo editor (fresh screenshots); also fixes fresh screenshots sometimes not appearing in the attach sheet or making it flash
 - messages consisting of only 2 or 3 emojis are huge in chat search results
@@ -387,7 +399,9 @@ the sections below contain the broader feature set: inugram functionality, featu
 - dialogs list briefly flashing over the lockscreen after ending/declining a call
 - fix camera2api a/v sync issue in round messages
 - forward bar showing stale message count/senders after deselecting messages in the forward options sheet
+- forwarding with captions removed no longer blanks out text-only messages in the optimistic copy (stock only checked `media != null`, but locally-sent text messages carry `messageMediaEmpty` sometimes)
 - cross-peer reply: clear stale quote so a leftover quote-reply target doesn't override the new one at send
+- emoji suggestion panel popping up after sending a message (late `:keyword` lookup callback ignored the input having been cleared)
 - phantom empty dialog rows after peeking a non-joined channel / discuss group
 - expand emoji tabs when there's enough space to fit without scrolling
 - "pause music on media" now lets external players auto-resume (transient focus instead of indefinite)
@@ -404,7 +418,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - comments/topic thread restored as plain group chat after activity recreation
 - phantom message selection after back-gesture swipe over a reply header (leaked long-press timer)
 - fix deeplinking to a non-primary album member sometimes mis-anchoring
-- a bunch of stock memory/resource leaks
+- a bunch of stock memory/resource leaks (incl. `NativeByteBuffer` wrapper pool growing unbounded on write-heavy threads, reply-line sticker emoji never detaching and pinning closed chats via the global emoji cache, story viewer input/mention observers, `BotLocation` caching an activity context)
 - correctly handle "Open in..." in ChatAttachAlert: open editor before sending + support multi-attach
 - avatar of a bubble right below a topic separator (forum "All" tab) only clickable in its lower part
 - opt out of android media resumption, so a phantom telegram player chip no longer reappears in quick settings after a reboot or once the app process is gone
@@ -424,3 +438,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
 - fix bottom progress bar on video bubbles now following inline playback (autoplay & play-with-sound)
+- correctly publish album name for streamed music
+- permanently white/stale message bubbles on low-memory devices (stock bug: `MessageDrawable` committed its radius/color cache keys even when the bitmap allocation for the bubble nine-patch failed, so the stale drawable was never rebuilt; the shadow nine-patch also recycled its old bitmap before allocating the new one, leaving a recycled bitmap in use)
+- unread reaction/poll vote badge stuck on a chat after reading some of them on another device (stock only persisted the dialog counter once it hit zero); counter now follows every single-message read, each read is acked to the server right away; the jump-to-reaction button no longer marks everything read when its offset overshoots

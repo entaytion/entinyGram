@@ -228,7 +228,7 @@ index 0000000..0000000 100644
                      editState.cropState.cropPx = editState.cropState.cropPy = 0;
                      editState.cropState.cropPw = editState.cropState.cropPh = 1;
                  }
-@@ -18077,6 +18092,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18062,6 +18077,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return;
              }
              if (currentEditMode == EDIT_MODE_CROP) {

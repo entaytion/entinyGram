@@ -4,8 +4,8 @@ Date: Tue, 28 Apr 2026 15:27:42 +0300
 Subject: add custom resource loader for icon replacement
 
 ---
- .../main/java/org/telegram/ui/LaunchActivity.java  | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .../java/org/telegram/ui/LaunchActivity.java     | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
  import android.database.Cursor;
  import android.graphics.Bitmap;
  import android.graphics.Canvas;
-@@ -392,6 +394,18 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -390,6 +392,20 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      private FrameMetricsOverlayView frameMetricsOverlayView;
      // private RefreshRateController refreshRateController;
  
@@ -30,10 +30,12 @@ index 0000000..0000000 100644
 +    @Override
 +    public Resources getResources() {
 +        Resources baseResources = super.getResources();
-+        if (customResources == null) {
++        if (desu.inugram.InuConfig.ICON_REPLACEMENT.getValue() == desu.inugram.InuConfig.IconReplacementItem.OFF) {
++            return baseResources;
++        }
++        if (customResources == null || !customResources.wrapsResources(baseResources)) {
 +            customResources = new desu.inugram.helpers.icons.IconsResources(baseResources);
 +        }
-+        customResources.syncConfigurationFrom(baseResources);
 +        return customResources;
 +    }
 +

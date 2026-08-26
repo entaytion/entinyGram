@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 25 Aug 2026 01:27:44 +0300
+Subject: support patch for "switch account from launcher" feature
+
+---
+ TMessagesProj/src/main/AndroidManifest.xml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -412,6 +412,12 @@
+             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+             android:exported="true">
+         </activity>
++        <activity
++            android:name="desu.inugram.ui.AccountPickerActivity"
++            android:taskAffinity=""
++            android:excludeFromRecents="true"
++            android:theme="@style/Theme.TMessages.TransparentWithAlerts"
++            android:exported="true"/>
+         <activity
+             android:name="org.telegram.ui.PopupNotificationActivity"
+             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"

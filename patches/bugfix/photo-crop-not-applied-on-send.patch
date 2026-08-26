@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              }
              if (!replace && parentChatActivity != null) {
                  TLRPC.Chat chat = parentChatActivity.getCurrentChat();
-@@ -11427,15 +11433,16 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11428,15 +11434,16 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
      }
  
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          Bitmap[] paintThumbBitmap = new Bitmap[1];
          List<TLRPC.InputDocument> stickers = null;
          MediaController.SavedFilterState savedFilterState = null;
-@@ -11444,10 +11451,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11445,10 +11452,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          boolean hasChanged = false;
          MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
          if (currentEditMode == EDIT_MODE_CROP || currentEditMode == EDIT_MODE_NONE && sendPhotoType == SELECT_TYPE_AVATAR) {
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
              if (isCurrentVideo) {
                  if (!TextUtils.isEmpty(entry.filterPath)) {
                      bitmap = ImageLoader.loadBitmap(entry.filterPath, null, thumbSize, thumbSize, true);
-@@ -11464,6 +11467,24 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11465,6 +11468,24 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              } else {
                  bitmap = centerImage.getBitmap();
                  orientation = new int[]{centerImage.getOrientation(), centerImage.getInvert()};
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
              }
          } else if (currentEditMode == EDIT_MODE_FILTER) {
              bitmap = photoFilterView.getBitmap();
-@@ -11505,10 +11526,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11506,10 +11527,10 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                      stickerMakerView.updateOutlinePath(bitmap);
                  }
              }
@@ -104,7 +104,7 @@ index 0000000..0000000 100644
          }
  
          if (entry.thumbPath != null) {
-@@ -11526,7 +11547,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11527,7 +11548,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              editState.croppedMediaEntities = entry.croppedMediaEntities;
  
              if (entry.cropState != null) {
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
                  if (entry.paintPath != null) {
                      Bitmap paintBitmap = BitmapFactory.decodeFile(entry.fullPaintPath);
                      Bitmap croppedPaintBitmap = createCroppedBitmap(paintBitmap, entry.cropState, null, false);
-@@ -11792,6 +11813,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11793,6 +11814,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
          ignoreDidSetImage = false;
          centerImage.setParentView(containerView);

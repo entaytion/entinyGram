@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 17:46:54 +0400
+Subject: option to hide rich input button in composer
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -6164,7 +6164,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+     private boolean shownRichButton;
+     private void showRichButton(boolean show_) {
+-        final boolean show = (richDraftActive || show_) && parentFragment != null && !parentFragment.isSecretChat() && editingMessageObject == null && MessagesController.getInstance(currentAccount).richEditorAvailable();
++        final boolean show = (richDraftActive || show_) && parentFragment != null && !parentFragment.isSecretChat() && editingMessageObject == null && MessagesController.getInstance(currentAccount).richEditorAvailable() && !desu.inugram.InuConfig.HIDE_RICH_EDITOR_BUTTON.getValue();
+ 
+         if (shownRichButton == show) return;
+         shownRichButton = show;

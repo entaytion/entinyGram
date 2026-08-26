@@ -33,7 +33,7 @@ object SharePicker {
                     file.absolutePath, file.absolutePath,
                     null, null, mime, key.dialogId,
                     null, null, null, null, null,
-                    true, 0, null, null, 0, false,
+                    true, 0, null, null, false,
                 )
             }
             onSent()

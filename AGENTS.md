@@ -14,7 +14,7 @@ the same change.
 2. **Do not run `stg` or `git` yourself** unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
 3. **Stock patches stay tiny & code-only.** Only Java wiring/hooks/guards in `TMessagesProj/src/main/java/...`. Real logic goes in `src/kotlin`. **NEVER include XML resources, drawables, or non-Java assets in stgit patches.** New icons, drawables, and XML resources MUST be placed in `src/res/drawable/` or `src/res/`, NOT tracked inside `patches/*.patch`. A patch touching only `src/**` or resource XMLs is WRONG.
 4. **Default off = stock-identical.** Every behavior change gated behind an `InuConfig.*.getValue()` check. Verify every call site is gated.
-5. **Check if stock or origin (inugram) already does it** before implementing a toggle (Lite Mode, `InuConfig`, `src/kotlin` helpers, `series`). Tell the user, don't silently re-implement. Duplicating origin is a hard error — see rule 19.
+5. **Check if stock or origin (inugram) already does it** before implementing a toggle (Lite Mode, `InuConfig`, `src/kotlin` helpers, `series`). Tell the user, don't silently re-implement. Duplicating origin is a hard error — see rule 20.
 6. **Confirm bug repro in unpatched worktree** before treating a visual/behavior issue as a patch regression.
 7. **No renames in stock. No removing stock imports** (except `desu.inugram.*`).
 8. **Prefer data-layer patches over UI-layer** — one hook in a controller beats fifteen hooks in views.
@@ -23,7 +23,8 @@ the same change.
 11. **No LSP, no local build.** Don't try to compile.
 12. **Debug logs use `android.util.Log.d`**, not `FileLog`.
 13. **Prefer non-`_solar` icons** when an alternative exists.
-14. **Format Commits Carefully.** Use the exact format: `type(scope): subject` followed by an empty line, an optional short summary paragraph, and an explicit bulleted list of changes starting with `- `. 
+14. **Never install/launch the app yourself.** No `adb install`, `adb shell am start`, `adb uninstall`, `adb logcat` — nothing that touches the user's device. Ask them to install/run and paste logs.
+15. **Format Commits Carefully.** Use the exact format: `type(scope): subject` followed by an empty line, an optional short summary paragraph, and an explicit bulleted list of changes starting with `- `. 
 **Important for upstream syncs:** When syncing changes from upstream inugram, clearly denote it as `sync with upstream inugram` in the commit subject so the release notes AI knows to group it. For our own specific changes, list them clearly with `- ` bullets. If the changes are very minor, you can just write a single-line commit message without bullets.
 Example:
 ```
@@ -35,14 +36,14 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 - document entiny/ ownership and merge behavior in AGENTS.md
 - fix InuDatabaseHelper SQLite crash: old_text -> text in inu_edit_history stats
 ```
-15. **Release Bumping:** The APK `versionCode` and release tag are controlled solely by the `INU_BUILD` GitHub variable, not `gradle.properties`. To check the current build number, run `gh variable list --repo entaytion/entinyGram` in the terminal. To perform a major version jump (e.g., when upstream updates), instruct the user to update the variable via the browser, or execute: `gh variable set INU_BUILD --body <number> --repo entaytion/entinyGram`.
+16. **Release Bumping:** The APK `versionCode` and release tag are controlled solely by the `INU_BUILD` GitHub variable, not `gradle.properties`. To check the current build number, run `gh variable list --repo entaytion/entinyGram` in the terminal. To perform a major version jump (e.g., when upstream updates), instruct the user to update the variable via the browser, or execute: `gh variable set INU_BUILD --body <number> --repo entaytion/entinyGram`.
     - **`INU_BUILD` is a plain release counter, not the versionCode itself.** `scripts/ci/version.ts` derives the real `versionCode` as `YYYYMMDD*100 + (INU_BUILD % 10)*10 + variant(1=full/0=lite)` — the CI's own UTC date at build time, not a value you set. Never hand-craft or "fix" a `versionCode`-looking number into `INU_BUILD` (e.g. don't set it to something like `2026082900`) — that field only ever holds the small monotonic counter (currently in the low millions, see `gh variable list`).
     - **Before touching `INU_BUILD` (manual bump, troubleshooting a failed release, or explaining versionCode math to the user), check the actual UTC date** (`date -u`, not local time) against the date encoded in the last shipped `versionCode`/APK filename — CI runs in UTC and a same-day assumption made in local time can be off by one. Cross-check with the real value: `gh variable list --repo entaytion/entinyGram` for the current `INU_BUILD`, and `gh release list --repo entaytion/entinyGram --limit 1` for the last tag/date actually shipped, before asserting what the next versionCode will be.
     - **The last digit of `INU_BUILD` (`% 10`) is the same-day release slot.** More than 10 releases on the same UTC day makes that slot wrap and repeat a `versionCode`, which Android/Play will reject as non-increasing. If a user is about to ship a rapid string of same-day bugfix releases, warn them of this ceiling before it's hit — don't wait for the rejected upload to explain it.
-16. **Check stgit Stack Before Patch Operations:** Always check `stg top` and `stg series` BEFORE creating, modifying, or refreshing patches. Verify if a patch for the feature already exists in `patches/` or `series`. Never run `stg refresh` blindly on whatever patch happens to be at the top of the stack.
-17. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
-18. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
-19. **Never duplicate origin. Never rewrite a hotspot for a feature origin already has.** If inugram already has the feature, take theirs — do not add a parallel `entiny/` patch, a second toggle, or a rewrite of `ChatMessageCell` / other 10k+ stock files. Bubble metadata (time, views, forwards, edited) goes through `ChatHelper.timePrefix` / `extraTimeWidth` / `timeAdditionsHash`, not a new cell patch. Checklist: `.claude/skills/write-patches/SKILL.md`. Code comparison: `.claude/skills/write-patches/dont-reinvent.md`.
+17. **Check stgit Stack Before Patch Operations:** Always check `stg top` and `stg series` BEFORE creating, modifying, or refreshing patches. Verify if a patch for the feature already exists in `patches/` or `series`. Never run `stg refresh` blindly on whatever patch happens to be at the top of the stack.
+18. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
+19. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
+20. **Never duplicate origin. Never rewrite a hotspot for a feature origin already has.** If inugram already has the feature, take theirs — do not add a parallel `entiny/` patch, a second toggle, or a rewrite of `ChatMessageCell` / other 10k+ stock files. Bubble metadata (time, views, forwards, edited) goes through `ChatHelper.timePrefix` / `extraTimeWidth` / `timeAdditionsHash`, not a new cell patch. Checklist: `.claude/skills/write-patches/SKILL.md`. Code comparison: `.claude/skills/write-patches/dont-reinvent.md`.
 
 ## Patch groups & naming
 
@@ -121,7 +122,7 @@ If inugram already has the feature, use it. Do not add a parallel `entiny/` patc
 
 **Code comparison (ours vs origin, forward count):** `.claude/skills/write-patches/dont-reinvent.md`
 
-Checklist: `.claude/skills/write-patches/SKILL.md`. Rule 19 above.
+Checklist: `.claude/skills/write-patches/SKILL.md`. Rule 20 above.
 
 ## Commonly touched stock files
 

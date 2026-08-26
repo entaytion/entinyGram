@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 24 Aug 2026 02:16:00 +0300
+Subject: fix crash when QR scanner returns less than 4 corner points
+
+---
+ .../src/main/java/org/telegram/ui/CameraScanActivity.java      | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CameraScanActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CameraScanActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CameraScanActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CameraScanActivity.java
+@@ -1216,6 +1216,9 @@ public class CameraScanActivity extends BaseFragment {
+     }
+ 
+     private static PointF[] toPointF(Point[] points, int w, int h) {
++        if (points == null || points.length != 4) {
++            return null;
++        }
+         PointF[] out = new PointF[points.length];
+         for (int i = 0; i < points.length; ++i) {
+             out[i] = new PointF(

@@ -83,7 +83,7 @@ object DrawerHelper {
     @JvmStatic
     @JvmOverloads
     fun createMainFragment(args: Bundle? = null): BaseFragment {
-        if (InuConfig.NAVIGATION_DRAWER.value) return DialogsActivity(args)
+        if (MainTabsHelper.isHidden) return DialogsActivity(args)
         val main = MainTabsActivity()
         if (args != null) main.prepareDialogsActivity(args)
         return main
@@ -138,7 +138,20 @@ object DrawerHelper {
         drawerLayoutContainer: DrawerLayoutContainer,
         actionBarLayout: INavigationLayout,
     ) {
-        val sm = RecyclerListView(context)
+        val sm = object : RecyclerListView(context) {
+            override fun findChildViewUnder(x: Float, y: Float): View? {
+                for (i in 0 until childCount) {
+                    val child = getChildAt(i)
+                    if (child is DrawerProfileCell &&
+                        x >= child.left && x <= child.right &&
+                        y >= child.top && y <= child.bottom
+                    ) {
+                        return child
+                    }
+                }
+                return super.findChildViewUnder(x, y)
+            }
+        }
         sm.layoutManager = LinearLayoutManager(context)
         val itemAnimator = SideMenultItemAnimator(sm)
         val newAdapter = DrawerLayoutAdapter(
@@ -549,12 +562,7 @@ object DrawerHelper {
         val account = UserConfig.selectedAccount
         val close = { drawerLayoutContainer.inu_drawer?.closeDrawer(false) }
 
-        // Profile cell (position 0): toggle accounts list. The arrow is purely
-        // a rotation indicator — clicks come in on the whole cell.
         if (position == 0) {
-            if (view is DrawerProfileCell) {
-                adapter.setAccountsShown(!adapter.isAccountsShown(), true)
-            }
             return
         }
 
@@ -586,11 +594,7 @@ object DrawerHelper {
 
         when (adapter.getId(position)) {
             ITEM_MY_PROFILE -> {
-                val args = Bundle()
-                args.putLong("user_id", UserConfig.getInstance(account).getClientUserId())
-                args.putBoolean("my_profile", true)
-                nav.presentFragment(ProfileActivity(args))
-                close()
+                openMyProfile(drawerLayoutContainer)
             }
 
             ITEM_NEW_GROUP -> {
@@ -605,7 +609,9 @@ object DrawerHelper {
 
             ITEM_NEW_MESSAGE -> {
                 // swapped in for New Group when a compose draft is pending
-                (nav.lastFragment as? DialogsActivity)?.openWriteContacts()
+                val top = nav.lastFragment
+                val dialogs = if (top is MainTabsActivity) top.currentVisibleFragment else top
+                (dialogs as? DialogsActivity)?.openWriteContacts()
                 close()
             }
 
@@ -653,6 +659,14 @@ object DrawerHelper {
 
             else -> close()
         }
+    }
+
+    fun openMyProfile(drawerLayoutContainer: DrawerLayoutContainer) {
+        val args = Bundle()
+        args.putLong("user_id", UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId())
+        args.putBoolean("my_profile", true)
+        drawerLayoutContainer.parentActionBarLayout.presentFragment(ProfileActivity(args))
+        drawerLayoutContainer.inu_drawer?.closeDrawer(false)
     }
 
     // Stock DrawerLayoutAdapter item IDs — these are stable identifiers from the stock drawer.

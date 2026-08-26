@@ -99,6 +99,25 @@ object ParanoiaHelper {
     @JvmStatic
     fun shouldHideFolders(): Boolean = isParanoia() && hideFolders
 
+    // read on every story hot path (per dialog cell), so keep it off SharedPreferences.
+    @Volatile
+    private var hideMyStoriesCache: Boolean? = null
+
+    var hideMyStories: Boolean
+        get() = hideMyStoriesCache ?: prefs.getBoolean("hideMyStories", false).also { hideMyStoriesCache = it }
+        set(value) {
+            prefs.edit { putBoolean("hideMyStories", value) }
+            hideMyStoriesCache = value
+        }
+
+    // opt-in: while armed, act as if we never posted a story (own ring, profile tabs, story archive).
+    @JvmStatic
+    fun shouldHideMyStories(): Boolean = isParanoia() && hideMyStories
+
+    @JvmStatic
+    fun hidesStoriesOf(account: Int, dialogId: Long): Boolean =
+        shouldHideMyStories() && dialogId == UserConfig.getInstance(account).clientUserId
+
     var disguiseIcon: Boolean
         get() = prefs.getBoolean("disguiseIcon", false)
         set(value) = prefs.edit { putBoolean("disguiseIcon", value) }
@@ -183,10 +202,108 @@ object ParanoiaHelper {
         peers.removeAll { isHidden(account, DialogObject.getPeerDialogId(it.peer)) }
     }
 
+    // every consumer of getAllDialogs() (pickers, share sheets, mention suggestions) reads through this.
+    // while armed it hands out a copy, so callers that mutate the result must use `allDialogs` directly.
+    @JvmStatic
+    fun filterDialogs(account: Int, dialogs: ArrayList<TLRPC.Dialog>): ArrayList<TLRPC.Dialog> {
+        if (!isParanoia()) return dialogs
+        return dialogs.filterTo(ArrayList()) { !isHidden(account, it.id) }
+    }
+
     @JvmStatic
     fun filterContacts(account: Int, list: MutableList<TLRPC.TL_contact>) {
         if (!isParanoia()) return
         list.removeAll { isHidden(account, it.user_id) }
+    }
+
+    // blocked peers: hidden ones never enter the loaded list, so paging offsets and the total
+    // count have to account for what was skipped. a set, not a counter — blocking an already-skipped
+    // peer again must not drift the offset.
+    private val skippedBlocked = Array(UserConfig.MAX_ACCOUNT_COUNT) { HashSet<Long>() }
+
+    @JvmStatic
+    fun skipBlockedPeer(account: Int, peerId: Long): Boolean {
+        if (!isHidden(account, peerId)) return false
+        skippedBlocked[account].add(peerId)
+        return true
+    }
+
+    @JvmStatic
+    fun getSkippedBlocked(account: Int): Int = skippedBlocked[account].size
+
+    @JvmStatic
+    fun unskipBlockedPeer(account: Int, peerId: Long): Boolean {
+        if (!isHidden(account, peerId)) return false
+        skippedBlocked[account].remove(peerId)
+        return true
+    }
+
+    @JvmStatic
+    fun resetSkippedBlocked(account: Int) {
+        skippedBlocked[account].clear()
+    }
+
+    @JvmStatic
+    fun adjustBlockedTotal(account: Int, total: Int): Int =
+        if (total <= 0) total else (total - skippedBlocked[account].size).coerceAtLeast(0)
+
+    private class StrippedExceptions {
+        val allowed = ArrayList<Long>()
+        val disallowed = ArrayList<Long>()
+    }
+
+    private val strippedExceptions = HashMap<Long, StrippedExceptions>()
+
+    private fun getExceptionsKey(account: Int, type: Int): Long = account.toLong() shl 32 or type.toLong()
+
+    @JvmStatic
+    fun filterPrivacyRules(account: Int, type: Int, rules: MutableList<TLRPC.PrivacyRule>?) {
+        val key = getExceptionsKey(account, type)
+        if (!isParanoia()) {
+            strippedExceptions.remove(key)
+            return
+        }
+        // an empty list carries no information about what the server still holds, so it must not clear
+        // what a previous pass stashed, or the ids it holds would never make it back into the next upload.
+        if (rules.isNullOrEmpty()) return
+        val stripped = StrippedExceptions()
+        for (rule in rules) {
+            when (rule) {
+                is TLRPC.TL_privacyValueAllowUsers -> stripUsers(account, rule.users, stripped.allowed)
+                is TLRPC.TL_privacyValueDisallowUsers -> stripUsers(account, rule.users, stripped.disallowed)
+                is TLRPC.TL_privacyValueAllowChatParticipants -> stripChats(account, rule.chats, stripped.allowed)
+                is TLRPC.TL_privacyValueDisallowChatParticipants -> stripChats(account, rule.chats, stripped.disallowed)
+            }
+        }
+        if (stripped.allowed.isEmpty() && stripped.disallowed.isEmpty()) {
+            strippedExceptions.remove(key)
+        } else {
+            strippedExceptions[key] = stripped
+        }
+    }
+
+    private fun stripUsers(account: Int, users: MutableList<Long>, into: MutableList<Long>) {
+        users.removeAll { if (isHidden(account, it)) into.add(it) else false }
+    }
+
+    private fun stripChats(account: Int, chats: MutableList<Long>, into: MutableList<Long>) {
+        chats.removeAll { if (isHidden(account, -it)) into.add(-it) else false }
+    }
+
+    // the exception editor rebuilds the whole rule set out of what it was given, so ids stripped on
+    // load have to go back in before it uploads, or they would be dropped server-side.
+    @JvmStatic
+    fun restorePrivacyExceptions(account: Int, type: Int, allowed: MutableList<Long>, disallowed: MutableList<Long>) {
+        val stripped = strippedExceptions[getExceptionsKey(account, type)] ?: return
+        stripped.allowed.forEach { if (!allowed.contains(it) && !disallowed.contains(it)) allowed.add(it) }
+        stripped.disallowed.forEach { if (!allowed.contains(it) && !disallowed.contains(it)) disallowed.add(it) }
+    }
+
+    @JvmStatic
+    fun stripPrivacyExceptions(account: Int, allowed: MutableList<Long>, disallowed: MutableList<Long>) {
+        if (!isParanoia()) return
+        allowed.removeAll { isHidden(account, it) }
+        disallowed.removeAll { isHidden(account, it) }
     }
 
     @JvmStatic

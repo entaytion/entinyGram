@@ -5,7 +5,7 @@
     <string name="InuSendToDiscussWithoutJoin">Write to discuss groups without joining</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Skip the client-only membership check for discussion groups</string>
     <string name="InuNavigationDrawer">Navigation drawer</string>
-    <string name="InuNavigationDrawerInfo">Replaces the bottom tab bar with the pre-12.0 hamburger side drawer. Requires restart.</string>
+    <string name="InuNavigationDrawerInfo">Brings back the pre-12.0 hamburger side drawer. Requires restart.</string>
     <string name="InuDrawerBackGesture">Open drawer with back gesture</string>
     <string name="InuDrawerBackGestureInfo">Swiping back from the left edge of the chat list opens the drawer instead of leaving the app.</string>
     <string name="InuDrawerM3Sections">Modular sections in navigation drawer</string>
@@ -132,6 +132,7 @@
     <string name="InuMainTabsCustomizeInfo">Reorder or hide tabs in the bottom bar. Drag the handle to rearrange, toggle the switch to hide. The Chats tab is always first and can\'t be hidden. Requires a restart.</string>
     <string name="InuMainTabsItems">Tabs</string>
     <string name="InuMainTabsCustomizeReset">Reset to default</string>
+    <string name="InuMaterial3BottomTabs">Bottom tabs</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>
@@ -202,6 +203,7 @@
     <string name="InuSimpleAttachPopupAnimation">Simple attach popup animation</string>
     <string name="InuHidePaidReactionUpsell">Hide paid reaction upsell</string>
     <string name="InuHideHashtagSuggestions">Hide hashtag suggestions</string>
+    <string name="InuHideRichEditorButton">Hide rich text editor button</string>
     <string name="InuDisableProfileScrollSnap">Disable profile scroll snap</string>
     <string name="InuDisableProfileScrollSnapInfo">Don\'t snap the profile header to fixed positions when scrolling</string>
     <string name="InuReduceProfileMotion">Reduce profile motion</string>
@@ -605,6 +607,9 @@
     <string name="InuHiddenCaptionDescription">Captions removed</string>
     <string name="InuHiddenSendersAndCaptionDescription">Sender names and captions removed</string>
 
+    <string name="InuAccountSwitchShortcut">Account switcher shortcut</string>
+    <string name="InuAccountSwitchShortcutInfo">Add a long-press shortcut on the app icon that asks which account to open</string>
+
     <string name="InuTextClassifierMode">Text classifier mode</string>
     <string name="InuTextClassifierModeInfo">Text classifier is a system component that auto-expands selection when double-tapping text</string>
     <string name="InuTextClassifierModeNative">Native</string>
@@ -791,6 +796,7 @@
     <string name="InuParanoiaDisableNotifications">Disable notifications</string>
     <string name="InuParanoiaHideOtherAccounts">Hide other accounts</string>
     <string name="InuParanoiaHideFolders">Hide folders</string>
+    <string name="InuParanoiaHideMyStories">Hide my stories</string>
     <string name="InuParanoiaDisguise">Disguise as Telegram</string>
     <string name="InuParanoiaDisguiseInfo">Only the launcher icon and name change. Notifications and the in-app name still show \"entinyGram\", due to Android limitations.</string>
     <string name="InuDisguiseName" translatable="false">Telegram</string>
@@ -1227,4 +1233,8 @@
     <string name="InuDevBadgeInuChannel">Official inuGram channel</string>
     <string name="InuDevBadgeInuChannelInfo">Original inuGram fork that entinyGram is based on</string>
     <string name="InuDevBadgeAccess">Developer badge</string>
+    <string name="InuStopBot">Stop bot</string>
+    <string name="InuStopBotAlert">Are you sure you want to stop **%1$s**? It won\'t be able to send you messages anymore.</string>
+    <string name="InuStopBotAction">Stop</string>
+    <string name="InuStopBotDone">Bot stopped</string>
 </resources>

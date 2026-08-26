@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 19:55:29 +0400
+Subject: persist playback position when message object is replaced (e.g. first reaction)
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -26897,6 +26897,13 @@ public class ChatActivity extends BaseFragment implements
+             }
+ 
+             addToPolls(messageObject, old);
++            if (MediaController.getInstance().isPlayingMessage(messageObject)) {
++                MessageObject player = MediaController.getInstance().getPlayingMessageObject();
++                messageObject.audioProgress = player.audioProgress;
++                messageObject.audioProgressSec = player.audioProgressSec;
++                messageObject.audioPlayerDuration = player.audioPlayerDuration;
++                messageObject.bufferedProgress = player.bufferedProgress;
++            }
+             if (old.richCheckboxEcho && messageObject.type == MessageObject.TYPE_ARTICLE && old.richLayout != null && messageObject.messageOwner != null) {
+                 messageObject.richLayout = old.richLayout;
+                 messageObject.messageOwner.rich_message = old.messageOwner.rich_message;

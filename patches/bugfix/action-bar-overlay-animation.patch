@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 21:05:44 +0400
+Subject: prevent connection status title from getting stuck
+
+---
+ .../java/org/telegram/ui/ActionBar/ActionBar.java | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -1746,8 +1746,23 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             requestLayout();
+             centerScale = true;
+             animator.setDuration(220).setListener(new AnimatorListenerAdapter() {
++                private boolean completed;
++
++                @Override
++                public void onAnimationCancel(Animator animation) {
++                    completeAnimation();
++                }
++
+                 @Override
+                 public void onAnimationEnd(Animator animation) {
++                    completeAnimation();
++                }
++
++                private void completeAnimation() {
++                    if (completed) {
++                        return;
++                    }
++                    completed = true;
+                     if (titleTextView[1] != null && titleTextView[1].getParent() != null) {
+                         ViewGroup viewGroup = (ViewGroup) titleTextView[1].getParent();
+                         viewGroup.removeView(titleTextView[1]);

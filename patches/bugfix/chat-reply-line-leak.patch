@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 26 Aug 2026 01:40:32 +0400
+Subject: detach reply line sticker emoji
+
+---
+ .../main/java/org/telegram/ui/Components/ReplyMessageLine.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReplyMessageLine.java
+@@ -91,7 +91,7 @@ public class ReplyMessageLine {
+                         emoji.detach();
+                     }
+                     if (sticker != null) {
+-                        sticker.attach();
++                        sticker.detach();
+                     }
+                 }
+             });

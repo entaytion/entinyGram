@@ -6,6 +6,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ProxyVpnHelper
+import desu.inugram.helpers.ShortcutHelper
 import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.maps.MapsHelper
 import desu.inugram.helpers.search.UserIdOpenHelper
@@ -13,6 +14,7 @@ import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
+import org.telegram.messenger.UserConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
@@ -283,6 +285,16 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        if (UserConfig.getActivatedAccountsCount() > 1) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_ACCOUNT_SWITCH_SHORTCUT,
+                    R.string.InuAccountSwitchShortcut,
+                    R.string.InuAccountSwitchShortcutInfo,
+                    InuConfig.ACCOUNT_SWITCH_SHORTCUT.value,
+                )
+            )
+        }
         items.add(UItem.asShadow(null))
     }
 
@@ -438,6 +450,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            TOGGLE_ACCOUNT_SWITCH_SHORTCUT -> {
+                val new = InuConfig.ACCOUNT_SWITCH_SHORTCUT.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                parentActivity?.let { ShortcutHelper.sync(it) }
+            }
+
             TOGGLE_DISABLE_ROUNDING -> {
                 val new = InuConfig.DISABLE_ROUNDING.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -564,6 +582,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val BUTTON_MAP_PREVIEW_PROVIDER = InuUtils.generateId()
         private val TOGGLE_SHOW_SECONDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
+        private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
 
         private fun performanceClassLabel(value: Int): String = when (value) {
             SharedConfig.PERFORMANCE_CLASS_HIGH -> LocaleController.getString(R.string.InuPerformanceClassHigh)
@@ -613,6 +632,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("map-preview-provider", R.string.InuMapPreviewProvider, BUTTON_MAP_PREVIEW_PROVIDER),
                 SearchRegistry.Entry("show-seconds", R.string.InuShowSeconds, TOGGLE_SHOW_SECONDS),
                 SearchRegistry.Entry("disable-rounding", R.string.InuDisableRounding, TOGGLE_DISABLE_ROUNDING),
+                SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),
             ),
         )
     }

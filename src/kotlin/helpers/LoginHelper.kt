@@ -15,7 +15,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -26,6 +25,7 @@ import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.PasskeysController
 import org.telegram.messenger.R
+import org.telegram.messenger.TelegramQRCodeWriter
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.ConnectionsManager
@@ -289,7 +289,7 @@ object LoginHelper {
                     EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
                     EncodeHintType.MARGIN to 0,
                 )
-                lastBitmap = QRCodeWriter().encode(link, 768, 768, hints, lastBitmap)
+                lastBitmap = TelegramQRCodeWriter().encode(link, 768, 768, hints, lastBitmap)
                 imageView?.setImageBitmap(lastBitmap)
             } catch (e: Exception) {
                 FileLog.e(e)

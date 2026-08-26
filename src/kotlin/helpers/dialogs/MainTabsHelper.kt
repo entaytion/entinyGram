@@ -26,6 +26,7 @@ import org.telegram.ui.MainTabsActivity
 import desu.inugram.helpers.icons.ScaledIconDrawable
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.security.PasscodeHelper
+import desu.inugram.helpers.theme.M3MainTabsHelper
 
 
 object MainTabsHelper {
@@ -34,14 +35,36 @@ object MainTabsHelper {
     const val TAB_WIDTH: Int = 80
     const val TAB_WIDTH_COMPACT: Int = 64
     const val TAB_PADDING: Int = 4
+    private const val TAB_SCRIM_RADIUS = 28
 
     @JvmStatic
     val isCompact: Boolean
         get() = InuConfig.BOTTOM_TABS_COMPACT_MODE.value
 
     @JvmStatic
+    val isMaterial: Boolean
+        get() = InuConfig.M3_BOTTOM_TABS.value
+
+    @JvmStatic
+    fun createTabScrimBackground(anchor: View, color: Int): Drawable {
+        val radius = if (isMaterial) M3MainTabsHelper.SCRIM_RADIUS else TAB_SCRIM_RADIUS
+        val bg = Theme.createRoundRectDrawable(dp(radius.toFloat()), color)
+        bg.paint.setShadowLayer(dp(6f).toFloat(), 0f, dp(1f).toFloat(), Theme.multAlpha(0xFF000000.toInt(), 0.15f))
+        M3MainTabsHelper.sizeScrimBackground(bg, anchor)
+        return bg
+    }
+
+    @JvmStatic
+    fun getMainTabsBottomOffset(navigationBarHeight: Int): Int =
+        if (isMaterial) 0 else navigationBarHeight + dp(mainTabsMargin.toFloat())
+
+    @JvmStatic
+    fun getMainTabsBlurHeight(navigationBarHeight: Int): Int =
+        dp(mainTabsHeight.toFloat()) + if (isMaterial) navigationBarHeight else 0
+
+    @JvmStatic
     val isHidden: Boolean
-        get() = InuConfig.BOTTOM_TABS_HIDE.value || InuConfig.NAVIGATION_DRAWER.value
+        get() = InuConfig.BOTTOM_TABS_HIDE.value
 
     @JvmStatic
     val showTitles: Boolean
@@ -103,11 +126,19 @@ object MainTabsHelper {
 
     @JvmStatic
     val mainTabsHeight: Int
-        get() = if (isCompact) MAIN_TABS_HEIGHT_COMPACT else DialogsActivity.MAIN_TABS_HEIGHT
+        get() = when {
+            isMaterial -> M3MainTabsHelper.barHeight
+            isCompact -> MAIN_TABS_HEIGHT_COMPACT
+            else -> DialogsActivity.MAIN_TABS_HEIGHT
+        }
 
     @JvmStatic
     val mainTabsMargin: Int
-        get() = if (isCompact) MAIN_TABS_MARGIN_COMPACT else DialogsActivity.MAIN_TABS_MARGIN
+        get() = when {
+            isMaterial -> 0
+            isCompact -> MAIN_TABS_MARGIN_COMPACT
+            else -> DialogsActivity.MAIN_TABS_MARGIN
+        }
 
     @JvmStatic
     val mainTabsHeightWithMargins: Int
@@ -168,9 +199,7 @@ object MainTabsHelper {
         o.setBlur(true)
         o.translate(0f, -dp(4f).toFloat())
         o.setGravity(Gravity.CENTER_HORIZONTAL)
-        val bg = Theme.createRoundRectDrawable(dp(28f), fragment.getThemedColor(Theme.key_windowBackgroundWhite))
-        bg.paint.setShadowLayer(dp(6f).toFloat(), 0f, dp(1f).toFloat(), Theme.multAlpha(0xFF000000.toInt(), 0.15f))
-        o.setScrimViewBackground(bg)
+        o.setScrimViewBackground(createTabScrimBackground(button, fragment.getThemedColor(Theme.key_windowBackgroundWhite)))
 
         return o
     }

@@ -5,6 +5,7 @@ Subject: force system font for ui
 
 ---
  .../telegram/messenger/AndroidUtilities.java  |  6 ++
+ .../telegram/messenger/RichMessageLayout.java |  6 ++
  .../telegram/ui/ActionBar/SimpleTextView.java |  1 +
  .../java/org/telegram/ui/ActionBar/Theme.java |  3 +
  .../telegram/ui/Cells/ProfileSearchCell.java  |  1 +
@@ -13,7 +14,11 @@ Subject: force system font for ui
  .../ui/Components/Paint/PaintTypeface.java    | 63 +++++++------------
  .../Paint/Views/PaintTextOptionsView.java     |  5 +-
  .../Components/Paint/Views/TextPaintView.java |  4 ++
- 9 files changed, 43 insertions(+), 42 deletions(-)
+ .../org/telegram/ui/iv/RichAudioCell.java     |  1 +
+ .../org/telegram/ui/iv/RichBlockChrome.java   |  1 +
+ .../org/telegram/ui/iv/RichDocumentCell.java  |  1 +
+ .../java/org/telegram/ui/iv/RichMapCell.java  |  1 +
+ 14 files changed, 53 insertions(+), 42 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 index 0000000..0000000 100644
@@ -33,6 +38,44 @@ index 0000000..0000000 100644
              if (!typefaceCache.containsKey(assetPath)) {
                  try {
                      Typeface t;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+@@ -222,6 +222,8 @@ public class RichMessageLayout {
+         density = AndroidUtilities.density;
+         textPaint.setTextSize(dp(fontSize));
+         numTextPaint.setTextSize(dp(fontSize));
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(textPaint);
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(numTextPaint);
+     }
+ 
+     /** Uses the message renderer for editable inline buttons without laying out a message. */
+@@ -367,6 +369,8 @@ public class RichMessageLayout {
+         density = AndroidUtilities.density;
+         textPaint.setTextSize(dp(SharedConfig.fontSize));
+         numTextPaint.setTextSize(dp(SharedConfig.fontSize));
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(textPaint);
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(numTextPaint);
+         isPart = false;
+ 
+         richMessage = null;
+@@ -7400,6 +7404,7 @@ public class RichMessageLayout {
+             this.currentMessageObject = root.audioBlocks.get(block);
+             this.currentDocument = currentMessageObject != null ? currentMessageObject.getDocument() : null;
+             this.observerTag = DownloadController.getInstance(root.currentAccount).generateObserverTag();
++            desu.inugram.helpers.font.FontHelper.applyDefaultFont(audioTimePaint);
+ 
+             radialProgress = new RadialProgress2(null);
+             radialProgress.setCircleRadius(dp(24));
+@@ -7742,6 +7747,7 @@ public class RichMessageLayout {
+             this.previewX = root.padLeft + dp(10);
+             this.hasPreview = MessageObject.isDocumentHasThumb(document);
+             observerTag = DownloadController.getInstance(root.currentAccount).generateObserverTag();
++            desu.inugram.helpers.font.FontHelper.applyDefaultFont(sizePaint);
+             radialProgress = new RadialProgress2(null);
+             radialProgress.setCircleRadius(buttonSize / 2);
+             final int progressX = hasPreview ? previewX + (dp(86) - buttonSize) / 2 : buttonX;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
@@ -49,7 +92,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -8552,6 +8552,7 @@ public class Theme {
+@@ -7973,6 +7973,7 @@ public class Theme {
          dialogs_tagTextPaint.setTextSize(dp(10));
          dialogs_searchNamePaint.setTextSize(dp(16));
          dialogs_searchNameEncryptedPaint.setTextSize(dp(16));
@@ -57,7 +100,7 @@ index 0000000..0000000 100644
      }
  
      public static void applyDialogsTheme() {
-@@ -8804,6 +8805,7 @@ public class Theme {
+@@ -8225,6 +8226,7 @@ public class Theme {
              addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
              addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
          }
@@ -65,7 +108,7 @@ index 0000000..0000000 100644
      }
  
      public static void createChatResources(Context context, boolean fontsOnly) {
-@@ -9511,6 +9513,7 @@ public class Theme {
+@@ -8932,6 +8934,7 @@ public class Theme {
          }
  
          profile_aboutTextPaint.setTextSize(dp(16));
@@ -89,7 +132,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmoj
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
-@@ -1067,6 +1067,7 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
+@@ -1107,6 +1107,7 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
          private int cacheType = AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES;
          public TextViewEmojis(Context context) {
              super(context);
@@ -249,3 +292,50 @@ index 0000000..0000000 100644
          lastTypefaceKey = found ? null : key;
          updateSelectionView();
      }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichAudioCell.java
+@@ -96,6 +96,7 @@ public class RichAudioCell extends RichBlockCell
+         setWillNotDraw(false);
+ 
+         observerTag = DownloadController.getInstance(currentAccount).generateObserverTag();
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(audioTimePaint);
+ 
+         radialProgress = new RadialProgress2(this, resourcesProvider);
+         radialProgress.setCircleRadius(dp(24));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichBlockChrome.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichBlockChrome.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichBlockChrome.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichBlockChrome.java
+@@ -157,5 +157,6 @@ public class RichBlockChrome {
+     public RichBlockChrome() {
+         markerPaint.setTextSize(dp(16));
+         markerPaint.setTextAlign(Paint.Align.CENTER);
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(markerPaint);
+     }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichDocumentCell.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichDocumentCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichDocumentCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichDocumentCell.java
+@@ -89,6 +89,7 @@ public class RichDocumentCell extends RichBlockCell implements Theme.Colorable,
+         setWillNotDraw(false);
+         setMinimumHeight(dp(66));
+         observerTag = DownloadController.getInstance(currentAccount).generateObserverTag();
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(sizePaint);
+         radialProgress = new RadialProgress2(this, resourcesProvider);
+         radialProgress.setCircleRadius(dp(24));
+         radialProgress.setProgressRect(buttonX, buttonY, buttonX + buttonSize, buttonY + buttonSize);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichMapCell.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichMapCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichMapCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichMapCell.java
+@@ -76,6 +76,7 @@ public class RichMapCell extends RichBlockCell
+ 
+         hintPaint.setTextSize(dp(15));
+         hintPaint.setTextAlign(Paint.Align.CENTER);
++        desu.inugram.helpers.font.FontHelper.applyDefaultFont(hintPaint);
+ 
+         imageReceiver = new ImageReceiver(this);
+ 

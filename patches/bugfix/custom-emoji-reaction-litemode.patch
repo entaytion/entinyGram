@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 24 Aug 2026 02:13:24 +0300
+Subject: respect lite mode for the custom emoji reaction burst
+
+---
+ .../ui/Components/Reactions/ReactionsEffectOverlay.java         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
+@@ -657,7 +657,7 @@ public class ReactionsEffectOverlay {
+                 } else if (animationType == ONLY_MOVE_ANIMATION) {
+                     emojiImageView.setAnimatedReactionDrawable(new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_KEYBOARD, currentAccount, visibleReaction.documentId));
+                 }
+-                if (animationType == LONG_ANIMATION || animationType == SHORT_ANIMATION) {
++                if (animationType == LONG_ANIMATION || (animationType == SHORT_ANIMATION && LiteMode.isEnabled(LiteMode.FLAG_ANIMATED_EMOJI_CHAT))) {
+                     AnimatedEmojiDrawable animatedEmojiDrawable = new AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_KEYBOARD, currentAccount, visibleReaction.documentId);
+                     int color;
+                     if (messageObject != null) {

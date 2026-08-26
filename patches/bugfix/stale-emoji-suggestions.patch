@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 24 Aug 2026 02:34:03 +0300
+Subject: ignore late emoji suggestion results after input changed
+
+---
+ .../main/java/org/telegram/ui/Adapters/MentionsAdapter.java | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MentionsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MentionsAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MentionsAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MentionsAdapter.java
+@@ -125,6 +125,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+     private int resultStartPosition;
+     private int resultLength;
+     private String lastText;
++    private int inu_emojiSearchGeneration;
+     private boolean lastForSearch;
+     private boolean lastUsernameOnly;
+     private int lastPosition;
+@@ -967,6 +968,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+             searchGlobalRunnable = null;
+         }
+         desu.inugram.helpers.search.SearchFromHelper.cancel();
++        inu_emojiSearchGeneration++;
+         if (checkAgainRunnable != null) {
+             AndroidUtilities.cancelRunOnUIThread(checkAgainRunnable);
+             checkAgainRunnable = null;
+@@ -1608,7 +1610,11 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+                 MediaDataController.getInstance(currentAccount).fetchNewEmojiKeywords(newLanguage);
+             }
+             lastSearchKeyboardLanguage = newLanguage;
++            final int emojiSearchGeneration = inu_emojiSearchGeneration;
+             MediaDataController.getInstance(currentAccount).getEmojiSuggestions(lastSearchKeyboardLanguage, result.toString(), false, (param, alias) -> {
++                if (emojiSearchGeneration != inu_emojiSearchGeneration) {
++                    return;
++                }
+                 searchResultSuggestions = param;
+                 searchResultHashtags = null;
+                 stickers = null;

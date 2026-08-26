@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      private boolean ignoreRect = false;
      private float currentHeight = 0;
  
-@@ -136,7 +137,8 @@ public class ProfileActionsView extends View {
+@@ -137,7 +138,8 @@ public class ProfileActionsView extends View {
          top = dpf2(8);
          textPadding = dpf2(4);
  
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
  
          setBackgroundColor(0);
  
-@@ -200,12 +202,11 @@ public class ProfileActionsView extends View {
+@@ -201,12 +203,11 @@ public class ProfileActionsView extends View {
          int w = getMeasuredWidth();
          if (w <= 0) return;
  
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                  hasColorById ? width * 0.65f : 1f,
                  Theme.multAlpha(color, 0.8f),
                  color,
-@@ -218,7 +219,7 @@ public class ProfileActionsView extends View {
+@@ -219,7 +220,7 @@ public class ProfileActionsView extends View {
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
          setMeasuredDimension(
                  MeasureSpec.getSize(widthMeasureSpec),
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          );
      }
  
-@@ -231,7 +232,25 @@ public class ProfileActionsView extends View {
+@@ -232,7 +233,25 @@ public class ProfileActionsView extends View {
      private float getItemWidth() {
          int w = getMeasuredWidth();
          float betweenPadding = xpadding / 2f;
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
      }
  
      @Override
-@@ -244,7 +263,7 @@ public class ProfileActionsView extends View {
+@@ -245,7 +264,7 @@ public class ProfileActionsView extends View {
              canvas.clipRect(0f, 0f, getMeasuredWidth(), bottom);
          }
  
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
  
          if (height <= 0f) {
              return;
-@@ -252,7 +271,7 @@ public class ProfileActionsView extends View {
+@@ -253,7 +272,7 @@ public class ProfileActionsView extends View {
  
          final float betweenPadding = xpadding / 2f;
          final float width = getItemWidth();
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
          float r = getRoundRadius();
  
          if (renderNode != null) {
-@@ -277,10 +296,10 @@ public class ProfileActionsView extends View {
+@@ -278,10 +297,10 @@ public class ProfileActionsView extends View {
  
              action.updatePosition();
              if (renderNode != null) {
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
                  );
                  AndroidUtilities.rectTmp.inset(-1, -1);
                  clipPath.addRoundRect(AndroidUtilities.rectTmp, r, r, Path.Direction.CCW);
-@@ -303,10 +322,10 @@ public class ProfileActionsView extends View {
+@@ -304,10 +323,10 @@ public class ProfileActionsView extends View {
              for (int i = 0; i < c; i++) {
                  Action action = actions.get(i);
                  if (!action.isDeleted) {
@@ -127,7 +127,7 @@ index 0000000..0000000 100644
                      );
                      int wasAlpha = paint.getAlpha();
                      int newAlpha = (int) (action.getAlpha() * alphaFraction1 * wasAlpha);
-@@ -396,7 +415,9 @@ public class ProfileActionsView extends View {
+@@ -397,7 +416,9 @@ public class ProfileActionsView extends View {
  
          action.text.setMaxWidth(action.rect.width() - dp(2));
          action.textScale = action.text.getLineCount() >= 3 ? 0.75f : action.text.getLineCount() >= 2 ? 0.85f : 1.0f;
@@ -138,7 +138,7 @@ index 0000000..0000000 100644
          action.setBounds(
              (int) (cx - drawableR),
              (int) (drawableTop),
-@@ -420,9 +441,13 @@ public class ProfileActionsView extends View {
+@@ -421,9 +442,13 @@ public class ProfileActionsView extends View {
          }
  
          final int textColor = ColorUtils.blendARGB(Color.BLACK, Color.WHITE, useFilledWhiteIcon);
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
          }
  
          canvas.save();
-@@ -435,7 +460,9 @@ public class ProfileActionsView extends View {
+@@ -436,7 +461,9 @@ public class ProfileActionsView extends View {
  
          updateBounds(action);
  
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
          canvas.save();
          canvas.scale(action.textScale, action.textScale, cx, textY + action.text.getHeight() * action.textScale / 2.0f);
          action.text.draw(canvas, cx - action.text.getWidth() / 2f, textY, textColor, alpha);
-@@ -449,8 +476,8 @@ public class ProfileActionsView extends View {
+@@ -450,8 +477,8 @@ public class ProfileActionsView extends View {
              canvas.scale(action.iconScale, action.iconScale, action.bounds.centerX(), action.bounds.centerY());
          }
          if (!isAnimatingCallAction || action.key != KEY_CALL) {
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
              if (action.drawableAnimated != null) {
                  if (action.key == KEY_NOTIFICATION) {
                      drawActionDrawable(canvas, action.drawableOutline, outlineAlpha);
-@@ -506,7 +533,8 @@ public class ProfileActionsView extends View {
+@@ -507,7 +534,8 @@ public class ProfileActionsView extends View {
          }
  
          if (action.loadingDrawable != null) {
@@ -187,7 +187,7 @@ index 0000000..0000000 100644
              action.loadingDrawable.setRadii(getRoundRadius());
              action.loadingDrawable.setAlpha((int) (0xFF * alpha));
              action.loadingDrawable.draw(canvas);
-@@ -514,7 +542,7 @@ public class ProfileActionsView extends View {
+@@ -515,7 +543,7 @@ public class ProfileActionsView extends View {
      }
  
      public float getRoundRadius() {
@@ -196,7 +196,7 @@ index 0000000..0000000 100644
      }
  
      private Action hit = null;
-@@ -945,7 +973,7 @@ public class ProfileActionsView extends View {
+@@ -952,7 +980,7 @@ public class ProfileActionsView extends View {
              int c = actions.size();
              final float betweenPadding = xpadding / 2f;
              final float width = getItemWidth();
@@ -205,7 +205,7 @@ index 0000000..0000000 100644
  
              for (int i = 0; i < c; i++) {
                  Action action = actions.get(i);
-@@ -959,7 +987,7 @@ public class ProfileActionsView extends View {
+@@ -966,7 +994,7 @@ public class ProfileActionsView extends View {
  
              updateBounds(callAction);
  
@@ -214,7 +214,7 @@ index 0000000..0000000 100644
                      + callAction.bounds.centerY()
                      - callView.getMeasuredHeight() / 2f
                      - callAnimateFromY;
-@@ -1031,8 +1059,8 @@ public class ProfileActionsView extends View {
+@@ -1038,8 +1066,8 @@ public class ProfileActionsView extends View {
          }
  
          public void setText(CharSequence cs) {
@@ -229,7 +229,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -383,6 +383,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -390,6 +390,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private FrameLayout avatarContainer;
      private FrameLayout avatarContainer2;
      private ProfileActionsView actionsView;
@@ -238,7 +238,7 @@ index 0000000..0000000 100644
      private MessagesController.SavedMusicList savedMusicList;
      private ProfileMusicView musicView;
      private AnimatedStatusView animatedStatusView;
-@@ -3884,7 +3886,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3901,7 +3903,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
              });
  
@@ -247,7 +247,7 @@ index 0000000..0000000 100644
              setActionsMode();
              updateNotifications(false);
  
-@@ -5489,7 +5491,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -5530,7 +5532,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              avatarsViewPager.setChatInfo(chatInfo);
          }
          avatarContainer2.addView(avatarsViewPager);
@@ -256,7 +256,7 @@ index 0000000..0000000 100644
          avatarContainer2.addView(overlaysView);
          if (actionsView != null) {
              avatarsBlurView.setActionsView(actionsView);
-@@ -6050,7 +6052,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -6095,7 +6097,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
      private int getActionsExtraHeight(boolean withMusic) {
          if (userId != 0 && imageUpdater != null && !myProfile)
              return 0;
@@ -265,7 +265,7 @@ index 0000000..0000000 100644
      }
  
      private int getHeaderExtraHeight() {
-@@ -11266,17 +11268,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11315,17 +11317,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
              actionsView.updatePosition(bottom - height + ProfileHelper.expandedActionsOffset(playProfileAnimation, avatarAnimationProgress, currentExpandAnimatorValue, openAnimationInProgress), height);
          }
  
-@@ -11296,22 +11299,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11345,22 +11348,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              return;
          }
          final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);

@@ -769,4 +769,4 @@ windowBackgroundWhiteLinkText=a3_100
 windowBackgroundWhiteValueText=a1_100
 code_comment=n1_400
 chat_inCodeBackground=a1_300
-chat_outCodeBackground=a1_900(a=85)
+chat_outCodeBackground=a1_500(a=20)

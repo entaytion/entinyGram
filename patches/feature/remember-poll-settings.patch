@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 12 Aug 2026 22:16:30 +0400
+Subject: remember last used poll creation settings + reasonable defaults
+
+---
+ .../ui/Components/ChatAttachAlertPollLayout.java    | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPollLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPollLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPollLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPollLayout.java
+@@ -292,6 +292,12 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
+             allowAddingOptions = !quizPoll;
+             allowRevoting = !quizPoll;
+         }
++        if (!todo) {
++            android.content.SharedPreferences inuPrefs = desu.inugram.InuConfig.INSTANCE.getPrefs();
++            multipleChoise = inuPrefs.getBoolean("poll_last_multiple", false);
++            allowAddingOptions = !quizPoll && inuPrefs.getBoolean("poll_last_open_answers", false);
++            shuffleOptions = inuPrefs.getBoolean("poll_last_shuffle", false);
++        }
+         updateRows();
+ 
+         checkboxPaint.setColor(getThemedColor(Theme.key_telegram_color));
+@@ -873,6 +879,13 @@ public class ChatAttachAlertPollLayout extends ChatAttachAlert.AttachAlertLayout
+         poll.poll.open_answers = allowAddingOptions;
+         poll.poll.revoting_disabled = !allowRevoting;
+         poll.poll.shuffle_answers = shuffleOptions;
++        if (!quizPoll) {
++            desu.inugram.InuConfig.INSTANCE.getPrefs().edit()
++                .putBoolean("poll_last_multiple", multipleChoise)
++                .putBoolean("poll_last_open_answers", allowAddingOptions)
++                .putBoolean("poll_last_shuffle", shuffleOptions)
++                .apply();
++        }
+         poll.poll.subscribers_only = poll2vSubscribersOnlyRow.checked;
+         if (poll2vLimitByCountryRow.checked && !countriesList.isEmpty()) {
+             poll.poll.flags |= TLObject.FLAG_12;

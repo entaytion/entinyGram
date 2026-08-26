@@ -4,14 +4,30 @@ Date: Wed, 13 May 2026 17:51:19 +0200
 Subject: fix stale unread mention from breaking "jump to mention" button
 
 ---
- .../telegram/messenger/MessagesStorage.java    | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../telegram/messenger/MessagesStorage.java   | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -13837,13 +13837,24 @@ public class MessagesStorage extends BaseController {
+@@ -6178,6 +6178,7 @@ public class MessagesStorage extends BaseController {
+                 if (idx1 == 1) {
+                     archivedDialogs.put(user.id, true);
+                 }
++                if (!read || dialogsWithUnread.indexOfKey(user.id) < 0 && dialogsWithMentions.indexOfKey(user.id) < 0) {
+                 if (isUserCollapsedInCommunity(chatsDict, user)) {
+                     communities[idx1][idx2]++;
+                 } else if (user.bot) {
+@@ -6187,6 +6188,7 @@ public class MessagesStorage extends BaseController {
+                 } else {
+                     nonContacts[idx1][idx2]++;
+                 }
++                }
+                 usersDict.put(user.id, user);
+             }
+         }
+@@ -14291,13 +14293,31 @@ public class MessagesStorage extends BaseController {
  
      private void markMessagesAsReadInternal(LongSparseIntArray inbox, LongSparseIntArray outbox, SparseIntArray encryptedMessages) {
          SQLitePreparedStatement state = null;
@@ -30,13 +46,20 @@ index 0000000..0000000 100644
 +                    if (cursor.next()) newMentions = cursor.intValue(0);
 +                    cursor.dispose();
 +                    cursor = null;
-+                    database.executeFast(String.format(Locale.US, "UPDATE dialogs SET unread_count_i = %d WHERE did = %d AND unread_count_i > %d", newMentions, key, newMentions)).stepThis().dispose();
-+                    if (mentionsUpdate == null) mentionsUpdate = new LongSparseIntArray();
-+                    mentionsUpdate.put(key, newMentions);
++                    int oldMentions = 0;
++                    cursor = database.queryFinalized("SELECT unread_count_i FROM dialogs WHERE did = " + key);
++                    if (cursor.next()) oldMentions = cursor.intValue(0);
++                    cursor.dispose();
++                    cursor = null;
++                    if (oldMentions > newMentions && !isForum(key, FORUM_TYPE_CHAT | FORUM_TYPE_BOT | FORUM_TYPE_DIRECT)) {
++                        database.executeFast(String.format(Locale.US, "UPDATE dialogs SET unread_count_i = %d WHERE did = %d", newMentions, key)).stepThis().dispose();
++                        if (mentionsUpdate == null) mentionsUpdate = new LongSparseIntArray();
++                        mentionsUpdate.put(key, newMentions);
++                    }
  
                      state.requery();
                      state.bindLong(1, key);
-@@ -13852,6 +13863,10 @@ public class MessagesStorage extends BaseController {
+@@ -14306,6 +14326,10 @@ public class MessagesStorage extends BaseController {
                  }
                  state.dispose();
                  state = null;
@@ -47,7 +70,7 @@ index 0000000..0000000 100644
              }
              if (!isEmpty(outbox)) {
                  for (int b = 0; b < outbox.size(); b++) {
-@@ -13879,6 +13894,9 @@ public class MessagesStorage extends BaseController {
+@@ -14333,6 +14357,9 @@ public class MessagesStorage extends BaseController {
              if (state != null) {
                  state.dispose();
              }

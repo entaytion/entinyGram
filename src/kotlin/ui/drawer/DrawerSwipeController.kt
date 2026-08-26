@@ -22,10 +22,12 @@ import androidx.core.graphics.ColorUtils
 import desu.inugram.helpers.dialogs.DrawerHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.DrawerLayoutContainer
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
+import org.telegram.ui.MainTabsActivity
 
 /**
  * Old Layout side drawer mechanics for [DrawerLayoutContainer]: swipe
@@ -198,7 +200,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     private fun canTrackGesture(): Boolean {
         if (drawerOpened || drawerPosition > 0) return true
         if (host.parentActionBarLayout.fragmentStack.size != 1) return false
-        val top = host.parentActionBarLayout.lastFragment
+        val top = getVisibleFragment()
         if (top is DialogsActivity) {
             if (top.searchIsShowed) return false
             if (top.rightSlidingDialogContainer?.hasFragment() == true) return false
@@ -206,8 +208,16 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         return true
     }
 
+    /** Unwraps the bottom tabs pager, whose pages are fragments in their own right. */
+    private fun getVisibleFragment(): BaseFragment? {
+        val top = host.parentActionBarLayout.lastFragment
+        return if (top is MainTabsActivity) top.currentVisibleFragment else top
+    }
+
     private fun tabsOwnHorizontalSwipe(): Boolean {
-        val top = host.parentActionBarLayout.lastFragment as? DialogsActivity ?: return false
+        val mainTabs = host.parentActionBarLayout.lastFragment as? MainTabsActivity
+        if (mainTabs != null && mainTabs.viewPager?.currentPosition != 0) return true
+        val top = getVisibleFragment() as? DialogsActivity ?: return false
         val tabs = top.filterTabsView ?: return false
         return tabs.visibility == View.VISIBLE && !tabs.isFirstTabSelected
     }
