@@ -936,6 +936,8 @@
     <string name="InuSaveDeletedBots">Bots</string>
     <string name="InuHideSponsoredMessages">Hide sponsored messages (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
+    <string name="InuHideProxySponsorChat">Hide proxy sponsor chat</string>
+    <string name="InuHideProxySponsorChatInfo">Blocks the promoted chat/channel some MTProto proxies pin to the top of your chat list while connected</string>
     <string name="InuBetaFeatureTitle">Beta feature</string>
     <string name="InuBetaFeatureInfo">This feature is in active development (beta/experimental).</string>
     <string name="InuRegexFilter">AdBlock &amp; Regex Filter</string>
@@ -947,6 +949,7 @@
     <string name="InuRegexFilterHint">Filtering runs locally in real-time without slowing down scrolling.</string>
     <string name="InuRegexFiltersList">Filters</string>
     <string name="InuRegexFilterAdd">Add filter</string>
+    <string name="InuRegexFilterStatusEnabled">Enabled</string>
     <string name="InuRegexFilterDisabled">Disabled</string>
     <string name="InuRegexPatternEmpty">(empty pattern)</string>
     <string name="InuRegexFilterEditTitle">Edit filter</string>

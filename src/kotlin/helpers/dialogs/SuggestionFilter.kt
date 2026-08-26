@@ -23,5 +23,12 @@ object SuggestionFilter {
         if (InuConfig.HIDE_SUGGESTION_CUSTOM.value) {
             res.custom_pending_suggestion = null
         }
+        // proxy owners can attach a "sponsor" chat/channel that Telegram pins atop the dialog
+        // list while their proxy is in use (TL_help_getPromoData's `proxy` flag + `peer`) —
+        // strip it here so no promo dialog is ever created for it.
+        if (res.proxy && InuConfig.HIDE_PROXY_SPONSOR_CHAT.value) {
+            res.proxy = false
+            res.peer = null
+        }
     }
 }

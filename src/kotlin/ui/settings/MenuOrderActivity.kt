@@ -35,7 +35,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     protected abstract val headerStringRes: Int
     protected abstract val resetStringRes: Int
 
-    /** override to prepend an interactive live preview above the list (see [MainTabsCustomizeActivity]) */
+    /** override to prepend an interactive live preview above the list (unused since bottom tabs moved to [DialogsSettingsActivity]) */
     protected open fun buildPreviewCell(context: Context): View? = null
     protected var previewCell: View? = null
     protected open fun refreshPreviewCell(cell: View) {}

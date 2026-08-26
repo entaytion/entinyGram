@@ -27,6 +27,14 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
                 InuConfig.HIDE_SPONSORED_MESSAGES.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_PROXY_SPONSOR_CHAT,
+                R.string.InuHideProxySponsorChat,
+                R.string.InuHideProxySponsorChatInfo,
+                InuConfig.HIDE_PROXY_SPONSOR_CHAT.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuRegexFilter)))
@@ -78,6 +86,11 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            item.id == TOGGLE_HIDE_PROXY_SPONSOR_CHAT -> {
+                val new = InuConfig.HIDE_PROXY_SPONSOR_CHAT.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             item.id == TOGGLE_REGEX_FILTER_ENABLED -> {
                 val new = InuConfig.REGEX_FILTER_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -121,7 +134,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
     private fun statusLabel(filter: RegexFilterHelper.FilterEntry): String {
         val parts = ArrayList<String>()
         parts.add(
-            LocaleController.getString(if (filter.enabled) R.string.InuRegexFilterEnabled else R.string.InuRegexFilterDisabled)
+            LocaleController.getString(if (filter.enabled) R.string.InuRegexFilterStatusEnabled else R.string.InuRegexFilterDisabled)
         )
         if (filter.reversed) parts.add(LocaleController.getString(R.string.InuRegexReversed))
         return parts.joinToString(" • ")
@@ -165,6 +178,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_HIDE_SPONSORED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_HIDE_PROXY_SPONSOR_CHAT = InuUtils.generateId()
         private val TOGGLE_REGEX_FILTER_ENABLED = InuUtils.generateId()
         private val BUTTON_REGEX_FILTER_MODE = InuUtils.generateId()
         private val BUTTON_ADD_FILTER = InuUtils.generateId()
@@ -180,6 +194,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
             factory = ::RegexFilterSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("hide-sponsored-messages", R.string.InuHideSponsoredMessages, TOGGLE_HIDE_SPONSORED_MESSAGES),
+                SearchRegistry.Entry("hide-proxy-sponsor-chat", R.string.InuHideProxySponsorChat, TOGGLE_HIDE_PROXY_SPONSOR_CHAT),
                 SearchRegistry.Entry("regex-filter-enabled", R.string.InuRegexFilterEnabled, TOGGLE_REGEX_FILTER_ENABLED),
                 SearchRegistry.Entry("regex-filter-mode", R.string.InuRegexFilterMode, BUTTON_REGEX_FILTER_MODE),
                 SearchRegistry.Entry("regex-filter-add", R.string.InuRegexFilterAdd, BUTTON_ADD_FILTER),

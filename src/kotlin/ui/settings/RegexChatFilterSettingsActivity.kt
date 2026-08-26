@@ -24,7 +24,7 @@ class RegexChatFilterSettingsActivity(private val dialogId: Long) : SettingsPage
                 UItem.asButton(
                     CHAT_FILTER_BASE + index,
                     filter.pattern.ifBlank { LocaleController.getString(R.string.InuRegexPatternEmpty) },
-                    LocaleController.getString(if (filter.enabled) R.string.InuRegexFilterEnabled else R.string.InuRegexFilterDisabled),
+                    LocaleController.getString(if (filter.enabled) R.string.InuRegexFilterStatusEnabled else R.string.InuRegexFilterDisabled),
                 )
             )
         }

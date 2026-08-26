@@ -66,7 +66,7 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Плавніша крива зуму, як у Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Подвійна камера</string>
     <string name="InuRoundRecorderDualCameraInfo">Одночасний запуск фронтальної та основної камер для миттєвого перемикання під час запису. Споживає більше батареї.</string>
-    <string name="InuRoundRecorderCameraApi">Запис відеоповідомлень використовує %1$s API. **Переключити на %2$s >**</string>
+    <string name="InuRoundRecorderCameraApi">Запис відеоповідомлень використовує %1$s API. **Перемкнути на %2$s >**</string>
     <string name="InuShowAllRecentStickers">Показувати всі нещодавні наліпки</string>
     <string name="InuNoStickerExtraPadding">Прибрати додатковий відступ знизу</string>
     <string name="InuHideKeyboardOnScroll">Приховувати клавіатуру при прокручуванні</string>
@@ -96,7 +96,7 @@
     <string name="InuHideBotSlashBots">У чатах з ботами</string>
     <string name="InuHideBotWebView">Приховати Web App ботів</string>
     <string name="InuHideSendAsPicker">Приховати вибір «Надіслати від імені»</string>
-    <string name="InuHideSendAsPickerInfo">Довге натискання на кнопку емодзі тимчасово покаже його</string>
+    <string name="InuHideSendAsPickerInfo">Довге натискання на кнопку емодзі тимчасово відкриє вибір</string>
     <string name="InuHideRepostToStory">Приховати «Репост в Історію»</string>
     <string name="InuHideTrendingStickers">Приховати популярні наліпки</string>
     <string name="InuBottomTabs">Нижні вкладки</string>
@@ -133,7 +133,7 @@
     <string name="InuSpoilerExtendToLineEnd">Розтягувати спойлери до кінця рядка</string>
     <string name="InuSpoilerExtendToLineEndInfo">Розтягує блоки спойлерів до краю рядка, коли текст закінчується поруч</string>
     <string name="InuLinkPreviewSpoiler">Спойлер для попереднього перегляду посилань</string>
-    <string name="InuLinkPreviewSpoilerInfo">Коли посилання приховане спойлером, прев\'ю посилання також покривається спойлером</string>
+    <string name="InuLinkPreviewSpoilerInfo">Коли посилання приховане спойлером, прев\'ю посилання також закривається спойлером</string>
     <string name="InuMediaSpoilerLabel">Спойлер</string>
     <string name="InuMediaSpoilerMode">Стиль спойлера медіа</string>
     <string name="InuMediaSpoilerModeTelegram">Telegram</string>
@@ -154,8 +154,8 @@
     <string name="InuAiEditorButtonSetupInfo">Спочатку додайте API-ключ у AI-сервісах. Ця кнопка використовується під час написання повідомлень, а не для керування провайдерами.</string>
     <string name="InuAiSummary">AI-резюме</string>
     <string name="InuAiSummaryInfo">Додає окрему дію «Скоротити через AI» для довгих повідомлень каналів через ваш Chat-ендпоінт.</string>
-    <string name="InuHideMessageSummary">Кнопка самарі повідомлення</string>
-    <string name="InuHideIvSummary">Самарі Instant View</string>
+    <string name="InuHideMessageSummary">Кнопка AI-резюме повідомлення</string>
+    <string name="InuHideIvSummary">Резюме Instant View</string>
     <string name="InuClearHints">Закрити всі підказки</string>
     <string name="InuClearHintsDone">Усі підказки закрито</string>
     <string name="InuRestartRequired">Необхідно перезапустити додаток для застосування змін</string>
@@ -167,8 +167,8 @@
     <string name="InuStickerTimeModeHideTime">Приховати лише час</string>
     <string name="InuStickerTimeModeHideIncoming">Приховати лише для вхідних</string>
     <string name="InuStickerTimeModeHideCompletely">Приховати повністю</string>
-    <string name="InuStickerSizeDialogMessage">i like antennas</string>
-    <string name="InuBubbleTails">Хвостики баблів</string>
+    <string name="InuStickerSizeDialogMessage">мені подобаються антени</string>
+    <string name="InuBubbleTails">Хвостики бульбашок повідомлень</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">гав! entinyGram чи inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">обидва найкращі, собача база 🐶⚡</string>
@@ -813,6 +813,8 @@
     <string name="InuSuppressScreenshotNotificationInfo">Не сповіщати співрозмовника, коли ви робите скриншот секретного чату.</string>
     <string name="InuHideSponsoredMessages">Приховати спонсорську рекламу (Адблок)</string>
     <string name="InuHideSponsoredMessagesInfo">Вимикає рекламні дописи в каналах та повністю блокує їх завантаження</string>
+    <string name="InuHideProxySponsorChat">Приховати спонсорський чат проксі</string>
+    <string name="InuHideProxySponsorChatInfo">Блокує рекламний чат/канал, який деякі MTProto-проксі закріплюють вгорі списку чатів під час підключення</string>
 
     <string name="InuPrivacySecurity">Конфіденційність і безпека</string>
     <string name="InuMaterialProfileActions">Кнопки дій у профілі</string>
@@ -866,15 +868,16 @@
 
     <string name="InuTosProfile">Профіль і Premium</string>
     <string name="InuBetaFeatureTitle">Бета-функція</string>
-    <string name="InuBetaFeatureInfo">Ця функція знаходиться у стадії активного тестування (бета/експериментальна).</string>
+    <string name="InuBetaFeatureInfo">Ця функція перебуває на стадії активного тестування (бета/експериментальна).</string>
     <string name="InuRegexFilter">Адблок та регекс-фільтр</string>
     <string name="InuRegexFilterEnabled">Увімкнути фільтр контенту</string>
     <string name="InuRegexFilterEnabledInfo">Фільтрує дописи та повідомлення за регекс-шаблонами або ключовими словами</string>
     <string name="InuRegexFilterMode">Режим фільтрації</string>
     <string name="InuRegexFilterModeHide">Приховувати повністю</string>
-    <string name="InuRegexFilterModeSpoiler">Укривати під спойлер</string>
+    <string name="InuRegexFilterModeSpoiler">Ховати під спойлер</string>
     <string name="InuRegexFiltersList">Фільтри</string>
     <string name="InuRegexFilterAdd">Додати фільтр</string>
+    <string name="InuRegexFilterStatusEnabled">Увімкнено</string>
     <string name="InuRegexFilterDisabled">Вимкнено</string>
     <string name="InuRegexPatternEmpty">(порожній шаблон)</string>
     <string name="InuRegexFilterEditTitle">Редагувати фільтр</string>
@@ -960,7 +963,7 @@
     <string name="InuAiHistoryInfo">Історія розмов дозволяє ШІ розуміти попередні запити та враховувати їх під час створення нових відповідей.</string>
     <string name="InuAiSectionGeneration">Генерація</string>
     <string name="InuAiStream">Потокова передача відповіді</string>
-    <string name="InuAiStreamInfo">Забезпечує більш плавне та швидке зображення відповідей.</string>
+    <string name="InuAiStreamInfo">Забезпечує більш плавне та швидке відображення відповідей.</string>
     <string name="InuAiOnlyAnswer">Показати лише відповідь</string>
     <string name="InuAiInsertQuote">Вставляти відповідь як цитату</string>
     <string name="InuAiSectionTemperature">Температура</string>
@@ -969,7 +972,7 @@
     <string name="InuAiServiceNew">Новий сервіс</string>
     <string name="InuAiServiceEdit">Редагувати сервіс</string>
     <string name="InuAiProvider">Провайдер</string>
-    <string name="InuAiProviderDesc">Виберіть відповідний сервіс для взаємодії з мовними моделями.</string>
+    <string name="InuAiProviderDesc">Оберіть відповідний сервіс для взаємодії з мовними моделями.</string>
     <string name="InuAiProviderCustom">Власний</string>
     <string name="InuAiServiceInfo">Інформація про сервіс</string>
     <string name="InuAiApiKeyHint">API Ключ</string>
@@ -1008,13 +1011,13 @@
 
     <string name="InuGhostMode">Режим примари</string>
     <string name="InuGhostModeMaster">Режим примари</string>
-    <string name="InuGhostModeInfo">Сховати активність: повідомлення не відмічаються як прочитані, ваш статус онлайн, стан набору тексту та перегляди історій залишаються прихованими.</string>
+    <string name="InuGhostModeInfo">Сховати активність: повідомлення не позначаються як прочитані, ваш статус онлайн, стан набору тексту та перегляди історій залишаються прихованими.</string>
     <string name="InuGhostFeatures">Прихована активність</string>
     <string name="InuGhostHideRead">Не надсилати підтвердження прочитання</string>
     <string name="InuGhostHideReadInfo">Повідомлення не позначаються як прочитані на сервері — співрозмовник не бачить синіх галочок.</string>
     <string name="InuContentProtectionBypass">Обхід захисту контенту</string>
     <string name="InuGhostHideVoiceRead">Не позначати голосові та відеоповідомлення прослуханими</string>
-    <string name="InuGhostHideVoiceReadInfo">Голосові повідомлення та кружечки не відмічаються як прослухані для співрозмовника.</string>
+    <string name="InuGhostHideVoiceReadInfo">Голосові повідомлення та кружечки не позначаються як прослухані для співрозмовника.</string>
     <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
     <string name="InuGhostHideStoryReadInfo">Перегляди сторіс та лічильник не передаються автору.</string>
     <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>

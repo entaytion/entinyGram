@@ -522,6 +522,9 @@ object InuConfig {
     val HIDE_SUGGESTION_CUSTOM = BoolItem("hide_suggestion_custom", false)
 
     @JvmField
+    val HIDE_PROXY_SPONSOR_CHAT = BoolItem("hide_proxy_sponsor_chat", true)
+
+    @JvmField
     val DELETE_FOR_BOTH_MESSAGES = BoolItem("delete_for_both_messages", true)
 
     @JvmField

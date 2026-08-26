@@ -923,6 +923,7 @@
     <string name="InuRegexFilterModeSpoiler">Закрывать спойлером</string>
     <string name="InuRegexFiltersList">Фильтры</string>
     <string name="InuRegexFilterAdd">Добавить фильтр</string>
+    <string name="InuRegexFilterStatusEnabled">Включён</string>
     <string name="InuRegexFilterDisabled">Отключён</string>
     <string name="InuRegexPatternEmpty">(пустой шаблон)</string>
     <string name="InuRegexFilterEditTitle">Редактировать фильтр</string>

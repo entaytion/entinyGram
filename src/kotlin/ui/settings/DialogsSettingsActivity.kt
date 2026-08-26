@@ -5,6 +5,8 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.menu.MainTabsMenuConfig
+import desu.inugram.helpers.menu.MenuOrderEntry
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
@@ -18,6 +20,8 @@ import org.telegram.ui.Components.UniversalAdapter
 class DialogsSettingsActivity : SettingsPageActivity() {
 
     private var filterTabsPreview: FilterTabsPreviewCell? = null
+    private var mainTabsPreview: MainTabsPreviewCell? = null
+    private var mainTabsEntries: MutableList<MenuOrderEntry<MainTabsMenuConfig.Item>> = InuConfig.BOTTOM_TABS_ORDER.value.toMutableList()
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
 
@@ -166,17 +170,26 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                         InuConfig.BOTTOM_TABS_COMPACT_MODE.value
                     )
                 )
-                items.add(
-                    UItem.asCheck(
-                        TOGGLE_SHOW_TAB_TITLES,
-                        LocaleController.getString(R.string.InuShowTabTitles),
-                    ).setChecked(InuConfig.BOTTOM_TABS_SHOW_TITLES.value)
-                )
+                if (!InuConfig.BOTTOM_TABS_COMPACT_MODE.value) {
+                    items.add(
+                        UItem.asCheck(
+                            TOGGLE_SHOW_TAB_TITLES,
+                            LocaleController.getString(R.string.InuShowTabTitles),
+                        ).setChecked(InuConfig.BOTTOM_TABS_SHOW_TITLES.value)
+                    )
+                }
+                val preview = mainTabsPreview ?: MainTabsPreviewCell(
+                    context,
+                    onToggle = { item -> toggleMainTab(item) },
+                    onReorder = { newOrder -> reorderMainTabs(newOrder) },
+                ).also { mainTabsPreview = it }
+                refreshMainTabsPreview(preview)
+                items.add(UItem.asCustom(preview))
                 items.add(
                     UItem.asButton(
-                        BUTTON_CUSTOMIZE_BOTTOM_TABS,
-                        R.drawable.tabs_reorder,
-                        LocaleController.getString(R.string.InuCustomizeBottomTabs),
+                        BUTTON_RESET_BOTTOM_TABS,
+                        R.drawable.msg_reset,
+                        LocaleController.getString(R.string.InuMainTabsCustomizeReset),
                     )
                 )
             }
@@ -341,16 +354,25 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             TOGGLE_COMPACT_MODE -> {
                 val new = InuConfig.BOTTOM_TABS_COMPACT_MODE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                listView.adapter.update(true)
                 softRebuild()
+                mainTabsPreview?.let { refreshMainTabsPreview(it) }
+                showRestartBulletin()
             }
 
             TOGGLE_SHOW_TAB_TITLES -> {
                 val new = InuConfig.BOTTOM_TABS_SHOW_TITLES.toggle()
                 (view as? TextCheckCell)?.isChecked = new
+                mainTabsPreview?.let { refreshMainTabsPreview(it) }
                 showRestartBulletin()
             }
 
-            BUTTON_CUSTOMIZE_BOTTOM_TABS -> presentFragment(MainTabsCustomizeActivity())
+            BUTTON_RESET_BOTTOM_TABS -> {
+                InuConfig.BOTTOM_TABS_ORDER.resetToDefault()
+                mainTabsEntries = InuConfig.BOTTOM_TABS_ORDER.default.toMutableList()
+                mainTabsPreview?.let { refreshMainTabsPreview(it) }
+                showRestartBulletin()
+            }
 
             BUTTON_TITLE_TEXT -> RadioItemOptions.show(
                 this, view,
@@ -388,6 +410,29 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 softRebuild()
             }
         }
+    }
+
+    private fun toggleMainTab(item: MainTabsMenuConfig.Item) {
+        val idx = mainTabsEntries.indexOfFirst { it.item == item }
+        if (idx < 0) return
+        mainTabsEntries[idx] = mainTabsEntries[idx].copy(enabled = !mainTabsEntries[idx].enabled)
+        InuConfig.BOTTOM_TABS_ORDER.value = mainTabsEntries
+        mainTabsPreview?.let { refreshMainTabsPreview(it) }
+        showRestartBulletin()
+    }
+
+    private fun reorderMainTabs(newOrder: List<MainTabsMenuConfig.Item>) {
+        val byItem = mainTabsEntries.associateBy { it.item }
+        mainTabsEntries = newOrder.mapNotNull { byItem[it] }.toMutableList()
+        InuConfig.BOTTOM_TABS_ORDER.value = mainTabsEntries
+        showRestartBulletin()
+    }
+
+    private fun refreshMainTabsPreview(cell: MainTabsPreviewCell) {
+        cell.setState(
+            mainTabsEntries.map { it.item },
+            mainTabsEntries.filter { it.enabled }.map { it.item }.toSet(),
+        )
     }
 
     private fun showCommunityDisplayModeSelector() {
@@ -480,7 +525,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_BOTTOM_TABS_HIDE = InuUtils.generateId()
         private val TOGGLE_COMPACT_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_TAB_TITLES = InuUtils.generateId()
-        private val BUTTON_CUSTOMIZE_BOTTOM_TABS = InuUtils.generateId()
+        private val BUTTON_RESET_BOTTOM_TABS = InuUtils.generateId()
         private val BUTTON_FAB_MAIN_ACTION = InuUtils.generateId()
         private val BUTTON_FAB_SECONDARY_ACTION = InuUtils.generateId()
         private val TOGGLE_FAB_HIDE_ON_SCROLL = InuUtils.generateId()
@@ -536,7 +581,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("bottom-tabs-hide", R.string.InuBottomTabsHide, TOGGLE_BOTTOM_TABS_HIDE),
                 SearchRegistry.Entry("compact-mode", R.string.InuCompactMode, TOGGLE_COMPACT_MODE),
                 SearchRegistry.Entry("show-tab-titles", R.string.InuShowTabTitles, TOGGLE_SHOW_TAB_TITLES),
-                SearchRegistry.Entry("customize-bottom-tabs", R.string.InuCustomizeBottomTabs, BUTTON_CUSTOMIZE_BOTTOM_TABS),
+                SearchRegistry.Entry("customize-bottom-tabs", R.string.InuMainTabsCustomizeReset, BUTTON_RESET_BOTTOM_TABS),
                 SearchRegistry.Entry("dialogs-fab-main-action", R.string.InuDialogsFabMainAction, BUTTON_FAB_MAIN_ACTION),
                 SearchRegistry.Entry("dialogs-fab-secondary-action", R.string.InuDialogsFabSecondaryAction, BUTTON_FAB_SECONDARY_ACTION),
                 SearchRegistry.Entry("dialogs-fab-hide-on-scroll", R.string.InuDialogsFabHideOnScroll, TOGGLE_FAB_HIDE_ON_SCROLL),

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.SystemClock
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -44,16 +45,16 @@ object MainTabsHelper {
 
     @JvmStatic
     val showTitles: Boolean
-        get() = InuConfig.BOTTOM_TABS_SHOW_TITLES.value
-
+        get() = !isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value
     // index scheme matches MainTabsActivity's INDEX_* constants: 0=Chats,1=Contacts,2=Settings,3=Calls,4=Profile
 
     // snapshotted once per process: MainTabsActivity builds its tab bar/ViewPager positions once at
     // creation and never rebuilds them live, so re-reading InuConfig on every call would let a mid-session
-    // toggle (from MainTabsCustomizeActivity, before the user actually restarts) desync the ViewPager's
-    // position count from the already-built tab bar and crash in ViewPagerFixed.scrollToPosition with a
-    // null fragment. Changes to BOTTOM_TABS_ORDER only take effect on the next process restart anyway
-    // (see MainTabsCustomizeActivity.showRestartBulletin), so a process-lifetime cache is exactly correct.
+    // toggle (from DialogsSettingsActivity's bottom tabs preview, before the user actually restarts)
+    // desync the ViewPager's position count from the already-built tab bar and crash in
+    // ViewPagerFixed.scrollToPosition with a null fragment. Changes to BOTTOM_TABS_ORDER only take effect
+    // on the next process restart anyway (see DialogsSettingsActivity's showRestartBulletin calls), so a
+    // process-lifetime cache is exactly correct.
     private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {
         InuConfig.BOTTOM_TABS_ORDER.value.filter { it.enabled }.map { it.item }
     }
@@ -208,16 +209,28 @@ object MainTabsHelper {
         return true
     }
 
+    // BulletinWindow (the old approach here) is its own top-level Dialog/Window, outside the
+    // single-bulletin-per-fragment queue every other bulletin in the app uses (e.g. the updater's
+    // "Hotfix deployed!"). Two independent bulletin mechanisms showing at once don't dedupe or
+    // account for each other's position — that's what produced the garbled double-bulletin overlap.
+    // `BaseFragment.setBulletinDelegate` is already public stock API: registering our offset there
+    // routes everything through the normal `Bulletin.make(fragment, ...)` path instead.
     @JvmStatic
     fun resolveBulletinContainer(fragment: BaseFragment?): FrameLayout? {
-        if (fragment is DialogsActivity && fragment.hasMainTabs) {
-            return Bulletin.BulletinWindow.make(
-                fragment.getParentActivity(),
-                object : Bulletin.Delegate {
-                    override fun getBottomOffset(tag: Int): Int {
-                        return if (isHidden) 0 else dp(mainTabsHeightWithMargins.toFloat())
-                    }
-                })
+        Log.d(
+            "InuBulletin", "resolveBulletinContainer: fragment=${fragment?.javaClass?.simpleName} " +
+                "isDialogs=${fragment is DialogsActivity} hasMainTabs=${(fragment as? DialogsActivity)?.hasMainTabs} " +
+                "isHidden=$isHidden offsetDp=$mainTabsHeightWithMargins existingDelegate=${fragment?.bulletinDelegate}"
+        )
+        if (fragment is DialogsActivity && fragment.hasMainTabs && fragment.bulletinDelegate == null) {
+            fragment.bulletinDelegate = object : Bulletin.Delegate {
+                override fun getBottomOffset(tag: Int): Int {
+                    val offset = if (isHidden) 0 else dp(mainTabsHeightWithMargins.toFloat())
+                    Log.d("InuBulletin", "getBottomOffset -> $offset (isHidden=$isHidden)")
+                    return offset
+                }
+            }
+            Log.d("InuBulletin", "attached delegate to $fragment")
         }
         return null
     }

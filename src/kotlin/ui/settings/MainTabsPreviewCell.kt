@@ -167,7 +167,7 @@ class MainTabsPreviewCell(
             this.enabled = enabled
             icon.setImageResource(iconRes)
             label.text = LocaleController.getString(labelRes)
-            label.visibility = if (InuConfig.BOTTOM_TABS_SHOW_TITLES.value) VISIBLE else GONE
+            label.visibility = if (desu.inugram.helpers.dialogs.MainTabsHelper.showTitles) VISIBLE else GONE
             val color = Theme.getColor(if (enabled) Theme.key_windowBackgroundWhiteBlackText else Theme.key_windowBackgroundWhiteGrayIcon)
             icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY)
             icon.alpha = if (enabled) 1f else 0.5f

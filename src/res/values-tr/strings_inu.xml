@@ -840,6 +840,7 @@
     <string name="InuRegexFilterModeSpoiler">Spoiler ile kapat</string>
     <string name="InuRegexFiltersList">Filtreler</string>
     <string name="InuRegexFilterAdd">Filtre ekle</string>
+    <string name="InuRegexFilterStatusEnabled">Etkin</string>
     <string name="InuRegexFilterDisabled">Devre dışı</string>
     <string name="InuRegexPatternEmpty">(boş kalıp)</string>
     <string name="InuRegexFilterEditTitle">Filtreyi düzenle</string>

@@ -42,6 +42,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **typing status spoofing**: loop a fake typing/recording/uploading indicator in any chat, reachable from the chat header menu or a quick-launch list in settings
 - 📡 **adblock & content filtering**:
   - **hide sponsored messages**: completely disables Telegram sponsored channel ads and video ads
+  - **hide proxy sponsor chat**: blocks the promoted chat/channel some MTProto proxies pin to the top of your chat list while connected
   - **regex content filter**: manage multiple named filters (not just one combined pattern) with per-filter enable/case-insensitive/allow-list toggles, global or scoped to a single chat, with per-chat exclusions for global filters. Add a filter straight from a message's long-press menu, or manage the full list from settings. Hides or spoiler-covers matches; caches match results locally so scrolling stays fast even with many filters. Export/import the full filter set as JSON.
 
 ### restricted features

@@ -841,6 +841,7 @@
     <string name="InuRegexFilterModeSpoiler">用遮罩覆盖</string>
     <string name="InuRegexFiltersList">过滤器</string>
     <string name="InuRegexFilterAdd">添加过滤器</string>
+    <string name="InuRegexFilterStatusEnabled">已启用</string>
     <string name="InuRegexFilterDisabled">已禁用</string>
     <string name="InuRegexPatternEmpty">（空模式）</string>
     <string name="InuRegexFilterEditTitle">编辑过滤器</string>
