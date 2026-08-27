@@ -20,6 +20,7 @@ import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
+import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
@@ -43,6 +44,32 @@ object PhotoViewerHelper {
     private var footerGap: View? = null
     private var footerItem: ActionBarMenuSubItem? = null
     private var lastAvatarsDialogId: Long = 0L
+
+    @JvmStatic
+    fun ensureEditSourceSnapshot(entry: MediaController.MediaEditState) {
+        if (entry.isVideo || entry.inu_editSourcePath?.let { File(it).isFile } == true) return
+        val source = entry.path?.let(::File)?.takeIf { it.isFile } ?: return
+        val snapshot = File(
+            FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE),
+            "${SharedConfig.getLastLocalId()}_inu_edit_source.${source.extension.ifEmpty { "jpg" }}",
+        )
+        try {
+            if (AndroidUtilities.copyFile(source, snapshot)) {
+                entry.inu_editSourcePath = snapshot.absolutePath
+            } else {
+                snapshot.delete()
+            }
+        } catch (e: Exception) {
+            snapshot.delete()
+            FileLog.e(e)
+        }
+    }
+
+    @JvmStatic
+    fun getEditSourcePath(entry: MediaController.MediaEditState): String =
+        entry.filterPath?.takeIf { it.isNotEmpty() }
+            ?: entry.inu_editSourcePath?.takeIf { File(it).isFile }
+            ?: entry.path
 
     @JvmStatic
     fun clearHdrMode(viewer: PhotoViewer) {
@@ -342,7 +369,7 @@ object PhotoViewerHelper {
     // (part of bugfix__photo-crop-not-applied-on-send)
     @JvmStatic
     fun loadEditSourceBitmap(entry: MediaController.MediaEditState, orientation: IntArray): Bitmap? {
-        val path = entry.filterPath?.takeIf { it.isNotEmpty() } ?: entry.path
+        val path = getEditSourcePath(entry)
         if (path.isNullOrEmpty() || !File(path).exists()) return null
         val exif = AndroidUtilities.getImageOrientation(path)
         orientation[0] = exif.first
@@ -367,7 +394,7 @@ object PhotoViewerHelper {
     fun renderHighQualityCrop(entry: MediaController.MediaEditState): Bitmap? {
         val cropState = entry.cropState ?: return null
         if (entry.paintPath != null) return null
-        val path = entry.filterPath?.takeIf { it.isNotEmpty() } ?: entry.path
+        val path = getEditSourcePath(entry)
         if (path.isNullOrEmpty() || !File(path).exists()) return null
 
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }

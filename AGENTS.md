@@ -45,6 +45,8 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 19. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
 20. **Never duplicate origin. Never rewrite a hotspot for a feature origin already has.** If inugram already has the feature, take theirs — do not add a parallel `entiny/` patch, a second toggle, or a rewrite of `ChatMessageCell` / other 10k+ stock files. Bubble metadata (time, views, forwards, edited) goes through `ChatHelper.timePrefix` / `extraTimeWidth` / `timeAdditionsHash`, not a new cell patch. Checklist: `.claude/skills/write-patches/SKILL.md`. Code comparison: `.claude/skills/write-patches/dont-reinvent.md`.
 
+> you are allowed to violate them if the user explicitly asks for this
+
 ## Patch groups & naming
 
 Format: `group__name` → `patches/<group>/<name>.patch`. Commit subject = plain human sentence (`Allow editing by double tapping a message`).

@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -1043,6 +1043,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1055,6 +1055,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
      private Timer progressTimer = null;
      private final Object progressTimerSync = new Object();
      private boolean downloadingCurrentMessage;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      private boolean playMusicAgain;
      private PlaylistGlobalSearchParams playlistGlobalSearchParams;
      private AudioInfo audioInfo;
-@@ -4159,6 +4160,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -4171,6 +4172,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              FileLog.e(e);
          }
  

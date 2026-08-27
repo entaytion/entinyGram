@@ -1,6 +1,7 @@
 package desu.inugram.helpers.font
 
 import android.content.Context
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.fonts.Font
 import android.graphics.fonts.FontStyle
@@ -22,8 +23,7 @@ import org.telegram.ui.Components.Paint.PaintTypeface
 import java.io.File
 import java.io.FileOutputStream
 import java.io.RandomAccessFile
-import java.nio.ByteBuffer
-import java.nio.channels.FileChannel
+import kotlin.math.roundToInt
 
 /**
  * Owns the editor **font roster** and the storage behind it: imported font families, discovered device
@@ -369,8 +369,8 @@ object FontLibrary {
 
     /**
      * Some Google Fonts downloads (notably Google Sans variable) carry a reasonable line box but a wildly
-     * oversized safety bbox/win box. Android can let those outer boxes leak into TextView top/bottom metrics,
-     * which shifts Telegram text. Clamp only the outer boxes to a padded line box; keep hhea/typo metrics.
+     * oversized safety bbox/win box. Android can let those outer boxes leak into text metrics, which shifts
+     * Telegram text and makes emoji spans huge. Replace pathological vertical metrics with stock UI ratios.
      */
     private fun normalizeVerticalMetrics(file: File) {
         try {
@@ -401,9 +401,7 @@ object FontLibrary {
 
         var os2: SfntTable? = null
         var head: SfntTable? = null
-        var maxp: SfntTable? = null
-        var loca: SfntTable? = null
-        var glyf: SfntTable? = null
+        var hhea: SfntTable? = null
         for (i in 0 until numTables) {
             val recordOffset = raf.filePointer
             val tag = raf.readInt()
@@ -413,13 +411,13 @@ object FontLibrary {
             when (tag) {
                 0x4F532F32 -> os2 = SfntTable(recordOffset, off, length) // OS/2
                 0x68656164 -> head = SfntTable(recordOffset, off, length) // head
-                0x6D617870 -> maxp = SfntTable(recordOffset, off, length) // maxp
-                0x6C6F6361 -> loca = SfntTable(recordOffset, off, length) // loca
-                0x676C7966 -> glyf = SfntTable(recordOffset, off, length) // glyf
+                0x68686561 -> hhea = SfntTable(recordOffset, off, length) // hhea
             }
         }
         val os2Table = os2 ?: return false
 
+        raf.seek(os2Table.offset.toLong())
+        val os2Version = raf.readShort().toInt() and 0xffff
         raf.seek(os2Table.offset.toLong() + 68)
         val typoAsc = raf.readShort().toInt()
         val typoDesc = raf.readShort().toInt()
@@ -427,15 +425,13 @@ object FontLibrary {
         raf.seek(os2Table.offset.toLong() + 74)
         val winAsc = raf.readShort().toInt() and 0xffff
         val winDesc = raf.readShort().toInt() and 0xffff
-        val headTable = head
-        var headYMin = 0
-        var headYMax = 0
-        if (headTable != null) {
-            raf.seek(headTable.offset.toLong() + 38)
-            headYMin = raf.readShort().toInt()
-            raf.skipBytes(2)
-            headYMax = raf.readShort().toInt()
-        }
+        val headTable = head ?: return false
+        raf.seek(headTable.offset.toLong() + 18)
+        val unitsPerEm = raf.readShort().toInt() and 0xffff
+        raf.seek(headTable.offset.toLong() + 38)
+        val headYMin = raf.readShort().toInt()
+        raf.skipBytes(2)
+        val headYMax = raf.readShort().toInt()
 
         val typoDescAbs = -typoDesc
         val typoTotal = typoAsc + typoDescAbs + typoGap
@@ -443,96 +439,87 @@ object FontLibrary {
         if (typoAsc <= 0 || typoDescAbs <= 0 || typoTotal <= 0) return false
 
         val shouldNormalizeWinBox = winTotal > typoTotal * 3 / 2 || winDesc > typoDescAbs * 2
+        val hheaTable = hhea
+        var hheaAsc = 0
+        var hheaDesc = 0
+        var hheaGap = 0
+        if (hheaTable != null) {
+            raf.seek(hheaTable.offset.toLong() + 4)
+            hheaAsc = raf.readShort().toInt()
+            hheaDesc = raf.readShort().toInt()
+            hheaGap = raf.readShort().toInt()
+        }
+        val hheaDescAbs = -hheaDesc
+        val hheaTotal = hheaAsc + hheaDescAbs + hheaGap
+        val shouldNormalizeLineBox = hheaTable != null &&
+            (hheaAsc <= 0 || hheaDescAbs <= 0 || hheaTotal > typoTotal * 3 / 2 || hheaDescAbs > typoDescAbs * 2)
         val headDescAbs = -headYMin
-        val shouldNormalizeHeadBox = headTable != null && (headDescAbs > typoDescAbs * 2 || headYMax > typoAsc * 3 / 2)
-        if (!shouldNormalizeWinBox && !shouldNormalizeHeadBox) return false
+        val shouldNormalizeHeadBox = headDescAbs > typoDescAbs * 2 || headYMax > typoAsc * 3 / 2
+        if (!shouldNormalizeWinBox && !shouldNormalizeLineBox && !shouldNormalizeHeadBox) return false
+        if (unitsPerEm <= 0) return false
 
-        val glyphExtents = glyphYExtents(raf, headTable, maxp, loca, glyf)
-        val minAsc = glyphExtents?.yMax ?: headYMax.coerceAtLeast(0)
-        val minDesc = -(glyphExtents?.yMin ?: headYMin.coerceAtMost(0))
-        val targetDesc = (typoDescAbs + typoTotal / 16).coerceAtMost(typoDescAbs * 2)
-        val targetAsc = (typoAsc + typoTotal / 10).coerceAtMost(typoAsc * 3 / 2)
-        val safeTargetDesc = targetDesc.coerceAtLeast(minDesc)
-        val safeTargetAsc = targetAsc.coerceAtLeast(minAsc)
+        val stockMetrics = Paint().apply {
+            typeface = FontHelper.stockDefault
+            textSize = unitsPerEm.toFloat()
+        }.fontMetrics
+        val targetAsc = (-stockMetrics.ascent).roundToInt().coerceIn(1, Short.MAX_VALUE.toInt())
+        val targetDesc = stockMetrics.descent.roundToInt().coerceIn(1, Short.MAX_VALUE.toInt())
+        val targetGap = stockMetrics.leading.roundToInt().coerceIn(0, Short.MAX_VALUE.toInt())
+        val targetTop = (-stockMetrics.top).roundToInt().coerceIn(targetAsc, Short.MAX_VALUE.toInt())
+        val targetBottom = stockMetrics.bottom.roundToInt().coerceIn(targetDesc, Short.MAX_VALUE.toInt())
         var changed = false
+        var os2Changed = false
 
-        if (shouldNormalizeHeadBox && headTable != null && (safeTargetDesc != headDescAbs || safeTargetAsc != headYMax)) {
-            raf.seek(headTable.offset.toLong() + 38)
-            raf.writeShort((-safeTargetDesc).coerceIn(Short.MIN_VALUE.toInt(), -1))
-            raf.skipBytes(2)
-            raf.writeShort(safeTargetAsc.coerceIn(1, 0xffff))
+        if (hheaTable != null && (hheaAsc != targetAsc || hheaDesc != -targetDesc || hheaGap != targetGap)) {
+            raf.seek(hheaTable.offset.toLong() + 4)
+            raf.writeShort(targetAsc)
+            raf.writeShort(-targetDesc)
+            raf.writeShort(targetGap)
+            updateTableChecksum(raf, hheaTable)
             changed = true
         }
 
-        val winTargetAsc = safeTargetAsc.coerceAtMost(winAsc)
-        val winTargetDesc = safeTargetDesc.coerceAtMost(winDesc)
-        if (shouldNormalizeWinBox && (winTargetAsc != winAsc || winTargetDesc != winDesc)) {
+        if (typoAsc != targetAsc || typoDesc != -targetDesc || typoGap != targetGap) {
+            raf.seek(os2Table.offset.toLong() + 68)
+            raf.writeShort(targetAsc)
+            raf.writeShort(-targetDesc)
+            raf.writeShort(targetGap)
+            os2Changed = true
+        }
+
+        if (os2Version >= 4) {
+            raf.seek(os2Table.offset.toLong() + 62)
+            val fsSelection = raf.readShort().toInt() and 0xffff
+            if (fsSelection and 0x80 == 0) {
+                raf.seek(os2Table.offset.toLong() + 62)
+                raf.writeShort(fsSelection or 0x80)
+                os2Changed = true
+            }
+        }
+
+        if (headYMin != -targetBottom || headYMax != targetTop) {
+            raf.seek(headTable.offset.toLong() + 38)
+            raf.writeShort(-targetBottom)
+            raf.skipBytes(2)
+            raf.writeShort(targetTop)
+            changed = true
+        }
+
+        if (winAsc != targetTop || winDesc != targetBottom) {
             raf.seek(os2Table.offset.toLong() + 74)
-            raf.writeShort(winTargetAsc.coerceIn(1, 0xffff))
-            raf.writeShort(winTargetDesc.coerceIn(1, 0xffff))
+            raf.writeShort(targetTop)
+            raf.writeShort(targetBottom)
+            os2Changed = true
+        }
+        if (os2Changed) {
             updateTableChecksum(raf, os2Table)
             changed = true
         }
-        if (changed) headTable?.let { updateCheckSumAdjustment(raf, it) }
+        if (changed) updateCheckSumAdjustment(raf, headTable)
         return changed
     }
 
     private data class SfntTable(val recordOffset: Long, val offset: Int, val length: Int)
-    private data class GlyphYExtents(val yMin: Int, val yMax: Int)
-
-    private fun glyphYExtents(
-        raf: RandomAccessFile,
-        head: SfntTable?,
-        maxp: SfntTable?,
-        loca: SfntTable?,
-        glyf: SfntTable?,
-    ): GlyphYExtents? {
-        if (head == null || maxp == null || loca == null || glyf == null) return null
-        return try {
-            raf.seek(head.offset.toLong() + 50)
-            val longLoca = raf.readShort().toInt() != 0
-            raf.seek(maxp.offset.toLong() + 4)
-            val glyphCount = raf.readShort().toInt() and 0xffff
-            if (glyphCount <= 0) return null
-
-            // a seek+read per loca entry and per glyph header is ~4 syscalls x glyphCount; fonts with
-            // tens of thousands of glyphs (Iosevka & co) spend seconds there. map both tables instead.
-            val locaEntry = if (longLoca) 4 else 2
-            val locaBuf = raf.map(loca, (glyphCount + 1).toLong() * locaEntry) ?: return null
-            val glyfBuf = raf.map(glyf, glyf.length.toLong()) ?: return null
-
-            fun locaOffset(index: Int): Int {
-                val at = index * locaEntry
-                if (at + locaEntry > locaBuf.limit()) return -1
-                return if (longLoca) locaBuf.getInt(at) else (locaBuf.getShort(at).toInt() and 0xffff) * 2
-            }
-
-            var yMin = Int.MAX_VALUE
-            var yMax = Int.MIN_VALUE
-            for (i in 0 until glyphCount) {
-                val start = locaOffset(i)
-                val end = locaOffset(i + 1)
-                if (end <= start || start < 0 || end > glyf.length) continue
-                // glyph header: numberOfContours, xMin, yMin, xMax, yMax
-                if (start + 10 > glyfBuf.limit()) continue
-                val glyphYMin = glyfBuf.getShort(start + 4).toInt()
-                val glyphYMax = glyfBuf.getShort(start + 8).toInt()
-                if (glyphYMin < yMin) yMin = glyphYMin
-                if (glyphYMax > yMax) yMax = glyphYMax
-            }
-            if (yMin == Int.MAX_VALUE || yMax == Int.MIN_VALUE) null else GlyphYExtents(yMin, yMax)
-        } catch (_: Throwable) {
-            null
-        }
-    }
-
-    /** Read-only mapping of [table], clamped to the file; null when the table lies outside it. */
-    private fun RandomAccessFile.map(table: SfntTable, size: Long): ByteBuffer? {
-        if (table.offset < 0) return null
-        val available = length() - table.offset
-        if (available <= 0) return null
-        return channel.map(FileChannel.MapMode.READ_ONLY, table.offset.toLong(), minOf(size, available))
-    }
 
     private fun updateTableChecksum(raf: RandomAccessFile, table: SfntTable) {
         val checksum = tableChecksum(raf, table.offset.toLong(), table.length)

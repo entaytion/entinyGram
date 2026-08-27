@@ -5,6 +5,7 @@ Subject: force system font for ui
 
 ---
  .../telegram/messenger/AndroidUtilities.java  |  6 ++
+ .../java/org/telegram/messenger/Emoji.java    |  4 +-
  .../telegram/messenger/RichMessageLayout.java |  6 ++
  .../telegram/ui/ActionBar/SimpleTextView.java |  1 +
  .../java/org/telegram/ui/ActionBar/Theme.java |  3 +
@@ -18,7 +19,7 @@ Subject: force system font for ui
  .../org/telegram/ui/iv/RichBlockChrome.java   |  1 +
  .../org/telegram/ui/iv/RichDocumentCell.java  |  1 +
  .../java/org/telegram/ui/iv/RichMapCell.java  |  1 +
- 14 files changed, 53 insertions(+), 42 deletions(-)
+ 15 files changed, 56 insertions(+), 43 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 index 0000000..0000000 100644
@@ -38,6 +39,28 @@ index 0000000..0000000 100644
              if (!typefaceCache.containsKey(assetPath)) {
                  try {
                      Typeface t;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java b/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java
+@@ -657,6 +657,7 @@ public class Emoji {
+         if (SharedConfig.useSystemEmoji || cs == null || cs.length() == 0) {
+             return cs;
+         }
++        scale *= desu.inugram.helpers.font.FontHelper.getEmojiScale();
+         Spannable s;
+         if (!createNew && cs instanceof Spannable) {
+             s = (Spannable) cs;
+@@ -925,7 +926,8 @@ public class Emoji {
+                 getDrawable().setAlpha(paint.getAlpha());
+             }
+             boolean needRestore = false;
+-            float ty = emojiDrawingYOffset - (size - scale * size) / 2;
++            float ty = emojiDrawingYOffset - (size - scale * size) / 2
++                - desu.inugram.helpers.font.FontHelper.getEmojiBaselineOffset(fontMetrics);
+             if (ty != 0) {
+                 needRestore = true;
+                 canvas.save();
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java

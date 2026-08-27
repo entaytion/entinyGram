@@ -15,7 +15,7 @@ index 0000000..0000000 100644
  
          if (chatInvite != null && origination == ORIGINATION_SPONSORED_CHAT) {
              textView.setText(getString(R.string.ChannelPublic).toLowerCase());
-+        } else if (chatInvite != null && chatInvite.request_needed && participants_count > 0) {
++        } else if (chatInvite != null && participants_count > 0) {
 +            textView.setText(LocaleController.formatPluralStringComma(isChannel ? "Subscribers" : "Members", participants_count));
          } else {
              textView.setText(isChannel

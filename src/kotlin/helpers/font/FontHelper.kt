@@ -2,6 +2,7 @@ package desu.inugram.helpers.font
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.graphics.fonts.FontFamily
 import android.graphics.fonts.FontStyle
@@ -22,6 +23,8 @@ object FontHelper {
     // "real" default/mono fonts captured before they are replaced with reflection
     val stockDefault: Typeface = Typeface.DEFAULT
     val stockMonospace: Typeface = Typeface.MONOSPACE
+    private var emojiScale = 1f
+    private var emojiBottomPaddingRatio = 0f
 
     private val typefaceDefaultField = Typeface::class.java.getDeclaredField("DEFAULT")
     private val typefaceDefaultBoldField = Typeface::class.java.getDeclaredField("DEFAULT_BOLD")
@@ -279,6 +282,22 @@ object FontHelper {
         }
         if (regular != null) {
             val bold = resolve(700, false) ?: regular
+            val stockPaint = TextPaint().apply {
+                textSize = 100f
+                typeface = stockDefault
+            }
+            val customPaint = TextPaint().apply {
+                textSize = 100f
+                typeface = regular
+            }
+            val stockMetrics = stockPaint.fontMetrics
+            val customMetrics = customPaint.fontMetrics
+            val stockHeight = stockMetrics.descent - stockMetrics.ascent
+            val customHeight = customMetrics.descent - customMetrics.ascent
+            if (stockHeight > 0f && customHeight > 0f) {
+                emojiScale = (stockHeight / customHeight).coerceIn(0.75f, 1.25f)
+                emojiBottomPaddingRatio = (stockMetrics.bottom - stockMetrics.descent) / customHeight
+            }
             trySetStatic(typefaceDefaultField, regular)
             trySetStatic(typefaceDefaultBoldField, bold)
             trySetStatic(typefaceSansSerifField, regular)
@@ -300,6 +319,18 @@ object FontHelper {
             field.set(null, value)
         } catch (_: Throwable) {
         }
+    }
+
+    @JvmStatic
+    fun getEmojiScale(): Float = emojiScale
+
+    @JvmStatic
+    fun getEmojiBaselineOffset(metrics: Paint.FontMetricsInt?): Float {
+        metrics ?: return 0f
+        val height = (metrics.descent - metrics.ascent).toFloat()
+        if (height <= 0f) return 0f
+        return ((metrics.bottom - metrics.descent) - height * emojiBottomPaddingRatio)
+            .coerceIn(-height * 0.1f, height * 0.1f)
     }
 
     @JvmStatic
