@@ -3,7 +3,6 @@ package desu.inugram.helpers.update
 import android.os.Build
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.maps.MapsHelper
 import desu.inugram.helpers.security.ParanoiaHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
@@ -25,16 +24,13 @@ import kotlin.math.max
 import kotlin.math.min
 
 object UpdateHelper {
-    // CI channel entinygram-ci-upload.ts posts full/lite APK documents to, tagged #release.
+    // CI channel entinygram-ci-upload.ts posts the APK document to, tagged #release.
     const val USERNAME = "entinyGramCI"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
-    // entinygram-arm64-{full|lite}-{appVerName}-{verCode}.apk (see scripts/ci/version.ts)
-    private val APK_RE = Regex("^entinygram-arm64-(full|lite)-(.+)-(\\d+)\\.apk$")
-
-    // the current build's variant, matching the filename tag CI produces for it
-    private val ourVariant: String get() = if (MapsHelper.hasMapLibre) "full" else "lite"
+    // entinygram-arm64-{appVerName}-{verCode}.apk (see scripts/ci/version.ts)
+    private val APK_RE = Regex("^entinygram-arm64-(.+)-(\\d+)\\.apk$")
 
     // bare channel id for USERNAME, cached from the first successful username resolve so we
     // never have to hardcode entinyGramCI's numeric id (which can differ per-environment/test).
@@ -370,9 +366,8 @@ object UpdateHelper {
         val nameAttr = doc.attributes.filterIsInstance<TLRPC.TL_documentAttributeFilename>().firstOrNull()
             ?: return null
         val match = APK_RE.matchEntire(nameAttr.file_name) ?: return null
-        if (match.groupValues[1] != ourVariant) return null
-        val appVerName = match.groupValues[2]
-        val verCode = match.groupValues[3].toIntOrNull() ?: return null
+        val appVerName = match.groupValues[1]
+        val verCode = match.groupValues[2].toIntOrNull() ?: return null
         return ApkInfo(verCode, appVerName, doc)
     }
 

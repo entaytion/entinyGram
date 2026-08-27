@@ -23,7 +23,6 @@ import { join, resolve } from 'node:path'
 interface Commit { sha: string, message: string }
 interface BuildInfo {
   verName: string
-  buildNum: number
   repo: string
   commits: Commit[]
 }
@@ -54,7 +53,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
   return [
     'You are writing release notes for entinyGram, a customized modern fork of Telegram for Android.',
     '',
-    `Release: v${info.verName} (build ${info.buildNum}, repo ${info.repo})`,
+    `Release: v${info.verName} (repo ${info.repo})`,
     '',
     'Commits since the last release (technical subjects + detailed bullet points):',
     list || '(no commits)',
