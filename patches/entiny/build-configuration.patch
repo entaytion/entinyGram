@@ -5,10 +5,10 @@ Subject: Configure ABI filters, R8 rules, and local builds
 
 ---
  TMessagesProj/build.gradle       | 11 +++++++++--
- TMessagesProj/proguard-rules.pro | 10 +++++++---
+ TMessagesProj/proguard-rules.pro | 14 +++++++++++---
  TMessagesProj_App/build.gradle   | 27 ++++++++++++++++++++++++---
  build.gradle                     | 29 +++++++++++++++++++++++++++--
- 4 files changed, 67 insertions(+), 10 deletions(-)
+ 4 files changed, 71 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -66,7 +66,18 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -126,4 +130,4 @@
+@@ -119,6 +123,10 @@
+ -dontwarn javax.naming.**
+ -dontwarn org.bouncycastle.cert.**
+ -dontwarn org.bouncycastle.openssl.**
++# inu: lite (-PNOMAPS) builds drop maplibre, which used to transitively pull in
++# enough of org.bouncycastle to satisfy R8 for com.nimbusds's optional JWK/X.509
++# code paths (unused at runtime here). Silence R8 instead of depending on that.
++-dontwarn org.bouncycastle.**
+ -dontwarn org.objectweb.asm.**
+ -dontwarn com.google.crypto.tink.**
+ -keep class desu.inugram.** { *; }
+@@ -126,4 +134,4 @@
  
  # Use -keep to explicitly keep any other classes shrinking would remove
  -dontoptimize
