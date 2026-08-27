@@ -62,6 +62,24 @@ object SavedMessagesHelper {
     // In-memory cache for edit history (account -> (dialogId -> (msgId -> List<EditEntry>)))
     private val editHistoryCache = LongSparseArray<LongSparseArray<LongSparseArray<ArrayList<EditEntry>>>>()
 
+    // Independent shadow cache of message text/media presence, populated for every message as
+    // it's first seen off the wire (see rememberMessageText), regardless of whether its chat is
+    // open or it's the dialog's current preview message. Needed because dialogMessagesByIds
+    // (stock's per-dialog cache, used as the primary edit-history source) only ever tracks each
+    // dialog's newest message -- editing any other message in an unread/unopened chat had no
+    // fallback to recover the pre-edit text from, since messages_v2 may not have a row for it
+    // yet either (see recordEditHistoryFromShadow, called when both other sources miss).
+    private const val SHADOW_CACHE_MAX_PER_ACCOUNT = 500
+
+    private class BoundedLinkedHashMap<K, V>(private val maxSize: Int) :
+        LinkedHashMap<K, V>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<K, V>): Boolean = size > maxSize
+    }
+
+    private data class ShadowEntry(val text: String, val hadMedia: Boolean, val date: Int)
+
+    private val shadowMessageCache = LongSparseArray<LinkedHashMap<Pair<Long, Int>, ShadowEntry>>()
+
     data class EditEntry(
         val timestamp: Long,
         val text: String,
@@ -205,6 +223,7 @@ object SavedMessagesHelper {
                     deletedMessageIds.remove(account.toLong())
                     deletedMessageDates.remove(account.toLong())
                     editHistoryCache.remove(account.toLong())
+                    shadowMessageCache.remove(account.toLong())
                     loadedAccounts.remove(account)
                 }
             }
@@ -266,6 +285,7 @@ object SavedMessagesHelper {
                     deletedMessageIds.remove(account.toLong())
                     deletedMessageDates.remove(account.toLong())
                     editHistoryCache.remove(account.toLong())
+                    shadowMessageCache.remove(account.toLong())
                     loadedAccounts.remove(account)
                 }
                 onDone?.run()
@@ -410,6 +430,34 @@ object SavedMessagesHelper {
     @JvmStatic
     fun recordEditHistory(account: Int, dialogId: Long, msgId: Int, oldText: String, date: Int) {
         recordEditHistory(account, dialogId, msgId, oldText, date, null)
+    }
+
+    /** Called for every incoming message (see MessagesController's new-message ingestion) so an
+     *  edit later has something to diff against even if this message is never opened/read. */
+    @JvmStatic
+    fun rememberMessageText(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int) {
+        if (!isSaveEditedEnabled()) return
+        synchronized(cacheLock) {
+            val map = shadowMessageCache.get(account.toLong())
+                ?: BoundedLinkedHashMap<Pair<Long, Int>, ShadowEntry>(SHADOW_CACHE_MAX_PER_ACCOUNT)
+                    .also { shadowMessageCache.put(account.toLong(), it) }
+            map[dialogId to msgId] = ShadowEntry(text ?: "", hasMedia, date)
+        }
+    }
+
+    /** Last-resort fallback when neither dialogMessagesByIds nor the messages_v2 row had the
+     *  pre-edit text (both only reliably cover a dialog's current preview message). */
+    @JvmStatic
+    fun recordEditHistoryFromShadow(account: Int, dialogId: Long, msgId: Int, newText: String?, newHasMedia: Boolean) {
+        if (!isSaveEditedEnabled()) return
+        val old = synchronized(cacheLock) {
+            shadowMessageCache.get(account.toLong())?.remove(dialogId to msgId)
+        } ?: return
+        val textChanged = old.text.isNotEmpty() && old.text != (newText ?: "")
+        val mediaChanged = old.hadMedia || newHasMedia
+        if (textChanged || mediaChanged) {
+            recordEditHistory(account, dialogId, msgId, old.text, old.date, null)
+        }
     }
 
     @JvmStatic

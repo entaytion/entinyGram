@@ -7,13 +7,13 @@ Subject: feat(history): preserve message history and saved deletions
 - capture outgoing edits before stock state changes
 - render preserved deletions with the configured transparent style
 ---
- .../messenger/MessagesController.java         | 77 ++++++++++++++++++-
- .../telegram/messenger/MessagesStorage.java   | 28 ++++++-
+ .../messenger/MessagesController.java         | 84 ++++++++++++++++++-
+ .../telegram/messenger/MessagesStorage.java   | 33 +++++++-
  .../messenger/SendMessagesHelper.java         |  6 ++
  .../telegram/ui/Cells/ChatMessageCell.java    | 11 ++-
  .../java/org/telegram/ui/ChatActivity.java    | 15 ++++
  .../org/telegram/ui/MainTabsActivity.java     | 11 +--
- 6 files changed, 132 insertions(+), 16 deletions(-)
+ 6 files changed, 144 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -103,7 +103,15 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -19549,6 +19591,17 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18699,6 +18741,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         messagesArr = new ArrayList<>();
+                     }
+                     messagesArr.add(message);
++                    desu.inugram.helpers.chat.SavedMessagesHelper.rememberMessageText(currentAccount, message.dialog_id, message.id, message.message, message.media != null, message.date);
+ 
+                     ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
+                     Integer value = read_max.get(message.dialog_id);
+@@ -19549,6 +19592,23 @@ public class MessagesController extends BaseController implements NotificationCe
                  ImageLoader.saveMessageThumbs(message);
                  AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
  
@@ -115,13 +123,19 @@ index 0000000..0000000 100644
 +                        if (inu_textChanged || inu_mediaChanged) {
 +                            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, message.dialog_id, message.id, inu_cachedMessage.messageOwner.message != null ? inu_cachedMessage.messageOwner.message : "", inu_cachedMessage.messageOwner.date, inu_cachedMessage.messageOwner);
 +                        }
++                    } else {
++                        // dialogMessagesByIds only tracks each dialog's current preview message, so
++                        // it misses edits to any other message in a chat the user hasn't opened. Fall
++                        // back to the shadow cache populated for every message as it's first seen,
++                        // regardless of read/open state (see rememberMessageText below).
++                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, message.dialog_id, message.id, message.message, message.media != null);
 +                    }
 +                }
 +
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21148,6 +21201,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21148,6 +21208,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -132,7 +146,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21272,6 +21329,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21272,6 +21336,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -202,7 +216,7 @@ index 0000000..0000000 100644
                                              message.attachPath = oldMessage.attachPath;
                                          }
                                          message.ttl = cursor.intValue(2);
-@@ -16411,6 +16424,13 @@ public class MessagesStorage extends BaseController {
+@@ -16411,6 +16424,18 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
@@ -211,12 +225,17 @@ index 0000000..0000000 100644
 +                                    if (inu_fallbackCached != null && inu_fallbackCached.messageOwner != null) {
 +                                        String inu_fallbackText = inu_fallbackCached.messageOwner.message != null ? inu_fallbackCached.messageOwner.message : "";
 +                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, inu_fallbackText, inu_fallbackCached.messageOwner.date, inu_fallbackCached.messageOwner);
++                                    } else {
++                                        // dialogMessagesByIds only tracks each dialog's current preview
++                                        // message; fall back to the shadow cache for any other message
++                                        // in a chat the user hasn't opened.
++                                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, MessageObject.getDialogId(message), message.id, message.message, message.media != null);
 +                                    }
 +                                }
                                  continue;
                              }
                          }
-@@ -19090,7 +19110,7 @@ public class MessagesStorage extends BaseController {
+@@ -19090,7 +19115,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  
