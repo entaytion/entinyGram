@@ -215,6 +215,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuCompactEdited),
             ).setChecked(InuConfig.COMPACT_EDITED.value)
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_BUBBLE_TAILS,
+                LocaleController.getString(R.string.InuBubbleTails),
+            ).setChecked(InuConfig.BUBBLE_TAILS.value)
+        )
         items.add(UItem.asShadow(null))
         items.add(
             UItem.asButton(
@@ -343,6 +349,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_COMPACT_EDITED -> {
                 val new = InuConfig.COMPACT_EDITED.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                miscPreview?.invalidate()
+            }
+
+            TOGGLE_BUBBLE_TAILS -> {
+                val new = InuConfig.BUBBLE_TAILS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 miscPreview?.invalidate()
             }
@@ -503,6 +515,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_FORWARDS_COUNT = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
+        private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
@@ -558,6 +571,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
+                SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
                 SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),
