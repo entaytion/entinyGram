@@ -111,7 +111,7 @@ index 0000000..0000000 100644
              }
  
              final int b = calculateListViewPaddingBottom();
-@@ -5261,7 +5263,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -5254,7 +5256,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterTabsViewBackground.setPadding(dp(6.666f));
              filterTabsView.setPadding(0, dp(7), 0, dp(7));
              filterTabsView.setBlurredBackground(filterTabsViewBackground);
@@ -124,7 +124,7 @@ index 0000000..0000000 100644
              NonIslandHelper.applyFilterTabBar(filterTabsView, contentView);
          }
  
-@@ -6708,7 +6714,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6701,7 +6707,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          float topPanelsVisibility = 0;
          float fadeViewT = totalOffset;
  
@@ -133,7 +133,7 @@ index 0000000..0000000 100644
              filterTabsView.setTranslationY(totalOffset - (NonIslandHelper.globalSearch() ? 0 : searchOffset) - (NonIslandHelper.foldersBar() ? dp(NonIslandHelper.foldersBarOverlapDp()) * getFilterTabsVisibilityFactor(false) : 0));
              filtersTabVisibility = filterTabsView.getAlpha();
              filtersTabHeight = dp(NonIslandHelper.foldersBar() ? NonIslandHelper.foldersBarVisibleHeightDp() : 36 + 7) * filtersTabVisibility;
-@@ -9056,6 +9062,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9049,6 +9055,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  storyHint.setTranslationY(baseTranslationY - dp(52));
              }
          }
@@ -143,7 +143,7 @@ index 0000000..0000000 100644
      }
  
      public boolean storiesEnabled = true;
-@@ -14432,7 +14441,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14425,7 +14434,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          final int actionBarHeight = actionBar.getMeasuredHeight()
              + dp(DialogsActivity.SEARCH_FIELD_HEIGHT)
              + dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0)
@@ -152,7 +152,7 @@ index 0000000..0000000 100644
              + (topPanelLayout != null && topPanelLayout.getVisibility() == View.VISIBLE ? topPanelLayout.getSumHeightOfAllVisibleChild() : 0)
              + ((int) scrollYOffset);
  
-@@ -14476,7 +14485,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14469,7 +14478,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {

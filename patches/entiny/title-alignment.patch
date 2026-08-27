@@ -951,7 +951,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3248,6 +3248,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3245,6 +3245,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
@@ -1026,4 +1026,4 @@ index 0000000..0000000 100644
 +            }
              telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
  
-             if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+             emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());

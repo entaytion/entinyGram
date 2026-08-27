@@ -236,7 +236,7 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -13794,6 +13796,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13787,6 +13789,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
  
@@ -245,7 +245,7 @@ index 0000000..0000000 100644
          io.show();
          io.setTranslationY(-dp(64));
      }
-@@ -14179,8 +14183,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14172,8 +14176,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int additionalList = dp(48);

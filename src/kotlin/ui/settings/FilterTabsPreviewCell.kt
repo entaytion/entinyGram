@@ -86,9 +86,12 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
                 0f
             )
         )
-        // deferred: filterTabsView has zero measured width until the first layout pass,
-        // and selectTabWithId()'s smoothScrollToPosition needs real dimensions to land correctly
-        post { updateTabs(false) }
+        // populate tabs synchronously so the cell has its real content (and height/width) on
+        // the very first layout pass -- deferring the whole thing via post{} used to make the
+        // settings page visibly jump/reflow right after opening. Only the initial scroll-to-tab
+        // needs a real measured width, so that part alone stays deferred.
+        val firstId = updateTabs(false)
+        post { selectInitialTab(firstId) }
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean = true
@@ -96,7 +99,9 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
     fun refresh() {
         (filterTabsView.layoutParams as? FrameLayout.LayoutParams)?.height = AndroidUtilities.dp(50f)
         filterTabsView.requestLayout()
-        updateTabs(false)
+        // already attached/measured at this point (refresh() only runs on an existing cell),
+        // so selecting the tab can happen immediately -- no need to defer like in init.
+        selectInitialTab(updateTabs(false))
         refreshVisuals()
     }
 
@@ -117,7 +122,8 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
         refreshVisuals()
     }
 
-    private fun updateTabs(animated: Boolean) {
+    /** returns the tab id [selectInitialTab] should scroll/select to once the view is measured. */
+    private fun updateTabs(animated: Boolean): Int {
         filterTabsView.resetTabId()
         filterTabsView.removeTabs()
         idsWithCounters.clear()
@@ -207,6 +213,10 @@ class FilterTabsPreviewCell(context: Context) : FrameLayout(context), Notificati
         if (firstId == -1 && filters.isNotEmpty()) {
             firstId = filters[0].id
         }
+        return firstId
+    }
+
+    private fun selectInitialTab(firstId: Int) {
         if (firstId != -1) {
             filterTabsView.selectTabWithId(firstId, 1f)
         } else {

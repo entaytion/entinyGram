@@ -44,8 +44,15 @@ object StarGiftsHelper {
 
     @JvmStatic
     fun patchStarGifts(response: TL_stars.StarGifts?): TL_stars.StarGifts? {
-        if (response == null || !InuConfig.HIDDEN_STAR_GIFTS.value) return response
-        if (response !is TL_stars.TL_starGifts) return response
+        if (response == null) return response
+        if (!InuConfig.HIDDEN_STAR_GIFTS.value) {
+            android.util.Log.d("StarGiftsHelper", "patch: toggle is off, skipping")
+            return response
+        }
+        if (response !is TL_stars.TL_starGifts) {
+            android.util.Log.d("StarGiftsHelper", "patch: response is ${response.javaClass.simpleName}, not a full TL_starGifts (probably a cached starGiftsNotModified) -- skipping")
+            return response
+        }
         try {
             val giftsList = response.gifts ?: return response
             if (giftsList.isEmpty()) return response
@@ -65,13 +72,18 @@ object StarGiftsHelper {
     }
 
     private fun injectDeletedGifts(giftsList: ArrayList<TL_stars.StarGift>) {
+        // refreshed on every catalog fetch, not just once -- self-heals if the first fetch
+        // silently failed (no network yet, GitHub blocked before the channel fallback kicks
+        // in, etc.) instead of permanently giving up after one failed attempt.
+        refreshDeletedGiftsList()
         val gifts = deletedGifts
         if (gifts.isEmpty()) {
-            refreshDeletedGiftsList()
+            android.util.Log.d("StarGiftsHelper", "inject: no remote gift list yet, skipping this pass")
             return
         }
         if (stickerPackDocs.isEmpty()) {
             loadStickerPack()
+            android.util.Log.d("StarGiftsHelper", "inject: sticker pack not cached yet, injected gifts will use the donor's sticker as a placeholder")
         }
 
         var donor: TL_stars.TL_starGift? = null
@@ -83,10 +95,16 @@ object StarGiftsHelper {
                 donor = candidate
             }
         }
-        val donorGift = donor ?: return
+        val donorGift = donor ?: run {
+            android.util.Log.d("StarGiftsHelper", "inject: no TL_starGift with a sticker found to clone as donor")
+            return
+        }
 
         val toInject = gifts.filter { it.id !in existingIds }
-        if (toInject.isEmpty()) return
+        if (toInject.isEmpty()) {
+            android.util.Log.d("StarGiftsHelper", "inject: nothing to add, all ${gifts.size} remote ids already present in the catalog")
+            return
+        }
 
         val insertBase = minOf(LATEST_GIFT_POSITION, giftsList.size)
         toInject.forEachIndexed { i, gift ->
@@ -102,6 +120,7 @@ object StarGiftsHelper {
                 android.util.Log.d("StarGiftsHelper", "Failed to inject deleted gift ${gift.debugName}", e)
             }
         }
+        android.util.Log.d("StarGiftsHelper", "inject: injected ${toInject.size}/${gifts.size} gifts, catalog now has ${giftsList.size}")
     }
 
     private fun cloneDonor(donor: TL_stars.TL_starGift): TL_stars.TL_starGift {
@@ -213,8 +232,23 @@ object StarGiftsHelper {
             )
         }
         if (list.isNotEmpty()) {
+            val wasEmpty = deletedGifts.isEmpty()
             deletedGifts = list
             stickerPackName = json.optString("stickerpack", DEFAULT_STICKER_PACK)
+            if (wasEmpty) {
+                // the very first patchStarGifts() call always runs before this async fetch
+                // finishes, so it injects nothing -- and StarsController.loadStarGifts() then
+                // caches that unpatched result for 60s, meaning the catalog would otherwise stay
+                // stripped of deleted gifts until the user happens to reopen it a minute later.
+                // Force one immediate reload now that the list is actually ready. Gated on
+                // wasEmpty so later refreshes (injectDeletedGifts() now retries on every
+                // catalog fetch, not just the first) don't reinvalidate on every call --
+                // invalidateStarGifts() -> loadStarGifts() -> patchStarGifts() would otherwise
+                // call back into refreshDeletedGiftsList() forever.
+                org.telegram.messenger.AndroidUtilities.runOnUIThread {
+                    org.telegram.ui.Stars.StarsController.getInstance(UserConfig.selectedAccount).invalidateStarGifts()
+                }
+            }
         }
     }
 

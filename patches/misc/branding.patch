@@ -8,9 +8,9 @@ Subject: change app name to Inugram
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
  .../telegram/messenger/LocaleController.java  | 10 +++---
  .../telegram/messenger/MediaController.java   | 22 ++++++-------
- .../java/org/telegram/ui/DialogsActivity.java |  9 ++++-
+ .../java/org/telegram/ui/DialogsActivity.java |  2 +-
  .../telegram/ui/LauncherIconController.java   |  6 ++--
- .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
+ .../ui/Stories/DialogStoriesCell.java         |  4 ++-
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
@@ -25,7 +25,7 @@ Subject: change app name to Inugram
  .../src/main/res/values-uk/strings.xml        |  6 ++--
  .../src/main/res/values-v31/styles.xml        |  6 +++-
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
- 21 files changed, 130 insertions(+), 65 deletions(-)
+ 21 files changed, 111 insertions(+), 58 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -222,34 +222,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3006,6 +3006,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-     private Drawable premiumStar;
- 
-     public void updateStatus(TLRPC.User user, boolean animated) {
-+        if (!desu.inugram.helpers.security.ParanoiaHelper.isDisguised() && actionBar != null) {
-+            actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
-+        }
-         if (dialogStoriesCell != null) {
-             dialogStoriesCell.updateStatus(user, animated);
-         }
-@@ -3517,12 +3520,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-             } else {
-                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
-                 statusDrawable.center = true;
-+                if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
-                 logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
-                 logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
-                 logoDrawable.setColorFilter(getThemedColor(Theme.key_telegram_color_dialogsLogo), PorterDuff.Mode.MULTIPLY);
-                 SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
-                 ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                 actionBar.setTitle(ssb, statusDrawable);
-+                } else {
-+                    actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
-+                }
-                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
-             }
-             if (folderId == 0) {
-@@ -14433,4 +14440,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14433,4 +14433,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          return true;
      }
  
@@ -290,66 +263,15 @@ index 0000000..0000000 100644
          titleView.setGravity(Gravity.LEFT);
          titleView.setTextColor(getTextLogoColor());
          titleView.setTypeface(AndroidUtilities.bold());
-@@ -626,11 +628,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-                     currentTitle = str;
-                 }
-             } else {
--                currentTitle = menuItemsOffset < dp(50) ? null :
-+                currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
-                     LocaleController.getString(R.string.MyStory);
-             }
-         } else {
--            currentTitle = menuItemsOffset < dp(50) ? null :
-+            currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
-                 LocaleController.formatPluralString("Stories", totalCount);
+@@ -638,7 +640,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             titleView.setText(currentTitle, animated && !LocaleController.isRTL);
          }
  
-@@ -944,7 +946,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-             telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
-             telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
+-        animatorHasTitleText.setValue(!TextUtils.isEmpty(currentTitle) || hasOverlayText, animated);
++        animatorHasTitleText.setValue(hasOverlayText, animated);
  
--            emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
-+            if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
-+                emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
-+            } else {
-+                emojiStatusView.setTranslationX(titleView.getTranslationX() + titleView.getDrawable().getCurrentWidth() + dpf2(2.66f));
-+            }
-             emojiStatusView.setTranslationY(bottomY + dp(14 - 11 + FAKE_TOP_PADDING + 4.333f) + translationOffset);
- 
-             subtitleOverlayContainer.setTranslationX(titleView.getTranslationX());
-@@ -1302,7 +1308,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-             titleView.setText(currentTitle, !LocaleController.isRTL);
-         }
- 
--        animatorHasTitleText.setValue(hasOverlayText, true);
-+        animatorHasTitleText.setValue(!TextUtils.isEmpty(currentTitle) || hasOverlayText, true);
-         if (hasEllipsizedText) {
-             ellipsizeSpanAnimator.addView(titleView);
-         } else {
-@@ -2211,18 +2217,19 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-         final float logoVisibility = 1f - titleVisibility;
-         final float titleAlpha = titleVisibility * progress;
-         final float logoAlpha = logoVisibility * progress;
-+        final boolean inu_disguised = desu.inugram.helpers.security.ParanoiaHelper.isDisguised();
- 
-         if (titleView != null) {
-             titleView.setAlpha(titleAlpha);
-             titleView.setVisibility(titleAlpha > 0 ? VISIBLE : GONE);
-         }
-         if (telegramLogoView != null) {
--            telegramLogoView.setAlpha(logoAlpha);
--            telegramLogoView.setVisibility(logoAlpha > 0 ? VISIBLE : GONE);
-+            telegramLogoView.setAlpha(inu_disguised ? logoAlpha : 0f);
-+            telegramLogoView.setVisibility(inu_disguised && logoAlpha > 0 ? VISIBLE : GONE);
-         }
-         if (emojiStatusView != null) {
--            emojiStatusView.setAlpha(logoAlpha);
--            emojiStatusView.setVisibility(logoAlpha > 0 ? VISIBLE : GONE);
-+            emojiStatusView.setAlpha(inu_disguised ? logoAlpha : progress);
-+            emojiStatusView.setVisibility((inu_disguised ? logoAlpha > 0 : progress > 0) ? VISIBLE : GONE);
-         }
-         if (subtitleOverlayContainer != null) {
-             subtitleOverlayContainer.setAlpha(progress);
+         miniItems.clear();
+         for (int i = 0; i < items.size(); i++) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java

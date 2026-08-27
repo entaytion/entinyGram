@@ -343,3 +343,4 @@ debloat/hide-rich-editor-button.patch
 bugfix/playback-progress-on-message-replace.patch
 bugfix/action-bar-overlay-animation.patch
 feature/hdr-images.patch
+entiny/dialogs-title-text.patch

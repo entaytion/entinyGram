@@ -103,6 +103,14 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE,
+                R.string.InuTitleTextOverrideArchive,
+                R.string.InuTitleTextOverrideArchiveInfo,
+                InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE.value
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_OLD_MENTION_INDICATOR,
                 LocaleController.getString(R.string.InuOldMentionIndicator),
@@ -398,6 +406,11 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 softRebuild()
             }
 
+            TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE -> {
+                val new = InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             BUTTON_COMMUNITY_DISPLAY_MODE -> showCommunityDisplayModeSelector()
 
             BUTTON_FAB_MAIN_ACTION -> showFabActionDialog(view, InuConfig.DIALOGS_FAB_MAIN_ACTION)
@@ -546,6 +559,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_ALL_CHATS_TAB = InuUtils.generateId()
         private val BUTTON_COMMUNITY_DISPLAY_MODE = InuUtils.generateId()
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
+        private val TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE = InuUtils.generateId()
 
         private fun titleTextLabel(value: Int): String = when (value) {
             InuConfig.DialogsTitleTextItem.USERNAME -> LocaleController.getString(R.string.Username)
@@ -582,6 +596,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("folders-at-bottom", R.string.InuFoldersAtBottom, TOGGLE_FOLDERS_AT_BOTTOM),
                 SearchRegistry.Entry("hide-archive", R.string.InuHideArchive, TOGGLE_HIDE_ARCHIVE),
                 SearchRegistry.Entry("title-text", R.string.InuTitleText, BUTTON_TITLE_TEXT),
+                SearchRegistry.Entry("title-text-override-archive", R.string.InuTitleTextOverrideArchive, TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE),
                 SearchRegistry.Entry("old-mention-indicator", R.string.InuOldMentionIndicator, TOGGLE_OLD_MENTION_INDICATOR),
                 SearchRegistry.Entry("pull-down-action", R.string.InuPullDownAction, BUTTON_PULL_DOWN_ACTION),
                 SearchRegistry.Entry("disable-swipe-to-unarchive", R.string.InuDisableSwipeToUnarchive, TOGGLE_DISABLE_SWIPE_TO_UNARCHIVE),

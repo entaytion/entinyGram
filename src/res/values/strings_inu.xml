@@ -37,6 +37,8 @@
     <string name="InuUserProfileInformation">Information</string>
     <string name="InuChatList">Chat list</string>
     <string name="InuTitleText">Title text</string>
+    <string name="InuTitleTextOverrideArchive">Also apply to archive</string>
+    <string name="InuTitleTextOverrideArchiveInfo">Use the same title text on the archive screen instead of the default "Archived Chats"</string>
     <string name="InuPullDownAction">Pull-down action</string>
     <string name="InuPullDownActionDisabled">Disabled</string>
     <string name="InuPullDownActionDisabledInfo">The archive is moved to the menu</string>

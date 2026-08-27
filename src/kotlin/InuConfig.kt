@@ -621,6 +621,9 @@ object InuConfig {
     @JvmField
     val DIALOGS_TITLE_TEXT = DialogsTitleTextItem()
 
+    @JvmField
+    val DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE = BoolItem("dialogs_title_text_override_archive", false)
+
     class StickerTimeModeItem : IntItem("sticker_time_mode", SHOW) {
         companion object {
             const val SHOW = 1;

@@ -479,7 +479,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6966,7 +6966,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6959,7 +6959,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -488,7 +488,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8623,7 +8623,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8616,7 +8616,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
