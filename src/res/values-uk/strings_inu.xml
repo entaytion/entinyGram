@@ -169,6 +169,8 @@
     <string name="InuStickerTimeModeHideCompletely">Приховати повністю</string>
     <string name="InuStickerSizeDialogMessage">мені подобаються антени</string>
     <string name="InuBubbleTails">Хвостики бульбашок повідомлень</string>
+    <string name="InuShowPollResultsBeforeVote">Показувати результати опитувань до голосування</string>
+    <string name="InuShowPollResultsBeforeVoteInfo">Завжди показувати відсотки голосів, навіть в анонімних опитуваннях, у яких ви ще не проголосували</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">гав! entinyGram чи inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">обидва найкращі, собача база 🐶⚡</string>

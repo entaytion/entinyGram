@@ -836,6 +836,9 @@ object InuConfig {
     val BUBBLE_TAILS = BoolItem("bubble_tails", true)
 
     @JvmField
+    val SHOW_POLL_RESULTS_BEFORE_VOTE = BoolItem("show_poll_results_before_vote", false)
+
+    @JvmField
     val INTERACTIVE_CHAT_PREVIEW = BoolItem("disable_chat_preview_expand", true)
 
     @JvmField

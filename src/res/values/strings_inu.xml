@@ -196,6 +196,8 @@
     <string name="InuStickerTimeModeHideCompletely">Hide completely</string>
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">Bubble tails</string>
+    <string name="InuShowPollResultsBeforeVote">Show poll results before voting</string>
+    <string name="InuShowPollResultsBeforeVoteInfo">Always show vote percentages, even for anonymous polls you haven\'t voted in yet</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">woof! entinyGram or inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">both are the best, doggo base 🐶⚡</string>

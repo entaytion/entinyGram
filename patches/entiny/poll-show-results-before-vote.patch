@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 28 Aug 2026 13:21:05 +0300
+Subject: Add toggle to always show poll result percentages before voting
+
+---
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -6838,7 +6838,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             if (!pollChanged && newResults != lastPollResults) {
+                 pollChanged = true;
+             }
+-            if (!pollChanged && (messageObject.forceShowPollResults != pollResultsPreview)) {
++            final boolean newPollResultsPreview = messageObject.forceShowPollResults || (desu.inugram.InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.getValue() && newPoll != null && !newPoll.closed && !messageObject.isVoted());
++            if (!pollChanged && (newPollResultsPreview != pollResultsPreview)) {
+                 pollChanged = true;
+             }
+             if (lastPoll != newPoll && (lastPoll != null && lastPoll.closed) != newPoll.closed) {
+@@ -6851,7 +6852,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             animatePollAvatars = false;
+             if (pollChanged && attachedToWindow) {
+                 pollAnimationProgressTime = 0.0f;
+-                if ((pollVoted || pollResultsPreview) && !(messageObject.isVoted() || messageObject.forceShowPollResults)) {
++                if ((pollVoted || pollResultsPreview) && !(messageObject.isVoted() || newPollResultsPreview)) {
+                     pollUnvoteInProgress = true;
+                 }
+                 animatePollAvatars = lastPollResultsVoters == 0 || lastPollResultsVoters != 0 && newVoters == 0;
+@@ -11387,7 +11388,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             total_voters = media.results.total_voters;
+             timerTransitionProgress = media.poll.close_date - ConnectionsManager.getInstance(currentAccount).getCurrentTime() < 60 ? 0.0f : 1.0f;
+             pollClosed = media.poll.closed;
+-            pollResultsPreview = messageObject.forceShowPollResults;
++            pollResultsPreview = messageObject.forceShowPollResults || (desu.inugram.InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.getValue() && !pollClosed && !messageObject.isVoted());
+             pollHideResults = media.poll.hide_results_until_close;
+             title = media.poll.question;
+             if (pollClosed) {

@@ -344,3 +344,4 @@ bugfix/playback-progress-on-message-replace.patch
 bugfix/action-bar-overlay-animation.patch
 feature/hdr-images.patch
 entiny/dialogs-title-text.patch
+entiny/poll-show-results-before-vote.patch
