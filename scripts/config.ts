@@ -205,6 +205,7 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'user-x',
       'menu-2',
       'camera-rotate',
+      'circle',
       'mood-smile',
       'list',
       'folder',

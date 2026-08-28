@@ -81,6 +81,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, and Profile tabs in MainTabsActivity, with separate tab title visibility toggle
 - 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
 - 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
+- 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
+- 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 

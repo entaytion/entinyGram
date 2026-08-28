@@ -1,0 +1,1452 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 28 Aug 2026 23:33:22 +0300
+Subject: Remove unused stock Huawei app-variant module
+
+---
+ TMessagesProj_AppHuawei/.gitignore            |   1 -
+ .../agconnect-services.json                   |  92 ---
+ TMessagesProj_AppHuawei/build.gradle          | 177 -----
+ .../src/main/AndroidManifest.xml              |  39 --
+ .../messenger/GoogleVoiceClientActivity.java  |  19 -
+ .../messenger/GoogleVoiceClientService.java   |  55 --
+ .../messenger/HuaweiApplicationLoader.java    |  46 --
+ .../messenger/HuaweiLocationProvider.java     | 168 -----
+ .../messenger/HuaweiMapsProvider.java         | 656 ------------------
+ .../messenger/HuaweiPushListenerProvider.java |  66 --
+ .../messenger/HuaweiPushListenerService.java  |  34 -
+ 11 files changed, 1353 deletions(-)
+ delete mode 100644 TMessagesProj_AppHuawei/.gitignore
+ delete mode 100644 TMessagesProj_AppHuawei/agconnect-services.json
+ delete mode 100644 TMessagesProj_AppHuawei/build.gradle
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/AndroidManifest.xml
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientService.java
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiApplicationLoader.java
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiLocationProvider.java
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiMapsProvider.java
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerProvider.java
+ delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerService.java
+
+diff --git a/TMessagesProj_AppHuawei/.gitignore b/TMessagesProj_AppHuawei/.gitignore
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/.gitignore
++++ /dev/null
+@@ -1 +0,0 @@
+-/build
+\ No newline at end of file
+diff --git a/TMessagesProj_AppHuawei/agconnect-services.json b/TMessagesProj_AppHuawei/agconnect-services.json
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/agconnect-services.json
++++ /dev/null
+@@ -1,92 +0,0 @@
+-{
+-	"agcgw":{
+-		"backurl":"connect-dre.hispace.hicloud.com",
+-		"url":"connect-dre.dbankcloud.cn",
+-		"websocketbackurl":"connect-ws-dre.hispace.dbankcloud.com",
+-		"websocketurl":"connect-ws-dre.hispace.dbankcloud.cn"
+-	},
+-	"agcgw_all":{
+-		"CN":"connect-drcn.dbankcloud.cn",
+-		"CN_back":"connect-drcn.hispace.hicloud.com",
+-		"DE":"connect-dre.dbankcloud.cn",
+-		"DE_back":"connect-dre.hispace.hicloud.com",
+-		"RU":"connect-drru.hispace.dbankcloud.ru",
+-		"RU_back":"connect-drru.hispace.dbankcloud.cn",
+-		"SG":"connect-dra.dbankcloud.cn",
+-		"SG_back":"connect-dra.hispace.hicloud.com"
+-	},
+-	"websocketgw_all":{
+-		"CN":"connect-ws-drcn.hispace.dbankcloud.cn",
+-		"CN_back":"connect-ws-drcn.hispace.dbankcloud.com",
+-		"DE":"connect-ws-dre.hispace.dbankcloud.cn",
+-		"DE_back":"connect-ws-dre.hispace.dbankcloud.com",
+-		"RU":"connect-ws-drru.hispace.dbankcloud.ru",
+-		"RU_back":"connect-ws-drru.hispace.dbankcloud.cn",
+-		"SG":"connect-ws-dra.hispace.dbankcloud.cn",
+-		"SG_back":"connect-ws-dra.hispace.dbankcloud.com"
+-	},
+-	"client":{
+-		"cp_id":"890971000000000430",
+-		"product_id":"9105385871708127577",
+-		"client_id":"199221217075397696",
+-		"client_secret":"1BA95A459EAFAD0B04A8F5138E5BE9533DAEF4CADCF49AAB67ABF6502D68BAC8",
+-		"project_id":"9105385871708127577",
+-		"app_id":"101184875",
+-		"api_key":"DAEDAEehEkTAPVhW2szdQNNLzBVS1Re7Pw98QkLMvgGZaEEUc8JLBVi2qhMh2vWw9h/Yq2PwtSGxZzFrSmLAQIysf7Tvo4BAadcblA==",
+-		"package_name":"org.telegram.messenger"
+-	},
+-	"oauth_client":{
+-		"client_id":"101184875",
+-		"client_type":1
+-	},
+-	"app_info":{
+-		"app_id":"101184875",
+-		"package_name":"org.telegram.messenger"
+-	},
+-	"service":{
+-		"analytics":{
+-			"collector_url":"datacollector-dre.dt.hicloud.com,datacollector-dre.dt.dbankcloud.cn",
+-			"collector_url_ru":"datacollector-drru.dt.dbankcloud.ru,datacollector-drru.dt.hicloud.com",
+-			"collector_url_sg":"datacollector-dra.dt.hicloud.com,datacollector-dra.dt.dbankcloud.cn",
+-			"collector_url_de":"datacollector-dre.dt.hicloud.com,datacollector-dre.dt.dbankcloud.cn",
+-			"collector_url_cn":"datacollector-drcn.dt.hicloud.com,datacollector-drcn.dt.dbankcloud.cn",
+-			"resource_id":"p1",
+-			"channel_id":""
+-		},
+-		"search":{
+-			"url":"https://search-dre.cloud.huawei.com"
+-		},
+-		"cloudstorage":{
+-			"storage_url_sg_back":"https://agc-storage-dra.cloud.huawei.asia",
+-			"storage_url_ru_back":"https://agc-storage-drru.cloud.huawei.ru",
+-			"storage_url_ru":"https://agc-storage-drru.cloud.huawei.ru",
+-			"storage_url_de_back":"https://agc-storage-dre.cloud.huawei.eu",
+-			"storage_url_de":"https://ops-dre.agcstorage.link",
+-			"storage_url":"https://agc-storage-drcn.platform.dbankcloud.cn",
+-			"storage_url_sg":"https://ops-dra.agcstorage.link",
+-			"storage_url_cn_back":"https://agc-storage-drcn.cloud.huawei.com.cn",
+-			"storage_url_cn":"https://agc-storage-drcn.platform.dbankcloud.cn"
+-		},
+-		"ml":{
+-			"mlservice_url":"ml-api-dre.ai.dbankcloud.com,ml-api-dre.ai.dbankcloud.cn"
+-		}
+-	},
+-	"region":"DE",
+-	"configuration_version":"3.0",
+-	"appInfos":[
+-		{
+-			"package_name":"org.telegram.messenger",
+-			"client":{
+-				"app_id":"101184875"
+-			},
+-			"app_info":{
+-				"package_name":"org.telegram.messenger",
+-				"app_id":"101184875"
+-			},
+-			"oauth_client":{
+-				"client_type":1,
+-				"client_id":"101184875"
+-			}
+-		}
+-	]
+-}
+\ No newline at end of file
+diff --git a/TMessagesProj_AppHuawei/build.gradle b/TMessagesProj_AppHuawei/build.gradle
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/build.gradle
++++ /dev/null
+@@ -1,177 +0,0 @@
+-apply plugin: 'com.android.application'
+-apply plugin: 'com.huawei.agconnect'
+-
+-repositories {
+-    mavenCentral()
+-    google()
+-    maven { url 'https://developer.huawei.com/repo/' }
+-}
+-
+-configurations {
+-    compile.exclude module: 'support-v4'
+-}
+-
+-configurations.all {
+-    exclude group: 'com.google.firebase', module: 'firebase-core'
+-    exclude group: 'androidx.recyclerview', module: 'recyclerview'
+-}
+-
+-dependencies {
+-    implementation project(':TMessagesProj')
+-    implementation 'androidx.fragment:fragment:1.8.9'
+-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+-    implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
+-
+-    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+-    implementation 'com.huawei.hms:push:6.5.0.300'
+-    implementation 'com.huawei.hms:maps:6.6.0.300'
+-    implementation 'com.huawei.hms:location:6.4.0.300'
+-}
+-
+-android {
+-    compileSdkVersion 36
+-    buildToolsVersion '36.0.0'
+-
+-    defaultConfig.applicationId = APP_PACKAGE
+-
+-    sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
+-
+-    lintOptions {
+-        disable 'MissingTranslation'
+-        disable 'ExtraTranslation'
+-        disable 'BlockedPrivateApi'
+-    }
+-
+-    compileOptions {
+-        sourceCompatibility JavaVersion.VERSION_1_8
+-        targetCompatibility JavaVersion.VERSION_1_8
+-
+-        coreLibraryDesugaringEnabled true
+-    }
+-
+-    androidResources {
+-        localeFilters += ["en", "ar", "de", "es", "it", "ko", "nl", "pt-rBR", "ru", "uk"]
+-    }
+-
+-    def keystorePropsFile = rootProject.file('keystore.properties')
+-    def keystoreProps = new Properties()
+-    if (keystorePropsFile.exists()) {
+-        keystoreProps.load(new FileInputStream(keystorePropsFile))
+-    }
+-    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
+-    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
+-    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
+-    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
+-
+-    signingConfigs {
+-        debug {
+-            storeFile file(releaseKeystorePath)
+-            storePassword releaseKeystorePassword
+-            keyAlias releaseKeystoreAlias
+-            keyPassword releaseKeystoreKeyPassword
+-        }
+-
+-        release {
+-            storeFile file(releaseKeystorePath)
+-            storePassword releaseKeystorePassword
+-            keyAlias releaseKeystoreAlias
+-            keyPassword releaseKeystoreKeyPassword
+-        }
+-    }
+-
+-    buildTypes {
+-        debug {
+-            debuggable true
+-            jniDebuggable true
+-            signingConfig signingConfigs.debug
+-            minifyEnabled false
+-            shrinkResources false
+-            multiDexEnabled true
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
+-            ndk.debugSymbolLevel = 'FULL'
+-        }
+-        release {
+-            debuggable false
+-            jniDebuggable false
+-            signingConfig signingConfigs.release
+-            minifyEnabled true
+-            shrinkResources false
+-            multiDexEnabled true
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
+-            ndk.debugSymbolLevel = 'FULL'
+-        }
+-    }
+-
+-    sourceSets.debug {
+-        manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest.xml'
+-    }
+-
+-    sourceSets.release {
+-        manifest.srcFile '../TMessagesProj/config/release/AndroidManifest.xml'
+-    }
+-
+-    flavorDimensions "minApi"
+-
+-    productFlavors {
+-        afat {
+-            ndk {
+-                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+-            }
+-            sourceSets.debug {
+-                manifest.srcFile '../TMessagesProj/config/debug/AndroidManifest_SDK23.xml'
+-            }
+-            sourceSets.release {
+-                manifest.srcFile '../TMessagesProj/config/release/AndroidManifest_SDK23.xml'
+-            }
+-            ext {
+-                abiVersionCode = 9
+-            }
+-        }
+-    }
+-
+-    defaultConfig.versionCode = Integer.parseInt(APP_VERSION_CODE)
+-
+-    applicationVariants.all { variant ->
+-        variant.outputs.all { output ->
+-            outputFileName = "app-huawei.apk"
+-            output.versionCodeOverride = defaultConfig.versionCode * 10 + variant.productFlavors.get(0).abiVersionCode
+-        }
+-    }
+-
+-    variantFilter { variant ->
+-        def names = variant.flavors*.name
+-        if (variant.buildType.name != "release" && !names.contains("afat")) {
+-            setIgnore(true)
+-        }
+-    }
+-
+-    defaultConfig {
+-        minSdkVersion 21
+-        targetSdkVersion 36
+-        versionName APP_VERSION_NAME
+-        ndkVersion "27.2.12479018"
+-
+-        multiDexEnabled true
+-
+-        vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
+-
+-        externalNativeBuild {
+-            cmake {
+-                version '3.22.1'
+-                arguments '-DANDROID_STL=c++_static', '-DANDROID_PLATFORM=android-21' //, '-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON'
+-                targets 'tmessages.49'
+-            }
+-        }
+-    }
+-
+-    buildFeatures {
+-        buildConfig = true
+-    }
+-    namespace 'org.telegram.messenger.huawei'
+-
+-    lintOptions {
+-        checkReleaseBuilds false
+-    }
+-}
+-
+-apply plugin: 'com.google.gms.google-services'
+diff --git a/TMessagesProj_AppHuawei/src/main/AndroidManifest.xml b/TMessagesProj_AppHuawei/src/main/AndroidManifest.xml
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/AndroidManifest.xml
++++ /dev/null
+@@ -1,39 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:installLocation="auto">
+-
+-    <uses-permission android:name="com.huawei.appmarket.service.commondata.permission.GET_COMMON_DATA"/>
+-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
+-
+-    <queries>
+-        <package android:name="com.huawei.maps.app"/>
+-    </queries>
+-
+-    <application android:name="org.telegram.messenger.HuaweiApplicationLoader" tools:replace="name">
+-        <service
+-            android:name="org.telegram.messenger.GoogleVoiceClientService"
+-            android:exported="true"
+-            android:foregroundServiceType="dataSync"
+-        />
+-        <activity
+-            android:name="org.telegram.messenger.GoogleVoiceClientActivity"
+-            android:exported="true">
+-            <intent-filter>
+-                <action android:name="com.google.android.voicesearch.SEND_MESSAGE_TO_CONTACTS" />
+-                <category android:name="android.intent.category.DEFAULT" />
+-                <data android:mimeType="text/plain" />
+-            </intent-filter>
+-        </activity>
+-
+-        <service
+-            android:name="org.telegram.messenger.HuaweiPushListenerService"
+-            android:exported="false"
+-            android:foregroundServiceType="dataSync|remoteMessaging"
+-        >
+-            <intent-filter>
+-                <action android:name="com.huawei.push.action.MESSAGING_EVENT"/>
+-            </intent-filter>
+-        </service>
+-    </application>
+-</manifest>
+\ No newline at end of file
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java
++++ /dev/null
+@@ -1,19 +0,0 @@
+-/*
+- * This is the source code of Telegram for Android v. 5.x.x
+- * It is licensed under GNU GPL v. 2 or later.
+- * You should have received a copy of the license in this archive (see LICENSE).
+- *
+- * Copyright Nikolai Kudashov, 2013-2018.
+- */
+-
+-package org.telegram.messenger;
+-
+-import com.google.android.search.verification.client.SearchActionVerificationClientActivity;
+-import com.google.android.search.verification.client.SearchActionVerificationClientService;
+-
+-public class GoogleVoiceClientActivity extends SearchActionVerificationClientActivity {
+-
+-    public Class<? extends SearchActionVerificationClientService> getServiceClass() {
+-        return GoogleVoiceClientService.class;
+-    }
+-}
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientService.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientService.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientService.java
++++ /dev/null
+@@ -1,55 +0,0 @@
+-/*
+- * This is the source code of Telegram for Android v. 5.x.x
+- * It is licensed under GNU GPL v. 2 or later.
+- * You should have received a copy of the license in this archive (see LICENSE).
+- *
+- * Copyright Nikolai Kudashov, 2013-2018.
+- */
+-
+-package org.telegram.messenger;
+-
+-import android.content.Intent;
+-import android.os.Bundle;
+-import android.text.TextUtils;
+-
+-import com.google.android.search.verification.client.SearchActionVerificationClientService;
+-
+-import org.telegram.tgnet.TLRPC;
+-
+-public class GoogleVoiceClientService extends SearchActionVerificationClientService {
+-
+-    @Override
+-    public void performAction(Intent intent, boolean isVerified, Bundle options) {
+-        if (!isVerified) {
+-            return;
+-        }
+-        AndroidUtilities.runOnUIThread(() -> {
+-            try {
+-                int currentAccount = UserConfig.selectedAccount;
+-                ApplicationLoader.postInitApplication();
+-                if (AndroidUtilities.needShowPasscode() || SharedConfig.isWaitingForPasscodeEnter) {
+-                    return;
+-                }
+-                String text = intent.getStringExtra("android.intent.extra.TEXT");
+-                if (!TextUtils.isEmpty(text)) {
+-                    String contactUri = intent.getStringExtra("com.google.android.voicesearch.extra.RECIPIENT_CONTACT_URI");
+-                    String id = intent.getStringExtra("com.google.android.voicesearch.extra.RECIPIENT_CONTACT_CHAT_ID");
+-                    long uid = Long.parseLong(id);
+-                    TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(uid);
+-                    if (user == null) {
+-                        user = MessagesStorage.getInstance(currentAccount).getUserSync(uid);
+-                        if (user != null) {
+-                            MessagesController.getInstance(currentAccount).putUser(user, true);
+-                        }
+-                    }
+-                    if (user != null) {
+-                        ContactsController.getInstance(currentAccount).markAsContacted(contactUri);
+-                        SendMessagesHelper.getInstance(currentAccount).sendMessage(SendMessagesHelper.SendMessageParams.of(text, user.id, null, null, null, true, null, null, null, true, 0, 0, null, false));
+-                    }
+-                }
+-            } catch (Exception e) {
+-                FileLog.e(e);
+-            }
+-        });
+-    }
+-}
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiApplicationLoader.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiApplicationLoader.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiApplicationLoader.java
++++ /dev/null
+@@ -1,46 +0,0 @@
+-package org.telegram.messenger;
+-
+-import com.google.firebase.messaging.FirebaseMessaging;
+-import com.huawei.hms.push.HmsMessaging;
+-
+-import org.telegram.messenger.huawei.BuildConfig;
+-
+-public class HuaweiApplicationLoader extends ApplicationLoader {
+-    @Override
+-    protected boolean isHuaweiBuild() {
+-        return true;
+-    }
+-
+-    @Override
+-    protected PushListenerController.IPushListenerServiceProvider onCreatePushProvider() {
+-        if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
+-            HmsMessaging.getInstance(this).setAutoInitEnabled(false);
+-            FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+-            return PushListenerController.GooglePushListenerServiceProvider.INSTANCE;
+-        }
+-        HmsMessaging.getInstance(this).setAutoInitEnabled(true);
+-        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+-        return HuaweiPushListenerProvider.INSTANCE;
+-    }
+-
+-    @Override
+-    protected ILocationServiceProvider onCreateLocationServiceProvider() {
+-        if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
+-            return new GoogleLocationProvider();
+-        }
+-        return new HuaweiLocationProvider();
+-    }
+-
+-    @Override
+-    protected IMapsProvider onCreateMapsProvider() {
+-        if (PushListenerController.GooglePushListenerServiceProvider.INSTANCE.hasServices()) {
+-            return new GoogleMapsProvider();
+-        }
+-        return new HuaweiMapsProvider();
+-    }
+-
+-    @Override
+-    protected String onGetApplicationId() {
+-        return BuildConfig.APPLICATION_ID;
+-    }
+-}
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiLocationProvider.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiLocationProvider.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiLocationProvider.java
++++ /dev/null
+@@ -1,168 +0,0 @@
+-package org.telegram.messenger;
+-
+-import android.annotation.SuppressLint;
+-import android.content.Context;
+-import android.location.Location;
+-import android.os.Looper;
+-
+-import androidx.annotation.NonNull;
+-import androidx.core.util.Consumer;
+-
+-import com.huawei.hms.api.HuaweiApiClient;
+-import com.huawei.hms.common.ApiException;
+-import com.huawei.hms.location.FusedLocationProviderClient;
+-import com.huawei.hms.location.LocationCallback;
+-import com.huawei.hms.location.LocationRequest;
+-import com.huawei.hms.location.LocationResult;
+-import com.huawei.hms.location.LocationServices;
+-import com.huawei.hms.location.LocationSettingsRequest;
+-import com.huawei.hms.location.LocationSettingsStatusCodes;
+-import com.huawei.hms.location.SettingsClient;
+-
+-@SuppressLint("MissingPermission")
+-public class HuaweiLocationProvider implements ILocationServiceProvider {
+-    private FusedLocationProviderClient locationProviderClient;
+-    private SettingsClient settingsClient;
+-
+-    @Override
+-    public void init(Context context) {
+-        locationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+-        settingsClient = new SettingsClient(context);
+-    }
+-
+-    @Override
+-    public ILocationRequest onCreateLocationRequest() {
+-        return new HuaweiLocationRequest(LocationRequest.create());
+-    }
+-
+-    @Override
+-    public void getLastLocation(Consumer<Location> callback) {
+-        locationProviderClient.getLastLocation().addOnCompleteListener(task -> {
+-            if (task.getException() != null) {
+-                return;
+-            }
+-            callback.accept(task.getResult());
+-        });
+-    }
+-
+-    @Override
+-    public void requestLocationUpdates(ILocationRequest request, ILocationListener locationListener) {
+-        locationProviderClient.requestLocationUpdates(((HuaweiLocationRequest) request).request, new LocationCallback() {
+-            @Override
+-            public void onLocationResult(@NonNull LocationResult locationResult) {
+-                locationListener.onLocationChanged(locationResult.getLastLocation());
+-            }
+-        }, Looper.getMainLooper());
+-    }
+-
+-    @Override
+-    public void removeLocationUpdates(ILocationListener locationListener) {
+-        locationProviderClient.removeLocationUpdates(new LocationCallback() {
+-            @Override
+-            public void onLocationResult(@NonNull LocationResult locationResult) {
+-                locationListener.onLocationChanged(locationResult.getLastLocation());
+-            }
+-        });
+-    }
+-
+-    @Override
+-    public void checkLocationSettings(ILocationRequest request, Consumer<Integer> callback) {
+-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(((HuaweiLocationRequest) request).request);
+-
+-        settingsClient.checkLocationSettings(builder.build()).addOnCompleteListener(task -> {
+-            try {
+-                task.getResultThrowException(ApiException.class);
+-                callback.accept(STATUS_SUCCESS);
+-            } catch (ApiException exception) {
+-                switch (exception.getStatusCode()) {
+-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+-                        callback.accept(STATUS_RESOLUTION_REQUIRED);
+-                        break;
+-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+-                        callback.accept(STATUS_SETTINGS_CHANGE_UNAVAILABLE);
+-                        break;
+-                }
+-            }
+-        });
+-    }
+-
+-    @Override
+-    public IMapApiClient onCreateLocationServicesAPI(Context context, IAPIConnectionCallbacks connectionCallbacks, IAPIOnConnectionFailedListener failedListener) {
+-        return new HuaweiApiClientImpl(new HuaweiApiClient.Builder(ApplicationLoader.applicationContext)
+-                .addConnectionCallbacks(new HuaweiApiClient.ConnectionCallbacks() {
+-                    @Override
+-                    public void onConnected() {
+-                        connectionCallbacks.onConnected(null);
+-                    }
+-
+-                    @Override
+-                    public void onConnectionSuspended(int i) {
+-                        connectionCallbacks.onConnectionSuspended(i);
+-                    }
+-                })
+-                .addOnConnectionFailedListener(connectionResult -> failedListener.onConnectionFailed())
+-                .build());
+-    }
+-
+-    @Override
+-    public boolean checkServices() {
+-        return HuaweiPushListenerProvider.INSTANCE.hasServices();
+-    }
+-
+-    public final static class HuaweiLocationRequest implements ILocationRequest {
+-        private LocationRequest request;
+-
+-        private HuaweiLocationRequest(LocationRequest request) {
+-            this.request = request;
+-        }
+-
+-        @Override
+-        public void setPriority(int priority) {
+-            int outPriority;
+-            switch (priority) {
+-                default:
+-                case PRIORITY_HIGH_ACCURACY:
+-                    outPriority = LocationRequest.PRIORITY_HIGH_ACCURACY;
+-                    break;
+-                case PRIORITY_BALANCED_POWER_ACCURACY:
+-                    outPriority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+-                    break;
+-                case PRIORITY_LOW_POWER:
+-                    outPriority = LocationRequest.PRIORITY_LOW_POWER;
+-                    break;
+-                case PRIORITY_NO_POWER:
+-                    outPriority = LocationRequest.PRIORITY_NO_POWER;
+-                    break;
+-            }
+-            request.setPriority(outPriority);
+-        }
+-
+-        @Override
+-        public void setInterval(long interval) {
+-            request.setInterval(interval);
+-        }
+-
+-        @Override
+-        public void setFastestInterval(long interval) {
+-            request.setFastestInterval(interval);
+-        }
+-    }
+-
+-    public final static class HuaweiApiClientImpl implements IMapApiClient {
+-        private HuaweiApiClient apiClient;
+-
+-        private HuaweiApiClientImpl(HuaweiApiClient apiClient) {
+-            this.apiClient = apiClient;
+-        }
+-
+-        @Override
+-        public void connect() {
+-            apiClient.connect(null);
+-        }
+-
+-        @Override
+-        public void disconnect() {
+-            apiClient.disconnect();
+-        }
+-    }
+-}
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiMapsProvider.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiMapsProvider.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiMapsProvider.java
++++ /dev/null
+@@ -1,656 +0,0 @@
+-package org.telegram.messenger;
+-
+-import android.annotation.SuppressLint;
+-import android.content.Context;
+-import android.graphics.Bitmap;
+-import android.graphics.Point;
+-import android.location.Location;
+-import android.opengl.GLSurfaceView;
+-import android.os.Bundle;
+-import android.view.MotionEvent;
+-import android.view.View;
+-import android.view.ViewGroup;
+-
+-import androidx.core.util.Consumer;
+-
+-import com.huawei.hms.maps.CameraUpdate;
+-import com.huawei.hms.maps.CameraUpdateFactory;
+-import com.huawei.hms.maps.HuaweiMap;
+-import com.huawei.hms.maps.MapView;
+-import com.huawei.hms.maps.MapsInitializer;
+-import com.huawei.hms.maps.Projection;
+-import com.huawei.hms.maps.UiSettings;
+-import com.huawei.hms.maps.model.BitmapDescriptorFactory;
+-import com.huawei.hms.maps.model.Circle;
+-import com.huawei.hms.maps.model.CircleOptions;
+-import com.huawei.hms.maps.model.Dash;
+-import com.huawei.hms.maps.model.Gap;
+-import com.huawei.hms.maps.model.LatLngBounds;
+-import com.huawei.hms.maps.model.MapStyleOptions;
+-import com.huawei.hms.maps.model.Marker;
+-import com.huawei.hms.maps.model.MarkerOptions;
+-
+-import java.util.ArrayList;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+-public class HuaweiMapsProvider implements IMapsProvider {
+-    public HuaweiMapsProvider() {
+-        initializeMaps(ApplicationLoader.applicationContext);
+-    }
+-
+-    @Override
+-    public void initializeMaps(Context context) {
+-        MapsInitializer.initialize(context);
+-    }
+-
+-    @Override
+-    public IMapView onCreateMapView(Context context) {
+-        return new HuaweiMapView(context);
+-    }
+-
+-    @Override
+-    public ICameraUpdate newCameraUpdateLatLng(LatLng latLng) {
+-        return new HuaweiCameraUpdate(CameraUpdateFactory.newLatLng(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude)));
+-    }
+-
+-    @Override
+-    public ICameraUpdate newCameraUpdateLatLngZoom(LatLng latLng, float zoom) {
+-        return new HuaweiCameraUpdate(CameraUpdateFactory.newLatLngZoom(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude), zoom));
+-    }
+-
+-    @Override
+-    public ICameraUpdate newCameraUpdateLatLngBounds(ILatLngBounds bounds, int padding) {
+-        return new HuaweiCameraUpdate(CameraUpdateFactory.newLatLngBounds(((HuaweiLatLngBounds) bounds).bounds, padding));
+-    }
+-
+-    @Override
+-    public ILatLngBoundsBuilder onCreateLatLngBoundsBuilder() {
+-        return new HuaweiLatLngBoundsBuilder();
+-    }
+-
+-    @Override
+-    public IMapStyleOptions loadRawResourceStyle(Context context, int resId) {
+-        return new HuaweiMapStyleOptions(MapStyleOptions.loadRawResourceStyle(context, resId));
+-    }
+-
+-    @Override
+-    public IMarkerOptions onCreateMarkerOptions() {
+-        return new HuaweiMarkerOptions();
+-    }
+-
+-    @Override
+-    public ICircleOptions onCreateCircleOptions() {
+-        return new HuaweiCircleOptions();
+-    }
+-
+-    @Override
+-    public String getMapsAppPackageName() {
+-        return "com.huawei.maps.app";
+-    }
+-
+-    @Override
+-    public int getInstallMapsString() {
+-        return R.string.InstallHuaweiMaps;
+-    }
+-
+-    public final static class HuaweiMapImpl implements IMap {
+-        private HuaweiMap huaweiMap;
+-
+-        private Map<Marker, HuaweiMarker> implToAbsMarkerMap = new HashMap<>();
+-        private Map<Circle, HuaweiCircle> implToAbsCircleMap = new HashMap<>();
+-
+-        private HuaweiMapImpl(HuaweiMap huaweiMap) {
+-            this.huaweiMap = huaweiMap;
+-        }
+-
+-        @Override
+-        public void setMapType(int mapType) {
+-            switch (mapType) {
+-                case MAP_TYPE_NORMAL:
+-                    huaweiMap.setMapType(HuaweiMap.MAP_TYPE_NORMAL);
+-                    break;
+-                case MAP_TYPE_SATELLITE:
+-                    huaweiMap.setMapType(HuaweiMap.MAP_TYPE_SATELLITE);
+-                    break;
+-                case MAP_TYPE_HYBRID:
+-                    huaweiMap.setMapType(HuaweiMap.MAP_TYPE_HYBRID);
+-                    break;
+-            }
+-        }
+-
+-        @Override
+-        public float getMaxZoomLevel() {
+-            return huaweiMap.getMaxZoomLevel();
+-        }
+-
+-        @Override
+-        public float getMinZoomLevel() {
+-            return huaweiMap.getMinZoomLevel();
+-        }
+-
+-        @SuppressLint("MissingPermission")
+-        @Override
+-        public void setMyLocationEnabled(boolean enabled) {
+-            huaweiMap.setMyLocationEnabled(enabled);
+-        }
+-
+-        @Override
+-        public IUISettings getUiSettings() {
+-            return new HuaweiUISettings(huaweiMap.getUiSettings());
+-        }
+-
+-        @Override
+-        public void setOnCameraMoveStartedListener(OnCameraMoveStartedListener onCameraMoveStartedListener) {
+-            huaweiMap.setOnCameraMoveStartedListener(reason -> {
+-                int outReason;
+-                switch (reason) {
+-                    default:
+-                    case HuaweiMap.OnCameraMoveStartedListener.REASON_GESTURE:
+-                        outReason = OnCameraMoveStartedListener.REASON_GESTURE;
+-                        break;
+-                    case HuaweiMap.OnCameraMoveStartedListener.REASON_API_ANIMATION:
+-                        outReason = OnCameraMoveStartedListener.REASON_API_ANIMATION;
+-                        break;
+-                    case HuaweiMap.OnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION:
+-                        outReason = OnCameraMoveStartedListener.REASON_DEVELOPER_ANIMATION;
+-                        break;
+-                }
+-                onCameraMoveStartedListener.onCameraMoveStarted(outReason);
+-            });
+-        }
+-
+-        @Override
+-        public void setOnCameraIdleListener(Runnable callback) {
+-            huaweiMap.setOnCameraIdleListener(callback::run);
+-        }
+-
+-        @Override
+-        public CameraPosition getCameraPosition() {
+-            com.huawei.hms.maps.model.CameraPosition pos = huaweiMap.getCameraPosition();
+-            return new CameraPosition(new LatLng(pos.target.latitude, pos.target.longitude), pos.zoom);
+-        }
+-
+-        @Override
+-        public void setOnMapLoadedCallback(Runnable callback) {
+-            huaweiMap.setOnMapLoadedCallback(callback::run);
+-        }
+-
+-        @Override
+-        public IProjection getProjection() {
+-            return new HuaweiProjection(huaweiMap.getProjection());
+-        }
+-
+-        @Override
+-        public void setPadding(int left, int top, int right, int bottom) {
+-            huaweiMap.setPadding(left, top, right, bottom);
+-        }
+-
+-        @Override
+-        public void setMapStyle(IMapStyleOptions style) {
+-            huaweiMap.setMapStyle(style == null ? null : ((HuaweiMapStyleOptions) style).mapStyleOptions);
+-        }
+-
+-        @Override
+-        public IMarker addMarker(IMarkerOptions markerOptions) {
+-            Marker impl = huaweiMap.addMarker(((HuaweiMarkerOptions) markerOptions).markerOptions);
+-            HuaweiMarker abs = new HuaweiMarker(impl);
+-            implToAbsMarkerMap.put(impl, abs);
+-            return abs;
+-        }
+-
+-        @Override
+-        public ICircle addCircle(ICircleOptions circleOptions) {
+-            Circle impl = huaweiMap.addCircle(((HuaweiCircleOptions) circleOptions).circleOptions);
+-            HuaweiCircle abs = new HuaweiCircle(impl);
+-            implToAbsCircleMap.put(impl, abs);
+-            return abs;
+-        }
+-
+-        @Override
+-        public void setOnMyLocationChangeListener(Consumer<Location> callback) {}
+-
+-        @Override
+-        public void setOnMarkerClickListener(OnMarkerClickListener markerClickListener) {
+-            huaweiMap.setOnMarkerClickListener(marker -> {
+-                HuaweiMarker abs = implToAbsMarkerMap.get(marker);
+-                if (abs == null) {
+-                    abs = new HuaweiMarker(marker);
+-                    implToAbsMarkerMap.put(marker, abs);
+-                }
+-                return markerClickListener.onClick(abs);
+-            });
+-        }
+-
+-        @Override
+-        public void setOnCameraMoveListener(Runnable callback) {
+-            huaweiMap.setOnCameraMoveListener(callback::run);
+-        }
+-
+-        @Override
+-        public void animateCamera(ICameraUpdate update) {
+-            huaweiMap.animateCamera(((HuaweiCameraUpdate) update).cameraUpdate);
+-        }
+-
+-        @Override
+-        public void animateCamera(ICameraUpdate update, ICancelableCallback callback) {
+-            huaweiMap.animateCamera(((HuaweiCameraUpdate) update).cameraUpdate, callback == null ? null : new HuaweiMap.CancelableCallback() {
+-                @Override
+-                public void onFinish() {
+-                    callback.onFinish();
+-                }
+-
+-                @Override
+-                public void onCancel() {
+-                    callback.onCancel();
+-                }
+-            });
+-        }
+-
+-        @Override
+-        public void animateCamera(ICameraUpdate update, int duration, ICancelableCallback callback) {
+-            huaweiMap.animateCamera(((HuaweiCameraUpdate) update).cameraUpdate, duration, callback == null ? null : new HuaweiMap.CancelableCallback() {
+-                @Override
+-                public void onFinish() {
+-                    callback.onFinish();
+-                }
+-
+-                @Override
+-                public void onCancel() {
+-                    callback.onCancel();
+-                }
+-            });
+-        }
+-
+-        @Override
+-        public void moveCamera(ICameraUpdate update) {
+-            huaweiMap.moveCamera(((HuaweiCameraUpdate) update).cameraUpdate);
+-        }
+-
+-        public final class HuaweiMarker implements IMarker {
+-            private Marker marker;
+-
+-            private HuaweiMarker(Marker marker) {
+-                this.marker = marker;
+-            }
+-
+-            @Override
+-            public Object getTag() {
+-                return marker.getTag();
+-            }
+-
+-            @Override
+-            public void setTag(Object tag) {
+-                marker.setTag(tag);
+-            }
+-
+-            @Override
+-            public LatLng getPosition() {
+-                com.huawei.hms.maps.model.LatLng latLng = marker.getPosition();
+-                return new LatLng(latLng.latitude, latLng.longitude);
+-            }
+-
+-            @Override
+-            public void setPosition(LatLng latLng) {
+-                marker.setPosition(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude));
+-            }
+-
+-            @Override
+-            public void setRotation(int rotation) {
+-                marker.setRotation(rotation);
+-            }
+-
+-            @Override
+-            public void setIcon(Bitmap bitmap) {
+-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+-            }
+-
+-            @Override
+-            public void setIcon(int resId) {
+-                marker.setIcon(BitmapDescriptorFactory.fromResource(resId));
+-            }
+-
+-            @Override
+-            public void remove() {
+-                marker.remove();
+-                implToAbsMarkerMap.remove(marker);
+-            }
+-        }
+-
+-        public final class HuaweiCircle implements ICircle {
+-            private Circle circle;
+-
+-            private HuaweiCircle(Circle circle) {
+-                this.circle = circle;
+-            }
+-
+-            @Override
+-            public void setStrokeColor(int color) {
+-                circle.setStrokeColor(color);
+-            }
+-
+-            @Override
+-            public void setFillColor(int color) {
+-                circle.setFillColor(color);
+-            }
+-
+-            @Override
+-            public void setRadius(double radius) {
+-                circle.setRadius(radius);
+-            }
+-
+-            @Override
+-            public double getRadius() {
+-                return circle.getRadius();
+-            }
+-
+-            @Override
+-            public void setCenter(LatLng latLng) {
+-                circle.setCenter(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude));
+-            }
+-
+-            @Override
+-            public void remove() {
+-                circle.remove();
+-                implToAbsCircleMap.remove(circle);
+-            }
+-        }
+-    }
+-
+-    public final static class HuaweiProjection implements IProjection {
+-        private Projection projection;
+-
+-        private HuaweiProjection(Projection projection) {
+-            this.projection = projection;
+-        }
+-
+-        @Override
+-        public Point toScreenLocation(LatLng latLng) {
+-            return projection.toScreenLocation(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude));
+-        }
+-    }
+-
+-    public final static class HuaweiUISettings implements IUISettings {
+-        private UiSettings uiSettings;
+-
+-        private HuaweiUISettings(UiSettings settings) {
+-            uiSettings = settings;
+-        }
+-
+-        @Override
+-        public void setMyLocationButtonEnabled(boolean enabled) {
+-            uiSettings.setMyLocationButtonEnabled(enabled);
+-        }
+-
+-        @Override
+-        public void setZoomControlsEnabled(boolean enabled) {
+-            uiSettings.setZoomControlsEnabled(enabled);
+-        }
+-
+-        @Override
+-        public void setCompassEnabled(boolean enabled) {
+-            uiSettings.setCompassEnabled(enabled);
+-        }
+-    }
+-
+-    public final static class HuaweiCircleOptions implements ICircleOptions {
+-        private CircleOptions circleOptions;
+-
+-        private HuaweiCircleOptions() {
+-            circleOptions = new CircleOptions();
+-        }
+-
+-        @Override
+-        public ICircleOptions center(LatLng latLng) {
+-            circleOptions.center(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude));
+-            return this;
+-        }
+-
+-        @Override
+-        public ICircleOptions radius(double radius) {
+-            circleOptions.radius(radius);
+-            return this;
+-        }
+-
+-        @Override
+-        public ICircleOptions strokeColor(int color) {
+-            circleOptions.strokeColor(color);
+-            return this;
+-        }
+-
+-        @Override
+-        public ICircleOptions fillColor(int color) {
+-            circleOptions.fillColor(color);
+-            return this;
+-        }
+-
+-        @Override
+-        public ICircleOptions strokePattern(List<PatternItem> patternItems) {
+-            List<com.huawei.hms.maps.model.PatternItem> pattern = new ArrayList<>();
+-            for (PatternItem item : patternItems) {
+-                if (item instanceof PatternItem.Gap) {
+-                    pattern.add(new Gap(((PatternItem.Gap) item).length));
+-                } else if (item instanceof PatternItem.Dash) {
+-                    pattern.add(new Dash(((PatternItem.Dash) item).length));
+-                }
+-            }
+-            circleOptions.strokePattern(pattern);
+-            return this;
+-        }
+-
+-        @Override
+-        public ICircleOptions strokeWidth(int width) {
+-            circleOptions.strokeWidth(width);
+-            return this;
+-        }
+-    }
+-
+-    public final static class HuaweiMarkerOptions implements IMarkerOptions {
+-        private MarkerOptions markerOptions;
+-
+-        private HuaweiMarkerOptions() {
+-            this.markerOptions = new MarkerOptions();
+-        }
+-
+-        @Override
+-        public IMarkerOptions position(LatLng latLng) {
+-            markerOptions.position(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude));
+-            return this;
+-        }
+-
+-        @Override
+-        public IMarkerOptions icon(Bitmap bitmap) {
+-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+-            return this;
+-        }
+-
+-        @Override
+-        public IMarkerOptions icon(int resId) {
+-            markerOptions.icon(BitmapDescriptorFactory.fromResource(resId));
+-            return this;
+-        }
+-
+-        @Override
+-        public IMarkerOptions anchor(float lat, float lng) {
+-            markerOptions.anchor(lat, lng);
+-            return this;
+-        }
+-
+-        @Override
+-        public IMarkerOptions title(String title) {
+-            markerOptions.title(title);
+-            return this;
+-        }
+-
+-        @Override
+-        public IMarkerOptions snippet(String snippet) {
+-            markerOptions.snippet(snippet);
+-            return this;
+-        }
+-
+-        @Override
+-        public IMarkerOptions flat(boolean flat) {
+-            markerOptions.flat(flat);
+-            return this;
+-        }
+-    }
+-
+-    public final static class HuaweiLatLngBoundsBuilder implements ILatLngBoundsBuilder {
+-        private LatLngBounds.Builder builder;
+-
+-        private HuaweiLatLngBoundsBuilder() {
+-            builder = new LatLngBounds.Builder();
+-        }
+-
+-        @Override
+-        public ILatLngBoundsBuilder include(LatLng latLng) {
+-            builder.include(new com.huawei.hms.maps.model.LatLng(latLng.latitude, latLng.longitude));
+-            return this;
+-        }
+-
+-        @Override
+-        public ILatLngBounds build() {
+-            return new HuaweiLatLngBounds(builder.build());
+-        }
+-    }
+-
+-    public final static class HuaweiLatLngBounds implements ILatLngBounds {
+-        private LatLngBounds bounds;
+-
+-        private HuaweiLatLngBounds(LatLngBounds bounds) {
+-            this.bounds = bounds;
+-        }
+-
+-        @Override
+-        public LatLng getCenter() {
+-            com.huawei.hms.maps.model.LatLng latLng = bounds.getCenter();
+-            return new LatLng(latLng.latitude, latLng.longitude);
+-        }
+-    }
+-
+-    public final static class HuaweiMapView implements IMapView {
+-        private MapView mapView;
+-
+-        private ITouchInterceptor dispatchInterceptor;
+-        private ITouchInterceptor interceptInterceptor;
+-        private Runnable onLayoutListener;
+-
+-        private GLSurfaceView glSurfaceView;
+-
+-        private HuaweiMapView(Context context) {
+-            mapView = new MapView(context) {
+-                @Override
+-                public boolean dispatchTouchEvent(MotionEvent ev) {
+-                    if (dispatchInterceptor != null) {
+-                        return dispatchInterceptor.onInterceptTouchEvent(ev, super::dispatchTouchEvent);
+-                    }
+-                    return super.dispatchTouchEvent(ev);
+-                }
+-
+-                @Override
+-                public boolean onInterceptTouchEvent(MotionEvent ev) {
+-                    if (interceptInterceptor != null) {
+-                        return interceptInterceptor.onInterceptTouchEvent(ev, super::onInterceptTouchEvent);
+-                    }
+-                    return super.onInterceptTouchEvent(ev);
+-                }
+-
+-                @Override
+-                protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+-                    super.onLayout(changed, left, top, right, bottom);
+-                    if (onLayoutListener != null) {
+-                        onLayoutListener.run();
+-                    }
+-                }
+-            };
+-        }
+-
+-        @Override
+-        public void setOnDispatchTouchEventInterceptor(ITouchInterceptor touchInterceptor) {
+-            dispatchInterceptor = touchInterceptor;
+-        }
+-
+-        @Override
+-        public void setOnInterceptTouchEventInterceptor(ITouchInterceptor touchInterceptor) {
+-            interceptInterceptor = touchInterceptor;
+-        }
+-
+-        @Override
+-        public void setOnLayoutListener(Runnable callback) {
+-            onLayoutListener = callback;
+-        }
+-
+-        @Override
+-        public View getView() {
+-            return mapView;
+-        }
+-
+-        @Override
+-        public void getMapAsync(Consumer<IMap> callback) {
+-            mapView.getMapAsync(huaweiMap -> {
+-                callback.accept(new HuaweiMapImpl(huaweiMap));
+-                findGlSurfaceView(mapView);
+-            });
+-        }
+-
+-        @Override
+-        public GLSurfaceView getGlSurfaceView() {
+-            return glSurfaceView;
+-        }
+-
+-        private void findGlSurfaceView(View v) {
+-            if (v instanceof GLSurfaceView) {
+-                glSurfaceView = (GLSurfaceView) v;
+-            }
+-
+-            if (v instanceof ViewGroup) {
+-                ViewGroup vg = (ViewGroup) v;
+-                for (int i = 0; i < vg.getChildCount(); i++) {
+-                    findGlSurfaceView(vg.getChildAt(i));
+-                }
+-            }
+-        }
+-
+-        @Override
+-        public void onPause() {
+-            mapView.onPause();
+-        }
+-
+-        @Override
+-        public void onResume() {
+-            mapView.onResume();
+-        }
+-
+-        @Override
+-        public void onCreate(Bundle savedInstance) {
+-            mapView.onCreate(savedInstance);
+-        }
+-
+-        @Override
+-        public void onDestroy() {
+-            mapView.onDestroy();
+-        }
+-
+-        @Override
+-        public void onLowMemory() {
+-            mapView.onLowMemory();
+-        }
+-    }
+-
+-    public final static class HuaweiCameraUpdate implements ICameraUpdate {
+-        private CameraUpdate cameraUpdate;
+-
+-        private HuaweiCameraUpdate(CameraUpdate update) {
+-            this.cameraUpdate = update;
+-        }
+-    }
+-
+-    public final static class HuaweiMapStyleOptions implements IMapStyleOptions {
+-        private MapStyleOptions mapStyleOptions;
+-
+-        private HuaweiMapStyleOptions(MapStyleOptions mapStyleOptions) {
+-            this.mapStyleOptions = mapStyleOptions;
+-        }
+-    }
+-}
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerProvider.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerProvider.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerProvider.java
++++ /dev/null
+@@ -1,66 +0,0 @@
+-package org.telegram.messenger;
+-
+-import android.content.pm.PackageManager;
+-import android.os.SystemClock;
+-import android.text.TextUtils;
+-
+-import com.huawei.hms.aaid.HmsInstanceId;
+-import com.huawei.hms.common.ApiException;
+-
+-public class HuaweiPushListenerProvider implements PushListenerController.IPushListenerServiceProvider {
+-    public final static HuaweiPushListenerProvider INSTANCE = new HuaweiPushListenerProvider();
+-
+-    private Boolean hasServices;
+-
+-    private HuaweiPushListenerProvider() {}
+-
+-    @Override
+-    public boolean hasServices() {
+-        if (hasServices == null) {
+-            try {
+-                ApplicationLoader.applicationContext.getPackageManager().getPackageInfo("com.huawei.hwid", 0);
+-                hasServices = true;
+-            } catch (PackageManager.NameNotFoundException ignored) {
+-                hasServices = false;
+-            } catch (Exception e) {
+-                FileLog.e(e);
+-                hasServices = false;
+-            }
+-        }
+-        return hasServices;
+-    }
+-
+-    @Override
+-    public String getLogTitle() {
+-        return "HMS Core";
+-    }
+-
+-    @Override
+-    public void onRequestPushToken() {
+-        Utilities.globalQueue.postRunnable(() -> {
+-            try {
+-                String token = HmsInstanceId.getInstance(ApplicationLoader.applicationContext).getToken(BuildVars.HUAWEI_APP_ID, "HCM");
+-                SharedConfig.pushStringGetTimeEnd = SystemClock.elapsedRealtime();
+-
+-                if (!TextUtils.isEmpty(token)) {
+-                    PushListenerController.sendRegistrationToServer(getPushType(), token);
+-                }
+-            } catch (ApiException e) {
+-                FileLog.e(e);
+-
+-                SharedConfig.pushStringGetTimeEnd = SystemClock.elapsedRealtime();
+-
+-                if (BuildVars.LOGS_ENABLED) {
+-                    FileLog.d("Failed to get regid");
+-                }
+-                SharedConfig.pushStringStatus = "__HUAWEI_FAILED__";
+-                PushListenerController.sendRegistrationToServer(getPushType(), null);
+-            }
+-        });
+-    }
+-
+-    @Override
+-    public int getPushType() {
+-        return PushListenerController.PUSH_TYPE_HUAWEI;
+-    }
+-}
+diff --git a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerService.java b/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerService.java
+deleted file mode 100644
+index 0000000..0000000
+--- a/TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/HuaweiPushListenerService.java
++++ /dev/null
+@@ -1,34 +0,0 @@
+-package org.telegram.messenger;
+-
+-import com.huawei.hms.push.HmsMessageService;
+-import com.huawei.hms.push.RemoteMessage;
+-
+-import java.util.Map;
+-
+-public class HuaweiPushListenerService extends HmsMessageService {
+-    @Override
+-    public void onMessageReceived(RemoteMessage remoteMessage) {
+-        Utilities.globalQueue.postRunnable(() -> {
+-            String from = remoteMessage.getFrom();
+-            String data = remoteMessage.getData();
+-            long time = remoteMessage.getSentTime();
+-
+-            if (BuildVars.LOGS_ENABLED) {
+-                FileLog.d("HCM received data: " + data + " from: " + from);
+-            }
+-
+-            PushListenerController.processRemoteMessage(PushListenerController.PUSH_TYPE_HUAWEI, data, time);
+-        });
+-    }
+-
+-    @Override
+-    public void onNewToken(String token) {
+-        AndroidUtilities.runOnUIThread(() -> {
+-            if (BuildVars.LOGS_ENABLED) {
+-                FileLog.d("Refreshed HCM token: " + token);
+-            }
+-            ApplicationLoader.postInitApplication();
+-            PushListenerController.sendRegistrationToServer(PushListenerController.PUSH_TYPE_HUAWEI, token);
+-        });
+-    }
+-}

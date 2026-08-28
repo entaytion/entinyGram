@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { glob } from 'tinyglobby'
@@ -318,11 +319,23 @@ export async function getPatchSubject(repoDir: string, patchName: string) {
 }
 
 export async function generateStablePatchFromCommit(repoDir: string, commitId: string) {
-  const stdout = execSync(`git format-patch --stdout --zero-commit --no-signature --subject-prefix= -1 ${commitId}`, {
-    cwd: repoDir,
-    encoding: 'utf8',
-    maxBuffer: 50 * 1024 * 1024,
-  })
+  // Writing to a file instead of piping --stdout through cmd.exe avoids a Windows-only
+  // ENOBUFS crash (Node's execSync/cmd.exe pipe chokes on very large diffs, e.g. removing
+  // a big vendored module in one commit) that persists no matter how high maxBuffer is set.
+  const outDir = await fs.mkdtemp(join(tmpdir(), 'entinygram-patch-'))
+  let stdout: string
+  try {
+    execSync(`git format-patch --zero-commit --no-signature --subject-prefix= -1 ${commitId} -o "${outDir}"`, {
+      cwd: repoDir,
+      encoding: 'utf8',
+      maxBuffer: 50 * 1024 * 1024,
+    })
+    const [patchFile] = await fs.readdir(outDir)
+    if (!patchFile) throw new Error(`git format-patch produced no file for commit ${commitId}`)
+    stdout = await fs.readFile(join(outDir, patchFile), 'utf8')
+  } finally {
+    await fs.rm(outDir, { recursive: true, force: true })
+  }
   let clean = stdout
     .replace(/^index [0-9a-f]+\.\.[0-9a-f]+( \d+)?$/gm, 'index 0000000..0000000$1')
     .replace(/^Subject:.*(?:\n[ \t].*)+/m, m => m.replace(/\n[ \t]+/g, ' '))
