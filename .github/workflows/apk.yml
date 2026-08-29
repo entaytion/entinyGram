@@ -108,6 +108,14 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
 
+      - name: Cache Android NDK & CMake
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: |
+            ${{ env.ANDROID_HOME }}/ndk/27.2.12479018
+            ${{ env.ANDROID_HOME }}/cmake/3.10.2.4988404
+          key: android-ndk-cmake-27.2.12479018-3.10.2.4988404
+
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
         with:
           packages: >-
