@@ -77,6 +77,21 @@ object InuHooks {
         for (msg in messages) onNewMessage(msg, acc)
     }
 
+    // Ghost mode's presence is only guaranteed correct at the moment GhostHelper.syncPresence()
+    // runs (onMessagesControllerCreated/onResume) -- if any stock path resets
+    // MessagesController.ignoreSetOnline in between (e.g. right after an app update, before this
+    // gets audited further), the wrong presence can linger until the next of those hooks fires.
+    // Re-asserting on every reconnect closes that gap cheaply: GhostHelper.processSendRequest
+    // already force-rewrites any outgoing updateStatus packet, so this is redundant-but-safe
+    // in the common case, and self-healing in the one we haven't been able to reproduce.
+    private val connectionStateObserver = NotificationCenter.NotificationCenterDelegate { id, acc, _ ->
+        if (id != NotificationCenter.didUpdateConnectionState) return@NotificationCenterDelegate
+        if (org.telegram.tgnet.ConnectionsManager.getInstance(acc).connectionState
+            != org.telegram.tgnet.ConnectionsManager.ConnectionStateConnected
+        ) return@NotificationCenterDelegate
+        desu.inugram.helpers.security.GhostHelper.syncPresence(acc)
+    }
+
     @JvmStatic
     fun onMessagesControllerCreated(messagesController: MessagesController, account: Int) {
         MapsHelper.syncMapProvider(messagesController)
@@ -98,6 +113,8 @@ object InuHooks {
             // onNewMessage doesn't fire multiple times per message.
             nc.removeObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
             nc.addObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
+            nc.removeObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
+            nc.addObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
         }
     }
 
