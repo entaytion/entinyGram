@@ -15,6 +15,9 @@
     <string name="InuPerformanceClassAverage">Средний</string>
     <string name="InuPerformanceClassHigh">Высокий</string>
     <string name="InuAnnoyances">Раздражители</string>
+    <string name="InuAnnoyancesStories">Истории</string>
+    <string name="InuAnnoyancesInterface">Интерфейс</string>
+    <string name="InuAnnoyancesMedia">Медиа</string>
     <string name="InuMessages">Сообщения</string>
     <string name="InuChats">Чаты</string>
     <string name="InuStarGiftsSection">Подарки</string>
@@ -66,6 +69,8 @@
     <string name="InuShowCustomTheme">Включить кастомную тему</string>
     <string name="InuDisableSwipeToUnarchive">Отключить свайп для разархивирования</string>
     <string name="InuDisableSwipeToHideGeneralTopic">Отключить свайп для скрытия темы General</string>
+    <string name="InuIosChatsTabFirstFolder">Вкладка «Чаты» возвращает в первую папку</string>
+    <string name="InuIosChatsTabFirstFolderInfo">Как в Telegram для iOS: тап по уже выбранной вкладке «Чаты» сначала возвращает в первую папку, а уже потом прокручивает список наверх</string>
     <string name="InuResetStorage">Сбросить хранилище</string>
     <string name="InuResetStorageConfirm">Это удалит локальные ключи авторизации и кэши, чтобы сбросить ожидающую авторизацию. Вы уверены?</string>
     <string name="InuHideBottomBar">Скрывать нижнюю панель</string>
@@ -649,6 +654,7 @@
     <string name="InuUnifiedCornerRadius">Единый радиус скругления</string>
     <string name="InuUnifiedCornerRadiusInfo">Применять одинаковый радиус скругления ко всем аватаркам, включая темы форумов</string>
     <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
+    <string name="InuMaterial3Progress">Волнистые полосы загрузки</string>
     <string name="InuMaterialProfileActions">Кнопки действий в профиле</string>
     <string name="InuMonetTheme">Monet тема</string>
     <string name="InuMonetThemeDisabled">Отключено</string>
@@ -689,6 +695,7 @@
     <string name="InuHideMessages">Скрыть сообщения</string>
     <string name="InuShowHiddenMessages">Показать сообщения</string>
     <string name="InuSpoilers">Спойлеры</string>
+    <string name="InuSpoilerStyle">Стиль</string>
     <string name="InuDisableVolumePlayVideo">Отключить запуск видео клавишами громкости</string>
     <string name="InuDisableVolumePlayVideoInfo">Не запускать видимое видео со звуком при нажатии клавиш громкости в чате</string>
     <string name="InuConfirmInternalLinks">Подтверждать открытие внутренних ссылок</string>
@@ -1247,6 +1254,10 @@
     <string name="InuKeepDownloadsInBackground">Не прерывать загрузки при скролле и выходе</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Продолжает текущие загрузки, когда сообщение уходит с экрана или вы выходите из чата, не отменяя и не перезапуская их заново.</string>
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
+    <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
+    <string name="InuIosBottomBarInfo">Делает нижнюю панель вкладок шире и с равномерно растянутыми вкладками, как в iOS. Отключает нижние вкладки Material 3.</string>
+    <string name="InuIosChatHeader">Шапка чата в стиле iOS</string>
+    <string name="InuIosChatHeaderInfo">Рисует фон шапки чата в виде скруглённой «таблетки», которая обхватывает и центрирует аватарку, заголовок и подзаголовок, как в Telegram для iOS. Включает центрирование заголовка чата. Аватарка заменяет кнопку меню «⋮» — тап открывает профиль, долгий тап открывает меню чата. Это довольно кривой патч, и дорабатывать его дальше самостоятельно мы не планируем — пул-реквесты приветствуются.</string>
     <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
     <string name="InuStopBot">Остановить бота</string>
     <string name="InuStopBotAction">Остановить</string>

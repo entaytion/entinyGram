@@ -20,6 +20,9 @@
     <string name="InuLookAndFeel">Оформлення</string>
     <string name="InuBehavior">Поведінка</string>
     <string name="InuAnnoyances">Дратівливі елементи</string>
+    <string name="InuAnnoyancesStories">Історії</string>
+    <string name="InuAnnoyancesInterface">Інтерфейс</string>
+    <string name="InuAnnoyancesMedia">Медіа</string>
     <string name="InuMessages">Повідомлення</string>
     <string name="InuChats">Чати</string>
     <string name="InuStarGiftsSection">Подарунки</string>
@@ -83,6 +86,8 @@
     <string name="InuShowCustomTheme">Показати власні теми</string>
     <string name="InuDisableSwipeToUnarchive">Вимкнути свайп для розархівації</string>
     <string name="InuDisableSwipeToHideGeneralTopic">Вимкнути свайп приховування топіку «Загальне»</string>
+    <string name="InuIosChatsTabFirstFolder">Вкладка «Чати» повертає до першої папки</string>
+    <string name="InuIosChatsTabFirstFolderInfo">Як у Telegram для iOS: тап по вже вибраній вкладці «Чати» спочатку повертає до першої папки, і лише потім прокручує список догори</string>
     <string name="InuResetStorage">Скинути сховище</string>
     <string name="InuResetStorageConfirm">Це очистить локальні ключі та кеш. Ви впевнені?</string>
     <string name="InuHideBottomBar">Приховати нижню панель</string>
@@ -148,6 +153,7 @@
     <string name="InuHideMessages">Приховати повідомлення</string>
     <string name="InuShowHiddenMessages">Показати повідомлення</string>
     <string name="InuSpoilers">Спойлери</string>
+    <string name="InuSpoilerStyle">Стиль</string>
     <string name="InuHideAiFeatures">Приховати AI функції</string>
     <string name="InuHideAiEditor">Кнопка AI редактора</string>
     <string name="InuAiEditorButtonInfo">Показує AI-дії біля поля повідомлення: переписати, продовжити, скоротити або виправити текст.</string>
@@ -997,6 +1003,7 @@
     <string name="InuPerformanceClassAverage">Середній</string>
     <string name="InuPerformanceClassHigh">Високий</string>
     <string name="InuMaterial3NavigationAnimation">Анімація навігації</string>
+    <string name="InuMaterial3Progress">Хвилясті смуги завантаження</string>
     <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
@@ -1232,6 +1239,10 @@
     <string name="InuKeepDownloadsInBackground">Не переривати завантаження під час скролу та виходу</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Продовжує поточні завантаження, коли повідомлення зникає з екрана або ви виходите з чату, не скасовуючи й не перезапускаючи їх знову.</string>
     <string name="InuMaterial3BottomTabs">Нижні вкладки</string>
+    <string name="InuIosBottomBar">Нижня панель у стилі iOS</string>
+    <string name="InuIosBottomBarInfo">Робить нижню панель вкладок ширшою, з рівномірно розтягнутими вкладками, як в iOS. Вимикає нижні вкладки Material 3.</string>
+    <string name="InuIosChatHeader">Шапка чату в стилі iOS</string>
+    <string name="InuIosChatHeaderInfo">Малює фон шапки чату у вигляді заокругленої «пігулки», яка обгортає та центрує аватарку, заголовок і підзаголовок, як у Telegram для iOS. Вмикає центрування заголовка чату. Аватарка замінює кнопку меню «⋮» — тап відкриває профіль, довге натискання відкриває меню чату. Це доволі кривий патч, і доопрацьовувати його далі самостійно ми не плануємо — пул-реквести вітаються.</string>
     <string name="InuParanoiaHideMyStories">Приховати мої історії</string>
     <string name="InuStopBot">Зупинити бота</string>
     <string name="InuStopBotAction">Зупинити</string>

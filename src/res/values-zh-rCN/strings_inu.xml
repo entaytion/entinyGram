@@ -15,6 +15,9 @@
     <string name="InuPerformanceClassAverage">中</string>
     <string name="InuPerformanceClassHigh">高</string>
     <string name="InuAnnoyances">烦人项</string>
+    <string name="InuAnnoyancesStories">动态</string>
+    <string name="InuAnnoyancesInterface">界面</string>
+    <string name="InuAnnoyancesMedia">媒体</string>
     <string name="InuMessages">消息</string>
     <string name="InuOther">其他</string>
     <string name="InuMainPage">对话列表</string>
@@ -64,6 +67,8 @@
     <string name="InuShowCustomTheme">显示自定义主题</string>
     <string name="InuDisableSwipeToUnarchive">禁用滑动取消归档</string>
     <string name="InuDisableSwipeToHideGeneralTopic">禁用滑动隐藏 General 话题</string>
+    <string name="InuIosChatsTabFirstFolder">点击聊天标签返回首个文件夹</string>
+    <string name="InuIosChatsTabFirstFolderInfo">与 iOS 版 Telegram 一样：点击已选中的\"聊天\"标签会先返回首个文件夹，然后再滚动到顶部</string>
     <string name="InuResetStorage">重置存储</string>
     <string name="InuResetStorageConfirm">这将清除本地认证密钥和缓存，以重置待处理的认证。确定吗？</string>
     <string name="InuHideBottomBar">隐藏底部栏</string>
@@ -634,6 +639,7 @@
     <string name="InuHideMessages">隐藏消息</string>
     <string name="InuShowHiddenMessages">显示消息</string>
     <string name="InuSpoilers">剧透</string>
+    <string name="InuSpoilerStyle">样式</string>
     <string name="InuDisableVolumePlayVideo">禁用音量键播放视频</string>
     <string name="InuDisableVolumePlayVideoInfo">在聊天中按音量键时不让可见视频开始有声播放</string>
     <string name="InuConfirmInternalLinks">打开内部链接前确认</string>
@@ -701,6 +707,7 @@
     <string name="InuUnifiedCornerRadius">统一圆角半径</string>
     <string name="InuUnifiedCornerRadiusInfo">将相同的圆角半径应用于所有头像，包括论坛话题</string>
     <string name="InuMaterial3NavigationAnimation">导航动画</string>
+    <string name="InuMaterial3Progress">波浪形进度条</string>
     <string name="InuMaterialProfileActions">个人资料操作按钮</string>
     <string name="InuTypographyAndIcons">字体与图标</string>
     <string name="InuMotion">动画</string>
@@ -1226,6 +1233,10 @@
     <string name="InuKeepDownloadsInBackground">滑动或退出时不中断下载</string>
     <string name="InuKeepDownloadsInBackgroundInfo">当消息滑出屏幕或离开聊天时继续后台下载，而不是取消并在稍后重新开始。</string>
     <string name="InuMaterial3BottomTabs">底部标签栏</string>
+    <string name="InuIosBottomBar">iOS 风格底部栏</string>
+    <string name="InuIosBottomBarInfo">使底部标签栏呈现 iOS 那种更宽、均匀分布的胶囊样式。会禁用 Material 3 底部标签。</string>
+    <string name="InuIosChatHeader">iOS 风格聊天顶栏</string>
+    <string name="InuIosChatHeaderInfo">将聊天顶栏背景绘制为围绕并居中头像、标题和副标题的圆角\"胶囊\"形状,如同 iOS 版 Telegram。这会启用聊天标题居中。头像会替代\"⋮\"菜单按钮——点击打开个人资料,长按打开聊天菜单。这是一个相当粗糙的补丁,我们自己不打算继续打磨——欢迎提交 Pull Request。</string>
     <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>

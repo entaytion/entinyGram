@@ -15,6 +15,9 @@
     <string name="InuPerformanceClassAverage">中</string>
     <string name="InuPerformanceClassHigh">高</string>
     <string name="InuAnnoyances">煩わしい要素</string>
+    <string name="InuAnnoyancesStories">ストーリー</string>
+    <string name="InuAnnoyancesInterface">インターフェース</string>
+    <string name="InuAnnoyancesMedia">メディア</string>
     <string name="InuMessages">メッセージ</string>
     <string name="InuOther">その他</string>
     <string name="InuMainPage">チャット一覧</string>
@@ -64,6 +67,8 @@
     <string name="InuShowCustomTheme">カスタムテーマを表示</string>
     <string name="InuDisableSwipeToUnarchive">スワイプでアーカイブ解除を無効化</string>
     <string name="InuDisableSwipeToHideGeneralTopic">スワイプで General トピックを非表示にするのを無効化</string>
+    <string name="InuIosChatsTabFirstFolder">「チャット」タブで最初のフォルダに戻る</string>
+    <string name="InuIosChatsTabFirstFolderInfo">iOS版Telegramと同様に、選択中の「チャット」タブをタップすると、上部までスクロールする前にまず最初のフォルダに戻ります</string>
     <string name="InuResetStorage">ストレージをリセット</string>
     <string name="InuResetStorageConfirm">保留中の認証をリセットするため、ローカル認証キーとキャッシュを消去します。よろしいですか？</string>
     <string name="InuHideBottomBar">下部バーを非表示</string>
@@ -635,6 +640,7 @@
     <string name="InuHideMessages">メッセージを非表示にする</string>
     <string name="InuShowHiddenMessages">メッセージを表示する</string>
     <string name="InuSpoilers">スポイラー</string>
+    <string name="InuSpoilerStyle">スタイル</string>
     <string name="InuDisableVolumePlayVideo">音量キーで動画再生を無効化</string>
     <string name="InuDisableVolumePlayVideoInfo">チャットで音量キーを押したときに表示中の動画を音付きで再生しない</string>
     <string name="InuConfirmInternalLinks">内部リンクを開く前に確認</string>
@@ -702,6 +708,7 @@
     <string name="InuUnifiedCornerRadius">統一された角丸半径</string>
     <string name="InuUnifiedCornerRadiusInfo">フォーラムのトピックを含むすべてのアバターに同じ角丸半径を適用する</string>
     <string name="InuMaterial3NavigationAnimation">ナビゲーションアニメーション</string>
+    <string name="InuMaterial3Progress">波形プログレスバー</string>
     <string name="InuMaterialProfileActions">プロフィールの操作ボタン</string>
     <string name="InuTypographyAndIcons">タイポグラフィとアイコン</string>
     <string name="InuMotion">モーション</string>
@@ -1225,6 +1232,10 @@
     <string name="InuKeepDownloadsInBackground">スクロールや終了時にダウンロードを中断しない</string>
     <string name="InuKeepDownloadsInBackgroundInfo">メッセージが画面外にスクロールされたりチャットを離れたりしても、ダウンロードをキャンセルして再開するのではなく継続します。</string>
     <string name="InuMaterial3BottomTabs">ボトムタブ</string>
+    <string name="InuIosBottomBar">iOS風のボトムバー</string>
+    <string name="InuIosBottomBarInfo">ボトムタブバーをiOSのような幅広で均等配置のカプセル型に変更します。Material 3のボトムタブは無効になります。</string>
+    <string name="InuIosChatHeader">iOS風のチャットヘッダー</string>
+    <string name="InuIosChatHeaderInfo">iOS版Telegramのように、アバター・タイトル・サブタイトルを中央に寄せた丸いピル型の背景をチャットヘッダーに描画します。チャットタイトルの中央揃えを伴います。アバターが「⋮」メニューボタンの代わりになります — タップでプロフィールを開き、長押しでチャットメニューを開きます。かなり粗い実装で、これ以上磨き上げる予定はありません — プルリクエスト歓迎です。</string>
     <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>

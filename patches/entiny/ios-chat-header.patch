@@ -1,0 +1,201 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 29 Aug 2026 15:21:16 +0300
+Subject: Add an iOS-style centered chat header
+
+---
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 29 +++++++-
+ .../java/org/telegram/ui/ChatActivity.java    | 19 ++++++
+ .../ui/Components/ChatAvatarContainer.java    | 68 +++++++++++++++++--
+ 3 files changed, 110 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -59,6 +59,7 @@ import org.telegram.messenger.R;
+ import org.telegram.messenger.SharedConfig;
+ import org.telegram.ui.Adapters.FiltersView;
+ import org.telegram.ui.Components.AnimatedEmojiDrawable;
++import org.telegram.ui.Components.AnimatedFloat;
+ import org.telegram.ui.Components.BackupImageView;
+ import org.telegram.ui.Components.ChatAvatarContainer;
+ import org.telegram.ui.Components.CubicBezierInterpolator;
+@@ -213,6 +214,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         this.chatAvatarContainer = chatAvatarContainer;
+     }
+ 
++    // iOS-style centered chat header: pill hugs the avatar+title group instead of
++    // spanning the full back-button-to-menu width. See updateGlassBounds().
++    private final AnimatedFloat inu_iosHeaderPillWidth = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
++
++    public int getCenteredTitlePillPadding() {
++        // With the iOS header the avatar sits out in the menu slot, so the pill only has to
++        // wrap the title/subtitle text — it needs far less side padding than the avatar layout.
++        if (chatAvatarContainer != null && chatAvatarContainer.inu_isIosMenuSlotAvatar()) {
++            return dp(32);
++        }
++        return dp(72);
++    }
++
+     public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
+         setupGlass(factory, colorProvider, false);
+     }
+@@ -2389,8 +2403,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+         final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
+         final int rightOffset = menuWidthWithPadding;
+-        final int leftDefault = hasBackButton ? s + p : 0;
+-        final int rightDefault = width - rightOffset;
++        int leftDefault = hasBackButton ? s + p : 0;
++        int rightDefault = width - rightOffset;
++
++        if (desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue() && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode()) {
++            final int avatarLeft = chatAvatarContainer.getCenteredAvatarLeft();
++            final int rightLimit = avatarLeft > 0 ? Math.min(rightDefault, avatarLeft - p) : rightDefault;
++            final int centerX = Math.round(chatAvatarContainer.getLeft() + chatAvatarContainer.getTitlesCenterX());
++            final int symRoom = Math.max(dp(48), 2 * Math.min(centerX - leftDefault, rightLimit - centerX));
++            final int target = Math.min(symRoom, Math.max(dp(136), chatAvatarContainer.getTitlesWidth() + getCenteredTitlePillPadding()));
++            final int pillWidth = Math.round(inu_iosHeaderPillWidth.set(target));
++            leftDefault = centerX - pillWidth / 2;
++            rightDefault = leftDefault + pillWidth;
++        }
+ 
+         inu_glassTitleLeft = leftDefault;
+         inu_glassTitleRight = rightDefault;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -4349,6 +4349,25 @@ public class ChatActivity extends BaseFragment implements
+             headerItem.inu_reorderable = true;
+             otherIcon.addView(headerItem.getIconView());
+             headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
++            if (avatarContainer != null && avatarContainer.inu_isIosMenuSlotAvatar()) {
++                // iOS-style header: the chat avatar is laid out in this slot instead of the
++                // "..." icon (see ChatAvatarContainer#onLayout), so hide the icon and make the
++                // slot behave like the avatar — tap opens the profile, long press opens the menu.
++                final ActionBarMenuItem inu_headerItem = headerItem;
++                headerItem.getIconView().setAlpha(0f);
++                headerItem.setOnClickListener(v -> {
++                    // Mirror ChatAvatarContainer's own avatarImageView click listener: a linked
++                    // community (channel/user with linked_community_id) takes over the tap and
++                    // opens CommunitySheet instead of the profile — see onAvatarClick() overrides.
++                    if (!avatarContainer.onAvatarClick()) {
++                        avatarContainer.openProfile(true);
++                    }
++                });
++                headerItem.setOnLongClickListener(v -> {
++                    inu_headerItem.toggleSubMenu();
++                    return true;
++                });
++            }
+ 
+             if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
+                 savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -670,14 +670,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+         int width = MeasureSpec.getSize(widthMeasureSpec);
+         boolean centerChatTitle = isCenteredTitle();
+-        if (centerChatTitle && actionBar != null) {
++        if (centerChatTitle && actionBar != null && !desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()) {
+             int targetPill = actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft;
+             if (targetPill > 0) {
+                 width = Math.min(width, targetPill);
+             }
+         }
+         final int availableWidth;
+-        if (centerChatTitle) {
++        if (inu_isIosMenuSlotAvatar()) {
++            // Mirrors onLayout's iOS branch: the avatar is laid out out in the action bar's
++            // right-hand menu slot (outside this container), so the whole container width
++            // minus a small symmetric inset is the title/subtitle box.
++            availableWidth = Math.max(0, width - 2 * dp(6) - rightAvatarPadding);
++        } else if (centerChatTitle) {
+             // Mirror onLayout's textLeftBound/textRightBound math so the EXACTLY-measured
+             // width used for ellipsizing matches the box the text is actually laid out into —
+             // otherwise long subtitles (e.g. member count + online) get visually clipped
+@@ -802,7 +807,44 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     private boolean isCenteredTitle() {
+-        return desu.inugram.InuConfig.CENTER_TITLE_CHATS.getValue() && inu_isRealChatHeader();
++        return (desu.inugram.InuConfig.CENTER_TITLE_CHATS.getValue() || desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()) && inu_isRealChatHeader();
++    }
++
++    public boolean isTitleCenteredMode() {
++        return isCenteredTitle();
++    }
++
++    public int getTitlesWidth() {
++        int width = 0;
++        if (titleTextView != null) {
++            int titleWidth = titleTextView.getTextWidth() + titleTextView.getRightDrawableWidth();
++            android.graphics.drawable.Drawable rightDrawable2 = titleTextView.getRightDrawable2();
++            if (rightDrawable2 != null) {
++                titleWidth += rightDrawable2.getIntrinsicWidth() + dp(4);
++            }
++            width = Math.max(width, titleWidth);
++        }
++        if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
++            width = Math.max(width, subtitleTextView.getTextWidth() + subtitleTextView.getRightDrawableWidth());
++        }
++        if (animatedSubtitleTextView != null && animatedSubtitleTextView.getVisibility() != GONE) {
++            width = Math.max(width, (int) Math.ceil(animatedSubtitleTextView.getDrawable().getCurrentWidth()));
++        }
++        return width;
++    }
++
++    public int getCenteredAvatarLeft() {
++        if (avatarImageView == null || avatarImageView.getVisibility() != VISIBLE) {
++            return -1;
++        }
++        return (int) (getX() + avatarImageView.getX());
++    }
++
++    public float getTitlesCenterX() {
++        if (titleTextView == null) {
++            return getMeasuredWidth() / 2f;
++        }
++        return titleTextView.getLeft() + titleTextView.getMeasuredWidth() / 2f;
+     }
+ 
+     private boolean inu_isRealChatHeader() {
+@@ -818,6 +860,13 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         return glassMode && isCenteredTitle() && desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.getValue();
+     }
+ 
++    // iOS-style chat header: the avatar is moved out of this container into the action bar's
++    // right-hand overflow-menu slot, fully replacing the "..." button there (ChatActivity hides
++    // that item's icon and re-wires its tap/long-press). Title+subtitle stay centered.
++    public boolean inu_isIosMenuSlotAvatar() {
++        return desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue() && isCenteredTitle() && hasVisibleAvatar();
++    }
++
+     @Override
+     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+         final int actionBarHeight = ActionBar.getCurrentActionBarHeight();
+@@ -836,7 +885,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         int textLeftBound;
+         int textRightBound;
+ 
+-        if (rightAvatar) {
++        if (inu_isIosMenuSlotAvatar()) {
++            // Place the avatar in the action bar's right menu slot, mirroring the back button's
++            // left slot center (dp(6) padding + dp(46) slot => center dp(29) from the edge).
++            // That is outside this container's own right edge; ActionBar has setClipChildren(false)
++            // so it still draws, and touches there land on the icon-less header menu item.
++            final int slotCenterX = (actionBar != null ? actionBar.getWidth() - getLeft() : (right - left)) - dp(29);
++            final int iosAvatarLeft = slotCenterX - avatarW / 2;
++            avatarImageView.setTranslationX(0);
++            avatarImageView.layout(iosAvatarLeft, 1 + viewTop, iosAvatarLeft + avatarW, 1 + viewTop + avatarH);
++            textLeftBound = dp(6) + rightAvatarPadding;
++            textRightBound = Math.max(textLeftBound, (right - left) - dp(6));
++        } else if (rightAvatar) {
+             int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
+             if (pillWidth <= 0) {
+                 pillWidth = getVisualWidth() + dp(12);

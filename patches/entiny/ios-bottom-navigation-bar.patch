@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 29 Aug 2026 15:21:13 +0300
+Subject: Add an iOS-style wide bottom navigation bar
+
+---
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java     | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -321,10 +321,11 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsView = new MainTabsLayout(context, resourceProvider);
+         tabsView.setClipChildren(false);
+         final int paddingH = dp(mainTabsMargin + 4);
+-        final int paddingV = dp(mainTabsMargin + 4);
++        final int paddingV = dp(MainTabsHelper.getTabsInnerPaddingVertical());
+         tabsView.setPadding(paddingH, paddingV, paddingH, paddingV);
+         tabsView.setMaxWidth(dp(tabsViewWidth));
+         M3MainTabsHelper.applyTabsLayout(tabsView);
++        MainTabsHelper.applyIosTabsLayout(tabsView);
+ 
+         tabs = new GlassTabView[5];
+         tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
+@@ -957,7 +958,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         }
+ 
+         if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
+-            tabsViewWrapper.setPadding(systemInsets.left, 0, systemInsets.right, navigationBarHeight);
++            final int iosSidePadding = MainTabsHelper.getIosSidePaddingExtra();
++            tabsViewWrapper.setPadding(systemInsets.left + iosSidePadding, 0, systemInsets.right + iosSidePadding, navigationBarHeight);
+         }
+ 
+         final WindowInsetsCompat consumed = isUpdateLayoutVisible ?

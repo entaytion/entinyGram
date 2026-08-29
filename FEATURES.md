@@ -82,7 +82,11 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
 - 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
 - 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
-- 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message
+- 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
+- 📡 **iOS-style design**, ported from [exteraless](https://github.com/exteraless/exteraless):
+  - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
+  - Chats tab tap returns to the first folder before scrolling to top
+  - centered chat header: avatar+title+subtitle grouped in a pill, chat avatar moved into the "⋮" menu slot (long-press it for the chat menu) — **this one is a pretty janky patch (touch-target overlap in chats with extra header icons, off-by-a-few-dp centering when a call/search icon is present, untested interaction with search/action mode) and we don't have much motivation to keep polishing it ourselves, so pull requests to clean it up are welcome**
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 
@@ -122,6 +126,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - lists & sections
   - avatars (tonal on-container initials instead of white)
   - profile action buttons
+  - wavy Expressive progress/loading bars
 - 🐶 toggle to replace profile photo bottom blur with a plain gradient fade
 - disable number rounding
 - export/import settings to/from json file

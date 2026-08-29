@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 29 Aug 2026 15:21:10 +0300
+Subject: Return to the first folder when tapping the already-selected Chats tab
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java    | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14505,6 +14505,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     @Override
+     public void onParentScrollToTop() {
++        if (desu.inugram.InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.getValue()
++                && filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE
++                && !tabsAnimationInProgress && !filterTabsView.isAnimatingIndicator() && !startedTracking
++                && !filterTabsView.isFirstTabSelected()
++                && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment())) {
++            filterTabsView.selectFirstTab();
++            return;
++        }
+         scrollToTop(true, true);
+     }
+ 

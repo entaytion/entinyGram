@@ -150,6 +150,15 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
+                TOGGLE_IOS_CHAT_HEADER,
+                R.string.InuIosChatHeader,
+                R.string.InuIosChatHeaderInfo,
+                InuConfig.IOS_CHAT_HEADER.value,
+                experimental = true,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_CHAT_TITLE_MARQUEE,
                 R.string.InuChatTitleMarquee,
                 R.string.InuChatTitleMarqueeInfo,
@@ -350,6 +359,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 showRestartBulletin()
             }
+            TOGGLE_IOS_CHAT_HEADER -> {
+                val new = InuConfig.IOS_CHAT_HEADER.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_CHAT_TITLE_MARQUEE -> {
                 val new = InuConfig.CHAT_TITLE_MARQUEE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -416,6 +429,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
+        private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val TOGGLE_FLOATING_AVATAR = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
@@ -458,6 +472,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
+                SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("floating-avatar", R.string.InuFloatingAvatar, TOGGLE_FLOATING_AVATAR),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),

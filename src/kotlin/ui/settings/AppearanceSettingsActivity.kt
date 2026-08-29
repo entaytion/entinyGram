@@ -35,6 +35,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 ExpandableBoolGroup.Option(R.string.InuMaterial3BottomTabs, InuConfig.M3_BOTTOM_TABS, TOGGLE_M3_BOTTOM_TABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterialProfileActions, InuConfig.MATERIAL_PROFILE_ACTIONS, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3NavigationAnimation, InuConfig.M3_NAVIGATION_ANIMATION, TOGGLE_M3_NAVIGATION_ANIMATION),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Progress, InuConfig.MATERIAL3_PROGRESS, TOGGLE_MATERIAL3_PROGRESS),
             ),
             sectionId = SECTION_MATERIAL3,
         )
@@ -75,6 +76,14 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             softRebuild()
             listView.adapter.update(true)
         }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_IOS_BOTTOM_BAR,
+                R.string.InuIosBottomBar,
+                R.string.InuIosBottomBarInfo,
+                InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value,
+            )
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             items.add(
                 UItem.asButton(
@@ -245,6 +254,20 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
         when (item.id) {
 
+            TOGGLE_IOS_BOTTOM_BAR -> {
+                val new = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.toggle()
+                if (new && InuConfig.M3_BOTTOM_TABS.value) {
+                    // iOS style's visibility check makes it a no-op while M3 bottom tabs is also
+                    // on, so leaving M3 enabled would look broken - mirror exteraless and force it off.
+                    InuConfig.M3_BOTTOM_TABS.value = false
+                }
+                (view as? NotificationsCheckCell)?.isChecked = new
+                invalidateVisibleRows()
+                softRebuild()
+                listView.adapter.update(true)
+                showRestartBulletin()
+            }
+
             TOGGLE_HIDE_FADE_VIEW -> {
                 val new = InuConfig.HIDE_FADE_VIEW.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -405,8 +428,10 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
         private val TOGGLE_M3_BOTTOM_TABS = InuUtils.generateId()
+        private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
+        private val TOGGLE_MATERIAL3_PROGRESS = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
@@ -444,8 +469,10 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("material3-sections", R.string.InuMaterial3Sections, TOGGLE_M3_SECTIONS_STYLE),
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),
                 SearchRegistry.Entry("m3-bottom-tabs", R.string.InuMaterial3BottomTabs, TOGGLE_M3_BOTTOM_TABS),
+                SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
                 SearchRegistry.Entry("material-profile-actions", R.string.InuMaterialProfileActions, TOGGLE_MATERIAL_PROFILE_ACTIONS),
                 SearchRegistry.Entry("material3-navigation-animation", R.string.InuMaterial3NavigationAnimation, TOGGLE_M3_NAVIGATION_ANIMATION),
+                SearchRegistry.Entry("material3-progress", R.string.InuMaterial3Progress, TOGGLE_MATERIAL3_PROGRESS),
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),

@@ -28,6 +28,9 @@
     <string name="InuPerformanceClassAverage">Average</string>
     <string name="InuPerformanceClassHigh">High</string>
     <string name="InuAnnoyances">Annoyances</string>
+    <string name="InuAnnoyancesStories">Stories</string>
+    <string name="InuAnnoyancesInterface">Interface</string>
+    <string name="InuAnnoyancesMedia">Media</string>
     <string name="InuMessages">Messages</string>
     <string name="InuChats">Chats</string>
     <string name="InuOther">Other</string>
@@ -68,6 +71,7 @@
     <string name="InuMaterial3Sections">List items</string>
     <string name="InuMaterial3Avatars">Avatars</string>
     <string name="InuMaterial3NavigationAnimation">Navigation animation</string>
+    <string name="InuMaterial3Progress">Wavy progress bars</string>
     <string name="InuMaterialProfileActions">Profile action buttons</string>
     <string name="InuAvatarCorners">Avatar corners</string>
     <string name="InuAvatarCornersLeft">Sharp</string>
@@ -108,6 +112,8 @@
     <string name="InuShowCustomTheme">Show custom theme</string>
     <string name="InuDisableSwipeToUnarchive">Disable swipe to unarchive</string>
     <string name="InuDisableSwipeToHideGeneralTopic">Disable swipe to hide General topic</string>
+    <string name="InuIosChatsTabFirstFolder">Chats tab returns to first folder</string>
+    <string name="InuIosChatsTabFirstFolderInfo">Like Telegram for iOS: tapping the already-selected Chats tab switches back to the first folder before scrolling to the top</string>
     <string name="InuResetStorage">Reset storage</string>
     <string name="InuResetStorageConfirm">This will wipe local auth keys and caches to reset the pending authentication. Are you sure?</string>
     <string name="InuHideBottomBar">Hide bottom bar</string>
@@ -136,6 +142,8 @@
     <string name="InuMainTabsItems">Tabs</string>
     <string name="InuMainTabsCustomizeReset">Reset to default</string>
     <string name="InuMaterial3BottomTabs">Bottom tabs</string>
+    <string name="InuIosBottomBar">iOS-style bottom bar</string>
+    <string name="InuIosBottomBarInfo">Makes the bottom tabs bar match iOS\'s wider, evenly-spread capsule style. Disables Material 3 bottom tabs.</string>
     <string name="InuDialogsFab">FAB</string>
     <string name="InuDialogsFabMainAction">Primary action</string>
     <string name="InuDialogsFabSecondaryAction">Secondary action</string>
@@ -175,6 +183,7 @@
     <string name="InuHideMessages">Hide messages</string>
     <string name="InuShowHiddenMessages">Show messages</string>
     <string name="InuSpoilers">Spoilers</string>
+    <string name="InuSpoilerStyle">Style</string>
     <string name="InuHideAiFeatures">Hide AI features</string>
     <string name="InuHideAiEditor">AI editor button</string>
     <string name="InuAiEditorButtonInfo">Shows AI actions next to the message field for rewriting, continuing, summarizing, and fixing text.</string>
@@ -916,6 +925,8 @@
     <string name="InuCenterTitleMain">Centered screen titles</string>
     <string name="InuCenterTitleMainInfo">Centers action bar titles on all screens except chats - chats use their own toggle.</string>
     <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>
+    <string name="InuIosChatHeader">iOS-style chat header</string>
+    <string name="InuIosChatHeaderInfo">Draws the chat header background as a rounded pill that hugs and centers around the avatar, title and subtitle, like Telegram for iOS. Implies centered chat titles. The avatar replaces the \"⋮\" menu button — tap it to open the profile, long-press it to open the chat menu. This is a pretty janky patch and we don\'t plan on polishing it further ourselves — pull requests welcome.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuFloatingAvatar">Floating avatar in chat header</string>

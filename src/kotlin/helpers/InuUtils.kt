@@ -70,7 +70,7 @@ public object InuUtils {
     fun shouldCenterTitle(fragment: Any?): Boolean {
         if (fragment == null) return false // not attached yet — don't center until we know which screen this is
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
-            return desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+            return desu.inugram.InuConfig.CENTER_TITLE_CHATS.value || desu.inugram.InuConfig.IOS_CHAT_HEADER.value
         }
         return desu.inugram.InuConfig.CENTER_TITLE_MAIN.value
     }

@@ -32,10 +32,14 @@ import desu.inugram.helpers.theme.M3MainTabsHelper
 object MainTabsHelper {
     const val MAIN_TABS_MARGIN_COMPACT: Int = 4
     const val MAIN_TABS_HEIGHT_COMPACT: Int = 48
+    const val MAIN_TABS_HEIGHT_IOS: Int = 60
     const val TAB_WIDTH: Int = 80
     const val TAB_WIDTH_COMPACT: Int = 64
     const val TAB_PADDING: Int = 4
     private const val TAB_SCRIM_RADIUS = 28
+    private const val TABS_INNER_PADDING: Int = 4
+    private const val TABS_INNER_PADDING_IOS: Int = 6
+    private const val TABS_SIDE_PADDING_EXTRA_IOS: Int = 8
 
     @JvmStatic
     val isCompact: Boolean
@@ -44,6 +48,13 @@ object MainTabsHelper {
     @JvmStatic
     val isMaterial: Boolean
         get() = InuConfig.M3_BOTTOM_TABS.value
+
+    // iOS style is a no-op whenever M3 bottom tabs is also enabled, mirroring the settings-page
+    // mutual exclusion (turning iOS on force-disables M3, but this keeps every geometry getter
+    // safe even if InuConfig ever ends up with both flags set at once).
+    @JvmStatic
+    val isIos: Boolean
+        get() = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value && !isMaterial
 
     @JvmStatic
     fun createTabScrimBackground(anchor: View, color: Int): Drawable {
@@ -128,6 +139,7 @@ object MainTabsHelper {
     val mainTabsHeight: Int
         get() = when {
             isMaterial -> M3MainTabsHelper.barHeight
+            isIos -> MAIN_TABS_HEIGHT_IOS
             isCompact -> MAIN_TABS_HEIGHT_COMPACT
             else -> DialogsActivity.MAIN_TABS_HEIGHT
         }
@@ -143,6 +155,24 @@ object MainTabsHelper {
     @JvmStatic
     val mainTabsHeightWithMargins: Int
         get() = mainTabsHeight + mainTabsMargin * 2
+
+    /** vertical padding baked into the tabs strip itself; iOS style adds +2dp over the stock/M3-off value so its capsule reads taller. */
+    @JvmStatic
+    val tabsInnerPaddingVertical: Int
+        get() = mainTabsMargin + if (isIos) TABS_INNER_PADDING_IOS else TABS_INNER_PADDING
+
+    /** extra left/right padding stacked on top of the system nav-bar inset, iOS-only (M3 handles its own insets via [M3MainTabsHelper.applyTabsInsets]). */
+    @JvmStatic
+    val iosSidePaddingExtra: Int
+        get() = if (isIos) dp(TABS_SIDE_PADDING_EXTRA_IOS.toFloat()) else 0
+
+    /** iOS style, like M3, spreads tabs evenly across the full width instead of capping at a fixed [tabsViewWidth]. */
+    @JvmStatic
+    fun applyIosTabsLayout(tabsView: org.telegram.ui.MainTabsLayout) {
+        if (!isIos) return
+        tabsView.inu_materialTabs = true
+        tabsView.setMaxWidth(0)
+    }
 
     @JvmStatic
     val fragmentsCount: Int

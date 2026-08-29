@@ -146,6 +146,9 @@ object InuConfig {
     @JvmField
     val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
 
+    @JvmField
+    val MATERIAL3_PROGRESS = BoolItem("material3_progress", false)
+
     // snapshot of theme state before Monet was enabled, "day|night|autoNightType"; empty = none
     @JvmField
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)
@@ -937,6 +940,15 @@ object InuConfig {
 
     @JvmField
     val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
+
+    @JvmField
+    val IOS_BOTTOM_NAVIGATION_BAR = BoolItem("ios_bottom_navigation_bar", false)
+
+    @JvmField
+    val IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER = BoolItem("ios_chats_tab_returns_to_first_folder", false)
+
+    @JvmField
+    val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
     @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
