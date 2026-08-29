@@ -51,6 +51,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesStories)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_HIDE_STORIES,
@@ -65,8 +66,13 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuHideRepostToStory),
             ).setChecked(InuConfig.HIDE_REPOST_TO_STORY.value)
         )
+        items.add(UItem.asShadow(null))
+
         aiFeaturesGroup.addTo(items) { listView.adapter.update(true) }
         hideSuggestionsGroup.addTo(items) { listView.adapter.update(true) }
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesInterface)))
         items.add(
             UItem.asCheck(
                 TOGGLE_HIDE_TRENDING_STICKERS,
@@ -115,6 +121,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuHideRichEditorButton),
             ).setChecked(InuConfig.HIDE_RICH_EDITOR_BUTTON.value)
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesMedia)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_DISABLE_MOTION_PHOTOS,

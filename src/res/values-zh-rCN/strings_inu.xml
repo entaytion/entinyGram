@@ -688,6 +688,8 @@
     <string name="InuLogsShare">分享日志</string>
     <string name="InuLogsShareZip">全部日志 (.zip)</string>
     <string name="InuLogsShareCurrent">当前日志 (.txt)</string>
+    <string name="InuLogsShareByCategory">按分类 (.zip)</string>
+    <string name="InuLogsNoCategories">暂无分类日志</string>
     <string name="InuLogsClear">清除日志</string>
     <string name="InuLogsCleared">旧日志已清除</string>
     <string name="InuLogsShareError">打包日志失败</string>

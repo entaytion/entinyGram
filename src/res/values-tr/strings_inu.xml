@@ -730,6 +730,8 @@
     <string name="InuLogsShare">Günlükleri paylaş</string>
     <string name="InuLogsShareZip">Tüm günlükler (.zip)</string>
     <string name="InuLogsShareCurrent">Mevcut günlük (.txt)</string>
+    <string name="InuLogsShareByCategory">Kategoriye göre (.zip)</string>
+    <string name="InuLogsNoCategories">Henüz kategorilere ayrılmış günlük yok</string>
     <string name="InuLogsClear">Günlükleri temizle</string>
     <string name="InuLogsCleared">Eski günlükler temizlendi</string>
     <string name="InuLogsShareError">Günlükler paketlenemedi</string>

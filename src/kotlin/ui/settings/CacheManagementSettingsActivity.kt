@@ -1,6 +1,7 @@
 package desu.inugram.ui.settings
 
 import android.view.View
+import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.InuUtils
@@ -51,7 +52,48 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                 it.subtext = categorySubtitle(presenceLogStat)
             }
         )
+        items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
+            it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
+        })
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuCacheManagementInfo)))
+    }
+
+    private fun ttlLabel(days: Int): String = when (days) {
+        InuConfig.PresenceLogsTtlItem.ONE_DAY -> LocaleController.getString(R.string.InuCacheTtlDay)
+        InuConfig.PresenceLogsTtlItem.ONE_WEEK -> LocaleController.getString(R.string.InuCacheTtlWeek)
+        InuConfig.PresenceLogsTtlItem.ONE_MONTH -> LocaleController.getString(R.string.InuCacheTtlMonth)
+        else -> LocaleController.getString(R.string.InuCacheTtlNever)
+    }
+
+    private fun showTtlDialog() {
+        val context = context ?: return
+        val values = intArrayOf(
+            InuConfig.PresenceLogsTtlItem.NEVER,
+            InuConfig.PresenceLogsTtlItem.ONE_DAY,
+            InuConfig.PresenceLogsTtlItem.ONE_WEEK,
+            InuConfig.PresenceLogsTtlItem.ONE_MONTH,
+        )
+        val radioItems = listOf(
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlNever)),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlDay)),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlWeek)),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlMonth)),
+        )
+        showDialog(
+            RadioDialogBuilder(context, getResourceProvider())
+                .setTitle(LocaleController.getString(R.string.InuCacheTtl))
+                .setSubtitle(LocaleController.getString(R.string.InuCacheTtlInfo))
+                .setItems(radioItems, values.indexOf(InuConfig.PRESENCE_LOGS_TTL.value).coerceAtLeast(0)) { _, which ->
+                    val newVal = values[which]
+                    if (InuConfig.PRESENCE_LOGS_TTL.value == newVal) return@setItems
+                    InuConfig.PRESENCE_LOGS_TTL.value = newVal
+                    if (newVal != InuConfig.PresenceLogsTtlItem.NEVER) {
+                        PresenceHelper.pruneIfNeeded(UserConfig.selectedAccount)
+                    }
+                    listView?.adapter?.update(true)
+                }
+                .create()
+        )
     }
 
     private fun refreshStats() {
@@ -105,6 +147,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_MESSAGE_CACHE -> presentFragment(AntiDeletionSettingsActivity())
             BUTTON_PRESENCE_CACHE -> presentFragment(PresenceWatchListSettingsActivity())
+            BUTTON_LOGS_TTL -> showTtlDialog()
         }
     }
 
@@ -216,6 +259,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_MESSAGE_CACHE = InuUtils.generateId()
         private val BUTTON_PRESENCE_CACHE = InuUtils.generateId()
+        private val BUTTON_LOGS_TTL = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -226,6 +270,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("cache-messages", R.string.InuCacheMessagesCategory, BUTTON_MESSAGE_CACHE),
                 SearchRegistry.Entry("cache-presence", R.string.InuCachePresenceCategory, BUTTON_PRESENCE_CACHE),
+                SearchRegistry.Entry("presence-logs-ttl", R.string.InuCacheTtl, BUTTON_LOGS_TTL),
             ),
         )
     }

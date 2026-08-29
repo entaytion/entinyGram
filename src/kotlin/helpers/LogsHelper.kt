@@ -53,6 +53,14 @@ object LogsHelper {
         stageThenShare(activity, onDone, mime = "application/zip") { stageZip() }
     }
 
+    /** Categories with a log file on disk, e.g. "Fork-Security", "Fork-Chat", "Stock", "Other". */
+    fun availableCategories(): List<String> = LogCategoryHelper.availableCategories()
+
+    /** Zip only the selected categories (see [LogCategoryHelper]) + system_info.txt, then share. */
+    fun shareCategories(activity: LaunchActivity, categories: Set<String>, onDone: (ok: Boolean) -> Unit) {
+        stageThenShare(activity, onDone, mime = "application/zip") { stageCategoriesZip(categories) }
+    }
+
     private fun stageThenShare(
         activity: LaunchActivity,
         onDone: (ok: Boolean) -> Unit,
@@ -106,6 +114,24 @@ object LogsHelper {
             out.closeEntry()
             dir.listFiles()?.forEach { f ->
                 if (!f.isFile) return@forEach
+                out.putNextEntry(ZipEntry(f.name))
+                f.inputStream().buffered().use { it.copyTo(out) }
+                out.closeEntry()
+            }
+        }
+        return dst
+    }
+
+    private fun stageCategoriesZip(categories: Set<String>): File? {
+        val files = LogCategoryHelper.filesForCategories(categories)
+        if (files.isEmpty()) return null
+        val cacheDir = AndroidUtilities.getCacheDir().apply { mkdirs() }
+        val dst = File(cacheDir, "entinygram-logs-categories.zip").apply { if (exists()) delete() }
+        ZipOutputStream(FileOutputStream(dst).buffered()).use { out ->
+            out.putNextEntry(ZipEntry("system_info.txt"))
+            out.write(SystemInfo.build().toByteArray(Charsets.UTF_8))
+            out.closeEntry()
+            files.forEach { f ->
                 out.putNextEntry(ZipEntry(f.name))
                 f.inputStream().buffered().use { it.copyTo(out) }
                 out.closeEntry()

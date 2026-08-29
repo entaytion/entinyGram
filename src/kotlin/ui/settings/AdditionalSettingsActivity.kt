@@ -269,7 +269,34 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             val activity = parentActivity as? LaunchActivity ?: return@add
             LogsHelper.shareCurrent(activity, ::onShareDone)
         }
+        opts.add(R.drawable.msg_list, LocaleController.getString(R.string.InuLogsShareByCategory)) {
+            showCategoryPicker()
+        }
         opts.setGravity(Gravity.END).show()
+    }
+
+    private fun showCategoryPicker() {
+        val activity = parentActivity as? LaunchActivity ?: return
+        val categories = LogsHelper.availableCategories()
+        if (categories.isEmpty()) {
+            BulletinFactory.of(this).createErrorBulletin(
+                LocaleController.getString(R.string.InuLogsNoCategories)
+            ).show()
+            return
+        }
+        val checked = BooleanArray(categories.size) { true }
+        AlertDialog.Builder(activity)
+            .setTitle(LocaleController.getString(R.string.InuLogsShareByCategory))
+            .setMultiChoiceItems(categories.toTypedArray(), checked) { _, which, isChecked ->
+                checked[which] = isChecked
+            }
+            .setPositiveButton(LocaleController.getString(R.string.InuLogsShare)) { _, _ ->
+                val selected = categories.filterIndexed { i, _ -> checked[i] }.toSet()
+                if (selected.isEmpty()) return@setPositiveButton
+                LogsHelper.shareCategories(activity, selected, ::onShareDone)
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .show()
     }
 
     private fun onShareDone(ok: Boolean) {

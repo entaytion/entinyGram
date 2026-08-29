@@ -860,6 +860,8 @@
     <string name="InuLogsShare">Share logs</string>
     <string name="InuLogsShareZip">All logs (.zip)</string>
     <string name="InuLogsShareCurrent">Current log (.txt)</string>
+    <string name="InuLogsShareByCategory">By category (.zip)</string>
+    <string name="InuLogsNoCategories">No categorized logs yet</string>
     <string name="InuLogsClear">Clear logs</string>
     <string name="InuLogsCleared">Old logs cleared</string>
     <string name="InuLogsShareError">Failed to package logs</string>

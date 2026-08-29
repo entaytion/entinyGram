@@ -846,6 +846,8 @@
     <string name="InuLogsSize">Розмір логів: %1$s</string>
     <string name="InuLogsShareZip">Усі логи (.zip)</string>
     <string name="InuLogsShareCurrent">Поточний лог (.txt)</string>
+    <string name="InuLogsShareByCategory">За категоріями (.zip)</string>
+    <string name="InuLogsNoCategories">Логів за категоріями поки немає</string>
     <string name="InuLogsShareError">Не вдалося упакувати логи</string>
     <string name="InuLogsCopySystemInfo">Копіювати системну інформацію</string>
     <string name="InuLogsSystemInfoCopied">Системну інформацію скопійовано в буфер обміну</string>

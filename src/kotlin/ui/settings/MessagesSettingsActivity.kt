@@ -141,36 +141,42 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 InuConfig.SHOW_SPOILERS_DIRECTLY.value,
             )
         )
-        items.add(
-            UItem.asButton(
-                BUTTON_TEXT_SPOILER_MODE,
-                LocaleController.getString(R.string.InuTextSpoilerMode),
-                textSpoilerModeLabel(InuConfig.TEXT_SPOILER_MODE.value),
+        // These all control how a spoiler looks/behaves before it's revealed - moot once
+        // spoilers are shown directly, so hide the whole sub-section in that case.
+        if (!InuConfig.SHOW_SPOILERS_DIRECTLY.value) {
+            items.add(UItem.asShadow(null))
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuSpoilerStyle)))
+            items.add(
+                UItem.asButton(
+                    BUTTON_TEXT_SPOILER_MODE,
+                    LocaleController.getString(R.string.InuTextSpoilerMode),
+                    textSpoilerModeLabel(InuConfig.TEXT_SPOILER_MODE.value),
+                )
             )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_MEDIA_SPOILER_MODE,
-                LocaleController.getString(R.string.InuMediaSpoilerMode),
-                mediaSpoilerModeLabel(InuConfig.MEDIA_SPOILER_MODE.value),
+            items.add(
+                UItem.asButton(
+                    BUTTON_MEDIA_SPOILER_MODE,
+                    LocaleController.getString(R.string.InuMediaSpoilerMode),
+                    mediaSpoilerModeLabel(InuConfig.MEDIA_SPOILER_MODE.value),
+                )
             )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SPOILER_EXTEND_TO_LINE_END,
-                R.string.InuSpoilerExtendToLineEnd,
-                R.string.InuSpoilerExtendToLineEndInfo,
-                InuConfig.SPOILER_EXTEND_TO_LINE_END.value,
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_SPOILER_EXTEND_TO_LINE_END,
+                    R.string.InuSpoilerExtendToLineEnd,
+                    R.string.InuSpoilerExtendToLineEndInfo,
+                    InuConfig.SPOILER_EXTEND_TO_LINE_END.value,
+                )
             )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_LINK_PREVIEW_SPOILER,
-                R.string.InuLinkPreviewSpoiler,
-                R.string.InuLinkPreviewSpoilerInfo,
-                InuConfig.LINK_PREVIEW_SPOILER.value,
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_LINK_PREVIEW_SPOILER,
+                    R.string.InuLinkPreviewSpoiler,
+                    R.string.InuLinkPreviewSpoilerInfo,
+                    InuConfig.LINK_PREVIEW_SPOILER.value,
+                )
             )
-        )
+        }
         items.add(UItem.asShadow(null))
 
         // Miscellaneous
@@ -374,6 +380,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.SHOW_SPOILERS_DIRECTLY.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+                listView.adapter.update(true)
             }
 
             TOGGLE_SPOILER_EXTEND_TO_LINE_END -> {

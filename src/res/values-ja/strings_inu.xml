@@ -689,6 +689,8 @@
     <string name="InuLogsShare">ログを共有</string>
     <string name="InuLogsShareZip">全ログ (.zip)</string>
     <string name="InuLogsShareCurrent">現在のログ (.txt)</string>
+    <string name="InuLogsShareByCategory">カテゴリー別 (.zip)</string>
+    <string name="InuLogsNoCategories">まだ分類されたログはありません</string>
     <string name="InuLogsClear">ログを削除</string>
     <string name="InuLogsCleared">古いログを削除しました</string>
     <string name="InuLogsShareError">ログのパッケージ化に失敗しました</string>

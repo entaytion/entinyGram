@@ -744,6 +744,8 @@
     <string name="InuLogsShare">Поделиться логами</string>
     <string name="InuLogsShareZip">Все логи (.zip)</string>
     <string name="InuLogsShareCurrent">Текущий лог (.txt)</string>
+    <string name="InuLogsShareByCategory">По категориям (.zip)</string>
+    <string name="InuLogsNoCategories">Логов по категориям пока нет</string>
     <string name="InuLogsClear">Очистить логи</string>
     <string name="InuLogsCleared">Старые логи очищены</string>
     <string name="InuLogsShareError">Не удалось упаковать логи</string>
