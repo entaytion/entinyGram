@@ -20,6 +20,7 @@ object LogCategoryHelper {
     private val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.US)
     private val timeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.US)
 
+    @JvmStatic
     fun record(message: String?) {
         if (!BuildVars.LOGS_ENABLED || message == null) return
         val category = detectCategory() ?: return
