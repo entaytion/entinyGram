@@ -183,13 +183,26 @@ object GhostHelper {
         if (dialogId != 0L && isDialogWhitelisted(dialogId)) {
             return false
         }
-        return when (kind) {
+        val suppress = when (kind) {
             SuppressKind.READ -> InuConfig.GHOST_HIDE_READ.value
             SuppressKind.TYPING -> InuConfig.GHOST_HIDE_TYPING.value
             SuppressKind.ONLINE -> InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.HIDDEN
             SuppressKind.VOICE_READ -> InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value
             SuppressKind.STORY_READ -> InuConfig.GHOST_HIDE_STORY_READ.value
         }
+        // Diagnostic for the "settings show off, behavior acts like on" report — dump every
+        // sub-toggle whenever a suppression actually fires, so a live logcat can catch a real
+        // divergence between what shouldSuppress() reads and what the Settings UI shows for the
+        // same InuConfig fields, instead of guessing again via static analysis.
+        if (suppress) {
+            android.util.Log.d(
+                "GhostMode",
+                "suppress dialogId=$dialogId kind=$kind read=${InuConfig.GHOST_HIDE_READ.value} " +
+                    "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
+                    "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}",
+            )
+        }
+        return suppress
     }
 
     @JvmStatic
