@@ -22,6 +22,44 @@ object InuConfig {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         FontConfig.register() // force-init so its items join _items before we load them
         for (item in _items) item.load(prefs)
+        migrateGhostMasterFlag()
+        migrateSelfDestructCategories()
+    }
+
+    // GHOST_MODE (a single master on/off) was removed in favor of independent sub-toggles with
+    // no stored master flag (see GhostHelper's class doc). Without this, anyone who had the old
+    // master switch on silently lost every bit of Ghost Mode protection the moment they updated
+    // past that change -- the new sub-toggles all default to false, so nothing carries over.
+    private fun migrateGhostMasterFlag() {
+        if (!prefs.contains("ghost_mode")) return
+        if (prefs.getBoolean("ghost_mode", false)) {
+            GHOST_HIDE_READ.value = true
+            GHOST_HIDE_VOICE_READ.value = true
+            GHOST_HIDE_STORY_READ.value = true
+            GHOST_HIDE_TYPING.value = true
+            GHOST_PRESENCE_MODE.value = GhostPresenceModeItem.HIDDEN
+        }
+        prefs.edit(commit = true) { remove("ghost_mode") }
+    }
+
+    // SAVE_SELF_DESTRUCT and SAVE_SECRET_CHAT_CONTENT (two single bools) were split into the
+    // per-category items below. The split isn't a clean 1:1 rename, so migrate conservatively:
+    // if either old flag was on, turn on every new category rather than guessing which ones the
+    // old flag actually covered -- silently narrowing what a user had opted into is worse than
+    // temporarily over-covering it (they can turn categories back off in Settings).
+    private fun migrateSelfDestructCategories() {
+        val hadOld = prefs.contains("save_self_destruct") || prefs.contains("save_secret_chat_content")
+        if (!hadOld) return
+        if (prefs.getBoolean("save_self_destruct", false) || prefs.getBoolean("save_secret_chat_content", false)) {
+            SAVE_SELF_DESTRUCT_MEDIA.value = true
+            SAVE_SELF_DESTRUCT_TEXT.value = true
+            SAVE_VIEW_ONCE_MEDIA.value = true
+            SAVE_TIMED_MESSAGES.value = true
+        }
+        prefs.edit(commit = true) {
+            remove("save_self_destruct")
+            remove("save_secret_chat_content")
+        }
     }
 
     abstract class Item<T>(val key: String, val default: T, val exportable: Boolean = true) {
@@ -160,6 +198,21 @@ object InuConfig {
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)
 
     class PredictiveBackModeItem : IntItem("predictive_back_mode", OFF) {
+        // Migrate the old DISABLE_PREDICTIVE_BACK boolean (removed when this became a 3-way
+        // mode): disabled=true mapped to OFF, disabled=false mapped to STOCK (the only "on"
+        // state that existed before MATERIAL3 was added) — otherwise the setting silently
+        // reset to OFF for anyone who had predictive back enabled under the old scheme.
+        override fun read(prefs: SharedPreferences): Int {
+            if (prefs.contains(key)) return prefs.getInt(key, default)
+            if (!prefs.contains("disable_predictive_back")) return default
+            val migrated = if (prefs.getBoolean("disable_predictive_back", true)) OFF else STOCK
+            prefs.edit(commit = true) {
+                putInt(key, migrated)
+                remove("disable_predictive_back")
+            }
+            return migrated
+        }
+
         companion object {
             const val OFF = 0
             const val STOCK = 1
