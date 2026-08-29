@@ -42,8 +42,14 @@ object InuConfig {
             currentValue = read(prefs)
         }
 
+        // commit=true (synchronous) is deliberate: apply() only queues the write to a background
+        // thread, and does not survive the process dying before that flush lands -- which is
+        // exactly what happens when an app update replaces the running process (MY_PACKAGE_REPLACED
+        // kills it). A toggle flipped right before an update could silently lose that write and
+        // revert to its last-flushed value. The sync cost here is negligible (a handful of ms on
+        // a small prefs file, on a UI-triggered settings write, not a hot path).
         fun save() {
-            prefs.edit { write() }
+            prefs.edit(commit = true) { write() }
         }
 
         // batched write: set currentValue and stage it onto [editor] (call inside a prefs.edit {} block,
