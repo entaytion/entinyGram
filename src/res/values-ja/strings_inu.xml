@@ -23,6 +23,8 @@
     <string name="InuUserProfileInformation">情報</string>
     <string name="InuChatList">チャットリスト</string>
     <string name="InuTitleText">タイトルテキスト</string>
+    <string name="InuTitleTextOverrideArchive">アーカイブにも適用</string>
+    <string name="InuTitleTextOverrideArchiveInfo">アーカイブ画面でも、デフォルトの「アーカイブ済みチャット」の代わりに同じタイトルテキストを使用します</string>
     <string name="InuPullDownAction">プルダウン操作</string>
     <string name="InuPullDownActionDisabled">無効</string>
     <string name="InuPullDownActionDisabledInfo">アーカイブはメニューに移動します</string>
@@ -119,6 +121,9 @@
     <string name="InuStickerTimeModeHideCompletely">完全に非表示</string>
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">吹き出しのしっぽ</string>
+    <string name="InuSendAsRoundVideo">動画メッセージとして送信</string>
+    <string name="InuShowPollResultsBeforeVote">投票前に結果を表示</string>
+    <string name="InuShowPollResultsBeforeVoteInfo">まだ投票していない匿名投票でも、常に投票の割合を表示します</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">わん! entinyGram か inuGram どっち? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">どっちも最高 🐶⚡</string>

@@ -23,6 +23,8 @@
     <string name="InuUserProfileInformation">信息</string>
     <string name="InuChatList">聊天列表</string>
     <string name="InuTitleText">标题文本</string>
+    <string name="InuTitleTextOverrideArchive">同时应用于归档</string>
+    <string name="InuTitleTextOverrideArchiveInfo">在归档界面使用相同的标题文本，而非默认的"已归档聊天"</string>
     <string name="InuPullDownAction">下拉操作</string>
     <string name="InuPullDownActionDisabled">禁用</string>
     <string name="InuPullDownActionDisabledInfo">归档会移入菜单</string>
@@ -119,6 +121,9 @@
     <string name="InuStickerTimeModeHideCompletely">完全隐藏</string>
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">气泡尾巴</string>
+    <string name="InuSendAsRoundVideo">以圆形视频发送</string>
+    <string name="InuShowPollResultsBeforeVote">投票前显示投票结果</string>
+    <string name="InuShowPollResultsBeforeVoteInfo">始终显示投票百分比，即使是尚未参与的匿名投票</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">汪! entinyGram 还是 inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">两个都很棒 🐶⚡</string>

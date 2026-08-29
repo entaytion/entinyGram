@@ -25,6 +25,8 @@
     <string name="InuUserProfileInformation">Информация</string>
     <string name="InuChatList">Список чатов</string>
     <string name="InuTitleText">Текст заголовка</string>
+    <string name="InuTitleTextOverrideArchive">Применить также к архиву</string>
+    <string name="InuTitleTextOverrideArchiveInfo">Использовать тот же текст заголовка на экране архива вместо стандартного «Архивные чаты»</string>
     <string name="InuPullDownAction">Действие при потягивании вниз</string>
     <string name="InuPullDownActionDisabled">Отключено</string>
     <string name="InuPullDownActionDisabledInfo">Архив переносится в меню</string>
@@ -121,6 +123,9 @@
     <string name="InuStickerTimeModeHideCompletely">Скрыть полностью</string>
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">Хвостики у сообщений</string>
+    <string name="InuSendAsRoundVideo">Отправить как кружок</string>
+    <string name="InuShowPollResultsBeforeVote">Показывать результаты опроса до голосования</string>
+    <string name="InuShowPollResultsBeforeVoteInfo">Всегда показывать проценты голосов, даже для анонимных опросов, в которых вы ещё не голосовали</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">гав! entinyGram или inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">оба лучшие, собачья база 🐶⚡</string>

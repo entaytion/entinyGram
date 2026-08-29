@@ -32,6 +32,8 @@
     <string name="InuUserProfileInformation">Bilgi</string>
     <string name="InuChatList">Sohbet listesi</string>
     <string name="InuTitleText">Başlık metni</string>
+    <string name="InuTitleTextOverrideArchive">Arşive de uygula</string>
+    <string name="InuTitleTextOverrideArchiveInfo">Arşiv ekranında varsayılan \"Arşivlenmiş Sohbetler\" yerine aynı başlık metnini kullan</string>
     <string name="InuPullDownAction">Aşağı çekme eylemi</string>
     <string name="InuPullDownActionDisabled">Devre dışı</string>
     <string name="InuPullDownActionDisabledInfo">Arşiv menüye taşınır</string>
@@ -183,6 +185,9 @@
     <string name="InuStickerTimeModeHideCompletely">Tamamen gizle</string>
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">Baloncuk kuyrukları</string>
+    <string name="InuSendAsRoundVideo">Yuvarlak video olarak gönder</string>
+    <string name="InuShowPollResultsBeforeVote">Oylamadan önce anket sonuçlarını göster</string>
+    <string name="InuShowPollResultsBeforeVoteInfo">Henüz oy vermediğiniz anonim anketler için bile oy yüzdelerini her zaman göster</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">hav! entinyGram mı yoksa inuGram mı? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">ikisi de en iyisi 🐶⚡</string>
