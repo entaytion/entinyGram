@@ -1250,6 +1250,21 @@ object InuConfig {
     val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", false)
 
     class GhostPresenceModeItem : IntItem("ghost_presence_mode", NORMAL) {
+        // Migrate the old GHOST_HIDE_ONLINE boolean toggle (removed when presence became a
+        // 3-way mode): without this, everyone who had "hide online" on under the old scheme
+        // silently reverted to NORMAL on the update that introduced this enum, since the new
+        // key never existed for them and just fell back to its own default.
+        override fun read(prefs: SharedPreferences): Int {
+            if (prefs.contains(key)) return prefs.getInt(key, default)
+            if (!prefs.contains("ghost_hide_online")) return default
+            val migrated = if (prefs.getBoolean("ghost_hide_online", true)) HIDDEN else NORMAL
+            prefs.edit(commit = true) {
+                putInt(key, migrated)
+                remove("ghost_hide_online")
+            }
+            return migrated
+        }
+
         companion object {
             const val NORMAL = 0
             const val HIDDEN = 1
