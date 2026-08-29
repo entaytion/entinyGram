@@ -15,15 +15,30 @@ was at risk of being silently dropped or duplicated on every inugram merge.
   custom title also replaces "Archived Chats" on the archive screen
   (previously it always did, unconditionally, which was the actual bug)
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 39 +++++++++++++++++++
- .../ui/Stories/DialogStoriesCell.java         | 23 ++++++-----
- 2 files changed, 53 insertions(+), 9 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 47 +++++++++++++++++++
+ .../ui/Stories/DialogStoriesCell.java         | 23 +++++----
+ 2 files changed, 61 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3049,6 +3049,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1564,6 +1564,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                     viewPages[0].dialogsAdapter.resume();
+                                     viewPages[1].dialogsAdapter.pause();
+                                 }
++                                // Whichever way this settles -- committed to the target page, or
++                                // snapped back to the original one (backAnimation) -- viewPages[0]
++                                // is now authoritative again; re-assert the title from it so a
++                                // cancelled swipe doesn't leave the target folder's name showing.
++                                java.util.ArrayList<MessagesController.DialogFilter> inu_settledFilters = getMessagesController().getDialogFilters();
++                                if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < inu_settledFilters.size()) {
++                                    inu_updateFolderTitle(inu_settledFilters.get(viewPages[0].selectedType));
++                                }
+                                 viewPages[1].setVisibility(View.GONE);
+                                 showScrollbars(true);
+                                 tabsAnimationInProgress = false;
+@@ -3049,6 +3057,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private Drawable premiumStar;
  
      public void updateStatus(TLRPC.User user, boolean animated) {
@@ -34,7 +49,7 @@ index 0000000..0000000 100644
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3569,12 +3573,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3569,12 +3581,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                  statusDrawable.center = true;
@@ -51,7 +66,7 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
-@@ -3719,6 +3727,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3719,6 +3735,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
@@ -62,7 +77,7 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6934,6 +6946,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6934,6 +6954,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -85,7 +100,7 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6960,6 +6988,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6960,6 +6996,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
