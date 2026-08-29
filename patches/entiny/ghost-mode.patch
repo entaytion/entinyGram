@@ -4,13 +4,13 @@ Date: Mon, 10 Aug 2026 08:11:28 +0300
 Subject: Add ghost mode (invisible mode) for read receipts, typing and online status
 
 ---
- .../main/java/org/telegram/messenger/LocaleController.java  | 6 ++++++
- .../java/org/telegram/messenger/MessagesController.java     | 3 +++
- .../main/java/org/telegram/tgnet/ConnectionsManager.java    | 3 +++
- .../org/telegram/ui/Components/ChatAvatarContainer.java     | 1 +
- .../src/main/java/org/telegram/ui/LaunchActivity.java       | 2 +-
- .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++++-
- 6 files changed, 19 insertions(+), 2 deletions(-)
+ .../java/org/telegram/messenger/LocaleController.java |  6 ++++++
+ .../org/telegram/messenger/MessagesController.java    | 11 +++++++++++
+ .../java/org/telegram/tgnet/ConnectionsManager.java   |  3 +++
+ .../telegram/ui/Components/ChatAvatarContainer.java   |  1 +
+ .../src/main/java/org/telegram/ui/LaunchActivity.java |  2 +-
+ .../main/java/org/telegram/ui/ProfileActivity.java    |  6 +++++-
+ 6 files changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 index 0000000..0000000 100644
@@ -33,10 +33,18 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14720,6 +14720,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14720,6 +14720,17 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
++        // Diagnostic for the "unread badge doesn't clear after opening/exiting a forum chat"
++        // report -- dump every call so a captured log (adb, or Settings -> Logs -> Send on a
++        // release build) can show whether this is even reached, and with what threadId/
++        // maxPositiveId, for the specific chat/topic combo that reproduces it.
++        FileLog.d("markDialogAsRead dialogId=" + dialogId + " threadId=" + threadId
++                + " maxPositiveId=" + maxPositiveId + " maxNegativeId=" + maxNegativeId
++                + " isForum=" + isForum(dialogId)
++                + " ghostSuppressed=" + desu.inugram.helpers.security.GhostHelper.shouldSuppressLocalRead(dialogId));
 +        if (desu.inugram.helpers.security.GhostHelper.shouldSuppressLocalRead(dialogId)) {
 +            return;
 +        }

@@ -103,7 +103,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -18699,6 +18741,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18707,6 +18749,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -19549,6 +19592,23 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19557,6 +19600,23 @@ public class MessagesController extends BaseController implements NotificationCe
                  ImageLoader.saveMessageThumbs(message);
                  AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
  
@@ -135,7 +135,7 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21148,6 +21208,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21156,6 +21216,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21272,6 +21336,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21280,6 +21344,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
