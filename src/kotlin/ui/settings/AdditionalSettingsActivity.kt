@@ -30,7 +30,6 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.ShareAlert
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.BuildVars
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -71,18 +70,16 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(mkSubPageButton(BUTTON_CACHE_MANAGEMENT, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheManagement)))
         items.add(UItem.asShadow(null))
 
-        if (BuildVars.DEBUG_VERSION) {
-            items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
-            items.add(
-                UItem.asCheck(
-                    TOGGLE_LOGS_ENABLED,
-                    LocaleController.getString(R.string.InuLogsEnabled),
-                ).setChecked(LogsHelper.isEnabled())
-            )
-            if (LogsHelper.isEnabled()) {
-                items.add(UItem.asCustom(getOrCreateLogsRow()))
-                items.add(UItem.asCustom(getOrCreateHeapRow()))
-            }
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_LOGS_ENABLED,
+                LocaleController.getString(R.string.InuLogsEnabled),
+            ).setChecked(LogsHelper.isEnabled())
+        )
+        if (LogsHelper.isEnabled()) {
+            items.add(UItem.asCustom(getOrCreateLogsRow()))
+            items.add(UItem.asCustom(getOrCreateHeapRow()))
         }
         items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_terminal_2, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))

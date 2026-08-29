@@ -195,12 +195,14 @@ object GhostHelper {
         // divergence between what shouldSuppress() reads and what the Settings UI shows for the
         // same InuConfig fields, instead of guessing again via static analysis.
         if (suppress) {
-            android.util.Log.d(
-                "GhostMode",
-                "suppress dialogId=$dialogId kind=$kind read=${InuConfig.GHOST_HIDE_READ.value} " +
-                    "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
-                    "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}",
-            )
+            val dump = "suppress dialogId=$dialogId kind=$kind read=${InuConfig.GHOST_HIDE_READ.value} " +
+                "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
+                "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}"
+            android.util.Log.d("GhostMode", dump)
+            // Also mirrored to FileLog (no-ops unless LogsHelper/BuildVars.LOGS_ENABLED is on) so
+            // a release-build user can capture this via Settings -> Additional -> Logs -> Send,
+            // without needing adb.
+            org.telegram.messenger.FileLog.d("GhostMode: $dump")
         }
         return suppress
     }
