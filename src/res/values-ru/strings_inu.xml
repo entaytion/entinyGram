@@ -893,6 +893,8 @@
     <string name="InuCenteringSection">Центрирование</string>
     <string name="InuCenterTitleChats">Центрирование в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Переместить аватар вправо</string>
+    <string name="InuCenterTitleFixed">Фиксированное центрирование</string>
+    <string name="InuCenterTitleFixedInfo">Всегда центрирует ровно по середине экрана вместо подстройки под кнопку назад и меню — на перегруженных шапках возможно наложение.</string>
     <string name="InuCenterTitleAdaptiveSize">Адаптивный размер названия (iOS-style)</string>
     <string name="InuCenterTitleMain">Центрированные заголовки экранов</string>
     <string name="InuCenterTitleMainInfo">Центрирует заголовки на всех экранах, кроме чатов — у чатов отдельный переключатель.</string>

@@ -959,6 +959,8 @@
     <string name="InuCategoryProfile">プロフィールとナビゲーション</string>
     <string name="InuCenterTitleAdaptiveSize">適応型タイトルフォント (iOS スタイル)</string>
     <string name="InuCenterTitleRightAvatar">アバターを右側に移動</string>
+    <string name="InuCenterTitleFixed">固定センタリング</string>
+    <string name="InuCenterTitleFixedInfo">戻るボタンやメニューに合わせて調整せず、常に画面の正確な中央に配置します。項目が多いヘッダーでは重なる場合があります。</string>
     <string name="InuCenterTitleMain">画面タイトルを中央揃え</string>
     <string name="InuCenterTitleMainInfo">チャットを除くすべての画面でアクションバーのタイトルを中央に表示します。チャットは別のトグルで制御されます。</string>
     <string name="InuChatTitleMarquee">長いタイトルのマーキースクロール</string>

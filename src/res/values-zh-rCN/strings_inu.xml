@@ -956,6 +956,8 @@
     <string name="InuCategoryProfile">个人资料与导航</string>
     <string name="InuCenterTitleAdaptiveSize">自适应标题字号 (iOS 风格)</string>
     <string name="InuCenterTitleRightAvatar">头像移至右侧</string>
+    <string name="InuCenterTitleFixed">固定居中</string>
+    <string name="InuCenterTitleFixedInfo">始终居中于屏幕正中央，而不是根据返回按钮和菜单自适应——在元素较多的标题栏中可能会重叠。</string>
     <string name="InuCenterTitleMain">居中的屏幕标题</string>
     <string name="InuCenterTitleMainInfo">在聊天以外的所有屏幕上将标题居中显示——聊天使用单独的开关。</string>
     <string name="InuChatTitleMarquee">长标题跑马灯滚动</string>

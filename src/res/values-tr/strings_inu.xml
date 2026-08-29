@@ -955,6 +955,8 @@
     <string name="InuCategoryProfile">Profil ve Gezinme</string>
     <string name="InuCenterTitleAdaptiveSize">Uyarlanabilir başlık yazı tipi (iOS stili)</string>
     <string name="InuCenterTitleRightAvatar">Profil resmini sağa taşı</string>
+    <string name="InuCenterTitleFixed">Sabit ortalama</string>
+    <string name="InuCenterTitleFixedInfo">Geri düğmesine ve menüye uyum sağlamak yerine her zaman ekranın tam ortasına ortalar - yoğun başlıklarda üst üste binme olabilir.</string>
     <string name="InuCenterTitleMain">Ortalanmış ekran başlıkları</string>
     <string name="InuCenterTitleMainInfo">Sohbetler hariç tüm ekranlarda başlıkları ortalar - sohbetlerin ayrı anahtarı vardır.</string>
     <string name="InuChatTitleMarquee">Uzun başlıklar için kayan metin</string>

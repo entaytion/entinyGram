@@ -942,6 +942,14 @@ object InuConfig {
     @JvmField
     val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
 
+    // Only meaningful together with CENTER_TITLE_CHATS: forces the centered chat title/avatar
+    // group onto the screen's true horizontal midpoint always, instead of the default adaptive
+    // placement that shrinks/shifts away from an oversized back button or a busy menu. No-op
+    // while IOS_CHAT_HEADER is on (that mode's avatar-in-corner-slot math already has its own
+    // mandatory avoidance clamp).
+    @JvmField
+    val CENTER_TITLE_FIXED = BoolItem("center_title_fixed", false)
+
     @JvmField
     val IOS_BOTTOM_NAVIGATION_BAR = BoolItem("ios_bottom_navigation_bar", false)
 

@@ -4,10 +4,10 @@ Date: Sat, 29 Aug 2026 15:21:16 +0300
 Subject: Add an iOS-style centered chat header
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 29 +++++++-
- .../java/org/telegram/ui/ChatActivity.java    | 19 ++++++
- .../ui/Components/ChatAvatarContainer.java    | 68 +++++++++++++++++--
- 3 files changed, 110 insertions(+), 6 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 38 ++++++++-
+ .../java/org/telegram/ui/ChatActivity.java    | 19 +++++
+ .../ui/Components/ChatAvatarContainer.java    | 85 ++++++++++++++++++-
+ 3 files changed, 136 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -2389,8 +2403,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2389,8 +2403,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
          final int rightOffset = menuWidthWithPadding;
@@ -57,6 +57,15 @@ index 0000000..0000000 100644
 +            final int symRoom = Math.max(dp(48), 2 * Math.min(centerX - leftDefault, rightLimit - centerX));
 +            final int target = Math.min(symRoom, Math.max(dp(136), chatAvatarContainer.getTitlesWidth() + getCenteredTitlePillPadding()));
 +            final int pillWidth = Math.round(inu_iosHeaderPillWidth.set(target));
++            leftDefault = centerX - pillWidth / 2;
++            rightDefault = leftDefault + pillWidth;
++        } else if (desu.inugram.InuConfig.CENTER_TITLE_FIXED.getValue() && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode()) {
++            // "Fixed" centering (exteraGram-style): always sit at the screen's true horizontal
++            // midpoint, sized to content but NOT clamped against leftDefault/rightDefault's real
++            // back-button/menu edges the way the default branch above is - it can overlap a wide
++            // back button or a busy menu on narrow headers. That's the accepted tradeoff.
++            final int pillWidth = Math.max(dp(48), Math.min(width, chatAvatarContainer.getTitlesWidth() + getCenteredTitlePillPadding()));
++            final int centerX = width / 2;
 +            leftDefault = centerX - pillWidth / 2;
 +            rightDefault = leftDefault + pillWidth;
 +        }
@@ -199,3 +208,27 @@ index 0000000..0000000 100644
              int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
              if (pillWidth <= 0) {
                  pillWidth = getVisualWidth() + dp(12);
+@@ -859,6 +919,23 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             textLeftBound = (centerChatTitle ? inset : (1 + leftPadding + avatarW + dp(8))) + rightAvatarPadding;
+             textRightBound = (right - left) - (centerChatTitle ? inset : dp(glassMode ? 20 : 16));
+         }
++
++        // "Fixed" centering: this container's own screen position/width still comes from the
++        // adaptive math above (and from ActionBar's fixed left margin), so the symmetric inset
++        // we just computed is only centered within THIS container's local box, not necessarily
++        // the screen's true midpoint. Rigidly translate the whole group so its natural center
++        // lands on ActionBar's fixed pill center instead (see ActionBar.updateGlassBounds's
++        // CENTER_TITLE_FIXED branch) - mirrors that branch's tradeoff of accepting overlap over
++        // avoidance. Not applicable to the iOS menu-slot-avatar layout - that branch already has
++        // its own mandatory avoidance clamp around the avatar's fixed corner position.
++        if (centerChatTitle && actionBar != null && desu.inugram.InuConfig.CENTER_TITLE_FIXED.getValue() && !inu_isIosMenuSlotAvatar()) {
++            float naturalCenterX = left + (right - left) / 2f;
++            float desiredCenterX = (actionBar.inu_glassTitleLeft + actionBar.inu_glassTitleRight) / 2f;
++            setTranslationX(desiredCenterX - naturalCenterX);
++        } else {
++            setTranslationX(0);
++        }
++
+         int availableWidth = Math.max(0, textRightBound - textLeftBound);
+ 
+         int l = textLeftBound;

@@ -138,6 +138,15 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                     addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleRightAvatar)),
                 ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
             )
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_CENTER_TITLE_FIXED,
+                    R.string.InuCenterTitleFixed,
+                    R.string.InuCenterTitleFixedInfo,
+                    InuConfig.CENTER_TITLE_FIXED.value,
+                    experimental = true,
+                )
+            )
         }
         items.add(
             mkTwoLineCheckItem(
@@ -354,6 +363,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
             TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
+            TOGGLE_CENTER_TITLE_FIXED -> {
+                val new = InuConfig.CENTER_TITLE_FIXED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_CENTER_TITLE_MAIN -> {
                 val new = InuConfig.CENTER_TITLE_MAIN.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -428,6 +441,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_FIXED = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
@@ -471,6 +485,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
+                SearchRegistry.Entry("center-title-fixed", R.string.InuCenterTitleFixed, TOGGLE_CENTER_TITLE_FIXED),
                 SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),

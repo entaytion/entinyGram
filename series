@@ -354,6 +354,6 @@ bugfix/topics-hidden-general-indicator.patch
 entiny/material3-progress.patch
 entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
-entiny/ios-chat-header.patch
 entiny/build-configuration.patch
 entiny/dialogs-title-text.patch
+entiny/ios-chat-header.patch

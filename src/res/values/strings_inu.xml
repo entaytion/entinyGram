@@ -923,6 +923,8 @@
     <string name="InuCenteringSection">Centering</string>
     <string name="InuCenterTitleChats">Center in chats/channels</string>
     <string name="InuCenterTitleRightAvatar">Move avatar to the right</string>
+    <string name="InuCenterTitleFixed">Fixed centering</string>
+    <string name="InuCenterTitleFixedInfo">Always centers on the exact middle of the screen instead of adapting to the back button and menu, even if that means overlapping them on busy headers.</string>
     <string name="InuCenterTitleMain">Centered screen titles</string>
     <string name="InuCenterTitleMainInfo">Centers action bar titles on all screens except chats - chats use their own toggle.</string>
     <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>
