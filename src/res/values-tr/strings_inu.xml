@@ -35,6 +35,7 @@
     <string name="InuUserProfileInformation">Bilgi</string>
     <string name="InuChatList">Sohbet listesi</string>
     <string name="InuTitleText">Başlık metni</string>
+    <string name="InuTitleTextFolder">Klasör adı</string>
     <string name="InuTitleTextOverrideArchive">Arşive de uygula</string>
     <string name="InuTitleTextOverrideArchiveInfo">Arşiv ekranında varsayılan \"Arşivlenmiş Sohbetler\" yerine aynı başlık metnini kullan</string>
     <string name="InuPullDownAction">Aşağı çekme eylemi</string>

@@ -28,6 +28,7 @@
     <string name="InuUserProfileInformation">Информация</string>
     <string name="InuChatList">Список чатов</string>
     <string name="InuTitleText">Текст заголовка</string>
+    <string name="InuTitleTextFolder">Название папки</string>
     <string name="InuTitleTextOverrideArchive">Применить также к архиву</string>
     <string name="InuTitleTextOverrideArchiveInfo">Использовать тот же текст заголовка на экране архива вместо стандартного «Архивные чаты»</string>
     <string name="InuPullDownAction">Действие при потягивании вниз</string>

@@ -26,6 +26,7 @@
     <string name="InuUserProfileInformation">信息</string>
     <string name="InuChatList">聊天列表</string>
     <string name="InuTitleText">标题文本</string>
+    <string name="InuTitleTextFolder">文件夹名称</string>
     <string name="InuTitleTextOverrideArchive">同时应用于归档</string>
     <string name="InuTitleTextOverrideArchiveInfo">在归档界面使用相同的标题文本，而非默认的"已归档聊天"</string>
     <string name="InuPullDownAction">下拉操作</string>

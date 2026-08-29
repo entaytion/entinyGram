@@ -1071,6 +1071,7 @@
     <string name="InuProfilePhotosSelected">Вибрано: %1$d</string>
 
     <string name="InuTitleText">Текст заголовка</string>
+    <string name="InuTitleTextFolder">Назва папки</string>
     <string name="InuTitleTextOverrideArchive">Застосувати й до архіву</string>
     <string name="InuTitleTextOverrideArchiveInfo">Використовувати той самий текст заголовка на екрані архіву замість стандартного «Архівні чати»</string>
     <string name="InuPullDownAction">Дія при потягуванні вниз</string>

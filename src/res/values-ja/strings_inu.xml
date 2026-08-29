@@ -26,6 +26,7 @@
     <string name="InuUserProfileInformation">情報</string>
     <string name="InuChatList">チャットリスト</string>
     <string name="InuTitleText">タイトルテキスト</string>
+    <string name="InuTitleTextFolder">フォルダ名</string>
     <string name="InuTitleTextOverrideArchive">アーカイブにも適用</string>
     <string name="InuTitleTextOverrideArchiveInfo">アーカイブ画面でも、デフォルトの「アーカイブ済みチャット」の代わりに同じタイトルテキストを使用します</string>
     <string name="InuPullDownAction">プルダウン操作</string>

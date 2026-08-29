@@ -15,9 +15,9 @@ was at risk of being silently dropped or duplicated on every inugram merge.
   custom title also replaces "Archived Chats" on the archive screen
   (previously it always did, unconditionally, which was the actual bug)
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 15 ++++++++++++
- .../ui/Stories/DialogStoriesCell.java         | 23 +++++++++++--------
- 2 files changed, 29 insertions(+), 9 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 30 +++++++++++++++++++
+ .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++------
+ 2 files changed, 44 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -51,16 +51,45 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
-@@ -6960,6 +6968,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3719,6 +3727,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                         checkListLoad(viewPages[0]);
+                         viewPages[0].dialogsAdapter.resume();
+                         viewPages[1].dialogsAdapter.pause();
++                        ArrayList<MessagesController.DialogFilter> inu_settledFilters = getMessagesController().getDialogFilters();
++                        if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < inu_settledFilters.size()) {
++                            inu_updateFolderTitle(inu_settledFilters.get(viewPages[0].selectedType));
++                        }
+                     }
+                 }
+ 
+@@ -6934,6 +6946,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         switchToCurrentSelectedMode(false);
+     }
+ 
++    // Re-asserted both when a folder swipe/tap starts (switchToCurrentSelectedMode) and again once
++    // it actually settles (onPageScrolled progress==1) -- calling it twice is harmless, and doing
++    // it at settle-time is what stops a stale filter's name from flashing if some unrelated update
++    // (e.g. a message arriving mid-swipe) races the title back to viewPages[0] before the swap.
++    private void inu_updateFolderTitle(MessagesController.DialogFilter filter) {
++        if (actionBar == null || folderId != 0 || communityId != 0 || filter == null) {
++            return;
++        }
++        if (desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() != desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
++            return;
++        }
++        actionBar.setTitle(filter.isDefault()
++                ? desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)
++                : desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first);
++    }
++
+     public void switchToCurrentSelectedMode(boolean animated) {
+         for (int a = 0; a < viewPages.length; a++) {
+             viewPages[a].listView.stopScroll();
+@@ -6960,6 +6988,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
-+        if (actionBar != null && folderId == 0 && communityId == 0
-+                && desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() == desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
-+            actionBar.setTitle(filter.isDefault()
-+                    ? desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)
-+                    : desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first);
-+        }
++        inu_updateFolderTitle(filter);
 +
          viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
          viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
