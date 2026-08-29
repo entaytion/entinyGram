@@ -351,3 +351,6 @@ misc/remove-unused-hockeyapp.patch
 misc/remove-unused-apptests.patch
 entiny/send-round-video.patch
 entiny/gif-restriction-bypass.patch
+misc/optimize-build.patch
+bugfix/redundant-lang-code-native-calls.patch
+bugfix/topics-hidden-general-indicator.patch

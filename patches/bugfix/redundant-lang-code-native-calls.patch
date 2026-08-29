@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 29 Aug 2026 11:01:51 +0300
+Subject: Remove redundant per-account loop around ConnectionsManager.setLangCode
+
+---
+ .../main/java/org/telegram/messenger/LocaleController.java    | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+@@ -3356,9 +3356,7 @@ public class LocaleController {
+                     }
+                 }, ConnectionsManager.RequestFlagWithoutLogin);
+             } else {
+-                for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+-                    ConnectionsManager.setLangCode(localeInfo.getLangCode());
+-                }
++                ConnectionsManager.setLangCode(localeInfo.getLangCode());
+                 FileLog.d("applyRemoteLanguage getLangPack");
+                 TLRPC.TL_langpack_getLangPack req = new TLRPC.TL_langpack_getLangPack();
+                 req.lang_code = localeInfo.getLangCode();
