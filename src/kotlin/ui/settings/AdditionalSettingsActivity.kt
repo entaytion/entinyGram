@@ -42,6 +42,7 @@ import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.Cells.CheckBoxCell
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.BulletinFactory
@@ -285,11 +286,19 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             return
         }
         val checked = BooleanArray(categories.size) { true }
+        val list = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
+        categories.forEachIndexed { i, category ->
+            list.addView(CheckBoxCell(activity, 1).apply {
+                setText(category, "", true, i != categories.lastIndex)
+                setOnClickListener {
+                    checked[i] = !checked[i]
+                    setChecked(checked[i], true)
+                }
+            })
+        }
         AlertDialog.Builder(activity)
             .setTitle(LocaleController.getString(R.string.InuLogsShareByCategory))
-            .setMultiChoiceItems(categories.toTypedArray(), checked) { _, which, isChecked ->
-                checked[which] = isChecked
-            }
+            .setView(list)
             .setPositiveButton(LocaleController.getString(R.string.InuLogsShare)) { _, _ ->
                 val selected = categories.filterIndexed { i, _ -> checked[i] }.toSet()
                 if (selected.isEmpty()) return@setPositiveButton
