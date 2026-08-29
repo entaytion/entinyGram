@@ -15,9 +15,9 @@ was at risk of being silently dropped or duplicated on every inugram merge.
   custom title also replaces "Archived Chats" on the archive screen
   (previously it always did, unconditionally, which was the actual bug)
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 30 +++++++++++++++++++
- .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++------
- 2 files changed, 44 insertions(+), 9 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 36 +++++++++++++++++++
+ .../ui/Stories/DialogStoriesCell.java         | 23 +++++++-----
+ 2 files changed, 50 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -85,11 +85,17 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6960,6 +6988,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6960,6 +6988,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
-+        inu_updateFolderTitle(filter);
++        if (!animated) {
++            // Animated swipes/taps only get the title update once they actually settle (see
++            // onPageScrolled's progress==1 branch) -- setting it here too, eagerly, against the
++            // still-outgoing viewPages[a], is exactly what caused the previous folder's name to
++            // flash mid-swipe.
++            inu_updateFolderTitle(filter);
++        }
 +
          viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
          viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
