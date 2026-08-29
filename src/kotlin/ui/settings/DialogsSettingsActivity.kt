@@ -412,6 +412,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                     LocaleController.getString(R.string.Username),
                     LocaleController.getString(R.string.FirstNameSmall),
                     LocaleController.getString(R.string.Chats),
+                    LocaleController.getString(R.string.InuTitleTextFolder),
                 ),
                 InuConfig.DIALOGS_TITLE_TEXT.value - 1,
             ) { which ->
@@ -579,6 +580,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             InuConfig.DialogsTitleTextItem.USERNAME -> LocaleController.getString(R.string.Username)
             InuConfig.DialogsTitleTextItem.FIRST_NAME -> LocaleController.getString(R.string.FirstNameSmall)
             InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.Chats)
+            InuConfig.DialogsTitleTextItem.FOLDER -> LocaleController.getString(R.string.InuTitleTextFolder)
             else -> LocaleController.getString(R.string.AppName)
         }
 

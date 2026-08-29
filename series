@@ -342,7 +342,6 @@ debloat/hide-rich-editor-button.patch
 bugfix/playback-progress-on-message-replace.patch
 bugfix/action-bar-overlay-animation.patch
 feature/hdr-images.patch
-entiny/dialogs-title-text.patch
 entiny/poll-show-results-before-vote.patch
 misc/remove-unused-huawei.patch
 misc/remove-unused-hockeyapp.patch
@@ -357,3 +356,4 @@ entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
 entiny/ios-chat-header.patch
 entiny/build-configuration.patch
+entiny/dialogs-title-text.patch

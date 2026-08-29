@@ -15,9 +15,9 @@ was at risk of being silently dropped or duplicated on every inugram merge.
   custom title also replaces "Archived Chats" on the archive screen
   (previously it always did, unconditionally, which was the actual bug)
 ---
- .../java/org/telegram/ui/DialogsActivity.java |  8 +++++++
+ .../java/org/telegram/ui/DialogsActivity.java | 15 ++++++++++++
  .../ui/Stories/DialogStoriesCell.java         | 23 +++++++++++--------
- 2 files changed, 22 insertions(+), 9 deletions(-)
+ 2 files changed, 29 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -51,6 +51,20 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
+@@ -6960,6 +6968,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             viewPages[1].isLocked = filter.locked;
+         }
+ 
++        if (actionBar != null && folderId == 0 && communityId == 0
++                && desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() == desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
++            actionBar.setTitle(filter.isDefault()
++                    ? desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)
++                    : desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first);
++        }
++
+         viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
+         viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
+         checkListLoad(viewPages[a]);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
