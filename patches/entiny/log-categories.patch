@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 30 Aug 2026 00:21:50 +0300
+Subject: Add per-category log capture (auto-detected from caller)
+
+---
+ .../src/main/java/org/telegram/messenger/FileLog.java        | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLog.java
+@@ -382,6 +382,7 @@ public class FileLog {
+         if (!BuildVars.LOGS_ENABLED) {
+             return;
+         }
++        desu.inugram.helpers.LogCategoryHelper.record(message + " " + exception);
+         ensureInitied();
+         Log.e(tag, message, exception);
+         if (getInstance().streamWriter != null) {
+@@ -405,6 +406,7 @@ public class FileLog {
+         if (!BuildVars.LOGS_ENABLED) {
+             return;
+         }
++        desu.inugram.helpers.LogCategoryHelper.record(message);
+         ensureInitied();
+         Log.e(tag, message);
+         if (getInstance().streamWriter != null) {
+@@ -514,6 +516,7 @@ public class FileLog {
+         if (e instanceof OutOfMemoryError) {
+             getInstance().dumpMemory(false);
+         }
++        desu.inugram.helpers.LogCategoryHelper.record("FATAL: " + e);
+         if (logToAppCenter && BuildVars.DEBUG_VERSION && needSent(e)) {
+             AndroidUtilities.appCenterLog(e);
+         }
+@@ -563,6 +566,7 @@ public class FileLog {
+         if (!BuildVars.LOGS_ENABLED) {
+             return;
+         }
++        desu.inugram.helpers.LogCategoryHelper.record(message);
+         ensureInitied();
+         Log.d(tag, message);
+         if (getInstance().streamWriter != null) {
+@@ -584,6 +588,7 @@ public class FileLog {
+         if (!BuildVars.LOGS_ENABLED) {
+             return;
+         }
++        desu.inugram.helpers.LogCategoryHelper.record(message);
+         ensureInitied();
+         Log.w(tag, message);
+         if (getInstance().streamWriter != null) {
