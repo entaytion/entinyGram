@@ -14,6 +14,11 @@ on:
         options:
           - release
           - release+tg
+      prerelease:
+        description: 'Mark as a pre-release build (adds a "‼️ PRE RELEASE" banner to the main channel post, between the version line and the changelog)'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: build-apk-${{ github.ref }}
@@ -139,15 +144,24 @@ jobs:
         env:
           COMMIT_ID: ${{ github.sha }}
           INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          INU_BUILD_TYPE: release
+          INU_BUILD_TYPE: ${{ inputs.prerelease == 'true' && 'beta' || 'release' }}
           ABI_FILTERS: arm64-v8a
           CCACHE_COMPILERCHECK: content
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          mkdir -p "$GITHUB_WORKSPACE/out"
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+          # Pre-release builds compile the debug buildType instead -- it carries the ".beta"
+          # applicationId suffix, so it installs side-by-side with the main app instead of
+          # overwriting it (still signed with the same release keystore, see build.gradle).
+          if [ '${{ inputs.prerelease }}' = 'true' ]; then
+            ./gradlew --no-daemon :TMessagesProj_App:assembleDebug
+            mkdir -p "$GITHUB_WORKSPACE/out"
+            cp TMessagesProj_App/build/outputs/apk/debug/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+          else
+            ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+            mkdir -p "$GITHUB_WORKSPACE/out"
+            cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+          fi
 
       - name: Show ccache stats
         if: always()
@@ -291,6 +305,7 @@ jobs:
           path: out
 
       - name: Create GitHub release
+        if: inputs.prerelease != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -333,10 +348,13 @@ jobs:
           TELEGRAM_CI_CHANNEL:   ${{ vars.TELEGRAM_CI_CHANNEL || vars.TELEGRAM_CHANNEL }}
           MTPROTO_SESSION:       ${{ secrets.MTPROTO_SESSION }}
           GH_VARS_TOKEN:         ${{ secrets.GH_VARS_TOKEN }}
+          PRE_RELEASE:           ${{ inputs.prerelease }}
         run: |
           # Always upload to CI channel.
-          # Only post to main channel when mode is "release+tg".
-          if [ '${{ inputs.mode }}' = 'release+tg' ]; then
+          # Only post to main channel when mode is "release+tg" -- and never for a pre-release,
+          # even if release+tg was selected alongside it by mistake; pre-releases are test builds
+          # for the CI channel only.
+          if [ '${{ inputs.mode }}' = 'release+tg' ] && [ '${{ inputs.prerelease }}' != 'true' ]; then
             bun run tsx scripts/ci/upload.ts out
           else
             bun run tsx scripts/ci/upload.ts out --ci-only
@@ -348,5 +366,11 @@ jobs:
           GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
         run: |
           next_day_counter=$((${{ needs.build.outputs.day-counter }} + 1))
-          gh variable set INU_DAY_STATE    --body "${{ needs.build.outputs.date }}:$next_day_counter"
-          gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
+          gh variable set INU_DAY_STATE --body "${{ needs.build.outputs.date }}:$next_day_counter"
+          # Pre-releases don't advance the changelog base -- so once the fixes they were testing
+          # actually ship in a normal release, its changelog spans everything since the last real
+          # release (including all commits that only ever went out in pre-release test builds),
+          # instead of silently dropping them because a pre-release "used them up" already.
+          if [ '${{ inputs.prerelease }}' != 'true' ]; then
+            gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
+          fi

@@ -116,6 +116,15 @@ try {
   // shows up in the on-device update dialog too. Fall back to Ukrainian only if no EN notes.
   const ciHtml = enHtml ?? ukHtml
 
+  const isPreRelease = process.env.PRE_RELEASE === 'true'
+
+  // Pre-releases compile the .beta-suffixed debug buildType (see apk.yml), so they install as a
+  // separate app alongside the main one instead of updating it -- call that out explicitly since
+  // it's easy to miss and testers might otherwise expect it to replace their main install.
+  const preReleaseBanner = isPreRelease
+    ? html`‼️ <b>PRE RELEASE</b>\nThis is a test build aimed at fixing bugs and issues reported by the community. Expect instability. Note: this installs as a separate app (different package name) alongside your main entinyGram install, it will not update it.<br/><br/>`
+    : ''
+
   // 1) Upload the APK document to the CI channel — always happens. The changelog goes in a
   // <blockquote>: UpdateHelper.kt's extractApkInfo/applyUpdate clips the update-dialog text to
   // exactly this entity, discarding the #release/label wrapper text around it.
@@ -124,10 +133,12 @@ try {
     type: 'document',
     file: `file:${join(artifactDir, file)}`,
     fileName: file,
-    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/><blockquote>${ciHtml}</blockquote><br/>🏷️ #release • @entinyGram • @entinyGramChat`,
+    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${ciHtml}</blockquote><br/>🏷️ #release • @entinyGram • @entinyGramChat`,
   })
 
-  // 2) If --ci-only, stop here — no main channel post.
+  // 2) If --ci-only, stop here — no main channel post. Pre-releases are always ci-only (see
+  // apk.yml), so this is also where their message content lives -- the main-channel blocks below
+  // never run for a pre-release.
   if (ciOnly) {
     console.log('CI-only mode: APK uploaded to CI channel, skipping main channel post.')
   } else {

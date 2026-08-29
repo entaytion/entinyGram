@@ -17,14 +17,13 @@ object LogsHelper {
     private const val SYSTEM_PREFS = "systemConfig"
     private const val LOGS_ENABLED_KEY = "logsEnabled"
 
-    // Nothing here actually requires a debug build -- FileLog itself is already gated at
-    // runtime by BuildVars.LOGS_ENABLED (which stock's own hidden debug menu can already flip
-    // via the "logsEnabled" SharedPreferences key), and every other piece (zipping, sharing) is
-    // plain file I/O. Restricting this to DEBUG_VERSION only meant release-build users had no
-    // way to capture logs for bug reports without a separate debug APK.
-    fun isEnabled(): Boolean = BuildVars.LOGS_ENABLED
+    // Gated on the .beta app variant (testers), not BuildVars.DEBUG_VERSION -- the main/production
+    // release build shouldn't surface debug tooling to regular users at all, but beta testers
+    // (who report most bugs) need a way to capture logs without a separate debug-only APK.
+    fun isEnabled(): Boolean = BuildVars.isBetaApp() && BuildVars.LOGS_ENABLED
 
     fun setEnabled(enabled: Boolean) {
+        if (!BuildVars.isBetaApp()) return
         if (BuildVars.LOGS_ENABLED == enabled) return
         BuildVars.LOGS_ENABLED = enabled
         ApplicationLoader.applicationContext.getSharedPreferences(SYSTEM_PREFS, Context.MODE_PRIVATE).edit {
