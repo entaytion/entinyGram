@@ -350,3 +350,4 @@ misc/remove-unused-standalone.patch
 misc/remove-unused-hockeyapp.patch
 misc/remove-unused-apptests.patch
 entiny/send-round-video.patch
+entiny/gif-restriction-bypass.patch

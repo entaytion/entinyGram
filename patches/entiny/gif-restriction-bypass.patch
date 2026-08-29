@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 29 Aug 2026 10:37:17 +0300
+Subject: Bypass GIF-only chat restrictions by sending as video
+
+---
+ .../main/java/org/telegram/messenger/SendMessagesHelper.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -1918,6 +1918,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (document == null) {
+             return;
+         }
++        if (desu.inugram.helpers.media.GifBypassHelper.shouldBypass(currentAccount, peer, document)) {
++            if (desu.inugram.helpers.media.GifBypassHelper.sendAsVideo(getAccountInstance(), document, peer, caption, replyToMsg, replyToTopMsg, storyItem, quote, notify, scheduleDate, scheduleRepeatPeriod, sendMessageChatArguments, stars, monoForumPeerId, suggestionParams)) {
++                return;
++            }
++        }
+         if (DialogObject.isEncryptedDialog(peer)) {
+             int encryptedId = DialogObject.getEncryptedChatId(peer);
+             TLRPC.EncryptedChat encryptedChat = getMessagesController().getEncryptedChat(encryptedId);
