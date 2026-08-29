@@ -346,7 +346,6 @@ feature/hdr-images.patch
 entiny/dialogs-title-text.patch
 entiny/poll-show-results-before-vote.patch
 misc/remove-unused-huawei.patch
-misc/remove-unused-standalone.patch
 misc/remove-unused-hockeyapp.patch
 misc/remove-unused-apptests.patch
 entiny/send-round-video.patch
