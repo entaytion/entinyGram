@@ -6,15 +6,15 @@ Subject: Configure ABI filters, R8 rules, and local builds
 ---
  TMessagesProj/build.gradle       | 11 +++++++++--
  TMessagesProj/proguard-rules.pro | 14 +++++++++++---
- TMessagesProj_App/build.gradle   | 27 ++++++++++++++++++++++++---
+ TMessagesProj_App/build.gradle   | 29 +++++++++++++++++++++++++----
  build.gradle                     | 29 +++++++++++++++++++++++++++--
- 4 files changed, 71 insertions(+), 10 deletions(-)
+ 4 files changed, 72 insertions(+), 11 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -61,7 +61,9 @@ dependencies {
+@@ -60,7 +60,9 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -138,7 +140,12 @@ android {
+@@ -145,7 +147,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      buildToolsVersion '36.0.0'
 +    ndkVersion "27.2.12479018"
  
-     defaultConfig.applicationId = "desu.inugram"
+     defaultConfig.applicationId = "ua.entaytion.entinygram"
  
 -    sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
 +    externalNativeBuild {
@@ -121,8 +121,12 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -86,7 +102,7 @@ android {
-             shrinkResources false
+@@ -83,10 +99,10 @@ android {
+             jniDebuggable false
+             signingConfig signingConfigs.release
+             minifyEnabled true
+-            shrinkResources false
++            shrinkResources true
              multiDexEnabled true
              proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
 -            ndk.debugSymbolLevel = 'FULL'

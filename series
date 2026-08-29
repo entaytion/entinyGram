@@ -254,7 +254,6 @@ entiny/save-stories.patch
 entiny/save-self-destruct.patch
 entiny/ai-compose.patch
 feature/faster-file-load.patch
-entiny/build-configuration.patch
 bugfix/album-caption-spoiler-reset.patch
 bugfix/story-privacy-hint-npe.patch
 bugfix/preview-rotation-black-screen.patch
@@ -357,3 +356,4 @@ entiny/material3-progress.patch
 entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
 entiny/ios-chat-header.patch
+entiny/build-configuration.patch

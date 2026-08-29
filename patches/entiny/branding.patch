@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -86,7 +86,9 @@ dependencies {
+@@ -84,7 +84,9 @@ dependencies {
      api project(':jlatexmath')
  
      // inu
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
      // end inu
  
  //    implementation 'com.google.mlkit:translate:17.0.3'
-@@ -110,6 +112,12 @@ android {
+@@ -108,6 +110,12 @@ android {
  
      sourceSets.main.jniLibs.srcDirs = ['./jni/']
  
@@ -269,12 +269,12 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -26,7 +26,7 @@ android {
+@@ -25,7 +25,7 @@ android {
+     compileSdkVersion 36
      buildToolsVersion '36.0.0'
-     ndkVersion "27.2.12479018"
  
 -    defaultConfig.applicationId = "desu.inugram"
 +    defaultConfig.applicationId = "ua.entaytion.entinygram"
  
-     externalNativeBuild {
-         cmake {
+     sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
+ 
