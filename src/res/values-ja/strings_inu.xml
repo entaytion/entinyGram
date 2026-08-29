@@ -1238,7 +1238,7 @@
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
     <string name="InuIosBottomBarInfo">ボトムタブバーをiOSのような幅広で均等配置のカプセル型に変更します。Material 3のボトムタブは無効になります。</string>
     <string name="InuIosChatHeader">iOS風のチャットヘッダー</string>
-    <string name="InuIosChatHeaderInfo">iOS版Telegramのように、アバター・タイトル・サブタイトルを中央に寄せた丸いピル型の背景をチャットヘッダーに描画します。チャットタイトルの中央揃えを伴います。アバターが「⋮」メニューボタンの代わりになります — タップでプロフィールを開き、長押しでチャットメニューを開きます。かなり粗い実装で、これ以上磨き上げる予定はありません — プルリクエスト歓迎です。</string>
+    <string name="InuIosChatHeaderInfo">iOS版Telegramのように、アバター・タイトル・サブタイトルを中央に寄せた丸いピル型の背景をチャットヘッダーに描画します。チャットタイトルの中央揃えを伴います。アバターが「⋮」メニューボタンの代わりになります — タップでチャットメニューを開き、長押しでプロフィールを開きます。かなり粗い実装で、これ以上磨き上げる予定はありません — プルリクエスト歓迎です。</string>
     <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>

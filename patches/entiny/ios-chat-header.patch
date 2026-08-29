@@ -5,9 +5,9 @@ Subject: Add an iOS-style centered chat header
 
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 38 ++++++++-
- .../java/org/telegram/ui/ChatActivity.java    | 19 +++++
+ .../java/org/telegram/ui/ChatActivity.java    | 20 +++++
  .../ui/Components/ChatAvatarContainer.java    | 85 ++++++++++++++++++-
- 3 files changed, 136 insertions(+), 6 deletions(-)
+ 3 files changed, 137 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -76,26 +76,27 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4349,6 +4349,25 @@ public class ChatActivity extends BaseFragment implements
+@@ -4349,6 +4349,26 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
 +            if (avatarContainer != null && avatarContainer.inu_isIosMenuSlotAvatar()) {
 +                // iOS-style header: the chat avatar is laid out in this slot instead of the
 +                // "..." icon (see ChatAvatarContainer#onLayout), so hide the icon and make the
-+                // slot behave like the avatar — tap opens the profile, long press opens the menu.
++                // slot behave like the old "..." button — tap opens the chat menu. Long-press
++                // opens the profile instead (the centered title/subtitle in the middle of the
++                // header still opens the profile on a plain tap too, via ChatAvatarContainer's
++                // own click listener, so this is just an alternate route to the same place).
 +                final ActionBarMenuItem inu_headerItem = headerItem;
 +                headerItem.getIconView().setAlpha(0f);
-+                headerItem.setOnClickListener(v -> {
++                headerItem.setOnClickListener(v -> inu_headerItem.toggleSubMenu());
++                headerItem.setOnLongClickListener(v -> {
 +                    // Mirror ChatAvatarContainer's own avatarImageView click listener: a linked
 +                    // community (channel/user with linked_community_id) takes over the tap and
 +                    // opens CommunitySheet instead of the profile — see onAvatarClick() overrides.
 +                    if (!avatarContainer.onAvatarClick()) {
 +                        avatarContainer.openProfile(true);
 +                    }
-+                });
-+                headerItem.setOnLongClickListener(v -> {
-+                    inu_headerItem.toggleSubMenu();
 +                    return true;
 +                });
 +            }

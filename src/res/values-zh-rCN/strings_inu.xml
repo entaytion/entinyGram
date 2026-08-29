@@ -1239,7 +1239,7 @@
     <string name="InuIosBottomBar">iOS 风格底部栏</string>
     <string name="InuIosBottomBarInfo">使底部标签栏呈现 iOS 那种更宽、均匀分布的胶囊样式。会禁用 Material 3 底部标签。</string>
     <string name="InuIosChatHeader">iOS 风格聊天顶栏</string>
-    <string name="InuIosChatHeaderInfo">将聊天顶栏背景绘制为围绕并居中头像、标题和副标题的圆角\"胶囊\"形状,如同 iOS 版 Telegram。这会启用聊天标题居中。头像会替代\"⋮\"菜单按钮——点击打开个人资料,长按打开聊天菜单。这是一个相当粗糙的补丁,我们自己不打算继续打磨——欢迎提交 Pull Request。</string>
+    <string name="InuIosChatHeaderInfo">将聊天顶栏背景绘制为围绕并居中头像、标题和副标题的圆角\"胶囊\"形状,如同 iOS 版 Telegram。这会启用聊天标题居中。头像会替代\"⋮\"菜单按钮——点击打开聊天菜单,长按打开个人资料。这是一个相当粗糙的补丁,我们自己不打算继续打磨——欢迎提交 Pull Request。</string>
     <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>

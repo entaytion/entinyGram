@@ -1238,7 +1238,7 @@
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
     <string name="InuIosBottomBarInfo">Alt sekme çubuğunu iOS\'un daha geniş, eşit aralıklı kapsül stiline uygun hale getirir. Material 3 alt sekmelerini devre dışı bırakır.</string>
     <string name="InuIosChatHeader">iOS tarzı sohbet başlığı</string>
-    <string name="InuIosChatHeaderInfo">Sohbet başlığı arka planını, avatarı, başlığı ve alt başlığı saran ve ortalayan yuvarlak bir \"hap\" şeklinde çizer, tıpkı Telegram iOS\'ta olduğu gibi. Sohbet başlıklarının ortalanmasını da beraberinde getirir. Avatar, \"⋮\" menü düğmesinin yerini alır — dokunmak profili açar, uzun basmak sohbet menüsünü açar. Bu oldukça kaba bir yama ve kendimiz daha fazla cilalamayı planlamıyoruz — pull request\'ler memnuniyetle karşılanır.</string>
+    <string name="InuIosChatHeaderInfo">Sohbet başlığı arka planını, avatarı, başlığı ve alt başlığı saran ve ortalayan yuvarlak bir \"hap\" şeklinde çizer, tıpkı Telegram iOS\'ta olduğu gibi. Sohbet başlıklarının ortalanmasını da beraberinde getirir. Avatar, \"⋮\" menü düğmesinin yerini alır — dokunmak sohbet menüsünü açar, uzun basmak profili açar. Bu oldukça kaba bir yama ve kendimiz daha fazla cilalamayı planlamıyoruz — pull request\'ler memnuniyetle karşılanır.</string>
     <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
     <string name="InuStopBot">Botu durdur</string>
     <string name="InuStopBotAction">Durdur</string>

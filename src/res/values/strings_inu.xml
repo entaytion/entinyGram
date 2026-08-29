@@ -929,7 +929,7 @@
     <string name="InuCenterTitleMainInfo">Centers action bar titles on all screens except chats - chats use their own toggle.</string>
     <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>
     <string name="InuIosChatHeader">iOS-style chat header</string>
-    <string name="InuIosChatHeaderInfo">Draws the chat header background as a rounded pill that hugs and centers around the avatar, title and subtitle, like Telegram for iOS. Implies centered chat titles. The avatar replaces the \"⋮\" menu button — tap it to open the profile, long-press it to open the chat menu. This is a pretty janky patch and we don\'t plan on polishing it further ourselves — pull requests welcome.</string>
+    <string name="InuIosChatHeaderInfo">Draws the chat header background as a rounded pill that hugs and centers around the avatar, title and subtitle, like Telegram for iOS. Implies centered chat titles. The avatar replaces the \"⋮\" menu button — tap it to open the chat menu, long-press it to open the profile. This is a pretty janky patch and we don\'t plan on polishing it further ourselves — pull requests welcome.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuFloatingAvatar">Floating avatar in chat header</string>
