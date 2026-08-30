@@ -18,7 +18,6 @@
     <string name="InuLegacySettingsLink">This settings link format is obsolete. Use tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>
-    <string name="InuUpdates">Updates</string>
     <string name="InuAutoUpdateCheck">Check for updates</string>
     <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>
     <string name="InuUpdatesIncludeBeta">Catch beta updates</string>
