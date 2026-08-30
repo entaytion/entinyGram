@@ -350,7 +350,6 @@ entiny/send-round-video.patch
 entiny/gif-restriction-bypass.patch
 misc/optimize-build.patch
 bugfix/redundant-lang-code-native-calls.patch
-bugfix/topics-hidden-general-indicator.patch
 entiny/material3-progress.patch
 entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
