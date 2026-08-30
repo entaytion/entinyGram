@@ -30,16 +30,52 @@ object InuConfig {
     // no stored master flag (see GhostHelper's class doc). Without this, anyone who had the old
     // master switch on silently lost every bit of Ghost Mode protection the moment they updated
     // past that change -- the new sub-toggles all default to false, so nothing carries over.
+    //
+    // This migration is destructive (it force-sets five sub-toggles), so it MUST be strictly
+    // one-time. Its original guard was the mere presence of the legacy key, with the removal of
+    // that key as the only record that it had run -- i.e. the run-record lived in the same
+    // prefs file the migration writes, and nowhere else. Anything that reintroduces an older
+    // `inugram.xml` (Android Auto Backup / device-to-device restore -- the manifest ships
+    // allowBackup="true" + restoreAnyVersion="true" with no dataExtractionRules exclusion --
+    // or any external prefs restore) re-arms the legacy key and re-fires the migration, stomping
+    // the user's real per-toggle choices back to "all ghost on". That is the reported
+    // "all four sub-toggles are active after an update even though only one is enabled" bug.
+    //
+    // [GHOST_MASTER_FLAG_MIGRATED] is an independent, non-exportable run-record: once it is set,
+    // the migration never applies again regardless of whether the legacy key comes back.
     private fun migrateGhostMasterFlag() {
-        if (!prefs.contains("ghost_mode")) return
-        if (prefs.getBoolean("ghost_mode", false)) {
+        if (GHOST_MASTER_FLAG_MIGRATED.value) {
+            // Legacy key resurfaced (restore/import) after we had already migrated -- drop it
+            // without touching the user's sub-toggles.
+            if (prefs.contains("ghost_mode")) {
+                logGhostMigration("skipped (already migrated), dropping resurfaced legacy ghost_mode key")
+                prefs.edit(commit = true) { remove("ghost_mode") }
+            }
+            return
+        }
+        val hadLegacyMaster = prefs.contains("ghost_mode") && prefs.getBoolean("ghost_mode", false)
+        if (hadLegacyMaster) {
             GHOST_HIDE_READ.value = true
             GHOST_HIDE_VOICE_READ.value = true
             GHOST_HIDE_STORY_READ.value = true
             GHOST_HIDE_TYPING.value = true
             GHOST_PRESENCE_MODE.value = GhostPresenceModeItem.HIDDEN
+            logGhostMigration("applied: legacy ghost_mode=true -> all sub-toggles forced on")
+        } else {
+            logGhostMigration("skipped: no legacy ghost_mode=true (contains=${prefs.contains("ghost_mode")})")
         }
-        prefs.edit(commit = true) { remove("ghost_mode") }
+        // Record the run first, then clear the legacy key. If the process dies between the two,
+        // the worst case is a stale key that the already-migrated branch above cleans up later --
+        // never a second stomp.
+        GHOST_MASTER_FLAG_MIGRATED.value = true
+        if (prefs.contains("ghost_mode")) prefs.edit(commit = true) { remove("ghost_mode") }
+    }
+
+    // Mirrors GhostHelper.shouldSuppress's convention: Log.d for adb, FileLog.d so a release-build
+    // tester can capture it via Settings -> Additional -> Logs -> Send.
+    private fun logGhostMigration(what: String) {
+        android.util.Log.d("GhostMode", "migrateGhostMasterFlag $what")
+        org.telegram.messenger.FileLog.d("GhostMode: migrateGhostMasterFlag $what")
     }
 
     // SAVE_SELF_DESTRUCT and SAVE_SECRET_CHAT_CONTENT (two single bools) were split into the
@@ -573,6 +609,9 @@ object InuConfig {
 
     @JvmField
     val DISABLE_QUICK_SHARE = BoolItem("disable_quick_share", true)
+
+    @JvmField
+    val HIDE_CHANNEL_SHARE_BUTTON = BoolItem("hide_channel_share_button", false)
 
     @JvmField
     val DISABLE_PROFILE_MUSIC_AUTOPLAY = BoolItem("disable_profile_music_autoplay", true)
@@ -1175,6 +1214,12 @@ object InuConfig {
     @JvmField
     val UPDATES_ENABLED = UpdatesEnabledItem()
 
+    // Opts into also matching #prerelease-tagged CI posts (see scripts/ci/upload.ts /
+    // UpdateHelper.searchByTag). Off by default -- regular users only ever match #release, so a
+    // beta/pre-release build can never get offered to someone who didn't ask for it.
+    @JvmField
+    val UPDATES_INCLUDE_BETA = BoolItem("updates_include_beta", false)
+
     // internal state
     @JvmField
     val VOICE_HINT_SHOWN = BoolItem("voice_hint_shown", false, exportable = false)
@@ -1284,6 +1329,11 @@ object InuConfig {
     // quick toggle. All suppression defaults stay off so a fresh install remains
     // stock-identical without needing a gate. GHOST_READ_ON_SEND defaults to true,
     // matching AyuGram's markReadAfterSend.
+    // Run-record for [migrateGhostMasterFlag]. Never exported: a backup taken before the
+    // migration must not be able to un-set it and re-arm the stomp on restore.
+    @JvmField
+    val GHOST_MASTER_FLAG_MIGRATED = BoolItem("ghost_master_flag_migrated", false, exportable = false)
+
     @JvmField
     val GHOST_HIDE_READ = BoolItem("ghost_hide_read", false)
 

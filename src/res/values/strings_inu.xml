@@ -18,6 +18,11 @@
     <string name="InuLegacySettingsLink">This settings link format is obsolete. Use tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>
+    <string name="InuUpdates">Updates</string>
+    <string name="InuAutoUpdateCheck">Check for updates</string>
+    <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>
+    <string name="InuUpdatesIncludeBeta">Catch beta updates</string>
+    <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta test builds. If a stable release is newer than the beta you\'re on, that\'s offered instead.</string>
     <string name="InuAppearance">Appearance</string>
     <string name="InuLookAndFeel">Look &amp; Feel</string>
     <string name="InuBehavior">Behavior</string>
@@ -102,6 +107,8 @@
     <string name="InuDisableSensitive">Disable sensitive filter</string>
     <string name="InuDisableQuickShare">Disable quick share</string>
     <string name="InuDisableQuickShareInfo">Don\'t show frequent contacts on long-tapping the share button (next to channel messages); it sends without confirmation</string>
+    <string name="InuHideChannelShareButton">Hide channel share button</string>
+    <string name="InuHideChannelShareButtonInfo">Hide the small share/forward icon next to channel posts entirely. The normal forward action from the message menu still works.</string>
     <string name="InuDisableProfileMusicAutoplay">Disable profile music auto-play</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Don\'t start playback automatically when opening the pinned music player on a profile</string>
     <string name="InuDisableChatBackgrounds">Disable custom chat backgrounds</string>

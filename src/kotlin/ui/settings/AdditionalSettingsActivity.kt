@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
@@ -44,6 +45,7 @@ import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.Cells.CheckBoxCell
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
@@ -62,6 +64,27 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     private var bottomInset: Int = 0
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuUpdates)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_AUTO_UPDATE_CHECK,
+                R.string.InuAutoUpdateCheck,
+                R.string.InuAutoUpdateCheckInfo,
+                InuConfig.UPDATES_ENABLED.value,
+            )
+        )
+        if (InuConfig.UPDATES_ENABLED.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_UPDATES_INCLUDE_BETA,
+                    R.string.InuUpdatesIncludeBeta,
+                    R.string.InuUpdatesIncludeBetaInfo,
+                    InuConfig.UPDATES_INCLUDE_BETA.value,
+                )
+            )
+        }
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.inu_tabler_file_export, LocaleController.getString(R.string.InuBackupExport)))
         items.add(UItem.asButton(BUTTON_IMPORT, R.drawable.inu_tabler_file_import, LocaleController.getString(R.string.InuBackupImport)))
@@ -124,6 +147,17 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            TOGGLE_AUTO_UPDATE_CHECK -> {
+                val new = InuConfig.UPDATES_ENABLED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                listView?.adapter?.update(true)
+            }
+
+            TOGGLE_UPDATES_INCLUDE_BETA -> {
+                val new = InuConfig.UPDATES_INCLUDE_BETA.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_LOGS_ENABLED -> {
                 val new = !LogsHelper.isEnabled()
                 LogsHelper.setEnabled(new)
@@ -519,6 +553,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     }
 
     companion object {
+        private val TOGGLE_AUTO_UPDATE_CHECK = InuUtils.generateId()
+        private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
         private val BUTTON_EXPORT = InuUtils.generateId()
@@ -535,6 +571,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             iconRes = R.drawable.inu_tabler_device_floppy,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),
+                SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
                 SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
                 SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
                 SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),

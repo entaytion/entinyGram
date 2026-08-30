@@ -77,13 +77,18 @@ object InuHooks {
         for (msg in messages) onNewMessage(msg, acc)
     }
 
-    // Ghost mode's presence is only guaranteed correct at the moment GhostHelper.syncPresence()
-    // runs (onMessagesControllerCreated/onResume) -- if any stock path resets
-    // MessagesController.ignoreSetOnline in between (e.g. right after an app update, before this
-    // gets audited further), the wrong presence can linger until the next of those hooks fires.
-    // Re-asserting on every reconnect closes that gap cheaply: GhostHelper.processSendRequest
-    // already force-rewrites any outgoing updateStatus packet, so this is redundant-but-safe
-    // in the common case, and self-healing in the one we haven't been able to reproduce.
+    // Re-asserts MessagesController.ignoreSetOnline on every reconnect, since stock paths
+    // (MessagesController.cleanup, VoIPService/VoIPPreNotificationService call teardown) reset it.
+    //
+    // Audited: this is belt-and-braces only, NOT the guard that makes "hidden" presence work.
+    // HIDDEN presence is enforced at the packet level -- GhostHelper.processSendRequest, called
+    // from ConnectionsManager.sendRequestInternal (the single choke point behind every
+    // sendRequest overload), force-rewrites `offline = true` on any outgoing TL_account.updateStatus.
+    // And InuConfig.load() runs at the very top of ApplicationLoader.onCreate, before
+    // NativeLoader/ConnectionsManager exist, so there is no cold-start window in which
+    // GHOST_PRESENCE_MODE reads its default. An online status therefore cannot race out ahead of
+    // syncPresence(). ignoreSetOnline only observably matters for DELAYED presence, which
+    // deliberately lets a real "online" through and schedules the offline afterwards.
     private val connectionStateObserver = NotificationCenter.NotificationCenterDelegate { id, acc, _ ->
         if (id != NotificationCenter.didUpdateConnectionState) return@NotificationCenterDelegate
         if (org.telegram.tgnet.ConnectionsManager.getInstance(acc).connectionState

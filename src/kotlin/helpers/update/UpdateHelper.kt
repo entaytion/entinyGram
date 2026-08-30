@@ -254,34 +254,69 @@ object UpdateHelper {
         }
     }
 
+    // Regular users only ever search #release. Users who opted into InuConfig.UPDATES_INCLUDE_BETA
+    // additionally search #prerelease -- the two tags are mutually exclusive per CI post (see
+    // scripts/ci/upload.ts), so a plain "#release" search on its own already excludes every
+    // pre-release/beta build for everyone who hasn't opted in.
     private fun performSearch(account: Int, peerId: Long, callback: ((CheckResult) -> Unit)?) {
+        searchByTag(account, peerId, "#release") { releaseMessages, err ->
+            if (err != null) {
+                finish(callback, CheckResult.Error(err))
+                return@searchByTag
+            }
+            if (!InuConfig.UPDATES_INCLUDE_BETA.value) {
+                resolveBestUpdate(releaseMessages, callback)
+                return@searchByTag
+            }
+            searchByTag(account, peerId, "#prerelease") { betaMessages, betaErr ->
+                if (betaErr != null) {
+                    finish(callback, CheckResult.Error(betaErr))
+                    return@searchByTag
+                }
+                resolveBestUpdate(releaseMessages + betaMessages, callback)
+            }
+        }
+    }
+
+    private fun searchByTag(
+        account: Int,
+        peerId: Long,
+        tag: String,
+        callback: (List<TLRPC.Message>, String?) -> Unit,
+    ) {
         val mc = MessagesController.getInstance(account)
         val req = TLRPC.TL_messages_search().apply {
             peer = mc.getInputPeer(peerId)
-            q = "#release"
+            q = tag
             filter = TLRPC.TL_inputMessagesFilterDocument()
             limit = 10
         }
         ConnectionsManager.getInstance(account).sendRequest(req) { resp, err ->
             AndroidUtilities.runOnUIThread {
                 if (err != null || resp !is TLRPC.messages_Messages) {
-                    finish(callback, CheckResult.Error(err?.text ?: "no response"))
-                    return@runOnUIThread
+                    callback(emptyList(), err?.text ?: "no response")
+                } else {
+                    callback(resp.messages, null)
                 }
-                val match = resp.messages.firstNotNullOfOrNull { msg ->
-                    extractApkInfo(msg)?.let { msg to it }
-                }
-                val currentVerCode = currentVersionCode()
-                if (match == null || match.second.verCode <= currentVerCode) {
-                    clearPending()
-                    finish(callback, CheckResult.UpToDate)
-                    return@runOnUIThread
-                }
-                val (msg, info) = match
-                val updateObj = applyUpdate(msg, info, currentVerCode)
-                finish(callback, CheckResult.Updated(updateObj))
             }
         }
+    }
+
+    // Picks the single best candidate across every tag search that was allowed to run -- always
+    // the highest verCode, so a newer stable release naturally wins over an older pending beta
+    // even for opted-in users ("catch beta too, but a real release always wins" per spec).
+    private fun resolveBestUpdate(candidates: List<TLRPC.Message>, callback: ((CheckResult) -> Unit)?) {
+        val match = candidates.mapNotNull { msg -> extractApkInfo(msg)?.let { msg to it } }
+            .maxByOrNull { it.second.verCode }
+        val currentVerCode = currentVersionCode()
+        if (match == null || match.second.verCode <= currentVerCode) {
+            clearPending()
+            finish(callback, CheckResult.UpToDate)
+            return
+        }
+        val (msg, info) = match
+        val updateObj = applyUpdate(msg, info, currentVerCode)
+        finish(callback, CheckResult.Updated(updateObj))
     }
 
     @JvmStatic
@@ -290,7 +325,12 @@ object UpdateHelper {
         if (BuildConfig.INU_BUILD_TYPE == "debug") return
         val channelId = resolvedChannelId
         if (channelId != null && msg.peer_id?.channel_id != channelId) return
-        if (msg.message?.contains("#release") != true) return
+        val text = msg.message ?: return
+        if (text.contains("#prerelease")) {
+            if (!InuConfig.UPDATES_INCLUDE_BETA.value) return
+        } else if (!text.contains("#release")) {
+            return
+        }
         val info = extractApkInfo(msg) ?: return
         val currentVerCode = currentVersionCode()
         if (info.verCode <= currentVerCode) return

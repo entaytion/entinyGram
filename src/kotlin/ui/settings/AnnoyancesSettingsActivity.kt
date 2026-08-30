@@ -158,6 +158,14 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
+                TOGGLE_HIDE_CHANNEL_SHARE_BUTTON,
+                R.string.InuHideChannelShareButton,
+                R.string.InuHideChannelShareButtonInfo,
+                InuConfig.HIDE_CHANNEL_SHARE_BUTTON.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY,
                 R.string.InuDisableProfileMusicAutoplay,
                 R.string.InuDisableProfileMusicAutoplayInfo,
@@ -247,6 +255,11 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_DISABLE_QUICK_SHARE -> {
                 val new = InuConfig.DISABLE_QUICK_SHARE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_HIDE_CHANNEL_SHARE_BUTTON -> {
+                val new = InuConfig.HIDE_CHANNEL_SHARE_BUTTON.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -344,6 +357,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
         private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
         private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
+        private val TOGGLE_HIDE_CHANNEL_SHARE_BUTTON = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
         private val SECTION_HIDE_AI_FEATURES = InuUtils.generateId()
@@ -370,6 +384,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
+                SearchRegistry.Entry("hide-channel-share-button", R.string.InuHideChannelShareButton, TOGGLE_HIDE_CHANNEL_SHARE_BUTTON),
                 SearchRegistry.Entry("disable-profile-music-autoplay", R.string.InuDisableProfileMusicAutoplay, TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY),
                 SearchRegistry.Entry("clear-hints", R.string.InuClearHints, BUTTON_CLEAR_HINTS),
                 SearchRegistry.Entry("hide-ai-features", R.string.InuHideAiFeatures, SECTION_HIDE_AI_FEATURES),

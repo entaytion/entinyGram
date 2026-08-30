@@ -128,12 +128,18 @@ try {
   // 1) Upload the APK document to the CI channel — always happens. The changelog goes in a
   // <blockquote>: UpdateHelper.kt's extractApkInfo/applyUpdate clips the update-dialog text to
   // exactly this entity, discarding the #release/label wrapper text around it.
+  //
+  // Tag is #release XOR #prerelease (never both) — UpdateHelper.kt's on-device update checker
+  // searches the CI channel by this tag to decide what to offer a given user. Regular users only
+  // ever search #release; only users who opted into the beta toggle also search #prerelease. A
+  // pre-release build must never also carry #release, or it would get offered to everyone.
+  const releaseTag = isPreRelease ? '#prerelease' : '#release'
   const { file } = info.apkFiles[0]
   const apkMsg = await tg.sendMedia(channelCI, {
     type: 'document',
     file: `file:${join(artifactDir, file)}`,
     fileName: file,
-    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${ciHtml}</blockquote><br/>🏷️ #release • @entinyGram • @entinyGramChat`,
+    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${ciHtml}</blockquote><br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`,
   })
 
   // 2) If --ci-only, stop here — no main channel post. Pre-releases are always ci-only (see

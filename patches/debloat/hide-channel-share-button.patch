@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 30 Aug 2026 12:16:10 +0300
+Subject: Add a toggle to hide the channel share button
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java     | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -18737,6 +18737,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+     }
+ 
+     protected boolean checkNeedDrawShareButton(MessageObject messageObject) {
++        if (desu.inugram.InuConfig.HIDE_CHANNEL_SHARE_BUTTON.getValue()) return false;
+         if (isReportChat) return false;
+         if (currentMessageObject.deleted && !currentMessageObject.deletedByThanos) return false;
+         if (currentMessageObject.isSponsored()) return false;

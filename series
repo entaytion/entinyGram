@@ -359,3 +359,4 @@ entiny/dialogs-title-text.patch
 entiny/ios-chat-header.patch
 entiny/fix-beta-app-detection.patch
 entiny/log-categories.patch
+debloat/hide-channel-share-button.patch
