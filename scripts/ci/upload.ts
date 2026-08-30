@@ -122,7 +122,7 @@ try {
   // separate app alongside the main one instead of updating it -- call that out explicitly since
   // it's easy to miss and testers might otherwise expect it to replace their main install.
   const preReleaseBanner = isPreRelease
-    ? html`‼️ <b>PRE RELEASE</b>\nThis is a test build aimed at fixing bugs and issues reported by the community. Expect instability. Note: this installs as a separate app (different package name) alongside your main entinyGram install, it will not update it.<br/><br/>`
+    ? html`🧪 <b>PRE-RELEASE BUILD</b><blockquote>⚠️ Test build for fixing reported bugs — expect instability\n📦 Installs as a <b>separate app</b> alongside your main entinyGram install, won't update it</blockquote><br/>`
     : ''
 
   // 1) Upload the APK document to the CI channel — always happens. The changelog goes in a

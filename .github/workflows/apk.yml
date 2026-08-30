@@ -15,7 +15,7 @@ on:
           - release
           - release+tg
       prerelease:
-        description: 'Mark as a pre-release build (adds a "‼️ PRE RELEASE" banner to the main channel post, between the version line and the changelog)'
+        description: 'Mark as a pre-release build (CI-channel-only, creates a GitHub pre-release, adds a "‼️ PRE RELEASE" banner to both)'
         required: false
         default: false
         type: boolean
@@ -305,9 +305,9 @@ jobs:
           path: out
 
       - name: Create GitHub release
-        if: inputs.prerelease != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          PRE_RELEASE: ${{ inputs.prerelease }}
         run: |
           tag='${{ needs.build.outputs.tag }}'
           apk="out/${{ needs.build.outputs.apk-arm64 }}"
@@ -323,17 +323,41 @@ jobs:
             printf 'Release %s\n' "$tag" > release_body.md
           fi
 
-          # Append compare link using the previous release tag
+          # Pre-releases compile the .beta-suffixed debug buildType (see the build job above) --
+          # installs as a separate app alongside the main one, doesn't update it. Call that out on
+          # the release page too, same as the Telegram CI channel post (scripts/ci/upload.ts).
+          # GitHub renders "> [!WARNING]" as a colored admonition box, not just a quoted line.
+          if [ "$PRE_RELEASE" = 'true' ]; then
+            {
+              printf '> [!WARNING]\n'
+              printf '> **Pre-release build** — a test build for fixing reported bugs. Expect instability.\n'
+              printf '>\n'
+              printf '> Installs as a **separate app** (different package name) alongside your main entinyGram install — it will **not** update it.\n'
+              printf '\n'
+              cat release_body.md
+            } > release_body.tmp.md
+            mv release_body.tmp.md release_body.md
+          fi
+
+          # Append compare link using the previous release tag. GitHub only auto-marks
+          # non-prerelease releases as "latest", so this list naturally still reflects the last
+          # real release even once pre-releases start showing up in it.
           prev_tag=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
           if [ -n "$prev_tag" ] && [ "$prev_tag" != "$tag" ]; then
             printf '\n\n**Full Changelog**: https://github.com/%s/compare/%s...%s\n' \
               "$GITHUB_REPOSITORY" "$prev_tag" "$tag" >> release_body.md
           fi
 
+          flags=()
+          if [ "$PRE_RELEASE" = 'true' ]; then
+            flags+=(--prerelease)
+          fi
+
           gh release create "$tag" \
             --target "$GITHUB_SHA" \
             --title  "$tag" \
             --notes-file release_body.md \
+            "${flags[@]}" \
             "$apk" || \
           gh release upload "$tag" \
             --clobber \
