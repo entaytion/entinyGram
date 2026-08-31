@@ -130,7 +130,9 @@ object MessageDetailsHelper {
         }
         rootLayout.addView(backItem, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))
 
-        val headerGap = ActionBarPopupWindow.GapView(context, rp)
+        val headerGap = ActionBarPopupWindow.GapView(context, rp).apply {
+            background = null
+        }
         rootLayout.addView(headerGap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8))
 
         // ScrollView for the detail items with dynamic max height constraint
@@ -159,7 +161,9 @@ object MessageDetailsHelper {
     }
 
     private fun addGap(context: Context, layout: LinearLayout, rp: Theme.ResourcesProvider?) {
-        val gap = ActionBarPopupWindow.GapView(context, rp)
+        val gap = ActionBarPopupWindow.GapView(context, rp).apply {
+            background = null
+        }
         layout.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8))
     }
 
