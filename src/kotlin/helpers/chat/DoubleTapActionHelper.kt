@@ -25,8 +25,7 @@ enum class DoubleTapAction(
     NONE(0, R.string.None),
     QUICK_REACTION(1, R.string.InuQuickReaction),
     SHOW_REACTIONS(2, R.string.InuShowReactions),
-    TRANSLATE(3, R.string.TranslateMessage, setOf(DoubleTapContext.INCOMING, DoubleTapContext.CHANNEL)),
-    REPLY(4, R.string.Reply),
+    TRANSLATE(3, R.string.TranslateMessage, setOf(DoubleTapContext.INCOMING, DoubleTapContext.OUTGOING, DoubleTapContext.CHANNEL)),
     SAVE(5, R.string.Save),
     EDIT(6, R.string.Edit, setOf(DoubleTapContext.OUTGOING, DoubleTapContext.CHANNEL)),
     DELETE(7, R.string.Delete),
@@ -50,13 +49,23 @@ object DoubleTapActionHelper {
 
     private fun menuOptionForAction(action: DoubleTapAction, message: MessageObject): Int? {
         return when (action) {
-            DoubleTapAction.REPLY -> ChatActivity.OPTION_REPLY
             DoubleTapAction.EDIT -> ChatActivity.OPTION_EDIT
             DoubleTapAction.DELETE -> ChatActivity.OPTION_DELETE
             DoubleTapAction.TRANSLATE -> if (TranslateHelper.isManualTranslated(message)) ChatHelper.OPTION_TRANSLATE_REVERT else ChatActivity.OPTION_TRANSLATE
             DoubleTapAction.SAVE -> ChatHelper.OPTION_SAVE
             DoubleTapAction.DETAILS -> ChatHelper.OPTION_DETAILS
             else -> null
+        }
+    }
+
+    private fun canPerformAction(activity: ChatActivity, message: MessageObject, action: DoubleTapAction): Boolean {
+        return when (action) {
+            DoubleTapAction.EDIT -> message.canEditMessage(activity.currentChat)
+            DoubleTapAction.DELETE -> message.canDeleteMessage(activity.isInScheduleMode, activity.currentChat)
+            DoubleTapAction.SAVE -> !message.messageOwner.noforwards &&
+                message.dialogId != org.telegram.messenger.UserConfig.getInstance(activity.currentAccount).clientUserId
+            DoubleTapAction.TRANSLATE, DoubleTapAction.DETAILS -> true
+            else -> true
         }
     }
 
@@ -70,15 +79,7 @@ object DoubleTapActionHelper {
             DoubleTapAction.QUICK_REACTION -> null
             DoubleTapAction.NONE -> false
             DoubleTapAction.SHOW_REACTIONS -> hasReactionMenu(activity, message)
-            else -> {
-                val option = menuOptionForAction(action, message) ?: return false
-                setSelection(activity, message)
-                val options = ArrayList<Int>()
-                activity.fillMessageMenu(message, ArrayList<Int>(), ArrayList<CharSequence>(), options)
-                clearSelection(activity)
-
-                options.any(option::equals)
-            }
+            else -> canPerformAction(activity, message, action)
         }
     }
 
@@ -88,7 +89,6 @@ object DoubleTapActionHelper {
         val action = getAction(activity, message)
 
         return when (action) {
-            // fallback to the default handling
             DoubleTapAction.QUICK_REACTION -> false
             DoubleTapAction.NONE -> true
             DoubleTapAction.SHOW_REACTIONS -> {
@@ -97,6 +97,7 @@ object DoubleTapActionHelper {
             }
 
             else -> {
+                if (!canPerformAction(activity, message, action)) return true
                 val option = menuOptionForAction(action, message) ?: return true
 
                 setSelection(activity, message)
@@ -106,7 +107,6 @@ object DoubleTapActionHelper {
             }
         }
     }
-
     fun getAction(activity: ChatActivity, message: MessageObject): DoubleTapAction {
         val context = getContext(activity, message)
         val value = when (context) {
@@ -127,12 +127,6 @@ object DoubleTapActionHelper {
         }
         return DoubleTapContext.INCOMING
     }
-
-//    private fun canUseAction(activity: ChatActivity, message: MessageObject): Boolean =
-//        activity.parentActivity != null &&
-//            activity.actionBar?.isActionModeShowed != true &&
-//            !activity.isInPreviewMode &&
-//            !message.isDateObject
 
     private fun extractMessage(view: View): MessageObject? = when (view) {
         is ChatMessageCell -> view.primaryMessageObject
@@ -161,11 +155,5 @@ object DoubleTapActionHelper {
             }
         }
         return target
-    }
-
-    private fun clearSelection(activity: ChatActivity) {
-        activity.selectedObject = null
-        activity.selectedObjectGroup = null
-        activity.selectedObjectToEditCaption = null
     }
 }
