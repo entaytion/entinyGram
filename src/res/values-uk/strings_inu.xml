@@ -547,6 +547,8 @@
     <string name="InuForwardLongTapOff">Вимкнено</string>
     <string name="InuLongTapChooseMode">Запитувати щоразу</string>
     <string name="InuForwardNoQuote">Пересилка без цитування</string>
+    <string name="InuSelectionBottomNoQuote">Кнопка «Без цитати» в панелі вибору</string>
+    <string name="InuSelectionBottomNoQuoteInfo">Замінює кнопку «Відповісти» на пересилку без цитування при виборі повідомлень</string>
     <string name="InuRepeat">Повторити</string>
     <string name="InuRepeatLongTapCopy">Довгий тап для повтору як копія</string>
     <string name="InuRepeatLongTapForward">Довгий тап для повтору як пересилання</string>

@@ -24,6 +24,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     }
 
     private var chatInputMaxLinesSlider: SliderCell? = null
+    private var wideChannelPostsPreview: WideChannelPostsPreviewCell? = null
 
     private val hideBotSlashGroup = ExpandableBoolGroup(
         LocaleController.getString(R.string.InuHideBotSlash),
@@ -101,6 +102,14 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SELECTION_BOTTOM_NO_QUOTE,
+                R.string.InuSelectionBottomNoQuote,
+                R.string.InuSelectionBottomNoQuoteInfo,
+                InuConfig.SELECTION_BOTTOM_NO_QUOTE.value,
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_DISABLE_BOT_DRAFT_TOP,
                 LocaleController.getString(R.string.InuDisableBotDraftTop),
@@ -123,6 +132,25 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuWideChannelPosts)))
+        if (wideChannelPostsPreview == null) {
+            wideChannelPostsPreview = WideChannelPostsPreviewCell(context, this)
+        }
+        items.add(UItem.asCustom(wideChannelPostsPreview))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_WIDE_CHANNEL_POSTS,
+                LocaleController.getString(R.string.InuWideChannelPosts),
+            ).setChecked(InuConfig.WIDE_CHANNEL_POSTS.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_WIDE_FEED_POSTS,
+                LocaleController.getString(R.string.InuWideFeedPosts),
+            ).setChecked(InuConfig.WIDE_FEED_POSTS.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuWideChannelPostsFooter)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuCenteringSection)))
         items.add(
@@ -357,6 +385,12 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
 
         when (item.id) {
             TOGGLE_HIDE_DEV_BADGES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
+            TOGGLE_WIDE_CHANNEL_POSTS -> {
+                val new = InuConfig.WIDE_CHANNEL_POSTS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                wideChannelPostsPreview?.setWide(new, true)
+            }
+            TOGGLE_WIDE_FEED_POSTS -> (view as? TextCheckCell)?.isChecked = InuConfig.WIDE_FEED_POSTS.toggle()
             TOGGLE_CENTER_TITLE_CHATS -> {
                 InuConfig.CENTER_TITLE_CHATS.toggle()
                 (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_CHATS.value
@@ -385,6 +419,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
             TOGGLE_CHAT_ALWAYS_SHOW_DOWN -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_ALWAYS_SHOW_DOWN.toggle()
             TOGGLE_CHAT_TWO_FINGER_SELECT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TWO_FINGER_SELECT.toggle()
+            TOGGLE_SELECTION_BOTTOM_NO_QUOTE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SELECTION_BOTTOM_NO_QUOTE.toggle()
             TOGGLE_DISABLE_BOT_DRAFT_TOP -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_BOT_DRAFT_TOP.toggle()
             TOGGLE_SHOW_ALL_RECENT_STICKERS -> (view as? TextCheckCell)?.isChecked = InuConfig.SHOW_ALL_RECENT_STICKERS.toggle()
             TOGGLE_DISABLE_INSTANT_CAMERA -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_INSTANT_CAMERA.toggle()
@@ -439,6 +474,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
+        private val TOGGLE_WIDE_CHANNEL_POSTS = InuUtils.generateId()
+        private val TOGGLE_WIDE_FEED_POSTS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_FIXED = InuUtils.generateId()
@@ -450,6 +487,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_PULL_TO_NEXT = InuUtils.generateId()
         private val TOGGLE_CHAT_ALWAYS_SHOW_DOWN = InuUtils.generateId()
         private val TOGGLE_CHAT_TWO_FINGER_SELECT = InuUtils.generateId()
+        private val TOGGLE_SELECTION_BOTTOM_NO_QUOTE = InuUtils.generateId()
         private val TOGGLE_DISABLE_BOT_DRAFT_TOP = InuUtils.generateId()
         private val TOGGLE_SHOW_ALL_RECENT_STICKERS = InuUtils.generateId()
         private val TOGGLE_DISABLE_INSTANT_CAMERA = InuUtils.generateId()
@@ -483,6 +521,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             factory = ::CategoryChatsSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
+                SearchRegistry.Entry("wide-channel-posts", R.string.InuWideChannelPosts, TOGGLE_WIDE_CHANNEL_POSTS),
+                SearchRegistry.Entry("wide-feed-posts", R.string.InuWideFeedPosts, TOGGLE_WIDE_FEED_POSTS),
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("center-title-fixed", R.string.InuCenterTitleFixed, TOGGLE_CENTER_TITLE_FIXED),
@@ -494,6 +534,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-pull-to-next", R.string.InuDisablePullToNext, TOGGLE_DISABLE_PULL_TO_NEXT),
                 SearchRegistry.Entry("chat-always-show-down", R.string.InuChatAlwaysShowDown, TOGGLE_CHAT_ALWAYS_SHOW_DOWN),
                 SearchRegistry.Entry("chat-two-finger-select", R.string.InuChatTwoFingerSelect, TOGGLE_CHAT_TWO_FINGER_SELECT),
+                SearchRegistry.Entry("selection-bottom-no-quote", R.string.InuSelectionBottomNoQuote, TOGGLE_SELECTION_BOTTOM_NO_QUOTE),
                 SearchRegistry.Entry("disable-bot-draft-top", R.string.InuDisableBotDraftTop, TOGGLE_DISABLE_BOT_DRAFT_TOP),
                 SearchRegistry.Entry("show-all-recent-stickers", R.string.InuShowAllRecentStickers, TOGGLE_SHOW_ALL_RECENT_STICKERS),
                 SearchRegistry.Entry("disable-instant-camera", R.string.InuDisableInstantCamera, TOGGLE_DISABLE_INSTANT_CAMERA),

@@ -440,6 +440,8 @@
     <string name="InuForwardLongTapOff">Выкл.</string>
     <string name="InuLongTapChooseMode">Спрашивать каждый раз</string>
     <string name="InuForwardNoQuote">Переслать без цитаты</string>
+    <string name="InuSelectionBottomNoQuote">Кнопка «Без цитаты» в панели выбора</string>
+    <string name="InuSelectionBottomNoQuoteInfo">Заменяет кнопку «Ответить» на пересылку без цитаты при выборе сообщений</string>
     <string name="InuRepeat">Повторить</string>
     <string name="InuRepeatLongTapCopy">Долгий тап — повторить копией</string>
     <string name="InuRepeatLongTapForward">Долгий тап — повторить пересылкой</string>

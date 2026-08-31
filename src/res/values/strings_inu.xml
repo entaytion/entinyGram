@@ -18,6 +18,12 @@
     <string name="InuLegacySettingsLink">This settings link format is obsolete. Use tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>
+    <string name="InuWideChannelPosts">Wide posts</string>
+    <string name="InuWideFeedPosts">Wide posts in Feed</string>
+    <string name="InuWideChannelPostsFooter">Channel posts and forwards use the available width.</string>
+    <string name="InuWideChannelPostsPreviewText">News, photos and videos</string>
+    <string name="InuWideChannelPostsPreviewReply">Forwarded channel post</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Channel posts</string>
     <string name="InuAutoUpdateCheck">Check for updates</string>
     <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>
     <string name="InuUpdatesIncludeBeta">Catch beta updates</string>
@@ -622,6 +628,8 @@
     <string name="InuForwardLongTapOff">Off</string>
     <string name="InuLongTapChooseMode">Ask every time</string>
     <string name="InuForwardNoQuote">No-Quote forward</string>
+    <string name="InuSelectionBottomNoQuote">No-Quote button in selection bar</string>
+    <string name="InuSelectionBottomNoQuoteInfo">Replaces the Reply button with No-Quote forward when selecting messages</string>
     <string name="InuRepeat">Repeat</string>
     <string name="InuRepeatLongTapCopy">Long-tap to repeat as a copy</string>
     <string name="InuRepeatLongTapForward">Long-tap to repeat as a forward</string>
