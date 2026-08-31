@@ -197,14 +197,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableGlassGlare),
             ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_DISABLE_SCRIM_BLUR,
-                R.string.InuDisableScrimBlur,
-                R.string.InuDisableScrimBlurInfo,
-                InuConfig.DISABLE_SCRIM_BLUR.value
-            )
-        )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
 
         if (animationSpeedSlider == null) {
@@ -228,6 +220,14 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         }
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMotion)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_SCRIM_BLUR,
+                R.string.InuDisableScrimBlur,
+                R.string.InuDisableScrimBlurInfo,
+                InuConfig.DISABLE_SCRIM_BLUR.value
+            )
+        )
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_REDUCE_MENU_MOTION,
