@@ -864,6 +864,15 @@ object InuConfig {
     @JvmField
     val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", true)
 
+    // Channel posts (and, separately, channel posts shown in the feed/forwards) stretch to the
+    // full available width instead of a narrow auto-sized bubble. Ported from exteraless
+    // (https://github.com/exteraless/exteraless) -- see WideChannelPostLayout.kt.
+    @JvmField
+    val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
+
+    @JvmField
+    val WIDE_FEED_POSTS = BoolItem("wide_feed_posts", false)
+
     @JvmField
     val REDUCE_MENU_MOTION = BoolItem("reduce_menu_motion", true)
 

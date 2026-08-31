@@ -201,6 +201,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - "Repeat" in message menu - re-send the same message to the same chat
 - "Save to Downloads" for stickers
 - customizable message context menu - reorder and hide items + long-tap forward/reply items + quick actions row (*ported from [NagramX](https://github.com/risin42/NagramX)*)
+- wide channel posts - channel posts (and, separately, channel posts/forwards shown in the feed) stretch to the full available width instead of a narrow auto-sized bubble, with a live before/after preview in settings (*ported from [exteraless](https://github.com/exteraless/exteraless)*)
 - customizable chat menu + extra actions:
   - Recent actions
   - Go to beginning
