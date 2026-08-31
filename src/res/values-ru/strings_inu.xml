@@ -1044,6 +1044,9 @@
     <string name="InuSaveDeletedGroups">Группах</string>
     <string name="InuSaveDeletedChannels">Каналах</string>
     <string name="InuSaveDeletedBots">Ботах</string>
+    <string name="InuSaveDeletedOwn">Моих собственных сообщениях</string>
+    <string name="InuDeletePermanently">Удалить навсегда</string>
+    <string name="InuDeletePermanentlyDone">Удалено навсегда</string>
     <string name="InuAiTranscribe">Распознавание речи (Voice-to-Text)</string>
     <string name="InuAiTranscribeInfo">Расшифровка голосовых и видеосообщений без Telegram Premium с помощью сервисов ИИ.</string>
     <string name="InuAiTranscribeSection">Voice-to-Text</string>

@@ -598,6 +598,31 @@ object InuDatabaseHelper {
     }
 
     /**
+     * Drops specific rows from inu_deleted_messages (single-message "delete permanently"),
+     * cleaning up their media file if no other row still references it.
+     */
+    fun deleteDeletedMessageEntries(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
+        if (mids.isEmpty()) return
+        val idsStr = mids.joinToString(",")
+        val mediaPaths = try {
+            val paths = ArrayList<String>()
+            val cursor = db.queryFinalized("SELECT media_path FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr) AND media_path IS NOT NULL")
+            try {
+                while (cursor.next()) {
+                    cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
+                }
+            } finally {
+                cursor.dispose()
+            }
+            paths
+        } catch (_: Throwable) {
+            emptyList()
+        }
+        db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
+        deleteUnreferencedMediaFiles(db, mediaPaths)
+    }
+
+    /**
      * Physically removes saved-deleted messages from the chat dialogs.
      * The stock delete path (MessagesStorage.markMessagesAsDeleted) skips these rows while
      * SAVE_DELETED_MESSAGES is on, so clearing the cache must delete them directly.

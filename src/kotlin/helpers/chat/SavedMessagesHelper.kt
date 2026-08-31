@@ -95,6 +95,7 @@ object SavedMessagesHelper {
     @JvmStatic
     fun shouldSaveForDialog(account: Int, dialogId: Long): Boolean {
         if (!isSaveDeletedEnabled()) return false
+        if (org.telegram.messenger.DialogObject.isEncryptedDialog(dialogId)) return false
         val controller = MessagesController.getInstance(account) ?: return true
         if (org.telegram.messenger.DialogObject.isUserDialog(dialogId)) {
             val user = controller.getUser(dialogId)
@@ -293,10 +294,46 @@ object SavedMessagesHelper {
         }
     }
 
+    /**
+     * Permanently removes a single saved-deleted message: drops its `inu_deleted_messages` row
+     * (so it stops being shown as a "deleted" placeholder) and the underlying `messages_v2` row
+     * (so the bubble disappears from the chat entirely), mirroring [clearCache] but scoped to one message.
+     */
+    @JvmStatic
+    fun deletePermanently(account: Int, dialogId: Long, msgId: Int, onDone: Runnable? = null) {
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            InuDatabaseHelper.deleteDeletedMessageEntries(db, dialogId, listOf(msgId))
+            InuDatabaseHelper.deleteSavedMessages(db, dialogId, listOf(msgId))
+            val channelId = getChannelId(account, dialogId)
+            storage.updateDialogsWithDeletedMessages(dialogId, channelId, arrayListOf(msgId), null)
+            org.telegram.messenger.AndroidUtilities.runOnUIThread {
+                synchronized(cacheLock) {
+                    deletedMessageIds.get(account.toLong())?.get(dialogId)?.remove(msgId)
+                    deletedMessageDates.get(account.toLong())?.get(dialogId)?.remove(msgId.toLong())
+                }
+                val controller = MessagesController.getInstance(account)
+                controller.dialogMessagesByIds.remove(msgId)
+                val list = controller.dialogMessage.get(dialogId)
+                if (list != null) {
+                    list.removeAll { it?.id == msgId }
+                }
+                org.telegram.messenger.NotificationCenter.getInstance(account)
+                    .postNotificationName(
+                        org.telegram.messenger.NotificationCenter.messagesDeleted,
+                        arrayListOf(msgId), channelId, false, false, false, 0
+                    )
+                onDone?.run()
+            }
+        }
+    }
+
     @JvmStatic
     @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
         if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
+        if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && fromId == UserConfig.getInstance(account).clientUserId) return
         ensureAccountLoaded(account)
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
         synchronized(cacheLock) {

@@ -109,6 +109,7 @@ object ChatHelper {
     const val OPTION_MARK_AS_READ = 522
     const val OPTION_AI_SUMMARIZE = 523
     const val OPTION_ADD_FILTER = 524
+    const val OPTION_DELETE_PERMANENTLY = 525
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -466,6 +467,12 @@ object ChatHelper {
             icons.add(R.drawable.group_edit)
         }
 
+        if (InuConfig.SAVE_DELETED_MESSAGES.value && SavedMessagesHelper.isMessageDeleted(activity.currentAccount, selectedObject.dialogId, selectedObject.id)) {
+            items.add(LocaleController.getString(R.string.InuDeletePermanently))
+            options.add(OPTION_DELETE_PERMANENTLY)
+            icons.add(R.drawable.inu_tabler_trash_x)
+        }
+
         if (InuConfig.GHOST_HIDE_READ.value && !GhostHelper.isDialogWhitelisted(activity.dialogId)) {
             items.add(LocaleController.getString(R.string.InuMarkChatAsRead))
             options.add(OPTION_MARK_AS_READ)
@@ -814,6 +821,17 @@ object ChatHelper {
 
             OPTION_EDIT_HISTORY -> {
                 SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject.dialogId, selectedObject.id)
+            }
+
+            OPTION_DELETE_PERMANENTLY -> {
+                val dialogId = selectedObject.dialogId
+                val msgId = selectedObject.id
+                SavedMessagesHelper.deletePermanently(activity.currentAccount, dialogId, msgId) {
+                    BulletinFactory.of(activity).createSimpleBulletin(
+                        R.drawable.inu_tabler_trash_x,
+                        LocaleController.getString(R.string.InuDeletePermanentlyDone),
+                    ).show()
+                }
             }
 
             OPTION_SAVE_STICKER_TO_DOWNLOADS -> {

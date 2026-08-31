@@ -968,6 +968,9 @@
     <string name="InuSaveDeletedGroups">Groups</string>
     <string name="InuSaveDeletedChannels">Channels</string>
     <string name="InuSaveDeletedBots">Bots</string>
+    <string name="InuSaveDeletedOwn">My own messages</string>
+    <string name="InuDeletePermanently">Delete permanently</string>
+    <string name="InuDeletePermanentlyDone">Deleted permanently</string>
     <string name="InuHideSponsoredMessages">Hide sponsored messages (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Disables channel sponsored ads and prevents loading promotional messages</string>
     <string name="InuHideProxySponsorChat">Hide proxy sponsor chat</string>

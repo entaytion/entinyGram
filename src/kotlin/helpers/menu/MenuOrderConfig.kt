@@ -255,6 +255,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         MARK_AS_READ("mark_as_read", listOf(ChatHelper.OPTION_MARK_AS_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.inu_tabler_file_diff),
         ADD_FILTER("add_filter", listOf(ChatHelper.OPTION_ADD_FILTER), R.string.InuRegexFilterAddFromMessage, R.drawable.inu_tabler_filter),
+        DELETE_PERMANENTLY("delete_permanently", listOf(ChatHelper.OPTION_DELETE_PERMANENTLY), R.string.InuDeletePermanently, R.drawable.inu_tabler_trash_x),
 
         // bottom-row "smart slots" — no real option id; resolved via fallback chains at render
         // (see ChatHelper.resolveSlot). Default to the bottom row, NagramX-style.

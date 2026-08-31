@@ -1095,6 +1095,9 @@ object InuConfig {
     val SAVE_DELETED_BOTS = BoolItem("save_deleted_bots", false)
 
     @JvmField
+    val SAVE_DELETED_OWN = BoolItem("save_deleted_own", true)
+
+    @JvmField
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
 
     @JvmField

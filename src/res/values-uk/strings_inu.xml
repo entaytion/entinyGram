@@ -820,6 +820,9 @@
     <string name="InuSaveDeletedGroups">Групах</string>
     <string name="InuSaveDeletedChannels">Каналах</string>
     <string name="InuSaveDeletedBots">Ботах</string>
+    <string name="InuSaveDeletedOwn">Моїх власних повідомленнях</string>
+    <string name="InuDeletePermanently">Видалити назавжди</string>
+    <string name="InuDeletePermanentlyDone">Видалено назавжди</string>
     <string name="InuSuppressScreenshotNotification">Приховувати сповіщення про скриншоти</string>
     <string name="InuSuppressScreenshotNotificationInfo">Не сповіщати співрозмовника, коли ви робите скриншот секретного чату.</string>
     <string name="InuHideSponsoredMessages">Приховати спонсорську рекламу (Адблок)</string>

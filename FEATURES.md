@@ -26,7 +26,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **whitelist management**: dedicated screen listing every chat exempt from Ghost Mode, with one-tap add/remove
 - 📡 **anti-deletion & edit history**:
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
-  - **per-category controls** for private chats, groups, channels, and bots
+  - **per-category controls** for private chats, groups, channels, and bots, plus a separate toggle to skip saving your own outgoing deleted messages; secret chats are never saved
+  - **delete permanently** from a saved-deleted message's own long-press menu, wiping just that one entry (and its media) instead of clearing the whole cache
   - **save edit history** (marked with ✏️) in an interactive message sheet
   - **text diff mode** with inline color-coded changes
   - **deleted-message styling** with transparency, custom mark and accent color, plus a live settings preview
