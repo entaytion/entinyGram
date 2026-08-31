@@ -1440,4 +1440,7 @@ object InuConfig {
 
     @JvmField
     val OPEN_BY_USER_ID = BoolItem("open_by_user_id", true)
+
+    @JvmField
+    val SELECTION_BOTTOM_NO_QUOTE = BoolItem("selection_bottom_no_quote", false)
 }

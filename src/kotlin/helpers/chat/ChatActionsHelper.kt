@@ -428,7 +428,8 @@ object ChatActionsHelper {
         activity.clearSelectionMode()
     }
 
-    private fun forwardSelectionNoQuote(activity: ChatActivity) {
+    @JvmStatic
+    fun forwardSelectionNoQuote(activity: ChatActivity) {
         ChatHelper.clearForwardFlags()
         activity.openForward(true)
         ChatHelper.pendingHideAuthor = true
