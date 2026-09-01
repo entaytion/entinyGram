@@ -1,0 +1,350 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 00:10:13 +0300
+Subject: Add wide channel posts option (ported from exteraless)
+
+- channel posts (and, separately, forwards/posts shown in the feed) stretch to the full available width instead of a narrow auto-sized bubble
+- new MessageObject.isWideChannelPost()/hasWideChannelPostHeader() predicates and ChatMessageCell width wiring
+---
+ .../org/telegram/messenger/MessageObject.java |  26 ++++
+ .../telegram/ui/Cells/ChatMessageCell.java    | 147 ++++++++++++++++--
+ 2 files changed, 159 insertions(+), 14 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -9868,6 +9868,32 @@ public class MessageObject {
+         return messageOwner.from_id instanceof TLRPC.TL_peerChannel && messageOwner.fwd_from != null && messageOwner.fwd_from.channel_post != 0 && messageOwner.fwd_from.saved_from_peer instanceof TLRPC.TL_peerChannel && messageOwner.from_id.channel_id == messageOwner.fwd_from.saved_from_peer.channel_id;
+     }
+ 
++    // Wide channel posts (InuConfig.WIDE_CHANNEL_POSTS / WIDE_FEED_POSTS) -- ported from
++    // exteraless (https://github.com/exteraless/exteraless). Only the predicates live here; the
++    // ChatMessageCell width wiring is a separate, larger follow-up patch.
++    public boolean isWideChannelPost() {
++        return hasWideChannelPostHeader();
++    }
++
++    public boolean hasWideChannelPostHeader() {
++        final boolean inFeed = searchType == 4;
++        if (!(inFeed ? desu.inugram.InuConfig.WIDE_FEED_POSTS.getValue() : desu.inugram.InuConfig.WIDE_CHANNEL_POSTS.getValue())
++                || messageOwner == null
++                || messageOwner.action != null
++                || messageOwner.peer_id == null
++                || messageOwner.peer_id.channel_id == 0
++                || eventId != 0
++                || preview
++                || sendPreview
++                || previewForward
++                || isRepostPreview
++                || isSponsored()) {
++            return false;
++        }
++        TLRPC.Chat chat = getChat(null, null, messageOwner.peer_id.channel_id);
++        return chat != null ? ChatObject.isChannelAndNotMegaGroup(chat) : messageOwner.post;
++    }
++
+     public boolean isUnread() {
+         return messageOwner != null && messageOwner.unread;
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -340,7 +340,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         if (messageObject == null) {
+             return;
+         }
+-        if (isAvatarVisible) {
++        if (isAvatarVisible || messageObject.hasWideChannelPostHeader() && !messageObject.isOutOwner()) {
+             if (messageObject.customAvatarDrawable != null) {
+                 avatarImage.setImageBitmap(messageObject.customAvatarDrawable);
+             } else if (currentUser != null) {
+@@ -6270,7 +6270,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         updateCurrentUserAndChat();
+         TLRPC.FileLocation newPhoto = null;
+ 
+-        if (isAvatarVisible) {
++        if (isAvatarVisible || currentMessageObject.hasWideChannelPostHeader() && !currentMessageObject.isOutOwner()) {
+             if (currentUser != null && currentUser.photo != null) {
+                 newPhoto = currentUser.photo.photo_small;
+             } else if (currentChat != null && currentChat.photo != null) {
+@@ -6968,9 +6968,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             hasNewLineForTime = false;
+             flipImage = false;
+             isThreadPost = isThreadChat && messageObject.messageOwner.fwd_from != null && messageObject.messageOwner.fwd_from.channel_post != 0 && messageObject.messageOwner.reply_to == null;
+-            isAvatarVisible = needDrawAvatar() && (currentPosition == null || currentPosition.edge);
+-            boolean drawAvatar = needDrawAvatar();
+-            if (messageObject.customAvatarDrawable != null || messageObject.forceAvatar || messageObject.messageOwner.guestchat_via_from != null) {
++            final boolean wideChannelPostHeader = messageObject.hasWideChannelPostHeader() && !messageObject.isOutOwner();
++            isAvatarVisible = !wideChannelPostHeader && needDrawAvatar() && (currentPosition == null || currentPosition.edge);
++            boolean drawAvatar = !wideChannelPostHeader && needDrawAvatar();
++            if (!wideChannelPostHeader && (messageObject.customAvatarDrawable != null || messageObject.forceAvatar || messageObject.messageOwner.guestchat_via_from != null)) {
+                 isAvatarVisible = true;
+                 drawAvatar = true;
+             }
+@@ -7009,6 +7010,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 }
+             }
+             drawSummarizeButton = !desu.inugram.InuConfig.HIDE_MESSAGE_SUMMARY.getValue() && TranslateController.isSummarizable(messageObject);
++            if (messageObject.isWideChannelPost()) {
++                drawSideButton = 0;
++                drawSideButton2 = 0;
++                drawSummarizeButton = false;
++            }
+             hasReplyQuote = false;
+             isReplyQuote = false;
+             isReplyTaskOrPollOption = false;
+@@ -7424,6 +7430,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 } else {
+                     maxWidth = Math.min(getParentWidth(), AndroidUtilities.displaySize.y) - dp((isArticle ? 40 : 80) + (isSideMenuEnabled ? ChatActivity.SIDE_MENU_WIDTH : drawAvatar ? 42 : 0));
+                 }
++                int wideBackgroundWidth = getWideChannelPostBackgroundWidth(messageObject);
++                if (!isArticle && wideBackgroundWidth != 0) {
++                    maxWidth = wideBackgroundWidth - dp(31);
++                }
+                 drawName = drawAvatar || isPinnedChat || isSavedChat && !messageObject.isOutOwner() && (messageObject.getSavedDialogId() < 0 || messageObject.getSavedDialogId() == UserObject.ANONYMOUS) || (messageObject.messageOwner.peer_id != null && messageObject.messageOwner.peer_id.channel_id != 0 && (!messageObject.isOutOwner() || messageObject.isSupergroup())) || messageObject.isImportedForward() && messageObject.messageOwner.fwd_from.from_id == null;
+ 
+                 availableTimeWidth = maxWidth;
+@@ -8882,6 +8892,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 } else {
+                     backgroundWidth = Math.min(getParentWidth() - dp(50 + (isSideMenued ? ChatActivity.SIDE_MENU_WIDTH : drawAvatar ? 52 : 0)), dp(270));
+                 }
++                backgroundWidth = applyWideChannelPostWidth(messageObject, backgroundWidth);
+                 availableTimeWidth = backgroundWidth - dp(31);
+ 
+                 int maxWidth = getMaxNameWidth() - dp(50);
+@@ -8994,6 +9005,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 } else {
+                     backgroundWidth = Math.min(getParentWidth() - dp(50 + (isSideMenued ? ChatActivity.SIDE_MENU_WIDTH : drawAvatar ? 52 : 0)), dp(270));
+                 }
++                backgroundWidth = applyWideChannelPostWidth(messageObject, backgroundWidth);
+                 availableTimeWidth = backgroundWidth - dp(31);
+ 
+                 long uid = MessageObject.getMedia(messageObject.messageOwner).user_id;
+@@ -9372,10 +9384,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             backgroundWidth -= dp(20);
+                         }
+                     }
++                    backgroundWidth = applyWideChannelPostWidth(messageObject, backgroundWidth);
+                     int maxTextWidth = 0;
+                     int maxWidth = backgroundWidth - dp(86 + (currentPosition == null ? 0 : 52));
+                     if (currentPosition == null) {
+                         captionFullWidth = backgroundWidth - getExtraTextX() * 2;
++                        if (messageObject.isWideChannelPost()) {
++                            captionFullWidth -= dp(45);
++                        }
+                         currentCaption = messageObject.caption;
+                         if (!TextUtils.isEmpty(currentCaption)) {
+                             try {
+@@ -9497,6 +9513,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         if (checkNeedDrawShareButton(messageObject)) {
+                             backgroundWidth -= dp(20);
+                         }
++                        backgroundWidth = applyWideChannelPostWidth(messageObject, backgroundWidth);
+                         int maxWidth = backgroundWidth - dp(37);
+                         availableTimeWidth = maxWidth;
+                         maxWidth -= dp(54);
+@@ -9547,6 +9564,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         if (checkNeedDrawShareButton(messageObject)) {
+                             backgroundWidth -= dp(20);
+                         }
++                        backgroundWidth = applyWideChannelPostWidth(messageObject, backgroundWidth);
+                         int maxWidth = backgroundWidth - dp(34);
+                         availableTimeWidth = maxWidth;
+ 
+@@ -9581,6 +9599,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         if (checkNeedDrawShareButton(messageObject)) {
+                             backgroundWidth -= dp(20);
+                         }
++                        backgroundWidth = applyWideChannelPostWidth(messageObject, backgroundWidth);
+                         availableTimeWidth = backgroundWidth - dp(34);
+ 
+                         photoWidth = backgroundWidth - dp(8);
+@@ -9838,11 +9857,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     currentPhotoObject = FileLoader.getClosestPhotoSizeWithSize(messageObject.photoThumbs, AndroidUtilities.getPhotoSize(true));
+                     photoParentObject = messageObject.photoThumbsObject;
+                     boolean useFullWidth = false;
++                    boolean useWideChannelWidth = false;
+                     if (messageObject.type == MessageObject.TYPE_ROUND_VIDEO) {
+                         documentAttach = messageObject.getDocument();
+                         documentAttachType = DOCUMENT_ATTACH_TYPE_ROUND;
+                     } else {
+-                        if (AndroidUtilities.isTablet()) {
++                        int wideMediaWidth = getWideChannelPostMediaWidth(messageObject);
++                        if (wideMediaWidth != 0) {
++                            photoWidth = wideMediaWidth;
++                            useFullWidth = true;
++                            useWideChannelWidth = true;
++                        } else if (AndroidUtilities.isTablet()) {
+                             photoWidth = (int) (AndroidUtilities.getMinTabletSide() * 0.7f);
+                         } else {
+                             if (
+@@ -10044,6 +10069,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         h = (int) (0.61f * w);
+                     }
+ 
++                    if (useWideChannelWidth && currentMessagesGroup == null) {
++                        int wideContentWidth = getWideChannelPostMediaContentWidth(messageObject, mediaBackground);
++                        if (w > 0 && h > 0 && wideContentWidth > 0 && w != wideContentWidth) {
++                            h = Math.min(photoHeight, Math.max(dp(1), Math.round(h * (wideContentWidth / (float) w))));
++                        }
++                        w = wideContentWidth;
++                    }
++
+                     int widthForCaption = 0;
+                     int widthCaptionMin = -1;
+                     boolean fixPhotoWidth = false;
+@@ -10067,9 +10100,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             w += firstLineWidth - currentLineWidth;
+                         }
+                         w -= dp(9);
+-                        if (currentMessageObject != null && !currentMessageObject.isOutOwner() && isSideMenuPossibleLeftMargin()) {
++                        if (!messageObject.isWideChannelPost()
++                                && currentMessageObject != null
++                                && !currentMessageObject.isOutOwner()
++                                && isSideMenuPossibleLeftMargin()) {
+                             w -= dp(ChatActivity.SIDE_MENU_WIDTH);
+-                        } else if (isAvatarVisible) {
++                        } else if (!messageObject.isWideChannelPost() && isAvatarVisible) {
+                             w -= dp(48);
+                         }
+                         if (currentPosition.siblingHeights != null) {
+@@ -10136,7 +10172,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                                     } else {
+                                         w -= dp(9);
+                                     }
+-                                    if (((isChat || m.isRepostPreview) && !isThreadPost && !m.isOutOwner() || m.forceAvatar || m.messageOwner.guestchat_via_from != null || m.getDialogId() == UserObject.VERIFY) && m.needDrawAvatar() && (rowPosition == null || rowPosition.edge)) {
++                                    if (!m.isWideChannelPost()
++                                            && ((isChat || m.isRepostPreview) && !isThreadPost && !m.isOutOwner() || m.forceAvatar || m.messageOwner.guestchat_via_from != null || m.getDialogId() == UserObject.VERIFY) && m.needDrawAvatar() && (rowPosition == null || rowPosition.edge)) {
+                                         w -= dp(48);
+                                     }
+                                     w += getAdditionalWidthForPosition(rowPosition);
+@@ -10796,6 +10833,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             }
+ 
+             final int separatorHeight = dp(4 + 4);
++            if (shouldEnforceWideChannelPostOuterWidth(messageObject)) {
++                backgroundWidth = getWideChannelPostBackgroundWidth(messageObject, mediaBackground);
++            }
++
+             if (!messageObject.isRestrictedMessage && !messageObject.isRepostPreview && (currentPosition == null || currentMessagesGroup != null && currentMessagesGroup.isDocuments && currentPosition.last) && (inlineButtons != null) && !messageObject.hasExtendedMedia()) {
+                 int rows, separators;
+ 
+@@ -10814,7 +10855,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 substractBackgroundHeight = keyboardHeight = dp(44 + 4) * rows + dp(1) + separatorHeight * separators;
+                 widthForButtons = backgroundWidth - dp(mediaBackground ? 0 : 9);
+                 boolean fullWidth = false;
+-                if (messageObject.wantedBotKeyboardWidth > widthForButtons) {
++                if (!messageObject.isWideChannelPost() && messageObject.wantedBotKeyboardWidth > widthForButtons) {
+                     int maxButtonWidth = -dp(10 + (isSideMenued ? ChatActivity.SIDE_MENU_WIDTH : drawAvatar ? 52 : 0));
+                     if (AndroidUtilities.isTablet()) {
+                         maxButtonWidth += AndroidUtilities.getMinTabletSide();
+@@ -11371,8 +11412,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         drawName = true;
+         drawForwardedName = !isRepliesChat;
+         drawPhotoImage = false;
+-        int maxWidth = Math.min(dp(500), messageObject.getMaxMessageTextWidth());
+-        backgroundWidth = maxWidth + dp(31);
++        int maxMessageWidth = messageObject.getMaxMessageTextWidth();
++        int wideBackgroundWidth = getWideChannelPostBackgroundWidth(messageObject);
++        int maxWidth = wideBackgroundWidth != 0 ? wideBackgroundWidth - dp(31) : Math.min(dp(500), maxMessageWidth);
++        backgroundWidth = wideBackgroundWidth != 0 ? wideBackgroundWidth : maxWidth + dp(31);
+ 
+         TLRPC.MessageMedia m = MessageObject.getMedia(messageObject.messageOwner);
+         TLRPC.TL_textWithEntities title;
+@@ -13772,9 +13815,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         setMessageObject(messageObject, currentMessagesGroup, pinnedBottom, pinnedTop, firstInChat);
+     }
+ 
+-    private int getGroupPhotosWidth() {
++    private int getGroupPhotosBaseWidth() {
++        return getGroupPhotosBaseWidth(currentMessageObject);
++    }
++
++    private int getGroupPhotosBaseWidth(MessageObject messageObject) {
+         int width = getParentWidth();
+-        if (currentMessageObject != null && currentMessageObject.preview) {
++        if (messageObject != null && messageObject.preview) {
+             width = parentWidth;
+         }
+         if (!AndroidUtilities.isInMultiwindow && AndroidUtilities.isTablet() && (!AndroidUtilities.isSmallTablet() || getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+@@ -13785,6 +13832,78 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         }
+     }
+ 
++    // Wide channel posts -- ported from exteraless (https://github.com/exteraless/exteraless).
++    private int getGroupPhotosWidth() {
++        int width = getGroupPhotosBaseWidth();
++        if (currentMessageObject != null && currentMessageObject.isWideChannelPost()) {
++            return desu.inugram.helpers.chat.WideChannelPostLayout.groupedMediaViewportWidth(width,
++                    getWideChannelPostLeadingInset(currentMessageObject));
++        }
++        return width;
++    }
++
++    private int getWideChannelPostBackgroundWidth(MessageObject messageObject) {
++        return getWideChannelPostBackgroundWidth(messageObject, false);
++    }
++
++    private int getWideChannelPostBackgroundWidth(MessageObject messageObject, boolean mediaBackground) {
++        if (messageObject == null || !messageObject.isWideChannelPost()) {
++            return 0;
++        }
++        int width = getGroupPhotosBaseWidth();
++        if (width <= 0) {
++            return 0;
++        }
++        return desu.inugram.helpers.chat.WideChannelPostLayout.backgroundWidth(width,
++                getWideChannelPostLeadingInset(messageObject), mediaBackground);
++    }
++
++    private int applyWideChannelPostWidth(MessageObject messageObject, int regularWidth) {
++        int wideWidth = getWideChannelPostBackgroundWidth(messageObject);
++        return wideWidth == 0 ? regularWidth : wideWidth;
++    }
++
++    int getWideChannelPostMediaWidth(MessageObject messageObject) {
++        if (messageObject == null || !messageObject.isWideChannelPost()) {
++            return 0;
++        }
++        int width = getGroupPhotosBaseWidth();
++        if (width <= 0) {
++            return 0;
++        }
++        return desu.inugram.helpers.chat.WideChannelPostLayout.mediaContentWidth(width,
++                getWideChannelPostLeadingInset(messageObject));
++    }
++
++    private int getWideChannelPostLeadingInset(MessageObject messageObject) {
++        if (isSideMenued || isSideMenuEnabled) {
++            return dp(ChatActivity.SIDE_MENU_WIDTH);
++        }
++        boolean drawsAvatar = messageObject != null
++                && !messageObject.isOutOwner()
++                && (isChat
++                    || messageObject.forceAvatar
++                    || messageObject.messageOwner.guestchat_via_from != null
++                    || messageObject.getDialogId() == UserObject.VERIFY)
++                && isAvatarVisible;
++        return drawsAvatar ? dp(48) : 0;
++    }
++
++    private int getWideChannelPostMediaContentWidth(MessageObject messageObject, boolean mediaBackground) {
++        int background = getWideChannelPostBackgroundWidth(messageObject, mediaBackground);
++        return background == 0 ? 0 : desu.inugram.helpers.chat.WideChannelPostLayout.mediaContentWidthFromBackground(background, mediaBackground);
++    }
++
++    private boolean shouldEnforceWideChannelPostOuterWidth(MessageObject messageObject) {
++        return messageObject != null
++                && messageObject.isWideChannelPost()
++                && (currentMessagesGroup == null || currentMessagesGroup.isDocuments)
++                && !messageObject.isAnyKindOfSticker()
++                && !messageObject.isAnimatedEmoji()
++                && !messageObject.isDice()
++                && !messageObject.isRoundVideo();
++    }
++
+     public boolean isUpdating() {
+         return isUpdating;
+     }

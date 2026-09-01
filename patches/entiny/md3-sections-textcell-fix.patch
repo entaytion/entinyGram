@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 00:11:02 +0300
+Subject: Remove M3SectionsHelper text-centering override in TextCell
+
+TextCell's single-line layout no longer special-cases vertical centering
+when Material 3 sections are enabled; uses the stock centering math.
+---
+ .../src/main/java/org/telegram/ui/Cells/TextCell.java          | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+@@ -295,9 +295,6 @@ public class TextCell extends FrameLayout {
+             subtitleView.layout(viewLeft, viewTop, viewLeft + subtitleView.getMeasuredWidth(), viewTop + subtitleView.getMeasuredHeight());
+         } else {
+             viewTop = (height - textView.getTextHeight()) / 2 + dp(1);
+-            if (desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
+-                viewTop = (height - textView.getMeasuredHeight()) / 2;
+-            }
+             textView.layout(viewLeft, viewTop, viewLeft + textView.getMeasuredWidth(), viewTop + textView.getMeasuredHeight());
+         }
+         if (imageView.getVisibility() == VISIBLE) {

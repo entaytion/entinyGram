@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 00:11:13 +0300
+Subject: Keep swipeback submenu pages transparent over a live blur3 popup background
+
+PopupSwipeBackLayout painted an opaque foreground rect behind every
+non-root swipeback page. When the parent ActionBarPopupWindowLayout's
+background is a live BlurredBackgroundDrawable (blur3), skip that fill
+so submenu pages show the same live blur instead of a flat color.
+---
+ .../ui/Components/PopupSwipeBackLayout.java   | 20 ++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PopupSwipeBackLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PopupSwipeBackLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PopupSwipeBackLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PopupSwipeBackLayout.java
+@@ -28,6 +28,7 @@ import org.telegram.messenger.UserConfig;
+ import org.telegram.ui.ActionBar.ActionBarMenuSlider;
+ import org.telegram.ui.ActionBar.ActionBarPopupWindow;
+ import org.telegram.ui.ActionBar.Theme;
++import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
+ 
+ import java.util.ArrayList;
+ 
+@@ -142,12 +143,21 @@ public class PopupSwipeBackLayout extends FrameLayout {
+         int i = indexOfChild(child);
+         int s = canvas.save();
+         if (i != 0) {
+-            if (foregroundColor == 0) {
+-                foregroundPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
+-            } else {
+-                foregroundPaint.setColor(foregroundColor);
++            // When the parent popup already carries a live blur3 background, painting an opaque
++            // rect here would hide it behind every swipeback foreground page (submenus). Skip the
++            // fill so those pages show the same live blur as the popup's root page instead of
++            // reverting to a flat submenu color.
++            boolean parentIsLiveBlur = getParent() instanceof ActionBarPopupWindow.ActionBarPopupWindowLayout
++                && (((ActionBarPopupWindow.ActionBarPopupWindowLayout) getParent()).getBackground() instanceof BlurredBackgroundDrawable
++                    || ((ActionBarPopupWindow.ActionBarPopupWindowLayout) getParent()).getBackgroundDrawable() instanceof BlurredBackgroundDrawable);
++            if (!parentIsLiveBlur) {
++                if (foregroundColor == 0) {
++                    foregroundPaint.setColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider));
++                } else {
++                    foregroundPaint.setColor(foregroundColor);
++                }
++                canvas.drawRect(child.getX(), 0, child.getX() + child.getMeasuredWidth(), getMeasuredHeight(), foregroundPaint);
+             }
+-            canvas.drawRect(child.getX(), 0, child.getX() + child.getMeasuredWidth(), getMeasuredHeight(), foregroundPaint);
+         }
+         boolean b = super.drawChild(canvas, child, drawingTime);
+         if (i == 0) {

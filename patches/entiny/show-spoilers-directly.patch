@@ -8,10 +8,30 @@ Subject: Add auto-reveal spoilers option (show text spoilers without tapping)
 - SpoilersTextView.setText() marks isSpoilersRevealed=true when enabled
 - toggle in Messages settings under Spoilers section, triggers interface reload
 ---
- .../org/telegram/ui/Components/spoilers/SpoilerEffect.java  | 6 ++++++
- .../telegram/ui/Components/spoilers/SpoilersTextView.java   | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ .../main/java/org/telegram/messenger/MessageObject.java   | 8 ++++++++
+ .../telegram/ui/Components/spoilers/SpoilerEffect.java    | 6 ++++++
+ .../telegram/ui/Components/spoilers/SpoilersTextView.java | 2 +-
+ 3 files changed, 15 insertions(+), 1 deletion(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -644,6 +644,14 @@ public class MessageObject {
+     }
+ 
+     public boolean hasMediaSpoilers() {
++        // InuConfig.SHOW_SPOILERS_DIRECTLY also covers media spoilers (photos, videos, round
++        // videos) everywhere hasMediaSpoilers() is checked -- channels included, since
++        // ChatMessageCell uses this single choke point for all of them. Sensitive-content
++        // blurring is intentionally left alone; this toggle is a convenience skip, not a content
++        // policy bypass.
++        if (desu.inugram.InuConfig.SHOW_SPOILERS_DIRECTLY.getValue()) {
++            return isHiddenSensitive();
++        }
+         return !isRepostPreview && (messageOwner.media != null && messageOwner.media.spoiler || needDrawBluredPreview() || desu.inugram.helpers.chat.BlockedMessagesHelper.shouldSpoil(this)) || isHiddenSensitive();
+     }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/spoilers/SpoilerEffect.java

@@ -1,0 +1,77 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 00:10:55 +0300
+Subject: Add No-Quote button option to the message selection bar
+
+- InuConfig.SELECTION_BOTTOM_NO_QUOTE toggle
+- when enabled, the Reply button in the multi-select bottom bar forwards without quoting instead of replying
+---
+ .../main/java/org/telegram/ui/ChatActivity.java  | 16 +++++++++++++++-
+ .../ChatActivityActionsButtonsLayout.java        |  6 +++++-
+ 2 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -8180,6 +8180,10 @@ public class ChatActivity extends BaseFragment implements
+         actionsButtonsLayout = new ChatActivityActionsButtonsLayout(context, resourceProvider, blurredBackgroundColorProvider, glassBackgroundDrawableFactory);
+         actionsButtonsLayout.setForwardButtonOnClickListener(v -> openForward(false));
+         actionsButtonsLayout.setReplyButtonOnClickListener(v -> {
++            if (desu.inugram.InuConfig.SELECTION_BOTTOM_NO_QUOTE.getValue()) {
++                desu.inugram.helpers.chat.ChatActionsHelper.forwardSelectionNoQuote(ChatActivity.this);
++                return;
++            }
+             MessageObject messageObject = null;
+             for (int a = 1; a >= 0; a--) {
+                 if (messageObject == null && selectedMessagesIds[a].size() != 0) {
+@@ -19398,6 +19402,9 @@ public class ChatActivity extends BaseFragment implements
+                     }
+                     if (actionsButtonsLayout != null) {
+                         actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, true);
++                        if (desu.inugram.InuConfig.SELECTION_BOTTOM_NO_QUOTE.getValue()) {
++                            actionsButtonsLayout.setReplyButtonEnabled(cantForwardMessagesCount == 0 || noforwards, true);
++                        }
+                     }
+                     forwardButtonAnimation.playTogether(animators);
+                     forwardButtonAnimation.setDuration(100);
+@@ -19419,6 +19426,9 @@ public class ChatActivity extends BaseFragment implements
+                     }
+                     if (actionsButtonsLayout != null) {
+                         actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, false);
++                        if (desu.inugram.InuConfig.SELECTION_BOTTOM_NO_QUOTE.getValue()) {
++                            actionsButtonsLayout.setReplyButtonEnabled(cantForwardMessagesCount == 0 || noforwards, false);
++                        }
+                     }
+                 }
+                 if (saveItem != null) {
+@@ -19505,7 +19515,11 @@ public class ChatActivity extends BaseFragment implements
+                             }
+                         }
+                     }
+-                    actionsButtonsLayout.showReplyButton(newVisibility == View.VISIBLE, true);
++                    if (desu.inugram.InuConfig.SELECTION_BOTTOM_NO_QUOTE.getValue()) {
++                        actionsButtonsLayout.showReplyButton(true, true);
++                    } else {
++                        actionsButtonsLayout.showReplyButton(newVisibility == View.VISIBLE, true);
++                    }
+                 }
+ 
+                 if (editItem != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/chat/layouts/ChatActivityActionsButtonsLayout.java
+@@ -58,7 +58,11 @@ public class ChatActivityActionsButtonsLayout extends LinearLayout {
+         forwardButton.button.setOnClickListener(v -> {});
+         ScaleStateListAnimator.apply(forwardButton.button, .065f, 2f);
+ 
+-        addTextView(replyButton, LocaleController.getString(R.string.Reply), R.drawable.input_reply, false);
++        if (desu.inugram.InuConfig.SELECTION_BOTTOM_NO_QUOTE.getValue()) {
++            addTextView(replyButton, LocaleController.getString("InuForwardNoQuote", R.string.InuForwardNoQuote), R.drawable.input_reply, false);
++        } else {
++            addTextView(replyButton, LocaleController.getString(R.string.Reply), R.drawable.input_reply, false);
++        }
+         addTextView(forwardButton, LocaleController.getString(R.string.Forward), R.drawable.input_forward, true);
+ 
+         setOrientation(HORIZONTAL);
