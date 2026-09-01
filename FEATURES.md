@@ -196,10 +196,12 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
 - tap a web preview photo to open it in the photo viewer
+- 🐶 "Preview" in the link long-tap menu: peek a t.me message link (public or private) as a chat preview at that exact message
+- message details from menu (+ show json)
 - per-message statistics from message menu
 - remove single message's file from cache from the message menu
 - "Repeat" in message menu - re-send the same message to the same chat
-- "Save to Downloads" for stickers
+- "Save to Downloads" for stickers & custom emoji (both in chat and in egs/sheets)
 - customizable message context menu - reorder and hide items + long-tap forward/reply items + quick actions row (*ported from [NagramX](https://github.com/risin42/NagramX)*)
 - wide channel posts - channel posts (and, separately, channel posts/forwards shown in the feed) stretch to the full available width instead of a narrow auto-sized bubble, with a live before/after preview in settings (*ported from [exteraless](https://github.com/exteraless/exteraless)*)
 - customizable chat menu + extra actions:
@@ -236,6 +238,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 - 🐶 customizable max input lines (and bumped default)
 - 🐶 voice recorder moved into attachments drawer
+- 🐶 camera placement in the attach panel: instant (stock), static, floating button or bottom tab. the last two free up the grid cell
 - 🐶 custom formatting popup ui (better ux for span manipulation)
 - 🐶 customizable text classifier (native / improved / off) - reduces false positive expansions
 - show custom emoji *after* regular ones in `:smile` emoji suggestion popup
@@ -297,7 +300,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - disable pull-to-next-channel
 - disable swipe-to-unarchive
 - 🐶 disable swipe-to-hide the General topic in the forum topics list
-- disable instant camera in attachments
 - disable motion photos (rendering + detection, in picker and in messages)
 - disable notification chat bubbles
 - 🐶 disable cloud drafts upload
@@ -310,7 +312,10 @@ the sections below contain the broader feature set: inugram functionality, featu
 - faster downloads/uploads
 - auto-disable the configured proxy while a VPN is active
 - send MP4 files attached through Files as playable videos without conversion
-- original video quality option in quality picker when sending videos
+- sort attach panel albums by photo count instead of recency
+- 🐶 "Minimize" option in the attach panel discard prompt to keep the selection (e.g. to choose a message to reply to)
+- choose the media save folder (Inugram/Telegram) used for saved photos, videos, music and downloads
+- original video quality option in quality picker, including audio removal without re-encoding video
 - remember last used settings in polls + reasonable defaults
 - strip tracking parameters from URLs (UTM, fbclid, etc.) on open and paste using AdGuard tracking rules
 
@@ -343,6 +348,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
 - cancelling a video download kept restarting it after streaming the video in PhotoViewer (the player's loader thread swallowed its shutdown interrupt, survived the viewer close, and re-requested the file on every cancel; also a file-reference refresh landing mid-cancel resurrected the operation into an uncancellable zombie)
 - "Save to Downloads" preserves the original filename on Android 10+
+- downloaded photos/videos no longer show up in the system gallery on devices whose scanner indexes app-private dirs (stock never wrote `.nomedia` into the media cache dirs; only on Android 11+, where the gallery-visible copies live elsewhere)
 - gboard image paste no longer skips PhotoViewer
 - reordering an attach-panel album preserves per-photo captions and no longer duplicates its album caption
 - photo crop silently not applied to the sent image
@@ -353,21 +359,32 @@ the sections below contain the broader feature set: inugram functionality, featu
 - webm stickers played too fast (frame pacing was driven by the container's declared fps instead of frame timestamps, so variable-rate or mis-probed webm ran at up to 2x)
 - recyclerlistview double-tap requires same view
 - list ripple left behind when the pressed row moves because another row changed height (selector was only re-synced on scroll)
+- link ripples in album captions work across the entire group
+- link long-tap menu no longer draws the lifted link 2dp to the left of the actual text (the scrim was being nudged onto the popup's scale pivot even when it isn't morphing into a rewritten url)
+- long-tap scrims (link / date / card / username / phone menus) block chat touches while open — the lifted text is pinned to screen coords captured on open, so scrolling, swipe-to-reply or swipe-back behind it detached it from its bubble
 - dead zones in list rows where a hidden clickable child kept stale bounds from a previous binding (e.g. top-right corner of a member row in profile after a tagged member was recycled)
+- share sheet search results unclickable near the top (the touch dead zone under the search field double-counted the status bar inset, swallowing taps on the first row of results)
 - chat list crash while flinging when RecyclerView exposes a stale child without a ViewHolder
 - dialogs list pull-to-reveal-archive glitches
 - inline code in dialog previews no longer inherits chat-bubble colors
+- chat previews no longer persist the scroll position, so opening the chat normally afterwards still starts where you left off
 - big emoji jumping around in emoji-only messages when a visible reply preview shared its spans (stock bug: per-span draw-position cache fought over by both layouts), plus oversized animated emoji in reply previews (stock bug: `cloneSpan` overwrote the resized value with the old size)
 - pinned dialog reorder scrolling/glitching mid-drag in the archive (stock bug: async list diffing dispatched the move after the drag swap)
 - forwards from users with hidden forward privacy: the optimistic message shows the anonymized name right away (when their profile is cached), and the server-confirmed hidden header is applied in place instead of showing the linked author until chat reopen
 - shared media player visual glitches
 - profile pinned-music sheet bugfixes
 - shared media pager: fling mid-animation to chain tabs or reverse (was ignored until settled); at the edge tab the fling falls through to swipe-to-close
+- shared media grid cells (the opened one's neighbour especially) going blank after opening a photo — the viewer hides the source cell's image receiver a frame or more after resolving it, and restores it by re-resolving by message id; if the grid recycled that cell onto another message in between, the wrong cell was blanked and the restore landed elsewhere, so it never came back. deferred hides now verify the cell still shows what they were resolved for, and a cell rebound to a different message drops any inherited hidden flag
+- second copy of the photo showing over the shared media grid during the open/close transition (our own regression: stock's transition draws a list-space copy through a hole in the viewer's background, which is invisible while the main content is hidden — our keyboard fix keeps that content drawn, so the shared media provider now opts out of the second copy like ChatActivity does)
+- shared media photo transition starting/landing ~2dp off (down, and right for left-column cells): the grid's place provider pre-added the cell's image offset to the window coords, which the photo viewer then adds again via `drawRegion` — every other provider, including the sibling branches in the same method, passes the raw view position
+- image memory cache sized off `getMemoryClass()` while the app runs with `android:largeHeap` — the cache was ~29MB instead of ~56MB, too small to hold the shared media grid and the photo viewer's full-screen bitmaps at once, so opening any photo evicted the whole grid and every cell flashed its blurred thumbnail
 - attach panel: better perf, safe close before fully open
 - paid reaction animation respects litemode
 - custom emoji reaction burst respects litemode (stock only gated the "around" animation of regular emoji)
 - reaction counter shift during long-tap menu
 - reactions silently disappearing right after being sent (stale server read race)
+- channel reactions: toggling "Enable Reactions" was silently discarded on back (unsaved-changes check only compared the emoji selection, never the enabled state), and re-enabling always saved the prefilled list as an explicit set instead of "All"
+- rounded section backgrounds ignored the alpha of the fading container they lived in, so they stayed fully opaque during the animation and only popped away on the next unrelated redraw (e.g. toggling "Enable Reactions" in channel reactions)
 - sticky date pill jump and color shift when replacing an inline date separator
 - bubble jump when ime height changes mid send-animation
 - out-of-bubble panels (reply/forward/name) on custom wallpapers jumping tint when the keyboard opens (wallpaper-sampling offset flipped by the action bar height via a stale keyboard-layout conditional)
@@ -450,3 +467,4 @@ the sections below contain the broader feature set: inugram functionality, featu
 - correctly publish album name for streamed music
 - permanently white/stale message bubbles on low-memory devices (stock bug: `MessageDrawable` committed its radius/color cache keys even when the bitmap allocation for the bubble nine-patch failed, so the stale drawable was never rebuilt; the shadow nine-patch also recycled its old bitmap before allocating the new one, leaving a recycled bitmap in use)
 - unread reaction/poll vote badge stuck on a chat after reading some of them on another device (stock only persisted the dialog counter once it hit zero); counter now follows every single-message read, each read is acked to the server right away; the jump-to-reaction button no longer marks everything read when its offset overshoots
+- group call recording timer showing a nonsense duration (the whole unix epoch, e.g. `496691:48:15`) right after starting a recording: stock flips the local `recording` flag optimistically while `record_start_date` is still 0

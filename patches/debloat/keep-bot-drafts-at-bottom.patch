@@ -43,7 +43,7 @@ index 0000000..0000000 100644
              checkSendButtonBlockedByTyping(true);
          } else if (id == NotificationCenter.botForumDraftDelete) {
              final BotForumHelper.BotForumTextDraftDeleteNotification arg = (BotForumHelper.BotForumTextDraftDeleteNotification) args[0];
-@@ -25498,7 +25505,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25510,7 +25517,7 @@ public class ChatActivity extends BaseFragment implements
  
          final boolean isBot = UserObject.isBot(currentUser);
          final boolean isStreamingTopic = isBot && BotForumHelper.getInstance(currentAccount).isStreamingTopic(getDialogId(), getTopicId());
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
              MessageObject message = arr.get(0);
  
              final boolean isOutButWithHeight = !message.isBotPendingDraft && !message.isOutOwner()
-@@ -25703,7 +25710,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25715,7 +25722,7 @@ public class ChatActivity extends BaseFragment implements
  
          checkSendButtonBlockedByTyping(true);
  
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
  
          if (isBot && isStreamingTopic && !hasDraftsReplaces) {
              boolean hasMessageFromBot = false;
-@@ -26818,8 +26825,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -26830,8 +26837,10 @@ public class ChatActivity extends BaseFragment implements
              if (messageObject.getId() > 0 && old == null && UserObject.isBot(currentUser)) {
                  old = BotForumHelper.getInstance(currentAccount).onBotForumDraftCheckNewMessages(currentUser.id, (int) getTopicId(), messageObject.getId(), messageObject.messageText.toString());
                  if (old != null) {

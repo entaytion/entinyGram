@@ -98,8 +98,13 @@ object InuConfig {
         }
     }
 
+    enum class PrefType { BOOL, INT, LONG, FLOAT, STRING }
+
     abstract class Item<T>(val key: String, val default: T, val exportable: Boolean = true) {
         private var currentValue: T = default
+
+        // underlying SharedPreferences type this item serializes into
+        abstract val prefType: PrefType
 
         open var value: T
             get() = currentValue
@@ -139,6 +144,7 @@ object InuConfig {
 
     open class BoolItem(key: String, default: Boolean, exportable: Boolean = true) :
         Item<Boolean>(key, default, exportable) {
+        override val prefType = PrefType.BOOL
         override fun read(prefs: SharedPreferences): Boolean = prefs.getBoolean(key, default)
         override fun SharedPreferences.Editor.write() {
             putBoolean(key, value)
@@ -152,6 +158,7 @@ object InuConfig {
     }
 
     open class IntItem(key: String, default: Int, exportable: Boolean = true) : Item<Int>(key, default, exportable) {
+        override val prefType = PrefType.INT
         override fun read(prefs: SharedPreferences): Int = prefs.getInt(key, default)
         override fun SharedPreferences.Editor.write() {
             putInt(key, value)
@@ -159,6 +166,7 @@ object InuConfig {
     }
 
     class FloatItem(key: String, default: Float, exportable: Boolean = true) : Item<Float>(key, default, exportable) {
+        override val prefType = PrefType.FLOAT
         override fun read(prefs: SharedPreferences): Float = prefs.getFloat(key, default)
         override fun SharedPreferences.Editor.write() {
             putFloat(key, value)
@@ -167,6 +175,7 @@ object InuConfig {
 
     class StringItem(key: String, default: String, exportable: Boolean = true) :
         Item<String>(key, default, exportable) {
+        override val prefType = PrefType.STRING
         override fun read(prefs: SharedPreferences): String = prefs.getString(key, default) ?: default
         override fun SharedPreferences.Editor.write() {
             putString(key, value)
@@ -183,6 +192,7 @@ object InuConfig {
     }
 
     class LongItem(key: String, default: Long, exportable: Boolean = true) : Item<Long>(key, default, exportable) {
+        override val prefType = PrefType.LONG
         override fun read(prefs: SharedPreferences): Long = prefs.getLong(key, default)
         override fun SharedPreferences.Editor.write() {
             putLong(key, value)
@@ -318,8 +328,29 @@ object InuConfig {
     @JvmField
     val BLOCKED_MESSAGES_MODE = BlockedMessagesModeItem()
 
+    class AttachCameraModeItem : IntItem("attach_camera_mode", STATIC) {
+        // Migrate the old `disable_instant_camera` boolean toggle: on → static, off → instant.
+        override fun read(prefs: SharedPreferences): Int {
+            if (prefs.contains(key)) return prefs.getInt(key, default)
+            if (!prefs.contains("disable_instant_camera")) return default
+            val migrated = if (prefs.getBoolean("disable_instant_camera", true)) STATIC else INSTANT
+            prefs.edit {
+                putInt(key, migrated)
+                remove("disable_instant_camera")
+            }
+            return migrated
+        }
+
+        companion object {
+            const val INSTANT = 0
+            const val STATIC = 1
+            const val FAB = 2
+            const val TAB = 3
+        }
+    }
+
     @JvmField
-    val DISABLE_INSTANT_CAMERA = BoolItem("disable_instant_camera", true)
+    val ATTACH_CAMERA_MODE = AttachCameraModeItem()
 
     @JvmField
     val GIF_SEEKBAR = BoolItem("gif_seekbar", true)
@@ -329,6 +360,12 @@ object InuConfig {
 
     @JvmField
     val BYPASS_GIF_RESTRICTIONS = BoolItem("bypass_gif_restrictions", false)
+
+    @JvmField
+    val SORT_ALBUMS_BY_SIZE = BoolItem("sort_albums_by_size", true)
+
+    @JvmField
+    val DOWNLOAD_DIRECTORY = StringItem("download_directory", "Inugram")
 
     @JvmField
     val AUTO_DISABLE_PROXY_ON_VPN = BoolItem("auto_disable_proxy_on_vpn", false)
@@ -1231,6 +1268,9 @@ object InuConfig {
     // beta/pre-release build can never get offered to someone who didn't ask for it.
     @JvmField
     val UPDATES_INCLUDE_BETA = BoolItem("updates_include_beta", false)
+
+    @JvmField
+    val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
 
     // internal state
     @JvmField

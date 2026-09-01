@@ -759,16 +759,21 @@ object ChatActionsHelper {
         req.participant = activity.messagesController.getInputPeer(peerId)
         activity.connectionsManager.sendRequest(req) { response, _ ->
             AndroidUtilities.runOnUIThread {
-                val banned = (response as? TLRPC.TL_channels_channelParticipant)?.participant?.banned_rights
-                openRightsEditor(activity, peerId, banned)
+                val participant = (response as? TLRPC.TL_channels_channelParticipant)?.participant
+                openRightsEditor(activity, peerId, participant?.banned_rights, participant?.rank)
             }
         }
     }
 
-    private fun openRightsEditor(activity: ChatActivity, peerId: Long, bannedRights: TLRPC.TL_chatBannedRights?) {
+    private fun openRightsEditor(
+        activity: ChatActivity,
+        peerId: Long,
+        bannedRights: TLRPC.TL_chatBannedRights?,
+        rank: String?,
+    ) {
         val chat = activity.currentChat ?: return
         val fragment = ChatRightsEditActivity(
-            peerId, chat.id, null, chat.default_banned_rights, bannedRights, "",
+            peerId, chat.id, null, chat.default_banned_rights, bannedRights, rank ?: "",
             ChatRightsEditActivity.TYPE_BANNED, true, false, null,
         )
         activity.presentFragment(fragment)

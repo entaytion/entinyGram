@@ -6,13 +6,16 @@ Subject: change app name to Inugram
 ---
  TMessagesProj/src/main/AndroidManifest.xml    | 33 +++++++++++++++++++
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
+ .../messenger/ContactsController.java         | 10 +++---
  .../telegram/messenger/LocaleController.java  | 10 +++---
  .../telegram/messenger/MediaController.java   | 22 ++++++-------
- .../java/org/telegram/ui/DialogsActivity.java |  2 +-
+ .../java/org/telegram/ui/DialogsActivity.java |  6 +++-
  .../telegram/ui/LauncherIconController.java   |  6 ++--
- .../ui/Stories/DialogStoriesCell.java         |  4 ++-
+ .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
+ .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
+ .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
  .../ic_launcher_stock_round.xml               |  6 ++++
  .../src/main/res/values-de/strings.xml        |  4 +--
@@ -23,9 +26,11 @@ Subject: change app name to Inugram
  .../src/main/res/values-pt-rBR/strings.xml    |  6 ++--
  .../src/main/res/values-ru/strings.xml        |  6 ++--
  .../src/main/res/values-uk/strings.xml        |  6 ++--
- .../src/main/res/values-v31/styles.xml        |  6 +++-
+ .../src/main/res/values-v31/styles.xml        |  2 +-
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
- 21 files changed, 111 insertions(+), 58 deletions(-)
+ TMessagesProj/src/main/res/xml/auth.xml       |  2 +-
+ .../src/main/res/xml/sync_contacts.xml        |  2 +-
+ 26 files changed, 136 insertions(+), 78 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -82,10 +87,59 @@ index 0000000..0000000 100644
          File storageDir = null;
          if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 -            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
-+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "entinyGram");
++            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
              if (!storageDir.mkdirs()) {
                  if (!storageDir.exists()) {
                      if (BuildVars.LOGS_ENABLED) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+@@ -391,7 +391,7 @@ public class ContactsController extends BaseController {
+         Utilities.globalQueue.postRunnable(() -> {
+             AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
+             try {
+-                Account[] accounts = am.getAccountsByType("org.telegram.messenger");
++                Account[] accounts = am.getAccountsByType("desu.inugram");
+                 for (int a = 0; a < accounts.length; a++) {
+                     Account acc = accounts[a];
+                     boolean found = false;
+@@ -423,7 +423,7 @@ public class ContactsController extends BaseController {
+                 readContacts();
+                 if (systemAccount == null) {
+                     try {
+-                        systemAccount = new Account("" + getUserConfig().getClientUserId(), "org.telegram.messenger");
++                        systemAccount = new Account("" + getUserConfig().getClientUserId(), "desu.inugram");
+                         am.addAccountExplicitly(systemAccount, "", null);
+                     } catch (Exception ignore) {
+ 
+@@ -437,7 +437,7 @@ public class ContactsController extends BaseController {
+         try {
+             systemAccount = null;
+             AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
+-            Account[] accounts = am.getAccountsByType("org.telegram.messenger");
++            Account[] accounts = am.getAccountsByType("desu.inugram");
+             for (int a = 0; a < accounts.length; a++) {
+                 Account acc = accounts[a];
+                 boolean found = false;
+@@ -513,7 +513,7 @@ public class ContactsController extends BaseController {
+                 AndroidUtilities.runOnUIThread(() -> {
+                     AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
+                     try {
+-                        Account[] accounts = am.getAccountsByType("org.telegram.messenger");
++                        Account[] accounts = am.getAccountsByType("desu.inugram");
+                         systemAccount = null;
+                         for (int a = 0; a < accounts.length; a++) {
+                             Account acc = accounts[a];
+@@ -531,7 +531,7 @@ public class ContactsController extends BaseController {
+ 
+                     }
+                     try {
+-                        systemAccount = new Account("" + getUserConfig().getClientUserId(), "org.telegram.messenger");
++                        systemAccount = new Account("" + getUserConfig().getClientUserId(), "desu.inugram");
+                         am.addAccountExplicitly(systemAccount, "", null);
+                     } catch (Exception ignore) {
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
@@ -128,7 +182,7 @@ index 0000000..0000000 100644
                  final ContentValues cv = new ContentValues();
                  final Uri uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
 -                final File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "Telegram");
-+                final File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "entinyGram");
++                final File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                  cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  cv.put(MediaStore.Downloads.DISPLAY_NAME, filename);
                  cv.put(MediaStore.MediaColumns.MIME_TYPE, outputMime);
@@ -137,7 +191,7 @@ index 0000000..0000000 100644
                  }
              } else {
 -                final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "Telegram");
-+                final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "entinyGram");
++                final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                  destDir.mkdirs();
                  File destFile = new File(destDir, filename);
                  if (!destFile.exists()) {
@@ -146,12 +200,12 @@ index 0000000..0000000 100644
                          File destFile;
                          if (type == 0) {
 -                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
-+                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "entinyGram");
++                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                              destFile.mkdirs();
                              destFile = new File(destFile, AndroidUtilities.generateFileName(0, FileLoader.getFileExtension(sourceFile)));
                          } else if (type == 1) {
 -                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "Telegram");
-+                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), "entinyGram");
++                            destFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                              destFile.mkdirs();
                              destFile = new File(destFile, AndroidUtilities.generateFileName(1, FileLoader.getFileExtension(sourceFile)));
                          } else {
@@ -160,7 +214,7 @@ index 0000000..0000000 100644
                                  dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
                              }
 -                            dir = new File(dir, "Telegram");
-+                            dir = new File(dir, "entinyGram");
++                            dir = new File(dir, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                              dir.mkdirs();
                              destFile = new File(dir, name);
                              if (destFile.exists()) {
@@ -169,7 +223,7 @@ index 0000000..0000000 100644
                      final ContentValues cv = new ContentValues();
                      final Uri uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
 -                    final File dirDest = new File(Environment.DIRECTORY_PICTURES, "Telegram");
-+                    final File dirDest = new File(Environment.DIRECTORY_PICTURES, "entinyGram");
++                    final File dirDest = new File(Environment.DIRECTORY_PICTURES, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                      cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                      cv.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                      cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
@@ -178,7 +232,7 @@ index 0000000..0000000 100644
                      }
                  } else {
 -                    final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
-+                    final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "entinyGram");
++                    final File destDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                      destDir.mkdirs();
                      File destFile = new File(destDir, AndroidUtilities.generateFileName(0, "jpg"));
                      if (!destFile.exists()) {
@@ -187,7 +241,7 @@ index 0000000..0000000 100644
                  }
                  uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
 -                File dirDest = new File(Environment.DIRECTORY_PICTURES, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_PICTURES, "entinyGram");
++                File dirDest = new File(Environment.DIRECTORY_PICTURES, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                  contentValues.put(MediaStore.Images.Media.MIME_TYPE, mimeType);
@@ -196,7 +250,7 @@ index 0000000..0000000 100644
                      filename = AndroidUtilities.generateFileName(1, extension);
                  }
 -                File dirDest = new File(Environment.DIRECTORY_MOVIES, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_MOVIES, "entinyGram");
++                File dirDest = new File(Environment.DIRECTORY_MOVIES, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, filename);
@@ -205,7 +259,7 @@ index 0000000..0000000 100644
                      filename = sourceFile.getName();
                  }
 -                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, "entinyGram");
++                File dirDest = new File(Environment.DIRECTORY_DOWNLOADS, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Downloads.DISPLAY_NAME, filename);
@@ -214,7 +268,7 @@ index 0000000..0000000 100644
                      filename = sourceFile.getName();
                  }
 -                File dirDest = new File(Environment.DIRECTORY_MUSIC, "Telegram");
-+                File dirDest = new File(Environment.DIRECTORY_MUSIC, "entinyGram");
++                File dirDest = new File(Environment.DIRECTORY_MUSIC, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Audio.Media.DISPLAY_NAME, filename);
@@ -222,7 +276,24 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14433,4 +14433,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3517,12 +3517,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             } else {
+                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
+                 statusDrawable.center = true;
++                if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+                 logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
+                 logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
+                 logoDrawable.setColorFilter(getThemedColor(Theme.key_telegram_color_dialogsLogo), PorterDuff.Mode.MULTIPLY);
+                 SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
+                 ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                 actionBar.setTitle(ssb, statusDrawable);
++                } else {
++                    actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
++                }
+                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
+             }
+             if (folderId == 0) {
+@@ -14433,4 +14437,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          return true;
      }
  
@@ -263,15 +334,66 @@ index 0000000..0000000 100644
          titleView.setGravity(Gravity.LEFT);
          titleView.setTextColor(getTextLogoColor());
          titleView.setTypeface(AndroidUtilities.bold());
-@@ -638,7 +640,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-             titleView.setText(currentTitle, animated && !LocaleController.isRTL);
+@@ -626,11 +628,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+                     currentTitle = str;
+                 }
+             } else {
+-                currentTitle = menuItemsOffset < dp(50) ? null :
++                currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
+                     LocaleController.getString(R.string.MyStory);
+             }
+         } else {
+-            currentTitle = menuItemsOffset < dp(50) ? null :
++            currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
+                 LocaleController.formatPluralString("Stories", totalCount);
          }
  
--        animatorHasTitleText.setValue(!TextUtils.isEmpty(currentTitle) || hasOverlayText, animated);
-+        animatorHasTitleText.setValue(hasOverlayText, animated);
+@@ -944,7 +946,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
+             telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
  
-         miniItems.clear();
-         for (int i = 0; i < items.size(); i++) {
+-            emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
++            if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
++                emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
++            } else {
++                emojiStatusView.setTranslationX(titleView.getTranslationX() + titleView.getDrawable().getCurrentWidth() + dpf2(2.66f));
++            }
+             emojiStatusView.setTranslationY(bottomY + dp(14 - 11 + FAKE_TOP_PADDING + 4.333f) + translationOffset);
+ 
+             subtitleOverlayContainer.setTranslationX(titleView.getTranslationX());
+@@ -1302,7 +1308,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             titleView.setText(currentTitle, !LocaleController.isRTL);
+         }
+ 
+-        animatorHasTitleText.setValue(hasOverlayText, true);
++        animatorHasTitleText.setValue(!TextUtils.isEmpty(currentTitle) || hasOverlayText, true);
+         if (hasEllipsizedText) {
+             ellipsizeSpanAnimator.addView(titleView);
+         } else {
+@@ -2211,18 +2217,19 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+         final float logoVisibility = 1f - titleVisibility;
+         final float titleAlpha = titleVisibility * progress;
+         final float logoAlpha = logoVisibility * progress;
++        final boolean inu_disguised = desu.inugram.helpers.security.ParanoiaHelper.isDisguised();
+ 
+         if (titleView != null) {
+             titleView.setAlpha(titleAlpha);
+             titleView.setVisibility(titleAlpha > 0 ? VISIBLE : GONE);
+         }
+         if (telegramLogoView != null) {
+-            telegramLogoView.setAlpha(logoAlpha);
+-            telegramLogoView.setVisibility(logoAlpha > 0 ? VISIBLE : GONE);
++            telegramLogoView.setAlpha(inu_disguised ? logoAlpha : 0f);
++            telegramLogoView.setVisibility(inu_disguised && logoAlpha > 0 ? VISIBLE : GONE);
+         }
+         if (emojiStatusView != null) {
+-            emojiStatusView.setAlpha(logoAlpha);
+-            emojiStatusView.setVisibility(logoAlpha > 0 ? VISIBLE : GONE);
++            emojiStatusView.setAlpha(inu_disguised ? logoAlpha : progress);
++            emojiStatusView.setVisibility((inu_disguised ? logoAlpha > 0 : progress > 0) ? VISIBLE : GONE);
+         }
+         if (subtitleOverlayContainer != null) {
+             subtitleOverlayContainer.setAlpha(progress);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
@@ -351,6 +473,35 @@ index 0000000..0000000 100644
  
          super.dispatchDraw(canvas);
      }
+diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
++++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+-    <background android:drawable="@drawable/icon_background" />
+-    <foreground android:drawable="@mipmap/icon_foreground" />
+-    <monochrome android:drawable="@drawable/icon_plane" />
++    <background android:drawable="@drawable/icon_background_inu" />
++    <foreground android:drawable="@drawable/icon_foreground_inu" />
++    <monochrome android:drawable="@drawable/icon_plane_inu" />
+ </adaptive-icon>
+\ No newline at end of file
+diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
++++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+-    <background android:drawable="@drawable/icon_background_round" />
+-    <foreground android:drawable="@mipmap/icon_foreground_round" />
+-    <monochrome android:drawable="@drawable/icon_plane" />
++    <background android:drawable="@drawable/icon_background_inu" />
++    <foreground android:drawable="@drawable/icon_foreground_inu_round" />
++    <monochrome android:drawable="@drawable/icon_plane_inu" />
+ </adaptive-icon>
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
 new file mode 100644
 index 0000000..0000000
@@ -384,8 +535,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">Deutsch</string>
      <string name="English">Englisch</string>
      <string name="LanguageNameInEnglish">German</string>
@@ -398,8 +549,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">Español</string>
      <string name="English">Inglés</string>
      <string name="LanguageNameInEnglish">Spanish</string>
@@ -408,7 +559,7 @@ index 0000000..0000000 100644
      <string name="PermissionDrawAboveOtherAppsGroupCallTitle">Superposición del videochat</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">entinyGram</string>
++    <string name="Page1Title">Inugram</string>
      <string name="Page2Title">Rápido</string>
      <string name="Page3Title">Gratuito</string>
      <string name="Page4Title">Seguro</string>
@@ -421,8 +572,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">Italiano</string>
      <string name="English">Inglese</string>
      <string name="LanguageNameInEnglish">Italian</string>
@@ -447,7 +598,7 @@ index 0000000..0000000 100644
  <?xml version="1.0" encoding="utf-8"?>
  <resources>
 -    <string name="AppName">Telegram</string>
-+    <string name="AppName">entinyGram</string>
++    <string name="AppName">Inugram</string>
      <string name="AppNameBeta">Telegram-bèta</string>
      <string name="LanguageName">Nederlands</string>
      <string name="English">Engels</string>
@@ -460,8 +611,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">Português (Brasil)</string>
      <string name="English">Inglês</string>
      <string name="LanguageNameInEnglish">Portuguese (Brazil)</string>
@@ -470,7 +621,7 @@ index 0000000..0000000 100644
      <string name="PermissionDrawAboveOtherAppsGroupCallTitle">Chat de vídeo flutuante</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">entinyGram</string>
++    <string name="Page1Title">Inugram</string>
      <string name="Page2Title">Rápido</string>
      <string name="Page3Title">Gratuito</string>
      <string name="Page4Title">Seguro</string>
@@ -483,8 +634,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">Русский</string>
      <string name="English">Английский</string>
      <string name="LanguageNameInEnglish">Russian</string>
@@ -493,7 +644,7 @@ index 0000000..0000000 100644
      <string name="LoginOrSingInWithGoogle">или</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">entinyGram</string>
++    <string name="Page1Title">Inugram</string>
      <string name="Page2Title">Быстрый</string>
      <string name="Page3Title">Бесплатный</string>
      <string name="Page4Title">Безопасный</string>
@@ -506,8 +657,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">Українська</string>
      <string name="English">Англійська</string>
      <string name="LanguageNameInEnglish">Ukrainian</string>
@@ -516,7 +667,7 @@ index 0000000..0000000 100644
      <string name="LoginOrSingInWithGoogle">або</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">entinyGram</string>
++    <string name="Page1Title">Inugram</string>
      <string name="Page2Title">Швидкий</string>
      <string name="Page3Title">Безплатний</string>
      <string name="Page4Title">Захищений</string>
@@ -524,7 +675,7 @@ diff --git a/TMessagesProj/src/main/res/values-v31/styles.xml b/TMessagesProj/sr
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values-v31/styles.xml
 +++ b/TMessagesProj/src/main/res/values-v31/styles.xml
-@@ -28,11 +28,15 @@
+@@ -28,7 +28,7 @@
          <item name="android:navigationBarColor">#000000</item>
          <item name="android:textViewStyle">@style/MyTextViewStyle</item>
          <item name="android:forceDarkAllowed">false</item>
@@ -533,14 +684,6 @@ index 0000000..0000000 100644
          <item name="android:windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
          <item name="android:windowSplashScreenBackground">?android:windowBackground</item>
      </style>
- 
-+    <style name="Theme.TMessages.Start.Old" parent="Theme.TMessages.Start">
-+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_old_320</item>
-+    </style>
-+
-     <style name="Theme.TMessages" parent="Theme.AppCompat.Light">
-         <item name="android:windowActionBar">false</item>
-         <item name="android:windowNoTitle">true</item>
 diff --git a/TMessagesProj/src/main/res/values/strings.xml b/TMessagesProj/src/main/res/values/strings.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values/strings.xml
@@ -550,8 +693,8 @@ index 0000000..0000000 100644
  <resources>
 -    <string name="AppName">Telegram</string>
 -    <string name="AppNameBeta">Telegram Beta</string>
-+    <string name="AppName">entinyGram</string>
-+    <string name="AppNameBeta">entinyGram Beta</string>
++    <string name="AppName">Inugram</string>
++    <string name="AppNameBeta">Inugram Beta</string>
      <string name="LanguageName">English</string>
      <string name="English">English</string>
      <string name="LanguageNameInEnglish">English</string>
@@ -561,8 +704,8 @@ index 0000000..0000000 100644
      <string name="SetProfilePhoto">Set Profile Photo</string>
 -    <string name="AppUpdate">Update Telegram</string>
 -    <string name="AppUpdateBeta">Update Telegram Beta</string>
-+    <string name="AppUpdate">Update entinyGram</string>
-+    <string name="AppUpdateBeta">Update entinyGram Beta</string>
++    <string name="AppUpdate">Update Inugram</string>
++    <string name="AppUpdateBeta">Update Inugram Beta</string>
      <string name="AppUpdateVersionAndSize">Version %1$s • %2$s</string>
      <string name="AppBetaUpdateVersion">Version %1$s (%2$s)</string>
      <string name="AppUpdateDownloading">Downloading %1$d%%...</string>
@@ -571,7 +714,31 @@ index 0000000..0000000 100644
      <string name="ViewMessage">Open Message</string>
      <!--Intro view-->
 -    <string name="Page1Title">Telegram</string>
-+    <string name="Page1Title">entinyGram</string>
++    <string name="Page1Title">Inugram</string>
      <string name="Page2Title">Fast</string>
      <string name="Page3Title">Free</string>
      <string name="Page4Title">Secure</string>
+diff --git a/TMessagesProj/src/main/res/xml/auth.xml b/TMessagesProj/src/main/res/xml/auth.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/xml/auth.xml
++++ b/TMessagesProj/src/main/res/xml/auth.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ 
+ <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:accountType="org.telegram.messenger"
++    android:accountType="desu.inugram"
+     android:icon="@drawable/ic_launcher_dr"
+     android:smallIcon="@drawable/ic_launcher_dr"
+     android:label="@string/AppName"
+diff --git a/TMessagesProj/src/main/res/xml/sync_contacts.xml b/TMessagesProj/src/main/res/xml/sync_contacts.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/xml/sync_contacts.xml
++++ b/TMessagesProj/src/main/res/xml/sync_contacts.xml
+@@ -1,3 +1,3 @@
+ <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+     android:contentAuthority="com.android.contacts"
+-    android:accountType="org.telegram.messenger"/>
+\ No newline at end of file
++    android:accountType="desu.inugram"/>
+\ No newline at end of file

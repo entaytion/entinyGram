@@ -85,6 +85,25 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_LOGS_ENABLED,
+                LocaleController.getString(R.string.InuLogsEnabled),
+            ).setChecked(LogsHelper.isEnabled())
+        )
+        if (LogsHelper.isEnabled()) {
+            items.add(
+                UItem.asCheck(
+                    TOGGLE_EXTRA_DEBUG_LOGS,
+                    LocaleController.getString(R.string.InuExtraDebugLogs),
+                ).setChecked(InuConfig.EXTRA_DEBUG_LOGS.value)
+            )
+            items.add(UItem.asCustom(getOrCreateLogsRow()))
+            items.add(UItem.asCustom(getOrCreateHeapRow()))
+        }
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.inu_tabler_file_export, LocaleController.getString(R.string.InuBackupExport)))
         items.add(UItem.asButton(BUTTON_IMPORT, R.drawable.inu_tabler_file_import, LocaleController.getString(R.string.InuBackupImport)))
@@ -95,19 +114,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(mkSubPageButton(BUTTON_CACHE_MANAGEMENT, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheManagement)))
         items.add(UItem.asShadow(null))
 
-        if (BuildVars.isBetaApp()) {
-            items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
-            items.add(
-                UItem.asCheck(
-                    TOGGLE_LOGS_ENABLED,
-                    LocaleController.getString(R.string.InuLogsEnabled),
-                ).setChecked(LogsHelper.isEnabled())
-            )
-            if (LogsHelper.isEnabled()) {
-                items.add(UItem.asCustom(getOrCreateLogsRow()))
-                items.add(UItem.asCustom(getOrCreateHeapRow()))
-            }
-        }
         items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_terminal_2, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
         items.add(UItem.asShadow(null))
     }
@@ -164,6 +170,10 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 (view as? TextCheckCell)?.isChecked = new
                 if (new) refreshLogsSize()
                 listView?.adapter?.update(true)
+            }
+
+            TOGGLE_EXTRA_DEBUG_LOGS -> {
+                (view as? TextCheckCell)?.isChecked = InuConfig.EXTRA_DEBUG_LOGS.toggle()
             }
 
             BUTTON_COPY_SYSINFO -> {
@@ -556,6 +566,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val TOGGLE_AUTO_UPDATE_CHECK = InuUtils.generateId()
         private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
+        private val TOGGLE_EXTRA_DEBUG_LOGS = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
         private val BUTTON_EXPORT = InuUtils.generateId()
         private val BUTTON_IMPORT = InuUtils.generateId()

@@ -27,6 +27,8 @@ abstract class MenuOrderConfig<I : MenuOrderItem>(
     private val offByDefault: Set<I>,
 ) : InuConfig.Item<List<MenuOrderEntry<I>>>(key, allItems.map { MenuOrderEntry(it, it !in offByDefault, it.isSlot) }) {
 
+    override val prefType = InuConfig.PrefType.STRING
+
     protected abstract fun itemByKey(key: String): I?
 
     override fun read(prefs: SharedPreferences): List<MenuOrderEntry<I>> {

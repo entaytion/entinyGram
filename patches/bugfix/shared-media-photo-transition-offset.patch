@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 19:18:19 +0400
+Subject: fix shared media photo transition offset by the grid spacing
+
+---
+ .../main/java/org/telegram/ui/Components/SharedMediaLayout.java | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -1309,8 +1309,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                     if (message.getId() == messageObject.getId()) {
+                         imageReceiver = cell.imageReceiver;
+                         cell.getLocationInWindow(coords);
+-                        coords[0] += Math.round(cell.imageReceiver.getImageX());
+-                        coords[1] += Math.round(cell.imageReceiver.getImageY());
+                     }
+                 } else if (view instanceof SharedDocumentCell) {
+                     SharedDocumentCell cell = (SharedDocumentCell) view;

@@ -1,0 +1,128 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 19:21:50 +0400
+Subject: fix blank cells in shared media grid after opening a photo
+
+---
+ .../ui/Cells/SharedPhotoVideoCell2.java       |  8 ++++
+ .../java/org/telegram/ui/PhotoViewer.java     | 37 ++++++++++++++++++-
+ 2 files changed, 43 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java
+@@ -265,6 +265,7 @@ public class SharedPhotoVideoCell2 extends FrameLayout {
+         }
+ 
+         int oldParentColumnsCount = currentParentColumnsCount;
++        final int inu_prevMsgId = currentMessageObject == null ? 0 : currentMessageObject.getId();
+         currentParentColumnsCount = parentColumnsCount;
+         if (currentMessageObject == null && messageObject == null) {
+             return;
+@@ -283,6 +284,13 @@ public class SharedPhotoVideoCell2 extends FrameLayout {
+             return;
+         }
+         currentMessageObject = messageObject;
++        // PhotoViewer hides the source cell's receiver during its transition and restores it by
++        // re-resolving the cell later. if this cell got recycled onto another message in between,
++        // that restore lands elsewhere and this receiver would stay invisible forever - the flag
++        // belongs to the (cell, message) pair, so drop it whenever the message changes.
++        if (messageObject == null || inu_prevMsgId != messageObject.getId()) {
++            this.imageReceiver.setVisible(true, false);
++        }
+         isStory = currentMessageObject != null && currentMessageObject.isStory();
+         isStoryUploading = currentMessageObject != null && currentMessageObject.uploadingStory != null;
+         updateSpoilers2();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -2040,6 +2040,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+     private boolean currentVideoFinishedLoading;
+     private TL_iv.PageBlock currentPageBlock;
+     private ImageReceiver.BitmapHolder currentThumb;
++    private ImageReceiver inu_hiddenImageReceiver;
+     private boolean ignoreDidSetImage;
+     private boolean dontAutoPlay;
+     boolean fromCamera;
+@@ -2736,6 +2737,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+ 
+     public static class PlaceProviderObject {
+         public ImageReceiver imageReceiver;
++        public String inu_imageKey;
+         public int viewX;
+         public int viewY;
+         public int viewY2;
+@@ -16001,6 +16003,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 currentPlaceObject.imageReceiver.setVisible(false, true);
+             } else {
+                 hideAfterAnimation = currentPlaceObject;
++                inu_armDeferredHide(hideAfterAnimation);
+             }
+         }
+ 
+@@ -17904,7 +17907,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                         if (showAfterAnimation != null) {
+                             showAfterAnimation.imageReceiver.setVisible(true, true);
+                         }
+-                        if (hideAfterAnimation != null && !hideAfterAnimation.keepImageReceiverVisible) {
++                        if (hideAfterAnimation != null && !hideAfterAnimation.keepImageReceiverVisible && inu_stillBound(hideAfterAnimation)) {
+                             hideAfterAnimation.imageReceiver.setVisible(false, true);
+                         }
+                         if (photos != null && sendPhotoType != 3 && sendPhotoType != SELECT_TYPE_AVATAR) {
+@@ -17984,9 +17987,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                             photoCropView.setAlpha(1.0f);
+                         }
+                     }
++                    inu_armDeferredHide(object);
+                     backgroundDrawable.drawRunnable = () -> {
+                         disableShowCheck = false;
+-                        if (!object.keepImageReceiverVisible) {
++                        if (!object.keepImageReceiverVisible && inu_stillBound(object)) {
++                            inu_hiddenImageReceiver = object.imageReceiver;
+                             object.imageReceiver.setVisible(false, true);
+                         }
+                     };
+@@ -18739,6 +18744,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+         }
+     }
+ 
++    // a PlaceProviderObject holds the ImageReceiver of whichever cell showed the photo when it was
++    // resolved. deferred hides fire a frame or more later, by which time the list may have recycled
++    // that cell onto another message - hiding it then blanks the wrong cell, and the restore (which
++    // re-resolves by message id) lands elsewhere, so it never comes back.
++    private static void inu_armDeferredHide(PlaceProviderObject object) {
++        if (object != null && object.imageReceiver != null) {
++            object.inu_imageKey = object.imageReceiver.getImageKey();
++        }
++    }
++
++    private static boolean inu_stillBound(PlaceProviderObject object) {
++        return object != null && object.imageReceiver != null
++            && (object.inu_imageKey == null || object.inu_imageKey.equals(object.imageReceiver.getImageKey()));
++    }
++
+     private ClippingImageView[] getAnimatingImageViews(PlaceProviderObject object) {
+         final boolean hasSecondAnimatingImageView = !AndroidUtilities.isTablet() && object != null && object.animatingImageView != null;
+         final ClippingImageView[] animatingImageViews = new ClippingImageView[1 + (hasSecondAnimatingImageView ? 1 : 0)];
+@@ -18900,6 +18920,19 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+         shownControlsByEnd = false;
+         videoCutStart = 0;
+         videoCutEnd = 1f;
++        if (inu_hiddenImageReceiver != null) {
++            inu_hiddenImageReceiver.setVisible(true, true);
++            inu_hiddenImageReceiver = null;
++        }
++        if (currentPlaceObject != null) {
++            currentPlaceObject.imageReceiver.setVisible(true, true);
++            currentPlaceObject = null;
++        }
++        if (hideAfterAnimation != null) {
++            hideAfterAnimation.imageReceiver.setVisible(true, true);
++            hideAfterAnimation = null;
++        }
++        showAfterAnimation = null;
+         if (object != null) {
+             object.imageReceiver.setVisible(true, true);
+         }

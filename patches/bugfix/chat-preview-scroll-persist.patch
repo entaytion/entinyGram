@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 05:26:43 +0400
+Subject: dont persist scroll position from a chat preview
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -30297,7 +30297,7 @@ public class ChatActivity extends BaseFragment implements
+             getMessagesController().cancelTyping(0, dialog_id, threadMessageId);
+         }
+         if (chatMode == 0 || chatMode == MODE_SAVED) {
+-            if (!pausedOnLastMessage && !firstLoading && (!isThreadChat() || isTopic)) {
++            if (!pausedOnLastMessage && !firstLoading && !inPreviewMode && (!isThreadChat() || isTopic)) {
+                 SharedPreferences.Editor editor = MessagesController.getNotificationsSettings(currentAccount).edit();
+                 int messageId = 0;
+                 int offset = 0;

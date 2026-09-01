@@ -5,9 +5,9 @@ Subject: md3-styled bottom navigation bar
 
 ---
  .../ui/Components/glass/GlassTabView.java     | 35 +++++++++++++++----
- .../org/telegram/ui/MainTabsActivity.java     | 21 ++++++-----
+ .../org/telegram/ui/MainTabsActivity.java     | 24 ++++++++-----
  .../java/org/telegram/ui/MainTabsLayout.java  | 15 +++++++-
- 3 files changed, 55 insertions(+), 16 deletions(-)
+ 3 files changed, 58 insertions(+), 16 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
 index 0000000..0000000 100644
@@ -207,6 +207,16 @@ index 0000000..0000000 100644
  
          final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
              insets.inset(0, 0, 0, navigationBarHeight) : insets;
+@@ -1282,6 +1285,9 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (tabsView != null) {
+             tabsView.invalidate();
+         }
++        if (tabsViewWrapper != null) {
++            tabsViewWrapper.invalidate();
++        }
+         if (tabs != null) {
+             for (GlassTabView tabView : tabs) {
+                 tabView.updateColorsLottie();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsLayout.java

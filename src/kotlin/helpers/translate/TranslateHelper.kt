@@ -2,6 +2,7 @@ package desu.inugram.helpers.translate
 
 import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -49,6 +50,9 @@ object TranslateHelper {
 
     // dialog id -> message id -> (detected src lang, target lang) for the webpage
     private val webPagesLangs = ConcurrentHashMap<Long, ConcurrentHashMap<Int, Pair<String?, String>>>()
+
+    // dialog id -> message id -> source text at the time it was translated
+    private val originals = ConcurrentHashMap<Long, ConcurrentHashMap<Int, String>>()
 
     @JvmStatic
     fun isWebPageTranslating(msg: MessageObject?): Boolean {
@@ -134,6 +138,7 @@ object TranslateHelper {
         if (!hasBody && !hasWebPage) return false
 
         activity.dimBehindView(false)
+        originals.computeIfAbsent(target.dialogId) { ConcurrentHashMap() }[target.id] = owner.message.orEmpty()
         if (hasBody) startBodyTranslate(activity, target, owner, fromLang, toLang)
         if (hasWebPage) startWebPageTranslate(activity, target, webPage!!, toLang)
         return true
@@ -519,14 +524,55 @@ object TranslateHelper {
 
     @JvmStatic
     fun revert(activity: ChatActivity, msg: MessageObject) {
+        clearState(msg)
+        NotificationCenter.getInstance(activity.currentAccount)
+            .postNotificationName(NotificationCenter.messageTranslated, msg)
+    }
+
+    private fun clearState(msg: MessageObject) {
         manual[msg.dialogId]?.remove(msg.id)
         bodies[msg.dialogId]?.remove(msg.id)
         if (webPages[msg.dialogId]?.remove(msg.id) != null) {
             msg.linkDescription = null
         }
+        webPagesLoading[msg.dialogId]?.remove(msg.id)
         webPagesLangs[msg.dialogId]?.remove(msg.id)
-        NotificationCenter.getInstance(activity.currentAccount)
-            .postNotificationName(NotificationCenter.messageTranslated, msg)
+        originals[msg.dialogId]?.remove(msg.id)
+    }
+
+    /**
+     * True when the fork holds an in-place translation for [msg] and its source text is
+     * still the one that was translated. Stock invalidates translations on every edit update,
+     * and reactions arrive as edit updates.
+     */
+    @JvmStatic
+    fun shouldKeepTranslation(msg: MessageObject?): Boolean {
+        if (msg == null || !InuConfig.IN_PLACE_TRANSLATION.value) return false
+        if (!isManualTranslated(msg) && !hasTranslatedWebPage(msg)) return false
+        val original = originals[msg.dialogId]?.get(msg.id) ?: return false
+        return TextUtils.equals(original, msg.messageOwner?.message)
+    }
+
+    /** Carries the in-place translation from a replaced message object onto its replacement. */
+    @JvmStatic
+    fun carryTranslation(old: MessageObject?, updated: MessageObject?) {
+        if (old == null || updated == null || old === updated) return
+        if (!InuConfig.IN_PLACE_TRANSLATION.value) return
+        if (!isManualTranslated(old) && !hasTranslatedWebPage(old)) return
+        val oldOwner = old.messageOwner ?: return
+        val newOwner = updated.messageOwner ?: return
+        if (!shouldKeepTranslation(updated)) {
+            clearState(updated)
+            return
+        }
+        if (newOwner.translatedText != null || newOwner.translatedVoiceTranscription != null || newOwner.translatedPoll != null) return
+        newOwner.originalLanguage = oldOwner.originalLanguage
+        newOwner.translatedToLanguage = oldOwner.translatedToLanguage
+        newOwner.translatedText = oldOwner.translatedText
+        newOwner.translatedVoiceTranscription = oldOwner.translatedVoiceTranscription
+        newOwner.translatedPoll = oldOwner.translatedPoll
+        updated.linkDescription = null
+        updated.updateTranslation(false)
     }
 
     fun resetForDialog(dialogId: Long) {
@@ -535,6 +581,7 @@ object TranslateHelper {
         webPages.remove(dialogId)
         webPagesLoading.remove(dialogId)
         webPagesLangs.remove(dialogId)
+        originals.remove(dialogId)
     }
 
     /** Returns the translated body with original appended when the toggle is on; otherwise [original]. */

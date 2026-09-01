@@ -86,7 +86,7 @@ index 0000000..0000000 100644
          ReactionsEffectOverlay.dismissByFragment(this);
          if (messageMetricsView != null) {
              messageMetricsView.finish();
-@@ -35931,6 +35935,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35851,6 +35855,7 @@ public class ChatActivity extends BaseFragment implements
      private int commentMessagesRequestId;
      private int commentLoadingMessageId;
      private boolean hideCommentLoading;
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      private long commentLoadingStartedAt;
      private TLRPC.TL_messages_discussionMessage savedDiscussionMessage;
      private TLRPC.messages_Messages savedHistory;
-@@ -36028,9 +36033,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -35948,9 +35953,11 @@ public class ChatActivity extends BaseFragment implements
                                      chatActivity.didReceivedNotification(id, account, args);
                                  }, 50);
                                  NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.messagesDidLoad);
@@ -211,7 +211,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDial
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
-@@ -4972,7 +4972,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
+@@ -4976,7 +4976,7 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
          NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.groupStickersDidLoad);
          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
          if (type == TYPE_EMOJI_STATUS || type == TYPE_EMOJI_STATUS_TOP) {

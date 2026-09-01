@@ -96,8 +96,12 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Auto</string>
     <string name="InuMonetThemeAutoAmoled">Auto (AMOLED)</string>
-    <string name="InuDisableInstantCamera">Disable instant camera</string>
-    <string name="InuDisableInstantCameraInfo">Prevents camera from starting when opening the attachment panel</string>
+    <string name="InuAttachCamera">Camera</string>
+    <string name="InuAttachCameraMode">Camera</string>
+    <string name="InuAttachCameraModeInstant">Instant</string>
+    <string name="InuAttachCameraModeStatic">Static</string>
+    <string name="InuAttachCameraModeFab">Floating button</string>
+    <string name="InuAttachCameraModeTab">Bottom tab</string>
     <string name="InuRoundRecorderKeepZoom">Keep zoom on pinch release</string>
     <string name="InuRoundRecorderZoomSlider">Zoom slider</string>
     <string name="InuRoundRecorderExponentialZoom">Exponential zoom</string>
@@ -523,6 +527,9 @@
     <string name="InuMsgDetailStickerPack">Sticker pack</string>
     <string name="InuMsgDetailAssociatedEmoji">Associated emoji</string>
     <string name="InuMsgDetailAdaptiveTextColor">Adaptive text color</string>
+    <string name="InuMsgDetailFileId">File ID</string>
+    <string name="InuMsgDetailFileUniqueId">Unique File ID</string>
+    <string name="InuMsgDetailFileIdInfo">This file ID is bound to the current account and will expire after a while.</string>
     <string name="InuMsgDetailStickerPackCreator">Sticker Pack Creator</string>
     <string name="InuMsgDetailEmojiPackCreators">Emoji Pack Creators</string>
     <string name="InuMsgDetailOpenFile">Open file</string>
@@ -729,6 +736,11 @@
     <string name="InuFontStyles_other">%1$d styles</string>
     <string name="InuBackupImportSheetApply">Yes, apply</string>
     <string name="InuBackupImportSheetCancel">No, leave as is</string>
+    <string name="InuBackupSettings">Backup &amp; reset</string>
+    <string name="InuBackupReset">Reset settings</string>
+    <string name="InuBackupResetConfirm">All Inugram settings will be reset to their default values. Your chats, accounts, and Telegram\'s own settings stay the same.\n\nThis cannot be undone.</string>
+    <string name="InuBackupResetSuccess">Reset %1$d settings</string>
+    <string name="InuBackupResetNoChanges">Settings are already at their defaults</string>
     <string name="InuCloudSync">Sync settings</string>
     <string name="InuCloudSyncDesc">Back up your entinyGram settings to Telegram cloud and restore on another device.\n\nUses [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), your data is never sent to our servers.</string>
     <string name="InuCloudSyncNow">Sync now</string>
@@ -740,10 +752,8 @@
     <string name="InuCloudDeleteFailed">Delete failed</string>
     <string name="InuCloudDeleteSuccess">Cloud backup deleted</string>
     <string name="InuCloudNoBackup">No cloud backup found</string>
-    <string name="InuCloudSyncDate">Last cloud backup: %1$s</string>
-    <string name="InuCloudSyncDateNever">never</string>
-    <string name="InuCloudSyncAccount">Sync account</string>
-    <string name="InuCloudSyncAccountPick">Choose sync account</string>
+    <string name="InuCloudSyncedAt">last backup %1$s</string>
+    <string name="InuCloudSyncNever">never backed up</string>
     <string name="InuCloudSyncAccountInactive">Account no longer signed in. Pick another to resume sync.</string>
     <string name="InuCloudSyncAuto">Auto-upload</string>
     <string name="InuSearchOpenUsername">Open %1$s</string>
@@ -774,6 +784,10 @@
     <string name="InuBlockSleepWhileDownloadingInfo">Holds a partial wake lock while a download is active so Android doesn\'t pause it in the background.</string>
     <string name="InuSendMp4DocumentAsVideo">Send MP4 documents as videos</string>
     <string name="InuSendMp4DocumentAsVideoInfo">MP4 files attached through Files are sent as playable videos without conversion</string>
+    <string name="InuSortAlbumsBySize">Sort albums by size</string>
+    <string name="InuSortAlbumsBySizeInfo">Albums in the attachment menu are ordered by photo count instead of recency</string>
+    <string name="InuDownloadDirectory">Download folder</string>
+    <string name="InuDownloadDirectoryApplied">Applies to newly downloaded files only</string>
     <string name="InuMentionInsertTitle">Insert mention</string>
     <string name="InuPasscode">Passcode</string>
     <string name="InuPasscodeNeeded">Set up a Telegram passcode first.</string>
@@ -870,6 +884,7 @@
 
     <string name="InuLogs">Debug</string>
     <string name="InuLogsEnabled">Debug mode</string>
+    <string name="InuExtraDebugLogs">[Inu] Extra debug logs</string>
     <string name="InuLogsSize">Logs size: %1$s</string>
     <string name="InuLogsShare">Share logs</string>
     <string name="InuLogsShareZip">All logs (.zip)</string>
@@ -1276,4 +1291,8 @@
     <string name="InuStopBotAlert">Are you sure you want to stop **%1$s**? It won\'t be able to send you messages anymore.</string>
     <string name="InuStopBotAction">Stop</string>
     <string name="InuStopBotDone">Bot stopped</string>
+
+    <string name="InuPreviewMessage">Preview</string>
+
+    <string name="InuMinimize">Minimize</string>
 </resources>

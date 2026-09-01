@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 04:07:21 +0400
+Subject: Fix unclickable share sheet search results
+
+---
+ .../src/main/java/org/telegram/ui/Components/ShareAlert.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -1161,7 +1161,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+ 
+             @Override
+             protected boolean allowSelectChildAtPosition(float x, float y) {
+-                return y >= dp(darkTheme && linkToCopy[1] != null ? 111 : 58) + systemInsets.top;
++                return y >= scrollOffsetY + dp(darkTheme && linkToCopy[1] != null ? 111 : 58);
+             }
+ 
+             @Override
+@@ -1245,7 +1245,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+ 
+             @Override
+             protected boolean allowSelectChildAtPosition(float x, float y) {
+-                return y >= dp(darkTheme && linkToCopy[1] != null ? 111 : 58) + systemInsets.top;
++                return y >= scrollOffsetY + dp(darkTheme && linkToCopy[1] != null ? 111 : 58);
+             }
+ 
+             @Override

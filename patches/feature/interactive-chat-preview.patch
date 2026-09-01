@@ -63,7 +63,7 @@ index 0000000..0000000 100644
                      pressTime = -1;
                  }
              }
-@@ -40843,12 +40846,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -40911,12 +40914,12 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean canPerformActions() {
@@ -82,7 +82,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -8695,6 +8695,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8699,6 +8699,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              });
          }
  
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
          if (!isCommunityCell) {
              ActionBarMenuSubItem markAsUnreadItem = new ActionBarMenuSubItem(getParentActivity(), true, false);
              if (cell.getHasUnread()) {
-@@ -8897,7 +8909,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8901,7 +8913,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  presentFragmentAsPreviewWithMenu(previewActivity[0] = chatActivity1, previewMenu[0]);
                  if (chatActivity1 != null) {

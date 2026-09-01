@@ -1,53 +1,61 @@
 package desu.inugram.ui.settings
 
 
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.collection.LongSparseArray
 import desu.inugram.InuConfig
+import desu.inugram.SearchRegistry
 import desu.inugram.helpers.cloud.CloudSettingsHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.cloud.SettingsBackupHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.Emoji
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.SendMessagesHelper
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
+import org.telegram.messenger.Utilities
+import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Cells.TextCheckCell
+import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
-import org.telegram.ui.Components.LinkSpanDrawable
-import org.telegram.ui.Components.RLottieImageView
+import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
-import org.telegram.ui.Stories.recorder.ButtonWithCounterView
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class CloudSyncActivity : SettingsPageActivity() {
+class BackupSettingsActivity : SettingsPageActivity() {
     private var syncAccount: Int = -1
     private var cloudTs: Long = 0L
     private var loading: Boolean = false
     private var hasBackup: Boolean = false
 
-    private var syncButton: ButtonWithCounterView? = null
-    private var headerView: View? = null
+    private var cloudCard: CloudSyncCell? = null
 
-    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCloudSync)
+    override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuBackupSettings)
 
     override fun createView(context: Context): View {
         var stored = InuConfig.CLOUD_SYNC_ACCOUNT_ID.value
@@ -57,7 +65,6 @@ class CloudSyncActivity : SettingsPageActivity() {
         }
         syncAccount = resolveAccount(stored)
         val view = super.createView(context)
-        attachStickyButton(view, buildSyncButton(context))
         reloadFromCloud()
         return view
     }
@@ -78,8 +85,7 @@ class CloudSyncActivity : SettingsPageActivity() {
     }
 
     private fun formatDate(ts: Long): String =
-        if (ts > 0) SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(ts))
-        else LocaleController.getString(R.string.InuCloudSyncDateNever)
+        SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(ts))
 
     private fun accountAvatarRow(account: Int, selected: Boolean): View {
         val ctx = context
@@ -130,22 +136,16 @@ class CloudSyncActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asCustomShadow(getOrCreateHeader(), LayoutHelper.WRAP_CONTENT))
-        items.add(
-            UItem.asButton(
-                BUTTON_SYNC_ACCOUNT,
-                LocaleController.getString(R.string.InuCloudSyncAccount),
-                accountRowSubtitle(),
-            )
-        )
-
-        items.add(
-            UItem.asCheck(TOGGLE_AUTO, LocaleController.getString(R.string.InuCloudSyncAuto))
-                .setChecked(InuConfig.CLOUD_SYNC_AUTO.value)
-        )
-        items.add(UItem.asShadow(null))
+        items.add(UItem.asCustom(CARD_CLOUD, getOrCreateCloudCard()))
 
         val opsEnabled = syncAccount >= 0 && hasBackup && !loading
+        items.add(
+            UItem.asButton(
+                BUTTON_SYNC_NOW,
+                R.drawable.msg_retry,
+                LocaleController.getString(R.string.InuCloudSyncNow),
+            ).setEnabled(syncAccount >= 0 && !loading)
+        )
         items.add(
             UItem.asButton(
                 BUTTON_RESTORE,
@@ -160,26 +160,57 @@ class CloudSyncActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuCloudDelete),
             ).red().setEnabled(opsEnabled)
         )
-        items.add(UItem.asShadow(statusLabel()))
+        items.add(
+            UItem.asShadow(
+                AndroidUtilities.replaceLinks(
+                    LocaleController.getString(R.string.InuCloudSyncDesc), resourceProvider
+                )
+            )
+        )
+
+        items.add(
+            UItem.asButton(
+                BUTTON_EXPORT,
+                R.drawable.msg_shareout,
+                LocaleController.getString(R.string.InuBackupExport)
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_IMPORT,
+                R.drawable.msg_download,
+                LocaleController.getString(R.string.InuBackupImport)
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_RESET,
+                R.drawable.msg_reset_solar,
+                LocaleController.getString(R.string.InuBackupReset)
+            ).red()
+        )
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_SYNC_ACCOUNT -> showAccountPicker(view)
+            BUTTON_EXPORT -> launchExport()
+            BUTTON_IMPORT -> launchImport()
+            BUTTON_RESET -> confirmReset()
+            BUTTON_SYNC_NOW -> onSyncClick()
             BUTTON_RESTORE -> if (syncAccount >= 0 && !loading) onRestoreClick()
             BUTTON_DELETE -> if (syncAccount >= 0 && !loading) onDeleteClick()
-            TOGGLE_AUTO -> {
-                InuConfig.CLOUD_SYNC_AUTO_USER_SET.value = true
-                (view as? TextCheckCell)?.isChecked = InuConfig.CLOUD_SYNC_AUTO.toggle()
-            }
         }
     }
 
-    private fun accountRowSubtitle(): String =
-        if (syncAccount >= 0) accountLabel(syncAccount)
-        else LocaleController.getString(R.string.InuCloudSyncAccountInactive)
+    private fun toggleAutoSync() {
+        InuConfig.CLOUD_SYNC_AUTO_USER_SET.value = true
+        InuConfig.CLOUD_SYNC_AUTO.toggle()
+        updateCloudCard(animated = true)
+    }
 
     private fun refreshList() {
+        updateCloudCard(animated = false)
         listView?.adapter?.update(true)
         listView?.post { updateOpsAlpha() }
     }
@@ -191,67 +222,36 @@ class CloudSyncActivity : SettingsPageActivity() {
             val child = lv.getChildAt(i)
             val pos = lv.getChildAdapterPosition(child)
             val item = adapter.getItem(pos) ?: continue
-            if (item.id == BUTTON_RESTORE || item.id == BUTTON_DELETE) {
+            if (item.id == BUTTON_SYNC_NOW || item.id == BUTTON_RESTORE || item.id == BUTTON_DELETE) {
                 child.alpha = if (item.enabled) 1f else 0.5f
             }
         }
     }
 
-    private fun statusLabel(): CharSequence = when {
+    private fun getCloudStatus(): CharSequence = when {
         syncAccount < 0 -> LocaleController.getString(R.string.InuCloudSyncAccountInactive)
         loading -> LocaleController.getString(R.string.InuCloudSyncing)
-        else -> LocaleController.formatString(R.string.InuCloudSyncDate, formatDate(cloudTs))
+        cloudTs <= 0L -> "${accountLabel(syncAccount)} · ${LocaleController.getString(R.string.InuCloudSyncNever)}"
+        else -> "${accountLabel(syncAccount)} · ${
+            LocaleController.formatString(R.string.InuCloudSyncedAt, formatDate(cloudTs))
+        }"
     }
 
-    private fun getOrCreateHeader(): View {
-        headerView?.let { return it }
-        val ctx = context
-        val rp = resourceProvider
-        val animation = RLottieImageView(ctx).apply {
-            setAutoRepeat(true)
-            setAnimation(R.raw.utyan_saved_messages, 120, 120)
-            scaleType = ImageView.ScaleType.CENTER
-            playAnimation()
-        }
-        val text = LinkSpanDrawable.LinksTextView(ctx).apply {
-            setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4, rp))
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
-            gravity = Gravity.CENTER
-            text = AndroidUtilities.replaceLinks(
-                LocaleController.getString(R.string.InuCloudSyncDesc), resourceProvider
-            )
-        }
-        val frame = FrameLayout(ctx)
-        frame.addView(
-            animation,
-            LayoutHelper.createFrame(120, 120f, Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0f, 14f, 0f, 0f),
+    private fun getOrCreateCloudCard(): CloudSyncCell {
+        cloudCard?.let { return it }
+        val card = CloudSyncCell(
+            context,
+            resourceProvider,
+            onPickAccount = { anchor -> showAccountPicker(anchor) },
+            onToggleAuto = { toggleAutoSync() },
         )
-        frame.addView(
-            text,
-            LayoutHelper.createFrame(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat(),
-                Gravity.TOP or Gravity.CENTER_HORIZONTAL, 32f, 150f, 32f, 20f,
-            ),
-        )
-        headerView = frame
-        return frame
+        cloudCard = card
+        updateCloudCard(animated = false)
+        return card
     }
 
-    private fun buildSyncButton(ctx: Context): View {
-        val btn = ButtonWithCounterView(ctx, true, resourceProvider).setRound().apply {
-            setText(LocaleController.getString(R.string.InuCloudSyncNow), false)
-            setOnClickListener { onSyncClick() }
-        }
-        syncButton = btn
-        updateSyncButtonEnabled()
-        return btn
-    }
-
-    private fun updateSyncButtonEnabled() {
-        val btn = syncButton ?: return
-        val enabled = syncAccount >= 0 && !loading
-        btn.isEnabled = enabled
-        btn.alpha = if (enabled) 1f else 0.5f
+    private fun updateCloudCard(animated: Boolean) {
+        cloudCard?.setState(syncAccount, getCloudStatus(), InuConfig.CLOUD_SYNC_AUTO.value, animated)
     }
 
     private fun showAccountPicker(anchor: View) {
@@ -277,7 +277,6 @@ class CloudSyncActivity : SettingsPageActivity() {
         cloudTs = 0L
         hasBackup = false
         loading = false
-        updateSyncButtonEnabled()
         refreshList()
         if (syncAccount < 0) return
         val acc = syncAccount
@@ -285,7 +284,6 @@ class CloudSyncActivity : SettingsPageActivity() {
             if (acc != syncAccount) return@fetchCloudTimestamp
             cloudTs = ts
             hasBackup = ts > 0
-            updateSyncButtonEnabled()
             refreshList()
         }
     }
@@ -293,7 +291,6 @@ class CloudSyncActivity : SettingsPageActivity() {
     private fun onSyncClick() {
         if (syncAccount < 0 || loading) return
         loading = true
-        updateSyncButtonEnabled()
         refreshList()
         val acc = syncAccount
         CloudSettingsHelper.syncToCloud(acc) { ok, error ->
@@ -306,7 +303,6 @@ class CloudSyncActivity : SettingsPageActivity() {
                     InuConfig.CLOUD_SYNC_AUTO.value = true
                 }
             }
-            updateSyncButtonEnabled()
             refreshList()
             if (!ok) showError(R.string.InuCloudSyncFailed, error)
         }
@@ -314,13 +310,11 @@ class CloudSyncActivity : SettingsPageActivity() {
 
     private fun onRestoreClick() {
         loading = true
-        updateSyncButtonEnabled()
         refreshList()
         val acc = syncAccount
         CloudSettingsHelper.restoreFromCloud(acc) { parsed, error ->
             if (acc != syncAccount) return@restoreFromCloud
             loading = false
-            updateSyncButtonEnabled()
             refreshList()
             if (parsed == null) {
                 showError(R.string.InuCloudRestoreFailed, error)
@@ -339,7 +333,6 @@ class CloudSyncActivity : SettingsPageActivity() {
 
     private fun onDeleteClick() {
         loading = true
-        updateSyncButtonEnabled()
         refreshList()
         val acc = syncAccount
         CloudSettingsHelper.deleteCloudBackup(acc) { ok, error ->
@@ -349,7 +342,6 @@ class CloudSyncActivity : SettingsPageActivity() {
                 cloudTs = 0L
                 hasBackup = false
             }
-            updateSyncButtonEnabled()
             refreshList()
             when {
                 ok -> bulletin().createSimpleBulletin(
@@ -376,10 +368,143 @@ class CloudSyncActivity : SettingsPageActivity() {
         b.show()
     }
 
+    private fun launchExport() {
+        Utilities.globalQueue.postRunnable {
+            val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
+            val file = File(AndroidUtilities.getCacheDir(), "$date${SettingsBackupHelper.FILENAME_SUFFIX}")
+            val err: String? = try {
+                file.parentFile?.mkdirs()
+                file.writeText(SettingsBackupHelper.export(), Charsets.UTF_8)
+                null
+            } catch (e: Exception) {
+                e.message ?: e.javaClass.simpleName
+            }
+            AndroidUtilities.runOnUIThread {
+                if (err != null) {
+                    bulletin().createErrorBulletin(
+                        LocaleController.formatString(R.string.InuBackupExportError, err)
+                    ).show()
+                    return@runOnUIThread
+                }
+                openSharePicker(file)
+            }
+        }
+    }
+
+    private fun openSharePicker(file: File) {
+        val ctx = parentActivity ?: return
+        val account = accountInstance
+        val sheet = object : ShareAlert(ctx, null, null, false, null, false) {
+            override fun onSend(
+                dids: LongSparseArray<TLRPC.Dialog>,
+                count: Int,
+                topic: TLRPC.TL_forumTopic?,
+                showToast: Boolean
+            ) {
+                for (i in 0 until dids.size()) {
+                    val did = dids.keyAt(i)
+                    SendMessagesHelper.prepareSendingDocument(
+                        account, file.absolutePath, file.absolutePath, null, null,
+                        "application/json", did,
+                        null, null, null, null, null,
+                        true, 0, null, null, false,
+                    )
+                }
+                if (dids.size() == 1) openChat(dids.keyAt(0))
+            }
+        }
+        showDialog(sheet)
+    }
+
+    private fun openChat(did: Long) {
+        val args = Bundle().apply {
+            putBoolean("scrollToTopOnResume", true)
+            when {
+                DialogObject.isEncryptedDialog(did) -> putInt("enc_id", DialogObject.getEncryptedChatId(did))
+                DialogObject.isUserDialog(did) -> putLong("user_id", did)
+                else -> putLong("chat_id", -did)
+            }
+        }
+        if (messagesController.checkCanOpenChat(args, this)) {
+            presentFragment(ChatActivity(args))
+        }
+    }
+
+    private fun launchImport() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/json", "text/plain", "*/*"))
+        }
+        try {
+            startActivityForResult(intent, REQ_IMPORT)
+        } catch (e: Exception) {
+            bulletin().createErrorBulletin(e.message ?: "").show()
+        }
+    }
+
+    override fun onActivityResultFragment(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) return
+        val uri = data?.data ?: return
+        val ctx = context ?: parentActivity ?: return
+        if (requestCode == REQ_IMPORT) {
+            Utilities.globalQueue.postRunnable {
+                val text = try {
+                    ctx.contentResolver.openInputStream(uri)?.use { it.readBytes().toString(Charsets.UTF_8) }
+                } catch (_: Exception) {
+                    null
+                }
+                AndroidUtilities.runOnUIThread {
+                    if (text == null) {
+                        bulletin().createErrorBulletin(
+                            LocaleController.getString(R.string.InuBackupImportBadFormat)
+                        ).show()
+                        return@runOnUIThread
+                    }
+                    SettingsBackupHelper.showImportConfirm(this, text)
+                }
+            }
+        }
+    }
+
+    private fun confirmReset() {
+        val ctx = parentActivity ?: return
+        val dialog = AlertDialog.Builder(ctx, resourceProvider)
+            .setTitle(LocaleController.getString(R.string.InuBackupReset))
+            .setMessage(LocaleController.getString(R.string.InuBackupResetConfirm))
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .setPositiveButton(LocaleController.getString(R.string.InuBackupReset)) { _, _ ->
+                SettingsBackupHelper.resetAndPromptRestart(this)
+            }
+            .create()
+        showDialog(dialog)
+        (dialog.getButton(Dialog.BUTTON_POSITIVE) as? TextView)
+            ?.setTextColor(getThemedColor(Theme.key_text_RedBold))
+    }
+
     companion object {
-        private val BUTTON_SYNC_ACCOUNT = InuUtils.generateId()
+        private val CARD_CLOUD = InuUtils.generateId()
+        private val BUTTON_SYNC_NOW = InuUtils.generateId()
         private val BUTTON_RESTORE = InuUtils.generateId()
         private val BUTTON_DELETE = InuUtils.generateId()
-        private val TOGGLE_AUTO = InuUtils.generateId()
+        private val BUTTON_EXPORT = InuUtils.generateId()
+        private val BUTTON_IMPORT = InuUtils.generateId()
+        private val BUTTON_RESET = InuUtils.generateId()
+
+        private const val REQ_IMPORT = 31002
+
+        @JvmField
+        val PAGE = SearchRegistry.Page(
+            slug = "backup",
+            titleRes = R.string.InuBackupSettings,
+            iconRes = R.drawable.inu_tabler_cloud,
+            factory = ::BackupSettingsActivity,
+            entries = listOf(
+                SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
+                SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
+                SearchRegistry.Entry("backup-reset", R.string.InuBackupReset, BUTTON_RESET),
+                SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, CARD_CLOUD),
+            ),
+        )
     }
 }

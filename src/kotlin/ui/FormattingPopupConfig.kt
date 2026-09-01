@@ -26,6 +26,8 @@ class FormattingPopupConfig(key: String) : InuConfig.Item<List<FormattingPopupCo
 
     data class Entry(val item: Item, val enabled: Boolean)
 
+    override val prefType = InuConfig.PrefType.STRING
+
     override fun read(prefs: SharedPreferences): List<Entry> {
         val json = prefs.getString(key, "") ?: ""
         if (json.isEmpty()) return DEFAULT

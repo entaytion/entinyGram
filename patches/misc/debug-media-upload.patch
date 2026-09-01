@@ -1,0 +1,92 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 04:20:18 +0400
+Subject: temporary patch adding debug logs for some intermittent large video upload failure
+
+---
+ .../main/java/org/telegram/messenger/AutoDeleteMediaTask.java | 2 ++
+ .../src/main/java/org/telegram/messenger/FileLoader.java      | 1 +
+ .../main/java/org/telegram/messenger/FileUploadOperation.java | 1 +
+ .../main/java/org/telegram/messenger/SendMessagesHelper.java  | 4 ++++
+ 4 files changed, 8 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java b/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AutoDeleteMediaTask.java
+@@ -127,6 +127,7 @@ public class AutoDeleteMediaTask {
+                                     if (BuildVars.DEBUG_PRIVATE_VERSION) {
+                                         FileLog.d("delete file " + file.file.getPath() + " last_usage_time=" + lastUsageTime + " time_local=" + timeLocal + " story=" + file.isStory);
+                                     }
++                                    desu.inugram.helpers.media.MediaSendDebugHelper.onLocalFileDeleted(file.file, "autoDelete/keepMedia");
+                                     file.file.delete();
+                                 } catch (Exception exception) {
+                                     FileLog.e(exception);
+@@ -183,6 +184,7 @@ public class AutoDeleteMediaTask {
+                         try {
+                             deletedFilesBySize++;
+                             deletedFilesBySizeSize += size;
++                            desu.inugram.helpers.media.MediaSendDebugHelper.onLocalFileDeleted(allFiles.get(i).file, "autoDelete/cacheLimit");
+                             allFiles.get(i).file.delete();
+                         } catch (Exception e) {
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -422,6 +422,7 @@ public class FileLoader extends BaseController {
+                     uploadSizes.remove(location);
+                 }
+             }
++            desu.inugram.helpers.media.MediaSendDebugHelper.onUploadEnqueued(location, encrypted, small, esimated);
+             FileUploadOperation operation = new FileUploadOperation(currentAccount, location, encrypted, esimated, type);
+             if (delegate != null && estimatedSize != 0) {
+                 delegate.fileUploadProgressChanged(operation, location, 0, estimatedSize, encrypted);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileUploadOperation.java
+@@ -528,6 +528,7 @@ public class FileUploadOperation {
+             readBytesCount += currentRequestBytes;
+         } catch (Exception e) {
+             FileLog.e(e);
++            desu.inugram.helpers.media.MediaSendDebugHelper.onUploadFailed(uploadingFilePath, e);
+             state = 4;
+             delegate.didFailedUploadingFile(this);
+             cleanup();
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -922,6 +922,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         }
+ 
+         public void markAsError() {
++            desu.inugram.helpers.media.MediaSendDebugHelper.onDelayedMessageError(type, groupId, messageObjects, obj);
+             if (type == 4) {
+                 for (int a = 0; a < messageObjects.size(); a++) {
+                     MessageObject obj = messageObjects.get(a);
+@@ -8660,6 +8661,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     if (!found) {
+                         String fileName = size2.location.volume_id + "_" + size2.location.local_id;
+                         File cacheFile = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), fileName + ".jpg");
++                        desu.inugram.helpers.media.MediaSendDebugHelper.onLocalFileDeleted(cacheFile, "processSentMessage");
+                         cacheFile.delete();
+                         if ("s".equals(size2.type) && strippedNew != null) {
+                             newMedia.photo.sizes.set(b, strippedNew);
+@@ -8815,6 +8817,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                         if (!found) {
+                             String fileName = coverSize2.location.volume_id + "_" + coverSize2.location.local_id;
+                             File cacheFile = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), fileName + ".jpg");
++                            desu.inugram.helpers.media.MediaSendDebugHelper.onLocalFileDeleted(cacheFile, "processSentMessage");
+                             cacheFile.delete();
+                             if ("s".equals(coverSize2.type) && coverStrippedNew != null) {
+                                 newPhoto.sizes.set(b, coverStrippedNew);
+@@ -8985,6 +8988,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     }
+ 
+     protected void processUnsentMessages(final ArrayList<TLRPC.Message> messages, final ArrayList<TLRPC.Message> scheduledMessages, final ArrayList<TLRPC.User> users, final ArrayList<TLRPC.Chat> chats, final ArrayList<TLRPC.EncryptedChat> encryptedChats) {
++        desu.inugram.helpers.media.MediaSendDebugHelper.onUnsentMessagesLoaded(messages, scheduledMessages);
+         AndroidUtilities.runOnUIThread(() -> {
+             getMessagesController().putUsers(users, true);
+             getMessagesController().putChats(chats, true);

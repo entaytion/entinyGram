@@ -1,0 +1,84 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 04:04:45 +0400
+Subject: temporary patch with extra debug logs for various notifications-related issues
+
+---
+ .../messenger/NotificationsController.java        | 15 ++++++++++++---
+ .../messenger/PushListenerController.java         |  2 ++
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -1148,7 +1148,10 @@ public class NotificationsController extends BaseController implements Notificat
+ 
+             for (int a = 0; a < messageObjects.size(); a++) {
+                 MessageObject messageObject = messageObjects.get(a);
+-                if (desu.inugram.helpers.NotificationsHelper.shouldSuppressMessageNotification(messageObject)) continue;
++                if (desu.inugram.helpers.NotificationsHelper.shouldSuppressMessageNotification(messageObject)) {
++                    desu.inugram.helpers.NotificationDebugHelper.onPushMessageSkipped(messageObject.getDialogId(), messageObject.getId(), "fork suppression");
++                    continue;
++                }
+                 if (messageObject.messageOwner != null && (messageObject.isImportedForward() ||
+                         messageObject.messageOwner.action instanceof TLRPC.TL_messageActionSetMessagesTTL ||
+                         messageObject.messageOwner.silent && (messageObject.messageOwner.action instanceof TLRPC.TL_messageActionContactSignUp || messageObject.messageOwner.action instanceof TLRPC.TL_messageActionUserJoined)) ||
+@@ -5308,6 +5311,7 @@ public class NotificationsController extends BaseController implements Notificat
+                 }
+             }
+ 
++            desu.inugram.helpers.NotificationDebugHelper.onAvatarResolved(currentAccount, dialogId, "dialog", chat != null ? chat : user, avatarFile);
+             if (chat != null) {
+                 Person.Builder personBuilder = new Person.Builder().setName(name);
+                 if (avatarFile != null && avatarFile.exists() && Build.VERSION.SDK_INT >= 28) {
+@@ -5516,6 +5520,9 @@ public class NotificationsController extends BaseController implements Notificat
+ 
+                     if (person == null || !TextUtils.equals(person.getName(), personName)) {
+                         Person.Builder personBuilder = new Person.Builder().setName(personName);
++                        if (!preview[0] || DialogObject.isEncryptedDialog(dialogId) || Build.VERSION.SDK_INT < 28) {
++                            desu.inugram.helpers.NotificationDebugHelper.onPersonIconSkipped(dialogId, "preview=" + preview[0]);
++                        }
+                         if (preview[0] && !DialogObject.isEncryptedDialog(dialogId) && Build.VERSION.SDK_INT >= 28) {
+                             File avatar = null;
+                             if (DialogObject.isUserDialog(dialogId) || isChannel) {
+@@ -5532,6 +5539,7 @@ public class NotificationsController extends BaseController implements Notificat
+                                 if (sender != null && sender.photo != null && sender.photo.photo_small != null && sender.photo.photo_small.volume_id != 0 && sender.photo.photo_small.local_id != 0) {
+                                     avatar = getFileLoader().getPathToAttach(sender.photo.photo_small, true);
+                                 }
++                                desu.inugram.helpers.NotificationDebugHelper.onAvatarResolved(currentAccount, dialogId, "sender" + fromId, sender, avatar);
+                             }
+                             if (avatar == null && dialogId == UserObject.VERIFY && messageObject.getForwardedFromId() != null) {
+                                 if (uid >= 0) {
+@@ -5945,6 +5953,7 @@ public class NotificationsController extends BaseController implements Notificat
+             }
+             FileLog.d("showExtraNotifications: holders["+a+"].call()");
+             holder.call();
++            desu.inugram.helpers.NotificationDebugHelper.onNotificationPosted(holder.id, holder.dialogId);
+             if (!unsupportedNotificationShortcut() && !ids.isEmpty()) {
+                 ShortcutManagerCompat.removeDynamicShortcuts(ApplicationLoader.applicationContext, ids);
+             }
+@@ -6042,8 +6051,8 @@ public class NotificationsController extends BaseController implements Notificat
+                 });
+                 IconCompat icon = IconCompat.createWithBitmap(bitmap);
+                 personBuilder.setIcon(icon);
+-            } catch (Throwable ignore) {
+-
++            } catch (Throwable e) {
++                desu.inugram.helpers.NotificationDebugHelper.onAvatarDecodeFailed(dialogId, avatar, e);
+             }
+         }
+         return personBuilder;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+@@ -462,6 +462,8 @@ public class PushListenerController {
+                                 }
+                                 if (msg_id > currentReadValue) {
+                                     processNotification = true;
++                                } else {
++                                    desu.inugram.helpers.NotificationDebugHelper.onPushSkippedAsRead(dialogId, msg_id, currentReadValue);
+                                 }
+                             } else if (random_id != 0) {
+                                 if (!MessagesStorage.getInstance(account).checkMessageByRandomId(random_id)) {

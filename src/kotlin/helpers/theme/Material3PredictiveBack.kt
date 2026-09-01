@@ -152,7 +152,23 @@ object Material3PredictiveBack {
             if (!layout.predictiveInput) return
             layout.predictiveInput = false
             layout.predictiveBackInProgress = false
-            layout.onSlideAnimationEnd(true)
+            endStockSlide(true)
+        }
+
+        // onSlideAnimationEnd removes the off-screen fragment's view; since that view holds focus,
+        // ViewGroup re-homes it through rootViewRequestFocus() into the first focusable descendant
+        // of the outgoing container. Nothing there was focused before the gesture, and screens with
+        // focus-driven side effects (channel reactions opens its emoji panel on editText focus) act
+        // on the phantom focus. Block that subtree for the duration so focus is simply cleared.
+        private fun endStockSlide(cancel: Boolean) {
+            val cv = layout.containerView
+            val saved = cv?.descendantFocusability
+            cv?.descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+            try {
+                layout.onSlideAnimationEnd(cancel)
+            } finally {
+                if (saved != null) cv.descendantFocusability = saved
+            }
         }
 
         private fun attachOverlays() {
@@ -285,7 +301,7 @@ object Material3PredictiveBack {
             if (layout.predictiveInput) {
                 layout.predictiveInput = false
                 layout.predictiveBackInProgress = false
-                layout.onSlideAnimationEnd(cancel)
+                endStockSlide(cancel)
             } else if (!cancel) {
                 layout.onBackPressed()
             }

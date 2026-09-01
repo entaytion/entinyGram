@@ -6,16 +6,13 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
-import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.isVisible
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -27,13 +24,9 @@ import org.telegram.ui.Components.ChatActivityEnterViewAnimatedIconView
 import org.telegram.ui.Components.ChatAttachAlert
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
-import desu.inugram.helpers.theme.M3FabHelper
-import desu.inugram.helpers.theme.NonIslandHelper
 
 object VoiceRecorderHelper {
     private const val RECORD_DELAY_MS = 150L
-    private const val FAB_SIZE = 48
-    private const val FAB_MARGIN = 12
 
     // read by InstantCameraView.showCamera to pick initial camera
     @JvmField
@@ -41,7 +34,8 @@ object VoiceRecorderHelper {
     private var skipIntercept = false
 
     @JvmStatic
-    fun isMovedToAttach(): Boolean = InuConfig.CHAT_VOICE_IN_ATTACH.value
+    fun isMovedToAttach(): Boolean =
+        InuConfig.CHAT_VOICE_IN_ATTACH.value && !AttachCameraHelper.isFab()
 
     // when enabled, attachButton/attachLayout are shifted right into the sendButton slot
     // since the frame margin stays at DEFAULT_HEIGHT but the audio/video button is gone
@@ -77,16 +71,7 @@ object VoiceRecorderHelper {
         val enterView = activity.chatActivityEnterView ?: return
         val context = container.context
 
-        val buttonsWrapper = alert.buttonsRecyclerViewWrapper
-
-        val tabBarHeight = if (NonIslandHelper.chatElements()) 48 else 70
-        val fabLayoutParams = LayoutHelper.createFrame(
-            FAB_SIZE.toFloat(), FAB_SIZE.toFloat(),
-            Gravity.BOTTOM or Gravity.RIGHT,
-            0f, 0f,
-            (if (NonIslandHelper.chatElements()) 0 else FAB_MARGIN).toFloat(),
-            (tabBarHeight + FAB_MARGIN).toFloat()
-        )
+        val fabLayoutParams = AttachFabHelper.createLayoutParams()
 
         val fab = object : FrameLayout(context) {
             private var isVideoMode = enterView.isInVideoMode
@@ -108,14 +93,7 @@ object VoiceRecorderHelper {
                     LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat())
                 )
 
-                val accentColor = Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider)
-                background = M3FabHelper.makeSelectorBackground(
-                    FAB_SIZE,
-                    accentColor,
-                    Theme.blendOver(accentColor, 0x28FFFFFF),
-                )
-                outlineProvider = M3FabHelper.outlineProvider()
-                elevation = AndroidUtilities.dp(4f).toFloat()
+                AttachFabHelper.applyFabStyle(this, resourcesProvider)
             }
 
             override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -176,31 +154,7 @@ object VoiceRecorderHelper {
         }
 
 
-        container.addView(fab, fabLayoutParams)
-
-        val sync = Runnable {
-            val wrapperVisible = buttonsWrapper.isVisible && buttonsWrapper.alpha > 0.01f
-            val target = if (wrapperVisible) View.VISIBLE else View.GONE
-            if (fab.visibility != target) fab.visibility = target
-            fab.alpha = buttonsWrapper.alpha
-            fab.translationY = buttonsWrapper.translationY
-        }
-        val preDraw = ViewTreeObserver.OnPreDrawListener { sync.run(); true }
-        // VTO is window-scoped; rebind on each attach so reused alert instances stay synced
-        buttonsWrapper.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {
-                v.viewTreeObserver.addOnPreDrawListener(preDraw)
-                sync.run()
-            }
-
-            override fun onViewDetachedFromWindow(v: View) {
-                v.viewTreeObserver.removeOnPreDrawListener(preDraw)
-            }
-        })
-        if (buttonsWrapper.isAttachedToWindow) {
-            buttonsWrapper.viewTreeObserver.addOnPreDrawListener(preDraw)
-        }
-        sync.run()
+        AttachFabHelper.install(alert, container, fab, fabLayoutParams)
     }
 
     private fun dismissAndRecord(alert: ChatAttachAlert, enterView: ChatActivityEnterView, video: Boolean) {

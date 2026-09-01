@@ -248,3 +248,5 @@ Build fixes belong in the patch that owns the line — `stg refresh -p <patch>`
 after `git add -f`, which edits it in place without replaying the stack.
 
 Then hand back. Don't commit or push.
+
+Give the user the value of the rebased-onto codebase's `APP_VERSION_CODE`, for them to use in the commit name.

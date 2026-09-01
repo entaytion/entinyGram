@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 23:50:23 +0400
+Subject: fix link long-tap scrim being drawn 2dp left of the link
+
+---
+ .../main/java/org/telegram/ui/Components/ScrimOptions.java    | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrimOptions.java
+@@ -90,6 +90,7 @@ public class ScrimOptions extends Dialog {
+     private float scrimDrawableTx1, scrimDrawableTy1;
+     private float scrimDrawableTx2, scrimDrawableTy2;
+     private float scrimDrawableSw = 1f, scrimDrawableSh = 1f;
++    private boolean scrimMorphsToOptions;
+ 
+     public ScrimOptions(@NonNull Context context, Theme.ResourcesProvider resourcesProvider) {
+         super(context, R.style.TransparentDialog);
+@@ -442,7 +443,7 @@ public class ScrimOptions extends Dialog {
+                     optionsView.setPivotX(optionsView.getMeasuredWidth() - dp(6));
+                     optionsContainer.setX(Math.max(dp(8), boundsRight + dp(4) - optionsContainer.getMeasuredWidth()) - containerView.getX());
+                 }
+-                scrimDrawableTx1 = right ? optionsContainer.getX() + optionsContainer.getWidth() - dp(6) - boundsRight : optionsContainer.getX() + dp(10) - boundsLeft;
++                scrimDrawableTx1 = !scrimMorphsToOptions ? 0f : right ? optionsContainer.getX() + optionsContainer.getWidth() - dp(6) - boundsRight : optionsContainer.getX() + dp(10) - boundsLeft;
+                 scrimDrawableTy1 = 0f;
+             }
+ 
+@@ -785,6 +786,7 @@ public class ScrimOptions extends Dialog {
+                 scrimDrawableTy2 -= (top + pathBounds.height()) - (AndroidUtilities.displaySize.y - AndroidUtilities.statusBarHeight - AndroidUtilities.navigationBarHeight - dp(8));
+             }
+             if (realPathBounds != null) {
++                scrimMorphsToOptions = true;
+                 scrimDrawableSw = realPathBounds.width() / pathBounds.width();
+                 scrimDrawableSh = realPathBounds.height() / pathBounds.height();
+             }

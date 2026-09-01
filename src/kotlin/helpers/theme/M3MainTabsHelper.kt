@@ -18,6 +18,7 @@ import org.telegram.messenger.AndroidUtilities.dpf2
 import org.telegram.messenger.AndroidUtilities.lerp
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable
+import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
 import org.telegram.ui.MainTabsLayout
 
 object M3MainTabsHelper {
@@ -126,6 +127,7 @@ object M3MainTabsHelper {
 
     private class TopDividerDrawable : Drawable() {
         override fun draw(canvas: Canvas) {
+            if (BlurredBackgroundProviderImpl.checkBlurEnabled(null)) return
             val top = bounds.top.toFloat()
             canvas.drawRect(bounds.left.toFloat(), top, bounds.right.toFloat(), top + DIVIDER_HEIGHT_PX, Theme.dividerPaint)
         }

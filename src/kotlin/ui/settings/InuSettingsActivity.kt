@@ -82,6 +82,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.InuCategoryChats)))
         items.add(mkSubPageButton(CAT_MESSAGES, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessages)))
         items.add(mkSubPageButton(CAT_AI, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiCompose)))
+        items.add(mkSubPageButton(CAT_TRANSLATOR, R.drawable.msg_translate, LocaleController.getString(R.string.InuTranslator)))
         items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.inu_tabler_adjustments_horizontal, LocaleController.getString(R.string.InuCategoryBehavior)))
         items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuCategoryPrivacy)))
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
@@ -123,6 +124,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             CAT_CHATS -> presentFragment(CategoryChatsSettingsActivity())
             CAT_MESSAGES -> presentFragment(MessagesSettingsActivity())
             CAT_AI -> presentFragment(AiSettingsActivity())
+            CAT_TRANSLATOR -> presentFragment(TranslatorSettingsActivity())
             CAT_BEHAVIOR -> presentFragment(BehaviorSettingsActivity())
             CAT_PRIVACY -> presentFragment(PrivacySecurityActivity())
             CAT_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
@@ -168,6 +170,7 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val CAT_CHATS = InuUtils.generateId()
         private val CAT_MESSAGES = InuUtils.generateId()
         private val CAT_AI = InuUtils.generateId()
+        private val CAT_TRANSLATOR = InuUtils.generateId()
         private val CAT_BEHAVIOR = InuUtils.generateId()
         private val CAT_PRIVACY = InuUtils.generateId()
         private val CAT_ANNOYANCES = InuUtils.generateId()
@@ -185,6 +188,7 @@ class InuSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("channel", R.string.InuAboutChannel, BUTTON_CHANNEL_LINK),
                 SearchRegistry.Entry("github", R.string.InuAboutGitHub, BUTTON_GITHUB),
+                SearchRegistry.Entry("open-translator", R.string.InuTranslator, CAT_TRANSLATOR),
             ),
         )
     }

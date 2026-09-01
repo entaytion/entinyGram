@@ -4,8 +4,8 @@ Date: Wed, 12 Aug 2026 23:17:45 +0400
 Subject: music sheet bugfixes
 
 ---
- .../ui/Components/AudioPlayerAlert.java       | 56 ++++++++++++++++++-
- 1 file changed, 54 insertions(+), 2 deletions(-)
+ .../ui/Components/AudioPlayerAlert.java       | 71 ++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AudioPlayerAlert.java
 index 0000000..0000000 100644
@@ -15,8 +15,8 @@ index 0000000..0000000 100644
              private int lastMeasturedHeight;
              private int lastMeasturedWidth;
  
-+            private float inu_headerDownX, inu_headerDownY;
-+            private boolean inu_headerTracking, inu_headerForwarding;
++            private float inu_downX, inu_downY;
++            private boolean inu_headerTracking, inu_headerForwarding, inu_backdropTracking;
 +
 +            private void inu_forwardToListView(MotionEvent e, int action) {
 +                MotionEvent forwarded = MotionEvent.obtain(e);
@@ -54,38 +54,53 @@ index 0000000..0000000 100644
                  }
                  int padding;
                  if (searching || keyboardVisible) {
-@@ -382,6 +409,30 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -382,6 +409,45 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
  
              @Override
              public boolean onInterceptTouchEvent(MotionEvent ev) {
++                final boolean inu_profileSheet = isProfilePlaylist && !searching && !keyboardVisible;
++                final float inu_sheetTop = actionBar.getY() + AndroidUtilities.statusBarHeight;
 +                switch (ev.getActionMasked()) {
 +                    case MotionEvent.ACTION_DOWN:
-+                        inu_headerTracking = isProfilePlaylist && !searching && !keyboardVisible
-+                            && ev.getY() >= actionBar.getY() + AndroidUtilities.statusBarHeight
++                        inu_headerTracking = inu_profileSheet
++                            && ev.getY() >= actionBar.getY()
 +                            && ev.getY() <= actionBar.getY() + actionBar.getMeasuredHeight();
-+                        inu_headerDownX = ev.getX();
-+                        inu_headerDownY = ev.getY();
++                        inu_backdropTracking = inu_profileSheet && scrollOffsetY != 0
++                            && actionBarBackground.getAlpha() == 0.0f
++                            && ev.getY() < inu_sheetTop;
++                        inu_downX = ev.getX();
++                        inu_downY = ev.getY();
 +                        break;
-+                    case MotionEvent.ACTION_MOVE:
-+                        if (inu_headerTracking && !inu_headerForwarding) {
-+                            float dx = ev.getX() - inu_headerDownX;
-+                            float dy = ev.getY() - inu_headerDownY;
-+                            if (Math.abs(dy) > ViewConfiguration.get(getContext()).getScaledTouchSlop() && Math.abs(dy) > Math.abs(dx)) {
-+                                inu_headerForwarding = true;
-+                                inu_forwardToListView(ev, MotionEvent.ACTION_DOWN);
-+                                return true;
-+                            }
++                    case MotionEvent.ACTION_MOVE: {
++                        final float dx = ev.getX() - inu_downX;
++                        final float dy = ev.getY() - inu_downY;
++                        final int slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
++                        if (inu_backdropTracking && Math.hypot(dx, dy) > slop) {
++                            inu_backdropTracking = false;
++                        }
++                        if (inu_headerTracking && !inu_headerForwarding && Math.abs(dy) > slop && Math.abs(dy) > Math.abs(dx)) {
++                            inu_headerForwarding = true;
++                            inu_forwardToListView(ev, MotionEvent.ACTION_DOWN);
++                            return true;
 +                        }
 +                        break;
++                    }
 +                    case MotionEvent.ACTION_UP:
 +                    case MotionEvent.ACTION_CANCEL:
 +                        inu_headerTracking = false;
++                        if (inu_backdropTracking) {
++                            inu_backdropTracking = false;
++                            if (ev.getActionMasked() == MotionEvent.ACTION_UP && !isDismissed()) {
++                                dismiss();
++                                return true;
++                            }
++                        }
 +                        break;
 +                }
                  if (ev.getAction() == MotionEvent.ACTION_DOWN && scrollOffsetY != 0 && actionBar.getAlpha() == 0.0f) {
                      boolean dismiss;
                      if (listAdapter.getItemCount() > 0) {
-@@ -466,8 +517,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
+@@ -466,8 +532,9 @@ public class AudioPlayerAlert extends BottomSheet implements NotificationCenter.
  
                      if (isProfilePlaylist) {
                          actionBar.setVisibility(View.VISIBLE);

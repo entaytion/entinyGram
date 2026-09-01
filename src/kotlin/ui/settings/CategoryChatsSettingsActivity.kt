@@ -207,11 +207,29 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAttachmentSheet)))
         items.add(
+            UItem.asButton(
+                BUTTON_ATTACH_CAMERA_MODE,
+                LocaleController.getString(R.string.InuAttachCameraMode),
+                attachCameraModeLabel(InuConfig.ATTACH_CAMERA_MODE.value),
+            )
+        )
+        if (InuConfig.ATTACH_CAMERA_MODE.value != InuConfig.AttachCameraModeItem.FAB) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_CHAT_VOICE_IN_ATTACH,
+                    R.string.InuChatVoiceInAttach,
+                    R.string.InuChatVoiceInAttachInfo,
+                    InuConfig.CHAT_VOICE_IN_ATTACH.value,
+                    experimental = true
+                )
+            )
+        }
+        items.add(
             mkTwoLineCheckItem(
-                TOGGLE_DISABLE_INSTANT_CAMERA,
-                R.string.InuDisableInstantCamera,
-                R.string.InuDisableInstantCameraInfo,
-                InuConfig.DISABLE_INSTANT_CAMERA.value
+                TOGGLE_SORT_ALBUMS_BY_SIZE,
+                R.string.InuSortAlbumsBySize,
+                R.string.InuSortAlbumsBySizeInfo,
+                InuConfig.SORT_ALBUMS_BY_SIZE.value,
             )
         )
         items.add(
@@ -422,8 +440,22 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SELECTION_BOTTOM_NO_QUOTE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SELECTION_BOTTOM_NO_QUOTE.toggle()
             TOGGLE_DISABLE_BOT_DRAFT_TOP -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_BOT_DRAFT_TOP.toggle()
             TOGGLE_SHOW_ALL_RECENT_STICKERS -> (view as? TextCheckCell)?.isChecked = InuConfig.SHOW_ALL_RECENT_STICKERS.toggle()
-            TOGGLE_DISABLE_INSTANT_CAMERA -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_INSTANT_CAMERA.toggle()
+            BUTTON_ATTACH_CAMERA_MODE -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuAttachCameraModeInstant),
+                    LocaleController.getString(R.string.InuAttachCameraModeStatic),
+                    LocaleController.getString(R.string.InuAttachCameraModeFab),
+                    LocaleController.getString(R.string.InuAttachCameraModeTab),
+                ),
+                InuConfig.ATTACH_CAMERA_MODE.value,
+            ) { which ->
+                InuConfig.ATTACH_CAMERA_MODE.value = which
+                listView.adapter.update(true)
+            }
+
             TOGGLE_CHAT_VOICE_IN_ATTACH -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_VOICE_IN_ATTACH.toggle()
+            TOGGLE_SORT_ALBUMS_BY_SIZE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SORT_ALBUMS_BY_SIZE.toggle()
             TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION -> (view as? TextCheckCell)?.isChecked = InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.toggle()
             BUTTON_ROUND_DEFAULT_CAMERA -> RadioItemOptions.show(
                 this, view,
@@ -490,8 +522,9 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SELECTION_BOTTOM_NO_QUOTE = InuUtils.generateId()
         private val TOGGLE_DISABLE_BOT_DRAFT_TOP = InuUtils.generateId()
         private val TOGGLE_SHOW_ALL_RECENT_STICKERS = InuUtils.generateId()
-        private val TOGGLE_DISABLE_INSTANT_CAMERA = InuUtils.generateId()
+        private val BUTTON_ATTACH_CAMERA_MODE = InuUtils.generateId()
         private val TOGGLE_CHAT_VOICE_IN_ATTACH = InuUtils.generateId()
+        private val TOGGLE_SORT_ALBUMS_BY_SIZE = InuUtils.generateId()
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_ZOOM_SLIDER = InuUtils.generateId()
@@ -512,6 +545,19 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
         private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
         private val TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN = InuUtils.generateId()
+
+        private fun attachCameraModeLabel(value: Int): String = when (value) {
+            InuConfig.AttachCameraModeItem.INSTANT -> LocaleController.getString(R.string.InuAttachCameraModeInstant)
+            InuConfig.AttachCameraModeItem.FAB -> LocaleController.getString(R.string.InuAttachCameraModeFab)
+            InuConfig.AttachCameraModeItem.TAB -> LocaleController.getString(R.string.InuAttachCameraModeTab)
+            else -> LocaleController.getString(R.string.InuAttachCameraModeStatic)
+        }
+
+        private fun roundCameraLabel(value: Int): String = when (value) {
+            2 -> LocaleController.getString(R.string.InuRoundCameraRear)
+            3 -> LocaleController.getString(R.string.InuRoundCameraAsk)
+            else -> LocaleController.getString(R.string.InuRoundCameraFront)
+        }
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -538,7 +584,9 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-bot-draft-top", R.string.InuDisableBotDraftTop, TOGGLE_DISABLE_BOT_DRAFT_TOP),
                 SearchRegistry.Entry("show-all-recent-stickers", R.string.InuShowAllRecentStickers, TOGGLE_SHOW_ALL_RECENT_STICKERS),
                 SearchRegistry.Entry("disable-instant-camera", R.string.InuDisableInstantCamera, TOGGLE_DISABLE_INSTANT_CAMERA),
+                SearchRegistry.Entry("attach-camera-mode", R.string.InuAttachCameraMode, BUTTON_ATTACH_CAMERA_MODE),
                 SearchRegistry.Entry("chat-voice-in-attach", R.string.InuChatVoiceInAttach, TOGGLE_CHAT_VOICE_IN_ATTACH),
+                SearchRegistry.Entry("sort-albums-by-size", R.string.InuSortAlbumsBySize, TOGGLE_SORT_ALBUMS_BY_SIZE),
                 SearchRegistry.Entry("simple-attach-popup-animation", R.string.InuSimpleAttachPopupAnimation, TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION),
                 SearchRegistry.Entry("round-default-camera", R.string.InuRoundDefaultCamera, BUTTON_ROUND_DEFAULT_CAMERA),
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),

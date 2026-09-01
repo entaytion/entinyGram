@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 05:14:07 +0400
+Subject: fix nonsense group call recording timer before the start date arrives
+
+---
+ .../src/main/java/org/telegram/ui/GroupCallActivity.java        | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+@@ -1634,7 +1634,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+             return;
+         }
+         int time = accountInstance.getConnectionsManager().getCurrentTime() - call.call.record_start_date;
+-        if (call.recording) {
++        if (call.recording && call.call.record_start_date != 0) {
+             recordItem.setSubtext(AndroidUtilities.formatDuration(time, false));
+         } else {
+             recordItem.setSubtext(null);

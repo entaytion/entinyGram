@@ -1,0 +1,128 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 22:47:32 +0400
+Subject: allow minimizing the attach panel without discarding the selection
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    |  8 +++--
+ .../ui/Components/ChatActivityEnterView.java  |  7 ++++
+ .../ui/Components/ChatAttachAlert.java        | 34 +++++++++++++++++--
+ 3 files changed, 44 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -13675,8 +13675,11 @@ public class ChatActivity extends BaseFragment implements
+             chatAttachAlert.setMaxSelectedPhotos(-1, true);
+         }
+         chatAttachAlert.enableDefaultMode();
+-        chatAttachAlert.init();
+-        chatAttachAlert.getCommentView().setText(chatActivityEnterView.getFieldText());
++        if (!chatAttachAlert.inu_consumePreservedState()) {
++            chatAttachAlert.init();
++            chatAttachAlert.getCommentView().setText(chatActivityEnterView.getFieldText());
++        }
++        desu.inugram.helpers.chat.AttachMinimizeHelper.syncBadge(this);
+         chatAttachAlert.parentThemeDelegate = themeDelegate;
+         showDialog(chatAttachAlert);
+     }
+@@ -30055,6 +30058,7 @@ public class ChatActivity extends BaseFragment implements
+     public void onResume() {
+         super.onResume();
+         checkShowBlur(false);
++        desu.inugram.helpers.chat.AttachMinimizeHelper.syncBadge(this);
+         activityResumeTime = System.currentTimeMillis();
+         if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {
+             ImportingAlert alert = new ImportingAlert(getParentActivity(), null, this, themeDelegate);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -641,6 +641,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+     private LinearLayout attachLayout;
+     private ViewPropertyAnimator attachButtonAnimator;
+     private ImageView attachButton;
++    public CounterView.CounterDrawable inu_attachBadge;
+     private AiButtonDrawable aiButtonIcon;
+     private ImageView aiButton;
+     private ImageView richButton;
+@@ -2814,6 +2815,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     if (getAlpha() < 0.5f) return false;
+                     return super.dispatchTouchEvent(event);
+                 }
++
++                @Override
++                protected void onDraw(Canvas canvas) {
++                    super.onDraw(canvas);
++                    desu.inugram.helpers.chat.AttachMinimizeHelper.drawBadge(ChatActivityEnterView.this, this, canvas);
++                }
+             };
+             attachButton.setScaleType(ImageView.ScaleType.CENTER);
+             attachButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+@@ -6061,6 +6061,8 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+     }
+ 
+     public void init() {
++        inu_selectionGeneration++;
++        inu_preservedGeneration = -1;
+         writeButton.setEffect(effectId = 0);
+         botButtonWasVisible = false;
+         botButtonProgressWasVisible = false;
+@@ -6909,6 +6911,24 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+ 
+     private boolean confirmationAlertShown = false;
+     protected boolean allowPassConfirmationAlert = false;
++    private static int inu_selectionGeneration = 0;
++    private int inu_preservedGeneration = -1;
++
++    private boolean inu_canPreserveState() {
++        return baseFragment instanceof ChatActivity && currentAttachLayout == photoLayout && editingMessageObject == null && avatarPicker == 0 && !isPhotoPicker && !isStickerMode;
++    }
++
++    public int inu_getPreservedCount() {
++        return inu_preservedGeneration == inu_selectionGeneration && photoLayout != null ? photoLayout.getSelectedItemsCount() : 0;
++    }
++
++    public boolean inu_consumePreservedState() {
++        if (inu_getPreservedCount() == 0) {
++            return false;
++        }
++        inu_preservedGeneration = -1;
++        return true;
++    }
+ 
+     public void dismiss(boolean passConfirmationAlert) {
+         if (passConfirmationAlert) {
+@@ -6938,7 +6958,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+                 return;
+             }
+             confirmationAlertShown = true;
+-            AlertDialog dialog =
++            AlertDialog.Builder builder =
+                 new AlertDialog.Builder(baseFragment.getParentActivity(), resourcesProvider)
+                     .setTitle(getString(R.string.DiscardSelectionAlertTitle))
+                     .setMessage(getString(R.string.DiscardSelectionAlertMessage))
+@@ -6958,8 +6978,16 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+                     })
+                     .setOnPreDismissListener(di -> {
+                         confirmationAlertShown = false;
+-                    })
+-                    .create();
++                    });
++            if (inu_canPreserveState()) {
++                builder.setNeutralButton(getString(R.string.InuMinimize), (dialogInterface, i) -> {
++                    inu_preservedGeneration = inu_selectionGeneration;
++                    allowPassConfirmationAlert = true;
++                    dismiss();
++                    desu.inugram.helpers.chat.AttachMinimizeHelper.syncBadge((ChatActivity) this.baseFragment);
++                });
++            }
++            AlertDialog dialog = builder.create();
+             dialog.show();
+             TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+             if (button != null) {

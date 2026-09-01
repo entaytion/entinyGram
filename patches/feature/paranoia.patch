@@ -14,7 +14,6 @@ Subject: paranoia mode (hide chats, accounts, disguise as stock app)
  .../java/org/telegram/ui/CallLogActivity.java |  4 +++
  .../ui/Cells/AppIconsSelectorCell.java        |  1 +
  .../org/telegram/ui/Cells/SessionCell.java    |  4 +++
- .../telegram/ui/Components/ShareAlert.java    |  3 ++
  .../ui/Components/SharedMediaLayout.java      | 12 +++----
  .../java/org/telegram/ui/DialogsActivity.java |  5 +--
  .../org/telegram/ui/GroupCreateActivity.java  |  4 ++-
@@ -22,7 +21,7 @@ Subject: paranoia mode (hide chats, accounts, disguise as stock app)
  .../java/org/telegram/ui/ProfileActivity.java |  2 +-
  .../org/telegram/ui/SessionBottomSheet.java   |  3 ++
  .../ui/Stories/StoriesController.java         | 33 +++++++++++++++++++
- 18 files changed, 111 insertions(+), 24 deletions(-)
+ 17 files changed, 108 insertions(+), 24 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -423,20 +422,6 @@ index 0000000..0000000 100644
              detailTextView.setText(stringBuilder);
          } else if (object instanceof TLRPC.TL_webAuthorization) {
              TLRPC.TL_webAuthorization session = (TLRPC.TL_webAuthorization) object;
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
-@@ -2933,6 +2933,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
-                 if (dialog.id == selfUserId) {
-                     continue;
-                 }
-+                if (desu.inugram.helpers.security.ParanoiaHelper.isHidden(currentAccount, dialog.id)) {
-+                    continue;
-+                }
-                 if (!DialogObject.isEncryptedDialog(dialog.id)) {
-                     if (DialogObject.isUserDialog(dialog.id)) {
-                         if (dialog.folder_id == 1) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
@@ -459,7 +444,7 @@ index 0000000..0000000 100644
              this.initialTab = getInitialTab();
          } else if (!inuPreferMediaTab && (userInfo != null && userInfo.stargifts_count > 0 || chatInfo != null && chatInfo.stargifts_count > 0)) {
              this.initialTab = TAB_GIFTS;
-@@ -6818,10 +6818,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6819,10 +6819,10 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
      }
  
      public void setUserInfo(TLRPC.UserFull userInfo) {
@@ -472,7 +457,7 @@ index 0000000..0000000 100644
              scrollToPage(TAB_STORIES);
          }
      }
-@@ -6921,7 +6921,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6922,7 +6922,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          final TLRPC.User user = dialog_id <= 0 || profileActivity == null ? null : profileActivity.getMessagesController().getUser(dialog_id);
          boolean hasEditBotPreviews = user != null && user.bot && user.bot_has_main_app && user.bot_can_edit;
          boolean hasBotPreviews = user != null && user.bot && !user.bot_can_edit && (userInfo != null && userInfo.bot_info != null && userInfo.bot_info.has_preview_medias) && !hasEditBotPreviews;
@@ -481,7 +466,7 @@ index 0000000..0000000 100644
          boolean hasGifts = giftsContainer != null && (userInfo != null && userInfo.stargifts_count > 0 || info != null && info.stargifts_count > 0);
          final TLRPC.ProfileTab main_tab = info != null ? info.main_tab : userInfo != null ? userInfo.main_tab : null;
          int changed = 0;
-@@ -7035,7 +7035,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -7036,7 +7036,7 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
              }
              if (hasBotPreviews) {
                  tabs.add(new Pair(TAB_STORIES, getString(R.string.ProfileBotPreviewTab)));
@@ -494,7 +479,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6959,7 +6959,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6976,7 +6976,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -503,7 +488,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8616,7 +8616,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8633,7 +8633,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
@@ -582,7 +567,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -10625,7 +10625,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10633,7 +10633,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              }
          }
          if (!hasMedia && userInfo != null) {

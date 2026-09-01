@@ -17,6 +17,8 @@ object PinnedReactionsHelper {
     }
 
     class ConfigItem(key: String) : InuConfig.Item<MutableList<Pin>>(key, mutableListOf()) {
+        override val prefType = InuConfig.PrefType.STRING
+
         override fun read(prefs: SharedPreferences): MutableList<Pin> {
             val json = prefs.getString(key, "") ?: ""
             if (json.isEmpty()) return mutableListOf()

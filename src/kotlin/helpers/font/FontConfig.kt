@@ -51,6 +51,8 @@ object FontConfig {
     }
 
     class FontModeItem : InuConfig.Item<FontMode>("font_config", FontMode.Bundled, false) {
+        override val prefType = InuConfig.PrefType.STRING
+
         override fun read(prefs: SharedPreferences): FontMode {
             prefs.getString(key, null)?.let { return FontMode.fromJson(it) ?: default }
             // migrate the legacy split keys (font_mode int + active_font_id + font_fallbacks), then the

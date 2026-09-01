@@ -4,8 +4,9 @@ Date: Fri, 17 Apr 2026 22:43:33 +0300
 Subject: disable showing phone number instead of the display name in chat title
 
 ---
- TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java   | 2 +-
+ .../src/main/java/org/telegram/ui/ProfileActivity.java          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -20,3 +21,16 @@ index 0000000..0000000 100644
                      avatarContainer.setTitle(PhoneFormat.getInstance().format("+" + currentUser.phone), currentUser.scam, currentUser.fake, currentUser.verified, getMessagesController().isPremiumUser(currentUser), currentUser.emoji_status, animated);
                  } else {
                      avatarContainer.setTitle(AndroidUtilities.removeRTL(AndroidUtilities.removeDiacritics(UserObject.getUserName(currentUser))), currentUser.scam, currentUser.fake, currentUser.verified, getMessagesController().isPremiumUser(currentUser), currentUser.emoji_status, animated);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -11419,7 +11419,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     nameTextView[a].setText(titleTextView.getText());
+                     nameTextView[a].setRightDrawable(titleTextView.getRightDrawable());
+                     nameTextView[a].setRightDrawable2(titleTextView.getRightDrawable2());
+-                } else if (a == 0 && user.id != getUserConfig().getClientUserId() && !MessagesController.isSupportUser(user) && user.phone != null && user.phone.length() != 0 && getContactsController().contactsDict.get(user.id) == null &&
++                } else if (a == 0 && !desu.inugram.InuConfig.DISABLE_CHAT_TITLE_PHONE.getValue() && user.id != getUserConfig().getClientUserId() && !MessagesController.isSupportUser(user) && user.phone != null && user.phone.length() != 0 && getContactsController().contactsDict.get(user.id) == null &&
+                         (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
+                     nameTextView[a].setText(PhoneFormat.getInstance().format("+" + user.phone));
+                 } else {

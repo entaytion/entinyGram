@@ -325,7 +325,7 @@ class PinnedReactionsActivity : SettingsPageActivity() {
         view.tag = RecyclerListView.TAG_NOT_SECTION
         view.alpha = if (InuConfig.PINNED_REACTIONS_ENABLED.value) 1f else 0.5f
         val reactions =
-            MediaDataController.getInstance(currentAccount).reactionsList.map { VisibleReaction.fromEmojicon(it) }
+            MediaDataController.getInstance(currentAccount).enabledReactionsList.map { VisibleReaction.fromEmojicon(it) }
         view.setRecentReactions(reactions)
         view.emojiGridView?.isNestedScrollingEnabled = false
         view.emojiSearchGridView?.isNestedScrollingEnabled = false

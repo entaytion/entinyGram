@@ -26,11 +26,13 @@ import android.widget.ScrollView
 import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.StickerDownloadHelper
 import desu.inugram.helpers.ai.AiComposeHelper
 import desu.inugram.helpers.ai.AiSummaryHelper
 import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
+import desu.inugram.helpers.media.MediaSendDebugHelper
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
@@ -43,7 +45,6 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagePreviewParams
 import org.telegram.messenger.MessagesStorage
@@ -836,27 +837,14 @@ object ChatHelper {
 
             OPTION_SAVE_STICKER_TO_DOWNLOADS -> {
                 val parent = activity.parentActivity ?: return true
-                if (Build.VERSION.SDK_INT >= 23 &&
-                    (Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE) &&
-                    parent.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    parent.requestPermissions(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        BasePermissionsActivity.REQUEST_CODE_EXTERNAL_STORAGE,
-                    )
-                    return true
-                }
-                MediaController.saveFilesFromMessages(
+                val document = selectedObject.document ?: return true
+                StickerDownloadHelper.saveStickerToDownloads(
                     parent,
-                    activity.accountInstance,
-                    arrayListOf(selectedObject),
-                ) { count ->
-                    if (count > 0 && activity.parentActivity != null) {
-                        BulletinFactory.of(activity)
-                            .createDownloadBulletin(BulletinFactory.FileType.UNKNOWNS, count, activity.resourceProvider)
-                            .show()
-                    }
-                }
+                    activity.currentAccount,
+                    document,
+                    selectedObject,
+                    activity.resourceProvider,
+                )
             }
 
             else -> return false
@@ -1230,6 +1218,7 @@ object ChatHelper {
             for (msg in messages) {
                 for (file in cachedFilesForMessage(account, msg)) {
                     runCatching {
+                        MediaSendDebugHelper.onLocalFileDeleted(file, "clearMessageCaches")
                         if (file.exists() && !file.delete()) file.deleteOnExit()
                     }
                 }

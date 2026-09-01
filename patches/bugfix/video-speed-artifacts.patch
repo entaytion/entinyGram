@@ -4,22 +4,58 @@ Date: Wed, 26 Aug 2026 07:22:06 +0400
 Subject: use low-latency audio stack to avoid crackling artifacts when changing video speed
 
 ---
- .../src/main/java/org/telegram/ui/Components/VideoPlayer.java  | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../telegram/ui/Components/VideoPlayer.java   | 63 ++++++++++++++++---
+ .../java/org/telegram/ui/PhotoViewer.java     |  1 +
+ 2 files changed, 56 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
-@@ -263,6 +263,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
-                 factory = new DefaultRenderersFactory(ApplicationLoader.applicationContext);
+@@ -195,6 +195,30 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+ 
+     boolean audioDisabled;
+ 
++    private long inu_mediaDurationMs;
++
++    public void inu_setMediaDurationMs(long durationMs) {
++        inu_mediaDurationMs = durationMs;
++    }
++
++    /**
++     * The platform never starts a MODE_STREAM AudioTrack whose buffer has not filled, so a buffer
++     * longer than the media itself stalls forever when the media loops instead of ending. Sizing
++     * for AudioTrack playback params multiplies the buffer by MAX_PLAYBACK_SPEED (8x), which for
++     * short clips overshoots the content, so cap it at half the media.
++     */
++    private final DefaultAudioSink.AudioTrackBufferSizeProvider inu_bufferSizeProvider =
++            (minBufferSizeInBytes, encoding, outputMode, pcmFrameSize, sampleRate, bitrate, maxAudioTrackPlaybackSpeed) -> {
++                final DefaultAudioSink.AudioTrackBufferSizeProvider provider = DefaultAudioSink.AudioTrackBufferSizeProvider.DEFAULT;
++                final int size = provider.getBufferSizeInBytes(minBufferSizeInBytes, encoding, outputMode, pcmFrameSize, sampleRate, bitrate, maxAudioTrackPlaybackSpeed);
++                if (inu_mediaDurationMs <= 0 || outputMode != DefaultAudioSink.OUTPUT_MODE_PCM) {
++                    return size;
++                }
++                final int unscaled = provider.getBufferSizeInBytes(minBufferSizeInBytes, encoding, outputMode, pcmFrameSize, sampleRate, bitrate, 1.0);
++                final long halfMedia = (long) pcmFrameSize * sampleRate * inu_mediaDurationMs / 2000L;
++                return (int) Math.max(unscaled, Math.min(size, halfMedia - halfMedia % Math.max(pcmFrameSize, 1)));
++            };
++
+     public VideoPlayer() {
+         this(true, false);
+     }
+@@ -260,9 +284,10 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+             if (audioVisualizerDelegate != null) {
+                 factory = new AudioVisualizerRenderersFactory(ApplicationLoader.applicationContext);
+             } else {
+-                factory = new DefaultRenderersFactory(ApplicationLoader.applicationContext);
++                factory = new InuRenderersFactory(ApplicationLoader.applicationContext);
              }
              factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
 +            factory.setEnableAudioTrackPlaybackParams(true);
              ExoPlayer.Builder builder = new ExoPlayer.Builder(ApplicationLoader.applicationContext).setRenderersFactory(factory)
                      .setTrackSelector(trackSelector)
                      .setLoadControl(loadControl);
-@@ -1472,7 +1473,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+@@ -1472,7 +1497,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
      public void setPlaybackSpeed(float speed) {
          try {
              if (player != null) {
@@ -28,3 +64,69 @@ index 0000000..0000000 100644
              }
          } catch (Exception ignore) {}
      }
+@@ -1806,25 +1831,47 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+         return repeatCount;
+     }
+ 
+-    private class AudioVisualizerRenderersFactory extends DefaultRenderersFactory {
++    private class InuRenderersFactory extends DefaultRenderersFactory {
+ 
+-        public AudioVisualizerRenderersFactory(Context context) {
++        public InuRenderersFactory(Context context) {
+             super(context);
+         }
+ 
++        @Nullable
++        protected AudioProcessor[] getAudioProcessors() {
++            return null;
++        }
++
+         @Nullable
+         @Override
+         protected AudioSink buildAudioSink(Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams, boolean enableOffload) {
+-            return new DefaultAudioSink.Builder()
++            DefaultAudioSink.Builder builder = new DefaultAudioSink.Builder()
+                     .setAudioCapabilities(AudioCapabilities.getCapabilities(context))
+                     .setEnableFloatOutput(enableFloatOutput)
+                     .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+-                    .setAudioProcessors(new AudioProcessor[] {new TeeAudioProcessor(new VisualizerBufferSink())})
++                    .setAudioTrackBufferSizeProvider(inu_bufferSizeProvider)
+                     .setOffloadMode(
+                             enableOffload
+                                     ? DefaultAudioSink.OFFLOAD_MODE_ENABLED_GAPLESS_REQUIRED
+-                                    : DefaultAudioSink.OFFLOAD_MODE_DISABLED)
+-                    .build();
++                                    : DefaultAudioSink.OFFLOAD_MODE_DISABLED);
++            AudioProcessor[] audioProcessors = getAudioProcessors();
++            if (audioProcessors != null) {
++                builder.setAudioProcessors(audioProcessors);
++            }
++            return builder.build();
++        }
++    }
++
++    private class AudioVisualizerRenderersFactory extends InuRenderersFactory {
++
++        public AudioVisualizerRenderersFactory(Context context) {
++            super(context);
++        }
++
++        @Nullable
++        @Override
++        protected AudioProcessor[] getAudioProcessors() {
++            return new AudioProcessor[] {new TeeAudioProcessor(new VisualizerBufferSink())};
+         }
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -10753,6 +10753,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 }
+             }
+ 
++            videoPlayer.inu_setMediaDurationMs(currentMessageObject != null ? (long) (currentMessageObject.getDuration() * 1000) : 0);
+             if (videoUrises != null) {
+                 videoPlayer.preparePlayer(videoUrises, VideoPlayer.getSavedQuality(videoUrises, currentMessageObject));
+             } else {

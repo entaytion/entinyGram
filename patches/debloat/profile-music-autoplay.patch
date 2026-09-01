@@ -4,48 +4,49 @@ Date: Wed, 12 Aug 2026 22:30:08 +0400
 Subject: Dont auto-play music when opening the profile music player
 
 ---
- .../java/org/telegram/messenger/MediaController.java     | 9 +++++++++
- .../src/main/java/org/telegram/ui/ProfileActivity.java   | 3 +++
- 2 files changed, 12 insertions(+)
+ .../java/org/telegram/messenger/MediaController.java | 12 ++++++++++++
+ .../main/java/org/telegram/ui/ProfileActivity.java   |  8 +++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -1055,6 +1055,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
-     private Timer progressTimer = null;
-     private final Object progressTimerSync = new Object();
-     private boolean downloadingCurrentMessage;
-+    public MessageObject inu_pauseOncePlayingMessage;
-     private boolean playMusicAgain;
-     private PlaylistGlobalSearchParams playlistGlobalSearchParams;
-     private AudioInfo audioInfo;
-@@ -4171,6 +4172,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
-             FileLog.e(e);
-         }
- 
-+        if (inu_pauseOncePlayingMessage != null) {
-+            final boolean inu_pause = inu_pauseOncePlayingMessage == messageObject;
-+            inu_pauseOncePlayingMessage = null;
-+            if (inu_pause) {
-+                pauseMessage(messageObject, false);
-+            }
-+        }
-+
-         return true;
+@@ -3656,6 +3656,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+         return playMessage(messageObject, false);
      }
  
++    public boolean inu_prepareMessage(final MessageObject messageObject) {
++        if (messageObject == null) {
++            return false;
++        }
++        playingMessageObject = messageObject;
++        downloadingCurrentMessage = false;
++        isPaused = true;
++        lastProgress = 0;
++        NotificationCenter.getInstance(messageObject.currentAccount).postNotificationName(NotificationCenter.messagePlayingPlayStateChanged, messageObject.getId());
++        return true;
++    }
++
+     public boolean playMessage(final MessageObject messageObject, boolean silent) {
+         if (messageObject == null) {
+             return false;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3904,6 +3904,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3898,7 +3898,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      MediaController.getInstance().currentSavedMusicList = savedMusicList;
                      MediaController.getInstance().getPlaylist().clear();
                      MediaController.getInstance().getPlaylist().addAll(savedMusicList.list);
-+                    if (!sameList && desu.inugram.InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.getValue()) {
-+                        MediaController.getInstance().inu_pauseOncePlayingMessage = savedMusicList.list.get(0);
+-                    if (!sameList) MediaController.getInstance().playMessage(savedMusicList.list.get(0));
++                    if (!sameList) {
++                        if (desu.inugram.InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.getValue()) {
++                            MediaController.getInstance().inu_prepareMessage(savedMusicList.list.get(0));
++                        } else {
++                            MediaController.getInstance().playMessage(savedMusicList.list.get(0));
++                        }
 +                    }
-                     if (!sameList) MediaController.getInstance().playMessage(savedMusicList.list.get(0));
                      showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()));
                  }
+             });

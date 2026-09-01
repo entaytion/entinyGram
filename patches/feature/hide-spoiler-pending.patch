@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
-@@ -241,6 +241,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -240,6 +240,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      public final static int preview = 7;
      public final static int caption = 8;
      public final static int stars = 9;
@@ -87,7 +87,7 @@ index 0000000..0000000 100644
  
      private ActionBarMenuSubItem spoilerItem;
      private ActionBarMenuSubItem compressItem;
-@@ -258,6 +259,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -257,6 +258,11 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
      }
  
      private class BasePhotoProvider extends PhotoViewer.EmptyPhotoViewerProvider {
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
          @Override
          public boolean isPhotoChecked(int index) {
              MediaController.PhotoEntry photoEntry = getPhotoEntryAtPosition(index);
-@@ -3272,7 +3278,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3266,7 +3272,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                      parentAlert.delegate.didPressedButton(4, true, true, 0, 0, 0, parentAlert.isCaptionAbove(), false, payStars);
                  });
              }
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
              if (parentAlert.getPhotoPreviewLayout() != null) {
                  parentAlert.getPhotoPreviewLayout().startMediaCrossfade();
              }
-@@ -3285,7 +3291,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3279,7 +3285,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
                      break;
                  }
              }
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
              boolean finalSpoilersEnabled = spoilersEnabled;
              AndroidUtilities.runOnUIThread(()-> {
                  spoilerItem.setText(LocaleController.getString(finalSpoilersEnabled ? R.string.DisablePhotoSpoiler : R.string.EnablePhotoSpoiler));
-@@ -3311,7 +3317,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3305,7 +3311,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              for (HashMap.Entry<Object, Object> entry : selectedPhotos.entrySet()) {
                  if (entry.getValue() instanceof MediaController.PhotoEntry) {
                      MediaController.PhotoEntry photoEntry = (MediaController.PhotoEntry) entry.getValue();
@@ -126,7 +126,7 @@ index 0000000..0000000 100644
                      photoEntry.isChatPreviewSpoilerRevealed = false;
                      photoEntry.isAttachSpoilerRevealed = false;
                      selectedIds.add(photoEntry.imageId);
-@@ -3321,7 +3327,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+@@ -3315,7 +3321,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
              gridView.forAllChild(view -> {
                  if (view instanceof PhotoAttachPhotoCell) {
                      MediaController.PhotoEntry entry = ((PhotoAttachPhotoCell) view).getPhotoEntry();

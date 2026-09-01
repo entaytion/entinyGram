@@ -7,6 +7,7 @@ import desu.inugram.ui.settings.AiSettingsActivity
 import desu.inugram.ui.settings.AnnoyancesSettingsActivity
 import desu.inugram.ui.settings.AntiDeletionSettingsActivity
 import desu.inugram.ui.settings.AppearanceSettingsActivity
+import desu.inugram.ui.settings.BackupSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
@@ -71,6 +72,7 @@ object SearchRegistry {
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
+            BackupSettingsActivity.PAGE,
         )
     }
 

@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 19:17:23 +0400
+Subject: size the image memory cache against the large heap, to avoid too many evictions in shared media
+
+---
+ .../src/main/java/org/telegram/messenger/ImageLoader.java | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+@@ -2077,7 +2077,13 @@ public class ImageLoader {
+     public ImageLoader() {
+         thumbGeneratingQueue.setPriority(Thread.MIN_PRIORITY);
+ 
+-        int memoryClass = ((ActivityManager) ApplicationLoader.applicationContext.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
++        final ActivityManager inu_am = (ActivityManager) ApplicationLoader.applicationContext.getSystemService(Context.ACTIVITY_SERVICE);
++        // the app declares android:largeHeap, so the real budget is getLargeMemoryClass(); sizing
++        // the cache off getMemoryClass() leaves it too small to hold the shared media grid and
++        // PhotoViewer's full-screen bitmaps at once, so opening a photo evicts the whole grid.
++        int memoryClass = (ApplicationLoader.applicationContext.getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_LARGE_HEAP) != 0
++            ? inu_am.getLargeMemoryClass()
++            : inu_am.getMemoryClass();
+         int maxSize;
+         if (canForce8888 = memoryClass >= 192) {
+             maxSize = 80;

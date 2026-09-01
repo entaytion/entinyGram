@@ -80,16 +80,16 @@ object SettingsBackupHelper {
     }
 
     private fun differsFromInu(item: InuConfig.Item<*>, raw: Any?): Boolean {
-        val prefs = InuConfig.prefs
-        val key = item.key
-        return when (item) {
-            is InuConfig.BoolItem -> raw is Boolean && raw != prefs.getBoolean(key, item.default)
-            is InuConfig.IntItem -> raw is Number && raw.toInt() != prefs.getInt(key, item.default)
-            is InuConfig.LongItem -> raw is Number && raw.toLong() != prefs.getLong(key, item.default)
-            is InuConfig.FloatItem -> raw is Number && raw.toFloat() != prefs.getFloat(key, item.default)
-            is InuConfig.StringItem -> raw is String && raw != prefs.getString(key, item.default)
-            // custom string-backed items (e.g. MenuOrderConfig) serialize to a JSON string in prefs
-            else -> raw is String && raw != prefs.getString(key, null)
+        // items with a non-primitive default (json-backed lists etc) have no comparable raw default,
+        // so an unset key counts as differing
+        val stored = InuConfig.prefs.all[item.key]
+            ?: item.default.takeIf { it is Boolean || it is Number || it is String }
+        return when (item.prefType) {
+            InuConfig.PrefType.BOOL -> raw is Boolean && raw != stored
+            InuConfig.PrefType.INT -> raw is Number && raw.toInt() != (stored as? Number)?.toInt()
+            InuConfig.PrefType.LONG -> raw is Number && raw.toLong() != (stored as? Number)?.toLong()
+            InuConfig.PrefType.FLOAT -> raw is Number && raw.toFloat() != (stored as? Number)?.toFloat()
+            InuConfig.PrefType.STRING -> raw is String && raw != stored
         }
     }
 
@@ -150,14 +150,11 @@ object SettingsBackupHelper {
                     val item = byKey[key] ?: continue
                     val raw = values.get(key)
                     val ok = when {
-                        item is InuConfig.BoolItem && raw is Boolean -> { putBoolean(key, raw); true }
-                        item is InuConfig.IntItem && raw is Number -> { putInt(key, raw.toInt()); true }
-                        item is InuConfig.LongItem && raw is Number -> { putLong(key, raw.toLong()); true }
-                        item is InuConfig.FloatItem && raw is Number -> { putFloat(key, raw.toFloat()); true }
-                        item is InuConfig.StringItem && raw is String -> { putString(key, raw); true }
-                        // custom string-backed items (e.g. MenuOrderConfig) — write raw string;
-                        // item.load() below will parse it back through the item's own read()
-                        raw is String -> { putString(key, raw); true }
+                        item.prefType == InuConfig.PrefType.BOOL && raw is Boolean -> { putBoolean(key, raw); true }
+                        item.prefType == InuConfig.PrefType.INT && raw is Number -> { putInt(key, raw.toInt()); true }
+                        item.prefType == InuConfig.PrefType.LONG && raw is Number -> { putLong(key, raw.toLong()); true }
+                        item.prefType == InuConfig.PrefType.FLOAT && raw is Number -> { putFloat(key, raw.toFloat()); true }
+                        item.prefType == InuConfig.PrefType.STRING && raw is String -> { putString(key, raw); true }
                         else -> false
                     }
                     if (ok) applied++
@@ -186,6 +183,36 @@ object SettingsBackupHelper {
         } finally {
             CloudSettingsHelper.restoring = false
         }
+    }
+
+    fun resetToDefaults(): Int {
+        val exportable = InuConfig.items.filter { it.exportable }
+        val stored = InuConfig.prefs.all
+        val toRemove = exportable.filter { it.key in stored }
+        InuConfig.prefs.edit {
+            for (item in toRemove) remove(item.key)
+        }
+        for (item in exportable) item.load(InuConfig.prefs)
+        return toRemove.size
+    }
+
+    fun resetAndPromptRestart(fragment: BaseFragment) {
+        val reset = resetToDefaults()
+        if (reset == 0) {
+            BulletinFactory.of(fragment).createSimpleBulletin(
+                R.raw.chats_infotip,
+                LocaleController.getString(R.string.InuBackupResetNoChanges)
+            ).show()
+            return
+        }
+        BulletinFactory.of(fragment).createSimpleBulletin(
+            R.raw.chats_infotip,
+            LocaleController.formatString(R.string.InuBackupResetSuccess, reset),
+            LocaleController.getString(R.string.InuRestartNow)
+        ) {
+            val activity = fragment.parentActivity ?: return@createSimpleBulletin
+            InuUtils.restartApp(activity)
+        }.show()
     }
 
     const val FILENAME_SUFFIX = ".inu-settings.json"

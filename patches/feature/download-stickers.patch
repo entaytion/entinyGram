@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 31 Aug 2026 05:20:26 +0400
+Subject: download stickers from the previewer
+
+---
+ .../java/org/telegram/ui/ContentPreviewViewer.java  | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+@@ -783,6 +783,8 @@ public class ContentPreviewViewer {
+                     }
+                 }
+ 
++                desu.inugram.helpers.StickerDownloadHelper.addPreviewMenuItems(currentDocument, items, icons, actions);
++
+                 if (items.isEmpty()) {
+                     return;
+                 }
+@@ -796,6 +798,10 @@ public class ContentPreviewViewer {
+                             return;
+                         }
+                         int which = (int) v.getTag();
++                        if (desu.inugram.helpers.StickerDownloadHelper.processPreviewMenuOption(parentActivity, currentAccount, currentDocument, resourcesProvider, actions.get(which))) {
++                            dismissPopupWindow();
++                            return;
++                        }
+                         if (actions.get(which) == 0 || actions.get(which) == 6) {
+                             if (delegate != null) {
+                                 delegate.sendSticker(currentDocument, currentQuery, parentObject, actions.get(which) == 0, 0, 0);
+@@ -932,6 +938,9 @@ public class ContentPreviewViewer {
+                     icons.add(inFavs ? R.drawable.msg_unfave : R.drawable.msg_fave);
+                     actions.add(5);
+                 }
++
++                desu.inugram.helpers.StickerDownloadHelper.addPreviewMenuItems(currentDocument, items, icons, actions);
++
+                 if (items.isEmpty()) {
+                     return;
+                 }
+@@ -949,6 +958,10 @@ public class ContentPreviewViewer {
+                     }
+                     int which = (int) v.getTag();
+                     int action = actions.get(which);
++                    if (desu.inugram.helpers.StickerDownloadHelper.processPreviewMenuOption(parentActivity, currentAccount, currentDocument, resourcesProvider, action)) {
++                        dismissPopupWindow();
++                        return;
++                    }
+                     if (action == 0) {
+                         delegate.sendEmoji(currentDocument);
+                     } else if (action == 1) {
