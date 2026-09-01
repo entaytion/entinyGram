@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 object TranslateEngine {
 
-    private const val TAG = "InuTranslate"
+    private const val TAG = "EntinyTranslate"
 
     private const val KIND_TEXT = 0
     private const val KIND_TRANSCRIPTION = 1

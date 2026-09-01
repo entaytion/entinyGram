@@ -1,0 +1,105 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 23:19:32 +0300
+Subject: Let the Settings screen and My Profile info rows be reordered and hidden
+
+---
+ .../java/org/telegram/ui/ProfileActivity.java   | 17 +++++++++++++++++
+ .../java/org/telegram/ui/SettingsActivity.java  | 17 +++++++++++++----
+ 2 files changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -9663,6 +9663,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+         if (listAdapter != null) {
+             // saveScrollPosition();
+             firstLayout = true;
++            updateRowsIds(); // inu: pick up info-row order/visibility changes made while this fragment was paused (ProfileInfoMenuOrderActivity)
+             listAdapter.notifyDataSetChanged();
+         }
+         if (!parentLayout.isInPreviewMode() && blurredView != null && blurredView.getVisibility() == View.VISIBLE) {
+@@ -10836,6 +10837,21 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     }
+                 }
+                 infoStartRow = rowCount;
++                // inu: on our own profile the phone/bio/username rows are reorderable/hideable
++                // (InuConfig.PROFILE_INFO_ROWS); other profiles keep the stock order below.
++                if (myProfile && UserObject.isUserSelf(user)) {
++                    java.util.HashSet<desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item> inu_unavailable = new java.util.HashSet<>();
++                    if (isBot || !(hasPhone || !hasInfo)) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.PHONE);
++                    if (userInfo == null || TextUtils.isEmpty(userInfo.about)) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.BIO);
++                    if (user == null || username == null) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.USERNAME);
++                    for (desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item inu_row : desu.inugram.helpers.ProfileSettingsHelper.orderedEnabledInfoRows(inu_unavailable)) {
++                        switch (inu_row) {
++                            case PHONE: phoneRow = rowCount++; break;
++                            case BIO: userInfoRow = rowCount++; break;
++                            case USERNAME: usernameRow = rowCount++; break;
++                        }
++                    }
++                } else {
+                 if (!isBot && (hasPhone || !hasInfo)) {
+                     phoneRow = rowCount++;
+                 }
+@@ -10845,6 +10861,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (user != null && username != null) {
+                     usernameRow = rowCount++;
+                 }
++                }
+                 if (ProfileHelper.shouldShowIdRow()) inu_idRow = rowCount++;
+                 if (ProfileHelper.shouldShowRegDateRow(userId, currentChat)) inu_regDateRow = rowCount++;
+                 if (userInfo != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
+@@ -689,9 +689,16 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
+         // (ported from inugram PR #34, made unconditional)
+ 
++        // inu: everything from here down to the version cell is one reorderable/hideable pool
++        // (InuConfig.PROFILE_SETTINGS_ROWS). While the order is untouched this renders exactly
++        // like stock; once the user customizes it the group separators collapse into one flat
++        // section, since the groups no longer describe the order.
++        final int inu_reorderFrom = items.size();
++        final boolean inu_flat = desu.inugram.helpers.ProfileSettingsHelper.isCustomized();
++
+         if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
+             items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
+-            items.add(UItem.asShadow(null));
++            if (!inu_flat) items.add(UItem.asShadow(null));
+         }
+ 
+         items.add(SettingCell.Factory.of(1, IconBackgroundColors.BLUE.top, IconBackgroundColors.BLUE.bottom, R.drawable.settings_account, getString(R.string.SettingsAccount), getString(R.string.SettingsAccountInfo)));
+@@ -704,7 +711,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         items.add(SettingCell.Factory.of(9, IconBackgroundColors.ORANGE_DEEP.top, IconBackgroundColors.ORANGE_DEEP.bottom, R.drawable.settings_power, getString(R.string.SettingsPowerSaving), getString(R.string.SettingsPowerSavingInfo)));
+         items.add(SettingCell.Factory.of(10, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_language, getString(R.string.SettingsLanguage), LocaleController.getCurrentLanguageName()));
+ 
+-        items.add(UItem.asShadow(null));
++        if (!inu_flat) items.add(UItem.asShadow(null));
+ 
+         if (!getMessagesController().premiumFeaturesBlocked()) {
+             items.add(SettingCell.Factory.of(11, 0xFFB659FF, 0xFF617CFF, R.drawable.settings_premium, getString(R.string.TelegramPremium)));
+@@ -739,10 +746,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+         if (!getMessagesController().premiumPurchaseBlocked()) {
+             items.add(SettingCell.Factory.of(16, 0xFFF38B31, 0xFFE26314, R.drawable.settings_gift, getString(R.string.SendAGift)));
+         }
+-        if (items.get(items.size() - 1).viewType != UniversalAdapter.VIEW_TYPE_SHADOW)
++        if (!inu_flat && items.get(items.size() - 1).viewType != UniversalAdapter.VIEW_TYPE_SHADOW)
+             items.add(UItem.asShadow(null));
+ 
+-        items.add(UItem.asHeader(getString(R.string.SettingsHelp)));
++        if (!inu_flat) items.add(UItem.asHeader(getString(R.string.SettingsHelp)));
+         items.add(SettingCell.Factory.of(17, IconBackgroundColors.ORANGE.top, IconBackgroundColors.ORANGE.bottom, R.drawable.settings_ask, getString(R.string.AskAQuestion)));
+         items.add(SettingCell.Factory.of(18, IconBackgroundColors.BLUE_LIGHT.top, IconBackgroundColors.BLUE_LIGHT.bottom, R.drawable.settings_faq, getString(R.string.TelegramFAQ)));
+         items.add(SettingCell.Factory.of(23, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_features, getString(R.string.TelegramFeatures)));
+@@ -756,6 +763,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             items.add(SettingCell.Factory.of(22, 0xFFF45255, 0xFFDF3955, 0, getString(R.string.DebugClearLogs)));
+         }
+ 
++        desu.inugram.helpers.ProfileSettingsHelper.reorder(items, inu_reorderFrom);
++
+         items.add(UItem.asCustomShadow(versionView));
+     }
+ 

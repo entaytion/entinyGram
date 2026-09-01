@@ -6,6 +6,16 @@
     <string name="InuSettingsInfo">сквозь землю и ветер я иду за тобой</string>
     <string name="InuGeneral">Основные</string>
     <string name="InuMiscellaneous">Прочее</string>
+    <string name="InuWideChannelPosts">Широкие посты</string>
+    <string name="InuWideFeedPosts">Широкие посты в Ленте</string>
+    <string name="InuWideChannelPostsFooter">Посты каналов и пересланные сообщения используют всю доступную ширину.</string>
+    <string name="InuWideChannelPostsPreviewText">Новости, фото и видео</string>
+    <string name="InuWideChannelPostsPreviewReply">Пересланный пост из канала</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Посты каналов</string>
+    <string name="InuAutoUpdateCheck">Проверять обновления</string>
+    <string name="InuAutoUpdateCheckInfo">Периодически проверять канал entinyGram CI на наличие новых релизов и предлагать их загрузку.</string>
+    <string name="InuUpdatesIncludeBeta">Получать бета-обновления</string>
+    <string name="InuUpdatesIncludeBetaInfo">Также предлагать тестовые сборки (бета/pre-release). Если стабильный релиз новее текущей беты, будет предложен именно он.</string>
     <string name="InuAppearance">Внешний вид</string>
     <string name="InuBehavior">Поведение</string>
     <string name="InuPerformanceClass">Класс производительности</string>
@@ -54,13 +64,19 @@
     <string name="InuShowSeconds">Показывать секунды</string>
     <string name="InuDisableRounding">Отключить округление чисел</string>
     <string name="InuDisableRoundingInfo">1,2K → 1 234</string>
-    <string name="InuDisableInstantCamera">Отключить мгновенную камеру</string>
-    <string name="InuDisableInstantCameraInfo">Не запускать камеру при открытии панели вложений</string>
+    <string name="InuAttachCamera">Камера</string>
+    <string name="InuAttachCameraMode">Камера</string>
+    <string name="InuAttachCameraModeInstant">Мгновенная</string>
+    <string name="InuAttachCameraModeStatic">Обычная</string>
+    <string name="InuAttachCameraModeFab">Плавающая кнопка</string>
+    <string name="InuAttachCameraModeTab">Нижняя вкладка</string>
     <string name="InuShowAllRecentStickers">Показывать все недавние стикеры</string>
     <string name="InuNoStickerExtraPadding">Убрать лишний отступ снизу</string>
     <string name="InuHideKeyboardOnScroll">Скрывать клавиатуру при прокрутке</string>
     <string name="InuDisablePullToNext">Отключить переход к следующему каналу</string>
     <string name="InuDisableSensitive">Отключить фильтр чувствительного контента</string>
+    <string name="InuHideChannelShareButton">Скрыть кнопку «Поделиться» в каналах</string>
+    <string name="InuHideChannelShareButtonInfo">Полностью скрывает маленькую иконку «Поделиться/Переслать» рядом с постами в каналах. Обычная пересылка через меню сообщения продолжает работать.</string>
     <string name="InuDisableChatBackgrounds">Отключить пользовательские фоны чатов</string>
     <string name="InuDisableChatThemes">Отключить пользовательские темы чатов</string>
     <string name="InuDisableBgParallax">Отключить параллакс фона</string>
@@ -531,6 +547,11 @@
     <string name="InuFontStyles_other">%1$d стиля</string>
     <string name="InuBackupImportSheetApply">Да, применить</string>
     <string name="InuBackupImportSheetCancel">Нет, оставить как есть</string>
+    <string name="InuBackupSettings">Резервное копирование и сброс</string>
+    <string name="InuBackupReset">Сбросить настройки</string>
+    <string name="InuBackupResetConfirm">Все настройки entinyGram будут сброшены до значений по умолчанию. Ваши чаты, аккаунты и собственные настройки Telegram останутся неизменными.\n\nЭто действие нельзя отменить.</string>
+    <string name="InuBackupResetSuccess">Сброшено %1$d настроек</string>
+    <string name="InuBackupResetNoChanges">Настройки уже имеют значения по умолчанию</string>
     <string name="InuCloudSync">Синхронизация настроек</string>
     <string name="InuCloudSyncDesc">Сохраните настройки entinyGram в облако Telegram и восстановите их на другом устройстве.\n\nИспользуется [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), ваши данные не отправляются на наши серверы.</string>
     <string name="InuCloudSyncNow">Синхронизировать</string>
@@ -542,10 +563,8 @@
     <string name="InuCloudDeleteFailed">Сбой удаления</string>
     <string name="InuCloudDeleteSuccess">Облачная копия удалена</string>
     <string name="InuCloudNoBackup">Облачная копия не найдена</string>
-    <string name="InuCloudSyncDate">Последняя облачная копия: %1$s</string>
-    <string name="InuCloudSyncDateNever">никогда</string>
-    <string name="InuCloudSyncAccount">Аккаунт для синхронизации</string>
-    <string name="InuCloudSyncAccountPick">Выберите аккаунт для синхронизации</string>
+    <string name="InuCloudSyncedAt">последняя копия %1$s</string>
+    <string name="InuCloudSyncNever">копия не создавалась</string>
     <string name="InuCloudSyncAccountInactive">Аккаунт больше не активен. Выберите другой, чтобы продолжить синхронизацию.</string>
     <string name="InuCloudSyncAuto">Автозагрузка</string>
     <string name="InuSearchOpenUsername">Открыть %1$s</string>
@@ -723,6 +742,10 @@
     <string name="InuChatMenuItems">Пункты</string>
     <string name="InuChatMenuOrderInfo">Переставь или скрой пункты в меню «три точки» в чатах. Перетаскивай ручку для перестановки, используй переключатель чтобы скрыть.</string>
     <string name="InuChatMenuReset">Сбросить по умолчанию</string>
+    <string name="InuProfileSettingsRowsOrder">Порядок экрана настроек</string>
+    <string name="InuProfileSettingsRowsItems">Пункты</string>
+    <string name="InuProfileSettingsRowsOrderInfo">Переставь или скрой пункты на экране настроек самого Telegram (Настройки чатов, Конфиденциальность, Уведомления и т.д.). Перетаскивай ручку для перестановки, используй переключатель чтобы скрыть.</string>
+    <string name="InuProfileSettingsRowsReset">Сбросить по умолчанию</string>
     <string name="InuGoToMessage">Перейти к сообщению</string>
     <string name="InuGoToMessagePrompt">ID сообщения</string>
     <string name="InuParanoiaHideFolders">Скрыть папки</string>
@@ -742,6 +765,7 @@
 
     <string name="InuLogs">Отладка</string>
     <string name="InuLogsEnabled">Режим отладки</string>
+    <string name="InuExtraDebugLogs">[entinyGram] Дополнительные логи отладки</string>
     <string name="InuLogsSize">Размер логов: %1$s</string>
     <string name="InuLogsShare">Поделиться логами</string>
     <string name="InuLogsShareZip">Все логи (.zip)</string>
@@ -1252,7 +1276,6 @@
     <string name="InuMsgDetailViews">Просмотры</string>
     <string name="InuMsgDetailVoiceNote">Голосовое сообщение</string>
     <string name="InuMsgDetailWaveformLength">Сэмплы волны</string>
-    <string name="Chats">Чаты</string>
     <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунтов</string>
     <string name="InuAccountSwitchShortcutInfo">Добавить ярлык по долгому нажатию на иконку приложения с выбором аккаунта для входа</string>
     <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
@@ -1273,4 +1296,13 @@
     <string name="InuStopBotAction">Остановить</string>
     <string name="InuStopBotAlert">Вы уверены, что хотите остановить **%1$s**? Он больше не сможет отправлять вам сообщения.</string>
     <string name="InuStopBotDone">Бот остановлен</string>
+    <string name="InuMsgDetailFileId">File ID</string>
+    <string name="InuMsgDetailFileUniqueId">Уникальный File ID</string>
+    <string name="InuMsgDetailFileIdInfo">Этот File ID привязан к текущему аккаунту и через некоторое время станет недействительным.</string>
+    <string name="InuSortAlbumsBySize">Сортировать альбомы по размеру</string>
+    <string name="InuSortAlbumsBySizeInfo">Альбомы в меню вложений упорядочиваются по количеству фото, а не по новизне</string>
+    <string name="InuDownloadDirectory">Папка загрузок</string>
+    <string name="InuDownloadDirectoryApplied">Применяется только к новым загрузкам</string>
+    <string name="InuPreviewMessage">Предпросмотр</string>
+    <string name="InuMinimize">Свернуть</string>
 </resources>

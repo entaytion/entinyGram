@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -430,6 +430,12 @@
+@@ -412,6 +412,12 @@
              android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
              android:exported="true">
          </activity>

@@ -190,5 +190,5 @@ object EntinyTranslate {
 
     private val configBulletins = HashSet<Long>()
 
-    private const val TAG = "InuTranslate"
+    private const val TAG = "EntinyTranslate"
 }

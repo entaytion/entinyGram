@@ -4,14 +4,26 @@ Date: Mon, 10 Aug 2026 08:11:28 +0300
 Subject: Add ghost mode (invisible mode) for read receipts, typing and online status
 
 ---
+ .../org/telegram/messenger/ContactsController.java    |  1 +
  .../java/org/telegram/messenger/LocaleController.java |  6 ++++++
  .../org/telegram/messenger/MessagesController.java    | 11 +++++++++++
  .../java/org/telegram/tgnet/ConnectionsManager.java   |  3 +++
- .../telegram/ui/Components/ChatAvatarContainer.java   |  1 +
  .../src/main/java/org/telegram/ui/LaunchActivity.java |  2 +-
  .../main/java/org/telegram/ui/ProfileActivity.java    |  6 +++++-
  6 files changed, 27 insertions(+), 2 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+@@ -2848,6 +2848,7 @@ public class ContactsController extends BaseController {
+ 
+     public void setPrivacyRules(ArrayList<TLRPC.PrivacyRule> rules, int type) {
+         desu.inugram.helpers.security.ParanoiaHelper.filterPrivacyRules(currentAccount, type, rules);
++        desu.inugram.helpers.security.GhostHelper.syncPresence(currentAccount);
+         switch (type) {
+             case PRIVACY_RULES_TYPE_LASTSEEN:
+                 lastseenPrivacyRules = rules;
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
@@ -33,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14720,6 +14720,17 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14800,6 +14800,17 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
@@ -65,18 +77,6 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -989,6 +989,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-             titleTextView.setRightDrawable(null);
-             rightDrawableContentDescription = null;
-         }
-+        desu.inugram.helpers.security.GhostHelper.applyChatTitleGhost(parentFragment, titleTextView);
-         checkActionBar(animated);
-     }
- 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
@@ -94,7 +94,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11479,7 +11479,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11532,7 +11532,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (userInfo != null && userInfo.stars_rating != null && userInfo.stars_rating.stars < 0) {
                          newString2 = getString(R.string.StarRatingLevelNegative).toLowerCase(Locale.ROOT);
                      } else {

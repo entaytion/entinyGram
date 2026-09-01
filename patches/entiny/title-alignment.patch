@@ -966,7 +966,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11729,11 +11729,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11725,11 +11725,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          showDialog(premiumPreviewBottomSheet);
                      });
                  }
@@ -984,7 +984,7 @@ index 0000000..0000000 100644
                  );
              }
  
-@@ -11994,11 +11999,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11990,11 +11995,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  } else {
                      nameTextView[a].setLeftDrawable(null);
                  }

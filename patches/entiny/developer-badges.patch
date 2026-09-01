@@ -10,9 +10,9 @@ Subject: developer badges
  .../telegram/ui/Cells/ManageChatUserCell.java |  2 +
  .../telegram/ui/Cells/ProfileSearchCell.java  | 34 +++++++--
  .../java/org/telegram/ui/Cells/UserCell.java  | 10 +++
- .../ui/Components/ChatAvatarContainer.java    |  9 +++
+ .../ui/Components/ChatAvatarContainer.java    | 10 +++
  .../java/org/telegram/ui/ProfileActivity.java | 36 ++++++++-
- 8 files changed, 187 insertions(+), 20 deletions(-)
+ 8 files changed, 188 insertions(+), 20 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
 index 0000000..0000000 100644
@@ -397,7 +397,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -989,6 +989,15 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -989,6 +989,16 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              titleTextView.setRightDrawable(null);
              rightDrawableContentDescription = null;
          }
@@ -410,14 +410,15 @@ index 0000000..0000000 100644
 +                desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
 +            );
 +        }
-         desu.inugram.helpers.security.GhostHelper.applyChatTitleGhost(parentFragment, titleTextView);
++        desu.inugram.helpers.security.GhostHelper.applyChatTitleGhost(parentFragment, titleTextView);
          checkActionBar(animated);
      }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11549,8 +11549,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11545,8 +11545,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      ChatActivity chatActivity = (ChatActivity) prevFragment;
                      SimpleTextView titleTextView = chatActivity.avatarContainer.getTitleTextView();
                      nameTextView[a].setText(titleTextView.getText());
@@ -436,7 +437,7 @@ index 0000000..0000000 100644
                  } else if (a == 0 && !desu.inugram.InuConfig.DISABLE_CHAT_TITLE_PHONE.getValue() && user.id != getUserConfig().getClientUserId() && !MessagesController.isSupportUser(user) && user.phone != null && user.phone.length() != 0 && getContactsController().contactsDict.get(user.id) == null &&
                          (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
                      nameTextView[a].setText(PhoneFormat.getInstance().format("+" + user.phone));
-@@ -11703,6 +11711,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11699,6 +11707,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          showDialog(premiumPreviewBottomSheet);
                      });
                  }
@@ -449,7 +450,7 @@ index 0000000..0000000 100644
              }
  
              if (userId == UserConfig.getInstance(currentAccount).clientUserId) {
-@@ -11867,10 +11881,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11863,10 +11877,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (nameTextView[a].setText(titleTextView.getText())) {
                          changed = true;
                      }
@@ -470,7 +471,7 @@ index 0000000..0000000 100644
                          changed = true;
                      }
                  } else if (isTopic) {
-@@ -11954,6 +11976,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11950,6 +11972,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  } else {
                      nameTextView[a].setLeftDrawable(null);
                  }

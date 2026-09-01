@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -3356,9 +3356,7 @@ public class LocaleController {
+@@ -3350,9 +3350,7 @@ public class LocaleController {
                      }
                  }, ConnectionsManager.RequestFlagWithoutLogin);
              } else {

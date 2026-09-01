@@ -9,6 +9,8 @@ import desu.inugram.helpers.font.FontConfig
 import desu.inugram.helpers.menu.ChatMenuConfig
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MessageMenuConfig
+import desu.inugram.helpers.menu.ProfileInfoMenuConfig
+import desu.inugram.helpers.menu.ProfileMenuConfig
 import desu.inugram.ui.FormattingPopupConfig
 
 object InuConfig {
@@ -369,7 +371,7 @@ object InuConfig {
     val SORT_ALBUMS_BY_SIZE = BoolItem("sort_albums_by_size", true)
 
     @JvmField
-    val DOWNLOAD_DIRECTORY = StringItem("download_directory", "Inugram")
+    val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram")
 
     @JvmField
     val AUTO_DISABLE_PROXY_ON_VPN = BoolItem("auto_disable_proxy_on_vpn", false)
@@ -1031,6 +1033,12 @@ object InuConfig {
 
     @JvmField
     val CHAT_MENU_ITEMS = ChatMenuConfig("chat_menu_items")
+
+    @JvmField
+    val PROFILE_SETTINGS_ROWS = ProfileMenuConfig("profile_settings_rows")
+
+    @JvmField
+    val PROFILE_INFO_ROWS = ProfileInfoMenuConfig("profile_info_rows")
 
     class ForwardLongTapItem : IntItem("forward_long_tap_action", CHOOSE_MODE) {
         companion object {

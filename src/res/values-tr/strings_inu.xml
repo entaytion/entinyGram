@@ -14,6 +14,16 @@
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuGeneral">Genel</string>
     <string name="InuMiscellaneous">Çeşitli</string>
+    <string name="InuWideChannelPosts">Geniş gönderiler</string>
+    <string name="InuWideFeedPosts">Akışta geniş gönderiler</string>
+    <string name="InuWideChannelPostsFooter">Kanal gönderileri ve iletilen mesajlar kullanılabilir tüm genişliği kaplar.</string>
+    <string name="InuWideChannelPostsPreviewText">Haberler, fotoğraflar ve videolar</string>
+    <string name="InuWideChannelPostsPreviewReply">İletilen kanal gönderisi</string>
+    <string name="InuWideChannelPostsPreviewReplyLabel">Kanal gönderileri</string>
+    <string name="InuAutoUpdateCheck">Güncellemeleri kontrol et</string>
+    <string name="InuAutoUpdateCheckInfo">Yeni sürümler için periyodik olarak entinyGram CI kanalını kontrol edin ve indirme teklifi alın.</string>
+    <string name="InuUpdatesIncludeBeta">Beta güncellemelerini al</string>
+    <string name="InuUpdatesIncludeBetaInfo">Ayrıca ön sürüm/beta test yapılarını sunun. Kararlı sürüm mevcut betanızdan daha yeniyse bunun yerine o sunulur.</string>
     <string name="InuAppearance">Görünüm</string>
     <string name="InuLookAndFeel">Tasarım &amp; His</string>
     <string name="InuBehavior">Davranış</string>
@@ -81,8 +91,12 @@
     <string name="InuMonetThemeAmoled">AMOLED</string>
     <string name="InuMonetThemeAuto">Otomatik</string>
     <string name="InuMonetThemeAutoAmoled">Otomatik (AMOLED)</string>
-    <string name="InuDisableInstantCamera">Anlık kamerayı devre dışı bırak</string>
-    <string name="InuDisableInstantCameraInfo">Ek panelini açarken kameranın başlatılmasını önler</string>
+    <string name="InuAttachCamera">Kamera</string>
+    <string name="InuAttachCameraMode">Kamera</string>
+    <string name="InuAttachCameraModeInstant">Anlık</string>
+    <string name="InuAttachCameraModeStatic">Statik</string>
+    <string name="InuAttachCameraModeFab">Kayan düğme</string>
+    <string name="InuAttachCameraModeTab">Alt sekme</string>
     <string name="InuRoundRecorderKeepZoom">Yakınlaştırmayı bırakınca koru</string>
     <string name="InuRoundRecorderZoomSlider">Yakınlaştırma kaydırıcısı</string>
     <string name="InuRoundRecorderExponentialZoom">Üstel yakınlaştırma</string>
@@ -97,6 +111,8 @@
     <string name="InuDisableSensitive">Hassas içerik filtresini devre dışı bırak</string>
     <string name="InuDisableQuickShare">Hızlı paylaşımı devre dışı bırak</string>
     <string name="InuDisableQuickShareInfo">Paylaş düğmesine (kanal mesajlarının yanında) uzun basıldığında sık görüşülen kişileri göstermez; onay almadan gönderir</string>
+    <string name="InuHideChannelShareButton">Kanal paylaşım düğmesini gizle</string>
+    <string name="InuHideChannelShareButtonInfo">Kanal gönderilerinin yanındaki küçük paylaş/ilet simgesini tamamen gizleyin. Mesaj menüsündeki normal iletme eylemi çalışmaya devam eder.</string>
     <string name="InuDisableProfileMusicAutoplay">Profil müziğinin otomatik oynatılmasını devre dışı bırak</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Bir profildeki sabitlenmiş müzik oynatıcı açıldığında oynatmayı otomatik olarak başlatmaz</string>
     <string name="InuDisableChatBackgrounds">Özel sohbet arka planlarını devre dışı bırak</string>
@@ -590,6 +606,11 @@
     <string name="InuFontStyles_other">%1$d stil</string>
     <string name="InuBackupImportSheetApply">Evet, uygula</string>
     <string name="InuBackupImportSheetCancel">Hayır, olduğu gibi bırak</string>
+    <string name="InuBackupSettings">Yedekleme ve sıfırlama</string>
+    <string name="InuBackupReset">Ayarları sıfırla</string>
+    <string name="InuBackupResetConfirm">Tüm entinyGram ayarları varsayılan değerlerine sıfırlanacaktır. Sohbetleriniz, hesaplarınız ve Telegram\'ın kendi ayarları aynı kalır.\n\nBu işlem geri alınamaz.</string>
+    <string name="InuBackupResetSuccess">%1$d ayar sıfırlandı</string>
+    <string name="InuBackupResetNoChanges">Ayarlar zaten varsayılan durumunda</string>
     <string name="InuCloudSync">Ayarları senkronize et</string>
     <string name="InuCloudSyncDesc">entinyGram ayarlarınızı Telegram bulutuna yedekleyin ve başka bir cihazda geri yükleyin.\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) kullanılır, verileriniz asla bizim sunucularımıza gönderilmez.</string>
     <string name="InuCloudSyncNow">Şimdi senkronize et</string>
@@ -601,10 +622,8 @@
     <string name="InuCloudDeleteFailed">Silme başarısız</string>
     <string name="InuCloudDeleteSuccess">Bulut yedeği silindi</string>
     <string name="InuCloudNoBackup">Bulut yedeği bulunamadı</string>
-    <string name="InuCloudSyncDate">Son bulut yedeği: %1$s</string>
-    <string name="InuCloudSyncDateNever">hiçbir zaman</string>
-    <string name="InuCloudSyncAccount">Senkronizasyon hesabı</string>
-    <string name="InuCloudSyncAccountPick">Senkronizasyon hesabını seçin</string>
+    <string name="InuCloudSyncedAt">son yedekleme %1$s</string>
+    <string name="InuCloudSyncNever">hiç yedeklenmedi</string>
     <string name="InuCloudSyncAccountInactive">Hesap oturumu kapatılmış. Senkronizasyonu sürdürmek için başka bir hesap seçin.</string>
     <string name="InuCloudSyncAuto">Otomatik yükle</string>
     <string name="InuSearchOpenUsername">%1$s kullanıcısını aç</string>
@@ -726,6 +745,7 @@
 
     <string name="InuLogs">Hata Ayıklama</string>
     <string name="InuLogsEnabled">Hata ayıklama modu</string>
+    <string name="InuExtraDebugLogs">[entinyGram] Ek hata ayıklama günlükleri</string>
     <string name="InuLogsSize">Günlük boyutu: %1$s</string>
     <string name="InuLogsShare">Günlükleri paylaş</string>
     <string name="InuLogsShareZip">Tüm günlükler (.zip)</string>
@@ -1225,7 +1245,6 @@
     <string name="InuUnreader">Okunmadı Yöneticisi</string>
     <string name="InuUnreaderInfo">Mesajlar asla okundu olarak işaretlenmez: bir sohbeti açmak okunmadı rozetini korur ve karşı tarafa okundu bilgisi gitmez.</string>
     <string name="InuYes">Evet</string>
-    <string name="Chats">Sohbetler</string>
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
     <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
     <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
@@ -1246,4 +1265,18 @@
     <string name="InuStopBotAction">Durdur</string>
     <string name="InuStopBotAlert">**%1$s** botunu durdurmak istediğinizden emin misiniz? Artık size mesaj gönderemeyecek.</string>
     <string name="InuStopBotDone">Bot durduruldu</string>
+    <string name="InuMsgDetailFileId">File ID</string>
+    <string name="InuMsgDetailFileUniqueId">Benzersiz File ID</string>
+    <string name="InuMsgDetailFileIdInfo">Bu File ID mevcut hesaba bağlıdır ve bir süre sonra geçerliliğini yitirecektir.</string>
+    <string name="InuSelectionBottomNoQuote">Seçim çubuğunda Alıntısız düğmesi</string>
+    <string name="InuSelectionBottomNoQuoteInfo">Mesaj seçerken Yanıtla düğmesini Alıntısız ilet düğmesiyle değiştirir</string>
+    <string name="InuSaveDeletedOwn">Kendi mesajlarım</string>
+    <string name="InuDeletePermanently">Kalıcı olarak sil</string>
+    <string name="InuDeletePermanentlyDone">Kalıcı olarak silindi</string>
+    <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
+    <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler yeniliğe göre değil fotoğraf sayısına göre sıralanır</string>
+    <string name="InuDownloadDirectory">İndirme klasörü</string>
+    <string name="InuDownloadDirectoryApplied">Yalnızca yeni indirilen dosyalar için geçerlidir</string>
+    <string name="InuPreviewMessage">Önizleme</string>
+    <string name="InuMinimize">Küçült</string>
 </resources>

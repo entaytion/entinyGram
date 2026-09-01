@@ -59,6 +59,11 @@ object DoubleTapActionHelper {
     }
 
     private fun canPerformAction(activity: ChatActivity, message: MessageObject, action: DoubleTapAction): Boolean {
+        // Reject actions on special messages
+        if (message.isDateObject || message.isSending() || message.isEditing() || message.isSponsored()) {
+            return false
+        }
+
         return when (action) {
             DoubleTapAction.EDIT -> message.canEditMessage(activity.currentChat)
             DoubleTapAction.DELETE -> message.canDeleteMessage(activity.isInScheduleMode, activity.currentChat)

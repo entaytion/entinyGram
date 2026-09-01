@@ -24,7 +24,7 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
 
 object DeleteOwnMessagesHelper {
-    private const val TAG = "inu/delete-own"
+    private const val TAG = "entiny/delete-own"
     private const val BATCH_SIZE = 100
     private const val DELETE_BATCH_DELAY_MS = 100L
     private const val MAX_CONCURRENT_SEARCH = 5
@@ -286,7 +286,7 @@ object DeleteOwnMessagesHelper {
             }
             val batch = batches[batchIndex]
             val req: TLObject = if (
-                batch.dialogId == primaryDialogId && ChatObject.isChannel(chat)
+                batch.dialogId == primaryDialogId && ChatObject.isChannelAndNotMegaGroup(chat)
             ) {
                 TLRPC.TL_channels_deleteMessages().apply {
                     channel = MessagesController.getInputChannel(chat)

@@ -19,13 +19,13 @@ object NotificationDebugHelper {
     @JvmStatic
     fun onPushSkippedAsRead(dialogId: Long, msgId: Int, readMax: Int) {
         if (!isEnabled()) return
-        FileLog.d("InuNotify push dropped as read did=$dialogId mid=$msgId readMax=$readMax")
+        FileLog.d("entinyNotify push dropped as read did=$dialogId mid=$msgId readMax=$readMax")
     }
 
     @JvmStatic
     fun onPushMessageSkipped(dialogId: Long, msgId: Int, reason: String) {
         if (!isEnabled()) return
-        FileLog.d("InuNotify push message skipped did=$dialogId mid=$msgId reason=$reason")
+        FileLog.d("entinyNotify push message skipped did=$dialogId mid=$msgId reason=$reason")
     }
 
     @JvmStatic
@@ -34,7 +34,7 @@ object NotificationDebugHelper {
         try {
             val manager = ApplicationLoader.applicationContext.getSystemService(NotificationManager::class.java) ?: return
             if (manager.activeNotifications.any { it.id == id }) return
-            FileLog.e("InuNotify posted but not active id=$id did=$dialogId, dropped by the system")
+            FileLog.e("entinyNotify posted but not active id=$id did=$dialogId, dropped by the system")
         } catch (e: Throwable) {
             FileLog.e(e)
         }
@@ -43,19 +43,19 @@ object NotificationDebugHelper {
     @JvmStatic
     fun onAvatarDecodeFailed(dialogId: Long, file: File?, e: Throwable) {
         if (!isEnabled()) return
-        FileLog.e("InuNotify avatar decode failed did=$dialogId ${describeFile(file)}", e)
+        FileLog.e("entinyNotify avatar decode failed did=$dialogId ${describeFile(file)}", e)
     }
 
     @JvmStatic
     fun onPersonIconSkipped(dialogId: Long, reason: String) {
         if (!isEnabled()) return
-        FileLog.d("InuNotify person icon skipped did=$dialogId reason=$reason")
+        FileLog.d("entinyNotify person icon skipped did=$dialogId reason=$reason")
     }
 
     @JvmStatic
     fun onAvatarResolved(account: Int, dialogId: Long, label: String, owner: TLObject?, file: File?) {
         if (!isEnabled()) return
-        FileLog.d("InuNotify avatar did=$dialogId $label ${describeOwner(account, owner)} ${describeFile(file)}")
+        FileLog.d("entinyNotify avatar did=$dialogId $label ${describeOwner(account, owner)} ${describeFile(file)}")
     }
 
     private fun describeOwner(account: Int, owner: TLObject?): String = when (owner) {

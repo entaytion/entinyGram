@@ -51,33 +51,33 @@ object MediaSendDebugHelper {
     fun onUploadEnqueued(location: String, encrypted: Boolean, small: Boolean, estimatedSize: Long) {
         if (!isEnabled()) return
         startWatchingCache()
-        FileLog.d("InuSend upload enqueue ${describeFile(File(location))} encrypted=$encrypted small=$small estimated=$estimatedSize free=${getFreeSpace()}")
+        FileLog.d("entinySend upload enqueue ${describeFile(File(location))} encrypted=$encrypted small=$small estimated=$estimatedSize free=${getFreeSpace()}")
     }
 
     @JvmStatic
     fun onUploadFailed(location: String, error: Throwable) {
         if (!isEnabled()) return
-        FileLog.e("InuSend upload failed ${describeFile(File(location))} free=${getFreeSpace()} error=${error.javaClass.simpleName}: ${error.message}")
+        FileLog.e("entinySend upload failed ${describeFile(File(location))} free=${getFreeSpace()} error=${error.javaClass.simpleName}: ${error.message}")
     }
 
     @JvmStatic
     fun onLocalFileDeleted(file: File?, reason: String) {
         if (file == null || !isEnabled() || !file.name.startsWith(LOCAL_PREFIX)) return
-        FileLog.d("InuSend local file deleted by $reason ${describeFile(file)}")
+        FileLog.d("entinySend local file deleted by $reason ${describeFile(file)}")
     }
 
     @JvmStatic
     fun onDelayedMessageError(type: Int, groupId: Long, messageObjects: List<MessageObject>?, obj: MessageObject?) {
         if (!isEnabled()) return
         val affected = if (type == 4) messageObjects.orEmpty() else listOfNotNull(obj)
-        FileLog.d("InuSend delayed message error type=$type group=$groupId ${describeMessageObjects(affected)}")
+        FileLog.d("entinySend delayed message error type=$type group=$groupId ${describeMessageObjects(affected)}")
     }
 
     @JvmStatic
     fun onUnsentMessagesLoaded(messages: List<TLRPC.Message>?, scheduled: List<TLRPC.Message>?) {
         if (!isEnabled()) return
         FileLog.d(
-            "InuSend retrying unsent count=${messages.orEmpty().size} scheduled=${scheduled.orEmpty().size}" +
+            "entinySend retrying unsent count=${messages.orEmpty().size} scheduled=${scheduled.orEmpty().size}" +
                 " ${describeMessages(messages.orEmpty() + scheduled.orEmpty())}"
         )
     }
@@ -91,7 +91,7 @@ object MediaSendDebugHelper {
             FileObserver.MOVED_TO -> "renamed in"
             else -> return
         }
-        FileLog.d("InuSend local file $action $path free=${getFreeSpace()}")
+        FileLog.d("entinySend local file $action $path free=${getFreeSpace()}")
     }
 
     private fun describeMessageObjects(messages: List<MessageObject>): String =

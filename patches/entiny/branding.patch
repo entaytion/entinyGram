@@ -13,7 +13,11 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
  TMessagesProj/jni/intro/IntroRenderer.c        |  6 ++++--
  TMessagesProj/src/main/AndroidManifest.xml     | 18 ++++++++++++++++++
  .../java/org/telegram/messenger/BuildVars.java |  4 ++--
+ .../messenger/FilesMigrationService.java       |  6 +++---
+ .../org/telegram/messenger/ImageLoader.java    |  8 ++++----
+ .../org/telegram/messenger/SharedConfig.java   |  6 +++---
  .../org/telegram/ui/Cells/SessionCell.java     |  2 +-
+ .../ChatAttachAlertDocumentLayout.java         |  5 +++--
  .../org/telegram/ui/Components/UndoView.java   |  2 +-
  .../java/org/telegram/ui/IntroActivity.java    | 17 ++++++++++++-----
  .../telegram/ui/LauncherIconController.java    |  1 +
@@ -27,13 +31,13 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
  .../src/main/res/values-uk/strings.xml         |  6 +++---
  TMessagesProj/src/main/res/values/strings.xml  | 10 +++++-----
  TMessagesProj_App/build.gradle                 |  2 +-
- 23 files changed, 77 insertions(+), 41 deletions(-)
+ 27 files changed, 90 insertions(+), 53 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -84,7 +84,9 @@ dependencies {
+@@ -85,7 +85,9 @@ dependencies {
      api project(':jlatexmath')
  
      // inu
@@ -44,7 +48,7 @@ index 0000000..0000000 100644
      // end inu
  
  //    implementation 'com.google.mlkit:translate:17.0.3'
-@@ -106,6 +108,12 @@ android {
+@@ -107,6 +109,12 @@ android {
  
      sourceSets.main.jniLibs.srcDirs = ['./jni/']
  
@@ -183,6 +187,87 @@ index 0000000..0000000 100644
  
      // SafetyNet key for Google Identity SDK, set it to empty to disable
      public static String SAFETYNET_KEY = "";
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FilesMigrationService.java b/TMessagesProj/src/main/java/org/telegram/messenger/FilesMigrationService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FilesMigrationService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FilesMigrationService.java
+@@ -97,8 +97,8 @@ public class FilesMigrationService extends Service {
+         }
+ 
+         File newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
+-        File telegramPath = new File(newPath, "Telegram");
+-        File oldPath = new File(path, "Telegram");
++        File telegramPath = new File(newPath, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
++        File oldPath = new File(path, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
+ 
+         totalFilesCount = getFilesCount(oldPath);
+ 
+@@ -204,7 +204,7 @@ public class FilesMigrationService extends Service {
+                     }
+                 }
+             }
+-            File oldDirectory = new File(path, "Telegram");
++            File oldDirectory = new File(path, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
+             hasOldFolder = oldDirectory.exists();
+         }
+         if (hasOldFolder) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLoader.java
+@@ -2480,14 +2480,14 @@ public class ImageLoader {
+                     try {
+                         if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
+                             publicMediaDir = getPublicStorageDir();
+-                            publicMediaDir = new File(publicMediaDir, "Telegram");
++                            publicMediaDir = new File(publicMediaDir, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
+                             publicMediaDir.mkdirs();
+                         }
+                     } catch (Exception e) {
+                         FileLog.e(e);
+                     }
+                     newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
+-                    telegramPath = new File(newPath, "Telegram");
++                    telegramPath = new File(newPath, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
+                 } else {
+                     boolean isSdCard = !TextUtils.isEmpty(SharedConfig.storageCacheDir) && path.getAbsolutePath().startsWith(SharedConfig.storageCacheDir);
+                     if (!isSdCard) {
+@@ -2496,7 +2496,7 @@ public class ImageLoader {
+                             path = ApplicationLoader.applicationContext.getExternalFilesDir(null);
+                         }
+                     }
+-                    telegramPath = new File(path, "Telegram");
++                    telegramPath = new File(path, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
+                 }
+                 telegramPath.mkdirs();
+ 
+@@ -2506,7 +2506,7 @@ public class ImageLoader {
+                         File dir = dirs.get(a);
+                         if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
+                             path = dir;
+-                            telegramPath = new File(path, "Telegram");
++                            telegramPath = new File(path, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
+                             telegramPath.mkdirs();
+                             break;
+                         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+@@ -1558,10 +1558,10 @@ public class SharedConfig {
+     public static void checkSaveToGalleryFiles() {
+         Utilities.globalQueue.postRunnable(() -> {
+             try {
+-                File telegramPath = new File(Environment.getExternalStorageDirectory(), "Telegram");
+-                File imagePath = new File(telegramPath, "Telegram Images");
++                File telegramPath = new File(Environment.getExternalStorageDirectory(), desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue());
++                File imagePath = new File(telegramPath, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue() + " Images");
+                 imagePath.mkdir();
+-                File videoPath = new File(telegramPath, "Telegram Video");
++                File videoPath = new File(telegramPath, desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue() + " Video");
+                 videoPath.mkdir();
+ 
+                 if (!BuildVars.NO_SCOPED_STORAGE) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
@@ -196,6 +281,24 @@ index 0000000..0000000 100644
              stringBuilder.append(" ").append(session.app_version);
  
              if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java
+@@ -1351,10 +1351,11 @@ public class ChatAttachAlertDocumentLayout extends ChatAttachAlert.AttachAlertLa
+ 
+         ListItem fs;
+         try {
+-            File telegramPath = new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "Telegram");
++            String appFolderName = desu.inugram.InuConfig.DOWNLOAD_DIRECTORY.getValue();
++            File telegramPath = new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), appFolderName);
+             if (telegramPath.exists()) {
+                 fs = new ListItem();
+-                fs.title = "Telegram";
++                fs.title = appFolderName;
+                 fs.subtitle = LocaleController.getString(R.string.AppFolderInfo);
+                 fs.icon = R.drawable.files_folder;
+                 fs.file = telegramPath;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
@@ -441,12 +544,12 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -25,7 +25,7 @@ android {
-     compileSdkVersion 36
+@@ -26,7 +26,7 @@ android {
      buildToolsVersion '36.0.0'
+     ndkVersion "27.2.12479018"
  
 -    defaultConfig.applicationId = "desu.inugram"
 +    defaultConfig.applicationId = "ua.entaytion.entinygram"
  
-     sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
- 
+     externalNativeBuild {
+         cmake {

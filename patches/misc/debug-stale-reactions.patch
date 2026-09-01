@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                              currentDialog.unread_reactions_count = value.unread_reactions_count;
                              getNotificationCenter().postNotificationName(NotificationCenter.dialogsUnreadReactionsCounterChanged, currentDialog.id, 0L, currentDialog.unread_reactions_count, null);
                          }
-@@ -21440,6 +21449,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21429,6 +21438,9 @@ public class MessagesController extends BaseController implements NotificationCe
      public void inu_onMessageUnreadContentRead(long dialogId, long topicId, int messageId, boolean isReactions) {
          AndroidUtilities.runOnUIThread(() -> {
              int current = inu_getUnreadCount(dialogId, topicId, isReactions);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              if (current == 1) {
                  if (isReactions) {
                      markReactionsAsRead(dialogId, topicId);
-@@ -21490,6 +21502,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21479,6 +21491,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      private void checkUnreadReactionsInternal(long dialogId, long topicId, SparseBooleanArray unreadReactions, boolean isReactions) {
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          final String tableMentionsForDialogs = isReactions ? "reaction_mentions" : "poll_votes_mentions";
          final String tableMentionsForTopics = isReactions ? "reaction_mentions_topics" : "poll_votes_mentions_topics";
          final boolean isVotes = !isReactions;
-@@ -21564,6 +21579,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21553,6 +21568,9 @@ public class MessagesController extends BaseController implements NotificationCe
                      e.printStackTrace();
                  }
              }
@@ -75,7 +75,7 @@ index 0000000..0000000 100644
              if (isReactions) {
                  checkUnreadReactionsInternal2(dialogId, topicId, needReload, changed, newUnreadCount, newUnreadMessages);
              }
-@@ -21590,6 +21608,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21579,6 +21597,9 @@ public class MessagesController extends BaseController implements NotificationCe
                                  getMessagesStorage().updateDialogUnreadReactions(dialogId, 0, count, false);
                                  return;
                              }
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                              dialog.unread_reactions_count = count;
                              getMessagesStorage().updateUnreadReactionsCount(dialogId, topicId, count);
                              getNotificationCenter().postNotificationName(NotificationCenter.dialogsUnreadReactionsCounterChanged, dialogId, topicId, count, newUnreadMessages);
-@@ -21636,6 +21657,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21625,6 +21646,9 @@ public class MessagesController extends BaseController implements NotificationCe
                          getMessagesStorage().updateDialogUnreadReactions(dialogId, 0, finalNewUnreadCount, true);
                          return;
                      }
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                      dialog.unread_reactions_count += finalNewUnreadCount;
                      if (dialog.unread_reactions_count < 0) {
                          dialog.unread_reactions_count = 0;
-@@ -21816,6 +21840,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21805,6 +21829,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markReactionsAsRead(long dialogId, long topicId) {

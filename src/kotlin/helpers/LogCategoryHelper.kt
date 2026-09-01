@@ -53,9 +53,19 @@ object LogCategoryHelper {
         else -> "Other"
     }
 
+    private fun getCategoriesDir(): File? {
+        val base = AndroidUtilities.getLogsDir() ?: return null
+        val dir = File(base, "entiny-categories")
+        if (!dir.exists()) {
+            val oldDir = File(base, "inu-categories")
+            if (oldDir.exists()) oldDir.renameTo(dir)
+        }
+        return dir
+    }
+
     private fun writerFor(category: String): FileWriter {
         writers[category]?.let { return it }
-        val dir = File(AndroidUtilities.getLogsDir(), "inu-categories").apply { mkdirs() }
+        val dir = getCategoriesDir()?.apply { mkdirs() } ?: File(AndroidUtilities.getLogsDir(), "entiny-categories").apply { mkdirs() }
         val file = File(dir, dateFormat.format(Date()) + "_" + category + ".txt")
         val writer = FileWriter(file, true)
         writers[category] = writer
@@ -64,7 +74,7 @@ object LogCategoryHelper {
 
     /** Distinct category names with a log file for today (or any cached day still on disk). */
     fun availableCategories(): List<String> {
-        val dir = File(AndroidUtilities.getLogsDir() ?: return emptyList(), "inu-categories")
+        val dir = getCategoriesDir() ?: return emptyList()
         if (!dir.isDirectory) return emptyList()
         return dir.listFiles { f -> f.isFile && f.name.endsWith(".txt") }
             ?.map { it.name.substringAfter('_').removeSuffix(".txt") }
@@ -74,7 +84,7 @@ object LogCategoryHelper {
     }
 
     fun filesForCategories(categories: Set<String>): List<File> {
-        val dir = File(AndroidUtilities.getLogsDir() ?: return emptyList(), "inu-categories")
+        val dir = getCategoriesDir() ?: return emptyList()
         if (!dir.isDirectory) return emptyList()
         return dir.listFiles { f -> f.isFile && categories.any { c -> f.name.endsWith("_$c.txt") } }
             ?.toList() ?: emptyList()

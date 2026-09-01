@@ -204,6 +204,87 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     }
 }
 
+/**
+ * The rows of the stock Settings screen (`SettingsActivity.fillItems`) — Inugram Settings,
+ * Account, Chat Settings, Privacy, ... down to the help block. Reorderable/hideable via
+ * [desu.inugram.ui.settings.ProfileSettingsMenuOrderActivity]; consumed from Java through
+ * `ProfileSettingsHelper.reorder`.
+ *
+ * Declaration order MUST match the order `fillItems` builds the rows in — that is what makes
+ * an untouched config render byte-identical to stock (see [reorderByMenu]).
+ */
+class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
+    enum class Item(
+        override val key: String,
+        /** `UItem.id` used by `SettingsActivity.fillItems`; 0 = not identified by id (wallet bot) */
+        val settingsId: Int,
+        override val labelRes: Int,
+        override val iconRes: Int,
+    ) : MenuOrderItem {
+        INUGRAM("inugram", 99, R.string.InuSettings, R.drawable.icon_settings_inu),
+        ACCOUNT("account", 1, R.string.SettingsAccount, R.drawable.settings_account),
+        CHAT("chat", 2, R.string.SettingsChat, R.drawable.settings_chat),
+        PRIVACY("privacy", 3, R.string.SettingsPrivacySecurity, R.drawable.settings_privacy),
+        NOTIFICATIONS("notifications", 5, R.string.SettingsNotifications, R.drawable.settings_sounds),
+        DATA("data", 6, R.string.SettingsData, R.drawable.settings_data),
+        FILTERS("filters", 7, R.string.SettingsFolders, R.drawable.settings_folders),
+        DEVICES("devices", 8, R.string.SettingsDevices, R.drawable.settings_devices),
+        LITE_MODE("lite_mode", 9, R.string.SettingsPowerSaving, R.drawable.settings_power),
+        LANGUAGE("language", 10, R.string.SettingsLanguage, R.drawable.settings_language),
+        PREMIUM("premium", 11, R.string.TelegramPremium, R.drawable.settings_premium),
+        STARS("stars", 12, R.string.TelegramStars, R.drawable.settings_stars),
+        TON("ton", 13, R.string.MyTON, R.drawable.settings_gram_24),
+        WALLET("wallet", 0, R.string.InuSettingsRowWallet, R.drawable.settings_wallet),
+        BUSINESS("business", 15, R.string.TelegramBusiness, R.drawable.settings_business),
+        PREMIUM_GIFTING("premium_gifting", 16, R.string.SendAGift, R.drawable.settings_gift),
+        QUESTION("question", 17, R.string.AskAQuestion, R.drawable.settings_ask),
+        FAQ("faq", 18, R.string.TelegramFAQ, R.drawable.settings_faq),
+        FEATURES("features", 23, R.string.TelegramFeatures, R.drawable.settings_features),
+        POLICY("policy", 19, R.string.PrivacyPolicy, R.drawable.settings_policy);
+
+        companion object {
+            private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
+            private val byId: Map<Int, Item> by lazy { entries.filter { it.settingsId != 0 }.associateBy { it.settingsId } }
+
+            fun forKey(k: String): Item? = byKey[k]
+            fun forSettingsId(id: Int): Item? = byId[id]
+        }
+    }
+
+    override fun itemByKey(key: String): Item? = Item.forKey(key)
+
+    companion object {
+        private val OFF_BY_DEFAULT = emptySet<Item>()
+    }
+}
+
+/** The three account-info rows on the self ("My Profile") screen — phone, bio, username.
+ * Consumed from `ProfileActivity.updateRowsIds` through `ProfileSettingsHelper.orderedEnabledInfoRows`.
+ * Declaration order matches stock's row order. */
+class ProfileInfoMenuConfig(key: String) : MenuOrderConfig<ProfileInfoMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
+    enum class Item(
+        override val key: String,
+        override val labelRes: Int,
+        override val iconRes: Int,
+    ) : MenuOrderItem {
+        PHONE("phone", R.string.YourPhone, R.drawable.msg_newphone),
+        BIO("bio", R.string.UserBio, R.drawable.msg_info),
+        USERNAME("username", R.string.Username, R.drawable.menu_username_change);
+
+        companion object {
+            private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
+
+            fun forKey(k: String): Item? = byKey[k]
+        }
+    }
+
+    override fun itemByKey(key: String): Item? = Item.forKey(key)
+
+    companion object {
+        private val OFF_BY_DEFAULT = emptySet<Item>()
+    }
+}
+
 class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,

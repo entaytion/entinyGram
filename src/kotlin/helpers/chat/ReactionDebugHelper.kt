@@ -55,7 +55,7 @@ object ReactionDebugHelper {
         val oldDesc = describe(old)
         val newDesc = describe(new)
         if (oldDesc == newDesc) return
-        FileLog.d("InuRx replaced object reactionsChanged=${new.reactionsChanged} old=$oldDesc new=$newDesc")
+        FileLog.d("entinyRx replaced object reactionsChanged=${new.reactionsChanged} old=$oldDesc new=$newDesc")
     }
 
     @JvmStatic
@@ -64,7 +64,7 @@ object ReactionDebugHelper {
         val shown = cell.reactionsLayoutInBubble.messageObject
         if (shown === messageObject) return
         if (describeReactions(shown) == describeReactions(messageObject)) return
-        FileLog.d("InuRx cell kept stale reactions shown=${describe(shown)} actual=${describe(messageObject)}")
+        FileLog.d("entinyRx cell kept stale reactions shown=${describe(shown)} actual=${describe(messageObject)}")
     }
 
     @JvmStatic
@@ -78,6 +78,6 @@ object ReactionDebugHelper {
         }
         if (staleUnreadLoggedId == messageObject.id) return
         staleUnreadLoggedId = messageObject.id
-        FileLog.d("InuRx stale unread badge count=$unreadReactionsCount actual=${describe(messageObject)} shown=${describe(cell.reactionsLayoutInBubble.messageObject)}")
+        FileLog.d("entinyRx stale unread badge count=$unreadReactionsCount actual=${describe(messageObject)} shown=${describe(cell.reactionsLayoutInBubble.messageObject)}")
     }
 }

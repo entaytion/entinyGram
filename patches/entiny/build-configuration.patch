@@ -25,7 +25,7 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -140,7 +142,12 @@ android {
+@@ -132,7 +134,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -94,7 +94,7 @@ index 0000000..0000000 100644
      buildToolsVersion '36.0.0'
 +    ndkVersion "27.2.12479018"
  
-     defaultConfig.applicationId = "ua.entaytion.entinygram"
+     defaultConfig.applicationId = "desu.inugram"
  
 -    sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
 +    externalNativeBuild {

@@ -88,7 +88,7 @@ index 0000000..0000000 100644
              if (emptyRow < 0 && emptyRow2 < 0) {
                  if (hasMusic || peerColor != null || actionsView == null) {
                      emptyRow2 = rowCount++;
-@@ -13612,6 +13633,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -13608,6 +13629,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          }
                          isFragmentPhoneNumber = phoneNumber != null && phoneNumber.matches("888\\d{8}");
                          detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile), false);
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
                      } else if (position == noteRow) {
                          if (userInfo == null || userInfo.note == null) return;
                          TLRPC.TL_textWithEntities note = userInfo.note;
-@@ -14433,7 +14460,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -14429,7 +14456,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (position == infoHeaderRow || position == membersHeaderRow || position == settingsSectionRow2 ||
                      position == numberSectionRow || position == helpHeaderRow || position == debugHeaderRow || position == botPermissionsHeader) {
                  return VIEW_TYPE_HEADER;
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
                  return VIEW_TYPE_TEXT_DETAIL;
              } else if (position == usernameRow || position == setUsernameRow) {
                  return VIEW_TYPE_TEXT_DETAIL_MULTILINE;
-@@ -15893,6 +15920,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -15889,6 +15916,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              put(++pointer, bizHoursRow, sparseIntArray);
              put(++pointer, bizLocationRow, sparseIntArray);
              put(++pointer, birthdayRow, sparseIntArray);
