@@ -19,6 +19,8 @@ data class AiEndpoint(
  */
 class AiEndpointsConfig(key: String) : InuConfig.Item<List<AiEndpoint>>(key, emptyList(), exportable = false) {
 
+    override val prefType = InuConfig.PrefType.STRING
+
     override fun read(prefs: SharedPreferences): List<AiEndpoint> {
         val json = prefs.getString(key, "") ?: ""
         if (json.isEmpty()) return emptyList()

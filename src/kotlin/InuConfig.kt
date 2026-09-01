@@ -184,6 +184,10 @@ object InuConfig {
 
     open class StringSetItem(key: String, default: Set<String> = emptySet(), exportable: Boolean = true) :
         Item<Set<String>>(key, default, exportable) {
+        // No dedicated PrefType for string sets; STRING is a harmless placeholder here since the
+        // backup export/import path branches on the *runtime* prefs value type (Set<String> matches
+        // none of Boolean/Int/Long/Float/Double/String there), not on this field, for this item.
+        override val prefType = PrefType.STRING
         override fun read(prefs: SharedPreferences): Set<String> =
             prefs.getStringSet(key, default)?.toSet() ?: default
         override fun SharedPreferences.Editor.write() {

@@ -185,7 +185,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
             BUTTON_EXPORT -> launchExport()
             BUTTON_IMPORT -> launchImport()
-            BUTTON_CLOUD_SYNC -> presentFragment(CloudSyncActivity())
+            BUTTON_CLOUD_SYNC -> presentFragment(BackupSettingsActivity())
             BUTTON_CACHE_MANAGEMENT -> presentFragment(CacheManagementSettingsActivity())
         }
     }
