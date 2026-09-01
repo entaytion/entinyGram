@@ -180,6 +180,9 @@ jobs:
             echo "::warning::last uploaded sha $base not in history, falling back"
             base=
           fi
+          if [ -z "$base" ]; then
+            base=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+          fi
           commits_json=$(bun run tsx scripts/ci/get-commits.ts "$base" "$GITHUB_SHA")
 
           jq -n \
@@ -391,10 +394,4 @@ jobs:
         run: |
           next_day_counter=$((${{ needs.build.outputs.day-counter }} + 1))
           gh variable set INU_DAY_STATE --body "${{ needs.build.outputs.date }}:$next_day_counter"
-          # Pre-releases don't advance the changelog base -- so once the fixes they were testing
-          # actually ship in a normal release, its changelog spans everything since the last real
-          # release (including all commits that only ever went out in pre-release test builds),
-          # instead of silently dropping them because a pre-release "used them up" already.
-          if [ '${{ inputs.prerelease }}' != 'true' ]; then
-            gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
-          fi
+          gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"

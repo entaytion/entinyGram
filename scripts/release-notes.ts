@@ -20,7 +20,7 @@ import { join, resolve } from 'node:path'
  * If no key is present — or the API call fails — a rule-based fallback is used.
  */
 
-interface Commit { sha: string, message: string }
+interface Commit { sha: string, author?: string, message: string }
 interface BuildInfo {
   verName: string
   repo: string
@@ -40,14 +40,21 @@ const MODELS = [
 
 function cleanCommits(commits: Commit[]): Commit[] {
   return commits
-    .filter(c => !c.message.startsWith('infra:'))
+    .filter(c => {
+      const msg = c.message.trim()
+      // Filter out CI, infra, debug, chore, and internal maintenance noise
+      if (/^(infra|ci|debug|chore)(\([^)]+\))?:/i.test(msg)) return false
+      if (/^(temp debug|debug logs|export stgit|update series)/i.test(msg)) return false
+      return true
+    })
     .reverse()
 }
 
 function buildPrompt(info: BuildInfo, commits: Commit[]): string {
   const list = commits.map(c => {
     const indented = c.message.split('\n').map(l => `  ${l}`).join('\n')
-    return `Commit ${c.sha.slice(0, 7)}:\n${indented}`
+    const authorTag = c.author ? ` (Author: ${c.author})` : ''
+    return `Commit ${c.sha.slice(0, 7)}${authorTag}:\n${indented}`
   }).join('\n\n')
 
   return [
@@ -70,12 +77,20 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
     '=== CORE PRINCIPLES (STRICT ACCURACY & PROPORTIONALITY) ===',
     '1. STRICT FACTUAL GROUNDING: Describe ONLY what is explicitly stated in the commits above. NEVER hallucinate, invent, assume, or fabricate features, bug fixes, UI changes, or optimizations not present in the commits.',
     '2. PROPORTIONALITY & 1-TO-1 ESSENCE:',
-    '   - 1 commit / 1 fix -> exactly 1 concise bullet point.',
-    '   - Multiple commits (e.g. 5-15 commits) -> exactly 1 bullet point per distinct feature/fix. If you have 10 separate changes, produce 10 clear, direct bullet points corresponding to those 10 changes.',
+    '   - 1 distinct change / commit -> exactly 1 concise bullet point.',
     '   - If several commits are just micro-edits/typos for the same single feature, merge them into 1 point for that feature.',
     '   - ZERO fluff, zero marketing buzzwords, zero fake explanations.',
     '3. NO EMPTY/FAKE SECTIONS: In GitHub notes ("en"/"uk"), only include section headers (### New Features, ### Bug Fixes, ### Improvements & Polish) if there are actual commits for them. Never invent entries just to fill a section.',
-    '4. UPSTREAM SYNC: Only mention "inugram" / "upstream sync" if the commits explicitly contain "sync with upstream inugram". Otherwise, never mention inugram.',
+    '4. UPSTREAM SYNC & FORK OWNERSHIP:',
+    '   - If a commit is an upstream sync (e.g. subject is "sync with upstream inugram" or represents an upstream merge):',
+    '     Summarize the sync as ONE consolidated bullet point (e.g. "[=] Synced with upstream inugram (latest base updates and fixes)" / "[=] Синхронізація з upstream inugram (оновлення бази та виправлення Telegram)").',
+    '     Do NOT explode the entire list of upstream internal patches into separate main features.',
+    '   - For entinyGram-specific commits (features, bugfixes, refactors, UI additions):',
+    '     Highlight each distinct entinyGram change with its own dedicated bullet point as usual.',
+    '5. MINOR FIXES & POLISH GROUPING:',
+    '   - Do NOT blow up tiny minor fixes (typos, string tweaks, internal variable adjustments, micro-polishing) into full separate bullet points or bloated paragraphs.',
+    '   - If there are minor technical adjustments, group them together concisely (e.g. "[*] Minor bug fixes and UI polish" / "[*] Дрібні виправлення та покращення інтерфейсу") rather than listing each trivial tweak separately.',
+    '   - If a release consists of only ONE fix (e.g. reverting a single patch), the entire changelog must be ONE concise bullet point describing that single fix. Do NOT invent multiple sections.',
     '',
     '=== "en" and "uk" keys (GitHub release notes) ===',
     '- Clean, straight-to-the-point Markdown.',
@@ -87,6 +102,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
     '- "[+] " for new features and user-facing capabilities.',
     '- "[*] " for bug fixes, performance improvements, and UI refinements.',
     '- "[-] " for removals / deprecated behavior.',
+    '- "[=] " for upstream sync or technical maintenance.',
     '',
     'Rules for Telegram lines:',
     '- Each distinct change gets 1 concise bullet line.',
@@ -153,8 +169,9 @@ async function aiNotes(key: string, info: BuildInfo, commits: Commit[]) {
   throw lastErr
 }
 
-function categorize(message: string): 'fix' | 'feature' | 'other' {
+function categorize(message: string): 'sync' | 'fix' | 'feature' | 'other' {
   const m = message.toLowerCase()
+  if (m.includes('sync with upstream inugram') || m.startsWith('sync:')) return 'sync'
   if (/(fix|prevent|avoid|correct|bug|crash|regression|hang|improve|optimize|faster|perf)/.test(m)) return 'fix'
   if (/(add|allow|support|enable|new|option|config|toggle|feature|ability|introduce)/.test(m)) return 'feature'
   return 'other'
@@ -169,7 +186,7 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
     tg: '🇺🇦 UK:\n[=] Змін немає\n\n🇺🇸 EN:\n[=] No changes',
   }
 
-  const sections: Record<string, string[]> = { feature: [], fix: [], other: [] }
+  const sections: Record<string, string[]> = { sync: [], feature: [], fix: [], other: [] }
   for (const c of commits) {
     const subject = c.message.split('\n')[0].trim()
     sections[categorize(subject)].push(subject)
@@ -177,10 +194,12 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
 
   const en: string[] = []
   const uk: string[] = []
+  if (sections.sync.length) en.push(`[=] Synced with upstream inugram`)
   if (sections.feature.length) en.push(...sections.feature.map(l => `[+] ${l}`))
   if (sections.fix.length) en.push(`[*] Bug fixes and UI optimizations`)
   if (sections.other.length) en.push(...sections.other.map(l => `[=] ${l}`))
 
+  if (sections.sync.length) uk.push(`[=] Синхронізація з upstream inugram`)
   if (sections.feature.length) uk.push(...sections.feature.map(l => `[+] ${l}`))
   if (sections.fix.length) uk.push(`[*] Виправлено баги та оптимізовано інтерфейс`)
   if (sections.other.length) uk.push(...sections.other.map(l => `[=] ${l}`))
