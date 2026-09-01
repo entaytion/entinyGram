@@ -44,7 +44,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -10006,6 +10006,7 @@ public class MessageObject {
+@@ -10024,6 +10024,7 @@ public class MessageObject {
      }
  
      public boolean needDrawBluredPreview() {
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
          if (isRepostPreview) {
              return false;
          }
-@@ -11621,6 +11622,7 @@ public class MessageObject {
+@@ -11639,6 +11640,7 @@ public class MessageObject {
      }
  
      public boolean canForwardMessage() {
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33539,6 +33545,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33536,6 +33542,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -46003,7 +46015,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46002,7 +46014,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

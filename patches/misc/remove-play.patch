@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.su>
-Date: Tue, 21 Apr 2026 08:54:19 +0300
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 10:57:01 +0300
 Subject: remove play services stuff only available for official apps
 
 ---
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
 -    implementation 'com.google.android.recaptcha:recaptcha:18.7.1'
  }
  
- def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
+ android {
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/CaptchaController.java
 deleted file mode 100644
 index 0000000..0000000

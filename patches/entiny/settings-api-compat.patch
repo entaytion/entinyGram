@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 15 Aug 2026 00:15:42 +0300
+Date: Tue, 1 Sep 2026 11:04:59 +0300
 Subject: Keep settings cell APIs compatible
 
 ---
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
              items.add(UItem.asShadow(null));
          }
  
--        if (accountNumbers.size() > 0) {
+-        if (accountNumbers.size() > 0 && (hasMainTabs || !desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue())) { // inu: redundant with the drawer account switcher
 -            items.add(UItem.asHeader(getString(R.string.SettingsAccounts)));
 -            for (int i = 0; i < accountNumbers.size(); ++i) {
 -                items.add(AccountCell.Factory.of(i, accountNumbers.get(i)));

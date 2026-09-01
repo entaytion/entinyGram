@@ -1,12 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Fri, 28 Aug 2026 23:33:22 +0300
+Date: Tue, 1 Sep 2026 11:11:18 +0300
 Subject: Remove unused stock Huawei app-variant module
 
 ---
  TMessagesProj_AppHuawei/.gitignore            |   1 -
  .../agconnect-services.json                   |  92 ---
- TMessagesProj_AppHuawei/build.gradle          | 177 -----
+ TMessagesProj_AppHuawei/build.gradle          | 167 -----
  .../src/main/AndroidManifest.xml              |  39 --
  .../messenger/GoogleVoiceClientActivity.java  |  19 -
  .../messenger/GoogleVoiceClientService.java   |  55 --
@@ -15,10 +15,11 @@ Subject: Remove unused stock Huawei app-variant module
  .../messenger/HuaweiMapsProvider.java         | 656 ------------------
  .../messenger/HuaweiPushListenerProvider.java |  66 --
  .../messenger/HuaweiPushListenerService.java  |  34 -
- 11 files changed, 1353 deletions(-)
+ 12 files changed, 1441 deletions(-)
  delete mode 100644 TMessagesProj_AppHuawei/.gitignore
  delete mode 100644 TMessagesProj_AppHuawei/agconnect-services.json
  delete mode 100644 TMessagesProj_AppHuawei/build.gradle
+ delete mode 100644 TMessagesProj_AppHuawei/google-services.json
  delete mode 100644 TMessagesProj_AppHuawei/src/main/AndroidManifest.xml
  delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java
  delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientService.java
@@ -140,7 +141,7 @@ deleted file mode 100644
 index 0000000..0000000
 --- a/TMessagesProj_AppHuawei/build.gradle
 +++ /dev/null
-@@ -1,177 +0,0 @@
+@@ -1,167 +0,0 @@
 -apply plugin: 'com.android.application'
 -apply plugin: 'com.huawei.agconnect'
 -
@@ -196,29 +197,19 @@ index 0000000..0000000
 -        localeFilters += ["en", "ar", "de", "es", "it", "ko", "nl", "pt-rBR", "ru", "uk"]
 -    }
 -
--    def keystorePropsFile = rootProject.file('keystore.properties')
--    def keystoreProps = new Properties()
--    if (keystorePropsFile.exists()) {
--        keystoreProps.load(new FileInputStream(keystorePropsFile))
--    }
--    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
--    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
--    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
--    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
--
 -    signingConfigs {
 -        debug {
--            storeFile file(releaseKeystorePath)
--            storePassword releaseKeystorePassword
--            keyAlias releaseKeystoreAlias
--            keyPassword releaseKeystoreKeyPassword
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
 -        }
 -
 -        release {
--            storeFile file(releaseKeystorePath)
--            storePassword releaseKeystorePassword
--            keyAlias releaseKeystoreAlias
--            keyPassword releaseKeystoreKeyPassword
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
 -        }
 -    }
 -

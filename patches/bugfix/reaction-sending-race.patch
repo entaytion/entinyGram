@@ -67,7 +67,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -3825,6 +3825,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3829,6 +3829,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (messageObject == null || parentFragment == null) {
              return;
          }
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -32992,6 +32992,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33069,6 +33069,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          ReactionsEffectOverlay.removeCurrent(false);

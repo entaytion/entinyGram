@@ -31,7 +31,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaL
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
-@@ -6908,6 +6908,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+@@ -6878,6 +6878,9 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
          if (!delegate.isFragmentOpened()) {
              animated = false;
          }

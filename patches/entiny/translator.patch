@@ -160,7 +160,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              translatingDialogs.put(dialogId, false);
          }
-@@ -781,6 +776,9 @@ public class TranslateController extends BaseController {
+@@ -784,6 +779,9 @@ public class TranslateController extends BaseController {
          messageObject.messageOwner.summaryText = null;
          messageObject.messageOwner.translatedSummaryText = null;
          messageObject.messageOwner.translatedSummaryLanguage = null;
@@ -170,7 +170,7 @@ index 0000000..0000000 100644
          getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
          AndroidUtilities.runOnUIThread(() -> {
              NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslated, messageObject, false, isTranslatingDialog(dialogId));
-@@ -836,6 +834,7 @@ public class TranslateController extends BaseController {
+@@ -839,6 +837,7 @@ public class TranslateController extends BaseController {
  
      public void cleanup() {
          cancelAllTranslations();
@@ -178,7 +178,7 @@ index 0000000..0000000 100644
          resetTranslatingDialogsCache();
  
          translatingDialogs.clear();
-@@ -1046,6 +1045,12 @@ public class TranslateController extends BaseController {
+@@ -1049,6 +1048,12 @@ public class TranslateController extends BaseController {
              source.entities = message.messageOwner.entities;
          }
  
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
          PendingTranslation pendingTranslation;
          synchronized (this) {
              ArrayList<PendingTranslation> dialogPendingTranslations = pendingTranslations.get(dialogId);
-@@ -1170,7 +1175,7 @@ public class TranslateController extends BaseController {
+@@ -1173,7 +1178,7 @@ public class TranslateController extends BaseController {
                          for (int i = 0; i < count; ++i) {
                              callbacks.get(i).run(isTranscription, ids.get(i), TranslateAlert2.preprocess(texts.get(i), translated.get(i)), toLanguage);
                          }
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
                          for (int i = 0; i < ids.size(); ++i) {
                              final int id = ids.get(i);
                              final Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> _callback = callbacks.get(i);
-@@ -1358,6 +1363,11 @@ public class TranslateController extends BaseController {
+@@ -1361,6 +1366,11 @@ public class TranslateController extends BaseController {
              }
              final TLRPC.TL_messageMediaPoll mediaPoll = (TLRPC.TL_messageMediaPoll) media;
              final PollText pollText = PollText.fromPoll(mediaPoll);
@@ -212,7 +212,7 @@ index 0000000..0000000 100644
              final PollText translatedText = message.messageOwner.translatedPoll;
              final int messageSymbolsCount = pollText.length();
  
-@@ -1600,6 +1610,13 @@ public class TranslateController extends BaseController {
+@@ -1603,6 +1613,13 @@ public class TranslateController extends BaseController {
      public boolean isTranslating(MessageObject messageObject) {
          if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.summarizedOpen)
              return loadingSummarizations.contains(Objects.hash(messageObject.getDialogId(), messageObject.getId(), isTranslatingDialog(messageObject.getDialogId()) ? 1 : 0));
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              return (
                  messageObject != null &&
-@@ -1620,6 +1637,9 @@ public class TranslateController extends BaseController {
+@@ -1623,6 +1640,9 @@ public class TranslateController extends BaseController {
              return false;
          }
          final boolean isTranscription = messageObject.messageOwner != null && messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal;
@@ -236,7 +236,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              if ((isTranscription ? loadingTranscriptionTranslations : loadingTranslations).contains(messageObject.getId())) {
                  return true;
-@@ -1636,6 +1656,7 @@ public class TranslateController extends BaseController {
+@@ -1639,6 +1659,7 @@ public class TranslateController extends BaseController {
      }
  
      public void cancelAllTranslations() {
@@ -244,7 +244,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              for (ArrayList<PendingTranslation> translations : pendingTranslations.values()) {
                  if (translations != null) {
-@@ -1693,6 +1714,7 @@ public class TranslateController extends BaseController {
+@@ -1696,6 +1717,7 @@ public class TranslateController extends BaseController {
      }
  
      public void cancelTranslations(long dialogId) {
@@ -252,7 +252,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              ArrayList<PendingTranslation> translations = pendingTranslations.get(dialogId);
              if (translations != null) {
-@@ -1775,6 +1797,10 @@ public class TranslateController extends BaseController {
+@@ -1778,6 +1800,10 @@ public class TranslateController extends BaseController {
      }
  
      private boolean isLanguageRestricted(String lng) {
@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                  updateTopPanel(true);
              }
          };
-@@ -29388,11 +29377,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29390,11 +29379,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);

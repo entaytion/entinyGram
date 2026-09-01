@@ -426,7 +426,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13658,6 +13658,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13662,6 +13662,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private void showItemOptions() {
          ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
          io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));
@@ -437,7 +437,7 @@ index 0000000..0000000 100644
          io.setDimAlpha(0x08);
  
          final Activity activity = getParentActivity();
-@@ -13720,28 +13724,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13724,28 +13728,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              switchingTheme = true;
              SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);

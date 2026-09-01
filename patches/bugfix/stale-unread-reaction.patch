@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                      int finalMessageId = messageId;
                      AndroidUtilities.runOnUIThread(() -> callback.accept(finalMessageId));
                  });
-@@ -21317,6 +21332,60 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21420,6 +21435,60 @@ public class MessagesController extends BaseController implements NotificationCe
          checkUnreadReactionsInternal(dialogId, topicId, unreadPollVotes, false);
      }
  
@@ -107,7 +107,7 @@ index 0000000..0000000 100644
      private void checkUnreadReactionsInternal(long dialogId, long topicId, SparseBooleanArray unreadReactions, boolean isReactions) {
          final String tableMentionsForDialogs = isReactions ? "reaction_mentions" : "poll_votes_mentions";
          final String tableMentionsForTopics = isReactions ? "reaction_mentions_topics" : "poll_votes_mentions_topics";
-@@ -21569,6 +21638,46 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21672,6 +21741,46 @@ public class MessagesController extends BaseController implements NotificationCe
          }
      }
  
@@ -158,7 +158,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -18756,6 +18756,28 @@ public class MessagesStorage extends BaseController {
+@@ -18781,6 +18781,28 @@ public class MessagesStorage extends BaseController {
      private void markMessageReactionsAsReadInternal(String tableMentionsForDialogs, String tableMentionsForTopics, long dialogId, long topicId, int messageId, boolean updateReactions) {
          SQLitePreparedStatement state = null;
          SQLiteCursor cursor = null;
@@ -187,7 +187,7 @@ index 0000000..0000000 100644
          try {
              for (int k = 0; k < 2; k++) {
                  boolean isTopic = k == 1;
-@@ -18827,6 +18849,9 @@ public class MessagesStorage extends BaseController {
+@@ -18852,6 +18874,9 @@ public class MessagesStorage extends BaseController {
              }
          }
  
@@ -197,7 +197,7 @@ index 0000000..0000000 100644
      }
  
      public void updateDialogUnreadReactions(long dialogId, long topicId, int newUnreadCount, boolean increment) {
-@@ -18854,7 +18879,7 @@ public class MessagesStorage extends BaseController {
+@@ -18879,7 +18904,7 @@ public class MessagesStorage extends BaseController {
                      cursor.dispose();
                      cursor = null;
                  }
@@ -206,7 +206,7 @@ index 0000000..0000000 100644
                  state = getMessagesStorage().getDatabase().executeFast(String.format(Locale.US, "UPDATE dialogs SET %s = ? WHERE did = ?", mentionsCounterFieldForDialogs));
                  state.bindInteger(1, oldUnreadRactions);
                  state.bindLong(2, dialogId);
-@@ -18873,7 +18898,7 @@ public class MessagesStorage extends BaseController {
+@@ -18898,7 +18923,7 @@ public class MessagesStorage extends BaseController {
                          cursor = null;
                      }
  

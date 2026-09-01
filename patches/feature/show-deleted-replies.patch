@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -3845,6 +3845,16 @@ public class MessageObject {
+@@ -3844,6 +3844,16 @@ public class MessageObject {
          return !(replyMessageObject == null || replyMessageObject.messageOwner instanceof TLRPC.TL_messageEmpty || replyMessageObject.messageOwner.action instanceof TLRPC.TL_messageActionHistoryClear || replyMessageObject.messageOwner.action instanceof TLRPC.TL_messageActionTopicCreate);
      }
  
@@ -34,7 +34,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -4887,7 +4887,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -4884,7 +4884,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          }
                      }
                  } else {
@@ -43,7 +43,7 @@ index 0000000..0000000 100644
                          delegate.didPressReplyMessage(this, currentMessageObject.getReplyMsgId(), x, y, false);
                      }
                  }
-@@ -12304,7 +12304,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -12299,7 +12299,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  replyBounce.setPressed(false);
              }
              playSoundEffect(SoundEffectConstants.CLICK);
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                  delegate.didPressReplyMessage(this, currentMessageObject.getReplyMsgId(), replyBounceX, replyBounceY, true);
              }
              return true;
-@@ -19238,7 +19238,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19210,7 +19210,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              }
          }
  
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
              if (currentPosition == null || currentPosition.minY == 0) {
                  if (isSideMenued && !drawBackground || !messageObject.isAnyKindOfSticker() && messageObject.type != MessageObject.TYPE_ROUND_VIDEO || messageObject.type == MessageObject.TYPE_EMOJIS) {
                      namesOffset += dp(20) + (Theme.chat_replyTextPaint.getTextSize() + Theme.chat_replyNamePaint.getTextSize());
-@@ -19265,7 +19265,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19237,7 +19237,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  CharSequence stringFinalText = null;
  
                  CharSequence name = null;
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
                  isReplyQuote = hasReplyQuote && messageObject.messageOwner.reply_to.quote;
                  final boolean showQuote = isReplyQuote && messageObject.messageOwner.reply_to.quote;
                  if (isReplyQuote && showQuote && replyQuoteDrawable == null) {
-@@ -19288,7 +19288,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19260,7 +19260,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          stringFinalText = StoriesUtilities.createReplyStoryString();
                          maxWidth -= dp(16) + (textPaint.getTextSize() + Theme.chat_replyNamePaint.getTextSize());
                      }
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                      lastReplyMessage = messageObject.replyMessageObject == null ? null : messageObject.replyMessageObject.messageOwner;
                      int cacheType = 1;
                      int size = 0;
-@@ -19445,7 +19445,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19417,7 +19417,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          }
                      }
  
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                      if (name == null) {
                          name = getString("Loading", R.string.Loading);
                      }
-@@ -19554,6 +19556,15 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19526,6 +19528,15 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              MediaDataController.addTextStyleRuns(messageObject.replyMessageObject, (Spannable) stringFinalText);
                              stringFinalText = TextUtils.ellipsize(stringFinalText, textPaint, maxWidth, TextUtils.TruncateAt.END);
                          }
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
                      }
                  } else {
                      replyImageReceiver.setImageBitmap((Drawable) null);
-@@ -28001,7 +28012,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -27973,7 +27984,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              delegate.didPressSideButton(ChatMessageCell.this);
                          }
                      } else if (virtualViewId == REPLY) {
@@ -119,7 +119,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -41165,6 +41165,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -41242,6 +41242,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                      final Integer finalTaskId = task_id;
                      final byte[] finalPollOptionId = option_id;
@@ -127,7 +127,7 @@ index 0000000..0000000 100644
                      Runnable scroll = () -> {
                          scrollToMessageId(id, messageObject.getId(), true, messageObject.getDialogId() == mergeDialogId ? 1 : 0, true, 0, finalTaskId, finalPollOptionId, () -> {
                              progressDialogAtMessageId = messageObject.getId();
-@@ -41178,6 +41179,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -41255,6 +41256,9 @@ public class ChatActivity extends BaseFragment implements
                      } else {
                          scroll.run();
                      }

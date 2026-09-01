@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sun, 2 Aug 2026 13:44:28 +0300
+Date: Tue, 1 Sep 2026 11:12:44 +0300
 Subject: Configure ABI filters, R8 rules, and local builds
 
 ---
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -145,7 +147,12 @@ android {
+@@ -140,7 +142,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -83,10 +99,10 @@ android {
+@@ -73,10 +89,10 @@ android {
              jniDebuggable false
              signingConfig signingConfigs.release
              minifyEnabled true
@@ -134,7 +134,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -113,7 +129,12 @@ android {
+@@ -103,7 +119,12 @@ android {
          ndkVersion "27.2.12479018"
  
          ndk {
@@ -190,4 +190,4 @@ index 0000000..0000000 100644
 +  verCode = currentVerCode
    stockVerCode = Integer.parseInt(APP_VERSION_CODE)
    buildDate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_DATE)
-   ccachePath = null
+   ccachePath = ['sh', '-c', 'command -v ccache'].execute().text.trim() ?: null

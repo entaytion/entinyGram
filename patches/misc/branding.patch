@@ -14,8 +14,6 @@ Subject: change app name to Inugram
  .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
- .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
- .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
  .../ic_launcher_stock_round.xml               |  6 ++++
  .../src/main/res/values-de/strings.xml        |  4 +--
@@ -473,35 +471,6 @@ index 0000000..0000000 100644
  
          super.dispatchDraw(canvas);
      }
-diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-+++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-@@ -1,6 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
--    <background android:drawable="@drawable/icon_background" />
--    <foreground android:drawable="@mipmap/icon_foreground" />
--    <monochrome android:drawable="@drawable/icon_plane" />
-+    <background android:drawable="@drawable/icon_background_inu" />
-+    <foreground android:drawable="@drawable/icon_foreground_inu" />
-+    <monochrome android:drawable="@drawable/icon_plane_inu" />
- </adaptive-icon>
-\ No newline at end of file
-diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-+++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-@@ -1,6 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
- <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
--    <background android:drawable="@drawable/icon_background_round" />
--    <foreground android:drawable="@mipmap/icon_foreground_round" />
--    <monochrome android:drawable="@drawable/icon_plane" />
-+    <background android:drawable="@drawable/icon_background_inu" />
-+    <foreground android:drawable="@drawable/icon_foreground_inu_round" />
-+    <monochrome android:drawable="@drawable/icon_plane_inu" />
- </adaptive-icon>
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
 new file mode 100644
 index 0000000..0000000

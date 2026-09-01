@@ -1,11 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Fri, 28 Aug 2026 23:35:34 +0300
+Date: Tue, 1 Sep 2026 11:11:31 +0300
 Subject: Remove unused stock HockeyApp app-variant module
 
 ---
  TMessagesProj_AppHockeyApp/.gitignore         |   1 -
- TMessagesProj_AppHockeyApp/build.gradle       | 206 ----------
+ TMessagesProj_AppHockeyApp/build.gradle       | 196 ---------
  .../src/main/AndroidManifest.xml              |  44 --
  .../messenger/ApplicationLoaderImpl.java      | 266 -------------
  .../messenger/BetaUpdaterController.java      | 299 --------------
@@ -13,9 +13,10 @@ Subject: Remove unused stock HockeyApp app-variant module
  .../messenger/GoogleVoiceClientService.java   |  22 -
  .../ui/Components/UpdateAppAlertDialog.java   | 376 ------------------
  .../telegram/ui/Components/UpdateLayout.java  | 150 -------
- 9 files changed, 1383 deletions(-)
+ 10 files changed, 1471 deletions(-)
  delete mode 100644 TMessagesProj_AppHockeyApp/.gitignore
  delete mode 100644 TMessagesProj_AppHockeyApp/build.gradle
+ delete mode 100644 TMessagesProj_AppHockeyApp/google-services.json
  delete mode 100644 TMessagesProj_AppHockeyApp/src/main/AndroidManifest.xml
  delete mode 100644 TMessagesProj_AppHockeyApp/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java
  delete mode 100644 TMessagesProj_AppHockeyApp/src/main/java/org/telegram/messenger/BetaUpdaterController.java
@@ -37,7 +38,7 @@ deleted file mode 100644
 index 0000000..0000000
 --- a/TMessagesProj_AppHockeyApp/build.gradle
 +++ /dev/null
-@@ -1,206 +0,0 @@
+@@ -1,196 +0,0 @@
 -plugins {
 -    id 'com.android.application'
 -    id 'com.google.gms.google-services'
@@ -98,29 +99,19 @@ index 0000000..0000000
 -        localeFilters += ["en", "ar", "de", "es", "it", "ko", "nl", "pt-rBR", "ru", "uk"]
 -    }
 -
--    def keystorePropsFile = rootProject.file('keystore.properties')
--    def keystoreProps = new Properties()
--    if (keystorePropsFile.exists()) {
--        keystoreProps.load(new FileInputStream(keystorePropsFile))
--    }
--    def releaseKeystorePath = System.getenv('RELEASE_KEYSTORE_PATH') ?: keystoreProps.getProperty('RELEASE_KEYSTORE_PATH', "../TMessagesProj/config/release.keystore")
--    def releaseKeystorePassword = System.getenv('RELEASE_STORE_PASSWORD') ?: keystoreProps.getProperty('RELEASE_STORE_PASSWORD', RELEASE_STORE_PASSWORD)
--    def releaseKeystoreAlias = System.getenv('RELEASE_KEY_ALIAS') ?: keystoreProps.getProperty('RELEASE_KEY_ALIAS', RELEASE_KEY_ALIAS)
--    def releaseKeystoreKeyPassword = System.getenv('RELEASE_KEY_PASSWORD') ?: keystoreProps.getProperty('RELEASE_KEY_PASSWORD', RELEASE_KEY_PASSWORD)
--
 -    signingConfigs {
 -        debug {
--            storeFile file(releaseKeystorePath)
--            storePassword releaseKeystorePassword
--            keyAlias releaseKeystoreAlias
--            keyPassword releaseKeystoreKeyPassword
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
 -        }
 -
 -        release {
--            storeFile file(releaseKeystorePath)
--            storePassword releaseKeystorePassword
--            keyAlias releaseKeystoreAlias
--            keyPassword releaseKeystoreKeyPassword
+-            storeFile file("../TMessagesProj/config/release.keystore")
+-            storePassword RELEASE_STORE_PASSWORD
+-            keyAlias RELEASE_KEY_ALIAS
+-            keyPassword RELEASE_KEY_PASSWORD
 -        }
 -    }
 -

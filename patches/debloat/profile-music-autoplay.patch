@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -3656,6 +3656,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -3670,6 +3670,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          return playMessage(messageObject, false);
      }
  
@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -3898,7 +3898,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -3904,7 +3904,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      MediaController.getInstance().currentSavedMusicList = savedMusicList;
                      MediaController.getInstance().getPlaylist().clear();
                      MediaController.getInstance().getPlaylist().addAll(savedMusicList.list);

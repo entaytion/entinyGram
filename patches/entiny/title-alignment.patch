@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sun, 26 Jul 2026 01:30:43 +0300
+Date: Tue, 1 Sep 2026 11:08:07 +0300
 Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismatch
 
 ---
@@ -1026,4 +1026,4 @@ index 0000000..0000000 100644
 +            }
              telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
  
-             emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
+             if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {

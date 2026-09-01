@@ -1,11 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Tue, 18 Aug 2026 01:57:55 +0300
-Subject: feat(chat): render developer badges in chat headers, message names, dialogs, search and profiles
+Date: Tue, 1 Sep 2026 11:06:00 +0300
+Subject: developer badges
 
-- badge entinyGram/inuGram developers and official channels next to names in the chat header, message bubbles, dialog rows, profile search results and profiles
-- make name/forwarded-header taps on media messages open the message menu instead of being treated as image taps
-- hideable via InuConfig.HIDE_DEV_BADGES (badges shown by default)
 ---
  .../telegram/ui/ActionBar/SimpleTextView.java | 74 +++++++++++++++++--
  .../telegram/ui/Cells/ChatMessageCell.java    | 21 ++++++
@@ -436,7 +433,7 @@ index 0000000..0000000 100644
 +                    }
 +                    nameTextView[a].setRightDrawable(titleRight);
 +                    nameTextView[a].setRightDrawable2(titleRight2);
-                 } else if (a == 0 && user.id != getUserConfig().getClientUserId() && !MessagesController.isSupportUser(user) && user.phone != null && user.phone.length() != 0 && getContactsController().contactsDict.get(user.id) == null &&
+                 } else if (a == 0 && !desu.inugram.InuConfig.DISABLE_CHAT_TITLE_PHONE.getValue() && user.id != getUserConfig().getClientUserId() && !MessagesController.isSupportUser(user) && user.phone != null && user.phone.length() != 0 && getContactsController().contactsDict.get(user.id) == null &&
                          (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
                      nameTextView[a].setText(PhoneFormat.getInstance().format("+" + user.phone));
 @@ -11703,6 +11711,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.

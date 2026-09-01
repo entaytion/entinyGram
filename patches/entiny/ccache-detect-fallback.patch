@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 11:38:57 +0300
+Subject: Don't hard-crash Gradle sync when ccache detection has no POSIX shell
+
+Android Studio's own Gradle daemon on Windows (outside a git-bash/WSL
+terminal) doesn't have sh on PATH, so ['sh', '-c', ...].execute() throws
+before the existing ?: null fallback ever runs. Wrap it in a try/catch --
+ccache is just an optional build speedup, never required.
+---
+ build.gradle | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/build.gradle b/build.gradle
+index 0000000..0000000 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -67,5 +67,12 @@ ext {
+   verCode = currentVerCode
+   stockVerCode = Integer.parseInt(APP_VERSION_CODE)
+   buildDate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_DATE)
+-  ccachePath = ['sh', '-c', 'command -v ccache'].execute().text.trim() ?: null
++  ccachePath = null
++  try {
++    def found = ['sh', '-c', 'command -v ccache'].execute().text.trim()
++    if (found) ccachePath = found
++  } catch (IOException ignored) {
++    // no POSIX shell on PATH (e.g. Android Studio's Gradle daemon on Windows
++    // outside a git-bash/WSL terminal) -- ccache is just an optional speedup
++  }
+ }

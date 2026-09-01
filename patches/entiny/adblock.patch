@@ -88,7 +88,7 @@ index 0000000..0000000 100644
              return;
          }
          MessagesController.SponsoredMessagesInfo res = getMessagesController().getSponsoredMessages(dialog_id);
-@@ -37029,7 +37029,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -37027,7 +37027,7 @@ public class ChatActivity extends BaseFragment implements
          private int messagesEndRow;
  
          public ArrayList<MessageObject> getMessages() {

@@ -1,23 +1,11 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Thu, 27 Aug 2026 11:03:19 +0300
+Date: Tue, 1 Sep 2026 11:15:02 +0300
 Subject: Show custom title text on the dialogs list, with an option for the archive
 
-Moved out of misc/branding.patch, where it accidentally lived as a shared
-inugram patch -- this logic (DIALOGS_TITLE_TEXT + Disguise-mode title swap)
-is entiny-authored and unrelated to inugram's own app rename/branding, so it
-was at risk of being silently dropped or duplicated on every inugram merge.
-
-- ChatHelper.getDialogsTitle() renders the configured title (app name,
-  username, first name, or "Chats") in place of the stock Telegram logo,
-  except while Disguise mode is active
-- new toggle: DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE controls whether this
-  custom title also replaces "Archived Chats" on the archive screen
-  (previously it always did, unconditionally, which was the actual bug)
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 47 +++++++++++++++++++
- .../ui/Stories/DialogStoriesCell.java         | 23 +++++----
- 2 files changed, 61 insertions(+), 9 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -49,24 +37,7 @@ index 0000000..0000000 100644
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3569,12 +3581,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
-             } else {
-                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
-                 statusDrawable.center = true;
-+                if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
-                 logoDrawable = context.getResources().getDrawable(R.drawable.telegram_logo_2).mutate();
-                 logoDrawable.setBounds(0, dp(2), logoDrawable.getIntrinsicWidth(), dp(2) + logoDrawable.getIntrinsicHeight());
-                 logoDrawable.setColorFilter(getThemedColor(Theme.key_telegram_color_dialogsLogo), PorterDuff.Mode.MULTIPLY);
-                 SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
-                 ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                 actionBar.setTitle(ssb, statusDrawable);
-+                } else {
-+                    actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
-+                }
-                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
-             }
-             if (folderId == 0) {
-@@ -3719,6 +3735,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3723,6 +3735,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
@@ -77,7 +48,7 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6934,6 +6954,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6939,6 +6955,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -100,7 +71,7 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6960,6 +6996,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6965,6 +6997,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
@@ -118,76 +89,3 @@ index 0000000..0000000 100644
          viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
          viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
          checkListLoad(viewPages[a]);
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
-@@ -628,11 +628,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-                     currentTitle = str;
-                 }
-             } else {
--                currentTitle = menuItemsOffset < dp(50) ? null :
-+                currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
-                     LocaleController.getString(R.string.MyStory);
-             }
-         } else {
--            currentTitle = menuItemsOffset < dp(50) ? null :
-+            currentTitle = menuItemsOffset < dp(50) ? (desu.inugram.helpers.security.ParanoiaHelper.isDisguised() ? null : desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount)) :
-                 LocaleController.formatPluralString("Stories", totalCount);
-         }
- 
-@@ -640,7 +640,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-             titleView.setText(currentTitle, animated && !LocaleController.isRTL);
-         }
- 
--        animatorHasTitleText.setValue(hasOverlayText, animated);
-+        animatorHasTitleText.setValue(!TextUtils.isEmpty(currentTitle) || hasOverlayText, animated);
- 
-         miniItems.clear();
-         for (int i = 0; i < items.size(); i++) {
-@@ -952,7 +952,11 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-             }
-             telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
- 
--            emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
-+            if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
-+                emojiStatusView.setTranslationX(titleView.getTranslationX() - dpf2(3.33f) + telegramLogoView.getMeasuredWidth());
-+            } else {
-+                emojiStatusView.setTranslationX(titleView.getTranslationX() + titleView.getDrawable().getCurrentWidth() + dpf2(2.66f));
-+            }
-             emojiStatusView.setTranslationY(bottomY + dp(14 - 11 + FAKE_TOP_PADDING + 4.333f) + translationOffset);
- 
-             subtitleOverlayContainer.setTranslationX(titleView.getTranslationX());
-@@ -1310,7 +1314,7 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-             titleView.setText(currentTitle, !LocaleController.isRTL);
-         }
- 
--        animatorHasTitleText.setValue(hasOverlayText, true);
-+        animatorHasTitleText.setValue(!TextUtils.isEmpty(currentTitle) || hasOverlayText, true);
-         if (hasEllipsizedText) {
-             ellipsizeSpanAnimator.addView(titleView);
-         } else {
-@@ -2219,18 +2223,19 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
-         final float logoVisibility = 1f - titleVisibility;
-         final float titleAlpha = titleVisibility * progress;
-         final float logoAlpha = logoVisibility * progress;
-+        final boolean inu_disguised = desu.inugram.helpers.security.ParanoiaHelper.isDisguised();
- 
-         if (titleView != null) {
-             titleView.setAlpha(titleAlpha);
-             titleView.setVisibility(titleAlpha > 0 ? VISIBLE : GONE);
-         }
-         if (telegramLogoView != null) {
--            telegramLogoView.setAlpha(logoAlpha);
--            telegramLogoView.setVisibility(logoAlpha > 0 ? VISIBLE : GONE);
-+            telegramLogoView.setAlpha(inu_disguised ? logoAlpha : 0f);
-+            telegramLogoView.setVisibility(inu_disguised && logoAlpha > 0 ? VISIBLE : GONE);
-         }
-         if (emojiStatusView != null) {
--            emojiStatusView.setAlpha(logoAlpha);
--            emojiStatusView.setVisibility(logoAlpha > 0 ? VISIBLE : GONE);
-+            emojiStatusView.setAlpha(inu_disguised ? logoAlpha : progress);
-+            emojiStatusView.setVisibility((inu_disguised ? logoAlpha > 0 : progress > 0) ? VISIBLE : GONE);
-         }
-         if (subtitleOverlayContainer != null) {
-             subtitleOverlayContainer.setAlpha(progress);

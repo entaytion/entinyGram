@@ -181,7 +181,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLiteCursor cursor = null;
              SQLitePreparedStatement state = null;
-@@ -14961,8 +14964,10 @@ public class MessagesStorage extends BaseController {
+@@ -14971,8 +14974,10 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -16355,12 +16360,20 @@ public class MessagesStorage extends BaseController {
+@@ -16365,12 +16370,20 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -216,7 +216,7 @@ index 0000000..0000000 100644
                                              message.attachPath = oldMessage.attachPath;
                                          }
                                          message.ttl = cursor.intValue(2);
-@@ -16411,6 +16424,18 @@ public class MessagesStorage extends BaseController {
+@@ -16421,6 +16434,18 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
@@ -235,7 +235,7 @@ index 0000000..0000000 100644
                                  continue;
                              }
                          }
-@@ -19090,7 +19115,7 @@ public class MessagesStorage extends BaseController {
+@@ -19100,7 +19125,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  

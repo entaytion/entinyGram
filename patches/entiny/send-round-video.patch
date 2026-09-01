@@ -191,7 +191,7 @@ index 0000000..0000000 100644
          return videoEditedInfo;
      }
  
-@@ -11453,7 +11514,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11454,7 +11515,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          int[] orientation = null;
          boolean hasChanged = false;
          MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
              if (isCurrentVideo) {
                  if (!TextUtils.isEmpty(entry.filterPath)) {
                      bitmap = ImageLoader.loadBitmap(entry.filterPath, null, thumbSize, thumbSize, true);
-@@ -11552,7 +11613,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11553,7 +11614,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              entry.imagePath = null;
          }
  
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
              editState.cropState = entry.cropState;
              editState.croppedPaintPath = entry.croppedPaintPath;
              editState.croppedMediaEntities = entry.croppedMediaEntities;
-@@ -11817,7 +11878,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11818,7 +11879,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          ignoreDidSetImage = true;
          boolean setImage;
          if (isCurrentVideo) {
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
          } else {
              setImage = currentEditMode == EDIT_MODE_FILTER;
          }
-@@ -14152,6 +14213,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14153,6 +14214,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          topCaptionEdit.setTimerVisible(false, false);
          rotateItem.setVisibility(View.GONE);
          mirrorItem.setVisibility(View.GONE);
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
  
          pickerView.getLayoutParams().height = LayoutHelper.WRAP_CONTENT;
          docInfoTextView.setVisibility(View.GONE);
-@@ -15080,6 +15142,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15081,6 +15143,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              rotateItem.setTag(null);
                              mirrorItem.setVisibility(View.GONE);
                              mirrorItem.setTag(null);
@@ -234,7 +234,7 @@ index 0000000..0000000 100644
                              AndroidUtilities.updateViewVisibilityAnimated(muteButton, false, 1f, animated);
                              AndroidUtilities.updateViewVisibilityAnimated(livePhotoButton, false, 1f, animated);
                              AndroidUtilities.updateViewVisibilityAnimated(editCoverButton, false, 1f, animated);
-@@ -15114,6 +15177,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15115,6 +15178,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                  rotateItem.setTag(1);
                                  mirrorItem.setVisibility(View.VISIBLE);
                                  mirrorItem.setTag(1);
@@ -242,7 +242,7 @@ index 0000000..0000000 100644
                                  AndroidUtilities.updateViewVisibilityAnimated(muteButton, false, 1f, animated);
                                  AndroidUtilities.updateViewVisibilityAnimated(livePhotoButton, false, 1f, animated);
                                  AndroidUtilities.updateViewVisibilityAnimated(editCoverButton, false, 1f, animated);
-@@ -15133,6 +15197,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15134,6 +15198,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  } else {
                      showVideoTimeline(false, animated);
                      videoAvatarTooltip.setVisibility(View.GONE);
