@@ -14,6 +14,7 @@ import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.ContentProtectionSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
+import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
@@ -53,6 +54,7 @@ object SearchRegistry {
             CacheManagementSettingsActivity.PAGE,
             InuSettingsActivity.PAGE,
             AppearanceSettingsActivity.PAGE,
+            IconPacksSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
             CategoryChatsSettingsActivity.PAGE,

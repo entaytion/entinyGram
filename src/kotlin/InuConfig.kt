@@ -1165,6 +1165,7 @@ object InuConfig {
             const val OFF = 0
             const val SOLAR = 1
             const val VKUI = 2
+            const val PHOSPHOR = 3
         }
     }
 

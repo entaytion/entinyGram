@@ -378,7 +378,6 @@
     <string name="InuTranslateProviderInfo">Translate chats with a third-party service instead of Telegram\'s server API. The provider handles auto-translate and in-place message translation; text formatting is preserved.</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
     <string name="InuTranslateProviderGoogle">Google Translate</string>
-    <string name="InuTranslateSupportsYourLanguage">Supports your language</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI-compatible)</string>
     <string name="InuTranslateProviderYandex">Yandex Translate</string>
@@ -475,6 +474,8 @@
     <string name="InuIconReplacementOff">Default</string>
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementRestartInfo">Changing the active icon pack replaces icons across the entire app. Restart the app to apply changes.</string>
 
     <string name="InuMapsHeader">Maps</string>
     <string name="InuMapProvider">Map view provider</string>

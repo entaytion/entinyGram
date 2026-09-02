@@ -336,8 +336,15 @@ export async function generateStablePatchFromCommit(repoDir: string, commitId: s
   } finally {
     await fs.rm(outDir, { recursive: true, force: true })
   }
+  // Zero out index lines for stability across rebases, but only for non-binary diffs -
+  // `git apply` requires a real (non-abbreviated-to-zero) index line to apply binary
+  // patches, since it can't otherwise resolve the pre-image blob.
   let clean = stdout
-    .replace(/^index [0-9a-f]+\.\.[0-9a-f]+( \d+)?$/gm, 'index 0000000..0000000$1')
+    .split(/(?=^diff --git )/m)
+    .map(block => block.includes('\nGIT binary patch')
+      ? block
+      : block.replace(/^index [0-9a-f]+\.\.[0-9a-f]+( \d+)?$/m, 'index 0000000..0000000$1'))
+    .join('')
     .replace(/^Subject:.*(?:\n[ \t].*)+/m, m => m.replace(/\n[ \t]+/g, ' '))
 
   // Strip diffs and diffstat lines for local/synced files that must never land in patches

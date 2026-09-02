@@ -88,6 +88,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
 - 📡 **standalone AMOLED theme**: a true-black theme selectable from the regular theme list, independent of Monet (no dynamic accent tracking) - *ported from NagramX Turbo*
 - 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
+- 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (chat input bar, message action strip, settings/navigation showcase). Supports Stock Telegram, Solar by @Design480, VKUI by VK, and Phosphor Icons (Regular style).
 - 📡 **iOS-style design**, ported from [exteraless](https://github.com/exteraless/exteraless):
   - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
   - Chats tab tap returns to the first folder before scrolling to top

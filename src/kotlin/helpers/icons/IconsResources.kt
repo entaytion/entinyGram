@@ -90,6 +90,7 @@ class IconsResources(private val resources: Resources) : Resources(resources.ass
         return when (InuConfig.ICON_REPLACEMENT.value) {
             InuConfig.IconReplacementItem.SOLAR -> SolarIconPack.map(icon)
             InuConfig.IconReplacementItem.VKUI -> VkIconPack.map(icon)
+            InuConfig.IconReplacementItem.PHOSPHOR -> PhosphorIconPack.map(icon)
             else -> icon
         }
     }

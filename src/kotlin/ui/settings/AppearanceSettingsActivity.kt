@@ -44,17 +44,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         // Design Header
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
-        items.add(
-            UItem.asButton(
-                BUTTON_ICON_REPLACEMENT,
-                LocaleController.getString(R.string.InuIconReplacement),
-                when (InuConfig.ICON_REPLACEMENT.value) {
-                    InuConfig.IconReplacementItem.SOLAR -> LocaleController.getString(R.string.InuIconReplacementSolar)
-                    InuConfig.IconReplacementItem.VKUI -> LocaleController.getString(R.string.InuIconReplacementVkui)
-                    else -> LocaleController.getString(R.string.InuIconReplacementOff)
-                }
-            )
-        )
+        items.add(mkSubPageButton(BUTTON_ICON_REPLACEMENT, LocaleController.getString(R.string.InuIconReplacement)))
 
         items.add(
             UItem.asButton(
@@ -279,18 +269,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 avatarCornerPreview?.updatePreview()
             }
 
-            BUTTON_ICON_REPLACEMENT -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuIconReplacementOff),
-                    LocaleController.getString(R.string.InuIconReplacementSolar),
-                    LocaleController.getString(R.string.InuIconReplacementVkui),
-                ),
-                InuConfig.ICON_REPLACEMENT.value,
-            ) { which ->
-                InuConfig.ICON_REPLACEMENT.value = which
-                showRestartBulletin()
-            }
+            BUTTON_ICON_REPLACEMENT -> presentFragment(IconPacksSettingsActivity())
 
             BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
                 this, view,

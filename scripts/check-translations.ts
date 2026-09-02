@@ -1,19 +1,25 @@
 import fs from 'node:fs/promises'
 import { join, relative } from 'node:path'
+import { $ } from 'zx'
 import { rootDir } from './config.js'
+
+$.verbose = false
 
 // Scans values/strings_inu.xml against every values-<locale>/strings_inu.xml and
 // reports, per locale:
 //   - missing        : key present in base, absent in the locale
 //   - untranslated   : key present, but the value is a byte-identical copy of the
 //                      base English text (i.e. a placeholder, not a translation)
+//   - stale          : key where base English was modified after the translation (git blame)
 //   - extra          : key present only in the locale
 //
 // Usage:
 //   bun scripts/check-translations.ts                  # summary + breakdown for all locales
-//   bun scripts/check-translations.ts ru               # single locale
+//   bun scripts/check-translations.ts ru               # single locale (includes stale check)
 //   bun scripts/check-translations.ts --matrix         # matrix of which keys are missing where
 //   bun scripts/check-translations.ts --missing [iso]  # only missing XML strings
+//   bun scripts/check-translations.ts --untranslated   # only untranslated copy strings
+//   bun scripts/check-translations.ts --stale [iso]    # only stale translations (git blame)
 //   bun scripts/check-translations.ts --summary        # only summary table
 //   bun scripts/check-translations.ts --fill [iso]     # append missing keys with base text into locale files
 
@@ -23,10 +29,12 @@ const showSummaryOnly = args.includes('--summary') || args.includes('-s')
 const fillMissing = args.includes('--fill') || args.includes('-f')
 const onlyMissing = args.includes('--missing')
 const onlyUntranslated = args.includes('--untranslated') || args.includes('-u')
+const onlyStale = args.includes('--stale')
 const onlyExtra = args.includes('--extra') || args.includes('-e')
 const onlyIso = args.find(a => !a.startsWith('-'))
 
 const stringRe = /<string\s+name="([^"]+)">([\s\S]*?)<\/string>/g
+const stringNameRe = /<string\s+name="([^"]+)">/
 
 async function parseStrings(file: string) {
   const text = await fs.readFile(file, 'utf8')
@@ -35,6 +43,26 @@ async function parseStrings(file: string) {
     map.set(m[1], m[2])
   }
   return map
+}
+
+async function blameKeyTimes(file: string) {
+  const rel = relative(rootDir, file).split('\\').join('/')
+  try {
+    const out = (await $({ cwd: rootDir })`git blame --line-porcelain -w -M -C -- ${rel}`).stdout
+    const map = new Map<string, number>()
+    let time = 0
+    for (const line of out.split('\n')) {
+      if (line.startsWith('author-time ')) {
+        time = Number.parseInt(line.slice(12), 10)
+      } else if (line.startsWith('\t')) {
+        const m = line.slice(1).match(stringNameRe)
+        if (m) map.set(m[1], time)
+      }
+    }
+    return map
+  } catch {
+    return new Map<string, number>()
+  }
 }
 
 const baseFile = join(rootDir, 'src/res/values/strings_inu.xml')
@@ -100,10 +128,18 @@ function identicalEverywhere(key: string) {
   return true
 }
 
+// Stale detection via git blame if checking single locale or explicit --stale flag
+const checkStale = onlyStale || (onlyIso !== undefined && !onlyMissing && !onlyUntranslated && !onlyExtra)
+let baseTimes: Map<string, number> | null = null
+if (checkStale) {
+  baseTimes = await blameKeyTimes(baseFile)
+}
+
 interface LocaleReport {
   missing: string[]
   untranslated: string[]
   shared: string[]
+  stale: string[]
   extra: string[]
 }
 
@@ -112,6 +148,7 @@ for (const l of allLocales) {
   const missing: string[] = []
   const untranslated: string[] = []
   const shared: string[] = []
+  const stale: string[] = []
   const extra: string[] = []
   const lStems = localeStems.get(l.iso)!
 
@@ -137,8 +174,21 @@ for (const l of allLocales) {
     extra.push(key)
   }
 
+  if (checkStale && baseTimes) {
+    const lTimes = await blameKeyTimes(l.file)
+    for (const key of base.keys()) {
+      if (!l.strings.has(key)) continue
+      const bt = baseTimes.get(key)
+      const lt = lTimes.get(key)
+      if (bt !== undefined && lt !== undefined && bt > lt) {
+        stale.push(key)
+      }
+    }
+    stale.sort()
+  }
+
   for (const list of [missing, untranslated, shared, extra]) list.sort()
-  reports.set(l.iso, { missing, untranslated, shared, extra })
+  reports.set(l.iso, { missing, untranslated, shared, stale, extra })
 }
 
 // ---- output -------------------------------------------------------------
@@ -232,16 +282,31 @@ const dump = (title: string, keys: string[], get: (k: string) => string) => {
 
 for (const l of locales) {
   const r = reports.get(l.iso)!
-  if (!onlyUntranslated && !onlyExtra) {
+  if (!onlyUntranslated && !onlyStale && !onlyExtra) {
     dump(`${l.iso} — missing (present in values/, absent in values-${l.iso}/)`, r.missing, k => base.get(k)!)
   }
-  if (!onlyMissing && !onlyExtra) {
+  if (!onlyMissing && !onlyStale && !onlyExtra) {
     dump(`${l.iso} — untranslated copy (value equals base English text)`, r.untranslated, k => base.get(k)!)
   }
-  if (!onlyMissing && !onlyUntranslated && !onlyExtra && onlyIso) {
+  if (!onlyMissing && !onlyUntranslated && !onlyStale && !onlyExtra && onlyIso) {
     dump(`${l.iso} — identical everywhere (brand terms, usually fine)`, r.shared, k => base.get(k)!)
   }
-  if (!onlyMissing && !onlyUntranslated) {
+  if (checkStale && (!onlyMissing && !onlyUntranslated && !onlyExtra)) {
+    if (r.stale.length === 0) {
+      console.log(`## ${l.iso} — stale translations — (none)`)
+      console.log()
+    } else {
+      console.log(`## ${l.iso} — stale translations (${r.stale.length}) — base line touched after translation, may need re-check`)
+      console.log()
+      for (const key of r.stale) {
+        console.log(`<!-- ${key} -->`)
+        console.log(`[en] <string name="${key}">${base.get(key)}</string>`)
+        console.log(`[${l.iso}] <string name="${key}">${l.strings.get(key)}</string>`)
+        console.log()
+      }
+    }
+  }
+  if (!onlyMissing && !onlyUntranslated && !onlyStale) {
     dump(`${l.iso} — extra (present in values-${l.iso}/, absent in values/)`, r.extra, k => l.strings.get(k)!)
   }
 }

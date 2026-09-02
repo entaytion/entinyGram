@@ -4266,7 +4266,7 @@ index 0000000..0000000
 -}
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/large_sms_code.png b/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/large_sms_code.png
 deleted file mode 100644
-index 0000000..0000000
+index 33b6a24578db0908be09639b744232491d5dc80c..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4321,7 +4321,7 @@ D4;e<@
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_feature_gift.png b/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_feature_gift.png
 deleted file mode 100644
-index 0000000..0000000
+index 77b6e7547e63ef61ce31414750bfbb82feaa3c69..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4354,7 +4354,7 @@ Cxg(4K
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_feature_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_feature_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 139dc1f5b0669753ec2accadcc6157a7f528f72d..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4392,7 +4392,7 @@ N002ovPDHLkV1oG5mZbmy
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_premium_main.png b/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_premium_main.png
 deleted file mode 100644
-index 0000000..0000000
+index 9c4fdb7c4893be3b408dc4fb1f465dfe6836b0ed..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4422,7 +4422,7 @@ mXwR-*!)Q!KE}SC<+=0I&mxJN0=7qEX0000<MNUMnLSTYoJ=J;u
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_sms_history.png b/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/menu_sms_history.png
 deleted file mode 100644
-index 0000000..0000000
+index 0282260ad79d59e21a5d7b74f9a30c37228fe38a..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4454,7 +4454,7 @@ Co%2!v
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/permissions_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-hdpi/permissions_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 544ca2fc91240e9cce193e30ebcd56b0d2e95cf4..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4512,7 +4512,7 @@ zXM=S>zoPDl^n&*(<(o)bq=kVN23i={TL%6G-442byQ`?A00000NkvXXu0mjfEZwcJ
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/large_sms_code.png b/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/large_sms_code.png
 deleted file mode 100644
-index 0000000..0000000
+index 4a593b2ddce9954c1ba14ffceb440045bf1e7cca..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4552,7 +4552,7 @@ KMNUMnLSTYSz}$ZT
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_feature_gift.png b/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_feature_gift.png
 deleted file mode 100644
-index 0000000..0000000
+index 0b8223a3d00dc6762e6f71b35ad98f9c14cb836d..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4577,7 +4577,7 @@ TE~#WigOa7EtDnm{r-UW|u9{Ul
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_feature_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_feature_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 0f00290405e52331ae1e8df32d51708e35a58c23..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4603,7 +4603,7 @@ Y_>>83tK+V%eFsX-p00i_>zopr00FmaYybcN
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_premium_main.png b/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_premium_main.png
 deleted file mode 100644
-index 0000000..0000000
+index 0f578be0d3cc2dd108b56a07cb416475ebd9e525..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4627,7 +4627,7 @@ Fng9}eKiU8Q
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_sms_history.png b/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/menu_sms_history.png
 deleted file mode 100644
-index 0000000..0000000
+index 7023594a59a6669e439d74cb1a0e9a586e42db0a..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4651,7 +4651,7 @@ se=qlUw!Wm$bC7$-S@*hgzv_?Y-&Id^n38iu1eE$bUHx3vIVCg!0GgaYO8@`>
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/permissions_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-mdpi/permissions_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 1a35653757c101d531f9e9cbbea5b822174f44fb..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4692,7 +4692,7 @@ T$USm(00000NkvXXu0mjfbx7PX
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/large_sms_code.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/large_sms_code.png
 deleted file mode 100644
-index 0000000..0000000
+index a2c9dbc27e0126dbfb30f1e3d57caf007f43174a..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4767,7 +4767,7 @@ Q<xdeZF|shMz2chiFWo#$egFUf
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_feature_gift.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_feature_gift.png
 deleted file mode 100644
-index 0000000..0000000
+index d653fdddda43b2bbb1020d887b25dcdc12cdcf35..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4806,7 +4806,7 @@ Z{0-FBSYXlPx{&|?002ovPDHLkV1k&XzF7bO
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_feature_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_feature_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 80764efa6a9e6627e08defddf799a722477170c5..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4854,7 +4854,7 @@ Z{sYvl@-+YCRU!ZY002ovPDHLkV1gS~rab@v
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_premium_main.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_premium_main.png
 deleted file mode 100644
-index 0000000..0000000
+index 6b2dd92f493f2c8471325b35e75217fffb6a9c30..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4891,7 +4891,7 @@ v`3BV`?{ot7z@G;D$$O4=L`G(y5i{@~uODg%lpIIK00000NkvXXu0mjf^+Jrf
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_sms_history.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/menu_sms_history.png
 deleted file mode 100644
-index 0000000..0000000
+index ef04853396e66a64f0bc043e6e3d0a7e6106a591..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -4930,7 +4930,7 @@ Dn<1k@
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/permissions_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xhdpi/permissions_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index eaea32c6db9946fd1f4ca1999e9b71e2dd8fc63e..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5006,7 +5006,7 @@ LNkvXXu0mjfdq`D<
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/large_sms_code.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/large_sms_code.png
 deleted file mode 100644
-index 0000000..0000000
+index e229a2f08d960eaf9c0269475b930aca00d5eb29..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5116,7 +5116,7 @@ O04+6rRHX{~#s2^if%Rno
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_feature_gift.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_feature_gift.png
 deleted file mode 100644
-index 0000000..0000000
+index 1633928296e279b00f7bdf3ac15839d27cebbac5..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5169,7 +5169,7 @@ KMNUMnLSTY-xF?(d
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_feature_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_feature_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 6028f05c286bc812d4543b687e4486d643cad0dd..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5238,7 +5238,7 @@ cWEz401IsD3k2IK($N&HU07*qoM6N<$g02g@H2?qr
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_premium_main.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_premium_main.png
 deleted file mode 100644
-index 0000000..0000000
+index f4a96b087ac0df6abcc214fd2bad32ebdade18fd..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5288,7 +5288,7 @@ fK&1k$wF3VEdMV-<PA~qK00000NkvXXu0mjfitf<o
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_sms_history.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/menu_sms_history.png
 deleted file mode 100644
-index 0000000..0000000
+index 9cf889f4de372100c3851405c596a1260916a897..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5341,7 +5341,7 @@ D92plO
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/permissions_sms.png b/TMessagesProj_AppStandalone/src/main/res/drawable-xxhdpi/permissions_sms.png
 deleted file mode 100644
-index 0000000..0000000
+index 3a0221ad33c28ba3645bd856e0ef111b48dacce8..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5575,7 +5575,7 @@ index 0000000..0000000
 \ No newline at end of file
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/ic_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/ic_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index fede4550b3dda0677bdf8536deafc2dab3421543..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5695,7 +5695,7 @@ oMf&ae1tj4Dmb7hd+l{LHe`zH=o3vWPKL7v#07*qoM6N<$f}V%jn*aa+
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_2_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_2_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 0798d4900c04abc35df6a07fab9c882a651ab998..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5837,7 +5837,7 @@ ce^~qf0U%rljY9`u(EtDd07*qoM6N<$g4c>r7ytkO
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_3_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_3_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 60f76574e012788d7e1b6332b1046cde5f6a8d30..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -5965,7 +5965,7 @@ CcIk%z
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_4_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_4_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 06bc1e6485482126cc3d597dd3d8bc22bea0fd31..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6098,7 +6098,7 @@ GLSTX`zg$)T
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_5_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_5_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index a843de42ac93798e2ee1849a0b9c4df9ebb42840..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6237,7 +6237,7 @@ a#{Ulon|Tg7k8~vf0000<MNUMnLSTYbIljLD
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_6_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-hdpi/icon_6_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 3167bbbcf58edb822eeeceaa8a5778381ce72dbc..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6353,7 +6353,7 @@ Q3IG5A07*qoM6N<$f@1-I00000
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/ic_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/ic_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 19df9e17136d9776d54aae896106b02a7a4e7d4a..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6424,7 +6424,7 @@ RLYDvl002ovPDHLkV1nVu^B({J
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_2_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_2_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 86aa47f140045960ffeadfc297ba1d1c93796262..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6497,7 +6497,7 @@ m81H7j2%mdS$N2iB#{U4iGGhJtW(;ot0000<MNUMnLSTZ3TTI~q
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_3_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_3_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index ea53f5819e1068815e4b89e6983b507127cd1ff8..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6574,7 +6574,7 @@ gSDPxM>l2#)3ov$eAcCscbpQYW07*qoM6N<$f^_1c1poj5
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_4_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_4_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index c8d66d3ca331d5801f144b3c21c992beb15e9c73..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6651,7 +6651,7 @@ hjJBAjWBUoM{{gAJ7D-FsDEt5b002ovPDHLkV1jo@uay7*
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_5_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_5_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 8593c9ad1c710dfa2584d18b43d705d5bb706dc6..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6732,7 +6732,7 @@ aYX1QdbWy2-u#tWM0000<MNUMnLSTaaV({qz
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_6_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-mdpi/icon_6_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index a801a206faff4acb6689af7b49711899c881ba7d..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6802,7 +6802,7 @@ s6)Xx+9<kI$S2J9M@|sg^bbdkfKgSAoaY)M%E&u=k07*qoM6N<$f-$!6iU0rr
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/ic_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/ic_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 88fad92c5c9b9b24fd4c27d4443d553dc60def13..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -6973,7 +6973,7 @@ rIAv@;rW*OYW?}tn@`*YAcY*&8xg`lU0w|uX00000NkvXXu0mjfZ`uEW
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_2_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_2_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index a63b7edab4066a88483899c83a5e74e78b36443b..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -7186,7 +7186,7 @@ cyR+E;FPr9e!7Eiu9smFU07*qoM6N<$g2v*nq5uE@
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_3_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_3_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 18fba2e996cb427e33ac77dbc63e393de1292dcf..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -7368,7 +7368,7 @@ KMNUMnLSTZ<Raz$i
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_4_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_4_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 89272479cd981b17870e7db4236654efc4799c28..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -7567,7 +7567,7 @@ X)dWTmbSN%d00000NkvXXu0mjf&!w$2
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_5_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_5_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 69a1f0c393b27ee9d9a35311cca36fc8a3fc5747..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -7777,7 +7777,7 @@ so)%hjVo!_1NjlkH@%>IDd%U^-UzBI4c0pu9TL1t607*qoM6N<$f@yns6aWAK
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_6_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xhdpi/icon_6_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index c227c29ae45a874028556441c550c284e038b7a9..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -7945,7 +7945,7 @@ Z{})|uc1?#GG28$E002ovPDHLkV1i%I^I!k~
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/ic_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/ic_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index f8aa06f8f0ce18f7269a862647a94e5a06c3f308..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -8253,7 +8253,7 @@ Ef;2q@_W%F@
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_2_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_2_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 00ec4714c55ec453a51680686eec852c06e88fa0..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -8659,7 +8659,7 @@ IM6N<$f(9Wc4*&oF
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_3_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_3_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 941db6791d9c0c83a3f221e3dccb0451dd5eabe7..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -8967,7 +8967,7 @@ BB3J+b
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_4_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_4_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 724b1deb2cd2b6e8ed8d5be2198bad37735916c6..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -9325,7 +9325,7 @@ Z{{s{puIy@p7KH!+002ovPDHLkV1fxS&6xlI
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_5_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_5_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 6d180ea1e943158ac7498d8e01a916c5559e8638..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -9707,7 +9707,7 @@ O0000<MNUMnLSTY*-ynJb
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_6_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxhdpi/icon_6_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index fbd6b5fd2a083d260d95e646b0d89a68b2fb9ef0..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -10001,7 +10001,7 @@ nei>XHr>8sS|8JY6ET8`ml%nC!<(fqI00000NkvXXu0mjfYbO-f
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/ic_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/ic_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 66433b3668d69c62f14ae4b3e0fac31443304925..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -10456,7 +10456,7 @@ s8_Rlq&P0x^SIqVLa)u5vibvr82T0k$y|T(e8UO$Q07*qoM6N<$g8HEPX#fBK
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_2_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_2_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 40af15585b793817f65d9b1ab48bb19141f7ffd3..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -11104,7 +11104,7 @@ vUFCB6vJ1UQr*9==<xf^U|G&u>sMG!rw-~cLvcmF500000NkvXXu0mjfOD2)B
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_3_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_3_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 470554ba08d589ef1314b57243886989b1e3b0d2..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -11565,7 +11565,7 @@ geC{mrO;l<BKlwzKiA$D@)&Kwi07*qoM6N<$f+P<!&Hw-a
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_4_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_4_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 6fe44e352bf4a67c69e68103d3cb5ba34df7935e..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -12152,7 +12152,7 @@ wYL{F#FL|mrY4fh6&wRDk^Z$$d6jj>)0I)&VYu3px`Tzg`07*qoM6N<$g1><ng8%>k
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_5_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_5_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index 547df65e7d90896d71089078cab1b03dd5203d1b..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001
@@ -12745,7 +12745,7 @@ GLSTYV&b&bY
 
 diff --git a/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_6_launcher_sa.png b/TMessagesProj_AppStandalone/src/main/res/mipmap-xxxhdpi/icon_6_launcher_sa.png
 deleted file mode 100644
-index 0000000..0000000
+index b1e36f3495e975a01965aa005dc232e02f84aee2..0000000000000000000000000000000000000000
 GIT binary patch
 literal 0
 HcmV?d00001

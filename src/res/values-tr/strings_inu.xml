@@ -385,6 +385,8 @@
     <string name="InuIconReplacementOff">Varsayılan</string>
     <string name="InuIconReplacementSolar">@Design480 tarafından Solar</string>
     <string name="InuIconReplacementVkui">VK tarafından VKUI</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementRestartInfo">Etkin simge paketini değiştirmek tüm uygulamadaki simgeleri değiştirir. Değişiklikleri uygulamak için uygulamayı yeniden başlatın.</string>
 
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
@@ -1243,7 +1245,6 @@
     <string name="InuTranslateProviderTelegram">Telegram API</string>
     <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, ücretsiz)</string>
     <string name="InuTranslateProviderYandex">Yandex Çeviri</string>
-    <string name="InuTranslateSupportsYourLanguage">Dilinizi destekler</string>
     <string name="InuTranslateYandexApiKey">Yandex API anahtarı</string>
     <string name="InuTranslatorInfo">Otomatik sohbet çevirisi, sağlayıcılar ve dil ayarları</string>
     <string name="InuUnreader">Okunmadı Yöneticisi</string>

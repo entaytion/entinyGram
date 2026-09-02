@@ -297,7 +297,6 @@
     <string name="InuAdvanced">Додатково</string>
     <string name="InuForceTranslate">Примусовий переклад</string>
     <string name="InuForceTranslateInfo">Показувати кнопку перекладу та перекладати повідомлення, навіть якщо Telegram вважає, що вони вже вашою мовою або у списку «Не перекладати».</string>
-    <string name="InuTranslateSupportsYourLanguage">Підтримує вашу мову</string>
     <string name="InuTranslationTarget">Цільова мова</string>
     <string name="InuTranslationTargetFollowApp">Як у додатку</string>
     <string name="InuHideReactionEntry">Приховати анімацію появи реакцій</string>
@@ -375,11 +374,15 @@
     <string name="InuIconReplacement">Пакет іконок</string>
     <string name="InuIconReplacementOff">За замовчуванням</string>
     <string name="InuIconReplacementSolar">Solar від @Design480</string>
+    <string name="InuIconReplacementVkui">VKUI від VK</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementRestartInfo">Зміна активного пакета замінює іконки по всьому додатку. Перезапустіть додаток для застосування змін.</string>
 
     <string name="InuMapsHeader">Карти</string>
     <string name="InuMapProvider">Провайдер карт</string>
     <string name="InuMapProviderGoogle">Карти Google</string>
     <string name="InuMapProviderOsm">OpenStreetMap</string>
+    <string name="InuMapProviderOsmLite">OpenStreetMap (lite)</string>
     <string name="InuMapPreviewProvider">Провайдер прев\'ю карт</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
@@ -656,8 +659,12 @@
     <string name="InuBackupImportSheetTitle">Застосувати ці налаштування?</string>
     <string name="InuBackupImportNoChanges">Цей файл відповідає вашим поточним налаштуванням</string>
     <string name="InuBackupImportSheetChanges_one">**%1$d** зміну буде застосовано до поточних налаштувань.</string>
+    <string name="InuBackupImportSheetChanges_few">**%1$d** зміни буде застосовано до поточних налаштувань.</string>
+    <string name="InuBackupImportSheetChanges_many">**%1$d** змін буде застосовано до поточних налаштувань.</string>
     <string name="InuBackupImportSheetChanges_other">**%1$d** змін буде застосовано до поточних налаштувань.</string>
     <string name="InuFontStyles_one">%1$d стиль</string>
+    <string name="InuFontStyles_few">%1$d стилі</string>
+    <string name="InuFontStyles_many">%1$d стилів</string>
     <string name="InuFontStyles_other">%1$d стилів</string>
     <string name="InuBackupImportSheetApply">Так, застосувати</string>
     <string name="InuBackupImportSheetCancel">Ні, залишити як є</string>
@@ -873,6 +880,11 @@
     <string name="InuProfileSettingsRowsItems">Пункти</string>
     <string name="InuProfileSettingsRowsOrderInfo">Змінюй порядок або приховуй пункти на екрані налаштувань самого Telegram (Налаштування чатів, Конфіденційність, Сповіщення тощо). Перетягуй за ручку для перестановки, використовуй перемикач щоб приховати.</string>
     <string name="InuProfileSettingsRowsReset">Скинути за замовчуванням</string>
+    <string name="InuSettingsRowWallet">Гаманець</string>
+    <string name="InuProfileInfoRowsOrder">Порядок інфо в моєму профілі</string>
+    <string name="InuProfileInfoRowsItems">Пункти</string>
+    <string name="InuProfileInfoRowsOrderInfo">Змінюй порядок або приховуй номер телефону, біо та ім’я користувача у власному профілі. Перетягуй за ручку для перестановки, використовуй перемикач щоб приховати.</string>
+    <string name="InuProfileInfoRowsReset">Скинути за замовчуванням</string>
     <string name="InuGoToMessage">Перейти до повідомлення</string>
     <string name="InuGoToMessagePrompt">ID повідомлення</string>
     <string name="InuLogsEnabled">Режим налагодження</string>
@@ -888,15 +900,19 @@
     <string name="InuLogsHeapUsage">Купа: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Зробити дамп купи</string>
     <string name="InuLogsMakingHeapDump">Створення дампу купи…</string>
-    <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не ділися отриманим файлом .hprof ні з ким — це знімок пам’яті додатка, який **містить чутливу інформацію** (повідомлення, токени тощо).\n\nДосліджуй його **ТОЛЬКО** самостійно.\n\nДодаток ненадовго зависне.</string>
+    <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не ділися отриманим файлом .hprof ні з ким — це знімок пам’яті додатка, який **містить чутливу інформацію** (повідомлення, токени тощо).\n\nДосліджуй його **ТІЛЬКИ** самостійно.\n\nДодаток ненадовго зависне.</string>
     <string name="InuDeleteOwnMessages">Видалити мої повідомлення</string>
     <string name="InuDeleteOwnMessagesSearching">Пошук ваших повідомлень…</string>
     <string name="InuDeleteOwnMessagesFoundProgress">Знайдено %1$d / %2$d</string>
     <string name="InuDeleteOwnMessagesNone">У цьому чаті немає ваших повідомлень</string>
     <string name="InuDeleteOwnMessagesConfirm_one">Видалити %d ваше повідомлення? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteOwnMessagesConfirm_few">Видалити %d ваших повідомлення? Цю дію неможливо скасувати.</string>
+    <string name="InuDeleteOwnMessagesConfirm_many">Видалити %d ваших повідомлень? Цю дію неможливо скасувати.</string>
     <string name="InuDeleteOwnMessagesConfirm_other">Видалити %d ваших повідомлень? Цю дію неможливо скасувати.</string>
     <string name="InuDeleteOwnMessagesDeleting">Видалено %1$d / %2$d</string>
     <string name="InuDeleteOwnMessagesDone_one">Видалено %d повідомлення</string>
+    <string name="InuDeleteOwnMessagesDone_few">Видалено %d повідомлення</string>
+    <string name="InuDeleteOwnMessagesDone_many">Видалено %d повідомлень</string>
     <string name="InuDeleteOwnMessagesDone_other">Видалено %d повідомлень</string>
     <string name="InuDeleteOwnMessagesError">Помилка: %1$s</string>
     <string name="InuDeleteOwnMessagesFloodWait">Ліміт запитів, очікуємо %d с…</string>
@@ -1161,7 +1177,6 @@
     <string name="InuHideGroupStickerPack">Сховати підказку про емодзі-пак групи</string>
     <string name="InuHdBluetoothCallAudio">HD аудіо дзвінків по Bluetooth</string>
     <string name="InuHdBluetoothCallAudioInfo">Відтворювати звук дзвінка як медіа замість перемикання на низькоякісний профіль гарнітури, використовуючи мікрофон телефона. Працює, якщо Bluetooth-пристрій підключено на початку виклику</string>
-    <string name="InuIconReplacementVkui">VKUI від VK</string>
     <string name="InuAntiDeletion">Збереження видаленого</string>
     <string name="InuDeletedEditedSave">Видалені та змінені</string>
     <string name="InuSaveSelfDestructMedia">Зберігати самознищувані медіа</string>

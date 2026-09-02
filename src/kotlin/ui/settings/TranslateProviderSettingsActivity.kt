@@ -18,16 +18,10 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val provider = InuConfig.TRANSLATE_PROVIDER.value
-        val userLang = LocaleController.getInstance().getCurrentLocale().getLanguage()
-        val supportsYourLang = LocaleController.getString(R.string.InuTranslateSupportsYourLanguage)
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslateProviderSection)))
         items.add(UItem.asRadio(PROVIDER_BASE + TranslationProviders.PROVIDER_TELEGRAM, LocaleController.getString(R.string.InuTranslateProviderTelegram)).also { it.checked = provider == TranslationProviders.PROVIDER_TELEGRAM })
         for (p in TranslationProviders.all) {
-            val item = UItem.asRadio(PROVIDER_BASE + p.id, LocaleController.getString(p.nameRes)).also { it.checked = provider == p.id }
-            if (p.supportsLanguage(userLang)) {
-                item.textValue = supportsYourLang
-            }
-            items.add(item)
+            items.add(UItem.asRadio(PROVIDER_BASE + p.id, LocaleController.getString(p.nameRes)).also { it.checked = provider == p.id })
         }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateProviderInfo)))
 

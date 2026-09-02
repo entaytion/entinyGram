@@ -215,6 +215,21 @@ abstract class SettingsPageActivity : UniversalFragment() {
         }
     }
 
+    protected fun mkSubPageButton(id: Int, text: CharSequence, value: CharSequence?): UItem {
+        return UItem.asButton(id, text, value).also {
+            it.bind = Utilities.Callback { view ->
+                val cell = view as? TextCell ?: return@Callback
+                val iv = cell.valueImageView
+                iv.setImageResource(R.drawable.msg_arrowright)
+                iv.colorFilter = PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
+                    PorterDuff.Mode.MULTIPLY,
+                )
+                iv.visibility = View.VISIBLE
+            }
+        }
+    }
+
     protected fun mkSubPageButton(id: Int, iconRes: Int, text: CharSequence): UItem {
         return UItem.asButton(id, iconRes, text).also {
             it.bind = Utilities.Callback { view ->
