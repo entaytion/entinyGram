@@ -35,8 +35,13 @@
     <string name="InuPerformanceClassHigh">Yüksek</string>
     <string name="InuAnnoyances">Rahatsız Edici Ögeler</string>
     <string name="InuAnnoyancesStories">Hikayeler</string>
-    <string name="InuAnnoyancesInterface">Arayüz</string>
+    <string name="InuAnnoyancesProfile">Profil</string>
+    <string name="InuAnnoyancesGifts">Hediyeler ve Premium</string>
+    <string name="InuAnnoyancesInterface">Sohbetler ve Arayüz</string>
+    <string name="InuAnnoyancesChannels">Kanallar ve Öneriler</string>
     <string name="InuAnnoyancesMedia">Medya</string>
+    <string name="InuAnnoyancesAi">Yapay Zeka</string>
+    <string name="InuAnnoyancesHints">İpuçları ve Hatırlatıcılar</string>
     <string name="InuMessages">Mesajlar</string>
     <string name="InuOther">Diğer</string>
     <string name="InuMainPage">Sohbet listesi</string>
@@ -82,7 +87,6 @@
     <string name="InuUnifiedCornerRadius">Birleşik köşe yarıçapı</string>
     <string name="InuUnifiedCornerRadiusInfo">Forum konuları da dahil olmak üzere tüm profil fotoğraflarına aynı köşe yarıçapını uygula</string>
     <string name="InuMaterial3NavigationAnimation">Gezinme animasyonu</string>
-    <string name="InuMaterial3Progress">Dalgalı ilerleme çubukları</string>
     <string name="InuMaterialProfileActions">Profil eylem düğmeleri</string>
     <string name="InuMonetTheme">Monet teması</string>
     <string name="InuMonetThemeDisabled">Devre dışı</string>

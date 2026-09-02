@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 2 Sep 2026 10:11:07 +0300
+Subject: Allow disabling the post-call rating prompt
+
+---
+ .../main/java/org/telegram/messenger/voip/VoIPService.java  | 3 +++
+ .../src/main/java/org/telegram/ui/VoIPFragment.java         | 6 ++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+index 0000000..0000000 100755
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+@@ -1809,6 +1809,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 	}
+ 
+ 	private void startRatingActivity() {
++		if (desu.inugram.InuConfig.DISABLE_CALL_RATING.getValue()) {
++			return;
++		}
+ 		try {
+ 			PendingIntent.getActivity(VoIPService.this, 0, new Intent(VoIPService.this, VoIPFeedbackActivity.class)
+ 					.putExtra("call_id", privateCall.id)
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/VoIPFragment.java
+@@ -1893,8 +1893,10 @@ public class VoIPFragment implements
+                         }, false);
+                     }
+ 
+-                    rateCallLayout.setVisibility(View.VISIBLE);
+-                    rateCallLayout.show(count -> selectedRating = count);
++                    if (!desu.inugram.InuConfig.DISABLE_CALL_RATING.getValue()) {
++                        rateCallLayout.setVisibility(View.VISIBLE);
++                        rateCallLayout.show(count -> selectedRating = count);
++                    }
+                     if (emojiExpanded) {
+                         emojiExpanded = false;
+                         hideEmojiLayout.animate().alpha(0f).scaleY(0.3f).scaleX(0.3f).setDuration(250).setInterpolator(CubicBezierInterpolator.DEFAULT).setListener(new HideViewAfterAnimation(hideEmojiLayout)).start();

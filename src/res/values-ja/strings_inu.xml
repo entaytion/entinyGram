@@ -26,8 +26,13 @@
     <string name="InuPerformanceClassHigh">高</string>
     <string name="InuAnnoyances">煩わしい要素</string>
     <string name="InuAnnoyancesStories">ストーリー</string>
-    <string name="InuAnnoyancesInterface">インターフェース</string>
+    <string name="InuAnnoyancesProfile">プロフィール</string>
+    <string name="InuAnnoyancesGifts">ギフトとプレミアム</string>
+    <string name="InuAnnoyancesInterface">チャットとインターフェース</string>
+    <string name="InuAnnoyancesChannels">チャンネルとおすすめ</string>
     <string name="InuAnnoyancesMedia">メディア</string>
+    <string name="InuAnnoyancesAi">人工知能 (AI)</string>
+    <string name="InuAnnoyancesHints">ヒントとリマインダー</string>
     <string name="InuMessages">メッセージ</string>
     <string name="InuOther">その他</string>
     <string name="InuMainPage">チャット一覧</string>
@@ -731,7 +736,6 @@
     <string name="InuUnifiedCornerRadius">統一された角丸半径</string>
     <string name="InuUnifiedCornerRadiusInfo">フォーラムのトピックを含むすべてのアバターに同じ角丸半径を適用する</string>
     <string name="InuMaterial3NavigationAnimation">ナビゲーションアニメーション</string>
-    <string name="InuMaterial3Progress">波形プログレスバー</string>
     <string name="InuMaterialProfileActions">プロフィールの操作ボタン</string>
     <string name="InuTypographyAndIcons">タイポグラフィとアイコン</string>
     <string name="InuMotion">モーション</string>

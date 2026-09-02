@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3723,6 +3735,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3719,6 +3731,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6939,6 +6955,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6935,6 +6951,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6965,6 +6997,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6961,6 +6993,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  

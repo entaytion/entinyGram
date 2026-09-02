@@ -249,15 +249,15 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMapsHeader)))
-        if (MapsHelper.hasMapLibre) {
+        if (mapProviderOptions.size > 1) {
             items.add(
                 UItem.asButton(
                     BUTTON_MAP_PROVIDER,
                     LocaleController.getString(R.string.InuMapProvider),
-                    when (InuConfig.MAP_PROVIDER.value) {
-                        InuConfig.MapProviderItem.OSM -> LocaleController.getString(R.string.InuMapProviderOsm)
-                        else -> LocaleController.getString(R.string.InuMapProviderGoogle)
-                    }
+                    LocaleController.getString(
+                        mapProviderOptions.firstOrNull { it.first == InuConfig.MAP_PROVIDER.value }?.second
+                            ?: R.string.InuMapProviderGoogle
+                    )
                 )
             )
         }
@@ -485,13 +485,10 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
 
             BUTTON_MAP_PROVIDER -> RadioItemOptions.show(
                 this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuMapProviderGoogle),
-                    LocaleController.getString(R.string.InuMapProviderOsm),
-                ),
-                InuConfig.MAP_PROVIDER.value,
+                mapProviderOptions.map { LocaleController.getString(it.second) },
+                mapProviderOptions.indexOfFirst { it.first == InuConfig.MAP_PROVIDER.value }.coerceAtLeast(0),
             ) { which ->
-                InuConfig.MAP_PROVIDER.value = which
+                InuConfig.MAP_PROVIDER.value = mapProviderOptions[which].first
                 showRestartBulletin()
             }
 
@@ -608,6 +605,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_SECONDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
+
+        // (InuConfig.MapProviderItem value, label res) for every renderer actually present in this build
+        private val mapProviderOptions: List<Pair<Int, Int>> = buildList {
+            add(InuConfig.MapProviderItem.GOOGLE to R.string.InuMapProviderGoogle)
+            if (MapsHelper.hasOsmdroid) add(InuConfig.MapProviderItem.OSM_LITE to R.string.InuMapProviderOsmLite)
+        }
 
         private fun performanceClassLabel(value: Int): String = when (value) {
             SharedConfig.PERFORMANCE_CLASS_HIGH -> LocaleController.getString(R.string.InuPerformanceClassHigh)

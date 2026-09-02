@@ -64,8 +64,8 @@ class ApplicationLoaderImpl : BaseApplicationLoaderImpl() {
     }
 
     override fun onCreateMapsProvider(): IMapsProvider? {
-        if (InuConfig.MAP_PROVIDER.value == InuConfig.MapProviderItem.OSM && MapsHelper.hasMapLibre) {
-            return MapsHelper.newMapLibreProvider()
+        if (InuConfig.MAP_PROVIDER.value == InuConfig.MapProviderItem.OSM_LITE && MapsHelper.hasOsmdroid) {
+            return MapsHelper.newOsmdroidProvider()
         }
         return GoogleMapsProvider()
     }

@@ -4,13 +4,22 @@ Date: Tue, 1 Sep 2026 23:23:01 +0300
 Subject: Add a standalone true-black AMOLED theme (independent of Monet)
 
 ---
- .../java/org/telegram/ui/ActionBar/Theme.java | 26 +++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ .../java/org/telegram/ui/ActionBar/Theme.java | 28 ++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -1667,7 +1667,7 @@ public class Theme {
+             if (isDark != UNKNOWN) {
+                 return isDark == DARK;
+             }
+-            if ("Dark Blue".equals(name) || "Night".equals(name) || "Monet Dark".equals(name) || "Monet AMOLED".equals(name)) {
++            if ("Dark Blue".equals(name) || "Night".equals(name) || "AMOLED".equals(name) || "Monet Dark".equals(name) || "Monet AMOLED".equals(name)) {
+                 isDark = DARK;
+             } else if ("Blue".equals(name) || "Arctic Blue".equals(name) || "Day".equals(name) || "Monet Light".equals(name)) {
+                 isDark = LIGHT;
 @@ -4039,6 +4039,32 @@ public class Theme {
          themes.add(themeInfo);
          themesDict.put("Night", themeInfo);

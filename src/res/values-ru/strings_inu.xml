@@ -26,8 +26,13 @@
     <string name="InuPerformanceClassHigh">Высокий</string>
     <string name="InuAnnoyances">Раздражители</string>
     <string name="InuAnnoyancesStories">Истории</string>
-    <string name="InuAnnoyancesInterface">Интерфейс</string>
+    <string name="InuAnnoyancesProfile">Профиль</string>
+    <string name="InuAnnoyancesGifts">Подарки и Premium</string>
+    <string name="InuAnnoyancesInterface">Чаты и интерфейс</string>
+    <string name="InuAnnoyancesChannels">Каналы и рекомендации</string>
     <string name="InuAnnoyancesMedia">Медиа</string>
+    <string name="InuAnnoyancesAi">Искусственный интеллект</string>
+    <string name="InuAnnoyancesHints">Подсказки и напоминания</string>
     <string name="InuMessages">Сообщения</string>
     <string name="InuChats">Чаты</string>
     <string name="InuStarGiftsSection">Подарки</string>
@@ -676,7 +681,6 @@
     <string name="InuUnifiedCornerRadius">Единый радиус скругления</string>
     <string name="InuUnifiedCornerRadiusInfo">Применять одинаковый радиус скругления ко всем аватаркам, включая темы форумов</string>
     <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
-    <string name="InuMaterial3Progress">Волнистые полосы загрузки</string>
     <string name="InuMaterialProfileActions">Кнопки действий в профиле</string>
     <string name="InuMonetTheme">Monet тема</string>
     <string name="InuMonetThemeDisabled">Отключено</string>

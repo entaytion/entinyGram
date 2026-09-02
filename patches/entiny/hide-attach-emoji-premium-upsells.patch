@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 2 Sep 2026 10:11:02 +0300
+Subject: Add toggles to hide premium upsells in the attach menu and emoji panel
+
+---
+ .../java/org/telegram/ui/Components/ChatAttachAlert.java    | 5 ++++-
+ .../src/main/java/org/telegram/ui/Components/EmojiView.java | 6 ++++--
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+@@ -4336,6 +4336,9 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+     }
+ 
+     private void showCaptionLimitBulletin(BaseFragment parentFragment) {
++        if (desu.inugram.InuConfig.HIDE_CAPTION_LIMIT_UPSELL.getValue()) {
++            return;
++        }
+         if (!(parentFragment instanceof ChatActivity) || !ChatObject.isChannelAndNotMegaGroup(((ChatActivity) parentFragment).getCurrentChat())) {
+             return;
+         }
+@@ -6663,7 +6666,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+                         needPremium = !MessagesController.getInstance(currentAccount).storyEntitiesAllowed();
+                     }
+                     attachButton.glassTabView.setCounter(err ? "!" : null, err, false);
+-                    attachButton.glassTabView.setPremiumBadge(needPremium && !UserConfig.getInstance(currentAccount).isPremium());
++                    attachButton.glassTabView.setPremiumBadge(needPremium && !UserConfig.getInstance(currentAccount).isPremium() && !desu.inugram.InuConfig.HIDE_ATTACH_PREMIUM_BADGES.getValue());
+                     break;
+                 case VIEW_TYPE_BOT_BUTTON:
+                     AttachBotButton child = (AttachBotButton) holder.itemView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+@@ -3841,7 +3841,8 @@ public class EmojiView extends FrameLayout implements
+         private float lockT;
+         private Boolean lockShow;
+         private ValueAnimator lockAnimator;
+-        private void updateLock(boolean show, boolean animated) {
++        private void updateLock(boolean inu_show, boolean animated) {
++            final boolean show = inu_show && !desu.inugram.InuConfig.HIDE_EMOJI_PREMIUM_UPSELL.getValue();
+             if (lockAnimator != null) {
+                 lockAnimator.cancel();
+                 lockAnimator = null;
+@@ -4207,7 +4208,8 @@ public class EmojiView extends FrameLayout implements
+ 
+         private int currentButtonState;
+         private AnimatorSet stateAnimator;
+-        public void updateState(int state, boolean animated) {
++        public void updateState(int inu_state, boolean animated) {
++            final int state = (inu_state == BUTTON_STATE_LOCKED && desu.inugram.InuConfig.HIDE_EMOJI_PREMIUM_UPSELL.getValue()) ? BUTTON_STATE_EMPTY : inu_state;
+             if ((state == BUTTON_STATE_EMPTY) != (currentButtonState == BUTTON_STATE_EMPTY)) {
+                 requestLayout();
+             }

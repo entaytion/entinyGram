@@ -86,10 +86,34 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
 - 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
 - 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
+- 📡 **standalone AMOLED theme**: a true-black theme selectable from the regular theme list, independent of Monet (no dynamic accent tracking) - *ported from NagramX Turbo*
+- 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
 - 📡 **iOS-style design**, ported from [exteraless](https://github.com/exteraless/exteraless):
   - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
   - Chats tab tap returns to the first folder before scrolling to top
   - centered chat header: avatar+title+subtitle grouped in a pill, chat avatar moved into the "⋮" menu slot (long-press it for the chat menu) — **this one is a pretty janky patch (touch-target overlap in chats with extra header icons, off-by-a-few-dp centering when a call/search icon is present, untested interaction with search/action mode) and we don't have much motivation to keep polishing it ourselves, so pull requests to clean it up are welcome**
+
+### debloat & premium noise
+
+- 📡 **profile & gifts**:
+  - hide the Story / Gift / Live Stream & Video Chat buttons on profiles
+  - hide "Send a Gift" and "Archived Stories" from the profile "⋮" menu
+  - hide Premium badge, collectible (NFT gift) status styling, Stars rating, and organization verification badge next to names
+  - hide the colorful peer-color profile background and the decorative animated pattern icons on profile headers
+  - hide the ring of gift icons around the avatar, and/or the whole Gifts tab in shared media (independent toggles)
+  - hide the Similar Channels/Bots tab in shared media
+  - hide the group emoji-pack promo hint
+- 📡 **chat gifts & upsells**:
+  - hide the gift button in the message input field
+  - hide gift service messages (Stars/TON/Premium gifts) and giveaway messages from chat
+  - hide the Premium upsell shown when a caption exceeds the free length limit (the limit itself still applies)
+  - hide Premium lock badges on attach-menu tabs and "Unlock" buttons on locked emoji packs
+- 📡 **chat list & prompts**:
+  - hide the gift-auctions promo banner and the "free up space" cache-cleanup card pinned above the chat list
+  - hide PSA promo chats (separate from the existing proxy-sponsor-chat toggle)
+  - hide the "similar channels" discovery card Telegram injects into chats after joining one
+  - disable the post-call rating prompt
+  - disable the contacts-permission and lockscreen (MIUI / Android 14+ full-screen-intent) permission nags shown on cold start
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 
@@ -129,13 +153,13 @@ the sections below contain the broader feature set: inugram functionality, featu
   - lists & sections
   - avatars (tonal on-container initials instead of white)
   - profile action buttons
-  - wavy Expressive progress/loading bars
 - 🐶 toggle to replace profile photo bottom blur with a plain gradient fade
 - disable number rounding
 - export/import settings to/from json file
 - cloud sync of settings via web app storage api
-- search and deeplinks for fork settings
-- MapLibre-based map view (full build only, not compiled into the lite APK variant)
+- search and deeplinks for fork settings, incl. `tg://settings/...` links tapped from inside a chat message
+- osmdroid-based map view (default) — pure-Java OpenStreetMap renderer with no native libraries, replacing the old MapLibre view to cut ~12MB of native code from the APK
+- 📡 trimmed APK size: dropped unused firebase-appindexing/datatransport and com.google.android.material (which only existed for an opt-in wavy progress bar), and unused annotation-only Guava transitives
 - customizable map preview provider
 - in-app updater - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 crash report sheet: catches uncaught exceptions, offers to share the log on next launch, posts a tap-to-restart notification
@@ -330,7 +354,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - hide paid reaction upsell
 - hide hashtag suggestions in chat input
 - hide rich text editor button in chat input
-- hide repost to story
+- hide repost to story
 - 🐶 hide bot commands and webview buttons
 - hide intro greeting + non-clickable custom intro sticker
 - 🐶 hide server-pushed suggestions

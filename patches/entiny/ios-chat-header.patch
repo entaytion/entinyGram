@@ -4,10 +4,10 @@ Date: Sat, 29 Aug 2026 15:21:16 +0300
 Subject: Add an iOS-style centered chat header
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 38 ++++++++-
- .../java/org/telegram/ui/ChatActivity.java    | 20 +++++
- .../ui/Components/ChatAvatarContainer.java    | 85 ++++++++++++++++++-
- 3 files changed, 137 insertions(+), 6 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  58 +++++++
+ .../java/org/telegram/ui/ChatActivity.java    |  20 +++
+ .../ui/Components/ChatAvatarContainer.java    | 143 +++++++++++++++++-
+ 3 files changed, 217 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.Components.BackupImageView;
  import org.telegram.ui.Components.ChatAvatarContainer;
  import org.telegram.ui.Components.CubicBezierInterpolator;
-@@ -213,6 +214,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -208,6 +209,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          this.chatAvatarContainer = chatAvatarContainer;
      }
  
@@ -41,12 +41,25 @@ index 0000000..0000000 100644
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -2389,8 +2403,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2240,6 +2254,50 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
-         final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
-         final int rightOffset = menuWidthWithPadding;
--        final int leftDefault = hasBackButton ? s + p : 0;
--        final int rightDefault = width - rightOffset;
+     public boolean doNotDrawGlassMenu;
+ 
++    public int inu_getMenuWidth() {
++        return hasForcedMenuWidth ? forcedMenuWidth : (int) animatorMenuItemsWidth.getFactor();
++    }
++
++    public void updateGlassBounds(int width, int height) {
++        final int p = dp(6);
++        final int s = dp(46);
++        final int menuWidth = hasForcedMenuWidth ? forcedMenuWidth : (int) animatorMenuItemsWidth.getFactor();
++        final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
++
++        final int t = height - (getCurrentActionBarHeight() + s) / 2 - p;
++        final int b = t + s + p * 2;
++
++        final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
++        final int rightOffset = menuWidthWithPadding;
 +        int leftDefault = hasBackButton ? s + p : 0;
 +        int rightDefault = width - rightOffset;
 +
@@ -69,9 +82,16 @@ index 0000000..0000000 100644
 +            leftDefault = centerX - pillWidth / 2;
 +            rightDefault = leftDefault + pillWidth;
 +        }
- 
-         inu_glassTitleLeft = leftDefault;
-         inu_glassTitleRight = rightDefault;
++
++        inu_glassTitleLeft = leftDefault;
++        inu_glassTitleRight = rightDefault;
++        inu_glassTop = t;
++        inu_glassBottom = b;
++    }
++
+     @Override
+     protected void dispatchDraw(Canvas canvas) {
+         final int p = dp(6);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
@@ -129,11 +149,11 @@ index 0000000..0000000 100644
              // Mirror onLayout's textLeftBound/textRightBound math so the EXACTLY-measured
              // width used for ellipsizing matches the box the text is actually laid out into —
              // otherwise long subtitles (e.g. member count + online) get visually clipped
-@@ -802,7 +807,44 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -806,14 +811,144 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         glassMode = true;
      }
  
-     private boolean isCenteredTitle() {
--        return desu.inugram.InuConfig.CENTER_TITLE_CHATS.getValue() && inu_isRealChatHeader();
++    private boolean isCenteredTitle() {
 +        return (desu.inugram.InuConfig.CENTER_TITLE_CHATS.getValue() || desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()) && inu_isRealChatHeader();
 +    }
 +
@@ -172,13 +192,21 @@ index 0000000..0000000 100644
 +            return getMeasuredWidth() / 2f;
 +        }
 +        return titleTextView.getLeft() + titleTextView.getMeasuredWidth() / 2f;
-     }
- 
-     private boolean inu_isRealChatHeader() {
-@@ -818,6 +860,13 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-         return glassMode && isCenteredTitle() && desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.getValue();
-     }
- 
++    }
++
++    private boolean inu_isRealChatHeader() {
++        return parentFragment != null
++                && parentFragment.getChatMode() != ChatActivity.MODE_SAVED
++                && !parentFragment.isReplyChatComment()
++                && parentFragment.getDialogId() != 0
++                && parentFragment.getDialogId() != UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId()
++                && parentFragment.getDialogId() != UserObject.REPLY_BOT;
++    }
++
++    public boolean isRightAvatar() {
++        return glassMode && isCenteredTitle() && desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.getValue();
++    }
++
 +    // iOS-style chat header: the avatar is moved out of this container into the action bar's
 +    // right-hand overflow-menu slot, fully replacing the "..." button there (ChatActivity hides
 +    // that item's icon and re-wires its tap/long-press). Title+subtitle stay centered.
@@ -189,11 +217,23 @@ index 0000000..0000000 100644
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
          final int actionBarHeight = ActionBar.getCurrentActionBarHeight();
-@@ -836,7 +885,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-         int textLeftBound;
-         int textRightBound;
+         final int viewTop = (actionBarHeight - avatarImageView.getMeasuredHeight() - 2) / 2 + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
+         final int subtitleTop = viewTop + dp(glassMode ? 23.66f : 24);
  
--        if (rightAvatar) {
+-        avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarImageView.getMeasuredWidth(), 1 + viewTop + avatarImageView.getMeasuredHeight());
+-        int l = leftPadding + (avatarImageView.getVisibility() == VISIBLE ? dp(glassMode ? 49.66f : 55) : dp(glassMode ? 13 : 1)) + rightAvatarPadding;
++        boolean centerChatTitle = isCenteredTitle();
++        boolean rightAvatar = isRightAvatar();
++        final int avatarW = avatarImageView.getMeasuredWidth();
++        final int avatarH = avatarImageView.getMeasuredHeight();
++        ActionBar actionBar = parentFragment != null ? parentFragment.getActionBar() : null;
++        if (actionBar == null && getParent() instanceof ActionBar) {
++            actionBar = (ActionBar) getParent();
++        }
++
++        int textLeftBound;
++        int textRightBound;
++
 +        if (inu_isIosMenuSlotAvatar()) {
 +            // Place the avatar in the action bar's right menu slot, mirroring the back button's
 +            // left slot center (dp(6) padding + dp(46) slot => center dp(29) from the edge).
@@ -206,13 +246,32 @@ index 0000000..0000000 100644
 +            textLeftBound = dp(6) + rightAvatarPadding;
 +            textRightBound = Math.max(textLeftBound, (right - left) - dp(6));
 +        } else if (rightAvatar) {
-             int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
-             if (pillWidth <= 0) {
-                 pillWidth = getVisualWidth() + dp(12);
-@@ -859,6 +919,23 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-             textLeftBound = (centerChatTitle ? inset : (1 + leftPadding + avatarW + dp(8))) + rightAvatarPadding;
-             textRightBound = (right - left) - (centerChatTitle ? inset : dp(glassMode ? 20 : 16));
-         }
++            int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
++            if (pillWidth <= 0) {
++                pillWidth = getVisualWidth() + dp(12);
++            }
++            int avatarRight = pillWidth - (1 + leftPadding);
++            int avatarLeft = avatarRight - avatarW;
++            if (avatarLeft < dp(10)) {
++                avatarLeft = (right - left) - avatarW - (1 + leftPadding);
++            }
++            avatarImageView.setTranslationX(0);
++            avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
++
++            int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 14 : 10);
++            textLeftBound = (centerChatTitle ? inset : dp(glassMode ? 14 : 10)) + rightAvatarPadding;
++            textRightBound = Math.max(textLeftBound, pillWidth - inset);
++        } else {
++            avatarImageView.setTranslationX(0);
++            avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarW, 1 + viewTop + avatarH);
++            int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);
++            // The non-centered left bound must track avatar visibility the same way onMeasure's
++            // availableWidth does (hasVisibleAvatar()), otherwise an avatar-less header indents the
++            // text by a full avatar width while having been measured for a box with no avatar,
++            // pushing the right edge of the text box past the container.
++            textLeftBound = (centerChatTitle ? inset : (hasVisibleAvatar() ? (1 + leftPadding + avatarW + dp(8)) : dp(glassMode ? 13 : 1) + leftPadding)) + rightAvatarPadding;
++            textRightBound = (right - left) - (centerChatTitle ? inset : dp(glassMode ? 20 : 16));
++        }
 +
 +        // "Fixed" centering: this container's own screen position/width still comes from the
 +        // adaptive math above (and from ActionBar's fixed left margin), so the symmetric inset
@@ -230,6 +289,10 @@ index 0000000..0000000 100644
 +            setTranslationX(0);
 +        }
 +
-         int availableWidth = Math.max(0, textRightBound - textLeftBound);
- 
-         int l = textLeftBound;
++        int availableWidth = Math.max(0, textRightBound - textLeftBound);
++
++        int l = textLeftBound;
++        int r = centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + titleTextView.getMeasuredWidth());
+         SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
+         if (getSubtitleTextView().getVisibility() != GONE) {
+             titleTextView.layout(l, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());

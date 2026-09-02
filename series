@@ -298,7 +298,6 @@ entiny/main-tabs-customize.patch
 debloat/remove-dump-canvas.patch
 entiny/hidden-star-gifts.patch
 entiny/keep-downloads-in-background.patch
-entiny/title-alignment.patch
 entiny/auto-marquee.patch
 entiny/local-premium.patch
 bugfix/community-picker-avatar-npe.patch
@@ -346,12 +345,11 @@ entiny/send-round-video.patch
 entiny/gif-restriction-bypass.patch
 misc/optimize-build.patch
 bugfix/redundant-lang-code-native-calls.patch
-entiny/material3-progress.patch
 entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
-entiny/build-configuration.patch
 entiny/dialogs-title-text.patch
 entiny/ios-chat-header.patch
+entiny/title-alignment.patch
 entiny/fix-beta-app-detection.patch
 entiny/log-categories.patch
 debloat/hide-channel-share-button.patch
@@ -387,3 +385,9 @@ entiny/ghost-mode.patch
 misc/remove-unused-appstandalone.patch
 entiny/customizable-settings-rows.patch
 entiny/amoled-theme.patch
+entiny/hide-gift-elements.patch
+entiny/hide-dialogs-banners.patch
+entiny/hide-attach-emoji-premium-upsells.patch
+entiny/disable-call-rating.patch
+entiny/hide-profile-similar-gifts-tabs.patch
+entiny/build-configuration.patch

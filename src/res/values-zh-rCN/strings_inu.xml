@@ -26,8 +26,13 @@
     <string name="InuPerformanceClassHigh">高</string>
     <string name="InuAnnoyances">烦人项</string>
     <string name="InuAnnoyancesStories">动态</string>
-    <string name="InuAnnoyancesInterface">界面</string>
+    <string name="InuAnnoyancesProfile">个人资料</string>
+    <string name="InuAnnoyancesGifts">礼物与高级会员</string>
+    <string name="InuAnnoyancesInterface">聊天与界面</string>
+    <string name="InuAnnoyancesChannels">频道与推荐</string>
     <string name="InuAnnoyancesMedia">媒体</string>
+    <string name="InuAnnoyancesAi">人工智能</string>
+    <string name="InuAnnoyancesHints">提示与提醒</string>
     <string name="InuMessages">消息</string>
     <string name="InuOther">其他</string>
     <string name="InuMainPage">对话列表</string>
@@ -730,7 +735,6 @@
     <string name="InuUnifiedCornerRadius">统一圆角半径</string>
     <string name="InuUnifiedCornerRadiusInfo">将相同的圆角半径应用于所有头像，包括论坛话题</string>
     <string name="InuMaterial3NavigationAnimation">导航动画</string>
-    <string name="InuMaterial3Progress">波浪形进度条</string>
     <string name="InuMaterialProfileActions">个人资料操作按钮</string>
     <string name="InuTypographyAndIcons">字体与图标</string>
     <string name="InuMotion">动画</string>

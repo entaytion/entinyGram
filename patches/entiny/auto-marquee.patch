@@ -4,17 +4,17 @@ Date: Sun, 23 Aug 2026 23:56:36 +0300
 Subject: Add auto-scrolling marquee for long titles across the app
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  |  4 ++++
- .../ui/Components/ChatAvatarContainer.java    | 21 +++++++++++++++----
- .../java/org/telegram/ui/ProfileActivity.java |  3 +++
- 3 files changed, 24 insertions(+), 4 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  4 ++
+ .../ui/Components/ChatAvatarContainer.java    | 59 +++++++++++++++++--
+ .../java/org/telegram/ui/ProfileActivity.java |  3 +
+ 3 files changed, 60 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -538,6 +538,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-             isCenterTitle = true;
+@@ -527,6 +527,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             return;
          }
          titleTextView[i] = new SimpleTextView(getContext());
 +        if (desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
@@ -28,20 +28,21 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -277,9 +277,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -276,8 +276,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             });
          }
  
-         boolean centerChatTitle = isCenteredTitle();
++        boolean centerChatTitle = isCenteredTitle();
 +        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
- 
++
          titleTextView = new SimpleTextConnectedView(context, titleTextLargerCopyView);
 -        titleTextView.setEllipsizeByGradient(true);
 +        titleTextView.setScrollNonFitText(marquee);
 +        titleTextView.setEllipsizeByGradient(!marquee, false);
          titleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
          titleTextView.setTextSize(18);
-         titleTextView.setGravity(centerChatTitle ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT);
-@@ -303,7 +305,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         titleTextView.setGravity(Gravity.LEFT);
+@@ -301,7 +305,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              addView(animatedSubtitleTextView);
          } else {
              subtitleTextView = new SimpleTextConnectedView(context, subtitleTextLargerCopyView);
@@ -51,29 +52,60 @@ index 0000000..0000000 100644
              subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              subtitleTextView.setTextSize(14);
-@@ -688,15 +691,19 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-         } else {
-             availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
-         }
-+        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
-         float baseSizePx = dp(glassMode ? 17.5f : 18);
-         if (Math.abs(titleTextView.getTextPaint().getTextSize() - baseSizePx) > 0.5f) {
-             titleTextView.setTextSizePx((int) baseSizePx);
-         }
+@@ -663,12 +668,48 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+ 
+     @Override
+     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+-        final int width = MeasureSpec.getSize(widthMeasureSpec);
+-        final int availableWidth = width - dp((avatarImageView.getVisibility() == VISIBLE ? 54 : 0) + 16);
++        int width = MeasureSpec.getSize(widthMeasureSpec);
++        boolean centerChatTitle = isCenteredTitle();
++        if (centerChatTitle && actionBar != null) {
++            int targetPill = actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft;
++            if (targetPill > 0) {
++                width = Math.min(width, targetPill);
++            }
++        }
++        final int availableWidth;
++        if (centerChatTitle) {
++            // Mirror onLayout's textLeftBound/textRightBound math so the EXACTLY-measured
++            // width used for ellipsizing matches the box the text is actually laid out into —
++            // otherwise long subtitles (e.g. member count + online) get visually clipped
++            // instead of ellipsized because the layout box in onLayout is narrower than this.
++            boolean rightAvatar = isRightAvatar();
++            int avatarW = hasVisibleAvatar() ? dp(avatarSizeInDp) - 2 : 0;
++            int inset = hasVisibleAvatar()
++                    ? (1 + leftPadding + avatarW + dp(4))
++                    : dp(rightAvatar ? (glassMode ? 14 : 10) : (glassMode ? 20 : 16));
++            availableWidth = Math.max(0, width - 2 * inset - rightAvatarPadding);
++        } else {
++            availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
++        }
++        float baseSizePx = dp(glassMode ? 17.5f : 18);
++        if (Math.abs(titleTextView.getTextPaint().getTextSize() - baseSizePx) > 0.5f) {
++            titleTextView.setTextSizePx((int) baseSizePx);
++        }
          avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY));
--        titleTextView.setWidthWrapContent(!centerChatTitle);
-+        // wrap_content sizing shrinks the view down to the actual text width, which is fine for
-+        // static ellipsis but leaves the marquee scrolling inside a window only as wide as the
-+        // text itself instead of the full row — force full width while marquee is active.
-+        titleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
-         titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
+-        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
++        // Never size these wrap_content (this matches stock). SimpleTextView#setText goes through
++        // recreateLayoutMaybe(), which — once the view has been laid out once — rebuilds the layout
++        // against the CURRENT getMaxTextWidth() and deliberately does NOT requestLayout(). With
++        // wrap_content the measured width is min(availableWidth, textWidth), i.e. the width of
++        // whatever text was set at the last measure pass. A later, longer subtitle (e.g. "14
++        // members" -> "14 members, 2 online") is then clipped/gradient-faded at the previous,
++        // shorter text's width and nothing ever re-measures it. Measuring to the full availableWidth
++        // keeps the drawing window at the real box width; the layout bounds below and getVisualWidth()
++        // do not depend on this view being shrink-wrapped.
++        titleTextView.setWidthWrapContent(false);
++        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
          if (subtitleTextView != null) {
--            subtitleTextView.setWidthWrapContent(!centerChatTitle);
-+            subtitleTextView.setWidthWrapContent(!centerChatTitle && !marquee);
-             subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
+-            subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
++            subtitleTextView.setWidthWrapContent(false);
++            subtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
-@@ -1033,6 +1040,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         }
+@@ -941,6 +982,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
@@ -83,7 +115,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1708,6 +1718,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1611,6 +1655,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (title == null) {
              if (lastSubtitle != null) {
                  if (subtitleTextView != null) {

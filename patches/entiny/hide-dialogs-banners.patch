@@ -1,0 +1,68 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 2 Sep 2026 10:10:42 +0300
+Subject: Allow hiding chat-list banners, PSA promo, and startup permission nags
+
+Signed-off-by: no
+---
+ .../main/java/org/telegram/ui/DialogsActivity.java   | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -5962,6 +5962,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     }
+ 
+     private boolean isCacheHintVisible() {
++        if (desu.inugram.InuConfig.HIDE_CACHE_HINT.getValue()) {
++            return false;
++        }
+         if (cacheSize == null || deviceSize == null) {
+             return false;
+         }
+@@ -6505,6 +6508,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+         final boolean isVisible = !isInPreviewMode()
+             && folderId == 0 && communityId == 0 && initialDialogsType == DIALOGS_TYPE_DEFAULT
++            && !desu.inugram.InuConfig.HIDE_GIFT_AUCTIONS_HINT.getValue()
+             && getGiftAuctionsController().hasActiveAuctions()
+             && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment())
+             && (!animatorSearchVisible.getValue() || NonIslandHelper.globalSearch());
+@@ -7282,7 +7286,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                                     }));
+                                 }
+                             });
+-                        } else if (hasNotContactsPermission && askAboutContacts && getUserConfig().syncContacts && activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
++                        } else if (hasNotContactsPermission && askAboutContacts && !desu.inugram.InuConfig.DISABLE_CONTACTS_PERMISSION_NAG.getValue() && getUserConfig().syncContacts && activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
+                             AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
+                                 askAboutContacts = param != 0;
+                                 MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
+@@ -7304,7 +7308,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             if (getParentActivity() == null) {
+                 return;
+             }
+-            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutMiuiLockscreen", false)) {
++            if (!desu.inugram.InuConfig.DISABLE_LOCKSCREEN_PERMISSION_NAG.getValue() && !MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutMiuiLockscreen", false)) {
+                 showDialog(new AlertDialog.Builder(getParentActivity())
+                     .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
+                     .setMessage(getString(R.string.PermissionXiaomiLockscreen))
+@@ -7331,7 +7335,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             if (getParentActivity() == null) {
+                 return;
+             }
+-            if (!MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutFSILockscreen", false)) {
++            if (!desu.inugram.InuConfig.DISABLE_LOCKSCREEN_PERMISSION_NAG.getValue() && !MessagesController.getGlobalNotificationsSettings().getBoolean("askedAboutFSILockscreen", false)) {
+                 showDialog(new AlertDialog.Builder(getParentActivity())
+                     .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
+                     .setMessage(getString(R.string.PermissionFSILockscreen))
+@@ -10646,7 +10650,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+             permissons.add(Manifest.permission.POST_NOTIFICATIONS);
+         }
+-        if (getUserConfig().syncContacts && askAboutContacts && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
++        if (getUserConfig().syncContacts && askAboutContacts && !desu.inugram.InuConfig.DISABLE_CONTACTS_PERMISSION_NAG.getValue() && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+             if (alert) {
+                 AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
+                     askAboutContacts = param != 0;

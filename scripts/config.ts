@@ -34,8 +34,8 @@ export const forkSyncFiles: ForkSyncFile[] = [
     directory: true,
   },
   {
-    source: 'src/kotlin-maps',
-    target: 'TMessagesProj/src/main/kotlin-maps/desu/inugram/helpers/maps',
+    source: 'src/kotlin-osmdroid',
+    target: 'TMessagesProj/src/main/kotlin-osmdroid/desu/inugram/helpers/maps/osm',
     directory: true,
   },
   {

@@ -1,20 +1,30 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 11:12:44 +0300
-Subject: Configure ABI filters, R8 rules, and local builds
+Subject: Adjust build configuration (branding, versioning, dependency trimming for APK size)
 
 ---
- TMessagesProj/build.gradle       | 11 +++++++++--
- TMessagesProj/proguard-rules.pro | 14 +++++++++++---
- TMessagesProj_App/build.gradle   | 29 +++++++++++++++++++++++++----
- build.gradle                     | 29 +++++++++++++++++++++++++++--
- 4 files changed, 72 insertions(+), 11 deletions(-)
+ TMessagesProj/build.gradle                    | 36 +++++++++++++------
+ TMessagesProj/proguard-rules.pro              | 14 ++++++--
+ .../java/org/telegram/ui/LaunchActivity.java  | 21 -----------
+ TMessagesProj_App/build.gradle                | 29 ++++++++++++---
+ build.gradle                                  | 29 +++++++++++++--
+ 5 files changed, 88 insertions(+), 41 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -60,7 +60,9 @@ dependencies {
+@@ -50,8 +50,6 @@ dependencies {
+     compileOnly 'org.checkerframework:checker-qual:2.5.2'
+     compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
+     implementation 'com.google.firebase:firebase-messaging:22.0.0'
+-    implementation 'com.google.firebase:firebase-datatransport:18.1.0'
+-    implementation 'com.google.firebase:firebase-appindexing:20.0.0'
+     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+     implementation 'com.google.android.gms:play-services-auth:20.4.0'
+     implementation 'com.google.android.gms:play-services-vision:20.1.3'
+@@ -59,11 +57,25 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -25,7 +35,47 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -132,7 +134,12 @@ android {
+-    implementation 'com.google.guava:guava:31.1-android'
++    implementation('com.google.guava:guava:31.1-android') {
++        // NOT excluding jsr305 or error_prone_annotations: stock code imports
++        // javax.annotation.Nonnull/Nullable (exoplayer2, GroupCallMessage, WebInstantView,
++        // MusicBrowserService) and com.google.errorprone.annotations.InlineMe (63 files in
++        // exoplayer2) directly, not just transitively through Guava's internals - excluding
++        // either breaks compilation. checker-qual is separately compileOnly'd above, so it's
++        // safe to exclude Guava's own copy; j2objc/animal-sniffer/checker-compat-qual have
++        // zero direct imports in this codebase.
++        exclude group: 'com.google.j2objc', module: 'j2objc-annotations'
++        exclude group: 'org.codehaus.mojo', module: 'animal-sniffer-annotations'
++        exclude group: 'org.checkerframework', module: 'checker-qual'
++        exclude group: 'org.checkerframework', module: 'checker-compat-qual'
++    }
+ 
+     implementation 'com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1'
+     implementation 'com.google.android.gms:play-services-mlkit-image-labeling:16.0.8'
+@@ -82,9 +94,8 @@ dependencies {
+     api project(':jlatexmath')
+ 
+     // inu
+-    if (!project.hasProperty("NOMAPS")) {
+-        implementation 'org.maplibre.gl:android-sdk:13.1.0'
+-    }
++    // pure-java osm renderer, no native libs (replaces maplibre, which cost ~12MB of .so per ABI)
++    implementation 'org.osmdroid:osmdroid-android:6.1.20'
+     // end inu
+ 
+ //    implementation 'com.google.mlkit:translate:17.0.3'
+@@ -107,9 +118,7 @@ android {
+     sourceSets.main.jniLibs.srcDirs = ['./jni/']
+ 
+     // inu
+-    if (!project.hasProperty("NOMAPS")) {
+-        sourceSets.main.java.srcDirs += 'src/main/kotlin-maps'
+-    }
++    sourceSets.main.java.srcDirs += 'src/main/kotlin-osmdroid'
+     // end inu
+ 
+     externalNativeBuild {
+@@ -139,7 +148,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -70,9 +120,9 @@ index 0000000..0000000 100644
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
-+# inu: lite (-PNOMAPS) builds drop maplibre, which used to transitively pull in
-+# enough of org.bouncycastle to satisfy R8 for com.nimbusds's optional JWK/X.509
-+# code paths (unused at runtime here). Silence R8 instead of depending on that.
++# inu: without maplibre (removed) nothing else pulls in enough of org.bouncycastle
++# to satisfy R8 for com.nimbusds's optional JWK/X.509 code paths (unused at
++# runtime here). Silence R8 instead of depending on an unrelated dependency for it.
 +-dontwarn org.bouncycastle.**
  -dontwarn org.objectweb.asm.**
  -dontwarn com.google.crypto.tink.**
@@ -84,6 +134,52 @@ index 0000000..0000000 100644
 --dontobfuscate
 \ No newline at end of file
 +-dontobfuscate
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -90,9 +90,6 @@ import androidx.core.view.ViewCompat;
+ 
+ import com.google.android.gms.common.api.Status;
+ import com.google.common.primitives.Longs;
+-import com.google.firebase.appindexing.Action;
+-import com.google.firebase.appindexing.FirebaseUserActions;
+-import com.google.firebase.appindexing.builders.AssistActionBuilder;
+ 
+ import org.telegram.PhoneFormat.PhoneFormat;
+ import org.telegram.messenger.AccountInstance;
+@@ -1939,15 +1936,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+ 
+                     final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
+                     if (linkManager.handle(data)) {
+-                        if (intent.hasExtra(EXTRA_ACTION_TOKEN)) {
+-                            final boolean success = true;
+-                            final Action assistAction = new AssistActionBuilder()
+-                                .setActionToken(intent.getStringExtra(EXTRA_ACTION_TOKEN))
+-                                .setActionStatus(success ? Action.Builder.STATUS_TYPE_COMPLETED : Action.Builder.STATUS_TYPE_FAILED)
+-                                .build();
+-                            FirebaseUserActions.getInstance(this).end(assistAction);
+-                            intent.removeExtra(EXTRA_ACTION_TOKEN);
+-                        }
+                         return true;
+                     }
+ 
+@@ -2856,15 +2844,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                                 }
+                             }
+                         }
+-                        if (intent.hasExtra(EXTRA_ACTION_TOKEN)) {
+-                            final boolean success = UserConfig.getInstance(currentAccount).isClientActivated() && "tg".equals(scheme) && unsupportedUrl == null;
+-                            final Action assistAction = new AssistActionBuilder()
+-                                    .setActionToken(intent.getStringExtra(EXTRA_ACTION_TOKEN))
+-                                    .setActionStatus(success ? Action.Builder.STATUS_TYPE_COMPLETED : Action.Builder.STATUS_TYPE_FAILED)
+-                                    .build();
+-                            FirebaseUserActions.getInstance(this).end(assistAction);
+-                            intent.removeExtra(EXTRA_ACTION_TOKEN);
+-                        }
+                         if (code != null || UserConfig.getInstance(currentAccount).isClientActivated()) {
+                             if (phone != null || phoneHash != null) {
+                                 AlertDialog cancelDeleteProgressDialog = new AlertDialog(LaunchActivity.this, AlertDialog.ALERT_TYPE_SPINNER);
 diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
@@ -94,7 +190,7 @@ index 0000000..0000000 100644
      buildToolsVersion '36.0.0'
 +    ndkVersion "27.2.12479018"
  
-     defaultConfig.applicationId = "desu.inugram"
+     defaultConfig.applicationId = "ua.entaytion.entinygram"
  
 -    sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
 +    externalNativeBuild {
@@ -190,4 +286,4 @@ index 0000000..0000000 100644
 +  verCode = currentVerCode
    stockVerCode = Integer.parseInt(APP_VERSION_CODE)
    buildDate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ISO_DATE)
-   ccachePath = ['sh', '-c', 'command -v ccache'].execute().text.trim() ?: null
+   ccachePath = null

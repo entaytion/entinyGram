@@ -123,6 +123,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         CALL("call", listOf(ChatActivity.call), R.string.Call, R.drawable.msg_callback),
         VIDEO_CALL("video_call", listOf(ChatActivity.video_call), R.string.VideoCall, R.drawable.msg_videocall),
         SEARCH("search", listOf(ChatActivity.search), R.string.Search, R.drawable.msg_search),
+        BOOST_GROUP("boost_group", listOf(ChatActivity.boost_group), R.string.BoostGroup, R.drawable.boost_channel_solar),
         TRANSLATE("translate", listOf(ChatActivity.translate), R.string.TranslateMessage, R.drawable.msg_translate),
         REPORT("report", listOf(ChatActivity.report), R.string.ReportChat, R.drawable.msg_report),
         ADD_CONTACT("add_contact", listOf(ChatActivity.share_contact), R.string.AddToContacts, R.drawable.msg_addcontact),

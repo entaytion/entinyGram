@@ -5,26 +5,25 @@ import org.telegram.messenger.IMapsProvider
 import org.telegram.messenger.MessagesController
 
 object MapsHelper {
-    // lite builds (-PNOMAPS) compile without org.maplibre.gl and src/kotlin-maps entirely,
-    // so this class is probed by name rather than referenced directly.
+    // osmdroid is pure java and always shipped, but probe it anyway so a build that
+    // ever trims it degrades to Google Maps instead of crashing.
     @JvmField
-    val hasMapLibre: Boolean = try {
-        Class.forName("org.maplibre.android.MapLibre")
+    val hasOsmdroid: Boolean = try {
+        Class.forName("org.osmdroid.views.MapView")
         true
     } catch (e: ClassNotFoundException) {
         false
     }
 
     @JvmStatic
-    fun newMapLibreProvider(): IMapsProvider =
-        Class.forName("desu.inugram.helpers.maps.MapLibreMapsProvider")
+    fun newOsmdroidProvider(): IMapsProvider =
+        Class.forName("desu.inugram.helpers.maps.osm.OsmdroidMapsProvider")
             .getDeclaredConstructor()
             .newInstance() as IMapsProvider
 
+    /** true when the currently selected renderer can show a real hybrid (satellite + labels) layer. */
     @JvmStatic
-    fun isHybridAvailable(): Boolean {
-        return InuConfig.MAP_PROVIDER.value != InuConfig.MapProviderItem.OSM
-    }
+    fun isHybridAvailable(): Boolean = InuConfig.MAP_PROVIDER.value != InuConfig.MapProviderItem.OSM_LITE
 
     @JvmStatic
     // MessagesController.mapProvider values:

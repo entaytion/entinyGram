@@ -55,7 +55,31 @@ object BlockedMessagesHelper {
         return isHideMode() || (
             RegexFilterHelper.isEnabled() &&
                 RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE
-            )
+            ) ||
+            InuConfig.HIDE_GIFT_CARDS_IN_CHAT.value ||
+            InuConfig.HIDE_GIVEAWAYS.value ||
+            InuConfig.HIDE_CHANNEL_RECOMMENDATIONS.value
+    }
+
+    // "Similar channels" discovery card Telegram injects into a channel right after you join.
+    // It is a synthetic MessageObject retyped to TYPE_JOINED_CHANNEL and rendered by
+    // ChannelRecommendationsCell, so it is dropped list-side like the other hidden types
+    // instead of patching the cell.
+    private fun isChannelRecommendations(messageObject: MessageObject?): Boolean =
+        messageObject?.type == MessageObject.TYPE_JOINED_CHANNEL
+
+    // Gift service/action messages ("X sent you a gift", star gifts, gift codes, premium/stars/TON
+    // gifts). These render as ChatActionCell items, so hiding them is a list-level filter like the
+    // blocked/regex ones rather than a ChatActionCell patch.
+    private fun isGiftMessage(messageObject: MessageObject?): Boolean {
+        val action = messageObject?.messageOwner?.action ?: return false
+        return action is TLRPC.TL_messageActionStarGift ||
+            action is TLRPC.TL_messageActionStarGiftUnique ||
+            action is TLRPC.TL_messageActionStarGiftPurchaseOffer ||
+            action is TLRPC.TL_messageActionGiftStars ||
+            action is TLRPC.TL_messageActionGiftTon ||
+            action is TLRPC.TL_messageActionGiftPremium ||
+            action is TLRPC.TL_messageActionGiftCode
     }
 
     @JvmStatic
@@ -73,6 +97,9 @@ object BlockedMessagesHelper {
         if (RegexFilterHelper.isEnabled() && RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE) {
             if (isRegexFilteredMessage(messageObject)) return true
         }
+        if (InuConfig.HIDE_GIFT_CARDS_IN_CHAT.value && isGiftMessage(messageObject)) return true
+        if (InuConfig.HIDE_GIVEAWAYS.value && messageObject?.isGiveawayOrGiveawayResults() == true) return true
+        if (InuConfig.HIDE_CHANNEL_RECOMMENDATIONS.value && isChannelRecommendations(messageObject)) return true
         return false
     }
 

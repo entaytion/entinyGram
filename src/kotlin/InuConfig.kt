@@ -242,9 +242,6 @@ object InuConfig {
     @JvmField
     val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
 
-    @JvmField
-    val MATERIAL3_PROGRESS = BoolItem("material3_progress", false)
-
     // snapshot of theme state before Monet was enabled, "day|night|autoNightType"; empty = none
     @JvmField
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)
@@ -464,6 +461,12 @@ object InuConfig {
     @JvmField
     val DISABLE_SWIPE_TO_HIDE_GENERAL_TOPIC = BoolItem("disable_swipe_to_hide_general_topic", true)
 
+    @JvmField
+    val DISABLE_CONTACTS_PERMISSION_NAG = BoolItem("disable_contacts_permission_nag", false)
+
+    @JvmField
+    val DISABLE_LOCKSCREEN_PERMISSION_NAG = BoolItem("disable_lockscreen_permission_nag", false)
+
     class PullDownActionItem : IntItem("pull_down_action", REVEAL_ARCHIVE) {
         // Migrate the old `open_archive_on_pull` boolean toggle: on → open archive, off → reveal (stock).
         override fun read(prefs: SharedPreferences): Int {
@@ -633,7 +636,34 @@ object InuConfig {
     val HIDE_PAID_REACTION_UPSELL = BoolItem("hide_paid_reaction_upsell", true)
 
     @JvmField
+    val HIDE_CAPTION_LIMIT_UPSELL = BoolItem("hide_caption_limit_upsell", false)
+
+    @JvmField
+    val HIDE_ATTACH_PREMIUM_BADGES = BoolItem("hide_attach_premium_badges", false)
+
+    @JvmField
+    val HIDE_EMOJI_PREMIUM_UPSELL = BoolItem("hide_emoji_premium_upsell", false)
+
+    @JvmField
     val HIDE_HASHTAG_SUGGESTIONS = BoolItem("hide_hashtag_suggestions", true)
+
+    @JvmField
+    val HIDE_GIFT_BUTTON_INPUT = BoolItem("hide_gift_button_input", false)
+
+    @JvmField
+    val HIDE_GIFT_CARDS_IN_CHAT = BoolItem("hide_gift_cards_in_chat", false)
+
+    @JvmField
+    val HIDE_GIVEAWAYS = BoolItem("hide_giveaways", false)
+
+    @JvmField
+    val HIDE_CHANNEL_RECOMMENDATIONS = BoolItem("hide_channel_recommendations", false)
+
+    @JvmField
+    val DISABLE_CALL_RATING = BoolItem("disable_call_rating", false)
+
+    @JvmField
+    val HIDE_GROUP_STICKER_PACK = BoolItem("hide_group_sticker_pack", false)
 
     @JvmField
     val DISABLE_PROFILE_SCROLL_SNAP = BoolItem("disable_profile_scroll_snap", true)
@@ -655,6 +685,42 @@ object InuConfig {
 
     @JvmField
     val HIDE_CHANNEL_SHARE_BUTTON = BoolItem("hide_channel_share_button", false)
+
+    @JvmField
+    val HIDE_PROFILE_STORY_BUTTON = BoolItem("hide_profile_story_button", false)
+
+    @JvmField
+    val HIDE_PROFILE_GIFT_BUTTON = BoolItem("hide_profile_gift_button", false)
+
+    @JvmField
+    val HIDE_PROFILE_LIVE_ACTIONS_BUTTON = BoolItem("hide_profile_live_actions_button", false)
+
+    @JvmField
+    val HIDE_PREMIUM_BADGE = BoolItem("hide_premium_badge", false)
+
+    @JvmField
+    val HIDE_COLLECTIBLE_STATUS = BoolItem("hide_collectible_status", false)
+
+    @JvmField
+    val HIDE_STARS_RATING = BoolItem("hide_stars_rating", false)
+
+    @JvmField
+    val HIDE_VERIFICATION_BADGE = BoolItem("hide_verification_badge", false)
+
+    @JvmField
+    val HIDE_PROFILE_COLORFUL_BACKGROUND = BoolItem("hide_profile_colorful_background", false)
+
+    @JvmField
+    val HIDE_GIFTS_AROUND_AVATAR = BoolItem("hide_gifts_around_avatar", false)
+
+    @JvmField
+    val HIDE_PROFILE_GIFTS_TAB = BoolItem("hide_profile_gifts_tab", false)
+
+    @JvmField
+    val HIDE_SIMILAR_CHANNELS_TAB = BoolItem("hide_similar_channels_tab", false)
+
+    @JvmField
+    val HIDE_PROFILE_ICONS = BoolItem("hide_profile_icons", false)
 
     @JvmField
     val DISABLE_PROFILE_MUSIC_AUTOPLAY = BoolItem("disable_profile_music_autoplay", true)
@@ -682,6 +748,15 @@ object InuConfig {
 
     @JvmField
     val HIDE_PROXY_SPONSOR_CHAT = BoolItem("hide_proxy_sponsor_chat", true)
+
+    @JvmField
+    val HIDE_PSA_PROMO_CHAT = BoolItem("hide_psa_promo_chat", false)
+
+    @JvmField
+    val HIDE_GIFT_AUCTIONS_HINT = BoolItem("hide_gift_auctions_hint", false)
+
+    @JvmField
+    val HIDE_CACHE_HINT = BoolItem("hide_cache_hint", false)
 
     @JvmField
     val DELETE_FOR_BOTH_MESSAGES = BoolItem("delete_for_both_messages", true)
@@ -1040,6 +1115,13 @@ object InuConfig {
     @JvmField
     val PROFILE_INFO_ROWS = ProfileInfoMenuConfig("profile_info_rows")
 
+    // hide entries from ProfileActivity's ⋮ overflow menu (default off = stock)
+    @JvmField
+    val HIDE_PROFILE_MENU_SEND_GIFT = BoolItem("hide_profile_menu_send_gift", false)
+
+    @JvmField
+    val HIDE_PROFILE_MENU_ARCHIVED_STORIES = BoolItem("hide_profile_menu_archived_stories", false)
+
     class ForwardLongTapItem : IntItem("forward_long_tap_action", CHOOSE_MODE) {
         companion object {
             const val OFF = 0
@@ -1237,10 +1319,10 @@ object InuConfig {
     @JvmField
     val NOTIFICATION_ICON = NotificationIconItem()
 
-    class MapProviderItem : IntItem("map_provider", GOOGLE) {
+    class MapProviderItem : IntItem("map_provider", OSM_LITE) {
         companion object {
             const val GOOGLE = 0
-            const val OSM = 1
+            const val OSM_LITE = 2 // osmdroid raster renderer (pure java, no native libs)
         }
     }
 
