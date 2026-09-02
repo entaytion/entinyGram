@@ -4,15 +4,15 @@ Date: Tue, 1 Sep 2026 23:19:32 +0300
 Subject: Let the Settings screen and My Profile info rows be reordered and hidden
 
 ---
- .../java/org/telegram/ui/ProfileActivity.java   | 17 +++++++++++++++++
- .../java/org/telegram/ui/SettingsActivity.java  | 17 +++++++++++++----
- 2 files changed, 30 insertions(+), 4 deletions(-)
+ .../java/org/telegram/ui/ProfileActivity.java | 21 +++++++++++++++++++
+ .../org/telegram/ui/SettingsActivity.java     | 17 +++++++++++----
+ 2 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -9663,6 +9663,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9667,6 +9667,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (listAdapter != null) {
              // saveScrollPosition();
              firstLayout = true;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              listAdapter.notifyDataSetChanged();
          }
          if (!parentLayout.isInPreviewMode() && blurredView != null && blurredView.getVisibility() == View.VISIBLE) {
-@@ -10836,6 +10837,21 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10840,6 +10841,25 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      }
                  }
                  infoStartRow = rowCount;
@@ -31,25 +31,29 @@ index 0000000..0000000 100644
 +                    if (isBot || !(hasPhone || !hasInfo)) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.PHONE);
 +                    if (userInfo == null || TextUtils.isEmpty(userInfo.about)) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.BIO);
 +                    if (user == null || username == null) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.USERNAME);
++                    if (!ProfileHelper.shouldShowIdRow()) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.ID);
++                    if (!ProfileHelper.shouldShowRegDateRow(userId, currentChat)) inu_unavailable.add(desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item.REG_DATE);
 +                    for (desu.inugram.helpers.menu.ProfileInfoMenuConfig.Item inu_row : desu.inugram.helpers.ProfileSettingsHelper.orderedEnabledInfoRows(inu_unavailable)) {
 +                        switch (inu_row) {
 +                            case PHONE: phoneRow = rowCount++; break;
 +                            case BIO: userInfoRow = rowCount++; break;
 +                            case USERNAME: usernameRow = rowCount++; break;
++                            case ID: inu_idRow = rowCount++; break;
++                            case REG_DATE: inu_regDateRow = rowCount++; break;
 +                        }
 +                    }
 +                } else {
                  if (!isBot && (hasPhone || !hasInfo)) {
                      phoneRow = rowCount++;
                  }
-@@ -10845,6 +10861,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                 if (user != null && username != null) {
-                     usernameRow = rowCount++;
+@@ -10851,6 +10871,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  }
-+                }
                  if (ProfileHelper.shouldShowIdRow()) inu_idRow = rowCount++;
                  if (ProfileHelper.shouldShowRegDateRow(userId, currentChat)) inu_regDateRow = rowCount++;
++                }
                  if (userInfo != null) {
+                     if (userInfo.birthday != null) {
+                         birthdayRow = rowCount++;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java

@@ -270,7 +270,9 @@ class ProfileInfoMenuConfig(key: String) : MenuOrderConfig<ProfileInfoMenuConfig
     ) : MenuOrderItem {
         PHONE("phone", R.string.YourPhone, R.drawable.msg_newphone),
         BIO("bio", R.string.UserBio, R.drawable.msg_info),
-        USERNAME("username", R.string.Username, R.drawable.menu_username_change);
+        USERNAME("username", R.string.Username, R.drawable.menu_username_change),
+        ID("id", R.string.InuProfileId, R.drawable.inu_tabler_id),
+        REG_DATE("reg_date", R.string.InuProfileRegDate, R.drawable.input_calendar1);
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }

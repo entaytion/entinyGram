@@ -383,7 +383,6 @@ entiny/ccache-detect-fallback.patch
 entiny/branding.patch
 entiny/ghost-mode.patch
 misc/remove-unused-appstandalone.patch
-entiny/customizable-settings-rows.patch
 entiny/amoled-theme.patch
 entiny/hide-gift-elements.patch
 entiny/hide-dialogs-banners.patch
@@ -391,3 +390,4 @@ entiny/hide-attach-emoji-premium-upsells.patch
 entiny/disable-call-rating.patch
 entiny/hide-profile-similar-gifts-tabs.patch
 entiny/build-configuration.patch
+entiny/customizable-settings-rows.patch
