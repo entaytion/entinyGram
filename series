@@ -391,3 +391,4 @@ entiny/disable-call-rating.patch
 entiny/hide-profile-similar-gifts-tabs.patch
 entiny/build-configuration.patch
 entiny/customizable-settings-rows.patch
+entiny/session-version-display.patch

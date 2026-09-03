@@ -160,6 +160,19 @@ object ParanoiaHelper {
         return serverName
     }
 
+    // The app_version we report to the server (ConnectionsManager) is versionName + "-<7-char
+    // git sha>" (see build.gradle verName) followed by " (versionCode)" and an optional
+    // " pbeta"/" beta" tag — e.g. "12.10.1-6d61858 (100050323) pbeta". That raw string is exactly
+    // what's useful in bug reports/support, so it's kept as-is server-side; only the Devices/
+    // Sessions display (SessionCell, SessionBottomSheet) is cosmetically cleaned up here.
+    private val GIT_SHA_SUFFIX = Regex("-[0-9a-fA-F]{6,40}(?=[ (]|$)")
+
+    @JvmStatic
+    fun getSessionAppVersion(rawVersion: String): String {
+        if (!InuConfig.MASK_SERVER_APP_NAME.value) return rawVersion
+        return GIT_SHA_SUFFIX.replace(rawVersion, "")
+    }
+
     @JvmStatic
     fun filterLauncherIcons(icons: MutableList<LauncherIcon>) {
         if (isDisguised()) {

@@ -585,7 +585,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_DOWNLOAD_DIRECTORY = InuUtils.generateId()
 
-        private val DOWNLOAD_DIRECTORIES = listOf("Inugram", "Telegram")
+        private val DOWNLOAD_DIRECTORIES = listOf("entinyGram", "Telegram")
         private val BUTTON_TEXT_CLASSIFIER_MODE = InuUtils.generateId()
         private val TOGGLE_CALL_CONFIRMATION = InuUtils.generateId()
         private val TOGGLE_HD_BLUETOOTH_CALL_AUDIO = InuUtils.generateId()

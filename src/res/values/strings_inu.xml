@@ -781,7 +781,7 @@
     <string name="InuBackupImportSheetCancel">No, leave as is</string>
     <string name="InuBackupSettings">Backup &amp; reset</string>
     <string name="InuBackupReset">Reset settings</string>
-    <string name="InuBackupResetConfirm">All Inugram settings will be reset to their default values. Your chats, accounts, and Telegram\'s own settings stay the same.\n\nThis cannot be undone.</string>
+    <string name="InuBackupResetConfirm">All entinyGram settings will be reset to their default values. Your chats, accounts, and Telegram\'s own settings stay the same.\n\nThis cannot be undone.</string>
     <string name="InuBackupResetSuccess">Reset %1$d settings</string>
     <string name="InuBackupResetNoChanges">Settings are already at their defaults</string>
     <string name="InuCloudSync">Sync settings</string>
@@ -996,6 +996,7 @@
     <string name="InuSaveSecretChatContentInfo">Everything in secret chats (media and text) is preserved locally and never auto-deleted.</string>
     <string name="InuSaveViewOnceMedia">Keep view-once media</string>
     <string name="InuSaveViewOnceMediaInfo">View-once photos, videos and video messages in regular chats are kept in the local database after being viewed.</string>
+    <string name="InuViewOnceShowNormal">Show as a regular photo instead of gating it behind the one-time reveal</string>
     <string name="InuSaveTimedMessages">Keep timed messages</string>
     <string name="InuSaveTimedMessagesInfo">Messages in chats with an auto-delete timer are preserved locally instead of being deleted when the timer expires.</string>
     <string name="InuAllowForwardRestricted">Allow forwarding from protected chats</string>
@@ -1150,7 +1151,11 @@
     <string name="InuAiStream">Streaming response</string>
     <string name="InuAiStreamInfo">Provides smoother and faster display of responses.</string>
     <string name="InuAiOnlyAnswer">Show only answer</string>
+    <string name="InuAiOnlyAnswerInfo">Hides the reasoning trace for models that stream one, showing just the final answer.</string>
     <string name="InuAiInsertQuote">Insert response as quote</string>
+    <string name="InuAiInsertQuoteInfo">Inserts the result into the message field as a quote block instead of replacing your draft.</string>
+    <string name="InuAiRolesHint">e.g. Assistant, Translator, Editor</string>
+    <string name="InuBurnOneTime">Burn</string>
     <string name="InuAiSectionTemperature">Temperature</string>
     <string name="InuAiTemperatureInfo">Temperature determines the degree of randomness: higher values mean more creativity; lower values mean more focus.</string>
     <string name="InuAiServicesHeaderDesc">Add an API key and endpoint to use AI Compose without Telegram Premium. You can use any compatible service or your own server.</string>

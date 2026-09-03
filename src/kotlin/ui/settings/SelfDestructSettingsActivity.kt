@@ -20,6 +20,7 @@ class SelfDestructSettingsActivity : SettingsPageActivity() {
             ExpandableBoolGroup.Option(R.string.InuSaveTimedMessages, InuConfig.SAVE_TIMED_MESSAGES, TOGGLE_SAVE_TIMED_MESSAGES),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructMedia, InuConfig.SAVE_SELF_DESTRUCT_MEDIA, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructText, InuConfig.SAVE_SELF_DESTRUCT_TEXT, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
+            ExpandableBoolGroup.Option(R.string.InuViewOnceShowNormal, InuConfig.VIEW_ONCE_SHOW_NORMAL, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
         ),
         sectionId = SECTION_SELF_DESTRUCT_SAVE,
     ).apply { expanded = true }
@@ -37,6 +38,7 @@ class SelfDestructSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_SELF_DESTRUCT_TEXT = InuUtils.generateId()
         private val TOGGLE_SAVE_VIEW_ONCE_MEDIA = InuUtils.generateId()
         private val TOGGLE_SAVE_TIMED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_VIEW_ONCE_SHOW_NORMAL = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
 
         @JvmField
@@ -51,6 +53,7 @@ class SelfDestructSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-timed-messages", R.string.InuSaveTimedMessages, TOGGLE_SAVE_TIMED_MESSAGES),
                 SearchRegistry.Entry("save-self-destruct-media", R.string.InuSaveSelfDestructMedia, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
                 SearchRegistry.Entry("save-self-destruct-text", R.string.InuSaveSelfDestructText, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
+                SearchRegistry.Entry("view-once-show-normal", R.string.InuViewOnceShowNormal, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
             ),
         )
     }

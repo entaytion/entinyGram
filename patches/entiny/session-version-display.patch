@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 3 Sep 2026 10:31:29 +0300
+Subject: entiny: clean up session app_version display (strip build git-sha suffix)
+
+---
+ .../src/main/java/org/telegram/ui/Cells/SessionCell.java        | 2 +-
+ .../src/main/java/org/telegram/ui/SessionBottomSheet.java       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
+@@ -249,7 +249,7 @@ public class SessionCell extends FrameLayout {
+ 
+             stringBuilder = new StringBuilder();
+             stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
+-            stringBuilder.append(" ").append(session.app_version);
++            stringBuilder.append(" ").append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppVersion(session.app_version));
+ 
+             if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+                 stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
+@@ -111,7 +111,7 @@ public class SessionBottomSheet extends BottomSheet {
+         ItemView applicationItemView = new ItemView(context, false);
+         stringBuilder = new StringBuilder();
+         stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
+-        stringBuilder.append(" ").append(session.app_version);
++        stringBuilder.append(" ").append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppVersion(session.app_version));
+         if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+             stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
+         }

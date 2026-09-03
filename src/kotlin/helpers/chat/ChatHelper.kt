@@ -111,6 +111,8 @@ object ChatHelper {
     const val OPTION_AI_SUMMARIZE = 523
     const val OPTION_ADD_FILTER = 524
     const val OPTION_DELETE_PERMANENTLY = 525
+    const val OPTION_BURN_ONE_TIME = 526
+    const val OPTION_SAVE_ONE_TIME = 527
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -474,6 +476,31 @@ object ChatHelper {
             icons.add(R.drawable.inu_tabler_trash_x)
         }
 
+        // Gated mode keeps the stock one-time reveal/blur, so the stock menu itself skips
+        // "Save to Gallery" for it (guarded by needDrawBluredPreview() in ChatActivity's own
+        // menu builder) even though the file is already preserved locally. Offer Save here
+        // directly — the stock OPTION_SAVE_TO_GALLERY handler doesn't re-check the blur flag,
+        // it just needs the file, which our shouldPreserveMedia fix already makes findable.
+        if (selectedObject.isSecretMedia() && SelfDestructHelper.shouldPreserveMedia(dialogId) && !InuConfig.VIEW_ONCE_SHOW_NORMAL.value) {
+            items.add(LocaleController.getString(R.string.SaveToGallery))
+            options.add(OPTION_SAVE_ONE_TIME)
+            icons.add(R.drawable.msg_gallery)
+        }
+
+        // Burn replays the same read+expire flow the stock "hold to view" viewer runs on close
+        // (sendSecretMessageRead + sendSecretMediaDelete), so it consumes server-side exactly
+        // like actually viewing it would, no delete confirmation involved. Both stock methods
+        // no-op on your own outgoing media, hence the isOut() guard here too.
+        if (selectedObject.isSecretMedia() &&
+            !selectedObject.isOut() &&
+            SelfDestructHelper.shouldPreserveMedia(dialogId) &&
+            !InuConfig.VIEW_ONCE_SHOW_NORMAL.value
+        ) {
+            items.add(LocaleController.getString(R.string.InuBurnOneTime))
+            options.add(OPTION_BURN_ONE_TIME)
+            icons.add(R.drawable.filled_fire)
+        }
+
         if (InuConfig.GHOST_HIDE_READ.value && !GhostHelper.isDialogWhitelisted(activity.dialogId)) {
             items.add(LocaleController.getString(R.string.InuMarkChatAsRead))
             options.add(OPTION_MARK_AS_READ)
@@ -833,6 +860,26 @@ object ChatHelper {
                         LocaleController.getString(R.string.InuDeletePermanentlyDone),
                     ).show()
                 }
+            }
+
+            OPTION_SAVE_ONE_TIME -> {
+                activity.processSelectedOption(ChatActivity.OPTION_SAVE_TO_GALLERY)
+            }
+
+            OPTION_BURN_ONE_TIME -> {
+                // sendSecretMessageRead/sendSecretMediaDelete gate on messageOwner.ttl, which
+                // SecretChatHelper populates from the decrypted payload for secret chats but
+                // nothing ever sets for a *received* regular-chat view-once message (only the
+                // outgoing send path mirrors it into media.ttl_seconds). Without this, both
+                // stock methods silently return null and Burn does nothing.
+                val media = selectedObject.messageOwner.media
+                if (selectedObject.messageOwner.ttl <= 0 && media != null && media.ttl_seconds != 0) {
+                    selectedObject.messageOwner.ttl = media.ttl_seconds
+                }
+                val openAction = activity.sendSecretMessageRead(selectedObject, false)
+                val closeAction = activity.sendSecretMediaDelete(selectedObject)
+                openAction?.run()
+                closeAction?.run()
             }
 
             OPTION_SAVE_STICKER_TO_DOWNLOADS -> {

@@ -4,29 +4,37 @@ Date: Sat, 1 Aug 2026 17:52:54 +0300
 Subject: Add client-side AI compose with custom endpoints
 
 ---
- .../ui/Components/ChatActivityEnterView.java      | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ .../ui/Components/ChatActivityEnterView.java  | 23 +++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -2843,6 +2843,14 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -2843,6 +2843,22 @@ public class ChatActivityEnterView extends FrameLayout implements
          aiButton.setOnClickListener(v -> {
              MessagesController.getGlobalMainSettings().edit().putInt("aihintshown", 3).apply();
              final long dialogId = parentFragment != null ? parentFragment.getDialogId() : dialog_id;
 +            if (desu.inugram.InuConfig.AI_COMPOSE_ENABLED.getValue() && !richDraftActive) {
 +                if (messageEditText == null) return;
 +                desu.inugram.helpers.ai.AiComposeHelper.showEditor(getContext(), messageEditText.getText(), text -> {
-+                    messageEditText.setText(text);
-+                    messageEditText.setSelection(text.length(), text.length());
++                    if (desu.inugram.InuConfig.AI_INSERT_QUOTE.getValue()) {
++                        Editable editable = messageEditText.getText();
++                        editable.clear();
++                        editable.append(text);
++                        QuoteSpan.putQuoteToEditable(editable, 0, editable.length(), false);
++                        messageEditText.setSelection(editable.length(), editable.length());
++                    } else {
++                        messageEditText.setText(text);
++                        messageEditText.setSelection(text.length(), text.length());
++                    }
 +                });
 +                return;
 +            }
              if (richDraftActive) {
                  if (richDraftMessage == null) return;
                  new AIEditorAlert(getContext(), resourcesProvider)
-@@ -6111,11 +6119,13 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6111,11 +6127,13 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private boolean shownAiButton;
      private void showAiButton(boolean show_) {
@@ -42,7 +50,7 @@ index 0000000..0000000 100644
          }
          shownAiButton = show;
          aiButton.setVisibility(View.VISIBLE);
-@@ -6140,6 +6150,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6140,6 +6158,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
  
              if (

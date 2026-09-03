@@ -33,6 +33,18 @@ object SelfDestructHelper {
     }
 
     /**
+     * Guard for the "show as a regular reopenable photo" bypass (stock blur/one-time-reveal/
+     * no-forward gates in MessageObject/FileLoader/ChatActivity). Only bypasses when the media is
+     * actually preserved locally *and* the user opted into [InuConfig.VIEW_ONCE_SHOW_NORMAL] — the
+     * default (gated) mode keeps the stock ephemeral UI even though the file survives, so it can
+     * still be recovered via the Save/Burn message-menu actions.
+     */
+    @JvmStatic
+    fun shouldBypassOneTimeGate(dialogId: Long): Boolean {
+        return shouldPreserveMedia(dialogId) && InuConfig.VIEW_ONCE_SHOW_NORMAL.value
+    }
+
+    /**
      * Guard for the full row-deletion branch of `MessagesController.checkDeletingTask`
      * (`enc_tasks_v4` tasks with media = 0).
      * Encrypted dialogs: self-destructing text (scheduled by `createTaskForSecretChat`).

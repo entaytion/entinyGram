@@ -67,7 +67,7 @@ class MainTabsPreviewCell(
         val chip = Chip(context)
         chip.bind(
             iconRes = item?.iconRes ?: R.drawable.msg_viewchats,
-            labelRes = item?.labelRes ?: R.string.Chats,
+            labelRes = item?.labelRes ?: R.string.InuChats,
             enabled = enabled,
         )
         if (item != null) {

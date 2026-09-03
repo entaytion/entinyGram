@@ -37,12 +37,12 @@ object M3SectionsHelper {
     fun isEnabled(): Boolean = InuConfig.M3_SECTIONS_STYLE.value
 
     /**
-     * Round M3 tiles for colorful list/settings icons are only valid on a Monet theme. On any
-     * other (regular) theme the stock square tiles must stay intact even when the M3 sections
-     * toggle is on — otherwise the icons turn into "quasi-monet" circles with wrong colors.
+     * Round M3 tiles for colorful list/settings icons. circleColor()/iconColor() derive the tile's
+     * hue from the row's own gradient colors, so this renders consistently on any theme (Monet or
+     * not) once the M3 sections toggle is on.
      */
     @JvmStatic
-    fun isCircleIconsEnabled(): Boolean = isEnabled() && Theme.getActiveTheme()?.inu_isMonet() == true
+    fun isCircleIconsEnabled(): Boolean = isEnabled()
 
     @JvmStatic
     fun shadowHeightDp(nextItem: UItem?, stockDp: Int): Int {

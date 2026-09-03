@@ -212,10 +212,24 @@ object GhostHelper {
 
     @JvmStatic
     fun shouldSuppressLocalRead(dialogId: Long): Boolean {
+        // Mirrors the TL_channels_readHistory exemption in processSendRequest: channels/
+        // supergroups have no per-user read receipt visible to others, so there is nothing to
+        // hide here — only the local unread badge (which never gets the server's
+        // TL_updateReadChannelInbox confirmation once the request itself isn't suppressed) to
+        // lose by gating it anyway.
+        if (isChannelDialog(dialogId)) {
+            return false
+        }
         if (!InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)) {
             return true
         }
         return false
+    }
+
+    private fun isChannelDialog(dialogId: Long): Boolean {
+        if (!DialogObject.isChatDialog(dialogId)) return false
+        val chat = MessagesController.getInstance(UserConfig.selectedAccount).getChat(-dialogId) ?: return false
+        return ChatObject.isChannel(chat)
     }
 
     /**
@@ -241,8 +255,14 @@ object GhostHelper {
                     false
                 }
             }
+            // Channels/supergroups have no per-user "read by you" visible to other members —
+            // only anonymous view counts — so suppressing this buys zero privacy. It only
+            // starves the local unread counter of the TL_updateReadChannelInbox confirmation
+            // the server sends back, leaving the badge stuck forever (see the "unread counter
+            // never clears for channels" report). DMs and basic groups keep the suppression:
+            // there the other side's client genuinely reflects your read state back to them.
+            is TLRPC.TL_channels_readHistory -> false
             is TLRPC.TL_messages_readHistory,
-            is TLRPC.TL_channels_readHistory,
             is TLRPC.TL_messages_readEncryptedHistory,
             is TLRPC.TL_messages_readDiscussion,
             is TLRPC.TL_messages_readSavedHistory,

@@ -109,6 +109,12 @@ object AiComposeHelper {
 
     // ---------------- request ----------------
 
+    /** Prefixes the system prompt with the user's configured AI persona, if any. */
+    private fun withRole(systemPrompt: String): String {
+        val role = InuConfig.AI_ROLE.value.trim()
+        return if (role.isNotEmpty()) "You are $role. $systemPrompt" else systemPrompt
+    }
+
     fun request(
         endpoint: AiEndpoint,
         systemPrompt: String,
@@ -124,7 +130,7 @@ object AiComposeHelper {
                     .put(
                         "messages",
                         JSONArray()
-                            .put(JSONObject().put("role", "system").put("content", systemPrompt))
+                            .put(JSONObject().put("role", "system").put("content", withRole(systemPrompt)))
                             .put(JSONObject().put("role", "user").put("content", userText))
                     )
 
@@ -183,6 +189,80 @@ object AiComposeHelper {
             val r = result
             val err = error
             AndroidUtilities.runOnUIThread { onResult(r, err) }
+        }
+    }
+
+    /**
+     * Same request as [request] but streams the OpenAI-compatible SSE response, calling
+     * [onChunk] on the UI thread with the accumulated text after every delta. Reasoning-model
+     * "reasoning_content" deltas aren't split out here — only the final answer streams live.
+     */
+    fun requestStream(
+        endpoint: AiEndpoint,
+        systemPrompt: String,
+        userText: String,
+        onChunk: (accumulated: String) -> Unit,
+        onDone: (error: String?) -> Unit,
+    ) {
+        Utilities.globalQueue.postRunnable {
+            var error: String? = null
+            val accumulated = StringBuilder()
+            try {
+                val json = JSONObject()
+                    .put("model", endpoint.model.ifBlank { "gpt-4o-mini" })
+                    .put("stream", true)
+                    .put(
+                        "messages",
+                        JSONArray()
+                            .put(JSONObject().put("role", "system").put("content", withRole(systemPrompt)))
+                            .put(JSONObject().put("role", "user").put("content", userText))
+                    )
+                val temp = InuConfig.AI_TEMPERATURE.value
+                if (temp != 1.0f) json.put("temperature", temp.toDouble())
+
+                val body = json.toString()
+                val conn = (URL(endpoint.url).openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    connectTimeout = 20_000
+                    readTimeout = 60_000
+                    doOutput = true
+                    setRequestProperty("Content-Type", "application/json")
+                    setRequestProperty("Accept", "text/event-stream")
+                    if (endpoint.apiKey.isNotBlank()) {
+                        setRequestProperty("Authorization", "Bearer ${endpoint.apiKey}")
+                    }
+                }
+                try {
+                    conn.outputStream.use { it.write(body.toByteArray(Charsets.UTF_8)) }
+                    val code = conn.responseCode
+                    if (code !in 200..299) {
+                        val errBody = conn.errorStream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() } ?: ""
+                        throw IOException("HTTP $code: ${errBody.take(300)}")
+                    }
+                    conn.inputStream.bufferedReader(Charsets.UTF_8).forEachLine { line ->
+                        if (!line.startsWith("data:")) return@forEachLine
+                        val data = line.removePrefix("data:").trim()
+                        if (data.isEmpty() || data == "[DONE]") return@forEachLine
+                        val delta = try {
+                            JSONObject(data).getJSONArray("choices").getJSONObject(0)
+                                .optJSONObject("delta")?.optString("content", "") ?: ""
+                        } catch (_: Exception) {
+                            ""
+                        }
+                        if (delta.isNotEmpty()) {
+                            accumulated.append(delta)
+                            val snapshot = accumulated.toString()
+                            AndroidUtilities.runOnUIThread { onChunk(snapshot) }
+                        }
+                    }
+                } finally {
+                    conn.disconnect()
+                }
+            } catch (e: Exception) {
+                error = e.message ?: e.javaClass.simpleName
+            }
+            val err = error
+            AndroidUtilities.runOnUIThread { onDone(err) }
         }
     }
 
@@ -778,22 +858,49 @@ private class AiComposeSheet(
     private fun runPrompt(prompt: String) {
         if (running) return
         val endpoint = AiComposeHelper.activeEndpoint() ?: return
-        if (userText.isEmpty()) return
+        // With history on, chain off the previous result instead of the original draft, so
+        // consecutive actions (e.g. Rewrite, then Shorten) refine each other's output.
+        val inputText = if (InuConfig.AI_HISTORY_ENABLED.value) (lastResult ?: userText) else userText
+        if (inputText.isEmpty()) return
         clearResult()
         setRunning(true)
-        AiComposeHelper.request(endpoint, prompt, userText) { result, error ->
-            setRunning(false)
-            if (result != null) {
-                lastResult = result
-                resultText?.setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
-                resultText?.text = result
-                resultText?.visibility = View.VISIBLE
-                resultActions?.visibility = View.VISIBLE
-            } else {
-                resultText?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
-                resultText?.text = LocaleController.formatString(R.string.InuAiError, error ?: "?")
-                resultText?.visibility = View.VISIBLE
-                resultActions?.visibility = View.GONE
+        if (InuConfig.AI_STREAM_ENABLED.value) {
+            lastResult = null
+            resultText?.setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
+            resultText?.text = ""
+            resultText?.visibility = View.VISIBLE
+            AiComposeHelper.requestStream(
+                endpoint, prompt, inputText,
+                onChunk = { partial ->
+                    lastResult = partial
+                    resultText?.text = partial
+                },
+                onDone = { error ->
+                    setRunning(false)
+                    if (lastResult.isNullOrBlank()) {
+                        resultText?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
+                        resultText?.text = LocaleController.formatString(R.string.InuAiError, error ?: "?")
+                        resultActions?.visibility = View.GONE
+                    } else {
+                        resultActions?.visibility = View.VISIBLE
+                    }
+                },
+            )
+        } else {
+            AiComposeHelper.request(endpoint, prompt, inputText) { result, error ->
+                setRunning(false)
+                if (result != null) {
+                    lastResult = result
+                    resultText?.setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
+                    resultText?.text = result
+                    resultText?.visibility = View.VISIBLE
+                    resultActions?.visibility = View.VISIBLE
+                } else {
+                    resultText?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
+                    resultText?.text = LocaleController.formatString(R.string.InuAiError, error ?: "?")
+                    resultText?.visibility = View.VISIBLE
+                    resultActions?.visibility = View.GONE
+                }
             }
         }
     }

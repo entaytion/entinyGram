@@ -1214,6 +1214,12 @@ object InuConfig {
     @JvmField
     val SAVE_VIEW_ONCE_MEDIA = BoolItem("save_view_once_media", false)
 
+    // Only meaningful when SAVE_SELF_DESTRUCT_MEDIA/SAVE_VIEW_ONCE_MEDIA keeps a local copy: off
+    // (default) still gates the view behind the stock one-time reveal/blur; on shows it as a
+    // regular reopenable photo right away.
+    @JvmField
+    val VIEW_ONCE_SHOW_NORMAL = BoolItem("view_once_show_normal", false)
+
     @JvmField
     val SAVE_TIMED_MESSAGES = BoolItem("save_timed_messages", false)
 

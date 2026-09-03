@@ -37,7 +37,7 @@ index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 @@ -11646,7 +11646,7 @@ public class MessageObject {
-         if (desu.inugram.InuConfig.SAVE_SELF_DESTRUCT_MEDIA.getValue() && isSecretMedia()) return true;
+         if (desu.inugram.helpers.security.SelfDestructHelper.shouldBypassOneTimeGate(getDialogId()) && isSecretMedia()) return true;
          if (isQuickReply()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
 -        return !(messageOwner instanceof TLRPC.TL_message_secret) && !needDrawBluredPreview() && !isLiveLocation() && type != MessageObject.TYPE_PHONE_CALL && !isSponsored() && !messageOwner.noforwards;

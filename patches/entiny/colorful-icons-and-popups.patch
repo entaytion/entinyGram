@@ -4,17 +4,42 @@ Date: Wed, 5 Aug 2026 10:20:40 +0300
 Subject: feat(ui): adapt colorful icons, Monet theme transitions, dialog inputs, and popups
 
 ---
- .../java/org/telegram/ui/Cells/TextCell.java  | 46 +++++++++++++------
+ .../telegram/ui/Adapters/ContactsAdapter.java |  4 +-
+ .../java/org/telegram/ui/Cells/TextCell.java  | 58 ++++++++++++++-----
  .../ui/Components/IconBackgroundColors.java   |  3 +-
  .../telegram/ui/Components/ItemOptions.java   |  4 +-
  .../org/telegram/ui/SettingsActivity.java     |  2 +-
- 4 files changed, 38 insertions(+), 17 deletions(-)
+ 5 files changed, 51 insertions(+), 20 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
+@@ -562,9 +562,9 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
+                 if (section == 0) {
+                     if (needPhonebook) {
+                         if (position == 0) {
+-                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.InviteFriends), "", false, R.drawable.settings_invite, 0xFF1CA5ED, 0xFF1488E1, false);
++                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.InviteFriends), "", false, R.drawable.settings_invite, 0xFF1CA5ED, 0xFF1488E1, false, true);
+                         } else if (position == 1) {
+-                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.RecentCalls), "", false, R.drawable.settings_calls, 0xFF55CA47, 0xFF27B434, false);
++                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.RecentCalls), "", false, R.drawable.settings_calls, 0xFF55CA47, 0xFF27B434, false, true);
+                         }
+                     } else if (isAdmin) {
+                         if (isChannel) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
-@@ -203,20 +203,27 @@ public class TextCell extends FrameLayout {
+@@ -62,6 +62,7 @@ public class TextCell extends FrameLayout {
+     public int heightDp = desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? 56 : 50;
+     public int imageLeft = 16;
+     public int inu_m3IconSize = 22;
++    private boolean forceStockColorfulIcon;
+     private boolean inDialogs;
+     private boolean prioritizeTitleOverValue;
+     private Theme.ResourcesProvider resourcesProvider;
+@@ -203,20 +204,27 @@ public class TextCell extends FrameLayout {
              subtitleView.measure(MeasureSpec.makeMeasureSpec(width - dp(71 + leftPadding) - valueWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.EXACTLY));
          }
          if (imageView.getVisibility() == VISIBLE) {
@@ -24,7 +49,7 @@ index 0000000..0000000 100644
 -                    imageView.setPadding(dp(7), dp(7), dp(7), dp(7));
 -                    final int iconMeasureSpec = MeasureSpec.makeMeasureSpec(dp(36), MeasureSpec.EXACTLY);
 -                    imageView.measure(iconMeasureSpec, iconMeasureSpec);
-+            if (desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) {
++            if (!forceStockColorfulIcon && desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) {
 +                final boolean isColorful = imageView.getBackground() != null;
 +                final int targetSize = isColorful ? dp(36) : dp(inu_m3IconSize);
 +                if (isColorful) {
@@ -52,12 +77,39 @@ index 0000000..0000000 100644
              }
          }
          if (valueImageView.getVisibility() == VISIBLE) {
-@@ -641,17 +648,30 @@ public class TextCell extends FrameLayout {
+@@ -500,6 +508,10 @@ public class TextCell extends FrameLayout {
+     }
+ 
+     public void setTextAndValueAndColorfulIcon(String text, CharSequence value, boolean animated, int resId, int colorTop, int colorBottom, boolean divider) {
++        setTextAndValueAndColorfulIcon(text, value, animated, resId, colorTop, colorBottom, divider, false);
++    }
++
++    public void setTextAndValueAndColorfulIcon(String text, CharSequence value, boolean animated, int resId, int colorTop, int colorBottom, boolean divider, boolean forceStock) {
+         imageLeft = 16;
+         offsetFromImage = getOffsetFromImage(false);
+         textView.setText(text);
+@@ -507,7 +519,7 @@ public class TextCell extends FrameLayout {
+         valueTextView.setText(value == null ? "" : TextUtils.ellipsize(valueText = value, valueTextView.getPaint(), AndroidUtilities.displaySize.x / 2.5f, TextUtils.TruncateAt.END), animated);
+         valueTextView.setVisibility(VISIBLE);
+         valueSpoilersTextView.setVisibility(GONE);
+-        setColorfulIcon(colorTop, colorBottom, resId);
++        setColorfulIcon(colorTop, colorBottom, resId, forceStock);
+         valueImageView.setVisibility(GONE);
+         needDivider = divider;
+         setWillNotDraw(!needDivider);
+@@ -639,19 +651,37 @@ public class TextCell extends FrameLayout {
+     }
+ 
      public void setColorfulIcon(int colorTop, int colorBottom, int resId) {
++        setColorfulIcon(colorTop, colorBottom, resId, false);
++    }
++
++    public void setColorfulIcon(int colorTop, int colorBottom, int resId, boolean forceStock) {
          offsetFromImage = getOffsetFromImage(true);
          imageView.setVisibility(VISIBLE);
 -        imageView.setPadding(dp(2), dp(2), dp(2), dp(2));
-+        final boolean isM3 = desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled();
++        forceStockColorfulIcon = forceStock;
++        final boolean isM3 = !forceStock && desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled();
 +        // Match the settings screen exactly: M3 round tiles are a 36dp circle with a 24dp glyph
 +        // (6dp inset); every non-M3 mode is a 28dp stock gradient square with a 24dp glyph (2dp inset).
 +        final int iconPadding = isM3 ? dp(6) : dp(2);
