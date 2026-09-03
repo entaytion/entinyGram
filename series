@@ -381,7 +381,6 @@ bugfix/link-scrim-offset.patch
 bugfix/scrim-touch-lock.patch
 entiny/ccache-detect-fallback.patch
 entiny/branding.patch
-entiny/ghost-mode.patch
 misc/remove-unused-appstandalone.patch
 entiny/amoled-theme.patch
 entiny/hide-gift-elements.patch
@@ -392,3 +391,4 @@ entiny/hide-profile-similar-gifts-tabs.patch
 entiny/build-configuration.patch
 entiny/customizable-settings-rows.patch
 entiny/session-version-display.patch
+entiny/ghost-mode.patch

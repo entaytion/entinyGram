@@ -1202,8 +1202,6 @@
     <string name="InuGhostPresenceModeNormal">Normal</string>
     <string name="InuGhostPresenceModeHidden">Always hidden</string>
     <string name="InuGhostPresenceModeDelayed">Go offline shortly after coming online</string>
-    <string name="InuGhostLocks">Excluded from quick toggle</string>
-    <string name="InuGhostLocksInfo">These options keep their current state when the Ghost Mode quick toggle in the drawer or menu is switched.</string>
 
     <string name="InuGhostEnabled">Ghost Mode enabled</string>
     <string name="InuGhostDisabled">Ghost Mode disabled</string>

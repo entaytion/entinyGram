@@ -1076,8 +1076,6 @@
     <string name="InuGhostPresenceModeNormal">Обычный</string>
     <string name="InuGhostPresenceModeHidden">Всегда скрыт</string>
     <string name="InuGhostPresenceModeDelayed">Уходить в офлайн вскоре после выхода в онлайн</string>
-    <string name="InuGhostLocks">Исключены из быстрого переключателя</string>
-    <string name="InuGhostLocksInfo">Эти опции сохраняют своё состояние при переключении режима призрака кнопкой в меню или списке чатов.</string>
     <string name="InuGhostWhitelist">Белый список</string>
     <string name="InuGhostWhitelistInfo">Режим призрака отключён для этих чатов — нажмите на чат, чтобы убрать его из белого списка.</string>
     <string name="InuGhostWhitelistEmpty">В белом списке пока нет чатов.</string>

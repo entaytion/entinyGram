@@ -36,17 +36,16 @@ enum class SuppressKind {
 /**
  * Ghost mode ("invisible mode"), modeled after AyuGram/NagramX's ghost mode.
  *
- * No stored master flag. Two computed views over the same sub-toggles:
- *  - [isGhostActive] — OR of the sub-toggles: "any suppression is on". Drives display-only
- *    indicators (chat-title ghost icon, Invisible status label) so partial setups still show up.
- *  - [isFullGhost] — AND over every non-locked component being in its ghost state. This is
- *    exactly AyuGram's `AyuConfig.isGhostModeActive()` / exteraless's locked-pair variant and
- *    is what the drawer/burger quick toggle flips via [setGhostMode], which skips components
- *    locked through [InuConfig.GHOST_LOCK_*].
+ * Real, persisted master flag: [InuConfig.GHOST_MODE_ENABLED]. It's a hard gate in
+ * [shouldSuppress] — while it's off, nothing is suppressed regardless of what the sub-toggles
+ * (read/voice/story/typing/presence) say. The sub-toggles keep their own values the whole time;
+ * flipping the master back on resumes exactly the combination that was configured instead of
+ * forcing everything to "all on" (that used to be a real bug: a "no stored master flag, master
+ * switch = every sub-toggle in its ghost state" design meant re-enabling from the drawer quick
+ * toggle stomped a user's partial setup, e.g. only "hide typing", back to all four).
  *
- * [shouldSuppress] reads each sub-toggle directly — no master gate — avoiding the
- * desync a stored master flag creates when multiple UI entry points
- * (drawer icon, settings page, presence picker) can all write to it independently.
+ * [isGhostActive] mirrors the master flag and drives the display-only indicators (chat-title
+ * ghost icon, Invisible status label, drawer/burger icon, settings-page master switch).
  *
  * Unified single source of truth for both network packet filtering
  * ([ConnectionsManager.sendRequestInternal]) and local UI/DB suppression
@@ -57,50 +56,21 @@ object GhostHelper {
     private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
     private var offlineRunnable: Runnable? = null
 
-    /** True if any suppression behavior is currently enabled. Display-only — never gates [shouldSuppress]. */
+    /** True if the master switch is on. Sub-toggles decide *what* gets suppressed while it is. */
     @JvmStatic
-    fun isGhostActive(): Boolean =
-        InuConfig.GHOST_HIDE_READ.value ||
-            InuConfig.GHOST_HIDE_VOICE_READ.value ||
-            InuConfig.GHOST_HIDE_STORY_READ.value ||
-            InuConfig.GHOST_HIDE_TYPING.value ||
-            InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
+    fun isGhostActive(): Boolean = InuConfig.GHOST_MODE_ENABLED.value
 
-    /**
-     * True if every non-locked component is in its ghost state — the state represented
-     * by the quick toggle (`AyuConfig.isGhostModeActive()` / NagramX locked pairs).
-     * Locked components are skipped entirely, like exteraless's `ghostToggleItems`.
-     */
-    @JvmStatic
-    fun isFullGhost(): Boolean {
-        if (!InuConfig.GHOST_LOCK_HIDE_READ.value && !InuConfig.GHOST_HIDE_READ.value) return false
-        if (!InuConfig.GHOST_LOCK_HIDE_VOICE_READ.value && !InuConfig.GHOST_HIDE_VOICE_READ.value) return false
-        if (!InuConfig.GHOST_LOCK_HIDE_STORY_READ.value && !InuConfig.GHOST_HIDE_STORY_READ.value) return false
-        if (!InuConfig.GHOST_LOCK_HIDE_TYPING.value && !InuConfig.GHOST_HIDE_TYPING.value) return false
-        if (!InuConfig.GHOST_LOCK_PRESENCE.value &&
-            InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.HIDDEN
-        ) return false
-        return true
-    }
-
-    /** Mass-sets the unlocked sub-toggles together (mirrors AyuGram/NagramX `setGhostMode`; locked ones keep their state). */
+    /** Flips only the master flag — sub-toggles and presence mode are left exactly as configured. */
     @JvmStatic
     fun setGhostMode(enabled: Boolean) {
-        if (!InuConfig.GHOST_LOCK_HIDE_READ.value) InuConfig.GHOST_HIDE_READ.value = enabled
-        if (!InuConfig.GHOST_LOCK_HIDE_VOICE_READ.value) InuConfig.GHOST_HIDE_VOICE_READ.value = enabled
-        if (!InuConfig.GHOST_LOCK_HIDE_STORY_READ.value) InuConfig.GHOST_HIDE_STORY_READ.value = enabled
-        if (!InuConfig.GHOST_LOCK_HIDE_TYPING.value) InuConfig.GHOST_HIDE_TYPING.value = enabled
-        if (!InuConfig.GHOST_LOCK_PRESENCE.value) {
-            InuConfig.GHOST_PRESENCE_MODE.value =
-                if (enabled) InuConfig.GhostPresenceModeItem.HIDDEN else InuConfig.GhostPresenceModeItem.NORMAL
-        }
+        InuConfig.GHOST_MODE_ENABLED.value = enabled
         syncPresence(UserConfig.selectedAccount)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
     }
 
     @JvmStatic
     fun toggleGhostMode(): Boolean {
-        val newState = !isFullGhost()
+        val newState = !InuConfig.GHOST_MODE_ENABLED.value
         setGhostMode(newState)
         return newState
     }
@@ -173,10 +143,13 @@ object GhostHelper {
 
     /**
      * Single source of truth for checking if an action should be suppressed by Ghost Mode.
-     * Reads each sub-toggle directly — no master-flag gate (see class doc).
+     * Hard-gated by the master flag first, then reads the specific sub-toggle for [kind].
      */
     @JvmStatic
     fun shouldSuppress(dialogId: Long, kind: SuppressKind): Boolean {
+        if (!InuConfig.GHOST_MODE_ENABLED.value) {
+            return false
+        }
         if (dialogId != 0L && temporarilyAllowedDialogs.contains(dialogId)) {
             return false
         }
@@ -212,24 +185,7 @@ object GhostHelper {
 
     @JvmStatic
     fun shouldSuppressLocalRead(dialogId: Long): Boolean {
-        // Mirrors the TL_channels_readHistory exemption in processSendRequest: channels/
-        // supergroups have no per-user read receipt visible to others, so there is nothing to
-        // hide here — only the local unread badge (which never gets the server's
-        // TL_updateReadChannelInbox confirmation once the request itself isn't suppressed) to
-        // lose by gating it anyway.
-        if (isChannelDialog(dialogId)) {
-            return false
-        }
-        if (!InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)) {
-            return true
-        }
-        return false
-    }
-
-    private fun isChannelDialog(dialogId: Long): Boolean {
-        if (!DialogObject.isChatDialog(dialogId)) return false
-        val chat = MessagesController.getInstance(UserConfig.selectedAccount).getChat(-dialogId) ?: return false
-        return ChatObject.isChannel(chat)
+        return !InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)
     }
 
     /**
@@ -255,13 +211,7 @@ object GhostHelper {
                     false
                 }
             }
-            // Channels/supergroups have no per-user "read by you" visible to other members —
-            // only anonymous view counts — so suppressing this buys zero privacy. It only
-            // starves the local unread counter of the TL_updateReadChannelInbox confirmation
-            // the server sends back, leaving the badge stuck forever (see the "unread counter
-            // never clears for channels" report). DMs and basic groups keep the suppression:
-            // there the other side's client genuinely reflects your read state back to them.
-            is TLRPC.TL_channels_readHistory -> false
+            is TLRPC.TL_channels_readHistory,
             is TLRPC.TL_messages_readHistory,
             is TLRPC.TL_messages_readEncryptedHistory,
             is TLRPC.TL_messages_readDiscussion,
@@ -280,7 +230,7 @@ object GhostHelper {
             is TL_account.updateStatus -> {
                 if (shouldSuppress(0L, SuppressKind.ONLINE)) {
                     request.offline = true
-                } else if (InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED && !request.offline) {
+                } else if (InuConfig.GHOST_MODE_ENABLED.value && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED && !request.offline) {
                     scheduleOffline(account)
                 }
                 false
@@ -377,31 +327,24 @@ object GhostHelper {
     }
 
     /**
-     * Whether stock's "reset ignoreSetOnline on pause" (LaunchActivity.onPause) should be
-     * skipped — Ghost Mode's hidden/delayed presence relies on ignoreSetOnline staying true
-     * across background/foreground cycles, otherwise every resume silently re-enables the
-     * stock auto-online logic and undoes the "always hidden" setting.
-     */
-    @JvmStatic
-    fun shouldKeepIgnoringOnline(): Boolean {
-        return InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
-    }
-
-    /**
      * Re-asserts the desired presence right after a settings change:
      *  - hide/delay presence → send offline immediately (drop the stale "online")
      *  - normal presence → send online to restore stock presence
+     *
+     * Deliberately does NOT touch [MessagesController.ignoreSetOnline]. That stock field is
+     * also the gate for ChatActivity's local read-marking block (see the read-history hunk in
+     * markDialogAsRead's caller) — setting it true to keep presence hidden silently disabled
+     * marking messages as read while a chat was open, since ChatActivity only runs that block
+     * when `!ignoreSetOnline`. Presence hiding is already fully handled at the packet level by
+     * [processSendRequest]'s `TL_account.updateStatus` case, which force-rewrites every status
+     * update to offline regardless of this flag, so ignoreSetOnline was redundant here and only
+     * caused the "unread badge never clears in ghost mode" bug.
      */
     @JvmStatic
     fun syncPresence(account: Int) {
-        val controller = MessagesController.getInstance(account)
-        if (InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL) {
-            controller?.ignoreSetOnline = true
-            sendStatus(account, offline = true)
-        } else {
-            controller?.ignoreSetOnline = false
-            sendStatus(account, offline = false)
-        }
+        val hide = InuConfig.GHOST_MODE_ENABLED.value &&
+            InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
+        sendStatus(account, offline = hide)
     }
 
     /**
@@ -421,7 +364,7 @@ object GhostHelper {
     private fun scheduleOffline(account: Int) {
         offlineRunnable?.let { Utilities.stageQueue.cancelRunnable(it) }
         val runnable = Runnable {
-            if (InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED) {
+            if (InuConfig.GHOST_MODE_ENABLED.value && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED) {
                 sendStatus(account, offline = true)
             }
         }

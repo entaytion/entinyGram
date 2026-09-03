@@ -78,18 +78,18 @@ object InuHooks {
         for (msg in messages) onNewMessage(msg, acc)
     }
 
-    // Re-asserts MessagesController.ignoreSetOnline on every reconnect, since stock paths
-    // (MessagesController.cleanup, VoIPService/VoIPPreNotificationService call teardown) reset it.
+    // Re-asserts the desired presence on every reconnect (stock resets connection-level state on
+    // reconnect, e.g. via MessagesController.cleanup / VoIPService teardown).
     //
-    // Audited: this is belt-and-braces only, NOT the guard that makes "hidden" presence work.
-    // HIDDEN presence is enforced at the packet level -- GhostHelper.processSendRequest, called
-    // from ConnectionsManager.sendRequestInternal (the single choke point behind every
-    // sendRequest overload), force-rewrites `offline = true` on any outgoing TL_account.updateStatus.
-    // And InuConfig.load() runs at the very top of ApplicationLoader.onCreate, before
-    // NativeLoader/ConnectionsManager exist, so there is no cold-start window in which
-    // GHOST_PRESENCE_MODE reads its default. An online status therefore cannot race out ahead of
-    // syncPresence(). ignoreSetOnline only observably matters for DELAYED presence, which
-    // deliberately lets a real "online" through and schedules the offline afterwards.
+    // HIDDEN presence is enforced entirely at the packet level -- GhostHelper.processSendRequest,
+    // called from ConnectionsManager.sendRequestInternal (the single choke point behind every
+    // sendRequest overload), force-rewrites `offline = true` on any outgoing TL_account.updateStatus
+    // while GHOST_MODE_ENABLED + GHOST_PRESENCE_MODE == HIDDEN. syncPresence() here does NOT touch
+    // MessagesController.ignoreSetOnline -- that stock field also gates ChatActivity's local
+    // read-marking block, so a Ghost Mode component setting it true previously broke marking
+    // messages as read while a chat was open (see GhostHelper.syncPresence's own doc). This
+    // observer only re-sends the offline/online status itself; DELAYED presence relies on
+    // scheduleOffline() letting a real "online" through first and scheduling the offline after.
     private val connectionStateObserver = NotificationCenter.NotificationCenterDelegate { id, acc, _ ->
         if (id != NotificationCenter.didUpdateConnectionState) return@NotificationCenterDelegate
         if (org.telegram.tgnet.ConnectionsManager.getInstance(acc).connectionState

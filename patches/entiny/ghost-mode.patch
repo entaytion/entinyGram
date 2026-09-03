@@ -4,13 +4,13 @@ Date: Mon, 10 Aug 2026 08:11:28 +0300
 Subject: Add ghost mode (invisible mode) for read receipts, typing and online status
 
 ---
- .../org/telegram/messenger/ContactsController.java    |  1 +
- .../java/org/telegram/messenger/LocaleController.java |  6 ++++++
- .../org/telegram/messenger/MessagesController.java    | 11 +++++++++++
- .../java/org/telegram/tgnet/ConnectionsManager.java   |  3 +++
- .../src/main/java/org/telegram/ui/LaunchActivity.java |  2 +-
- .../main/java/org/telegram/ui/ProfileActivity.java    |  6 +++++-
- 6 files changed, 27 insertions(+), 2 deletions(-)
+ .../java/org/telegram/messenger/ContactsController.java     | 1 +
+ .../main/java/org/telegram/messenger/LocaleController.java  | 6 ++++++
+ .../java/org/telegram/messenger/MessagesController.java     | 3 +++
+ .../main/java/org/telegram/tgnet/ConnectionsManager.java    | 3 +++
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 3 +++
+ .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++++-
+ 6 files changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -45,18 +45,10 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14800,6 +14800,17 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14800,6 +14800,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
-+        // Diagnostic for the "unread badge doesn't clear after opening/exiting a forum chat"
-+        // report -- dump every call so a captured log (adb, or Settings -> Logs -> Send on a
-+        // release build) can show whether this is even reached, and with what threadId/
-+        // maxPositiveId, for the specific chat/topic combo that reproduces it.
-+        FileLog.d("markDialogAsRead dialogId=" + dialogId + " threadId=" + threadId
-+                + " maxPositiveId=" + maxPositiveId + " maxNegativeId=" + maxNegativeId
-+                + " isForum=" + isForum(dialogId)
-+                + " ghostSuppressed=" + desu.inugram.helpers.security.GhostHelper.shouldSuppressLocalRead(dialogId));
 +        if (desu.inugram.helpers.security.GhostHelper.shouldSuppressLocalRead(dialogId)) {
 +            return;
 +        }
@@ -77,24 +69,32 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -6793,7 +6793,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
-         Utilities.stageQueue.postRunnable(() -> {
-             ApplicationLoader.mainInterfacePausedStageQueue = true;
-             ApplicationLoader.mainInterfacePausedStageQueueTime = 0;
--            if (VoIPService.getSharedInstance() == null) {
-+            if (VoIPService.getSharedInstance() == null && !desu.inugram.helpers.security.GhostHelper.shouldKeepIgnoringOnline()) {
-                 MessagesController.getInstance(account).ignoreSetOnline = false;
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2945,6 +2945,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             currentConnectionState = getConnectionsManager().getConnectionState();
+ 
+             globalObserversGroup.add(NotificationCenter.emojiLoaded);
++            globalObserversGroup.add(NotificationCenter.mainUserInfoChanged);
+             if (!onlySelect) {
+                 globalObserversGroup.add(NotificationCenter.closeSearchByActiveAction);
+                 globalObserversGroup.add(NotificationCenter.proxySettingsChanged);
+@@ -10874,6 +10875,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
-         });
+         } else if (id == NotificationCenter.proxySettingsChanged) {
+             updateProxyButton(false, false);
++        } else if (id == NotificationCenter.mainUserInfoChanged) {
++            updateStatus(getUserConfig().getCurrentUser(), true);
+         } else if (id == NotificationCenter.updateInterfaces) {
+             Integer mask = (Integer) args[0];
+             updateVisibleRows(mask);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -11532,7 +11532,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11565,7 +11565,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      if (userInfo != null && userInfo.stars_rating != null && userInfo.stars_rating.stars < 0) {
                          newString2 = getString(R.string.StarRatingLevelNegative).toLowerCase(Locale.ROOT);
                      } else {

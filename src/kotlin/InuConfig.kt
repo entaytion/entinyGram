@@ -25,6 +25,7 @@ object InuConfig {
         FontConfig.register() // force-init so its items join _items before we load them
         for (item in _items) item.load(prefs)
         migrateGhostMasterFlag()
+        migrateGhostModeEnabledDefault()
         migrateSelfDestructCategories()
     }
 
@@ -71,6 +72,27 @@ object InuConfig {
         // never a second stomp.
         GHOST_MASTER_FLAG_MIGRATED.value = true
         if (prefs.contains("ghost_mode")) prefs.edit(commit = true) { remove("ghost_mode") }
+    }
+
+    // GHOST_MODE_ENABLED reintroduces a real, persisted master flag (see GhostHelper's class doc
+    // for why): with sub-toggles alone, there was no way to "pause" ghost mode without wiping the
+    // user's per-toggle picks, and turning the drawer quick-toggle back on forced every sub-toggle
+    // to true regardless of what had actually been configured. Unlike the legacy `ghost_mode` key
+    // this replaces a second time, this migration is guarded by its OWN non-exportable run-record
+    // ([GHOST_MODE_ENABLED_MIGRATED]), not by the presence of the key it writes -- so a restored
+    // backup that reintroduces an old `ghost_mode_enabled` value cannot re-arm it and stomp a
+    // later choice. It only runs once, ever, on the upgrade that introduces this flag: if any
+    // sub-toggle was already active (from the no-master-flag era), it flips the new master on so
+    // existing protection doesn't silently vanish; a fresh install with everything off stays off.
+    private fun migrateGhostModeEnabledDefault() {
+        if (GHOST_MODE_ENABLED_MIGRATED.value) return
+        GHOST_MODE_ENABLED_MIGRATED.value = true
+        val hadActiveSubToggle = GHOST_HIDE_READ.value || GHOST_HIDE_VOICE_READ.value ||
+            GHOST_HIDE_STORY_READ.value || GHOST_HIDE_TYPING.value ||
+            GHOST_PRESENCE_MODE.value != GhostPresenceModeItem.NORMAL
+        if (hadActiveSubToggle) {
+            GHOST_MODE_ENABLED.value = true
+        }
     }
 
     // Mirrors GhostHelper.shouldSuppress's convention: Log.d for adb, FileLog.d so a release-build
@@ -1476,16 +1498,24 @@ object InuConfig {
     val BIOMETRIC_LOCK_ARCHIVE_EVERY_TIME = BoolItem("biometric_lock_archive_every_time", false)
 
     // --- ghost mode (invisible mode) ---
-    // No stored master switch: the quick toggle represents "full ghost" — every
-    // non-locked component in its ghost state (AyuGram/exteraless isGhostModeActive).
-    // shouldSuppress() still reads each component directly; locks only affect the
-    // quick toggle. All suppression defaults stay off so a fresh install remains
-    // stock-identical without needing a gate. GHOST_READ_ON_SEND defaults to true,
-    // matching AyuGram's markReadAfterSend.
+    // Real, persisted master switch: GHOST_MODE_ENABLED gates every sub-toggle below (see
+    // GhostHelper.shouldSuppress). While it's off, nothing is suppressed no matter what the
+    // sub-toggles say -- they keep their own values so turning the master back on resumes
+    // exactly what was configured, instead of forcing everything to "all on". All suppression
+    // defaults stay off so a fresh install remains stock-identical without needing a gate.
+    // GHOST_READ_ON_SEND defaults to true, matching AyuGram's markReadAfterSend.
     // Run-record for [migrateGhostMasterFlag]. Never exported: a backup taken before the
     // migration must not be able to un-set it and re-arm the stomp on restore.
     @JvmField
     val GHOST_MASTER_FLAG_MIGRATED = BoolItem("ghost_master_flag_migrated", false, exportable = false)
+
+    // Run-record for [migrateGhostModeEnabledDefault]. Never exported, same reasoning as
+    // GHOST_MASTER_FLAG_MIGRATED above.
+    @JvmField
+    val GHOST_MODE_ENABLED_MIGRATED = BoolItem("ghost_mode_enabled_migrated", false, exportable = false)
+
+    @JvmField
+    val GHOST_MODE_ENABLED = BoolItem("ghost_mode_enabled", false)
 
     @JvmField
     val GHOST_HIDE_READ = BoolItem("ghost_hide_read", false)
@@ -1533,23 +1563,6 @@ object InuConfig {
 
     @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
-
-    // Quick-toggle locks: a locked component keeps its current value when the
-    // drawer/burger Ghost toggle flips everything else (exteraless/NagramX style).
-    @JvmField
-    val GHOST_LOCK_HIDE_READ = BoolItem("ghost_lock_hide_read", false)
-
-    @JvmField
-    val GHOST_LOCK_HIDE_VOICE_READ = BoolItem("ghost_lock_hide_voice_read", false)
-
-    @JvmField
-    val GHOST_LOCK_HIDE_STORY_READ = BoolItem("ghost_lock_hide_story_read", false)
-
-    @JvmField
-    val GHOST_LOCK_HIDE_TYPING = BoolItem("ghost_lock_hide_typing", false)
-
-    @JvmField
-    val GHOST_LOCK_PRESENCE = BoolItem("ghost_lock_presence", false)
 
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)

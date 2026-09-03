@@ -1049,8 +1049,6 @@
     <string name="InuGhostWhitelistRemoved">已从白名单移除</string>
     <string name="InuGhostHideVoiceRead">不将语音和视频消息标记为已播放</string>
     <string name="InuGhostHideVoiceReadInfo">语音消息和视频动态不会向发送方显示为已听取或已播放。</string>
-    <string name="InuGhostLocks">不随快速开关切换</string>
-    <string name="InuGhostLocksInfo">锁定的选项在切换抽屉或菜单中的幽灵模式快速开关时保持其状态。</string>
     <string name="InuGhostMode">幽灵模式</string>
     <string name="InuGhostModeDisableForChat">对此聊天禁用幽灵模式</string>
     <string name="InuGhostModeDisabledForChatDone">已对此聊天禁用幽灵模式</string>

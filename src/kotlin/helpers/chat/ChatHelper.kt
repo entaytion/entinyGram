@@ -501,7 +501,7 @@ object ChatHelper {
             icons.add(R.drawable.filled_fire)
         }
 
-        if (InuConfig.GHOST_HIDE_READ.value && !GhostHelper.isDialogWhitelisted(activity.dialogId)) {
+        if (GhostHelper.shouldSuppressRead(activity.dialogId)) {
             items.add(LocaleController.getString(R.string.InuMarkChatAsRead))
             options.add(OPTION_MARK_AS_READ)
             icons.add(R.drawable.msg_markread)

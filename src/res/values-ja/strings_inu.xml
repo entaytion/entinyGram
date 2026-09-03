@@ -1052,8 +1052,6 @@
     <string name="InuGhostWhitelistRemoved">ホワイトリストから削除しました</string>
     <string name="InuGhostHideVoiceRead">音声・動画メッセージを再生済みにしない</string>
     <string name="InuGhostHideVoiceReadInfo">ボイスメッセージやビデオループを再生しても、送信者に再生済みとして表示されません。</string>
-    <string name="InuGhostLocks">クイックトグルの対象外</string>
-    <string name="InuGhostLocksInfo">ロックされた項目は、ドロワーやメニューのゴーストモードクイックトグルを切り替えても状態が保持されます。</string>
     <string name="InuGhostMode">ゴーストモード</string>
     <string name="InuGhostModeDisableForChat">このチャットでゴーストモードを無効化</string>
     <string name="InuGhostModeDisabledForChatDone">このチャットのゴーストモードを無効にしました</string>
