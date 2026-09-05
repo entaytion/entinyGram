@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -9178,14 +9178,18 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -9176,14 +9176,18 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      private int reasonsToHideMainContent = 0;
      private int reasonsToHideDecorView = 0;
  

@@ -15,9 +15,9 @@ import java.io.File
 import kotlin.system.exitProcess
 
 public object InuUtils {
-    private var _nextId = 1
+    private val _nextId = java.util.concurrent.atomic.AtomicInteger(1)
     fun generateId(): Int {
-        return _nextId++
+        return _nextId.getAndIncrement()
     }
 
 

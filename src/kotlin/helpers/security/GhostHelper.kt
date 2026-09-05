@@ -54,7 +54,7 @@ enum class SuppressKind {
 object GhostHelper {
 
     private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
-    private var offlineRunnable: Runnable? = null
+    @Volatile private var offlineRunnable: Runnable? = null
 
     /** True if the master switch is on. Sub-toggles decide *what* gets suppressed while it is. */
     @JvmStatic

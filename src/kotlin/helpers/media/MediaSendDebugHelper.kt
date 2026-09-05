@@ -20,8 +20,8 @@ object MediaSendDebugHelper {
 
     private var watcher: FileObserver? = null
 
-    private var freeSpaceValue = -1L
-    private var freeSpaceAt = 0L
+    @Volatile private var freeSpaceValue = -1L
+    @Volatile private var freeSpaceAt = 0L
 
     @JvmStatic
     fun isEnabled(): Boolean = BuildVars.LOGS_ENABLED && InuConfig.EXTRA_DEBUG_LOGS.value

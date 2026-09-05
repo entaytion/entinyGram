@@ -65,13 +65,16 @@ object FolderHelper {
         val db = storage.database ?: return
         db.executeFast("DELETE FROM inu_folder_meta").stepThis().dispose()
         val state = db.executeFast("REPLACE INTO inu_folder_meta VALUES(?, ?)")
-        for (filter in filters) {
-            state.requery()
-            state.bindInteger(1, filter.id)
-            state.bindString(2, filter.inu_emoticon ?: "")
-            state.step()
+        try {
+            for (filter in filters) {
+                state.requery()
+                state.bindInteger(1, filter.id)
+                state.bindString(2, filter.inu_emoticon ?: "")
+                state.step()
+            }
+        } finally {
+            state.dispose()
         }
-        state.dispose()
     }
 
     @JvmStatic
@@ -282,19 +285,23 @@ object FolderHelper {
     fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP
 
     /**
-     * translationY for [filterTabsView] when [atBottom] is on. Reuses the same base
-     * (navigationBarHeight, additionFloatingButtonOffset, additionalFloatingTranslation,
-     * floatingButtonPanOffset) DialogsActivity already computes for the floating button row,
-     * placing the tabs pill right above the bottom navigation bar / main tabs.
+     * translationY for [filterTabsView] when [atBottom] is on. Places the tabs pill right
+     * above the bottom navigation bar / main tabs.
+     *
+     * Note: [additionalFloatingTranslation] is intentionally not subtracted here because temporary
+     * bottom alerts (Bulletin, UndoView) already position themselves above the tabs via
+     * [DialogsActivity.getBottomOffset], so the tabs must stay docked at the bottom rather
+     * than jumping up into the alert.
      */
     @JvmStatic
+    @JvmOverloads
     fun bottomTabsTranslationY(
         navigationBarHeight: Int,
         additionFloatingButtonOffset: Int,
-        additionalFloatingTranslation: Float,
-        floatingButtonPanOffset: Float
+        additionalFloatingTranslation: Float = 0f,
+        floatingButtonPanOffset: Float = 0f
     ): Float {
         val baseOffset = additionFloatingButtonOffset - AndroidUtilities.dp(bottomReservedHeightDp().toFloat())
-        return -navigationBarHeight - baseOffset - additionalFloatingTranslation - floatingButtonPanOffset
+        return -navigationBarHeight - baseOffset - floatingButtonPanOffset
     }
 }
