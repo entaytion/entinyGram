@@ -169,7 +169,11 @@ jobs:
 
       - name: Stage artifacts
         env:
-          LAST_UPLOADED_SHA: ${{ vars.LAST_RELEASE_SHA }}
+          # Real releases diff from the last REAL release (LAST_RELEASE_SHA), so nothing
+          # announced only to the CI channel via a pre-release build gets silently dropped
+          # from the public changelog. Pre-releases diff from the last build of any kind
+          # (LAST_BUILD_SHA), which keeps each test build's own notes incremental.
+          LAST_UPLOADED_SHA: ${{ inputs.prerelease == 'true' && vars.LAST_BUILD_SHA || vars.LAST_RELEASE_SHA }}
         run: |
           mkdir -p out
           apk='${{ steps.info.outputs.apk-arm64 }}'
@@ -391,7 +395,14 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
+          PRE_RELEASE: ${{ inputs.prerelease }}
         run: |
           next_day_counter=$((${{ needs.build.outputs.day-counter }} + 1))
           gh variable set INU_DAY_STATE --body "${{ needs.build.outputs.date }}:$next_day_counter"
-          gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
+          # LAST_BUILD_SHA moves on every build so pre-release changelogs stay incremental.
+          # LAST_RELEASE_SHA only moves on a real release, so the next real release's
+          # changelog still spans everything since the last one, prereleases included.
+          gh variable set LAST_BUILD_SHA --body "$GITHUB_SHA"
+          if [ "$PRE_RELEASE" != 'true' ]; then
+            gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
+          fi
