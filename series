@@ -378,7 +378,6 @@ feature/instant-camera-mode.patch
 feature/minimize-attach-panel.patch
 bugfix/link-scrim-offset.patch
 bugfix/scrim-touch-lock.patch
-entiny/ccache-detect-fallback.patch
 entiny/branding.patch
 misc/remove-unused-appstandalone.patch
 entiny/amoled-theme.patch
@@ -387,10 +386,10 @@ entiny/hide-dialogs-banners.patch
 entiny/hide-attach-emoji-premium-upsells.patch
 entiny/disable-call-rating.patch
 entiny/hide-profile-similar-gifts-tabs.patch
-entiny/build-configuration.patch
 entiny/customizable-settings-rows.patch
 entiny/session-version-display.patch
 entiny/ghost-mode.patch
 bugfix/launch-activity-leaks.patch
 feature/round-recorder-zoom-buttons.patch
-bugfix/r8-guava-j2objc-dontwarn.patch
+bugfix/non-island-shared-media-scroll.patch
+entiny/build-configuration.patch
