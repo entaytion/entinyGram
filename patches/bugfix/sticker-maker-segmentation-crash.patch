@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 5 Sep 2026 23:01:00 +0300
+Subject: Guard ML Kit subject segmentation client creation against missing module crash
+
+---
+ .../Paint/Views/StickerMakerView.java         | 26 ++++++++++++-------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StickerMakerView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StickerMakerView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StickerMakerView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StickerMakerView.java
+@@ -930,21 +930,29 @@ public class StickerMakerView extends FrameLayout implements NotificationCenter.
+ 
+     private void segment(Bitmap bitmap, int orientation, Utilities.Callback<List<SubjectMock>> whenDone, Utilities.Callback<SegmentedObject> whenEmpty) {
+         segmentingLoading = true;
+-        SubjectSegmenter segmenter = SubjectSegmentation.getClient(
+-            new SubjectSegmenterOptions.Builder()
+-                .enableMultipleSubjects(
+-                    new SubjectSegmenterOptions.SubjectResultOptions.Builder()
+-                        .enableSubjectBitmap()
+-                        .build()
+-                )
+-                .build()
+-        );
+         if (EmuDetector.with(getContext()).detect()) {
+             ArrayList<SubjectMock> list = new ArrayList<>();
+             list.add(SubjectMock.mock(sourceBitmap));
+             whenDone.run(list);
+             return;
+         }
++        final SubjectSegmenter segmenter;
++        try {
++            segmenter = SubjectSegmentation.getClient(
++                new SubjectSegmenterOptions.Builder()
++                    .enableMultipleSubjects(
++                        new SubjectSegmenterOptions.SubjectResultOptions.Builder()
++                            .enableSubjectBitmap()
++                            .build()
++                    )
++                    .build()
++            );
++        } catch (Throwable e) {
++            segmentingLoading = false;
++            FileLog.e(e);
++            whenDone.run(new ArrayList<>());
++            return;
++        }
+         InputImage inputImage = InputImage.fromBitmap(bitmap, orientation);
+         segmenter.process(inputImage)
+             .addOnSuccessListener(result -> {

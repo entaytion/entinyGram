@@ -393,3 +393,5 @@ bugfix/launch-activity-leaks.patch
 feature/round-recorder-zoom-buttons.patch
 bugfix/non-island-shared-media-scroll.patch
 entiny/build-configuration.patch
+bugfix/sticker-maker-segmentation-crash.patch
+feature/osmdroid-provider-wiring.patch

@@ -11,6 +11,7 @@ import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.maps.MapsHelper
 import desu.inugram.helpers.search.UserIdOpenHelper
 import desu.inugram.ui.profile.DeleteProfilePhotosSheet
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
@@ -489,7 +490,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 mapProviderOptions.indexOfFirst { it.first == InuConfig.MAP_PROVIDER.value }.coerceAtLeast(0),
             ) { which ->
                 InuConfig.MAP_PROVIDER.value = mapProviderOptions[which].first
-                showRestartBulletin()
+                ApplicationLoader.inu_resetMapsProvider()
             }
 
             BUTTON_MAP_PREVIEW_PROVIDER -> RadioItemOptions.show(

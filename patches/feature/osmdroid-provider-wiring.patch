@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 5 Sep 2026 23:02:00 +0300
+Subject: Actually select the osmdroid maps provider when InuConfig.MAP_PROVIDER is set to OSM_LITE
+
+---
+ .../java/org/telegram/messenger/ApplicationLoader.java   | 5 +++++
+ .../org/telegram/messenger/ApplicationLoaderImpl.java    | 9 +++++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -101,6 +101,11 @@ public class ApplicationLoader extends Application {
+         return mapsProvider;
+     }
+ 
++    // lets a settings toggle apply the next time a map is opened instead of requiring a restart
++    public static void inu_resetMapsProvider() {
++        mapsProvider = null;
++    }
++
+     protected IMapsProvider onCreateMapsProvider() {
+         return new GoogleMapsProvider();
+     }
+diff --git a/TMessagesProj_App/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java b/TMessagesProj_App/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java
+index 0000000..0000000 100644
+--- a/TMessagesProj_App/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java
++++ b/TMessagesProj_App/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java
+@@ -7,4 +7,13 @@ public class ApplicationLoaderImpl extends ApplicationLoader {
+     protected String onGetApplicationId() {
+         return BuildConfig.APPLICATION_ID;
+     }
++
++    @Override
++    protected IMapsProvider onCreateMapsProvider() {
++        if (desu.inugram.helpers.maps.MapsHelper.hasOsmdroid
++                && desu.inugram.InuConfig.MAP_PROVIDER.getValue() == desu.inugram.InuConfig.MapProviderItem.OSM_LITE) {
++            return desu.inugram.helpers.maps.MapsHelper.newOsmdroidProvider();
++        }
++        return super.onCreateMapsProvider();
++    }
+ }
