@@ -4,14 +4,19 @@ Date: Sun, 7 Jun 2026 02:05:05 +0300
 Subject: fix various memory leaks in LaunchActivity
 
 ---
- .../src/main/java/org/telegram/ui/LaunchActivity.java         | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../src/main/java/org/telegram/ui/LaunchActivity.java       | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -6918,7 +6918,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -6925,11 +6925,13 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                 getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback((OnBackAnimationCallback) onBackAnimationCallback);
+             }
+         } else if (Build.VERSION.SDK_INT >= 33) {
+-            if (onBackAnimationCallback instanceof OnBackInvokedCallback) {
++            if (onBackInvokedCallback instanceof OnBackInvokedCallback) {
                  getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback((OnBackInvokedCallback) onBackInvokedCallback);
              }
          }

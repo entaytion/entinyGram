@@ -68,6 +68,6 @@ When creating or changing patches, edit `worktree/` and export through the docum
 
 ## Acknowledgements
 
-Special thanks to [Inugram](https://github.com/teidesu/inugram), [Telegram Android](https://github.com/DrKLO/Telegram), and the projects that inspired or contributed features, including [Nekogram](https://github.com/Nekogram/Nekogram), [NagramX](https://github.com/risin42/NagramX), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), [materialgram](https://github.com/kukuruzka165/materialgram), and [Catogram](https://github.com/Catogram/Catogram).
+Special thanks to [Inugram](https://github.com/teidesu/inugram), [Telegram Android](https://github.com/DrKLO/Telegram), and the projects that inspired or contributed features, including [Nekogram](https://github.com/Nekogram/Nekogram), [NagramX](https://github.com/risin42/NagramX), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), [materialgram](https://github.com/kukuruzka165/materialgram), [Catogram](https://github.com/Catogram/Catogram), [Xenon](https://github.com/sinkclose/Xenon), and [exteraLess](https://github.com/exteraless/exteraless).
 
 See [LICENSE](LICENSE) for licensing information.
