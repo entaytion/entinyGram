@@ -637,6 +637,8 @@
     <string name="InuMonetThemeAutoAmoled">自動 (AMOLED)</string>
     <string name="InuRoundRecorderKeepZoom">ピンチ解除後もズームを保持</string>
     <string name="InuRoundRecorderZoomSlider">ズームスライダー</string>
+    <string name="InuRoundRecorderZoomButtons">ズームレベルボタン</string>
+    <string name="InuRoundRecorderZoomButtonsInfo">丸型カメラの上に1×/2×/3×/5×/10×のボタンを表示（レンズの対応範囲まで）。タップでズームを固定でき、ピンチやスライダーのドラッグだけに頼らない</string>
     <string name="InuRoundRecorderExponentialZoom">指数的ズーム</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Google Camera のような滑らかなズームカーブ</string>
     <string name="InuRoundRecorderDualCamera">デュアルカメラ</string>

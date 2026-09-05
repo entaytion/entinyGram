@@ -268,6 +268,14 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.ROUND_RECORDER_ZOOM_SLIDER.value)
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS,
+                R.string.InuRoundRecorderZoomButtons,
+                R.string.InuRoundRecorderZoomButtonsInfo,
+                InuConfig.ROUND_RECORDER_ZOOM_BUTTONS.value
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_ROUND_RECORDER_KEEP_ZOOM,
                 LocaleController.getString(R.string.InuRoundRecorderKeepZoom),
@@ -470,6 +478,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             }
 
             TOGGLE_ROUND_RECORDER_ZOOM_SLIDER -> (view as? TextCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_ZOOM_SLIDER.toggle()
+            TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS ->
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_ZOOM_BUTTONS.toggle()
             TOGGLE_ROUND_RECORDER_KEEP_ZOOM -> (view as? TextCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_KEEP_ZOOM.toggle()
             TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPONENTIAL_ZOOM.toggle()
@@ -528,6 +538,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_ZOOM_SLIDER = InuUtils.generateId()
+        private val TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_KEEP_ZOOM = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_DUAL_CAMERA = InuUtils.generateId()
@@ -589,6 +600,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("simple-attach-popup-animation", R.string.InuSimpleAttachPopupAnimation, TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION),
                 SearchRegistry.Entry("round-default-camera", R.string.InuRoundDefaultCamera, BUTTON_ROUND_DEFAULT_CAMERA),
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),
+                SearchRegistry.Entry("round-recorder-zoom-buttons", R.string.InuRoundRecorderZoomButtons, TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS),
                 SearchRegistry.Entry("round-recorder-keep-zoom", R.string.InuRoundRecorderKeepZoom, TOGGLE_ROUND_RECORDER_KEEP_ZOOM),
                 SearchRegistry.Entry("round-recorder-exponential-zoom", R.string.InuRoundRecorderExponentialZoom, TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM),
                 SearchRegistry.Entry("round-recorder-dual-camera", R.string.InuRoundRecorderDualCamera, TOGGLE_ROUND_RECORDER_DUAL_CAMERA),

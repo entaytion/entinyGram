@@ -967,6 +967,9 @@ object InuConfig {
     val ROUND_RECORDER_ZOOM_SLIDER = BoolItem("round_recorder_zoom_slider", true)
 
     @JvmField
+    val ROUND_RECORDER_ZOOM_BUTTONS = BoolItem("round_recorder_zoom_buttons", true)
+
+    @JvmField
     val ROUND_RECORDER_EXPONENTIAL_ZOOM = BoolItem("round_recorder_exponential_zoom", true)
 
     @JvmField

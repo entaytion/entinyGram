@@ -273,6 +273,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - hide "send as" picker (long-tap stickers button to reveal)
 - round recorder:
   - zoom slider below the video feed
+  - fixed zoom-level buttons (1×/2×/3×/5×/10×, capped to what the lens supports) - tap to snap and lock zoom instead of only pinching or dragging the slider
   - keep zoom on pinch release
   - gentler exponential zoom curve (like in normal camera apps)
   - toggle to disable dual-camera mode

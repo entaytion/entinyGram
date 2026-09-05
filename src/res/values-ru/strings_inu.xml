@@ -693,6 +693,8 @@
     <string name="InuMonetThemeAutoAmoled">Авто (AMOLED)</string>
     <string name="InuRoundRecorderKeepZoom">Сохранять зум после щипка</string>
     <string name="InuRoundRecorderZoomSlider">Ползунок зума</string>
+    <string name="InuRoundRecorderZoomButtons">Кнопки уровня зума</string>
+    <string name="InuRoundRecorderZoomButtonsInfo">Показывать кнопки 1×/2×/3×/5×/10× поверх круглой камеры (в пределах возможностей объектива) — нажатие фиксирует зум вместо щипка или перетаскивания ползунка</string>
     <string name="InuRoundRecorderExponentialZoom">Экспоненциальный зум</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Более плавная кривая зума, как в Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Две камеры</string>

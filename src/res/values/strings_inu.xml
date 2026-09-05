@@ -108,6 +108,8 @@
     <string name="InuAttachCameraModeTab">Bottom tab</string>
     <string name="InuRoundRecorderKeepZoom">Keep zoom on pinch release</string>
     <string name="InuRoundRecorderZoomSlider">Zoom slider</string>
+    <string name="InuRoundRecorderZoomButtons">Zoom level buttons</string>
+    <string name="InuRoundRecorderZoomButtonsInfo">Show fixed 1×/2×/3×/5×/10× buttons over the round camera, capped to what the lens supports, so a tap snaps and locks zoom instead of only pinching or dragging the slider</string>
     <string name="InuRoundRecorderExponentialZoom">Exponential zoom</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Smoother zoom curve, like Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Dual camera</string>

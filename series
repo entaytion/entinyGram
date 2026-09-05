@@ -392,3 +392,4 @@ entiny/customizable-settings-rows.patch
 entiny/session-version-display.patch
 entiny/ghost-mode.patch
 bugfix/launch-activity-leaks.patch
+feature/round-recorder-zoom-buttons.patch

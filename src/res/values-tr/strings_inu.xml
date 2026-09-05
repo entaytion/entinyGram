@@ -103,6 +103,8 @@
     <string name="InuAttachCameraModeTab">Alt sekme</string>
     <string name="InuRoundRecorderKeepZoom">Yakınlaştırmayı bırakınca koru</string>
     <string name="InuRoundRecorderZoomSlider">Yakınlaştırma kaydırıcısı</string>
+    <string name="InuRoundRecorderZoomButtons">Yakınlaştırma seviyesi düğmeleri</string>
+    <string name="InuRoundRecorderZoomButtonsInfo">Yuvarlak kamera üzerinde 1×/2×/3×/5×/10× düğmeleri gösterir (lensin desteklediği kadar) — dokunma, kaydırıcıyı sürüklemek veya sıkıştırmak yerine yakınlaştırmayı doğrudan sabitler</string>
     <string name="InuRoundRecorderExponentialZoom">Üstel yakınlaştırma</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Google Kamera gibi daha pürüzsüz bir yakınlaştırma eğrisi</string>
     <string name="InuRoundRecorderDualCamera">Çift kamera</string>

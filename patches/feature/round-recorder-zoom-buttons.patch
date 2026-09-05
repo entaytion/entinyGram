@@ -1,0 +1,128 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 5 Sep 2026 20:39:19 +0300
+Subject: Add fixed zoom-level buttons (1x/2x/3x/5x/10x) to the round-video recorder
+
+---
+ .../ui/Components/InstantCameraView.java      | 31 +++++++++++++++++--
+ 1 file changed, 28 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+@@ -71,6 +71,7 @@ import com.google.android.exoplayer2.ExoPlayer;
+ 
+ import desu.inugram.helpers.chat.RoundRecorderHelper;
+ import desu.inugram.helpers.chat.VoiceRecorderHelper;
++import desu.inugram.helpers.chat.ZoomLevelButtonsView;
+ import org.telegram.messenger.AndroidUtilities;
+ import org.telegram.messenger.ApplicationLoader;
+ import org.telegram.messenger.AutoDeleteMediaTask;
+@@ -326,7 +327,16 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+         buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
+         addView(buttonsLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 56, Gravity.LEFT | Gravity.BOTTOM, 1, 0, 0, 0));
+ 
+-        inu_zoomSlider = RoundRecorderHelper.attachZoomSlider(this, t -> RoundRecorderHelper.applyZoomT(inu_zoomSlider, camera2SessionCurrent, cameraSession, t));
++        inu_zoomSlider = RoundRecorderHelper.attachZoomSlider(this, t -> {
++            RoundRecorderHelper.applyZoomT(inu_zoomSlider, camera2SessionCurrent, cameraSession, t);
++            RoundRecorderHelper.refreshActiveFromZoom(inu_zoomButtons, camera2SessionCurrent, cameraSession);
++        });
++        inu_zoomButtons = RoundRecorderHelper.attachZoomButtons(this, level -> {
++            if (camera2SessionCurrent == null) return;
++            float t = RoundRecorderHelper.zoomToT(level, camera2SessionCurrent.getMinZoom(), camera2SessionCurrent.getMaxZoom());
++            RoundRecorderHelper.applyZoomT(inu_zoomSlider, camera2SessionCurrent, cameraSession, t);
++            if (inu_zoomButtons != null) inu_zoomButtons.setActiveLevel(level);
++        });
+ 
+         switchCameraButton = new FlashViews.ImageViewInvertable(context);
+         switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
+@@ -671,6 +681,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+             cancelled = recordedTime < 800;
+             recording = false;
+             RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
++            RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, false);
+             updateFlash();
+             if (cameraThread != null) {
+                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, cancelled ? 4 : 2);
+@@ -1021,6 +1032,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+             recording = false;
+             flashing = false;
+             RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
++            RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, false);
+             updateFlash();
+             int reason;
+             if (cancelled) {
+@@ -1081,6 +1093,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+         recording = false;
+         flashing = false;
+         RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
++        RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, false);
+         updateFlash();
+         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, byGesture ? 0 : 6);
+         if (cameraThread != null) {
+@@ -1172,6 +1185,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+         cameraReady = false;
+         cameraThread.reinitForNewCamera();
+         RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
++        RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
+     }
+ 
+     // Old Camera1 API
+@@ -1982,7 +1996,10 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+ 
+                     textureBuffer = ByteBuffer.allocateDirect(texData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+                     textureBuffer.put(texData).position(0);
+-                    AndroidUtilities.runOnUIThread(() -> RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession));
++                    AndroidUtilities.runOnUIThread(() -> {
++                        RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
++                        RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
++                    });
+                     break;
+                 }
+             }
+@@ -3261,6 +3278,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                     recording = true;
+                     RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
+                     RoundRecorderHelper.setSliderVisible(inu_zoomSlider, true);
++                    RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
++                    RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, true);
+                     updateFlash();
+                     invalidate();
+                     NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStarted, recordingGuid, false);
+@@ -3811,6 +3830,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                 cameraSession.setZoom(zoom);
+             }
+             if (inu_zoomSlider != null) inu_zoomSlider.setZoom(t, false);
++            RoundRecorderHelper.refreshActiveFromZoom(inu_zoomButtons, camera2SessionCurrent, cameraSession);
+         } else if ((ev.getActionMasked() == MotionEvent.ACTION_UP || (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP && checkPointerIds(ev)) || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) && isInPinchToZoomTouchMode) {
+             isInPinchToZoomTouchMode = false;
+             finishZoom();
+@@ -3820,6 +3840,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+ 
+     ValueAnimator finishZoomTransition;
+     private ZoomControlView inu_zoomSlider;
++    private ZoomLevelButtonsView inu_zoomButtons;
+     private float inu_pinchStartT = 0f;
+ 
+     public void finishZoom() {
+@@ -3827,7 +3848,10 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+             return;
+         }
+ 
+-        if (desu.inugram.InuConfig.ROUND_RECORDER_KEEP_ZOOM.getValue()) return;
++        if (desu.inugram.InuConfig.ROUND_RECORDER_KEEP_ZOOM.getValue()) {
++            RoundRecorderHelper.refreshActiveFromZoom(inu_zoomButtons, camera2SessionCurrent, cameraSession);
++            return;
++        }
+ 
+         float zoom;
+         if (useCamera2) {
+@@ -3851,6 +3875,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                     }
+                 }
+                 if (inu_zoomSlider != null) inu_zoomSlider.setZoom(t, false);
++                RoundRecorderHelper.refreshActiveFromZoom(inu_zoomButtons, camera2SessionCurrent, cameraSession);
+             });
+             finishZoomTransition.addListener(new AnimatorListenerAdapter() {
+                 @Override

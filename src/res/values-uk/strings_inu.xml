@@ -84,6 +84,8 @@
     <string name="InuAttachCameraModeTab">Нижня вкладка</string>
     <string name="InuRoundRecorderKeepZoom">Зберігати зум після відпускання</string>
     <string name="InuRoundRecorderZoomSlider">Слайдер зуму</string>
+    <string name="InuRoundRecorderZoomButtons">Кнопки рівня зуму</string>
+    <string name="InuRoundRecorderZoomButtonsInfo">Показувати кнопки 1×/2×/3×/5×/10× поверх круглої камери (в межах можливостей об\'єктива) — тап фіксує зум замість щипка чи перетягування слайдера</string>
     <string name="InuRoundRecorderExponentialZoom">Експоненційний зум</string>
     <string name="InuRoundRecorderExponentialZoomInfo">Плавніша крива зуму, як у Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Подвійна камера</string>

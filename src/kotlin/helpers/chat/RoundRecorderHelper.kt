@@ -43,6 +43,16 @@ object RoundRecorderHelper {
         return t.coerceIn(0f, 1f)
     }
 
+    @JvmStatic
+    fun zoomToT(zoom: Float, min: Float, max: Float): Float = tFromZoom(zoom, min, max)
+
+    // fixed levels a round-camera button row can snap to, capped by what the active lens supports
+    private val ZOOM_BUTTON_CANDIDATES = floatArrayOf(1f, 2f, 3f, 5f, 10f)
+
+    @JvmStatic
+    fun zoomLevelsFor(maxZoom: Float): List<Float> =
+        ZOOM_BUTTON_CANDIDATES.filter { it <= maxZoom + 0.01f }.ifEmpty { listOf(1f) }
+
     // c2 and c1 are mutually exclusive (depends on useCamera2); pass both, only the live one matters
     @JvmStatic
     fun currentZoomT(c2: Camera2Session?, c1: CameraSession?): Float = when {
@@ -96,6 +106,66 @@ object RoundRecorderHelper {
                 .withEndAction { slider.visibility = View.GONE }
                 .start()
         }
+    }
+
+    @JvmStatic
+    fun attachZoomButtons(parent: FrameLayout, onLevel: Utilities.Callback<Float>): ZoomLevelButtonsView? {
+        if (!InuConfig.ROUND_RECORDER_ZOOM_BUTTONS.value) return null
+        val view = ZoomLevelButtonsView(parent.context)
+        view.alpha = 0f
+        view.visibility = View.GONE
+        view.setDelegate(onLevel)
+        parent.addView(
+            view,
+            LayoutHelper.createFrame(
+                LayoutHelper.WRAP_CONTENT, 30f,
+                Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM,
+                24f, 0f, 24f, 110f,
+            ),
+        )
+        return view
+    }
+
+    @JvmStatic
+    fun setButtonsVisible(buttons: ZoomLevelButtonsView?, visible: Boolean) {
+        if (buttons == null) return
+        buttons.animate().cancel()
+        if (visible) {
+            buttons.visibility = View.VISIBLE
+            buttons.animate().alpha(1f).setDuration(180).start()
+        } else {
+            buttons.animate().alpha(0f).setDuration(180)
+                .withEndAction { buttons.visibility = View.GONE }
+                .start()
+        }
+    }
+
+    // c2/c1 mutually exclusive, same convention as currentZoomT/syncSlider
+    @JvmStatic
+    fun syncZoomButtons(buttons: ZoomLevelButtonsView?, c2: Camera2Session?, c1: CameraSession?) {
+        if (buttons == null) return
+        if (c2 == null) {
+            // Camera1 has no real x-ratio to snap to (see Camera2Session.getMinZoom TODO), hide the row
+            buttons.setLevels(emptyList())
+            return
+        }
+        buttons.setLevels(zoomLevelsFor(c2.maxZoom))
+        buttons.setActiveLevel(nearestLevel(c2.zoom, c2.maxZoom))
+    }
+
+    // cheaper than syncZoomButtons: only re-highlights the closest button, doesn't rebuild the row.
+    // call this after every zoom change (slider drag, pinch move, reset animation) so the highlighted
+    // level never goes stale relative to the actual camera zoom.
+    @JvmStatic
+    fun refreshActiveFromZoom(buttons: ZoomLevelButtonsView?, c2: Camera2Session?, c1: CameraSession?) {
+        if (buttons == null || c2 == null) return
+        buttons.setActiveLevel(nearestLevel(c2.zoom, c2.maxZoom))
+    }
+
+    private fun nearestLevel(currentZoom: Float, maxZoom: Float): Float? {
+        val levels = zoomLevelsFor(maxZoom)
+        val closest = levels.minByOrNull { kotlin.math.abs(it - currentZoom) } ?: return null
+        return if (kotlin.math.abs(closest - currentZoom) <= 0.05f * closest) closest else null
     }
 
     @Volatile

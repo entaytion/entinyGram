@@ -636,6 +636,8 @@
     <string name="InuMonetThemeAutoAmoled">自动 (AMOLED)</string>
     <string name="InuRoundRecorderKeepZoom">松开捏合后保留缩放</string>
     <string name="InuRoundRecorderZoomSlider">缩放滑块</string>
+    <string name="InuRoundRecorderZoomButtons">缩放级别按钮</string>
+    <string name="InuRoundRecorderZoomButtonsInfo">在圆形相机上显示 1×/2×/3×/5×/10× 按钮（受镜头实际支持范围限制）——点击即可锁定缩放级别，而不仅依赖捏合或拖动滑块</string>
     <string name="InuRoundRecorderExponentialZoom">指数缩放</string>
     <string name="InuRoundRecorderExponentialZoomInfo">更平滑的缩放曲线，类似 Google Camera</string>
     <string name="InuRoundRecorderDualCamera">双摄像头</string>
