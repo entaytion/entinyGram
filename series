@@ -393,3 +393,4 @@ entiny/session-version-display.patch
 entiny/ghost-mode.patch
 bugfix/launch-activity-leaks.patch
 feature/round-recorder-zoom-buttons.patch
+bugfix/r8-guava-j2objc-dontwarn.patch

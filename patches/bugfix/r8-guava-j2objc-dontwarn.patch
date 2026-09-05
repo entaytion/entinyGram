@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 5 Sep 2026 21:20:23 +0300
+Subject: Silence R8 missing-class error for guava j2objc annotations
+
+---
+ TMessagesProj/proguard-rules.pro | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
+index 0000000..0000000 100644
+--- a/TMessagesProj/proguard-rules.pro
++++ b/TMessagesProj/proguard-rules.pro
+@@ -129,6 +129,10 @@
+ -dontwarn org.bouncycastle.**
+ -dontwarn org.objectweb.asm.**
+ -dontwarn com.google.crypto.tink.**
++
++# inu: guava's j2objc annotations are Objective-C transpilation hints only, never present
++# at runtime on Android; R8 treats the unresolved reference as a hard error otherwise.
++-dontwarn com.google.j2objc.annotations.**
+ -keep class desu.inugram.** { *; }
+ # /inu
+ 
