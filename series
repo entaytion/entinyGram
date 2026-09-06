@@ -349,7 +349,6 @@ entiny/title-alignment.patch
 entiny/fix-beta-app-detection.patch
 entiny/log-categories.patch
 entiny/show-spoilers-directly.patch
-entiny/wide-channel-posts.patch
 entiny/selection-no-quote.patch
 entiny/md3-sections-textcell-fix.patch
 entiny/popup-swipeback-live-blur.patch
@@ -396,3 +395,4 @@ entiny/hide-channel-share-button.patch
 entiny/non-island-shared-media-scroll.patch
 entiny/redundant-lang-code-native-calls.patch
 entiny/optimize-build.patch
+entiny/wide-channel-posts.patch

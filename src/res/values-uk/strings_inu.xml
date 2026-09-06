@@ -17,7 +17,6 @@
     <string name="InuGeneral">Загальні</string>
     <string name="InuMiscellaneous">Різне</string>
     <string name="InuWideChannelPosts">Широкі пости</string>
-    <string name="InuWideFeedPosts">Широкі пости у Стрічці</string>
     <string name="InuWideChannelPostsFooter">Пости каналів та переслані повідомлення займають усю доступну ширину.</string>
     <string name="InuWideChannelPostsPreviewText">Новини, фото та відео</string>
     <string name="InuWideChannelPostsPreviewReply">Пересланий пост із каналу</string>

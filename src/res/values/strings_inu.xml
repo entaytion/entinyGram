@@ -19,7 +19,6 @@
     <string name="InuGeneral">General</string>
     <string name="InuMiscellaneous">Miscellaneous</string>
     <string name="InuWideChannelPosts">Wide posts</string>
-    <string name="InuWideFeedPosts">Wide posts in Feed</string>
     <string name="InuWideChannelPostsFooter">Channel posts and forwards use the available width.</string>
     <string name="InuWideChannelPostsPreviewText">News, photos and videos</string>
     <string name="InuWideChannelPostsPreviewReply">Forwarded channel post</string>
@@ -1205,6 +1204,8 @@
     <string name="InuGhostPresenceModeHidden">Always hidden</string>
     <string name="InuGhostPresenceModeDelayed">Go offline shortly after coming online</string>
 
+    <string name="InuGhostAutoOffline">Automatically go offline</string>
+    <string name="InuGhostAutoOfflineInfo">Telegram marks you as online whenever you send a message or a reaction, even with a hidden status. This sends an offline status again shortly afterwards.</string>
     <string name="InuGhostEnabled">Ghost Mode enabled</string>
     <string name="InuGhostDisabled">Ghost Mode disabled</string>
     <string name="InuGhostWhitelist">Whitelist</string>

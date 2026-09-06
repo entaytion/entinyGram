@@ -7,7 +7,6 @@
     <string name="InuGeneral">Основные</string>
     <string name="InuMiscellaneous">Прочее</string>
     <string name="InuWideChannelPosts">Широкие посты</string>
-    <string name="InuWideFeedPosts">Широкие посты в Ленте</string>
     <string name="InuWideChannelPostsFooter">Посты каналов и пересланные сообщения используют всю доступную ширину.</string>
     <string name="InuWideChannelPostsPreviewText">Новости, фото и видео</string>
     <string name="InuWideChannelPostsPreviewReply">Пересланный пост из канала</string>

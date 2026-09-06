@@ -54,7 +54,9 @@ enum class SuppressKind {
 object GhostHelper {
 
     private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
-    @Volatile private var offlineRunnable: Runnable? = null
+    // Per-account: a single shared field made one account's scheduleOffline cancel another
+    // account's still-pending offline re-assert.
+    private val offlineRunnables: ConcurrentHashMap<Int, Runnable> = ConcurrentHashMap()
 
     /** True if the master switch is on. Sub-toggles decide *what* gets suppressed while it is. */
     @JvmStatic
@@ -228,9 +230,13 @@ object GhostHelper {
                 shouldSuppress(dialogId, SuppressKind.STORY_READ)
             }
             is TL_account.updateStatus -> {
+                // Two INDEPENDENT effects. They used to be if/else-if, which meant a HIDDEN-presence
+                // user never got the offline re-assert scheduled — so once the server implicitly
+                // flipped them online from an unrelated action, nothing pulled them back down.
                 if (shouldSuppress(0L, SuppressKind.ONLINE)) {
                     request.offline = true
-                } else if (InuConfig.GHOST_MODE_ENABLED.value && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED && !request.offline) {
+                }
+                if (autoOfflineEnabled() && !request.offline) {
                     scheduleOffline(account)
                 }
                 false
@@ -247,6 +253,14 @@ object GhostHelper {
                     AndroidUtilities.runOnUIThread {
                         markDialogAsRead(account, dialogId)
                     }
+                }
+                // Sending anything flips the account online server-side no matter what the client
+                // sends in updateStatus — queue a re-assert so that implicit online is short-lived.
+                // Scheduling here (before the request goes out) is fine: the delay is measured to
+                // land after the send round-trip, and a burst of sends just keeps replacing this
+                // account's own pending runnable.
+                if (autoOfflineEnabled()) {
+                    scheduleOffline(account)
                 }
                 false
             }
@@ -361,14 +375,32 @@ object GhostHelper {
         }
     }
 
+    /** True when the "automatically go back offline" switch is armed for this account. */
+    private fun autoOfflineEnabled(): Boolean =
+        InuConfig.GHOST_MODE_ENABLED.value && InuConfig.GHOST_AUTO_OFFLINE.value
+
+    /**
+     * Queues a delayed `updateStatus(offline = true)`, replacing this account's own pending one
+     * (and only its own — see [offlineRunnables]).
+     *
+     * The delay must outlast the round-trip of whatever action implicitly flipped the account
+     * online server-side; re-asserting offline before the server has processed that action just
+     * gets overwritten again. 1500ms was tuned for the settings-change path only and is too tight
+     * for the send path (upload + send + server ack), so it's 2500ms — long enough to land after a
+     * typical send completes, short enough that the "online" blip stays brief. Cannot be verified
+     * on-device from here; if reports still show a lingering online status, this is the knob.
+     */
     private fun scheduleOffline(account: Int) {
-        offlineRunnable?.let { Utilities.stageQueue.cancelRunnable(it) }
+        offlineRunnables.remove(account)?.let { Utilities.stageQueue.cancelRunnable(it) }
         val runnable = Runnable {
-            if (InuConfig.GHOST_MODE_ENABLED.value && InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.DELAYED) {
+            offlineRunnables.remove(account)
+            if (autoOfflineEnabled()) {
                 sendStatus(account, offline = true)
             }
         }
-        offlineRunnable = runnable
-        Utilities.stageQueue.postRunnable(runnable, 1500L)
+        offlineRunnables[account] = runnable
+        Utilities.stageQueue.postRunnable(runnable, OFFLINE_REASSERT_DELAY_MS)
     }
+
+    private const val OFFLINE_REASSERT_DELAY_MS = 2500L
 }

@@ -144,12 +144,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuWideChannelPosts),
             ).setChecked(InuConfig.WIDE_CHANNEL_POSTS.value)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_WIDE_FEED_POSTS,
-                LocaleController.getString(R.string.InuWideFeedPosts),
-            ).setChecked(InuConfig.WIDE_FEED_POSTS.value)
-        )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuWideChannelPostsFooter)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuCenteringSection)))
@@ -416,7 +410,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 wideChannelPostsPreview?.setWide(new, true)
             }
-            TOGGLE_WIDE_FEED_POSTS -> (view as? TextCheckCell)?.isChecked = InuConfig.WIDE_FEED_POSTS.toggle()
             TOGGLE_CENTER_TITLE_CHATS -> {
                 InuConfig.CENTER_TITLE_CHATS.toggle()
                 (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_CHATS.value
@@ -517,7 +510,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     companion object {
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_WIDE_CHANNEL_POSTS = InuUtils.generateId()
-        private val TOGGLE_WIDE_FEED_POSTS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_FIXED = InuUtils.generateId()
@@ -579,7 +571,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("wide-channel-posts", R.string.InuWideChannelPosts, TOGGLE_WIDE_CHANNEL_POSTS),
-                SearchRegistry.Entry("wide-feed-posts", R.string.InuWideFeedPosts, TOGGLE_WIDE_FEED_POSTS),
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("center-title-fixed", R.string.InuCenterTitleFixed, TOGGLE_CENTER_TITLE_FIXED),

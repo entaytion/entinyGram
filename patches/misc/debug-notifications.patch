@@ -50,7 +50,7 @@ index 0000000..0000000 100644
                              }
                              if (avatar == null && dialogId == UserObject.VERIFY && messageObject.getForwardedFromId() != null) {
                                  if (uid >= 0) {
-@@ -5945,6 +5953,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5946,6 +5954,7 @@ public class NotificationsController extends BaseController implements Notificat
              }
              FileLog.d("showExtraNotifications: holders["+a+"].call()");
              holder.call();
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
              if (!unsupportedNotificationShortcut() && !ids.isEmpty()) {
                  ShortcutManagerCompat.removeDynamicShortcuts(ApplicationLoader.applicationContext, ids);
              }
-@@ -6042,8 +6051,8 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -6043,8 +6052,8 @@ public class NotificationsController extends BaseController implements Notificat
                  });
                  IconCompat icon = IconCompat.createWithBitmap(bitmap);
                  personBuilder.setIcon(icon);

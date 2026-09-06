@@ -4,7 +4,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 
 /**
- * Width math for "wide" channel posts (InuConfig.WIDE_CHANNEL_POSTS / WIDE_FEED_POSTS) -- ported
+ * Width math for "wide" channel posts (InuConfig.WIDE_CHANNEL_POSTS) -- ported
  * from exteraless (https://github.com/exteraless/exteraless), app/exteraless/chats/WideChannelPostLayout.java.
  * Pure math, no view/state dependencies, so it ports as-is.
  */

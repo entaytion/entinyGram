@@ -231,7 +231,7 @@ index 0000000..0000000 100644
              AndroidUtilities.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.pushMessagesUpdated));
          } catch (Exception e) {
              FileLog.e(e);
-@@ -5870,6 +5949,7 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5871,6 +5950,7 @@ public class NotificationsController extends BaseController implements Notificat
                  ShortcutManagerCompat.removeDynamicShortcuts(ApplicationLoader.applicationContext, ids);
              }
          }

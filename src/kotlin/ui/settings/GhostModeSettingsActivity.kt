@@ -43,13 +43,24 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }
+        // Both presence rows are inert while the master switch is off (GhostHelper.shouldSuppress
+        // hard-gates on it), so grey them out instead of showing an active-looking value — same
+        // .setEnabled() convention BackupSettingsActivity uses for its unusable rows.
+        val masterOn = GhostHelper.isGhostActive()
         items.add(
             UItem.asButton(
                 BUTTON_PRESENCE_MODE,
                 LocaleController.getString(R.string.InuGhostPresenceMode),
                 presenceModeLabel(),
-            )
+            ).setEnabled(masterOn)
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_AUTO_OFFLINE,
+                LocaleController.getString(R.string.InuGhostAutoOffline),
+            ).setChecked(InuConfig.GHOST_AUTO_OFFLINE.value).setEnabled(masterOn)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostAutoOfflineInfo)))
         items.add(mkSubPageButton(BUTTON_MANAGE_WHITELIST, LocaleController.getString(R.string.InuGhostWhitelist)))
         items.add(UItem.asShadow(null))
         // Independent of the group above — not part of "is ghost active" (same as
@@ -86,7 +97,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
-            BUTTON_PRESENCE_MODE -> RadioItemOptions.show(
+            BUTTON_PRESENCE_MODE -> if (GhostHelper.isGhostActive()) RadioItemOptions.show(
                 this, view,
                 listOf(
                     LocaleController.getString(R.string.InuGhostPresenceModeNormal),
@@ -99,6 +110,11 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 GhostHelper.syncPresence(currentAccount)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
                 listView?.adapter?.update(true)
+            }
+            TOGGLE_AUTO_OFFLINE -> {
+                if (!GhostHelper.isGhostActive()) return
+                val new = InuConfig.GHOST_AUTO_OFFLINE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
             }
             BUTTON_MANAGE_WHITELIST -> presentFragment(GhostWhitelistSettingsActivity())
             TOGGLE_READ_ON_SEND -> {
@@ -122,6 +138,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_STORY_READ = InuUtils.generateId()
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
+        private val TOGGLE_AUTO_OFFLINE = InuUtils.generateId()
         private val BUTTON_MANAGE_WHITELIST = InuUtils.generateId()
 
         @JvmField
@@ -140,6 +157,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-story-read", R.string.InuGhostHideStoryRead, TOGGLE_HIDE_STORY_READ),
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
+                SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostAutoOffline, TOGGLE_AUTO_OFFLINE),
             ),
         )
     }

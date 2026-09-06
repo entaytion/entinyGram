@@ -31,7 +31,7 @@ class AiTranscriptionSettingsActivity : SettingsPageActivity() {
             InuConfig.TRANSCRIBE_PROVIDER_GROQ -> keyField(items, R.string.InuAiTranscribeApiKey, InuConfig.AI_TRANSCRIBE_GROQ_KEY.value) { InuConfig.AI_TRANSCRIBE_GROQ_KEY.value = it }
             InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> {
                 keyField(items, R.string.InuAiTranscribeApiKey, InuConfig.AI_TRANSCRIBE_GEMINI_KEY.value) { InuConfig.AI_TRANSCRIBE_GEMINI_KEY.value = it }
-                keyField(items, R.string.InuAiTranscribeModel, InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.ifBlank { "gemini-2.0-flash" }, InputType.TYPE_CLASS_TEXT) { InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value = it }
+                keyField(items, R.string.InuAiTranscribeModel, InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.ifBlank { "gemini-3.5-flash" }, InputType.TYPE_CLASS_TEXT) { InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value = it }
             }
             InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> keyField(items, R.string.InuAiTranscribeApiKey, InuConfig.AI_TRANSCRIBE_OPENAI_KEY.value) { InuConfig.AI_TRANSCRIBE_OPENAI_KEY.value = it }
             InuConfig.TRANSCRIBE_PROVIDER_CF -> {

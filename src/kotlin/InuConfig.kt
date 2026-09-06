@@ -26,7 +26,26 @@ object InuConfig {
         for (item in _items) item.load(prefs)
         migrateGhostMasterFlag()
         migrateGhostModeEnabledDefault()
+        migrateGhostAutoOffline()
         migrateSelfDestructCategories()
+    }
+
+    // The periodic "go offline again" re-assert used to be welded to GHOST_PRESENCE_MODE.DELAYED;
+    // it is now its own switch ([GHOST_AUTO_OFFLINE]) that works with any presence mode.
+    //
+    // Minimal, non-stranding migration: GHOST_PRESENCE_MODE keeps all three of its values (NORMAL /
+    // HIDDEN / DELAYED) so nobody's stored choice is reinterpreted, and DELAYED keeps meaning
+    // exactly what it meant. The one-time step just turns the new independent toggle ON for anyone
+    // who was on DELAYED, so their behaviour after the update is identical to before. HIDDEN and
+    // NORMAL users are untouched (auto-offline stays off = stock-identical); HIDDEN users can now
+    // opt into the re-assert they could never get before. Guarded by its own non-exportable
+    // run-record so a restored backup can't re-arm it over a later explicit choice.
+    private fun migrateGhostAutoOffline() {
+        if (GHOST_AUTO_OFFLINE_MIGRATED.value) return
+        GHOST_AUTO_OFFLINE_MIGRATED.value = true
+        if (GHOST_PRESENCE_MODE.value == GhostPresenceModeItem.DELAYED) {
+            GHOST_AUTO_OFFLINE.value = true
+        }
     }
 
     // GHOST_MODE (a single master on/off) was removed in favor of independent sub-toggles with
@@ -619,7 +638,7 @@ object InuConfig {
     val AI_TRANSCRIBE_GEMINI_KEY = StringItem("ai_transcribe_gemini_key", "", exportable = false)
 
     @JvmField
-    val AI_TRANSCRIBE_GEMINI_MODEL = StringItem("ai_transcribe_gemini_model", "gemini-2.0-flash", exportable = false)
+    val AI_TRANSCRIBE_GEMINI_MODEL = StringItem("ai_transcribe_gemini_model", "gemini-3.5-flash", exportable = false)
 
     @JvmField
     val AI_TRANSCRIBE_OPENAI_KEY = StringItem("ai_transcribe_openai_key", "", exportable = false)
@@ -1007,14 +1026,13 @@ object InuConfig {
     @JvmField
     val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", true)
 
-    // Channel posts (and, separately, channel posts shown in the feed/forwards) stretch to the
-    // full available width instead of a narrow auto-sized bubble. Ported from exteraless
-    // (https://github.com/exteraless/exteraless) -- see WideChannelPostLayout.kt.
+    // Channel posts stretch to the full available width instead of a narrow auto-sized bubble.
+    // Ported from exteraless (https://github.com/exteraless/exteraless) -- see WideChannelPostLayout.kt.
+    // Only applies to actual broadcast-channel posts -- there is no "Feed" surface in this fork
+    // to apply a separate wide-in-feed variant to (exteraless's WIDE_FEED_POSTS counterpart gates
+    // on a searchType==4 that only exists alongside their own Feed feature).
     @JvmField
     val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
-
-    @JvmField
-    val WIDE_FEED_POSTS = BoolItem("wide_feed_posts", false)
 
     @JvmField
     val REDUCE_MENU_MOTION = BoolItem("reduce_menu_motion", true)
@@ -1563,6 +1581,20 @@ object InuConfig {
 
     @JvmField
     val GHOST_PRESENCE_MODE = GhostPresenceModeItem()
+
+    // Independent of GHOST_PRESENCE_MODE (AyuGram's design: "don't send online" and "auto go
+    // offline" are two separate switches). Telegram's server flips the account online implicitly
+    // on any live action (sending a message, a reaction, ...), which no client-side packet filter
+    // can prevent -- so even a HIDDEN-presence user leaks "online" until something re-asserts
+    // offline. Previously only the DELAYED mode scheduled that re-assert, which meant HIDDEN --
+    // the strictest setting -- was paradoxically the least protected.
+    @JvmField
+    val GHOST_AUTO_OFFLINE = BoolItem("ghost_auto_offline", false)
+
+    // Run-record for [migrateGhostAutoOffline]. Non-exportable, same reasoning as the other ghost
+    // run-records above.
+    @JvmField
+    val GHOST_AUTO_OFFLINE_MIGRATED = BoolItem("ghost_auto_offline_migrated", false, exportable = false)
 
     @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())

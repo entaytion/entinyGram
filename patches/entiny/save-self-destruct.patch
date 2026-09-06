@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -10061,6 +10061,7 @@ public class MessageObject {
+@@ -10035,6 +10035,7 @@ public class MessageObject {
      }
  
      public boolean needDrawBluredPreview() {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
          if (isRepostPreview) {
              return false;
          }
-@@ -11676,6 +11677,7 @@ public class MessageObject {
+@@ -11650,6 +11651,7 @@ public class MessageObject {
      }
  
      public boolean canForwardMessage() {

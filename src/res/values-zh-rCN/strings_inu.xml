@@ -7,7 +7,6 @@
     <string name="InuGeneral">通用</string>
     <string name="InuMiscellaneous">杂项</string>
     <string name="InuWideChannelPosts">宽屏帖子</string>
-    <string name="InuWideFeedPosts">动态中的宽屏帖子</string>
     <string name="InuWideChannelPostsFooter">频道帖子和转发将使用全部可用宽度。</string>
     <string name="InuWideChannelPostsPreviewText">新闻、照片和视频</string>
     <string name="InuWideChannelPostsPreviewReply">已转发的频道帖子</string>

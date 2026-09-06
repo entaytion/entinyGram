@@ -307,7 +307,7 @@ object TranscribeHelper {
 
     private fun transcribeGemini(bytes: ByteArray, mime: String, prompt: String): String {
         val apiKey = InuConfig.AI_TRANSCRIBE_GEMINI_KEY.value.trim()
-        val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-2.0-flash" }
+        val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-3.5-flash" }
         val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
         val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
 

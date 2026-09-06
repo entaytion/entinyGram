@@ -35,7 +35,7 @@ const baseUrl = (process.env.GEMINI_BASE_URL ?? 'https://generativelanguage.goog
 const MODELS = [
   process.env.GEMINI_MODEL,
   'gemini-3.1-flash-lite',
-  'gemini-2.0-flash',
+  'gemini-3.5-flash', // ahhhhhhhh
 ].filter((m): m is string => Boolean(m))
 
 function cleanCommits(commits: Commit[]): Commit[] {

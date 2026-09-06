@@ -55,9 +55,17 @@ object NotificationsHelper {
 
     // Every showOrUpdateNotification re-notify()s ALL per-chat notifications, and notification bridges
     // (Mi Fitness etc.) re-forward every onNotificationPosted without deduping by key or respecting
-    // FLAG_ONLY_ALERT_ONCE — so unchanged reposts must be skipped on our side. Signatures are keyed by
-    // notification id; per-account maps are only touched from that account's notificationsQueue.
-    private val postedSignatures = ConcurrentHashMap<Int, MutableMap<Int, String>>()
+    // FLAG_ONLY_ALERT_ONCE — so unchanged reposts must be skipped on our side.
+    //
+    // Signatures are keyed by dialogId+topicId, NOT by the Android notification id: stock derives that id
+    // from dialogId alone, so two forum topics of the same supergroup collide on it and one topic's
+    // notification would be silently skipped as "unchanged" against the other topic's signature.
+    // Per-account maps are only touched from that account's notificationsQueue.
+    private val postedSignatures = ConcurrentHashMap<Int, MutableMap<String, String>>()
+
+    @JvmStatic
+    fun signatureKey(dialogId: Long, topicId: Long, story: Boolean): String =
+        if (story) "story" else "$dialogId:$topicId"
 
     @JvmStatic
     fun computeNotificationSignature(
@@ -77,17 +85,21 @@ object NotificationsHelper {
     }
 
     @JvmStatic
-    fun shouldSkipNotify(account: Int, notificationId: Int, signature: String?): Boolean {
+    fun shouldSkipNotify(account: Int, key: String, signature: String?): Boolean {
         if (signature == null) return false
         val map = postedSignatures.getOrPut(account) { HashMap() }
-        if (map[notificationId] == signature) return true
-        map[notificationId] = signature
+        if (map[key] == signature) return true
+        map[key] = signature
         return false
     }
 
+    // Cancel paths only know the dialogId (stock's wearNotificationsIds is dialog-keyed), so drop every
+    // topic's signature for that dialog.
     @JvmStatic
-    fun removePostedSignature(account: Int, notificationId: Int) {
-        postedSignatures[account]?.remove(notificationId)
+    fun removePostedSignatures(account: Int, dialogId: Long) {
+        val map = postedSignatures[account] ?: return
+        val prefix = "$dialogId:"
+        map.keys.removeAll { it.startsWith(prefix) }
     }
 
     @JvmStatic

@@ -15,7 +15,6 @@
     <string name="InuGeneral">Genel</string>
     <string name="InuMiscellaneous">Çeşitli</string>
     <string name="InuWideChannelPosts">Geniş gönderiler</string>
-    <string name="InuWideFeedPosts">Akışta geniş gönderiler</string>
     <string name="InuWideChannelPostsFooter">Kanal gönderileri ve iletilen mesajlar kullanılabilir tüm genişliği kaplar.</string>
     <string name="InuWideChannelPostsPreviewText">Haberler, fotoğraflar ve videolar</string>
     <string name="InuWideChannelPostsPreviewReply">İletilen kanal gönderisi</string>

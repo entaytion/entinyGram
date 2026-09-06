@@ -4,8 +4,8 @@ Date: Thu, 2 Jul 2026 20:37:42 +0400
 Subject: correctly handle notification channels on android 16+, fixes heads-up notifications when there are multiple unread chats
 
 ---
- .../messenger/NotificationsController.java    | 406 ++++++++++++------
- 1 file changed, 263 insertions(+), 143 deletions(-)
+ .../messenger/NotificationsController.java    | 407 ++++++++++++------
+ 1 file changed, 264 insertions(+), 143 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
 index 0000000..0000000 100644
@@ -434,7 +434,7 @@ index 0000000..0000000 100644
          }
  
          ArrayList<NotificationHolder> holders = new ArrayList<>();
-+        SparseArray<String> inu_signatures = new SparseArray<>();
++        HashMap<String, String> inu_signatures = new HashMap<>();
  
          boolean useSummaryNotification = Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1 || sortedDialogs.size() > (storyPushMessages.isEmpty() ? 1 : 2);
          if (useSummaryNotification && Build.VERSION.SDK_INT >= 26) {
@@ -458,7 +458,7 @@ index 0000000..0000000 100644
              FileLog.d("showExtraNotifications: holders.add " + dialogId);
              holders.add(new NotificationHolder(internalId, dialogId, dialogKey.story, topicId, name, user, chat, builder));
              wearNotificationsIds.put(dialogId, internalId);
-+            inu_signatures.put(internalId, NotificationsHelper.computeNotificationSignature(inu_channelId, name, dialogKey.story ? null : messageObjects, dialogKey.story ? storyPushMessages.size() : 0, maxId, waitingForPasscode, avatarBitmap != null));
++            inu_signatures.put(NotificationsHelper.signatureKey(dialogId, topicId, dialogKey.story), NotificationsHelper.computeNotificationSignature(inu_channelId, name, dialogKey.story ? null : messageObjects, dialogKey.story ? storyPushMessages.size() : 0, maxId, waitingForPasscode, avatarBitmap != null));
          }
  
          if (useSummaryNotification) {
@@ -477,15 +477,16 @@ index 0000000..0000000 100644
              if (BuildVars.LOGS_ENABLED) {
                  FileLog.d("cancel notification id " + id);
              }
-+            NotificationsHelper.removePostedSignature(currentAccount, id);
++            NotificationsHelper.removePostedSignatures(currentAccount, did);
              notificationManager.cancel(id);
          }
  
-@@ -5737,6 +5853,10 @@ public class NotificationsController extends BaseController implements Notificat
+@@ -5737,6 +5853,11 @@ public class NotificationsController extends BaseController implements Notificat
          FileLog.d("showExtraNotifications: holders.size()=" + holders.size());
          for (int a = 0, size = holders.size(); a < size; a++) {
              NotificationHolder holder = holders.get(a);
-+            if (NotificationsHelper.shouldSkipNotify(currentAccount, holder.id, inu_signatures.get(holder.id))) {
++            String inu_signatureKey = NotificationsHelper.signatureKey(holder.dialogId, holder.topicId, holder.story);
++            if (NotificationsHelper.shouldSkipNotify(currentAccount, inu_signatureKey, inu_signatures.get(inu_signatureKey))) {
 +                FileLog.d("showExtraNotifications: holders["+a+"] skipped, unchanged");
 +                continue;
 +            }

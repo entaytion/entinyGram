@@ -7,7 +7,6 @@
     <string name="InuGeneral">一般</string>
     <string name="InuMiscellaneous">その他</string>
     <string name="InuWideChannelPosts">ワイド投稿</string>
-    <string name="InuWideFeedPosts">フィード内のワイド投稿</string>
     <string name="InuWideChannelPostsFooter">チャンネルの投稿と転送メッセージが画面幅いっぱいに表示されます。</string>
     <string name="InuWideChannelPostsPreviewText">ニュース、写真、動画</string>
     <string name="InuWideChannelPostsPreviewReply">転送されたチャンネル投稿</string>
