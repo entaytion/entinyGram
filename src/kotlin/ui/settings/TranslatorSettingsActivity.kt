@@ -111,6 +111,20 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.TRANSLATE_AUTO_DETECT_LANG.value)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateAutoDetectLangInfo)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_INSTANT_TRANSLATE_BANNER,
+                LocaleController.getString(R.string.InuInstantTranslateBanner),
+            ).setChecked(InuConfig.INSTANT_TRANSLATE_BANNER.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuInstantTranslateBannerInfo)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_IGNORE_TRANSLATIONS_DISABLED,
+                LocaleController.getString(R.string.InuIgnoreTranslationsDisabled),
+            ).setChecked(InuConfig.IGNORE_TRANSLATIONS_DISABLED.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuIgnoreTranslationsDisabledInfo)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -124,6 +138,16 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_TRANSLATE_OUTGOING -> {
                 val new = InuConfig.TRANSLATE_OUTGOING.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_INSTANT_TRANSLATE_BANNER -> {
+                val new = InuConfig.INSTANT_TRANSLATE_BANNER.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_IGNORE_TRANSLATIONS_DISABLED -> {
+                val new = InuConfig.IGNORE_TRANSLATIONS_DISABLED.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
 
@@ -196,6 +220,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_TRANSLATE_WEB_PREVIEWS = InuUtils.generateId()
         private val TOGGLE_KEEP_ORIGINAL = InuUtils.generateId()
         private val TOGGLE_AUTO_DETECT_LANG = InuUtils.generateId()
+        private val TOGGLE_INSTANT_TRANSLATE_BANNER = InuUtils.generateId()
+        private val TOGGLE_IGNORE_TRANSLATIONS_DISABLED = InuUtils.generateId()
         private val TOGGLE_SHOW_TRANSLATE_BUTTON = InuUtils.generateId()
         private val TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON = InuUtils.generateId()
         private val BUTTON_DO_NOT_TRANSLATE = InuUtils.generateId()
@@ -218,6 +244,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("translate-web-previews", R.string.InuTranslateWebPreviews, TOGGLE_TRANSLATE_WEB_PREVIEWS),
                 SearchRegistry.Entry("keep-original-after-translation", R.string.InuKeepOriginalAfterTranslation, TOGGLE_KEEP_ORIGINAL),
                 SearchRegistry.Entry("translate-auto-detect-lang", R.string.InuTranslateAutoDetectLang, TOGGLE_AUTO_DETECT_LANG),
+                SearchRegistry.Entry("instant-translate-banner", R.string.InuInstantTranslateBanner, TOGGLE_INSTANT_TRANSLATE_BANNER),
+                SearchRegistry.Entry("ignore-translations-disabled", R.string.InuIgnoreTranslationsDisabled, TOGGLE_IGNORE_TRANSLATIONS_DISABLED),
             ),
         )
     }

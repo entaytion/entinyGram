@@ -32,7 +32,6 @@ import org.telegram.ui.LaunchActivity
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.UUID
 
 /**
  * Client-side AI compose: rewrites / continues the chat draft via a user-configured
@@ -41,40 +40,80 @@ import java.util.UUID
  */
 object AiComposeHelper {
 
-    // ---------------- endpoint CRUD (settings UI + editor) ----------------
+    // ---------------- unified provider config (AI Providers screen) ----------------
+    // One chat slot per known provider instead of an arbitrary named endpoint list -- see
+    // [InuConfig.migrateAiProviders]. [AiEndpoint] is now just a resolved-at-read-time DTO for
+    // whichever provider is active, so request()/requestStream() below don't need to change.
 
     @JvmStatic
-    fun endpoints(): List<AiEndpoint> = InuConfig.AI_COMPOSE_ENDPOINTS.value
+    fun chatProviderBaseUrl(id: Int): String = when (id) {
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> "https://generativelanguage.googleapis.com/v1beta/openai/"
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> "https://api.openai.com/v1/"
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> "https://api.groq.com/openai/v1/"
+        InuConfig.AI_PROVIDER_OPENROUTER -> "https://openrouter.ai/api/v1/"
+        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_URL.value
+        else -> ""
+    }
 
+    @JvmStatic
+    fun chatProviderKey(id: Int): String = when (id) {
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value
+        InuConfig.AI_PROVIDER_OPENROUTER -> InuConfig.AI_CHAT_OPENROUTER_KEY.value
+        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_KEY.value
+        else -> ""
+    }
+
+    /** Setter counterpart of [chatProviderKey], shared with the voice scope for named providers. */
+    @JvmStatic
+    fun setProviderKey(id: Int, value: String) {
+        when (id) {
+            InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value = value
+            InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value = value
+            InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value = value
+            InuConfig.AI_PROVIDER_OPENROUTER -> InuConfig.AI_CHAT_OPENROUTER_KEY.value = value
+            InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_KEY.value = value
+        }
+    }
+
+    @JvmStatic
+    fun chatProviderModel(id: Int): String = when (id) {
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_CHAT_GEMINI_MODEL.value
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_CHAT_OPENAI_MODEL.value
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_CHAT_GROQ_MODEL.value
+        InuConfig.AI_PROVIDER_OPENROUTER -> InuConfig.AI_CHAT_OPENROUTER_MODEL.value
+        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_MODEL.value
+        else -> ""
+    }
+
+    @JvmStatic
+    fun providerDisplayName(id: Int): String = when (id) {
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> "Gemini"
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> "OpenAI"
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> "Groq"
+        InuConfig.TRANSCRIBE_PROVIDER_CF -> "Cloudflare"
+        InuConfig.AI_PROVIDER_OPENROUTER -> "OpenRouter"
+        else -> LocaleController.getString(R.string.InuAiProviderCustom)
+    }
+
+    @JvmStatic
+    fun sameModelForBothScopes(id: Int): InuConfig.BoolItem? = when (id) {
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_SAME_MODEL_GEMINI
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_SAME_MODEL_OPENAI
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_SAME_MODEL_GROQ
+        else -> null
+    }
+
+    /** The provider currently active for chat compose, resolved into the shape request()/requestStream() expect. */
     @JvmStatic
     fun activeEndpoint(): AiEndpoint? {
-        val list = endpoints()
-        if (list.isEmpty()) return null
-        val activeId = InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value
-        return list.firstOrNull { it.id == activeId } ?: list.first()
+        val id = InuConfig.AI_CHAT_ACTIVE_PROVIDER.value
+        val key = chatProviderKey(id).trim()
+        val url = chatProviderBaseUrl(id).trim()
+        if (key.isBlank() || url.isBlank()) return null
+        return AiEndpoint(id = id.toString(), name = providerDisplayName(id), url = url, apiKey = key, model = chatProviderModel(id))
     }
-
-    @JvmStatic
-    fun setActiveEndpoint(id: String) {
-        InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value = id
-    }
-
-    @JvmStatic
-    fun upsertEndpoint(endpoint: AiEndpoint) {
-        val list = endpoints().toMutableList()
-        val index = list.indexOfFirst { it.id == endpoint.id }
-        if (index >= 0) list[index] = endpoint else list.add(endpoint)
-        InuConfig.AI_COMPOSE_ENDPOINTS.value = list
-    }
-
-    @JvmStatic
-    fun deleteEndpoint(id: String) {
-        InuConfig.AI_COMPOSE_ENDPOINTS.value = endpoints().filterNot { it.id == id }
-        if (InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value == id) InuConfig.AI_COMPOSE_ACTIVE_ENDPOINT.value = ""
-    }
-
-    @JvmStatic
-    fun newEndpointId(): String = UUID.randomUUID().toString()
 
     @JvmStatic
     fun host(url: String): String = try {
@@ -111,8 +150,14 @@ object AiComposeHelper {
 
     /** Prefixes the system prompt with the user's configured AI persona, if any. */
     private fun withRole(systemPrompt: String): String {
-        val role = InuConfig.AI_ROLE.value.trim()
-        return if (role.isNotEmpty()) "You are $role. $systemPrompt" else systemPrompt
+        val role = AiRolesHelper.activeRole()
+        val customPrompt = role?.prompt?.trim().orEmpty()
+        val name = role?.text?.trim().orEmpty()
+        return when {
+            customPrompt.isNotEmpty() -> "$customPrompt $systemPrompt"
+            name.isNotEmpty() -> "You are $name. $systemPrompt"
+            else -> systemPrompt
+        }
     }
 
     fun request(

@@ -86,9 +86,9 @@ object TranscribeHelper {
 
         val provider = InuConfig.AI_TRANSCRIBE_PROVIDER.value
         val apiKey = when (provider) {
-            InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_TRANSCRIBE_GROQ_KEY.value
-            InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_TRANSCRIBE_GEMINI_KEY.value
-            InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_TRANSCRIBE_OPENAI_KEY.value
+            InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value
+            InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value
+            InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value
             InuConfig.TRANSCRIBE_PROVIDER_CF -> InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value
             InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_TRANSCRIBE_CUSTOM_KEY.value
             else -> ""
@@ -242,10 +242,10 @@ object TranscribeHelper {
     // ------------------------------------------------------------------ Providers
 
     private fun transcribeGroq(file: File, fileName: String, mime: String, prompt: String): String {
-        val apiKey = InuConfig.AI_TRANSCRIBE_GROQ_KEY.value.trim()
+        val apiKey = InuConfig.AI_PROVIDER_GROQ_KEY.value.trim()
         val url = "https://api.groq.com/openai/v1/audio/transcriptions"
         val parts = mutableMapOf(
-            "model" to "whisper-large-v3-turbo",
+            "model" to InuConfig.AI_TRANSCRIBE_GROQ_MODEL.value.trim().ifBlank { "whisper-large-v3-turbo" },
             "response_format" to "json",
             "temperature" to "0"
         )
@@ -261,10 +261,10 @@ object TranscribeHelper {
     }
 
     private fun transcribeOpenAI(file: File, fileName: String, mime: String, prompt: String): String {
-        val apiKey = InuConfig.AI_TRANSCRIBE_OPENAI_KEY.value.trim()
+        val apiKey = InuConfig.AI_PROVIDER_OPENAI_KEY.value.trim()
         val url = "https://api.openai.com/v1/audio/transcriptions"
         val parts = mutableMapOf(
-            "model" to "whisper-1",
+            "model" to InuConfig.AI_TRANSCRIBE_OPENAI_MODEL.value.trim().ifBlank { "whisper-1" },
             "response_format" to "json",
             "temperature" to "0"
         )
@@ -306,7 +306,7 @@ object TranscribeHelper {
     }
 
     private fun transcribeGemini(bytes: ByteArray, mime: String, prompt: String): String {
-        val apiKey = InuConfig.AI_TRANSCRIBE_GEMINI_KEY.value.trim()
+        val apiKey = InuConfig.AI_PROVIDER_GEMINI_KEY.value.trim()
         val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-3.5-flash" }
         val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
         val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
@@ -370,7 +370,8 @@ object TranscribeHelper {
         if (accountId.isEmpty() || apiToken.isEmpty()) {
             throw IOException("Cloudflare Account ID or API Token missing")
         }
-        val url = "https://api.cloudflare.com/client/v4/accounts/$accountId/ai/run/@cf/openai/whisper"
+        val model = InuConfig.AI_TRANSCRIBE_CF_MODEL.value.trim().ifBlank { "@cf/openai/whisper" }
+        val url = "https://api.cloudflare.com/client/v4/accounts/$accountId/ai/run/$model"
 
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"

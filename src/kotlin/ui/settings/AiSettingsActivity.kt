@@ -5,7 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ai.AiComposeHelper
-import desu.inugram.ui.showInputDialog
+import desu.inugram.helpers.ai.AiRolesHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
@@ -29,10 +29,18 @@ class AiSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneral)))
         items.add(
             UItem.asButton(
-                BUTTON_SERVICES,
+                BUTTON_PROVIDERS,
                 R.drawable.inu_tabler_cpu,
-                LocaleController.getString(R.string.InuAiServices),
-                activeServiceSummary()
+                LocaleController.getString(R.string.InuAiProvidersTitle),
+                activeProvidersSummary()
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_TRANSCRIBE_ENABLED,
+                R.string.InuAiTranscribe,
+                R.string.InuAiTranscribeInfo,
+                InuConfig.AI_TRANSCRIBE_ENABLED.value
             )
         )
         val composeConfigured = hasComposeCredentials()
@@ -105,35 +113,14 @@ class AiSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiTemperatureInfo)))
-
-        // Section: Розпізнавання голосу (Voice Transcription)
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiTranscribeSection)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_TRANSCRIBE_ENABLED,
-                R.string.InuAiTranscribe,
-                R.string.InuAiTranscribeInfo,
-                InuConfig.AI_TRANSCRIBE_ENABLED.value
-            )
-        )
-        if (InuConfig.AI_TRANSCRIBE_ENABLED.value) {
-            items.add(
-                UItem.asButton(
-                    BUTTON_TRANSCRIBE_SETTINGS,
-                    R.drawable.inu_tabler_microphone,
-                    LocaleController.getString(R.string.InuAiTranscribeSettings)
-                )
-            )
-        }
-        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_SERVICES -> presentFragment(AiServicesSettingsActivity())
+            BUTTON_PROVIDERS -> presentFragment(AiProvidersSettingsActivity())
             BUTTON_AI_EDITOR -> {
                 if (!hasComposeCredentials()) {
-                    presentFragment(AiServicesSettingsActivity())
+                    presentFragment(AiProvidersSettingsActivity())
                 } else {
                     InuConfig.HIDE_AI_EDITOR.value = !InuConfig.HIDE_AI_EDITOR.value
                     listView.adapter.update(true)
@@ -142,19 +129,10 @@ class AiSettingsActivity : SettingsPageActivity() {
             TOGGLE_AI_SUMMARY -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_SUMMARY_ENABLED.toggle()
             }
-            BUTTON_AI_ROLE -> {
-                showInputDialog(
-                    this,
-                    LocaleController.getString(R.string.InuAiRoles),
-                    hint = LocaleController.getString(R.string.InuAiRolesHint),
-                    initialText = InuConfig.AI_ROLE.value,
-                    selectAll = true,
-                ) { text ->
-                    InuConfig.AI_ROLE.value = text
-                    listView.adapter.update(true)
-                    true
-                }
+            TOGGLE_TRANSCRIBE_ENABLED -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_TRANSCRIBE_ENABLED.toggle()
             }
+            BUTTON_AI_ROLE -> presentFragment(AiRolesSettingsActivity())
             TOGGLE_AI_STREAM -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_STREAM_ENABLED.toggle()
             }
@@ -167,19 +145,13 @@ class AiSettingsActivity : SettingsPageActivity() {
             TOGGLE_AI_HISTORY -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_HISTORY_ENABLED.toggle()
             }
-            TOGGLE_TRANSCRIBE_ENABLED -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_TRANSCRIBE_ENABLED.toggle()
-                listView.adapter.update(true)
-            }
-            BUTTON_TRANSCRIBE_SETTINGS -> presentFragment(AiTranscriptionSettingsActivity())
         }
     }
 
-    private fun activeServiceSummary(): String {
-        val endpoints = AiComposeHelper.endpoints()
-        if (endpoints.isEmpty()) return LocaleController.getString(R.string.InuAiServicesNone)
-        val active = AiComposeHelper.activeEndpoint() ?: return endpoints.size.toString()
-        return active.name.ifBlank { AiComposeHelper.host(active.url) }.ifBlank { LocaleController.getString(R.string.InuAiServicesNone) }
+    private fun activeProvidersSummary(): String {
+        val chatName = AiComposeHelper.providerDisplayName(InuConfig.AI_CHAT_ACTIVE_PROVIDER.value)
+        val voiceName = AiComposeHelper.providerDisplayName(InuConfig.AI_TRANSCRIBE_PROVIDER.value)
+        return if (chatName == voiceName) chatName else "$chatName • $voiceName"
     }
 
     private fun hasComposeCredentials(): Boolean {
@@ -188,10 +160,11 @@ class AiSettingsActivity : SettingsPageActivity() {
     }
 
     private fun aiRoleSummary(): String =
-        InuConfig.AI_ROLE.value.trim().ifEmpty { LocaleController.getString(R.string.InuAiRolesAssistant) }
+        AiRolesHelper.activeRoleText().trim().ifEmpty { LocaleController.getString(R.string.InuAiRolesAssistant) }
 
     companion object {
-        private val BUTTON_SERVICES = InuUtils.generateId()
+        private val BUTTON_PROVIDERS = InuUtils.generateId()
+        private val TOGGLE_TRANSCRIBE_ENABLED = InuUtils.generateId()
         private val BUTTON_AI_EDITOR = InuUtils.generateId()
         private val TOGGLE_AI_SUMMARY = InuUtils.generateId()
         private val BUTTON_AI_ROLE = InuUtils.generateId()
@@ -199,8 +172,6 @@ class AiSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_AI_ONLY_ANSWER = InuUtils.generateId()
         private val TOGGLE_AI_INSERT_QUOTE = InuUtils.generateId()
         private val TOGGLE_AI_HISTORY = InuUtils.generateId()
-        private val TOGGLE_TRANSCRIBE_ENABLED = InuUtils.generateId()
-        private val BUTTON_TRANSCRIBE_SETTINGS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -209,7 +180,8 @@ class AiSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_sparkles,
             factory = ::AiSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("ai-services", R.string.InuAiServices, BUTTON_SERVICES),
+                SearchRegistry.Entry("ai-providers", R.string.InuAiProvidersTitle, BUTTON_PROVIDERS),
+                SearchRegistry.Entry("ai-transcribe-enabled", R.string.InuAiTranscribe, TOGGLE_TRANSCRIBE_ENABLED),
                 SearchRegistry.Entry("ai-editor-button", R.string.InuHideAiEditor, BUTTON_AI_EDITOR),
                 SearchRegistry.Entry("ai-summary", R.string.InuAiSummary, TOGGLE_AI_SUMMARY),
                 SearchRegistry.Entry("ai-role", R.string.InuAiRoles, BUTTON_AI_ROLE),
@@ -217,7 +189,6 @@ class AiSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ai-only-answer", R.string.InuAiOnlyAnswer, TOGGLE_AI_ONLY_ANSWER),
                 SearchRegistry.Entry("ai-insert-quote", R.string.InuAiInsertQuote, TOGGLE_AI_INSERT_QUOTE),
                 SearchRegistry.Entry("ai-history", R.string.InuAiHistory, TOGGLE_AI_HISTORY),
-                SearchRegistry.Entry("ai-transcribe-enabled", R.string.InuAiTranscribe, TOGGLE_TRANSCRIBE_ENABLED),
             ),
         )
     }

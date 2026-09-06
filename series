@@ -396,3 +396,4 @@ entiny/non-island-shared-media-scroll.patch
 entiny/redundant-lang-code-native-calls.patch
 entiny/optimize-build.patch
 entiny/wide-channel-posts.patch
+entiny/translate-debug-logging.patch

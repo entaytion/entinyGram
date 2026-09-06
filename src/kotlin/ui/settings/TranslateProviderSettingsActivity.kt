@@ -7,7 +7,9 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.translate.engine.EntinyTranslate
 import desu.inugram.helpers.translate.engine.TranslationProviders
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -65,9 +67,21 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
                 InuConfig.TRANSLATE_PROVIDER.value = newProvider
                 // retry messages that failed under the previous provider with the new one
                 EntinyTranslate.onProviderChanged()
+                unlockStockTranslateButton()
             }
             listView.adapter.update(true)
         }
+    }
+
+    // Stock gates the per-message "Translate" context menu item and the chat-bar banner behind
+    // their own opt-in flags (translate_button / translate_chat_button), defaulting OFF and
+    // otherwise only ever flipped on by the user finding Settings > Language > Show Translate
+    // Button. Picking a provider here is a clear enough signal of intent that we flip them for
+    // the user instead of leaving them stuck with a configured provider and no visible button.
+    private fun unlockStockTranslateButton() {
+        val controller = MessagesController.getInstance(UserConfig.selectedAccount).translateController
+        if (!controller.isContextTranslateEnabled) controller.setContextTranslateEnabled(true)
+        if (!controller.isChatTranslateEnabled) controller.setChatTranslateEnabled(true)
     }
 
     companion object {

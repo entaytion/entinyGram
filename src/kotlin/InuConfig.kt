@@ -28,6 +28,68 @@ object InuConfig {
         migrateGhostModeEnabledDefault()
         migrateGhostAutoOffline()
         migrateSelfDestructCategories()
+        migrateAiRoles()
+        migrateAiProviders()
+        migrateSharedProviderKeys()
+    }
+
+    // AI Compose used to store an arbitrary named list of endpoints ([AI_COMPOSE_ENDPOINTS]) you
+    // picked one active one from. The unified AI Providers screen replaces that with exactly one
+    // chat slot per known provider, so there is nothing left to "pick a name" for. One-time seed:
+    // whichever endpoint was active becomes that provider's chat slot, so an already-configured
+    // user doesn't silently lose their key on update. Extra endpoints beyond the active one (a
+    // second saved Custom config, say) are not preserved -- the new model has room for one.
+    private fun migrateAiProviders() {
+        if (AI_PROVIDERS_MIGRATED.value) return
+        AI_PROVIDERS_MIGRATED.value = true
+        val list = AI_COMPOSE_ENDPOINTS.value
+        if (list.isEmpty()) return
+        val activeId = AI_COMPOSE_ACTIVE_ENDPOINT.value
+        val endpoint = list.firstOrNull { it.id == activeId } ?: list.first()
+        val url = endpoint.url
+        val providerId = when {
+            url.contains("generativelanguage.googleapis.com", ignoreCase = true) -> TRANSCRIBE_PROVIDER_GEMINI
+            url.contains("api.openai.com", ignoreCase = true) -> TRANSCRIBE_PROVIDER_OPENAI
+            url.contains("api.groq.com", ignoreCase = true) -> TRANSCRIBE_PROVIDER_GROQ
+            url.contains("openrouter.ai", ignoreCase = true) -> AI_PROVIDER_OPENROUTER
+            else -> TRANSCRIBE_PROVIDER_CUSTOM
+        }
+        when (providerId) {
+            TRANSCRIBE_PROVIDER_GEMINI -> { AI_PROVIDER_GEMINI_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_GEMINI_MODEL.value = endpoint.model }
+            TRANSCRIBE_PROVIDER_OPENAI -> { AI_PROVIDER_OPENAI_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_OPENAI_MODEL.value = endpoint.model }
+            TRANSCRIBE_PROVIDER_GROQ -> { AI_PROVIDER_GROQ_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_GROQ_MODEL.value = endpoint.model }
+            AI_PROVIDER_OPENROUTER -> { AI_CHAT_OPENROUTER_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_OPENROUTER_MODEL.value = endpoint.model }
+            else -> { AI_CHAT_CUSTOM_URL.value = url; AI_CHAT_CUSTOM_KEY.value = endpoint.apiKey; AI_CHAT_CUSTOM_MODEL.value = endpoint.model }
+        }
+        AI_CHAT_ACTIVE_PROVIDER.value = providerId
+    }
+
+    // Gemini/OpenAI/Groq used to store a separate API key per scope (chat vs voice), which meant
+    // pasting the same account's key twice. Now there's one shared key per provider -- this
+    // one-time step copies whichever scope-specific key was already set (voice, since that
+    // screen shipped first) into the new shared slot, so nobody has to re-paste it.
+    private fun migrateSharedProviderKeys() {
+        if (AI_SHARED_PROVIDER_KEYS_MIGRATED.value) return
+        AI_SHARED_PROVIDER_KEYS_MIGRATED.value = true
+        if (AI_PROVIDER_GEMINI_KEY.value.isBlank()) AI_PROVIDER_GEMINI_KEY.value = AI_TRANSCRIBE_GEMINI_KEY.value
+        if (AI_PROVIDER_OPENAI_KEY.value.isBlank()) AI_PROVIDER_OPENAI_KEY.value = AI_TRANSCRIBE_OPENAI_KEY.value
+        if (AI_PROVIDER_GROQ_KEY.value.isBlank()) AI_PROVIDER_GROQ_KEY.value = AI_TRANSCRIBE_GROQ_KEY.value
+    }
+
+    // AI_ROLE used to be a single free-text persona string with no way to save more than one.
+    // It's now a list of named presets ([AI_ROLES]) you switch between from their own screen.
+    // One-time seed: whatever the user had typed into the old field becomes their first preset,
+    // so nobody's existing persona silently vanishes on update. Guarded by its own run-record so
+    // a later backup restore can't re-seed over presets the user has since edited or deleted.
+    private fun migrateAiRoles() {
+        if (AI_ROLES_MIGRATED.value) return
+        AI_ROLES_MIGRATED.value = true
+        val legacy = AI_ROLE.value.trim()
+        if (legacy.isNotEmpty() && AI_ROLES.value.isEmpty()) {
+            val role = desu.inugram.helpers.ai.AiRole(id = "legacy", text = legacy)
+            AI_ROLES.value = listOf(role)
+            AI_ACTIVE_ROLE.value = role.id
+        }
     }
 
     // The periodic "go offline again" re-assert used to be welded to GHOST_PRESENCE_MODE.DELAYED;
@@ -588,8 +650,71 @@ object InuConfig {
     @JvmField
     val AI_COMPOSE_ACTIVE_ENDPOINT = StringItem("ai_compose_active_endpoint", "", exportable = false)
 
+    // Legacy multi-endpoint list, kept only so [migrateAiProviders] can seed the new per-provider
+    // fields below from whatever endpoint was active. Superseded by the unified AI Providers
+    // screen, where each provider has exactly one chat slot instead of an arbitrary named list.
     @JvmField
     val AI_COMPOSE_ENDPOINTS = desu.inugram.helpers.ai.AiEndpointsConfig("ai_compose_endpoints")
+
+    @JvmField
+    val AI_CHAT_ACTIVE_PROVIDER = IntItem("ai_chat_active_provider", TRANSCRIBE_PROVIDER_GEMINI)
+
+    // One API key per named provider, shared by chat and voice -- it's the same account either
+    // way, so asking twice was pure duplication. Only the model differs per scope (a chat
+    // completion model isn't a transcription model), so models stay split below.
+    @JvmField
+    val AI_PROVIDER_GROQ_KEY = StringItem("ai_provider_groq_key", "", exportable = false)
+
+    @JvmField
+    val AI_PROVIDER_GEMINI_KEY = StringItem("ai_provider_gemini_key", "", exportable = false)
+
+    @JvmField
+    val AI_PROVIDER_OPENAI_KEY = StringItem("ai_provider_openai_key", "", exportable = false)
+
+    @JvmField
+    val AI_CHAT_GROQ_MODEL = StringItem("ai_chat_groq_model", "llama-3.3-70b-versatile", exportable = false)
+
+    @JvmField
+    val AI_CHAT_GEMINI_MODEL = StringItem("ai_chat_gemini_model", "gemini-3.1-flash-lite", exportable = false)
+
+    @JvmField
+    val AI_CHAT_OPENAI_MODEL = StringItem("ai_chat_openai_model", "gpt-4o-mini", exportable = false)
+
+    // When a named provider is active for both scopes, defaults to one shared model field; flip
+    // off to pick a different model per scope (e.g. a fast chat model but a specific transcription
+    // model for the same Gemini account).
+    @JvmField
+    val AI_SAME_MODEL_GROQ = BoolItem("ai_same_model_groq", true)
+
+    @JvmField
+    val AI_SAME_MODEL_GEMINI = BoolItem("ai_same_model_gemini", true)
+
+    @JvmField
+    val AI_SAME_MODEL_OPENAI = BoolItem("ai_same_model_openai", true)
+
+    @JvmField
+    val AI_CHAT_OPENROUTER_KEY = StringItem("ai_chat_openrouter_key", "", exportable = false)
+
+    @JvmField
+    val AI_CHAT_OPENROUTER_MODEL = StringItem("ai_chat_openrouter_model", "openai/gpt-4o-mini", exportable = false)
+
+    @JvmField
+    val AI_CHAT_CUSTOM_URL = StringItem("ai_chat_custom_url", "", exportable = false)
+
+    @JvmField
+    val AI_CHAT_CUSTOM_KEY = StringItem("ai_chat_custom_key", "", exportable = false)
+
+    @JvmField
+    val AI_CHAT_CUSTOM_MODEL = StringItem("ai_chat_custom_model", "", exportable = false)
+
+    @JvmField
+    val AI_CHAT_CUSTOM_NAME = StringItem("ai_chat_custom_name", "", exportable = false)
+
+    @JvmField
+    val AI_PROVIDERS_MIGRATED = BoolItem("ai_providers_migrated", false, exportable = false)
+
+    @JvmField
+    val AI_SHARED_PROVIDER_KEYS_MIGRATED = BoolItem("ai_shared_provider_keys_migrated", false, exportable = false)
 
     @JvmField
     val AI_SUMMARY_ENABLED = BoolItem("ai_summary_enabled", false)
@@ -600,8 +725,19 @@ object InuConfig {
     @JvmField
     val AI_REASONING_EFFORT = StringItem("ai_reasoning_effort", "medium")
 
+    // Legacy single-string persona field, kept only so [migrateAiRoles] can seed the first
+    // preset in [AI_ROLES] from whatever the user had typed here. Not read anywhere else.
     @JvmField
-    val AI_ROLE = StringItem("ai_role", "Assistant")
+    val AI_ROLE = StringItem("ai_role", "Assistant", exportable = false)
+
+    @JvmField
+    val AI_ROLES = desu.inugram.helpers.ai.AiRolesConfig("ai_roles")
+
+    @JvmField
+    val AI_ACTIVE_ROLE = StringItem("ai_active_role", "", exportable = false)
+
+    @JvmField
+    val AI_ROLES_MIGRATED = BoolItem("ai_roles_migrated", false, exportable = false)
 
     @JvmField
     val AI_HISTORY_ENABLED = BoolItem("ai_history_enabled", true)
@@ -619,11 +755,14 @@ object InuConfig {
     val AI_TEMPERATURE = FloatItem("ai_temperature", 1.0f)
 
     // AI Transcription (Voice-to-Text)
+    // Unified provider id space, shared by the AI Providers screen's chat and voice sections.
+    // Cloudflare has no chat API here (voice-only); OpenRouter has no transcription API (chat-only).
     const val TRANSCRIBE_PROVIDER_GROQ = 0
     const val TRANSCRIBE_PROVIDER_GEMINI = 1
     const val TRANSCRIBE_PROVIDER_OPENAI = 2
     const val TRANSCRIBE_PROVIDER_CF = 3
     const val TRANSCRIBE_PROVIDER_CUSTOM = 4
+    const val AI_PROVIDER_OPENROUTER = 5
 
     @JvmField
     val AI_TRANSCRIBE_ENABLED = BoolItem("ai_transcribe_enabled", false)
@@ -635,6 +774,9 @@ object InuConfig {
     val AI_TRANSCRIBE_GROQ_KEY = StringItem("ai_transcribe_groq_key", "", exportable = false)
 
     @JvmField
+    val AI_TRANSCRIBE_GROQ_MODEL = StringItem("ai_transcribe_groq_model", "whisper-large-v3-turbo", exportable = false)
+
+    @JvmField
     val AI_TRANSCRIBE_GEMINI_KEY = StringItem("ai_transcribe_gemini_key", "", exportable = false)
 
     @JvmField
@@ -644,10 +786,16 @@ object InuConfig {
     val AI_TRANSCRIBE_OPENAI_KEY = StringItem("ai_transcribe_openai_key", "", exportable = false)
 
     @JvmField
+    val AI_TRANSCRIBE_OPENAI_MODEL = StringItem("ai_transcribe_openai_model", "whisper-1", exportable = false)
+
+    @JvmField
     val AI_TRANSCRIBE_CF_ACCOUNT_ID = StringItem("ai_transcribe_cf_account_id", "", exportable = false)
 
     @JvmField
     val AI_TRANSCRIBE_CF_API_TOKEN = StringItem("ai_transcribe_cf_api_token", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CF_MODEL = StringItem("ai_transcribe_cf_model", "@cf/openai/whisper", exportable = false)
 
     @JvmField
     val AI_TRANSCRIBE_CUSTOM_URL = StringItem("ai_transcribe_custom_url", "", exportable = false)
@@ -657,6 +805,9 @@ object InuConfig {
 
     @JvmField
     val AI_TRANSCRIBE_CUSTOM_MODEL = StringItem("ai_transcribe_custom_model", "", exportable = false)
+
+    @JvmField
+    val AI_TRANSCRIBE_CUSTOM_NAME = StringItem("ai_transcribe_custom_name", "", exportable = false)
 
     @JvmField
     val AI_TRANSCRIBE_PROMPT = StringItem("ai_transcribe_prompt", "")
@@ -1460,6 +1611,23 @@ object InuConfig {
     // Third-party translation providers (0 = Telegram API, stock behavior)
     @JvmField
     val TRANSLATE_PROVIDER = IntItem("translate_provider", 0)
+
+    // Stock only shows the chat-bar "Translate to X?" banner after on-device language detection
+    // has accumulated 6 sampled messages agreeing the dialog is in a foreign language (2 if the
+    // chat has autotranslation on) -- see TranslateController.checkDialogTranslatable. A single
+    // opened post/deep-link rarely reaches that sample size, so the banner silently never
+    // appears even though the per-message Translate button (which has no such threshold) works
+    // fine. This skips the sample-size wait: the dialog is marked translatable off the very first
+    // confidently-detected foreign-language message.
+    @JvmField
+    val INSTANT_TRANSLATE_BANNER = BoolItem("instant_translate_banner", false)
+
+    // A channel/user can opt out of the translate banner + button-menu suggestion via
+    // `translations_disabled` (set by the channel owner in Telegram's own channel settings).
+    // Stock respects it only for the banner -- the per-message context-menu Translate button
+    // ignores it entirely already. This makes the banner ignore it too, for consistency.
+    @JvmField
+    val IGNORE_TRANSLATIONS_DISABLED = BoolItem("ignore_translations_disabled", false)
 
     @JvmField
     val TRANSLATE_DEEPL_KEY = StringItem("translate_deepl_key", "", exportable = false)

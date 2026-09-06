@@ -1,0 +1,140 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 7 Sep 2026 01:03:58 +0300
+Subject: Add InuTranslate debug logging for banner investigation
+
+---
+ .../messenger/TranslateController.java        | 22 +++++++++++++++++--
+ .../java/org/telegram/ui/ChatActivity.java    |  5 +++++
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+@@ -198,6 +198,9 @@ public class TranslateController extends BaseController {
+         if (hideTranslateDialogs.contains(dialogId)) {
+             return true;
+         }
++        if (desu.inugram.InuConfig.IGNORE_TRANSLATIONS_DISABLED.getValue()) {
++            return false;
++        }
+         TLRPC.ChatFull chatFull = getMessagesController().getChatFull(-dialogId);
+         if (chatFull != null) {
+             return chatFull.translations_disabled;
+@@ -590,6 +593,7 @@ public class TranslateController extends BaseController {
+         }
+ 
+         if (!isFeatureAvailable(dialogId)) {
++            android.util.Log.d("InuTranslate", "checkTranslation: dialogId=" + dialogId + " isFeatureAvailable=false, bailing");
+             return;
+         }
+ 
+@@ -598,6 +602,7 @@ public class TranslateController extends BaseController {
+         }
+ 
+         if (!isTranslatable(messageObject)) {
++            android.util.Log.d("InuTranslate", "checkTranslation: mid=" + messageObject.getId() + " dialogId=" + dialogId + " isTranslatable=false, bailing");
+             return;
+         }
+ 
+@@ -872,13 +877,16 @@ public class TranslateController extends BaseController {
+     private ArrayList<Integer> pendingLanguageChecks = new ArrayList<>();
+     private void checkLanguage(MessageObject messageObject) {
+         if (!LanguageDetector.hasSupport()) {
++            android.util.Log.d("InuTranslate", "checkLanguage: no LanguageDetector support, bailing");
+             return;
+         }
+         final String detectText = getDetectLanguageText(messageObject);
+         if (!isTranslatable(messageObject) || messageObject.messageOwner == null || TextUtils.isEmpty(detectText)) {
++            android.util.Log.d("InuTranslate", "checkLanguage: mid=" + (messageObject != null ? messageObject.getId() : -1) + " isTranslatable=" + (messageObject != null && isTranslatable(messageObject)) + " detectTextEmpty=" + TextUtils.isEmpty(detectText));
+             return;
+         }
+         if (messageObject.messageOwner.originalLanguage != null) {
++            android.util.Log.d("InuTranslate", "checkLanguage: mid=" + messageObject.getId() + " already has originalLanguage=" + messageObject.messageOwner.originalLanguage);
+             checkDialogTranslatable(messageObject);
+             return;
+         }
+@@ -886,6 +894,7 @@ public class TranslateController extends BaseController {
+         final long dialogId = messageObject.getDialogId();
+         final int hash = hash(messageObject);
+         if (isDialogTranslatable(dialogId)) {
++            android.util.Log.d("InuTranslate", "checkLanguage: dialogId=" + dialogId + " already marked translatable");
+             return;
+         }
+         if (pendingLanguageChecks.contains(hash)) {
+@@ -893,6 +902,7 @@ public class TranslateController extends BaseController {
+         }
+ 
+         pendingLanguageChecks.add(hash);
++        android.util.Log.d("InuTranslate", "checkLanguage: mid=" + messageObject.getId() + " dialogId=" + dialogId + " detecting language for text=" + detectText.substring(0, Math.min(40, detectText.length())));
+ 
+         Utilities.stageQueue.postRunnable(() -> {
+             LanguageDetector.detectLanguage(detectText, lng -> AndroidUtilities.runOnUIThread(() -> {
+@@ -900,11 +910,13 @@ public class TranslateController extends BaseController {
+                 if (detectedLanguage == null) {
+                     detectedLanguage = UNKNOWN_LANGUAGE;
+                 }
++                android.util.Log.d("InuTranslate", "checkLanguage: mid=" + messageObject.getId() + " detected=" + detectedLanguage);
+                 messageObject.messageOwner.originalLanguage = detectedLanguage;
+                 getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
+                 pendingLanguageChecks.remove((Integer) hash);
+                 checkDialogTranslatable(messageObject);
+             }), err -> AndroidUtilities.runOnUIThread(() -> {
++                android.util.Log.d("InuTranslate", "checkLanguage: mid=" + messageObject.getId() + " detection failed: " + err);
+                 messageObject.messageOwner.originalLanguage = UNKNOWN_LANGUAGE;
+                 getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
+                 pendingLanguageChecks.remove((Integer) hash);
+@@ -949,14 +961,20 @@ public class TranslateController extends BaseController {
+         final int notTranslatableCount = translatableMessages.certainlyNotTranslatable.size();
+         final int totalCount = translatableCount + unknownCount + notTranslatableCount;
+         final boolean autotranslation = isChatAutoTranslated(dialogId);
+-        if (
++        final boolean instantPass = desu.inugram.InuConfig.INSTANT_TRANSLATE_BANNER.getValue() && translatableCount > 0;
++        final boolean stockPass = (
+             totalCount >= (autotranslation ? REQUIRED_TOTAL_MESSAGES_CHECKED_AUTOTRANSLATE : REQUIRED_TOTAL_MESSAGES_CHECKED) &&
+             (autotranslation ?
+                 translatableCount >= REQUIRED_MIN_MESSAGES_TRANSLATABLE_AUTOTRANSLATE :
+                 (translatableCount / (float) (translatableCount + notTranslatableCount)) >= REQUIRED_PERCENTAGE_MESSAGES_TRANSLATABLE
+             ) &&
+             (unknownCount / (float) totalCount) < (autotranslation ? REQUIRED_MIN_PERCENTAGE_MESSAGES_UNKNOWN_AUTOTRANSLATE : REQUIRED_MIN_PERCENTAGE_MESSAGES_UNKNOWN)
+-        ) {
++        );
++        android.util.Log.d("InuTranslate", "checkDialogTranslatable: dialogId=" + dialogId + " isUnknown=" + isUnknown + " translatable=" + translatable
++                + " lang=" + messageObject.messageOwner.originalLanguage + " counts[translatable=" + translatableCount + " unknown=" + unknownCount + " notTranslatable=" + notTranslatableCount + "]"
++                + " autotranslation=" + autotranslation + " instantPass=" + instantPass + " stockPass=" + stockPass
++                + " isFeatureAvailable=" + isFeatureAvailable(dialogId) + " isTranslateDialogHidden=" + isTranslateDialogHidden(dialogId));
++        if (instantPass || stockPass) {
+             translatableDialogs.add(dialogId);
+             translatableDialogMessages.remove((Long) dialogId);
+             AndroidUtilities.runOnUIThread(() -> {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -25128,6 +25128,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+     private Runnable checkTranslationRunnable = () -> {
+         lastTranslationCheck = System.currentTimeMillis();
++        android.util.Log.d("InuTranslate", "checkTranslationRunnable: fired, dialogId=" + getDialogId() + " chatListViewNull=" + (chatListView == null) + " chatAdapterNull=" + (chatAdapter == null));
+         if (chatListView != null && chatAdapter != null) {
+             int minId = Integer.MAX_VALUE, maxId = Integer.MIN_VALUE;
+             for (int i = 0; i < chatListView.getChildCount(); ++i) {
+@@ -29391,6 +29392,7 @@ public class ChatActivity extends BaseFragment implements
+     public static final boolean DEBUG_TOP_PANELS = false;
+     public void updateTopPanel(boolean animated) {
+         if (chatMode != 0 && chatMode != MODE_SUGGESTIONS || topPanelLayout == null) {
++            android.util.Log.d("InuTranslate", "updateTopPanel: bailing early, chatMode=" + chatMode + " topPanelLayoutNull=" + (topPanelLayout == null) + " dialogId=" + getDialogId());
+             return;
+         }
+         SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
+@@ -29466,6 +29468,9 @@ public class ChatActivity extends BaseFragment implements
+ 
+         boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
+         boolean showTranslate = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) || DEBUG_TOP_PANELS;
++        android.util.Log.d("InuTranslate", "updateTopPanel: dialogId=" + getDialogId() + " chatMode=" + chatMode + " showTranslate=" + showTranslate
++                + " isDialogTranslatable=" + getMessagesController().getTranslateController().isDialogTranslatable(getDialogId())
++                + " isTranslateDialogHidden=" + getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()));
+         boolean showAddProfilePicture = UserObject.isBot(currentUser) && currentUser.bot_can_edit && currentUser.photo == null;
+         boolean showBizBot = currentEncryptedChat == null && getUserConfig().isPremium() && preferences.getLong("dialog_botid" + did, 0) != 0 || DEBUG_TOP_PANELS;
+         boolean showBotAd = currentUser != null && currentUser.bot && messages.size() >= 2 && botSponsoredMessage != null;
