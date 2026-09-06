@@ -871,15 +871,15 @@ object ChatHelper {
                 // SecretChatHelper populates from the decrypted payload for secret chats but
                 // nothing ever sets for a *received* regular-chat view-once message (only the
                 // outgoing send path mirrors it into media.ttl_seconds). Without this, both
-                // stock methods silently return null and Burn does nothing.
+                // stock methods silently return null and the viewer never opens.
                 val media = selectedObject.messageOwner.media
                 if (selectedObject.messageOwner.ttl <= 0 && media != null && media.ttl_seconds != 0) {
                     selectedObject.messageOwner.ttl = media.ttl_seconds
                 }
-                val openAction = activity.sendSecretMessageRead(selectedObject, false)
-                val closeAction = activity.sendSecretMediaDelete(selectedObject)
-                openAction?.run()
-                closeAction?.run()
+                // Open the real one-time viewer (same as tapping the bubble) instead of firing
+                // read+expire blind: burning without ever showing the content behaved like a
+                // delete, not like the regular one-time view a normal recipient gets.
+                activity.inu_openSecretMediaViewer(selectedObject)
             }
 
             OPTION_SAVE_STICKER_TO_DOWNLOADS -> {

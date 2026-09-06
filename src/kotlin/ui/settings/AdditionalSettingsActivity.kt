@@ -584,9 +584,9 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             entries = listOf(
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),
                 SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
-                SearchRegistry.Entry("backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
-                SearchRegistry.Entry("backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
-                SearchRegistry.Entry("cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
+                SearchRegistry.Entry("additional-backup-export", R.string.InuBackupExport, BUTTON_EXPORT),
+                SearchRegistry.Entry("additional-backup-import", R.string.InuBackupImport, BUTTON_IMPORT),
+                SearchRegistry.Entry("additional-cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
                 SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
             ),
         )

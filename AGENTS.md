@@ -45,6 +45,11 @@ chore(maintainer): migrate owned patches to entiny/ namespace...
 18. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
 19. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
 20. **Never duplicate origin. Never rewrite a hotspot for a feature origin already has.** If inugram already has the feature, take theirs — do not add a parallel `entiny/` patch, a second toggle, or a rewrite of `ChatMessageCell` / other 10k+ stock files. Bubble metadata (time, views, forwards, edited) goes through `ChatHelper.timePrefix` / `extraTimeWidth` / `timeAdditionsHash`, not a new cell patch. Checklist: `.claude/skills/write-patches/SKILL.md`. Code comparison: `.claude/skills/write-patches/dont-reinvent.md`.
+21. **Before calling any feature/patch done, run the automated checks — don't just eyeball it.** A duplicate `SearchRegistry` slug shipped to prod and hard-crashed settings search because this step got skipped. Every time you touch settings pages, patches, or translations, run before declaring done:
+    - `bun run tsx scripts/entinychecker.ts` — catches duplicate `SearchRegistry` slugs and unused app variants. Mandatory after adding/editing any `*SettingsActivity` `PAGE`/`Entry`.
+    - `bun run tsx scripts/check-translations.ts` — catches missing/stale translations after touching `strings_inu.xml`.
+    - `bun run lint-patches` — catches unexpected patch overwrites after any `stg refresh`/`bun run export`.
+    None of these require a build; they're static and fast — there's no excuse to skip them.
 
 > you are allowed to violate them if the user explicitly asks for this
 
@@ -77,6 +82,11 @@ git show upstream/HEAD:series | grep <name>
 
 As of writing, all `entiny__*` patches are **new** (not in inugram) — only `feature__translator` and `misc__branding` remain shared inugram base patches.
 
+**A brand-new entinyGram feature is ALWAYS `entiny__<name>`, never `feature__`/`debloat__`/`bugfix__`/`hooks__`/`misc__`.** Those five groups are the inherited inugram base — a patch that never existed upstream does not belong there, no matter how "feature-shaped" the name feels while writing it. Naming it `feature__x` instead of `entiny__x` misclassifies who owns and maintains it, and breaks the merge-duplication check above (it'll look like a shared inugram patch needing re-assertion, when actually it's ours and inugram will never touch it). **Case study:** the round-video-recorder zoom-level buttons (a purely entinyGram feature) was created as `patches/feature/round-recorder-zoom-buttons.patch` — sitting in the inugram-base folder — and its FEATURES.md line was left unmarked in the inuGram section too (see the FEATURES.md rule right below). Both mistakes were the same root cause: not stopping to ask "did inugram ship this, or did we?" before naming/filing it. Renamed to `entiny__round-recorder-zoom-buttons` once caught. Always sanity-check the group against rule 6 above before creating or naming a patch.
+
+**Every entinyGram feature gets its own bullet under `## entinyGram additions` in `FEATURES.md`, in the topical subsection that fits it (privacy & protection / restricted features / power-user tools / debloat & premium noise) — never left as an unmarked or inline-📡 line buried inside `## inuGram additions`.** The `## inuGram additions` section is for what inugram itself ships (occasionally inline-marked 🐶/📡 when a *sub-item* of an inugram feature happens to be ours, e.g. a toggle option within a larger inugram-owned settings block) — but a whole standalone feature that's entirely ours belongs at the top, as its own bullet, full stop. When in doubt, treat it like the patch group question above: "did inugram ship this, or did we?" — same case study, same fix.
+
+If `patches/entiny/` gets unwieldy to browse, it's fine to mirror the `src/kotlin/helpers/` convention and group by feature area (e.g. `patches/entiny/media/`, `patches/entiny/privacy/`) instead of one flat folder — ask before doing a mass reshuffle of existing patches, since renaming/moving many at once is a bigger stgit operation, but default new patches into a sensible subfolder going forward once there's an obvious cluster.
 
 Propose a patch name (and comment) for every newly made patch — don't touch stgit yourself.
 

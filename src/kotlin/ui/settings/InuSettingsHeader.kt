@@ -79,7 +79,7 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
     init {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER
-        setPadding(
+        setPaddingRelative(
             AndroidUtilities.dp(16f),
             AndroidUtilities.dp(4f),
             AndroidUtilities.dp(42f),
@@ -113,7 +113,7 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                leftMargin = AndroidUtilities.dp(14f)
+                marginStart = AndroidUtilities.dp(14f)
                 gravity = Gravity.CENTER_VERTICAL
             }
         )

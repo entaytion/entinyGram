@@ -998,6 +998,12 @@
     <string name="InuDeleteAllProfilePhotosConfirm">Tüm profil fotoğraflarını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="InuDeleteProfilePhotos">Profil fotoğraflarını sil</string>
     <string name="InuDeleteProfilePhotosInfo">Tüm profil fotoğraflarını veya yalnızca seçilenleri tek dokunuşla silin</string>
+
+    <string name="InuDeleteMyMessages">Mesajlarımı sil</string>
+    <string name="InuDeleteMyMessagesTitle">Mesajlarım silinsin mi?</string>
+    <string name="InuDeleteMyMessagesConfirm">Bu sohbette gönderdiğin tüm mesajlar herkes için silinecek. Bu işlem geri alınamaz.</string>
+    <string name="InuDeleteMyMessagesStarted">Mesajların siliniyor…</string>
+    <string name="InuDeleteMyMessagesDone">%1$d mesajın silindi</string>
     <string name="InuDeleteSelectedProfilePhotos">Seçilenleri sil (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">Seçilen %1$d profil fotoğrafını silmek istediğinizden emin misiniz?</string>
     <string name="InuDeletedAt">Silindi: %1$s</string>

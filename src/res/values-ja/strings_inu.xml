@@ -1002,6 +1002,12 @@
     <string name="InuDeleteAllProfilePhotosConfirm">すべてのプロフィール写真を削除してもよろしいですか？この操作は取り消せません。</string>
     <string name="InuDeleteProfilePhotos">プロフィール写真を削除</string>
     <string name="InuDeleteProfilePhotosInfo">すべてのプロフィール写真、または選択した写真をワンタップで削除します</string>
+
+    <string name="InuDeleteMyMessages">自分のメッセージを削除</string>
+    <string name="InuDeleteMyMessagesTitle">自分のメッセージを削除しますか？</string>
+    <string name="InuDeleteMyMessagesConfirm">このチャットで送信したすべてのメッセージが全員に対して削除されます。元に戻せません。</string>
+    <string name="InuDeleteMyMessagesStarted">メッセージを削除しています…</string>
+    <string name="InuDeleteMyMessagesDone">%1$d件のメッセージを削除しました</string>
     <string name="InuDeleteSelectedProfilePhotos">選択した写真を削除 (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">選択した %1$d 枚のプロフィール写真を削除してもよろしいですか？</string>
     <string name="InuDeletedAt">削除日時: %1$s</string>

@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 6 Sep 2026 00:39:15 +0300
+Subject: Fix missing style reference on the OldIcon launcher activity-alias
+
+---
+ TMessagesProj/src/main/AndroidManifest.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -134,7 +134,7 @@
+             android:enabled="false"
+             android:name="org.telegram.messenger.OldIcon"
+             android:targetActivity="org.telegram.ui.LaunchActivity"
+-            android:theme="@style/Theme.TMessages.Start.Old"
++            android:theme="@style/Theme.TMessages.Start"
+             android:icon="@mipmap/ic_launcher_old"
+             android:roundIcon="@mipmap/ic_launcher_old"
+             android:exported="true">

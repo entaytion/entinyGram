@@ -999,6 +999,12 @@
     <string name="InuDeleteAllProfilePhotosConfirm">确定要删除所有头像吗？此操作无法撤销。</string>
     <string name="InuDeleteProfilePhotos">删除个人头像</string>
     <string name="InuDeleteProfilePhotosInfo">一键删除全部个人头像或仅删除选中的头像</string>
+
+    <string name="InuDeleteMyMessages">删除我的消息</string>
+    <string name="InuDeleteMyMessagesTitle">删除我的消息？</string>
+    <string name="InuDeleteMyMessagesConfirm">你在此聊天中发送的所有消息都将为所有人删除。此操作无法撤销。</string>
+    <string name="InuDeleteMyMessagesStarted">正在删除你的消息…</string>
+    <string name="InuDeleteMyMessagesDone">已删除 %1$d 条你的消息</string>
     <string name="InuDeleteSelectedProfilePhotos">删除选中的头像 (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">确定要删除选中的 %1$d 张头像吗？</string>
     <string name="InuDeletedAt">已删除 %1$s</string>

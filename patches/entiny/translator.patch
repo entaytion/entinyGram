@@ -287,7 +287,7 @@ index 0000000..0000000 100644
                  updateTopPanel(true);
              }
          };
-@@ -29390,11 +29379,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29384,11 +29373,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);

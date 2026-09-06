@@ -249,7 +249,6 @@ bugfix/album-caption-link-ripple.patch
 bugfix/recyclerview-prelayout-space-change.patch
 bugfix/save-uncached-documents-to-downloads.patch
 entiny/save-stories.patch
-entiny/save-self-destruct.patch
 entiny/ai-compose.patch
 feature/faster-file-load.patch
 bugfix/album-caption-spoiler-reset.patch
@@ -342,8 +341,6 @@ misc/remove-unused-hockeyapp.patch
 misc/remove-unused-apptests.patch
 entiny/send-round-video.patch
 entiny/gif-restriction-bypass.patch
-misc/optimize-build.patch
-bugfix/redundant-lang-code-native-calls.patch
 entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
 entiny/dialogs-title-text.patch
@@ -351,7 +348,6 @@ entiny/ios-chat-header.patch
 entiny/title-alignment.patch
 entiny/fix-beta-app-detection.patch
 entiny/log-categories.patch
-debloat/hide-channel-share-button.patch
 entiny/show-spoilers-directly.patch
 entiny/wide-channel-posts.patch
 entiny/selection-no-quote.patch
@@ -381,7 +377,6 @@ bugfix/scrim-touch-lock.patch
 entiny/branding.patch
 misc/remove-unused-appstandalone.patch
 entiny/amoled-theme.patch
-entiny/hide-gift-elements.patch
 entiny/hide-dialogs-banners.patch
 entiny/hide-attach-emoji-premium-upsells.patch
 entiny/disable-call-rating.patch
@@ -390,8 +385,14 @@ entiny/customizable-settings-rows.patch
 entiny/session-version-display.patch
 entiny/ghost-mode.patch
 bugfix/launch-activity-leaks.patch
-feature/round-recorder-zoom-buttons.patch
-bugfix/non-island-shared-media-scroll.patch
 entiny/build-configuration.patch
 bugfix/sticker-maker-segmentation-crash.patch
 feature/osmdroid-provider-wiring.patch
+bugfix/old-icon-alias-theme.patch
+entiny/hide-gift-elements.patch
+entiny/save-self-destruct.patch
+entiny/round-recorder-zoom-buttons.patch
+entiny/hide-channel-share-button.patch
+entiny/non-island-shared-media-scroll.patch
+entiny/redundant-lang-code-native-calls.patch
+entiny/optimize-build.patch

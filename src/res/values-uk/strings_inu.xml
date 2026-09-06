@@ -1111,6 +1111,12 @@
 
     <string name="InuDeleteProfilePhotos">Видалити фото профілю</string>
     <string name="InuDeleteProfilePhotosInfo">Видалення всіх фото профілю або лише вибраних в один дотик</string>
+
+    <string name="InuDeleteMyMessages">Видалити мої повідомлення</string>
+    <string name="InuDeleteMyMessagesTitle">Видалити мої повідомлення?</string>
+    <string name="InuDeleteMyMessagesConfirm">Усі повідомлення, які ти надіслав(-ла) у цьому чаті, будуть видалені для всіх. Це не можна скасувати.</string>
+    <string name="InuDeleteMyMessagesStarted">Видалення твоїх повідомлень…</string>
+    <string name="InuDeleteMyMessagesDone">Видалено %1$d твоїх повідомлень</string>
     <string name="InuDeleteAllProfilePhotos">Видалити всі фото</string>
     <string name="InuDeleteSelectedProfilePhotos">Видалити вибрані (%1$d)</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Ви впевнені, що хочете видалити всі фотографії профілю? Цю дію неможливо скасувати.</string>

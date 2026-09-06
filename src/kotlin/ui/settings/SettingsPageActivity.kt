@@ -206,6 +206,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
                 val cell = view as? TextCell ?: return@Callback
                 val iv = cell.valueImageView
                 iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
                 iv.colorFilter = PorterDuffColorFilter(
                     Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
                     PorterDuff.Mode.MULTIPLY,
@@ -221,6 +222,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
                 val cell = view as? TextCell ?: return@Callback
                 val iv = cell.valueImageView
                 iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
                 iv.colorFilter = PorterDuffColorFilter(
                     Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
                     PorterDuff.Mode.MULTIPLY,
@@ -236,6 +238,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
                 val cell = view as? TextCell ?: return@Callback
                 val iv = cell.valueImageView
                 iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
                 iv.colorFilter = PorterDuffColorFilter(
                     Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
                     PorterDuff.Mode.MULTIPLY,

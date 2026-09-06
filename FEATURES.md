@@ -64,35 +64,43 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings — pinned chats and folder chats beyond the server limit (5/10 pins, 100/200 folder chats with Premium) are tracked client-only and never revert on resync; favorite stickers/GIFs simply stop being trimmed from the local cache
 - 📡 **force relay calls**: always route voice/video calls through Telegram's relay servers, never peer-to-peer, so the other party's client can never learn your real IP address
 
-### power-user tools
+### appearance & customization
 
-- 📡 **developer badges**: show entinyGram, inuGram, and official-channel badges in chat headers and profiles. Tap a badge for details or disable them in Settings → Chats.
-- 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags & toggle in settings
-- 📡 **estimated registration date & DC**: profile info card with fast copy and DC location resolution
-- 📡 **delete profile photos**: one-tap delete all or selected profile photos from profile menu, photo viewer, or settings
-- 📡 **extended message details & JSON view**: inspect raw message objects and properties
-- 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
-- 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
-- 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
-- 📡 **custom title alignment & modular navigation**: selective centering for chat headers and centered status-bar titles across all other screens; modular M3 drawer cards
-- 📡 **auto marquee for long titles**: chat header titles/subtitles, action bar screen titles and profile names smoothly auto-scroll instead of fading out - *inspired by the auto_marquee plugin (@chestertech)*
-- 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
-- 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator (`SHARP`, `ROUND`, or radius), live interactive dialog mock preview card with squareness-aware online dot cutout, and `Unified corner radius` toggle for regular and forum avatars - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, and Profile tabs in MainTabsActivity, with separate tab title visibility toggle
-- 📡 **customizable settings screen**: reorder and hide the rows of Telegram's own Settings screen (Inugram Settings, Account, Chat Settings, Privacy, Notifications, Data, Folders, Devices, Power Saving, Language, Premium, Stars, TON, Wallet, Business, Gift, Ask a Question, FAQ, Features, Privacy Policy) — untouched it renders exactly like stock, customized it collapses into one flat section
-- 📡 **customizable My Profile info rows**: independent reordering and show/hide toggles for the phone number, bio, username, ID, and estimated registration date rows on your own profile
-- 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
-- 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
-- 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
-- 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
 - 📡 **standalone AMOLED theme**: a true-black theme selectable from the regular theme list, independent of Monet (no dynamic accent tracking) - *ported from NagramX Turbo*
-- 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
 - 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (chat input bar, message action strip, settings/navigation showcase). Supports Stock Telegram, Solar by @Design480, VKUI by VK, and Phosphor Icons (Regular style).
 - 📡 **iOS-style design**, ported from [exteraless](https://github.com/exteraless/exteraless):
   - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
   - Chats tab tap returns to the first folder before scrolling to top
   - centered chat header: avatar+title+subtitle grouped in a pill, chat avatar moved into the "⋮" menu slot (long-press it for the chat menu) — **this one is a pretty janky patch (touch-target overlap in chats with extra header icons, off-by-a-few-dp centering when a call/search icon is present, untested interaction with search/action mode) and we don't have much motivation to keep polishing it ourselves, so pull requests to clean it up are welcome**
+- 📡 **custom title alignment & modular navigation**: selective centering for chat headers and centered status-bar titles across all other screens; modular M3 drawer cards
+- 📡 **auto marquee for long titles**: chat header titles/subtitles, action bar screen titles and profile names smoothly auto-scroll instead of fading out - *inspired by the auto_marquee plugin (@chestertech)*
+- 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
+- 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, and Profile tabs in MainTabsActivity, with separate tab title visibility toggle
+- 📡 **customizable settings screen**: reorder and hide the rows of Telegram's own Settings screen (Inugram Settings, Account, Chat Settings, Privacy, Notifications, Data, Folders, Devices, Power Saving, Language, Premium, Stars, TON, Wallet, Business, Gift, Ask a Question, FAQ, Features, Privacy Policy) — untouched it renders exactly like stock, customized it collapses into one flat section
+- 📡 **customizable My Profile info rows**: independent reordering and show/hide toggles for the phone number, bio, username, ID, and estimated registration date rows on your own profile
+- 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
+
+### profile & identity tools
+
+- 📡 **developer badges**: show entinyGram, inuGram, and official-channel badges in chat headers and profiles. Tap a badge for details or disable them in Settings → Chats.
+- 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags & toggle in settings
+- 📡 **estimated registration date & DC**: profile info card with fast copy and DC location resolution
+- 📡 **delete profile photos**: one-tap delete all or selected profile photos from profile menu, photo viewer, or settings
+- 📡 **delete my messages**: wipe every message you sent in a chat, group, or channel with one confirmation — good for leaving without a trace
+- 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
+- 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
+
+### messages & media tools
+
+- 📡 **extended message details & JSON view**: inspect raw message objects and properties
+- 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
+- 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
+- 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
+- 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
+- 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
+- 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
+- 📡 **round recorder zoom-level buttons**: fixed zoom presets (1×/2×/3×/5×/10×, capped to what the lens supports) below the video feed - tap to snap and lock zoom instead of only pinching or dragging the slider
 
 ### debloat & premium noise
 
@@ -115,6 +123,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - hide the "similar channels" discovery card Telegram injects into chats after joining one
   - disable the post-call rating prompt
   - disable the contacts-permission and lockscreen (MIUI / Android 14+ full-screen-intent) permission nags shown on cold start
+- 📡 **hide channel share button**: hide the small share/forward icon next to channel posts entirely (the normal forward action from the message menu still works)
 
 the sections below contain the broader feature set: inugram functionality, features adapted from other telegram clients, bug fixes, and entinygram additions in their original context.
 
@@ -273,7 +282,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - hide "send as" picker (long-tap stickers button to reveal)
 - round recorder:
   - zoom slider below the video feed
-  - fixed zoom-level buttons (1×/2×/3×/5×/10×, capped to what the lens supports) - tap to snap and lock zoom instead of only pinching or dragging the slider
   - keep zoom on pinch release
   - gentler exponential zoom curve (like in normal camera apps)
   - toggle to disable dual-camera mode

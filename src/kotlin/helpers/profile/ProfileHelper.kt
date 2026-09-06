@@ -60,6 +60,7 @@ object ProfileHelper {
     const val ACTION_MARK_AS_READ = 509
     const val ACTION_DELETE_PROFILE_PHOTOS = 510
     const val ACTION_TOGGLE_PRESENCE_WATCH = 511
+    const val ACTION_DELETE_MY_MESSAGES = 512
     const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
@@ -289,6 +290,12 @@ object ProfileHelper {
                 R.drawable.inu_tabler_photo_x,
                 LocaleController.getString(R.string.InuDeleteProfilePhotos),
             )
+        } else {
+            otherItem.addSubItem(
+                ACTION_DELETE_MY_MESSAGES,
+                R.drawable.msg_delete,
+                LocaleController.getString(R.string.InuDeleteMyMessages),
+            )
         }
     }
 
@@ -335,6 +342,10 @@ object ProfileHelper {
             ACTION_DELETE_PROFILE_PHOTOS -> {
                 val activity = LaunchActivity.getLastFragment()?.parentActivity ?: LaunchActivity.instance ?: return true
                 DeleteProfilePhotosSheet(activity, currentAccount).show()
+            }
+            ACTION_DELETE_MY_MESSAGES -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                desu.inugram.helpers.chat.SelfMessageWipeHelper.confirmAndDelete(fragment, currentAccount, dialogId)
             }
             ACTION_DEBUG_CLEAR_CACHE -> debugClearProfileCache(currentAccount, dialogId)
             else -> return false

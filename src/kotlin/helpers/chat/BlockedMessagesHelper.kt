@@ -175,6 +175,11 @@ object BlockedMessagesHelper {
 
     private fun isBlockedMessage(messageObject: MessageObject?): Boolean {
         if (messageObject?.messageOwner == null || messageObject.storyItem != null) return false
+        // A linked channel's own post auto-crossposted into its discussion group carries the
+        // channel's peer id as both fromChatId and fwd_from.from_id (isForwardedChannelPost()).
+        // Blocking that channel/peer identity (deliberately, or via an anonymous-admin block that
+        // has no other target) must not blackout the channel's real announcements in the group.
+        if (messageObject.isForwardedChannelPost) return false
         if (isBlockedPeer(messageObject.currentAccount, messageObject.fromChatId)) return true
         val forwardedFrom = messageObject.messageOwner.fwd_from?.from_id ?: return false
         return isBlockedPeer(messageObject.currentAccount, MessageObject.getPeerId(forwardedFrom))

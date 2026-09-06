@@ -234,6 +234,16 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             when (changed?.id) {
                 TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
                 TOGGLE_M3_SECTIONS_STYLE -> inu_rebuildSelf()
+                TOGGLE_M3_BOTTOM_TABS -> {
+                    // Mirror of the IOS_BOTTOM_NAVIGATION_BAR toggle below: both bottom-tabs
+                    // styles fighting over the same row makes iOS's own toggle a no-op, so
+                    // turning M3 tabs on must switch iOS bottom bar off, not just the reverse.
+                    if (InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
+                        InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
+                        invalidateVisibleRows()
+                        showRestartBulletin()
+                    }
+                }
             }
             if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_BOTTOM_TABS)) {
                 softRebuild()
