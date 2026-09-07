@@ -1,13 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 29 Aug 2026 15:21:16 +0300
-Subject: Add an iOS-style centered chat header
+Subject: iOS-style chat header + adaptive width + unread badge
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 149 ++++++++++++++++++
- .../java/org/telegram/ui/ChatActivity.java    |  24 +++
- .../ui/Components/ChatAvatarContainer.java    | 143 ++++++++++++++++-
- 3 files changed, 312 insertions(+), 4 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 156 +++++++++++++++++-
+ .../java/org/telegram/ui/ChatActivity.java    |  39 ++++-
+ .../ui/Components/ChatAvatarContainer.java    | 155 ++++++++++++++++-
+ 3 files changed, 337 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -206,6 +206,20 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          final int p = dp(6);
+@@ -2254,7 +2403,12 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         final int t = getHeight() - (getCurrentActionBarHeight() + s) / 2 - p;
+         final int b = t + s + p * 2;
+ 
+-        if (glassDrawable != null && !glassOnlyBack) {
++        // inu: skip the centered-title pill background entirely for the iOS-style header - no
++        // pill shape means no gap/alignment mismatch to chase, just centered text on the plain
++        // header background.
++        final boolean inu_skipTitlePill = desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()
++                && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode();
++        if (glassDrawable != null && !glassOnlyBack && !inu_skipTitlePill) {
+             final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
+             final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
@@ -245,7 +259,33 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -22119,6 +22140,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -4611,18 +4632,17 @@ public class ChatActivity extends BaseFragment implements
+             BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
+             ChatObject.isForum(currentChat));
+ 
+-        if (chatMode == MODE_PINNED) {
+-            actionBar.setChatAvatarContainer(avatarContainer);
+-            avatarContainer.setActionBar(actionBar);
+-        } else if (chatMode == MODE_WELCOME_MESSAGES) {
+-            actionBar.setChatAvatarContainer(avatarContainer);
++        // inu: this used to only run for MODE_PINNED/MODE_WELCOME_MESSAGES/isComments, leaving
++        // actionBar.chatAvatarContainer null for the default chat mode - the centered-header
++        // checks in ActionBar (IOS_CHAT_HEADER pill sizing/skip, CENTER_TITLE_ADAPTIVE_WIDTH) all
++        // silently no-op without it. Always wire it so those checks actually run.
++        actionBar.setChatAvatarContainer(avatarContainer);
++        avatarContainer.setActionBar(actionBar);
++        if (chatMode == MODE_WELCOME_MESSAGES) {
+             actionBar.setForcedMenuWidth(dp(46));
+             actionBar.doNotDrawGlassMenu = true;
+-            avatarContainer.setActionBar(actionBar);
+         } else if (isComments) {
+-            actionBar.setChatAvatarContainer(avatarContainer);
+             actionBar.setForcedMenuMinWidth(dp(46));
+-            avatarContainer.setActionBar(actionBar);
+         }
+ 
+         chatInputViewsContainer = new ChatInputViewsContainer(context);
+@@ -22119,6 +22139,9 @@ public class ChatActivity extends BaseFragment implements
              }
          } else if (id == NotificationCenter.updateInterfaces) {
              int updateMask = (Integer) args[0];
@@ -281,7 +321,7 @@ index 0000000..0000000 100644
              // Mirror onLayout's textLeftBound/textRightBound math so the EXACTLY-measured
              // width used for ellipsizing matches the box the text is actually laid out into —
              // otherwise long subtitles (e.g. member count + online) get visually clipped
-@@ -806,14 +811,144 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -806,14 +811,156 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -377,6 +417,18 @@ index 0000000..0000000 100644
 +            avatarImageView.layout(iosAvatarLeft, 1 + viewTop, iosAvatarLeft + avatarW, 1 + viewTop + avatarH);
 +            textLeftBound = dp(6) + rightAvatarPadding;
 +            textRightBound = Math.max(textLeftBound, (right - left) - dp(6));
++            // inu: shift the symmetric band (without touching its width) so its midpoint lands on
++            // the screen's true horizontal center in absolute coordinates, not just the center of
++            // this container's own local box - the container itself is not translated here (that
++            // would drag the avatar out of its menu-slot position above), so this bound-shift is
++            // the only way to get genuinely centered text for the iOS-style header.
++            if (actionBar != null) {
++                final int currentCenter = (textLeftBound + textRightBound) / 2;
++                final int desiredCenter = actionBar.getWidth() / 2 - getLeft();
++                final int shift = desiredCenter - currentCenter;
++                textLeftBound += shift;
++                textRightBound += shift;
++            }
 +        } else if (rightAvatar) {
 +            int pillWidth = (actionBar != null ? (actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft) : 0);
 +            if (pillWidth <= 0) {

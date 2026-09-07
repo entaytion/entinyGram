@@ -280,7 +280,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
  
-@@ -2400,37 +2535,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2400,8 +2535,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
  
@@ -289,7 +289,12 @@ index 0000000..0000000 100644
 +        final int t = inu_glassTop;
 +        final int b = inu_glassBottom;
  
-         if (glassDrawable != null && !glassOnlyBack) {
+         // inu: skip the centered-title pill background entirely for the iOS-style header - no
+         // pill shape means no gap/alignment mismatch to chase, just centered text on the plain
+@@ -2409,33 +2544,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         final boolean inu_skipTitlePill = desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()
+                 && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode();
+         if (glassDrawable != null && !glassOnlyBack && !inu_skipTitlePill) {
 -            final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
 -            final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
 -
@@ -321,7 +326,7 @@ index 0000000..0000000 100644
              }
              glassDrawable.draw(canvas);
          }
-@@ -2443,6 +2555,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2448,6 +2560,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              glassDrawableMenu.setAlpha(hasForcedMenuWidth ? 255 : (int) (255 * animatorHasMenuItems.getFloatValue()));
              glassDrawableMenu.draw(canvas);
          }
@@ -692,7 +697,7 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -951,45 +951,53 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -963,45 +963,53 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          int r = centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + titleTextView.getMeasuredWidth());
          SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
          if (getSubtitleTextView().getVisibility() != GONE) {
@@ -759,7 +764,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -1091,10 +1099,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1103,10 +1111,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -773,7 +778,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -1170,10 +1179,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1182,10 +1191,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          if (parentFragment != null) {
              long dialogId = parentFragment.getDialogId();
@@ -788,7 +793,7 @@ index 0000000..0000000 100644
                  desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
              );
          }
-@@ -1716,6 +1729,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1728,6 +1741,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -796,7 +801,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1927,7 +1941,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1939,7 +1953,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (hasVisibleAvatar()) {
              width += dp(52 + 18);
          } else {
