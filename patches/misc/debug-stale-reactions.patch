@@ -166,7 +166,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -8944,6 +8944,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -8945,6 +8945,9 @@ public class ChatActivity extends BaseFragment implements
                  updatePollVotesMentionButton(false);
              }
          }
@@ -176,7 +176,7 @@ index 0000000..0000000 100644
  
          if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
              savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
-@@ -16248,6 +16251,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -16249,6 +16252,9 @@ public class ChatActivity extends BaseFragment implements
                      updatePollVotesMentionButton(true);
                  }
                  if (messageObject != null && fragmentOpened && openAnimationEnded && !inPreviewMode && (chatListItemAnimator == null || !chatListItemAnimator.isRunning()) && messageCell.checkUnreadReactions(clipTop, chatListView.getMeasuredHeight() - blurredViewBottomOffset)) {
@@ -186,7 +186,7 @@ index 0000000..0000000 100644
                      reactionsMentionCount--;
                      getMessagesStorage().markMessageReactionsAsRead(getDialogId(), getTopicId(), messageObject.getId());
                      if (reactionsMentionCount <= 0) {
-@@ -16267,6 +16273,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -16268,6 +16274,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                      updateReactionsMentionButton(true);
                  }
@@ -194,7 +194,7 @@ index 0000000..0000000 100644
                  getDownloadController().checkUnviewedDownloads(messageCell.getId(), dialog_id);
                  boolean allowPlayEffect = messageObject.getEffect() != null || ((messageObject.messageOwner.media != null && !messageObject.messageOwner.media.nopremium) || (messageObject.isAnimatedEmojiStickerSingle() && dialog_id > 0));
                  if ((chatListItemAnimator == null || !chatListItemAnimator.isRunning()) && (!messageObject.isOutOwner() || messageObject.forcePlayEffect) && allowPlayEffect && !messageObject.messageOwner.premiumEffectWasPlayed && (messageObject.isPremiumSticker() || messageCell.getEffect() != null || messageObject.isAnimatedEmojiStickerSingle()) && emojiAnimationsOverlay.isIdle() && emojiAnimationsOverlay.checkPosition(messageCell, chatListViewPaddingTop, chatListView.getMeasuredHeight() - blurredViewBottomOffset)) {
-@@ -24436,6 +24443,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -24440,6 +24447,9 @@ public class ChatActivity extends BaseFragment implements
              long topicId = (long) args[1];
              if (dialogId == dialog_id && ((!isTopic && (!ChatObject.isMonoForum(currentChat) || getTopicId() == 0)) || topicId == getTopicId())) {
                  reactionsMentionCount = (int) args[2];
@@ -204,7 +204,7 @@ index 0000000..0000000 100644
                  ArrayList<Integer> messages = null;
                  if (args[2] != null) {
                      messages = (ArrayList<Integer>) args[3];
-@@ -24444,6 +24454,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -24448,6 +24458,9 @@ public class ChatActivity extends BaseFragment implements
                      for (int i = 0; i < messages.size(); i++) {
                          int messageId = messages.get(i);
                          BaseCell cell = findMessageCell(messageId, true);
@@ -214,7 +214,7 @@ index 0000000..0000000 100644
                          if (cell != null && reactionsMentionCount > 0) {
                              reactionsMentionCount--;
                              getMessagesStorage().markMessageReactionsAsRead(getDialogId(), getTopicId(), messageId);
-@@ -27071,6 +27084,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -27075,6 +27088,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  if (messageObject.type >= 0) {
                      messageObject.reactionsChanged |= old.isBotPendingDraft && !messageObject.isBotPendingDraft;
@@ -222,7 +222,7 @@ index 0000000..0000000 100644
                      messageObject.copyStableParams(old);
                      messages.set(index, messageObject);
                      if (chatAdapter != null && !chatAdapter.isFiltered) {
-@@ -47007,7 +47021,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -47011,7 +47025,13 @@ public class ChatActivity extends BaseFragment implements
              loadLastUnreadMention();
          } else if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_REACTIONS) {
              wasManualScroll = true;

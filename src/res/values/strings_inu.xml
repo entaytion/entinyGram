@@ -357,7 +357,7 @@
     <string name="InuTranslateAutoDetectLang">Respect DNT in message menu</string>
     <string name="InuTranslateAutoDetectLangInfo">When the message language is in the DNT list, its language is automatically detected and the menu item is hidden.\nThis might cause the menu to open a bit slower.</string>
     <string name="InuInstantTranslateBanner">Instant translate banner</string>
-    <string name="InuInstantTranslateBannerInfo">Shows the "Translate to X?" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Useful for chats and single posts you rarely see more than a few messages of.</string>
+    <string name="InuInstantTranslateBannerInfo">Shows the "Translate to X?" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Also ignores the restricted/"don\'t translate this language" list, so the banner still appears even for languages you\'ve told Telegram not to offer translation for. Useful for chats and single posts you rarely see more than a few messages of.</string>
     <string name="InuIgnoreTranslationsDisabled">Ignore "Translations disabled"</string>
     <string name="InuIgnoreTranslationsDisabledInfo">A channel or user can turn off the translate chat-bar banner via their own Telegram settings. This shows it anyway. The per-message Translate button in the message menu already ignores this setting, so this just makes the banner behave the same way.</string>
     <string name="InuTranslateInstantView">Translate page</string>
@@ -1014,11 +1014,15 @@
     <string name="InuCenterTitleRightAvatar">Move avatar to the right</string>
     <string name="InuCenterTitleFixed">Fixed centering</string>
     <string name="InuCenterTitleFixedInfo">Always centers on the exact middle of the screen instead of adapting to the back button and menu, even if that means overlapping them on busy headers.</string>
+    <string name="InuCenterTitleAdaptiveWidth">Adaptive width (iOS-style)</string>
+    <string name="InuCenterTitleAdaptiveWidthInfo">Shrinks the centered header pill to hug the avatar, title and subtitle instead of always spanning the full space between the back button and menu, like Telegram for iOS.</string>
     <string name="InuCenterTitleMain">Centered screen titles</string>
     <string name="InuCenterTitleMainInfo">Centers action bar titles on all screens except chats - chats use their own toggle.</string>
     <string name="InuCenterTitleAdaptiveSize">Adaptive title font (iOS-style)</string>
     <string name="InuIosChatHeader">iOS-style chat header</string>
     <string name="InuIosChatHeaderInfo">Draws the chat header background as a rounded pill that hugs and centers around the avatar, title and subtitle, like Telegram for iOS. Implies centered chat titles. The avatar replaces the \"⋮\" menu button — tap it to open the chat menu, long-press it to open the profile. This is a pretty janky patch and we don\'t plan on polishing it further ourselves — pull requests welcome.</string>
+    <string name="InuUnreadBadgeBackButton">Unread badge on back button (iOS-style)</string>
+    <string name="InuUnreadBadgeBackButtonInfo">Shows your total unread chats count as a small growing pill next to the back button, like Telegram for iOS. Requires a centered chat header.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuFloatingAvatar">Floating avatar in chat header</string>

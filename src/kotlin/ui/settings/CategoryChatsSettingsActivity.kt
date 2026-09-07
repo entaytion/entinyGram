@@ -169,6 +169,17 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                     experimental = true,
                 )
             )
+            if (!InuConfig.IOS_CHAT_HEADER.value) {
+                items.add(
+                    mkTwoLineCheckItem(
+                        TOGGLE_CENTER_TITLE_ADAPTIVE_WIDTH,
+                        R.string.InuCenterTitleAdaptiveWidth,
+                        R.string.InuCenterTitleAdaptiveWidthInfo,
+                        InuConfig.CENTER_TITLE_ADAPTIVE_WIDTH.value,
+                        experimental = true,
+                    )
+                )
+            }
         }
         items.add(
             mkTwoLineCheckItem(
@@ -188,6 +199,17 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 experimental = true,
             )
         )
+        if (InuConfig.CENTER_TITLE_CHATS.value || InuConfig.IOS_CHAT_HEADER.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_UNREAD_BADGE_BACK_BUTTON,
+                    R.string.InuUnreadBadgeBackButton,
+                    R.string.InuUnreadBadgeBackButtonInfo,
+                    InuConfig.UNREAD_BADGE_BACK_BUTTON.value,
+                    experimental = true,
+                )
+            )
+        }
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_CHAT_TITLE_MARQUEE,
@@ -420,6 +442,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.CENTER_TITLE_FIXED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_CENTER_TITLE_ADAPTIVE_WIDTH -> {
+                val new = InuConfig.CENTER_TITLE_ADAPTIVE_WIDTH.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_CENTER_TITLE_MAIN -> {
                 val new = InuConfig.CENTER_TITLE_MAIN.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -427,6 +453,11 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             }
             TOGGLE_IOS_CHAT_HEADER -> {
                 val new = InuConfig.IOS_CHAT_HEADER.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                listView.adapter.update(true)
+            }
+            TOGGLE_UNREAD_BADGE_BACK_BUTTON -> {
+                val new = InuConfig.UNREAD_BADGE_BACK_BUTTON.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
             TOGGLE_CHAT_TITLE_MARQUEE -> {
@@ -513,8 +544,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_FIXED = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_ADAPTIVE_WIDTH = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
+        private val TOGGLE_UNREAD_BADGE_BACK_BUTTON = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val TOGGLE_FLOATING_AVATAR = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
@@ -574,8 +607,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("center-title-fixed", R.string.InuCenterTitleFixed, TOGGLE_CENTER_TITLE_FIXED),
+                SearchRegistry.Entry("center-title-adaptive-width", R.string.InuCenterTitleAdaptiveWidth, TOGGLE_CENTER_TITLE_ADAPTIVE_WIDTH),
                 SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
+                SearchRegistry.Entry("unread-badge-back-button", R.string.InuUnreadBadgeBackButton, TOGGLE_UNREAD_BADGE_BACK_BUTTON),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("floating-avatar", R.string.InuFloatingAvatar, TOGGLE_FLOATING_AVATAR),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),

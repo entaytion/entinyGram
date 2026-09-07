@@ -4,9 +4,9 @@ Date: Fri, 14 Aug 2026 22:51:49 +0300
 Subject: Free AI Voice-to-Text transcription without Telegram Premium
 
 ---
- .../java/org/telegram/ui/Cells/ChatMessageCell.java    |  2 ++
- .../org/telegram/ui/Components/TranscribeButton.java   | 10 ++++++++++
- 2 files changed, 12 insertions(+)
+ .../java/org/telegram/ui/Cells/ChatMessageCell.java  |  2 ++
+ .../org/telegram/ui/Components/TranscribeButton.java | 12 +++++++++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
@@ -25,6 +25,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranscribeBu
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranscribeButton.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranscribeButton.java
+@@ -117,7 +117,7 @@ public class TranscribeButton {
+ 
+         this.isOpen = false;
+         this.shouldBeOpen = false;
+-        premium = parent.getMessageObject() != null && UserConfig.getInstance(parent.getMessageObject().currentAccount).isPremium();
++        premium = parent.getMessageObject() != null && (UserConfig.getInstance(parent.getMessageObject().currentAccount).isPremium() || desu.inugram.InuConfig.AI_TRANSCRIBE_ENABLED.getValue());
+ 
+         loadingFloat = new AnimatedFloat(parent, 250, CubicBezierInterpolator.EASE_OUT_QUINT);
+         animatedDrawLock = new AnimatedFloat(parent, 250, CubicBezierInterpolator.EASE_OUT_QUINT);
 @@ -665,6 +665,9 @@ public class TranscribeButton {
      }
  

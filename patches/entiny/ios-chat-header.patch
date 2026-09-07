@@ -4,30 +4,105 @@ Date: Sat, 29 Aug 2026 15:21:16 +0300
 Subject: Add an iOS-style centered chat header
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  |  58 +++++++
- .../java/org/telegram/ui/ChatActivity.java    |  20 +++
- .../ui/Components/ChatAvatarContainer.java    | 143 +++++++++++++++++-
- 3 files changed, 217 insertions(+), 4 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 149 ++++++++++++++++++
+ .../java/org/telegram/ui/ChatActivity.java    |  24 +++
+ .../ui/Components/ChatAvatarContainer.java    | 143 ++++++++++++++++-
+ 3 files changed, 312 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -59,6 +59,7 @@ import org.telegram.messenger.R;
+@@ -59,8 +59,10 @@ import org.telegram.messenger.R;
  import org.telegram.messenger.SharedConfig;
  import org.telegram.ui.Adapters.FiltersView;
  import org.telegram.ui.Components.AnimatedEmojiDrawable;
 +import org.telegram.ui.Components.AnimatedFloat;
  import org.telegram.ui.Components.BackupImageView;
  import org.telegram.ui.Components.ChatAvatarContainer;
++import org.telegram.ui.Components.CounterView;
  import org.telegram.ui.Components.CubicBezierInterpolator;
-@@ -208,6 +209,19 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ import org.telegram.ui.Components.EllipsizeSpanAnimator;
+ import org.telegram.ui.Components.FireworksEffect;
+@@ -208,6 +210,91 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          this.chatAvatarContainer = chatAvatarContainer;
      }
  
 +    // iOS-style centered chat header: pill hugs the avatar+title group instead of
 +    // spanning the full back-button-to-menu width. See updateGlassBounds().
 +    private final AnimatedFloat inu_iosHeaderPillWidth = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
++
++    // CherryGram-style adaptive width for the plain centered pill (see CENTER_TITLE_ADAPTIVE_WIDTH).
++    private final AnimatedFloat inu_adaptiveHeaderPillWidth = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
++
++    // CherryGram-style unread counter pill growing out of the back button. countLayout's own
++    // measured width feeds inu_backPillGrowth, which updateGlassBounds() reads to make room.
++    private CounterView inu_backCounterView;
++    private final AnimatedFloat inu_backPillGrowth = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
++    private int inu_backUnreadCount;
++
++    private void inu_ensureBackCounterView() {
++        if (inu_backCounterView != null) {
++            return;
++        }
++        inu_backCounterView = new CounterView(getContext(), resourcesProvider);
++        inu_backCounterView.setVisibility(VISIBLE);
++        inu_backCounterView.setColors(Theme.key_chats_unreadCounterText, Theme.key_chats_unreadCounter);
++        inu_backCounterView.setGravity(Gravity.LEFT);
++        inu_backCounterView.setScaleX(0f);
++        inu_backCounterView.setScaleY(0f);
++        inu_backCounterView.setAlpha(0f);
++        addView(inu_backCounterView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 20, Gravity.LEFT | Gravity.CENTER_VERTICAL, 44, 0, 0, 0));
++    }
++
++    // Called by ChatHelper.updateUnreadBackBadge() whenever the total unread count or the
++    // centered-title state might have changed. count <= 0 or the feature being off just hides it.
++    public void inu_setBackUnreadCount(int count) {
++        if (!desu.inugram.InuConfig.UNREAD_BADGE_BACK_BUTTON.getValue()) {
++            count = 0;
++        }
++        if (count > 0) {
++            inu_ensureBackCounterView();
++        }
++        inu_backUnreadCount = Math.max(0, count);
++        if (inu_backCounterView != null) {
++            inu_backCounterView.setCount(Math.min(999, inu_backUnreadCount), true);
++        }
++        inu_updateBackPillGrowth(true);
++    }
++
++    private boolean inu_backCounterShown() {
++        return inu_backCounterView != null
++                && desu.inugram.InuConfig.UNREAD_BADGE_BACK_BUTTON.getValue()
++                && inu_backUnreadCount > 0
++                && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode()
++                && !isActionModeShowed()
++                && !isSearchFieldVisible;
++    }
++
++    private void inu_updateBackPillGrowth(boolean animated) {
++        if (inu_backCounterView == null) {
++            return;
++        }
++        final boolean show = inu_backCounterShown();
++        inu_backCounterView.animate().cancel();
++        if (animated) {
++            inu_backCounterView.animate().scaleX(show ? 1f : 0f).scaleY(show ? 1f : 0f).alpha(show ? 1f : 0f).setDuration(220).start();
++        } else {
++            inu_backCounterView.setScaleX(show ? 1f : 0f);
++            inu_backCounterView.setScaleY(show ? 1f : 0f);
++            inu_backCounterView.setAlpha(show ? 1f : 0f);
++        }
++        invalidate();
++    }
++
++    // Read continuously from updateGlassBounds() (every layout/draw pass), same pattern as
++    // inu_iosHeaderPillWidth - AnimatedFloat.set() both drives the animation and returns the
++    // current interpolated value, invalidating us again next frame until it settles.
++    private int inu_getBackPillGrowth() {
++        final int target = inu_backCounterShown() ? Math.min(dp(35), Math.max(0, inu_backCounterView.getMeasuredWidth())) : 0;
++        return Math.round(inu_backPillGrowth.set(target));
++    }
 +
 +    public int getCenteredTitlePillPadding() {
 +        // With the iOS header the avatar sits out in the menu slot, so the pill only has to
@@ -41,7 +116,31 @@ index 0000000..0000000 100644
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -2240,6 +2254,50 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -848,6 +935,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+         actionModeVisible = true;
+         checkMenuItemsWidth();
++        inu_updateBackPillGrowth(animated);
+         if (animated) {
+             ArrayList<Animator> animators = new ArrayList<>();
+             animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
+@@ -1019,6 +1107,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         actionMode.hideAllPopupMenus();
+         actionModeVisible = false;
+         checkMenuItemsWidth();
++        inu_updateBackPillGrowth(true);
+         ArrayList<Animator> animators = new ArrayList<>();
+         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
+         if (actionModeHidingViews != null) {
+@@ -1193,6 +1282,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     public void onSearchFieldVisibilityChanged(boolean visible) {
+         isSearchFieldVisible = visible;
+         checkMenuItemsWidth();
++        inu_updateBackPillGrowth(true);
+         if (searchVisibleAnimator != null) {
+             searchVisibleAnimator.cancel();
+         }
+@@ -2240,6 +2330,65 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      public boolean doNotDrawGlassMenu;
  
@@ -60,7 +159,10 @@ index 0000000..0000000 100644
 +
 +        final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
 +        final int rightOffset = menuWidthWithPadding;
-+        int leftDefault = hasBackButton ? s + p : 0;
++        // inu: back-button unread-count pill (UNREAD_BADGE_BACK_BUTTON) grows the reserved
++        // back-button slot, pushing the centered title/pill start further right - mirrors
++        // CherryGram's back-pill-aware leftDefault.
++        int leftDefault = hasBackButton ? s + p + inu_getBackPillGrowth() : 0;
 +        int rightDefault = width - rightOffset;
 +
 +        if (desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue() && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode()) {
@@ -81,6 +183,18 @@ index 0000000..0000000 100644
 +            final int centerX = width / 2;
 +            leftDefault = centerX - pillWidth / 2;
 +            rightDefault = leftDefault + pillWidth;
++        } else if (desu.inugram.InuConfig.CENTER_TITLE_ADAPTIVE_WIDTH.getValue() && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode()) {
++            // CherryGram-style adaptive width for the plain centered pill: shrink to hug content
++            // instead of always spanning the full leftDefault/rightDefault room. Unlike the
++            // IOS_CHAT_HEADER branch above, the avatar still lives inside this pill (not moved to
++            // the menu slot), so getCenteredTitlePillPadding()'s wider default padding already
++            // reserves room for it - no separate avatar-left clamp is needed here.
++            final int centerX = (leftDefault + rightDefault) / 2;
++            final int symRoom = Math.max(dp(48), 2 * Math.min(centerX - leftDefault, rightDefault - centerX));
++            final int target = Math.min(symRoom, Math.max(dp(136), chatAvatarContainer.getTitlesWidth() + getCenteredTitlePillPadding()));
++            final int pillWidth = Math.round(inu_adaptiveHeaderPillWidth.set(target));
++            leftDefault = centerX - pillWidth / 2;
++            rightDefault = leftDefault + pillWidth;
 +        }
 +
 +        inu_glassTitleLeft = leftDefault;
@@ -96,7 +210,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4349,6 +4349,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -3713,6 +3713,7 @@ public class ChatActivity extends BaseFragment implements
+             actionBar.setBackButtonDrawable(null);
+         } else {
+             actionBar.setBackButtonDrawable(new BackDrawable(isReport()));
++            ChatHelper.updateUnreadBackBadge(this);
+         }
+ 
+         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+@@ -4349,6 +4350,26 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
@@ -123,6 +245,16 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
+@@ -22119,6 +22140,9 @@ public class ChatActivity extends BaseFragment implements
+             }
+         } else if (id == NotificationCenter.updateInterfaces) {
+             int updateMask = (Integer) args[0];
++            if ((updateMask & MessagesController.UPDATE_MASK_READ_DIALOG_MESSAGE) != 0) {
++                ChatHelper.updateUnreadBackBadge(this);
++            }
+             if ((updateMask & MessagesController.UPDATE_MASK_NAME) != 0 || (updateMask & MessagesController.UPDATE_MASK_CHAT_NAME) != 0 || (updateMask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
+                 if (currentChat != null) {
+                     TLRPC.Chat chat = getMessagesController().getChat(currentChat.id);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java

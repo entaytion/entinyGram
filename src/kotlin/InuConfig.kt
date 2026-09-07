@@ -1392,6 +1392,19 @@ object InuConfig {
     @JvmField
     val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
+    // CherryGram-style: shrink the plain centered pill (CENTER_TITLE_CHATS without
+    // IOS_CHAT_HEADER) to hug title/subtitle content instead of always spanning the full
+    // back-button-to-menu room. IOS_CHAT_HEADER and CENTER_TITLE_FIXED already always adapt
+    // to content on their own, so this only matters for the plain centered mode.
+    @JvmField
+    val CENTER_TITLE_ADAPTIVE_WIDTH = BoolItem("center_title_adaptive_width", false)
+
+    // CherryGram-style: a small counter pill grows out of the back button showing the total
+    // unread chats count, while a centered title mode (CENTER_TITLE_CHATS or IOS_CHAT_HEADER)
+    // is active. Purely decorative - not tied to the chat you navigated from.
+    @JvmField
+    val UNREAD_BADGE_BACK_BUTTON = BoolItem("unread_badge_back_button", false)
+
     @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 

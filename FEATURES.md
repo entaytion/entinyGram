@@ -74,6 +74,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
   - Chats tab tap returns to the first folder before scrolling to top
   - centered chat header: avatar+title+subtitle grouped in a pill, chat avatar moved into the "⋮" menu slot (long-press it for the chat menu) — **this one is a pretty janky patch (touch-target overlap in chats with extra header icons, off-by-a-few-dp centering when a call/search icon is present, untested interaction with search/action mode) and we don't have much motivation to keep polishing it ourselves, so pull requests to clean it up are welcome**
+  - adaptive width for the plain centered header pill: shrinks to hug the avatar/title/subtitle instead of always spanning the full back-button-to-menu room - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+  - unread badge on the back button: a small counter pill grows out of it showing your total unread chats count while a centered header is active - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - 📡 **custom title alignment & modular navigation**: selective centering for chat headers and centered status-bar titles across all other screens; modular M3 drawer cards
 - 📡 **auto marquee for long titles**: chat header titles/subtitles, action bar screen titles and profile names smoothly auto-scroll instead of fading out - *inspired by the auto_marquee plugin (@chestertech)*
 - 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
