@@ -42,6 +42,13 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiProvidersTitle)))
         ALL_PROVIDERS.forEach { addProviderRow(items, it) }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiProvidersUniversalDesc)))
+
+        // Applies to whichever voice provider is active, so it lives outside the per-provider blocks.
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiTranscribe)))
+        keyField(items, R.string.InuAiTranscribeLanguage, InuConfig.AI_TRANSCRIBE_LANGUAGE.value, InputType.TYPE_CLASS_TEXT) {
+            InuConfig.AI_TRANSCRIBE_LANGUAGE.value = it.trim()
+        }
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiTranscribeLanguageInfo)))
     }
 
     private fun addProviderRow(items: ArrayList<UItem>, meta: ProviderMeta) {

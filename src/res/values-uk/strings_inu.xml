@@ -301,6 +301,8 @@
     <string name="InuLanguages">Мови</string>
     <string name="InuAdvanced">Додатково</string>
     <string name="InuForceTranslate">Примусовий переклад</string>
+    <string name="InuAutoTranslateAll">Автоперекладати всі чати</string>
+    <string name="InuAutoTranslateAllInfo">Вмикає переклад чату за замовчуванням усюди. Якщо вимкнути його в конкретному чаті, це запам’ятається як виняток і працюватиме, доки цей параметр увімкнено.</string>
     <string name="InuForceTranslateInfo">Показувати кнопку перекладу та перекладати повідомлення, навіть якщо Telegram вважає, що вони вже вашою мовою або у списку «Не перекладати».</string>
     <string name="InuTranslationTarget">Цільова мова</string>
     <string name="InuTranslationTargetFollowApp">Як у додатку</string>
@@ -1223,7 +1225,7 @@
     <string name="InuSaveTimedMessages">Зберігати повідомлення з таймером</string>
     <string name="InuSaveTimedMessagesInfo">Повідомлення в чатах з таймером автовидалення зберігаються локально замість видалення після закінчення таймера.</string>
     <string name="InuAiTranscribe">Розпізнавання аудіо (Voice-to-Text)</string>
-    <string name="InuAiTranscribeInfo">Розшифровка голосових повідомлень і відео-кружечків без Telegram Premium за допомогою ШІ-сервісів.</string>
+    <string name="InuAiTranscribeInfo">Розшифровувати голосові та відеоповідомлення через власного AI-провайдера замість телеграмівського — з Premium чи без нього.</string>
     <string name="InuAiTranscribeSection">Voice-to-Text</string>
     <string name="InuAiTranscribeProvider">Провайдер розпізнавання</string>
     <string name="InuAiTranscribeProviderGroq">Groq Whisper (Швидко &amp; Безкоштовно)</string>
@@ -1239,10 +1241,17 @@
     <string name="InuAiTranscribePrompt">Кастомний промпт / Контекст (Опціонально)</string>
     <string name="InuAiTranscribePromptHint">наприклад, дослівно мовою оригіналу з пунктуацією</string>
     <string name="InuAiTranscribeGetApiKey">Отримати безкоштовний API ключ</string>
-    <string name="InuAiTranscribeNoKey">API ключ відсутній. Вкажіть його в Налаштуваннях &gt; AI.</string>
+    <string name="InuAiTranscribeNoKey">Голосовий AI-провайдер ще не налаштований. Додайте його в Налаштуваннях &gt; AI &gt; Провайдери.</string>
     <string name="InuAiTranscribeDownloading">Завантаження аудіо…</string>
     <string name="InuAiTranscribeTranscribing">Розпізнавання…</string>
     <string name="InuAiTranscribeFailed">Помилка розпізнавання: %1$s</string>
+    <string name="InuAiTranscribeLanguage">Мова мовлення</string>
+    <string name="InuAiTranscribeLanguageInfo">ISO-код мови, якою говорять у голосових, наприклад en, uk або ru. Залиште порожнім, щоб провайдер визначав сам — вказана мова помітно покращує короткі чи шумні записи.</string>
+    <string name="InuAiTranscribeErrorDownload">Не вдалося завантажити голосове повідомлення.</string>
+    <string name="InuAiTranscribeErrorNoAudio">У цьому повідомленні немає аудіо для розшифрування.</string>
+    <string name="InuAiTranscribeErrorEmpty">Провайдер повернув порожню розшифровку.</string>
+    <string name="InuAiTranscribeErrorTooLarge">Цей запис завеликий для розшифрування.</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">Цей запис задовгий для Gemini, який приймає аудіо всередині запиту. Для довгих повідомлень переключіть голосового провайдера на Groq або OpenAI.</string>
     <string name="InuAiTranscribeProviderDesc">Оберіть AI-рушій для розпізнавання голосових і відеоповідомлень без Telegram Premium.</string>
     <string name="InuAiTranscribeCredentialsHeader">Дані доступу — %1$s</string>
     <string name="InuAiTranscribeReqApiKey">API ключ</string>
@@ -1350,6 +1359,10 @@
     <string name="InuTranslateLlmEndpointUrl">URL API-ендпойнта</string>
     <string name="InuTranslateLlmModel">Модель</string>
     <string name="InuTranslateLlmPrompt">Системний запит (необов’язково)</string>
+    <string name="InuTranslateLlmContext">Контекст розмови</string>
+    <string name="InuTranslateLlmContextInfo">Скільки попередніх повідомлень із цього чату надсилати моделі разом із тим, що перекладається. Сам контекст ніколи не перекладається — саме він допомагає правильно передати займенники, рід і короткі відповіді. Витрачає більше токенів на кожне повідомлення.</string>
+    <string name="InuTranslateLlmTemperature">Температура</string>
+    <string name="InuTranslateLlmTemperatureInfo">Менші значення дають дослівний і передбачуваний переклад, більші — вільніший та ідіоматичніший.</string>
     <string name="InuTranslateMicrosoftApiKey">API-ключ Azure Translator</string>
     <string name="InuTranslateMicrosoftRegion">Регіон Azure (необов’язково)</string>
     <string name="InuTranslateProvider">Постачальник перекладу</string>

@@ -18,15 +18,36 @@ original fix we ported this from (commit db2016b).
 - drop the dead WIDE_FEED_POSTS/searchType==4 branch -- this fork has no
   Feed surface for it to apply to, so it was an unreachable toggle
 ---
- .../org/telegram/messenger/MessageObject.java |  25 +++
- .../telegram/ui/Cells/ChatMessageCell.java    | 176 +++++++++++++++---
- 2 files changed, 177 insertions(+), 24 deletions(-)
+ .../org/telegram/messenger/MessageObject.java |  32 +++-
+ .../telegram/ui/Cells/ChatMessageCell.java    | 178 +++++++++++++++---
+ 2 files changed, 182 insertions(+), 28 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -9886,6 +9886,31 @@ public class MessageObject {
+@@ -1346,8 +1346,9 @@ public class MessageObject {
+             positionsArray.clear();
+             captionMessage = null;
+ 
+-            maxSizeWidth = 800;
+-            int firstSpanAdditionalSize = 200;
++            boolean isWide = !messages.isEmpty() && messages.get(0).isWideChannelPost();
++            maxSizeWidth = isWide ? 1000 : 800;
++            int firstSpanAdditionalSize = isWide ? 0 : 200;
+ 
+             int count = messages.size();
+             if (count == 1) {
+@@ -1453,7 +1454,7 @@ public class MessageObject {
+                 return;
+             }
+ 
+-            if (needShare) {
++            if (!isWide && needShare) {
+                 maxSizeWidth -= 50;
+                 firstSpanAdditionalSize += 50;
+             }
+@@ -9886,6 +9887,31 @@ public class MessageObject {
          return messageOwner.from_id instanceof TLRPC.TL_peerChannel && messageOwner.fwd_from != null && messageOwner.fwd_from.channel_post != 0 && messageOwner.fwd_from.saved_from_peer instanceof TLRPC.TL_peerChannel && messageOwner.from_id.channel_id == messageOwner.fwd_from.saved_from_peer.channel_id;
      }
  
@@ -226,6 +247,15 @@ index 0000000..0000000 100644
                      int widthForCaption = 0;
                      int widthCaptionMin = -1;
                      boolean fixPhotoWidth = false;
+@@ -10053,7 +10088,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         float maxHeight = Math.max(getParentWidth(), AndroidUtilities.displaySize.y) * 0.5f;
+                         int dWidth = getGroupPhotosWidth();
+                         w = (int) Math.ceil(currentPosition.pw / 1000.0f * dWidth);
+-                        if (currentPosition.minY != 0 && (messageObject.isOutOwner() && (currentPosition.flags & MessageObject.POSITION_FLAG_LEFT) != 0 || !messageObject.isOutOwner() && (currentPosition.flags & MessageObject.POSITION_FLAG_RIGHT) != 0)) {
++                        if (!messageObject.isWideChannelPost() && currentPosition.minY != 0 && (messageObject.isOutOwner() && (currentPosition.flags & MessageObject.POSITION_FLAG_LEFT) != 0 || !messageObject.isOutOwner() && (currentPosition.flags & MessageObject.POSITION_FLAG_RIGHT) != 0)) {
+                             int firstLineWidth = 0;
+                             int currentLineWidth = 0;
+                             for (int a = 0; a < currentMessagesGroup.posArray.size(); a++) {
 @@ -10069,9 +10104,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              w += firstLineWidth - currentLineWidth;
                          }

@@ -4,9 +4,9 @@ Date: Fri, 14 Aug 2026 22:51:49 +0300
 Subject: Free AI Voice-to-Text transcription without Telegram Premium
 
 ---
- .../java/org/telegram/ui/Cells/ChatMessageCell.java  |  2 ++
- .../org/telegram/ui/Components/TranscribeButton.java | 12 +++++++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ .../telegram/ui/Cells/ChatMessageCell.java    |  2 ++
+ .../ui/Components/TranscribeButton.java       | 31 ++++++++++++++++---
+ 2 files changed, 28 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
@@ -25,16 +25,68 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranscribeBu
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranscribeButton.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranscribeButton.java
-@@ -117,7 +117,7 @@ public class TranscribeButton {
+@@ -81,7 +81,6 @@ public class TranscribeButton {
+     private Rect bounds, pressBounds;
+     private boolean clickedToOpen = false;
+ 
+-    private boolean premium;
+     private boolean isOpen, shouldBeOpen;
+ 
+     public TranscribeButton(ChatMessageCell parent, SeekBarWaveform seekBar) {
+@@ -117,12 +116,24 @@ public class TranscribeButton {
  
          this.isOpen = false;
          this.shouldBeOpen = false;
 -        premium = parent.getMessageObject() != null && UserConfig.getInstance(parent.getMessageObject().currentAccount).isPremium();
-+        premium = parent.getMessageObject() != null && (UserConfig.getInstance(parent.getMessageObject().currentAccount).isPremium() || desu.inugram.InuConfig.AI_TRANSCRIBE_ENABLED.getValue());
  
          loadingFloat = new AnimatedFloat(parent, 250, CubicBezierInterpolator.EASE_OUT_QUINT);
          animatedDrawLock = new AnimatedFloat(parent, 250, CubicBezierInterpolator.EASE_OUT_QUINT);
-@@ -665,6 +665,9 @@ public class TranscribeButton {
+     }
+ 
++    // inu: this replaces a `premium` field that was captured once in the constructor. The
++    // AI transcription toggle can be flipped while a chat is open, and cells built before the
++    // switch kept the old answer - so the button went on offering Telegram's Premium upsell for a
++    // feature the user had just made free for themselves. Read live instead; it is three cheap
++    // reads per tap, not per frame.
++    private boolean inu_unlocked() {
++        if (desu.inugram.InuConfig.AI_TRANSCRIBE_ENABLED.getValue()) {
++            return true;
++        }
++        return parent != null && parent.getMessageObject() != null
++            && UserConfig.getInstance(parent.getMessageObject().currentAccount).isPremium();
++    }
++
+     public void setLock(boolean drawLock, boolean animated) {
+         if (this.drawLock != drawLock && parent != null) {
+             parent.invalidate();
+@@ -214,7 +225,7 @@ public class TranscribeButton {
+         boolean processClick, toOpen = !shouldBeOpen;
+         if (!shouldBeOpen) {
+             processClick = !loading;
+-            if ((premium || canTranscribeTrial(parent.getMessageObject())) && parent.getMessageObject().isSent()) {
++            if ((inu_unlocked() || canTranscribeTrial(parent.getMessageObject())) && parent.getMessageObject().isSent()) {
+                 setLoading(true, true);
+             }
+         } else {
+@@ -228,7 +239,7 @@ public class TranscribeButton {
+         }
+         pressed = false;
+         if (processClick) {
+-            if (!premium && toOpen) {
++            if (!inu_unlocked() && toOpen) {
+                 if (canTranscribeTrial(parent.getMessageObject()) || parent.getMessageObject() != null && parent.getMessageObject().messageOwner != null && !TextUtils.isEmpty(parent.getMessageObject().messageOwner.voiceTranscription)) {
+                     transcribePressed(parent.getMessageObject(), toOpen, parent.getDelegate());
+                 } else {
+@@ -254,7 +265,7 @@ public class TranscribeButton {
+     }
+ 
+     public void setColor(int color, int grayColor, boolean isOut, float bgBack) {
+-        boolean disabled = !premium;
++        boolean disabled = !inu_unlocked();
+ //        if (disabled) {
+ //            color = ColorUtils.blendARGB(color, grayColor, isOut ? .6f : .8f);
+ //            color = ColorUtils.setAlphaComponent(color, (int) (Color.alpha(color) * .6f));
+@@ -665,6 +676,9 @@ public class TranscribeButton {
      }
  
      public static boolean isTranscribing(MessageObject messageObject) {
@@ -44,7 +96,7 @@ index 0000000..0000000 100644
          return (
              (transcribeOperationsByDialogPosition != null && (transcribeOperationsByDialogPosition.containsValue(messageObject) || transcribeOperationsByDialogPosition.containsKey((Integer) reqInfoHash(messageObject)))) ||
              (transcribeOperationsById != null && messageObject != null && messageObject.messageOwner != null && transcribeOperationsById.containsKey(messageObject.messageOwner.voiceTranscriptionId))
-@@ -689,6 +692,10 @@ public class TranscribeButton {
+@@ -689,6 +703,10 @@ public class TranscribeButton {
                      NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.voiceTranscriptionUpdate, messageObject, null, null, (Boolean) true, (Boolean) true);
                  });
              } else {
@@ -55,7 +107,7 @@ index 0000000..0000000 100644
                  if (BuildVars.LOGS_ENABLED) {
                      FileLog.d("sending Transcription request, msg_id=" + messageId + " dialog_id=" + dialogId);
                  }
-@@ -859,6 +866,9 @@ public class TranscribeButton {
+@@ -859,6 +877,9 @@ public class TranscribeButton {
      }
  
      public static boolean showTranscribeLock(MessageObject messageObject) {

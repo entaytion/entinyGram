@@ -8,7 +8,9 @@ import org.telegram.messenger.R
 import org.telegram.messenger.TranslateController
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.Bulletin
+import org.telegram.ui.LaunchActivity
 
 /**
  * Facade for the stock Java code (`TranslateController`). Keeps the patch surface to a handful
@@ -75,8 +77,40 @@ object EntinyTranslate {
             entities = entities,
             toLang = toLang,
             provider = effective,
+            context = conversationContext(dialogId, msgId, effective),
             callback = callback,
         )
+    }
+
+    /**
+     * The messages immediately preceding [msgId] in the same chat, oldest first, capped by
+     * [InuConfig.TRANSLATE_LLM_CONTEXT]. This is what lets an LLM resolve what a per-message
+     * translator structurally cannot: pronouns, grammatical gender, honorifics and one-word
+     * replies only come out right when the model can see what was said before them.
+     *
+     * Read here rather than in the engine on purpose - this runs on the UI thread, where the
+     * chat's loaded message list is safe to touch, and the result is then carried into the worker
+     * as an immutable snapshot. Everything about it is best-effort: no open chat, a different
+     * chat in front, or a message that has since scrolled out of the loaded window simply means
+     * no context, never a failed translation.
+     */
+    private fun conversationContext(dialogId: Long, msgId: Int, provider: TranslationProvider): List<String> {
+        if (provider !== LlmProvider) return emptyList()
+        val limit = InuConfig.TRANSLATE_LLM_CONTEXT.value
+        if (limit <= 0) return emptyList()
+        return runCatching {
+            val chat = LaunchActivity.getLastFragment() as? ChatActivity ?: return emptyList()
+            if (chat.dialogId != dialogId) return emptyList()
+            val messages = chat.messages
+            val index = messages.indexOfFirst { it != null && it.id == msgId }
+            if (index < 0) return emptyList()
+            messages.asSequence()
+                .drop(index + 1) // the list runs newest-first, so everything past it is older
+                .mapNotNull { it?.messageOwner?.message?.trim()?.takeIf(String::isNotEmpty) }
+                .take(limit)
+                .toList()
+                .asReversed() // hand them over in the order they were actually said
+        }.getOrDefault(emptyList())
     }
 
     /** Routes one poll translation request; returns true when the engine took it over. */

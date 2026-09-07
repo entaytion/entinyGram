@@ -37,6 +37,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **self-destructing & expiring media**:
   - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
   - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
+  - **persistent media playback**: view-once voice notes, round videos, and encrypted media remain playable inline and surviving sender deletion or expiration
 - 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
 - 📡 **stalker pack**:
   - **presence logger**: opt-in per-contact online/offline tracking — pick who to watch from their profile menu or a dedicated watch-list screen (which also shows each contact's local status-change log), every status change is logged locally, with an optional popup notification the moment they come online or go offline
@@ -57,9 +58,11 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
   - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
   - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
-- 📡 **whole-chat translation without telegram premium**: unlock translation bar and real-time chat translation without subscription — pick a third-party provider below; the stock Telegram API provider still requires Telegram Premium
+- 📡 **whole-chat translation without telegram premium**: the translation bar and real-time chat translation are ungated for every provider, Telegram's own API included — a free account sends one message per translate request instead of a batch of twenty, which is what the server actually refuses. Optional instant translate banner and force-translate mode
 - 📡 **third-party translation providers**: use Google, DeepL, Yandex, Bing/Azure, MyMemory, Lingo, or TranSmart for chat and message translation. Providers expose supported-language pickers, retries, fallback, force-translate mode, optional translation of your own messages, and translated link previews.
-- 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare)
+- 📡 **auto-translate every chat**: chat translation on by default everywhere, with each chat you switch off remembered as an exception — *the idea is [OwlGram](https://github.com/OwlGramDev/OwlGram)'s, riding Telegram's own per-dialog store instead of a second exceptions list*
+- 📡 **LLM translation with conversation context**: the AI provider can be given the previous N messages of the chat as reference (never translated themselves), so pronouns, grammatical gender and one-word replies come out right — plus a temperature control. No other fork feeds the conversation to the translator.
+- 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare). Switching it on takes over the transcribe button outright — no Premium prompt, no trial counter, and an unconfigured provider says so in a bulletin instead. Comes with an optional spoken-language hint that sharply improves short or noisy recordings, streaming uploads, and automatic retries when a provider is busy
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
 - 📡 **hidden & archived star gifts**: restores removed, archived, and limited Star Gifts in the Telegram gifts catalog
 - 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings — pinned chats and folder chats beyond the server limit (5/10 pins, 100/200 folder chats with Premium) are tracked client-only and never revert on resync; favorite stickers/GIFs simply stop being trimmed from the local cache
@@ -73,7 +76,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **iOS-style design**, ported from [exteraless](https://github.com/exteraless/exteraless):
   - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
   - Chats tab tap returns to the first folder before scrolling to top
-  - centered chat header: avatar+title+subtitle grouped in a pill, chat avatar moved into the "⋮" menu slot (long-press it for the chat menu) — **this one is a pretty janky patch (touch-target overlap in chats with extra header icons, off-by-a-few-dp centering when a call/search icon is present, untested interaction with search/action mode) and we don't have much motivation to keep polishing it ourselves, so pull requests to clean it up are welcome**
+  - centered chat header: avatar+title+subtitle grouped in a pill, chat avatar moved into the "⋮" menu slot (long-press it for the chat menu). Rebuilt on [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)'s model — the pill's size and position come from the action bar's own slots plus the painted text width, and the title/subtitle are then laid out into it, so the text can no longer drift off the pill or spill out of it; the pill also steps aside for the back button's unread badge and hands the full width back during search and selection mode. Touch-target overlap with extra header icons is still a known rough edge, and pull requests are welcome
   - adaptive width for the plain centered header pill: shrinks to hug the avatar/title/subtitle instead of always spanning the full back-button-to-menu room - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
   - unread badge on the back button: a small counter pill grows out of it showing your total unread chats count while a centered header is active - *ported from [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
 - 📡 **custom title alignment & modular navigation**: selective centering for chat headers and centered status-bar titles across all other screens; modular M3 drawer cards
@@ -82,6 +85,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, and Profile tabs in MainTabsActivity, with separate tab title visibility toggle
 - 📡 **customizable settings screen**: reorder and hide the rows of Telegram's own Settings screen (Inugram Settings, Account, Chat Settings, Privacy, Notifications, Data, Folders, Devices, Power Saving, Language, Premium, Stars, TON, Wallet, Business, Gift, Ask a Question, FAQ, Features, Privacy Policy) — untouched it renders exactly like stock, customized it collapses into one flat section
 - 📡 **customizable My Profile info rows**: independent reordering and show/hide toggles for the phone number, bio, username, ID, and estimated registration date rows on your own profile
+- 📡 **wide channel posts**: channel posts stretch to the full available width instead of narrow bubbles, with accurate proportional album layout (no squished 3-item rows or aspect ratio distortion)
 - 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
 
 ### profile & identity tools

@@ -373,6 +373,8 @@
     <string name="InuLanguages">Languages</string>
     <string name="InuAdvanced">Advanced</string>
     <string name="InuForceTranslate">Force translation</string>
+    <string name="InuAutoTranslateAll">Auto-translate every chat</string>
+    <string name="InuAutoTranslateAllInfo">Turn chat translation on by default everywhere. Switching it off in a particular chat is remembered as an exception and keeps working while this is on.</string>
     <string name="InuForceTranslateInfo">Show the translate bar and translate messages even when Telegram thinks they are already in your language or in the "Do not translate" list.</string>
     <string name="InuTranslateOutgoing">Translate my messages</string>
     <string name="InuTranslateOutgoingInfo">Include messages sent by you in automatic chat translation.</string>
@@ -399,6 +401,10 @@
     <string name="InuTranslateLlmApiKey">API key (optional)</string>
     <string name="InuTranslateLlmModel">Model</string>
     <string name="InuTranslateLlmPrompt">System prompt (optional)</string>
+    <string name="InuTranslateLlmContext">Conversation context</string>
+    <string name="InuTranslateLlmContextInfo">How many earlier messages from the same chat are sent to the model alongside the one being translated. Context is never translated itself — it is what lets the model get pronouns, gender and short replies right. Costs extra tokens per message.</string>
+    <string name="InuTranslateLlmTemperature">Temperature</string>
+    <string name="InuTranslateLlmTemperatureInfo">Lower values keep translations literal and repeatable; higher values allow looser, more idiomatic wording.</string>
     <string name="InuTranslateProviderNotConfigured">Translation provider is not configured. Falling back to Telegram translation.</string>
     <string name="InuTranslateProviderFailed">Translation failed: %1$s. Messages will retry automatically.</string>
     <string name="InuPoweredByProvider">Translations are powered by %1$s.</string>
@@ -1277,7 +1283,7 @@
 
     <!-- AI Voice-to-Text Transcription -->
     <string name="InuAiTranscribe">Voice-to-Text (Transcription)</string>
-    <string name="InuAiTranscribeInfo">Transcribe voice and video messages without Telegram Premium using AI services.</string>
+    <string name="InuAiTranscribeInfo">Transcribe voice and video messages through your own AI provider instead of Telegram\'s, with or without Premium.</string>
     <string name="InuAiTranscribeSection">Voice-to-Text</string>
     <string name="InuAiTranscribeProvider">Transcription Provider</string>
     <string name="InuAiTranscribeProviderGroq">Groq Whisper (Fast &amp; Free)</string>
@@ -1293,10 +1299,17 @@
     <string name="InuAiTranscribePrompt">Custom prompt / Context (Optional)</string>
     <string name="InuAiTranscribePromptHint">e.g. verbatim transcription in original language</string>
     <string name="InuAiTranscribeGetApiKey">Get free API key</string>
-    <string name="InuAiTranscribeNoKey">API key is missing. Configure it in Settings &gt; AI.</string>
+    <string name="InuAiTranscribeNoKey">No AI provider is set up for voice yet. Add one in Settings &gt; AI &gt; Providers.</string>
     <string name="InuAiTranscribeDownloading">Downloading audio…</string>
     <string name="InuAiTranscribeTranscribing">Transcribing…</string>
     <string name="InuAiTranscribeFailed">Transcription failed: %1$s</string>
+    <string name="InuAiTranscribeLanguage">Spoken language</string>
+    <string name="InuAiTranscribeLanguageInfo">ISO code of the language spoken in voice messages, for example en, uk or ru. Leave empty to let the provider detect it — pinning it noticeably improves short or noisy recordings.</string>
+    <string name="InuAiTranscribeErrorDownload">Could not download the voice message.</string>
+    <string name="InuAiTranscribeErrorNoAudio">This message has no audio to transcribe.</string>
+    <string name="InuAiTranscribeErrorEmpty">The provider returned an empty transcription.</string>
+    <string name="InuAiTranscribeErrorTooLarge">This recording is too large to transcribe.</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">This recording is too long for Gemini, which takes audio inside the request. Switch the voice provider to Groq or OpenAI for long messages.</string>
     <string name="InuAiTranscribeProviderDesc">Select an AI engine to transcribe voice notes and video messages without Telegram Premium.</string>
     <string name="InuAiTranscribeCredentialsHeader">%1$s Credentials</string>
     <string name="InuAiTranscribeReqApiKey">API Key</string>

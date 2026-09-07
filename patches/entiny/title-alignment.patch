@@ -4,8 +4,8 @@ Date: Tue, 1 Sep 2026 11:08:07 +0300
 Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismatch
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 181 +++++++++++++++---
- .../telegram/ui/ActionBar/SimpleTextView.java | 113 ++++++-----
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 147 +++++++++++++++++-
+ .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++-------
  .../telegram/ui/Cells/ChatMessageCell.java    |  13 +-
  .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
  .../telegram/ui/Cells/ManageChatUserCell.java |   8 +-
@@ -13,17 +13,17 @@ Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismat
  .../java/org/telegram/ui/Cells/UserCell.java  |   4 +
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
  .../BottomSheetWithRecyclerListView.java      |   1 +
- .../ui/Components/ChatAvatarContainer.java    |  56 ++++--
+ .../ui/Components/ChatAvatarContainer.java    |  48 ++++--
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 13 files changed, 302 insertions(+), 120 deletions(-)
+ 13 files changed, 288 insertions(+), 92 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -96,6 +96,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -95,6 +95,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      private BlurredBackgroundDrawable glassDrawable;
      private BlurredBackgroundDrawable glassDrawableBack;
      private BlurredBackgroundDrawable glassDrawableMenu;
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
      public boolean inu_nonIsland;
      private INavigationLayout.BackButtonState backButtonState = INavigationLayout.BackButtonState.BACK;
      public ImageView backButtonImageView;
-@@ -201,6 +202,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -200,6 +201,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      private boolean glassModeIsForum;
  
      private ChatAvatarContainer chatAvatarContainer;
@@ -42,7 +42,7 @@ index 0000000..0000000 100644
  
      public void setGlassOnlyBack() {
          glassOnlyBack = true;
-@@ -560,8 +565,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -606,8 +611,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (subtitleTextView != null) {
              return;
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          subtitleTextView.setVisibility(GONE);
          subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
          addView(subtitleTextView, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP));
-@@ -613,6 +621,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -659,6 +667,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (titleTextView[i] != null) {
              return;
          }
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
          titleTextView[i] = new SimpleTextView(getContext());
          if (desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
              titleTextView[i].setScrollNonFitText(true);
-@@ -649,6 +660,41 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -695,6 +706,41 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
@@ -107,7 +107,7 @@ index 0000000..0000000 100644
      public void setTitleRightMargin(int value) {
          titleRightMargin = value;
      }
-@@ -1484,6 +1530,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1530,6 +1576,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int actionBarHeight = getCurrentActionBarHeight();
          int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
  
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
          ignoreLayoutRequest = true;
          if (actionModeTop != null) {
              FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
-@@ -1503,6 +1556,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1554,6 +1607,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -131,7 +131,7 @@ index 0000000..0000000 100644
          // textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1561,6 +1617,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1612,6 +1668,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  }
  
                  if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
                      titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
                      if (centerScale) {
                          CharSequence text = titleTextView[i].getText();
-@@ -1608,12 +1667,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1659,12 +1718,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -158,7 +158,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
-@@ -1621,11 +1684,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1672,11 +1735,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -198,7 +198,7 @@ index 0000000..0000000 100644
          }
  
          for (int i = 0; i < 2; i++) {
-@@ -1640,7 +1731,32 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1691,7 +1782,32 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
@@ -232,7 +232,7 @@ index 0000000..0000000 100644
              }
          }
          if (additionalSubTitleOverlayContainer != null) {
-@@ -1649,12 +1765,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1700,12 +1816,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
@@ -263,7 +263,7 @@ index 0000000..0000000 100644
          }
  
          if (avatarSearchImageView != null) {
-@@ -1712,6 +1844,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1763,6 +1895,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -272,7 +272,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2391,6 +2525,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2529,6 +2663,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void dispatchDraw(Canvas canvas) {
@@ -280,7 +280,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
  
-@@ -2400,8 +2535,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2538,8 +2673,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
  
@@ -289,59 +289,8 @@ index 0000000..0000000 100644
 +        final int t = inu_glassTop;
 +        final int b = inu_glassBottom;
  
-         // inu: skip the centered-title pill background entirely for the iOS-style header - no
-         // pill shape means no gap/alignment mismatch to chase, just centered text on the plain
-@@ -2409,33 +2544,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-         final boolean inu_skipTitlePill = desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()
-                 && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode();
-         if (glassDrawable != null && !glassOnlyBack && !inu_skipTitlePill) {
--            final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
--            final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
--
--            final int leftDefault = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
--            final int rightDefault = getWidth() - rightOffset;
--            final int widthDefault = rightDefault - leftDefault;
--            final int left, right;
--            if (chatAvatarContainer != null) {
--                final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
--                left = (rightDefault + leftDefault - width) / 2;
--                right = left + width;
--
--                final float translationX = left
--                    - ((MarginLayoutParams)(chatAvatarContainer.getLayoutParams())).leftMargin
--                    - chatAvatarContainer.getLeftPadding()
--                    + p + dp(3);
--                chatAvatarContainer.setTranslationX(translationX);
--                chatAvatarContainer.setPivotX((chatAvatarContainer.getMeasuredWidth()) / 2f - translationX );
--            } else {
--                left = leftDefault;
--                right = rightDefault;
--            }
--
+         if (glassDrawable != null && !glassOnlyBack) {
              if (inu_nonIsland) {
-                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
-             } else {
--                glassDrawable.setBounds(left, t, right, b);
-+                glassDrawable.setBounds(inu_glassTitleLeft, t, inu_glassTitleRight, b);
-             }
-             glassDrawable.draw(canvas);
-         }
-@@ -2448,6 +2560,15 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-             glassDrawableMenu.setAlpha(hasForcedMenuWidth ? 255 : (int) (255 * animatorHasMenuItems.getFloatValue()));
-             glassDrawableMenu.draw(canvas);
-         }
-+        if (glassDrawableBack != null && hasBackButton && !inu_nonIsland) {
-+            glassDrawableBack.setBounds(0, t, s + p * 2, b);
-+            glassDrawableBack.draw(canvas);
-+        }
-+        if (glassDrawableMenu != null && menuWidth > 0 && !glassOnlyBack && !inu_nonIsland) {
-+            glassDrawableMenu.setBounds(getWidth() - Math.max(s, menuWidth) - p * 2, t, getWidth(), b);
-+            glassDrawableMenu.setAlpha(hasForcedMenuWidth ? 255 : (int) (255 * animatorHasMenuItems.getFloatValue()));
-+            glassDrawableMenu.draw(canvas);
-+        }
- 
-         if (blurredBackground && actionBarColor != Color.TRANSPARENT) {
-             rectTmp.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
@@ -697,22 +646,8 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -963,45 +963,53 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
-         int r = centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + titleTextView.getMeasuredWidth());
-         SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
-         if (getSubtitleTextView().getVisibility() != GONE) {
--            titleTextView.layout(l, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-+            titleTextView.layout(l, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), r, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-             if (titleTextLargerCopyView != null) {
--                titleTextLargerCopyView.layout(l, viewTop + dp(1.66f), l + titleTextLargerCopyView.getMeasuredWidth(), viewTop + titleTextLargerCopyView.getTextHeight() + dp(1.66f));
-+                titleTextLargerCopyView.layout(l, viewTop + dp(1.66f), r, viewTop + titleTextLargerCopyView.getTextHeight() + dp(1.66f));
-             }
-         } else {
--            titleTextView.layout(l, viewTop + dp(11) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(11) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-+            titleTextView.layout(l, viewTop + dp(11) - titleTextView.getPaddingTop(), r, viewTop + titleTextView.getTextHeight() + dp(11) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-             if (titleTextLargerCopyView != null) {
--                titleTextLargerCopyView.layout(l, viewTop + dp(10), l + titleTextLargerCopyView.getMeasuredWidth(), viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
-+                titleTextLargerCopyView.layout(l, viewTop + dp(10), r, viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
+@@ -973,35 +973,43 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+                 titleTextLargerCopyView.layout(titleL, viewTop + dp(10), titleR, viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
              }
          }
 +        int avatarLeftPos = avatarImageView.getLeft();

@@ -40,6 +40,36 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
                 keyField(items, LocaleController.getString(R.string.InuTranslateLlmApiKey), InuConfig.TRANSLATE_LLM_KEY.value, InputType.TYPE_TEXT_VARIATION_PASSWORD) { InuConfig.TRANSLATE_LLM_KEY.value = it }
                 keyField(items, LocaleController.getString(R.string.InuTranslateLlmModel), InuConfig.TRANSLATE_LLM_MODEL.value) { InuConfig.TRANSLATE_LLM_MODEL.value = it }
                 keyField(items, LocaleController.getString(R.string.InuTranslateLlmPrompt), InuConfig.TRANSLATE_LLM_PROMPT.value) { InuConfig.TRANSLATE_LLM_PROMPT.value = it }
+
+                // Sliders are kept as fields: rebuilding them on every fillItems() pass would
+                // reset the thumb mid-drag.
+                if (contextSlider == null) contextSlider = SliderCell(
+                    context,
+                    min = 0f,
+                    max = 20f,
+                    defaultValue = InuConfig.TRANSLATE_LLM_CONTEXT.default.toFloat(),
+                    initialValue = InuConfig.TRANSLATE_LLM_CONTEXT.value.toFloat(),
+                    step = 1f,
+                    title = LocaleController.getString(R.string.InuTranslateLlmContext),
+                    format = { if (it <= 0f) LocaleController.getString(R.string.NotificationsOff) else it.toInt().toString() },
+                    onChanged = { InuConfig.TRANSLATE_LLM_CONTEXT.value = it.toInt() },
+                )
+                items.add(UItem.asCustom(contextSlider))
+                items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateLlmContextInfo)))
+
+                if (temperatureSlider == null) temperatureSlider = SliderCell(
+                    context,
+                    min = 0f,
+                    max = 1f,
+                    defaultValue = InuConfig.TRANSLATE_LLM_TEMPERATURE.default,
+                    initialValue = InuConfig.TRANSLATE_LLM_TEMPERATURE.value,
+                    step = 0.05f,
+                    title = LocaleController.getString(R.string.InuTranslateLlmTemperature),
+                    format = { String.format(java.util.Locale.US, "%.2f", it) },
+                    onChanged = { InuConfig.TRANSLATE_LLM_TEMPERATURE.value = it },
+                )
+                items.add(UItem.asCustom(temperatureSlider))
+                items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateLlmTemperatureInfo)))
             }
 
             TranslationProviders.PROVIDER_YANDEX -> keyField(
@@ -55,6 +85,9 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
             }
         }
     }
+
+    private var contextSlider: SliderCell? = null
+    private var temperatureSlider: SliderCell? = null
 
     private fun keyField(items: ArrayList<UItem>, title: String, value: String, type: Int = InputType.TYPE_CLASS_TEXT, onChanged: (String) -> Unit) {
         items.add(UItem.asCustom(InuUtils.generateId(), AiServiceFieldCell(context!!, title, value, type, onChanged = onChanged)))

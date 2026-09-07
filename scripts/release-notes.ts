@@ -32,19 +32,48 @@ const infoPath = join(artifactDir, 'build-info.json')
 
 const baseUrl = (process.env.GEMINI_BASE_URL ?? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions').replace(/\/+$/, '')
 
+// Strongest first. This is an extraction task with hard constraints, and the -lite tier is the
+// weakest at following them - it was the one inventing "accordion editor"-style detail and
+// reshuffling features into the wrong section. It stays only as a fallback if the better model is
+// unavailable on the key.
 const MODELS = [
   process.env.GEMINI_MODEL,
+  'gemini-3.5-flash',
   'gemini-3.1-flash-lite',
-  'gemini-3.5-flash', // ahhhhhhhh
 ].filter((m): m is string => Boolean(m))
+
+/**
+ * Repository bookkeeping: true statements about this repo that mean nothing to someone using the
+ * app. Past releases shipped bullets like "updated FEATURES.md and established AGENTS.md for patch
+ * naming conventions" and "reorganized internal patches for better maintainability" because such
+ * lines sit in commit bodies right next to real fixes, and the model has no way to know one is
+ * shippable and the other is not. Stripped from the input, and again from the output in case the
+ * model paraphrases its way around the filter.
+ */
+const META = /(FEATURES\.md|AGENTS\.md|CLAUDE\.md|README|CHANGELOG|release[- ]notes|changelog generation|patches?\/|\bseries\b|\bstgit\b|stg (refresh|export|float)|lint-patches|entinychecker|\.github|\bworkflow\b|\bCI\b|maintainability|patch (structure|naming|reclassif)|reclassif|renamed? .* patch)/i
+
+/** Drops bookkeeping bullets from a commit body, keeping the subject and the real changes. */
+function stripMetaLines(message: string): string {
+  const lines = message.split('\n')
+  const subject = lines[0]
+  const body = lines.slice(1).filter(l => !META.test(l))
+  return [subject, ...body].join('\n').trimEnd()
+}
 
 function cleanCommits(commits: Commit[]): Commit[] {
   return commits
+    .map(c => ({ ...c, message: stripMetaLines(c.message.trim()) }))
     .filter(c => {
       const msg = c.message.trim()
-      // Filter out CI, infra, debug, chore, and internal maintenance noise
-      if (/^(infra|ci|debug|chore)(\([^)]+\))?:/i.test(msg)) return false
+      // Filter out CI, infra, debug, chore, docs and internal maintenance noise
+      if (/^(infra|ci|debug|chore|docs|test|build|style)(\([^)]+\))?:/i.test(msg)) return false
       if (/^(temp debug|debug logs|export stgit|update series)/i.test(msg)) return false
+      // Only drop on a bookkeeping subject when nothing else survived. Real commits routinely
+      // mix both - "fix burn/blocked-messages bugs, reclassify misplaced patches, add delete-my-
+      // messages" is one subject naming two shippable fixes and one piece of bookkeeping, and
+      // dropping it wholesale would lose the fixes.
+      const lines = msg.split('\n')
+      if (META.test(lines[0]) && !lines.slice(1).some(l => l.trim().startsWith('-'))) return false
       return true
     })
     .reverse()
@@ -57,57 +86,40 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
     return `Commit ${c.sha.slice(0, 7)}${authorTag}:\n${indented}`
   }).join('\n\n')
 
+  // Deliberately short. The previous version was a sixty-line rulebook that told the model both
+  // "1 commit = 1 line" and "merge related commits" and "group minor fixes", then asked it to
+  // judge which applied - so it mixed all three and drifted off the commits. One rule per idea,
+  // no rule that contradicts another.
   return [
-    'You are writing release notes for entinyGram, a customized modern fork of Telegram for Android.',
+    'You write release notes for entinyGram, a fork of Telegram for Android.',
+    `Release v${info.verName}, repo ${info.repo}.`,
     '',
-    `Release: v${info.verName} (repo ${info.repo})`,
-    '',
-    'Commits since the last release (technical subjects + detailed bullet points):',
+    'COMMITS:',
     list || '(no commits)',
     '',
-    '=== OUTPUT FORMAT ===',
-    'Return ONLY valid JSON with exactly 4 keys: "en", "uk", "tg_uk", "tg_en". No markdown code blocks, fences, or backticks.',
-    '{',
-    '  "en": "...GitHub release notes in English (Markdown)...",',
-    '  "uk": "...нотатки для GitHub українською (Markdown)...",',
-    '  "tg_uk": "...short Ukrainian Telegram changelog lines...",',
-    '  "tg_en": "...short English Telegram changelog lines..."',
-    '}',
+    'Write ONLY what these commits say. If a detail is not in the commits, leave it out -',
+    'no invented UI names, no guessed reasons, no marketing.',
     '',
-    '=== CORE PRINCIPLES (STRICT ACCURACY & PROPORTIONALITY) ===',
-    '1. STRICT FACTUAL GROUNDING: Describe ONLY what is explicitly stated in the commits above. NEVER hallucinate, invent, assume, or fabricate features, bug fixes, UI changes, or optimizations not present in the commits.',
-    '2. PROPORTIONALITY & 1-TO-1 ESSENCE:',
-    '   - 1 distinct change / commit -> exactly 1 concise bullet point.',
-    '   - If several commits are just micro-edits/typos for the same single feature, merge them into 1 point for that feature.',
-    '   - ZERO fluff, zero marketing buzzwords, zero fake explanations.',
-    '3. NO EMPTY/FAKE SECTIONS: In GitHub notes ("en"/"uk"), only include section headers (### New Features, ### Bug Fixes, ### Improvements & Polish) if there are actual commits for them. Never invent entries just to fill a section.',
-    '4. UPSTREAM SYNC & FORK OWNERSHIP:',
-    '   - If a commit is an upstream sync (e.g. subject is "sync with upstream inugram" or represents an upstream merge):',
-    '     Summarize the sync as ONE consolidated bullet point (e.g. "[=] Synced with upstream inugram (latest base updates and fixes)" / "[=] Синхронізація з upstream inugram (оновлення бази та виправлення Telegram)").',
-    '     Do NOT explode the entire list of upstream internal patches into separate main features.',
-    '   - For entinyGram-specific commits (features, bugfixes, refactors, UI additions):',
-    '     Highlight each distinct entinyGram change with its own dedicated bullet point as usual.',
-    '5. MINOR FIXES & POLISH GROUPING:',
-    '   - Do NOT blow up tiny minor fixes (typos, string tweaks, internal variable adjustments, micro-polishing) into full separate bullet points or bloated paragraphs.',
-    '   - If there are minor technical adjustments, group them together concisely (e.g. "[*] Minor bug fixes and UI polish" / "[*] Дрібні виправлення та покращення інтерфейсу") rather than listing each trivial tweak separately.',
-    '   - If a release consists of only ONE fix (e.g. reverting a single patch), the entire changelog must be ONE concise bullet point describing that single fix. Do NOT invent multiple sections.',
+    'Skip entirely: repository bookkeeping (documentation, patch files, the patch stack, CI,',
+    'build scripts, refactors with no user-visible effect). A reader is a person using the app,',
+    'not someone working on it.',
     '',
-    '=== "en" and "uk" keys (GitHub release notes) ===',
-    '- Clean, straight-to-the-point Markdown.',
-    '- Use `- ` for list items.',
-    '- Clear, technical and user-friendly explanation of what actually changed.',
+    'One bullet per user-visible change. Merge commits that touch the same change into one',
+    'bullet. Group trivial tweaks as a single "Minor fixes and polish" bullet.',
+    'An upstream sync (subject mentioning "sync with upstream inugram") is always exactly one',
+    'bullet; never list its internal patches.',
     '',
-    '=== "tg_uk" and "tg_en" keys (Telegram post items) ===',
-    'Prefixes:',
-    '- "[+] " for new features and user-facing capabilities.',
-    '- "[*] " for bug fixes, performance improvements, and UI refinements.',
-    '- "[-] " for removals / deprecated behavior.',
-    '- "[=] " for upstream sync or technical maintenance.',
+    'Sections in "en"/"uk": "### New Features", "### Bug Fixes", "### Improvements & Polish".',
+    'Anything the user could not do before goes under New Features, not Improvements.',
+    'Omit a section that would be empty. Use "- " for bullets.',
     '',
-    'Rules for Telegram lines:',
-    '- Each distinct change gets 1 concise bullet line.',
-    '- 1 commit = 1 line. 10 distinct commits = 10 lines (strictly by essence, no fluff).',
-    '- Do NOT include headers like "🇺🇦 UK:" or "🇺🇸 EN:" inside tg_uk/tg_en — only the bullet lines separated by newlines.',
+    'Telegram lines in "tg_en"/"tg_uk": one line per bullet, prefixed',
+    '"[+] " new capability, "[*] " fix or refinement, "[-] " removal, "[=] " upstream sync.',
+    'No language headers inside them.',
+    '',
+    'Reply with JSON only - no code fences - with exactly these keys:',
+    '{"en": "...", "uk": "...", "tg_uk": "...", "tg_en": "..."}',
+    '"uk" and "tg_uk" are Ukrainian, "en" and "tg_en" are English.',
   ].join('\n')
 }
 
@@ -124,7 +136,7 @@ async function callGemini(key: string, model: string, prompt: string): Promise<s
         { role: 'system', content: 'You are a helpful assistant. Always reply with valid JSON only.' },
         { role: 'user', content: prompt },
       ],
-      temperature: 0.2,
+      temperature: 0,
     }),
   })
   if (!res.ok) {
@@ -136,15 +148,41 @@ async function callGemini(key: string, model: string, prompt: string): Promise<s
   return text
 }
 
+/**
+ * Last line of defence: drops any bullet that still talks about the repository rather than the
+ * app, and any section header left empty once those bullets are gone. Filtering the input is not
+ * enough on its own - the model happily rephrases "moved patches into entiny/" as "refactored
+ * internal structure for maintainability", which no input filter can catch.
+ */
+function dropMetaBullets(text: string): string {
+  const kept: string[] = []
+  for (const line of text.split('\n')) {
+    const isBullet = /^\s*(-|\[[+*\-=]\])\s/.test(line)
+    if (isBullet && META.test(line)) continue
+    kept.push(line)
+  }
+  // Collapse headers that lost every bullet under them, plus the blank runs they leave behind.
+  const out: string[] = []
+  for (let i = 0; i < kept.length; i++) {
+    const line = kept[i]
+    if (/^#{1,6}\s/.test(line)) {
+      const next = kept.slice(i + 1).find(l => l.trim() !== '')
+      if (!next || /^#{1,6}\s/.test(next)) continue
+    }
+    out.push(line)
+  }
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim()
+}
+
 function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string } {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   const parsed = JSON.parse(cleaned)
-  const tgUk = String(parsed.tg_uk ?? '').trim()
-  const tgEn = String(parsed.tg_en ?? '').trim()
+  const tgUk = dropMetaBullets(String(parsed.tg_uk ?? '').trim())
+  const tgEn = dropMetaBullets(String(parsed.tg_en ?? '').trim())
   const tgCombined = tgUk && tgEn ? `🇺🇦 UK:\n${tgUk}\n\n🇺🇸 EN:\n${tgEn}` : String(parsed.tg ?? '').trim()
   return {
-    en: String(parsed.en ?? '').trim(),
-    uk: String(parsed.uk ?? '').trim(),
+    en: dropMetaBullets(String(parsed.en ?? '').trim()),
+    uk: dropMetaBullets(String(parsed.uk ?? '').trim()),
     tg_uk: tgUk,
     tg_en: tgEn,
     tg: tgCombined,
@@ -169,9 +207,18 @@ async function aiNotes(key: string, info: BuildInfo, commits: Commit[]) {
   throw lastErr
 }
 
+/** Strips a conventional-commit prefix so the fallback reads as a changelog, not as a git log. */
+function subjectText(subject: string): string {
+  return subject.replace(/^(\w+)(\([^)]*\))?!?:\s*/, '').trim()
+}
+
 function categorize(message: string): 'sync' | 'fix' | 'feature' | 'other' {
   const m = message.toLowerCase()
   if (m.includes('sync with upstream inugram') || m.startsWith('sync:')) return 'sync'
+  // The conventional-commit prefix is the most reliable signal; the keyword sweep below only has
+  // to cover subjects written without one.
+  if (/^feat(\([^)]*\))?!?:/.test(m)) return 'feature'
+  if (/^(fix|perf)(\([^)]*\))?!?:/.test(m)) return 'fix'
   if (/(fix|prevent|avoid|correct|bug|crash|regression|hang|improve|optimize|faster|perf)/.test(m)) return 'fix'
   if (/(add|allow|support|enable|new|option|config|toggle|feature|ability|introduce)/.test(m)) return 'feature'
   return 'other'
@@ -189,7 +236,7 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
   const sections: Record<string, string[]> = { sync: [], feature: [], fix: [], other: [] }
   for (const c of commits) {
     const subject = c.message.split('\n')[0].trim()
-    sections[categorize(subject)].push(subject)
+    sections[categorize(subject)].push(subjectText(subject))
   }
 
   const en: string[] = []

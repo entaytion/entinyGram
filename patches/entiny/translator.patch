@@ -15,14 +15,14 @@ Subject: Unlock and extend built-in translator
 - add isFeatureAvailable gate tied to premium OR active third-party provider
 ---
  .../telegram/messenger/LanguageDetector.java  |  54 ++++
- .../messenger/TranslateController.java        |  54 +++-
+ .../messenger/TranslateController.java        |  95 +++++--
  .../java/org/telegram/ui/ChatActivity.java    |  19 +-
  .../telegram/ui/Components/AIEditorAlert.java |   4 +
  .../ui/Components/TranslateAlert2.java        |   4 +
  .../ui/Components/TranslateAlert3.java        |  11 +-
  .../ui/Components/TranslateButton.java        |  32 ++-
  .../telegram/ui/LanguageSelectActivity.java   | 259 ++----------------
- 8 files changed, 158 insertions(+), 279 deletions(-)
+ 8 files changed, 192 insertions(+), 286 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java b/TMessagesProj/src/main/java/org/telegram/messenger/LanguageDetector.java
 index 0000000..0000000 100644
@@ -102,15 +102,31 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
-@@ -92,27 +92,20 @@ public class TranslateController extends BaseController {
+@@ -66,6 +66,18 @@ public class TranslateController extends BaseController {
+ 
+     private static final int MAX_SYMBOLS_PER_REQUEST = 25000;
+     private static final int MAX_MESSAGES_PER_REQUEST = 20;
++
++    // inu: Telegram's translate endpoint only accepts a BATCH of texts from a Premium account; a
++    // free account has to send them one at a time or the whole request comes back refused. That is
++    // the actual reason the chat translate bar translated nothing without Premium while the
++    // single-message menu worked fine - the bar batches, the menu does not. Cherrygram handles it
++    // the same way (TelegramTranslator: `int maxSize = isPremium() ? 20 : 1`). No toggle: there is
++    // no sane reason to want a batch size that the server will reject.
++    // Compared as `size() + 1 >= limit`, exactly like stock, so the Premium path stays
++    // byte-for-byte stock behaviour and only the free path changes.
++    private int inu_maxMessagesPerRequest() {
++        return getUserConfig().isPremium() ? MAX_MESSAGES_PER_REQUEST : 1;
++    }
+     private static final int GROUPING_TRANSLATIONS_TIMEOUT = 80;
+ 
+     private final LongSparseArray<Boolean> translatingDialogs = new LongSparseArray<>();
+@@ -92,27 +104,17 @@ public class TranslateController extends BaseController {
      }
  
      public boolean isFeatureAvailable() {
 -        return isChatTranslateEnabled() && UserConfig.getInstance(currentAccount).isPremium();
-+        return isChatTranslateEnabled() && (
-+            UserConfig.getInstance(currentAccount).isPremium() ||
-+            desu.inugram.helpers.translate.engine.EntinyTranslate.isActive()
-+        );
++        return isChatTranslateEnabled();
      }
  
      public boolean isFeatureAvailable(long dialogId) {
@@ -135,7 +151,7 @@ index 0000000..0000000 100644
          if (chatTranslateEnabled == null) {
              chatTranslateEnabled = messagesController.getMainSettings().getBoolean("translate_chat_button", true);
          }
-@@ -165,7 +158,7 @@ public class TranslateController extends BaseController {
+@@ -165,7 +167,7 @@ public class TranslateController extends BaseController {
          return (
              messageObject != null &&
              messageObject.messageOwner != null &&
@@ -144,7 +160,37 @@ index 0000000..0000000 100644
              !messageObject.isRestrictedMessage &&
              !messageObject.isSponsored() &&
              (
-@@ -237,6 +230,7 @@ public class TranslateController extends BaseController {
+@@ -193,7 +195,7 @@ public class TranslateController extends BaseController {
+ 
+     public boolean isDialogTranslatable(long dialogId) {
+         return (
+-            translatableDialogs.contains(dialogId) &&
++            (translatableDialogs.contains(dialogId) || desu.inugram.InuConfig.FORCE_TRANSLATE.getValue()) &&
+             isFeatureAvailable(dialogId) &&
+             !DialogObject.isEncryptedDialog(dialogId) &&
+             getUserConfig().getClientUserId() != dialogId
+@@ -225,7 +227,19 @@ public class TranslateController extends BaseController {
+     }
+ 
+     public boolean isTranslatingDialog(long dialogId) {
+-        return isFeatureAvailable(dialogId) && translatingDialogs.get(dialogId, isChatAutoTranslated(dialogId));
++        return isFeatureAvailable(dialogId) && translatingDialogs.get(dialogId, inu_autoTranslateDefault(dialogId));
++    }
++
++    // inu: AUTO_TRANSLATE_ALL only supplies the DEFAULT for a dialog the user has not decided
++    // about. translatingDialogs holds every explicit choice and is consulted first by the caller
++    // above, so switching one chat off from its own translate bar is stored (and persisted by
++    // stock in `translating_dialog_languages2`) as an exception that outlives this being on -
++    // which is the whole of OwlGram's AutoTranslateConfig without a second exceptions store.
++    private boolean inu_autoTranslateDefault(long dialogId) {
++        if (desu.inugram.InuConfig.AUTO_TRANSLATE_ALL.getValue() && isDialogTranslatable(dialogId)) {
++            return true;
++        }
++        return isChatAutoTranslated(dialogId);
+     }
+ 
+     public void toggleTranslatingDialog(long dialogId) {
+@@ -237,6 +251,7 @@ public class TranslateController extends BaseController {
          if (value && !currentValue) {
              translatingDialogs.put(dialogId, true);
              NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogTranslate, dialogId, true);
@@ -152,7 +198,7 @@ index 0000000..0000000 100644
              notified = true;
          } else if (!value && currentValue) {
              translatingDialogs.put((Long) dialogId, false);
-@@ -300,6 +294,7 @@ public class TranslateController extends BaseController {
+@@ -300,6 +315,7 @@ public class TranslateController extends BaseController {
          }
  
          cancelTranslations(dialogId);
@@ -160,7 +206,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              translatingDialogs.put(dialogId, false);
          }
-@@ -784,6 +779,9 @@ public class TranslateController extends BaseController {
+@@ -784,6 +800,9 @@ public class TranslateController extends BaseController {
          messageObject.messageOwner.summaryText = null;
          messageObject.messageOwner.translatedSummaryText = null;
          messageObject.messageOwner.translatedSummaryLanguage = null;
@@ -170,7 +216,7 @@ index 0000000..0000000 100644
          getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
          AndroidUtilities.runOnUIThread(() -> {
              NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslated, messageObject, false, isTranslatingDialog(dialogId));
-@@ -839,6 +837,7 @@ public class TranslateController extends BaseController {
+@@ -839,6 +858,7 @@ public class TranslateController extends BaseController {
  
      public void cleanup() {
          cancelAllTranslations();
@@ -178,7 +224,7 @@ index 0000000..0000000 100644
          resetTranslatingDialogsCache();
  
          translatingDialogs.clear();
-@@ -1049,6 +1048,12 @@ public class TranslateController extends BaseController {
+@@ -1049,6 +1069,12 @@ public class TranslateController extends BaseController {
              source.entities = message.messageOwner.entities;
          }
  
@@ -191,7 +237,22 @@ index 0000000..0000000 100644
          PendingTranslation pendingTranslation;
          synchronized (this) {
              ArrayList<PendingTranslation> dialogPendingTranslations = pendingTranslations.get(dialogId);
-@@ -1173,7 +1178,7 @@ public class TranslateController extends BaseController {
+@@ -1077,8 +1103,12 @@ public class TranslateController extends BaseController {
+                 messageSymbolsCount = message.messageText.length();
+             }
+ 
+-            if (pendingTranslation.symbolsCount + messageSymbolsCount >= MAX_SYMBOLS_PER_REQUEST ||
+-                pendingTranslation.messageIds.size() + 1 >= MAX_MESSAGES_PER_REQUEST) {
++            // inu: never flush an empty batch - with a batch size of 1 the check below is true
++            // before the first message is even added, and PendingTranslation.runnable is still null
++            // at that point (posting null throws; cancelling null clears every pending callback).
++            if (!pendingTranslation.messageIds.isEmpty() &&
++                (pendingTranslation.symbolsCount + messageSymbolsCount >= MAX_SYMBOLS_PER_REQUEST ||
++                pendingTranslation.messageIds.size() + 1 >= inu_maxMessagesPerRequest())) {
+                 AndroidUtilities.cancelRunOnUIThread(pendingTranslation.runnable);
+                 AndroidUtilities.runOnUIThread(pendingTranslation.runnable); // without timeout
+                 dialogPendingTranslations.add(pendingTranslation = new PendingTranslation());
+@@ -1173,7 +1203,7 @@ public class TranslateController extends BaseController {
                          for (int i = 0; i < count; ++i) {
                              callbacks.get(i).run(isTranscription, ids.get(i), TranslateAlert2.preprocess(texts.get(i), translated.get(i)), toLanguage);
                          }
@@ -200,7 +261,7 @@ index 0000000..0000000 100644
                          for (int i = 0; i < ids.size(); ++i) {
                              final int id = ids.get(i);
                              final Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> _callback = callbacks.get(i);
-@@ -1361,6 +1366,11 @@ public class TranslateController extends BaseController {
+@@ -1361,11 +1391,17 @@ public class TranslateController extends BaseController {
              }
              final TLRPC.TL_messageMediaPoll mediaPoll = (TLRPC.TL_messageMediaPoll) media;
              final PollText pollText = PollText.fromPoll(mediaPoll);
@@ -212,7 +273,25 @@ index 0000000..0000000 100644
              final PollText translatedText = message.messageOwner.translatedPoll;
              final int messageSymbolsCount = pollText.length();
  
-@@ -1603,6 +1613,13 @@ public class TranslateController extends BaseController {
+-            if (pendingTranslation.symbolsCount + messageSymbolsCount >= MAX_SYMBOLS_PER_REQUEST ||
+-                    pendingTranslation.messageIds.size() + 1 >= MAX_MESSAGES_PER_REQUEST) {
++            if (!pendingTranslation.messageIds.isEmpty() &&
++                    (pendingTranslation.symbolsCount + messageSymbolsCount >= MAX_SYMBOLS_PER_REQUEST ||
++                    pendingTranslation.messageIds.size() + 1 >= inu_maxMessagesPerRequest())) {
+                 AndroidUtilities.cancelRunOnUIThread(pendingTranslation.runnable);
+                 AndroidUtilities.runOnUIThread(pendingTranslation.runnable); // without timeout
+                 dialogPendingTranslations.add(pendingTranslation = new PendingPollTranslation());
+@@ -1529,7 +1565,8 @@ public class TranslateController extends BaseController {
+                 return;
+             }
+ 
+-            if (pendingTranslation.messageIds.size() + 1 >= MAX_MESSAGES_PER_REQUEST) {
++            if (!pendingTranslation.messageIds.isEmpty() &&
++                    pendingTranslation.messageIds.size() + 1 >= inu_maxMessagesPerRequest()) {
+                 AndroidUtilities.cancelRunOnUIThread(pendingTranslation.runnable);
+                 AndroidUtilities.runOnUIThread(pendingTranslation.runnable); // without timeout
+                 dialogPendingTranslations.add(pendingTranslation = new PendingRichTranslation());
+@@ -1603,6 +1640,13 @@ public class TranslateController extends BaseController {
      public boolean isTranslating(MessageObject messageObject) {
          if (messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.summarizedOpen)
              return loadingSummarizations.contains(Objects.hash(messageObject.getDialogId(), messageObject.getId(), isTranslatingDialog(messageObject.getDialogId()) ? 1 : 0));
@@ -226,7 +305,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              return (
                  messageObject != null &&
-@@ -1623,6 +1640,9 @@ public class TranslateController extends BaseController {
+@@ -1623,6 +1667,9 @@ public class TranslateController extends BaseController {
              return false;
          }
          final boolean isTranscription = messageObject.messageOwner != null && messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal;
@@ -236,7 +315,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              if ((isTranscription ? loadingTranscriptionTranslations : loadingTranslations).contains(messageObject.getId())) {
                  return true;
-@@ -1639,6 +1659,7 @@ public class TranslateController extends BaseController {
+@@ -1639,6 +1686,7 @@ public class TranslateController extends BaseController {
      }
  
      public void cancelAllTranslations() {
@@ -244,7 +323,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              for (ArrayList<PendingTranslation> translations : pendingTranslations.values()) {
                  if (translations != null) {
-@@ -1696,6 +1717,7 @@ public class TranslateController extends BaseController {
+@@ -1696,6 +1744,7 @@ public class TranslateController extends BaseController {
      }
  
      public void cancelTranslations(long dialogId) {
@@ -252,7 +331,7 @@ index 0000000..0000000 100644
          synchronized (this) {
              ArrayList<PendingTranslation> translations = pendingTranslations.get(dialogId);
              if (translations != null) {
-@@ -1778,6 +1800,10 @@ public class TranslateController extends BaseController {
+@@ -1778,6 +1827,10 @@ public class TranslateController extends BaseController {
      }
  
      private boolean isLanguageRestricted(String lng) {

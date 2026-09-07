@@ -7,13 +7,13 @@ Subject: feat(history): preserve message history and saved deletions
 - capture outgoing edits before stock state changes
 - render preserved deletions with the configured transparent style
 ---
- .../messenger/MessagesController.java         | 84 ++++++++++++++++++-
- .../telegram/messenger/MessagesStorage.java   | 33 +++++++-
+ .../messenger/MessagesController.java         | 98 +++++++++++++++++--
+ .../telegram/messenger/MessagesStorage.java   | 36 ++++++-
  .../messenger/SendMessagesHelper.java         |  6 ++
  .../telegram/ui/Cells/ChatMessageCell.java    | 11 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 15 ++++
+ .../java/org/telegram/ui/ChatActivity.java    | 15 +++
  .../org/telegram/ui/MainTabsActivity.java     | 11 +--
- 6 files changed, 144 insertions(+), 16 deletions(-)
+ 6 files changed, 155 insertions(+), 22 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -63,7 +63,28 @@ index 0000000..0000000 100644
                      }
                  }
                  if (taskMedia != null) {
-@@ -9311,6 +9327,31 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -8315,12 +8331,14 @@ public class MessagesController extends BaseController implements NotificationCe
+                         long dialogId = taskMedia.keyAt(a);
+                         ArrayList<Integer> mids = taskMedia.valueAt(a);
+                         if (checkViewer && viewerObject != null && viewerObject.currentAccount == currentAccount && viewerObject.getDialogId() == dialogId && mids.contains(viewerObject.getId())) {
+-                            final int id = viewerObject.getId();
+-                            mids.remove((Integer) id);
+-                            viewerObject.forceExpired = true;
+-                            final long taskId = createDeleteShowOnceTask(dialogId, id);
+-                            SecretMediaViewer.getInstance().setOnClose(() -> doDeleteShowOnceTask(taskId, dialogId, id));
+-                            getNotificationCenter().postNotificationName(NotificationCenter.updateMessageMedia, viewerObject.messageOwner);
++                            if (!desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialogId)) {
++                                final int id = viewerObject.getId();
++                                mids.remove((Integer) id);
++                                viewerObject.forceExpired = true;
++                                final long taskId = createDeleteShowOnceTask(dialogId, id);
++                                SecretMediaViewer.getInstance().setOnClose(() -> doDeleteShowOnceTask(taskId, dialogId, id));
++                                getNotificationCenter().postNotificationName(NotificationCenter.updateMessageMedia, viewerObject.messageOwner);
++                            }
+                         }
+                         if (!mids.isEmpty()) {
+                             getMessagesStorage().emptyMessagesMedia(dialogId, mids);
+@@ -9311,6 +9329,31 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
@@ -95,7 +116,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -9385,6 +9426,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9385,6 +9428,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, false, ChatActivity.MODE_WELCOME_MESSAGES, topicId);
              } else {
                  if (channelId == 0) {
@@ -103,7 +124,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -18696,6 +18738,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18696,6 +18740,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
@@ -111,7 +132,7 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -19546,6 +19589,23 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19546,6 +19591,23 @@ public class MessagesController extends BaseController implements NotificationCe
                  ImageLoader.saveMessageThumbs(message);
                  AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
  
@@ -135,7 +156,7 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21145,6 +21205,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21145,6 +21207,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -146,7 +167,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21269,6 +21333,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21269,6 +21335,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -171,7 +192,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -4765,6 +4765,9 @@ public class MessagesStorage extends BaseController {
+@@ -4354,6 +4354,9 @@ public class MessagesStorage extends BaseController {
+         if (message == null) {
+             return false;
+         }
++        if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() || desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(MessageObject.getDialogId(message))) {
++            return false;
++        }
+         int type = 0;
+         long id = 0;
+         TLRPC.Document document = MessageObject.getDocument(message);
+@@ -4765,6 +4768,9 @@ public class MessagesStorage extends BaseController {
      }
  
      public void emptyMessagesMedia(long dialogId, ArrayList<Integer> mids) {
@@ -181,7 +212,7 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLiteCursor cursor = null;
              SQLitePreparedStatement state = null;
-@@ -14971,8 +14974,10 @@ public class MessagesStorage extends BaseController {
+@@ -14971,8 +14977,10 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -194,7 +225,7 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -16365,12 +16370,20 @@ public class MessagesStorage extends BaseController {
+@@ -16365,12 +16373,20 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -216,7 +247,7 @@ index 0000000..0000000 100644
                                              message.attachPath = oldMessage.attachPath;
                                          }
                                          message.ttl = cursor.intValue(2);
-@@ -16421,6 +16434,18 @@ public class MessagesStorage extends BaseController {
+@@ -16421,6 +16437,18 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
@@ -235,7 +266,7 @@ index 0000000..0000000 100644
                                  continue;
                              }
                          }
-@@ -19100,7 +19125,7 @@ public class MessagesStorage extends BaseController {
+@@ -19100,7 +19128,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  

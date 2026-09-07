@@ -812,6 +812,12 @@ object InuConfig {
     @JvmField
     val AI_TRANSCRIBE_PROMPT = StringItem("ai_transcribe_prompt", "")
 
+    // ISO code of the language spoken in voice messages; empty means the provider guesses. Whisper
+    // decides from the first seconds of audio, which is exactly where short or noisy voice notes go
+    // wrong, so pinning this is the single biggest accuracy win available on the transcription path.
+    @JvmField
+    val AI_TRANSCRIBE_LANGUAGE = StringItem("ai_transcribe_language", "")
+
     @JvmField
     val HIDE_RICH_EDITOR_BUTTON = BoolItem("hide_rich_editor_button", false)
 
@@ -1618,6 +1624,16 @@ object InuConfig {
     @JvmField
     val FORCE_TRANSLATE = BoolItem("force_translate", false)
 
+    // OwlGram-style "auto-translate everything": the DEFAULT translating state for a dialog the
+    // user has not decided about yet. Deliberately not a second list of chats - stock already
+    // persists every explicit per-dialog choice (TranslateController.translatingDialogs, saved as
+    // `translating_dialog_languages2`), and that override wins over this default. So switching a
+    // single chat off from its own translate bar is remembered as an exception for free, the same
+    // way OwlGram's AutoTranslateConfig behaves, without a parallel exceptions store to keep in
+    // sync. Per-topic granularity is the one thing stock's dialog-keyed map cannot express.
+    @JvmField
+    val AUTO_TRANSLATE_ALL = BoolItem("auto_translate_all", false)
+
     @JvmField
     val TRANSLATE_OUTGOING = BoolItem("translate_outgoing", false)
 
@@ -1665,6 +1681,19 @@ object InuConfig {
 
     @JvmField
     val TRANSLATE_LLM_PROMPT = StringItem("translate_llm_prompt", "")
+
+    // How many preceding messages of the same chat are handed to the LLM as conversation context
+    // (0 = off). They are quoted for reference and never translated themselves. This is what a
+    // plain per-message translator cannot do: pronouns, grammatical gender, honorifics and
+    // one-word replies ("yes", "his") only resolve correctly when the model can see what was said
+    // before. Costs tokens, hence the explicit size rather than a boolean.
+    @JvmField
+    val TRANSLATE_LLM_CONTEXT = IntItem("translate_llm_context", 0)
+
+    // Sampling temperature for the LLM provider. Translation wants determinism, so the default is
+    // low; raising it helps only with deliberately loose/idiomatic rewrites.
+    @JvmField
+    val TRANSLATE_LLM_TEMPERATURE = FloatItem("translate_llm_temperature", 0.3f)
 
     @JvmField
     val ACCOUNT_ORDER = StringItem("account_order", "", exportable = false)

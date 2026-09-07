@@ -9,9 +9,9 @@ Subject: translator-related features
  .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  42 +++-
  .../ui/Cells/TextSelectionHelper.java         |   1 +
- .../java/org/telegram/ui/ChatActivity.java    | 196 +++---------------
+ .../java/org/telegram/ui/ChatActivity.java    | 194 +++---------------
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 7 files changed, 92 insertions(+), 190 deletions(-)
+ 7 files changed, 91 insertions(+), 189 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -330,15 +330,6 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -11345,7 +11345,7 @@ public class ChatActivity extends BaseFragment implements
-         if (translateItem == null) {
-             return;
-         }
--        translateItem.setVisibility(getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) && getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) ? View.VISIBLE : View.GONE);
-+        translateItem.setVisibility(getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) /* && getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) */ ? View.VISIBLE : View.GONE);
-     }
- 
-     private Animator infoTopViewAnimator;
 @@ -24917,6 +24917,14 @@ public class ChatActivity extends BaseFragment implements
      }
  

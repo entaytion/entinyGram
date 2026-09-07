@@ -3,7 +3,6 @@ package desu.inugram.helpers.chat
 import android.text.TextUtils
 import android.util.Base64
 import desu.inugram.InuConfig
-import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
@@ -13,29 +12,46 @@ import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
-import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.TranscribeButton
 import java.io.File
 import java.io.IOException
 import java.io.FileInputStream
+import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.Semaphore
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 object TranscribeHelper {
 
     private val inFlight = ConcurrentHashMap<String, Boolean>()
     private val cancelled = ConcurrentHashMap.newKeySet<String>()
-    private val requestSlots = Semaphore(2)
 
-    // Keep transcription off the general memory cliff. Gemini additionally needs
-    // a Base64 copy, so its effective peak is higher than multipart providers.
+    // This used to run on Utilities.globalQueue, which is a single DispatchQueue thread shared by
+    // the whole app: one upload plus a two-minute read timeout stalled every other background task
+    // queued behind it, and the two-slot semaphore that was supposed to cap concurrency could never
+    // admit a second request anyway because the queue is serial. Own pool - concurrency is real,
+    // extra taps queue instead of being rejected, and nothing else in the app waits on us.
+    private val worker: ExecutorService = Executors.newFixedThreadPool(2) { r ->
+        Thread(r, "inu-transcribe").apply { isDaemon = true }
+    }
+
+    // Keep transcription off the general memory cliff.
     private const val MAX_TRANSCRIPTION_BYTES = 32L * 1024L * 1024L
+
+    // Gemini takes audio inline, Base64'd inside the JSON body, and rejects any request over 20MB.
+    // Base64 inflates by 4/3, so this is the largest file that can still fit - past it the request
+    // would come back as an opaque 400 rather than "your voice message is too long".
+    private const val GEMINI_MAX_INLINE_BYTES = 14L * 1024L * 1024L
+
+    private const val MAX_ATTEMPTS = 3
+
+    /** HTTP 429 / 5xx: the provider is busy or briefly broken, so the request is worth repeating. */
+    private class TransientHttpException(message: String) : IOException(message)
 
     @JvmStatic
     fun isTranscribing(messageObject: MessageObject?): Boolean {
@@ -58,11 +74,31 @@ object TranscribeHelper {
         }
     }
 
+    /**
+      * Whether a tap on the transcribe button goes to our provider instead of Telegram's endpoint.
+      *
+      * Deliberately just the toggle: it used to also require the account to be non-Premium, which
+      * meant a Premium user who had gone to the trouble of configuring Gemini silently kept getting
+      * Telegram's transcription instead. The toggle is off by default and switching it on is an
+      * explicit choice - honour it either way.
+      */
     @JvmStatic
-    fun shouldUseCustomTranscribe(account: Int): Boolean {
-        if (!InuConfig.AI_TRANSCRIBE_ENABLED.value) return false
-        val hasPremium = UserConfig.getInstance(account).isPremium
-        return !hasPremium
+    fun shouldUseCustomTranscribe(account: Int): Boolean = InuConfig.AI_TRANSCRIBE_ENABLED.value
+
+    /**
+     * Whether the selected provider has everything it needs to be called. Checked before anything
+     * is marked in-flight, so an unconfigured provider produces one bulletin pointing at the
+     * settings rather than a spinner that dies with a raw HTTP error.
+     */
+    private fun isProviderConfigured(): Boolean = when (InuConfig.AI_TRANSCRIBE_PROVIDER.value) {
+        InuConfig.TRANSCRIBE_PROVIDER_CF ->
+            InuConfig.AI_TRANSCRIBE_CF_ACCOUNT_ID.value.isNotBlank() && InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value.isNotBlank()
+        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM ->
+            InuConfig.AI_TRANSCRIBE_CUSTOM_URL.value.isNotBlank()
+        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value.isNotBlank()
+        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value.isNotBlank()
+        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value.isNotBlank()
+        else -> false
     }
 
     @JvmStatic
@@ -84,17 +120,7 @@ object TranscribeHelper {
         if (inFlight[key] == true) return
         cancelled.remove(key)
 
-        val provider = InuConfig.AI_TRANSCRIBE_PROVIDER.value
-        val apiKey = when (provider) {
-            InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value
-            InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value
-            InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value
-            InuConfig.TRANSCRIBE_PROVIDER_CF -> InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value
-            InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_TRANSCRIBE_CUSTOM_KEY.value
-            else -> ""
-        }.trim()
-
-        if (apiKey.isEmpty() && provider != InuConfig.TRANSCRIBE_PROVIDER_CUSTOM) {
+        if (!isProviderConfigured()) {
             BulletinFactory.global().createSimpleBulletin(
                 R.raw.info,
                 LocaleController.getString(R.string.InuAiTranscribeNoKey)
@@ -118,7 +144,7 @@ object TranscribeHelper {
             } else {
                 inFlight.remove(key)
                 notifyStateChange(account, messageObject)
-                showError("No audio document found")
+                showError(LocaleController.getString(R.string.InuAiTranscribeErrorNoAudio))
             }
         }
     }
@@ -128,36 +154,28 @@ object TranscribeHelper {
         if (attempts > 60) {
             inFlight.remove(key)
             notifyStateChange(account, messageObject)
-            showError("Download timeout")
+            showError(LocaleController.getString(R.string.InuAiTranscribeErrorDownload))
             return
         }
 
-        Utilities.globalQueue.postRunnable({
-            if (isCancelled(key)) return@postRunnable
+        AndroidUtilities.runOnUIThread({
+            if (isCancelled(key)) return@runOnUIThread
             val file = FileLoader.getInstance(account).getPathToAttach(doc, true)
             if (file != null && file.exists() && file.length() > 0) {
                 processAudioFile(account, messageObject, file)
             } else {
-                AndroidUtilities.runOnUIThread({
-                    pollFileDownload(account, messageObject, doc, attempts + 1)
-                }, 500)
+                pollFileDownload(account, messageObject, doc, attempts + 1)
             }
         }, 500)
     }
 
     private fun processAudioFile(account: Int, messageObject: MessageObject, file: File) {
         val key = reqKey(messageObject)
-        Utilities.globalQueue.postRunnable {
-            if (!requestSlots.tryAcquire()) {
-                inFlight.remove(key)
-                notifyStateChange(account, messageObject)
-                showError("Too many transcription requests")
-                return@postRunnable
-            }
+        worker.execute {
             try {
-                if (isCancelled(key)) return@postRunnable
+                if (isCancelled(key)) return@execute
                 if (file.length() > MAX_TRANSCRIPTION_BYTES) {
-                    throw IOException("Audio file is too large")
+                    throw IOException(LocaleController.getString(R.string.InuAiTranscribeErrorTooLarge))
                 }
                 val isRound = messageObject.isRoundVideo
                 val mime = if (isRound) "video/mp4" else "audio/ogg"
@@ -166,13 +184,15 @@ object TranscribeHelper {
                 val provider = InuConfig.AI_TRANSCRIBE_PROVIDER.value
                 val customPrompt = InuConfig.AI_TRANSCRIBE_PROMPT.value.trim()
 
-                val transcribedText = when (provider) {
-                    InuConfig.TRANSCRIBE_PROVIDER_GROQ -> transcribeGroq(file, fileName, mime, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> transcribeGemini(file.readBytes(), mime, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> transcribeOpenAI(file, fileName, mime, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_CF -> transcribeCloudflare(file, customPrompt)
-                    InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> transcribeCustom(file, fileName, mime, customPrompt)
-                    else -> throw IllegalStateException("Unknown provider: $provider")
+                val transcribedText = withRetry {
+                    when (provider) {
+                        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> transcribeGroq(file, fileName, mime, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> transcribeGemini(file, mime, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> transcribeOpenAI(file, fileName, mime, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_CF -> transcribeCloudflare(file, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> transcribeCustom(file, fileName, mime, customPrompt)
+                        else -> throw IllegalStateException("Unknown provider: $provider")
+                    }
                 }
 
                 AndroidUtilities.runOnUIThread {
@@ -200,23 +220,52 @@ object TranscribeHelper {
                         )
                     } else {
                         notifyStateChange(account, messageObject)
-                        showError("Empty transcription received")
+                        showError(LocaleController.getString(R.string.InuAiTranscribeErrorEmpty))
                     }
                 }
             } catch (e: Exception) {
-                if (isCancelled(key)) return@postRunnable
+                if (isCancelled(key)) return@execute
                 FileLog.e("TranscribeHelper error", e)
                 AndroidUtilities.runOnUIThread {
                     inFlight.remove(key)
                     notifyStateChange(account, messageObject)
-                    showError(e.message ?: "Transcription error")
+                    showError(e.message?.takeIf { it.isNotBlank() } ?: e.javaClass.simpleName)
                 }
             } finally {
-                requestSlots.release()
                 cancelled.remove(key)
             }
         }
     }
+
+    /**
+     * Repeats the request when the provider answers 429 or 5xx. Everything else - a rejected key,
+     * an unknown model, audio the provider will not accept - is permanent and fails immediately;
+     * retrying those just burns the user's quota and their patience.
+     */
+    private fun <T> withRetry(block: () -> T): T {
+        var attempt = 0
+        while (true) {
+            try {
+                return block()
+            } catch (e: TransientHttpException) {
+                attempt++
+                if (attempt >= MAX_ATTEMPTS) throw e
+                try {
+                    Thread.sleep(1500L * attempt)
+                } catch (ie: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                    throw e
+                }
+            }
+        }
+    }
+
+    /**
+     * ISO code of the spoken language, or empty for provider auto-detection. Whisper-family models
+     * guess from the first seconds of audio, which is exactly where short or noisy voice notes go
+     * wrong - a pinned language is the single biggest accuracy win available here.
+     */
+    private fun languageHint(): String = InuConfig.AI_TRANSCRIBE_LANGUAGE.value.trim()
 
     private fun isCancelled(key: String): Boolean = cancelled.contains(key)
 
@@ -250,6 +299,7 @@ object TranscribeHelper {
             "temperature" to "0"
         )
         if (prompt.isNotBlank()) parts["prompt"] = prompt
+        languageHint().takeIf { it.isNotBlank() }?.let { parts["language"] = it }
 
         val headers = mapOf("Authorization" to "Bearer $apiKey")
         val resp = postMultipart(url, headers, parts, "file", fileName, mime, file)
@@ -269,6 +319,7 @@ object TranscribeHelper {
             "temperature" to "0"
         )
         if (prompt.isNotBlank()) parts["prompt"] = prompt
+        languageHint().takeIf { it.isNotBlank() }?.let { parts["language"] = it }
 
         val headers = mapOf("Authorization" to "Bearer $apiKey")
         val resp = postMultipart(url, headers, parts, "file", fileName, mime, file)
@@ -293,6 +344,7 @@ object TranscribeHelper {
             "temperature" to "0"
         )
         if (prompt.isNotBlank()) parts["prompt"] = prompt
+        languageHint().takeIf { it.isNotBlank() }?.let { parts["language"] = it }
 
         val headers = mutableMapOf<String, String>()
         if (apiKey.isNotBlank()) headers["Authorization"] = "Bearer $apiKey"
@@ -305,32 +357,24 @@ object TranscribeHelper {
         return json.optString("text", "").trim()
     }
 
-    private fun transcribeGemini(bytes: ByteArray, mime: String, prompt: String): String {
+    private fun transcribeGemini(file: File, mime: String, prompt: String): String {
+        if (file.length() > GEMINI_MAX_INLINE_BYTES) {
+            throw IOException(LocaleController.getString(R.string.InuAiTranscribeErrorTooLargeInline))
+        }
         val apiKey = InuConfig.AI_PROVIDER_GEMINI_KEY.value.trim()
         val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-3.5-flash" }
         val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
-        val base64 = Base64.encodeToString(bytes, Base64.NO_WRAP)
 
-        val sysInstruction = if (prompt.isNotBlank()) prompt else "Transcribe the audio verbatim in its original language. Output ONLY the transcription text without speaker labels, introductions, or commentary."
-
-        val json = JSONObject().apply {
-            put(
-                "contents",
-                JSONArray().put(
-                    JSONObject().put(
-                        "parts",
-                        JSONArray().apply {
-                            put(JSONObject().put("text", sysInstruction))
-                            put(
-                                JSONObject().put(
-                                    "inlineData",
-                                    JSONObject().put("mimeType", mime).put("data", base64)
-                                )
-                            )
-                        }
-                    )
-                )
+        val instruction = buildString {
+            append(
+                if (prompt.isNotBlank()) prompt
+                else "Transcribe the audio verbatim in its original language. Output ONLY the transcription text without speaker labels, introductions, or commentary."
             )
+            languageHint().takeIf { it.isNotBlank() }?.let {
+                append(" The audio is spoken in \"")
+                append(it)
+                append("\"; transcribe it in that language.")
+            }
         }
 
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
@@ -338,9 +382,27 @@ object TranscribeHelper {
             connectTimeout = 30_000
             readTimeout = 120_000
             doOutput = true
+            // Without a streaming mode HttpURLConnection buffers the entire body in memory before
+            // sending - and this body is the audio Base64'd, so it is the single largest allocation
+            // the fork makes. Chunked keeps it to one buffer at a time.
+            setChunkedStreamingMode(0)
             setRequestProperty("Content-Type", "application/json")
         }
-        conn.outputStream.use { it.write(json.toString().toByteArray()) }
+
+        // The JSON is assembled around the payload rather than built as one object: the alternative
+        // materialises the Base64 string, then the JSONObject copy of it, then the byte array of
+        // the whole document - three copies of an already-inflated file.
+        val head = "{\"contents\":[{\"parts\":[" +
+            JSONObject().put("text", instruction).toString() +
+            ",{\"inlineData\":{\"mimeType\":" + JSONObject.quote(mime) + ",\"data\":\""
+        val tail = "\"}}]}],\"generationConfig\":{\"temperature\":0}}"
+
+        conn.outputStream.buffered().use { out ->
+            out.write(head.toByteArray())
+            streamBase64(file, out)
+            out.write(tail.toByteArray())
+        }
+
         val code = conn.responseCode
         val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
             ?.bufferedReader()?.use { it.readText() } ?: ""
@@ -348,20 +410,43 @@ object TranscribeHelper {
 
         if (code !in 200..299) {
             val errJson = try { JSONObject(resp).getJSONObject("error").optString("message", resp) } catch (_: Exception) { resp }
-            throw IOException("Gemini API error ($code): ${errJson.take(300)}")
+            val message = "Gemini API error ($code): ${errJson.take(300)}"
+            throw if (code == 429 || code >= 500) TransientHttpException(message) else IOException(message)
         }
 
-        val resObj = JSONObject(resp)
-        val candidates = resObj.optJSONArray("candidates")
-        if (candidates != null && candidates.length() > 0) {
-            val cand = candidates.getJSONObject(0)
-            val content = cand.optJSONObject("content")
-            val parts = content?.optJSONArray("parts")
-            if (parts != null && parts.length() > 0) {
-                return parts.getJSONObject(0).optString("text", "").trim()
+        val parts = JSONObject(resp)
+            .optJSONArray("candidates")?.optJSONObject(0)
+            ?.optJSONObject("content")?.optJSONArray("parts")
+            ?: return ""
+        // Long answers arrive split across several parts; taking only the first truncated them.
+        return buildString {
+            for (i in 0 until parts.length()) {
+                append(parts.optJSONObject(i)?.optString("text").orEmpty())
+            }
+        }.trim()
+    }
+
+    /**
+     * Base64-encodes [file] straight into [out]. Every chunk but the last is a multiple of three
+     * bytes on purpose: Base64 of concatenated chunks only equals Base64 of the whole file when
+     * each chunk is 3-byte aligned, otherwise padding lands in the middle of the stream and the
+     * provider decodes garbage.
+     */
+    private fun streamBase64(file: File, out: OutputStream) {
+        val buf = ByteArray(3 * 16 * 1024)
+        FileInputStream(file).use { input ->
+            while (true) {
+                var read = 0
+                while (read < buf.size) {
+                    val n = input.read(buf, read, buf.size - read)
+                    if (n < 0) break
+                    read += n
+                }
+                if (read <= 0) break
+                out.write(Base64.encode(if (read == buf.size) buf else buf.copyOf(read), Base64.NO_WRAP))
+                if (read < buf.size) break
             }
         }
-        return ""
     }
 
     private fun transcribeCloudflare(file: File, prompt: String): String {
@@ -378,6 +463,7 @@ object TranscribeHelper {
             connectTimeout = 30_000
             readTimeout = 120_000
             doOutput = true
+            setChunkedStreamingMode(0)
             setRequestProperty("Authorization", "Bearer $apiToken")
             setRequestProperty("Content-Type", "application/octet-stream")
         }
@@ -390,7 +476,8 @@ object TranscribeHelper {
         conn.disconnect()
 
         if (code !in 200..299) {
-            throw IOException("Cloudflare error ($code): ${resp.take(300)}")
+            val message = "Cloudflare error ($code): ${resp.take(300)}"
+            throw if (code == 429 || code >= 500) TransientHttpException(message) else IOException(message)
         }
 
         val json = JSONObject(resp)
@@ -423,11 +510,14 @@ object TranscribeHelper {
             connectTimeout = 30_000
             readTimeout = 120_000
             doOutput = true
+            // Buffering the whole multipart body (audio included) in memory is what made large
+            // voice messages an OOM risk rather than a slow request.
+            setChunkedStreamingMode(0)
             setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
             for ((k, v) in headers) setRequestProperty(k, v)
         }
 
-        conn.outputStream.use { out ->
+        conn.outputStream.buffered().use { out ->
             for ((k, v) in parts) {
                 out.write(("$twoHyphens$boundary$lineEnd").toByteArray())
                 out.write(("Content-Disposition: form-data; name=\"$k\"$lineEnd$lineEnd").toByteArray())
@@ -453,7 +543,8 @@ object TranscribeHelper {
             } catch (_: Exception) {
                 resp
             }
-            throw IOException("HTTP $code: ${err.take(300)}")
+            val message = "HTTP $code: ${err.take(300)}"
+            throw if (code == 429 || code >= 500) TransientHttpException(message) else IOException(message)
         }
         return resp
     }

@@ -4,15 +4,15 @@ Date: Mon, 7 Sep 2026 01:03:58 +0300
 Subject: Add InuTranslate debug logging for banner investigation
 
 ---
- .../messenger/TranslateController.java        | 22 +++++++++++++++++--
- .../java/org/telegram/ui/ChatActivity.java    |  5 +++++
- 2 files changed, 25 insertions(+), 2 deletions(-)
+ .../messenger/TranslateController.java        | 26 ++++++++++++++++---
+ .../java/org/telegram/ui/ChatActivity.java    |  5 ++++
+ 2 files changed, 27 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
-@@ -198,6 +198,9 @@ public class TranslateController extends BaseController {
+@@ -207,6 +207,9 @@ public class TranslateController extends BaseController {
          if (hideTranslateDialogs.contains(dialogId)) {
              return true;
          }
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          TLRPC.ChatFull chatFull = getMessagesController().getChatFull(-dialogId);
          if (chatFull != null) {
              return chatFull.translations_disabled;
-@@ -590,6 +593,7 @@ public class TranslateController extends BaseController {
+@@ -611,6 +614,7 @@ public class TranslateController extends BaseController {
          }
  
          if (!isFeatureAvailable(dialogId)) {
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
              return;
          }
  
-@@ -598,6 +602,7 @@ public class TranslateController extends BaseController {
+@@ -619,6 +623,7 @@ public class TranslateController extends BaseController {
          }
  
          if (!isTranslatable(messageObject)) {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
              return;
          }
  
-@@ -872,13 +877,16 @@ public class TranslateController extends BaseController {
+@@ -893,13 +898,16 @@ public class TranslateController extends BaseController {
      private ArrayList<Integer> pendingLanguageChecks = new ArrayList<>();
      private void checkLanguage(MessageObject messageObject) {
          if (!LanguageDetector.hasSupport()) {
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              checkDialogTranslatable(messageObject);
              return;
          }
-@@ -886,6 +894,7 @@ public class TranslateController extends BaseController {
+@@ -907,6 +915,7 @@ public class TranslateController extends BaseController {
          final long dialogId = messageObject.getDialogId();
          final int hash = hash(messageObject);
          if (isDialogTranslatable(dialogId)) {
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
              return;
          }
          if (pendingLanguageChecks.contains(hash)) {
-@@ -893,6 +902,7 @@ public class TranslateController extends BaseController {
+@@ -914,6 +923,7 @@ public class TranslateController extends BaseController {
          }
  
          pendingLanguageChecks.add(hash);
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
  
          Utilities.stageQueue.postRunnable(() -> {
              LanguageDetector.detectLanguage(detectText, lng -> AndroidUtilities.runOnUIThread(() -> {
-@@ -900,11 +910,13 @@ public class TranslateController extends BaseController {
+@@ -921,11 +931,13 @@ public class TranslateController extends BaseController {
                  if (detectedLanguage == null) {
                      detectedLanguage = UNKNOWN_LANGUAGE;
                  }
@@ -85,7 +85,7 @@ index 0000000..0000000 100644
                  messageObject.messageOwner.originalLanguage = UNKNOWN_LANGUAGE;
                  getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
                  pendingLanguageChecks.remove((Integer) hash);
-@@ -949,14 +961,20 @@ public class TranslateController extends BaseController {
+@@ -970,14 +982,20 @@ public class TranslateController extends BaseController {
          final int notTranslatableCount = translatableMessages.certainlyNotTranslatable.size();
          final int totalCount = translatableCount + unknownCount + notTranslatableCount;
          final boolean autotranslation = isChatAutoTranslated(dialogId);
@@ -108,11 +108,22 @@ index 0000000..0000000 100644
              translatableDialogs.add(dialogId);
              translatableDialogMessages.remove((Long) dialogId);
              AndroidUtilities.runOnUIThread(() -> {
+@@ -1827,8 +1845,8 @@ public class TranslateController extends BaseController {
+     }
+ 
+     private boolean isLanguageRestricted(String lng) {
+-        // entinyGram: force-translate mode overrides the "own language" / do-not-translate gate
+-        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) {
++        // entinyGram: force-translate mode, and the instant-banner toggle, override the "own language" / do-not-translate gate
++        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue() || desu.inugram.InuConfig.INSTANT_TRANSLATE_BANNER.getValue()) {
+             return false;
+         }
+         if (getUserConfig().isPremium()) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25128,6 +25128,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25134,6 +25134,7 @@ public class ChatActivity extends BaseFragment implements
      }
      private Runnable checkTranslationRunnable = () -> {
          lastTranslationCheck = System.currentTimeMillis();
@@ -120,7 +131,7 @@ index 0000000..0000000 100644
          if (chatListView != null && chatAdapter != null) {
              int minId = Integer.MAX_VALUE, maxId = Integer.MIN_VALUE;
              for (int i = 0; i < chatListView.getChildCount(); ++i) {
-@@ -29391,6 +29392,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29397,6 +29398,7 @@ public class ChatActivity extends BaseFragment implements
      public static final boolean DEBUG_TOP_PANELS = false;
      public void updateTopPanel(boolean animated) {
          if (chatMode != 0 && chatMode != MODE_SUGGESTIONS || topPanelLayout == null) {
@@ -128,7 +139,7 @@ index 0000000..0000000 100644
              return;
          }
          SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
-@@ -29466,6 +29468,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -29472,6 +29474,9 @@ public class ChatActivity extends BaseFragment implements
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
          boolean showTranslate = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) || DEBUG_TOP_PANELS;

@@ -87,13 +87,17 @@ object TranslateEngine {
         val entities: List<TLRPC.MessageEntity>?,
         toLang: String,
         epoch: Int,
+        // Preceding messages of the same chat, oldest first. Captured at enqueue time on the UI
+        // thread (the chat's loaded message list is not safe to read from the worker) and used
+        // only by providers that can make sense of it - see TranslationProvider.translate.
+        val context: List<String>,
         val callback: Utilities.Callback4<Boolean, Int, TLRPC.TL_textWithEntities, String>,
     ) : BaseJob(key, provider, toLang, epoch) {
 
         private val transcription = key.kind == KIND_TRANSCRIPTION
 
         override fun run(): Any {
-            val result = translateWithEntities(provider, text, entities, toLang)
+            val result = translateWithEntities(provider, text, entities, toLang, context)
             val twe = TLRPC.TL_textWithEntities().apply {
                 this.text = result.first
                 if (result.second.isNotEmpty()) this.entities = result.second
@@ -226,6 +230,7 @@ object TranslateEngine {
         entities: List<TLRPC.MessageEntity>?,
         toLang: String,
         provider: TranslationProvider,
+        context: List<String> = emptyList(),
         callback: Utilities.Callback4<Boolean, Int, TLRPC.TL_textWithEntities, String>,
     ): Boolean {
         val kind = if (transcription) KIND_TRANSCRIPTION else KIND_TEXT
@@ -246,7 +251,7 @@ object TranslateEngine {
             }
             Log.d(TAG, "enqueue dialog=$dialogId msg=$msgId kind=$kind to=$toLang provider=${provider.id} chars=${text.length}")
             inFlight.add(key)
-            queue.addLast(TextJob(key, provider, text, entities, toLang, epochs[dialogId] ?: 0, callback))
+            queue.addLast(TextJob(key, provider, text, entities, toLang, epochs[dialogId] ?: 0, context, callback))
         }
         pump()
         return true
@@ -436,12 +441,13 @@ object TranslateEngine {
         text: String,
         entities: List<TLRPC.MessageEntity>?,
         toLang: String,
+        context: List<String> = emptyList(),
     ): Pair<String, ArrayList<TLRPC.MessageEntity>> {
         var attempt = 0
         while (true) {
             try {
                 val marked = EntityKeeper.mark(text, entities)
-                val translated = provider.translate(marked, toLang)
+                val translated = provider.translate(marked, toLang, context)
                 val (resultText, resultEntities) = EntityKeeper.unmark(translated, entities)
                 if (resultText.isBlank()) throw IOException("Provider returned empty translation")
                 return resultText to resultEntities

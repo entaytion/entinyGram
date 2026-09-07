@@ -35,6 +35,15 @@ interface TranslationProvider {
     fun translate(text: String, toLang: String): String
 
     /**
+     * Same as [translate], plus up to N preceding messages of the same conversation, oldest first,
+     * for providers that can make use of them. Only [LlmProvider] can; every stateless HTTP
+     * translation API takes one string and knows nothing about who said what, so this default
+     * forwards to the plain overload and the context is dropped.
+     */
+    @Throws(Exception::class)
+    fun translate(text: String, toLang: String, context: List<String>): String = translate(text, toLang)
+
+    /**
      * Whether this provider can translate into [toLang]. Providers with a limited language set
      * (Lingo, TranSmart) override this; the engine falls back to a broader provider (Google,
      * Bing) when the selected one does not support the target language.
@@ -240,22 +249,40 @@ object LlmProvider : TranslationProvider {
 
     override fun isConfigured(): Boolean = InuConfig.TRANSLATE_LLM_URL.value.trim().isNotEmpty()
 
-    override fun translate(text: String, toLang: String): String {
+    override fun translate(text: String, toLang: String): String = translate(text, toLang, emptyList())
+
+    override fun translate(text: String, toLang: String, context: List<String>): String {
         val endpoint = InuConfig.TRANSLATE_LLM_URL.value.trim()
         val key = InuConfig.TRANSLATE_LLM_KEY.value.trim()
         val model = InuConfig.TRANSLATE_LLM_MODEL.value.trim().ifBlank { "gpt-4o-mini" }
         val system = InuConfig.TRANSLATE_LLM_PROMPT.value.trim().ifBlank { DEFAULT_SYSTEM_PROMPT }
         val langName = TranslateAlert2.languageName(toLang) ?: toLang
 
+        // Context goes in as its own turn with an acknowledgement after it, rather than being
+        // glued in front of the text to translate. Models reliably translate everything handed to
+        // them inside a single user message, so a flat "context: ... / now translate: ..." prompt
+        // comes back with the context translated too.
+        val messages = JSONArray().put(JSONObject().put("role", "system").put("content", system))
+        if (context.isNotEmpty()) {
+            messages.put(
+                JSONObject().put("role", "user").put(
+                    "content",
+                    "Earlier messages in this conversation, for context only. " +
+                        "Do not translate, quote or mention them:\n" +
+                        context.joinToString("\n") { "- $it" },
+                ),
+            )
+            messages.put(
+                JSONObject().put("role", "assistant")
+                    .put("content", "Understood. I will output only the translation of the next message."),
+            )
+        }
+        messages.put(JSONObject().put("role", "user").put("content", "Translate to $langName:\n$text"))
+
         val payload = JSONObject()
             .put("model", model)
-            .put(
-                "messages",
-                JSONArray()
-                    .put(JSONObject().put("role", "system").put("content", system))
-                    .put(JSONObject().put("role", "user").put("content", "Translate to $langName:\n$text")),
-            )
-            .put("temperature", 0.3)
+            .put("messages", messages)
+            .put("temperature", InuConfig.TRANSLATE_LLM_TEMPERATURE.value.coerceIn(0f, 2f).toDouble())
 
         val headers = if (key.isNotEmpty()) mapOf("Authorization" to "Bearer $key") else emptyMap()
         val resp = httpJson(

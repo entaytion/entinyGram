@@ -233,6 +233,8 @@
     <string name="InuLanguages">Языки</string>
     <string name="InuAdvanced">Дополнительно</string>
     <string name="InuForceTranslate">Принудительный перевод</string>
+    <string name="InuAutoTranslateAll">Автоперевод во всех чатах</string>
+    <string name="InuAutoTranslateAllInfo">Включает перевод чата по умолчанию везде. Если выключить его в конкретном чате, это запомнится как исключение и продолжит действовать, пока параметр включён.</string>
     <string name="InuForceTranslateInfo">Показывать кнопку перевода и переводить сообщения, даже если Telegram считает, что они уже на вашем языке или в списке «Не переводить».</string>
     <string name="InuTranslationTarget">Язык перевода</string>
     <string name="InuTranslationTargetFollowApp">Как в приложении</string>
@@ -257,6 +259,10 @@
     <string name="InuTranslateLlmApiKey">API-ключ (необязательно)</string>
     <string name="InuTranslateLlmModel">Модель</string>
     <string name="InuTranslateLlmPrompt">Системный промпт (необязательно)</string>
+    <string name="InuTranslateLlmContext">Контекст разговора</string>
+    <string name="InuTranslateLlmContextInfo">Сколько предыдущих сообщений из этого чата отправлять модели вместе с переводимым. Сам контекст никогда не переводится — именно он помогает правильно передать местоимения, род и короткие ответы. Расходует больше токенов на каждое сообщение.</string>
+    <string name="InuTranslateLlmTemperature">Температура</string>
+    <string name="InuTranslateLlmTemperatureInfo">Меньшие значения дают дословный и предсказуемый перевод, большие — более свободный и идиоматичный.</string>
     <string name="InuTranslateProviderNotConfigured">Провайдер перевода не настроен. Использую перевод через Telegram.</string>
     <string name="InuTranslateProviderFailed">Не удалось перевести: %1$s. Сообщения будут повторены автоматически.</string>
     <string name="InuPoweredByProvider">Переводы работают на %1$s.</string>
@@ -1127,7 +1133,7 @@
     <string name="InuDeletePermanently">Удалить навсегда</string>
     <string name="InuDeletePermanentlyDone">Удалено навсегда</string>
     <string name="InuAiTranscribe">Распознавание речи (Voice-to-Text)</string>
-    <string name="InuAiTranscribeInfo">Расшифровка голосовых и видеосообщений без Telegram Premium с помощью сервисов ИИ.</string>
+    <string name="InuAiTranscribeInfo">Расшифровывать голосовые и видеосообщения через своего AI-провайдера вместо телеграмовского — с Premium или без него.</string>
     <string name="InuAiTranscribeSection">Voice-to-Text</string>
     <string name="InuAiTranscribeProvider">Провайдер распознавания</string>
     <string name="InuAiTranscribeProviderGroq">Groq Whisper (Быстро &amp; Бесплатно)</string>
@@ -1143,10 +1149,17 @@
     <string name="InuAiTranscribePrompt">Пользовательский промпт / Контекст (Опционально)</string>
     <string name="InuAiTranscribePromptHint">например, дословно на языке оригинала с пунктуацией</string>
     <string name="InuAiTranscribeGetApiKey">Получить бесплатный API ключ</string>
-    <string name="InuAiTranscribeNoKey">API ключ не указан. Укажите его в Настройках &gt; AI.</string>
+    <string name="InuAiTranscribeNoKey">Голосовой AI-провайдер ещё не настроен. Добавьте его в Настройках &gt; AI &gt; Провайдеры.</string>
     <string name="InuAiTranscribeDownloading">Загрузка аудио…</string>
     <string name="InuAiTranscribeTranscribing">Распознавание…</string>
     <string name="InuAiTranscribeFailed">Ошибка распознавания: %1$s</string>
+    <string name="InuAiTranscribeLanguage">Язык речи</string>
+    <string name="InuAiTranscribeLanguageInfo">ISO-код языка, на котором говорят в голосовых, например en, uk или ru. Оставьте пустым, чтобы провайдер определял сам — заданный язык заметно улучшает короткие и шумные записи.</string>
+    <string name="InuAiTranscribeErrorDownload">Не удалось загрузить голосовое сообщение.</string>
+    <string name="InuAiTranscribeErrorNoAudio">В этом сообщении нет аудио для расшифровки.</string>
+    <string name="InuAiTranscribeErrorEmpty">Провайдер вернул пустую расшифровку.</string>
+    <string name="InuAiTranscribeErrorTooLarge">Эта запись слишком велика для расшифровки.</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">Эта запись слишком длинная для Gemini, который принимает аудио внутри запроса. Для длинных сообщений переключите голосового провайдера на Groq или OpenAI.</string>
     <string name="InuLocalPremium">Локальный Telegram Premium</string>
     <string name="InuLocalPremiumInfo"> Разблокирует локальные функции Premium на уровне клиента (звёздочка у профиля, эмодзи-статусы и цвета профиля с локальным сохранением, безлимитная панель перевода, премиум-реакции и анимации). Серверные фичи (4 ГБ загрузка, лимиты облака) требуют официальной подписки.</string>
     <string name="InuHiddenStarGifts">Скрытые и архивные подарки</string>
