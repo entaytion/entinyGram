@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Tue, 8 Sep 2026 22:13:50 +0300
+Subject: Fill bot_verification_icon from the remote badge registry
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java    | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -6892,6 +6892,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             return false;
+         }
+         desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
++        desu.inugram.helpers.badges.BadgeRegistry.applyTo(user);
+         fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
+         TLRPC.User oldUser = users.get(user.id);
+         if (oldUser == user && !force) {
+@@ -7027,6 +7028,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (chat == null) {
+             return;
+         }
++        desu.inugram.helpers.badges.BadgeRegistry.applyTo(chat);
+         TLRPC.Chat oldChat = chats.get(chat.id);
+         if (oldChat == chat) {
+             return;

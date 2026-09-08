@@ -278,7 +278,7 @@ entiny/translator.patch
 entiny/enable-premium-purchase.patch
 entiny/content-protection-bypass.patch
 entiny/allow-screenshots.patch
-entiny/developer-badges.patch
+entiny/simple-text-view-right-slot.patch
 entiny/name-emoji-picker.patch
 entiny/unlimited-fav-stickers.patch
 entiny/unlimited-pinned-chats.patch
@@ -397,3 +397,4 @@ entiny/redundant-lang-code-native-calls.patch
 entiny/optimize-build.patch
 entiny/wide-channel-posts.patch
 entiny/translate-debug-logging.patch
+entiny/remote-badges.patch

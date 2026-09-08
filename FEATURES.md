@@ -89,7 +89,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 ### profile & identity tools
 
-- 📡 **developer badges**: show entinyGram, inuGram, and official-channel badges in chat headers and profiles. Tap a badge for details or disable them in Settings → Chats.
+- 📡 **developer badges**: show entinyGram, inuGram, and official-channel badges in chat headers and profiles. Tap a badge for details or disable them in Settings → Chats. The badge is a custom emoji written into the same field Telegram's own bot verification uses, so it renders through stock machinery wherever a verification mark appears; the holder list is fetched once a day from a public manifest instead of being compiled in, so adding one never needs a release. The whole list is fetched and matched on-device — the app never asks the server about a single id.
 - 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags & toggle in settings
 - 📡 **estimated registration date & DC**: profile info card with fast copy and DC location resolution
 - 📡 **delete profile photos**: one-tap delete all or selected profile photos from profile menu, photo viewer, or settings

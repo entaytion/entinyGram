@@ -107,6 +107,7 @@ object InuHooks {
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
         desu.inugram.helpers.media.StarGiftsHelper.refreshDeletedGiftsList()
         desu.inugram.helpers.media.StarGiftsHelper.loadStickerPack()
+        desu.inugram.helpers.badges.BadgeRegistry.init(account)
         // TTL-based cache pruning only ran when the TTL setting itself was changed — accounts
         // that never touch the setting (or just leave the app running for weeks) never got
         // pruned. Run it once per account on every cold start instead.

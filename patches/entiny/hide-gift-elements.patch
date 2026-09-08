@@ -165,7 +165,7 @@ index 0000000..0000000 100644
  
  
              final ImageLocation imageLocation = ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_BIG);
-@@ -11662,7 +11675,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11654,7 +11667,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          rightIconIsPremium = false;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(user.emoji_status, false, false, a));
                          nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
                          rightIconIsStatus = false;
                          rightIconIsPremium = true;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(null, false, false, a));
-@@ -11683,7 +11696,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11675,7 +11688,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          rightIconIsStatus = true;
                          rightIconIsPremium = false;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(user.emoji_status, true, !ProfileHelper.reduceMotion(), a));
@@ -183,7 +183,7 @@ index 0000000..0000000 100644
                          rightIconIsStatus = false;
                          rightIconIsPremium = true;
                          nameTextView[a].setRightDrawable(getEmojiStatusDrawable(null, true, !ProfileHelper.reduceMotion(), a));
-@@ -11691,7 +11704,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11683,7 +11696,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          nameTextView[a].setRightDrawable(null);
                      }
                  }
@@ -192,7 +192,7 @@ index 0000000..0000000 100644
                      nameTextView[a].setLeftDrawableOutside(true);
                      leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false, a);
                  } else {
-@@ -11822,20 +11835,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -11803,20 +11816,24 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  flagSecure.invalidate();
              }
  
@@ -220,7 +220,7 @@ index 0000000..0000000 100644
  
              if (isTopic) {
                  topic = getMessagesController().getTopicsController().findTopic(chatId, topicId);
-@@ -12028,7 +12045,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12001,7 +12018,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          nameTextView[a].setRightDrawable(null);
                      }
                  }
@@ -229,7 +229,7 @@ index 0000000..0000000 100644
                      nameTextView[a].setLeftDrawableOutside(true);
                      nameTextView[a].setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false, a));
                  } else {
-@@ -12402,7 +12419,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12364,7 +12381,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  if (!UserObject.isDeleted(user) && !isBot && currentEncryptedChat == null && !userBlocked && userId != 333000 && userId != 777000 && userId != 42777) {
                      if (!BuildVars.IS_BILLING_UNAVAILABLE && !user.self && !user.bot && !MessagesController.isSupportUser(user) && !getMessagesController().premiumPurchaseBlocked()) {
                          StarsController.getInstance(currentAccount).loadStarGifts();
@@ -239,7 +239,7 @@ index 0000000..0000000 100644
                          giftAction = true;
                      }
                      otherItem.addSubItem(start_secret_chat, R.drawable.msg_secret, LocaleController.getString(R.string.StartEncryptedChat));
-@@ -12455,10 +12474,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12417,10 +12436,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      callItemVisible = call != null;
                      voiceChatAction = call != null || voiceChatAction;
                  }
@@ -253,7 +253,7 @@ index 0000000..0000000 100644
                      otherItem.addSubItem(channel_stories, R.drawable.msg_archive, LocaleController.getString(R.string.OpenChannelArchiveStories));
                  }
                  if (chat.megagroup) {
-@@ -12580,11 +12602,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12542,11 +12564,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              actionsView.set(ProfileActionsView.KEY_VIDEO, videoCallItemVisible);
              actionsView.set(ProfileActionsView.KEY_DISCUSS, discussAction);
              actionsView.set(ProfileActionsView.KEY_LEAVE, leaveAction);

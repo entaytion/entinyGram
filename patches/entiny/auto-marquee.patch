@@ -115,7 +115,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1611,6 +1655,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1602,6 +1646,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (title == null) {
              if (lastSubtitle != null) {
                  if (subtitleTextView != null) {

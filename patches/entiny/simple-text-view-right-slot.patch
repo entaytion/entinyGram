@@ -1,0 +1,184 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 1 Sep 2026 11:06:00 +0300
+Subject: Add a second right-drawable slot with its own click target to SimpleTextView
+
+---
+ .../telegram/ui/ActionBar/SimpleTextView.java | 74 +++++++++++++++++--
+ .../ui/Components/ChatAvatarContainer.java    |  1 +
+ 2 files changed, 67 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+@@ -339,7 +339,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+             }
+ 
+             if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
+-                offsetX = (width - textWidth) / 2 - (int) layout.getLineLeft(0);
++                offsetX = Math.max(0, (width - textWidth) / 2) - (int) layout.getLineLeft(0);
+             } else if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT) {
+                 if (firstLineLayout != null) {
+                     offsetX = -(int) firstLineLayout.getLineLeft(0);
+@@ -968,7 +968,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 int dh = (int) (rightDrawable2.getIntrinsicHeight() * rightDrawableScale);
+                 int x = textOffsetX + textWidth + drawablePadding + (int) -scrollingOffset + nextScrollX;
+                 if (rightDrawable != null) {
+-                    x += (int) (rightDrawable.getIntrinsicWidth() * rightDrawableScale) + drawablePadding;
++                    int rdw = rightDrawable.getIntrinsicWidth() > 0 ? rightDrawable.getIntrinsicWidth() : AndroidUtilities.dp(20);
++                    x += (int) (rdw * rightDrawableScale) + drawablePadding;
+                 }
+                 int y;
+                 if ((gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.CENTER_VERTICAL) {
+@@ -977,6 +978,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                     y = getPaddingTop() + (textHeight - dh) / 2 + rightDrawableTopPadding;
+                 }
+                 rightDrawable2.setBounds(x, y, x + dw, y + dh);
++                rightDrawable2X = x + (dw >> 1);
++                rightDrawable2Y = y + (dh >> 1);
+                 rightDrawable2.draw(canvas);
+             }
+         }
+@@ -1139,7 +1142,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                     getMaxTextWidth() - paddingRight + drawablePadding
+             );
+             if (rightDrawable != null) {
+-                x += (int) (rightDrawable.getIntrinsicWidth() * rightDrawableScale) + drawablePadding;
++                int rdw = rightDrawable.getIntrinsicWidth() > 0 ? rightDrawable.getIntrinsicWidth() : AndroidUtilities.dp(20);
++                x += (int) (rdw * rightDrawableScale) + drawablePadding;
+             }
+             int dw = (int) (rightDrawable2.getIntrinsicWidth() * rightDrawableScale);
+             int dh = (int) (rightDrawable2.getIntrinsicHeight() * rightDrawableScale);
+@@ -1150,6 +1154,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 y = getPaddingTop() + (textHeight - dh) / 2 + rightDrawableTopPadding;
+             }
+             rightDrawable2.setBounds(x, y, x + dw, y + dh);
++            rightDrawable2X = x + (dw >> 1);
++            rightDrawable2Y = y + (dh >> 1);
+             rightDrawable2.draw(canvas);
+         }
+     }
+@@ -1162,6 +1168,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         return rightDrawableY;
+     }
+ 
++    public int getRightDrawable2X() {
++        return rightDrawable2X;
++    }
++
++    public int getRightDrawable2Y() {
++        return rightDrawable2Y;
++    }
++
+     public int getMaxTextWidth() {
+         return getMeasuredWidth() - (rightDrawableOutside && rightDrawable != null ? rightDrawable.getIntrinsicWidth() + drawablePadding : 0) - (rightDrawableOutside && rightDrawable2 != null ? rightDrawable2.getIntrinsicWidth() + drawablePadding : 0);
+     }
+@@ -1229,12 +1243,16 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     }
+ 
+     private void updateScrollAnimation() {
+-        if (!scrollNonFitText || !textDoesNotFit && scrollingOffset == 0) {
++        if (!scrollNonFitText || (!textDoesNotFit && scrollingOffset == 0)) {
+             return;
+         }
+         long newUpdateTime = SystemClock.elapsedRealtime();
++        if (lastUpdateTime == 0) {
++            lastUpdateTime = newUpdateTime;
++        }
+         long dt = newUpdateTime - lastUpdateTime;
+-        if (dt > 17) {
++        lastUpdateTime = newUpdateTime;
++        if (dt > 100) {
+             dt = 17;
+         }
+         if (currentScrollDelay > 0) {
+@@ -1251,14 +1269,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 pixelsPerSecond = PIXELS_PER_SECOND;
+             }
+             scrollingOffset += dt / 1000.0f * dp(pixelsPerSecond);
+-            lastUpdateTime = newUpdateTime;
+             if (scrollingOffset > totalDistance) {
+                 scrollingOffset = 0;
+                 currentScrollDelay = SCROLL_DELAY_MS;
+             }
+             checkUi_layerType();
+         }
+-        invalidate();
++        postInvalidateOnAnimation();
+     }
+ 
+     @Override
+@@ -1325,10 +1342,22 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         return rightDrawableOutside;
+     }
+ 
++    private int rightDrawableX, rightDrawableY;
++    private OnClickListener rightDrawableOnClickListener;
++    private boolean maybeClick;
++
++    private int rightDrawable2X, rightDrawable2Y;
++    private OnClickListener rightDrawable2OnClickListener;
++    private boolean maybeClick2;
++
+     public void setRightDrawableOnClick(OnClickListener onClickListener) {
+         rightDrawableOnClickListener = onClickListener;
+     }
+ 
++    public void setRightDrawable2OnClick(OnClickListener onClickListener) {
++        rightDrawable2OnClickListener = onClickListener;
++    }
++
+     @Override
+     public boolean onTouchEvent(MotionEvent event) {
+         if (rightDrawableOnClickListener != null && rightDrawable != null) {
+@@ -1360,7 +1389,36 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 getParent().requestDisallowInterceptTouchEvent(false);
+             }
+         }
+-        return super.onTouchEvent(event) || maybeClick;
++        if (rightDrawable2OnClickListener != null && rightDrawable2 != null) {
++            AndroidUtilities.rectTmp.set(rightDrawable2X - dp(16), rightDrawable2Y - dp(16), rightDrawable2X + dp(16), rightDrawable2Y + dp(16));
++            if (event.getAction() == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
++                maybeClick2 = true;
++                touchDownX = event.getX();
++                touchDownY = event.getY();
++                getParent().requestDisallowInterceptTouchEvent(true);
++                if (rightDrawable2 instanceof PressableDrawable) {
++                    ((PressableDrawable) rightDrawable2).setPressed(true);
++                }
++            } else if (event.getAction() == MotionEvent.ACTION_MOVE && maybeClick2) {
++                if (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop) {
++                    maybeClick2 = false;
++                    getParent().requestDisallowInterceptTouchEvent(false);
++                    if (rightDrawable2 instanceof PressableDrawable) {
++                        ((PressableDrawable) rightDrawable2).setPressed(false);
++                    }
++                }
++            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
++                if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
++                    rightDrawable2OnClickListener.onClick(this);
++                    if (rightDrawable2 instanceof PressableDrawable) {
++                        ((PressableDrawable) rightDrawable2).setPressed(false);
++                    }
++                }
++                maybeClick2 = false;
++                getParent().requestDisallowInterceptTouchEvent(false);
++            }
++        }
++        return super.onTouchEvent(event) || maybeClick || maybeClick2;
+     }
+ 
+     public static interface PressableDrawable {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -989,6 +989,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             titleTextView.setRightDrawable(null);
+             rightDrawableContentDescription = null;
+         }
++        desu.inugram.helpers.security.GhostHelper.applyChatTitleGhost(parentFragment, titleTextView);
+         checkActionBar(animated);
+     }
+ 
