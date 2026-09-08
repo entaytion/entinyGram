@@ -13,10 +13,9 @@ Subject: Remove unused stock HockeyApp app-variant module
  .../messenger/GoogleVoiceClientService.java   |  22 -
  .../ui/Components/UpdateAppAlertDialog.java   | 376 ------------------
  .../telegram/ui/Components/UpdateLayout.java  | 150 -------
- 10 files changed, 1471 deletions(-)
+ 9 files changed, 1373 deletions(-)
  delete mode 100644 TMessagesProj_AppHockeyApp/.gitignore
  delete mode 100644 TMessagesProj_AppHockeyApp/build.gradle
- delete mode 100644 TMessagesProj_AppHockeyApp/google-services.json
  delete mode 100644 TMessagesProj_AppHockeyApp/src/main/AndroidManifest.xml
  delete mode 100644 TMessagesProj_AppHockeyApp/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java
  delete mode 100644 TMessagesProj_AppHockeyApp/src/main/java/org/telegram/messenger/BetaUpdaterController.java

@@ -80,10 +80,9 @@ Subject: Remove unused stock standalone app-variant module
  .../res/mipmap-xxxhdpi/icon_5_launcher_sa.png |  Bin 30314 -> 0 bytes
  .../res/mipmap-xxxhdpi/icon_6_launcher_sa.png |  Bin 21086 -> 0 bytes
  .../src/main/res/values/strings.xml           |   80 --
- 77 files changed, 4265 deletions(-)
+ 76 files changed, 4167 deletions(-)
  delete mode 100644 TMessagesProj_AppStandalone/.gitignore
  delete mode 100644 TMessagesProj_AppStandalone/build.gradle
- delete mode 100644 TMessagesProj_AppStandalone/google-services.json
  delete mode 100644 TMessagesProj_AppStandalone/src/main/AndroidManifest.xml
  delete mode 100644 TMessagesProj_AppStandalone/src/main/java/org/telegram/messenger/ApplicationLoaderImpl.java
  delete mode 100644 TMessagesProj_AppStandalone/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java

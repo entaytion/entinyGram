@@ -16,7 +16,7 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  build.gradle                                  |  14 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |  40 +++++-
- 14 files changed, 172 insertions(+), 356 deletions(-)
+ 12 files changed, 146 insertions(+), 230 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644

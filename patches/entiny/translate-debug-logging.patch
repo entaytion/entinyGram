@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -25134,6 +25134,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25135,6 +25135,7 @@ public class ChatActivity extends BaseFragment implements
      }
      private Runnable checkTranslationRunnable = () -> {
          lastTranslationCheck = System.currentTimeMillis();
@@ -131,7 +131,7 @@ index 0000000..0000000 100644
          if (chatListView != null && chatAdapter != null) {
              int minId = Integer.MAX_VALUE, maxId = Integer.MIN_VALUE;
              for (int i = 0; i < chatListView.getChildCount(); ++i) {
-@@ -29397,6 +29398,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29398,6 +29399,7 @@ public class ChatActivity extends BaseFragment implements
      public static final boolean DEBUG_TOP_PANELS = false;
      public void updateTopPanel(boolean animated) {
          if (chatMode != 0 && chatMode != MODE_SUGGESTIONS || topPanelLayout == null) {
@@ -139,7 +139,7 @@ index 0000000..0000000 100644
              return;
          }
          SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
-@@ -29472,6 +29474,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -29473,6 +29475,9 @@ public class ChatActivity extends BaseFragment implements
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
          boolean showTranslate = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) || DEBUG_TOP_PANELS;

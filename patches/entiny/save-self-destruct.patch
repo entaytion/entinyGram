@@ -104,7 +104,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -15742,7 +15742,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -15743,7 +15743,7 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
          if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.destroyTime != 0 || messageObject.messageOwner.ttl <= 0) {
              return null;
          }
-@@ -15771,10 +15771,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -15772,10 +15772,13 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -15785,6 +15788,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -15786,6 +15789,13 @@ public class ChatActivity extends BaseFragment implements
          return () -> getMessagesController().doDeleteShowOnceTask(taskId, dialog_id, messageObject.getId());
      }
  
@@ -142,7 +142,7 @@ index 0000000..0000000 100644
      private void clearChatData(boolean full) {
          messages.clear();
          messagesByDays.clear();
-@@ -19258,6 +19268,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19259,6 +19269,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -155,7 +155,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19265,7 +19281,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19266,7 +19282,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33523,6 +33539,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33524,6 +33540,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -177,7 +177,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -39640,7 +39662,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39641,7 +39663,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -186,7 +186,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46023,7 +46045,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46024,7 +46046,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

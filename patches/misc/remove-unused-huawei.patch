@@ -15,11 +15,10 @@ Subject: Remove unused stock Huawei app-variant module
  .../messenger/HuaweiMapsProvider.java         | 656 ------------------
  .../messenger/HuaweiPushListenerProvider.java |  66 --
  .../messenger/HuaweiPushListenerService.java  |  34 -
- 12 files changed, 1441 deletions(-)
+ 11 files changed, 1343 deletions(-)
  delete mode 100644 TMessagesProj_AppHuawei/.gitignore
  delete mode 100644 TMessagesProj_AppHuawei/agconnect-services.json
  delete mode 100644 TMessagesProj_AppHuawei/build.gradle
- delete mode 100644 TMessagesProj_AppHuawei/google-services.json
  delete mode 100644 TMessagesProj_AppHuawei/src/main/AndroidManifest.xml
  delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientActivity.java
  delete mode 100644 TMessagesProj_AppHuawei/src/main/java/org/telegram/messenger/GoogleVoiceClientService.java

@@ -28,7 +28,7 @@ Subject: change app name to Inugram
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
  TMessagesProj/src/main/res/xml/auth.xml       |  2 +-
  .../src/main/res/xml/sync_contacts.xml        |  2 +-
- 26 files changed, 136 insertions(+), 78 deletions(-)
+ 24 files changed, 130 insertions(+), 72 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 

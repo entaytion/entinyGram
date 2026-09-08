@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -8180,6 +8180,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8181,6 +8181,10 @@ public class ChatActivity extends BaseFragment implements
          actionsButtonsLayout = new ChatActivityActionsButtonsLayout(context, resourceProvider, blurredBackgroundColorProvider, glassBackgroundDrawableFactory);
          actionsButtonsLayout.setForwardButtonOnClickListener(v -> openForward(false));
          actionsButtonsLayout.setReplyButtonOnClickListener(v -> {
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
              MessageObject messageObject = null;
              for (int a = 1; a >= 0; a--) {
                  if (messageObject == null && selectedMessagesIds[a].size() != 0) {
-@@ -19392,6 +19396,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -19393,6 +19397,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, true);
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                      }
                      forwardButtonAnimation.playTogether(animators);
                      forwardButtonAnimation.setDuration(100);
-@@ -19413,6 +19420,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -19414,6 +19421,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, false);
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (saveItem != null) {
-@@ -19499,7 +19509,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -19500,7 +19510,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                      }
