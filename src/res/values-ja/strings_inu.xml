@@ -858,7 +858,7 @@
     <string name="InuCacheTtlNever">無効（永久保持）</string>
     <string name="InuCacheTtlWeek">1週間以上前</string>
     <string name="InuCategories">カテゴリー</string>
-    <string name="InuCenterTitleChats">チャット/チャンネルでタイトルを中央揃え</string>
+    <string name="InuCenterTitleChats">チャット/チャンネルでも中央揃え</string>
     <string name="InuClearDeletedCache">削除済みメッセージのキャッシュを消去</string>
     <string name="InuDeletedMessageSearch">アーカイブを検索</string>
     <string name="InuDeletedMessageSearchHint">保存された削除済み・編集済みメッセージを検索</string>
@@ -967,7 +967,10 @@
     <string name="InuAiTranscribeErrorNoAudio">このメッセージには文字起こしできる音声がありません。</string>
     <string name="InuAiTranscribeErrorEmpty">プロバイダーが空の文字起こしを返しました。</string>
     <string name="InuAiTranscribeErrorTooLarge">この録音は文字起こしするには大きすぎます。</string>
-    <string name="InuAiTranscribeErrorTooLargeInline">この録音はリクエスト内に音声を含める Gemini には長すぎます。長いメッセージでは音声プロバイダーを Groq か OpenAI に切り替えてください。</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">%1$s はリクエスト内に音声を含めるため、この録音は長すぎます。長いメッセージでは音声プロバイダーを Groq か OpenAI に切り替えてください。</string>
+    <string name="InuAiTranscribeErrorRateLimited">プロバイダーが現在リクエストを制限しています。少し待ってからもう一度タップしてください。</string>
+    <string name="InuAiTranscribeErrorDailyQuota">この API キーは本日の無料枠を使い切りました。明日試すか、課金を有効にするか、音声プロバイダーを切り替えてください。</string>
+    <string name="InuAiTranscribeErrorNoFreeQuota">このモデルにはお使いの API キーの無料枠がありません。Flash モデルを選ぶか、Google プロジェクトで課金を有効にするか、音声プロバイダーを切り替えてください。</string>
     <string name="InuAiTranscribeGetApiKey">無料の API キーを取得</string>
     <string name="InuAiTranscribeInfo">Telegram の代わりに自分の AI プロバイダーでボイスメッセージや動画メッセージを文字起こしします。Premium の有無を問いません。</string>
     <string name="InuAiTranscribeModel">モデル</string>
@@ -993,12 +996,9 @@
     <string name="InuCategoryChats">チャット</string>
     <string name="InuCategoryPrivacy">プライバシーとセキュリティ</string>
     <string name="InuCategoryProfile">プロフィールとナビゲーション</string>
-    <string name="InuCenterTitleAdaptiveSize">適応型タイトルフォント (iOS スタイル)</string>
-    <string name="InuCenterTitleRightAvatar">アバターを右側に移動</string>
-    <string name="InuCenterTitleFixed">固定センタリング</string>
-    <string name="InuCenterTitleFixedInfo">戻るボタンやメニューに合わせて調整せず、常に画面の正確な中央に配置します。項目が多いヘッダーでは重なる場合があります。</string>
+    <string name="InuCenterTitleRightAvatar">アバターを右側に表示</string>
     <string name="InuCenterTitleMain">画面タイトルを中央揃え</string>
-    <string name="InuCenterTitleMainInfo">チャットを除くすべての画面でアクションバーのタイトルを中央に表示します。チャットは別のトグルで制御されます。</string>
+    <string name="InuCenterTitleMainInfo">ホーム画面や設定など、すべての画面でアクションバーのタイトルを中央に表示します。チャットは下の個別トグルで制御します。</string>
     <string name="InuChatTitleMarquee">長いタイトルのマーキースクロール</string>
     <string name="InuChatTitleMarqueeInfo">チャットヘッダーのタイトルとサブタイトル、画面タイトル、プロフィール名が収まらない場合に自動でスクロールします</string>
     <string name="InuChats">チャット</string>
@@ -1251,6 +1251,7 @@
     <string name="InuTranslateProvider">翻訳プロバイダー</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">翻訳に失敗しました: %1$s。メッセージは自動的に再試行されます。</string>
+    <string name="InuTranslateGoogleBlocked">Google がこのネットワークからの翻訳リクエストを拒否しています (HTTP 429)。接続を変えるか、翻訳設定で別のプロバイダーを選んでください。</string>
     <string name="InuTranslateProviderGoogle">Google 翻訳</string>
     <string name="InuTranslateProviderInfo">Telegram サーバー API の代わりにサードパーティ製サービスでチャットを翻訳します。自動翻訳とメッセージ内直接翻訳に対応し、書式を維持します。</string>
     <string name="InuTranslateProviderLingo">Lingo (彩雲小訳, 無料)</string>
@@ -1281,8 +1282,8 @@
     <string name="InuMaterial3BottomTabs">ボトムタブ</string>
     <string name="InuIosBottomBar">iOS風のボトムバー</string>
     <string name="InuIosBottomBarInfo">ボトムタブバーをiOSのような幅広で均等配置のカプセル型に変更します。Material 3のボトムタブは無効になります。</string>
-    <string name="InuIosChatHeader">iOS風のチャットヘッダー</string>
-    <string name="InuIosChatHeaderInfo">iOS版Telegramのように、アバター・タイトル・サブタイトルを中央に寄せた丸いピル型の背景をチャットヘッダーに描画します。チャットタイトルの中央揃えを伴います。アバターが「⋮」メニューボタンの代わりになります — タップでチャットメニューを開き、長押しでプロフィールを開きます。かなり粗い実装で、これ以上磨き上げる予定はありません — プルリクエスト歓迎です。</string>
+    <string name="InuIosChatHeader">コンパクトなピル</string>
+    <string name="InuIosChatHeaderInfo">iOS版Telegramのように、チャットヘッダーのピルをタイトル・サブタイトル・アバターに合わせて縮め、全幅ではなくヘッダーの中央に浮かせます。</string>
     <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>
@@ -1303,4 +1304,9 @@
     <string name="InuDownloadDirectoryApplied">新しくダウンロードするファイルにのみ適用されます</string>
     <string name="InuPreviewMessage">プレビュー</string>
     <string name="InuMinimize">最小化</string>
+    <string name="InuCenterTitleChatsInfo">タイトルとサブタイトルをチャットヘッダーの中央に移動します。アバターは左端に固定されたままです。</string>
+    <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">アバターがピルから出て「⋮」ボタンの位置に移動します — タップでプロフィール、長押しでチャットメニューを開きます。オフの場合、アバターはコンパクトなピルの中に残ります。</string>
+    <string name="InuUnreadBadgeBackButton">戻るボタンに未読バッジ (iOS スタイル)</string>
+    <string name="InuUnreadBadgeBackButtonInfo">iOS版Telegramのように、未読チャットの合計数を戻るボタンの隣に小さなピルとして表示します。</string>
 </resources>

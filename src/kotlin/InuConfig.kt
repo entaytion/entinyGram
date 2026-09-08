@@ -1372,22 +1372,21 @@ object InuConfig {
     @JvmField
     val ICON_REPLACEMENT = IconReplacementItem()
 
-    @JvmField
-    val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
-
-    @JvmField
-    val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
-
+    // Header centering, top of the group: centers action bar titles on every screen EXCEPT
+    // chats. Everything below is nested under it and is meaningless on its own - InuUtils owns
+    // the whole decision matrix, nothing else reads these items directly.
     @JvmField
     val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
 
-    // Only meaningful together with CENTER_TITLE_CHATS: forces the centered chat title/avatar
-    // group onto the screen's true horizontal midpoint always, instead of the default adaptive
-    // placement that shrinks/shifts away from an oversized back button or a busy menu. No-op
-    // while IOS_CHAT_HEADER is on (that mode's avatar-in-corner-slot math already has its own
-    // mandatory avoidance clamp).
+    // Extends CENTER_TITLE_MAIN into chat/channel headers: title and subtitle move to the middle
+    // of the pill, the avatar stays pinned to its left edge.
     @JvmField
-    val CENTER_TITLE_FIXED = BoolItem("center_title_fixed", false)
+    val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
+
+    // Moves the avatar to the right end of the centered pill instead of its left. Loses to
+    // IOS_CHAT_HEADER_AVATAR_SLOT when both are on.
+    @JvmField
+    val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
 
     @JvmField
     val IOS_BOTTOM_NAVIGATION_BAR = BoolItem("ios_bottom_navigation_bar", false)
@@ -1395,19 +1394,20 @@ object InuConfig {
     @JvmField
     val IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER = BoolItem("ios_chats_tab_returns_to_first_folder", false)
 
+    // Compact pill: the centered chat pill shrinks to hug title/subtitle (and the avatar, unless
+    // that moved out to the menu slot) instead of spanning the whole room between the back button
+    // and the menu, like Telegram for iOS. Nested under CENTER_TITLE_CHATS.
     @JvmField
     val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
-    // CherryGram-style: shrink the plain centered pill (CENTER_TITLE_CHATS without
-    // IOS_CHAT_HEADER) to hug title/subtitle content instead of always spanning the full
-    // back-button-to-menu room. IOS_CHAT_HEADER and CENTER_TITLE_FIXED already always adapt
-    // to content on their own, so this only matters for the plain centered mode.
+    // Compact-pill-only: the avatar leaves the pill and takes over the action bar's overflow
+    // ("...") slot - tap opens the profile, long press opens the chat menu.
     @JvmField
-    val CENTER_TITLE_ADAPTIVE_WIDTH = BoolItem("center_title_adaptive_width", false)
+    val IOS_CHAT_HEADER_AVATAR_SLOT = BoolItem("ios_chat_header_avatar_slot", false)
 
     // CherryGram-style: a small counter pill grows out of the back button showing the total
-    // unread chats count, while a centered title mode (CENTER_TITLE_CHATS or IOS_CHAT_HEADER)
-    // is active. Purely decorative - not tied to the chat you navigated from.
+    // unread chats count, while chat headers are centered. Purely decorative - not tied to the
+    // chat you navigated from.
     @JvmField
     val UNREAD_BADGE_BACK_BUTTON = BoolItem("unread_badge_back_button", false)
 

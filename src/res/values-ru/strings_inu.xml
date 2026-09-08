@@ -265,6 +265,7 @@
     <string name="InuTranslateLlmTemperatureInfo">Меньшие значения дают дословный и предсказуемый перевод, большие — более свободный и идиоматичный.</string>
     <string name="InuTranslateProviderNotConfigured">Провайдер перевода не настроен. Использую перевод через Telegram.</string>
     <string name="InuTranslateProviderFailed">Не удалось перевести: %1$s. Сообщения будут повторены автоматически.</string>
+    <string name="InuTranslateGoogleBlocked">Google отклоняет запросы перевода из этой сети (HTTP 429). Смените подключение или выберите другого провайдера в настройках перевода.</string>
     <string name="InuPoweredByProvider">Переводы работают на %1$s.</string>
     <string name="InuHideReactionEntry">Скрыть анимацию появления реакции</string>
     <string name="InuHideReactionEntryInfo">…когда реакция добавляется к сообщению</string>
@@ -974,13 +975,10 @@
     <string name="InuSaveAnyStory">Сохранять любые истории</string>
     <string name="InuSaveAnyStoryInfo">Позволяет скачивать любые истории в галерею без Premium и ограничений автора.</string>
     <string name="InuCenteringSection">Центрирование</string>
-    <string name="InuCenterTitleChats">Центрирование в чатах/каналах</string>
-    <string name="InuCenterTitleRightAvatar">Переместить аватар вправо</string>
-    <string name="InuCenterTitleFixed">Фиксированное центрирование</string>
-    <string name="InuCenterTitleFixedInfo">Всегда центрирует ровно по середине экрана вместо подстройки под кнопку назад и меню — на перегруженных шапках возможно наложение.</string>
-    <string name="InuCenterTitleAdaptiveSize">Адаптивный размер названия (iOS-style)</string>
-    <string name="InuCenterTitleMain">Центрированные заголовки экранов</string>
-    <string name="InuCenterTitleMainInfo">Центрирует заголовки на всех экранах, кроме чатов — у чатов отдельный переключатель.</string>
+    <string name="InuCenterTitleChats">Также центрировать в чатах/каналах</string>
+    <string name="InuCenterTitleRightAvatar">Показывать аватарку справа</string>
+    <string name="InuCenterTitleMain">Центрировать заголовки экранов</string>
+    <string name="InuCenterTitleMainInfo">Центрирует заголовки на главном экране, в настройках и везде далее. У чатов отдельный переключатель ниже.</string>
     <string name="InuChatTitleMarquee">Бегущая строка для длинных названий</string>
     <string name="InuChatTitleMarqueeInfo">Названия и подписи в шапке чата, заголовки экранов и имя в профиле прокручиваются бегущей строкой, если не помещаются</string>
     <string name="InuFloatingAvatar">Плавающий аватар в шапке чата</string>
@@ -1159,7 +1157,10 @@
     <string name="InuAiTranscribeErrorNoAudio">В этом сообщении нет аудио для расшифровки.</string>
     <string name="InuAiTranscribeErrorEmpty">Провайдер вернул пустую расшифровку.</string>
     <string name="InuAiTranscribeErrorTooLarge">Эта запись слишком велика для расшифровки.</string>
-    <string name="InuAiTranscribeErrorTooLargeInline">Эта запись слишком длинная для Gemini, который принимает аудио внутри запроса. Для длинных сообщений переключите голосового провайдера на Groq или OpenAI.</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">%1$s принимает аудио внутри запроса, и эта запись для него слишком длинная. Для длинных сообщений переключите голосового провайдера на Groq или OpenAI.</string>
+    <string name="InuAiTranscribeErrorRateLimited">Провайдер сейчас ограничивает частоту запросов. Подождите немного и нажмите ещё раз.</string>
+    <string name="InuAiTranscribeErrorDailyQuota">У этого API-ключа закончилась бесплатная квота на сегодня. Попробуйте завтра, включите оплату или смените голосового провайдера.</string>
+    <string name="InuAiTranscribeErrorNoFreeQuota">У этой модели нет бесплатной квоты для вашего API-ключа. Выберите модель Flash, включите оплату в проекте Google или смените голосового провайдера.</string>
     <string name="InuLocalPremium">Локальный Telegram Premium</string>
     <string name="InuLocalPremiumInfo"> Разблокирует локальные функции Premium на уровне клиента (звёздочка у профиля, эмодзи-статусы и цвета профиля с локальным сохранением, безлимитная панель перевода, премиум-реакции и анимации). Серверные фичи (4 ГБ загрузка, лимиты облака) требуют официальной подписки.</string>
     <string name="InuHiddenStarGifts">Скрытые и архивные подарки</string>
@@ -1355,8 +1356,8 @@
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
     <string name="InuIosBottomBarInfo">Делает нижнюю панель вкладок шире и с равномерно растянутыми вкладками, как в iOS. Отключает нижние вкладки Material 3.</string>
-    <string name="InuIosChatHeader">Шапка чата в стиле iOS</string>
-    <string name="InuIosChatHeaderInfo">Рисует фон шапки чата в виде скруглённой «таблетки», которая обхватывает и центрирует аватарку, заголовок и подзаголовок, как в Telegram для iOS. Включает центрирование заголовка чата. Аватарка заменяет кнопку меню «⋮» — тап открывает меню чата, долгий тап открывает профиль. Это довольно кривой патч, и дорабатывать его дальше самостоятельно мы не планируем — пул-реквесты приветствуются.</string>
+    <string name="InuIosChatHeader">Компактная таблетка</string>
+    <string name="InuIosChatHeaderInfo">Сжимает таблетку шапки чата так, чтобы она обхватывала название, подпись и аватарку и плавала посередине шапки, как в Telegram для iOS, вместо того чтобы занимать всю ширину.</string>
     <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
     <string name="InuStopBot">Остановить бота</string>
     <string name="InuStopBotAction">Остановить</string>
@@ -1371,4 +1372,9 @@
     <string name="InuDownloadDirectoryApplied">Применяется только к новым загрузкам</string>
     <string name="InuPreviewMessage">Предпросмотр</string>
     <string name="InuMinimize">Свернуть</string>
+    <string name="InuCenterTitleChatsInfo">Переносит название и подпись в середину шапки чата. Аватарка остаётся прижатой слева.</string>
+    <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка выходит из таблетки и занимает место кнопки «⋮» — тап открывает профиль, долгое нажатие открывает меню чата. Если выключено, аватарка остаётся внутри компактной таблетки.</string>
+    <string name="InuUnreadBadgeBackButton">Счётчик непрочитанных на кнопке «назад» (iOS-style)</string>
+    <string name="InuUnreadBadgeBackButtonInfo">Показывает общее количество непрочитанных чатов небольшой таблеткой рядом с кнопкой «назад», как в Telegram для iOS.</string>
 </resources>

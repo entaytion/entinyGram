@@ -4,10 +4,10 @@ Date: Sat, 29 Aug 2026 15:21:16 +0300
 Subject: iOS-style chat header + adaptive width + unread badge
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 312 ++++++++++++++++--
- .../java/org/telegram/ui/ChatActivity.java    |  39 ++-
- .../ui/Components/ChatAvatarContainer.java    | 191 +++++++++--
- 3 files changed, 488 insertions(+), 54 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 325 ++++++++++++++++--
+ .../java/org/telegram/ui/ChatActivity.java    |  40 ++-
+ .../ui/Components/ChatAvatarContainer.java    | 232 +++++++++++--
+ 3 files changed, 543 insertions(+), 54 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.Components.CubicBezierInterpolator;
  import org.telegram.ui.Components.EllipsizeSpanAnimator;
  import org.telegram.ui.Components.FireworksEffect;
-@@ -208,6 +209,138 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -208,6 +209,164 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          this.chatAvatarContainer = chatAvatarContainer;
      }
  
@@ -44,10 +44,8 @@ index 0000000..0000000 100644
 +    public int inu_titlePillRight;
 +    private final FactorAnimator inu_animatorPillWidth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320);
 +
-+    // Padding between a pill edge and the text inside it. When the avatar lives inside the pill
-+    // (every centered mode except IOS_CHAT_HEADER, where it moves out to the menu slot) its room
-+    // is added symmetrically to BOTH insets, so the text stays centered in the pill and the
-+    // avatar simply occupies one of them.
++    // Padding between a pill edge and the text inside it, before any avatar room is added on top
++    // of it - see inu_getPillTextInsetLeft/Right for how that room is distributed.
 +    private static final int INU_PILL_TEXT_PADDING_DP = 16;
 +    private static final int INU_PILL_MIN_WIDTH_DP = 120;
 +    // Breathing room on top of the measured text. inu_getCenteredTextWidth() measures with
@@ -152,15 +150,43 @@ index 0000000..0000000 100644
 +
 +    // Distance from a pill edge to the text inside it, avatar room included when the avatar sits
 +    // inside the pill. Public because ChatAvatarContainer derives its own text band from it.
-+    public int inu_getPillTextInset() {
-+        return dp(INU_PILL_TEXT_PADDING_DP)
-+                + (chatAvatarContainer != null ? chatAvatarContainer.inu_getPillAvatarRoom() : 0);
++    //
++    // The room is reserved on BOTH sides only while the pill spans the whole free room: there the
++    // pill's width is fixed, so the symmetric reservation is what keeps the text centered in it
++    // and the dead space opposite the avatar is invisible. A compact pill is sized to its own
++    // content, so doing the same there inflated it by a whole extra avatar width and left the
++    // avatar hugging one edge with a void facing it across the text. Compact reserves the room
++    // only on the side the avatar is actually on, so the pill hugs [avatar][text] as one block.
++    private int inu_pillAvatarRoom() {
++        return chatAvatarContainer != null ? chatAvatarContainer.inu_getPillAvatarRoom() : 0;
++    }
++
++    private boolean inu_pillAvatarOnRight() {
++        return chatAvatarContainer != null && chatAvatarContainer.isRightAvatar();
++    }
++
++    public int inu_getPillTextInsetLeft() {
++        final int room = inu_pillAvatarRoom();
++        if (room == 0) {
++            return dp(INU_PILL_TEXT_PADDING_DP);
++        }
++        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
++        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || !inu_pillAvatarOnRight() ? room : 0);
++    }
++
++    public int inu_getPillTextInsetRight() {
++        final int room = inu_pillAvatarRoom();
++        if (room == 0) {
++            return dp(INU_PILL_TEXT_PADDING_DP);
++        }
++        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
++        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || inu_pillAvatarOnRight() ? room : 0);
 +    }
 +
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -848,6 +981,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -848,6 +1007,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          actionModeVisible = true;
          checkMenuItemsWidth();
@@ -168,7 +194,7 @@ index 0000000..0000000 100644
          if (animated) {
              ArrayList<Animator> animators = new ArrayList<>();
              animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
-@@ -1019,6 +1153,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1019,6 +1179,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          actionMode.hideAllPopupMenus();
          actionModeVisible = false;
          checkMenuItemsWidth();
@@ -176,7 +202,7 @@ index 0000000..0000000 100644
          ArrayList<Animator> animators = new ArrayList<>();
          animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
          if (actionModeHidingViews != null) {
-@@ -1193,6 +1328,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1193,6 +1354,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      public void onSearchFieldVisibilityChanged(boolean visible) {
          isSearchFieldVisible = visible;
          checkMenuItemsWidth();
@@ -184,7 +210,7 @@ index 0000000..0000000 100644
          if (searchVisibleAnimator != null) {
              searchVisibleAnimator.cancel();
          }
-@@ -1406,6 +1542,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1406,6 +1568,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          setMeasuredDimension(width, actionBarHeight + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0) + extraHeight);
  
@@ -196,7 +222,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
-@@ -2240,6 +2381,152 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2240,6 +2407,139 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      public boolean doNotDrawGlassMenu;
  
@@ -233,32 +259,22 @@ index 0000000..0000000 100644
 +            if (chatAvatarContainer.getTranslationX() != 0) {
 +                chatAvatarContainer.setTranslationX(0);
 +            }
++            final float inu_centeredTextWidth = chatAvatarContainer.inu_getCenteredTextWidth();
 +            final int roomRight = Math.max(baseLeft + dp(INU_PILL_MIN_WIDTH_DP), rightDefault);
-+            final boolean fixed = desu.inugram.InuConfig.CENTER_TITLE_FIXED.getValue();
 +
-+            // Fixed mode pins the pill to the screen's true midpoint; the adaptive and iOS modes
-+            // center it in the room between the two slots - identical whenever the menu slot holds
-+            // a single item, which is exactly the iOS-header case.
-+            final int centerX = fixed ? width / 2 : (baseLeft + roomRight) / 2;
++            // Centered on the room between the two slots, never on the raw screen midpoint: the
++            // back button and the menu are not the same width, so a true-midpoint pill reads as
++            // off-centre against them and can overlap one of them outright.
++            final int centerX = (baseLeft + roomRight) / 2;
 +
-+            // IOS_CHAT_HEADER and CENTER_TITLE_FIXED are adaptive by definition; the plain
-+            // centered pill only hugs its content when CENTER_TITLE_ADAPTIVE_WIDTH asks it to,
-+            // and otherwise keeps spanning the whole room between the slots.
-+            final boolean adaptive = fixed
-+                    || desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()
-+                    || desu.inugram.InuConfig.CENTER_TITLE_ADAPTIVE_WIDTH.getValue();
-+            int target = adaptive
-+                    ? (int) Math.ceil(chatAvatarContainer.inu_getCenteredTextWidth()) + dp(INU_PILL_TEXT_SLACK_DP) + inu_getPillTextInset() * 2
++            // Only the compact pill hugs its content; the plain centered mode keeps spanning the
++            // whole room between the slots and just centers the text inside it.
++            int target = desu.inugram.helpers.InuUtils.compactChatPill()
++                    ? (int) Math.ceil(inu_centeredTextWidth) + dp(INU_PILL_TEXT_SLACK_DP)
++                        + inu_getPillTextInsetLeft() + inu_getPillTextInsetRight()
 +                    : roomRight - baseLeft;
 +            target = Math.max(target, dp(INU_PILL_MIN_WIDTH_DP));
-+            if (fixed) {
-+                // Stay on the midpoint and shrink rather than slide - sliding would defeat the
-+                // whole point of the toggle. The symmetric clamp is also what keeps it off both
-+                // the back badge and the menu without any further clamping below.
-+                target = Math.min(target, 2 * Math.max(dp(24), Math.min(centerX - leftLimit, roomRight - centerX)));
-+            } else {
-+                target = Math.min(target, roomRight - baseLeft);
-+            }
++            target = Math.min(target, roomRight - baseLeft);
 +
 +            // Snap on the first pass (and whenever the pill was collapsed) so the header does not
 +            // unfold out of nothing every time a chat is opened; animate afterwards.
@@ -269,32 +285,32 @@ index 0000000..0000000 100644
 +            }
 +            final int drawn = Math.max(0, (int) inu_animatorPillWidth.getFactor());
 +
-+            inu_titlePillLeft = inu_placePill(centerX, target, fixed, leftLimit, roomRight);
++            inu_titlePillLeft = inu_placePill(centerX, target, leftLimit, roomRight);
 +            inu_titlePillRight = inu_titlePillLeft + target;
 +
-+            leftDefault = inu_placePill(centerX, drawn, fixed, leftLimit, roomRight);
++            leftDefault = inu_placePill(centerX, drawn, leftLimit, roomRight);
 +            rightDefault = leftDefault + drawn;
 +        } else {
-+            // Stock behaviour, moved here verbatim from dispatchDraw so that the bounds are known
-+            // at measure time like the centered ones: the pill hugs the avatar container, and the
-+            // container is translated to sit inside it. Every toggle off has to stay stock.
++            // Not centered: the pill spans the whole room between the back button and the menu,
++            // and the container is left where its own margins put it, so the avatar and the text
++            // read left-aligned. Stock instead shrank the pill onto the container's measured width
++            // and then dragged the container into the middle of the free room - that is what made
++            // a header with every toggle off still look centered, and worse, look centered ONLY
++            // while the glass pill was visible to explain it (with classic UI on, inu_nonIsland
++            // paints the bar edge to edge and the indent had nothing left to justify it).
 +            final int stockRightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
 +            final int stockLeft = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
-+            final int stockRight = width - stockRightOffset;
++            leftDefault = stockLeft;
++            rightDefault = width - stockRightOffset;
 +            if (chatAvatarContainer != null && chatAvatarContainer.getLayoutParams() instanceof MarginLayoutParams) {
-+                final int pill = lerp(Math.min(stockRight - stockLeft, (int) animatorAvatarContainerWidth.getFactor() + p * 2), stockRight - stockLeft, Math.max(searchFactor, getActionModeFactor()));
-+                leftDefault = (stockRight + stockLeft - pill) / 2;
-+                rightDefault = leftDefault + pill;
-+
++                // Keep the stock inset from the pill edge to the avatar (p + dp(3)) so the avatar
++                // does not touch the back button's own pill, and nothing else.
 +                final float translationX = leftDefault
 +                    - ((MarginLayoutParams) chatAvatarContainer.getLayoutParams()).leftMargin
 +                    - chatAvatarContainer.getLeftPadding()
 +                    + p + dp(3);
 +                chatAvatarContainer.setTranslationX(translationX);
 +                chatAvatarContainer.setPivotX(chatAvatarContainer.getMeasuredWidth() / 2f - translationX);
-+            } else {
-+                leftDefault = stockLeft;
-+                rightDefault = stockRight;
 +            }
 +            inu_titlePillLeft = leftDefault;
 +            inu_titlePillRight = rightDefault;
@@ -314,17 +330,14 @@ index 0000000..0000000 100644
 +        }
 +    }
 +
-+    // Center a pill of the given width, then keep it clear of the back badge and the menu. Fixed
-+    // mode skips the clamps: its width was already clamped symmetrically, so it cannot collide.
-+    private int inu_placePill(int centerX, int pillWidth, boolean fixed, int leftLimit, int rightLimit) {
++    // Center a pill of the given width, then keep it clear of the back badge and the menu.
++    private int inu_placePill(int centerX, int pillWidth, int leftLimit, int rightLimit) {
 +        int left = centerX - pillWidth / 2;
-+        if (!fixed) {
-+            if (left + pillWidth > rightLimit) {
-+                left = rightLimit - pillWidth;
-+            }
-+            if (left < leftLimit) {
-+                left = leftLimit;
-+            }
++        if (left + pillWidth > rightLimit) {
++            left = rightLimit - pillWidth;
++        }
++        if (left < leftLimit) {
++            left = leftLimit;
 +        }
 +        return left;
 +    }
@@ -349,7 +362,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          final int p = dp(6);
-@@ -2255,33 +2542,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2255,33 +2555,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int b = t + s + p * 2;
  
          if (glassDrawable != null && !glassOnlyBack) {
@@ -396,34 +409,35 @@ index 0000000..0000000 100644
          }
  
          actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -4349,6 +4350,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -4349,6 +4350,27 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
 +            if (avatarContainer != null && avatarContainer.inu_isIosMenuSlotAvatar()) {
-+                // iOS-style header: the chat avatar is laid out in this slot instead of the
-+                // "..." icon (see ChatAvatarContainer#onLayout), so hide the icon and make the
-+                // slot behave like the old "..." button — tap opens the chat menu. Long-press
-+                // opens the profile instead (the centered title/subtitle in the middle of the
-+                // header still opens the profile on a plain tap too, via ChatAvatarContainer's
-+                // own click listener, so this is just an alternate route to the same place).
++                // Compact pill with the avatar moved into this slot: the chat avatar is laid out
++                // here instead of the "..." icon (see ChatAvatarContainer#onLayout), so hide the
++                // icon and make the slot behave like an avatar — a plain tap opens the profile,
++                // which is what tapping an avatar does everywhere else, and a long press falls
++                // back to the chat menu this slot used to hold.
 +                final ActionBarMenuItem inu_headerItem = headerItem;
 +                headerItem.getIconView().setAlpha(0f);
-+                headerItem.setOnClickListener(v -> inu_headerItem.toggleSubMenu());
-+                headerItem.setOnLongClickListener(v -> {
++                headerItem.setOnClickListener(v -> {
 +                    // Mirror ChatAvatarContainer's own avatarImageView click listener: a linked
 +                    // community (channel/user with linked_community_id) takes over the tap and
 +                    // opens CommunitySheet instead of the profile — see onAvatarClick() overrides.
 +                    if (!avatarContainer.onAvatarClick()) {
 +                        avatarContainer.openProfile(true);
 +                    }
++                });
++                headerItem.setOnLongClickListener(v -> {
++                    inu_headerItem.toggleSubMenu();
 +                    return true;
 +                });
 +            }
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4611,18 +4632,17 @@ public class ChatActivity extends BaseFragment implements
+@@ -4611,18 +4633,17 @@ public class ChatActivity extends BaseFragment implements
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
              ChatObject.isForum(currentChat));
  
@@ -434,8 +448,8 @@ index 0000000..0000000 100644
 -            actionBar.setChatAvatarContainer(avatarContainer);
 +        // inu: this used to only run for MODE_PINNED/MODE_WELCOME_MESSAGES/isComments, leaving
 +        // actionBar.chatAvatarContainer null for the default chat mode - the centered-header
-+        // checks in ActionBar (IOS_CHAT_HEADER pill sizing/skip, CENTER_TITLE_ADAPTIVE_WIDTH) all
-+        // silently no-op without it. Always wire it so those checks actually run.
++        // checks in ActionBar (centered pill placement and compact-pill sizing) all silently
++        // no-op without it. Always wire it so those checks actually run.
 +        actionBar.setChatAvatarContainer(avatarContainer);
 +        avatarContainer.setActionBar(actionBar);
 +        if (chatMode == MODE_WELCOME_MESSAGES) {
@@ -449,7 +463,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -22119,6 +22139,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -22119,6 +22140,9 @@ public class ChatActivity extends BaseFragment implements
              }
          } else if (id == NotificationCenter.updateInterfaces) {
              int updateMask = (Integer) args[0];
@@ -497,12 +511,12 @@ index 0000000..0000000 100644
              availableWidth = Math.max(0, width - 2 * inset - rightAvatarPadding);
          } else {
              availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
-@@ -806,24 +800,177 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -806,24 +800,218 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
 +    private boolean isCenteredTitle() {
-+        return (desu.inugram.InuConfig.CENTER_TITLE_CHATS.getValue() || desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue()) && inu_isRealChatHeader();
++        return desu.inugram.helpers.InuUtils.centerChatTitle() && inu_isRealChatHeader();
 +    }
 +
 +    public boolean isTitleCenteredMode() {
@@ -513,22 +527,46 @@ index 0000000..0000000 100644
 +    // paint. Deliberately NOT SimpleTextView#getTextWidth() - that reports whatever layout was
 +    // last built, so a subtitle set after the last measure pass (which setText does not request)
 +    // came back short and the pill closed in on text that was already wider than it.
++    // Each view's own horizontal padding has to be counted in, not just its glyphs. Both subtitle
++    // variants carry setPadding(0, 0, dp(10), 0) and setEllipsizeByGradient(true), so a band sized
++    // to the glyphs alone left the subtitle dp(10) short of the room it lays itself out in and it
++    // gradient-faded its own tail ("...subscribers", "last seen ...") even though the pill had
++    // been sized for exactly that text. The title has no horizontal padding, which is why only the
++    // subtitle ever faded.
 +    public float inu_getCenteredTextWidth() {
 +        float width = 0;
 +        if (titleTextView != null) {
-+            width = Math.max(width, titleTextView.getExactWidthIncludeDrawables());
++            width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
++                    + titleTextView.getPaddingLeft() + titleTextView.getPaddingRight()
++                    + inu_getTitleBiasRoom());
 +        }
 +        if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
-+            width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables());
++            width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables()
++                    + subtitleTextView.getPaddingLeft() + subtitleTextView.getPaddingRight());
 +        }
 +        if (animatedSubtitleTextView != null && animatedSubtitleTextView.getVisibility() != GONE) {
-+            width = Math.max(width, animatedSubtitleTextView.getDrawable().getCurrentWidth());
++            // getAnimateToWidth(), NOT getCurrentWidth(): the latter is lerp(oldWidth, currentWidth)
++            // i.e. the width mid-flight, so every subtitle change made the pill chase the animation
++            // frame by frame - and because the pill has its own 320ms width animation, the two fed
++            // each other and the header pumped between two sizes indefinitely. The pill has to be
++            // sized to where the text is going to settle, not to where it is this frame.
++            width = Math.max(width, animatedSubtitleTextView.getDrawable().getAnimateToWidth()
++                    + animatedSubtitleTextView.getPaddingLeft() + animatedSubtitleTextView.getPaddingRight());
 +        }
 +        return width;
 +    }
 +
-+    // Room the avatar needs inside the pill. Zero under IOS_CHAT_HEADER: there it moves out to
-+    // the action bar's menu slot, so the pill only has to hold text.
++    // Extra room the centered title needs on top of its text so onLayout's drawableBias shift has
++    // somewhere to go. The title box is pushed right by half its side drawables so the WORD, not
++    // the word+badge unit, ends up centered; sized to the text exactly, that shift had no slack and
++    // pushed the badge past the pill's right edge. Only the title carries drawables, so only the
++    // title term needs it.
++    private float inu_getTitleBiasRoom() {
++        return titleTextView != null ? titleTextView.getSideDrawablesSize() / 2f : 0f;
++    }
++
++    // Room the avatar needs inside the pill. Zero once the avatar-in-menu-slot option moves it
++    // out to the action bar's menu slot, so the pill only has to hold text.
 +    public int inu_getPillAvatarRoom() {
 +        if (!hasVisibleAvatar() || inu_isIosMenuSlotAvatar()) {
 +            return 0;
@@ -569,12 +607,12 @@ index 0000000..0000000 100644
 +
 +    private int inu_bandLeft() {
 +        final ActionBar actionBar = inu_actionBar();
-+        return actionBar.inu_titlePillLeft + actionBar.inu_getPillTextInset() - inu_containerLeft();
++        return actionBar.inu_titlePillLeft + actionBar.inu_getPillTextInsetLeft() - inu_containerLeft();
 +    }
 +
 +    private int inu_bandRight() {
 +        final ActionBar actionBar = inu_actionBar();
-+        return actionBar.inu_titlePillRight - actionBar.inu_getPillTextInset() - inu_containerLeft();
++        return actionBar.inu_titlePillRight - actionBar.inu_getPillTextInsetRight() - inu_containerLeft();
 +    }
 +
 +    private boolean inu_isRealChatHeader() {
@@ -586,15 +624,19 @@ index 0000000..0000000 100644
 +                && parentFragment.getDialogId() != UserObject.REPLY_BOT;
 +    }
 +
++    // Avatar at the right end of the centered pill. Deliberately not gated on glassMode: the
++    // classic-UI action bar has the same pill geometry, it just paints a flat bar behind it, so
++    // gating here would have made the toggle silently do nothing with classic chat elements on.
 +    public boolean isRightAvatar() {
-+        return glassMode && isCenteredTitle() && desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.getValue();
++        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarOnRight();
 +    }
 +
-+    // iOS-style chat header: the avatar is moved out of this container into the action bar's
-+    // right-hand overflow-menu slot, fully replacing the "..." button there (ChatActivity hides
-+    // that item's icon and re-wires its tap/long-press). Title+subtitle stay centered.
++    // Compact pill, avatar-in-menu-slot option: the avatar is moved out of this container into the
++    // action bar's right-hand overflow-menu slot, fully replacing the "..." button there
++    // (ChatActivity hides that item's icon and re-wires its tap/long-press). Title+subtitle stay
++    // centered, and the pill then only has to hold text.
 +    public boolean inu_isIosMenuSlotAvatar() {
-+        return desu.inugram.InuConfig.IOS_CHAT_HEADER.getValue() && isCenteredTitle() && hasVisibleAvatar();
++        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarInMenuSlot() && hasVisibleAvatar();
 +    }
 +
      @Override
@@ -661,7 +703,20 @@ index 0000000..0000000 100644
 +        // subtitle also uses and has no such drawable) by half that icon's width so the TEXT
 +        // itself, not the text+icon unit, lands centered. Mirrors ActionBar's own titleTextView
 +        // centering (see its drawableBias comment).
-+        final int titleDrawableBias = centerChatTitle ? titleTextView.getSideDrawablesSize() / 2 : 0;
++        // Clamped by the slack the band actually has left over after the text and its drawables.
++        // Unclamped, a title that fills its band exactly (which is the normal case for the compact
++        // pill, sized to that very title) got shifted right with nothing to give, so the badge
++        // hung off the pill's right edge while the subtitle - which is never biased - stayed put,
++        // and the two lines read as misaligned. inu_getCenteredTextWidth() reserves this room up
++        // front; the clamp is what keeps the layout honest when it cannot be had.
++        // getExactWidthIncludeDrawables(), not getTextWidth() + getSideDrawablesSize(): getTextWidth()
++        // already folds the inside right drawables in, so adding the side sizes on top would count
++        // the badge twice and under-report the slack. This matches calcOffset's own totalContentWidth.
++        final int titleContentWidth = (int) Math.ceil(titleTextView.getExactWidthIncludeDrawables());
++        final int titleBiasSlack = Math.max(0, availableWidth - titleContentWidth);
++        final int titleDrawableBias = centerChatTitle
++                ? Math.min(titleTextView.getSideDrawablesSize() / 2, titleBiasSlack)
++                : 0;
 +        final int titleL = l + titleDrawableBias;
 +        final int titleR = r + titleDrawableBias;
          SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();

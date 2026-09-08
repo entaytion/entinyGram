@@ -815,13 +815,10 @@
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
     <string name="InuCenteringSection">Центрування</string>
-    <string name="InuCenterTitleChats">Центрування в чатах/каналах</string>
-    <string name="InuCenterTitleRightAvatar">Перемістити аватар праворуч</string>
-    <string name="InuCenterTitleFixed">Фіксоване центрування</string>
-    <string name="InuCenterTitleFixedInfo">Завжди центрує рівно по середині екрана замість підлаштування під кнопку назад і меню — на перевантажених шапках можливе накладання.</string>
-    <string name="InuCenterTitleAdaptiveSize">Адаптивний розмір назви (iOS-style)</string>
-    <string name="InuCenterTitleMain">Центровані заголовки екранів</string>
-    <string name="InuCenterTitleMainInfo">Центрує заголовки на всіх екранах, крім чатів — у чатах окремий перемикач.</string>
+    <string name="InuCenterTitleChats">Також центрувати в чатах/каналах</string>
+    <string name="InuCenterTitleRightAvatar">Показувати аватарку праворуч</string>
+    <string name="InuCenterTitleMain">Центрувати заголовки екранів</string>
+    <string name="InuCenterTitleMainInfo">Центрує заголовки на головному екрані, у налаштуваннях і всюди далі. У чатів окремий перемикач нижче.</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
     <string name="InuFloatingAvatar">Плаваючий аватар у шапці чату</string>
@@ -1251,7 +1248,10 @@
     <string name="InuAiTranscribeErrorNoAudio">У цьому повідомленні немає аудіо для розшифрування.</string>
     <string name="InuAiTranscribeErrorEmpty">Провайдер повернув порожню розшифровку.</string>
     <string name="InuAiTranscribeErrorTooLarge">Цей запис завеликий для розшифрування.</string>
-    <string name="InuAiTranscribeErrorTooLargeInline">Цей запис задовгий для Gemini, який приймає аудіо всередині запиту. Для довгих повідомлень переключіть голосового провайдера на Groq або OpenAI.</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">%1$s приймає аудіо всередині запиту, і цей запис для нього задовгий. Для довгих повідомлень переключіть голосового провайдера на Groq або OpenAI.</string>
+    <string name="InuAiTranscribeErrorRateLimited">Провайдер зараз обмежує частоту запитів. Зачекайте трохи й натисніть ще раз.</string>
+    <string name="InuAiTranscribeErrorDailyQuota">У цього API-ключа закінчилася безкоштовна квота на сьогодні. Спробуйте завтра, увімкніть оплату або змініть голосового провайдера.</string>
+    <string name="InuAiTranscribeErrorNoFreeQuota">Ця модель не має безкоштовної квоти для вашого API-ключа. Виберіть модель Flash, увімкніть оплату в проєкті Google або змініть голосового провайдера.</string>
     <string name="InuAiTranscribeProviderDesc">Оберіть AI-рушій для розпізнавання голосових і відеоповідомлень без Telegram Premium.</string>
     <string name="InuAiTranscribeCredentialsHeader">Дані доступу — %1$s</string>
     <string name="InuAiTranscribeReqApiKey">API ключ</string>
@@ -1368,6 +1368,7 @@
     <string name="InuTranslateProvider">Постачальник перекладу</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">Помилка перекладу: %1$s. Повідомлення буде повторено.</string>
+    <string name="InuTranslateGoogleBlocked">Google відхиляє запити перекладу з цієї мережі (HTTP 429). Змініть підключення або виберіть іншого провайдера в налаштуваннях перекладу.</string>
     <string name="InuTranslateProviderGoogle">Google Перекладач</string>
     <string name="InuTranslateProviderInfo">Перекладати чати стороннім сервісом замість сервера Telegram; форматування тексту зберігається.</string>
     <string name="InuTranslateProviderLingo">Lingo (Caiyun, безкоштовний)</string>
@@ -1392,8 +1393,8 @@
     <string name="InuMaterial3BottomTabs">Нижні вкладки</string>
     <string name="InuIosBottomBar">Нижня панель у стилі iOS</string>
     <string name="InuIosBottomBarInfo">Робить нижню панель вкладок ширшою, з рівномірно розтягнутими вкладками, як в iOS. Вимикає нижні вкладки Material 3.</string>
-    <string name="InuIosChatHeader">Шапка чату в стилі iOS</string>
-    <string name="InuIosChatHeaderInfo">Малює фон шапки чату у вигляді заокругленої «пігулки», яка обгортає та центрує аватарку, заголовок і підзаголовок, як у Telegram для iOS. Вмикає центрування заголовка чату. Аватарка замінює кнопку меню «⋮» — тап відкриває меню чату, довге натискання відкриває профіль. Це доволі кривий патч, і доопрацьовувати його далі самостійно ми не плануємо — пул-реквести вітаються.</string>
+    <string name="InuIosChatHeader">Компактна пілюля</string>
+    <string name="InuIosChatHeaderInfo">Стискає пілюлю шапки чату так, щоб вона обгортала назву, підпис і аватарку та плавала посередині шапки, як у Telegram для iOS, замість того щоб займати всю ширину.</string>
     <string name="InuParanoiaHideMyStories">Приховати мої історії</string>
     <string name="InuStopBot">Зупинити бота</string>
     <string name="InuStopBotAction">Зупинити</string>
@@ -1408,4 +1409,9 @@
     <string name="InuDownloadDirectoryApplied">Застосовується лише до нових завантажень</string>
     <string name="InuPreviewMessage">Попередній перегляд</string>
     <string name="InuMinimize">Згорнути</string>
+    <string name="InuCenterTitleChatsInfo">Переносить назву та підпис у середину шапки чату. Аватарка лишається притиснутою ліворуч.</string>
+    <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка виходить з пілюлі й займає місце кнопки «⋮» — тап відкриває профіль, довге натискання відкриває меню чату. Якщо вимкнено, аватарка лишається всередині компактної пілюлі.</string>
+    <string name="InuUnreadBadgeBackButton">Лічильник непрочитаних на кнопці «назад» (iOS-style)</string>
+    <string name="InuUnreadBadgeBackButtonInfo">Показує загальну кількість непрочитаних чатів невеликою пілюлею поруч із кнопкою «назад», як у Telegram для iOS.</string>
 </resources>

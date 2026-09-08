@@ -853,7 +853,7 @@
     <string name="InuCacheTtlNever">Asla (sürekli tut)</string>
     <string name="InuCacheTtlWeek">1 haftadan eski</string>
     <string name="InuCategories">Kategoriler</string>
-    <string name="InuCenterTitleChats">Sohbetlerde/kanallarda başlığı ortala</string>
+    <string name="InuCenterTitleChats">Sohbetlerde/kanallarda da ortala</string>
     <string name="InuClearDeletedCache">Silinen mesaj önbelleğini temizle</string>
     <string name="InuDeletedMessageSearch">Arşivde ara</string>
     <string name="InuDeletedMessageSearchHint">Kaydedilen silinen ve düzenlenen mesajlarda ara</string>
@@ -963,7 +963,10 @@
     <string name="InuAiTranscribeErrorNoAudio">Bu mesajda deşifre edilecek ses yok.</string>
     <string name="InuAiTranscribeErrorEmpty">Sağlayıcı boş bir deşifre döndürdü.</string>
     <string name="InuAiTranscribeErrorTooLarge">Bu kayıt deşifre edilemeyecek kadar büyük.</string>
-    <string name="InuAiTranscribeErrorTooLargeInline">Bu kayıt, sesi istek içinde alan Gemini için fazla uzun. Uzun mesajlar için ses sağlayıcısını Groq ya da OpenAI olarak değiştirin.</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">%1$s sesi istek içinde alır ve bu kayıt bunun için fazla uzun. Uzun mesajlar için ses sağlayıcısını Groq ya da OpenAI olarak değiştirin.</string>
+    <string name="InuAiTranscribeErrorRateLimited">Sağlayıcı şu anda istekleri sınırlıyor. Biraz bekleyip yeniden dokunun.</string>
+    <string name="InuAiTranscribeErrorDailyQuota">Bu API anahtarının bugünkü ücretsiz kotası doldu. Yarın tekrar deneyin, faturalandırmayı açın ya da ses sağlayıcısını değiştirin.</string>
+    <string name="InuAiTranscribeErrorNoFreeQuota">Bu modelin API anahtarınızda ücretsiz kotası yok. Bir Flash modeli seçin, Google projesinde faturalandırmayı açın ya da ses sağlayıcısını değiştirin.</string>
     <string name="InuAiTranscribeGetApiKey">Ücretsiz API anahtarı al</string>
     <string name="InuAiTranscribeInfo">Sesli ve video mesajları Telegram\'ınki yerine kendi AI sağlayıcınızla deşifre edin; Premium olsun ya da olmasın.</string>
     <string name="InuAiTranscribeModel">Model</string>
@@ -989,12 +992,9 @@
     <string name="InuCategoryChats">Sohbetler</string>
     <string name="InuCategoryPrivacy">Gizlilik ve Güvenlik</string>
     <string name="InuCategoryProfile">Profil ve Gezinme</string>
-    <string name="InuCenterTitleAdaptiveSize">Uyarlanabilir başlık yazı tipi (iOS stili)</string>
-    <string name="InuCenterTitleRightAvatar">Profil resmini sağa taşı</string>
-    <string name="InuCenterTitleFixed">Sabit ortalama</string>
-    <string name="InuCenterTitleFixedInfo">Geri düğmesine ve menüye uyum sağlamak yerine her zaman ekranın tam ortasına ortalar - yoğun başlıklarda üst üste binme olabilir.</string>
-    <string name="InuCenterTitleMain">Ortalanmış ekran başlıkları</string>
-    <string name="InuCenterTitleMainInfo">Sohbetler hariç tüm ekranlarda başlıkları ortalar - sohbetlerin ayrı anahtarı vardır.</string>
+    <string name="InuCenterTitleRightAvatar">Profil resmini sağda göster</string>
+    <string name="InuCenterTitleMain">Ekran başlıklarını ortala</string>
+    <string name="InuCenterTitleMainInfo">Ana ekranda, ayarlarda ve diğer her yerde başlıkları ortalar. Sohbetlerin aşağıda kendi anahtarı vardır.</string>
     <string name="InuChatTitleMarquee">Uzun başlıklar için kayan metin</string>
     <string name="InuChatTitleMarqueeInfo">Sığmayan sohbet başlığı ve alt başlığı, ekran başlıkları ve profil adı otomatik kaydırılır</string>
     <string name="InuChats">Sohbetler</string>
@@ -1251,6 +1251,7 @@
     <string name="InuTranslateProvider">Çeviri sağlayıcısı</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">Çeviri başarısız oldu: %1$s. Mesajlar otomatik olarak yeniden denenecek.</string>
+    <string name="InuTranslateGoogleBlocked">Google bu ağdan gelen çeviri isteklerini reddediyor (HTTP 429). Bağlantınızı değiştirin ya da çeviri ayarlarından başka bir sağlayıcı seçin.</string>
     <string name="InuTranslateProviderGoogle">Google Çeviri</string>
     <string name="InuTranslateProviderInfo">Sohbetleri Telegram\'ın sunucu API\'si yerine üçüncü taraf bir servisle çevirin. Sağlayıcı otomatik çeviriyi ve yerinde mesaj çevirisini yönetir; metin biçimlendirmesi korunur.</string>
     <string name="InuTranslateProviderLingo">Lingo (Caiyun, ücretsiz)</string>
@@ -1281,8 +1282,8 @@
     <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
     <string name="InuIosBottomBarInfo">Alt sekme çubuğunu iOS\'un daha geniş, eşit aralıklı kapsül stiline uygun hale getirir. Material 3 alt sekmelerini devre dışı bırakır.</string>
-    <string name="InuIosChatHeader">iOS tarzı sohbet başlığı</string>
-    <string name="InuIosChatHeaderInfo">Sohbet başlığı arka planını, avatarı, başlığı ve alt başlığı saran ve ortalayan yuvarlak bir \"hap\" şeklinde çizer, tıpkı Telegram iOS\'ta olduğu gibi. Sohbet başlıklarının ortalanmasını da beraberinde getirir. Avatar, \"⋮\" menü düğmesinin yerini alır — dokunmak sohbet menüsünü açar, uzun basmak profili açar. Bu oldukça kaba bir yama ve kendimiz daha fazla cilalamayı planlamıyoruz — pull request\'ler memnuniyetle karşılanır.</string>
+    <string name="InuIosChatHeader">Kompakt hap</string>
+    <string name="InuIosChatHeaderInfo">Sohbet başlığı hapını başlığı, alt başlığı ve profil resmini saracak şekilde küçültür ve tüm genişliği kaplamak yerine başlığın ortasında yüzdürür, tıpkı Telegram iOS gibi.</string>
     <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
     <string name="InuStopBot">Botu durdur</string>
     <string name="InuStopBotAction">Durdur</string>
@@ -1302,4 +1303,9 @@
     <string name="InuDownloadDirectoryApplied">Yalnızca yeni indirilen dosyalar için geçerlidir</string>
     <string name="InuPreviewMessage">Önizleme</string>
     <string name="InuMinimize">Küçült</string>
+    <string name="InuCenterTitleChatsInfo">Başlığı ve alt başlığı sohbet başlığının ortasına taşır. Profil resmi solda sabit kalır.</string>
+    <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmi haptan çıkar ve \"⋮\" düğmesinin yerini alır — dokunmak profili, uzun basmak sohbet menüsünü açar. Kapalıyken profil resmi kompakt hapın içinde kalır.</string>
+    <string name="InuUnreadBadgeBackButton">Geri düğmesinde okunmamış rozeti (iOS tarzı)</string>
+    <string name="InuUnreadBadgeBackButtonInfo">Toplam okunmamış sohbet sayınızı geri düğmesinin yanında küçük bir hap olarak gösterir, tıpkı Telegram iOS gibi.</string>
 </resources>

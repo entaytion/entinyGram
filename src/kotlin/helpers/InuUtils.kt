@@ -66,12 +66,47 @@ public object InuUtils {
         }
     }
 
+    // ---- header centering matrix ----------------------------------------------------------
+    // Single source of truth for the whole "Centering" group. The toggles are strictly nested,
+    // so every predicate re-checks its parents: a stale pref from an older build (or a deeplink
+    // that flipped a child while its parent was off) can never produce a half-centered header.
+    // Java call sites ask these questions, never InuConfig directly.
+
+    /** Centered action bar titles on every screen except chats. Root of the group. */
+    @JvmStatic
+    fun centerScreenTitles(): Boolean = desu.inugram.InuConfig.CENTER_TITLE_MAIN.value
+
+    /** Centered title/subtitle inside chat and channel headers. */
+    @JvmStatic
+    fun centerChatTitle(): Boolean =
+        centerScreenTitles() && desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+
+    /** Centered chat pill hugs its content instead of spanning the whole free room. */
+    @JvmStatic
+    fun compactChatPill(): Boolean =
+        centerChatTitle() && desu.inugram.InuConfig.IOS_CHAT_HEADER.value
+
+    /** Avatar takes over the action bar's overflow slot. Compact pill only. */
+    @JvmStatic
+    fun chatAvatarInMenuSlot(): Boolean =
+        compactChatPill() && desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value
+
+    /**
+     * Avatar sits at the right end of the centered pill. The menu slot wins when both are on:
+     * the avatar cannot be in two places, and moving it out of the pill is the more specific ask.
+     */
+    @JvmStatic
+    fun chatAvatarOnRight(): Boolean =
+        centerChatTitle() &&
+            !chatAvatarInMenuSlot() &&
+            desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.value
+
     @JvmStatic
     fun shouldCenterTitle(fragment: Any?): Boolean {
         if (fragment == null) return false // not attached yet — don't center until we know which screen this is
         if (fragment.javaClass.name == "org.telegram.ui.ChatActivity") {
-            return desu.inugram.InuConfig.CENTER_TITLE_CHATS.value || desu.inugram.InuConfig.IOS_CHAT_HEADER.value
+            return centerChatTitle()
         }
-        return desu.inugram.InuConfig.CENTER_TITLE_MAIN.value
+        return centerScreenTitles()
     }
 }

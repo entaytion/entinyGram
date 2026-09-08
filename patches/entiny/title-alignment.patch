@@ -4,8 +4,8 @@ Date: Tue, 1 Sep 2026 11:08:07 +0300
 Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismatch
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 147 +++++++++++++++++-
- .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++-------
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 158 +++++++++++++++++-
+ .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++------
  .../telegram/ui/Cells/ChatMessageCell.java    |  13 +-
  .../org/telegram/ui/Cells/DialogCell.java     |  10 +-
  .../telegram/ui/Cells/ManageChatUserCell.java |   8 +-
@@ -17,7 +17,7 @@ Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismat
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |  14 +-
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 13 files changed, 288 insertions(+), 92 deletions(-)
+ 13 files changed, 299 insertions(+), 92 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -42,7 +42,7 @@ index 0000000..0000000 100644
  
      public void setGlassOnlyBack() {
          glassOnlyBack = true;
-@@ -606,8 +611,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -632,8 +637,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (subtitleTextView != null) {
              return;
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          subtitleTextView.setVisibility(GONE);
          subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
          addView(subtitleTextView, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP));
-@@ -659,6 +667,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -685,6 +693,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (titleTextView[i] != null) {
              return;
          }
@@ -65,10 +65,21 @@ index 0000000..0000000 100644
          titleTextView[i] = new SimpleTextView(getContext());
          if (desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
              titleTextView[i].setScrollNonFitText(true);
-@@ -695,6 +706,41 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -721,6 +732,52 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
++    // Half the width the centering clamps below should treat this view's text as occupying.
++    // getTextWidth() alone is wrong once CHAT_TITLE_MARQUEE is on: setScrollNonFitText(true) makes
++    // SimpleTextView build its layout at dp(2000) instead of the measured width, so getTextWidth()
++    // reports the FULL untruncated text — for an overlong title that is wider than the whole action
++    // bar. Fed into "max(textLeft + textHalfWidth, ...)" it shoved the layout box far past the
++    // right edge and the title rendered cut off. The box can never usefully be treated as wider
++    // than itself: the marquee scrolls the text through the measured box, it does not widen it.
++    private int inu_clampedTextHalfWidth(SimpleTextView view) {
++        return Math.min(view.getTextWidth(), view.getMeasuredWidth()) / 2;
++    }
++
 +    private boolean inu_forceDisableCenterTitle;
 +
 +    private boolean inu_shouldCenterActionBarTitle() {
@@ -107,7 +118,7 @@ index 0000000..0000000 100644
      public void setTitleRightMargin(int value) {
          titleRightMargin = value;
      }
-@@ -1530,6 +1576,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1556,6 +1613,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int actionBarHeight = getCurrentActionBarHeight();
          int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
  
@@ -121,7 +132,7 @@ index 0000000..0000000 100644
          ignoreLayoutRequest = true;
          if (actionModeTop != null) {
              FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
-@@ -1554,6 +1607,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1580,6 +1644,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -131,7 +142,7 @@ index 0000000..0000000 100644
          // textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1612,6 +1668,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1638,6 +1705,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  }
  
                  if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
@@ -141,7 +152,7 @@ index 0000000..0000000 100644
                      titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
                      if (centerScale) {
                          CharSequence text = titleTextView[i].getText();
-@@ -1659,12 +1718,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1685,12 +1755,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -158,7 +169,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
-@@ -1672,11 +1735,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1698,11 +1772,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -198,7 +209,7 @@ index 0000000..0000000 100644
          }
  
          for (int i = 0; i < 2; i++) {
-@@ -1691,7 +1782,32 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1717,7 +1819,32 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
@@ -214,7 +225,7 @@ index 0000000..0000000 100644
 +                    // offsetX against that width at measure time, so shrinking the box here would throw
 +                    // the glyphs off-center inside it.
 +                    int halfWidth = titleTextView[i].getMeasuredWidth() / 2;
-+                    int textHalfWidth = titleTextView[i].getTextWidth() / 2;
++                    int textHalfWidth = inu_clampedTextHalfWidth(titleTextView[i]);
 +                    // inu: calcOffset() centers (text + side drawables) as one unit against the box's
 +                    // own measured width, not the glyph text alone (see getSideDrawablesSize() above).
 +                    // When a status/premium badge sits to the right of the title (DialogsActivity's
@@ -232,7 +243,7 @@ index 0000000..0000000 100644
              }
          }
          if (additionalSubTitleOverlayContainer != null) {
-@@ -1700,12 +1816,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1726,12 +1853,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
@@ -240,7 +251,7 @@ index 0000000..0000000 100644
 +            if (isCenterTitle) {
 +                // See the centered-title comment above: clamp by real text width, layout box by measured width.
 +                int halfWidth = subtitleTextView.getMeasuredWidth() / 2;
-+                int textHalfWidth = subtitleTextView.getTextWidth() / 2;
++                int textHalfWidth = inu_clampedTextHalfWidth(subtitleTextView);
 +                int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX));
 +                subtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + subtitleTextView.getTextHeight());
 +            } else {
@@ -254,7 +265,7 @@ index 0000000..0000000 100644
 +            if (isCenterTitle) {
 +                // See the centered-title comment above: clamp by real text width, layout box by measured width.
 +                int halfWidth = additionalSubtitleTextView.getMeasuredWidth() / 2;
-+                int textHalfWidth = additionalSubtitleTextView.getTextWidth() / 2;
++                int textHalfWidth = inu_clampedTextHalfWidth(additionalSubtitleTextView);
 +                int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX));
 +                additionalSubtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
 +            } else {
@@ -263,7 +274,7 @@ index 0000000..0000000 100644
          }
  
          if (avatarSearchImageView != null) {
-@@ -1763,6 +1895,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1789,6 +1932,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -272,7 +283,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2529,6 +2663,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2542,6 +2687,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void dispatchDraw(Canvas canvas) {
@@ -280,7 +291,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
  
-@@ -2538,8 +2673,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2551,8 +2697,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
  
@@ -646,7 +657,7 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -973,35 +973,43 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1014,35 +1014,43 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                  titleTextLargerCopyView.layout(titleL, viewTop + dp(10), titleR, viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
              }
          }
@@ -699,7 +710,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -1103,10 +1111,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1144,10 +1152,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -713,7 +724,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -1182,10 +1191,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1223,10 +1232,14 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          }
          if (parentFragment != null) {
              long dialogId = parentFragment.getDialogId();
@@ -728,7 +739,7 @@ index 0000000..0000000 100644
                  desu.inugram.helpers.DevBadgesHelper.HEADER_BADGE_SIZE_DP
              );
          }
-@@ -1728,6 +1741,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1769,6 +1782,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -736,7 +747,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1939,7 +1953,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1980,7 +1994,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (hasVisibleAvatar()) {
              width += dp(52 + 18);
          } else {

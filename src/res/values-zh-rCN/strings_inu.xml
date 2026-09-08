@@ -854,7 +854,7 @@
     <string name="InuCacheTtlNever">从不（永久保留）</string>
     <string name="InuCacheTtlWeek">1 周前</string>
     <string name="InuCategories">分类</string>
-    <string name="InuCenterTitleChats">在聊天/频道中居中标题</string>
+    <string name="InuCenterTitleChats">同时在聊天/频道中居中</string>
     <string name="InuClearDeletedCache">清除已删除消息缓存</string>
     <string name="InuDeletedMessageSearch">搜索存档</string>
     <string name="InuDeletedMessageSearchHint">搜索已保存的已删除和已编辑消息</string>
@@ -964,7 +964,10 @@
     <string name="InuAiTranscribeErrorNoAudio">此消息没有可转写的音频。</string>
     <string name="InuAiTranscribeErrorEmpty">服务商返回了空的转写结果。</string>
     <string name="InuAiTranscribeErrorTooLarge">此录音过大，无法转写。</string>
-    <string name="InuAiTranscribeErrorTooLargeInline">此录音对 Gemini 来说过长，它需要把音频放在请求内。较长的消息请将语音服务商切换为 Groq 或 OpenAI。</string>
+    <string name="InuAiTranscribeErrorTooLargeInline">%1$s 需要把音频放在请求内，此录音对它来说过长。较长的消息请将语音服务商切换为 Groq 或 OpenAI。</string>
+    <string name="InuAiTranscribeErrorRateLimited">服务商正在限制请求频率。请稍候再点一次。</string>
+    <string name="InuAiTranscribeErrorDailyQuota">此 API 密钥今天的免费额度已用完。请明天再试、开启计费，或更换语音服务商。</string>
+    <string name="InuAiTranscribeErrorNoFreeQuota">该模型在你的 API 密钥上没有免费额度。请选择 Flash 模型、在 Google 项目中开启计费，或更换语音服务商。</string>
     <string name="InuAiTranscribeGetApiKey">获取免费 API 密钥</string>
     <string name="InuAiTranscribeInfo">使用你自己的 AI 服务商而非 Telegram 的服务转写语音与视频消息，有没有 Premium 都可以。</string>
     <string name="InuAiTranscribeModel">模型</string>
@@ -990,12 +993,9 @@
     <string name="InuCategoryChats">聊天</string>
     <string name="InuCategoryPrivacy">隐私与安全</string>
     <string name="InuCategoryProfile">个人资料与导航</string>
-    <string name="InuCenterTitleAdaptiveSize">自适应标题字号 (iOS 风格)</string>
-    <string name="InuCenterTitleRightAvatar">头像移至右侧</string>
-    <string name="InuCenterTitleFixed">固定居中</string>
-    <string name="InuCenterTitleFixedInfo">始终居中于屏幕正中央，而不是根据返回按钮和菜单自适应——在元素较多的标题栏中可能会重叠。</string>
-    <string name="InuCenterTitleMain">居中的屏幕标题</string>
-    <string name="InuCenterTitleMainInfo">在聊天以外的所有屏幕上将标题居中显示——聊天使用单独的开关。</string>
+    <string name="InuCenterTitleRightAvatar">将头像显示在右侧</string>
+    <string name="InuCenterTitleMain">居中屏幕标题</string>
+    <string name="InuCenterTitleMainInfo">在主界面、设置以及其他所有界面将标题居中显示。聊天使用下方单独的开关。</string>
     <string name="InuChatTitleMarquee">长标题跑马灯滚动</string>
     <string name="InuChatTitleMarqueeInfo">聊天页头标题与副标题、屏幕标题和资料名称放不下时自动滚动显示</string>
     <string name="InuChats">聊天</string>
@@ -1252,6 +1252,7 @@
     <string name="InuTranslateProvider">翻译提供商</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">翻译失败：%1$s。消息将自动重试。</string>
+    <string name="InuTranslateGoogleBlocked">Google 拒绝了来自该网络的翻译请求（HTTP 429）。请更换网络，或在翻译设置中选择其他服务商。</string>
     <string name="InuTranslateProviderGoogle">Google 翻译</string>
     <string name="InuTranslateProviderInfo">使用第三方服务替代 Telegram 服务器 API 翻译聊天。提供商负责自动翻译和就地消息翻译，保留文本格式。</string>
     <string name="InuTranslateProviderLingo">Lingo (彩云小译, 免费)</string>
@@ -1282,8 +1283,8 @@
     <string name="InuMaterial3BottomTabs">底部标签栏</string>
     <string name="InuIosBottomBar">iOS 风格底部栏</string>
     <string name="InuIosBottomBarInfo">使底部标签栏呈现 iOS 那种更宽、均匀分布的胶囊样式。会禁用 Material 3 底部标签。</string>
-    <string name="InuIosChatHeader">iOS 风格聊天顶栏</string>
-    <string name="InuIosChatHeaderInfo">将聊天顶栏背景绘制为围绕并居中头像、标题和副标题的圆角\"胶囊\"形状,如同 iOS 版 Telegram。这会启用聊天标题居中。头像会替代\"⋮\"菜单按钮——点击打开聊天菜单,长按打开个人资料。这是一个相当粗糙的补丁,我们自己不打算继续打磨——欢迎提交 Pull Request。</string>
+    <string name="InuIosChatHeader">紧凑胶囊</string>
+    <string name="InuIosChatHeaderInfo">收窄聊天顶栏胶囊，使其贴合标题、副标题和头像，并悬浮在顶栏中央，如同 iOS 版 Telegram，而不是占满整个宽度。</string>
     <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>
@@ -1303,4 +1304,9 @@
     <string name="InuDownloadDirectoryApplied">仅适用于新下载的文件</string>
     <string name="InuPreviewMessage">预览</string>
     <string name="InuMinimize">最小化</string>
+    <string name="InuCenterTitleChatsInfo">将标题和副标题移到聊天顶栏中央。头像仍固定在左侧。</string>
+    <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">头像离开胶囊并取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单。关闭时头像保留在紧凑胶囊内。</string>
+    <string name="InuUnreadBadgeBackButton">返回按钮上的未读徽标 (iOS 风格)</string>
+    <string name="InuUnreadBadgeBackButtonInfo">如同 iOS 版 Telegram，在返回按钮旁以小胶囊显示未读聊天总数。</string>
 </resources>
