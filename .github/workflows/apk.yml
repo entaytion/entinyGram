@@ -144,7 +144,8 @@ jobs:
         env:
           COMMIT_ID: ${{ github.sha }}
           INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          INU_BUILD_TYPE: ${{ inputs.prerelease == 'true' && 'beta' || 'release' }}
+          # See the note on LAST_UPLOADED_SHA below: `== 'true'` never matches a boolean input.
+          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
           ABI_FILTERS: arm64-v8a
           CCACHE_COMPILERCHECK: content
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
@@ -173,7 +174,16 @@ jobs:
           # announced only to the CI channel via a pre-release build gets silently dropped
           # from the public changelog. Pre-releases diff from the last build of any kind
           # (LAST_BUILD_SHA), which keeps each test build's own notes incremental.
-          LAST_UPLOADED_SHA: ${{ inputs.prerelease == 'true' && vars.LAST_BUILD_SHA || vars.LAST_RELEASE_SHA }}
+          #
+          # `prerelease` is declared `type: boolean`, so in an expression it is a real boolean.
+          # GitHub compares mismatched types by coercing to number - true becomes 1, the string
+          # 'true' becomes NaN, and NaN matches nothing - so `== 'true'` was always false here and
+          # every pre-release silently diffed from the last full RELEASE instead. That is why
+          # consecutive pre-release changelogs kept repeating each other's contents. The shell
+          # tests elsewhere in this file are unaffected: there the value is already rendered to
+          # the literal text `true` before the shell compares it. Both shapes accepted below,
+          # since the REST API can still deliver this input as a string.
+          LAST_UPLOADED_SHA: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && vars.LAST_BUILD_SHA || vars.LAST_RELEASE_SHA }}
         run: |
           mkdir -p out
           apk='${{ steps.info.outputs.apk-arm64 }}'
