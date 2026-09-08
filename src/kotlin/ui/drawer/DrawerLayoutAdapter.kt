@@ -257,6 +257,7 @@ class DrawerLayoutAdapter(
             }
         }
         items.add(null) // divider
+        items.add(Item(ITEM_SCROLL_TOP, LocaleController.getString(R.string.InuScrollToTop), R.drawable.msg_go_up))
         // Mirrors the overflow menu: a pending compose-draft swaps "New Group" for "New Message".
         if (DialogsFabHelper.hasNewMessage()) {
             items.add(Item(17, LocaleController.getString(R.string.NewMessageTitle), R.drawable.menu_topic_add))
@@ -278,6 +279,7 @@ class DrawerLayoutAdapter(
         const val ITEM_PROXY = 9
         const val ITEM_ARCHIVE = 18
         const val ITEM_GHOST = 19
+        const val ITEM_SCROLL_TOP = 20
     }
 
     class Item private constructor(

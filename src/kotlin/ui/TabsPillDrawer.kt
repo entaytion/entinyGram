@@ -49,7 +49,7 @@ class TabsPillDrawer(
             h - strip.paddingBottom + t * dp(4f),
         )
         val r = lerp(bgRect.height() / 2f, 0f, t)
-        val restoreCount = canvas.save()
+        canvas.save()
         canvas.translate(strip.scrollX.toFloat(), 0f)
         bgPath.rewind()
         bgPath.addRoundRect(bgRect, r, r, Path.Direction.CW)
@@ -59,7 +59,7 @@ class TabsPillDrawer(
         if (t > 0f) {
             blurBehindHelper.draw(canvas, bgRect.bottom.toInt(), (0xFF * t).toInt())
         }
-        canvas.restoreToCount(restoreCount)
+        canvas.translate(-strip.scrollX.toFloat(), 0f)
     }
 
     companion object {

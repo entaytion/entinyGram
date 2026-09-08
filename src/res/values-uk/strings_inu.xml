@@ -12,7 +12,6 @@
     <string name="InuDrawerM3SectionsInfo">Групує пункти бічного меню в картки Material 3.</string>
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
-    <string name="InuSettingsPrefixHint">Посилання на налаштування використовують tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuLegacySettingsLink">Цей формат посилання застарів. Використовуйте tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">Загальні</string>
     <string name="InuMiscellaneous">Різне</string>
@@ -25,9 +24,6 @@
     <string name="InuAutoUpdateCheckInfo">Періодично перевіряти канал entinyGram CI на наявність нових релізів і пропонувати їх завантаження.</string>
     <string name="InuUpdatesIncludeBeta">Отримувати бета-оновлення</string>
     <string name="InuUpdatesIncludeBetaInfo">Також пропонувати тестові збірки (бета/pre-release). Якщо стабільний реліз новіший за поточну бету, буде запропоновано саме його.</string>
-    <string name="InuAppearance">Зовнішній вигляд</string>
-    <string name="InuLookAndFeel">Оформлення</string>
-    <string name="InuBehavior">Поведінка</string>
     <string name="InuAnnoyances">Дратівливі елементи</string>
     <string name="InuAnnoyancesStories">Історії</string>
     <string name="InuAnnoyancesProfile">Профіль</string>
@@ -40,14 +36,10 @@
     <string name="InuMessages">Повідомлення</string>
     <string name="InuChats">Чати</string>
     <string name="InuStarGiftsSection">Подарунки</string>
-    <string name="InuOther">Інше</string>
     <string name="InuMainPage">Список чатів</string>
     <string name="InuUserProfile">Профіль користувача</string>
-    <string name="InuUserProfileHeader">Шапка</string>
-    <string name="InuUserProfileInformation">Інформація</string>
     <string name="InuChatList">Список чатів</string>
     <string name="InuDoubleTapActions">Дії подвійного тапу</string>
-    <string name="InuDoubleTapDelay">Затримка подвійного тапу</string>
     <string name="InuIncomingMessages">Вхідні повідомлення</string>
     <string name="InuOutgoingMessages">Вихідні повідомлення</string>
     <string name="InuDoubleTapInfo">Примітка: через особливості Telegram увімкнення подвійного тапу затримує звичайний тап на вказаний час.\nВи можете налаштувати затримку, але повністю її прибрати можна лише вимкнувши ці дії.</string>
@@ -130,9 +122,6 @@
     <string name="InuBottomTabsHide">Приховати нижні вкладки</string>
     <string name="InuBottomTabsHideInfo">Елементи переміщуються у бічне меню головного екрана</string>
     <string name="InuShowTabTitles">Показувати підписи вкладок</string>
-    <string name="InuCustomizeBottomTabs">Налаштування нижніх вкладок</string>
-    <string name="InuMainTabsCustomizeInfo">Зміна порядку та приховування вкладок на нижній панелі. Перетягуйте елементи для сортування, використовуйте перемикач для приховування. Вкладка «Чати» завжди перша і її не можна приховати. Потребує перезапуску.</string>
-    <string name="InuMainTabsItems">Вкладки</string>
     <string name="InuMainTabsCustomizeReset">Скинути за замовчуванням</string>
     <string name="InuCompactMode">Компактний режим</string>
     <string name="InuCompactModeInfo">Приховує заголовки та зменшує розмір вкладок</string>
@@ -211,10 +200,8 @@
     <string name="InuHidePaidReactionUpsell">Приховати пропозицію платних реакцій</string>
     <string name="InuHideHashtagSuggestions">Приховати підказки хештегів</string>
     <string name="InuDisableProfileScrollSnap">Вимкнути фіксацію при прокручуванні профілю</string>
-    <string name="InuDisableProfileScrollSnapInfo">Не фіксувати шапку профілю у фіксованих позиціях при прокручуванні</string>
     <string name="InuReduceProfileMotion">Зменшити анімації профілю</string>
     <string name="InuProfilePreferMediaTab">Відкривати першою вкладку «Медіа»</string>
-    <string name="InuProfilePreferMediaTabInfo">…замість вкладок Подарунків та Дописів</string>
     <string name="InuDisableMotionPhotos">Вимкнути фото з рухом (Motion Photos)</string>
     <string name="InuDisableMotionPhotosInfo">Не рендерити живі фотографії у галереї та повідомленнях</string>
     <string name="InuDisableVolumePlayVideo">Вимкнути відтворення відео кнопками гучності</string>
@@ -297,7 +284,6 @@
     <string name="InuTranslateInstantViewPartial">Деякі розділи не вдалося перекласти.</string>
     <string name="InuTranslation">Переклад</string>
     <string name="InuTranslator">Перекладач</string>
-    <string name="InuTranslatorInfo">Автопереклад чатів, провайдери та мовні налаштування</string>
     <string name="InuLanguages">Мови</string>
     <string name="InuAdvanced">Додатково</string>
     <string name="InuForceTranslate">Примусовий переклад</string>
@@ -371,9 +357,7 @@
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID скопійовано в буфер обміну</string>
     <string name="InuShowProfileRegDate">Показувати дату реєстрації та DC</string>
-    <string name="InuShowProfileRegDateInfo">Показувати приблизну дату реєстрації та дата-центр у блоці інфо профілю</string>
     <string name="InuProfileRegDate">Дата реєстрації</string>
-    <string name="InuProfileCreatedDate">Дата створення</string>
     <string name="InuProfileRegDateCopied">Дату реєстрації та DC скопійовано</string>
     <string name="InuMessageInput">Введення повідомлення</string>
     <string name="InuAttachmentSheet">Панель вкладень</string>
@@ -388,7 +372,6 @@
     <string name="InuMapsHeader">Карти</string>
     <string name="InuMapProvider">Провайдер карт</string>
     <string name="InuMapProviderGoogle">Карти Google</string>
-    <string name="InuMapProviderOsm">OpenStreetMap</string>
     <string name="InuMapProviderOsmLite">OpenStreetMap (lite)</string>
     <string name="InuMapPreviewProvider">Провайдер прев\'ю карт</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
@@ -401,20 +384,12 @@
     <string name="InuClosestToDeletedReply">Оригінальне повідомлення видалено, показано найближче</string>
     <string name="InuSummarize">Зробити самарі</string>
     <string name="InuMessageDetails">Деталі</string>
-    <string name="InuMsgDetailScheduled">Заплановано</string>
-    <string name="InuMsgDetailScheduledDate">Дата планування</string>
-    <string name="InuMsgDetailMessage">Повідомлення</string>
-    <string name="InuMsgDetailCaption">Підпис</string>
-    <string name="InuMsgDetailChannel">Канал</string>
-    <string name="InuMsgDetailGroup">Група</string>
-    <string name="InuMsgDetailFrom">Від</string>
     <string name="InuMsgDetailDate">Дата</string>
     <string name="InuMsgDetailDeleteDate">Дата видалення</string>
     <string name="InuMsgDetailReadDate">Дата прочитання</string>
     <string name="InuMsgDetailViews">Перегляди</string>
     <string name="InuMsgDetailForwards">Поширення</string>
     <string name="InuMsgDetailForwardDate">Дата пересилання</string>
-    <string name="InuMsgDetailViaBot">Через бота</string>
     <string name="InuMsgDetailPoll">Питання опитування</string>
     <string name="InuMsgDetailPollDescription">Опис опитування</string>
     <string name="InuMsgDetailPollVoterNames">Хто проголосував</string>
@@ -436,13 +411,10 @@
     <string name="InuMsgDetailWhenOnline">Коли у мережі</string>
     <string name="InuMsgDetailEdited">Відредаговано</string>
     <string name="InuMsgDetailAutoDelete">Автовидалення</string>
-    <string name="InuMsgDetailForwardFrom">Переслано від</string>
-    <string name="InuMsgDetailRestrictionReason">Причина обмеження</string>
     <string name="InuMsgDetailFileName">Назва файла</string>
     <string name="InuMsgDetailFilePath">Шлях до файла</string>
     <string name="InuMsgDetailFileSize">Розмір файла</string>
     <string name="InuMsgDetailMimeType">MIME тип</string>
-    <string name="InuMsgDetailMedia">Медіа</string>
     <string name="InuMsgDetailAudioType">Тип аудіо</string>
     <string name="InuMsgDetailVoiceNote">Голосове повідомлення</string>
     <string name="InuMsgDetailMusicTrack">Музичний трек</string>
@@ -598,8 +570,6 @@
     <string name="InuSuggestCustomEmojiAfter">Підказувати кастомні емодзі після звичайних</string>
     <string name="InuSuggestCustomEmojiAfterInfo">У підказках \":shortcode\" показувати анімовані емодзі після звичайних</string>
 
-    <string name="InuEmojiPanelKeywordSearch">Пошук емодзі за ключовими словами</string>
-    <string name="InuEmojiPanelKeywordSearchInfo">Показувати звичайні емодзі при пошуку слів</string>
 
     <string name="InuFormattingPopup">Кастомне меню форматування</string>
     <string name="InuFormattingPopupInfo">Замінює стандартне меню форматування на зручний спливаючий попап.</string>
@@ -611,7 +581,6 @@
     <string name="InuCodeLanguage">Мова коду</string>
     <string name="InuVersion">entinyGram %1$s (%2$s)</string>
     <string name="InuCategories">Категорії</string>
-    <string name="InuLinks">Посилання</string>
     <string name="InuDataBackup">Резервне копіювання</string>
 
     <string name="InuSearchFilter">Фільтр за типом медіа</string>
@@ -637,14 +606,11 @@
     <string name="InuAppIconLicenseInugram">Тимчасова іконка, можете запропонувати кращу</string>
     <string name="InuAppIconLicenseTelegram">Іконка від **Telegram**. Усі права захищено.</string>
     <string name="InuJumpToBeginning">Перейти на самий початок</string>
+    <string name="InuScrollToTop">На початок</string>
 
-    <string name="InuAbout">Про додаток</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Канал оновлень</string>
     <string name="InuUpdates">Оновлення</string>
-    <string name="InuUpdatesEnabled">Перевіряти оновлення автоматично</string>
-    <string name="InuUpdateCheckNow">Перевірити зараз</string>
-    <string name="InuUpdateLastChecked">Остання перевірка: %1$s</string>
     <string name="InuUpdateUpToDate">У вас встановлено найновішу версію</string>
     <string name="InuUpdateError">Не вдалося перевірити оновлення: %1$s</string>
     <string name="InuUpdateInstalling">Встановлення оновлення</string>
@@ -760,7 +726,6 @@
     <string name="InuParanoiaHideFolders">Приховати папки</string>
     <string name="InuParanoiaDisguise">Маскування під Telegram</string>
     <string name="InuParanoiaDisguiseInfo">Змінюються лише іконка та назва у лаунчері. Сповіщення та внутрішня назва показують «entinyGram».</string>
-    <string name="InuDisguiseName" translatable="false">Telegram</string>
     <string name="InuParanoiaMode">Режим параної</string>
     <string name="InuParanoiaModeInfo">Режим параної дозволяє швидко підготуватися до перевірки телефону, приховуючи небезпечні чати.</string>
     <string name="InuParanoiaLauncherShortcut">Ярлик у лаунчері</string>
@@ -785,7 +750,6 @@
     <string name="InuBotSettings">Налаштування ботів</string>
     <string name="InuBotHelp">Допомога по ботах</string>
 
-    <string name="InuSimulateOom">Симулювати OOM краш</string>
     <string name="InuCrashTitle">entinyGram упав минулого разу</string>
     <string name="InuCrashTitleOom">entinyGram вичерпав пам\'ять</string>
     <string name="InuCrashDesc">Перепрошуємо за це. Ви можете поділитися краш-логом з розробником.</string>
@@ -808,8 +772,6 @@
     <string name="InuTranslateOutgoing">Перекладати мої повідомлення</string>
     <string name="InuTranslateOutgoingInfo">Додавати надіслані вами повідомлення до автоматичного перекладу чату.</string>
     <string name="InuSelfDestructMedia">Самознищуване медіа</string>
-    <string name="InuSaveSelfDestruct">Зберігати самознищуване медіа</string>
-    <string name="InuSaveSelfDestructInfo">Одноразові фото, відео та відеоповідомлення відображатимуться як звичайне медіа, їх можна зберігати або пересилати.</string>
     <string name="InuAllowForwardRestricted">Дозволити пересилання з захищених чатів</string>
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
@@ -821,13 +783,10 @@
     <string name="InuCenterTitleMainInfo">Центрує заголовки на головному екрані, у налаштуваннях і всюди далі. У чатів окремий перемикач нижче.</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
-    <string name="InuFloatingAvatar">Плаваючий аватар у шапці чату</string>
-    <string name="InuFloatingAvatarInfo">Відділяє аватар від заголовка і розміщує його як плаваючий елемент справа</string>
     <string name="InuClearDeletedCache">Очистити кеш збережених повідомлень</string>
     <string name="InuDeletedMessageSearch">Пошук по архіву</string>
     <string name="InuDeletedMessageSearchHint">Пошук по збережених видалених і змінених повідомленнях</string>
     <string name="InuDeletedMessageSearchEmpty">Збігів не знайдено.</string>
-    <string name="InuClearDeletedCacheConfirm">Очистити збережені видалені/відредаговані повідомлення для обраних чатів?</string>
     <string name="InuClearDeletedCacheDone">Кеш збережених повідомлень очищено</string>
     <string name="InuClearDeletedCacheEmpty">Кеш збережених повідомлень порожній</string>
     <string name="InuSaveDeletedMessages">Зберігати видалені повідомлення</string>
@@ -840,7 +799,6 @@
     <string name="InuCacheTtl">Авто-очищення кешу повідомлень</string>
     <string name="InuCacheTtlInfo">Автоматично видаляє збережені видалені/відредаговані повідомлення, старші за обраний період</string>
     <string name="InuGhostReadOnSend">Читати при надсиланні</string>
-    <string name="InuGhostReadOnSendInfo">Вихідні повідомлення та відповіді позначають поточний чат прочитаним на сервері.</string>
     <string name="InuGhostMarkReadLocally">Позначати прочитаним локально</string>
     <string name="InuGhostMarkReadLocallyInfo">Скидати лічильник непрочитаних повідомлень при відкритті чату в режимі примари, залишаючи його непрочитаним на сервері.</string>
     <string name="InuCacheTtlNever">Ніколи (зберігати назавжди)</string>
@@ -848,7 +806,6 @@
     <string name="InuCacheTtlWeek">Старші за 1 тиждень</string>
     <string name="InuCacheTtlMonth">Старші за 1 місяць</string>
     <string name="InuEditHistory">Історія редагувань</string>
-    <string name="InuEditedAt">Змінено %1$s</string>
     <string name="InuDeletedAt">Видалено: %1$s</string>
     <string name="InuAllowScreenshots">Дозволити скріншоти</string>
     <string name="InuAllowScreenshotsInfo">Дозволяє робити знімки екрана та запис відео в секретних чатах, одноразових медіа та захищених каналах.</string>
@@ -934,8 +891,6 @@
     <string name="InuBiometricLockArchiveEveryTimeInfo">Вимкнено — запитує один раз за сесію; увімкнено — щоразу при відкритті архіву.</string>
 
     <string name="InuTosProfile">Профіль і Premium</string>
-    <string name="InuBetaFeatureTitle">Бета-функція</string>
-    <string name="InuBetaFeatureInfo">Ця функція перебуває на стадії активного тестування (бета/експериментальна).</string>
     <string name="InuRegexFilter">Адблок та регекс-фільтр</string>
     <string name="InuRegexFilterEnabled">Увімкнути фільтр контенту</string>
     <string name="InuRegexFilterEnabledInfo">Фільтрує дописи та повідомлення за регекс-шаблонами або ключовими словами</string>
@@ -1097,7 +1052,6 @@
     <string name="InuCategoryBehavior">Поведінка та інструменти</string>
     <string name="InuCategoryChats">Чати</string>
     <string name="InuCategoryPrivacy">Конфіденційність і безпека</string>
-    <string name="InuCategoryProfile">Профіль та навігація</string>
     <string name="InuAdditional">Додатково</string>
 
     <string name="InuGhostMode">Режим примари</string>
@@ -1105,14 +1059,10 @@
     <string name="InuGhostModeInfo">Сховати активність: повідомлення не позначаються як прочитані, ваш статус онлайн, стан набору тексту та перегляди історій залишаються прихованими.</string>
     <string name="InuGhostFeatures">Прихована активність</string>
     <string name="InuGhostHideRead">Не надсилати підтвердження прочитання</string>
-    <string name="InuGhostHideReadInfo">Повідомлення не позначаються як прочитані на сервері — співрозмовник не бачить синіх галочок.</string>
     <string name="InuContentProtectionBypass">Обхід захисту контенту</string>
     <string name="InuGhostHideVoiceRead">Не позначати голосові та відеоповідомлення прослуханими</string>
-    <string name="InuGhostHideVoiceReadInfo">Голосові повідомлення та кружечки не позначаються як прослухані для співрозмовника.</string>
     <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
-    <string name="InuGhostHideStoryReadInfo">Перегляди сторіс та лічильник не передаються автору.</string>
     <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>
-    <string name="InuGhostHideTypingInfo">Стани набору тексту, запису аудіо та завантаження файлів не надсилаються співрозмовнику.</string>
     <string name="InuGhostPresenceMode">Статус онлайн</string>
     <string name="InuGhostPresenceModeNormal">Звичайний</string>
     <string name="InuGhostPresenceModeHidden">Завжди прихований</string>
@@ -1124,7 +1074,6 @@
     <string name="InuGhostWhitelistRemoved">Видалено з білого списку</string>
     <string name="InuGhostEnabled">Режим примари увімкнено</string>
     <string name="InuGhostDisabled">Режим примари вимкнено</string>
-    <string name="InuGhostModeForChat">Режим примари для цього чату</string>
     <string name="InuGhostModeEnableForChat">Увімкнути режим примари для цього чату</string>
     <string name="InuGhostModeDisableForChat">Вимкнути режим примари для цього чату</string>
     <string name="InuGhostModeEnabledForChatDone">Режим примари увімкнено для цього чату</string>
@@ -1132,8 +1081,6 @@
     <string name="InuMarkChatAsRead">Позначити прочитаним</string>
     <string name="InuMarkChatAsReadDone">Чат позначено прочитаним</string>
 
-    <string name="InuUnreader">Антипрочитання</string>
-    <string name="InuUnreaderInfo">Повідомлення ніколи не позначаються як прочитані: відкриття чату зберігає лічильник непрочитаних і не надсилає підтвердження прочитання іншій стороні.</string>
 
     <string name="InuDeleteProfilePhotos">Видалити фото профілю</string>
     <string name="InuDeleteProfilePhotosInfo">Видалення всіх фото профілю або лише вибраних в один дотик</string>
@@ -1210,17 +1157,10 @@
     <string name="InuHdBluetoothCallAudio">HD аудіо дзвінків по Bluetooth</string>
     <string name="InuHdBluetoothCallAudioInfo">Відтворювати звук дзвінка як медіа замість перемикання на низькоякісний профіль гарнітури, використовуючи мікрофон телефона. Працює, якщо Bluetooth-пристрій підключено на початку виклику</string>
     <string name="InuAntiDeletion">Збереження видаленого</string>
-    <string name="InuDeletedEditedSave">Видалені та змінені</string>
     <string name="InuSaveSelfDestructMedia">Зберігати самознищувані медіа</string>
-    <string name="InuSaveSelfDestructMediaInfo">Самознищувані фото, відео та кружечки у секретних чатах залишаються у локальній базі після закінчення таймера.</string>
     <string name="InuSaveSelfDestructText">Зберігати самознищуваний текст</string>
-    <string name="InuSaveSelfDestructTextInfo">Текстові повідомлення з таймером самознищення у секретних чатах зберігаються у локальній базі замість видалення.</string>
-    <string name="InuSaveSecretChatContent">Зберігати секретні чати</string>
-    <string name="InuSaveSecretChatContentInfo">Увесь вміст секретних чатів (медіа та текст) зберігається локально і ніколи не видаляється автоматично.</string>
     <string name="InuSaveViewOnceMedia">Зберігати одноразові медіа</string>
-    <string name="InuSaveViewOnceMediaInfo">Одноразові фото, відео та кружечки у звичайних чатах зберігаються у локальній базі після перегляду.</string>
     <string name="InuSaveTimedMessages">Зберігати повідомлення з таймером</string>
-    <string name="InuSaveTimedMessagesInfo">Повідомлення в чатах з таймером автовидалення зберігаються локально замість видалення після закінчення таймера.</string>
     <string name="InuAiTranscribe">Розпізнавання аудіо (Voice-to-Text)</string>
     <string name="InuAiTranscribeInfo">Розшифровувати голосові та відеоповідомлення через власного AI-провайдера замість телеграмівського — з Premium чи без нього.</string>
     <string name="InuAiTranscribeSection">Voice-to-Text</string>
@@ -1337,18 +1277,8 @@
     <string name="InuDeletedMarkStyleEyeCrossed">Перекреслене око</string>
     <string name="InuDeletedMarkPreviewText">Привіт! Це секрет 🤫</string>
     <string name="InuDeletedMarkPreviewSender">Аліна</string>
-    <string name="InuCustomization">Кастомізація</string>
     <string name="InuHideDevBadges">Вимкнути бейджі розробників</string>
     <string name="InuHideDevBadgesInfo">Ховає бейджі біля імен розробників entinyGram та inuGram і офіційних каналів</string>
-    <string name="InuDevBadgeEntiny">Розробник entinyGram</string>
-    <string name="InuDevBadgeEntinyInfo">Цей користувач створює та розвиває entinyGram</string>
-    <string name="InuDevBadgeInu">Розробниця inuGram</string>
-    <string name="InuDevBadgeInuInfo">Авторка inuGram — форку, на якому ґрунтується entinyGram</string>
-    <string name="InuDevBadgeChannel">Офіційний канал entinyGram</string>
-    <string name="InuDevBadgeChannelInfo">Новини та оновлення entinyGram</string>
-    <string name="InuDevBadgeInuChannel">Офіційний канал inuGram</string>
-    <string name="InuDevBadgeInuChannelInfo">Оригінальний форк inuGram, на якому ґрунтується entinyGram</string>
-    <string name="InuDevBadgeAccess">Значок розробника</string>
     <string name="InuAppIconOldEntinygram">Старий entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Старий entinyGram</string>
     <string name="InuPoweredByProvider">Переклад виконано через %1$s.</string>
@@ -1386,7 +1316,6 @@
     <string name="InuAccountSwitchShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка з вибором акаунта для входу</string>
     <string name="InuBlockSleepWhileDownloading">Блокувати режим сну під час завантаження</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Утримує wake lock під час активного завантаження, щоб Android не призупиняв його у фоні.</string>
-    <string name="InuHideContactsTab">Приховати вкладку «Контакти»</string>
     <string name="InuHideRichEditorButton">Приховати кнопку форматування тексту</string>
     <string name="InuKeepDownloadsInBackground">Не переривати завантаження під час скролу та виходу</string>
     <string name="InuKeepDownloadsInBackgroundInfo">Продовжує поточні завантаження, коли повідомлення зникає з екрана або ви виходите з чату, не скасовуючи й не перезапускаючи їх знову.</string>
@@ -1400,9 +1329,6 @@
     <string name="InuStopBotAction">Зупинити</string>
     <string name="InuStopBotAlert">Ви впевнені, що хочете зупинити **%1$s**? Він більше не зможе надсилати вам повідомлення.</string>
     <string name="InuStopBotDone">Бота зупинено</string>
-    <string name="InuMsgDetailFileId">File ID</string>
-    <string name="InuMsgDetailFileUniqueId">Унікальний File ID</string>
-    <string name="InuMsgDetailFileIdInfo">Цей File ID прив’язаний до поточного акаунта і за деякий час перестане діяти.</string>
     <string name="InuSortAlbumsBySize">Сортувати альбоми за розміром</string>
     <string name="InuSortAlbumsBySizeInfo">Альбоми в меню вкладень впорядковуються за кількістю фото, а не за датою</string>
     <string name="InuDownloadDirectory">Папка завантажень</string>

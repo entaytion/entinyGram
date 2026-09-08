@@ -513,9 +513,6 @@ object InuConfig {
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
     @JvmField
-    val BOTTOM_TABS_HIDE_CONTACTS = BoolItem("bottom_tabs_hide_contacts", false)
-
-    @JvmField
     val BOTTOM_TABS_COMPACT_MODE = BoolItem("bottom_tabs_hide_compact_mode", false)
 
     /** order + enabled state for non-Chats bottom tabs; Chats is always first and mandatory */
@@ -1279,9 +1276,6 @@ object InuConfig {
     @JvmField
     val SUGGEST_CUSTOM_EMOJI_AFTER = BoolItem("suggest_custom_emoji_after", true)
 
-    @JvmField
-    val EMOJI_PANEL_KEYWORD_SEARCH = BoolItem("emoji_panel_keyword_search", true)
-
     class TextClassifierModeItem : IntItem("text_classifier_mode", IMPROVED) {
         companion object {
             const val NATIVE = 1
@@ -1413,9 +1407,6 @@ object InuConfig {
 
     @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
-
-    @JvmField
-    val FLOATING_AVATAR = BoolItem("floating_avatar", false)
 
     // Per-category local preservation of self-destruct content. All default off = stock behavior.
     @JvmField

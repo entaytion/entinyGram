@@ -43,15 +43,24 @@ object TranscribeHelper {
     // Keep transcription off the general memory cliff.
     private const val MAX_TRANSCRIPTION_BYTES = 32L * 1024L * 1024L
 
-    // Gemini takes audio inline, Base64'd inside the JSON body, and rejects any request over 20MB.
-    // Base64 inflates by 4/3, so this is the largest file that can still fit - past it the request
-    // would come back as an opaque 400 rather than "your voice message is too long".
-    private const val GEMINI_MAX_INLINE_BYTES = 14L * 1024L * 1024L
+    // Gemini and most of Cloudflare's whisper family take audio inline, Base64'd inside the JSON
+    // body, and reject any request over 20MB. Base64 inflates by 4/3, so this is the largest file
+    // that can still fit - past it the request would come back as an opaque 400 rather than "your
+    // voice message is too long".
+    private const val MAX_INLINE_AUDIO_BYTES = 14L * 1024L * 1024L
 
     private const val MAX_ATTEMPTS = 3
 
-    /** HTTP 429 / 5xx: the provider is busy or briefly broken, so the request is worth repeating. */
-    private class TransientHttpException(message: String) : IOException(message)
+    /** Longest we will sit on a retry before giving the user the error instead of a spinner. */
+    private const val MAX_RETRY_DELAY_MS = 15_000L
+
+    /**
+     * HTTP 429 / 5xx: the provider is busy or briefly broken, so the request is worth repeating.
+     * [retryAfterMs] is how long the provider itself asked us to wait, when it said so - Google
+     * and OpenAI both do, and their answer is usually tens of seconds, not the 1.5s a blind
+     * backoff would have picked.
+     */
+    private class TransientHttpException(message: String, val retryAfterMs: Long = 0L) : IOException(message)
 
     @JvmStatic
     fun isTranscribing(messageObject: MessageObject?): Boolean {
@@ -241,6 +250,11 @@ object TranscribeHelper {
      * Repeats the request when the provider answers 429 or 5xx. Everything else - a rejected key,
      * an unknown model, audio the provider will not accept - is permanent and fails immediately;
      * retrying those just burns the user's quota and their patience.
+     *
+     * When the provider names its own cooldown we wait that long rather than guessing, and when
+     * the cooldown is longer than a user will hold a spinner for we stop and report it. Guessing
+     * short is what made the old backoff useless against a per-minute quota: three attempts
+     * 1.5s apart all land inside the same minute the provider already refused.
      */
     private fun <T> withRetry(block: () -> T): T {
         var attempt = 0
@@ -249,9 +263,9 @@ object TranscribeHelper {
                 return block()
             } catch (e: TransientHttpException) {
                 attempt++
-                if (attempt >= MAX_ATTEMPTS) throw e
+                if (attempt >= MAX_ATTEMPTS || e.retryAfterMs > MAX_RETRY_DELAY_MS) throw e
                 try {
-                    Thread.sleep(1500L * attempt)
+                    Thread.sleep(maxOf(1500L * attempt, e.retryAfterMs))
                 } catch (ie: InterruptedException) {
                     Thread.currentThread().interrupt()
                     throw e
@@ -358,8 +372,8 @@ object TranscribeHelper {
     }
 
     private fun transcribeGemini(file: File, mime: String, prompt: String): String {
-        if (file.length() > GEMINI_MAX_INLINE_BYTES) {
-            throw IOException(LocaleController.getString(R.string.InuAiTranscribeErrorTooLargeInline))
+        if (file.length() > MAX_INLINE_AUDIO_BYTES) {
+            throw IOException(LocaleController.formatString(R.string.InuAiTranscribeErrorTooLargeInline, "Gemini"))
         }
         val apiKey = InuConfig.AI_PROVIDER_GEMINI_KEY.value.trim()
         val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-3.5-flash" }
@@ -408,11 +422,7 @@ object TranscribeHelper {
             ?.bufferedReader()?.use { it.readText() } ?: ""
         conn.disconnect()
 
-        if (code !in 200..299) {
-            val errJson = try { JSONObject(resp).getJSONObject("error").optString("message", resp) } catch (_: Exception) { resp }
-            val message = "Gemini API error ($code): ${errJson.take(300)}"
-            throw if (code == 429 || code >= 500) TransientHttpException(message) else IOException(message)
-        }
+        if (code !in 200..299) throw geminiError(code, resp)
 
         val parts = JSONObject(resp)
             .optJSONArray("candidates")?.optJSONObject(0)
@@ -424,6 +434,74 @@ object TranscribeHelper {
                 append(parts.optJSONObject(i)?.optString("text").orEmpty())
             }
         }.trim()
+    }
+
+    /**
+     * Turns a Gemini failure into the right exception, and into something the user can act on.
+     *
+     * A 429 from the free tier is three different situations wearing one status code: going too
+     * fast for the per-minute limit (wait, the response says how long), spending the day's
+     * requests (nothing will work until Google's midnight), and a model whose free allowance in
+     * this project is zero (nothing will ever work without billing - which is what a user hits
+     * when they try model after model and every one of them answers 429). The quota id and value
+     * in the response body are the only things that separate them, so they are read rather than
+     * all three being reported as "rate limited, retrying".
+     */
+    private fun geminiError(code: Int, resp: String): IOException {
+        val error = runCatching { JSONObject(resp).getJSONObject("error") }.getOrNull()
+        val detail = error?.optString("message").orEmpty().ifBlank { resp }.take(300)
+
+        if (code != 429) {
+            val message = "Gemini API error ($code): $detail"
+            return if (code >= 500) TransientHttpException(message) else IOException(message)
+        }
+
+        var retryMs = 0L
+        var quotaId = ""
+        var quotaValue = ""
+        val details = error?.optJSONArray("details")
+        if (details != null) {
+            for (i in 0 until details.length()) {
+                val d = details.optJSONObject(i) ?: continue
+                val type = d.optString("@type")
+                when {
+                    type.endsWith("RetryInfo") -> retryMs = parseProtoDuration(d.optString("retryDelay"))
+                    type.endsWith("QuotaFailure") -> {
+                        val violation = d.optJSONArray("violations")?.optJSONObject(0)
+                        quotaId = violation?.optString("quotaId").orEmpty()
+                        quotaValue = violation?.optString("quotaValue").orEmpty()
+                    }
+                }
+            }
+        }
+
+        if (quotaValue == "0") {
+            return IOException(LocaleController.getString(R.string.InuAiTranscribeErrorNoFreeQuota))
+        }
+        if (quotaId.contains("PerDay", ignoreCase = true)) {
+            return IOException(LocaleController.getString(R.string.InuAiTranscribeErrorDailyQuota))
+        }
+        return TransientHttpException(
+            LocaleController.getString(R.string.InuAiTranscribeErrorRateLimited),
+            retryMs
+        )
+    }
+
+    /** google.protobuf.Duration as it appears in an API error: "29s", "1.5s". */
+    private fun parseProtoDuration(value: String): Long {
+        val seconds = value.trim().removeSuffix("s").toDoubleOrNull() ?: return 0L
+        return (seconds * 1000).toLong().coerceAtLeast(0L)
+    }
+
+    /**
+     * The provider's own cooldown, in milliseconds, from a `Retry-After` header. Seconds and
+     * HTTP-dates are both legal there; only the seconds form is worth parsing, since that is what
+     * every provider here actually sends.
+     */
+    private fun retryAfterMs(conn: HttpURLConnection): Long {
+        val header = conn.getHeaderField("Retry-After")?.trim().orEmpty()
+        val seconds = header.toLongOrNull() ?: return 0L
+        return (seconds * 1000).coerceAtLeast(0L)
     }
 
     /**
@@ -449,6 +527,15 @@ object TranscribeHelper {
         }
     }
 
+    /**
+     * The whisper models that take the audio as the raw request body. The rest of Cloudflare's
+     * whisper family - large-v3-turbo included, which is what the model picker lists right next to
+     * the default - takes JSON with the audio Base64'd in an "audio" field and answers 400 to a
+     * binary body. Sending the binary shape to every model is why Cloudflare transcription failed
+     * for anyone who picked a model other than the default.
+     */
+    private val CF_BINARY_MODELS = setOf("@cf/openai/whisper", "@cf/openai/whisper-tiny-en")
+
     private fun transcribeCloudflare(file: File, prompt: String): String {
         val accountId = InuConfig.AI_TRANSCRIBE_CF_ACCOUNT_ID.value.trim()
         val apiToken = InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value.trim()
@@ -456,6 +543,10 @@ object TranscribeHelper {
             throw IOException("Cloudflare Account ID or API Token missing")
         }
         val model = InuConfig.AI_TRANSCRIBE_CF_MODEL.value.trim().ifBlank { "@cf/openai/whisper" }
+        val binary = CF_BINARY_MODELS.contains(model.lowercase())
+        if (!binary && file.length() > MAX_INLINE_AUDIO_BYTES) {
+            throw IOException(LocaleController.formatString(R.string.InuAiTranscribeErrorTooLargeInline, "Cloudflare"))
+        }
         val url = "https://api.cloudflare.com/client/v4/accounts/$accountId/ai/run/$model"
 
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
@@ -465,19 +556,34 @@ object TranscribeHelper {
             doOutput = true
             setChunkedStreamingMode(0)
             setRequestProperty("Authorization", "Bearer $apiToken")
-            setRequestProperty("Content-Type", "application/octet-stream")
+            setRequestProperty("Content-Type", if (binary) "application/octet-stream" else "application/json")
         }
-        FileInputStream(file).use { input ->
-            conn.outputStream.use { output -> input.copyTo(output) }
+        if (binary) {
+            FileInputStream(file).use { input ->
+                conn.outputStream.use { output -> input.copyTo(output) }
+            }
+        } else {
+            // Written around the Base64 stream rather than built as a JSONObject, for the same
+            // reason as Gemini: the encoded audio is never held in memory in full.
+            val head = StringBuilder("{\"task\":\"transcribe\"")
+            languageHint().takeIf { it.isNotBlank() }?.let { head.append(",\"language\":").append(JSONObject.quote(it)) }
+            prompt.takeIf { it.isNotBlank() }?.let { head.append(",\"prompt\":").append(JSONObject.quote(it)) }
+            head.append(",\"audio\":\"")
+            conn.outputStream.buffered().use { out ->
+                out.write(head.toString().toByteArray())
+                streamBase64(file, out)
+                out.write("\"}".toByteArray())
+            }
         }
         val code = conn.responseCode
+        val retryAfter = retryAfterMs(conn)
         val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
             ?.bufferedReader()?.use { it.readText() } ?: ""
         conn.disconnect()
 
         if (code !in 200..299) {
             val message = "Cloudflare error ($code): ${resp.take(300)}"
-            throw if (code == 429 || code >= 500) TransientHttpException(message) else IOException(message)
+            throw if (code == 429 || code >= 500) TransientHttpException(message, retryAfter) else IOException(message)
         }
 
         val json = JSONObject(resp)
@@ -532,6 +638,7 @@ object TranscribeHelper {
         }
 
         val code = conn.responseCode
+        val retryAfter = retryAfterMs(conn)
         val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
             ?.bufferedReader()?.use { it.readText() } ?: ""
         conn.disconnect()
@@ -544,7 +651,7 @@ object TranscribeHelper {
                 resp
             }
             val message = "HTTP $code: ${err.take(300)}"
-            throw if (code == 429 || code >= 500) TransientHttpException(message) else IOException(message)
+            throw if (code == 429 || code >= 500) TransientHttpException(message, retryAfter) else IOException(message)
         }
         return resp
     }

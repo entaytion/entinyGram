@@ -23,9 +23,6 @@
     <string name="InuAutoUpdateCheckInfo">Yeni sürümler için periyodik olarak entinyGram CI kanalını kontrol edin ve indirme teklifi alın.</string>
     <string name="InuUpdatesIncludeBeta">Beta güncellemelerini al</string>
     <string name="InuUpdatesIncludeBetaInfo">Ayrıca ön sürüm/beta test yapılarını sunun. Kararlı sürüm mevcut betanızdan daha yeniyse bunun yerine o sunulur.</string>
-    <string name="InuAppearance">Görünüm</string>
-    <string name="InuLookAndFeel">Tasarım &amp; His</string>
-    <string name="InuBehavior">Davranış</string>
     <string name="InuPerformanceClass">Performans sınıfı</string>
     <string name="InuPerformanceClassInfo">Bu ayarı değiştirmeniz önerilmez, düşük performanslı bütçe dostu cihazlarda performansı ciddi ölçüde düşürebilir</string>
     <string name="InuPerformanceClassMeasured">Ölçülen</string>
@@ -42,11 +39,8 @@
     <string name="InuAnnoyancesAi">Yapay Zeka</string>
     <string name="InuAnnoyancesHints">İpuçları ve Hatırlatıcılar</string>
     <string name="InuMessages">Mesajlar</string>
-    <string name="InuOther">Diğer</string>
     <string name="InuMainPage">Sohbet listesi</string>
     <string name="InuUserProfile">Kullanıcı profili</string>
-    <string name="InuUserProfileHeader">Üst bilgi</string>
-    <string name="InuUserProfileInformation">Bilgi</string>
     <string name="InuChatList">Sohbet listesi</string>
     <string name="InuTitleText">Başlık metni</string>
     <string name="InuTitleTextFolder">Klasör adı</string>
@@ -62,7 +56,6 @@
     <string name="InuSwipeForSearch">Arama için aşağı kaydırın</string>
     <string name="InuReleaseForSearch">Arama için bırakın</string>
     <string name="InuDoubleTapActions">Çift dokunma eylemleri</string>
-    <string name="InuDoubleTapDelay">Çift dokunma gecikmesi</string>
     <string name="InuIncomingMessages">Gelen mesajlar</string>
     <string name="InuOutgoingMessages">Giden mesajlar</string>
     <string name="InuChannelMessages">Gönderi paylaşabildiğiniz kanallar</string>
@@ -151,9 +144,6 @@
     <string name="InuBottomTabsHide">Alt sekmeleri gizle</string>
     <string name="InuBottomTabsHideInfo">Ögeler ana ekranın sol yan menüsüne taşınır</string>
     <string name="InuShowTabTitles">Sekme başlıklarını göster</string>
-    <string name="InuCustomizeBottomTabs">Alt sekmeleri özelleştir</string>
-    <string name="InuMainTabsCustomizeInfo">Alt çubuktaki sekmeleri yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamacı sürükleyin, gizlemek için anahtarı değiştirin. Sohbetler sekmesi her zaman ilktir ve gizlenemez. Yeniden başlatma gerektirir.</string>
-    <string name="InuMainTabsItems">Sekmeler</string>
     <string name="InuMainTabsCustomizeReset">Varsayılana sıfırla</string>
     <string name="InuCompactMode">Kompakt mod</string>
     <string name="InuCompactModeInfo">Başlıkları gizler ve sekmeleri küçültür</string>
@@ -228,10 +218,8 @@
     <string name="InuHidePaidReactionUpsell">Ücretli tepki teşvikini gizle</string>
     <string name="InuHideHashtagSuggestions">Konu etiketi (hashtag) önerilerini gizle</string>
     <string name="InuDisableProfileScrollSnap">Profil kaydırma hizalamasını devre dışı bırak</string>
-    <string name="InuDisableProfileScrollSnapInfo">Kaydırırken profil üst bilgisini sabit konumlara hizalamaz</string>
     <string name="InuReduceProfileMotion">Profil hareketlerini azalt</string>
     <string name="InuProfilePreferMediaTab">\"Medya\" sekmesini tercih et</string>
-    <string name="InuProfilePreferMediaTabInfo">…Hediyeler ve Gönderiler sekmeleri yerine</string>
     <string name="InuDisableMotionPhotos">Hareketli fotoğrafları devre dışı bırak</string>
     <string name="InuDisableMotionPhotosInfo">Seçicide ve mesajlarda hareketli fotoğrafları algılamaz veya oynatmaz</string>
     <string name="InuDisableVolumePlayVideo">Ses tuşlarının videoları oynatmasını devre dışı bırak</string>
@@ -392,7 +380,6 @@
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
     <string name="InuMapProviderGoogle">Google Haritalar</string>
-    <string name="InuMapProviderOsm">OpenStreetMap</string>
     <string name="InuMapPreviewProvider">Harita önizleme sağlayıcısı</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
@@ -404,24 +391,14 @@
     <string name="InuClosestToDeletedReply">Orijinal mesaj silindi, en yakın olan gösteriliyor</string>
     <string name="InuSummarize">Özetle</string>
     <string name="InuMessageDetails">Detaylar</string>
-    <string name="InuMsgDetailScheduled">Zamanlandı</string>
-    <string name="InuMsgDetailScheduledDate">Zamanlanan tarih</string>
-    <string name="InuMsgDetailMessage">Mesaj</string>
-    <string name="InuMsgDetailCaption">Açıklama</string>
-    <string name="InuMsgDetailChannel">Kanal</string>
-    <string name="InuMsgDetailGroup">Grup</string>
-    <string name="InuMsgDetailFrom">Gönderen</string>
     <string name="InuMsgDetailDate">Tarih</string>
     <string name="InuMsgDetailWhenOnline">Çevrim içi olduğunda</string>
     <string name="InuMsgDetailEdited">Düzenlendi</string>
     <string name="InuMsgDetailAutoDelete">Otomatik silme</string>
-    <string name="InuMsgDetailForwardFrom">Yönlendirilen Kişi</string>
-    <string name="InuMsgDetailRestrictionReason">Kısıtlama Nedeni</string>
     <string name="InuMsgDetailFileName">Dosya Adı</string>
     <string name="InuMsgDetailFilePath">Dosya Yolu</string>
     <string name="InuMsgDetailFileSize">Dosya Boyutu</string>
     <string name="InuMsgDetailMimeType">MIME Türü</string>
-    <string name="InuMsgDetailMedia">Medya</string>
     <string name="InuMsgDetailStickerPackCreator">Çıkartma Paketi Oluşturucusu</string>
     <string name="InuMsgDetailEmojiPackCreators">Emoji Paketi Oluşturucuları</string>
     <string name="InuShowJson">JSON Göster</string>
@@ -543,8 +520,6 @@
     <string name="InuSuggestCustomEmojiAfter">Özel emojileri normal emojilerden sonra öner</string>
     <string name="InuSuggestCustomEmojiAfterInfo">\":kısakod\" öneri penceresinde hareketli/özel emojileri normal olanlardan önce değil sonra gösterir</string>
 
-    <string name="InuEmojiPanelKeywordSearch">Emoji panelinde anahtar kelimeyle ara</string>
-    <string name="InuEmojiPanelKeywordSearchInfo">Emoji paneli aramasında bir kelime yazarken eşleşen normal emojileri de (sadece özel olanları değil) gösterir</string>
 
     <string name="InuFormattingPopup">Özel biçimlendirme penceresi</string>
     <string name="InuFormattingPopupInfo">Varsayılan zengin metin biçimlendirme menüsünü etkileşimli bir açılır pencere ile değiştirir.\nÖzelleştirmek için tıklayın…</string>
@@ -580,13 +555,9 @@
     <string name="InuAppIconLicenseTelegram">Simge **Telegram** tarafından yapılmıştır. Tüm hakları saklıdır.</string>
     <string name="InuJumpToBeginning">En başa git</string>
 
-    <string name="InuAbout">Hakkında</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Güncelleme kanalı</string>
     <string name="InuUpdates">Güncellemeler</string>
-    <string name="InuUpdatesEnabled">Güncellemeleri otomatik denetle</string>
-    <string name="InuUpdateCheckNow">Şimdi denetle</string>
-    <string name="InuUpdateLastChecked">Son denetleme: %1$s</string>
     <string name="InuUpdateUpToDate">En son sürümü kullanıyorsunuz</string>
     <string name="InuUpdateError">Güncelleme denetimi başarısız: %1$s</string>
     <string name="InuUpdateInstalling">Güncelleme yükleniyor</string>
@@ -711,7 +682,6 @@
     <string name="InuParanoiaHideFolders">Klasörleri gizle</string>
     <string name="InuParanoiaDisguise">Telegram olarak gizle</string>
     <string name="InuParanoiaDisguiseInfo">Yalnızca başlatıcı simgesi ve adı değişir. Android kısıtlamaları nedeniyle bildirimler ve uygulama içi ad hâlâ \"entinyGram\" olarak görünür.</string>
-    <string name="InuDisguiseName" translatable="false">Telegram</string>
     <string name="InuParanoiaMode">Paranoia modu</string>
     <string name="InuParanoiaModeInfo">Paranoia modu, \"tehlikeli\" sohbetleri gizleyerek ve isteğe bağlı olarak varsayılan uygulama gibi görünerek bir başkasının telefonunuzu kontrol etmesine \"hazırlıklı\" olmanızı sağlar.</string>
     <string name="InuParanoiaLauncherShortcut">Başlatıcı kısayolu</string>
@@ -736,7 +706,6 @@
     <string name="InuBotSettings">Bot Ayarları</string>
     <string name="InuBotHelp">Bot Yardımı</string>
 
-    <string name="InuSimulateOom">OOM (bellek yetersizliği) çökmesini simüle et</string>
     <string name="InuCrashTitle">entinyGram geçen sefer çöktü</string>
     <string name="InuCrashTitleOom">entinyGram bellek yetersizliği yaşadı</string>
     <string name="InuCrashDesc">Bunun için üzgünüz. Düzeltilmesine yardımcı olmak için çökme günlüğünü geliştiriciyle paylaşabilirsiniz.</string>
@@ -844,8 +813,6 @@
     <string name="InuAiUse">Uygula</string>
     <string name="InuAllowForwardRestricted">Korumalı sohbetlerden iletmeye izin ver</string>
     <string name="InuAllowForwardRestrictedInfo">İletimi kapalı olan sohbetlerden medya iletmek, kopyalamak ve kaydetmek için içerik korumasını atlayın.</string>
-    <string name="InuBetaFeatureInfo">Bu özellik aktif geliştirme aşamasındadır (deneysel/beta).</string>
-    <string name="InuBetaFeatureTitle">Beta özelliği</string>
     <string name="InuCacheTtl">Mesaj önbelleğini otomatik temizle</string>
     <string name="InuCacheTtlDay">1 günden eski</string>
     <string name="InuCacheTtlInfo">Seçilen süreden eski kaydedilmiş silinen/düzenlenen mesajları otomatik olarak siler</string>
@@ -858,19 +825,16 @@
     <string name="InuDeletedMessageSearch">Arşivde ara</string>
     <string name="InuDeletedMessageSearchHint">Kaydedilen silinen ve düzenlenen mesajlarda ara</string>
     <string name="InuDeletedMessageSearchEmpty">Eşleşme bulunamadı.</string>
-    <string name="InuClearDeletedCacheConfirm">Seçilen sohbetler için kaydedilen silinen/düzenlenen mesajlar temizlensin mi?</string>
     <string name="InuClearDeletedCacheDone">Silinen mesaj önbelleği temizlendi</string>
     <string name="InuClearDeletedCacheEmpty">Silinen mesaj önbelleği boş</string>
     <string name="InuDataBackup">Yedekleme ve Senkronizasyon</string>
     <string name="InuDownloadingStory">Hikaye indiriliyor…</string>
     <string name="InuEditHistory">Düzenleme geçmişi</string>
-    <string name="InuEditedAt">%1$s düzenlendi</string>
     <string name="InuSuppressScreenshotNotification">Ekran görüntüsü bildirimlerini gizle</string>
     <string name="InuSuppressScreenshotNotificationInfo">Gizli bir sohbette ekran görüntüsü aldığınızda karşı tarafa bildirim gitmesin.</string>
     <string name="InuHideSponsoredMessages">Sponsorlu mesajları gizle (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Kanal reklamlarını devre dışı bırakır ve tanıtım mesajlarının yüklenmesini engeller</string>
     <string name="InuLegacySettingsLink">Bu ayar bağlantısı biçimi eskidi. tg://entinySettings/&lt;slug&gt; kullanın.</string>
-    <string name="InuLinks">Bağlantılar</string>
     <string name="InuNoEditHistory">Düzenleme geçmişi yok</string>
     <string name="InuRefreshStickerSet">Yenile</string>
     <string name="InuRegexFilter">AdBlock ve Regex Filtresi</string>
@@ -909,10 +873,7 @@
 
     <string name="InuSaveUserInfo">Kullanıcı bilgilerini kaydet</string>
     <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesi, kayıt ayı ve ad/fotoğraf değişiklik tarihlerini saklar (beta)</string>
-    <string name="InuSaveSelfDestruct">Süreli medyayı kaydet</string>
-    <string name="InuSaveSelfDestructInfo">Tek seferlik fotoğraflar, videolar ve video mesajları normal medya olarak görünür ve kaydedilebilir veya iletilebilir.</string>
     <string name="InuSelfDestructMedia">Süreli medya</string>
-    <string name="InuSettingsPrefixHint">Ayar bağlantıları tg://entinySettings/&lt;slug&gt; kullanır</string>
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuTOS">Hizmet Şartları</string>
@@ -991,7 +952,6 @@
     <string name="InuCategoryBehavior">Davranış ve Araçlar</string>
     <string name="InuCategoryChats">Sohbetler</string>
     <string name="InuCategoryPrivacy">Gizlilik ve Güvenlik</string>
-    <string name="InuCategoryProfile">Profil ve Gezinme</string>
     <string name="InuCenterTitleRightAvatar">Profil resmini sağda göster</string>
     <string name="InuCenterTitleMain">Ekran başlıklarını ortala</string>
     <string name="InuCenterTitleMainInfo">Ana ekranda, ayarlarda ve diğer her yerde başlıkları ortalar. Sohbetlerin aşağıda kendi anahtarı vardır.</string>
@@ -999,7 +959,6 @@
     <string name="InuChatTitleMarqueeInfo">Sığmayan sohbet başlığı ve alt başlığı, ekran başlıkları ve profil adı otomatik kaydırılır</string>
     <string name="InuChats">Sohbetler</string>
     <string name="InuContentProtectionBypass">İçerik Koruması</string>
-    <string name="InuCustomization">Özelleştirme</string>
     <string name="InuDeleteAllProfilePhotos">Tüm fotoğrafları sil</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Tüm profil fotoğraflarını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="InuDeleteProfilePhotos">Profil fotoğraflarını sil</string>
@@ -1013,7 +972,6 @@
     <string name="InuDeleteSelectedProfilePhotos">Seçilenleri sil (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">Seçilen %1$d profil fotoğrafını silmek istediğinizden emin misiniz?</string>
     <string name="InuDeletedAt">Silindi: %1$s</string>
-    <string name="InuDeletedEditedSave">Silinenler ve düzenlenenler</string>
     <string name="InuDeletedMark">Silindi işareti</string>
     <string name="InuDeletedMarkColor">Silindi işareti rengi</string>
     <string name="InuDeletedMarkPreviewSender">Alina</string>
@@ -1027,19 +985,8 @@
     <string name="InuDeletedMessagesTransparent">Silinen mesajları yarı saydam göster</string>
     <string name="InuDeletedMessagesTransparentInfo">Sohbette kolayca ayırt edilebilmesi için korunan silinmiş mesajları hafif bir şeffaflıkla gösterir.</string>
     <string name="InuDeselectAll">Tüm seçimleri kaldır</string>
-    <string name="InuDevBadgeAccess">Geliştirici rozeti</string>
-    <string name="InuDevBadgeChannel">Resmi entinyGram kanalı</string>
-    <string name="InuDevBadgeChannelInfo">entinyGram haberleri ve güncellemeleri için resmi kanal</string>
-    <string name="InuDevBadgeEntiny">entinyGram geliştiricisi</string>
-    <string name="InuDevBadgeEntinyInfo">Bu kullanıcı entinyGram\'ı geliştirmektedir</string>
-    <string name="InuDevBadgeInu">inuGram geliştiricisi</string>
-    <string name="InuDevBadgeInuChannel">Resmi inuGram kanalı</string>
-    <string name="InuDevBadgeInuChannelInfo">entinyGram\'ın temel aldığı orijinal inuGram kanalı</string>
-    <string name="InuDevBadgeInuInfo">Bu kullanıcı, entinyGram\'ın temel aldığı inuGram\'ın yazarıdır</string>
     <string name="InuEditHistoryDiff">Metin Değişikliklerini Vurgula (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Düzenleme geçmişinde silinen metni kırmızı üstü çizili, eklenen metni yeşil olarak gösterir</string>
-    <string name="InuFloatingAvatar">Sohbet başlığında kayan profil resmi</string>
-    <string name="InuFloatingAvatarInfo">Profil resmini başlıktan ayırır ve sağ tarafta kayan bir öge olarak konumlandırır</string>
     <string name="InuForceTranslate">Zorunlu çeviri</string>
     <string name="InuAutoTranslateAll">Tüm sohbetleri otomatik çevir</string>
     <string name="InuAutoTranslateAllInfo">Sohbet çevirisini her yerde varsayılan olarak açar. Belirli bir sohbette kapatmanız istisna olarak hatırlanır ve bu ayar açıkken de geçerli kalır.</string>
@@ -1048,11 +995,8 @@
     <string name="InuGhostEnabled">Hayalet Modu etkin</string>
     <string name="InuGhostFeatures">Gizli Etkinlik</string>
     <string name="InuGhostHideRead">Okundu bilgisi gönderme</string>
-    <string name="InuGhostHideReadInfo">Mesajlar sunucuda okundu olarak işaretlenmez, bu nedenle karşı taraf asla mavi onay işareti görmez.</string>
     <string name="InuGhostHideStoryRead">Hikaye görüntülemelerini gönderme</string>
-    <string name="InuGhostHideStoryReadInfo">Hikaye okumaları ve görüntüleme sayıları yazara bildirilmez.</string>
     <string name="InuGhostHideTyping">Yazıyor ve yükleme durumunu gizle</string>
-    <string name="InuGhostHideTypingInfo">Yazıyor, ses kaydediyor ve dosya yüklüyor durumları karşı tarafa asla iletilmez.</string>
     <string name="InuGhostPresenceMode">Çevrim içi durumu</string>
     <string name="InuGhostPresenceModeNormal">Normal</string>
     <string name="InuGhostPresenceModeHidden">Her zaman gizli</string>
@@ -1063,17 +1007,14 @@
     <string name="InuGhostWhitelistAdd">Sohbeti beyaz listeye ekle</string>
     <string name="InuGhostWhitelistRemoved">Beyaz listeden kaldırıldı</string>
     <string name="InuGhostHideVoiceRead">Sesli ve görüntülü mesajları dinlendi olarak işaretleme</string>
-    <string name="InuGhostHideVoiceReadInfo">Sesli mesajlar ve görüntülü notlar gönderene dinlendi/oynatıldı olarak gösterilmez.</string>
     <string name="InuGhostMode">Hayalet Modu</string>
     <string name="InuGhostModeDisableForChat">Bu sohbet için Hayalet Modunu devre dışı bırak</string>
     <string name="InuGhostModeDisabledForChatDone">Bu sohbet için Hayalet Modu devre dışı bırakıldı</string>
     <string name="InuGhostModeEnableForChat">Bu sohbet için Hayalet Modunu etkinleştir</string>
     <string name="InuGhostModeEnabledForChatDone">Bu sohbet için Hayalet Modu etkinleştirildi</string>
-    <string name="InuGhostModeForChat">Bu sohbet için Hayalet Modu</string>
     <string name="InuGhostModeInfo">Etkinliğinizi gizleyin: Gelen mesajlar okundu olarak işaretlenmez; çevrim içi durumunuz, yazıyor göstergesi ve hikaye görüntülemeleriniz gizli kalır.</string>
     <string name="InuGhostModeMaster">Hayalet Modu</string>
     <string name="InuGhostReadOnSend">Gönderirken okundu olarak işaretle</string>
-    <string name="InuGhostReadOnSendInfo">Sohbette bir mesaj veya yanıt gönderdiğinizde önceki mesajları otomatik olarak okundu olarak işaretler.</string>
     <string name="InuGhostMarkReadLocally">Yerel olarak okundu işaretle</string>
     <string name="InuGhostMarkReadLocallyInfo">Hayalet Modunda bir sohbet açıldığında okunmamış mesaj sayacını sıfırlar, ancak sunucuda okunmamış olarak tutar.</string>
     <string name="InuHiddenStarGifts">Gizli ve Arşivlenmiş Star Hediyeleri</string>
@@ -1190,7 +1131,6 @@
     <string name="InuMsgDetailSupportsStreaming">Akış desteği</string>
     <string name="InuMsgDetailTargetUsers">Hedef kullanıcılar</string>
     <string name="InuMsgDetailTrackTitle">Başlık</string>
-    <string name="InuMsgDetailViaBot">Bot aracılığıyla</string>
     <string name="InuMsgDetailVideoCodec">Video codec bileşeni</string>
     <string name="InuMsgDetailVideoGif">Hareketli GIF</string>
     <string name="InuMsgDetailVideoRound">Görüntülü not</string>
@@ -1203,7 +1143,6 @@
     <string name="InuNoProfilePhotos">Profil fotoğrafı bulunamadı</string>
     <string name="InuNotificationIconOldEntinygram">Eski entinyGram</string>
     <string name="InuPoweredByProvider">Çeviriler %1$s tarafından desteklenmektedir.</string>
-    <string name="InuProfileCreatedDate">Oluşturulma Tarihi</string>
     <string name="InuProfilePhotosDeleted">Tüm profil fotoğrafları silindi</string>
     <string name="InuProfilePhotosDeletedCount">%1$d profil fotoğrafı silindi</string>
     <string name="InuProfilePhotosSelected">Seçilen: %1$d</string>
@@ -1214,16 +1153,10 @@
     <string name="InuSaveDeletedChannels">Kanallar</string>
     <string name="InuSaveDeletedGroups">Gruplar</string>
     <string name="InuSaveDeletedPrivate">Özel sohbetler</string>
-    <string name="InuSaveSecretChatContent">Gizli sohbetleri sakla</string>
-    <string name="InuSaveSecretChatContentInfo">Gizli sohbetlerdeki her şey (medya ve metin) yerel olarak saklanır ve asla otomatik olarak silinmez.</string>
     <string name="InuSaveSelfDestructMedia">Gizli medyayı sakla</string>
-    <string name="InuSaveSelfDestructMediaInfo">Gizli sohbetlerdeki süreli fotoğraflar, videolar ve görüntülü notlar süre dolduktan sonra yerel veritabanında saklanır.</string>
     <string name="InuSaveSelfDestructText">Süreli metinleri sakla</string>
-    <string name="InuSaveSelfDestructTextInfo">Gizli sohbetlerdeki zamanlayıcılı metin mesajları silinmek yerine yerel veritabanında saklanır.</string>
     <string name="InuSaveTimedMessages">Süreli mesajları sakla</string>
-    <string name="InuSaveTimedMessagesInfo">Otomatik silme zamanlayıcısı olan sohbetlerdeki mesajlar, zamanlayıcı dolduğunda silinmek yerine yerel olarak saklanır.</string>
     <string name="InuSaveViewOnceMedia">Tek seferlik medyayı sakla</string>
-    <string name="InuSaveViewOnceMediaInfo">Normal sohbetlerdeki tek seferlik fotoğraflar, videolar ve görüntülü notlar görüntülendikten sonra yerel veritabanında saklanır.</string>
     <string name="InuSelectAll">Tümünü seç</string>
     <string name="InuShowDrawerAccounts">Çekmecede hesapları göster</string>
     <string name="InuShowDrawerAccountsInfo">Profilinizin altında genişletilebilir hesap değiştiriciyi gösterin.</string>
@@ -1232,7 +1165,6 @@
     <string name="InuShowMutualContactInChats">Grup ve Kanal Üye Listelerinde Karşılıklı Kişi Simgesini Göster</string>
     <string name="InuShowMutualContactInChatsInfo">Grup ve kanal üye listelerinde karşılıklı kişi simgesini görüntüler</string>
     <string name="InuShowProfileRegDate">Kayıt tarihini ve DC\'yi göster</string>
-    <string name="InuShowProfileRegDateInfo">Profil bilgilerinde tahmini kayıt tarihini ve veri merkezini görüntüler</string>
     <string name="InuStarGiftsSection">Hediyeler</string>
     <string name="InuCenteringSection">Ortalama</string>
     <string name="InuTranslateDeepLApiKey">DeepL API anahtarı</string>
@@ -1265,15 +1197,11 @@
     <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, ücretsiz)</string>
     <string name="InuTranslateProviderYandex">Yandex Çeviri</string>
     <string name="InuTranslateYandexApiKey">Yandex API anahtarı</string>
-    <string name="InuTranslatorInfo">Otomatik sohbet çevirisi, sağlayıcılar ve dil ayarları</string>
-    <string name="InuUnreader">Okunmadı Yöneticisi</string>
-    <string name="InuUnreaderInfo">Mesajlar asla okundu olarak işaretlenmez: bir sohbeti açmak okunmadı rozetini korur ve karşı tarafa okundu bilgisi gitmez.</string>
     <string name="InuYes">Evet</string>
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
     <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
     <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
     <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
-    <string name="InuHideContactsTab">Kişiler sekmesini gizle</string>
     <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>
     <string name="InuHideProxySponsorChatInfo">Bağlıyken bazı MTProto vekil sunucularının sohbet listenizin en üstüne sabitlediği tanıtım sohbetini/kanalını engeller</string>
     <string name="InuHideRichEditorButton">Zengin metin düzenleyici düğmesini gizle</string>
@@ -1289,9 +1217,6 @@
     <string name="InuStopBotAction">Durdur</string>
     <string name="InuStopBotAlert">**%1$s** botunu durdurmak istediğinizden emin misiniz? Artık size mesaj gönderemeyecek.</string>
     <string name="InuStopBotDone">Bot durduruldu</string>
-    <string name="InuMsgDetailFileId">File ID</string>
-    <string name="InuMsgDetailFileUniqueId">Benzersiz File ID</string>
-    <string name="InuMsgDetailFileIdInfo">Bu File ID mevcut hesaba bağlıdır ve bir süre sonra geçerliliğini yitirecektir.</string>
     <string name="InuSelectionBottomNoQuote">Seçim çubuğunda Alıntısız düğmesi</string>
     <string name="InuSelectionBottomNoQuoteInfo">Mesaj seçerken Yanıtla düğmesini Alıntısız ilet düğmesiyle değiştirir</string>
     <string name="InuSaveDeletedOwn">Kendi mesajlarım</string>
@@ -1308,4 +1233,5 @@
     <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmi haptan çıkar ve \"⋮\" düğmesinin yerini alır — dokunmak profili, uzun basmak sohbet menüsünü açar. Kapalıyken profil resmi kompakt hapın içinde kalır.</string>
     <string name="InuUnreadBadgeBackButton">Geri düğmesinde okunmamış rozeti (iOS tarzı)</string>
     <string name="InuUnreadBadgeBackButtonInfo">Toplam okunmamış sohbet sayınızı geri düğmesinin yanında küçük bir hap olarak gösterir, tıpkı Telegram iOS gibi.</string>
+    <string name="InuScrollToTop">Scroll to top</string>
 </resources>

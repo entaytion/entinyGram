@@ -311,14 +311,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.value,
             )
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH,
-                R.string.InuEmojiPanelKeywordSearch,
-                R.string.InuEmojiPanelKeywordSearchInfo,
-                InuConfig.EMOJI_PANEL_KEYWORD_SEARCH.value,
-            )
-        )
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
         hideBottomBarGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
@@ -357,7 +349,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 wideChannelPostsPreview?.setWide(new, true)
             }
-            TOGGLE_FLOATING_AVATAR -> (view as? TextCheckCell)?.isChecked = InuConfig.FLOATING_AVATAR.toggle()
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
             TOGGLE_CHAT_ALWAYS_SHOW_DOWN -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_ALWAYS_SHOW_DOWN.toggle()
@@ -407,7 +398,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.toggle()
             TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.toggle()
-            TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.EMOJI_PANEL_KEYWORD_SEARCH.toggle()
 
             BUTTON_FORMATTING_POPUP -> {
                 val isSwitch = if (LocaleController.isRTL)
@@ -434,7 +424,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     companion object {
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_WIDE_CHANNEL_POSTS = InuUtils.generateId()
-        private val TOGGLE_FLOATING_AVATAR = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
         private val TOGGLE_DISABLE_PULL_TO_NEXT = InuUtils.generateId()
         private val TOGGLE_CHAT_ALWAYS_SHOW_DOWN = InuUtils.generateId()
@@ -455,7 +444,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
         private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER = InuUtils.generateId()
-        private val TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH = InuUtils.generateId()
         private val BUTTON_FORMATTING_POPUP = InuUtils.generateId()
         private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
         private val BUTTON_MAIN_PAGE = InuUtils.generateId()
@@ -489,7 +477,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("wide-channel-posts", R.string.InuWideChannelPosts, TOGGLE_WIDE_CHANNEL_POSTS),
-                SearchRegistry.Entry("floating-avatar", R.string.InuFloatingAvatar, TOGGLE_FLOATING_AVATAR),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),
                 SearchRegistry.Entry("disable-pull-to-next", R.string.InuDisablePullToNext, TOGGLE_DISABLE_PULL_TO_NEXT),
                 SearchRegistry.Entry("chat-always-show-down", R.string.InuChatAlwaysShowDown, TOGGLE_CHAT_ALWAYS_SHOW_DOWN),
@@ -510,7 +497,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-bot-webview-input", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
                 SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
                 SearchRegistry.Entry("suggest-custom-emoji-after", R.string.InuSuggestCustomEmojiAfter, TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER),
-                SearchRegistry.Entry("emoji-panel-keyword-search", R.string.InuEmojiPanelKeywordSearch, TOGGLE_EMOJI_PANEL_KEYWORD_SEARCH),
                 SearchRegistry.Entry("formatting-popup", R.string.InuFormattingPopup, BUTTON_FORMATTING_POPUP),
                 SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
                 SearchRegistry.Entry("main-page", R.string.InuMainPage, BUTTON_MAIN_PAGE),

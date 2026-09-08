@@ -15,8 +15,6 @@
     <string name="InuAutoUpdateCheckInfo">定期检查 entinyGram CI 频道的新版本并提示下载。</string>
     <string name="InuUpdatesIncludeBeta">接收测试版更新</string>
     <string name="InuUpdatesIncludeBetaInfo">同时提供预发布/测试版构建。如果稳定版比当前测试版更新，则优先提供稳定版。</string>
-    <string name="InuAppearance">外观</string>
-    <string name="InuBehavior">行为</string>
     <string name="InuPerformanceClass">性能等级</string>
     <string name="InuPerformanceClassInfo">不建议更改此设置，在低性能的入门设备上可能会严重影响性能</string>
     <string name="InuPerformanceClassMeasured">实测</string>
@@ -33,11 +31,8 @@
     <string name="InuAnnoyancesAi">人工智能</string>
     <string name="InuAnnoyancesHints">提示与提醒</string>
     <string name="InuMessages">消息</string>
-    <string name="InuOther">其他</string>
     <string name="InuMainPage">对话列表</string>
     <string name="InuUserProfile">用户资料</string>
-    <string name="InuUserProfileHeader">头部</string>
-    <string name="InuUserProfileInformation">信息</string>
     <string name="InuChatList">聊天列表</string>
     <string name="InuTitleText">标题文本</string>
     <string name="InuTitleTextFolder">文件夹名称</string>
@@ -53,7 +48,6 @@
     <string name="InuSwipeForSearch">下拉打开搜索</string>
     <string name="InuReleaseForSearch">松开打开搜索</string>
     <string name="InuDoubleTapActions">双击操作</string>
-    <string name="InuDoubleTapDelay">双击延迟</string>
     <string name="InuIncomingMessages">收到的消息</string>
     <string name="InuOutgoingMessages">发出的消息</string>
     <string name="InuChannelMessages">你可以发布消息的频道</string>
@@ -109,9 +103,6 @@
     <string name="InuBottomTabsHide">隐藏底部标签</string>
     <string name="InuBottomTabsHideInfo">条目会移入主屏幕的汉堡菜单</string>
     <string name="InuShowTabTitles">显示标签标题</string>
-    <string name="InuCustomizeBottomTabs">自定义底部标签页</string>
-    <string name="InuMainTabsCustomizeInfo">重新排列或隐藏底部栏中的标签页。拖动手柄可调整顺序，切换开关可隐藏。聊天标签页始终位于第一位且无法隐藏。需要重启应用。</string>
-    <string name="InuMainTabsItems">标签页</string>
     <string name="InuMainTabsCustomizeReset">恢复默认</string>
     <string name="InuCompactMode">紧凑模式</string>
     <string name="InuCompactModeInfo">隐藏标题并缩小标签</string>
@@ -166,10 +157,8 @@
     <string name="InuHideArchive">从聊天列表中移除「已归档聊天」</string>
     <string name="InuHideCallActionButton">隐藏标题中的通话按钮</string>
     <string name="InuDisableProfileScrollSnap">禁用资料滚动吸附</string>
-    <string name="InuDisableProfileScrollSnapInfo">滚动时不让资料头部吸附到固定位置</string>
     <string name="InuReduceProfileMotion">减少资料动画</string>
     <string name="InuProfilePreferMediaTab">优先「媒体」标签</string>
-    <string name="InuProfilePreferMediaTabInfo">…而不是「礼物」和「帖子」标签</string>
     <string name="InuDisableMotionPhotos">禁用动态照片</string>
     <string name="InuDisableMotionPhotosInfo">不在选择器和消息中检测或渲染动态照片</string>
     <string name="InuChatAlwaysShowDown">始终显示「跳到底部」</string>
@@ -306,7 +295,6 @@
     <string name="InuMapsHeader">地图</string>
     <string name="InuMapProvider">地图视图提供方</string>
     <string name="InuMapProviderGoogle">Google 地图</string>
-    <string name="InuMapProviderOsm">OpenStreetMap</string>
     <string name="InuMapPreviewProvider">地图预览提供方</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
@@ -317,24 +305,14 @@
     <string name="InuDeletedMessageIdFormat">ID %1$d</string>
     <string name="InuClosestToDeletedReply">原消息已被删除，显示最接近的一条</string>
     <string name="InuMessageDetails">详情</string>
-    <string name="InuMsgDetailScheduled">已计划</string>
-    <string name="InuMsgDetailScheduledDate">计划时间</string>
-    <string name="InuMsgDetailMessage">消息</string>
-    <string name="InuMsgDetailCaption">说明</string>
-    <string name="InuMsgDetailChannel">频道</string>
-    <string name="InuMsgDetailGroup">群组</string>
-    <string name="InuMsgDetailFrom">来自</string>
     <string name="InuMsgDetailDate">日期</string>
     <string name="InuMsgDetailWhenOnline">上线时</string>
     <string name="InuMsgDetailEdited">已编辑</string>
     <string name="InuMsgDetailAutoDelete">自动删除</string>
-    <string name="InuMsgDetailForwardFrom">转发自</string>
-    <string name="InuMsgDetailRestrictionReason">限制原因</string>
     <string name="InuMsgDetailFileName">文件名</string>
     <string name="InuMsgDetailFilePath">文件路径</string>
     <string name="InuMsgDetailFileSize">文件大小</string>
     <string name="InuMsgDetailMimeType">MIME 类型</string>
-    <string name="InuMsgDetailMedia">媒体</string>
     <string name="InuMsgDetailStickerPackCreator">贴纸包创建者</string>
     <string name="InuMsgDetailEmojiPackCreators">表情符号包创建者</string>
     <string name="InuShowJson">显示 JSON</string>
@@ -474,13 +452,9 @@
     <string name="InuAppIconLicenseTelegram">图标版权归 **Telegram** 所有。保留所有权利。</string>
     <string name="InuJumpToBeginning">跳到开头</string>
 
-    <string name="InuAbout">关于</string>
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">更新频道</string>
     <string name="InuUpdates">更新</string>
-    <string name="InuUpdatesEnabled">自动检查更新</string>
-    <string name="InuUpdateCheckNow">立即检查</string>
-    <string name="InuUpdateLastChecked">上次检查: %1$s</string>
     <string name="InuUpdateUpToDate">已是最新版本</string>
     <string name="InuUpdateError">检查更新失败: %1$s</string>
     <string name="InuUpdateInstalling">正在安装更新</string>
@@ -684,8 +658,6 @@
     <string name="InuVoiceRecorder">语音 / 圆形录制</string>
     <string name="InuSummarize">总结</string>
     <string name="InuHiddenSendersAndCaptionDescription">发送者名和说明已移除</string>
-    <string name="InuEmojiPanelKeywordSearch">按关键词搜索表情</string>
-    <string name="InuEmojiPanelKeywordSearchInfo">在表情面板搜索中，输入单词时显示匹配的普通表情（不仅是自定义的）</string>
     <string name="InuRemoveFromCache">从缓存移除</string>
     <string name="InuCacheRemoved">文件已从缓存移除</string>
     <string name="InuChatMenuOrder">聊天菜单</string>
@@ -728,7 +700,6 @@
     <string name="InuLogsMakingHeapDump">正在生成堆转储…</string>
     <string name="InuLogsHeapDumpWarning">**切勿**与任何人分享生成的 .hprof 文件 —— 它是应用内存的快照，**包含敏感信息**（消息、令牌等）。\n\n**仅**自行查看。\n\n应用将会冻结一段时间。</string>
 
-    <string name="InuLookAndFeel">外观与样式</string>
     <string name="InuMaterial3Fabs">悬浮按钮</string>
     <string name="InuMaterial3Sections">列表项</string>
     <string name="InuMaterial3Avatars">头像</string>
@@ -763,7 +734,6 @@
     <string name="InuStripTrackingParamsOnPaste">粘贴时</string>
     <string name="InuStripTrackingParamsSourceRow">过滤器源</string>
 
-    <string name="InuSimulateOom">模拟 OOM 崩溃</string>
     <string name="InuCrashTitleOom">entinyGram 内存不足</string>
     <string name="InuCrashDescOom">抱歉。崩溃日志对内存不足问题帮助不大 —— 堆转储才有用。</string>
     <string name="InuCrashDescHeapDump">同时保存了堆转储。请勿分享！里面包含隐私数据！如果愿意，可以自己查看一下，并把你的发现告诉开发者——会非常有帮助。</string>
@@ -845,8 +815,6 @@
     <string name="InuAiUse">应用</string>
     <string name="InuAllowForwardRestricted">允许从受保护的聊天转发</string>
     <string name="InuAllowForwardRestrictedInfo">绕过内容保护，从禁止转发的聊天中转发、复制和保存媒体。</string>
-    <string name="InuBetaFeatureInfo">此功能正在积极开发中（测试版/实验性）。</string>
-    <string name="InuBetaFeatureTitle">测试版功能</string>
     <string name="InuCacheTtl">自动清理消息缓存</string>
     <string name="InuCacheTtlDay">1 天前</string>
     <string name="InuCacheTtlInfo">自动删除早于所选时间段的保存已删除/已编辑消息</string>
@@ -859,19 +827,16 @@
     <string name="InuDeletedMessageSearch">搜索存档</string>
     <string name="InuDeletedMessageSearchHint">搜索已保存的已删除和已编辑消息</string>
     <string name="InuDeletedMessageSearchEmpty">未找到匹配项。</string>
-    <string name="InuClearDeletedCacheConfirm">确定要清除所选聊天的已保存已删除/已编辑消息吗？</string>
     <string name="InuClearDeletedCacheDone">已删除消息缓存已清除</string>
     <string name="InuClearDeletedCacheEmpty">已删除消息缓存为空</string>
     <string name="InuDataBackup">备份与同步</string>
     <string name="InuDownloadingStory">正在下载故事…</string>
     <string name="InuEditHistory">编辑历史</string>
-    <string name="InuEditedAt">已编辑 %1$s</string>
     <string name="InuSuppressScreenshotNotification">隐藏截图通知</string>
     <string name="InuSuppressScreenshotNotificationInfo">在密聊中截图时不通知对方。</string>
     <string name="InuHideSponsoredMessages">隐藏赞助消息 (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">禁用频道赞助广告并防止加载推广消息</string>
     <string name="InuLegacySettingsLink">此设置链接格式已废弃。请使用 tg://entinySettings/&lt;slug&gt;</string>
-    <string name="InuLinks">链接</string>
     <string name="InuNoEditHistory">没有可用的编辑历史</string>
     <string name="InuRefreshStickerSet">刷新</string>
     <string name="InuRegexFilter">AdBlock 与正则表达式过滤器</string>
@@ -910,10 +875,7 @@
 
     <string name="InuSaveUserInfo">保存用户信息</string>
     <string name="InuSaveUserInfoInfo">在服务器停止返回后保留电话号码国家/地区、注册月份以及姓名/头像更改日期（测试版）</string>
-    <string name="InuSaveSelfDestruct">保存阅后即焚媒体</string>
-    <string name="InuSaveSelfDestructInfo">一次性照片、视频和视频消息将显示为普通媒体，可以保存或转发。</string>
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>
-    <string name="InuSettingsPrefixHint">设置链接使用 tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
     <string name="InuTOS">服务条款</string>
@@ -992,7 +954,6 @@
     <string name="InuCategoryBehavior">行为与工具</string>
     <string name="InuCategoryChats">聊天</string>
     <string name="InuCategoryPrivacy">隐私与安全</string>
-    <string name="InuCategoryProfile">个人资料与导航</string>
     <string name="InuCenterTitleRightAvatar">将头像显示在右侧</string>
     <string name="InuCenterTitleMain">居中屏幕标题</string>
     <string name="InuCenterTitleMainInfo">在主界面、设置以及其他所有界面将标题居中显示。聊天使用下方单独的开关。</string>
@@ -1000,7 +961,6 @@
     <string name="InuChatTitleMarqueeInfo">聊天页头标题与副标题、屏幕标题和资料名称放不下时自动滚动显示</string>
     <string name="InuChats">聊天</string>
     <string name="InuContentProtectionBypass">内容保护</string>
-    <string name="InuCustomization">个性化定制</string>
     <string name="InuDeleteAllProfilePhotos">删除所有头像</string>
     <string name="InuDeleteAllProfilePhotosConfirm">确定要删除所有头像吗？此操作无法撤销。</string>
     <string name="InuDeleteProfilePhotos">删除个人头像</string>
@@ -1014,7 +974,6 @@
     <string name="InuDeleteSelectedProfilePhotos">删除选中的头像 (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">确定要删除选中的 %1$d 张头像吗？</string>
     <string name="InuDeletedAt">已删除 %1$s</string>
-    <string name="InuDeletedEditedSave">已删除与已编辑</string>
     <string name="InuDeletedMark">已删除标记</string>
     <string name="InuDeletedMarkColor">删除标记颜色</string>
     <string name="InuDeletedMarkPreviewSender">Alina</string>
@@ -1028,19 +987,8 @@
     <string name="InuDeletedMessagesTransparent">半透明显示已删除消息</string>
     <string name="InuDeletedMessagesTransparentInfo">以轻微透明度显示已保留的删除消息，以便在聊天中清晰区分。</string>
     <string name="InuDeselectAll">取消全选</string>
-    <string name="InuDevBadgeAccess">开发者徽章</string>
-    <string name="InuDevBadgeChannel">entinyGram 官方频道</string>
-    <string name="InuDevBadgeChannelInfo">发布 entinyGram 新闻与更新的官方频道</string>
-    <string name="InuDevBadgeEntiny">entinyGram 开发者</string>
-    <string name="InuDevBadgeEntinyInfo">此用户创建并维护 entinyGram</string>
-    <string name="InuDevBadgeInu">inuGram 开发者</string>
-    <string name="InuDevBadgeInuChannel">inuGram 官方频道</string>
-    <string name="InuDevBadgeInuChannelInfo">entinyGram 所基于的原版 inuGram 频道</string>
-    <string name="InuDevBadgeInuInfo">此用户是 inuGram（entinyGram 所基于的项目）的作者</string>
     <string name="InuEditHistoryDiff">高亮文本更改 (Diff)</string>
     <string name="InuEditHistoryDiffInfo">在编辑历史中以红色删除线标出删除文本，绿色标出新增文本</string>
-    <string name="InuFloatingAvatar">聊天顶部悬浮头像</string>
-    <string name="InuFloatingAvatarInfo">将头像与标题分离并作为右侧悬浮元素展示</string>
     <string name="InuForceTranslate">强制翻译</string>
     <string name="InuAutoTranslateAll">自动翻译所有对话</string>
     <string name="InuAutoTranslateAllInfo">在所有对话中默认开启聊天翻译。在某个对话中关闭后会记为例外，即使此设置保持开启也依然有效。</string>
@@ -1049,11 +997,8 @@
     <string name="InuGhostEnabled">幽灵模式已启用</string>
     <string name="InuGhostFeatures">隐身活动</string>
     <string name="InuGhostHideRead">不发送已读回执</string>
-    <string name="InuGhostHideReadInfo">消息不会在服务器上标记为已读，因此对方永远看不到蓝色双勾。</string>
     <string name="InuGhostHideStoryRead">不发送故事浏览记录</string>
-    <string name="InuGhostHideStoryReadInfo">故事浏览和阅读计数不会向作者报告。</string>
     <string name="InuGhostHideTyping">隐藏正在输入和上传进度</string>
-    <string name="InuGhostHideTypingInfo">正在输入、正在录制和上传进度状态永远不会发送给对方。</string>
     <string name="InuGhostPresenceMode">在线状态</string>
     <string name="InuGhostPresenceModeNormal">正常</string>
     <string name="InuGhostPresenceModeHidden">始终隐藏</string>
@@ -1064,17 +1009,14 @@
     <string name="InuGhostWhitelistAdd">将聊天添加到白名单</string>
     <string name="InuGhostWhitelistRemoved">已从白名单移除</string>
     <string name="InuGhostHideVoiceRead">不将语音和视频消息标记为已播放</string>
-    <string name="InuGhostHideVoiceReadInfo">语音消息和视频动态不会向发送方显示为已听取或已播放。</string>
     <string name="InuGhostMode">幽灵模式</string>
     <string name="InuGhostModeDisableForChat">对此聊天禁用幽灵模式</string>
     <string name="InuGhostModeDisabledForChatDone">已对此聊天禁用幽灵模式</string>
     <string name="InuGhostModeEnableForChat">对此聊天启用幽灵模式</string>
     <string name="InuGhostModeEnabledForChatDone">已对此聊天启用幽灵模式</string>
-    <string name="InuGhostModeForChat">此聊天的幽灵模式</string>
     <string name="InuGhostModeInfo">隐藏您的活动：传入消息不会被标记为已读，您的在线状态、正在输入提示和故事浏览记录均保持隐藏。</string>
     <string name="InuGhostModeMaster">幽灵模式</string>
     <string name="InuGhostReadOnSend">发送时标记已读</string>
-    <string name="InuGhostReadOnSendInfo">发送消息或回复时在服务器上将当前聊天标记为已读。</string>
     <string name="InuGhostMarkReadLocally">本地标记为已读</string>
     <string name="InuGhostMarkReadLocallyInfo">在幽灵模式下打开聊天时重置未读消息计数器，同时在服务器上保持未读状态。</string>
     <string name="InuHiddenStarGifts">隐藏与归档的 Star 礼物</string>
@@ -1191,7 +1133,6 @@
     <string name="InuMsgDetailSupportsStreaming">流式播放支持</string>
     <string name="InuMsgDetailTargetUsers">目标用户</string>
     <string name="InuMsgDetailTrackTitle">标题</string>
-    <string name="InuMsgDetailViaBot">通过机器人</string>
     <string name="InuMsgDetailVideoCodec">视频编码</string>
     <string name="InuMsgDetailVideoGif">动态 GIF</string>
     <string name="InuMsgDetailVideoRound">视频消息</string>
@@ -1204,7 +1145,6 @@
     <string name="InuNoProfilePhotos">未找到个人头像</string>
     <string name="InuNotificationIconOldEntinygram">旧版 entinyGram</string>
     <string name="InuPoweredByProvider">翻译由 %1$s 提供支持。</string>
-    <string name="InuProfileCreatedDate">创建日期</string>
     <string name="InuProfilePhotosDeleted">已删除所有个人头像</string>
     <string name="InuProfilePhotosDeletedCount">已删除 %1$d 张头像</string>
     <string name="InuProfilePhotosSelected">已选择：%1$d</string>
@@ -1215,16 +1155,10 @@
     <string name="InuSaveDeletedChannels">频道</string>
     <string name="InuSaveDeletedGroups">群组</string>
     <string name="InuSaveDeletedPrivate">私聊</string>
-    <string name="InuSaveSecretChatContent">保留私密聊天</string>
-    <string name="InuSaveSecretChatContentInfo">私密聊天中的所有内容（媒体和文本）都将保存在本地，绝不会自动删除。</string>
     <string name="InuSaveSelfDestructMedia">保留私密媒体</string>
-    <string name="InuSaveSelfDestructMediaInfo">私密聊天中的阅后即焚照片、视频和视频消息在倒计时结束后仍会保留在本地数据库中。</string>
     <string name="InuSaveSelfDestructText">保留阅后即焚文本</string>
-    <string name="InuSaveSelfDestructTextInfo">私密聊天中带有自毁倒计时的文本消息将保留在本地数据库中，而不会被删除。</string>
     <string name="InuSaveTimedMessages">保留定时自毁消息</string>
-    <string name="InuSaveTimedMessagesInfo">带有自动删除定时器的聊天消息将保存在本地，计时器到期后不会被删除。</string>
     <string name="InuSaveViewOnceMedia">保留阅后即焚媒体</string>
-    <string name="InuSaveViewOnceMediaInfo">普通聊天中的单次查看照片、视频和视频消息在查看后仍会保留在本地数据库中。</string>
     <string name="InuSelectAll">全选</string>
     <string name="InuShowDrawerAccounts">在侧边栏显示账号列表</string>
     <string name="InuShowDrawerAccountsInfo">在侧边栏您的个人资料下方显示可展开的账号切换器。</string>
@@ -1233,7 +1167,6 @@
     <string name="InuShowMutualContactInChats">在群组和频道成员列表中显示双向联系人图标</string>
     <string name="InuShowMutualContactInChatsInfo">在群组和频道成员列表中显示双向联系人指示图标</string>
     <string name="InuShowProfileRegDate">显示注册日期和数据中心</string>
-    <string name="InuShowProfileRegDateInfo">在个人资料信息中显示估计的注册日期和数据中心</string>
     <string name="InuStarGiftsSection">礼物</string>
     <string name="InuCenteringSection">居中</string>
     <string name="InuTranslateDeepLApiKey">DeepL API 密钥</string>
@@ -1266,15 +1199,11 @@
     <string name="InuTranslateProviderTranSmart">TranSmart (腾讯, 免费)</string>
     <string name="InuTranslateProviderYandex">Yandex 翻译</string>
     <string name="InuTranslateYandexApiKey">Yandex API 密钥</string>
-    <string name="InuTranslatorInfo">自动翻译聊天、翻译提供商与语言设置</string>
-    <string name="InuUnreader">未读助手</string>
-    <string name="InuUnreaderInfo">消息永远不会标记为已读：打开聊天仍保留未读标记，对方不会收到已读回执。</string>
     <string name="InuYes">是</string>
     <string name="InuAccountSwitchShortcut">账号切换快捷方式</string>
     <string name="InuAccountSwitchShortcutInfo">在应用图标长按菜单中添加快捷方式，点击可选择要打开的账号</string>
     <string name="InuBlockSleepWhileDownloading">下载时阻止休眠</string>
     <string name="InuBlockSleepWhileDownloadingInfo">在下载进行时保持部分唤醒锁（wake lock），防止 Android 在后台暂停下载。</string>
-    <string name="InuHideContactsTab">隐藏联系人标签页</string>
     <string name="InuHideProxySponsorChat">隐藏代理赞助商聊天</string>
     <string name="InuHideProxySponsorChatInfo">屏蔽某些 MTProto 代理在连接时置顶在聊天列表顶部的推广聊天/频道</string>
     <string name="InuHideRichEditorButton">隐藏富文本编辑器按钮</string>
@@ -1290,9 +1219,6 @@
     <string name="InuStopBotAction">停止</string>
     <string name="InuStopBotAlert">确定要停止 **%1$s** 吗？它将无法再向您发送消息。</string>
     <string name="InuStopBotDone">机器人已停止</string>
-    <string name="InuMsgDetailFileId">File ID</string>
-    <string name="InuMsgDetailFileUniqueId">唯一 File ID</string>
-    <string name="InuMsgDetailFileIdInfo">此 File ID 绑定到当前账号，并将在一段时间后过期。</string>
     <string name="InuSelectionBottomNoQuote">多选栏中的无引用转发按钮</string>
     <string name="InuSelectionBottomNoQuoteInfo">在选择消息时将“回复”按钮替换为“无引用转发”</string>
     <string name="InuSaveDeletedOwn">我自己的消息</string>
@@ -1309,4 +1235,5 @@
     <string name="InuIosChatHeaderAvatarSlotInfo">头像离开胶囊并取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单。关闭时头像保留在紧凑胶囊内。</string>
     <string name="InuUnreadBadgeBackButton">返回按钮上的未读徽标 (iOS 风格)</string>
     <string name="InuUnreadBadgeBackButtonInfo">如同 iOS 版 Telegram，在返回按钮旁以小胶囊显示未读聊天总数。</string>
+    <string name="InuScrollToTop">Scroll to top</string>
 </resources>

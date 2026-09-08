@@ -3,6 +3,7 @@ package desu.inugram.helpers.translate.engine
 import desu.inugram.InuConfig
 import org.json.JSONArray
 import org.json.JSONObject
+import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Components.TranslateAlert2
 import java.io.IOException
@@ -123,6 +124,18 @@ object TranslationProviders {
 private fun encodeURIComponent(s: String): String =
     URLEncoder.encode(s, "UTF-8").replace("+", "%20").replace("%7E", "~")
 
+/**
+ * Trims a provider's error body down to something worth putting in a bulletin. Google's abuse
+ * block does not answer with JSON at all - it answers with a full HTML "Sorry..." page, and the
+ * first 200 characters of that are a stylesheet, which is what users were being shown as the
+ * reason their translation failed.
+ */
+private fun errorSnippet(text: String): String {
+    val trimmed = text.trim()
+    if (trimmed.startsWith("<")) return "blocked by the service (HTML error page)"
+    return trimmed.take(200)
+}
+
 /** Minimal blocking HTTP helper shared by providers. */
 internal fun httpJson(
     url: String,
@@ -151,10 +164,10 @@ internal fun httpJson(
         val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
             ?.bufferedReader()?.use { it.readText() } ?: ""
         when {
-            code == 429 -> throw ProviderRateLimitException("HTTP 429: ${text.take(200)}")
+            code == 429 -> throw ProviderRateLimitException("HTTP 429: ${errorSnippet(text)}")
             code in 200..299 -> text
-            code in 400..499 -> throw ProviderConfigException("HTTP $code: ${text.take(200)}")
-            else -> throw IOException("HTTP $code: ${text.take(200)}")
+            code in 400..499 -> throw ProviderConfigException("HTTP $code: ${errorSnippet(text)}")
+            else -> throw IOException("HTTP $code: ${errorSnippet(text)}")
         }
     } finally {
         conn.disconnect()
@@ -166,22 +179,57 @@ internal fun httpJson(
  * needed; subject to Google's unofficial rate limits, which the engine's serial queue and
  * backoff keep in check. A POST body avoids URL-length limits on long messages and the
  * `client=at` variant is more often blocked/throttled from mobile IPs.
+ *
+ * A 429 from this endpoint is usually not "you asked too often" - it is Google refusing the
+ * address the request came from. Carrier NAT, VPN exits and datacenter ranges get the /sorry/
+ * block page, and once an address is on it every later gtx call answers the same way, which is
+ * why the failure looks permanent to one user and invisible to the next on the same build. Since
+ * backing off cannot clear that, a blocked address is remembered and translation moves to the
+ * Chrome-extension dictionary endpoint, which is a separate service behind a separate quota and
+ * still answers from addresses gtx has already blocked.
  */
 object GoogleWebProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_GOOGLE
     override val nameRes: Int = R.string.InuTranslateProviderGoogle
 
+    /** How long gtx is skipped after it blocks us, before the next request tries it again. */
+    private const val BLOCK_COOLDOWN_MS = 10 * 60 * 1000L
+
+    /**
+     * Longest text the fallback will attempt. That endpoint only accepts GET, so the whole
+     * message travels in the URL; past roughly this length Google answers 414 instead of a
+     * translation and the original 429 is the more useful thing to report.
+     */
+    private const val MAX_FALLBACK_CHARS = 1800
+
+    @Volatile
+    private var blockedUntil = 0L
+
     override fun translate(text: String, toLang: String): String {
+        val tl = normalizeToLang(toLang)
+        if (System.currentTimeMillis() < blockedUntil) {
+            translateViaDictionary(text, tl)?.let { return it }
+        }
+        return try {
+            translateViaGtx(text, tl)
+        } catch (_: ProviderRateLimitException) {
+            blockedUntil = System.currentTimeMillis() + BLOCK_COOLDOWN_MS
+            translateViaDictionary(text, tl)
+                ?: throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
+        }
+    }
+
+    private fun translateViaGtx(text: String, tl: String): String {
         val body = "client=gtx&sl=auto&dt=t" +
-            "&tl=" + encodeURIComponent(normalizeToLang(toLang)) +
+            "&tl=" + encodeURIComponent(tl) +
             "&q=" + encodeURIComponent(text)
         val resp = httpJson(
             "https://translate.googleapis.com/translate_a/single",
             method = "POST",
             body = body,
             contentType = "application/x-www-form-urlencoded",
-            headers = mapOf("User-Agent" to "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36"),
+            headers = mapOf("User-Agent" to USER_AGENT),
         )
         val sentences = JSONArray(resp).optJSONArray(0) ?: JSONArray()
         val sb = StringBuilder(text.length)
@@ -190,6 +238,37 @@ object GoogleWebProvider : TranslationProvider {
         }
         if (sb.isEmpty()) throw IOException("Google Translate returned an empty result")
         return sb.toString()
+    }
+
+    /**
+     * The endpoint Chrome's built-in dictionary uses. Returns null - never throws - when it
+     * cannot help, so the caller reports the original rate limit rather than a second, less
+     * recognisable error. Line breaks and the `<inuN>` entity markers survive it intact.
+     */
+    private fun translateViaDictionary(text: String, tl: String): String? {
+        if (text.length > MAX_FALLBACK_CHARS) return null
+        return try {
+            val resp = httpJson(
+                "https://clients5.google.com/translate_a/t" +
+                    "?client=dict-chrome-ex&sl=auto" +
+                    "&tl=" + encodeURIComponent(tl) +
+                    "&q=" + encodeURIComponent(text),
+                headers = mapOf("User-Agent" to USER_AGENT),
+            )
+            // Single strings for one sentence, [text, detectedLang] pairs once Google splits the
+            // input; both shapes appear for the same request depending on length.
+            val root = JSONArray(resp)
+            val sb = StringBuilder(text.length)
+            for (i in 0 until root.length()) {
+                when (val item = root.opt(i)) {
+                    is JSONArray -> sb.append(item.optString(0, ""))
+                    is String -> sb.append(item)
+                }
+            }
+            sb.toString().ifBlank { null }
+        } catch (_: Exception) {
+            null
+        }
     }
 
     private fun normalizeToLang(code: String): String {
@@ -202,6 +281,8 @@ object GoogleWebProvider : TranslationProvider {
         return code.lowercase()
     }
 }
+
+private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36"
 
 /** DeepL API v2. Uses the free endpoint automatically when the key carries the ":fx" suffix. */
 object DeepLProvider : TranslationProvider {

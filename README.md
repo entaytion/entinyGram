@@ -57,6 +57,11 @@ bun run setup
 
 The setup script prepares `worktree/` and applies the current patch stack. Open `worktree/` in Android Studio to work on the Android project.
 
+### Building the APK
+
+See [BUILD.md](BUILD.md) — requirements, `bun run build-debug`, release builds, and how
+local builds differ from CI.
+
 Useful checks:
 
 ```sh

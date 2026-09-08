@@ -191,14 +191,13 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         // Header centering. Strictly nested: screens -> chats -> compact pill -> avatar slot.
         // InuUtils.centerChatTitle()/compactChatPill()/... mirror this nesting at runtime, so a
         // child left over in prefs can never take effect on its own once its parent is off.
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCenteringSection)))
+        items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_CENTER_TITLE_MAIN,
                 R.string.InuCenterTitleMain,
                 R.string.InuCenterTitleMainInfo,
                 InuConfig.CENTER_TITLE_MAIN.value,
-                experimental = true,
             )
         )
         if (InuConfig.CENTER_TITLE_MAIN.value) {
@@ -208,7 +207,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     R.string.InuCenterTitleChats,
                     R.string.InuCenterTitleChatsInfo,
                     InuConfig.CENTER_TITLE_CHATS.value,
-                    experimental = true,
                 )
             )
             if (InuConfig.CENTER_TITLE_CHATS.value) {
@@ -218,7 +216,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                         R.string.InuIosChatHeader,
                         R.string.InuIosChatHeaderInfo,
                         InuConfig.IOS_CHAT_HEADER.value,
-                        experimental = true,
                     )
                 )
                 if (InuConfig.IOS_CHAT_HEADER.value) {
@@ -228,7 +225,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                             R.string.InuIosChatHeaderAvatarSlot,
                             R.string.InuIosChatHeaderAvatarSlotInfo,
                             InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value,
-                            experimental = true,
                         )
                     )
                 }
@@ -238,7 +234,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     items.add(
                         UItem.asCheck(
                             TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
-                            addExperimentalSpan(LocaleController.getString(R.string.InuCenterTitleRightAvatar)),
+                            LocaleController.getString(R.string.InuCenterTitleRightAvatar),
                         ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
                     )
                 }
@@ -248,7 +244,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                         R.string.InuUnreadBadgeBackButton,
                         R.string.InuUnreadBadgeBackButtonInfo,
                         InuConfig.UNREAD_BADGE_BACK_BUTTON.value,
-                        experimental = true,
                     )
                 )
             }

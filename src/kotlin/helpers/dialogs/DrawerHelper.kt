@@ -593,6 +593,13 @@ object DrawerHelper {
         }
 
         when (adapter.getId(position)) {
+            ITEM_SCROLL_TOP -> {
+                val top = nav.lastFragment
+                val dialogs = if (top is MainTabsActivity) top.currentVisibleFragment else top
+                (dialogs as? DialogsActivity)?.scrollToTop(true, true)
+                close()
+            }
+
             ITEM_MY_PROFILE -> {
                 openMyProfile(drawerLayoutContainer)
             }
@@ -680,6 +687,7 @@ object DrawerHelper {
     private const val ITEM_PROXY = DrawerLayoutAdapter.ITEM_PROXY
     private const val ITEM_ARCHIVE = DrawerLayoutAdapter.ITEM_ARCHIVE
     private const val ITEM_GHOST = DrawerLayoutAdapter.ITEM_GHOST
+    private const val ITEM_SCROLL_TOP = DrawerLayoutAdapter.ITEM_SCROLL_TOP
 
     @JvmStatic
     fun notifyDataChanged() {
@@ -697,6 +705,10 @@ object DrawerHelper {
     @JvmStatic
     fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions) {
         val bottomTabsHidden = MainTabsHelper.isHidden
+
+        io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
+            instance.scrollToTop(true, true)
+        }
 
         if (bottomTabsHidden) {
             io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
