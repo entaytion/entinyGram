@@ -207,8 +207,6 @@
     <string name="InuInPlaceTranslation">その場で翻訳</string>
     <string name="InuTranslateWebPreviews">ウェブプレビューを翻訳</string>
     <string name="InuKeepOriginalAfterTranslation">原文を表示</string>
-    <string name="InuTranslateAutoDetectLang">メッセージメニューで DNT を尊重</string>
-    <string name="InuTranslateAutoDetectLangInfo">メッセージの言語が DNT リストに含まれる場合、その言語は自動検出され、メニュー項目は非表示になります。\nこれによりメニューを開く動作がやや遅くなることがあります。</string>
     <string name="InuTranslateInstantView">ページを翻訳</string>
     <string name="InuInstantViewShowOriginal">原文を表示</string>
     <string name="InuTranslating">翻訳中…</string>

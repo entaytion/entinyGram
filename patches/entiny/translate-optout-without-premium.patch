@@ -12,8 +12,8 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
-@@ -1836,8 +1836,14 @@ public class TranslateController extends BaseController {
-         if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue() || desu.inugram.InuConfig.INSTANT_TRANSLATE_BANNER.getValue()) {
+@@ -1860,8 +1860,14 @@ public class TranslateController extends BaseController {
+         if (message != null && message.isOutOwner() && desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) {
              return false;
          }
 -        if (getUserConfig().isPremium()) {

@@ -289,8 +289,6 @@
     <string name="InuInPlaceTranslation">Yerinde çeviri</string>
     <string name="InuTranslateWebPreviews">Web önizlemelerini çevir</string>
     <string name="InuKeepOriginalAfterTranslation">Orijinal metni göster</string>
-    <string name="InuTranslateAutoDetectLang">Mesaj menüsünde Çevirme listesine uy</string>
-    <string name="InuTranslateAutoDetectLangInfo">Mesaj dili Çevirme (DNT) listesindeyse dili otomatik algılanır ve menü ögesi gizlenir.\nBu, menünün biraz daha yavaş açılmasına neden olabilir.</string>
     <string name="InuTranslateInstantView">Sayfayı çevir</string>
     <string name="InuInstantViewShowOriginal">Orijinali göster</string>
     <string name="InuTranslating">Çevriliyor…</string>

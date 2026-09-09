@@ -209,8 +209,9 @@
     <string name="InuInPlaceTranslation">Перевод на месте</string>
     <string name="InuTranslateWebPreviews">Переводить превью ссылок</string>
     <string name="InuKeepOriginalAfterTranslation">Показывать оригинал</string>
-    <string name="InuTranslateAutoDetectLang">Учитывать DNT в меню сообщения</string>
-    <string name="InuTranslateAutoDetectLangInfo">Если язык сообщения есть в списке "Не переводить", он определяется автоматически, а пункт меню скрывается.\nЭто может немного замедлить открытие меню.</string>
+    <string name="InuTranslateAutoDetectLang">Определять язык для меню сообщения</string>
+    <string name="InuTranslateAutoDetectLangInfo">Запускает определение языка на устройстве для сообщений, язык которых Telegram ещё не выяснил, чтобы строку «Перевести» можно было скрыть, если они окажутся на языке из списка «Не переводить». Сообщения с уже известным языком фильтруются в любом случае.
+Из-за этого меню может открываться чуть медленнее.</string>
     <string name="InuTranslateInstantView">Перевести страницу</string>
     <string name="InuInstantViewShowOriginal">Показать оригинал</string>
     <string name="InuTranslating">Перевод…</string>

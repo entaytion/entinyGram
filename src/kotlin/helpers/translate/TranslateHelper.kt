@@ -246,14 +246,14 @@ object TranslateHelper {
         }
 
         val toLang = TranslateAlert2.getToLanguage()
-        // Gates only whether ML Kit runs below to classify a message with unknown language -
-        // unrelated to whether an already-known language (cached on a previous pass, or the
-        // common case of a message whose language was resolved earlier) respects the
-        // don't-translate list. That list must stay in effect regardless: it's what keeps the
-        // Translate row off messages already in the user's own language, and coupling it to
-        // "auto-detect" silently loses that the moment auto-detect is turned off - which reads
-        // as a totally unrelated regression ("now every message offers Translate, even mine").
-        val respectDnt = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
+        // Whether to spend an ML Kit pass classifying a message whose language Telegram has not
+        // resolved yet. That is ALL this flag does - it was named `respectDnt`, which read as if
+        // turning it off stopped the don't-translate list from applying, and the comment here
+        // argued at length against a coupling the code never had: the known-language branch below
+        // goes through shouldShowTranslateRow() unconditionally, and that is where the list is
+        // consulted. Off, an unknown-language message simply keeps the Translate row rather than
+        // paying for detection to find out whether to hide it.
+        val detectUnknownLanguage = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
 
         fun shouldShowTranslateRow(fromLang: String): Boolean {
             if (InuConfig.FORCE_TRANSLATE.value) return true
@@ -264,7 +264,7 @@ object TranslateHelper {
         val originalLanguage = selected.messageOwner?.originalLanguage
         if (originalLanguage != null) {
             cell.visibility = if (shouldShowTranslateRow(originalLanguage)) View.VISIBLE else View.GONE
-        } else if (respectDnt && LanguageDetector.hasSupport()) {
+        } else if (detectUnknownLanguage && LanguageDetector.hasSupport()) {
             // hasSupport() is not optional: stock guarded this same detection call with it, and
             // LanguageDetector's own comment says MLKit's native lib can abort the whole process
             // on emulators / x86 ABIs. Without the guard the cell is also set GONE right below

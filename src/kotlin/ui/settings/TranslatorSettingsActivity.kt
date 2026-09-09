@@ -39,12 +39,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.ShowTranslateChatButton),
             ).setChecked(translateController.isChatTranslateEnabled)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_AUTO_TRANSLATE_ALL,
-                LocaleController.getString(R.string.InuAutoTranslateAll),
-            ).setChecked(InuConfig.AUTO_TRANSLATE_ALL.value)
-        )
+        items.add(check(TOGGLE_AUTO_TRANSLATE_ALL, R.string.InuAutoTranslateAll, InuConfig.AUTO_TRANSLATE_ALL))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAutoTranslateAllInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLanguages)))
@@ -78,111 +73,54 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateProviderInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAdvanced)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_FORCE_TRANSLATE,
-                LocaleController.getString(R.string.InuForceTranslate),
-            ).setChecked(InuConfig.FORCE_TRANSLATE.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_TRANSLATE_OUTGOING,
-                LocaleController.getString(R.string.InuTranslateOutgoing),
-            ).setChecked(InuConfig.TRANSLATE_OUTGOING.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateOutgoingInfo)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_IN_PLACE_TRANSLATION,
-                LocaleController.getString(R.string.InuInPlaceTranslation),
-            ).setChecked(InuConfig.IN_PLACE_TRANSLATION.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_TRANSLATE_WEB_PREVIEWS,
-                LocaleController.getString(R.string.InuTranslateWebPreviews),
-            ).setChecked(InuConfig.TRANSLATE_WEB_PREVIEWS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_KEEP_ORIGINAL,
-                LocaleController.getString(R.string.InuKeepOriginalAfterTranslation),
-            ).setChecked(InuConfig.KEEP_ORIGINAL_AFTER_TRANSLATION.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_AUTO_DETECT_LANG,
-                LocaleController.getString(R.string.InuTranslateAutoDetectLang),
-            ).setChecked(InuConfig.TRANSLATE_AUTO_DETECT_LANG.value)
-        )
+        // In-place translation owns the next two outright: TranslateHelper gates web previews on
+        // `IN_PLACE_TRANSLATION && TRANSLATE_WEB_PREVIEWS`, and "show original" reads a merged body
+        // that only the in-place path ever stores. Shown flat, as siblings, both stayed switched on
+        // and did nothing the moment in-place went off, which is exactly the dead-toggle shape the
+        // Centering group was rebuilt to get rid of. Nest them so the screen cannot claim that.
+        items.add(check(TOGGLE_IN_PLACE_TRANSLATION, R.string.InuInPlaceTranslation, InuConfig.IN_PLACE_TRANSLATION))
+        if (InuConfig.IN_PLACE_TRANSLATION.value) {
+            items.add(check(TOGGLE_TRANSLATE_WEB_PREVIEWS, R.string.InuTranslateWebPreviews, InuConfig.TRANSLATE_WEB_PREVIEWS))
+            items.add(check(TOGGLE_KEEP_ORIGINAL, R.string.InuKeepOriginalAfterTranslation, InuConfig.KEEP_ORIGINAL_AFTER_TRANSLATION))
+        }
+        items.add(UItem.asShadow(null))
+
+        items.add(check(TOGGLE_AUTO_DETECT_LANG, R.string.InuTranslateAutoDetectLang, InuConfig.TRANSLATE_AUTO_DETECT_LANG))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateAutoDetectLangInfo)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_INSTANT_TRANSLATE_BANNER,
-                LocaleController.getString(R.string.InuInstantTranslateBanner),
-            ).setChecked(InuConfig.INSTANT_TRANSLATE_BANNER.value)
-        )
+        items.add(check(TOGGLE_TRANSLATE_OUTGOING, R.string.InuTranslateOutgoing, InuConfig.TRANSLATE_OUTGOING))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateOutgoingInfo)))
+
+        // The three "overrule what Telegram decided" toggles, kept adjacent because they are one
+        // idea and read as contradictory when scattered between unrelated rows.
+        items.add(check(TOGGLE_FORCE_TRANSLATE, R.string.InuForceTranslate, InuConfig.FORCE_TRANSLATE))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
+        items.add(check(TOGGLE_INSTANT_TRANSLATE_BANNER, R.string.InuInstantTranslateBanner, InuConfig.INSTANT_TRANSLATE_BANNER))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuInstantTranslateBannerInfo)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_IGNORE_TRANSLATIONS_DISABLED,
-                LocaleController.getString(R.string.InuIgnoreTranslationsDisabled),
-            ).setChecked(InuConfig.IGNORE_TRANSLATIONS_DISABLED.value)
-        )
+        items.add(check(TOGGLE_IGNORE_TRANSLATIONS_DISABLED, R.string.InuIgnoreTranslationsDisabled, InuConfig.IGNORE_TRANSLATIONS_DISABLED))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuIgnoreTranslationsDisabledInfo)))
     }
 
+    private fun check(id: Int, textRes: Int, item: InuConfig.BoolItem): UItem =
+        UItem.asCheck(id, LocaleController.getString(textRes)).setChecked(item.value)
+
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        when (item.id) {
-            BUTTON_PROVIDER -> presentFragment(TranslateProviderSettingsActivity())
-
-            TOGGLE_AUTO_TRANSLATE_ALL -> {
-                val new = InuConfig.AUTO_TRANSLATE_ALL.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_FORCE_TRANSLATE -> {
-                val new = InuConfig.FORCE_TRANSLATE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_TRANSLATE_OUTGOING -> {
-                val new = InuConfig.TRANSLATE_OUTGOING.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_INSTANT_TRANSLATE_BANNER -> {
-                val new = InuConfig.INSTANT_TRANSLATE_BANNER.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_IGNORE_TRANSLATIONS_DISABLED -> {
-                val new = InuConfig.IGNORE_TRANSLATIONS_DISABLED.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_IN_PLACE_TRANSLATION -> {
-                val new = InuConfig.IN_PLACE_TRANSLATION.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_TRANSLATE_WEB_PREVIEWS -> {
-                val new = InuConfig.TRANSLATE_WEB_PREVIEWS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_KEEP_ORIGINAL -> {
-                val new = InuConfig.KEEP_ORIGINAL_AFTER_TRANSLATION.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+        // Every plain InuConfig-backed row behaves identically, so route them through one table
+        // instead of ten copies of toggle()+isChecked. The list is always rebuilt afterwards:
+        // UItem.itemEquals() does not compare `checked`, so the adapter keeps the item it already
+        // has and a later recycle-driven rebind would re-render the stale value - and In-place
+        // translation additionally has to show or hide its two children in the same frame.
+        BOOL_TOGGLES[item.id]?.let { config ->
+            (view as? TextCheckCell)?.isChecked = config.toggle()
+            if (item.id == TOGGLE_KEEP_ORIGINAL) {
+                // Already-drawn bubbles keep the merged body until something asks them to re-read it.
                 NotificationCenter.getInstance(currentAccount)
                     .postNotificationName(NotificationCenter.updateInterfaces, 0)
             }
-
-            TOGGLE_AUTO_DETECT_LANG -> {
-                val new = InuConfig.TRANSLATE_AUTO_DETECT_LANG.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
+            listView?.adapter?.update(true)
+            return
+        }
+        when (item.id) {
+            BUTTON_PROVIDER -> presentFragment(TranslateProviderSettingsActivity())
 
             TOGGLE_SHOW_TRANSLATE_BUTTON -> {
                 val new = !translateController.isContextTranslateEnabled
@@ -238,6 +176,18 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON = InuUtils.generateId()
         private val BUTTON_DO_NOT_TRANSLATE = InuUtils.generateId()
         private val BUTTON_TARGET_LANG = InuUtils.generateId()
+
+        private val BOOL_TOGGLES: Map<Int, InuConfig.BoolItem> = mapOf(
+            TOGGLE_AUTO_TRANSLATE_ALL to InuConfig.AUTO_TRANSLATE_ALL,
+            TOGGLE_FORCE_TRANSLATE to InuConfig.FORCE_TRANSLATE,
+            TOGGLE_TRANSLATE_OUTGOING to InuConfig.TRANSLATE_OUTGOING,
+            TOGGLE_IN_PLACE_TRANSLATION to InuConfig.IN_PLACE_TRANSLATION,
+            TOGGLE_TRANSLATE_WEB_PREVIEWS to InuConfig.TRANSLATE_WEB_PREVIEWS,
+            TOGGLE_KEEP_ORIGINAL to InuConfig.KEEP_ORIGINAL_AFTER_TRANSLATION,
+            TOGGLE_AUTO_DETECT_LANG to InuConfig.TRANSLATE_AUTO_DETECT_LANG,
+            TOGGLE_INSTANT_TRANSLATE_BANNER to InuConfig.INSTANT_TRANSLATE_BANNER,
+            TOGGLE_IGNORE_TRANSLATIONS_DISABLED to InuConfig.IGNORE_TRANSLATIONS_DISABLED,
+        )
 
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "translator",

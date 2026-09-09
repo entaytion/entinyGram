@@ -340,10 +340,10 @@
     <string name="InuInPlaceTranslation">In-place translation</string>
     <string name="InuTranslateWebPreviews">Translate web previews</string>
     <string name="InuKeepOriginalAfterTranslation">Show original text</string>
-    <string name="InuTranslateAutoDetectLang">Respect DNT in message menu</string>
-    <string name="InuTranslateAutoDetectLangInfo">When the message language is in the DNT list, its language is automatically detected and the menu item is hidden.\nThis might cause the menu to open a bit slower.</string>
+    <string name="InuTranslateAutoDetectLang">Detect language for the message menu</string>
+    <string name="InuTranslateAutoDetectLangInfo">Runs on-device detection on messages whose language Telegram has not worked out yet, so the Translate row can be hidden when they turn out to be in a "Do not translate" language. Messages with a language Telegram already knows are filtered either way.\nThis might cause the menu to open a bit slower.</string>
     <string name="InuInstantTranslateBanner">Instant translate banner</string>
-    <string name="InuInstantTranslateBannerInfo">Shows the "Translate to X?" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Also ignores the restricted/"don\'t translate this language" list, so the banner still appears even for languages you\'ve told Telegram not to offer translation for. Useful for chats and single posts you rarely see more than a few messages of.</string>
+    <string name="InuInstantTranslateBannerInfo">Shows the "Translate to X?" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Useful for chats and single posts you rarely see more than a few messages of.</string>
     <string name="InuIgnoreTranslationsDisabled">Ignore "Translations disabled"</string>
     <string name="InuIgnoreTranslationsDisabledInfo">A channel or user can turn off the translate chat-bar banner via their own Telegram settings. This shows it anyway. The per-message Translate button in the message menu already ignores this setting, so this just makes the banner behave the same way.</string>
     <string name="InuTranslateInstantView">Translate page</string>

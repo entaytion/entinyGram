@@ -447,7 +447,13 @@ object TranslateEngine {
         while (true) {
             try {
                 val marked = EntityKeeper.mark(text, entities)
-                val translated = provider.translate(marked, toLang, context)
+                // Urls, @mentions, emails and hashtags go to the provider as opaque tokens and come
+                // back byte-for-byte. Marking alone kept the ENTITY across the round trip but still
+                // sent its payload through the translator, so a link's own text was translated and
+                // the link died with it. restore() runs before unmark() so the entity spans are
+                // measured against the final text.
+                val (guarded, vault) = EntityKeeper.protect(marked)
+                val translated = EntityKeeper.restore(provider.translate(guarded, toLang, context), vault)
                 val (resultText, resultEntities) = EntityKeeper.unmark(translated, entities)
                 if (resultText.isBlank()) throw IOException("Provider returned empty translation")
                 return resultText to resultEntities

@@ -389,8 +389,9 @@ object LlmProvider : TranslationProvider {
         Rules:
         1. Output ONLY the translation. No explanations, no notes, no quotes.
         2. Preserve markup tags such as <inu0>, <inu1> and their closing tags exactly as they appear.
-        3. Preserve markdown formatting (bold, italic, strikethrough, inline code, code blocks, headings, lists, links) exactly as in the source.
-        4. Preserve line breaks and code blocks.
+        3. Tags like <inux0> stand for a url, @mention or hashtag. Reproduce them exactly, never translate or reword them, and keep each one exactly once.
+        4. Preserve markdown formatting (bold, italic, strikethrough, inline code, code blocks, headings, lists, links) exactly as in the source.
+        5. Preserve line breaks and code blocks.
     """.trimIndent()
 }
 

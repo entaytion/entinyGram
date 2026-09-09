@@ -269,8 +269,9 @@
     <string name="InuInPlaceTranslation">Переклад на місці</string>
     <string name="InuTranslateWebPreviews">Перекладати прев\'ю посилань</string>
     <string name="InuKeepOriginalAfterTranslation">Показувати оригінальний текст</string>
-    <string name="InuTranslateAutoDetectLang">Автовизначення мови у меню</string>
-    <string name="InuTranslateAutoDetectLangInfo">Автоматично приховує пункт перекладу для мов зі списку виключень</string>
+    <string name="InuTranslateAutoDetectLang">Визначати мову для меню повідомлення</string>
+    <string name="InuTranslateAutoDetectLangInfo">Запускає визначення мови на пристрої для повідомлень, мову яких Telegram ще не з\'ясував, щоб рядок «Перекласти» можна було сховати, якщо вони виявляться мовою зі списку «Не перекладати». Повідомлення з уже відомою мовою фільтруються в будь-якому разі.
+Через це меню може відкриватися трохи повільніше.</string>
     <string name="InuInstantTranslateBanner">Миттєвий банер перекладу</string>
     <string name="InuInstantTranslateBannerInfo">Показує банер «Перекласти на X?» одразу після першого виявленого іноземномовного повідомлення, замість очікування кількох повідомлень для підтвердження (стоку треба 6, або 2 при увімкненому автоперекладі). Корисно для чатів і окремих постів, де рідко бачиш більше кількох повідомлень.</string>
     <string name="InuIgnoreTranslationsDisabled">Ігнорувати «Переклад вимкнено»</string>

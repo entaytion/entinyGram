@@ -4,8 +4,8 @@ Date: Mon, 7 Sep 2026 01:03:58 +0300
 Subject: Add instant translate banner and ignore-translations-disabled overrides
 
 ---
- .../org/telegram/messenger/TranslateController.java | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ .../messenger/TranslateController.java        | 39 ++++++++++++++++---
+ 1 file changed, 34 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 index 0000000..0000000 100644
@@ -21,6 +21,15 @@ index 0000000..0000000 100644
          TLRPC.ChatFull chatFull = getMessagesController().getChatFull(-dialogId);
          if (chatFull != null) {
              return chatFull.translations_disabled;
+@@ -952,7 +955,7 @@ public class TranslateController extends BaseController {
+             isTranslatable(messageObject) &&
+             messageObject.messageOwner.originalLanguage != null &&
+             !UNKNOWN_LANGUAGE.equals(messageObject.messageOwner.originalLanguage) &&
+-            !isLanguageRestricted(messageObject.messageOwner.originalLanguage)
++            !isLanguageRestricted(messageObject.messageOwner.originalLanguage, messageObject)
+         );
+ 
+         if (isUnknown) {
 @@ -970,14 +973,16 @@ public class TranslateController extends BaseController {
          final int notTranslatableCount = translatableMessages.certainlyNotTranslatable.size();
          final int totalCount = translatableCount + unknownCount + notTranslatableCount;
@@ -40,14 +49,46 @@ index 0000000..0000000 100644
              translatableDialogs.add(dialogId);
              translatableDialogMessages.remove((Long) dialogId);
              AndroidUtilities.runOnUIThread(() -> {
-@@ -1827,8 +1832,8 @@ public class TranslateController extends BaseController {
+@@ -1827,8 +1832,32 @@ public class TranslateController extends BaseController {
      }
  
      private boolean isLanguageRestricted(String lng) {
--        // entinyGram: force-translate mode overrides the "own language" / do-not-translate gate
++        return isLanguageRestricted(lng, null);
++    }
++
++    // entinyGram: `message` is the message the language was read off, where the caller has one.
++    //
++    // TRANSLATE_OUTGOING needs an exemption from the do-not-translate list because an outgoing
++    // message is written in the user's own language, and that language is in the list by default -
++    // without it, "translate my messages" could never translate anything. But the exemption belongs
++    // to the outgoing message, not to the setting: checking the flag alone (all this could do with
++    // no message in hand) switched the entire list off for INCOMING messages, story captions and
++    // photo captions too. The user's three do-not-translate languages silently stopped applying
++    // anywhere the moment they turned on a toggle whose description only mentions their own
++    // messages. Every caller that has a message now passes it, and the two dialog-level callers
++    // (which have only a cached language) correctly get no exemption at all.
++    //
++    // INSTANT_TRANSLATE_BANNER used to sit in this same early return, which was pure duplication:
++    // ignoring the do-not-translate list is what FORCE_TRANSLATE is for, and FORCE_TRANSLATE also
++    // makes every dialog translatable outright (see isDialogTranslatable), so the banner toggle's
++    // copy of that behaviour could never be observed on its own. What is actually its own is the
++    // one-message quorum in checkLanguage(); that stays.
++    private boolean isLanguageRestricted(String lng, MessageObject message) {
+         // entinyGram: force-translate mode overrides the "own language" / do-not-translate gate
 -        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) {
-+        // entinyGram: force-translate mode, and the instant-banner toggle, override the "own language" / do-not-translate gate
-+        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue() || desu.inugram.InuConfig.INSTANT_TRANSLATE_BANNER.getValue()) {
++        if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue()) {
++            return false;
++        }
++        if (message != null && message.isOutOwner() && desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) {
              return false;
          }
          if (getUserConfig().isPremium()) {
+@@ -2098,7 +2127,7 @@ public class TranslateController extends BaseController {
+         }
+         return messageObject != null && messageObject.messageOwner != null && !TextUtils.isEmpty(messageObject.messageOwner.message) && (
+             detectedLanguage == null && messageObject.messageOwner.translatedText != null && TextUtils.equals(messageObject.messageOwner.translatedToLanguage, TranslateAlert2.getToLanguage()) ||
+-            detectedLanguage != null && !isLanguageRestricted(messageObject.messageOwner.originalLanguage)
++            detectedLanguage != null && !isLanguageRestricted(messageObject.messageOwner.originalLanguage, messageObject)
+         ) && !messageObject.translated;
+     }
+ 

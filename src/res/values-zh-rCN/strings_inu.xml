@@ -207,8 +207,6 @@
     <string name="InuInPlaceTranslation">就地翻译</string>
     <string name="InuTranslateWebPreviews">翻译网页预览</string>
     <string name="InuKeepOriginalAfterTranslation">显示原文</string>
-    <string name="InuTranslateAutoDetectLang">在消息菜单中遵循「不翻译」列表</string>
-    <string name="InuTranslateAutoDetectLangInfo">当消息语言在「不翻译」列表中时，会自动检测其语言并隐藏该菜单项。\n这可能会让菜单打开得稍慢一些。</string>
     <string name="InuTranslateInstantView">翻译页面</string>
     <string name="InuInstantViewShowOriginal">显示原文</string>
     <string name="InuTranslating">翻译中…</string>
