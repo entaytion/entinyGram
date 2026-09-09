@@ -107,6 +107,10 @@ jobs:
         id: info
         env:
           INU_DAY_STATE: ${{ vars.INU_DAY_STATE || '' }}
+          # `prerelease` is declared `type: boolean` -- see the LAST_UPLOADED_SHA comment
+          # below for why `== 'true'` alone doesn't reliably match it. Rendered here to a
+          # plain 'true'/'false' string, which is safe to compare once it's env/process.env.
+          PRERELEASE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
         run: bun run tsx scripts/ci/version.ts
 
       - uses: gradle/actions/setup-gradle@0b6dd653ba04f4f93bf581ec31e66cbd7dcb644d # v4

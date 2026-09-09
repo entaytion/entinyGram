@@ -10,6 +10,11 @@ const sha = process.env.GITHUB_SHA ?? ''
 const shortSha = sha.slice(0, 7)
 const verName = `${appVerName}-${shortSha}`
 
+// apk.yml renders the boolean-vs-string workflow_dispatch input to a plain 'true'/'false'
+// string before it reaches this env var -- see the LAST_UPLOADED_SHA comment in apk.yml for
+// why the raw input can't be compared directly.
+const isPrerelease = process.env.PRERELEASE === 'true'
+
 const now = new Date()
 const y4 = String(now.getUTCFullYear())
 const mm = String(now.getUTCMonth() + 1).padStart(2, '0')
@@ -46,8 +51,9 @@ const out = {
   'day-counter': String(dailyCounter),
   date,
   // the in-app updater (UpdateHelper.kt) parses the versionCode straight out of the
-  // filename -- it must not re-derive the date-based formula on-device.
-  'apk-arm64': `entinygram-arm64-${appVerName}-${verCode}.apk`,
+  // filename -- it must not re-derive the date-based formula on-device. Its APK_RE regex
+  // tolerates the optional "-beta" segment inserted here for pre-release builds.
+  'apk-arm64': `entinygram${isPrerelease ? '-beta' : ''}-arm64-${appVerName}-${verCode}.apk`,
   tag,
 }
 

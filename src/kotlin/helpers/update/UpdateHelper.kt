@@ -29,8 +29,10 @@ object UpdateHelper {
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
-    // entinygram-arm64-{appVerName}-{verCode}.apk (see scripts/ci/version.ts)
-    private val APK_RE = Regex("^entinygram-arm64-(.+)-(\\d+)\\.apk$")
+    // entinygram[-beta]-arm64-{appVerName}-{verCode}.apk (see scripts/ci/version.ts). The
+    // optional "-beta" segment marks a pre-release build; it isn't captured, so group
+    // numbering (appVerName, verCode) is the same for both.
+    private val APK_RE = Regex("^entinygram(?:-beta)?-arm64-(.+)-(\\d+)\\.apk$")
 
     // bare channel id for USERNAME, cached from the first successful username resolve so we
     // never have to hardcode entinyGramCI's numeric id (which can differ per-environment/test).

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { glob } from 'tinyglobby'
-import { $, chalk } from 'zx'
+import { $, chalk, quote } from 'zx'
 import {
   forkSyncFiles,
   rootDir,
@@ -17,6 +17,7 @@ $.verbose = false
 if (process.platform === 'win32') {
   $.shell = 'cmd.exe'
   $.prefix = 'chcp 65001 >nul & '
+  $.quote = quote
 }
 
 export function step(message: string) {
