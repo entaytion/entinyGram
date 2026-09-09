@@ -17,6 +17,7 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.ProfileActivity
+import java.util.Locale
 
 class InuSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuSettings)
@@ -55,7 +56,10 @@ class InuSettingsActivity : SettingsPageActivity() {
                 }
 
                 override fun onTextChanged(searchField: EditText) {
-                    sAdapter.search(searchField.text.toString())
+                    // SearchAdapter lowercases only the entry titles it matches against, so the
+                    // query has to arrive lowercased too -- otherwise typing a capital letter
+                    // matches nothing at all. Same default-locale lowercasing the adapter uses.
+                    sAdapter.search(searchField.text.toString().lowercase(Locale.getDefault()))
                 }
             })
         }

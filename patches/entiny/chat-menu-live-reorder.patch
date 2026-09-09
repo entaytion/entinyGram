@@ -1,0 +1,69 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 17:40:19 +0300
+Subject: Re-apply the chat menu order without reopening the chat
+
+---
+ .../ui/ActionBar/ActionBarMenuItem.java       | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
+@@ -770,6 +770,9 @@ public class ActionBarMenuItem extends FrameLayout {
+     public void toggleSubMenu(View topView, View fromView) {
+         if (popupWindow == null || !popupWindow.isShowing()) {
+             layoutLazyItems();
++            if (inu_reorderable) {
++                desu.inugram.helpers.chat.ChatActionsHelper.checkMenuRevision(this);
++            }
+         }
+         if (popupLayout == null || parentMenu != null && parentMenu.isActionMode && parentMenu.parentActionBar != null && !parentMenu.parentActionBar.isActionModeShowed()) {
+             return;
+@@ -2421,6 +2424,7 @@ public class ActionBarMenuItem extends FrameLayout {
+     private ArrayList<Item> lazyList;
+     private HashMap<Integer, Item> lazyMap;
+     public boolean inu_reorderable = false;
++    private ArrayList<Item> inu_lazyItemsAll;
+ 
+     public static class Item {
+         public int viewType;
+@@ -2666,6 +2670,14 @@ public class ActionBarMenuItem extends FrameLayout {
+             return;
+         }
+         if (inu_reorderable) {
++            if (inu_lazyItemsAll == null) {
++                inu_lazyItemsAll = new ArrayList<>();
++            }
++            for (int i = 0; i < lazyList.size(); ++i) {
++                if (!inu_lazyItemsAll.contains(lazyList.get(i))) {
++                    inu_lazyItemsAll.add(lazyList.get(i));
++                }
++            }
+             desu.inugram.helpers.chat.ChatActionsHelper.reorder(lazyList);
+         }
+         for (int i = 0; i < lazyList.size(); ++i) {
+@@ -2674,6 +2686,22 @@ public class ActionBarMenuItem extends FrameLayout {
+         lazyList.clear();
+     }
+ 
++    /**
++     * Rebuilds the lazily-added sub-menu from the untouched item list, so a changed fork menu
++     * order can be applied to an item that was already materialized. {@link Item#add} is private
++     * to this class, hence the rebuild lives here; whether it is needed is decided by
++     * {@code ChatActionsHelper.checkMenuRevision}.
++     */
++    public void inu_rematerializeLazyItems() {
++        if (inu_lazyItemsAll == null || popupLayout == null) {
++            return;
++        }
++        removeAllSubItems();
++        lazyList = new ArrayList<>(inu_lazyItemsAll);
++        layoutLazyItems();
++        measurePopup = true;
++    }
++
+     public static ActionBarMenuSubItem addItem(ViewGroup windowLayout, int icon, CharSequence text, boolean needCheck, Theme.ResourcesProvider resourcesProvider) {
+         return addItem(false, false, windowLayout, icon, text, needCheck, resourcesProvider);
+     }

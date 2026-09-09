@@ -145,12 +145,15 @@ object SearchRegistry {
         if (uri.scheme != "tg") return false
         // canonical: `tg://entinySettings/<slug>` (host=entinySettings) or `tg:entinySettings/<slug>` (opaque)
         // legacy: `tg://settings/{inu,entiny}/<slug>` (host=settings) or `tg:settings/{inu,entiny}/<slug>` (opaque)
-        val segs = when (uri.host) {
-            "entinySettings", "settings" -> uri.pathSegments
-            null -> uri.schemeSpecificPart?.removePrefix("//")?.let { ssp ->
+        // Host and the {inu,entiny} legacy segment come from outside our control (typed by hand,
+        // pasted from elsewhere), so match them case-insensitively; only the trailing per-entry
+        // slug is ours end to end and stays exact.
+        val segs = when {
+            uri.host.equals("entinySettings", ignoreCase = true) || uri.host.equals("settings", ignoreCase = true) -> uri.pathSegments
+            uri.host == null -> uri.schemeSpecificPart?.removePrefix("//")?.let { ssp ->
                 when {
-                    ssp.startsWith("entinySettings/") -> ssp.removePrefix("entinySettings/").split('/')
-                    ssp.startsWith("settings/") -> ssp.removePrefix("settings/").split('/')
+                    ssp.startsWith("entinySettings/", ignoreCase = true) -> ssp.substring("entinySettings/".length).split('/')
+                    ssp.startsWith("settings/", ignoreCase = true) -> ssp.substring("settings/".length).split('/')
                     else -> null
                 }
             } ?: return false
@@ -159,7 +162,7 @@ object SearchRegistry {
         }
         val legacy = when (segs.size) {
             1 -> false
-            2 -> if (segs[0] == "inu" || segs[0] == "entiny") true else return false
+            2 -> if (segs[0].equals("inu", ignoreCase = true) || segs[0].equals("entiny", ignoreCase = true)) true else return false
             else -> return false
         }
         val target = targetBySlug[segs.last()] ?: return false

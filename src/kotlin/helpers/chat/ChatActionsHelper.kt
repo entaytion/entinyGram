@@ -43,6 +43,7 @@ import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.ManageLinksActivity
 import org.telegram.ui.RestrictedLanguagesSelectActivity
 import org.telegram.ui.StatisticActivity
+import java.util.WeakHashMap
 
 /**
  * Owns the customizable chat-header overflow menu, the message-selection action bar
@@ -82,6 +83,26 @@ object ChatActionsHelper {
         val ordered = reorderByMenu(lazyList, entries) { ChatMenuConfig.Item.forId(it.id) }
         lazyList.clear()
         lazyList.addAll(ordered)
+    }
+
+    /** Menu order revision each already-materialized header menu was last built with. */
+    private val menuRevisions = WeakHashMap<ActionBarMenuItem, Int>()
+
+    /**
+     * `ActionBarMenuItem` materializes its lazy sub-items exactly once and then empties the lazy
+     * list, so [reorder] would read the config a single time per menu. A chat still alive in the
+     * back stack therefore kept the menu it was built with, and toggling anything on the Chat menu
+     * settings page looked like it did nothing until the chat was fully reopened.
+     *
+     * Called right before the menu opens: rebuilds it when the saved order changed since.
+     */
+    @JvmStatic
+    fun checkMenuRevision(menu: ActionBarMenuItem) {
+        val revision = InuConfig.CHAT_MENU_ITEMS.value.hashCode()
+        val previous = menuRevisions.put(menu, revision)
+        if (previous != null && previous != revision) {
+            menu.inu_rematerializeLazyItems()
+        }
     }
 
     @JvmStatic

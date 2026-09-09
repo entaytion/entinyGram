@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 16:26:53 +0300
+Subject: Ignore local build artifacts CMake leaves behind (.cxx, .kotlin, .local_build_number)
+
+---
+ .gitignore | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/.gitignore b/.gitignore
+index 0000000..0000000 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,5 +1,6 @@
+ .idea/
+ .gradle/
++.kotlin/
+ build/
+ obj/
+ *.iml
+@@ -14,3 +15,5 @@ TMessagesProj_AppHockeyApp/afat/
+ TMessagesProj_AppStandalone/afat/
+ TMessagesProj_AppHuawei/afat/
+ TMessagesProj/jni/ffmpeg/build_android
++**/.cxx/
++.local_build_number

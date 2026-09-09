@@ -1267,6 +1267,8 @@
     <string name="InuAiTranscribeFetchModelsFailed">Couldn\'t fetch models: %1$s</string>
     <string name="InuLocalPremium">Local Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Unlocks client-side Premium features (star badge, app icons, emoji statuses and profile colors persisted locally, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require an official subscription.</string>
+    <string name="InuLocalCustomEmoji">Local Custom Emoji</string>
+    <string name="InuLocalCustomEmojiInfo">Sends Premium custom emoji as hidden emoji links, so a non-Premium account can use them anywhere. entinyGram and Nekogram clients show them animated; every other client sees the fallback emoji as an ordinary link. Pair it with Local Telegram Premium to unlock the emoji picker itself.</string>
     <string name="InuHiddenStarGifts">Hidden &amp; Archived Star Gifts</string>
     <string name="InuStarGiftsSection">Gifts</string>
     <string name="InuHiddenStarGiftsInfo">Restores removed, archived and limited Star Gifts in the Telegram gifts catalog.</string>
@@ -1340,6 +1342,8 @@
     <string name="InuDeletedMarkPreviewSender">Alina</string>
     <string name="InuHideDevBadges">Disable developer badges</string>
     <string name="InuHideDevBadgesInfo">Hide badges next to the names of entinyGram and inuGram developers and official channels</string>
+    <string name="InuDevBadge">entinyGram team</string>
+    <string name="InuDevBadgeInfo">This account is recognized by the entinyGram team.</string>
     <string name="InuStopBot">Stop bot</string>
     <string name="InuStopBotAlert">Are you sure you want to stop **%1$s**? It won\'t be able to send you messages anymore.</string>
     <string name="InuStopBotAction">Stop</string>

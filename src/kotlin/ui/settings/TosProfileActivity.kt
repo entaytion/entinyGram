@@ -26,6 +26,14 @@ class TosProfileActivity : SettingsPageActivity() {
                 InuConfig.LOCAL_PREMIUM.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_LOCAL_CUSTOM_EMOJI,
+                R.string.InuLocalCustomEmoji,
+                R.string.InuLocalCustomEmojiInfo,
+                InuConfig.LOCAL_CUSTOM_EMOJI.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuStarGiftsSection)))
@@ -55,6 +63,11 @@ class TosProfileActivity : SettingsPageActivity() {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal)
             }
 
+            TOGGLE_LOCAL_CUSTOM_EMOJI -> {
+                val new = InuConfig.LOCAL_CUSTOM_EMOJI.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_HIDDEN_STAR_GIFTS -> {
                 val new = InuConfig.HIDDEN_STAR_GIFTS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -64,6 +77,7 @@ class TosProfileActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_LOCAL_PREMIUM = InuUtils.generateId()
+        private val TOGGLE_LOCAL_CUSTOM_EMOJI = InuUtils.generateId()
         private val TOGGLE_HIDDEN_STAR_GIFTS = InuUtils.generateId()
 
         @JvmField
@@ -74,6 +88,7 @@ class TosProfileActivity : SettingsPageActivity() {
             factory = ::TosProfileActivity,
             entries = listOf(
                 SearchRegistry.Entry("local-premium", R.string.InuLocalPremium, TOGGLE_LOCAL_PREMIUM),
+                SearchRegistry.Entry("local-custom-emoji", R.string.InuLocalCustomEmoji, TOGGLE_LOCAL_CUSTOM_EMOJI),
                 SearchRegistry.Entry("hidden-star-gifts", R.string.InuHiddenStarGifts, TOGGLE_HIDDEN_STAR_GIFTS),
             ),
         )

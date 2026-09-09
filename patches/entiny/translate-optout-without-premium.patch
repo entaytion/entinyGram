@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 17:16:32 +0300
+Subject: Let non-premium users opt out of the translate bar
+
+---
+ .../org/telegram/messenger/TranslateController.java    | 10 ++++++++--
+ .../org/telegram/ui/Components/TranslateButton.java    |  6 +++++-
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+@@ -1836,8 +1836,14 @@ public class TranslateController extends BaseController {
+         if (desu.inugram.InuConfig.FORCE_TRANSLATE.getValue() || desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue() || desu.inugram.InuConfig.INSTANT_TRANSLATE_BANNER.getValue()) {
+             return false;
+         }
+-        if (getUserConfig().isPremium()) {
+-            return RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(lng);
++        // entinyGram: chat translation is no longer premium-gated (see isFeatureAvailable), so the
++        // Do Not Translate list has to apply to non-premium users too. Stock only consulted it for
++        // premium and fell back to "the app locale is the single exempt language", which - now that
++        // the banner is unlocked for everyone - made it pop up in every foreign-language chat with
++        // no way to opt a language out. getRestrictedLanguages() already defaults to the app locale
++        // when the user never touched the list, so the locale check below is only a floor.
++        if (RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(lng)) {
++            return true;
+         }
+         try {
+             return TextUtils.equals(LocaleController.getInstance().getCurrentLocaleInfo().pluralLangCode, lng);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
+@@ -298,7 +298,11 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
+             popupLayout.getSwipeBack().openForeground(swipeBackIndex);
+         });
+ 
+-        if (UserConfig.getInstance(currentAccount).isPremium() && detectedLanguageNameAccusative != null) {
++        // entinyGram: the translate bar itself is no longer premium-gated (TranslateController
++        // .isFeatureAvailable), so its opt-out must not be either. Stock hid "Do not translate
++        // <language>" behind Premium, which left an unlocked non-premium user with a bar in every
++        // foreign-language chat and only the per-chat "Hide" to fight it, one chat at a time.
++        if (detectedLanguageNameAccusative != null) {
+             final ActionBarMenuSubItem dontTranslateButton = new ActionBarMenuSubItem(getContext(), false, false, resourcesProvider);
+             String text;
+             if (accusative[0]) {

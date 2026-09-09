@@ -5,6 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
@@ -106,6 +107,35 @@ object BadgeRegistry {
 
     @JvmStatic
     fun hasBadge(rawId: Long): Boolean = badgeFor(rawId) != null
+
+    @JvmStatic
+    fun localizedTitle(badge: Badge): String {
+        val uk = LocaleController.getInstance().currentLocale?.language == "uk"
+        return (if (uk) badge.titleUk.ifEmpty { badge.titleEn } else badge.titleEn.ifEmpty { badge.titleUk })
+    }
+
+    @JvmStatic
+    fun localizedDescription(badge: Badge): String {
+        val uk = LocaleController.getInstance().currentLocale?.language == "uk"
+        return (if (uk) badge.descriptionUk.ifEmpty { badge.descriptionEn } else badge.descriptionEn.ifEmpty { badge.descriptionUk })
+    }
+
+    /**
+     * The badge is drawn through stock's own bot-verification rendering (see the class doc), which
+     * has no click handling of its own for it - tapping it used to fall through to whatever
+     * happened to sit underneath (the avatar, the header), popping an unrelated bulletin. Wired
+     * from [org.telegram.ui.ProfileActivity]'s bot-verification leftDrawable click.
+     */
+    @JvmStatic
+    fun showInfoBulletin(fragment: org.telegram.ui.ActionBar.BaseFragment?, rawId: Long) {
+        if (fragment == null) return
+        val badge = badgeFor(rawId) ?: return
+        val title = localizedTitle(badge).ifBlank { LocaleController.getString(org.telegram.messenger.R.string.InuDevBadge) }
+        val description = localizedDescription(badge).ifBlank { LocaleController.getString(org.telegram.messenger.R.string.InuDevBadgeInfo) }
+        org.telegram.ui.Components.BulletinFactory.of(fragment)
+            .createSimpleBulletin(title, description)
+            .show()
+    }
 
     @JvmStatic
     fun applyTo(user: TLRPC.User?) {

@@ -1210,6 +1210,8 @@
     <string name="InuAiTranscribeFetchModelsFailed">Не вдалося отримати моделі: %1$s</string>
     <string name="InuLocalPremium">Локальний Telegram Premium</string>
     <string name="InuLocalPremiumInfo">Розблоковує локальні функції Premium на рівні клієнта (зірочка біля профілю, емодзі-статуси, безлімітна панель перекладу, преміум-реакції та анімації). Серверні фічі (4 ГБ завантаження, ліміти хмари) вимагають офіційної підписки.</string>
+    <string name="InuLocalCustomEmoji">Локальні кастомні емодзі</string>
+    <string name="InuLocalCustomEmojiInfo">Надсилає преміум-емодзі як приховані емодзі-посилання, тож акаунт без Premium може використовувати їх будь-де. Клієнти entinyGram і Nekogram показують їх анімованими; в інших клієнтах видно звичайне емодзі-замінник як посилання. Вмикайте разом із локальним Telegram Premium, щоб розблокувати саму панель емодзі.</string>
     <string name="InuHiddenStarGifts">Приховані та архівні подарунки</string>
     <string name="InuHiddenStarGiftsInfo">Повертає видалені, архівні та лімітовані зіркові подарунки (Star Gifts) у каталог Telegram.</string>
     <string name="InuUnlimitedLimits">Зняття обмежень</string>
@@ -1279,6 +1281,8 @@
     <string name="InuDeletedMarkPreviewSender">Аліна</string>
     <string name="InuHideDevBadges">Вимкнути бейджі розробників</string>
     <string name="InuHideDevBadgesInfo">Ховає бейджі біля імен розробників entinyGram та inuGram і офіційних каналів</string>
+    <string name="InuDevBadge">Команда entinyGram</string>
+    <string name="InuDevBadgeInfo">Цей акаунт визнаний командою entinyGram.</string>
     <string name="InuAppIconOldEntinygram">Старий entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Старий entinyGram</string>
     <string name="InuPoweredByProvider">Переклад виконано через %1$s.</string>

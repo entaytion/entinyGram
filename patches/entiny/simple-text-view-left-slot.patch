@@ -1,0 +1,120 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 16:14:55 +0300
+Subject: Add a left-drawable click slot to SimpleTextView, mirroring the existing right one
+
+---
+ .../telegram/ui/ActionBar/SimpleTextView.java | 41 ++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+@@ -100,6 +100,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     public int rightDrawableY;
+     public int rightDrawable2X;
+     public int rightDrawable2Y;
++    public int leftDrawableX;
++    public int leftDrawableY;
+     private boolean wasLayout;
+ 
+     private boolean leftDrawableOutside, rightDrawableOutside;
+@@ -133,6 +135,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     private boolean maybeClick;
+     private OnClickListener rightDrawable2OnClickListener;
+     private boolean maybeClick2;
++    private OnClickListener leftDrawableOnClickListener;
++    private boolean maybeClickLeft;
+     private float touchDownX, touchDownY;
+ 
+     private AnimatedEmojiSpan.EmojiGroupedSpans emojiStack;
+@@ -1142,6 +1146,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 y = getPaddingTop() + (textHeight - dh) / 2 + leftDrawableTopPadding;
+             }
+             leftDrawable.setBounds(x, y, x + dw, y + dh);
++            leftDrawableX = x + (dw >> 1);
++            leftDrawableY = y + (dh >> 1);
+             leftDrawable.draw(canvas);
+         }
+         if (rightDrawable != null && rightDrawableOutside) {
+@@ -1372,6 +1378,12 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         rightDrawable2OnClickListener = onClickListener;
+     }
+ 
++    // Only the leftDrawableOutside=true draw path (below) stamps leftDrawableX/Y, so a click
++    // listener here only fires for a left drawable set together with setLeftDrawableOutside(true).
++    public void setLeftDrawableOnClick(OnClickListener onClickListener) {
++        leftDrawableOnClickListener = onClickListener;
++    }
++
+     @Override
+     public boolean onTouchEvent(MotionEvent event) {
+         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+@@ -1394,6 +1406,11 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                     in1 = false;
+                 }
+             }
++            boolean inLeft = false;
++            if (leftDrawableOnClickListener != null && leftDrawable != null && leftDrawableOutside) {
++                AndroidUtilities.rectTmp.set(leftDrawableX - dp(16), leftDrawableY - dp(16), leftDrawableX + dp(16), leftDrawableY + dp(16));
++                inLeft = AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY());
++            }
+             if (in1) {
+                 maybeClick = true;
+                 touchDownX = event.getX();
+@@ -1410,6 +1427,14 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 if (rightDrawable2 instanceof PressableDrawable) {
+                     ((PressableDrawable) rightDrawable2).setPressed(true);
+                 }
++            } else if (inLeft) {
++                maybeClickLeft = true;
++                touchDownX = event.getX();
++                touchDownY = event.getY();
++                getParent().requestDisallowInterceptTouchEvent(true);
++                if (leftDrawable instanceof PressableDrawable) {
++                    ((PressableDrawable) leftDrawable).setPressed(true);
++                }
+             }
+         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+             if (maybeClick && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
+@@ -1426,6 +1451,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                     ((PressableDrawable) rightDrawable2).setPressed(false);
+                 }
+             }
++            if (maybeClickLeft && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
++                maybeClickLeft = false;
++                getParent().requestDisallowInterceptTouchEvent(false);
++                if (leftDrawable instanceof PressableDrawable) {
++                    ((PressableDrawable) leftDrawable).setPressed(false);
++                }
++            }
+         } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+             if (maybeClick && event.getAction() == MotionEvent.ACTION_UP) {
+                 rightDrawableOnClickListener.onClick(this);
+@@ -1433,17 +1465,24 @@ public class SimpleTextView extends View implements Drawable.Callback {
+             if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
+                 rightDrawable2OnClickListener.onClick(this);
+             }
++            if (maybeClickLeft && event.getAction() == MotionEvent.ACTION_UP) {
++                leftDrawableOnClickListener.onClick(this);
++            }
+             if (rightDrawable instanceof PressableDrawable) {
+                 ((PressableDrawable) rightDrawable).setPressed(false);
+             }
+             if (rightDrawable2 instanceof PressableDrawable) {
+                 ((PressableDrawable) rightDrawable2).setPressed(false);
+             }
++            if (leftDrawable instanceof PressableDrawable) {
++                ((PressableDrawable) leftDrawable).setPressed(false);
++            }
++            maybeClickLeft = false;
+             maybeClick = false;
+             maybeClick2 = false;
+             getParent().requestDisallowInterceptTouchEvent(false);
+         }
+-        return super.onTouchEvent(event) || maybeClick || maybeClick2;
++        return super.onTouchEvent(event) || maybeClick || maybeClick2 || maybeClickLeft;
+     }
+ 
+     public static interface PressableDrawable {

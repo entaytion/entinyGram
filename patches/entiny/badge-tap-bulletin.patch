@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 16:22:18 +0300
+Subject: Show an info bulletin when tapping a dev badge in a profile
+
+---
+ .../main/java/org/telegram/ui/ProfileActivity.java | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -11699,8 +11699,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (leftIcon == null && currentEncryptedChat == null && user.bot_verification_icon != 0 && !desu.inugram.InuConfig.HIDE_VERIFICATION_BADGE.getValue()) {
+                     nameTextView[a].setLeftDrawableOutside(true);
+                     leftIcon = getBotVerificationDrawable(user.bot_verification_icon, false, a);
++                    if (desu.inugram.helpers.badges.BadgeRegistry.hasBadge(user.id)) {
++                        final long inu_userId = user.id;
++                        nameTextView[a].setLeftDrawableOnClick(v -> desu.inugram.helpers.badges.BadgeRegistry.showInfoBulletin(ProfileActivity.this, inu_userId));
++                    } else {
++                        nameTextView[a].setLeftDrawableOnClick(null);
++                    }
+                 } else {
+                     nameTextView[a].setLeftDrawableOutside(false);
++                    nameTextView[a].setLeftDrawableOnClick(null);
+                 }
+                 nameTextView[a].setLeftDrawable(leftIcon);
+                 if (a == 1 && (rightIconIsStatus || rightIconIsPremium)) {
+@@ -12021,8 +12028,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (chat.bot_verification_icon != 0 && !desu.inugram.InuConfig.HIDE_VERIFICATION_BADGE.getValue()) {
+                     nameTextView[a].setLeftDrawableOutside(true);
+                     nameTextView[a].setLeftDrawable(getBotVerificationDrawable(chat.bot_verification_icon, false, a));
++                    if (desu.inugram.helpers.badges.BadgeRegistry.hasBadge(-chat.id)) {
++                        final long inu_chatId = -chat.id;
++                        nameTextView[a].setLeftDrawableOnClick(v -> desu.inugram.helpers.badges.BadgeRegistry.showInfoBulletin(ProfileActivity.this, inu_chatId));
++                    } else {
++                        nameTextView[a].setLeftDrawableOnClick(null);
++                    }
+                 } else {
+                     nameTextView[a].setLeftDrawable(null);
++                    nameTextView[a].setLeftDrawableOnClick(null);
+                 }
+                 if (a == 0 && onlineTextOverride != null) {
+                     onlineTextView[a].setText(onlineTextOverride);

@@ -246,18 +246,29 @@ object TranslateHelper {
         }
 
         val toLang = TranslateAlert2.getToLanguage()
+        // Gates only whether ML Kit runs below to classify a message with unknown language -
+        // unrelated to whether an already-known language (cached on a previous pass, or the
+        // common case of a message whose language was resolved earlier) respects the
+        // don't-translate list. That list must stay in effect regardless: it's what keeps the
+        // Translate row off messages already in the user's own language, and coupling it to
+        // "auto-detect" silently loses that the moment auto-detect is turned off - which reads
+        // as a totally unrelated regression ("now every message offers Translate, even mine").
         val respectDnt = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
 
         fun shouldShowTranslateRow(fromLang: String): Boolean {
             if (InuConfig.FORCE_TRANSLATE.value) return true
-            if (respectDnt && RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
+            if (RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
             return fromLang != toLang || fromLang == TranslateController.UNKNOWN_LANGUAGE
         }
 
         val originalLanguage = selected.messageOwner?.originalLanguage
         if (originalLanguage != null) {
             cell.visibility = if (shouldShowTranslateRow(originalLanguage)) View.VISIBLE else View.GONE
-        } else if (respectDnt) {
+        } else if (respectDnt && LanguageDetector.hasSupport()) {
+            // hasSupport() is not optional: stock guarded this same detection call with it, and
+            // LanguageDetector's own comment says MLKit's native lib can abort the whole process
+            // on emulators / x86 ABIs. Without the guard the cell is also set GONE right below
+            // and, if detection never calls back, the Translate row just never reappears.
             val text = selected.getMessageTextToTranslate(group, intArrayOf(selected.id))
             if (text != null) {
                 cell.visibility = View.GONE

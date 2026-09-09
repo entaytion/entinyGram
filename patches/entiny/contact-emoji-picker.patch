@@ -1,0 +1,265 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 16:22:08 +0300
+Subject: Add emoji picker to contact first/last name fields
+
+---
+ .../org/telegram/ui/ContactAddActivity.java   | 170 +++++++++++++++---
+ 1 file changed, 150 insertions(+), 20 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContactAddActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ContactAddActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ContactAddActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ContactAddActivity.java
+@@ -26,6 +26,7 @@ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+ import android.view.View;
++import android.view.ViewGroup;
+ import android.view.inputmethod.EditorInfo;
+ import android.widget.FrameLayout;
+ import android.widget.TextView;
+@@ -56,6 +57,7 @@ import org.telegram.ui.ActionBar.AlertDialog;
+ import org.telegram.ui.ActionBar.BaseFragment;
+ import org.telegram.ui.ActionBar.Theme;
+ import org.telegram.ui.ActionBar.ThemeDescription;
++import org.telegram.ui.Cells.EditEmojiTextCell;
+ import org.telegram.ui.Cells.EditTextCell;
+ import org.telegram.ui.Cells.TextCell;
+ import org.telegram.ui.Cells.TextCheckCell;
+@@ -63,10 +65,13 @@ import org.telegram.ui.Components.AlertsCreator;
+ import org.telegram.ui.Components.AvatarDrawable;
+ import org.telegram.ui.Components.BackupImageView;
+ import org.telegram.ui.Components.BulletinFactory;
++import org.telegram.ui.Components.EditTextEmoji;
++import org.telegram.ui.Components.EmojiView;
+ import org.telegram.ui.Components.ImageUpdater;
+ import org.telegram.ui.Components.LayoutHelper;
+ import org.telegram.ui.Components.RLottieDrawable;
+ import org.telegram.ui.Components.RadialProgressView;
++import org.telegram.ui.Components.SizeNotifierFrameLayout;
+ import org.telegram.ui.Components.UItem;
+ import org.telegram.ui.Components.UniversalAdapter;
+ import org.telegram.ui.Components.UniversalRecyclerView;
+@@ -78,8 +83,8 @@ import java.util.ArrayList;
+ public class ContactAddActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, ImageUpdater.ImageUpdaterDelegate {
+ 
+     private View doneButton;
+-    private EditTextCell firstNameField;
+-    private EditTextCell lastNameField;
++    private EditEmojiTextCell firstNameField;
++    private EditEmojiTextCell lastNameField;
+     private EditTextCell noteField;
+     private BackupImageView avatarImage;
+     private TextView nameTextView;
+@@ -175,6 +180,25 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
+         if (imageUpdater != null) {
+             imageUpdater.clear();
+         }
++        if (firstNameField != null && firstNameField.editTextEmoji != null) {
++            firstNameField.editTextEmoji.onDestroy();
++        }
++        if (lastNameField != null && lastNameField.editTextEmoji != null) {
++            lastNameField.editTextEmoji.onDestroy();
++        }
++    }
++
++    @Override
++    public boolean onBackPressed(boolean invoked) {
++        if (firstNameField != null && firstNameField.editTextEmoji != null && firstNameField.editTextEmoji.isPopupShowing()) {
++            if (invoked) firstNameField.editTextEmoji.hidePopup(true);
++            return false;
++        }
++        if (lastNameField != null && lastNameField.editTextEmoji != null && lastNameField.editTextEmoji.isPopupShowing()) {
++            if (invoked) lastNameField.editTextEmoji.hidePopup(true);
++            return false;
++        }
++        return super.onBackPressed(invoked);
+     }
+ 
+     @Override
+@@ -230,7 +254,96 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
+         ActionBarMenu menu = actionBar.createMenu();
+         doneButton = menu.addItem(done_button, getString(R.string.Done).toUpperCase());
+ 
+-        final FrameLayout frameLayout = new FrameLayout(context);
++        final SizeNotifierFrameLayout frameLayout = new SizeNotifierFrameLayout(context) {
++            @Override
++            public void addView(View child) {
++                if (child instanceof EmojiView) {
++                    ViewGroup.LayoutParams lp = ((EmojiView) child).getLayoutParams();
++                    if (lp == null) {
++                        lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
++                    }
++                    if (lp instanceof FrameLayout.LayoutParams) {
++                        ((LayoutParams) lp).gravity = Gravity.BOTTOM | Gravity.FILL_HORIZONTAL;
++                    }
++                    child.setLayoutParams(lp);
++                }
++                super.addView(child);
++            }
++
++            @Override
++            protected void onLayout(boolean changed, int l, int t, int r, int b) {
++                final int count = getChildCount();
++
++                int keyboardSize = measureKeyboardHeight();
++                final int parentLeft = getPaddingLeft();
++                final int parentRight = r - l - getPaddingRight();
++
++                final int parentTop = getPaddingTop();
++                final int parentBottom = b - t - getPaddingBottom();
++
++                for (int i = 0; i < count; i++) {
++                    final View child = getChildAt(i);
++                    if (child.getVisibility() != GONE) {
++                        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
++
++                        final int width = child.getMeasuredWidth();
++                        final int height = child.getMeasuredHeight();
++
++                        int childLeft;
++                        int childTop;
++
++                        int gravity = lp.gravity;
++                        if (gravity == -1) {
++                            gravity = Gravity.TOP | Gravity.LEFT;
++                        }
++
++                        final int layoutDirection = getLayoutDirection();
++                        final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
++                        final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
++
++                        switch (absoluteGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
++                            case Gravity.CENTER_HORIZONTAL:
++                                childLeft = parentLeft + (parentRight - parentLeft - width) / 2 +
++                                        lp.leftMargin - lp.rightMargin;
++                                break;
++                            case Gravity.RIGHT:
++                                childLeft = parentRight - width - lp.rightMargin;
++                                break;
++                            case Gravity.LEFT:
++                            default:
++                                childLeft = parentLeft + lp.leftMargin;
++                        }
++
++                        switch (verticalGravity) {
++                            case Gravity.TOP:
++                                childTop = parentTop + lp.topMargin;
++                                break;
++                            case Gravity.CENTER_VERTICAL:
++                                childTop = parentTop + (parentBottom - parentTop - height) / 2 +
++                                        lp.topMargin - lp.bottomMargin;
++                                break;
++                            case Gravity.BOTTOM:
++                                childTop = parentBottom - height - lp.bottomMargin;
++                                break;
++                            default:
++                                childTop = parentTop + lp.topMargin;
++                        }
++
++                        if (child instanceof EmojiView) {
++                            if (AndroidUtilities.isTablet()) {
++                                childTop = b - t - height;
++                            } else {
++                                childTop = b - t + keyboardSize - height;
++                            }
++                        }
++
++                        child.layout(childLeft, childTop, childLeft + width, childTop + height);
++                    }
++                }
++
++                super.notifyHeightChanged();
++            }
++        };
+         frameLayout.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+ 
+ //        linearLayout = new LinearLayout(context);
+@@ -288,37 +401,48 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
+         onlineTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT));
+         infoLayout.addView(onlineTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 94, 49.66f, LocaleController.isRTL ? 94 : 0, 0));
+ 
+-        firstNameField = new EditTextCell(context, getString(R.string.FirstName), false, false, -1, resourcesProvider);
+-        firstNameField.editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
++        firstNameField = new EditEmojiTextCell(context, frameLayout, getString(R.string.FirstName), false, -1, EditTextEmoji.STYLE_GIFT, resourcesProvider) {
++            @Override
++            protected void onFocusChanged(boolean focused) {
++                super.onFocusChanged(focused);
++                if (focused && lastNameField != null && lastNameField.editTextEmoji != null && lastNameField.editTextEmoji.isPopupShowing()) {
++                    lastNameField.editTextEmoji.hidePopup(true);
++                }
++            }
++        };
++        firstNameField.setAllowEntities(false);
++        firstNameField.editTextEmoji.getEditText().setImeOptions(EditorInfo.IME_ACTION_NEXT);
+         firstNameField.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+         firstNameField.setDivider(true);
+-        firstNameField.editText.setOnEditorActionListener((textView, i, keyEvent) -> {
++        firstNameField.editTextEmoji.getEditText().setOnEditorActionListener((textView, i, keyEvent) -> {
+             if (i == EditorInfo.IME_ACTION_NEXT) {
+-                lastNameField.editText.requestFocus();
+-                lastNameField.editText.setSelection(lastNameField.editText.length());
++                lastNameField.editTextEmoji.getEditText().requestFocus();
++                lastNameField.editTextEmoji.getEditText().setSelection(lastNameField.editTextEmoji.getEditText().length());
+                 return true;
+             }
+             return false;
+         });
+-        firstNameField.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+-            boolean focused;
+-            @Override
+-            public void onFocusChange(View v, boolean hasFocus) {
+-                focused = hasFocus;
+-            }
+-        });
+         firstNameField.setText(firstNameFromCard);
+ 
+-        lastNameField = new EditTextCell(context, getString(R.string.LastName), false, false, -1, resourcesProvider);
+-        lastNameField.editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
++        lastNameField = new EditEmojiTextCell(context, frameLayout, getString(R.string.LastName), false, -1, EditTextEmoji.STYLE_GIFT, resourcesProvider) {
++            @Override
++            protected void onFocusChanged(boolean focused) {
++                super.onFocusChanged(focused);
++                if (focused && firstNameField != null && firstNameField.editTextEmoji != null && firstNameField.editTextEmoji.isPopupShowing()) {
++                    firstNameField.editTextEmoji.hidePopup(true);
++                }
++            }
++        };
++        lastNameField.setAllowEntities(false);
++        lastNameField.editTextEmoji.getEditText().setImeOptions(EditorInfo.IME_ACTION_NEXT);
+         lastNameField.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+-        lastNameField.editText.setOnEditorActionListener((textView, i, keyEvent) -> {
++        lastNameField.editTextEmoji.getEditText().setOnEditorActionListener((textView, i, keyEvent) -> {
+             if (i == EditorInfo.IME_ACTION_DONE) {
+                 doneButton.performClick();
+                 return true;
+             } else if (i == EditorInfo.IME_ACTION_NEXT) {
+                 noteField.editText.requestFocus();
+-                noteField.editText.setSelection(lastNameField.editText.length());
++                noteField.editText.setSelection(lastNameField.editTextEmoji.getEditText().length());
+                 return true;
+             }
+             return false;
+@@ -574,7 +698,7 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
+                         }
+                     }
+                     firstNameField.setText(user.first_name);
+-                    firstNameField.editText.setSelection(firstNameField.editText.length());
++                    firstNameField.editTextEmoji.getEditText().setSelection(firstNameField.editTextEmoji.getEditText().length());
+                     lastNameField.setText(user.last_name);
+                 }
+ 
+@@ -769,6 +893,12 @@ public class ContactAddActivity extends BaseFragment implements NotificationCent
+         super.onPause();
+         paused = true;
+         imageUpdater.onPause();
++        if (firstNameField != null && firstNameField.editTextEmoji != null) {
++            firstNameField.editTextEmoji.hidePopup(true);
++        }
++        if (lastNameField != null && lastNameField.editTextEmoji != null) {
++            lastNameField.editTextEmoji.hidePopup(true);
++        }
+     }
+ 
+     @Override

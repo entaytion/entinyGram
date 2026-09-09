@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Wed, 9 Sep 2026 16:01:53 +0300
+Subject: Send premium custom emoji as local emoji links
+
+---
+ .../main/java/org/telegram/messenger/MessageObject.java   | 8 +++++---
+ .../java/org/telegram/messenger/SendMessagesHelper.java   | 8 ++++----
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -6638,7 +6638,7 @@ public class MessageObject {
+         if (messageOwner == null || messageOwner.entities == null)
+             return false;
+         for (int i = 0; i < messageOwner.entities.size(); ++i)
+-            if (!(messageOwner.entities.get(i) instanceof TLRPC.TL_messageEntityCustomEmoji))
++            if (!(messageOwner.entities.get(i) instanceof TLRPC.TL_messageEntityCustomEmoji) && !desu.inugram.helpers.chat.LocalCustomEmojiHelper.isLocalCustomEmoji(messageOwner.entities.get(i)))
+                 return true;
+         return false;
+     }
+@@ -8053,8 +8053,9 @@ public class MessageObject {
+         for (int i = 0; i < entities.size(); ++i) {
+             if (limitCount <= 0) break;
+             TLRPC.MessageEntity messageEntity = entities.get(i);
+-            if (messageEntity instanceof TLRPC.TL_messageEntityCustomEmoji) {
+-                TLRPC.TL_messageEntityCustomEmoji entity = (TLRPC.TL_messageEntityCustomEmoji) messageEntity;
++            if (messageEntity instanceof TLRPC.TL_messageEntityCustomEmoji || desu.inugram.helpers.chat.LocalCustomEmojiHelper.isLocalCustomEmoji(messageEntity)) {
++                TLRPC.TL_messageEntityCustomEmoji entity = messageEntity instanceof TLRPC.TL_messageEntityCustomEmoji ? (TLRPC.TL_messageEntityCustomEmoji) messageEntity : desu.inugram.helpers.chat.LocalCustomEmojiHelper.parseLocalCustomEmoji(spannable, messageEntity);
++                if (entity == null) continue;
+                 for (int j = 0; j < emojiSpans.length; ++j) {
+                     Emoji.EmojiSpan span = emojiSpans[j];
+                     if (span != null) {
+@@ -8347,6 +8348,7 @@ public class MessageObject {
+                 }
+                 spannable.setSpan(new URLSpanNoUnderline("tel:" + tel, run), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+             } else if (run.urlEntity instanceof TLRPC.TL_messageEntityTextUrl) {
++                if (desu.inugram.helpers.chat.LocalCustomEmojiHelper.isLocalCustomEmoji(run.urlEntity)) continue;
+                 if (linksCount >= MediaDataController.MAX_LINKS_COUNT) continue;
+                 linksCount++;
+                 url = run.urlEntity.url;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -3376,7 +3376,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                         request.flags |= 2048;
+                         request.no_webpage = !messageObject.editingMessageSearchWebPage;
+                         if (messageObject.editingMessageEntities != null) {
+-                            request.entities = messageObject.editingMessageEntities;
++                            request.entities = desu.inugram.helpers.chat.LocalCustomEmojiHelper.replaceCustomEmojis(currentAccount, messageObject.getDialogId(), messageObject.editingMessageEntities);
+                             request.flags |= 8;
+                         } else {
+                             CharSequence[] message = new CharSequence[]{messageObject.editingMessage};
+@@ -3462,7 +3462,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             req.flags |= 131072;
+         }
+         if (entities != null) {
+-            req.entities = entities;
++            req.entities = desu.inugram.helpers.chat.LocalCustomEmojiHelper.replaceCustomEmojis(currentAccount, messageObject.getDialogId(), entities);
+             req.flags |= 8;
+         }
+         if (scheduleDate != 0) {
+@@ -4310,7 +4310,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         TLRPC.TL_messageMediaWebPage mediaWebPage = sendMessageParams.mediaWebPage;
+         boolean searchLinks = sendMessageParams.searchLinks;
+         MessageObject retryMessageObject = sendMessageParams.retryMessageObject;
+-        ArrayList<TLRPC.MessageEntity> entities = sendMessageParams.entities;
++        ArrayList<TLRPC.MessageEntity> entities = desu.inugram.helpers.chat.LocalCustomEmojiHelper.replaceCustomEmojis(currentAccount, peer, sendMessageParams.entities);
+         TLRPC.ReplyMarkup replyMarkup = sendMessageParams.replyMarkup;
+         HashMap<String, String> params = sendMessageParams.params;
+         boolean notify = sendMessageParams.notify;
+@@ -5751,7 +5751,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                             req.silent = newMsg.silent;
+                             req.message = pollSendParams.caption;
+                             if (pollSendParams.entities != null && !pollSendParams.entities.isEmpty()) {
+-                                req.entities = pollSendParams.entities;
++                                req.entities = desu.inugram.helpers.chat.LocalCustomEmojiHelper.replaceCustomEmojis(currentAccount, newMsg.dialog_id, pollSendParams.entities);
+                                 req.flags |= 8;
+                             }
+                             if (payStars > 0) {

@@ -1804,6 +1804,9 @@ object InuConfig {
     val LOCAL_PREMIUM = BoolItem("local_premium", false)
 
     @JvmField
+    val LOCAL_CUSTOM_EMOJI = BoolItem("local_custom_emoji", false)
+
+    @JvmField
     val HIDE_DEV_BADGES = BoolItem("hide_dev_badges", false)
 
     @JvmField
