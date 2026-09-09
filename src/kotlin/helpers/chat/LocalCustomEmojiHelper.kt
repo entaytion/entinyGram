@@ -50,9 +50,22 @@ object LocalCustomEmojiHelper {
         if (entity.offset < 0 || entity.length <= 0) return null
         if (spannable.length < entity.offset + entity.length) return null
         val documentId = entity.url.substring(LINK_PREFIX.length).toLongOrNull() ?: return null
-        val emojiOnly = IntArray(1)
-        val emojis = Emoji.parseEmojis(spannable.subSequence(entity.offset, entity.offset + entity.length), emojiOnly)
-        if (emojiOnly[0] <= 0 || emojis.size != 1) return null
+        // "exactly one emoji and nothing besides it", asserted from the span itself rather than
+        // from Emoji.parseEmojis' emojiOnly out-param.
+        //
+        // That out-param cannot express this for a KEYCAP emoji. 6️⃣ is U+0036 U+FE0F U+20E3, and
+        // parseEmojis walks it left to right: the leading '6' is a plain ASCII char, matching none
+        // of the emoji branches, so it sets notOnlyEmoji and the very next statement does
+        // `emojiOnly[0] = 0; emojiOnly = null`. Two characters later the U+20E3 branch looks back,
+        // recognises the keycap and reports the span - but the counter it would have incremented
+        // has already been detached. So parseEmojis returns one emoji with emojiOnly[0] == 0, this
+        // returned null, the link stayed a link, and stock then offered to sell the reader Premium
+        // for an emoji the fork had already unlocked. Same for 5️⃣, #️⃣ and *️⃣.
+        val range = spannable.subSequence(entity.offset, entity.offset + entity.length)
+        val emojis = Emoji.parseEmojis(range)
+        if (emojis.size != 1) return null
+        val span = emojis[0]
+        if (span.start != 0 || span.end != range.length) return null
         val parsed = TLRPC.TL_messageEntityCustomEmoji()
         parsed.offset = entity.offset
         parsed.length = entity.length
