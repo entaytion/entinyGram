@@ -88,7 +88,10 @@ object StarGiftsHelper {
 
         var donor: TL_stars.TL_starGift? = null
         val existingIds = HashSet<Long>()
-        for (candidate in giftsList) {
+        // Explicitly nullable: giftsList is filled by stock Java, which can put a null in it,
+        // and Kotlin inserts no element null-check for a for-loop over a non-null element type -
+        // so the guard below is not dead, the declared type was just too narrow to justify it.
+        for (candidate: TL_stars.StarGift? in giftsList) {
             if (candidate == null) continue
             existingIds.add(candidate.id)
             if (donor == null && candidate is TL_stars.TL_starGift && candidate.sticker != null) {

@@ -100,7 +100,7 @@ object SelfMessageWipeHelper {
             BulletinFactory.of(fragment)
                 .createSimpleBulletin(
                     R.raw.ic_delete,
-                    LocaleController.formatString("InuDeleteMyMessagesDone", R.string.InuDeleteMyMessagesDone, count),
+                    LocaleController.formatString(R.string.InuDeleteMyMessagesDone, count),
                 )
                 .show()
         }

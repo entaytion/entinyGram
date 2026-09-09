@@ -23,6 +23,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper
@@ -201,7 +202,7 @@ class DrawerProfileCell(
         darkThemeView.scaleType = ImageView.ScaleType.CENTER
         darkThemeView.setAnimation(sunDrawable)
         if (Build.VERSION.SDK_INT >= 21) {
-            darkThemeView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17f)))
+            darkThemeView.background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 1, AndroidUtilities.dp(17f))
             Theme.setRippleDrawableForceSoftware(darkThemeView.background as RippleDrawable)
         }
         if (!playDrawable && sunDrawable!!.customEndFrame != sunDrawable!!.currentFrame) {
@@ -510,7 +511,7 @@ class DrawerProfileCell(
         } else if (MessagesController.getInstance(lastAccount).isPremiumUser(user)) {
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4f))
             if (premiumStar == null) {
-                premiumStar = resources.getDrawable(R.drawable.msg_premium_liststar).mutate()
+                premiumStar = ResourcesCompat.getDrawable(resources, R.drawable.msg_premium_liststar, null)!!.mutate()
             }
             premiumStar!!.setColorFilter(PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuPhoneCats), PorterDuff.Mode.MULTIPLY))
             status.set(premiumStar, true)

@@ -24,6 +24,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.core.content.edit
+import androidx.core.content.res.ResourcesCompat
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.StickerDownloadHelper
@@ -856,7 +857,7 @@ object ChatHelper {
                 val msgId = selectedObject.id
                 SavedMessagesHelper.deletePermanently(activity.currentAccount, dialogId, msgId) {
                     BulletinFactory.of(activity).createSimpleBulletin(
-                        activity.context.resources.getDrawable(R.drawable.inu_tabler_trash_x).mutate(),
+                        ResourcesCompat.getDrawable(activity.context.resources, R.drawable.inu_tabler_trash_x, null)!!.mutate(),
                         LocaleController.getString(R.string.InuDeletePermanentlyDone),
                     ).show()
                 }
@@ -1432,15 +1433,14 @@ object ChatHelper {
     fun maybeCompactForwardLayouts(layouts: Array<StaticLayout>, width: Int, messageObject: MessageObject) {
         if (!isCompactForward(messageObject)) return
         layouts[0] = layouts[1]
-        layouts[1] = StaticLayout(
-            "",
-            Theme.chat_forwardNamePaint,
-            width,
-            Layout.Alignment.ALIGN_NORMAL,
-            1f,
-            0f,
-            false,
-        )
+        // Builder, not the deprecated ctor. Note the argument order flips: the ctor took
+        // (spacingMultiplier, spacingAdd), setLineSpacing takes (spacingAdd, spacingMultiplier).
+        layouts[1] = StaticLayout.Builder
+            .obtain("", 0, 0, Theme.chat_forwardNamePaint, width)
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(false)
+            .build()
     }
 
     @JvmStatic

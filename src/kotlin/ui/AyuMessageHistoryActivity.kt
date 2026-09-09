@@ -84,7 +84,7 @@ class AyuMessageHistoryActivity(
         val name = when (peer) {
             is TLRPC.User -> peer.first_name ?: ""
             is TLRPC.Chat -> peer.title ?: ""
-            else -> LocaleController.getString("InuEditHistory", R.string.InuEditHistory)
+            else -> LocaleController.getString(R.string.InuEditHistory)
         }
 
         actionBar.setBackButtonImage(R.drawable.ic_ab_back)
@@ -239,7 +239,7 @@ class AyuMessageHistoryActivity(
         private fun copyTextToClipboard(text: String) {
             AndroidUtilities.addToClipboard(text)
             BulletinFactory.of(this@AyuMessageHistoryActivity)
-                .createCopyBulletin(LocaleController.getString("MessageCopied", R.string.MessageCopied))
+                .createCopyBulletin(LocaleController.getString(R.string.MessageCopied))
                 .show()
         }
     }

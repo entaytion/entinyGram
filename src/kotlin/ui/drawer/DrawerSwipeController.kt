@@ -18,6 +18,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.Keep
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import desu.inugram.helpers.dialogs.DrawerHelper
 import org.telegram.messenger.AndroidUtilities
@@ -92,7 +93,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         drawerLayout!!.visibility = View.INVISIBLE
         if (shadowLeft == null) {
             try {
-                shadowLeft = host.resources.getDrawable(R.drawable.header_shadow)
+                shadowLeft = ResourcesCompat.getDrawable(host.resources, R.drawable.header_shadow, null)
             } catch (_: Exception) {
             }
         }
