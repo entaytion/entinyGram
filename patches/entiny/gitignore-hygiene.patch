@@ -1,5 +1,5 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 9 Sep 2026 16:26:53 +0300
 Subject: Ignore local build artifacts CMake leaves behind (.cxx, .kotlin, .local_build_number)
 

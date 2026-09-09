@@ -1,5 +1,5 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Wed, 9 Sep 2026 16:14:55 +0300
 Subject: Add a left-drawable click slot to SimpleTextView, mirroring the existing right one
 
