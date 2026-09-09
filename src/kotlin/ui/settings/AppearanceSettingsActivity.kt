@@ -238,14 +238,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                         ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
                     )
                 }
-                items.add(
-                    mkTwoLineCheckItem(
-                        TOGGLE_UNREAD_BADGE_BACK_BUTTON,
-                        R.string.InuUnreadBadgeBackButton,
-                        R.string.InuUnreadBadgeBackButtonInfo,
-                        InuConfig.UNREAD_BADGE_BACK_BUTTON.value,
-                    )
-                )
             }
         }
         // Not part of the nesting: the marquee also drives screen titles and profile names, so it
@@ -456,14 +448,18 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
 
-            TOGGLE_CENTER_TITLE_RIGHT_AVATAR ->
+            // These two have no children to show or hide, but they still re-render: the item the
+            // adapter holds is what a later rebind renders from, so leaving it behind is what made
+            // the switch snap back after scrolling the row out of view and back.
+            TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> {
                 (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
+                listView.adapter.update(true)
+            }
 
-            TOGGLE_UNREAD_BADGE_BACK_BUTTON ->
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.UNREAD_BADGE_BACK_BUTTON.toggle()
-
-            TOGGLE_CHAT_TITLE_MARQUEE ->
+            TOGGLE_CHAT_TITLE_MARQUEE -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
+                listView.adapter.update(true)
+            }
 
             BUTTON_MONET_THEME -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val context = context ?: return
@@ -519,7 +515,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT = InuUtils.generateId()
-        private val TOGGLE_UNREAD_BADGE_BACK_BUTTON = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
@@ -594,7 +589,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("ios-chat-header-avatar-slot", R.string.InuIosChatHeaderAvatarSlot, TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT),
-                SearchRegistry.Entry("unread-badge-back-button", R.string.InuUnreadBadgeBackButton, TOGGLE_UNREAD_BADGE_BACK_BUTTON),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("hide-fade-view", R.string.InuHideFadeView, TOGGLE_HIDE_FADE_VIEW),
             ),

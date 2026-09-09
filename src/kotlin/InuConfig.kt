@@ -31,6 +31,60 @@ object InuConfig {
         migrateAiRoles()
         migrateAiProviders()
         migrateSharedProviderKeys()
+        migrateCenteringGroup()
+    }
+
+    // "ios_chat_header" used to be a standalone iOS chat header: it centered the header by itself,
+    // independently of CENTER_TITLE_MAIN/CENTER_TITLE_CHATS, and moving the avatar into the "..."
+    // slot was simply part of that mode. The key survived the rebuild of the centering group but
+    // its meaning did not - it is now "compact pill", readable only through
+    // InuUtils.compactChatPill(), i.e. only under both centering parents, and the avatar-in-slot
+    // half became its own opt-in ([IOS_CHAT_HEADER_AVATAR_SLOT], default off).
+    //
+    // Without this step, anyone who had the old mode on lands on a header that is neither what
+    // they had nor off: the parents are false, so the pill does nothing at all, or - once they
+    // turn centering back on - the avatar is back inside the pill it used to sit outside of,
+    // eating the room the title needs and pushing a long one into the marquee. Re-state their old
+    // setup in the new vocabulary, and only ever for someone who actually had the legacy mode on.
+    private fun migrateCenteringGroup() {
+        if (CENTERING_GROUP_MIGRATED.value) {
+            dropLegacyCenteringKeys()
+            return
+        }
+        CENTERING_GROUP_MIGRATED.value = true
+        // The legacy fingerprint has to be unambiguous, because this runs once for everyone and
+        // the same key means two different things on either side of the rebuild. Under the NEW
+        // nesting, ios_chat_header can only ever have been switched on from a row that is itself
+        // only shown while both parents are on - so "on, with a parent off" is a state the new UI
+        // cannot produce and the old one produced routinely. Anyone already sitting on the new
+        // nesting is left completely alone; the cost is that a legacy user who happened to have
+        // all three on is read as new and keeps the avatar inside the pill rather than in the
+        // menu slot. That is one toggle away, and it is the right way round: never overwrite a
+        // deliberate choice to repair a guess.
+        val legacyStandaloneMode = IOS_CHAT_HEADER.value && !(CENTER_TITLE_MAIN.value && CENTER_TITLE_CHATS.value)
+        if (legacyStandaloneMode) {
+            CENTER_TITLE_MAIN.value = true
+            CENTER_TITLE_CHATS.value = true
+            // Only seed the avatar slot if the user has never had an opinion on it - the key is
+            // new, so its mere presence means they already made a choice on the new build.
+            if (!prefs.contains(IOS_CHAT_HEADER_AVATAR_SLOT.key)) {
+                IOS_CHAT_HEADER_AVATAR_SLOT.value = true
+            }
+        }
+        dropLegacyCenteringKeys()
+    }
+
+    // center_title_fixed / center_title_adaptive_width were dropped outright - the compact pill is
+    // the adaptive-width mode now, and the fixed placement is what the symmetric room does. Nothing
+    // reads them any more, so they are just dead weight in an export.
+    private fun dropLegacyCenteringKeys() {
+        if (!prefs.contains("center_title_fixed") && !prefs.contains("center_title_adaptive_width")) {
+            return
+        }
+        prefs.edit(commit = true) {
+            remove("center_title_fixed")
+            remove("center_title_adaptive_width")
+        }
     }
 
     // AI Compose used to store an arbitrary named list of endpoints ([AI_COMPOSE_ENDPOINTS]) you
@@ -1399,14 +1453,14 @@ object InuConfig {
     @JvmField
     val IOS_CHAT_HEADER_AVATAR_SLOT = BoolItem("ios_chat_header_avatar_slot", false)
 
-    // CherryGram-style: a small counter pill grows out of the back button showing the total
-    // unread chats count, while chat headers are centered. Purely decorative - not tied to the
-    // chat you navigated from.
-    @JvmField
-    val UNREAD_BADGE_BACK_BUTTON = BoolItem("unread_badge_back_button", false)
-
     @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
+
+    // Non-exportable run-record for [migrateCenteringGroup]. Independent of the keys it rewrites,
+    // so a restored backup that resurrects the legacy layout can never re-fire it over a choice
+    // the user has made since.
+    @JvmField
+    val CENTERING_GROUP_MIGRATED = BoolItem("centering_group_migrated", false, exportable = false)
 
     // Per-category local preservation of self-destruct content. All default off = stock behavior.
     @JvmField

@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13691,8 +13691,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -13710,8 +13710,11 @@ public class ChatActivity extends BaseFragment implements
              chatAttachAlert.setMaxSelectedPhotos(-1, true);
          }
          chatAttachAlert.enableDefaultMode();
@@ -27,10 +27,10 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30095,6 +30098,7 @@ public class ChatActivity extends BaseFragment implements
-     public void onResume() {
+@@ -30155,6 +30158,7 @@ public class ChatActivity extends BaseFragment implements
          super.onResume();
          checkShowBlur(false);
+         inu_updateMenuSlotAvatar();
 +        desu.inugram.helpers.chat.AttachMinimizeHelper.syncBadge(this);
          activityResumeTime = System.currentTimeMillis();
          if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {

@@ -1233,7 +1233,5 @@
     <string name="InuCenterTitleChatsInfo">タイトルとサブタイトルをチャットヘッダーの中央に移動します。アバターは左端に固定されたままです。</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">アバターがピルから出て「⋮」ボタンの位置に移動します — タップでプロフィール、長押しでチャットメニューを開きます。オフの場合、アバターはコンパクトなピルの中に残ります。</string>
-    <string name="InuUnreadBadgeBackButton">戻るボタンに未読バッジ (iOS スタイル)</string>
-    <string name="InuUnreadBadgeBackButtonInfo">iOS版Telegramのように、未読チャットの合計数を戻るボタンの隣に小さなピルとして表示します。</string>
     <string name="InuScrollToTop">Scroll to top</string>
 </resources>

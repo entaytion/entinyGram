@@ -1,35 +1,27 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Sat, 29 Aug 2026 15:21:16 +0300
-Subject: iOS-style chat header + adaptive width + unread badge
+Date: Wed, 9 Sep 2026 21:26:44 +0300
+Subject: iOS-style chat header + adaptive width
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 345 ++++++++++++++++--
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 247 ++++++++++++--
  .../telegram/ui/ActionBar/SimpleTextView.java |  18 +
- .../java/org/telegram/ui/ChatActivity.java    |  54 ++-
- .../ui/Components/ChatAvatarContainer.java    | 311 ++++++++++++++--
- 4 files changed, 672 insertions(+), 56 deletions(-)
+ .../java/org/telegram/ui/ChatActivity.java    | 114 ++++++-
+ .../ui/Components/ChatAvatarContainer.java    | 311 ++++++++++++++++--
+ 4 files changed, 634 insertions(+), 56 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -61,6 +61,7 @@ import org.telegram.ui.Adapters.FiltersView;
- import org.telegram.ui.Components.AnimatedEmojiDrawable;
- import org.telegram.ui.Components.BackupImageView;
- import org.telegram.ui.Components.ChatAvatarContainer;
-+import org.telegram.ui.Components.CounterView;
- import org.telegram.ui.Components.CubicBezierInterpolator;
- import org.telegram.ui.Components.EllipsizeSpanAnimator;
- import org.telegram.ui.Components.FireworksEffect;
-@@ -208,6 +209,164 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -208,6 +208,71 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          this.chatAvatarContainer = chatAvatarContainer;
      }
  
 +    // inu: centered chat header - CherryGram-style adaptive pill.
 +    //
-+    // The pill's geometry is a pure function of the action bar's own fixed slots (back button
-+    // plus its unread badge, menu items) and of the PAINT-measured width of title/subtitle.
++    // The pill's geometry is a pure function of the action bar's own fixed slots (back button,
++    // menu items) and of the PAINT-measured width of title/subtitle.
 +    // ChatAvatarContainer then lays its text out INTO that pill - never the other way round.
 +    // Reading the pill back off the text's laid-out position, as this used to, double-counted
 +    // the title's own centering bias (the pill drifted half a verified-badge to the right of
@@ -55,99 +47,6 @@ index 0000000..0000000 100644
 +    // span the String conversion dropped). Sized to the text exactly, that difference was enough
 +    // to trip setEllipsizeByGradient and fade the tail of a subtitle that actually fit.
 +    private static final int INU_PILL_TEXT_SLACK_DP = 3;
-+
-+    // CherryGram-style unread counter growing out of the back button. The counter's own measured
-+    // width feeds inu_animatorBackPillGrowth, which updateGlassBounds() reads to make room.
-+    private CounterView inu_backCounterView;
-+    private final FactorAnimator inu_animatorBackPillGrowth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320);
-+    private boolean inu_backCounterVisible;
-+    private int inu_backUnreadCount;
-+
-+    private void inu_ensureBackCounterView() {
-+        if (inu_backCounterView != null) {
-+            return;
-+        }
-+        // CounterView re-measures itself asynchronously after setCount(), so a growth target read
-+        // straight after setCount() would still be the previous count's width. CherryGram hooks
-+        // invalidate() for exactly this reason.
-+        inu_backCounterView = new CounterView(getContext(), resourcesProvider) {
-+            @Override
-+            public void invalidate() {
-+                super.invalidate();
-+                inu_updateBackPillGrowth(true);
-+            }
-+        };
-+        inu_backCounterView.setVisibility(VISIBLE);
-+        inu_backCounterView.setColors(Theme.key_chats_unreadCounterText, Theme.key_chats_unreadCounter);
-+        inu_backCounterView.setGravity(Gravity.LEFT);
-+        inu_backCounterView.setScaleX(0f);
-+        inu_backCounterView.setScaleY(0f);
-+        inu_backCounterView.setAlpha(0f);
-+        addView(inu_backCounterView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 20, Gravity.LEFT | Gravity.CENTER_VERTICAL, 44, 0, 0, 0));
-+    }
-+
-+    // Called by ChatHelper.updateUnreadBackBadge() whenever the total unread count or the
-+    // centered-title state might have changed. count <= 0 or the feature being off just hides it.
-+    public void inu_setBackUnreadCount(int count) {
-+        if (!desu.inugram.InuConfig.UNREAD_BADGE_BACK_BUTTON.getValue()) {
-+            count = 0;
-+        }
-+        if (count > 0) {
-+            inu_ensureBackCounterView();
-+        }
-+        inu_backUnreadCount = Math.max(0, count);
-+        if (inu_backCounterView != null) {
-+            inu_backCounterView.setCount(Math.min(999, inu_backUnreadCount), true);
-+        }
-+        inu_updateBackPillGrowth(true);
-+    }
-+
-+    private boolean inu_backCounterShown() {
-+        return inu_backCounterView != null
-+                && desu.inugram.InuConfig.UNREAD_BADGE_BACK_BUTTON.getValue()
-+                && inu_backUnreadCount > 0
-+                && chatAvatarContainer != null && chatAvatarContainer.isTitleCenteredMode()
-+                && !isActionModeShowed()
-+                && !isSearchFieldVisible;
-+    }
-+
-+    private void inu_updateBackPillGrowth(boolean animated) {
-+        if (inu_backCounterView == null) {
-+            return;
-+        }
-+        final boolean show = inu_backCounterShown();
-+        // Only (re)run the pop-in on an actual state change - this is reached from the counter's
-+        // own invalidate(), i.e. potentially every frame, and restarting the animator there would
-+        // pin the badge at its start scale forever.
-+        if (inu_backCounterVisible != show) {
-+            inu_backCounterVisible = show;
-+            inu_backCounterView.animate().cancel();
-+            if (animated) {
-+                inu_backCounterView.animate().scaleX(show ? 1f : 0f).scaleY(show ? 1f : 0f).alpha(show ? 1f : 0f).setDuration(220).start();
-+            } else {
-+                inu_backCounterView.setScaleX(show ? 1f : 0f);
-+                inu_backCounterView.setScaleY(show ? 1f : 0f);
-+                inu_backCounterView.setAlpha(show ? 1f : 0f);
-+            }
-+        }
-+        final int target = show ? Math.min(dp(35), Math.max(0, inu_backCounterView.getMeasuredWidth())) : 0;
-+        if (animated) {
-+            if (inu_animatorBackPillGrowth.getToFactor() != target) {
-+                inu_animatorBackPillGrowth.animateTo(target);
-+            }
-+        } else {
-+            inu_animatorBackPillGrowth.forceFactor(target);
-+        }
-+        invalidate();
-+    }
-+
-+    // Extra room the unread badge takes out of the back-button slot. A FactorAnimator (not an
-+    // AnimatedFloat) because updateGlassBounds() runs several times per frame - measure, layout
-+    // and draw - and animateTo() is idempotent where AnimatedFloat.set() would advance the
-+    // animation once per call and race ahead of real time.
-+    private int inu_getBackPillGrowth() {
-+        return Math.max(0, (int) inu_animatorBackPillGrowth.getFactor());
-+    }
 +
 +    // Distance from a pill edge to the text inside it, avatar room included when the avatar sits
 +    // inside the pill. Public because ChatAvatarContainer derives its own text band from it.
@@ -187,31 +86,7 @@ index 0000000..0000000 100644
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -848,6 +1007,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-         }
-         actionModeVisible = true;
-         checkMenuItemsWidth();
-+        inu_updateBackPillGrowth(animated);
-         if (animated) {
-             ArrayList<Animator> animators = new ArrayList<>();
-             animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f, 1.0f));
-@@ -1019,6 +1179,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-         actionMode.hideAllPopupMenus();
-         actionModeVisible = false;
-         checkMenuItemsWidth();
-+        inu_updateBackPillGrowth(true);
-         ArrayList<Animator> animators = new ArrayList<>();
-         animators.add(ObjectAnimator.ofFloat(actionMode, View.ALPHA, 0.0f));
-         if (actionModeHidingViews != null) {
-@@ -1193,6 +1354,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
-     public void onSearchFieldVisibilityChanged(boolean visible) {
-         isSearchFieldVisible = visible;
-         checkMenuItemsWidth();
-+        inu_updateBackPillGrowth(true);
-         if (searchVisibleAnimator != null) {
-             searchVisibleAnimator.cancel();
-         }
-@@ -1406,6 +1568,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1406,6 +1471,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          setMeasuredDimension(width, actionBarHeight + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0) + extraHeight);
  
@@ -223,7 +98,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
-@@ -2240,6 +2407,159 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2240,6 +2310,158 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      public boolean doNotDrawGlassMenu;
  
@@ -246,11 +121,10 @@ index 0000000..0000000 100644
 +        final int rightOffset = Math.max(menuWidthWithPadding,
 +                chatAvatarContainer == null ? 0 : chatAvatarContainer.inu_getMenuSlotAvatarReserve());
 +
-+        // The back button's own slot, WITHOUT its unread badge. Keeping the badge out of this
-+        // reference is what makes the centered pill stay put when the badge appears or goes away;
-+        // leftLimit below only pushes the pill when the grown badge would actually collide with it.
++        // The back button's own slot. Both the symmetric room below and the placement clamp are
++        // derived from it, so the centered pill is a pure function of the two fixed slots.
 +        final int baseLeft = hasBackButton ? s + p : 0;
-+        final int leftLimit = hasBackButton ? baseLeft + inu_getBackPillGrowth() : 0;
++        final int leftLimit = baseLeft;
 +        int leftDefault = leftLimit;
 +        int rightDefault = width - rightOffset;
 +
@@ -280,8 +154,8 @@ index 0000000..0000000 100644
 +            // subtitle centred inside it.
 +            //
 +            // A symmetric room costs the wider-slot side's difference in usable width, which is
-+            // the price of the pill actually being centred; the placement clamps below still let
-+            // it slide off the midpoint when the back button's unread badge would collide with it.
++            // the price of the pill actually being centred; the placement clamps below are what
++            // keep it clear of the two slots when the room is too tight to centre it in.
 +            final int symmetricInset = Math.max(baseLeft, rightOffset);
 +            final int roomLeft = symmetricInset;
 +            final int roomRight = Math.max(roomLeft + dp(INU_PILL_MIN_WIDTH_DP), width - symmetricInset);
@@ -351,7 +225,7 @@ index 0000000..0000000 100644
 +        }
 +    }
 +
-+    // Center a pill of the given width, then keep it clear of the back badge and the menu.
++    // Center a pill of the given width, then keep it clear of the back button and the menu.
 +    private int inu_placePill(int centerX, int pillWidth, int leftLimit, int rightLimit) {
 +        int left = centerX - pillWidth / 2;
 +        if (left + pillWidth > rightLimit) {
@@ -364,7 +238,7 @@ index 0000000..0000000 100644
 +    }
 +
 +    // The container measures and lays its text out against inu_titlePill*, so a pill that moved
-+    // outside a layout pass (a new subtitle, the unread badge appearing) has to ask for one.
++    // outside a layout pass (a new subtitle, a menu item appearing) has to ask for one.
 +    // Skipped while a layout pass is already pending, which is also what stops this from looping:
 +    // the pill is a pure function of slot geometry and painted text width, so the pass it asks
 +    // for recomputes the same rectangle and asks for nothing further.
@@ -383,7 +257,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          final int p = dp(6);
-@@ -2255,33 +2575,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2255,33 +2477,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int b = t + s + p * 2;
  
          if (glassDrawable != null && !glassOnlyBack) {
@@ -451,31 +325,41 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -3713,6 +3713,7 @@ public class ChatActivity extends BaseFragment implements
-             actionBar.setBackButtonDrawable(null);
-         } else {
-             actionBar.setBackButtonDrawable(new BackDrawable(isReport()));
-+            ChatHelper.updateUnreadBackBadge(this);
-         }
- 
-         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
-@@ -4349,6 +4350,31 @@ public class ChatActivity extends BaseFragment implements
+@@ -4349,6 +4349,53 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-+            if (avatarContainer != null && avatarContainer.inu_isIosMenuSlotAvatar()) {
++            if (avatarContainer != null) {
 +                // Compact pill with the avatar moved into this slot: the chat avatar is laid out
 +                // here instead of the "..." icon (see ChatAvatarContainer#onLayout), so hide the
 +                // icon and make the slot behave like an avatar — a plain tap opens the profile,
 +                // which is what tapping an avatar does everywhere else, and a long press falls
 +                // back to the chat menu this slot used to hold.
++                //
++                // Both listeners are installed unconditionally and branch on the LIVE state
++                // instead of being installed only while the option is on. ActionBarMenu#addItem
++                // owns this item's stock click listener, so an override installed once could
++                // never be undone - the slot kept opening the profile after the option was
++                // turned off, and the "..." it was hiding stayed invisible for the rest of the
++                // chat's life. Branching keeps the stock behaviour reachable at any time.
 +                final ActionBarMenuItem inu_headerItem = headerItem;
-+                // INVISIBLE, not alpha 0: ActionBarMenu drives every menu icon's alpha back to 1
-+                // when the search field closes (see its menuIcons animation), so an alpha-hidden
-+                // "..." came back on top of the avatar the first time the chat search was opened
-+                // and dismissed. Visibility survives that, and still reserves the slot's width.
-+                headerItem.getIconView().setVisibility(View.INVISIBLE);
++                final ActionBarMenu inu_menu = menu;
 +                headerItem.setOnClickListener(v -> {
++                    if (!avatarContainer.inu_isIosMenuSlotAvatar()) {
++                        // Verbatim ActionBarMenu#addItem's own click listener - the one this
++                        // override replaced. Reimplemented rather than approximated so the slot
++                        // behaves exactly like stock whenever the option is off.
++                        if (inu_headerItem.hasSubMenu()) {
++                            if (actionBar.actionBarMenuOnItemClick == null || actionBar.actionBarMenuOnItemClick.canOpenMenu()) {
++                                inu_headerItem.toggleSubMenu();
++                            }
++                        } else if (inu_headerItem.isSearchField()) {
++                            actionBar.onSearchFieldVisibilityChanged(inu_headerItem.toggleSearch(true));
++                        } else if (v.getTag() instanceof Integer) {
++                            inu_menu.onItemClick((Integer) v.getTag());
++                        }
++                        return;
++                    }
 +                    // Mirror ChatAvatarContainer's own avatarImageView click listener: a linked
 +                    // community (channel/user with linked_community_id) takes over the tap and
 +                    // opens CommunitySheet instead of the profile — see onAvatarClick() overrides.
@@ -484,14 +368,18 @@ index 0000000..0000000 100644
 +                    }
 +                });
 +                headerItem.setOnLongClickListener(v -> {
++                    if (!avatarContainer.inu_isIosMenuSlotAvatar()) {
++                        return false;
++                    }
 +                    inu_headerItem.toggleSubMenu();
 +                    return true;
 +                });
++                inu_updateMenuSlotAvatar();
 +            }
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4560,7 +4586,15 @@ public class ChatActivity extends BaseFragment implements
+@@ -4560,7 +4607,13 @@ public class ChatActivity extends BaseFragment implements
  
          if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
              attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
@@ -501,14 +389,12 @@ index 0000000..0000000 100644
 +                // The attach item shares this very slot with headerItem and takes over whenever
 +                // the composer has something to attach, so hiding only headerItem's icon left the
 +                // avatar covered again in exactly those states.
-+                if (avatarContainer != null && avatarContainer.inu_isIosMenuSlotAvatar()) {
-+                    cell.getIconView().setVisibility(View.INVISIBLE);
-+                }
++                inu_updateMenuSlotAvatar();
 +            });
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4611,18 +4645,17 @@ public class ChatActivity extends BaseFragment implements
+@@ -4611,18 +4664,17 @@ public class ChatActivity extends BaseFragment implements
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
              ChatObject.isForum(currentChat));
  
@@ -534,16 +420,61 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -22119,6 +22152,9 @@ public class ChatActivity extends BaseFragment implements
-             }
-         } else if (id == NotificationCenter.updateInterfaces) {
-             int updateMask = (Integer) args[0];
-+            if ((updateMask & MessagesController.UPDATE_MASK_READ_DIALOG_MESSAGE) != 0) {
-+                ChatHelper.updateUnreadBackBadge(this);
-+            }
-             if ((updateMask & MessagesController.UPDATE_MASK_NAME) != 0 || (updateMask & MessagesController.UPDATE_MASK_CHAT_NAME) != 0 || (updateMask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0) {
-                 if (currentChat != null) {
-                     TLRPC.Chat chat = getMessagesController().getChat(currentChat.id);
+@@ -30024,10 +30076,54 @@ public class ChatActivity extends BaseFragment implements
+ 
+     Bulletin.Delegate bulletinDelegate;
+ 
++    // inu: whether this fragment has hidden the menu slot's own icons for the avatar. Only ever
++    // set once the option has actually been on, so a chat that never used it leaves the stock
++    // icons untouched.
++    private boolean inu_menuSlotAvatarActive;
++
++    // inu: ChatAvatarContainer reads the avatar-in-menu-slot option live on every layout pass, but
++    // the "..." icon the avatar replaces lives in THIS fragment's menu and used to be hidden
++    // exactly once, in createView(). Flipping the option while this chat sat in the back stack
++    // therefore left the two halves disagreeing - the avatar moved out to the slot while the icon
++    // stayed drawn on top of it, or, turning it back off, the icon stayed invisible for the rest
++    // of the chat's life with nothing over it. Re-assert it whenever the fragment comes back.
++    public void inu_updateMenuSlotAvatar() {
++        if (avatarContainer == null) {
++            return;
++        }
++        final boolean active = avatarContainer.inu_isIosMenuSlotAvatar();
++        if (!active && !inu_menuSlotAvatarActive) {
++            return;
++        }
++        inu_menuSlotAvatarActive = active;
++        // INVISIBLE, not alpha 0: ActionBarMenu drives every menu icon's alpha back to 1 when the
++        // search field closes (see its menuIcons animation), so an alpha-hidden "..." came back on
++        // top of the avatar the first time chat search was opened and dismissed. Visibility
++        // survives that, and still reserves the slot's width.
++        final int visibility = active ? View.INVISIBLE : View.VISIBLE;
++        boolean changed = false;
++        if (headerItem != null && headerItem.getIconView() != null && headerItem.getIconView().getVisibility() != visibility) {
++            headerItem.getIconView().setVisibility(visibility);
++            changed = true;
++        }
++        // The attach item shares this very slot with headerItem and takes over whenever the
++        // composer has something to attach, so hiding only headerItem's icon left the avatar
++        // covered again in exactly those states. It is lazy, so it may not exist yet.
++        final ActionBarMenuItem attachCell = attachItem == null ? null : attachItem.getView();
++        if (attachCell != null && attachCell.getIconView() != null && attachCell.getIconView().getVisibility() != visibility) {
++            attachCell.getIconView().setVisibility(visibility);
++            changed = true;
++        }
++        if (changed && actionBar != null) {
++            actionBar.requestLayout();
++        }
++    }
++
+     @Override
+     public void onResume() {
+         super.onResume();
+         checkShowBlur(false);
++        inu_updateMenuSlotAvatar();
+         activityResumeTime = System.currentTimeMillis();
+         if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {
+             ImportingAlert alert = new ImportingAlert(getParentActivity(), null, this, themeDelegate);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java

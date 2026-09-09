@@ -1233,7 +1233,5 @@
     <string name="InuCenterTitleChatsInfo">将标题和副标题移到聊天顶栏中央。头像仍固定在左侧。</string>
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">头像离开胶囊并取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单。关闭时头像保留在紧凑胶囊内。</string>
-    <string name="InuUnreadBadgeBackButton">返回按钮上的未读徽标 (iOS 风格)</string>
-    <string name="InuUnreadBadgeBackButtonInfo">如同 iOS 版 Telegram，在返回按钮旁以小胶囊显示未读聊天总数。</string>
     <string name="InuScrollToTop">Scroll to top</string>
 </resources>

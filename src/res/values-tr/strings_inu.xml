@@ -1231,7 +1231,5 @@
     <string name="InuCenterTitleChatsInfo">Başlığı ve alt başlığı sohbet başlığının ortasına taşır. Profil resmi solda sabit kalır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmi haptan çıkar ve \"⋮\" düğmesinin yerini alır — dokunmak profili, uzun basmak sohbet menüsünü açar. Kapalıyken profil resmi kompakt hapın içinde kalır.</string>
-    <string name="InuUnreadBadgeBackButton">Geri düğmesinde okunmamış rozeti (iOS tarzı)</string>
-    <string name="InuUnreadBadgeBackButtonInfo">Toplam okunmamış sohbet sayınızı geri düğmesinin yanında küçük bir hap olarak gösterir, tıpkı Telegram iOS gibi.</string>
     <string name="InuScrollToTop">Scroll to top</string>
 </resources>

@@ -978,8 +978,6 @@
     <string name="InuIosChatHeaderInfo">Shrinks the chat header pill so it hugs the title, subtitle and avatar and floats in the middle of the header, like Telegram for iOS, instead of spanning the whole width.</string>
     <string name="InuIosChatHeaderAvatarSlot">Move avatar to the menu button</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">The avatar leaves the pill and takes the place of the \"⋮\" button — tap it to open the profile, long-press it to open the chat menu. With this off, the avatar stays inside the compact pill.</string>
-    <string name="InuUnreadBadgeBackButton">Unread badge on back button (iOS-style)</string>
-    <string name="InuUnreadBadgeBackButtonInfo">Shows your total unread chats count as a small growing pill next to the back button, like Telegram for iOS.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuSaveDeletedMessages">Save deleted messages</string>

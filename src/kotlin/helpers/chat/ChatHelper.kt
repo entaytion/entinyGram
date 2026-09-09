@@ -1871,16 +1871,4 @@ object ChatHelper {
         val name = UserObject.getFirstName(user)
         return if (name.isNullOrBlank()) LocaleController.getString(R.string.AppName) else name
     }
-
-    // CherryGram-style unread-count pill on the back button (UNREAD_BADGE_BACK_BUTTON). Reflects
-    // the app-wide total unread chats count, not anything tied to the previous screen.
-    @JvmStatic
-    fun updateUnreadBackBadge(fragment: ChatActivity) {
-        val actionBar = fragment.actionBar ?: return
-        if (!InuConfig.UNREAD_BADGE_BACK_BUTTON.value) {
-            actionBar.inu_setBackUnreadCount(0)
-            return
-        }
-        actionBar.inu_setBackUnreadCount(MessagesStorage.getInstance(fragment.currentAccount).mainUnreadCount)
-    }
 }

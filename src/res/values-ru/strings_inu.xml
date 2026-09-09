@@ -1301,7 +1301,5 @@
     <string name="InuCenterTitleChatsInfo">Переносит название и подпись в середину шапки чата. Аватарка остаётся прижатой слева.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка выходит из таблетки и занимает место кнопки «⋮» — тап открывает профиль, долгое нажатие открывает меню чата. Если выключено, аватарка остаётся внутри компактной таблетки.</string>
-    <string name="InuUnreadBadgeBackButton">Счётчик непрочитанных на кнопке «назад» (iOS-style)</string>
-    <string name="InuUnreadBadgeBackButtonInfo">Показывает общее количество непрочитанных чатов небольшой таблеткой рядом с кнопкой «назад», как в Telegram для iOS.</string>
     <string name="InuScrollToTop">Scroll to top</string>
 </resources>

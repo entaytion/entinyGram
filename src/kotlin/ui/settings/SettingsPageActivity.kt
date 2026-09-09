@@ -187,10 +187,15 @@ abstract class SettingsPageActivity : UniversalFragment() {
         return UItem.asButtonCheck(id, text, subtext).also {
             it.checked = checked
             it.bind = Utilities.Callback { view ->
+                // it.checked, NOT the captured `checked` local: UItem.itemEquals() does not
+                // compare `checked`, so DiffUtil treats a flipped row as unchanged and the adapter
+                // keeps the item it already has. A closure that had baked the old value in then
+                // re-asserted it on the next recycle-driven rebind, and the switch silently flipped
+                // back while the pref underneath stayed on.
                 (view as? NotificationsCheckCell)?.setTextAndValueAndCheck(
                     text,
                     subtext,
-                    checked,
+                    it.checked,
                     0,
                     subtext != null,
                     !InuConfig.M3_SECTIONS_STYLE.value
