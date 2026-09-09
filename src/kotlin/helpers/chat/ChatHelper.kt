@@ -856,7 +856,7 @@ object ChatHelper {
                 val msgId = selectedObject.id
                 SavedMessagesHelper.deletePermanently(activity.currentAccount, dialogId, msgId) {
                     BulletinFactory.of(activity).createSimpleBulletin(
-                        R.drawable.inu_tabler_trash_x,
+                        activity.context.resources.getDrawable(R.drawable.inu_tabler_trash_x).mutate(),
                         LocaleController.getString(R.string.InuDeletePermanentlyDone),
                     ).show()
                 }

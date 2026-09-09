@@ -5,7 +5,10 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
+import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
 import java.io.BufferedReader
@@ -128,6 +131,44 @@ object BadgeRegistry {
         // ones - the field survives in the cached user blob otherwise.
         if (InuConfig.HIDE_DEV_BADGES.value) return 0L
         return badgeFor(rawId)?.emojiId ?: 0L
+    }
+
+    /**
+     * Re-runs [resolveIcon] over everything MessagesController is already holding, then asks the
+     * UI to redraw.
+     *
+     * Needed because [applyTo] is only ever reached from putUser/putChat, i.e. as an object
+     * *enters* the controller. Flipping [InuConfig.HIDE_DEV_BADGES] left every already-cached user
+     * and chat carrying the id it was given on the way in, and re-putting them would not have
+     * helped either - putUser() returns early when handed the same instance it already holds, so
+     * resolveIcon() would never run. The setting looked completely dead until the process was
+     * restarted and the caches were rebuilt from scratch.
+     *
+     * Call on the UI thread: it mutates objects the UI reads and then publishes a rebuild.
+     */
+    @JvmStatic
+    fun refreshCached() {
+        for (account in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
+            if (!UserConfig.getInstance(account).isClientActivated) continue
+            val controller = MessagesController.getInstance(account)
+            for (user in controller.users.values) applyTo(user)
+            for (chat in controller.chats.values) applyTo(chat)
+        }
+        // Deliberately NOT NotificationCenter.updateInterfaces. That path updates each surface
+        // through its own incremental route, and for this field the routes run on three different
+        // clocks: the chat header drops the drawable in the frame it is told, the pill behind it
+        // eases to its new width over 320ms, and a dialog row cross-fades the badge out while
+        // rebuilding its name layout in one frame - so the badge ghosts over a name that has
+        // already moved. Every one of those is correct on its own and they still do not agree,
+        // which is what reads as the toggle glitching rather than switching.
+        //
+        // reloadInterface rebuilds the fragments outright, so the whole UI arrives in the new
+        // state at once with nothing left mid-animation. It is what the other appearance toggles
+        // in this fork already use, and rebuildAllFragments() skips the topmost fragment, so the
+        // settings page the switch lives on does not flicker under the finger.
+        AndroidUtilities.runOnUIThread {
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+        }
     }
 
     /**

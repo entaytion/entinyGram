@@ -4,6 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.badges.BadgeRegistry
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -343,7 +344,13 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         if (hideBottomBarGroup.handleClick(item, view) { listView.adapter.update(true) }) return
 
         when (item.id) {
-            TOGGLE_HIDE_DEV_BADGES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
+            TOGGLE_HIDE_DEV_BADGES -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
+                // The badge lives in the cached TLRPC objects, not in the draw path - it is only
+                // written as a user/chat enters MessagesController. Without this the toggle did
+                // nothing at all until the app was restarted.
+                BadgeRegistry.refreshCached()
+            }
             TOGGLE_WIDE_CHANNEL_POSTS -> {
                 val new = InuConfig.WIDE_CHANNEL_POSTS.toggle()
                 (view as? TextCheckCell)?.isChecked = new

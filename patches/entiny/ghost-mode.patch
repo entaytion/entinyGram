@@ -73,7 +73,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2945,6 +2945,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2941,6 +2941,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              currentConnectionState = getConnectionsManager().getConnectionState();
  
              globalObserversGroup.add(NotificationCenter.emojiLoaded);
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
              if (!onlySelect) {
                  globalObserversGroup.add(NotificationCenter.closeSearchByActiveAction);
                  globalObserversGroup.add(NotificationCenter.proxySettingsChanged);
-@@ -10874,6 +10875,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10887,6 +10888,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          } else if (id == NotificationCenter.proxySettingsChanged) {
              updateProxyButton(false, false);

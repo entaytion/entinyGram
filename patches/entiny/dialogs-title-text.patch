@@ -4,58 +4,69 @@ Date: Tue, 1 Sep 2026 11:15:02 +0300
 Subject: Show custom title text on the dialogs list, with an option for the archive
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ .../java/org/telegram/ui/DialogsActivity.java | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -1564,6 +1564,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -1564,6 +1564,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      viewPages[0].dialogsAdapter.resume();
                                      viewPages[1].dialogsAdapter.pause();
                                  }
-+                                // Whichever way this settles -- committed to the target page, or
-+                                // snapped back to the original one (backAnimation) -- viewPages[0]
-+                                // is now authoritative again; re-assert the title from it so a
-+                                // cancelled swipe doesn't leave the target folder's name showing.
-+                                java.util.ArrayList<MessagesController.DialogFilter> inu_settledFilters = getMessagesController().getDialogFilters();
-+                                if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < inu_settledFilters.size()) {
-+                                    inu_updateFolderTitle(inu_settledFilters.get(viewPages[0].selectedType));
-+                                }
++                                // The swipe has settled -- committed to the target page, or snapped
++                                // back to the original one (backAnimation) -- so viewPages[0] is
++                                // authoritative and this is where the name is allowed to change.
++                                inu_updateSettledFolderTitle();
                                  viewPages[1].setVisibility(View.GONE);
                                  showScrollbars(true);
                                  tabsAnimationInProgress = false;
-@@ -3049,6 +3057,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3049,6 +3053,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private Drawable premiumStar;
  
      public void updateStatus(TLRPC.User user, boolean animated) {
 +        if (!desu.inugram.helpers.security.ParanoiaHelper.isDisguised() && actionBar != null &&
 +                (folderId == 0 || desu.inugram.InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE.getValue())) {
-+            actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
++            if (folderId == 0 && desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() == desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
++                // getDialogsTitle() has no FOLDER branch and falls through to the app name, so
++                // running it here would drop the current folder's name on every status update
++                // (emoji status, premium, mainUserInfoChanged).
++                inu_updateSettledFolderTitle();
++            } else {
++                actionBar.setTitle(desu.inugram.helpers.chat.ChatHelper.getDialogsTitle(currentAccount), statusDrawable);
++            }
 +        }
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3719,6 +3731,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3719,6 +3734,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
-+                        ArrayList<MessagesController.DialogFilter> inu_settledFilters = getMessagesController().getDialogFilters();
-+                        if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < inu_settledFilters.size()) {
-+                            inu_updateFolderTitle(inu_settledFilters.get(viewPages[0].selectedType));
-+                        }
++                        inu_updateSettledFolderTitle();
                      }
                  }
  
-@@ -6935,6 +6951,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6935,6 +6951,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
-+    // Re-asserted both when a folder swipe/tap starts (switchToCurrentSelectedMode) and again once
-+    // it actually settles (onPageScrolled progress==1) -- calling it twice is harmless, and doing
-+    // it at settle-time is what stops a stale filter's name from flashing if some unrelated update
-+    // (e.g. a message arriving mid-swipe) races the title back to viewPages[0] before the swap.
++    // Applies whichever folder viewPages[0] currently holds. Safe to call at any time: it reads
++    // the settled page, so it is a no-op-equivalent repeat rather than a mid-transition guess.
++    private void inu_updateSettledFolderTitle() {
++        if (viewPages == null || viewPages.length == 0 || viewPages[0] == null) {
++            return;
++        }
++        ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
++        if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < filters.size()) {
++            inu_updateFolderTitle(filters.get(viewPages[0].selectedType));
++        }
++    }
++
++    // Only ever called for a settled page: the two transition-completion hooks (tabsAnimation
++    // onAnimationEnd, onPageScrolled progress==1) and switchToCurrentSelectedMode when no
++    // transition is in flight. Never while a swipe is mid-flight -- see the comment there.
 +    private void inu_updateFolderTitle(MessagesController.DialogFilter filter) {
 +        if (actionBar == null || folderId != 0 || communityId != 0 || filter == null) {
 +            return;
@@ -71,18 +82,20 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6961,6 +6993,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6961,6 +7004,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  
-+        if (animated || (!startedTracking && !tabsAnimationInProgress)) {
-+            // animated==true means this call is itself the transition kicking off (tab tap /
-+            // drag start), so it must win immediately. animated==false can also arrive from an
-+            // unrelated resync (updateFilterTabs() reacting to a dialog/counter update) that
-+            // fires *during* an in-flight swipe/fling -- in that case `a` is still 0, the
-+            // not-yet-swapped outgoing page, so applying it here would flash the old folder's
-+            // name mid-transition. Skip it; the settle-time update in onPageScrolled will apply
-+            // the correct (new) folder once the transition actually finishes.
++        if (!animated && !startedTracking && !tabsAnimationInProgress) {
++            // Only apply the title when no transition is in flight. animated==true is the
++            // transition *starting* (prepareForMoving / tab tap), where `filter` is the target
++            // page -- committing to it here means every way a swipe can be abandoned has to undo
++            // it, and two of them can't: the drag-reversal reset below prepareForMoving returns
++            // false for, and the touch-interrupt path that calls removeAllListeners() before
++            // cancel() so the animator's settle listener never runs. Both leave the target
++            // folder's name stuck on a page the user never moved to. The settle-time hooks
++            // (tabsAnimation onAnimationEnd, onPageScrolled progress==1) apply the name once the
++            // transition has actually committed, so there is nothing to undo.
 +            inu_updateFolderTitle(filter);
 +        }
 +

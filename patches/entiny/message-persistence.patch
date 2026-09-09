@@ -7,13 +7,13 @@ Subject: feat(history): preserve message history and saved deletions
 - capture outgoing edits before stock state changes
 - render preserved deletions with the configured transparent style
 ---
- .../messenger/MessagesController.java         | 98 +++++++++++++++++--
- .../telegram/messenger/MessagesStorage.java   | 36 ++++++-
- .../messenger/SendMessagesHelper.java         |  6 ++
- .../telegram/ui/Cells/ChatMessageCell.java    | 11 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 15 +++
- .../org/telegram/ui/MainTabsActivity.java     | 11 +--
- 6 files changed, 155 insertions(+), 22 deletions(-)
+ .../messenger/MessagesController.java         | 101 ++++++++++++++++--
+ .../telegram/messenger/MessagesStorage.java   |  40 ++++++-
+ .../messenger/SendMessagesHelper.java         |   6 ++
+ .../telegram/ui/Cells/ChatMessageCell.java    |  11 +-
+ .../java/org/telegram/ui/ChatActivity.java    |  15 +++
+ .../org/telegram/ui/MainTabsActivity.java     |  11 +-
+ 6 files changed, 163 insertions(+), 21 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -132,7 +132,7 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -19546,6 +19591,23 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19546,6 +19591,26 @@ public class MessagesController extends BaseController implements NotificationCe
                  ImageLoader.saveMessageThumbs(message);
                  AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
  
@@ -140,7 +140,10 @@ index 0000000..0000000 100644
 +                    MessageObject inu_cachedMessage = dialogMessagesByIds.get(message.id);
 +                    if (inu_cachedMessage != null && inu_cachedMessage.messageOwner != null) {
 +                        boolean inu_textChanged = inu_cachedMessage.messageOwner.message != null && !inu_cachedMessage.messageOwner.message.equals(message.message);
-+                        boolean inu_mediaChanged = inu_cachedMessage.messageOwner.media != null || message.media != null;
++                        // "either side has media" is true for every ordinary update to a media
++                        // message (reactions, view counts), which filed an edit-history entry for
++                        // messages that were never edited. Compare the attachment instead.
++                        boolean inu_mediaChanged = !MessageObject.getFileName(inu_cachedMessage.messageOwner).equals(MessageObject.getFileName(message));
 +                        if (inu_textChanged || inu_mediaChanged) {
 +                            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, message.dialog_id, message.id, inu_cachedMessage.messageOwner.message != null ? inu_cachedMessage.messageOwner.message : "", inu_cachedMessage.messageOwner.date, inu_cachedMessage.messageOwner);
 +                        }
@@ -156,7 +159,7 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21145,6 +21207,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21145,6 +21210,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -167,7 +170,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21269,6 +21335,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21269,6 +21338,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -225,13 +228,19 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -16365,12 +16373,20 @@ public class MessagesStorage extends BaseController {
+@@ -16365,6 +16373,20 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
 +                                    if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && oldMessage != null) {
 +                                        boolean textChanged = oldMessage.message != null && !oldMessage.message.equals(message.message);
-+                                        boolean mediaChanged = oldMessage.media != null || message.media != null;
++                                        // Compare the attachment itself, not merely whether either
++                                        // side has media: "has media" is true on every ordinary
++                                        // update to a photo/video message (reactions, view counts),
++                                        // which would file an edit-history entry for a message that
++                                        // was never edited. getFileName() returns "" when there is
++                                        // no attachment, so text-only messages compare equal.
++                                        boolean mediaChanged = !MessageObject.getFileName(oldMessage).equals(MessageObject.getFileName(message));
 +                                        if (textChanged || mediaChanged) {
 +                                            String textToSave = oldMessage.message != null ? oldMessage.message : "";
 +                                            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, MessageObject.getDialogId(message), message.id, textToSave, oldMessage.date, oldMessage);
@@ -240,14 +249,7 @@ index 0000000..0000000 100644
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }
-                                     int send_state = cursor.intValue(5);
-                                     if (send_state != 3) {
--                                        if (MessageObject.getFileName(oldMessage).equals(MessageObject.getFileName(message))) {
-+                                        if (FileLoader.getAttachFileName(oldMessage).equals(FileLoader.getAttachFileName(message))) {
-                                             message.attachPath = oldMessage.attachPath;
-                                         }
-                                         message.ttl = cursor.intValue(2);
-@@ -16421,6 +16437,18 @@ public class MessagesStorage extends BaseController {
+@@ -16421,6 +16443,18 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
@@ -266,7 +268,7 @@ index 0000000..0000000 100644
                                  continue;
                              }
                          }
-@@ -19100,7 +19128,7 @@ public class MessagesStorage extends BaseController {
+@@ -19100,7 +19134,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  

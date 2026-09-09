@@ -30,7 +30,7 @@ index 0000000..0000000 100644
              && getGiftAuctionsController().hasActiveAuctions()
              && (rightSlidingDialogContainer == null || !rightSlidingDialogContainer.hasFragment())
              && (!animatorSearchVisible.getValue() || NonIslandHelper.globalSearch());
-@@ -7282,7 +7286,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7295,7 +7299,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                      }));
                                  }
                              });
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                              AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                                  askAboutContacts = param != 0;
                                  MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
-@@ -7304,7 +7308,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7317,7 +7321,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              if (getParentActivity() == null) {
                  return;
              }
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setMessage(getString(R.string.PermissionXiaomiLockscreen))
-@@ -7331,7 +7335,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7344,7 +7348,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              if (getParentActivity() == null) {
                  return;
              }
@@ -57,7 +57,7 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setMessage(getString(R.string.PermissionFSILockscreen))
-@@ -10646,7 +10650,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10659,7 +10663,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              permissons.add(Manifest.permission.POST_NOTIFICATIONS);
          }

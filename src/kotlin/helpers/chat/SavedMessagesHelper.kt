@@ -332,6 +332,12 @@ object SavedMessagesHelper {
     @JvmStatic
     @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
+        // No dialog owns id 0: this is the non-channel TL_updateDeleteMessages path (key == 0)
+        // failing to resolve the message through dialogMessagesByIds, which only holds each
+        // dialog's preview message. Such a row carries no text or sender either, and message ids
+        // restart per dialog, so keeping it would mark every unrelated chat's message of the same
+        // id as deleted.
+        if (dialogId == 0L) return
         if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
         if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && fromId == UserConfig.getInstance(account).clientUserId) return
         ensureAccountLoaded(account)
@@ -376,10 +382,7 @@ object SavedMessagesHelper {
         ensureAccountLoaded(account)
         return synchronized(cacheLock) {
             val accMap = deletedMessageIds.get(account.toLong()) ?: return@synchronized false
-            val dialogSet = accMap.get(dialogId)
-            if (dialogSet?.contains(msgId) == true) return@synchronized true
-            if (dialogId != 0L && accMap.get(0L)?.contains(msgId) == true) return@synchronized true
-            false
+            accMap.get(dialogId)?.contains(msgId) == true
         }
     }
 
@@ -393,12 +396,7 @@ object SavedMessagesHelper {
         ensureAccountLoaded(account)
         return synchronized(cacheLock) {
             val accMap = deletedMessageDates.get(account.toLong()) ?: return@synchronized 0L
-            val date = accMap.get(dialogId)?.get(msgId.toLong()) ?: 0L
-            if (date > 0L) return@synchronized date
-            if (dialogId != 0L) {
-                return@synchronized accMap.get(0L)?.get(msgId.toLong()) ?: 0L
-            }
-            0L
+            accMap.get(dialogId)?.get(msgId.toLong()) ?: 0L
         }
     }
 
@@ -491,7 +489,7 @@ object SavedMessagesHelper {
             shadowMessageCache.get(account.toLong())?.remove(dialogId to msgId)
         } ?: return
         val textChanged = old.text.isNotEmpty() && old.text != (newText ?: "")
-        val mediaChanged = old.hadMedia || newHasMedia
+        val mediaChanged = old.hadMedia != newHasMedia
         if (textChanged || mediaChanged) {
             recordEditHistory(account, dialogId, msgId, old.text, old.date, null)
         }

@@ -4,14 +4,14 @@ Date: Tue, 1 Sep 2026 11:08:07 +0300
 Subject: Center chat title/subtitle alignment; fix subtitle EXACTLY-width mismatch
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 158 +++++++++++++++++-
- .../telegram/ui/ActionBar/SimpleTextView.java | 113 +++++++------
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 161 +++++++++++++++++-
+ .../telegram/ui/ActionBar/SimpleTextView.java | 113 ++++++------
  .../java/org/telegram/ui/ChatActivity.java    |   2 +-
  .../BottomSheetWithRecyclerListView.java      |   1 +
- .../ui/Components/ChatAvatarContainer.java    |  42 +++--
+ .../ui/Components/ChatAvatarContainer.java    |  59 +++++--
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 7 files changed, 254 insertions(+), 80 deletions(-)
+ 7 files changed, 273 insertions(+), 81 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -203,7 +203,7 @@ index 0000000..0000000 100644
          }
  
          for (int i = 0; i < 2; i++) {
-@@ -1717,7 +1819,32 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1717,7 +1819,35 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
@@ -228,7 +228,10 @@ index 0000000..0000000 100644
 +                    // shifted left even though the box itself sits exactly at inu_centerX. Push the box
 +                    // right by half that drawable width so the TEXT — not the text+badge unit — lands on
 +                    // the true center.
-+                    int drawableBias = titleTextView[i].getSideDrawablesSize() / 2;
++                    // Signed (see SimpleTextView#getCenteringDrawableBias): a LEFT drawable pushes
++                    // the glyphs right, so half of every side drawable was the wrong shift the
++                    // moment a title carried one.
++                    int drawableBias = titleTextView[i].getCenteringDrawableBias();
 +                    int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX + drawableBias));
 +                    titleTextView[i].layout(centerX - halfWidth, additionalTop + textTop - titleTextView[i].getPaddingTop(), centerX + halfWidth, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
 +                } else {
@@ -237,7 +240,7 @@ index 0000000..0000000 100644
              }
          }
          if (additionalSubTitleOverlayContainer != null) {
-@@ -1726,12 +1853,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1726,12 +1856,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
@@ -268,7 +271,7 @@ index 0000000..0000000 100644
          }
  
          if (avatarSearchImageView != null) {
-@@ -1789,6 +1932,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1789,6 +1935,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -277,7 +280,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2542,6 +2687,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2562,6 +2710,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void dispatchDraw(Canvas canvas) {
@@ -285,7 +288,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
  
-@@ -2551,8 +2697,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2571,8 +2720,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
  
@@ -318,7 +321,7 @@ index 0000000..0000000 100644
      private float touchDownX, touchDownY;
  
      private AnimatedEmojiSpan.EmojiGroupedSpans emojiStack;
-@@ -339,7 +343,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -357,7 +361,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
              }
  
              if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
@@ -328,7 +331,7 @@ index 0000000..0000000 100644
              } else if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT) {
                  if (firstLineLayout != null) {
                      offsetX = -(int) firstLineLayout.getLineLeft(0);
-@@ -1181,16 +1186,15 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1199,16 +1204,15 @@ public class SimpleTextView extends View implements Drawable.Callback {
      }
  
      public float getExactWidth() {
@@ -349,7 +352,7 @@ index 0000000..0000000 100644
      }
  
      private void drawLayout(Canvas canvas) {
-@@ -1342,14 +1346,6 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1360,14 +1364,6 @@ public class SimpleTextView extends View implements Drawable.Callback {
          return rightDrawableOutside;
      }
  
@@ -364,7 +367,7 @@ index 0000000..0000000 100644
      public void setRightDrawableOnClick(OnClickListener onClickListener) {
          rightDrawableOnClickListener = onClickListener;
      }
-@@ -1360,9 +1356,27 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1378,9 +1374,27 @@ public class SimpleTextView extends View implements Drawable.Callback {
  
      @Override
      public boolean onTouchEvent(MotionEvent event) {
@@ -395,7 +398,7 @@ index 0000000..0000000 100644
                  maybeClick = true;
                  touchDownX = event.getX();
                  touchDownY = event.getY();
-@@ -1370,28 +1384,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1388,28 +1402,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  if (rightDrawable instanceof PressableDrawable) {
                      ((PressableDrawable) rightDrawable).setPressed(true);
                  }
@@ -425,7 +428,7 @@ index 0000000..0000000 100644
                  maybeClick2 = true;
                  touchDownX = event.getX();
                  touchDownY = event.getY();
-@@ -1399,24 +1392,38 @@ public class SimpleTextView extends View implements Drawable.Callback {
+@@ -1417,24 +1410,38 @@ public class SimpleTextView extends View implements Drawable.Callback {
                  if (rightDrawable2 instanceof PressableDrawable) {
                      ((PressableDrawable) rightDrawable2).setPressed(true);
                  }
@@ -517,7 +520,7 @@ index 0000000..0000000 100644
          titleTextView.setLeftDrawableTopPadding(-dp(1.3f));
          titleTextView.setCanHideRightDrawable(false);
 -        titleTextView.setRightDrawableOutside(true);
-+        titleTextView.setRightDrawableOutside(!centerChatTitle);
++        titleTextView.setRightDrawableOutside(inu_titleRightDrawableOutside(marquee));
          titleTextView.setPadding(0, dp(6), 0, dp(12));
          addView(titleTextView);
  
@@ -548,7 +551,7 @@ index 0000000..0000000 100644
          return false;
      }
  
-@@ -1014,35 +1014,43 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1091,35 +1091,57 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                  titleTextLargerCopyView.layout(titleL, viewTop + dp(10), titleR, viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
              }
          }
@@ -582,17 +585,32 @@ index 0000000..0000000 100644
          }
          if (starFgItem != null) {
 -            starFgItem.layout(leftPadding + dp(28), viewTop + dp(24), leftPadding + dp(28) + starFgItem.getMeasuredWidth(), viewTop + dp(24) + starFgItem.getMeasuredHeight());
+-        }
 +            starFgItem.setTranslationX(transX);
 +            starFgItem.layout(avatarLeftPos + dp(28), viewTop + dp(24), avatarLeftPos + dp(28) + starFgItem.getMeasuredWidth(), viewTop + dp(24) + starFgItem.getMeasuredHeight());
-         }
++        }
 +
-+        int subR = centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + (subtitleTextView != null ? subtitleTextView.getMeasuredWidth() : (animatedSubtitleTextView != null ? animatedSubtitleTextView.getMeasuredWidth() : 0)));
++        // Both subtitle views centre their text inside (box width - paddingRight), not inside the
++        // box: SimpleTextView#calcOffset halves (width - paddingLeft - paddingRight) and then adds
++        // paddingLeft back, and AnimatedTextView hands its drawable bounds already inset by the
++        // padding. Both subtitle variants carry the stock setPadding(0, 0, dp(10), 0) for their
++        // gradient tail while the title carries no horizontal padding at all, so the subtitle
++        // settled half that padding LEFT of the title above it - visible as a header whose two
++        // lines simply do not line up, no matter how exactly the pill itself is centred. Shift the
++        // box right by half the padding difference so the glyphs, not the padded box, are what
++        // ends up centred. Same shape as titleDrawableBias above, and clamped the same way: with
++        // no slack left in the band there is nothing to shift into, and the text stays put.
++        final int subtitlePaddingBias = centerChatTitle
++                ? inu_centeredPaddingBias(subtitleTextView != null ? subtitleTextView : animatedSubtitleTextView, availableWidth)
++                : 0;
++        final int subL = textLeftBound + subtitlePaddingBias;
++        int subR = (centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + (subtitleTextView != null ? subtitleTextView.getMeasuredWidth() : (animatedSubtitleTextView != null ? animatedSubtitleTextView.getMeasuredWidth() : 0)))) + subtitlePaddingBias;
          if (subtitleTextView != null) {
 -            subtitleTextView.layout(l, subtitleTop, l + subtitleTextView.getMeasuredWidth(), subtitleTop + subtitleTextView.getTextHeight());
-+            subtitleTextView.layout(textLeftBound, subtitleTop, subR, subtitleTop + subtitleTextView.getTextHeight());
++            subtitleTextView.layout(subL, subtitleTop, subR, subtitleTop + subtitleTextView.getTextHeight());
          } else if (animatedSubtitleTextView != null) {
 -            animatedSubtitleTextView.layout(l, subtitleTop, l + animatedSubtitleTextView.getMeasuredWidth(), subtitleTop + animatedSubtitleTextView.getTextHeight());
-+            animatedSubtitleTextView.layout(textLeftBound, subtitleTop, subR, subtitleTop + animatedSubtitleTextView.getTextHeight());
++            animatedSubtitleTextView.layout(subL, subtitleTop, subR, subtitleTop + animatedSubtitleTextView.getTextHeight());
          }
          SimpleTextView subtitleTextLargerCopyView = this.subtitleTextLargerCopyView.get();
          if (subtitleTextLargerCopyView != null) {
@@ -601,7 +619,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -1144,10 +1152,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1221,10 +1243,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -614,7 +632,15 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -1760,6 +1769,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1250,6 +1273,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
+         titleTextView.setScrollNonFitText(marquee);
+         titleTextView.setEllipsizeByGradient(!marquee, false);
++        titleTextView.setRightDrawableOutside(inu_titleRightDrawableOutside(marquee));
+         titleTextView.setText(value);
+         rightDrawableIsScam = false;
+         if (scam || fake) {
+@@ -1837,6 +1861,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -622,7 +648,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -1971,7 +1981,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2048,7 +2073,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (hasVisibleAvatar()) {
              width += dp(52 + 18);
          } else {
@@ -635,7 +661,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3257,6 +3257,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3260,6 +3260,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  
