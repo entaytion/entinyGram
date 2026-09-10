@@ -12,12 +12,16 @@ Subject: Remove unused Android Auto integration and Play Store referrer receiver
  .../messenger/car/TelegramCarAppService.java  |  46 +-
  .../messenger/car/TelegramCarSession.java     |  16 -
  .../src/main/res/xml/automotive_app_desc.xml  |   5 -
- 8 files changed, 6 insertions(+), 663 deletions(-)
+ gradle.properties                             |   3 +
+ 12 files changed, 9 insertions(+), 957 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
  delete mode 100644 TMessagesProj/src/main/res/xml/automotive_app_desc.xml
+ delete mode 100644 TMessagesProj_AppHockeyApp/google-services.json
+ delete mode 100644 TMessagesProj_AppHuawei/google-services.json
+ delete mode 100644 TMessagesProj_AppStandalone/google-services.json
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -756,3 +760,14 @@ index 0000000..0000000
 -    <uses name="template"/>
 -</automotiveApp>
 \ No newline at end of file
+diff --git a/gradle.properties b/gradle.properties
+index 0000000..0000000 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -30,3 +30,6 @@ android.defaults.buildfeatures.buildconfig=true
+ android.nonTransitiveRClass=false
+ android.nonFinalResIds=false
+ android.enableR8.fullMode=true
++
++# Enabled parallel sync for Gradle 9.4+
++org.gradle.tooling.parallel=true
