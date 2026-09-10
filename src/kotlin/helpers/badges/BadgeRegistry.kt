@@ -354,8 +354,8 @@ object BadgeRegistry {
      */
     private const val EMOJI_ENTINY = 5260594734346313076L // satellite dish
     private const val EMOJI_INU = 5260551076003753813L // chinese symbol
-    private const val EMOJI_ENTINY_FIRST = 5265209225734304965L // bust in silhouette
-    private const val EMOJI_ENTINY_TESTER = 5264955358807369439L // star
+    private const val EMOJI_ENTINY_FIRST = 5264955358807369439L // star
+    private const val EMOJI_ENTINY_TESTER = 5265209225734304965L // bust in silhouette
 
     /**
      * The list that used to be hardcoded, kept so a fresh install shows badges before

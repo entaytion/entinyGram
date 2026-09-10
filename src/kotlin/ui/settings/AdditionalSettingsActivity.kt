@@ -466,7 +466,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     private fun launchExport() {
         Utilities.globalQueue.postRunnable {
             val date = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(Date())
-            val file = File(AndroidUtilities.getCacheDir(), "$date.inu-settings.json")
+            val file = File(AndroidUtilities.getCacheDir(), "$date${SettingsBackupHelper.FILENAME_SUFFIX}")
             val err: String? = try {
                 file.parentFile?.mkdirs()
                 file.writeText(SettingsBackupHelper.export(), Charsets.UTF_8)

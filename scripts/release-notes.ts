@@ -36,11 +36,14 @@ const baseUrl = (process.env.GEMINI_BASE_URL ?? 'https://generativelanguage.goog
 // weakest at following them - it was the one inventing "accordion editor"-style detail and
 // reshuffling features into the wrong section. It stays only as a fallback if the better model is
 // unavailable on the key.
-const MODELS = [
+const MODELS = Array.from(new Set([
   process.env.GEMINI_MODEL,
+  'gemini-3.8-flash',
+  'gemini-3.7-flash',
+  'gemini-3.6-flash',
   'gemini-3.5-flash',
   'gemini-3.1-flash-lite',
-].filter((m): m is string => Boolean(m))
+].filter((m): m is string => Boolean(m))))
 
 /**
  * Repository bookkeeping: true statements about this repo that mean nothing to someone using the

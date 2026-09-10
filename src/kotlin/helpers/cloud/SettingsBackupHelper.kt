@@ -215,7 +215,7 @@ object SettingsBackupHelper {
         }.show()
     }
 
-    const val FILENAME_SUFFIX = ".inu-settings.json"
+    const val FILENAME_SUFFIX = ".entiny-settings.json"
 
     fun startImportFromFile(fragment: BaseFragment, file: File) {
         Utilities.globalQueue.postRunnable {

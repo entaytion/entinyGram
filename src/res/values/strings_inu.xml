@@ -49,7 +49,7 @@
     <string name="InuTitleText">Title text</string>
     <string name="InuTitleTextFolder">Folder name</string>
     <string name="InuTitleTextOverrideArchive">Also apply to archive</string>
-    <string name="InuTitleTextOverrideArchiveInfo">Use the same title text on the archive screen instead of the default "Archived Chats"</string>
+    <string name="InuTitleTextOverrideArchiveInfo">Use the same title text on the archive screen instead of the default \"Archived Chats\"</string>
     <string name="InuPullDownAction">Pull-down action</string>
     <string name="InuPullDownActionDisabled">Disabled</string>
     <string name="InuPullDownActionDisabledInfo">The archive is moved to the menu</string>
@@ -118,10 +118,10 @@
     <string name="InuDisableProfileMusicAutoplay">Disable profile music auto-play</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Don\'t start playback automatically when opening the pinned music player on a profile</string>
     <string name="InuHideGiftAuctionsHint">Hide gift auction banner</string>
-    <string name="InuHideCacheHint">Hide "free up space" card</string>
+    <string name="InuHideCacheHint">Hide \"free up space\" card</string>
     <string name="InuHidePsaPromoChat">Hide PSA promo chat</string>
     <string name="InuHideProfileGiftsTab">Hide Gifts tab</string>
-    <string name="InuHideProfileGiftsTabInfo">Removes the Gifts tab from the shared-media section of profiles. Distinct from "Hide gifts around avatar".</string>
+    <string name="InuHideProfileGiftsTabInfo">Removes the Gifts tab from the shared-media section of profiles. Distinct from \"Hide gifts around avatar\".</string>
     <string name="InuHideSimilarChannelsTab">Hide Similar Channels tab</string>
     <string name="InuHideChannelRecommendations">Hide similar channels card in chat</string>
     <string name="InuDisableContactsPermissionNag">Hide contacts permission request</string>
@@ -129,7 +129,7 @@
     <string name="InuDisableLockscreenPermissionNag">Hide lockscreen permission alerts</string>
     <string name="InuDisableLockscreenPermissionNagInfo">Suppresses the startup alerts asking to allow display over the lockscreen (MIUI) or full-screen notifications (Android 14+)</string>
     <string name="InuDisableCallRating">Disable call rating</string>
-    <string name="InuDisableCallRatingInfo">Skips the "rate this call" prompt after a voice or video call ends</string>
+    <string name="InuDisableCallRatingInfo">Skips the \"rate this call\" prompt after a voice or video call ends</string>
     <string name="InuHideCaptionLimitUpsell">Hide caption limit upsell</string>
     <string name="InuHideCaptionLimitUpsellInfo">Don\'t show the Premium promo when a caption exceeds the free length limit. The limit itself still applies.</string>
     <string name="InuHideAttachPremiumBadges">Hide Premium badges in attach menu</string>
@@ -137,8 +137,8 @@
     <string name="InuHideProfileStoryButton">Hide story button</string>
     <string name="InuHideProfileGiftButton">Hide gift button</string>
     <string name="InuHideProfileLiveActionsButton">Hide live stream &amp; voice chat buttons</string>
-    <string name="InuHideProfileMenuSendGift">Hide "Send a Gift" in profile menu</string>
-    <string name="InuHideProfileMenuArchivedStories">Hide "Archived Stories" in profile menu</string>
+    <string name="InuHideProfileMenuSendGift">Hide \"Send a Gift\" in profile menu</string>
+    <string name="InuHideProfileMenuArchivedStories">Hide \"Archived Stories\" in profile menu</string>
     <string name="InuHidePremiumBadge">Hide Premium badge</string>
     <string name="InuHideCollectibleStatus">Hide collectible status</string>
     <string name="InuHideCollectibleStatusInfo">Show a collectible (NFT gift) emoji status as a plain emoji status instead — no sparkles, gradient, or collectible hint</string>
@@ -273,7 +273,7 @@
     <string name="InuDisableMotionPhotosInfo">Don\'t detect or render motion photos, in picker and in messages</string>
     <string name="InuDisableVolumePlayVideo">Disable volume keys playing videos</string>
     <string name="InuDisableVolumePlayVideoInfo">Don\'t start a visible video with sound when pressing volume keys in chat</string>
-    <string name="InuChatAlwaysShowDown">Always show "go to bottom"</string>
+    <string name="InuChatAlwaysShowDown">Always show \"go to bottom\"</string>
     <string name="InuChatAlwaysShowDownInfo">Even when scrolling upwards</string>
     <string name="InuChatTwoFingerSelect">Two-finger swipe to select</string>
     <string name="InuChatTwoFingerSelectInfo">Drag with two fingers over messages to select/deselect them (like on iOS)</string>
@@ -341,10 +341,10 @@
     <string name="InuTranslateWebPreviews">Translate web previews</string>
     <string name="InuKeepOriginalAfterTranslation">Show original text</string>
     <string name="InuTranslateAutoDetectLang">Detect language for the message menu</string>
-    <string name="InuTranslateAutoDetectLangInfo">Runs on-device detection on messages whose language Telegram has not worked out yet, so the Translate row can be hidden when they turn out to be in a "Do not translate" language. Messages with a language Telegram already knows are filtered either way.\nThis might cause the menu to open a bit slower.</string>
+    <string name="InuTranslateAutoDetectLangInfo">Runs on-device detection on messages whose language Telegram has not worked out yet, so the Translate row can be hidden when they turn out to be in a \"Do not translate\" language. Messages with a language Telegram already knows are filtered either way.\nThis might cause the menu to open a bit slower.</string>
     <string name="InuInstantTranslateBanner">Instant translate banner</string>
-    <string name="InuInstantTranslateBannerInfo">Shows the "Translate to X?" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Useful for chats and single posts you rarely see more than a few messages of.</string>
-    <string name="InuIgnoreTranslationsDisabled">Ignore "Translations disabled"</string>
+    <string name="InuInstantTranslateBannerInfo">Shows the \"Translate to X?\" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Useful for chats and single posts you rarely see more than a few messages of.</string>
+    <string name="InuIgnoreTranslationsDisabled">Ignore \"Translations disabled\"</string>
     <string name="InuIgnoreTranslationsDisabledInfo">A channel or user can turn off the translate chat-bar banner via their own Telegram settings. This shows it anyway. The per-message Translate button in the message menu already ignores this setting, so this just makes the banner behave the same way.</string>
     <string name="InuTranslateInstantView">Translate page</string>
     <string name="InuInstantViewShowOriginal">Show original</string>
@@ -360,7 +360,7 @@
     <string name="InuForceTranslate">Force translation</string>
     <string name="InuAutoTranslateAll">Auto-translate every chat</string>
     <string name="InuAutoTranslateAllInfo">Turn chat translation on by default everywhere. Switching it off in a particular chat is remembered as an exception and keeps working while this is on.</string>
-    <string name="InuForceTranslateInfo">Show the translate bar and translate messages even when Telegram thinks they are already in your language or in the "Do not translate" list.</string>
+    <string name="InuForceTranslateInfo">Show the translate bar and translate messages even when Telegram thinks they are already in your language or in the \"Do not translate\" list.</string>
     <string name="InuTranslateOutgoing">Translate my messages</string>
     <string name="InuTranslateOutgoingInfo">Include messages sent by you in automatic chat translation.</string>
     <string name="InuTranslationTarget">Target language</string>
@@ -599,7 +599,7 @@
     <string name="InuNonIslandSharedMediaTabs">Shared media tabs</string>
     <string name="InuNonIslandGlobalSearch">Global search</string>
     <string name="InuNonIslandChatElements">Chat elements</string>
-    <string name="InuNonIslandHint">Classic UI reverts some of the new (>12.6) "Liquid Glass" UI changes back towards the older flat design (best-effort).\nThere are probably a bunch of visual bugs, so be advised.</string>
+    <string name="InuNonIslandHint">Classic UI reverts some of the new (>12.6) \"Liquid Glass\" UI changes back towards the older flat design (best-effort).\nThere are probably a bunch of visual bugs, so be advised.</string>
 
     <string name="InuHideFadeView">Hide fade views</string>
 
@@ -909,7 +909,7 @@
 
     <string name="InuLogs">Debug</string>
     <string name="InuLogsEnabled">Debug mode</string>
-    <string name="InuExtraDebugLogs">[Inu] Extra debug logs</string>
+    <string name="InuExtraDebugLogs">[entiny] Extra debug logs</string>
     <string name="InuLogsSize">Logs size: %1$s</string>
     <string name="InuLogsShare">Share logs</string>
     <string name="InuLogsShareZip">All logs (.zip)</string>
@@ -1119,7 +1119,7 @@
     <string name="InuAiRoleLongPressHint">Long-press a role to delete it.</string>
     <string name="InuAiRoleNameHint">Name</string>
     <string name="InuAiRolePromptHint">Custom prompt (optional)</string>
-    <string name="InuAiRolePromptDesc">If set, this full prompt replaces the "You are Name" line entirely.</string>
+    <string name="InuAiRolePromptDesc">If set, this full prompt replaces the \"You are Name\" line entirely.</string>
     <string name="InuAiRoleDeleteConfirm">Delete this role?</string>
     <string name="InuBurnOneTime">Burn</string>
     <string name="InuAiSectionTemperature">Temperature</string>
