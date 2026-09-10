@@ -3,6 +3,8 @@ package desu.inugram.helpers
 import android.util.Log
 import org.telegram.SQLite.SQLiteDatabase
 import org.telegram.messenger.MessagesStorage
+import org.telegram.tgnet.NativeByteBuffer
+import org.telegram.tgnet.TLRPC
 
 object InuDatabaseHelper {
     @JvmStatic
@@ -95,6 +97,20 @@ object InuDatabaseHelper {
                 .stepThis().dispose()
             writeKv(db, "version", "9")
             version = 9
+        }
+
+        if (version == 9) {
+            // Edit history used to keep the plain text only, so every stored revision rendered as
+            // unformatted text with a stand-in photo bubble regardless of what the message really
+            // was. Both blobs are optional: rows written before this migration simply have none.
+            try {
+                db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN entities BLOB").stepThis().dispose()
+            } catch (e: Throwable) { }
+            try {
+                db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN media BLOB").stepThis().dispose()
+            } catch (e: Throwable) { }
+            writeKv(db, "version", "10")
+            version = 10
         }
 
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
@@ -281,6 +297,22 @@ object InuDatabaseHelper {
         }
     }
 
+    /**
+     * Streams just the (dialog, message) keys that have stored edit history, so the presence
+     * check can be answered from memory. Reading the rows themselves on demand meant every
+     * un-edited bubble in every chat ran a SQLite query on the UI thread to learn it had none.
+     */
+    fun forEachEditHistoryKey(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int) -> Unit) {
+        val cursor = db.queryFinalized("SELECT DISTINCT dialog_id, msg_id FROM inu_edit_history")
+        try {
+            while (cursor.next()) {
+                consumer(cursor.longValue(0), cursor.intValue(1))
+            }
+        } finally {
+            cursor.dispose()
+        }
+    }
+
     fun loadDeletedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
         val idsMap = HashMap<Long, HashSet<Int>>()
         forEachDeletedMessageInfo(db) { dialogId, msgId, _ ->
@@ -359,7 +391,16 @@ object InuDatabaseHelper {
         return list
     }
 
-    fun saveEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int, text: String, date: Int, mediaPath: String? = null) {
+    fun saveEditHistory(
+        db: SQLiteDatabase,
+        dialogId: Long,
+        msgId: Int,
+        text: String,
+        date: Int,
+        mediaPath: String? = null,
+        entities: ArrayList<TLRPC.MessageEntity>? = null,
+        media: TLRPC.MessageMedia? = null,
+    ) {
         val trimmed = text.trim()
         val check = db.queryFinalized("SELECT text, media_path FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date DESC LIMIT 1", dialogId, msgId)
         try {
@@ -385,30 +426,107 @@ object InuDatabaseHelper {
             }
         }
 
-        val query = db.executeFast("INSERT INTO inu_edit_history(dialog_id, msg_id, text, date, media_path) VALUES(?, ?, ?, ?, ?)");
-        query.bindLong(1, dialogId)
-        query.bindInteger(2, msgId)
-        query.bindString(3, text)
-        query.bindInteger(4, date)
-        if (mediaPath != null) query.bindString(5, mediaPath) else query.bindNull(5)
-        query.step()
-        query.dispose()
+        // Entity offsets address `text` as stored, so the two travel together in one blob.
+        val entitiesObject = if (entities.isNullOrEmpty()) {
+            null
+        } else {
+            TLRPC.TL_textWithEntities().also { it.text = text; it.entities = entities }
+        }
+        val mediaObject = if (media is TLRPC.TL_messageMediaEmpty) null else media
+
+        val query = db.executeFast("INSERT INTO inu_edit_history(dialog_id, msg_id, text, date, media_path, entities, media) VALUES(?, ?, ?, ?, ?, ?, ?)")
+        try {
+            query.bindLong(1, dialogId)
+            query.bindInteger(2, msgId)
+            query.bindString(3, text)
+            query.bindInteger(4, date)
+            if (mediaPath != null) query.bindString(5, mediaPath) else query.bindNull(5)
+            if (entitiesObject != null) query.bindTlObject(6, entitiesObject) else query.bindNull(6)
+            if (mediaObject != null) query.bindTlObject(7, mediaObject) else query.bindNull(7)
+            query.step()
+        } catch (e: Throwable) {
+            Log.e("InuDatabaseHelper", "saveEditHistory failed", e)
+        } finally {
+            query.dispose()
+        }
     }
 
-    fun loadEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int): List<Triple<Long, String, String?>> {
-        val list = ArrayList<Triple<Long, String, String?>>()
-        val cursor = db.queryFinalized("SELECT date, text, media_path FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date ASC", dialogId, msgId)
+    /** One stored revision of a message, with whatever fidelity the row was written at. */
+    data class EditHistoryRow(
+        val date: Long,
+        val text: String,
+        val mediaPath: String?,
+        val entities: ArrayList<TLRPC.MessageEntity>?,
+        val media: TLRPC.MessageMedia?,
+    )
+
+    /**
+     * Independent copy of a media object, via one serialization round-trip. The capture points
+     * hand us the media instance owned by a live `TLRPC.Message`; anything stored in a cache and
+     * later adjusted for display (clearing a one-time TTL, say) must not be that same object, or
+     * the edit archive starts mutating the message still sitting in the chat.
+     */
+    fun cloneMedia(media: TLRPC.MessageMedia?): TLRPC.MessageMedia? {
+        if (media == null || media is TLRPC.TL_messageMediaEmpty) return null
+        var buffer: NativeByteBuffer? = null
+        return try {
+            buffer = NativeByteBuffer(media.objectSize)
+            media.serializeToStream(buffer)
+            buffer.position(0)
+            TLRPC.MessageMedia.TLdeserialize(buffer, buffer.readInt32(false), false)
+        } catch (e: Throwable) {
+            Log.e("InuDatabaseHelper", "cloneMedia failed", e)
+            null
+        } finally {
+            buffer?.reuse()
+        }
+    }
+
+    private fun <T> readTl(cursor: org.telegram.SQLite.SQLiteCursor, column: Int, reader: (NativeByteBuffer) -> T?): T? {
+        if (cursor.isNull(column)) return null
+        val data = try {
+            cursor.byteBufferValue(column)
+        } catch (e: Throwable) {
+            null
+        } ?: return null
+        return try {
+            reader(data)
+        } catch (e: Throwable) {
+            Log.e("InuDatabaseHelper", "readTl failed", e)
+            null
+        } finally {
+            data.reuse()
+        }
+    }
+
+    fun loadEditHistory(db: SQLiteDatabase, dialogId: Long, msgId: Int): List<EditHistoryRow> {
+        val list = ArrayList<EditHistoryRow>()
+        val cursor = db.queryFinalized(
+            "SELECT date, text, media_path, entities, media FROM inu_edit_history WHERE dialog_id = ? AND msg_id = ? ORDER BY date ASC",
+            dialogId, msgId,
+        )
         try {
             while (cursor.next()) {
                 val date = cursor.longValue(0)
-                val text = cursor.stringValue(1)
+                val text = cursor.stringValue(1) ?: ""
                 val mediaPath = if (cursor.isNull(2)) null else cursor.stringValue(2)
-                list.add(Triple(date, text, mediaPath))
+                val entities = readTl(cursor, 3) { data ->
+                    TLRPC.TL_textWithEntities.TLdeserialize(data, data.readInt32(false), false)?.entities
+                }
+                val media = readTl(cursor, 4) { data ->
+                    TLRPC.MessageMedia.TLdeserialize(data, data.readInt32(false), false)
+                }
+                list.add(EditHistoryRow(date, text, mediaPath, entities, media))
             }
         } finally {
             cursor.dispose()
         }
         return list
+    }
+
+    /** Drops one stored revision. Revisions have no id of their own; (dialog, message, date) is unique enough. */
+    fun deleteEditHistoryEntry(db: SQLiteDatabase, dialogId: Long, msgId: Int, date: Long) {
+        db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date").stepThis().dispose()
     }
 
     /**
@@ -620,6 +738,13 @@ object InuDatabaseHelper {
         }
         db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
         deleteUnreferencedMediaFiles(db, mediaPaths)
+    }
+
+    /** Drops the stored edit history of specific messages (used by "delete permanently"). */
+    fun deleteEditHistory(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
+        if (mids.isEmpty()) return
+        val idsStr = mids.joinToString(",")
+        db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
     }
 
     /**

@@ -30,7 +30,7 @@ index 0000000..0000000 100644
                      pollUnvoteInProgress = true;
                  }
                  animatePollAvatars = lastPollResultsVoters == 0 || lastPollResultsVoters != 0 && newVoters == 0;
-@@ -11387,7 +11388,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11383,7 +11384,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              total_voters = media.results.total_voters;
              timerTransitionProgress = media.poll.close_date - ConnectionsManager.getInstance(currentAccount).getCurrentTime() < 60 ? 0.0f : 1.0f;
              pollClosed = media.poll.closed;

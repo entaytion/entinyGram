@@ -229,13 +229,31 @@ object ChatHelper {
     fun isDeletedOrPreserved(msg: MessageObject?): Boolean {
         if (msg == null) return false
         if (!InuConfig.SAVE_DELETED_MESSAGES.value) return false
+        if (SavedMessagesHelper.isHistoryPreview(msg)) return false
         if (msg.deleted) return true
         return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
+    }
+
+    /**
+     * Alpha a bubble must be drawn with. `1f` for everything but a preserved deleted message
+     * while [InuConfig.DELETED_MESSAGES_TRANSPARENT] is on.
+     *
+     * `ChatMessageCell.setAlpha` clamps to this instead of assigning it once at bind time:
+     * the chat list's item animator resets `itemView.setAlpha(1)` whenever it starts or ends a
+     * move/add/change animation (sending a message runs one over every visible row), which
+     * silently dropped the dimming until the cell was rebound.
+     */
+    @JvmStatic
+    fun deletedAlpha(msg: MessageObject?): Float {
+        if (msg == null) return 1f
+        if (!InuConfig.DELETED_MESSAGES_TRANSPARENT.value) return 1f
+        return if (isDeletedOrPreserved(msg)) 0.65f else 1f
     }
 
     @JvmStatic
     fun canClickTime(msg: MessageObject?): Boolean {
         if (msg == null) return false
+        if (SavedMessagesHelper.isHistoryPreview(msg)) return false
         val dialogId = msg.getDialogId()
         val msgId = msg.id
         val isDeleted = SavedMessagesHelper.isMessageDeleted(msg.currentAccount, dialogId, msgId)
@@ -849,7 +867,10 @@ object ChatHelper {
             }
 
             OPTION_EDIT_HISTORY -> {
-                SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject.dialogId, selectedObject.id)
+                // Pass the real MessageObject: the id-based overload has to synthesize a stand-in
+                // when the message is not a dialog's preview message, and the history screen
+                // derives peer/sender/current text from whatever it is handed.
+                SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject)
             }
 
             OPTION_DELETE_PERMANENTLY -> {

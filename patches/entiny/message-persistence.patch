@@ -8,12 +8,14 @@ Subject: feat(history): preserve message history and saved deletions
 - render preserved deletions with the configured transparent style
 ---
  .../messenger/MessagesController.java         | 101 ++++++++++++++++--
- .../telegram/messenger/MessagesStorage.java   |  40 ++++++-
+ .../telegram/messenger/MessagesStorage.java   |  45 +++++++-
  .../messenger/SendMessagesHelper.java         |   6 ++
- .../telegram/ui/Cells/ChatMessageCell.java    |  11 +-
- .../java/org/telegram/ui/ChatActivity.java    |  15 +++
+ .../telegram/ui/Cells/ChatMessageCell.java    |   8 +-
+ .../java/org/telegram/ui/ChatActivity.java    |  19 ++++
+ .../telegram/ui/Components/AlertsCreator.java |   2 +
+ .../Components/DeleteMessagesBottomSheet.java |   2 +
  .../org/telegram/ui/MainTabsActivity.java     |  11 +-
- 6 files changed, 163 insertions(+), 21 deletions(-)
+ 8 files changed, 173 insertions(+), 21 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -128,7 +130,7 @@ index 0000000..0000000 100644
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
-+                    desu.inugram.helpers.chat.SavedMessagesHelper.rememberMessageText(currentAccount, message.dialog_id, message.id, message.message, message.media != null, message.date);
++                    desu.inugram.helpers.chat.SavedMessagesHelper.rememberMessage(currentAccount, message.dialog_id, message.id, message.message, message.media != null, message.date, message.entities, message.media);
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
@@ -151,7 +153,7 @@ index 0000000..0000000 100644
 +                        // dialogMessagesByIds only tracks each dialog's current preview message, so
 +                        // it misses edits to any other message in a chat the user hasn't opened. Fall
 +                        // back to the shadow cache populated for every message as it's first seen,
-+                        // regardless of read/open state (see rememberMessageText below).
++                        // regardless of read/open state (see rememberMessage below).
 +                        desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistoryFromShadow(currentAccount, message.dialog_id, message.id, message.message, message.media != null);
 +                    }
 +                }
@@ -215,7 +217,19 @@ index 0000000..0000000 100644
          storageQueue.postRunnable(() -> {
              SQLiteCursor cursor = null;
              SQLitePreparedStatement state = null;
-@@ -14971,8 +14977,10 @@ public class MessagesStorage extends BaseController {
+@@ -14750,6 +14756,11 @@ public class MessagesStorage extends BaseController {
+                 cursor.dispose();
+                 cursor = null;
+ 
++                // messagesByDialogs is the only place a deletion's real dialog is known for a
++                // private chat: TL_updateDeleteMessages carries no peer, so the controller can only
++                // guess through dialogMessagesByIds (the dialog's newest message).
++                desu.inugram.helpers.chat.SavedMessagesHelper.markMessagesDeletedFromStorage(currentAccount, messagesByDialogs, deletedMessages);
++
+                 ArrayList<TopicKey> topicsToDelete = null;
+ 
+                 if (dialogId != 0) {
+@@ -14971,8 +14982,10 @@ public class MessagesStorage extends BaseController {
                          cursor.dispose();
                          cursor = null;
                      }
@@ -228,7 +242,7 @@ index 0000000..0000000 100644
                      database.executeFast(String.format(Locale.US, "DELETE FROM polls_v2 WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
                      database.executeFast(String.format(Locale.US, "DELETE FROM bot_keyboard_topics WHERE mid IN(%s) AND uid = %d", ids, did)).stepThis().dispose();
-@@ -16365,6 +16373,20 @@ public class MessagesStorage extends BaseController {
+@@ -16365,6 +16378,20 @@ public class MessagesStorage extends BaseController {
                                      TLRPC.Message oldMessage = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false);
                                      oldMessage.readAttachPath(data, getUserConfig().clientUserId);
                                      data.reuse();
@@ -249,7 +263,7 @@ index 0000000..0000000 100644
                                      if (reactionUpdates != null) {
                                          reactionUpdates.add(new SavedReactionsUpdate(selfId, oldMessage, message));
                                      }
-@@ -16421,6 +16443,18 @@ public class MessagesStorage extends BaseController {
+@@ -16421,6 +16448,18 @@ public class MessagesStorage extends BaseController {
                              cursor.dispose();
                              cursor = null;
                              if (!exist) {
@@ -268,7 +282,7 @@ index 0000000..0000000 100644
                                  continue;
                              }
                          }
-@@ -19100,7 +19134,7 @@ public class MessagesStorage extends BaseController {
+@@ -19100,7 +19139,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  
@@ -286,7 +300,7 @@ index 0000000..0000000 100644
                  path = newMsg.attachPath;
              } else {
 +                if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && newMsg != null && newMsg.message != null && !android.text.TextUtils.isEmpty(newMsg.message)) {
-+                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++                    desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date, messageObject.messageOwner);
 +                }
                  messageObject.previousMedia = newMsg.media;
                  messageObject.previousMessage = newMsg.message;
@@ -296,7 +310,7 @@ index 0000000..0000000 100644
              }
          }
 +        if (desu.inugram.InuConfig.SAVE_EDITED_MESSAGES.getValue() && messageObject != null && messageObject.messageOwner != null && messageObject.messageOwner.message != null && !android.text.TextUtils.isEmpty(messageObject.messageOwner.message) && !messageObject.messageOwner.message.equals(message)) {
-+            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date);
++            desu.inugram.helpers.chat.SavedMessagesHelper.recordEditHistory(currentAccount, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.message, messageObject.messageOwner.edit_date != 0 ? messageObject.messageOwner.edit_date : messageObject.messageOwner.date, messageObject.messageOwner);
 +        }
          return getConnectionsManager().sendRequest(req, (response, error) -> {
              if (error == null) {
@@ -325,32 +339,40 @@ index 0000000..0000000 100644
                      invalidate();
                      result = true;
                  }
-@@ -6900,6 +6902,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6900,6 +6902,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentMessageObject.richLayout.detach(this);
              }
              currentMessageObject = messageObject;
-+            if (desu.inugram.InuConfig.DELETED_MESSAGES_TRANSPARENT.getValue() && desu.inugram.helpers.chat.ChatHelper.isDeletedOrPreserved(currentMessageObject)) {
-+                setAlpha(0.65f);
-+            } else {
-+                setAlpha(1.0f);
-+            }
++            setAlpha(desu.inugram.helpers.chat.ChatHelper.deletedAlpha(currentMessageObject));
              currentMessagesGroup = groupedMessages;
              wasAllChats = isAllChats;
              lastTime = -2;
+@@ -28139,6 +28142,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+ 
+     @Override
+     public void setAlpha(float alpha) {
++        alpha = Math.min(alpha, desu.inugram.helpers.chat.ChatHelper.deletedAlpha(currentMessageObject));
+         if ((alpha == 1f) != (getAlpha() == 1)) {
+             invalidate();
+         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -26594,6 +26594,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26594,6 +26594,12 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
                  obj.deleted = true;
-+                boolean inu_keepVisible = desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()
-+                    && desu.inugram.helpers.chat.SavedMessagesHelper.shouldSaveForDialog(currentAccount, dialog_id);
++                // Decided per message, not per dialog: an own message with SAVE_DELETED_OWN off
++                // must vanish normally, and one the user deletes a second time is being purged from
++                // the archive, so the ghost has to disappear with it. Asking whether the archive
++                // already holds it would lose the race -- for a private chat the deletion is only
++                // recorded once MessagesStorage resolves the dialog off the storage queue.
++                boolean inu_keepVisible = desu.inugram.helpers.chat.SavedMessagesHelper.isPreservedOrWillBe(currentAccount, obj);
                  if (obj.scheduled && sent) {
                      obj.scheduledSent = true;
                  }
-@@ -26602,6 +26604,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -26602,6 +26608,18 @@ public class ChatActivity extends BaseFragment implements
                  }
                  int index = chatAdapter != null && chatAdapter.isFiltered && filteredMessagesDict != null ? chatAdapter.filteredMessages.indexOf(filteredMessagesDict.get(mid)) : messages.indexOf(obj);
                  if (index != -1) {
@@ -369,7 +391,7 @@ index 0000000..0000000 100644
                      if (obj.scheduled) {
                          scheduledMessagesCount--;
                          updateScheduled = true;
-@@ -26709,6 +26723,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -26709,6 +26727,7 @@ public class ChatActivity extends BaseFragment implements
                          }
                      }
                      updated = true;
@@ -377,6 +399,39 @@ index 0000000..0000000 100644
                  }
              }
          }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+@@ -8182,6 +8182,7 @@ public class AlertsCreator {
+                 if (mergeDialogId != 0 && selectedMessage.messageOwner.peer_id != null && selectedMessage.messageOwner.peer_id.chat_id == -mergeDialogId) {
+                     thisDialogId = mergeDialogId;
+                 }
++                desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, thisDialogId, ids);
+                 if (!ids.isEmpty()) {
+                     MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, thisDialogId, topicId, deleteForAll[0], mode);
+                 }
+@@ -8204,6 +8205,7 @@ public class AlertsCreator {
+                             }
+                         }
+                     }
++                    desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, ids);
+                     MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, deleteForAll[0], mode);
+                     selectedMessages[a].clear();
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
+@@ -1117,6 +1117,8 @@ public class DeleteMessagesBottomSheet extends BottomSheetWithRecyclerListView {
+                 });
+             }
+         } else {
++            desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, -inChat.id, supergroupMessageIds);
++            desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, mergeDialogId, groupMessageIds);
+             if (!supergroupMessageIds.isEmpty()) {
+                 MessagesController.getInstance(currentAccount).deleteMessages(supergroupMessageIds, null, null, -inChat.id, topicId, false, mode);
+             }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java

@@ -158,7 +158,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -18790,6 +18790,28 @@ public class MessagesStorage extends BaseController {
+@@ -18795,6 +18795,28 @@ public class MessagesStorage extends BaseController {
      private void markMessageReactionsAsReadInternal(String tableMentionsForDialogs, String tableMentionsForTopics, long dialogId, long topicId, int messageId, boolean updateReactions) {
          SQLitePreparedStatement state = null;
          SQLiteCursor cursor = null;
@@ -187,7 +187,7 @@ index 0000000..0000000 100644
          try {
              for (int k = 0; k < 2; k++) {
                  boolean isTopic = k == 1;
-@@ -18861,6 +18883,9 @@ public class MessagesStorage extends BaseController {
+@@ -18866,6 +18888,9 @@ public class MessagesStorage extends BaseController {
              }
          }
  
@@ -197,7 +197,7 @@ index 0000000..0000000 100644
      }
  
      public void updateDialogUnreadReactions(long dialogId, long topicId, int newUnreadCount, boolean increment) {
-@@ -18888,7 +18913,7 @@ public class MessagesStorage extends BaseController {
+@@ -18893,7 +18918,7 @@ public class MessagesStorage extends BaseController {
                      cursor.dispose();
                      cursor = null;
                  }
@@ -206,7 +206,7 @@ index 0000000..0000000 100644
                  state = getMessagesStorage().getDatabase().executeFast(String.format(Locale.US, "UPDATE dialogs SET %s = ? WHERE did = ?", mentionsCounterFieldForDialogs));
                  state.bindInteger(1, oldUnreadRactions);
                  state.bindLong(2, dialogId);
-@@ -18907,7 +18932,7 @@ public class MessagesStorage extends BaseController {
+@@ -18912,7 +18937,7 @@ public class MessagesStorage extends BaseController {
                          cursor = null;
                      }
  

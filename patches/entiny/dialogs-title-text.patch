@@ -26,7 +26,7 @@ index 0000000..0000000 100644
      private Drawable premiumStar;
  
      public void updateStatus(TLRPC.User user, boolean animated) {
-+        if (!desu.inugram.helpers.security.ParanoiaHelper.isDisguised() && actionBar != null &&
++        if (!desu.inugram.helpers.security.ParanoiaHelper.isDisguised() && actionBar != null && communityId == 0 &&
 +                (folderId == 0 || desu.inugram.InuConfig.DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE.getValue())) {
 +            if (folderId == 0 && desu.inugram.InuConfig.DIALOGS_TITLE_TEXT.getValue() == desu.inugram.InuConfig.DialogsTitleTextItem.FOLDER) {
 +                // getDialogsTitle() has no FOLDER branch and falls through to the app name, so

@@ -28,7 +28,7 @@ index 0000000..0000000 100644
                              Bundle args = new Bundle();
                              args.putBoolean("onlySelect", true);
                              args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-@@ -30328,7 +30331,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30332,7 +30335,7 @@ public class ChatActivity extends BaseFragment implements
          CharSequence draftMessage = null;
          MessageObject replyMessage = null;
          boolean searchWebpage = true;
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
              replyMessage = replyingMessageObject;
              draftMessage = AndroidUtilities.getTrimmedString(chatActivityEnterView.getDraftMessage());
              searchWebpage = chatActivityEnterView.isMessageWebPageSearchEnabled();
-@@ -33935,6 +33938,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33939,6 +33942,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                      replyingMessageObject = messageObject;
                      replyingQuote = null;

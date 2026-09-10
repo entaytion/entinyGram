@@ -29,8 +29,9 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
   - **per-category controls** for private chats, groups, channels, and bots, plus a separate toggle to skip saving your own outgoing deleted messages; secret chats are never saved
   - **delete permanently** from a saved-deleted message's own long-press menu, wiping just that one entry (and its media) instead of clearing the whole cache
-  - **save edit history** (marked with ✏️) in an interactive message sheet
-  - **text diff mode** with inline color-coded changes
+  - **save edit history** (marked with ✏️) in an interactive message sheet, where every revision is rendered as the message it actually was — formatting, links and spoilers intact, media as the real photo/video/voice/document rather than a stand-in
+  - **text diff mode** with inline color-coded changes, toggleable straight from the history screen's "⋮" menu
+  - **delete a single revision** from the history screen's long-press menu
   - **deleted-message styling** with transparency, custom mark and accent color, plus a live settings preview
   - **cache TTL and storage manager** with automatic expiration and per-dialog cleanup
   - **search the local archive**: full-text search across saved deleted messages and edit history
@@ -111,8 +112,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 ### debloat & premium noise
 
 - 📡 **profile & gifts**:
-  - hide the Story / Gift / Live Stream & Video Chat buttons on profiles
-  - hide "Send a Gift" and "Archived Stories" from the profile "⋮" menu
+  - hide the Story / Gift / Live Stream & Video Chat buttons on profiles, and the gift button in a channel's bottom action bar
+  - hide "Send a Gift" (users and channels alike) and "Archived Stories" from the profile "⋮" menu
   - hide Premium badge, collectible (NFT gift) status styling, Stars rating, and organization verification badge next to names
   - hide the colorful peer-color profile background and the decorative animated pattern icons on profile headers
   - hide the ring of gift icons around the avatar, and/or the whole Gifts tab in shared media (independent toggles)

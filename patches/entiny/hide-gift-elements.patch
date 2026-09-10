@@ -4,16 +4,16 @@ Date: Wed, 2 Sep 2026 00:36:34 +0300
 Subject: Allow hiding gift, premium and story elements across profile and chat
 
 ---
- .../java/org/telegram/ui/ChatActivity.java    |  3 +
+ .../java/org/telegram/ui/ChatActivity.java    |  7 ++
  .../ui/Components/ChatActivityEnterView.java  |  9 +++
- .../java/org/telegram/ui/ProfileActivity.java | 60 +++++++++++++------
- 3 files changed, 53 insertions(+), 19 deletions(-)
+ .../java/org/telegram/ui/ProfileActivity.java | 66 +++++++++++++------
+ 3 files changed, 61 insertions(+), 21 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -27753,6 +27753,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -27757,6 +27757,9 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void checkGroupEmojiPackHint() {
@@ -23,6 +23,17 @@ index 0000000..0000000 100644
          if (groupEmojiPackHint == null && ChatObject.isMegagroup(currentChat)) {
              final TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
              if (chatFull == null || chatActivityEnterView == null || getContext() == null) {
+@@ -28415,6 +28418,10 @@ public class ChatActivity extends BaseFragment implements
+ 
+         bottomOverlayChatText.setTextColorKey(accentTextButton ? Theme.key_featuredStickers_buttonText : Theme.key_glass_defaultText);
+ 
++        if (desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue()) {
++            showGiftButton = false;
++        }
++
+         bottomChannelButtonsLayout.setCenterAccentBackground(accentTextButton, animated);
+         bottomChannelButtonsLayout.updateWrappingVisible(animated);
+         bottomChannelButtonsLayout.showButton(ChatActivityChannelButtonsLayout.BUTTON_SEARCH, showSearchButton && bottomChannelButtonsLayout.getVisibility() == View.VISIBLE, animated);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
@@ -83,9 +94,12 @@ index 0000000..0000000 100644
          updateProfileData(true);
  
          writeButton = new RLottieImageView(context);
-@@ -9250,7 +9254,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9248,9 +9252,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 }
+                 if (chatId != 0) {
                      boolean gift = !BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
-                     otherItem.setSubItemShown(gift_premium, gift);
+-                    otherItem.setSubItemShown(gift_premium, gift);
++                    otherItem.setSubItemShown(gift_premium, gift && !desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue());
                      if (actionsView != null) {
 -                        actionsView.set(ProfileActionsView.KEY_GIFT, gift);
 +                        actionsView.set(ProfileActionsView.KEY_GIFT, gift && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
@@ -100,9 +114,12 @@ index 0000000..0000000 100644
          fixLayout();
          if (nameTextView[1] != null) {
              setParentActivityTitle(nameTextView[1].getText());
-@@ -10461,7 +10466,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -10459,9 +10464,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+         inu_fetchLinkedChannelMessage();
+         if (chatId != 0) {
              boolean gift = !BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked() && chatInfo != null && chatInfo.stargifts_available;
-             otherItem.setSubItemShown(gift_premium, gift);
+-            otherItem.setSubItemShown(gift_premium, gift);
++            otherItem.setSubItemShown(gift_premium, gift && !desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue());
              if (actionsView != null) {
 -                actionsView.set(ProfileActionsView.KEY_GIFT, gift);
 +                actionsView.set(ProfileActionsView.KEY_GIFT, gift && !desu.inugram.InuConfig.HIDE_PROFILE_GIFT_BUTTON.getValue());
@@ -253,7 +270,18 @@ index 0000000..0000000 100644
                      otherItem.addSubItem(channel_stories, R.drawable.msg_archive, LocaleController.getString(R.string.OpenChannelArchiveStories));
                  }
                  if (chat.megagroup) {
-@@ -12542,11 +12564,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -12453,8 +12475,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     }
+                     if (!BuildVars.IS_BILLING_UNAVAILABLE && !getMessagesController().premiumPurchaseBlocked()) {
+                         StarsController.getInstance(currentAccount).loadStarGifts();
++                        if (!desu.inugram.InuConfig.HIDE_PROFILE_MENU_SEND_GIFT.getValue()) {
+                         otherItem.addSubItem(gift_premium, R.drawable.msg_gift_premium, LocaleController.getString(R.string.ProfileSendAGiftToChannel));
+                         otherItem.setSubItemShown(gift_premium, chatInfo != null && chatInfo.stargifts_available);
++                        }
+                         giftAction = true;
+                     }
+                     if (chatInfo != null && chatInfo.linked_chat_id != 0) {
+@@ -12542,11 +12566,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              actionsView.set(ProfileActionsView.KEY_VIDEO, videoCallItemVisible);
              actionsView.set(ProfileActionsView.KEY_DISCUSS, discussAction);
              actionsView.set(ProfileActionsView.KEY_LEAVE, leaveAction);
