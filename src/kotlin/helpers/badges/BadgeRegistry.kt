@@ -20,7 +20,7 @@ import java.net.URL
  * Remote developer-badge registry.
  *
  * The holder list used to be compiled into the fork, so adding one channel meant
- * shipping an APK. It now comes from a manifest that is fetched once a day, cached in
+ * shipping an APK. It now comes from a manifest that is fetched once an hour, cached in
  * `inu_kv`, and falls back to the compiled-in list when it has never been fetched.
  *
  * How a badge actually reaches the screen: [applyTo] writes the badge's custom-emoji id into
@@ -37,7 +37,7 @@ import java.net.URL
  *    empty or already holds an id this registry put there.
  *
  * Worth knowing: this is a plain HTTPS request, so unlike everything else in the app it does not
- * go through MTProto or the user's proxy - the maintainer's host sees the client IP once a day.
+ * go through MTProto or the user's proxy - the maintainer's host sees the client IP once an hour.
  * Moving the manifest into a Telegram channel (the way UpdateHelper reads updates) would remove
  * that entirely if it ever becomes a concern.
  */
@@ -56,7 +56,7 @@ object BadgeRegistry {
     )
 
     private const val ENDPOINT = "https://entaytion.is-a.dev/api/entinygram/badges"
-    private const val TTL_MS = 24L * 60 * 60 * 1000
+    private const val TTL_MS = 60L * 60 * 1000 // 1 hour, matches Vercel edge max-age=3600
 
     private const val KV_MANIFEST = "badges:manifest"
     private const val KV_ETAG = "badges:etag"
@@ -80,7 +80,12 @@ object BadgeRegistry {
      * verification and refuse to ever clear it.
      */
     @Volatile
-    private var ownedEmojiIds: Set<Long> = setOf(EMOJI_ENTINY, EMOJI_INU)
+    private var ownedEmojiIds: Set<Long> = setOf(
+        EMOJI_ENTINY,
+        EMOJI_INU,
+        EMOJI_ENTINY_FIRST,
+        EMOJI_ENTINY_TESTER,
+    )
 
     @Volatile
     private var loaded = false
@@ -349,6 +354,8 @@ object BadgeRegistry {
      */
     private const val EMOJI_ENTINY = 5260594734346313076L // satellite dish
     private const val EMOJI_INU = 5260551076003753813L // chinese symbol
+    private const val EMOJI_ENTINY_FIRST = 5265209225734304965L // bust in silhouette
+    private const val EMOJI_ENTINY_TESTER = 5264955358807369439L // star
 
     /**
      * The list that used to be hardcoded, kept so a fresh install shows badges before
@@ -361,6 +368,8 @@ object BadgeRegistry {
         val entinyChannel = Badge("entiny-channel", "", "", "", "", "inu_badge_entiny", EMOJI_ENTINY)
         val inuDev = Badge("inu-dev", "", "", "", "", "inu_badge_inu", EMOJI_INU)
         val inuChannel = Badge("inu-channel", "", "", "", "", "inu_badge_inu", EMOJI_INU)
+        val entinyFirst = Badge("entiny-first", "", "", "", "", "inu_entiny_first", EMOJI_ENTINY_FIRST)
+        val entinyTester = Badge("entiny-tester", "", "", "", "", "inu_badge_tester", EMOJI_ENTINY_TESTER)
         return hashMapOf(
             650849996L to entinyDev,
             8926481003L to entinyDev,
@@ -372,6 +381,8 @@ object BadgeRegistry {
             3968318575L to inuChannel,
             3752050109L to inuChannel,
             3705403809L to inuChannel,
+            8010834366L to entinyFirst,
+            7448925421L to entinyTester,
         )
     }
 }
