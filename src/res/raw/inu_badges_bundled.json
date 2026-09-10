@@ -1,0 +1,198 @@
+{
+  "version": 1789059048,
+  "badges": [
+    {
+      "slug": "entiny-channel",
+      "title": {
+        "en": "Official entinyGram channel",
+        "uk": "Офіційний канал entinyGram",
+        "ru": "Официальный канал entinyGram",
+        "tr": "Resmi entinyGram kanalı",
+        "ja": "entinyGram公式チャンネル",
+        "zh": "entinyGram 官方频道"
+      },
+      "description": {
+        "en": "Official channel with entinyGram news and updates",
+        "uk": "Новини та оновлення entinyGram",
+        "ru": "Официальный канал с новостями и обновлениями entinyGram",
+        "tr": "entinyGram haberleri ve güncellemelerinin yer aldığı resmi kanal",
+        "ja": "entinyGramのニュースとアップデートを届ける公式チャンネル",
+        "zh": "发布 entinyGram 新闻和更新的官方频道"
+      },
+      "icon": "inu_badge_entiny",
+      "emojiId": "5260594734346313076"
+    },
+    {
+      "slug": "entiny-dev",
+      "title": {
+        "en": "EntinyGram developer",
+        "uk": "Розробник entinyGram",
+        "ru": "Разработчик entinyGram",
+        "tr": "entinyGram geliştiricisi",
+        "ja": "entinyGram開発者",
+        "zh": "entinyGram 开发者"
+      },
+      "description": {
+        "en": "This user creates and develops entinyGram",
+        "uk": "Цей користувач створює та розвиває entinyGram",
+        "ru": "Этот пользователь создаёт и развивает entinyGram",
+        "tr": "Bu kullanıcı entinyGram'ı oluşturuyor ve geliştiriyor",
+        "ja": "entinyGramを制作・開発しているユーザーです",
+        "zh": "该用户负责创建和开发 entinyGram"
+      },
+      "icon": "inu_badge_entiny",
+      "emojiId": "5260594734346313076"
+    },
+    {
+      "slug": "entiny-first",
+      "title": {
+        "en": "The first person on entinyGram",
+        "uk": "Перша людина entinyGram",
+        "ru": "Первый человек в entinyGram",
+        "tr": "entinyGram'daki ilk kişi",
+        "ja": "entinyGramの最初の人",
+        "zh": "entinyGram 第一人"
+      },
+      "description": {
+        "en": "He's the first one in both the chat and the channel. I'm shocked!",
+        "uk": "Він перший і в чаті, і на каналі. Я в шоці!",
+        "ru": "Он первый и в чате, и в канале. Я в шоке!",
+        "tr": "Hem sohbette hem de kanalda ilk o. Şok oldum!",
+        "ja": "チャンネルでもチャットでも彼が一番乗り。驚きました!",
+        "zh": "他在群组和频道里都是第一个。我很震惊!"
+      },
+      "icon": "inu_entiny_first",
+      "emojiId": "5264955358807369439"
+    },
+    {
+      "slug": "entiny-tester",
+      "title": {
+        "en": "entinyGram beta tester",
+        "uk": "Бета-тестер entinyGram",
+        "ru": "Бета-тестер entinyGram",
+        "tr": "entinyGram beta test kullanıcısı",
+        "ja": "entinyGramベータテスター",
+        "zh": "entinyGram 测试版体验官"
+      },
+      "description": {
+        "en": "Helps with and finds bugs in the app",
+        "uk": "Допомогає та знаходить баги в застосунку",
+        "ru": "Помогает и находит баги в приложении",
+        "tr": "Uygulamadaki hataları bulup yardımcı oluyor",
+        "ja": "アプリのバグを見つけて協力してくれています",
+        "zh": "协助发现应用中的漏洞"
+      },
+      "icon": "inu_badge_tester",
+      "emojiId": "5265209225734304965"
+    },
+    {
+      "slug": "inu-channel",
+      "title": {
+        "en": "Official inuGram channel",
+        "uk": "Офіційний канал inuGram",
+        "ru": "Официальный канал inuGram",
+        "tr": "Resmi inuGram kanalı",
+        "ja": "inuGram公式チャンネル",
+        "zh": "inuGram 官方频道"
+      },
+      "description": {
+        "en": "Original inuGram fork that entinyGram is based on",
+        "uk": "Оригінальний форк inuGram, на якому ґрунтується entinyGram",
+        "ru": "Оригинальный форк inuGram, на основе которого создан entinyGram",
+        "tr": "entinyGram'ın temelini oluşturan orijinal inuGram forku",
+        "ja": "entinyGramのベースとなったオリジナルのinuGramフォーク",
+        "zh": "entinyGram 所基于的原始 inuGram 分支"
+      },
+      "icon": "inu_badge_inu",
+      "emojiId": "5260551076003753813"
+    },
+    {
+      "slug": "inu-dev",
+      "title": {
+        "en": "inuGram developer",
+        "uk": "Розробниця inuGram",
+        "ru": "Разработчица inuGram",
+        "tr": "inuGram geliştiricisi",
+        "ja": "inuGram開発者",
+        "zh": "inuGram 开发者"
+      },
+      "description": {
+        "en": "This user is the author of inuGram, the fork entinyGram is based on",
+        "uk": "Авторка inuGram — форку, на якому ґрунтується entinyGram",
+        "ru": "Эта пользовательница — автор inuGram, форка, на основе которого создан entinyGram",
+        "tr": "entinyGram'ın temelini oluşturan inuGram forkunun yazarı",
+        "ja": "entinyGramのベースとなったinuGramの作者です",
+        "zh": "entinyGram 所基于的 inuGram 分支的作者"
+      },
+      "icon": "inu_badge_inu",
+      "emojiId": "5260551076003753813"
+    }
+  ],
+  "holders": [
+    {
+      "id": "650849996",
+      "kind": "user",
+      "badge": "entiny-dev"
+    },
+    {
+      "id": "715704672",
+      "kind": "user",
+      "badge": "entiny-tester"
+    },
+    {
+      "id": "1787945512",
+      "kind": "user",
+      "badge": "inu-dev"
+    },
+    {
+      "id": "3705403809",
+      "kind": "chat",
+      "badge": "inu-channel"
+    },
+    {
+      "id": "3752050109",
+      "kind": "chat",
+      "badge": "inu-channel"
+    },
+    {
+      "id": "3915376475",
+      "kind": "chat",
+      "badge": "entiny-channel"
+    },
+    {
+      "id": "3968318575",
+      "kind": "chat",
+      "badge": "inu-channel"
+    },
+    {
+      "id": "4296417802",
+      "kind": "chat",
+      "badge": "entiny-channel"
+    },
+    {
+      "id": "4319600055",
+      "kind": "chat",
+      "badge": "entiny-channel"
+    },
+    {
+      "id": "4346771715",
+      "kind": "chat",
+      "badge": "entiny-channel"
+    },
+    {
+      "id": "7448925421",
+      "kind": "user",
+      "badge": "entiny-tester"
+    },
+    {
+      "id": "8010834366",
+      "kind": "user",
+      "badge": "entiny-first"
+    },
+    {
+      "id": "8926481003",
+      "kind": "user",
+      "badge": "entiny-dev"
+    }
+  ]
+}

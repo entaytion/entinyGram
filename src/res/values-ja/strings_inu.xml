@@ -1071,8 +1071,8 @@
     <string name="InuTypingSpoofActive">現在有効</string>
     <string name="InuTypingSpoofPickChat">チャットを選択</string>
     <string name="InuTypingSpoofQuickListInfo">チャットを開かなくても、チャットヘッダーメニューと同じ入力偽装の選択画面を開きます。</string>
-    <string name="InuHideDevBadges">開発者バッジを無効化</string>
-    <string name="InuHideDevBadgesInfo">entinyGram および inuGram 開発者と公式チャンネルの名前の横にあるバッジを非表示にします</string>
+    <string name="InuHideDevBadges">entinyGramバッジを無効化</string>
+    <string name="InuHideDevBadgesInfo">これらには特別な意味も特典もありません。単なる開発者からの感謝の印です</string>
     <string name="InuLanguages">言語</string>
     <string name="InuLocalPremium">ローカル Telegram Premium</string>
     <string name="InuLocalPremiumInfo">クライアント側で Premium 機能を解放します (星バッジ、アプリアイコン、絵文字ステータスとプロフィール色のローカル保持、無制限翻訳バー、プレミアムリアクション、アニメーション)。サーバー側機能 (4 GB アップロード、クラウドリミット) は公式のサブスクリプションが必要です。</string>

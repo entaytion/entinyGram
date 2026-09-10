@@ -85,24 +85,26 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_LOGS_ENABLED,
-                LocaleController.getString(R.string.InuLogsEnabled),
-            ).setChecked(LogsHelper.isEnabled())
-        )
-        if (LogsHelper.isEnabled()) {
+        if (BuildVars.isBetaApp()) {
+            items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
             items.add(
                 UItem.asCheck(
-                    TOGGLE_EXTRA_DEBUG_LOGS,
-                    LocaleController.getString(R.string.InuExtraDebugLogs),
-                ).setChecked(InuConfig.EXTRA_DEBUG_LOGS.value)
+                    TOGGLE_LOGS_ENABLED,
+                    LocaleController.getString(R.string.InuLogsEnabled),
+                ).setChecked(LogsHelper.isEnabled())
             )
-            items.add(UItem.asCustom(getOrCreateLogsRow()))
-            items.add(UItem.asCustom(getOrCreateHeapRow()))
+            if (LogsHelper.isEnabled()) {
+                items.add(
+                    UItem.asCheck(
+                        TOGGLE_EXTRA_DEBUG_LOGS,
+                        LocaleController.getString(R.string.InuExtraDebugLogs),
+                    ).setChecked(InuConfig.EXTRA_DEBUG_LOGS.value)
+                )
+                items.add(UItem.asCustom(getOrCreateLogsRow()))
+                items.add(UItem.asCustom(getOrCreateHeapRow()))
+            }
+            items.add(UItem.asShadow(null))
         }
-        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.inu_tabler_file_export, LocaleController.getString(R.string.InuBackupExport)))

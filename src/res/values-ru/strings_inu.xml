@@ -1172,8 +1172,8 @@
     <string name="InuDeletedMarkStyleEyeCrossed">Перечёркнутый глаз</string>
     <string name="InuDeletedMarkPreviewText">Привет! Это секрет 🤫</string>
     <string name="InuDeletedMarkPreviewSender">Алина</string>
-    <string name="InuHideDevBadges">Отключить бейджи разработчиков</string>
-    <string name="InuHideDevBadgesInfo">Скрывает бейджи у имён разработчиков entinyGram и inuGram и у официальных каналов</string>
+    <string name="InuHideDevBadges">Отключить бейджи entinyGram</string>
+    <string name="InuHideDevBadgesInfo">Они ничего не означают, не дают преимуществ — просто благодарность от разработчика</string>
 
     <!-- AI Services & Summaries -->
     <string name="InuAiApiKeyHint">API-ключ</string>

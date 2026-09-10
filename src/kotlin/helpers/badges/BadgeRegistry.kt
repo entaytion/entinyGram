@@ -5,6 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
@@ -43,12 +44,14 @@ import java.net.URL
  */
 object BadgeRegistry {
 
+    /** Every locale the manifest and the app's own translations carry a badge string in. */
+    private val LOCALES = listOf("en", "uk", "ru", "tr", "ja", "zh")
+
     data class Badge(
         val slug: String,
-        val titleEn: String,
-        val titleUk: String,
-        val descriptionEn: String,
-        val descriptionUk: String,
+        /** Keyed by language tag (see [LOCALES]); a missing key means untranslated. */
+        val titles: Map<String, String>,
+        val descriptions: Map<String, String>,
         /** Bundled drawable name - the offline and Lite-mode fallback. */
         val icon: String,
         /** Custom emoji document id, or 0 when the badge has no remote icon yet. */
@@ -74,18 +77,13 @@ object BadgeRegistry {
     private var holders: Map<Long, Badge> = bundledHolders()
 
     /**
-     * Seeded with the compiled-in ids rather than left empty: on the very first frames, before
+     * Seeded from the compiled-in ids rather than left empty: on the very first frames, before
      * the cached list has been read back, a user object may already carry one of our ids from
      * the local cache. Starting empty would make [resolveIcon] mistake it for a real Telegram
      * verification and refuse to ever clear it.
      */
     @Volatile
-    private var ownedEmojiIds: Set<Long> = setOf(
-        EMOJI_ENTINY,
-        EMOJI_INU,
-        EMOJI_ENTINY_FIRST,
-        EMOJI_ENTINY_TESTER,
-    )
+    private var ownedEmojiIds: Set<Long> = holders.values.mapNotNull { it.emojiId.takeIf { id -> id != 0L } }.toSet()
 
     @Volatile
     private var loaded = false
@@ -114,15 +112,15 @@ object BadgeRegistry {
     fun hasBadge(rawId: Long): Boolean = badgeFor(rawId) != null
 
     @JvmStatic
-    fun localizedTitle(badge: Badge): String {
-        val uk = LocaleController.getInstance().currentLocale?.language == "uk"
-        return (if (uk) badge.titleUk.ifEmpty { badge.titleEn } else badge.titleEn.ifEmpty { badge.titleUk })
-    }
+    fun localizedTitle(badge: Badge): String = pickLocalized(badge.titles)
 
     @JvmStatic
-    fun localizedDescription(badge: Badge): String {
-        val uk = LocaleController.getInstance().currentLocale?.language == "uk"
-        return (if (uk) badge.descriptionUk.ifEmpty { badge.descriptionEn } else badge.descriptionEn.ifEmpty { badge.descriptionUk })
+    fun localizedDescription(badge: Badge): String = pickLocalized(badge.descriptions)
+
+    /** Device language, else English, else whatever the manifest did bother to translate. */
+    private fun pickLocalized(strings: Map<String, String>): String {
+        val lang = LocaleController.getInstance().currentLocale?.language
+        return strings[lang] ?: strings["en"] ?: strings.values.firstOrNull { it.isNotEmpty() }.orEmpty()
     }
 
     /**
@@ -322,14 +320,10 @@ object BadgeRegistry {
             val o = badgesJson.getJSONObject(i)
             val slug = o.optString("slug")
             if (TextUtils.isEmpty(slug)) continue
-            val title = o.optJSONObject("title")
-            val description = o.optJSONObject("description")
             bySlug[slug] = Badge(
                 slug = slug,
-                titleEn = title?.optString("en").orEmpty(),
-                titleUk = title?.optString("uk").orEmpty(),
-                descriptionEn = description?.optString("en").orEmpty(),
-                descriptionUk = description?.optString("uk").orEmpty(),
+                titles = localeStrings(o.optJSONObject("title")),
+                descriptions = localeStrings(o.optJSONObject("description")),
                 icon = o.optString("icon"),
                 // Sent as a string: a document id does not survive a JSON double intact.
                 emojiId = o.optString("emojiId").toLongOrNull() ?: 0L,
@@ -347,42 +341,36 @@ object BadgeRegistry {
         if (result.isEmpty()) null else result
     }.getOrNull()
 
-    /**
-     * Custom emoji document ids from the `entinyGram` pack (t.me/addemoji/entinyGram). The pack
-     * was created with /adaptive, so both are `needs_repainting` and Telegram tints them to the
-     * surrounding text colour, which the fork used to do by hand with setTint.
-     */
-    private const val EMOJI_ENTINY = 5260594734346313076L // satellite dish
-    private const val EMOJI_INU = 5260551076003753813L // chinese symbol
-    private const val EMOJI_ENTINY_FIRST = 5264955358807369439L // star
-    private const val EMOJI_ENTINY_TESTER = 5265209225734304965L // bust in silhouette
+    /** Reads whichever of [LOCALES] the manifest actually set; skips the rest instead of storing "". */
+    private fun localeStrings(obj: JSONObject?): Map<String, String> {
+        if (obj == null) return emptyMap()
+        val map = HashMap<String, String>(LOCALES.size)
+        for (locale in LOCALES) {
+            val value = obj.optString(locale)
+            if (value.isNotEmpty()) map[locale] = value
+        }
+        return map
+    }
 
     /**
-     * The list that used to be hardcoded, kept so a fresh install shows badges before
-     * its first fetch and an offline one keeps showing them. The emoji ids are compiled in on
-     * purpose: without them a first launch would briefly draw the old bundled-drawable badge and
-     * then swap it for the stock one, and the bundled path could not be retired at all.
+     * Compiled-in fallback so a fresh install shows badges before its first fetch and an
+     * offline one keeps showing them. This used to be a hand-typed `hashMapOf` here that had
+     * to be kept in sync with the database by eyeballing a diff every time a badge or holder
+     * changed on entaytion-is.a.dev - the two lists had already drifted (a holder present in
+     * the database was missing here). Instead this parses the same manifest shape [parse]
+     * reads over the network, from a JSON snapshot bundled as a raw resource.
+     *
+     * Refresh it with `bun run scripts/sync-badges-bundle.ts` after changing badges/holders
+     * on the server - not by hand-editing Kotlin.
      */
     private fun bundledHolders(): Map<Long, Badge> {
-        val entinyDev = Badge("entiny-dev", "", "", "", "", "inu_badge_entiny", EMOJI_ENTINY)
-        val entinyChannel = Badge("entiny-channel", "", "", "", "", "inu_badge_entiny", EMOJI_ENTINY)
-        val inuDev = Badge("inu-dev", "", "", "", "", "inu_badge_inu", EMOJI_INU)
-        val inuChannel = Badge("inu-channel", "", "", "", "", "inu_badge_inu", EMOJI_INU)
-        val entinyFirst = Badge("entiny-first", "", "", "", "", "inu_entiny_first", EMOJI_ENTINY_FIRST)
-        val entinyTester = Badge("entiny-tester", "", "", "", "", "inu_badge_tester", EMOJI_ENTINY_TESTER)
-        return hashMapOf(
-            650849996L to entinyDev,
-            8926481003L to entinyDev,
-            4346771715L to entinyChannel,
-            4319600055L to entinyChannel,
-            4296417802L to entinyChannel,
-            3915376475L to entinyChannel,
-            1787945512L to inuDev,
-            3968318575L to inuChannel,
-            3752050109L to inuChannel,
-            3705403809L to inuChannel,
-            8010834366L to entinyFirst,
-            7448925421L to entinyTester,
-        )
+        val json = runCatching {
+            ApplicationLoader.applicationContext
+                ?.resources
+                ?.openRawResource(org.telegram.messenger.R.raw.inu_badges_bundled)
+                ?.bufferedReader()
+                ?.use(BufferedReader::readText)
+        }.getOrNull()
+        return json?.let { parse(it) }.orEmpty()
     }
 }

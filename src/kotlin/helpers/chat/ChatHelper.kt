@@ -1312,17 +1312,62 @@ object ChatHelper {
         val isSettings = name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX)
         val isFont = !isSettings && FontImportHelper.isFontFileName(name)
         if (!isSettings && !isFont) return false
+
+        val existing = existingFileForMessage(activity, message)
+        if (existing != null) {
+            handleRecognizedFile(activity, message, existing, name, isSettings)
+            return true
+        }
+
+        // Not downloaded yet: fetch it ourselves rather than falling through to stock's
+        // click handling, which for an undownloaded, non-"attheme" document ends up routing
+        // to the system's "open with" chooser instead of our import flow.
+        val doc = message.getDocument() ?: return false
+        FileLoader.getInstance(activity.currentAccount).loadFile(doc, message, FileLoader.PRIORITY_NORMAL, 1)
+        pollFileDownload(activity, message, name, isSettings)
+        return true
+    }
+
+    private fun existingFileForMessage(activity: ChatActivity, message: MessageObject): File? {
         val attach = message.messageOwner?.attachPath?.takeIf { it.isNotEmpty() }?.let { File(it) }
-        val file = attach?.takeIf { it.exists() }
+        return attach?.takeIf { it.exists() }
             ?: FileLoader.getInstance(activity.currentAccount).getPathToMessage(message.messageOwner)
                 ?.takeIf { it.exists() }
-            ?: return false
+    }
+
+    private fun handleRecognizedFile(
+        activity: ChatActivity,
+        message: MessageObject,
+        file: File,
+        name: String,
+        isSettings: Boolean,
+    ) {
         if (isSettings) {
             SettingsBackupHelper.startImportFromFile(activity, file)
         } else {
             FontImportHelper.startImportFromFile(activity, message, file, name)
         }
-        return true
+    }
+
+    /** Mirrors [desu.inugram.helpers.chat.TranscribeHelper]'s download-then-process pattern: poll every
+     * 500ms for up to 30s, since there is no direct download-completion callback wired up here. */
+    private fun pollFileDownload(
+        activity: ChatActivity,
+        message: MessageObject,
+        name: String,
+        isSettings: Boolean,
+        attempts: Int = 0,
+    ) {
+        if (attempts > 60) return
+        AndroidUtilities.runOnUIThread({
+            if (activity.parentActivity == null) return@runOnUIThread
+            val file = existingFileForMessage(activity, message)
+            if (file != null) {
+                handleRecognizedFile(activity, message, file, name, isSettings)
+            } else {
+                pollFileDownload(activity, message, name, isSettings, attempts + 1)
+            }
+        }, 500)
     }
 
     @JvmStatic

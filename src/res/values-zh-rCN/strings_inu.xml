@@ -1072,8 +1072,8 @@
     <string name="InuTypingSpoofActive">当前活跃</string>
     <string name="InuTypingSpoofPickChat">选择聊天</string>
     <string name="InuTypingSpoofQuickListInfo">打开与聊天顶部菜单中相同的输入伪造选择界面，无需先打开该聊天。</string>
-    <string name="InuHideDevBadges">禁用开发者徽章</string>
-    <string name="InuHideDevBadgesInfo">隐藏 entinyGram 和 inuGram 开发者及官方频道名称旁的徽章</string>
+    <string name="InuHideDevBadges">禁用 entinyGram 徽章</string>
+    <string name="InuHideDevBadgesInfo">它们没有任何含义，也不提供任何优势——只是开发者的一份感谢</string>
     <string name="InuLanguages">语言</string>
     <string name="InuLocalPremium">本地 Telegram Premium</string>
     <string name="InuLocalPremiumInfo">解锁客户端级别的 Premium 功能（星标徽章、应用图标、本地保存的表情状态和个人资料颜色、无限制翻译栏、高级反应与动画）。服务端功能（4 GB 上传、云端上限）仍需要官方订阅。</string>

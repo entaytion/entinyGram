@@ -1338,8 +1338,8 @@
     <string name="InuDeletedMarkStyleEyeCrossed">Eye Crossed</string>
     <string name="InuDeletedMarkPreviewText">Hey! This is a secret 🤫</string>
     <string name="InuDeletedMarkPreviewSender">Alina</string>
-    <string name="InuHideDevBadges">Disable developer badges</string>
-    <string name="InuHideDevBadgesInfo">Hide badges next to the names of entinyGram and inuGram developers and official channels</string>
+    <string name="InuHideDevBadges">Disable entinyGram badges</string>
+    <string name="InuHideDevBadgesInfo">They don\'t mean anything, don\'t give any advantage — just a thank-you from the developer</string>
     <string name="InuDevBadge">entinyGram team</string>
     <string name="InuDevBadgeInfo">This account is recognized by the entinyGram team.</string>
     <string name="InuStopBot">Stop bot</string>

@@ -1280,8 +1280,8 @@
     <string name="InuDeletedMarkStyleEyeCrossed">Перекреслене око</string>
     <string name="InuDeletedMarkPreviewText">Привіт! Це секрет 🤫</string>
     <string name="InuDeletedMarkPreviewSender">Аліна</string>
-    <string name="InuHideDevBadges">Вимкнути бейджі розробників</string>
-    <string name="InuHideDevBadgesInfo">Ховає бейджі біля імен розробників entinyGram та inuGram і офіційних каналів</string>
+    <string name="InuHideDevBadges">Вимкнути бейджі entinyGram</string>
+    <string name="InuHideDevBadgesInfo">Вони нічого не означають і не дають жодних переваг — просто подяка від розробника</string>
     <string name="InuDevBadge">Команда entinyGram</string>
     <string name="InuDevBadgeInfo">Цей акаунт визнаний командою entinyGram.</string>
     <string name="InuAppIconOldEntinygram">Старий entinyGram</string>

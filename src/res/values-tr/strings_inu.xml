@@ -1070,8 +1070,8 @@
     <string name="InuTypingSpoofActive">Şu anda etkin</string>
     <string name="InuTypingSpoofPickChat">Sohbet seç</string>
     <string name="InuTypingSpoofQuickListInfo">Önce sohbeti açmaya gerek kalmadan, sohbet başlığı menüsünde bulunan aynı yazma sahteciliği seçicisini açar.</string>
-    <string name="InuHideDevBadges">Geliştirici rozetlerini devre dışı bırak</string>
-    <string name="InuHideDevBadgesInfo">entinyGram ve inuGram geliştiricilerinin ve resmi kanalların adlarının yanındaki rozetleri gizler</string>
+    <string name="InuHideDevBadges">entinyGram rozetlerini devre dışı bırak</string>
+    <string name="InuHideDevBadgesInfo">Hiçbir anlamı yoktur, herhangi bir ayrıcalık sağlamaz — sadece geliştiriciden bir teşekkürdür</string>
     <string name="InuLanguages">Diller</string>
     <string name="InuLocalPremium">Yerel Telegram Premium</string>
     <string name="InuLocalPremiumInfo">İstemci düzeyindeki Premium özelliklerin kilidini açar (yıldız rozeti, uygulama simgeleri, yerel olarak kaydedilen ifade durumları ve profil renkleri, sınırsız çeviri çubuğu, premium tepkiler ve animasyonlar). Sunucu tarafı özellikler (4 GB yükleme, bulut sınırları) resmi bir abonelik gerektirir.</string>
