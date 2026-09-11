@@ -1319,6 +1319,11 @@
     <string name="InuTranslateYandexApiKey">API-ключ Yandex</string>
     <string name="InuAccountSwitchShortcut">Ярлик перемикання акаунтів</string>
     <string name="InuAccountSwitchShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка з вибором акаунта для входу</string>
+
+    <string name="InuFastResendLoginCode">Пропустити відлік коду входу</string>
+    <string name="InuFastResendLoginCodeInfo">Натисніть на таймер на екрані введення коду, щоб запросити новий код, не чекаючи кінця відліку</string>
+    <string name="InuFastResendLoginCodeConfirm">Код не надійшов? Можна пропустити решту очікування й одразу запросити новий. Telegram усе одно може відмовитися надіслати його так рано.</string>
+    <string name="InuFastResendLoginCodeNow">Надіслати зараз</string>
     <string name="InuBlockSleepWhileDownloading">Блокувати режим сну під час завантаження</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Утримує wake lock під час активного завантаження, щоб Android не призупиняв його у фоні.</string>
     <string name="InuHideRichEditorButton">Приховати кнопку форматування тексту</string>

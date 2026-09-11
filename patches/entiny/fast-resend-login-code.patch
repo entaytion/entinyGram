@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 11 Sep 2026 09:20:26 +0300
+Subject: Skip the login code countdown on confirmation
+
+---
+ .../java/org/telegram/ui/LoginActivity.java    | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+@@ -3669,7 +3669,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+                 }
+                 @Override
+                 protected boolean isRippleEnabled() {
+-                    return getVisibility() == View.VISIBLE && !(time > 0 && timeTimer != null);
++                    return getVisibility() == View.VISIBLE && (desu.inugram.InuConfig.FAST_RESEND_LOGIN_CODE.getValue() && nextType != 0 || !(time > 0 && timeTimer != null));
+                 }
+             };
+             timeText.setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
+@@ -3682,6 +3682,13 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+ //                    return;
+ //                }
+                 if (time > 0 && timeTimer != null) {
++                    if (desu.inugram.InuConfig.FAST_RESEND_LOGIN_CODE.getValue() && nextType != 0 && !isResendingCode && !isRequestingFirebaseSms) {
++                        desu.inugram.helpers.LoginHelper.confirmFastResend(LoginActivity.this, () -> {
++                            time = 0;
++                            destroyTimer();
++                            timeText.callOnClick();
++                        });
++                    }
+                     return;
+                 }
+                 isResendingCode = true;
+@@ -8753,7 +8760,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+                 }
+                 @Override
+                 protected boolean isRippleEnabled() {
+-                    return getVisibility() == View.VISIBLE && !(time > 0 && timeTimer != null);
++                    return getVisibility() == View.VISIBLE && (desu.inugram.InuConfig.FAST_RESEND_LOGIN_CODE.getValue() && nextType != 0 || !(time > 0 && timeTimer != null));
+                 }
+             };
+             timeText.setLinkTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteValueText));
+@@ -8766,6 +8773,13 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+ //                    return;
+ //                }
+                 if (time > 0 && timeTimer != null) {
++                    if (desu.inugram.InuConfig.FAST_RESEND_LOGIN_CODE.getValue() && nextType != 0 && !isResendingCode && !isRequestingFirebaseSms) {
++                        desu.inugram.helpers.LoginHelper.confirmFastResend(LoginActivity.this, () -> {
++                            time = 0;
++                            destroyTimer();
++                            timeText.callOnClick();
++                        });
++                    }
+                     return;
+                 }
+                 if (nextCodeParams != null && nextCodeAuth != null) {

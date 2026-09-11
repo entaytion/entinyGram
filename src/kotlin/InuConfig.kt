@@ -1746,6 +1746,13 @@ object InuConfig {
     @JvmField
     val ACCOUNT_SWITCH_SHORTCUT = BoolItem("account_switch_shortcut", false)
 
+    // Lets a tap on the login screen's "code available in mm:ss" label offer to skip the local
+    // countdown and resend right away (after a confirmation). Purely client-side: it drops our own
+    // timer and runs stock's existing auth.resendCode path -- the server's own rate limit still
+    // applies, so a too-eager resend just comes back as FLOOD_WAIT. Off = stock-identical.
+    @JvmField
+    val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
+
     @JvmField
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)
 

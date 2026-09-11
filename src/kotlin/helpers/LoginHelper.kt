@@ -115,6 +115,28 @@ object LoginHelper {
         opts.show()
     }
 
+    /**
+     * Countdown override on the login code screens, gated by `InuConfig.FAST_RESEND_LOGIN_CODE`.
+     *
+     * Stock swallows a tap on the "code available in mm:ss" label for as long as the local timer
+     * runs. With the toggle on we ask first, and only then let the caller drop that timer and fall
+     * through to stock's own `auth.resendCode` path -- no new request, no protocol change.
+     *
+     * The confirmation is the point: the wait is a cooldown the server suggested, so skipping it
+     * has to be a deliberate choice rather than a stray tap, and the server is still free to answer
+     * FLOOD_WAIT (which stock already surfaces).
+     */
+    @JvmStatic
+    fun confirmFastResend(loginActivity: LoginActivity, onConfirm: Runnable) {
+        val activity = loginActivity.parentActivity ?: return
+        AlertDialog.Builder(activity)
+            .setTitle(getString(R.string.InuFastResendLoginCode))
+            .setMessage(getString(R.string.InuFastResendLoginCodeConfirm))
+            .setPositiveButton(getString(R.string.InuFastResendLoginCodeNow)) { _, _ -> onConfirm.run() }
+            .setNegativeButton(getString(R.string.Cancel), null)
+            .show()
+    }
+
     private fun fetchAndShowPasswordPage(loginActivity: LoginActivity, currentAccount: Int) {
         val req = TL_account.getPassword()
         ConnectionsManager.getInstance(currentAccount).sendRequest(req, { res, err ->

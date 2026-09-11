@@ -1198,6 +1198,11 @@
     <string name="InuYes">Evet</string>
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
     <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
+
+    <string name="InuFastResendLoginCode">Giriş kodu geri sayımını atla</string>
+    <string name="InuFastResendLoginCodeInfo">Giriş kodu ekranındaki geri sayıma dokunarak süresinin dolmasını beklemeden yeni bir kod isteyin</string>
+    <string name="InuFastResendLoginCodeConfirm">Kod gelmedi mi? Kalan bekleme süresini atlayıp hemen yeni bir kod isteyebilirsiniz. Telegram bu kadar erken göndermeyi yine de reddedebilir.</string>
+    <string name="InuFastResendLoginCodeNow">Şimdi yeniden gönder</string>
     <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
     <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
     <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>

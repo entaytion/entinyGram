@@ -279,6 +279,14 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FAST_RESEND_LOGIN_CODE,
+                R.string.InuFastResendLoginCode,
+                R.string.InuFastResendLoginCodeInfo,
+                InuConfig.FAST_RESEND_LOGIN_CODE.value,
+            )
+        )
+        items.add(
             UItem.asButton(
                 BUTTON_PERFORMANCE_CLASS,
                 LocaleController.getString(R.string.InuPerformanceClass),
@@ -473,6 +481,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            TOGGLE_FAST_RESEND_LOGIN_CODE -> {
+                val new = InuConfig.FAST_RESEND_LOGIN_CODE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_ACCOUNT_SWITCH_SHORTCUT -> {
                 val new = InuConfig.ACCOUNT_SWITCH_SHORTCUT.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -606,6 +619,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_SECONDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
+        private val TOGGLE_FAST_RESEND_LOGIN_CODE = InuUtils.generateId()
 
         // (InuConfig.MapProviderItem value, label res) for every renderer actually present in this build
         private val mapProviderOptions: List<Pair<Int, Int>> = buildList {
@@ -663,6 +677,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-seconds", R.string.InuShowSeconds, TOGGLE_SHOW_SECONDS),
                 SearchRegistry.Entry("disable-rounding", R.string.InuDisableRounding, TOGGLE_DISABLE_ROUNDING),
                 SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),
+                SearchRegistry.Entry("fast-resend-login-code", R.string.InuFastResendLoginCode, TOGGLE_FAST_RESEND_LOGIN_CODE),
             ),
         )
     }

@@ -69,6 +69,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **hidden & archived star gifts**: restores removed, archived, and limited Star Gifts in the Telegram gifts catalog
 - 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings — pinned chats and folder chats beyond the server limit (5/10 pins, 100/200 folder chats with Premium) are tracked client-only and never revert on resync; favorite stickers/GIFs simply stop being trimmed from the local cache
 - 📡 **force relay calls**: always route voice/video calls through Telegram's relay servers, never peer-to-peer, so the other party's client can never learn your real IP address
+- 📡 **skip the login code countdown**: tap the "code available in mm:ss" line on the login code screen to confirm and request a new code immediately, instead of waiting out the timer that swallows the tap. The countdown is purely local, so this drops it and runs Telegram's own resend — the server's rate limit is untouched and can still answer with a flood wait. Off by default; covers both the code and phrase login screens - *the idea is [NiagramX](https://github.com/HSSkyBoy/NiagramX/pull/18)'s; the "prioritize email code" half of that PR is deliberately not ported, since `codeSettings` has no such flag in the real MTProto schema*
 
 ### appearance & customization
 

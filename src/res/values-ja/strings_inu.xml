@@ -1199,6 +1199,11 @@
     <string name="InuYes">はい</string>
     <string name="InuAccountSwitchShortcut">アカウント切り替えショートカット</string>
     <string name="InuAccountSwitchShortcutInfo">アプリアイコン長押し時に開くアカウントを選択するショートカットを追加します</string>
+
+    <string name="InuFastResendLoginCode">ログインコードのカウントダウンをスキップ</string>
+    <string name="InuFastResendLoginCodeInfo">ログインコード画面のカウントダウンをタップすると、残り時間を待たずに新しいコードを要求できます</string>
+    <string name="InuFastResendLoginCodeConfirm">コードが届きませんか？残りの待ち時間をスキップして、すぐに新しいコードを要求できます。Telegram 側がこの時点での再送を拒否する場合もあります。</string>
+    <string name="InuFastResendLoginCodeNow">今すぐ再送</string>
     <string name="InuBlockSleepWhileDownloading">ダウンロード中のスリープを防止</string>
     <string name="InuBlockSleepWhileDownloadingInfo">ダウンロード中に部分的なウェイクロックを保持し、Androidがバックグラウンドで停止しないようにします。</string>
     <string name="InuHideProxySponsorChat">プロキシのスポンサーチャットを非表示</string>

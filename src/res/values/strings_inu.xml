@@ -670,6 +670,11 @@
     <string name="InuAccountSwitchShortcut">Account switcher shortcut</string>
     <string name="InuAccountSwitchShortcutInfo">Add a long-press shortcut on the app icon that asks which account to open</string>
 
+    <string name="InuFastResendLoginCode">Skip login code countdown</string>
+    <string name="InuFastResendLoginCodeInfo">Tap the countdown on the login code screen to request a new code without waiting for it to run out</string>
+    <string name="InuFastResendLoginCodeConfirm">Haven\'t received the code? You can skip the remaining wait and ask for a new one right away. Telegram may still refuse to send it that soon.</string>
+    <string name="InuFastResendLoginCodeNow">Resend now</string>
+
     <string name="InuTextClassifierMode">Text classifier mode</string>
     <string name="InuTextClassifierModeInfo">Text classifier is a system component that auto-expands selection when double-tapping text</string>
     <string name="InuTextClassifierModeNative">Native</string>

@@ -1276,6 +1276,11 @@
     <string name="InuMsgDetailWaveformLength">Сэмплы волны</string>
     <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунтов</string>
     <string name="InuAccountSwitchShortcutInfo">Добавить ярлык по долгому нажатию на иконку приложения с выбором аккаунта для входа</string>
+
+    <string name="InuFastResendLoginCode">Пропустить отсчёт кода входа</string>
+    <string name="InuFastResendLoginCodeInfo">Нажмите на таймер на экране ввода кода, чтобы запросить новый код, не дожидаясь конца отсчёта</string>
+    <string name="InuFastResendLoginCodeConfirm">Код не пришёл? Можно пропустить оставшееся ожидание и сразу запросить новый. Telegram всё равно может отказаться отправить его так рано.</string>
+    <string name="InuFastResendLoginCodeNow">Отправить сейчас</string>
     <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
     <string name="InuHideProxySponsorChat">Скрыть спонсорский чат прокси</string>

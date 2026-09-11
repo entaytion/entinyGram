@@ -1200,6 +1200,11 @@
     <string name="InuYes">是</string>
     <string name="InuAccountSwitchShortcut">账号切换快捷方式</string>
     <string name="InuAccountSwitchShortcutInfo">在应用图标长按菜单中添加快捷方式，点击可选择要打开的账号</string>
+
+    <string name="InuFastResendLoginCode">跳过登录验证码倒计时</string>
+    <string name="InuFastResendLoginCodeInfo">在登录验证码界面点按倒计时，无需等待其结束即可请求新的验证码</string>
+    <string name="InuFastResendLoginCodeConfirm">没有收到验证码？可以跳过剩余等待时间，立即请求新的验证码。Telegram 仍可能拒绝这么快重新发送。</string>
+    <string name="InuFastResendLoginCodeNow">立即重发</string>
     <string name="InuBlockSleepWhileDownloading">下载时阻止休眠</string>
     <string name="InuBlockSleepWhileDownloadingInfo">在下载进行时保持部分唤醒锁（wake lock），防止 Android 在后台暂停下载。</string>
     <string name="InuHideProxySponsorChat">隐藏代理赞助商聊天</string>
