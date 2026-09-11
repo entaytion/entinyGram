@@ -72,8 +72,9 @@ object SelfDestructHelper {
             if (obj != null && obj.messageOwner.ttl_period != 0) {
                 val fromId = if (obj.messageOwner.from_id != null) org.telegram.messenger.DialogObject.getPeerDialogId(obj.messageOwner.from_id) else 0L
                 val text = obj.messageOwner.message ?: ""
-                val date = obj.messageOwner.date
-                desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(account, obj.getDialogId(), id, fromId, text, date, obj.messageOwner, true)
+                // 0 = deleted now (SavedMessagesHelper falls back to System.currentTimeMillis()); the
+                // message's own send date isn't the deletion time and would misreport it in the bulletin
+                desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(account, obj.getDialogId(), id, fromId, text, 0, obj.messageOwner, true)
             }
         }
     }
