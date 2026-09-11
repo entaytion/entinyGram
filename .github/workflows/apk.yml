@@ -281,6 +281,7 @@ jobs:
             --ks-key-alias mrtv \
             --ks-pass "pass:$KEYSTORE_PASSWORD" \
             --key-pass "pass:$KEY_PASSWORD" \
+            --v1-signing-enabled false \
             --in  "out/$apk" \
             --out "out/$apk.signed"
           "$apksigner" verify --print-certs "out/$apk.signed"

@@ -4,7 +4,7 @@ Date: Sat, 29 Aug 2026 10:59:02 +0300
 Subject: Remove unused Android Auto integration and Play Store referrer receiver
 
 ---
- TMessagesProj/build.gradle                    |   2 -
+ TMessagesProj/build.gradle                    |   6 +-
  TMessagesProj/src/main/AndroidManifest.xml    |  25 -
  .../telegram/messenger/RefererReceiver.java   |  23 -
  .../telegram/messenger/car/HomeScreen.java    | 430 ------------------
@@ -12,8 +12,9 @@ Subject: Remove unused Android Auto integration and Play Store referrer receiver
  .../messenger/car/TelegramCarAppService.java  |  46 +-
  .../messenger/car/TelegramCarSession.java     |  16 -
  .../src/main/res/xml/automotive_app_desc.xml  |   5 -
+ TMessagesProj_App/build.gradle                |   4 +-
  gradle.properties                             |   3 +
- 12 files changed, 9 insertions(+), 957 deletions(-)
+ 13 files changed, 13 insertions(+), 961 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
@@ -36,6 +37,17 @@ index 0000000..0000000 100644
      implementation 'org.nanohttpd:nanohttpd:2.3.1'
  
      compileOnly 'org.checkerframework:checker-qual:2.5.2'
+@@ -192,8 +190,8 @@ android {
+             minifyEnabled true
+             shrinkResources false
+             multiDexEnabled true
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
+-            ndk.debugSymbolLevel = 'FULL'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
++            ndk.debugSymbolLevel = 'NONE'
+             buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
+             buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
+             buildConfigField "String", "INU_BUILD_TYPE", "\"" + (System.getenv('INU_BUILD_TYPE') ?: 'debug') + "\""
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
@@ -760,6 +772,21 @@ index 0000000..0000000
 -    <uses name="template"/>
 -</automotiveApp>
 \ No newline at end of file
+diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_App/build.gradle
++++ b/TMessagesProj_App/build.gradle
+@@ -91,8 +91,8 @@ android {
+             minifyEnabled true
+             shrinkResources true
+             multiDexEnabled true
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
+-            ndk.debugSymbolLevel = 'SYMBOL_TABLE'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
++            ndk.debugSymbolLevel = 'NONE'
+         }
+     }
+ 
 diff --git a/gradle.properties b/gradle.properties
 index 0000000..0000000 100644
 --- a/gradle.properties
