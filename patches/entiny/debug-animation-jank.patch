@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 11 Sep 2026 09:09:40 +0300
+Subject: Log chat-open animation jank behind extra debug logs
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -27638,6 +27638,7 @@ public class ChatActivity extends BaseFragment implements
+             openAnimationEnded = false;
+             if (!backward) {
+                 openAnimationStartTime = SystemClock.elapsedRealtime();
++                desu.inugram.helpers.chat.AnimationDebugHelper.onChatOpenAnimationStart();
+             }
+         } else {
+             if (UserObject.isUserSelf(currentUser)) {
+@@ -27657,6 +27658,9 @@ public class ChatActivity extends BaseFragment implements
+     @Override
+     public void onTransitionAnimationEnd(boolean isOpen, boolean backward) {
+         super.onTransitionAnimationEnd(isOpen, backward);
++        if (isOpen && !backward) {
++            desu.inugram.helpers.chat.AnimationDebugHelper.onChatOpenAnimationEnd(SystemClock.elapsedRealtime() - openAnimationStartTime);
++        }
+         if (isOpen) {
+             if (backward) {
+                 if (showPinBulletin && pinBulletin != null) {

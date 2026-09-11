@@ -406,3 +406,4 @@ entiny/badge-tap-bulletin.patch
 entiny/gitignore-hygiene.patch
 entiny/translate-optout-without-premium.patch
 entiny/chat-menu-live-reorder.patch
+entiny/debug-animation-jank.patch
