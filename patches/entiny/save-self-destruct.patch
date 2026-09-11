@@ -5,11 +5,11 @@ Subject: allow saving self-destructing media
 
 - consolidates the legacy self-destruct file-cache flag into SAVE_SELF_DESTRUCT_MEDIA
 ---
- .../org/telegram/messenger/FileLoader.java    | 24 ++++++++++++--
- .../telegram/messenger/MediaController.java   |  9 +++++-
- .../org/telegram/messenger/MessageObject.java |  4 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 32 ++++++++++++++++---
- 4 files changed, 60 insertions(+), 9 deletions(-)
+ .../org/telegram/messenger/FileLoader.java    | 24 ++++++++-
+ .../telegram/messenger/MediaController.java   |  9 +++-
+ .../org/telegram/messenger/MessageObject.java |  4 +-
+ .../java/org/telegram/ui/ChatActivity.java    | 50 +++++++++++++++++--
+ 4 files changed, 78 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -128,11 +128,29 @@ index 0000000..0000000 100644
          final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
          messageObject.forceExpired = true;
          if (messageObject.isOutOwner() || !messageObject.isRoundOnce() && !messageObject.isVoiceOnce()) {
-@@ -15817,6 +15820,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -15817,6 +15820,31 @@ public class ChatActivity extends BaseFragment implements
          return () -> getMessagesController().doDeleteShowOnceTask(taskId, dialog_id, messageObject.getId());
      }
  
 +    public void inu_openSecretMediaViewer(MessageObject messageObject) {
++        // Voice notes and round videos are consumed through SecretVoicePlayer, never through the
++        // photo/video viewer: SecretMediaViewer has no audio UI and getPlaceForPhoto finds no
++        // laid-out image to anchor to, so routing them there opened an empty viewer. Same call
++        // shape needPlayMessage uses for the ordinary tap.
++        if (messageObject != null && (messageObject.isVoiceOnce() || messageObject.isRoundOnce())) {
++            BaseCell baseCell = findMessageCell(messageObject.getId(), false);
++            if (!(baseCell instanceof ChatMessageCell) || secretVoicePlayer != null && secretVoicePlayer.isShown()) {
++                return;
++            }
++            secretVoicePlayer = new SecretVoicePlayer(getContext());
++            secretVoicePlayer.setCell(
++                (ChatMessageCell) baseCell,
++                !messageObject.isOutOwner() ? sendSecretMessageRead(messageObject, true) : null,
++                !messageObject.isOutOwner() ? sendSecretMediaDelete(messageObject) : null
++            );
++            showDialog(secretVoicePlayer);
++            return;
++        }
 +        Runnable openAction = sendSecretMessageRead(messageObject, false);
 +        Runnable closeAction = sendSecretMediaDelete(messageObject);
 +        SecretMediaViewer.getInstance().setParentActivity(getParentActivity());
@@ -142,7 +160,7 @@ index 0000000..0000000 100644
      private void clearChatData(boolean full) {
          messages.clear();
          messagesByDays.clear();
-@@ -19290,6 +19300,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -19290,6 +19318,12 @@ public class ChatActivity extends BaseFragment implements
                              canSave = true;
                          }
                      }
@@ -155,7 +173,7 @@ index 0000000..0000000 100644
                      if (canSave) {
                          if (messageObject.getDocument() != null) {
                              String mime = messageObject.getDocument().mime_type;
-@@ -19297,7 +19313,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19297,7 +19331,7 @@ public class ChatActivity extends BaseFragment implements
                                  return 5;
                              }
                          }
@@ -164,7 +182,7 @@ index 0000000..0000000 100644
                              return 4;
                          }
                      }
-@@ -33604,6 +33620,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -33604,6 +33638,12 @@ public class ChatActivity extends BaseFragment implements
                  path = f.getPath();
              }
          }
@@ -177,7 +195,7 @@ index 0000000..0000000 100644
          if (TextUtils.isEmpty(path) && messageObject.cachedQuality != null && messageObject.cachedQuality.isCached()) {
              File f = new File(messageObject.cachedQuality.uri.getPath());
              if (f != null && f.exists()) {
-@@ -39721,7 +39743,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -39721,7 +39761,7 @@ public class ChatActivity extends BaseFragment implements
  
          @Override
          public boolean needPlayMessage(ChatMessageCell cell, MessageObject messageObject, boolean muted) {
@@ -186,7 +204,7 @@ index 0000000..0000000 100644
                  if (secretVoicePlayer != null && secretVoicePlayer.isShown()) return false;
                  try {
                      AudioManager audioManager = (AudioManager) ApplicationLoader.applicationContext.getSystemService(Context.AUDIO_SERVICE);
-@@ -46104,7 +46126,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46104,7 +46144,7 @@ public class ChatActivity extends BaseFragment implements
              allowPin = false;
          }
          allowPin = allowPin && message.getId() > 0 && (message.messageOwner.action == null || message.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && !message.isExpiredStory() && message.type != MessageObject.TYPE_STORY_MENTION;

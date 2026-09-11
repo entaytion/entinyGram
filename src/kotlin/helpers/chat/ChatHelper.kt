@@ -46,6 +46,7 @@ import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagePreviewParams
 import org.telegram.messenger.MessagesStorage
@@ -55,6 +56,7 @@ import org.telegram.messenger.TranslateController
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
 import org.telegram.messenger.Utilities
+import org.telegram.messenger.secretmedia.EncryptedFileInputStream
 import org.telegram.messenger.utils.tlutils.TLKeyboardHelper
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_keyboard
@@ -498,12 +500,21 @@ object ChatHelper {
         // Gated mode keeps the stock one-time reveal/blur, so the stock menu itself skips
         // "Save to Gallery" for it (guarded by needDrawBluredPreview() in ChatActivity's own
         // menu builder) even though the file is already preserved locally. Offer Save here
-        // directly — the stock OPTION_SAVE_TO_GALLERY handler doesn't re-check the blur flag,
-        // it just needs the file, which our shouldPreserveMedia fix already makes findable.
-        if (selectedObject.isSecretMedia() && SelfDestructHelper.shouldPreserveMedia(dialogId) && !InuConfig.VIEW_ONCE_SHOW_NORMAL.value) {
-            items.add(LocaleController.getString(R.string.SaveToGallery))
+        // directly.
+        //
+        // Voice notes and round videos need the entry in *both* modes: ChatActivity's menu builder
+        // gates every save/share branch on `!isVoiceOnce() && !isRoundOnce()` on top of the blur
+        // check (createMenu, the type == 4 / 5 / 6 / 10 branches), so unlike a one-time photo or
+        // video they still get no stock Save entry once VIEW_ONCE_SHOW_NORMAL lifts the blur gate.
+        val oneTimeVoiceOrRound = selectedObject.isVoiceOnce() || selectedObject.isRoundOnce()
+        if (selectedObject.isSecretMedia() &&
+            SelfDestructHelper.shouldPreserveMedia(dialogId) &&
+            (!InuConfig.VIEW_ONCE_SHOW_NORMAL.value || oneTimeVoiceOrRound)
+        ) {
+            val toDownloads = selectedObject.isVoice() || selectedObject.isMusic()
+            items.add(LocaleController.getString(if (toDownloads) R.string.SaveToDownloads else R.string.SaveToGallery))
             options.add(OPTION_SAVE_ONE_TIME)
-            icons.add(R.drawable.msg_gallery)
+            icons.add(if (toDownloads) R.drawable.msg_download else R.drawable.msg_gallery)
         }
 
         // Burn replays the same read+expire flow the stock "hold to view" viewer runs on close
@@ -885,7 +896,7 @@ object ChatHelper {
             }
 
             OPTION_SAVE_ONE_TIME -> {
-                activity.processSelectedOption(ChatActivity.OPTION_SAVE_TO_GALLERY)
+                saveOneTimeMedia(activity, selectedObject)
             }
 
             OPTION_BURN_ONE_TIME -> {
@@ -919,6 +930,112 @@ object ChatHelper {
             else -> return false
         }
         return true
+    }
+
+    /**
+     * "Save" for preserved one-time media.
+     *
+     * Can't just delegate to [ChatActivity.OPTION_SAVE_TO_GALLERY]: view-once media is downloaded
+     * with `ImageLoader.CACHE_TYPE_ENCRYPTED` (`MessageObject.shouldEncryptPhotoOrVideo()` is true
+     * for anything with `ttl_seconds != 0`), so what survives on disk is an AES-CTR `.enc` blob
+     * plus a key file in the internal cache dir. `MediaController.saveFile` copies bytes verbatim
+     * and MediaStore derives the mime type from the extension — "enc" resolves to null, the insert
+     * is rejected, and the save silently produced nothing.
+     *
+     * One-time photos and videos usually dodge that because opening them in PhotoViewer (only
+     * reachable once VIEW_ONCE_SHOW_NORMAL lifts the blur gate) re-downloads them unencrypted.
+     * Voice notes and round videos have no such path — `MediaController.playMessage` always asks
+     * for cacheType 2 and decrypts during playback — so for them the ciphertext is all there is.
+     *
+     * So: decrypt into a scratch file named with the real extension, hand *that* to saveFile with
+     * the bucket the media actually belongs in (round videos report `isVideo() == false`, so the
+     * stock `isVideo() ? 1 : 0` would file them under Images), then drop the scratch copy.
+     */
+    private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject) {
+        val parent = activity.parentActivity ?: return
+        if (!StickerDownloadHelper.ensureStoragePermission(parent)) return
+
+        val owner = message.messageOwner ?: return
+        val attach = owner.attachPath?.takeIf { it.isNotEmpty() }?.let { File(it) }?.takeIf { it.exists() }
+        val source = attach
+            ?: FileLoader.getInstance(activity.currentAccount).getPathToMessage(owner)?.takeIf { it.exists() }
+            ?: return
+
+        val document = message.document
+        val isRound = message.isRoundVideo
+        // MediaController.saveFile types: 0 = Pictures, 1 = Movies, 2 = Downloads, 3 = Music.
+        val type = when {
+            message.isVoice -> 2
+            message.isMusic -> 3
+            isRound || message.isVideo -> 1
+            else -> 0
+        }
+        val bulletinType = when {
+            message.isVoice -> BulletinFactory.FileType.UNKNOWN
+            message.isMusic -> BulletinFactory.FileType.AUDIO
+            isRound || message.isVideo -> BulletinFactory.FileType.VIDEO
+            else -> BulletinFactory.FileType.PHOTO
+        }
+
+        // The cache name ("<dc>_<id>.ogg.enc") minus the ciphertext suffix already carries the real
+        // extension, and saveFileInternal infers the MediaStore mime type from the extension of the
+        // file it is handed — so the scratch copy must keep it. The display name can be prettier
+        // when the document carries a filename (voice notes and round videos never do).
+        var plainName = source.name.removeSuffix(".enc").takeIf { it.isNotEmpty() } ?: "media"
+        if (!plainName.contains('.')) {
+            val ext = FileLoader.getExtensionByMimeType(document?.mime_type)
+            if (!ext.isNullOrEmpty()) plainName += ext
+        }
+        val name = FileLoader.getDocumentFileName(document)?.takeIf { it.isNotEmpty() } ?: plainName
+
+        val scratch = if (source.name.endsWith(".enc")) {
+            val keyFile = File(FileLoader.getInternalCacheDir(), source.name + ".key")
+            if (!keyFile.exists()) return
+            val out = File(
+                FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE) ?: return,
+                "inu_save_${message.dialogId}_${message.id}_$plainName",
+            )
+            if (!decryptOneTimeFile(source, keyFile, out)) {
+                out.delete()
+                return
+            }
+            out
+        } else {
+            null
+        }
+
+        MediaController.saveFile((scratch ?: source).absolutePath, parent, type, name, document?.mime_type) {
+            scratch?.delete()
+            BulletinFactory.of(activity).createDownloadBulletin(bulletinType, 1, activity.themeDelegate).show()
+        }
+    }
+
+    /**
+     * Streams [source] through stock's AES-CTR reader into [target]. Reads are sized to the exact
+     * number of bytes still left in the file because [EncryptedFileInputStream] advances its
+     * counter by the *requested* length, not the returned one — a short read mid-stream would
+     * desync the keystream for everything after it.
+     */
+    private fun decryptOneTimeFile(source: File, keyFile: File, target: File): Boolean {
+        return try {
+            EncryptedFileInputStream(source, keyFile).use { input ->
+                target.outputStream().use { output ->
+                    val buffer = ByteArray(64 * 1024)
+                    var remaining = source.length()
+                    while (remaining > 0) {
+                        val want = minOf(buffer.size.toLong(), remaining).toInt()
+                        val read = input.read(buffer, 0, want)
+                        if (read <= 0) break
+                        output.write(buffer, 0, read)
+                        remaining -= read
+                    }
+                }
+            }
+            target.length() > 0
+        } catch (e: Throwable) {
+            android.util.Log.e("ChatHelper", "one-time media decrypt failed", e)
+            false
+        }
     }
 
     private fun canRepeatMessage(
