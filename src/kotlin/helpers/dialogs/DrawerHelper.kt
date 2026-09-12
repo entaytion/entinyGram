@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
 import desu.inugram.helpers.security.GhostHelper
+import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.update.UpdateHelper
 import desu.inugram.ui.drawer.DrawerAddCell
 import desu.inugram.ui.drawer.DrawerLayoutAdapter
@@ -22,6 +23,7 @@ import desu.inugram.ui.drawer.DrawerProxyCell
 import desu.inugram.ui.drawer.DrawerSwipeController
 import desu.inugram.ui.drawer.DrawerUserCell
 import desu.inugram.ui.drawer.SideMenultItemAnimator
+import desu.inugram.ui.settings.ParanoiaActivity
 import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
@@ -739,6 +741,12 @@ object DrawerHelper {
             val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
             instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
             BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, str).show()
+        }
+
+        if (!ParanoiaHelper.isParanoia()) {
+            io.add(R.drawable.inu_tabler_spy, getString(R.string.InuParanoiaMode)) {
+                instance.presentFragment(ParanoiaActivity())
+            }
         }
 
         if (bottomTabsHidden) {
