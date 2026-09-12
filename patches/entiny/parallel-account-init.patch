@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 12 Sep 2026 13:37:57 +0300
+Subject: Parallelize secondary-account init on cold start
+
+Stock ApplicationLoader.postInitApplication() iterates UserConfig.MAX_ACCOUNT_COUNT
+(8, raised from stock default by our own multi-account.patch) synchronously on the
+calling thread before returning, loading+resaving each accounts tgnet config in
+series. With several real accounts logged in this alone costs hundreds of ms of
+blocking I/O on cold start, on top of every one of the ~20 call sites that gate on
+this method (push receivers, widgets, wear reply, share).
+
+- extract the per-account body into initAccount(int) unchanged
+- keep account 0 synchronous and first (same order/timing as stock)
+- run accounts 1..MAX_ACCOUNT_COUNT-1 on their own threads, joined before return
+- same blocking-until-fully-initialized contract for every caller; each accounts
+  UserConfig/MessagesController/ConnectionsManager instance is independently
+  indexed and safe to construct concurrently
+---
+ .../telegram/messenger/ApplicationLoader.java | 39 +++++++++++++------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -250,18 +250,18 @@ public class ApplicationLoader extends Application {
+ 
+         SharedConfig.loadConfig();
+         SharedPrefsHelper.init(applicationContext);
+-        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
+-            UserConfig.getInstance(a).loadConfig();
+-            MessagesController.getInstance(a);
+-            if (a == 0) {
+-                SharedConfig.pushStringStatus = "__FIREBASE_GENERATING_SINCE_" + ConnectionsManager.getInstance(a).getCurrentTime() + "__";
+-            } else {
+-                ConnectionsManager.getInstance(a);
+-            }
+-            TLRPC.User user = UserConfig.getInstance(a).getCurrentUser();
+-            if (user != null) {
+-                MessagesController.getInstance(a).putUser(user, true);
+-                SendMessagesHelper.getInstance(a).checkUnsentMessages();
++        initAccount(0); //TODO improve account
++        Thread[] accountInitThreads = new Thread[UserConfig.MAX_ACCOUNT_COUNT - 1];
++        for (int a = 1; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
++            final int accountIndex = a;
++            Thread thread = new Thread(() -> initAccount(accountIndex), "AccountInit" + accountIndex);
++            thread.start();
++            accountInitThreads[a - 1] = thread;
++        }
++        for (Thread thread : accountInitThreads) {
++            try {
++                thread.join();
++            } catch (InterruptedException ignore) {
+             }
+         }
+ 
+@@ -279,6 +279,21 @@ public class ApplicationLoader extends Application {
+         BillingController.getInstance().startConnection();
+     }
+ 
++    private static void initAccount(int a) {
++        UserConfig.getInstance(a).loadConfig();
++        MessagesController.getInstance(a);
++        if (a == 0) {
++            SharedConfig.pushStringStatus = "__FIREBASE_GENERATING_SINCE_" + ConnectionsManager.getInstance(a).getCurrentTime() + "__";
++        } else {
++            ConnectionsManager.getInstance(a);
++        }
++        TLRPC.User user = UserConfig.getInstance(a).getCurrentUser();
++        if (user != null) {
++            MessagesController.getInstance(a).putUser(user, true);
++            SendMessagesHelper.getInstance(a).checkUnsentMessages();
++        }
++    }
++
+     public ApplicationLoader() {
+         super();
+     }
