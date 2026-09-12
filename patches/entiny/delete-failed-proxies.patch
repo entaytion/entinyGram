@@ -1,0 +1,135 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 12 Sep 2026 17:37:06 +0300
+Subject: Add a "Delete Failed Proxies" action to the proxy list
+
+Stock only offers deleting everything (and only once you have 10+ saved) or
+deleting one at a time by hand. There was no way to clear out just the ones
+that failed their last availability check while keeping the working ones.
+
+- new row next to "Delete All Proxies", shown whenever at least one saved
+  proxy is checked and unavailable
+- only removes proxies where availableCheckTime != 0 (actually checked, not
+  "never checked yet") and !available
+- if the currently active proxy happens to be among the ones removed, drops
+  back to no-proxy the same way "Delete All" already does; otherwise leaves
+  the active connection alone
+---
+ .../org/telegram/ui/ProxyListActivity.java    | 60 +++++++++++++++++--
+ 1 file changed, 56 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
+@@ -104,6 +104,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+     private int rotationTimeoutInfoRow;
+     private int callsDetailRow;
+     private int deleteAllRow;
++    private int deleteFailedRow;
+ 
+     private ItemTouchHelper itemTouchHelper;
+     private NumberTextView selectedCountTextView;
+@@ -523,6 +524,41 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 if (button != null) {
+                     button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                 }
++            } else if (position == deleteFailedRow) {
++                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
++                builder.setMessage(getString(R.string.InuDeleteFailedProxiesConfirm));
++                builder.setNegativeButton(getString(R.string.Cancel), null);
++                builder.setTitle(getString(R.string.InuDeleteFailedProxies));
++                builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
++                    boolean removedCurrent = false;
++                    for (SharedConfig.ProxyInfo info : proxyList) {
++                        if (!info.checking && info.availableCheckTime != 0 && !info.available) {
++                            if (SharedConfig.currentProxy == info) {
++                                removedCurrent = true;
++                            }
++                            SharedConfig.deleteProxy(info);
++                        }
++                    }
++                    if (removedCurrent) {
++                        useProxyForCalls = false;
++                        useProxySettings = false;
++                    }
++                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
++                    NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++                    updateRows(true);
++                    if (listAdapter != null) {
++                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++                        listAdapter.notifyItemChanged(callsRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++                        listAdapter.clearSelected();
++                    }
++                });
++                AlertDialog failedDialog = builder.create();
++                showDialog(failedDialog);
++                TextView failedButton = (TextView) failedDialog.getButton(DialogInterface.BUTTON_POSITIVE);
++                if (failedButton != null) {
++                    failedButton.setTextColor(Theme.getColor(Theme.key_text_RedBold));
++                }
+             }
+         });
+         listView.setOnItemLongClickListener((view, position) -> {
+@@ -713,6 +749,17 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         } else {
+             deleteAllRow = -1;
+         }
++        int inu_failedProxyCount = 0;
++        for (SharedConfig.ProxyInfo info : proxyList) {
++            if (!info.checking && info.availableCheckTime != 0 && !info.available) {
++                inu_failedProxyCount++;
++            }
++        }
++        if (inu_failedProxyCount > 0) {
++            deleteFailedRow = rowCount++;
++        } else {
++            deleteFailedRow = -1;
++        }
+         checkProxyList();
+         if (notify && listAdapter != null) {
+             listAdapter.notifyDataSetChanged();
+@@ -890,10 +937,13 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                     TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
+                     textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+                     if (position == proxyAddRow) {
+-                        textCell.setText(getString(R.string.AddProxy), deleteAllRow != -1);
++                        textCell.setText(getString(R.string.AddProxy), deleteAllRow != -1 || deleteFailedRow != -1);
+                     } else if (position == deleteAllRow) {
+                         textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+-                        textCell.setText(getString(R.string.DeleteAllProxies), false);
++                        textCell.setText(getString(R.string.DeleteAllProxies), deleteFailedRow != -1);
++                    } else if (position == deleteFailedRow) {
++                        textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
++                        textCell.setText(getString(R.string.InuDeleteFailedProxies), false);
+                     }
+                     break;
+                 }
+@@ -996,7 +1046,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         @Override
+         public boolean isEnabled(RecyclerView.ViewHolder holder) {
+             int position = holder.getAdapterPosition();
+-            return position == useProxyRow || position == rotationRow || position == callsRow || position == proxyAddRow || position == deleteAllRow || position >= proxyStartRow && position < proxyEndRow;
++            return position == useProxyRow || position == rotationRow || position == callsRow || position == proxyAddRow || position == deleteAllRow || position == deleteFailedRow || position >= proxyStartRow && position < proxyEndRow;
+         }
+ 
+         @Override
+@@ -1047,6 +1097,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 return -6;
+             } else if (position == deleteAllRow) {
+                 return -8;
++            } else if (position == deleteFailedRow) {
++                return -12;
+             } else if (position == rotationRow) {
+                 return -9;
+             } else if (position == rotationTimeoutRow) {
+@@ -1064,7 +1116,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         public int getItemViewType(int position) {
+             if (position == useProxyShadowRow || position == proxyShadowRow) {
+                 return VIEW_TYPE_SHADOW;
+-            } else if (position == proxyAddRow || position == deleteAllRow) {
++            } else if (position == proxyAddRow || position == deleteAllRow || position == deleteFailedRow) {
+                 return VIEW_TYPE_TEXT_SETTING;
+             } else if (position == useProxyRow || position == rotationRow || position == callsRow) {
+                 return VIEW_TYPE_TEXT_CHECK;

@@ -262,6 +262,8 @@
     <string name="InuDeleteForBothMessages">Messages</string>
     <string name="InuDeleteForBothDms">DM dialogs</string>
     <string name="InuDeleteForBothGroups">Group chats</string>
+    <string name="InuDeleteFailedProxies">Delete Failed Proxies</string>
+    <string name="InuDeleteFailedProxiesConfirm">Are you sure you want to delete all unavailable proxies?</string>
     <string name="InuSimpleAttachPopupAnimation">Simple attach popup animation</string>
     <string name="InuHidePaidReactionUpsell">Hide paid reaction upsell</string>
     <string name="InuHideHashtagSuggestions">Hide hashtag suggestions</string>

@@ -109,6 +109,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
 - 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
 - 📡 **round recorder zoom-level buttons**: fixed zoom presets (1×/2×/3×/5×/10×, capped to what the lens supports) below the video feed - tap to snap and lock zoom instead of only pinching or dragging the slider
+- 📡 **delete failed proxies**: one tap to remove every proxy that failed its last availability check, without touching the ones that still work
 
 ### debloat & premium noise
 
