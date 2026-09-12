@@ -1665,6 +1665,11 @@ object InuConfig {
     @JvmField
     val TRANSLATE_AUTO_DETECT_LANG = BoolItem("translate_auto_detect_lang", true)
 
+    // Fork-owned copy of Telegram's target language. Keeping this separately prevents a
+    // per-dialog language choice from overwriting the user's global translation preference.
+    @JvmField
+    val TRANSLATE_TARGET_LANGUAGE = StringItem("translate_target_language", "")
+
     // Force translation even for messages Telegram considers to be in the user's own language
     @JvmField
     val FORCE_TRANSLATE = BoolItem("force_translate", false)
@@ -1694,7 +1699,7 @@ object InuConfig {
     // fine. This skips the sample-size wait: the dialog is marked translatable off the very first
     // confidently-detected foreign-language message.
     @JvmField
-    val INSTANT_TRANSLATE_BANNER = BoolItem("instant_translate_banner", false)
+    val INSTANT_TRANSLATE_BANNER = BoolItem("instant_translate_banner", true)
 
     // A channel/user can opt out of the translate banner + button-menu suggestion via
     // `translations_disabled` (set by the channel owner in Telegram's own channel settings).

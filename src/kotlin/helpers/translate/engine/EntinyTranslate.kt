@@ -6,6 +6,7 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.TranslateController
+import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ChatActivity
@@ -24,7 +25,13 @@ import org.telegram.ui.LaunchActivity
 object EntinyTranslate {
 
     @JvmStatic
-    fun isActive(): Boolean = InuConfig.TRANSLATE_PROVIDER.value != TranslationProviders.PROVIDER_TELEGRAM
+    @JvmOverloads
+    fun isActive(account: Int = UserConfig.selectedAccount): Boolean {
+        if (InuConfig.TRANSLATE_PROVIDER.value != TranslationProviders.PROVIDER_TELEGRAM) return true
+        // Telegram API MTProto rejects chat translation for non-premium accounts.
+        // Route through our fast engine instead of waiting for MTProto to reject it.
+        return !UserConfig.getInstance(account).isPremium
+    }
 
     @JvmStatic
     fun currentProviderName(): String {
@@ -40,6 +47,7 @@ object EntinyTranslate {
      * returns false so stock (server-side) translation keeps working as a graceful fallback.
      */
     @JvmStatic
+    @JvmOverloads
     fun handle(
         dialogId: Long,
         msgId: Int,
@@ -48,10 +56,11 @@ object EntinyTranslate {
         entities: List<TLRPC.MessageEntity>?,
         toLang: String,
         callback: Utilities.Callback4<Boolean, Int, TLRPC.TL_textWithEntities, String>,
+        account: Int = UserConfig.selectedAccount,
     ): Boolean {
-        Log.d(TAG, "handle dialog=$dialogId msg=$msgId to=$toLang active=${isActive()}")
-        if (!isActive()) return false
-        val provider = TranslationProviders.current() ?: return false
+        Log.d(TAG, "handle dialog=$dialogId msg=$msgId to=$toLang active=${isActive(account)}")
+        if (!isActive(account)) return false
+        val provider = TranslationProviders.current() ?: GoogleWebProvider
         if (!provider.isConfigured()) {
             Log.d(TAG, "provider ${provider.nameRes} not configured; falling back to Telegram API")
             if (configBulletins.add(dialogId)) {
@@ -115,16 +124,18 @@ object EntinyTranslate {
 
     /** Routes one poll translation request; returns true when the engine took it over. */
     @JvmStatic
+    @JvmOverloads
     fun handlePoll(
         dialogId: Long,
         msgId: Int,
         poll: TranslateController.PollText,
         toLang: String,
         callback: Utilities.Callback3<Int, TranslateController.PollText, String>,
+        account: Int = UserConfig.selectedAccount,
     ): Boolean {
-        Log.d(TAG, "handlePoll dialog=$dialogId msg=$msgId to=$toLang active=${isActive()}")
-        if (!isActive()) return false
-        val provider = TranslationProviders.current() ?: return false
+        Log.d(TAG, "handlePoll dialog=$dialogId msg=$msgId to=$toLang active=${isActive(account)}")
+        if (!isActive(account)) return false
+        val provider = TranslationProviders.current() ?: GoogleWebProvider
         if (!provider.isConfigured()) {
             if (configBulletins.add(dialogId)) {
                 NotificationCenter.getGlobalInstance().postNotificationName(

@@ -154,7 +154,7 @@ object TranslateHelper {
         val parent = activity.parentActivity ?: return
         val account = activity.currentAccount
 
-        val toLang = TranslateAlert2.getToLanguage()
+        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
         val toLangDefault = LocaleController.getInstance().currentLocale.language
         val messageIdToTranslate = intArrayOf(selected.id)
 
@@ -245,7 +245,7 @@ object TranslateHelper {
             return
         }
 
-        val toLang = TranslateAlert2.getToLanguage()
+        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
         // Whether to spend an ML Kit pass classifying a message whose language Telegram has not
         // resolved yet. That is ALL this flag does - it was named `respectDnt`, which read as if
         // turning it off stopped the don't-translate list from applying, and the comment here

@@ -458,7 +458,7 @@ object ChatActionsHelper {
 
     private fun translateSelection(activity: ChatActivity) {
         if (!InuConfig.IN_PLACE_TRANSLATION.value) return
-        val toLang = TranslateAlert2.getToLanguage()
+        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
         val toLangDefault = LocaleController.getInstance().currentLocale.language
         val restricted = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
         val seenGroups = HashSet<Long>()

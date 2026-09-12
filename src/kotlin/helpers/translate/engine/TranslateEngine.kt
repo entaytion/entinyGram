@@ -11,7 +11,7 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.Bulletin
 import java.io.IOException
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Serial translation coordinator for third-party providers.
@@ -25,8 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  *   expires the next re-push retries it (and a provider switch clears failures immediately).
  *   Previously a single failure marked a message as failed forever, which silently killed
  *   auto-translate even after the user switched providers.
- * - **Deterministic rate behavior.** One worker thread drains the queue, so bursts of auto
- *   translations cannot trip provider rate limits the way parallel requests would.
+ * - **Bounded parallelism.** A small worker pool drains bulk translations concurrently, while the
+ *   queue still deduplicates messages and caps the request burst.
  * - **Clean cancellation.** Toggling a dialog off cancels queued work and drops in-flight
  *   callbacks instead of applying stale translations afterwards.
  * - **Visible failures.** Every final failure is logged (Log.d) and a one-per-dialog-per-minute
@@ -44,7 +44,7 @@ object TranslateEngine {
     private const val KIND_WEBPAGE = 3
 
     /** How long a failed message stays deduped before the stock re-push loop may retry it. */
-    private const val FAIL_RETRY_WINDOW_MS = 30_000L
+    private const val FAIL_RETRY_WINDOW_MS = 5_000L
 
     /** How often a failure bulletin may pop for the same dialog. */
     private const val BULLETIN_COOLDOWN_MS = 60_000L
@@ -215,9 +215,10 @@ object TranslateEngine {
     private val failedAt = HashMap<JobKey, Long>()
     private val epochs = HashMap<Long, Int>()
     private val bulletinsShown = HashMap<Long, Long>()
-    private val running = AtomicBoolean(false)
+    private const val WORKER_COUNT = 8
+    private val activeWorkers = AtomicInteger(0)
 
-    private val worker = Executors.newSingleThreadExecutor { r ->
+    private val worker = Executors.newFixedThreadPool(WORKER_COUNT) { r ->
         Thread(r, "entiny-translate").apply { isDaemon = true }
     }
 
@@ -365,18 +366,20 @@ object TranslateEngine {
     }
 
     private fun pump() {
-        if (running.getAndSet(true)) return
-        worker.execute { loop() }
+        synchronized(lock) {
+            while (queue.isNotEmpty() && activeWorkers.get() < WORKER_COUNT) {
+                activeWorkers.incrementAndGet()
+                worker.execute { loop() }
+            }
+        }
     }
 
     private fun loop() {
         while (true) {
             val job: Job = synchronized(lock) {
                 if (queue.isEmpty()) {
-                    running.set(false)
-                    // Re-check: a job may have been enqueued right after the emptiness check.
-                    if (queue.isEmpty()) return
-                    running.set(true)
+                    activeWorkers.decrementAndGet()
+                    return
                 }
                 queue.removeFirst()
             }

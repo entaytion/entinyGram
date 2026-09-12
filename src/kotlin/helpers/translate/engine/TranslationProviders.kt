@@ -144,7 +144,7 @@ internal fun httpJson(
     contentType: String? = null,
     headers: Map<String, String> = emptyMap(),
     connectTimeout: Int = 10_000,
-    readTimeout: Int = 45_000,
+    readTimeout: Int = 15_000,
 ): String {
     val conn = (URL(url).openConnection() as HttpURLConnection).apply {
         requestMethod = method
@@ -159,18 +159,14 @@ internal fun httpJson(
             outputStream.use { it.write(bytes) }
         }
     }
-    return try {
-        val code = conn.responseCode
-        val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
-            ?.bufferedReader()?.use { it.readText() } ?: ""
-        when {
-            code == 429 -> throw ProviderRateLimitException("HTTP 429: ${errorSnippet(text)}")
-            code in 200..299 -> text
-            code in 400..499 -> throw ProviderConfigException("HTTP $code: ${errorSnippet(text)}")
-            else -> throw IOException("HTTP $code: ${errorSnippet(text)}")
-        }
-    } finally {
-        conn.disconnect()
+    val code = conn.responseCode
+    val text = (if (code in 200..299) conn.inputStream else conn.errorStream)
+        ?.bufferedReader()?.use { it.readText() } ?: ""
+    return when {
+        code == 429 -> throw ProviderRateLimitException("HTTP 429: ${errorSnippet(text)}")
+        code in 200..299 -> text
+        code in 400..499 -> throw ProviderConfigException("HTTP $code: ${errorSnippet(text)}")
+        else -> throw IOException("HTTP $code: ${errorSnippet(text)}")
     }
 }
 

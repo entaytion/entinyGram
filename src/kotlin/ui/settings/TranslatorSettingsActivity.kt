@@ -145,10 +145,15 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     }
 
     private fun targetLangLabel(): String {
-        if (!MessagesController.getGlobalMainSettings().contains("translate_to_language")) {
+        val configured = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
+        if (configured.isEmpty() && !MessagesController.getGlobalMainSettings().contains("translate_to_language")) {
             return LocaleController.getString(R.string.InuTranslationTargetFollowApp)
         }
-        val code = TranslateAlert2.getToLanguage()
+        val code = configured.ifEmpty {
+            TranslateAlert2.getToLanguage().orEmpty().also {
+                if (it.isNotEmpty()) InuConfig.TRANSLATE_TARGET_LANGUAGE.value = it
+            }
+        }
         return TranslateAlert2.languageName(code)?.let { TranslateAlert2.capitalFirst(it) } ?: code.uppercase()
     }
 

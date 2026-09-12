@@ -1,13 +1,11 @@
 package desu.inugram.ui.settings
 
-
 import android.view.View
+import desu.inugram.InuConfig
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.TranslateController
-import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Cells.DialogRadioCell
 import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
@@ -17,59 +15,71 @@ class TranslationTargetActivity : SettingsPageActivity() {
 
     private val languages by lazy { TranslateController.getLanguages() }
     private val suggested by lazy { TranslateController.getSuggestedLanguages(null) }
-    private val cells = HashMap<String, DialogRadioCell>()
+    private val idToCode = HashMap<Int, String>()
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        idToCode.clear()
+        val current = currentValue()
         val app = LocaleController.getInstance().currentLocaleInfo
-        items.add(UItem.asCustom(cellFor("", "") {
-            it.setTextAndValue(
+        val followAppId = 1
+        idToCode[followAppId] = ""
+        items.add(
+            UItem.asRadio(
+                followAppId,
                 LocaleController.getString(R.string.InuTranslationTargetFollowApp),
                 app?.name ?: "",
-                currentValue().isEmpty(),
-                suggested.isNotEmpty(),
-            )
-        }))
-        appendLangs(items, "suggest:", suggested)
-        items.add(UItem.asShadow(null))
-        appendLangs(items, "", languages)
-        items.add(UItem.asShadow(null))
-    }
+            ).setChecked(current.isEmpty())
+        )
 
-    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {}
-
-    private fun appendLangs(items: ArrayList<UItem>, keyPrefix: String, langs: List<TranslateController.Language>) {
-        val current = currentValue()
-        for ((i, lang) in langs.withIndex()) {
+        var nextId = 2
+        for (lang in suggested) {
             val code = lang.code ?: continue
+            val id = nextId++
+            idToCode[id] = code
             val title = lang.displayName
             val subtitle = lang.ownDisplayName.takeIf { it != title } ?: ""
-            items.add(UItem.asCustom(cellFor("$keyPrefix$code", code) {
-                it.setTextAndValue(title, subtitle, code == current, i < langs.size - 1)
-            }))
+            items.add(UItem.asRadio(id, title, subtitle).setChecked(code == current))
         }
+        items.add(UItem.asShadow(null))
+
+        for (lang in languages) {
+            val code = lang.code ?: continue
+            val id = nextId++
+            idToCode[id] = code
+            val title = lang.displayName
+            val subtitle = lang.ownDisplayName.takeIf { it != title } ?: ""
+            items.add(UItem.asRadio(id, title, subtitle).setChecked(code == current))
+        }
+        items.add(UItem.asShadow(null))
     }
 
-    private fun currentValue(): String =
-        if (MessagesController.getGlobalMainSettings().contains(PREF_KEY)) TranslateAlert2.getToLanguage() else ""
+    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        val code = idToCode[item.id] ?: return
+        select(code)
+        listView?.adapter?.update(true)
+    }
+
+    private fun currentValue(): String {
+        val stored = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
+        if (stored.isNotEmpty()) return stored
+        if (!MessagesController.getGlobalMainSettings().contains(PREF_KEY)) return ""
+        val legacy = TranslateAlert2.getToLanguage().orEmpty()
+        if (legacy.isNotEmpty()) InuConfig.TRANSLATE_TARGET_LANGUAGE.value = legacy
+        return legacy
+    }
 
     private fun select(newValue: String) {
         if (newValue == currentValue()) return
-        if (newValue.isEmpty()) TranslateAlert2.resetToLanguage()
-        else TranslateAlert2.setToLanguage(newValue)
-        cells.values.forEach { it.setChecked(it.tag == newValue, true) }
-    }
-
-    private inline fun cellFor(key: String, code: String, configure: (DialogRadioCell) -> Unit): DialogRadioCell =
-        cells.getOrPut(key) {
-            DialogRadioCell(context).also {
-                configure(it)
-                it.tag = code
-                it.background = Theme.getSelectorDrawable(false)
-                it.setOnClickListener { _ -> select(code) }
-            }
+        InuConfig.TRANSLATE_TARGET_LANGUAGE.value = newValue
+        if (newValue.isEmpty()) {
+            TranslateAlert2.resetToLanguage()
+        } else {
+            TranslateAlert2.setToLanguage(newValue)
         }
+    }
 
     companion object {
         private const val PREF_KEY = "translate_to_language"
     }
 }
+

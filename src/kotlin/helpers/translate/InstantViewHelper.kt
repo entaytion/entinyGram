@@ -118,7 +118,7 @@ object InstantViewHelper {
     private fun ensureDetected(state: State) {
         if (state.detectionDone || state.detectionInFlight) return
         detectLanguage(state) { src ->
-            val toLang = TranslateAlert2.getToLanguage()
+            val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
             if (src == null || toLang == null) return@detectLanguage
             if (InuConfig.FORCE_TRANSLATE.value) return@detectLanguage
             val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
@@ -173,7 +173,7 @@ object InstantViewHelper {
     }
 
     private fun startTranslate(viewer: ArticleViewer, state: State) {
-        val toLang = TranslateAlert2.getToLanguage()
+        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
         if (toLang.isNullOrEmpty()) return
 
         val proceed: (String?) -> Unit = { src ->

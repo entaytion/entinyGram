@@ -397,7 +397,6 @@ entiny/redundant-lang-code-native-calls.patch
 entiny/optimize-build.patch
 entiny/wide-channel-posts.patch
 entiny/translate-banner-overrides.patch
-entiny/remote-badges.patch
 entiny/local-custom-emoji.patch
 entiny/simple-text-view-left-slot.patch
 entiny/settings-search-uppercase.patch
@@ -408,3 +407,7 @@ entiny/translate-optout-without-premium.patch
 entiny/chat-menu-live-reorder.patch
 entiny/debug-animation-jank.patch
 entiny/fast-resend-login-code.patch
+entiny/parallel-account-init.patch
+bugfix/positional-format-args.patch
+entiny/remote-badges.patch
+entiny/translate-target-language-override.patch
