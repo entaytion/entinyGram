@@ -411,3 +411,5 @@ entiny/parallel-account-init.patch
 bugfix/positional-format-args.patch
 entiny/remote-badges.patch
 entiny/translate-target-language-override.patch
+entiny/delete-failed-proxies.patch
+entiny/preserve-media-cache-fallback.patch

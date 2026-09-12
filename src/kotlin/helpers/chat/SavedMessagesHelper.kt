@@ -69,6 +69,11 @@ object SavedMessagesHelper {
     // In-memory cache for deleted message IDs per account (account -> (dialogId -> Set<msgId>))
     private val deletedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
     private val deletedMessageDates = LongSparseArray<LongSparseArray<LongSparseArray<Long>>>()
+    // account -> (dialogId -> (msgId -> archived copy path)). Only entries with a copy are present.
+    // Read by FileLoader.getPathToMessage as a last-resort fallback when the stock cache no longer
+    // has the file (autoclean, or the user clearing cache by hand) -- must stay synchronous, no
+    // SQLite query on that path, hence keeping a full in-memory copy alongside the DB rows.
+    private val deletedMessageMediaPaths = LongSparseArray<LongSparseArray<LongSparseArray<String>>>()
     private val loadedAccounts = HashSet<Int>()
     private val cacheLock = Any()
 
@@ -217,6 +222,15 @@ object SavedMessagesHelper {
             }
             ids.add(msgId)
         }
+        val mediaPathArray = LongSparseArray<LongSparseArray<String>>()
+        InuDatabaseHelper.forEachDeletedMessageMedia(db) { dialogId, msgId, mediaPath ->
+            var paths = mediaPathArray.get(dialogId)
+            if (paths == null) {
+                paths = LongSparseArray()
+                mediaPathArray.put(dialogId, paths)
+            }
+            paths.put(msgId.toLong(), mediaPath)
+        }
         org.telegram.messenger.AndroidUtilities.runOnUIThread {
             synchronized(cacheLock) {
                 var existingEdits = editHistoryIds.get(account.toLong())
@@ -259,6 +273,24 @@ object SavedMessagesHelper {
                         } else {
                             for (j in 0 until v.size()) {
                                 targetDates.put(v.keyAt(j), v.valueAt(j))
+                            }
+                        }
+                    }
+                }
+
+                var existingMediaPaths = deletedMessageMediaPaths.get(account.toLong())
+                if (existingMediaPaths == null) {
+                    deletedMessageMediaPaths.put(account.toLong(), mediaPathArray)
+                } else {
+                    for (i in 0 until mediaPathArray.size()) {
+                        val k = mediaPathArray.keyAt(i)
+                        val v = mediaPathArray.valueAt(i)
+                        val targetPaths = existingMediaPaths.get(k)
+                        if (targetPaths == null) {
+                            existingMediaPaths.put(k, v)
+                        } else {
+                            for (j in 0 until v.size()) {
+                                targetPaths.put(v.keyAt(j), v.valueAt(j))
                             }
                         }
                     }
@@ -465,6 +497,8 @@ object SavedMessagesHelper {
         val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
         if (alreadyRecorded && text.isNullOrEmpty() && message?.media == null) return
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
+        val mediaCopy = planMediaCopy(account, message)
+        val mediaPath = mediaCopy?.target?.absolutePath
         synchronized(cacheLock) {
             var dialogs = deletedMessageIds.get(account.toLong())
             if (dialogs == null) {
@@ -489,10 +523,25 @@ object SavedMessagesHelper {
                 dateAcc.put(dialogId, dateDialog)
             }
             dateDialog.put(msgId.toLong(), deletionTime)
+
+            // The copy itself is still pending on the storage queue below; the entry just
+            // means "check this path", and getArchivedMediaPath's own File.exists() covers
+            // the gap until runMediaCopy actually finishes writing it.
+            if (mediaPath != null) {
+                var mediaAcc = deletedMessageMediaPaths.get(account.toLong())
+                if (mediaAcc == null) {
+                    mediaAcc = LongSparseArray()
+                    deletedMessageMediaPaths.put(account.toLong(), mediaAcc)
+                }
+                var mediaDialog = mediaAcc.get(dialogId)
+                if (mediaDialog == null) {
+                    mediaDialog = LongSparseArray()
+                    mediaAcc.put(dialogId, mediaDialog)
+                }
+                mediaDialog.put(msgId.toLong(), mediaPath)
+            }
         }
 
-        val mediaCopy = planMediaCopy(account, message)
-        val mediaPath = mediaCopy?.target?.absolutePath
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
@@ -580,6 +629,23 @@ object SavedMessagesHelper {
     @JvmStatic
     fun getDeletedDate(dialogId: Long, msgId: Int): Long {
         return getDeletedDate(UserConfig.selectedAccount, dialogId, msgId)
+    }
+
+    /**
+     * FileLoader.getPathToMessage's last-resort fallback for a deleted-but-preserved message
+     * whose media has fallen out of the stock cache (autoclean, or the user clearing cache by
+     * hand): the archived copy in [getSavedMediaDir] this account saved on deletion, if the file
+     * is actually still there. Synchronous, cache-only -- no SQLite on the file-loading path.
+     */
+    @JvmStatic
+    fun getArchivedMediaPath(account: Int, dialogId: Long, msgId: Int): File? {
+        if (!isSaveDeletedEnabled()) return null
+        ensureAccountLoaded(account)
+        val path = synchronized(cacheLock) {
+            deletedMessageMediaPaths.get(account.toLong())?.get(dialogId)?.get(msgId.toLong())
+        } ?: return null
+        val file = File(path)
+        return if (file.exists()) file else null
     }
 
     @JvmStatic

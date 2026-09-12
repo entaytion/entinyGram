@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 12 Sep 2026 18:03:38 +0300
+Subject: Fall back to the archived copy when a preserved message's cache is gone
+
+SavedMessagesHelper already copies a deleted-but-preserved message's media to
+Downloads/entinyGram/media on deletion, but nothing ever read that copy back:
+the chat bubble kept resolving its file the normal way, through the stock
+cache. Once that cache entry got evicted (autoclean, or the user clearing
+cache by hand) the still-visible bubble had no way to show its voice/image
+again, even though the archived copy was sitting there untouched the whole
+time - reported by a user as "sometimes the media survives, sometimes it
+doesn't" and "after I clear cache, saved voice/images stop showing".
+
+- FileLoader.getPathToMessage now checks SavedMessagesHelper.getArchivedMediaPath
+  as a last resort, after the existing self-destruct-media fallback chain, for
+  both TL_messageMediaDocument (voice notes, files) and TL_messageMediaPhoto
+- SavedMessagesHelper keeps a synchronous in-memory index (account -> dialogId
+  -> msgId -> path) alongside the existing deleted-message caches, populated on
+  both the initial per-account DB load and on every new deletion, so the
+  file-loading path never touches SQLite directly
+- InuDatabaseHelper.forEachDeletedMessageMedia streams the media_path column
+  for that initial load
+
+Only affects messages already tracked as deleted+preserved; every other
+media load is unaffected past one cheap in-memory lookup.
+---
+ .../src/main/java/org/telegram/messenger/FileLoader.java  | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -1300,6 +1300,10 @@ public class FileLoader extends BaseController {
+                     File encCacheRes = new File(cacheRes.getPath() + ".enc");
+                     if (encCacheRes.exists()) return encCacheRes;
+                 }
++                if (!res.exists()) {
++                    File archivedRes = desu.inugram.helpers.chat.SavedMessagesHelper.getArchivedMediaPath(currentAccount, MessageObject.getDialogId(message), message.id);
++                    if (archivedRes != null) return archivedRes;
++                }
+                 return res;
+             } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaPhoto) {
+                 ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).photo.sizes;
+@@ -1316,6 +1320,10 @@ public class FileLoader extends BaseController {
+                             File encCacheRes = new File(cacheRes.getPath() + ".enc");
+                             if (encCacheRes.exists()) return encCacheRes;
+                         }
++                        if (!res.exists()) {
++                            File archivedRes = desu.inugram.helpers.chat.SavedMessagesHelper.getArchivedMediaPath(currentAccount, MessageObject.getDialogId(message), message.id);
++                            if (archivedRes != null) return archivedRes;
++                        }
+                         return res;
+                     }
+                 }

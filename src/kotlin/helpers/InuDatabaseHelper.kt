@@ -297,6 +297,22 @@ object InuDatabaseHelper {
         }
     }
 
+    // Feeds SavedMessagesHelper's in-memory archived-media cache. Only rows with a stored copy
+    // (the stock cache path can go stale/get cleared independently of this DB) are worth loading.
+    fun forEachDeletedMessageMedia(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int, mediaPath: String) -> Unit) {
+        val cursor = db.queryFinalized("SELECT dialog_id, msg_id, media_path FROM inu_deleted_messages WHERE media_path IS NOT NULL")
+        try {
+            while (cursor.next()) {
+                val path = cursor.stringValue(2)
+                if (!path.isNullOrEmpty()) {
+                    consumer(cursor.longValue(0), cursor.intValue(1), path)
+                }
+            }
+        } finally {
+            cursor.dispose()
+        }
+    }
+
     /**
      * Streams just the (dialog, message) keys that have stored edit history, so the presence
      * check can be answered from memory. Reading the rows themselves on demand meant every
