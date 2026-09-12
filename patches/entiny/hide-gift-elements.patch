@@ -6,8 +6,9 @@ Subject: Allow hiding gift, premium and story elements across profile and chat
 ---
  .../java/org/telegram/ui/ChatActivity.java    |  7 ++
  .../ui/Components/ChatActivityEnterView.java  |  9 +++
+ .../ui/Components/ChatAvatarContainer.java    |  1 +
  .../java/org/telegram/ui/ProfileActivity.java | 66 +++++++++++++------
- 3 files changed, 61 insertions(+), 21 deletions(-)
+ 4 files changed, 62 insertions(+), 21 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -54,6 +55,18 @@ index 0000000..0000000 100644
  
          final TLRPC.UserFull userInfo = getParentFragment() == null ? null : getParentFragment().getCurrentUserInfo();
          final TLRPC.UserFull myUserInfo = MessagesController.getInstance(currentAccount).getUserFull(UserConfig.getInstance(currentAccount).getClientUserId());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -1324,6 +1324,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             rightDrawableIsScamOrVerified = false;
+             rightDrawable2ContentDescription = null;
+         }
++        premium = premium && !desu.inugram.InuConfig.HIDE_PREMIUM_BADGE.getValue();
+         if (premium || DialogObject.getEmojiStatusDocumentId(emojiStatus) != 0) {
+             if (titleTextView.getRightDrawable() instanceof AnimatedEmojiDrawable.WrapSizeDrawable &&
+                 ((AnimatedEmojiDrawable.WrapSizeDrawable) titleTextView.getRightDrawable()).getDrawable() instanceof AnimatedEmojiDrawable) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java

@@ -508,7 +508,7 @@ class DrawerProfileCell(
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4f))
             status.set(emojiStatusId, true)
             status.setParticles(isCollectible, true)
-        } else if (MessagesController.getInstance(lastAccount).isPremiumUser(user)) {
+        } else if (MessagesController.getInstance(lastAccount).isPremiumUser(user) && !InuConfig.HIDE_PREMIUM_BADGE.value) {
             nameTextView.setDrawablePadding(AndroidUtilities.dp(4f))
             if (premiumStar == null) {
                 premiumStar = ResourcesCompat.getDrawable(resources, R.drawable.msg_premium_liststar, null)!!.mutate()
