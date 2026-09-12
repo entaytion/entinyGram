@@ -18,7 +18,8 @@ this method (push receivers, widgets, wear reply, share).
   indexed and safe to construct concurrently
 ---
  .../telegram/messenger/ApplicationLoader.java | 39 +++++++++++++------
- 1 file changed, 27 insertions(+), 12 deletions(-)
+ .../telegram/tgnet/ConnectionsManager.java    |  8 +++-
+ 2 files changed, 34 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 index 0000000..0000000 100644
@@ -77,3 +78,25 @@ index 0000000..0000000 100644
      public ApplicationLoader() {
          super();
      }
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -179,10 +179,16 @@ public class ConnectionsManager extends BaseController {
+     private static int lastClassGuid = 1;
+     
+     private static final ConnectionsManager[] Instance = new ConnectionsManager[UserConfig.MAX_ACCOUNT_COUNT];
++    private static final Object[] lockObjects = new Object[UserConfig.MAX_ACCOUNT_COUNT];
++    static {
++        for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++) {
++            lockObjects[i] = new Object();
++        }
++    }
+     public static ConnectionsManager getInstance(int num) {
+         ConnectionsManager localInstance = Instance[num];
+         if (localInstance == null) {
+-            synchronized (ConnectionsManager.class) {
++            synchronized (lockObjects[num]) {
+                 localInstance = Instance[num];
+                 if (localInstance == null) {
+                     Instance[num] = localInstance = new ConnectionsManager(num);
