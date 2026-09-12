@@ -1,0 +1,208 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 12 Sep 2026 13:39:11 +0300
+Subject: Pin implicit %s/%d format args to explicit positions in strings.xml
+
+Several stock strings interpolate multiple %s/%d placeholders without an explicit
+index (e.g. "%s, %d exception"). Android formats these positionally per-locale, so
+a translation that reorders the arguments (common for grammar reasons) silently
+swaps values instead of reordering them, and can throw MissingFormatArgumentException
+on some locales/ICU versions. Pin every multi-arg string in this pass to %1$s/%2$d
+style explicit indices so translations control word order without touching argument
+order.
+---
+ TMessagesProj/src/main/res/values/strings.xml | 84 +++++++++----------
+ 1 file changed, 42 insertions(+), 42 deletions(-)
+
+diff --git a/TMessagesProj/src/main/res/values/strings.xml b/TMessagesProj/src/main/res/values/strings.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/values/strings.xml
++++ b/TMessagesProj/src/main/res/values/strings.xml
+@@ -5961,8 +5961,8 @@
+     <string name="TopicClosedByAdmin">The topic is closed</string>
+     <string name="AlmostDone">Almost done</string>
+     <string name="TopicEmptyViewDescription">Send first message to start the topic</string>
+-    <string name="NotificationTopicExceptionsDesctription_one">%s, %d exception</string>
+-    <string name="NotificationTopicExceptionsDesctription_other">%s, %d exceptions</string>
++    <string name="NotificationTopicExceptionsDesctription_one">%1$s, %2$d exception</string>
++    <string name="NotificationTopicExceptionsDesctription_other">%1$s, %2$d exceptions</string>
+     <string name="FloatingDebugEnable">Enable floating debug</string>
+     <string name="FloatingDebugDisable">Disable floating debug</string>
+     <string name="DebugClearLocalDatabaseSuccess">Cleared local database.</string>
+@@ -6632,10 +6632,10 @@
+     <string name="StorySave">Save to profile</string>
+     <string name="StorySavedTitle_one">%d story saved to your profile</string>
+     <string name="StorySavedTitle_other">%d stories saved to your profile</string>
+-    <string name="StoryAddedToAlbumTitle_one">%d story saved to **%s**</string>
+-    <string name="StoryAddedToAlbumTitle_other">%d stories saved to **%s**</string>
+-    <string name="StoryRemovedFromAlbumTitle_one">%d story removed from **%s**</string>
+-    <string name="StoryRemovedFromAlbumTitle_other">%d stories removed from**%s**</string>
++    <string name="StoryAddedToAlbumTitle_one">%1$d story saved to **%2$s**</string>
++    <string name="StoryAddedToAlbumTitle_other">%1$d stories saved to **%2$s**</string>
++    <string name="StoryRemovedFromAlbumTitle_one">%1$d story removed from **%2$s**</string>
++    <string name="StoryRemovedFromAlbumTitle_other">%1$d stories removed from**%2$s**</string>
+     <string name="StorySavedSubtitle">Saved stories can be viewed by others on your profile until you remove them.</string>
+     <string name="StoryArchived_one">%d story is hidden from your profile</string>
+     <string name="StoryArchived_other">%d stories are hidden from your profile</string>
+@@ -6900,8 +6900,8 @@
+     <string name="SortByReactions">Reactions First</string>
+     <string name="SortByReposts">Reposts First</string>
+     <string name="SortByTime">Newest First</string>
+-    <string name="StoryViewsSortDescription">Choose the order for the  list of viewers.</string>
+-    <string name="StoryReactionsSortDescription">Choose the order for the  list of reactions.</string>
++    <string name="StoryViewsSortDescription">Choose the order for the list of viewers.</string>
++    <string name="StoryReactionsSortDescription">Choose the order for the list of reactions.</string>
+     <string name="NoContactsViewed">None of your contacts viewed this story.</string>
+     <string name="Viewers">Viewers</string>
+     <string name="StealthModeConfirmTitle">You are in Stealth Mode now</string>
+@@ -7315,8 +7315,8 @@
+     <string name="UnconfirmedAuthSingleBot">%1$s connected to your account from %2$s. Was this you?</string>
+     <string name="UnconfirmedAuthMultiple_one">We detected new %d login to your account. Is it you?</string>
+     <string name="UnconfirmedAuthMultiple_other">We detected new %d logins to your account. Is it you?</string>
+-    <string name="UnconfirmedAuthMultipleFrom_one">We detected new %d login to your account from %s. Is it you?</string>
+-    <string name="UnconfirmedAuthMultipleFrom_other">We detected new %d logins to your account from %s. Is it you?</string>
++    <string name="UnconfirmedAuthMultipleFrom_one">We detected new %1$d login to your account from %2$s. Is it you?</string>
++    <string name="UnconfirmedAuthMultipleFrom_other">We detected new %1$d logins to your account from %2$s. Is it you?</string>
+     <string name="UnconfirmedAuthDeniedTitle_one">New Login Prevented</string>
+     <string name="UnconfirmedAuthDeniedTitle_other">New Logins Prevented</string>
+     <string name="UnconfirmedAuthDeniedMessageSingle">We have terminated the login attempt from %s.</string>
+@@ -8895,12 +8895,12 @@
+     <string name="Gift2HideChannelInfo">You can hide your name and message from all visitors of this channel except its admins.</string>
+     <string name="Gift2HideSelf">Hide My Name</string>
+     <string name="Gift2HideSelfInfo">Hide my name and message from visitors to my profile</string>
+-    <string name="Gift2AuctionInfo_one">%d gift is dropped at varying intervals to the top %d bidder by bid amount.</string>
+-    <string name="Gift2AuctionInfo_other">%d gifts are dropped at varying intervals to the top %d bidders by bid amount.</string>
+-    <string name="Gift2AuctionInfoLearnMore2_one">%d gift is dropped at varying intervals to the top %d bidder by bid amount. **Learn More >**</string>
+-    <string name="Gift2AuctionInfoLearnMore2_other">%d gifts are dropped at varying intervals to the top %d bidders by bid amount. **Learn More >**</string>
+-    <string name="Gift2AuctionInfo2_one">Top **%d** bidder will get an **%s**\nthis round.</string>
+-    <string name="Gift2AuctionInfo2_other">Top **%d** bidders will get an **%s**\nthis round.</string>
++    <string name="Gift2AuctionInfo_one">%1$d gift is dropped at varying intervals to the top %2$d bidder by bid amount.</string>
++    <string name="Gift2AuctionInfo_other">%1$d gifts are dropped at varying intervals to the top %2$d bidders by bid amount.</string>
++    <string name="Gift2AuctionInfoLearnMore2_one">%1$d gift is dropped at varying intervals to the top %2$d bidder by bid amount. **Learn More >**</string>
++    <string name="Gift2AuctionInfoLearnMore2_other">%1$d gifts are dropped at varying intervals to the top %2$d bidders by bid amount. **Learn More >**</string>
++    <string name="Gift2AuctionInfo2_one">Top **%1$d** bidder will get an **%2$s**\nthis round.</string>
++    <string name="Gift2AuctionInfo2_other">Top **%1$d** bidders will get an **%2$s**\nthis round.</string>
+     <string name="Gift2AuctionInfo3">**%1$s** gifts are dropped in **%2$d** rounds\nto the top **%3$d** bidders. %4$s</string>
+     <string name="Gift2AuctionTableStarted">Started</string>
+     <string name="Gift2AuctionTableEnded">Ended</string>
+@@ -8967,7 +8967,7 @@
+     <string name="Gift2SendYourBalance_other">Your balance is %d Stars</string>
+     <string name="Gift2ActionTitle">Gift from </string>
+     <string name="Gift2ActionTitleTo">Gift for </string>
+-    <string name="Gift2AveragePriceHint">**%d Stars** is the average sale price for **%s** gifts.</string>
++    <string name="Gift2AveragePriceHint">**%1$d Stars** is the average sale price for **%2$s** gifts.</string>
+     <string name="Gift2ActionWonActionText">You bought this gift at auction for %s Stars.</string>
+     <string name="Gift2ActionUpgradeTitle">Upgrade from </string>
+     <string name="Gift2ActionUpgradeUnknownTitle">Upgrade from unknown</string>
+@@ -9070,8 +9070,8 @@
+     <string name="Gift2InfoConverted_other">You converted this gift to **%d** Stars.</string>
+     <string name="Gift2InfoChannelConverted_one">Your channel converted this gift to **%d** Star.</string>
+     <string name="Gift2InfoChannelConverted_other">Your channel converted this gift to **%d** Stars.</string>
+-    <string name="Gift2InfoOutConverted_one">%2$s converted this gift to **%d** Star.</string>
+-    <string name="Gift2InfoOutConverted_other">%2$s converted this gift to **%d** Stars.</string>
++    <string name="Gift2InfoOutConverted_one">%2$s converted this gift to **%1$d** Star.</string>
++    <string name="Gift2InfoOutConverted_other">%2$s converted this gift to **%1$d** Stars.</string>
+     <string name="Gift2InfoOutPinned">%1$s kept this gift in your Profile.</string>
+     <string name="Gift2InSenderHidden2">Only you can see the senderʼs name.</string>
+     <string name="Gift2InSenderMessageHidden2">Only you can see the senderʼs name and message.</string>
+@@ -9898,30 +9898,30 @@
+     <string name="SuggestAPostBelowHint">Tap here to suggest a post for %s</string>
+     <string name="SuggestAPostBelowSubtitle">Tap to offer a price for publishing</string>
+     <string name="SuggestAPostBelowSubtitleStars">⭐️ %s for publishing anytime</string>
+-    <string name="SuggestAPostBelowSubtitleStarsAndTime">⭐️ %s %s</string>
++    <string name="SuggestAPostBelowSubtitleStarsAndTime">⭐️ %1$s %2$s</string>
+     <string name="SuggestAPostTooMuch">You can offer maximum %s</string>
+     <string name="SuggestAPostTooSmall">You must offer minimum %s</string>
+ 
+     <string name="SuggestionAgreementReached">🤝 **Agreement Reached!**</string>
+ 
+-    <string name="SuggestionAgreementReachedUser1">📆 Your post will be automatically published on **%s** **%s**</string>
++    <string name="SuggestionAgreementReachedUser1">📆 Your post will be automatically published on **%1$s** **%2$s**</string>
+     <string name="SuggestionAgreementReachedUser1PresentPerfect">📆 Your post has been published on **%s**</string>
+-    <string name="SuggestionAgreementReachedUser1PastSimple">📆 Your post was automatically published on **%s** **%s**</string>
+-    <string name="SuggestionAgreementReachedAdmin1">📆 This post will be automatically published **%s** **%s**</string>
++    <string name="SuggestionAgreementReachedUser1PastSimple">📆 Your post was automatically published on **%1$s** **%2$s**</string>
++    <string name="SuggestionAgreementReachedAdmin1">📆 This post will be automatically published **%1$s** **%2$s**</string>
+     <string name="SuggestionAgreementReachedAdmin1PresentPerfect">📆 This post has been published on **%s**</string>
+-    <string name="SuggestionAgreementReachedAdmin1PastSimple">📆 This post was automatically published on **%s** **%s**</string>
++    <string name="SuggestionAgreementReachedAdmin1PastSimple">📆 This post was automatically published on **%1$s** **%2$s**</string>
+ 
+     <string name="SuggestionAgreementReachedUser2">💰 You have been charged ⭐️ **%s**.</string>
+-    <string name="SuggestionAgreementReachedAdmin2">💰 **%s** has been charged ⭐️ **%s**.</string>
+-    <string name="SuggestionAgreementReachedUser3Stars">⏳ **%s** will receive your **Stars** once the post has been live for **%d** hours.</string>
+-    <string name="SuggestionAgreementReachedAdmin3Stars">⏳ **%s** will receive the **Stars** once the post has been live for **%d** hours.</string>
+-    <string name="SuggestionAgreementReachedUser4Stars">🔁 If **%s** removes the post before it has been live for **%d** hours, your **Stars** will be refunded.</string>
+-    <string name="SuggestionAgreementReachedAdmin4Stars">🔁 If **%s** removes the post before it has been live for **%d** hours, **Stars** will be refunded to user.</string>
++    <string name="SuggestionAgreementReachedAdmin2">💰 **%1$s** has been charged ⭐️ **%2$s**.</string>
++    <string name="SuggestionAgreementReachedUser3Stars">⏳ **%1$s** will receive your **Stars** once the post has been live for **%2$d** hours.</string>
++    <string name="SuggestionAgreementReachedAdmin3Stars">⏳ **%1$s** will receive the **Stars** once the post has been live for **%2$d** hours.</string>
++    <string name="SuggestionAgreementReachedUser4Stars">🔁 If **%1$s** removes the post before it has been live for **%2$d** hours, your **Stars** will be refunded.</string>
++    <string name="SuggestionAgreementReachedAdmin4Stars">🔁 If **%1$s** removes the post before it has been live for **%2$d** hours, **Stars** will be refunded to user.</string>
+ 
+-    <string name="SuggestionAgreementReachedUser3TON">⏳ **%s** will receive your **TON** once the post has been live for **%d** hours.</string>
+-    <string name="SuggestionAgreementReachedAdmin3TON">⏳ **%s** will receive the **TON** once the post has been live for **%d** hours.</string>
+-    <string name="SuggestionAgreementReachedUser4TON">🔁 If **%s** removes the post before it has been live for **%d** hours, your **TON** will be refunded.</string>
+-    <string name="SuggestionAgreementReachedAdmin4TON">🔁 If **%s** removes the post before it has been live for **%d** hours, **TON** will be refunded to user.</string>
++    <string name="SuggestionAgreementReachedUser3TON">⏳ **%1$s** will receive your **TON** once the post has been live for **%2$d** hours.</string>
++    <string name="SuggestionAgreementReachedAdmin3TON">⏳ **%1$s** will receive the **TON** once the post has been live for **%2$d** hours.</string>
++    <string name="SuggestionAgreementReachedUser4TON">🔁 If **%1$s** removes the post before it has been live for **%2$d** hours, your **TON** will be refunded.</string>
++    <string name="SuggestionAgreementReachedAdmin4TON">🔁 If **%1$s** removes the post before it has been live for **%2$d** hours, **TON** will be refunded to user.</string>
+ 
+     <string name="SuggestionAgreementDeclinedYou">❌ **%s** rejected your message.</string>
+     <string name="SuggestionAgreementDeclinedThis">❌ **%s** rejected this message.</string>
+@@ -10126,11 +10126,11 @@
+     <string name="StarRatingDescription">This rating reflects **%s\'s** activity\non Telegram. What affects it:</string>
+     <string name="StarRatingSelfDescription">This rating reflects your activity\non Telegram. What affects it:</string>
+     <string name="StarRatingTitle1">Gifts from Telegram</string>
+-    <string name="StarRatingDescription1">%s 100% of the Stars spent on gifts purchased from Telegram.</string>
++    <string name="StarRatingDescription1">%s 100%% of the Stars spent on gifts purchased from Telegram.</string>
+     <string name="StarRatingTitle2">Gifts and Posts from Users</string>
+-    <string name="StarRatingDescription2">%s 20% of the Stars spent on resold gifts, paid messages and channel posts.</string>
++    <string name="StarRatingDescription2">%s 20%% of the Stars spent on resold gifts, paid messages and channel posts.</string>
+     <string name="StarRatingTitle3">Refunds and Conversions</string>
+-    <string name="StarRatingDescription3">%s 10x of refunded Stars and 85% of bought gifts converted to Stars.</string>
++    <string name="StarRatingDescription3">%s 10x of refunded Stars and 85%% of bought gifts converted to Stars.</string>
+     <string name="StarRatingButtonUnderstood">Understood</string>
+     <string name="StoriesAlbum">Album</string>
+     <string name="StoriesAlbumCreateNew">Create a New Album</string>
+@@ -10254,8 +10254,8 @@
+     <string name="GiftAuctionInfoText">Join the battle for exclusive gifts.</string>
+     <string name="GiftAuctionInfo1Header_one">Top %d Bidder</string>
+     <string name="GiftAuctionInfo1Header_other">Top %d Bidders</string>
+-    <string name="GiftAuctionInfo1Text_one">%d gift is dropped at varying intervals to the top %d bidder by bid amount.</string>
+-    <string name="GiftAuctionInfo1Text_other">%d gifts are dropped at varying intervals to the top %d bidders by bid amount.</string>
++    <string name="GiftAuctionInfo1Text_one">%1$d gift is dropped at varying intervals to the top %2$d bidder by bid amount.</string>
++    <string name="GiftAuctionInfo1Text_other">%1$d gifts are dropped at varying intervals to the top %2$d bidders by bid amount.</string>
+     <string name="GiftAuctionInfo2Header">Bid Carryover</string>
+     <string name="GiftAuctionInfo2Text_one">If your bid leaves the top %d, it will automatically join the next round.</string>
+     <string name="GiftAuctionInfo2Text_other">If your bid leaves the top %d, it will automatically join the next round.</string>
+@@ -10401,9 +10401,9 @@
+     <string name="Gift2ActiveAuctionsActiveStatusOutbid">You\'ve been outbid.</string>
+     <string name="Gift2ActiveAuctionsActiveStatusEarly">You\'ve placed an early bid.</string>
+ 
+-    <string name="Gift2ActiveAuctionsActiveRound">Round %s of %s</string>
++    <string name="Gift2ActiveAuctionsActiveRound">Round %1$s of %2$s</string>
+     <string name="Gift2ActiveAuctionsActiveRaiseBid">Raise Bid</string>
+-    <string name="Gift2ActiveAuctionsActiveBidActive">Your bid **%s** is ranked **#%d**</string>
++    <string name="Gift2ActiveAuctionsActiveBidActive">Your bid **%1$s** is ranked **#%2$d**</string>
+     <string name="Gift2ActiveAuctionsActiveBidOutbid">Your bid **%s** is outbid</string>
+     <string name="Gift2AuctionsItemsBought2_one">%1$d %2$s item bought ></string>
+     <string name="Gift2AuctionsItemsBought2_other">%1$d %2$s items bought ></string>
+@@ -10418,7 +10418,7 @@
+     <string name="Gift2AuctionsBidHasBeenPlaced">Your bid has been placed</string>
+     <string name="Gift2AuctionsBidHasBeenIncreased">Your bid has been increased</string>
+     <string name="Gift2AuctionsChangeRecipient">Change Recipient</string>
+-    <string name="Gift2AuctionsChangeRecipient2">You’ve already placed a bid on this gift for **%s.** Do you want to raise your bid and change the recipient to **%s?**</string>
++    <string name="Gift2AuctionsChangeRecipient2">You’ve already placed a bid on this gift for **%1$s.** Do you want to raise your bid and change the recipient to **%2$s?**</string>
+     <string name="Passkey">Passkeys</string>
+     <string name="PasskeyDeleteTitle">Delete Passkey</string>
+     <string name="PasskeyDeleteText">Once deleted, this passkey can\'t be used to log in.\n\nDon\'t forget to remove it from your password manager too.</string>
+@@ -10477,7 +10477,7 @@
+     <string name="GiftOfferRowValue">Value</string>
+     <string name="GiftOfferRowDuration">Duration</string>
+     <string name="GiftOfferPay">Pay ⭐️%s</string>
+-    <string name="GiftOfferPayMulti">Pay %s and %s</string>
++    <string name="GiftOfferPayMulti">Pay %1$s and %2$s</string>
+     <string name="GiftOfferPayMultiPart">⭐️%s</string>
+     <string name="GiftOfferSellFor">Sell for ⭐️%s</string>
+     <string name="GiftOfferAmount">⭐️ %s</string>
