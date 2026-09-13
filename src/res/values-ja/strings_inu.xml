@@ -678,6 +678,12 @@
     <string name="InuChatMenuItems">項目</string>
     <string name="InuChatMenuOrderInfo">チャットの 3 点メニューの項目を並べ替えたり非表示にできます。ハンドルをドラッグして並べ替え、スイッチで非表示を切り替えます。</string>
     <string name="InuChatMenuReset">デフォルトに戻す</string>
+    <string name="InuDialogsMenuOrder">オプションメニュー</string>
+    <string name="InuDialogsMenuItems">項目</string>
+    <string name="InuDialogsMenuOrderInfo">チャット画面の ☰ メニューの項目を並べ替えたり非表示にしたりします。ハンドルをドラッグして並べ替え、スイッチを切り替えて非表示にします。</string>
+    <string name="InuDialogsMenuReset">デフォルトに戻す</string>
+    <string name="InuMenuThemeToggle">テーマを切り替え</string>
+    <string name="InuMenuCompose">新しいグループ / メッセージ</string>
     <string name="InuGoToMessage">メッセージへ移動</string>
     <string name="InuGoToMessagePrompt">メッセージ ID</string>
     <string name="InuParanoiaHideFolders">フォルダーを隠す</string>

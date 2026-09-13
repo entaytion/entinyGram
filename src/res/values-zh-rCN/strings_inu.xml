@@ -678,6 +678,12 @@
     <string name="InuChatMenuItems">项目</string>
     <string name="InuChatMenuOrderInfo">重新排序或隐藏聊天中三点菜单的项目。拖动手柄进行排序，使用开关进行隐藏。</string>
     <string name="InuChatMenuReset">重置为默认</string>
+    <string name="InuDialogsMenuOrder">选项菜单</string>
+    <string name="InuDialogsMenuItems">项目</string>
+    <string name="InuDialogsMenuOrderInfo">对聊天列表界面 ☰ 菜单中的项目重新排序或隐藏。拖动手柄可调整顺序,切换开关可隐藏。</string>
+    <string name="InuDialogsMenuReset">重置为默认</string>
+    <string name="InuMenuThemeToggle">切换主题</string>
+    <string name="InuMenuCompose">新建群组 / 消息</string>
     <string name="InuGoToMessage">跳到消息</string>
     <string name="InuGoToMessagePrompt">消息 ID</string>
     <string name="InuParanoiaHideFolders">隐藏文件夹</string>

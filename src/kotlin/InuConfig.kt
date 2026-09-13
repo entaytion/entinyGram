@@ -7,6 +7,7 @@ import desu.inugram.helpers.chat.DoubleTapActionHelper
 import desu.inugram.helpers.chat.PinnedReactionsHelper
 import desu.inugram.helpers.font.FontConfig
 import desu.inugram.helpers.menu.ChatMenuConfig
+import desu.inugram.helpers.menu.DialogsMenuConfig
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.ProfileInfoMenuConfig
@@ -1362,6 +1363,9 @@ object InuConfig {
 
     @JvmField
     val PROFILE_INFO_ROWS = ProfileInfoMenuConfig("profile_info_rows")
+
+    @JvmField
+    val DIALOGS_MENU_ITEMS = DialogsMenuConfig("dialogs_menu_items")
 
     // hide entries from ProfileActivity's ⋮ overflow menu (default off = stock)
     @JvmField

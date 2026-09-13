@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
+import desu.inugram.helpers.menu.DialogsMenuConfig
+import desu.inugram.helpers.menu.DialogsMenuHelper
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.update.UpdateHelper
@@ -708,11 +710,13 @@ object DrawerHelper {
     fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions) {
         val bottomTabsHidden = MainTabsHelper.isHidden
 
-        io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
-            instance.scrollToTop(true, true)
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.SCROLL_TOP)) {
+            io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
+                instance.scrollToTop(true, true)
+            }
         }
 
-        if (bottomTabsHidden) {
+        if (bottomTabsHidden && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.MY_PROFILE)) {
             io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
                 val args = Bundle()
                 args.putLong("user_id", UserConfig.getInstance(instance.currentAccount).getClientUserId())
@@ -721,7 +725,9 @@ object DrawerHelper {
             }
         }
 
-        if (bottomTabsHidden || !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CONTACTS.index)) {
+        if ((bottomTabsHidden || !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CONTACTS.index)) &&
+            DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.CONTACTS)
+        ) {
             io.add(R.drawable.msg_contacts, getString(R.string.Contacts)) {
                 val args = Bundle()
                 args.putBoolean("needPhonebook", true)
@@ -729,27 +735,31 @@ object DrawerHelper {
             }
         }
 
-        io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
-            val args = Bundle()
-            args.putInt("folderId", 1)
-            instance.presentFragment(DialogsActivity(args))
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.ARCHIVE)) {
+            io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
+                val args = Bundle()
+                args.putInt("folderId", 1)
+                instance.presentFragment(DialogsActivity(args))
+            }
         }
 
-        val isGhostOn = GhostHelper.isGhostActive()
-        io.add(if (isGhostOn) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
-            val isGhost = GhostHelper.toggleGhostMode()
-            val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
-            instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
-            BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, str).show()
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.GHOST_MODE)) {
+            val isGhostOn = GhostHelper.isGhostActive()
+            io.add(if (isGhostOn) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
+                val isGhost = GhostHelper.toggleGhostMode()
+                val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
+                instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
+                BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, str).show()
+            }
         }
 
-        if (!ParanoiaHelper.isParanoia()) {
+        if (!ParanoiaHelper.isParanoia() && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.PARANOIA)) {
             io.add(R.drawable.inu_tabler_spy, getString(R.string.InuParanoiaMode)) {
                 instance.presentFragment(ParanoiaActivity())
             }
         }
 
-        if (bottomTabsHidden) {
+        if (bottomTabsHidden && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.SETTINGS)) {
             io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
                 instance.presentFragment(SettingsActivity())
             }

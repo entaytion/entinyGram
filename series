@@ -414,3 +414,4 @@ entiny/translate-target-language-override.patch
 entiny/delete-failed-proxies.patch
 entiny/preserve-media-cache-fallback.patch
 entiny/feed-menu-entry.patch
+entiny/dialogs-menu-customization.patch

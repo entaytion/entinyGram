@@ -686,6 +686,12 @@
     <string name="InuChatMenuItems">Ögeler</string>
     <string name="InuChatMenuOrderInfo">Sohbetlerdeki üç nokta menüsündeki ögeleri yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamağı sürükleyin, gizlemek için anahtarı kapatın.</string>
     <string name="InuChatMenuReset">Varsayılana sıfırla</string>
+    <string name="InuDialogsMenuOrder">Seçenekler menüsü</string>
+    <string name="InuDialogsMenuItems">Öğeler</string>
+    <string name="InuDialogsMenuOrderInfo">Sohbetler ekranındaki ☰ menüsünün öğelerini yeniden sıralayın veya gizleyin. Sıralamak için tutamacı sürükleyin, gizlemek için anahtarı değiştirin.</string>
+    <string name="InuDialogsMenuReset">Varsayılana sıfırla</string>
+    <string name="InuMenuThemeToggle">Temayı değiştir</string>
+    <string name="InuMenuCompose">Yeni grup / mesaj</string>
     <string name="InuGoToMessage">Mesaja git</string>
     <string name="InuGoToMessagePrompt">Mesaj Kimliği (ID)</string>
     <string name="InuPrivacySecurity">Gizlilik &amp; Güvenlik</string>

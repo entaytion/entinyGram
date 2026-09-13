@@ -1,0 +1,144 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 13 Sep 2026 09:51:24 +0300
+Subject: Allow hiding individual items from the chats screen options menu
+
+---
+ .../java/org/telegram/ui/DialogsActivity.java | 109 ++++++++++--------
+ 1 file changed, 59 insertions(+), 50 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14000,63 +14000,71 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         } else {
+             isCurrentThemeDark = Theme.isCurrentThemeDark();
+         }
+-        io.add(isCurrentThemeDark ? R.drawable.menu_day_mode_24 : R.drawable.menu_night_mode_24,
+-                getString(isCurrentThemeDark ? R.string.SwitchThemeToDay : R.string.SwitchThemeToNight), () -> {
+-            if (switchingTheme) {
+-                return;
+-            }
+-            switchingTheme = true;
+-            SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
+-            Theme.ThemeInfo themeInfo;
+-            boolean toDark;
+-            desu.inugram.helpers.theme.MonetHelper.ToggleThemeResult monetToggle = desu.inugram.helpers.theme.MonetHelper.getToggleTheme();
+-            if (monetToggle != null) {
+-                themeInfo = monetToggle.getThemeInfo();
+-                toDark = monetToggle.getToDark();
+-                preferences.edit().putString(toDark ? "lastDarkTheme" : "lastDayTheme", themeInfo.getKey()).apply();
+-            } else {
+-                String dayThemeName = preferences.getString("lastDayTheme", "Blue");
+-                if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark() || dayThemeName.startsWith("Monet")) {
+-                    dayThemeName = "Blue";
+-                }
+-                String nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue");
+-                if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark() || nightThemeName.startsWith("Monet")) {
+-                    nightThemeName = "Dark Blue";
++        if (desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.THEME_TOGGLE)) {
++            io.add(isCurrentThemeDark ? R.drawable.menu_day_mode_24 : R.drawable.menu_night_mode_24,
++                    getString(isCurrentThemeDark ? R.string.SwitchThemeToDay : R.string.SwitchThemeToNight), () -> {
++                if (switchingTheme) {
++                    return;
+                 }
+-                themeInfo = Theme.getActiveTheme();
+-                if (dayThemeName.equals(nightThemeName)) {
+-                    if (themeInfo.isDark() || dayThemeName.equals("Dark Blue") || dayThemeName.equals("Night")) {
++                switchingTheme = true;
++                SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);
++                Theme.ThemeInfo themeInfo;
++                boolean toDark;
++                desu.inugram.helpers.theme.MonetHelper.ToggleThemeResult monetToggle = desu.inugram.helpers.theme.MonetHelper.getToggleTheme();
++                if (monetToggle != null) {
++                    themeInfo = monetToggle.getThemeInfo();
++                    toDark = monetToggle.getToDark();
++                    preferences.edit().putString(toDark ? "lastDarkTheme" : "lastDayTheme", themeInfo.getKey()).apply();
++                } else {
++                    String dayThemeName = preferences.getString("lastDayTheme", "Blue");
++                    if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark() || dayThemeName.startsWith("Monet")) {
+                         dayThemeName = "Blue";
+-                    } else {
++                    }
++                    String nightThemeName = preferences.getString("lastDarkTheme", "Dark Blue");
++                    if (Theme.getTheme(nightThemeName) == null || !Theme.getTheme(nightThemeName).isDark() || nightThemeName.startsWith("Monet")) {
+                         nightThemeName = "Dark Blue";
+                     }
+-                }
++                    themeInfo = Theme.getActiveTheme();
++                    if (dayThemeName.equals(nightThemeName)) {
++                        if (themeInfo.isDark() || dayThemeName.equals("Dark Blue") || dayThemeName.equals("Night")) {
++                            dayThemeName = "Blue";
++                        } else {
++                            nightThemeName = "Dark Blue";
++                        }
++                    }
+ 
+-                if (toDark = dayThemeName.equals(themeInfo.getKey())) {
+-                    themeInfo = Theme.getTheme(nightThemeName);
+-                } else {
+-                    themeInfo = Theme.getTheme(dayThemeName);
++                    if (toDark = dayThemeName.equals(themeInfo.getKey())) {
++                        themeInfo = Theme.getTheme(nightThemeName);
++                    } else {
++                        themeInfo = Theme.getTheme(dayThemeName);
++                    }
+                 }
+-            }
+-            switchTheme(themeInfo, toDark);
+-            Theme.turnOffAutoNight(BulletinFactory.of(this), () -> {
+-                presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT));
++                switchTheme(themeInfo, toDark);
++                Theme.turnOffAutoNight(BulletinFactory.of(this), () -> {
++                    presentFragment(new ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT));
++                });
+             });
+-        });
+-        io.addGap();
++            io.addGap();
++        }
+         final boolean inu_needNewMessage = !DialogsFabHelper.hasNewMessage();
+-        io.addIf(!inu_needNewMessage, R.drawable.outline_groups_24, getString(R.string.NewGroup), () -> {
+-            Bundle args = new Bundle();
+-            presentFragment(new GroupCreateActivity(args));
+-        });
+-        io.addIf(inu_needNewMessage, R.drawable.menu_topic_add, getString(R.string.NewMessageTitle), this::openWriteContacts);
+-        io.add(R.drawable.outline_saved_24, getString(R.string.SavedMessages), () -> {
+-            Bundle args = new Bundle();
+-            args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
+-            presentFragment(new ChatActivity(args));
+-        });
+-        io.add(R.drawable.msg_channel, getString(R.string.InuFeed), () ->
+-            presentFragment(new desu.inugram.ui.feed.FeedActivity()));
++        if (desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.COMPOSE)) {
++            io.addIf(!inu_needNewMessage, R.drawable.outline_groups_24, getString(R.string.NewGroup), () -> {
++                Bundle args = new Bundle();
++                presentFragment(new GroupCreateActivity(args));
++            });
++            io.addIf(inu_needNewMessage, R.drawable.menu_topic_add, getString(R.string.NewMessageTitle), this::openWriteContacts);
++        }
++        if (desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.SAVED_MESSAGES)) {
++            io.add(R.drawable.outline_saved_24, getString(R.string.SavedMessages), () -> {
++                Bundle args = new Bundle();
++                args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
++                presentFragment(new ChatActivity(args));
++            });
++        }
++        if (desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.FEED)) {
++            io.add(R.drawable.msg_channel, getString(R.string.InuFeed), () ->
++                presentFragment(new desu.inugram.ui.feed.FeedActivity()));
++        }
+         if (ApplicationLoader.applicationLoaderInstance != null) {
+             ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
+         }
+@@ -14084,7 +14092,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+             }
+         }
+-        if (!MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.SETTINGS.getIndex())) {
++        if (!MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.SETTINGS.getIndex())
++                && desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.SETTINGS)) {
+             io.add(R.drawable.msg_settings_old, getString(R.string.Settings), () -> {
+                 presentFragment(new SettingsActivity());
+             });

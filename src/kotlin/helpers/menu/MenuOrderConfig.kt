@@ -259,6 +259,47 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(k
     }
 }
 
+/**
+ * The chats-screen action bar options menu (the "burger"/overflow button, top-right of
+ * `DialogsActivity`) — [org.telegram.ui.DialogsActivity.showItemOptions]'s own static rows plus
+ * the ones [desu.inugram.helpers.dialogs.DrawerHelper.addDialogsActivityOptions] appends onto the
+ * same `ItemOptions` instance. Deliberately excludes rows that are already conditionally shown
+ * based on other state (proxy visibility, community/archive-context submenus, third-party
+ * attach-menu bots) — those keep their own governance rather than gaining a second, conflicting
+ * toggle here. A disabled item here is ANDed with its existing precondition at each call site, so
+ * turning everything on reproduces stock-identical behavior (rule #4).
+ */
+class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
+    enum class Item(
+        override val key: String,
+        override val labelRes: Int,
+        override val iconRes: Int,
+    ) : MenuOrderItem {
+        THEME_TOGGLE("theme_toggle", R.string.InuMenuThemeToggle, R.drawable.menu_night_mode_24),
+        COMPOSE("compose", R.string.InuMenuCompose, R.drawable.menu_topic_add),
+        SAVED_MESSAGES("saved_messages", R.string.SavedMessages, R.drawable.outline_saved_24),
+        FEED("feed", R.string.InuFeed, R.drawable.msg_channel),
+        SCROLL_TOP("scroll_top", R.string.InuScrollToTop, R.drawable.msg_go_up),
+        MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
+        CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
+        ARCHIVE("archive", R.string.ArchivedChats, R.drawable.msg_archive),
+        GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
+        PARANOIA("paranoia", R.string.InuParanoiaMode, R.drawable.inu_tabler_spy),
+        SETTINGS("settings", R.string.Settings, R.drawable.msg_settings_old);
+
+        companion object {
+            private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
+            fun forKey(k: String): Item? = byKey[k]
+        }
+    }
+
+    override fun itemByKey(key: String): Item? = Item.forKey(key)
+
+    companion object {
+        private val OFF_BY_DEFAULT = emptySet<Item>()
+    }
+}
+
 /** The three account-info rows on the self ("My Profile") screen — phone, bio, username.
  * Consumed from `ProfileActivity.updateRowsIds` through `ProfileSettingsHelper.orderedEnabledInfoRows`.
  * Declaration order matches stock's row order. */

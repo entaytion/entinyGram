@@ -854,6 +854,12 @@
     <string name="InuChatMenuItems">Пункти</string>
     <string name="InuChatMenuOrderInfo">Змінюй порядок або приховуй пункти в меню «три точки» у чатах. Перетягуй за ручку для перестановки, використовуй перемикач щоб приховати.</string>
     <string name="InuChatMenuReset">Скинути за замовчуванням</string>
+    <string name="InuDialogsMenuOrder">Меню опцій</string>
+    <string name="InuDialogsMenuItems">Пункти</string>
+    <string name="InuDialogsMenuOrderInfo">Змініть порядок або приховайте пункти в меню ☰ на екрані чатів. Перетягніть за ручку, щоб змінити порядок, перемкніть тумблер, щоб приховати.</string>
+    <string name="InuDialogsMenuReset">Скинути за замовчуванням</string>
+    <string name="InuMenuThemeToggle">Перемкнути тему</string>
+    <string name="InuMenuCompose">Нова група / повідомлення</string>
     <string name="InuProfileSettingsRowsOrder">Порядок екрана налаштувань</string>
     <string name="InuProfileSettingsRowsItems">Пункти</string>
     <string name="InuProfileSettingsRowsOrderInfo">Змінюй порядок або приховуй пункти на екрані налаштувань самого Telegram (Налаштування чатів, Конфіденційність, Сповіщення тощо). Перетягуй за ручку для перестановки, використовуй перемикач щоб приховати.</string>

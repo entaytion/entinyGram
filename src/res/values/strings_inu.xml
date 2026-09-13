@@ -872,6 +872,12 @@
     <string name="InuChatMenuItems">Items</string>
     <string name="InuChatMenuOrderInfo">Reorder or hide items in the three-dots menu in chats. Drag the handle to rearrange, toggle the switch to hide.</string>
     <string name="InuChatMenuReset">Reset to default</string>
+    <string name="InuDialogsMenuOrder">Options menu</string>
+    <string name="InuDialogsMenuItems">Items</string>
+    <string name="InuDialogsMenuOrderInfo">Reorder or hide items in the ☰ menu on the chats screen. Drag the handle to rearrange, toggle the switch to hide.</string>
+    <string name="InuDialogsMenuReset">Reset to default</string>
+    <string name="InuMenuThemeToggle">Switch theme</string>
+    <string name="InuMenuCompose">New group / message</string>
     <string name="InuProfileSettingsRowsOrder">Settings screen order</string>
     <string name="InuProfileSettingsRowsItems">Rows</string>
     <string name="InuProfileSettingsRowsOrderInfo">Reorder or hide rows on Telegram\'s own Settings screen (Chat Settings, Privacy, Notifications, etc). Drag the handle to rearrange, toggle the switch to hide.</string>
