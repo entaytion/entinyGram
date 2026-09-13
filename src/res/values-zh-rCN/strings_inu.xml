@@ -511,6 +511,10 @@
     <string name="InuCreateAsSupergroup">创建为超级群</string>
     <string name="InuLoginViaQr">通过二维码登录</string>
     <string name="InuLoginViaPasskey">通过 Passkey 登录</string>
+    <string name="InuLoginViaBotToken">通过机器人令牌登录</string>
+    <string name="InuBotTokenLoginTitle">机器人令牌</string>
+    <string name="InuBotTokenLoginInfo">使用来自 @BotFather 的令牌以机器人身份登录。该账号只能执行 Bot API 允许的操作。</string>
+    <string name="InuBotTokenLoginHint">123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11</string>
     <string name="InuQrLoginMessage">1. 在手机上打开 Telegram。\n2. 进入 设置 → 设备 → 链接桌面设备。\n3. 把手机对准下方的二维码。</string>
     <string name="InuCopyButtonText">复制「%1$s」</string>
     <string name="InuCopyCallbackData">复制回调数据</string>

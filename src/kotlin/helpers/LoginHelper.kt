@@ -29,6 +29,8 @@ import org.telegram.messenger.TelegramQRCodeWriter
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.ConnectionsManager
+import org.telegram.tgnet.InputSerializedData
+import org.telegram.tgnet.OutputSerializedData
 import org.telegram.tgnet.SerializedData
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
@@ -95,6 +97,9 @@ object LoginHelper {
                 opts.add(R.drawable.filled_access_fingerprint, getString(R.string.InuLoginViaPasskey)) {
                     passkeyLogin(loginActivity, currentAccount)
                 }
+            }
+            opts.add(R.drawable.msg_bot, getString(R.string.InuLoginViaBotToken)) {
+                botTokenLogin(loginActivity, currentAccount)
             }
         }
         opts.add(R.drawable.outline_shield_check, getString(R.string.Proxy)) {
@@ -179,6 +184,61 @@ object LoginHelper {
                 err != null -> BulletinFactory.of(loginActivity).showForError(err)
                 authObject is TLRPC.TL_auth_authorization -> loginActivity.onAuthSuccess(authObject)
             }
+        }
+    }
+
+    /**
+     * `auth.importBotAuthorization` — logs the client in as a bot using a @BotFather token,
+     * instead of a phone number. Long-standing NekoX/Nagram feature; the request shape mirrors
+     * [showQrLoginDialog]'s `export()`: without-login, cross-DC, unauthorized flags because the
+     * client is not logged into anything yet when this fires. Reuses [LoginActivity.onAuthSuccess]
+     * for everything after a successful response - the same completion path QR and Passkey login
+     * already go through - instead of re-deriving user/storage setup by hand.
+     *
+     * `auth.importBotAuthorization` has no generated `TLRPC.TL_auth_importBotAuthorization` in
+     * this fork's schema snapshot, and golden rule #9 forbids hand-editing the generated
+     * `TLRPC.java` to add one - the same pattern `WebAppHelper.openTlViewer` already uses for a
+     * one-off request: a bare anonymous [TLObject] built and thrown away right here, not a new
+     * named class living in `TLRPC`.
+     */
+    private fun botTokenLogin(loginActivity: LoginActivity, currentAccount: Int) {
+        val activity = loginActivity.parentActivity ?: return
+        AlertsCreator.createSimpleTextInputAlert(
+            activity, loginActivity,
+            getString(R.string.InuBotTokenLoginTitle),
+            getString(R.string.InuBotTokenLoginInfo),
+            getString(R.string.InuBotTokenLoginHint),
+            null, 128, getString(R.string.Next), null,
+        ) { token ->
+            val req = object : TLObject() {
+                override fun serializeToStream(stream: OutputSerializedData) {
+                    stream.writeInt32(0x67a3ff2c) // auth.importBotAuthorization
+                    stream.writeInt32(0) // flags
+                    stream.writeInt32(BuildVars.APP_ID)
+                    stream.writeString(BuildVars.APP_HASH)
+                    stream.writeString(token)
+                }
+
+                override fun deserializeResponse(stream: InputSerializedData, constructor: Int, exception: Boolean): TLObject =
+                    TLRPC.auth_Authorization.TLdeserialize(stream, constructor, exception)
+            }
+            ConnectionsManager.getInstance(currentAccount).cleanup(false)
+            ConnectionsManager.getInstance(currentAccount).sendRequest(
+                req,
+                { response, error ->
+                    AndroidUtilities.runOnUIThread {
+                        when {
+                            error != null -> BulletinFactory.of(loginActivity).showForError(error.text)
+                            response is TLRPC.TL_auth_authorization -> loginActivity.onAuthSuccess(response)
+                            else -> BulletinFactory.of(loginActivity).showForError("UNEXPECTED_RESPONSE")
+                        }
+                    }
+                },
+                ConnectionsManager.RequestFlagFailOnServerErrors or
+                    ConnectionsManager.RequestFlagWithoutLogin or
+                    ConnectionsManager.RequestFlagTryDifferentDc or
+                    ConnectionsManager.RequestFlagEnableUnauthorized,
+            )
         }
     }
 

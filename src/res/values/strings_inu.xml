@@ -793,6 +793,10 @@
     <string name="InuCreateAsSupergroup">Create as supergroup</string>
     <string name="InuLoginViaQr">Log in via QR code</string>
     <string name="InuLoginViaPasskey">Log in via Passkey</string>
+    <string name="InuLoginViaBotToken">Log in via bot token</string>
+    <string name="InuBotTokenLoginTitle">Bot token</string>
+    <string name="InuBotTokenLoginInfo">Log in as a bot using the token from @BotFather. This account will only be able to do what the Bot API allows.</string>
+    <string name="InuBotTokenLoginHint">123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11</string>
     <string name="InuQrLoginMessage">1. Open Telegram on your phone.\n2. Go to Settings → Devices → Link Desktop Device.\n3. Point your phone at the QR code below.</string>
     <string name="InuCopyButtonText">Copy \"%1$s\"</string>
     <string name="InuCopyCallbackData">Copy callback data</string>

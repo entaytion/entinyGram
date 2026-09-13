@@ -564,6 +564,10 @@
     <string name="InuCreateAsSupergroup">Создать как супергруппу</string>
     <string name="InuLoginViaQr">Войти по QR-коду</string>
     <string name="InuLoginViaPasskey">Войти через Passkey</string>
+    <string name="InuLoginViaBotToken">Войти по токену бота</string>
+    <string name="InuBotTokenLoginTitle">Токен бота</string>
+    <string name="InuBotTokenLoginInfo">Войти как бот, используя токен от @BotFather. Этот аккаунт сможет только то, что разрешает Bot API.</string>
+    <string name="InuBotTokenLoginHint">123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11</string>
     <string name="InuQrLoginMessage">1. Откройте Telegram на телефоне.\n2. Перейдите в Настройки → Устройства → Подключить десктоп.\n3. Наведите телефон на QR-код ниже.</string>
     <string name="InuCopyButtonText">Копировать «%1$s»</string>
     <string name="InuCopyCallbackData">Копировать Callback-данные</string>

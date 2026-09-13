@@ -512,6 +512,10 @@
     <string name="InuCreateAsSupergroup">スーパーグループとして作成</string>
     <string name="InuLoginViaQr">QR コードでログイン</string>
     <string name="InuLoginViaPasskey">パスキーでログイン</string>
+    <string name="InuLoginViaBotToken">ボットトークンでログイン</string>
+    <string name="InuBotTokenLoginTitle">ボットトークン</string>
+    <string name="InuBotTokenLoginInfo">@BotFather から取得したトークンを使ってボットとしてログインします。このアカウントは Bot API で許可されている操作のみ実行できます。</string>
+    <string name="InuBotTokenLoginHint">123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11</string>
     <string name="InuQrLoginMessage">1. スマホで Telegram を開きます。\n2. 設定 → デバイス → デスクトップをリンクへ進みます。\n3. 下の QR コードにスマホを向けます。</string>
     <string name="InuCopyButtonText">「%1$s」をコピー</string>
     <string name="InuCopyCallbackData">コールバックデータをコピー</string>

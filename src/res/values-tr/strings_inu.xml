@@ -615,6 +615,10 @@
     <string name="InuCreateAsSupergroup">Süper grup olarak oluştur</string>
     <string name="InuLoginViaQr">QR kodu ile giriş yap</string>
     <string name="InuLoginViaPasskey">Passkey ile giriş yap</string>
+    <string name="InuLoginViaBotToken">Bot token ile giriş yap</string>
+    <string name="InuBotTokenLoginTitle">Bot token</string>
+    <string name="InuBotTokenLoginInfo">@BotFather\'dan aldığınız token ile bot olarak giriş yapın. Bu hesap yalnızca Bot API\'nin izin verdiği işlemleri yapabilir.</string>
+    <string name="InuBotTokenLoginHint">123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11</string>
     <string name="InuQrLoginMessage">1. Telefonunuzda Telegram\'ı açın.\n2. Ayarlar → Cihazlar → Masaüstü Cihazı Bağla bölümüne gidin.\n3. Telefonunuzu aşağıdaki QR koduna doğrultun.</string>
     <string name="InuCopyButtonText">\"%1$s\" kopyala</string>
     <string name="InuCopyCallbackData">Geri çağırma (callback) verisini kopyala</string>
