@@ -13,6 +13,7 @@ import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.ContentProtectionSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
+import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
 import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
@@ -75,6 +76,7 @@ object SearchRegistry {
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
             BackupSettingsActivity.PAGE,
+            FeedExcludedChannelsSettingsActivity.PAGE,
         )
     }
 

@@ -1902,4 +1902,12 @@ object InuConfig {
 
     @JvmField
     val SELECTION_BOTTOM_NO_QUOTE = BoolItem("selection_bottom_no_quote", false)
+
+    // Dialog ids (as strings, same convention as GHOST_WHITELIST_DIALOGS) excluded from the
+    // aggregated Feed screen. Absence from this set is the default (all eligible channels shown).
+    @JvmField
+    val FEED_EXCLUDED_CHANNELS = StringSetItem("feed_excluded_channels", emptySet())
+
+    @JvmField
+    val FEED_INCLUDE_ARCHIVED = BoolItem("feed_include_archived", false)
 }

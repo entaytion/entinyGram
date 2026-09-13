@@ -76,6 +76,35 @@ object InuHooks {
         @Suppress("UNCHECKED_CAST")
         val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
         for (msg in messages) onNewMessage(msg, acc)
+        if (desu.inugram.helpers.feed.FeedController.isActiveFor(acc)) {
+            desu.inugram.helpers.feed.FeedController.get(acc).onNewMessages(messages)
+        }
+    }
+
+    // messagesDeleted args: (ArrayList<Integer> markAsDeletedMessages, long channelId, boolean scheduled)
+    // historyCleared args: (long dialogId, int maxId)
+    // Both confirmed against MessagesController's own postNotificationName call sites.
+    private val feedPruneObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
+        if (!desu.inugram.helpers.feed.FeedController.isActiveFor(acc)) return@NotificationCenterDelegate
+        val controller = desu.inugram.helpers.feed.FeedController.get(acc)
+        when (id) {
+            NotificationCenter.messagesDeleted -> {
+                @Suppress("UNCHECKED_CAST")
+                val ids = args[0] as? ArrayList<Int> ?: return@NotificationCenterDelegate
+                val channelId = args.getOrNull(1) as? Long ?: 0L
+                // Stock call sites disagree on whether this second arg is already a negative
+                // dialog id or a positive channel chat id needing negation -- removeMessages() is
+                // a no-op for a dialog id with no matching rows, so trying both is harmless.
+                if (channelId != 0L) {
+                    controller.onMessagesDeleted(channelId, ids)
+                    controller.onMessagesDeleted(-channelId, ids)
+                }
+            }
+            NotificationCenter.historyCleared -> {
+                val dialogId = args.getOrNull(0) as? Long ?: return@NotificationCenterDelegate
+                controller.onHistoryCleared(dialogId)
+            }
+        }
     }
 
     // Re-asserts the desired presence on every reconnect (stock resets connection-level state on
@@ -122,6 +151,10 @@ object InuHooks {
             nc.addObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
             nc.removeObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
             nc.addObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
+            nc.removeObserver(feedPruneObserver, NotificationCenter.messagesDeleted)
+            nc.addObserver(feedPruneObserver, NotificationCenter.messagesDeleted)
+            nc.removeObserver(feedPruneObserver, NotificationCenter.historyCleared)
+            nc.addObserver(feedPruneObserver, NotificationCenter.historyCleared)
         }
     }
 

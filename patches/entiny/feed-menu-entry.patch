@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 13 Sep 2026 09:50:41 +0300
+Subject: Add a Feed entry to the chats screen options menu
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -14055,6 +14055,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
+             presentFragment(new ChatActivity(args));
+         });
++        io.add(R.drawable.msg_channel, getString(R.string.InuFeed), () ->
++            presentFragment(new desu.inugram.ui.feed.FeedActivity()));
+         if (ApplicationLoader.applicationLoaderInstance != null) {
+             ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
+         }
