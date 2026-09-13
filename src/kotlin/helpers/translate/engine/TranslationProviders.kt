@@ -171,18 +171,22 @@ internal fun httpJson(
 }
 
 /**
- * Google's public web translate endpoint (translate.googleapis.com, `client=gtx`). No API key
- * needed; subject to Google's unofficial rate limits, which the engine's serial queue and
- * backoff keep in check. A POST body avoids URL-length limits on long messages and the
- * `client=at` variant is more often blocked/throttled from mobile IPs.
+ * Google's public web translate endpoint (translate.googleapis.com, `client=gtx`) as the primary
+ * path. No API key needed; subject to Google's unofficial rate limits, which the engine's serial
+ * queue and backoff keep in check. A POST body avoids URL-length limits on long messages; `at` is
+ * used as primary less often because as a raw first choice it is more often blocked/throttled
+ * from mobile IPs, but it is a genuinely separate service tier (different hostname, different
+ * quota) and is tried as a fallback below for exactly that reason.
  *
  * A 429 from this endpoint is usually not "you asked too often" - it is Google refusing the
  * address the request came from. Carrier NAT, VPN exits and datacenter ranges get the /sorry/
  * block page, and once an address is on it every later gtx call answers the same way, which is
  * why the failure looks permanent to one user and invisible to the next on the same build. Since
- * backing off cannot clear that, a blocked address is remembered and translation moves to the
- * Chrome-extension dictionary endpoint, which is a separate service behind a separate quota and
- * still answers from addresses gtx has already blocked.
+ * backing off cannot clear that, a blocked address is remembered and translation moves to two
+ * fallback tiers in order: the Google Translate Android app's own endpoint (`client=at`, spoofed
+ * app User-Agent - a different hostname and quota gtx's block does not reach), then the
+ * Chrome-extension dictionary endpoint. All three are independent services, so one being blocked
+ * for a given address says nothing about the others.
  */
 object GoogleWebProvider : TranslationProvider {
 
@@ -199,19 +203,37 @@ object GoogleWebProvider : TranslationProvider {
      */
     private const val MAX_FALLBACK_CHARS = 1800
 
+    /** Same URL-length concern as the dictionary endpoint, just a longer practical limit. */
+    private const val MAX_APP_CHARS = 3500
+
+    /**
+     * gtx blocks are IP-based (see class doc), so a short connect/read timeout matters: on a
+     * blocked address the socket does not fail fast, it hangs for the full timeout. The default
+     * [httpJson] timeouts (10s/15s) were sized for arbitrary API calls; a translate request is a
+     * few hundred bytes and any of the three endpoints below should answer well within this or
+     * not at all, so cutting it lets a blocked gtx call fail fast enough to still try the other
+     * two endpoints inside one user-perceived request instead of eating the timeout three times.
+     */
+    private const val FAST_CONNECT_TIMEOUT_MS = 5_000
+    private const val FAST_READ_TIMEOUT_MS = 7_000
+
     @Volatile
     private var blockedUntil = 0L
 
     override fun translate(text: String, toLang: String): String {
         val tl = normalizeToLang(toLang)
         if (System.currentTimeMillis() < blockedUntil) {
-            translateViaDictionary(text, tl)?.let { return it }
+            return translateViaApp(text, tl)
+                ?: translateViaDictionary(text, tl)
+                ?: translateViaGtx(text, tl) // last resort: try the primary anyway
         }
         return try {
             translateViaGtx(text, tl)
-        } catch (_: ProviderRateLimitException) {
+        } catch (e: Exception) {
+            if (e !is ProviderRateLimitException && e !is IOException) throw e
             blockedUntil = System.currentTimeMillis() + BLOCK_COOLDOWN_MS
-            translateViaDictionary(text, tl)
+            translateViaApp(text, tl)
+                ?: translateViaDictionary(text, tl)
                 ?: throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
         }
     }
@@ -226,6 +248,8 @@ object GoogleWebProvider : TranslationProvider {
             body = body,
             contentType = "application/x-www-form-urlencoded",
             headers = mapOf("User-Agent" to USER_AGENT),
+            connectTimeout = FAST_CONNECT_TIMEOUT_MS,
+            readTimeout = FAST_READ_TIMEOUT_MS,
         )
         val sentences = JSONArray(resp).optJSONArray(0) ?: JSONArray()
         val sb = StringBuilder(text.length)
@@ -234,6 +258,38 @@ object GoogleWebProvider : TranslationProvider {
         }
         if (sb.isEmpty()) throw IOException("Google Translate returned an empty result")
         return sb.toString()
+    }
+
+    /**
+     * The endpoint the official Google Translate Android app uses (`client=at`, spoofed app
+     * User-Agent). A separate service tier from gtx on a different hostname
+     * (translate.google.com, not translate.googleapis.com); an address the gtx abuse filter has
+     * blocked is frequently not blocked here, and vice versa, so trying this before giving up
+     * roughly doubles the odds of a fast success instead of falling through to the much more
+     * limited dictionary endpoint. Returns null - never throws - so the caller keeps whatever
+     * more diagnostic error the other endpoints produced.
+     */
+    private fun translateViaApp(text: String, tl: String): String? {
+        if (text.length > MAX_APP_CHARS) return null
+        return try {
+            val resp = httpJson(
+                "https://translate.google.com/translate_a/single?dj=1" +
+                    "&sl=auto&tl=" + encodeURIComponent(tl) +
+                    "&ie=UTF-8&oe=UTF-8&client=at&dt=t&otf=2" +
+                    "&q=" + encodeURIComponent(text),
+                headers = mapOf("User-Agent" to APP_USER_AGENT),
+                connectTimeout = FAST_CONNECT_TIMEOUT_MS,
+                readTimeout = FAST_READ_TIMEOUT_MS,
+            )
+            val sentences = JSONObject(resp).optJSONArray("sentences") ?: JSONArray()
+            val sb = StringBuilder(text.length)
+            for (i in 0 until sentences.length()) {
+                sb.append(sentences.getJSONObject(i).optString("trans", ""))
+            }
+            sb.toString().ifBlank { null }
+        } catch (_: Exception) {
+            null
+        }
     }
 
     /**
@@ -250,6 +306,8 @@ object GoogleWebProvider : TranslationProvider {
                     "&tl=" + encodeURIComponent(tl) +
                     "&q=" + encodeURIComponent(text),
                 headers = mapOf("User-Agent" to USER_AGENT),
+                connectTimeout = FAST_CONNECT_TIMEOUT_MS,
+                readTimeout = FAST_READ_TIMEOUT_MS,
             )
             // Single strings for one sentence, [text, detectedLang] pairs once Google splits the
             // input; both shapes appear for the same request depending on length.
@@ -279,6 +337,9 @@ object GoogleWebProvider : TranslationProvider {
 }
 
 private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36"
+
+/** Spoofs the real Google Translate Android app, matching what `client=at` expects to see. */
+private const val APP_USER_AGENT = "GoogleTranslate/6.14.0.04.343003216 (Linux; U; Android 10; Redmi K20 Pro)"
 
 /** DeepL API v2. Uses the free endpoint automatically when the key carries the ":fx" suffix. */
 object DeepLProvider : TranslationProvider {
