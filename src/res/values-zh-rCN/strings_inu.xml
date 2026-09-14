@@ -521,6 +521,8 @@
     <string name="InuFeedNoChannels">您尚未加入任何频道</string>
     <string name="InuFeedShownChannels">在动态中显示</string>
     <string name="InuFeedHiddenChannels">已从动态隐藏</string>
+    <string name="InuFeedHideAll">隐藏所有频道</string>
+    <string name="InuFeedShowAll">显示所有频道</string>
     <string name="InuLoginViaQr">通过二维码登录</string>
     <string name="InuLoginViaPasskey">通过 Passkey 登录</string>
     <string name="InuLoginViaBotToken">通过机器人令牌登录</string>
@@ -1363,4 +1365,6 @@
     <string name="InuProfileInfoRowsOrderInfo">在您自己的个人资料上重新排序或隐藏电话号码、简介和用户名行。拖动控制柄以重新排列，切换开关以隐藏。</string>
     <string name="InuProfileInfoRowsReset">恢复默认</string>
     <string name="InuSmallGifs">GIF 显示得更小</string>
+    <string name="InuDeleteFailedProxies">删除失效代理</string>
+    <string name="InuDeleteFailedProxiesConfirm">确定要删除所有不可用的代理吗？</string>
 </resources>

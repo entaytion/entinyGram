@@ -522,6 +522,8 @@
     <string name="InuFeedNoChannels">まだどのチャンネルにも参加していません</string>
     <string name="InuFeedShownChannels">フィードに表示中</string>
     <string name="InuFeedHiddenChannels">フィードから非表示中</string>
+    <string name="InuFeedHideAll">すべてのチャンネルを非表示</string>
+    <string name="InuFeedShowAll">すべてのチャンネルを表示</string>
     <string name="InuLoginViaQr">QR コードでログイン</string>
     <string name="InuLoginViaPasskey">パスキーでログイン</string>
     <string name="InuLoginViaBotToken">ボットトークンでログイン</string>
@@ -1363,4 +1365,6 @@
     <string name="InuProfileInfoRowsOrderInfo">自分のプロフィールの電話番号、自己紹介、ユーザー名の行を並べ替えたり非表示にしたりできます。ハンドルをドラッグして並べ替え、スイッチで非表示に切り替えます。</string>
     <string name="InuProfileInfoRowsReset">デフォルトに戻す</string>
     <string name="InuSmallGifs">GIFを小さく表示</string>
+    <string name="InuDeleteFailedProxies">接続できないプロキシを削除</string>
+    <string name="InuDeleteFailedProxiesConfirm">利用できないすべてのプロキシを削除してもよろしいですか？</string>
 </resources>

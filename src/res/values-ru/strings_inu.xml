@@ -574,6 +574,8 @@
     <string name="InuFeedNoChannels">Вы пока не подписаны ни на один канал</string>
     <string name="InuFeedShownChannels">Показаны в ленте</string>
     <string name="InuFeedHiddenChannels">Скрыты из ленты</string>
+    <string name="InuFeedHideAll">Скрыть все каналы</string>
+    <string name="InuFeedShowAll">Показать все каналы</string>
     <string name="InuLoginViaQr">Войти по QR-коду</string>
     <string name="InuLoginViaPasskey">Войти через Passkey</string>
     <string name="InuLoginViaBotToken">Войти по токену бота</string>
@@ -1385,4 +1387,6 @@
     <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, позволяя использовать их без Premium. Клиенты entinyGram и Nekogram показывают их анимированными, а другие клиенты видят обычный эмодзи как ссылку. Включите вместе с локальным Premium для открытия панели выбора.</string>
     <string name="InuViewOnceShowNormal">Показывать как обычное фото вместо разового просмотра</string>
     <string name="InuSmallGifs">Маленькие GIF</string>
+    <string name="InuDeleteFailedProxies">Удалить недоступные прокси</string>
+    <string name="InuDeleteFailedProxiesConfirm">Вы уверены, что хотите удалить все недоступные прокси?</string>
 </resources>

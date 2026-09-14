@@ -9,6 +9,8 @@ import desu.inugram.helpers.dialogs.AccountOrderHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import desu.inugram.helpers.dialogs.PullActionHelper
+import desu.inugram.helpers.menu.DialogsMenuConfig
+import desu.inugram.helpers.menu.DialogsMenuHelper
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.AndroidUtilities
@@ -267,6 +269,9 @@ class DrawerLayoutAdapter(
         items.add(Item(6, LocaleController.getString(R.string.Contacts), R.drawable.msg_contacts))
         items.add(Item(10, LocaleController.getString(R.string.Calls), R.drawable.msg_calls))
         items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.FEED)) {
+            items.add(Item(ITEM_FEED, LocaleController.getString(R.string.InuFeed), R.drawable.msg_channel))
+        }
         if (PullActionHelper.shouldShowArchiveEntry(UserConfig.selectedAccount)) {
             items.add(Item(ITEM_ARCHIVE, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive))
         }
@@ -280,6 +285,7 @@ class DrawerLayoutAdapter(
         const val ITEM_ARCHIVE = 18
         const val ITEM_GHOST = 19
         const val ITEM_SCROLL_TOP = 20
+        const val ITEM_FEED = 21
     }
 
     class Item private constructor(

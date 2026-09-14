@@ -218,7 +218,9 @@ class FeedActivity : BaseFragment() {
         val lm = listView?.layoutManager as? LinearLayoutManager
         // Capture "was the user already looking at the bottom" BEFORE mutating the list, so a
         // live push doesn't yank someone reading older history down to the new message.
-        val wasAtBottom = lm != null && lm.findLastVisibleItemPosition() >= displayItems.size - 1 - LOAD_MORE_THRESHOLD
+        val wasAtBottom = listView?.let { lv ->
+            !lv.canScrollVertically(1) || (lm != null && lm.findLastCompletelyVisibleItemPosition() >= displayItems.size - 1)
+        } ?: false
         val chronological = added.asReversed()
         rows.addAll(chronological)
         val trailingDialogId = (displayItems.lastOrNull() as? Row.Msg)?.message?.getDialogId()

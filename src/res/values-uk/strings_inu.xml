@@ -685,6 +685,8 @@
     <string name="InuFeedNoChannels">Ви ще не підписані на жоден канал</string>
     <string name="InuFeedShownChannels">Показані у стрічці</string>
     <string name="InuFeedHiddenChannels">Приховані зі стрічки</string>
+    <string name="InuFeedHideAll">Приховати всі канали</string>
+    <string name="InuFeedShowAll">Показати всі канали</string>
     <string name="InuLoginViaQr">Увійти за QR-кодом</string>
     <string name="InuLoginViaPasskey">Увійти через Passkey</string>
     <string name="InuLoginViaBotToken">Увійти за токеном бота</string>
@@ -1377,4 +1379,6 @@
     <string name="InuGhostAutoOfflineInfo">Telegram позначає вас у мережі щоразу, коли ви надсилаєте повідомлення або реакцію, навіть із прихованим статусом. Це налаштування невдовзі знову надсилає статус «не в мережі».</string>
     <string name="InuViewOnceShowNormal">Показувати як звичайне фото замість відкриття через одноразовий перегляд</string>
     <string name="InuSmallGifs">Маленькі GIF</string>
+    <string name="InuDeleteFailedProxies">Видалити недоступні проксі</string>
+    <string name="InuDeleteFailedProxiesConfirm">Ви впевнені, що хочете видалити всі недоступні проксі?</string>
 </resources>

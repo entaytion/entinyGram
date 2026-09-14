@@ -668,6 +668,11 @@ object DrawerHelper {
                 close()
             }
 
+            ITEM_FEED -> {
+                nav.presentFragment(desu.inugram.ui.feed.FeedActivity())
+                close()
+            }
+
             else -> close()
         }
     }
@@ -692,6 +697,7 @@ object DrawerHelper {
     private const val ITEM_ARCHIVE = DrawerLayoutAdapter.ITEM_ARCHIVE
     private const val ITEM_GHOST = DrawerLayoutAdapter.ITEM_GHOST
     private const val ITEM_SCROLL_TOP = DrawerLayoutAdapter.ITEM_SCROLL_TOP
+    private const val ITEM_FEED = DrawerLayoutAdapter.ITEM_FEED
 
     @JvmStatic
     fun notifyDataChanged() {
@@ -740,6 +746,12 @@ object DrawerHelper {
                 val args = Bundle()
                 args.putInt("folderId", 1)
                 instance.presentFragment(DialogsActivity(args))
+            }
+        }
+
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.FEED)) {
+            io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
+                instance.presentFragment(desu.inugram.ui.feed.FeedActivity())
             }
         }
 

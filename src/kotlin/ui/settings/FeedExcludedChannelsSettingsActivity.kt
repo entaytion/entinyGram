@@ -27,6 +27,14 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
         }
 
         if (shown.isNotEmpty()) {
+            items.add(UItem.asButton(BUTTON_HIDE_ALL, R.drawable.msg_cancel, LocaleController.getString(R.string.InuFeedHideAll)))
+        }
+        if (hidden.isNotEmpty()) {
+            items.add(UItem.asButton(BUTTON_SHOW_ALL, R.drawable.msg_select, LocaleController.getString(R.string.InuFeedShowAll)))
+        }
+        items.add(UItem.asShadow(null))
+
+        if (shown.isNotEmpty()) {
             items.add(UItem.asHeader(LocaleController.getString(R.string.InuFeedShownChannels)))
             for ((index, dialogId) in shown.withIndex()) {
                 items.add(UItem.asCheck(CHANNEL_BASE + index, channelName(dialogId)).also { it.checked = true })
@@ -56,6 +64,17 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
                 FeedChannelSet.invalidate()
                 listView?.adapter?.update(true)
             }
+            item.id == BUTTON_HIDE_ALL -> {
+                val all = (shownIds + hiddenIds).map { it.toString() }.toSet()
+                InuConfig.FEED_EXCLUDED_CHANNELS.value = all
+                FeedChannelSet.invalidate()
+                listView?.adapter?.update(true)
+            }
+            item.id == BUTTON_SHOW_ALL -> {
+                InuConfig.FEED_EXCLUDED_CHANNELS.value = emptySet()
+                FeedChannelSet.invalidate()
+                listView?.adapter?.update(true)
+            }
             item.id in CHANNEL_BASE until CHANNEL_BASE + shownIds.size -> {
                 toggleExcluded(shownIds[item.id - CHANNEL_BASE])
             }
@@ -81,6 +100,8 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_INCLUDE_ARCHIVED = InuUtils.generateId()
+        private val BUTTON_HIDE_ALL = InuUtils.generateId()
+        private val BUTTON_SHOW_ALL = InuUtils.generateId()
         private const val CHANNEL_BASE = 10_000
         private const val HIDDEN_BASE = 20_000
 

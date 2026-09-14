@@ -803,6 +803,8 @@
     <string name="InuFeedNoChannels">You are not subscribed to any channels yet</string>
     <string name="InuFeedShownChannels">Shown in Feed</string>
     <string name="InuFeedHiddenChannels">Hidden from Feed</string>
+    <string name="InuFeedHideAll">Hide all channels</string>
+    <string name="InuFeedShowAll">Show all channels</string>
     <string name="InuLoginViaQr">Log in via QR code</string>
     <string name="InuLoginViaPasskey">Log in via Passkey</string>
     <string name="InuLoginViaBotToken">Log in via bot token</string>

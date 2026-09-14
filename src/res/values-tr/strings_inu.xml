@@ -625,6 +625,8 @@
     <string name="InuFeedNoChannels">Henüz hiçbir kanala katılmadınız</string>
     <string name="InuFeedShownChannels">Akışta gösterilenler</string>
     <string name="InuFeedHiddenChannels">Akıştan gizlenenler</string>
+    <string name="InuFeedHideAll">Tüm kanalları gizle</string>
+    <string name="InuFeedShowAll">Tüm kanalları göster</string>
     <string name="InuLoginViaQr">QR kodu ile giriş yap</string>
     <string name="InuLoginViaPasskey">Passkey ile giriş yap</string>
     <string name="InuLoginViaBotToken">Bot token ile giriş yap</string>
@@ -1361,4 +1363,6 @@
     <string name="InuProfileInfoRowsOrderInfo">Kendi profilinizdeki telefon numarası, biyografi ve kullanıcı adı satırlarını yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamacı sürükleyin, gizlemek için anahtarı kapatın.</string>
     <string name="InuProfileInfoRowsReset">Varsayılana sıfırla</string>
     <string name="InuSmallGifs">Küçük GIF\'leri göster</string>
+    <string name="InuDeleteFailedProxies">Kullanılamayan Vekil Sunucuları Sil</string>
+    <string name="InuDeleteFailedProxiesConfirm">Tüm kullanılamayan vekil sunucuları silmek istediğinizden emin misiniz?</string>
 </resources>
