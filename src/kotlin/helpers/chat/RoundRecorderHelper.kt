@@ -1,15 +1,23 @@
 package desu.inugram.helpers.chat
 
 import android.graphics.SurfaceTexture
+import android.hardware.camera2.CameraCharacteristics
+import android.util.Range
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import desu.inugram.InuConfig
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
 import org.telegram.messenger.Utilities
 import org.telegram.messenger.camera.Camera2Session
 import org.telegram.messenger.camera.CameraSession
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ZoomControlView
+import org.telegram.ui.Stories.recorder.FlashViews
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -220,5 +228,84 @@ object RoundRecorderHelper {
                 sessions[index]?.open(surface)
             }
         }
+    }
+
+    @JvmStatic
+    fun selectFpsRange(characteristics: CameraCharacteristics?, request60Fps: Boolean): Range<Int> {
+        if (!request60Fps || characteristics == null) {
+            return Range(30, 30)
+        }
+        val availableRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
+            ?: return Range(30, 30)
+
+        // 1. Look for fixed 60 FPS range [60, 60]
+        val fixed60 = availableRanges.firstOrNull { it.lower >= 60 && it.upper >= 60 }
+        if (fixed60 != null) return fixed60
+
+        // 2. Look for range with max FPS >= 60 (e.g. [30, 60] or [15, 60])
+        val maxFps60 = availableRanges
+            .filter { it.upper >= 60 }
+            .maxByOrNull { it.lower }
+        if (maxFps60 != null) return maxFps60
+
+        // 3. Fallback to fixed 30 or highest available
+        val fixed30 = availableRanges.firstOrNull { it.lower == 30 && it.upper == 30 }
+        if (fixed30 != null) return fixed30
+
+        return availableRanges.maxByOrNull { it.upper } ?: Range(30, 30)
+    }
+
+    @JvmStatic
+    fun getTargetFps(): Int = if (InuConfig.ROUND_RECORDER_60FPS.value) 60 else 30
+
+    @JvmStatic
+    fun getVideoBitrate(defaultBitrate: Int): Int {
+        return if (InuConfig.ROUND_RECORDER_60FPS.value) {
+            (defaultBitrate * 1.5f).toInt()
+        } else {
+            defaultBitrate
+        }
+    }
+
+    fun interface SessionProvider {
+        fun get(): Camera2Session?
+    }
+
+    @JvmStatic
+    fun isAeLocked(session: Camera2Session?): Boolean {
+        return session?.isAeLocked() ?: InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.value
+    }
+
+    @JvmStatic
+    fun attachAeLockButton(
+        parent: LinearLayout,
+        provider: SessionProvider,
+    ): FlashViews.ImageViewInvertable? {
+        if (!InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.value) return null
+        val context = parent.context
+        val button = FlashViews.ImageViewInvertable(context)
+        button.scaleType = ImageView.ScaleType.CENTER
+        button.contentDescription = LocaleController.getString(R.string.InuRoundRecorderLockExposure)
+        updateAeButtonIcon(button, isAeLocked(provider.get()))
+        button.setOnClickListener { v ->
+            v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+            val session = provider.get() ?: return@setOnClickListener
+            val newLocked = !session.isAeLocked()
+            session.setAeLocked(newLocked)
+            updateAeButtonIcon(button, isAeLocked(session))
+        }
+        parent.addView(button, LayoutHelper.createLinear(44, 44))
+        return button
+    }
+
+    @JvmStatic
+    fun syncAeButton(button: FlashViews.ImageViewInvertable?, session: Camera2Session?) {
+        if (button == null) return
+        updateAeButtonIcon(button, isAeLocked(session))
+    }
+
+    private fun updateAeButtonIcon(button: FlashViews.ImageViewInvertable, locked: Boolean) {
+        val resId = if (locked) R.drawable.inu_camera_ae_locked else R.drawable.inu_camera_ae_unlocked
+        button.setImageResource(resId)
     }
 }

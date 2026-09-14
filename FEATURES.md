@@ -110,8 +110,11 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **show small GIFs**: display animated GIFs in chat bubbles as compact 120dp thumbnails (similar to stickers) rather than full-width media - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
 - 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
 - 📡 **round recorder zoom-level buttons**: fixed zoom presets (1×/2×/3×/5×/10×, capped to what the lens supports) below the video feed - tap to snap and lock zoom instead of only pinching or dragging the slider
+- 📡 **60 FPS round video messages**: record smooth 60 FPS video notes with intelligent HAL frame rate negotiation (prioritizing 60 FPS fixed, then 30–60 FPS variable, with proper MediaCodec bitrate scaling and strictly monotonic timestamp clamping to completely eliminate audio/video desynchronization drift)
+- 📡 **round recorder exposure lock (AE lock)**: lock camera auto-exposure during round video recording (either automatically via a toggle or on-demand via a dedicated lock button in the recorder controls) to prevent distracting brightness flickers and exposure shifts - *inspired by Cherrygram*
 - 📡 **delete failed proxies**: one tap to remove every proxy that failed its last availability check, without touching the ones that still work
 - 📡 **fast cold start & locale caching**: binary serialization cache for downloaded translations drops locale parsing from ~1.6s to ~20ms, eliminates the redundant second XML parse on configuration change, and skips reconstructing background controllers and CPU telemetry loops for inactive account slots on startup
+- 📡 **Forward Pro (quick toggles & edit before forward)**: adds quick-action toggles directly in the forwarding dialog to show/hide the original author, strip/keep captions, and send silently, plus a dedicated edit button to modify message text and captions on the fly before sending - *inspired by Nagram X Turbo / Turbotel*
 
 ### debloat & premium noise
 

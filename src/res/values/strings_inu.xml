@@ -106,6 +106,12 @@
     <string name="InuRoundRecorderDualCamera">Dual camera</string>
     <string name="InuRoundRecorderDualCameraInfo">Open both front and rear cameras simultaneously for instant switching while recording. Uses more battery.</string>
     <string name="InuRoundRecorderCameraApi">Round recorder uses %1$s API. **Switch to %2$s >**</string>
+    <string name="InuRoundRecorder60Fps">60 FPS</string>
+    <string name="InuRoundRecorder60FpsInfo">Record video messages at 60 frames per second if supported by the camera.</string>
+    <string name="InuRoundRecorderLockExposure">Lock exposure</string>
+    <string name="InuRoundRecorderLockExposureInfo">Lock auto-exposure during recording to prevent flickering and brightness jumps.</string>
+    <string name="InuRoundRecorderExposureButton">Exposure lock button</string>
+    <string name="InuRoundRecorderExposureButtonInfo">Show a button to quickly lock or unlock exposure while recording.</string>
     <string name="InuShowAllRecentStickers">Show all recent stickers</string>
     <string name="InuNoStickerExtraPadding">Remove extra bottom padding</string>
     <string name="InuHideKeyboardOnScroll">Hide keyboard on scroll</string>
@@ -1382,4 +1388,11 @@
 
     <string name="InuMinimize">Minimize</string>
     <string name="InuSmallGifs">Show small GIFs</string>
+
+    <string name="InuForwardPro">Forward Pro</string>
+    <string name="InuForwardProInfo">Quick toggles for author, caption, and silent sending in the forward dialog, plus editing before forwarding.</string>
+    <string name="InuForwardProHideCaption">Hide captions</string>
+    <string name="InuForwardProShowCaption">Show captions</string>
+    <string name="InuForwardProSendWithSound">Send with sound</string>
+    <string name="InuForwardProEditedNotice">Edited (sending without author)</string>
 </resources>

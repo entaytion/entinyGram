@@ -102,6 +102,12 @@
     <string name="InuRoundRecorderDualCamera">Çift kamera</string>
     <string name="InuRoundRecorderDualCameraInfo">Kayıt sırasında anında geçiş yapmak için hem ön hem de arka kamerayı aynı anda açar. Daha fazla pil tüketir.</string>
     <string name="InuRoundRecorderCameraApi">Yuvarlak kaydedici %1$s API\'sini kullanıyor. **%2$s API\'sine geç >**</string>
+    <string name="InuRoundRecorder60Fps">Video mesajlarında 60 FPS</string>
+    <string name="InuRoundRecorder60FpsInfo">Kamera destekliyorsa video mesajlarını 60 FPS hızında kaydedin.</string>
+    <string name="InuRoundRecorderLockExposure">Pozlamayı kilitle</string>
+    <string name="InuRoundRecorderLockExposureInfo">Parlaklık değişimlerini önlemek için kayıt sırasında otomatik pozlamayı kilitler.</string>
+    <string name="InuRoundRecorderExposureButton">Pozlama kilidi düğmesi</string>
+    <string name="InuRoundRecorderExposureButtonInfo">Kayıt sırasında pozlamayı hızlıca kilitlemek veya açmak için bir düğme gösterir.</string>
     <string name="InuShowAllRecentStickers">Tüm son çıkartmaları göster</string>
     <string name="InuNoStickerExtraPadding">Alt boşluğu kaldır</string>
     <string name="InuHideKeyboardOnScroll">Kaydırırken klavyeyi gizle</string>
@@ -1365,4 +1371,11 @@
     <string name="InuSmallGifs">Küçük GIF\'leri göster</string>
     <string name="InuDeleteFailedProxies">Kullanılamayan Vekil Sunucuları Sil</string>
     <string name="InuDeleteFailedProxiesConfirm">Tüm kullanılamayan vekil sunucuları silmek istediğinizden emin misiniz?</string>
+
+    <string name="InuForwardPro">Forward Pro</string>
+    <string name="InuForwardProInfo">İletme penceresinde yazar, başlık ve sessiz gönderme için hızlı geçişler ve iletmeden önce düzenleme.</string>
+    <string name="InuForwardProHideCaption">Başlıkları gizle</string>
+    <string name="InuForwardProShowCaption">Başlıkları göster</string>
+    <string name="InuForwardProSendWithSound">Sesli gönder</string>
+    <string name="InuForwardProEditedNotice">Düzenlendi (yazarsız gönderiliyor)</string>
 </resources>

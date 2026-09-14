@@ -216,6 +216,14 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.SHOW_FORWARDS_COUNT.value)
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FORWARD_PRO,
+                R.string.InuForwardPro,
+                R.string.InuForwardProInfo,
+                InuConfig.FORWARD_PRO.value,
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_COMPACT_EDITED,
                 LocaleController.getString(R.string.InuCompactEdited),
@@ -363,6 +371,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.SHOW_FORWARDS_COUNT.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 miscPreview?.invalidate()
+            }
+
+            TOGGLE_FORWARD_PRO -> {
+                val new = InuConfig.FORWARD_PRO.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_COMPACT_EDITED -> {
@@ -544,6 +557,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_FORWARD_TIME = InuUtils.generateId()
         private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_FORWARDS_COUNT = InuUtils.generateId()
+        private val TOGGLE_FORWARD_PRO = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val TOGGLE_SMALL_GIFS = InuUtils.generateId()
@@ -602,6 +616,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-forward-time", R.string.InuShowForwardTime, TOGGLE_SHOW_FORWARD_TIME),
                 SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
+                SearchRegistry.Entry("forward-pro", R.string.InuForwardPro, TOGGLE_FORWARD_PRO),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("small-gifs", R.string.InuSmallGifs, TOGGLE_SMALL_GIFS),

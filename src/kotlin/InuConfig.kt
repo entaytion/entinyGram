@@ -1206,6 +1206,15 @@ object InuConfig {
     @JvmField
     val ROUND_RECORDER_DUAL_CAMERA = BoolItem("round_recorder_dual_camera", true)
 
+    @JvmField
+    val ROUND_RECORDER_60FPS = BoolItem("round_recorder_60fps", false)
+
+    @JvmField
+    val ROUND_RECORDER_LOCK_EXPOSURE = BoolItem("round_recorder_lock_exposure", false)
+
+    @JvmField
+    val ROUND_RECORDER_EXPOSURE_BUTTON = BoolItem("round_recorder_exposure_button", true)
+
     // todo: remove in 40
     class NonIslandSplitFromTabBarsItem(key: String) : BoolItem(key, false) {
         override fun read(prefs: SharedPreferences): Boolean {
@@ -1318,6 +1327,9 @@ object InuConfig {
 
     @JvmField
     val SHOW_FORWARDS_COUNT = BoolItem("show_forwards_count", false)
+
+    @JvmField
+    val FORWARD_PRO = BoolItem("forward_pro", false)
 
     @JvmField
     val BUBBLE_TAILS = BoolItem("bubble_tails", true)

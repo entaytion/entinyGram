@@ -81,7 +81,13 @@
     <string name="InuRoundRecorderExponentialZoomInfo">Плавніша крива зуму, як у Google Camera</string>
     <string name="InuRoundRecorderDualCamera">Подвійна камера</string>
     <string name="InuRoundRecorderDualCameraInfo">Одночасний запуск фронтальної та основної камер для миттєвого перемикання під час запису. Споживає більше батареї.</string>
-    <string name="InuRoundRecorderCameraApi">Запис відеоповідомлень використовує %1$s API. **Перемкнути на %2$s >**</string>
+    <string name="InuRoundRecorderCameraApi">Запис кружечків використовує %1$s API. **Перемкнутися на %2$s >**</string>
+    <string name="InuRoundRecorder60Fps">60 FPS у відеоповідомленнях</string>
+    <string name="InuRoundRecorder60FpsInfo">Записувати відеоповідомлення з частотою 60 кадрів на секунду, якщо це підтримується камерою.</string>
+    <string name="InuRoundRecorderLockExposure">Фіксувати експозицію</string>
+    <string name="InuRoundRecorderLockExposureInfo">Блокує автоекспозицію під час запису відеоповідомлень, запобігаючи мерехтінню та стрибкам яскравості.</string>
+    <string name="InuRoundRecorderExposureButton">Кнопка фіксації експозиції</string>
+    <string name="InuRoundRecorderExposureButtonInfo">Показувати кнопку для швидкого блокування або розблокування експозиції під час запису.</string>
     <string name="InuShowAllRecentStickers">Показувати всі нещодавні наліпки</string>
     <string name="InuNoStickerExtraPadding">Прибрати додатковий відступ знизу</string>
     <string name="InuHideKeyboardOnScroll">Приховувати клавіатуру при прокручуванні</string>
@@ -1381,4 +1387,11 @@
     <string name="InuSmallGifs">Маленькі GIF</string>
     <string name="InuDeleteFailedProxies">Видалити недоступні проксі</string>
     <string name="InuDeleteFailedProxiesConfirm">Ви впевнені, що хочете видалити всі недоступні проксі?</string>
+
+    <string name="InuForwardPro">Forward Pro</string>
+    <string name="InuForwardProInfo">Швидкі перемикачі автора, підпису та беззвучного надсилання у меню пересилання, а також редагування перед відправкою.</string>
+    <string name="InuForwardProHideCaption">Приховати підпис</string>
+    <string name="InuForwardProShowCaption">Показати підпис</string>
+    <string name="InuForwardProSendWithSound">Надіслати зі звуком</string>
+    <string name="InuForwardProEditedNotice">Відредаговано (надсилається без автора)</string>
 </resources>

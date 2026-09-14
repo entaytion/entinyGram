@@ -632,6 +632,12 @@
     <string name="InuRoundRecorderDualCamera">双摄像头</string>
     <string name="InuRoundRecorderDualCameraInfo">同时打开前后摄像头，可在录制中即时切换。耗电更多。</string>
     <string name="InuRoundRecorderCameraApi">圆形录制使用 %1$s API。**切换到 %2$s >**</string>
+    <string name="InuRoundRecorder60Fps">视频留言 60 FPS</string>
+    <string name="InuRoundRecorder60FpsInfo">如果相机支持，以 60 FPS 录制视频留言。</string>
+    <string name="InuRoundRecorderLockExposure">锁定曝光</string>
+    <string name="InuRoundRecorderLockExposureInfo">录制期间锁定自动曝光，防止画面亮度闪烁跳动。</string>
+    <string name="InuRoundRecorderExposureButton">曝光锁定按钮</string>
+    <string name="InuRoundRecorderExposureButtonInfo">在录制时显示快速锁定或解锁曝光的按钮。</string>
     <string name="InuHideBottomBarNonJoinedGroups">未加入的群组</string>
     <string name="InuShowSpoilersDirectly">直接显示剧透</string>
     <string name="InuShowSpoilersDirectlyInfo">跳过点击展开的步骤——文本剧透内容将随时随地直接显示。</string>
@@ -1367,4 +1373,11 @@
     <string name="InuSmallGifs">GIF 显示得更小</string>
     <string name="InuDeleteFailedProxies">删除失效代理</string>
     <string name="InuDeleteFailedProxiesConfirm">确定要删除所有不可用的代理吗？</string>
+
+    <string name="InuForwardPro">Forward Pro</string>
+    <string name="InuForwardProInfo">在转发对话框中提供发送者、文字说明和静音发送的快速开关，以及转发前编辑。</string>
+    <string name="InuForwardProHideCaption">隐藏文字说明</string>
+    <string name="InuForwardProShowCaption">显示文字说明</string>
+    <string name="InuForwardProSendWithSound">带声音发送</string>
+    <string name="InuForwardProEditedNotice">已编辑（将不带作者发送）</string>
 </resources>

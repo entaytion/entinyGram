@@ -1,0 +1,204 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 14 Sep 2026 14:08:33 +0300
+Subject: Add 60 FPS round video messages and round recorder exposure lock
+
+---
+ .../messenger/camera/Camera2Session.java      | 26 +++++++++-
+ .../ui/Components/InstantCameraView.java      | 48 ++++++++++++++-----
+ 2 files changed, 59 insertions(+), 15 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+@@ -486,6 +486,17 @@ public class Camera2Session {
+         }
+     }
+ 
++    private boolean aeLocked = desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
++    public void setAeLocked(boolean locked) {
++        if (aeLocked != locked) {
++            aeLocked = locked;
++            updateCaptureRequest();
++        }
++    }
++    public boolean isAeLocked() {
++        return aeLocked;
++    }
++
+     private void updateCaptureRequest() {
+         if (cameraDevice == null || surface == null || captureSession == null) return;
+         try {
+@@ -508,11 +519,22 @@ public class Camera2Session {
+             captureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashing ? (recordingVideo ? CaptureRequest.FLASH_MODE_TORCH : CaptureRequest.FLASH_MODE_SINGLE) : CaptureRequest.FLASH_MODE_OFF);
+ 
+             if (recordingVideo) {
+-                // inu: capping to 30 fps to prevent a/v sync drift. more of a workaround, but it works :shrug:
+-                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<Integer>(30, 30));
++                Range<Integer> fpsRange;
++                if (desu.inugram.InuConfig.ROUND_RECORDER_60FPS.getValue()) {
++                    fpsRange = desu.inugram.helpers.chat.RoundRecorderHelper.selectFpsRange(cameraCharacteristics, true);
++                } else {
++                    fpsRange = new Range<Integer>(30, 30);
++                }
++                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
+                 captureRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_VIDEO_RECORD);
+             }
+ 
++            Boolean aeLockAvailable = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE) : null;
++            if (aeLockAvailable == null || aeLockAvailable) {
++                boolean lock = aeLocked || desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
++                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
++            }
++
+             if (sensorSize != null && Math.abs(currentZoom - 1f) >= 0.01f) {
+                 final int centerX = sensorSize.width() / 2;
+                 final int centerY = sensorSize.height() / 2;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+@@ -405,12 +405,20 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+         });
+         updateFlash();
+ 
++        inu_aeButton = RoundRecorderHelper.attachAeLockButton(buttonsLayout, () -> camera2SessionCurrent);
++
+         if (!isNewDesign) {
+             flashViews.add(switchCameraButton);
+             flashViews.add(flashButton);
++            if (inu_aeButton != null) {
++                flashViews.add(inu_aeButton);
++            }
+         } else if (!resourcesProvider.isDark()) {
+             switchCameraButton.setInvert(0.6f);
+             flashButton.setInvert(0.6f);
++            if (inu_aeButton != null) {
++                inu_aeButton.setInvert(0.6f);
++            }
+         }
+ 
+         muteImageView = new ImageView(context);
+@@ -1186,6 +1194,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+         cameraThread.reinitForNewCamera();
+         RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
+         RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
++        RoundRecorderHelper.syncAeButton(inu_aeButton, camera2SessionCurrent);
+     }
+ 
+     // Old Camera1 API
+@@ -1999,6 +2008,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                     AndroidUtilities.runOnUIThread(() -> {
+                         RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
+                         RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
++                        RoundRecorderHelper.syncAeButton(inu_aeButton, camera2SessionCurrent);
+                     });
+                     break;
+                 }
+@@ -2257,7 +2267,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                     buffer.lastWroteBuffer = 0;
+                     buffer.results = AudioBufferInfo.MAX_SAMPLES;
+                     for (int a = 0; a < AudioBufferInfo.MAX_SAMPLES; a++) {
+-                        if (audioPresentationTimeUs == -1 && !shouldUseTimestamp) {
++                        if (audioPresentationTimeUs == -1) {
+                             audioPresentationTimeUs = System.nanoTime() / 1000;
+                         }
+ 
+@@ -2283,25 +2293,30 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                             break;
+                         }
+                         long timestamp;
++                        int bufferDurationUs = 1000000 * readResult / audioSampleRate / 2;
+                         if (shouldUseTimestamp) {
+                             try {
+-                                audioRecorder.getTimestamp(audioTimestamp, AudioTimestamp.TIMEBASE_MONOTONIC);
+-                                timestamp = audioTimestamp.nanoTime / 1000;
++                                int res = audioRecorder.getTimestamp(audioTimestamp, AudioTimestamp.TIMEBASE_MONOTONIC);
++                                if (res == AudioRecord.SUCCESS && audioTimestamp.nanoTime > 0) {
++                                    timestamp = audioTimestamp.nanoTime / 1000;
++                                    audioPresentationTimeUs = timestamp + bufferDurationUs;
++                                } else {
++                                    timestamp = audioPresentationTimeUs;
++                                    audioPresentationTimeUs += bufferDurationUs;
++                                }
+                             } catch (Exception e) {
+                                 FileLog.e(e);
+                                 shouldUseTimestamp = false;
+-                                timestamp = audioPresentationTimeUs = System.nanoTime() / 1000;
++                                timestamp = audioPresentationTimeUs;
++                                audioPresentationTimeUs += bufferDurationUs;
+                             }
+                         } else {
+                             timestamp = audioPresentationTimeUs;
++                            audioPresentationTimeUs += bufferDurationUs;
+                         }
+                         buffer.offset[a] = timestamp;
+ 
+                         buffer.read[a] = readResult;
+-                        int bufferDurationUs = 1000000 * readResult / audioSampleRate / 2;
+-                        if (!shouldUseTimestamp) {
+-                            audioPresentationTimeUs += bufferDurationUs;
+-                        }
+                     }
+                     if (buffer.results >= 0 || buffer.last) {
+                         if (!running && buffer.results < AudioBufferInfo.MAX_SAMPLES) {
+@@ -2613,7 +2628,12 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                 }
+                 lastTimestamp = timestampNanos;
+             } else {
+-                alphaDt = dt = (timestampNanos - lastTimestamp);
++                dt = (timestampNanos - lastTimestamp);
++                long expectedDuration = 1000000000L / RoundRecorderHelper.getTargetFps();
++                if (dt <= 0 || dt > 200000000L) {
++                    dt = expectedDuration;
++                }
++                alphaDt = dt;
+                 lastTimestamp = timestampNanos;
+             }
+             firstVideoFrameSincePause = false;
+@@ -2916,7 +2936,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                         videoEditedInfo.encryptedFile = encryptedFile;
+                         videoEditedInfo.key = key;
+                         videoEditedInfo.iv = iv;
+-                        videoEditedInfo.framerate = 25;
++                        videoEditedInfo.framerate = RoundRecorderHelper.getTargetFps();
+                         videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
+                         videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
+                         videoEditedInfo.originalPath = videoFile.getAbsolutePath();
+@@ -3068,7 +3088,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                         videoEditedInfo.encryptedFile = encryptedFile;
+                         videoEditedInfo.key = key;
+                         videoEditedInfo.iv = iv;
+-                        videoEditedInfo.framerate = 25;
++                        videoEditedInfo.framerate = RoundRecorderHelper.getTargetFps();
+                         videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
+                         videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
+                         videoEditedInfo.originalPath = videoFile.getAbsolutePath();
+@@ -3233,8 +3253,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                 MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, videoWidth, videoHeight);
+ 
+                 format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+-                format.setInteger(MediaFormat.KEY_BIT_RATE, videoBitrate);
+-                format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
++                format.setInteger(MediaFormat.KEY_BIT_RATE, RoundRecorderHelper.getVideoBitrate(videoBitrate));
++                format.setInteger(MediaFormat.KEY_FRAME_RATE, RoundRecorderHelper.getTargetFps());
+                 format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
+ 
+                 videoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+@@ -3280,6 +3300,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+                     RoundRecorderHelper.setSliderVisible(inu_zoomSlider, true);
+                     RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
+                     RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, true);
++                    RoundRecorderHelper.syncAeButton(inu_aeButton, camera2SessionCurrent);
+                     updateFlash();
+                     invalidate();
+                     NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStarted, recordingGuid, false);
+@@ -3841,6 +3862,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+     ValueAnimator finishZoomTransition;
+     private ZoomControlView inu_zoomSlider;
+     private ZoomLevelButtonsView inu_zoomButtons;
++    private FlashViews.ImageViewInvertable inu_aeButton;
+     private float inu_pinchStartT = 0f;
+ 
+     public void finishZoom() {

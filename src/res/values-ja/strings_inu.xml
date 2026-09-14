@@ -633,6 +633,12 @@
     <string name="InuRoundRecorderDualCamera">デュアルカメラ</string>
     <string name="InuRoundRecorderDualCameraInfo">フロントとリアのカメラを同時に開き、録画中に瞬時に切り替えできます。電池消費が増えます。</string>
     <string name="InuRoundRecorderCameraApi">丸メッセージの録画は %1$s API を使用しています。**%2$s に切り替える >**</string>
+    <string name="InuRoundRecorder60Fps">動画メッセージで60 FPS</string>
+    <string name="InuRoundRecorder60FpsInfo">カメラが対応している場合、60 FPSで動画メッセージを録画します。</string>
+    <string name="InuRoundRecorderLockExposure">露出を固定</string>
+    <string name="InuRoundRecorderLockExposureInfo">録画中の自動露出をロックし、明るさのちらつきや急激な変化を防ぎます。</string>
+    <string name="InuRoundRecorderExposureButton">露出固定ボタン</string>
+    <string name="InuRoundRecorderExposureButtonInfo">録画中に露出をすばやく固定または解除するボタンを表示します。</string>
     <string name="InuHideBottomBarNonJoinedGroups">未参加のグループ</string>
     <string name="InuShowSpoilersDirectly">スポイラーを直接表示</string>
     <string name="InuShowSpoilersDirectlyInfo">タップして表示する手順を省略します — テキストスポイラーの内容がどこでもすぐに表示されます。</string>
@@ -1367,4 +1373,11 @@
     <string name="InuSmallGifs">GIFを小さく表示</string>
     <string name="InuDeleteFailedProxies">接続できないプロキシを削除</string>
     <string name="InuDeleteFailedProxiesConfirm">利用できないすべてのプロキシを削除してもよろしいですか？</string>
+
+    <string name="InuForwardPro">Forward Pro</string>
+    <string name="InuForwardProInfo">転送ダイアログでの送信者名、キャプション、通知音のクイック切り替えおよび転送前の編集。</string>
+    <string name="InuForwardProHideCaption">キャプションを非表示</string>
+    <string name="InuForwardProShowCaption">キャプションを表示</string>
+    <string name="InuForwardProSendWithSound">通知音付きで送信</string>
+    <string name="InuForwardProEditedNotice">編集済み（送信者なしで送信）</string>
 </resources>

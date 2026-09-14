@@ -416,3 +416,5 @@ entiny/feed-menu-entry.patch
 entiny/dialogs-menu-customization.patch
 entiny/small-gifs.patch
 entiny/startup-optimizations.patch
+entiny/forward-pro.patch
+entiny/round-recorder-60fps-and-exposure-lock.patch

@@ -1,0 +1,115 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 14 Sep 2026 11:22:54 +0300
+Subject: Forward Pro: quick toggles and edit before forward in ShareAlert
+
+---
+ .../telegram/ui/Components/ShareAlert.java    | 35 +++++++++++++++----
+ 1 file changed, 28 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -164,7 +164,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+     private ShareDialogsAdapter listAdapter;
+     private ShareTopicsAdapter shareTopicsAdapter;
+     private ShareSearchAdapter searchAdapter;
+-    protected ArrayList<MessageObject> sendingMessageObjects;
++    public ArrayList<MessageObject> sendingMessageObjects;
+     private String[] sendingText = new String[2];
+     private int hasPoll;
+     private StickerEmptyView searchEmptyView;
+@@ -1085,6 +1085,9 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         });
+ 
+         frameLayout.addView(searchView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 40, Gravity.BOTTOM | Gravity.LEFT, 11, 7, 11, 11));
++        if (desu.inugram.InuConfig.FORWARD_PRO.getValue()) {
++            desu.inugram.helpers.chat.ForwardProHelper.attachTopIcons(this, searchView);
++        }
+         topicsBackActionBar = new ActionBar(context);
+         topicsBackActionBar.setOccupyStatusBar(false);
+         topicsBackActionBar.setBackButtonImage(R.drawable.ic_ab_back);
+@@ -1687,7 +1690,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+ //        commentTextView.setBackgroundColor(backgroundColor);
+         commentTextView.setHint(LocaleController.getString(R.string.ShareComment));
+         commentTextView.onResume();
+-        commentTextView.setPadding(0, 0, dp(84), 0);
++        commentTextView.setPadding(0, 0, dp(84) + desu.inugram.helpers.chat.ForwardProHelper.getExtraCommentPadding(this), 0);
+         frameLayout2.addView(commentTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.LEFT));
+         frameLayout2.setClipChildren(false);
+         frameLayout2.setClipToPadding(false);
+@@ -1727,7 +1730,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         writeButtonContainer.setScaleX(0.2f);
+         writeButtonContainer.setScaleY(0.2f);
+         writeButtonContainer.setAlpha(0.0f);
+-        containerView.addView(writeButtonContainer, LayoutHelper.createFrame(110, 50, Gravity.RIGHT | Gravity.BOTTOM));
++        int writeButtonContainerWidth = desu.inugram.InuConfig.FORWARD_PRO.getValue() ? 156 : 110;
++        containerView.addView(writeButtonContainer, LayoutHelper.createFrame(writeButtonContainerWidth, 50, Gravity.RIGHT | Gravity.BOTTOM));
+ 
+         writeButton = new ChatActivityEnterView.SendButton(context, R.drawable.send_plane_24, resourcesProvider) {
+             @Override
+@@ -1759,7 +1763,16 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         writeButton.setCirclePadding(dp(1), dp(6));
+         writeButton.newCounterPos = true;
+         writeButtonContainer.addView(writeButton, LayoutHelper.createFrameMatchParent());
+-        writeButton.setOnClickListener(v -> sendInternal(true));
++        if (desu.inugram.InuConfig.FORWARD_PRO.getValue()) {
++            desu.inugram.helpers.chat.ForwardProHelper.attachEditButton(this, writeButtonContainer);
++        }
++        writeButton.setOnClickListener(v -> {
++            boolean sound = true;
++            if (desu.inugram.InuConfig.FORWARD_PRO.getValue() && desu.inugram.helpers.chat.ForwardProHelper.isSilentSend(this)) {
++                sound = false;
++            }
++            sendInternal(sound);
++        });
+         writeButton.setOnLongClickListener(v -> {
+             return onSendLongClick(writeButton);
+         });
+@@ -2245,7 +2258,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         return containerView.getMeasuredHeight() - containerViewTop;
+     }
+ 
+-    private boolean showSendersName = true;
++    public boolean showSendersName = true;
+     private ActionBarPopupWindow sendPopupWindow;
+     private boolean onSendLongClick(View view) {
+         if (parentActivity == null) {
+@@ -2300,10 +2313,16 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+             showSendersNameView.setOnClickListener(e -> {
+                 showSendersNameView.setChecked(showSendersName = true);
+                 hideSendersNameView.setChecked(!showSendersName);
++                if (desu.inugram.InuConfig.FORWARD_PRO.getValue()) {
++                    desu.inugram.helpers.chat.ForwardProHelper.updateTopAuthorIcon(ShareAlert.this);
++                }
+             });
+             hideSendersNameView.setOnClickListener(e -> {
+                 showSendersNameView.setChecked(showSendersName = false);
+                 hideSendersNameView.setChecked(!showSendersName);
++                if (desu.inugram.InuConfig.FORWARD_PRO.getValue()) {
++                    desu.inugram.helpers.chat.ForwardProHelper.updateTopAuthorIcon(ShareAlert.this);
++                }
+             });
+             sendPopupLayout1.setupRadialSelectors(getThemedColor(Theme.key_dialogButtonSelector));
+ 
+@@ -2505,7 +2524,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+                         params.monoForumPeer = monoForumPeerId;
+                         SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+                     }
+-                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName,false, withSound, 0, 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
++                    boolean inu_hideCaption = desu.inugram.InuConfig.FORWARD_PRO.getValue() && desu.inugram.helpers.chat.ForwardProHelper.shouldHideCaption(this);
++                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName, inu_hideCaption, withSound, 0, 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
+                     if (result != 0) {
+                         removeKeys.add(key);
+                     }
+@@ -2879,7 +2899,8 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+             writeButton.setStarsPrice(price, messagesCount, animated != 0);
+             showCommentTextView(true);
+ 
+-            commentTextView.setPadding(0, 0, Math.max(dp(84), writeButton.width()), 0);
++            int extraPad = desu.inugram.helpers.chat.ForwardProHelper.getExtraCommentPadding(this);
++            commentTextView.setPadding(0, 0, Math.max(dp(84) + extraPad, writeButton.width() + extraPad), 0);
+         }
+     }
+ 
