@@ -1360,4 +1360,5 @@
     <string name="InuProfileInfoRowsItems">Satırlar</string>
     <string name="InuProfileInfoRowsOrderInfo">Kendi profilinizdeki telefon numarası, biyografi ve kullanıcı adı satırlarını yeniden sıralayın veya gizleyin. Yeniden düzenlemek için tutamacı sürükleyin, gizlemek için anahtarı kapatın.</string>
     <string name="InuProfileInfoRowsReset">Varsayılana sıfırla</string>
+    <string name="InuSmallGifs">Küçük GIF\'leri göster</string>
 </resources>

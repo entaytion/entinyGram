@@ -1379,4 +1379,5 @@
     <string name="InuPreviewMessage">Preview</string>
 
     <string name="InuMinimize">Minimize</string>
+    <string name="InuSmallGifs">Show small GIFs</string>
 </resources>

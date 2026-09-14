@@ -1362,4 +1362,5 @@
     <string name="InuProfileInfoRowsItems">行项目</string>
     <string name="InuProfileInfoRowsOrderInfo">在您自己的个人资料上重新排序或隐藏电话号码、简介和用户名行。拖动控制柄以重新排列，切换开关以隐藏。</string>
     <string name="InuProfileInfoRowsReset">恢复默认</string>
+    <string name="InuSmallGifs">GIF 显示得更小</string>
 </resources>

@@ -1362,4 +1362,5 @@
     <string name="InuProfileInfoRowsItems">行</string>
     <string name="InuProfileInfoRowsOrderInfo">自分のプロフィールの電話番号、自己紹介、ユーザー名の行を並べ替えたり非表示にしたりできます。ハンドルをドラッグして並べ替え、スイッチで非表示に切り替えます。</string>
     <string name="InuProfileInfoRowsReset">デフォルトに戻す</string>
+    <string name="InuSmallGifs">GIFを小さく表示</string>
 </resources>

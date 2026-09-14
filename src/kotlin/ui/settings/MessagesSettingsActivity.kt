@@ -229,6 +229,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             UItem.asCheck(
+                TOGGLE_SMALL_GIFS,
+                LocaleController.getString(R.string.InuSmallGifs),
+            ).setChecked(InuConfig.SMALL_GIFS.value)
+        )
+        items.add(
+            UItem.asCheck(
                 TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE,
                 LocaleController.getString(R.string.InuShowPollResultsBeforeVote),
             ).setChecked(InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.value)
@@ -369,6 +375,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.BUBBLE_TAILS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 miscPreview?.invalidate()
+            }
+
+            TOGGLE_SMALL_GIFS -> {
+                val new = InuConfig.SMALL_GIFS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
 
             TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE -> {
@@ -534,6 +546,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_FORWARDS_COUNT = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
+        private val TOGGLE_SMALL_GIFS = InuUtils.generateId()
         private val TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
@@ -591,6 +604,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
+                SearchRegistry.Entry("small-gifs", R.string.InuSmallGifs, TOGGLE_SMALL_GIFS),
                 SearchRegistry.Entry("show-poll-results-before-vote", R.string.InuShowPollResultsBeforeVote, TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),

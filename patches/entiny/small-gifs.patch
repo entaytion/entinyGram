@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 14 Sep 2026 10:02:42 +0300
+Subject: Allow displaying GIFs as compact 120dp thumbnails
+
+Add option to display animated GIFs in chat bubbles as compact 120dp
+thumbnails rather than full-width media.
+
+Thanks to Nagram (https://github.com/NextAlone/Nagram) for the
+original implementation we ported this from (commit 1a45e06).
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java   | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -10013,6 +10013,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     if (w == 0 || h == 0) {
+                         w = h = dp(150);
+                     }
++                    if (InuConfig.SMALL_GIFS.getValue() && messageObject.type == MessageObject.TYPE_GIF) {
++                        w = h = dp(120);
++                    }
+                     if (messageObject.type == MessageObject.TYPE_VIDEO) {
+                         if (w < infoWidth + dp(16 + 24)) {
+                             w = infoWidth + dp(16 + 24);

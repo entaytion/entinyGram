@@ -1035,6 +1035,9 @@ object InuConfig {
     @JvmField
     val NO_STICKER_EXTRA_PADDING = BoolItem("no_sticker_extra_padding", true)
 
+    @JvmField
+    val SMALL_GIFS = BoolItem("small_gifs", false)
+
     class FoldersDisplayModeItem : IntItem("folders_display_mode", TITLES) {
         companion object {
             const val TITLES = 1

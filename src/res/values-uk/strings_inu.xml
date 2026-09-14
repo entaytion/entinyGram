@@ -1376,4 +1376,5 @@
     <string name="InuGhostAutoOffline">Автоматично переходити в офлайн</string>
     <string name="InuGhostAutoOfflineInfo">Telegram позначає вас у мережі щоразу, коли ви надсилаєте повідомлення або реакцію, навіть із прихованим статусом. Це налаштування невдовзі знову надсилає статус «не в мережі».</string>
     <string name="InuViewOnceShowNormal">Показувати як звичайне фото замість відкриття через одноразовий перегляд</string>
+    <string name="InuSmallGifs">Маленькі GIF</string>
 </resources>

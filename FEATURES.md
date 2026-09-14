@@ -107,6 +107,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
 - 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
 - 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
+- 📡 **show small GIFs**: display animated GIFs in chat bubbles as compact 120dp thumbnails (similar to stickers) rather than full-width media - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
 - 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
 - 📡 **round recorder zoom-level buttons**: fixed zoom presets (1×/2×/3×/5×/10×, capped to what the lens supports) below the video feed - tap to snap and lock zoom instead of only pinching or dragging the slider
 - 📡 **delete failed proxies**: one tap to remove every proxy that failed its last availability check, without touching the ones that still work

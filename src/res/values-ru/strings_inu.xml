@@ -1384,4 +1384,5 @@
     <string name="InuLocalCustomEmoji">Локальные авторские эмодзи</string>
     <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, позволяя использовать их без Premium. Клиенты entinyGram и Nekogram показывают их анимированными, а другие клиенты видят обычный эмодзи как ссылку. Включите вместе с локальным Premium для открытия панели выбора.</string>
     <string name="InuViewOnceShowNormal">Показывать как обычное фото вместо разового просмотра</string>
+    <string name="InuSmallGifs">Маленькие GIF</string>
 </resources>
