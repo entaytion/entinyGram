@@ -405,7 +405,6 @@ entiny/badge-tap-bulletin.patch
 entiny/gitignore-hygiene.patch
 entiny/translate-optout-without-premium.patch
 entiny/chat-menu-live-reorder.patch
-entiny/debug-animation-jank.patch
 entiny/fast-resend-login-code.patch
 entiny/parallel-account-init.patch
 bugfix/positional-format-args.patch
@@ -416,3 +415,4 @@ entiny/preserve-media-cache-fallback.patch
 entiny/feed-menu-entry.patch
 entiny/dialogs-menu-customization.patch
 entiny/small-gifs.patch
+entiny/startup-optimizations.patch

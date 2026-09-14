@@ -1,0 +1,108 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 14 Sep 2026 11:04:12 +0300
+Subject: Fast binary cache and eliminate redundant reload in LocaleController
+
+---
+ .../telegram/messenger/ApplicationLoader.java |  9 ++++++--
+ .../telegram/messenger/LocaleController.java  | 23 +++++++++++++++----
+ .../telegram/tgnet/ConnectionsManager.java    |  2 +-
+ 3 files changed, 26 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -273,14 +273,19 @@ public class ApplicationLoader extends Application {
+ 
+         MediaController.getInstance();
+         for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
+-            ContactsController.getInstance(a).checkAppAccount();
+-            DownloadController.getInstance(a);
++            if (a == 0 || UserConfig.getInstance(a).isClientActivated()) {
++                ContactsController.getInstance(a).checkAppAccount();
++                DownloadController.getInstance(a);
++            }
+         }
+         BillingController.getInstance().startConnection();
+     }
+ 
+     private static void initAccount(int a) {
+         UserConfig.getInstance(a).loadConfig();
++        if (a != 0 && !UserConfig.getInstance(a).isClientActivated()) {
++            return;
++        }
+         MessagesController.getInstance(a);
+         if (a == 0) {
+             SharedConfig.pushStringStatus = "__FIREBASE_GENERATING_SINCE_" + ConnectionsManager.getInstance(a).getCurrentTime() + "__";
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+@@ -1208,6 +1208,12 @@ public class LocaleController {
+     }
+ 
+     private HashMap<String, String> getLocaleFileStrings(File file, boolean preserveEscapes) {
++        if (!preserveEscapes) {
++            HashMap<String, String> cached = desu.inugram.helpers.translate.LocaleCacheHelper.readCache(file);
++            if (cached != null) {
++                return cached;
++            }
++        }
+         FileInputStream stream = null;
+         reloadLastFile = false;
+         FileLog.d("getLocaleFileStrings: reloadLastFile = false");
+@@ -1215,11 +1221,11 @@ public class LocaleController {
+             if (!file.exists()) {
+                 return new HashMap<>();
+             }
+-            HashMap<String, String> stringMap = new HashMap<>(10_000);
++            HashMap<String, String> stringMap = new HashMap<>(16384);
+             XmlPullParser parser = Xml.newPullParser();
+             //AndroidUtilities.copyFile(file, new File(ApplicationLoader.applicationContext.getExternalFilesDir(null), "locale10.xml"));
+             stream = new FileInputStream(file);
+-            parser.setInput(stream, "UTF-8");
++            parser.setInput(new java.io.BufferedInputStream(stream, 32768), "UTF-8");
+             int eventType = parser.getEventType();
+             String name = null;
+             String value = null;
+@@ -1263,6 +1269,9 @@ public class LocaleController {
+                 }
+                 eventType = parser.next();
+             }
++            if (!preserveEscapes && !reloadLastFile) {
++                desu.inugram.helpers.translate.LocaleCacheHelper.writeCache(file, stringMap);
++            }
+             return stringMap;
+         } catch (Exception e) {
+             try {
+@@ -2133,9 +2142,13 @@ public class LocaleController {
+         is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
+         systemDefaultLocale = newConfig.locale;
+         if (languageOverride != null) {
+-            LocaleInfo toSet = currentLocaleInfo;
+-            currentLocaleInfo = null;
+-            applyLanguage(toSet, false, false, UserConfig.selectedAccount);
++            if (currentLocaleInfo != null && !localeValues.isEmpty()) {
++                applyLanguage(currentLocaleInfo, false, false, true, false, UserConfig.selectedAccount, null);
++            } else {
++                LocaleInfo toSet = currentLocaleInfo;
++                currentLocaleInfo = null;
++                applyLanguage(toSet, false, false, UserConfig.selectedAccount);
++            }
+         } else {
+             Locale newLocale = newConfig.locale;
+             if (newLocale != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -669,7 +669,7 @@ public class ConnectionsManager extends BaseController {
+             packageId = "";
+         }
+ 
+-        native_init(currentAccount, version, layer, apiId, deviceModel, systemVersion, appVersion, langCode, systemLangCode, configPath, logPath, regId, cFingerprint, installer, packageId, timezoneOffset, userId, userPremium, enablePushConnection, ApplicationLoader.isNetworkOnline(), ApplicationLoader.getCurrentNetworkType(), SharedConfig.measureDevicePerformanceClass());
++        native_init(currentAccount, version, layer, apiId, deviceModel, systemVersion, appVersion, langCode, systemLangCode, configPath, logPath, regId, cFingerprint, installer, packageId, timezoneOffset, userId, userPremium, enablePushConnection, ApplicationLoader.isNetworkOnline(), ApplicationLoader.getCurrentNetworkType(), SharedConfig.getDevicePerformanceClass());
+         checkConnection();
+     }
+ 
