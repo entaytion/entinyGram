@@ -8,6 +8,7 @@ import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.UserConfig
+import org.telegram.tgnet.TLRPC
 import java.util.UUID
 import java.util.regex.Pattern
 
@@ -58,13 +59,16 @@ object RegexFilterHelper {
         if (!isEnabled() || messageObject?.messageOwner == null) return false
         val msgText = messageObject.messageText
         val caption = messageObject.caption
+        val linkUrls = extractLinkUrls(messageObject.messageOwner)
         val hasText = !msgText.isNullOrEmpty()
         val hasCaption = !caption.isNullOrEmpty()
-        if (!hasText && !hasCaption) return false
+        val hasLinks = !linkUrls.isNullOrEmpty()
+        if (!hasText && !hasCaption && !hasLinks) return false
 
         // called on every cell bind while a filter is active — hash without allocating the
         // concatenated string; only build it on a cache miss.
-        val textHash = 31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)
+        val textHash = 31 * (31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)) +
+            (if (hasLinks) linkUrls.hashCode() else 0)
         val dialogId = messageObject.dialogId
         synchronized(lock) {
             matchCache[dialogId]?.get(messageObject.id)?.let {
@@ -73,13 +77,32 @@ object RegexFilterHelper {
         }
         val text = buildString {
             if (hasText) append(msgText).append('\n')
-            if (hasCaption) append(caption)
+            if (hasCaption) append(caption).append('\n')
+            if (hasLinks) append(linkUrls)
         }
         val result = matches(text, dialogId)
         synchronized(lock) {
             matchCache.getOrPut(dialogId) { BoundedCache(500) }[messageObject.id] = MatchCacheEntry(textHash, result)
         }
         return result
+    }
+
+    /**
+     * Filters were matching only the rendered message text, so a masked markdown link
+     * (`[click here](evil.example)`) or a link preview's own url slipped past a pattern that
+     * targeted the actual domain. Pull both in as extra match text, same as the visible caption.
+     */
+    private fun extractLinkUrls(message: TLRPC.Message): String? {
+        val urls = LinkedHashSet<String>()
+        message.entities?.forEach { entity ->
+            if (entity is TLRPC.TL_messageEntityTextUrl && !entity.url.isNullOrEmpty()) {
+                urls.add(entity.url)
+            }
+        }
+        (MessageObject.getMedia(message) as? TLRPC.TL_messageMediaWebPage)?.webpage?.url?.let {
+            if (it.isNotEmpty()) urls.add(it)
+        }
+        return if (urls.isEmpty()) null else urls.joinToString("\n")
     }
 
     private fun matches(text: CharSequence, dialogId: Long?): Boolean {
