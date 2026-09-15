@@ -12,7 +12,6 @@
     <string name="InuDrawerM3SectionsInfo">Групує пункти бічного меню в картки Material 3.</string>
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
-    <string name="InuLegacySettingsLink">Цей формат посилання застарів. Використовуйте tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuGeneral">Загальні</string>
     <string name="InuMiscellaneous">Різне</string>
     <string name="InuWideChannelPosts">Широкі пости</string>
@@ -220,6 +219,7 @@
     <string name="InuChatTwoFingerSelectInfo">Проведення двома пальцями по повідомленнях для виділення (як на iOS)</string>
     <string name="InuDisableBotDraftTop">Тримати чернетки ботів знизу</string>
     <string name="InuChatRememberAllReplies">Пам\'ятати всі натиснуті відповіді</string>
+    <string name="InuInstantMarkReactionsRead">Миттєво позначати реакції як прочитані</string>
     <string name="InuSaveToSavedMessages">Зберегти</string>
     <string name="InuHideSuggestions">Приховати підказки</string>
     <string name="InuHideSuggestionBirthdaySetup">Налаштування дня народження</string>
@@ -616,6 +616,9 @@
     <string name="InuAppIconLicenseTelegram">Іконка від **Telegram**. Усі права захищено.</string>
     <string name="InuJumpToBeginning">Перейти на самий початок</string>
     <string name="InuScrollToTop">На початок</string>
+    <string name="InuRecentChats">Нещодавні чати</string>
+    <string name="InuClearRecentChats">Очистити недавні чати</string>
+    <string name="InuClearRecentChatsAlert">Це очистить список нещодавно відкритих чатів. Жодні чати чи повідомлення не будуть видалені.</string>
 
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Канал оновлень</string>
@@ -814,7 +817,9 @@
     <string name="InuCenterTitleMainInfo">Центрує заголовки на головному екрані, у налаштуваннях і всюди далі. У чатів окремий перемикач нижче.</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
+    <string name="InuClearCache">Очистити кеш</string>
     <string name="InuClearDeletedCache">Очистити кеш збережених повідомлень</string>
+    <string name="InuClearDeletedCacheAlert">Це назавжди видалить локальний архів збережених видалених повідомлень та їхніх медіа. Скасувати неможливо.</string>
     <string name="InuDeletedMessageSearch">Пошук по архіву</string>
     <string name="InuDeletedMessageSearchHint">Пошук по збережених видалених і змінених повідомленнях</string>
     <string name="InuDeletedMessageSearchEmpty">Збігів не знайдено.</string>
@@ -846,6 +851,9 @@
     <string name="InuSaveDeletedChannels">Каналах</string>
     <string name="InuSaveDeletedBots">Ботах</string>
     <string name="InuSaveDeletedOwn">Моїх власних повідомленнях</string>
+    <string name="InuPromptKeepLocalOnDelete">Запит на збереження локальної копії</string>
+    <string name="InuPromptKeepLocalOnDeleteInfo">Додає прапорець «Зберегти локальну копію» до діалогу видалення повідомлення — можна вибирати для кожного видалення окремо. Показується лише коли автоматичне збереження вище вимкнене.</string>
+    <string name="InuKeepLocalCopy">Зберегти локальну копію</string>
     <string name="InuDeletePermanently">Видалити назавжди</string>
     <string name="InuDeletePermanentlyDone">Видалено назавжди</string>
     <string name="InuSuppressScreenshotNotification">Приховувати сповіщення про скриншоти</string>
@@ -1291,13 +1299,10 @@
     <string name="InuPresenceLogEntries">%1$d записів</string>
     <string name="InuCacheManagement">Управління кешем</string>
     <string name="InuCacheManagementInfo">Закріплення, кастомні папки, білий список режиму примари та список спостереження — це не кеш, а ваші налаштування, тож вони й далі керуються зі своїх сторінок і тут не зачіпаються.</string>
-    <string name="InuCacheCategories">Категорії</string>
     <string name="InuCacheClearAll">Очистити кеш…</string>
     <string name="InuCacheClearAllDone">Вибраний кеш очищено</string>
     <string name="InuCacheCalculating">Підрахунок…</string>
-    <string name="InuCacheEmpty">Порожньо</string>
     <string name="InuCacheSummarySubtitle">%1$d записів у всіх кешах</string>
-    <string name="InuCacheEntriesFormat">%1$s • %2$d записів</string>
     <string name="InuCacheEntriesShort">%1$d записів</string>
     <string name="InuCacheMessagesCategory">Кеш повідомлень</string>
     <string name="InuCachePresenceCategory">Журнали активності</string>
@@ -1344,7 +1349,7 @@
     <string name="InuTranslateProviderInfo">Перекладати чати стороннім сервісом замість сервера Telegram; форматування тексту зберігається.</string>
     <string name="InuTranslateProviderLingo">Lingo (Caiyun, безкоштовний)</string>
     <string name="InuTranslateProviderLlm">LLM (сумісний з OpenAI)</string>
-    <string name="InuTranslateProviderMicrosoft">Microsoft Translator</string>
+    <string name="InuTranslateProviderMicrosoft">Bing Translate (безкоштовний)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API-ключ)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (безкоштовний)</string>
     <string name="InuTranslateProviderNotConfigured">Постачальник не налаштовано. Використовується переклад Telegram.</string>

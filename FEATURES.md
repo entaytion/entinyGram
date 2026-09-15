@@ -29,6 +29,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
   - **per-category controls** for private chats, groups, channels, and bots, plus a separate toggle to skip saving your own outgoing deleted messages; secret chats are never saved
   - **delete permanently** from a saved-deleted message's own long-press menu, wiping just that one entry (and its media) instead of clearing the whole cache
+  - **keep local copy prompt**: optional checkbox in the delete-message dialog to archive just that deletion, without turning on automatic saving for everything
   - **save edit history** (marked with ✏️) in an interactive message sheet, where every revision is rendered as the message it actually was — formatting, links and spoilers intact, media as the real photo/video/voice/document rather than a stand-in
   - **text diff mode** with inline color-coded changes, toggleable straight from the history screen's "⋮" menu
   - **delete a single revision** from the history screen's long-press menu
@@ -47,7 +48,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **adblock & content filtering**:
   - **hide sponsored messages**: completely disables Telegram sponsored channel ads and video ads
   - **hide proxy sponsor chat**: blocks the promoted chat/channel some MTProto proxies pin to the top of your chat list while connected
-  - **regex content filter**: manage multiple named filters (not just one combined pattern) with per-filter enable/case-insensitive/allow-list toggles, global or scoped to a single chat, with per-chat exclusions for global filters. Add a filter straight from a message's long-press menu, or manage the full list from settings. Hides or spoiler-covers matches; caches match results locally so scrolling stays fast even with many filters. Export/import the full filter set as JSON.
+  - **regex content filter**: manage multiple named filters (not just one combined pattern) with per-filter enable/case-insensitive/allow-list toggles, global or scoped to a single chat, with per-chat exclusions for global filters. Add a filter straight from a message's long-press menu, or manage the full list from settings. Hides or spoiler-covers matches; caches match results locally so scrolling stays fast even with many filters. Export/import the full filter set as JSON. Matches hidden markdown-link URLs and link-preview URLs too, not just the visible message text.
 
 ### restricted features
 
@@ -84,6 +85,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **auto marquee for long titles**: chat header titles/subtitles, action bar screen titles and profile names smoothly auto-scroll instead of fading out - *inspired by the auto_marquee plugin (@chestertech)*
 - 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
 - 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, Profile and Feed tabs in MainTabsActivity, with separate tab title visibility toggle. Feed is an entinyGram-only tab (off by default) that puts the cross-channel unread-post screen one tap away, showing every eligible channel; its own overflow menu still narrows it to a single folder
+- 📡 **recent chats quick-switcher**: a popup listing the most recently opened chats (avatar + title, tap to open, long-press for their profile), reachable from the chats screen's "☰" options menu, with a one-tap clear-history action - *inspired by exteraless*
+- 📡 **clear cache shortcut**: a "Clear cache" entry in the chats screen's "☰" options menu, opening stock's own Storage Usage screen or directly wiping the local saved-deleted-messages archive (with confirmation), without hunting through Settings first
 - 📡 **customizable settings screen**: reorder and hide the rows of Telegram's own Settings screen (Inugram Settings, Account, Chat Settings, Privacy, Notifications, Data, Folders, Devices, Power Saving, Language, Premium, Stars, TON, Wallet, Business, Gift, Ask a Question, FAQ, Features, Privacy Policy) — untouched it renders exactly like stock, customized it collapses into one flat section
 - 📡 **customizable My Profile info rows**: independent reordering and show/hide toggles for the phone number, bio, username, ID, and estimated registration date rows on your own profile
 - 📡 **wide channel posts**: channel posts stretch to the full available width instead of narrow bubbles, with accurate proportional album layout (no squished 3-item rows or aspect ratio distortion)
@@ -115,6 +118,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **delete failed proxies**: one tap to remove every proxy that failed its last availability check, without touching the ones that still work
 - 📡 **fast cold start & locale caching**: binary serialization cache for downloaded translations drops locale parsing from ~1.6s to ~20ms, eliminates the redundant second XML parse on configuration change, and skips reconstructing background controllers and CPU telemetry loops for inactive account slots on startup
 - 📡 **Forward Pro (quick toggles & edit before forward)**: adds quick-action toggles directly in the forwarding dialog to show/hide the original author, strip/keep captions, and send silently, plus a dedicated edit button to modify message text and captions on the fly before sending - *inspired by Nagram X Turbo / Turbotel*
+- 📡 **instant mark reactions as read**: long-press the unread-reactions side button to mark everything read immediately, skipping the confirm popup - *inspired by exteraless*
 
 ### debloat & premium noise
 
@@ -431,6 +435,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - attach panel: better perf, safe close before fully open
 - paid reaction animation respects litemode
 - custom emoji reaction burst respects litemode (stock only gated the "around" animation of regular emoji)
+- expired once-view/self-destruct media now reliably shows the "Expired video/photo" placeholder instead of sometimes getting stuck showing live media (stock bug: the refresh triggered when `SecretMediaViewer` closes checked the media fields directly, which aren't cleared yet at that point — only a separate `forceExpired` flag is)
 - reaction counter shift during long-tap menu
 - reactions silently disappearing right after being sent (stale server read race)
 - channel reactions: toggling "Enable Reactions" was silently discarded on back (unsaved-changes check only compared the emoji selection, never the enabled state), and re-enabling always saved the prefilled list as an explicit set instead of "All"

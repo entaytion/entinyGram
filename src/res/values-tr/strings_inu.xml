@@ -238,6 +238,7 @@
     <string name="InuChatTwoFingerSelectInfo">Mesajları seçmek/seçimi kaldırmak için üzerlerinde iki parmakla sürükleyin (iOS\'teki gibi)</string>
     <string name="InuDisableBotDraftTop">Bot taslaklarını en altta tut</string>
     <string name="InuChatRememberAllReplies">Tıklanan tüm yanıtları hatırla</string>
+    <string name="InuInstantMarkReactionsRead">Tepkileri anında okundu olarak işaretle</string>
     <string name="InuSaveToSavedMessages">Kaydet</string>
     <string name="InuHideSuggestions">Önerileri gizle</string>
     <string name="InuHideSuggestionBirthdaySetup">Doğum günü kurulumu</string>
@@ -851,7 +852,9 @@
     <string name="InuCacheTtlWeek">1 haftadan eski</string>
     <string name="InuCategories">Kategoriler</string>
     <string name="InuCenterTitleChats">Sohbetlerde/kanallarda da ortala</string>
+    <string name="InuClearCache">Önbelleği temizle</string>
     <string name="InuClearDeletedCache">Silinen mesaj önbelleğini temizle</string>
+    <string name="InuClearDeletedCacheAlert">Bu, kaydedilen silinmiş mesajların ve medyalarının yerel arşivini kalıcı olarak siler. Bu işlem geri alınamaz.</string>
     <string name="InuDeletedMessageSearch">Arşivde ara</string>
     <string name="InuDeletedMessageSearchHint">Kaydedilen silinen ve düzenlenen mesajlarda ara</string>
     <string name="InuDeletedMessageSearchEmpty">Eşleşme bulunamadı.</string>
@@ -864,7 +867,6 @@
     <string name="InuSuppressScreenshotNotificationInfo">Gizli bir sohbette ekran görüntüsü aldığınızda karşı tarafa bildirim gitmesin.</string>
     <string name="InuHideSponsoredMessages">Sponsorlu mesajları gizle (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">Kanal reklamlarını devre dışı bırakır ve tanıtım mesajlarının yüklenmesini engeller</string>
-    <string name="InuLegacySettingsLink">Bu ayar bağlantısı biçimi eskidi. tg://entinySettings/&lt;slug&gt; kullanın.</string>
     <string name="InuNoEditHistory">Düzenleme geçmişi yok</string>
     <string name="InuRefreshStickerSet">Yenile</string>
     <string name="InuRegexFilter">AdBlock ve Regex Filtresi</string>
@@ -1089,13 +1091,10 @@
     <string name="InuPresenceLogEntries">%1$d kayıt</string>
     <string name="InuCacheManagement">Önbellek Yönetimi</string>
     <string name="InuCacheManagementInfo">Sabitlemeler, özel klasörler, hayalet mod beyaz listesi ve izleme listesi önbellek değildir — bunlar sizin yapılandırmanızdır, bu yüzden kendi sayfalarından yönetilmeye devam eder ve burada asla dokunulmaz.</string>
-    <string name="InuCacheCategories">Kategoriler</string>
     <string name="InuCacheClearAll">Önbelleği temizle…</string>
     <string name="InuCacheClearAllDone">Seçili önbellek temizlendi</string>
     <string name="InuCacheCalculating">Hesaplanıyor…</string>
-    <string name="InuCacheEmpty">Boş</string>
     <string name="InuCacheSummarySubtitle">Tüm önbelleklerde %1$d kayıt</string>
-    <string name="InuCacheEntriesFormat">%1$s • %2$d kayıt</string>
     <string name="InuCacheEntriesShort">%1$d kayıt</string>
     <string name="InuCacheMessagesCategory">Mesaj önbelleği</string>
     <string name="InuCachePresenceCategory">Çevrim içi günlükleri</string>
@@ -1218,7 +1217,7 @@
     <string name="InuTranslateProviderInfo">Sohbetleri Telegram\'ın sunucu API\'si yerine üçüncü taraf bir servisle çevirin. Sağlayıcı otomatik çeviriyi ve yerinde mesaj çevirisini yönetir; metin biçimlendirmesi korunur.</string>
     <string name="InuTranslateProviderLingo">Lingo (Caiyun, ücretsiz)</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI uyumlu)</string>
-    <string name="InuTranslateProviderMicrosoft">Microsoft Translator</string>
+    <string name="InuTranslateProviderMicrosoft">Bing Translate (ücretsiz, anahtar gerekmez)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API anahtarı)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (ücretsiz, anahtar gerekmez)</string>
     <string name="InuTranslateProviderNotConfigured">Çeviri sağlayıcısı yapılandırılmadı. Telegram çevirisine geri dönülüyor.</string>
@@ -1255,6 +1254,9 @@
     <string name="InuSelectionBottomNoQuote">Seçim çubuğunda Alıntısız düğmesi</string>
     <string name="InuSelectionBottomNoQuoteInfo">Mesaj seçerken Yanıtla düğmesini Alıntısız ilet düğmesiyle değiştirir</string>
     <string name="InuSaveDeletedOwn">Kendi mesajlarım</string>
+    <string name="InuPromptKeepLocalOnDelete">Yerel kopya sorusu</string>
+    <string name="InuPromptKeepLocalOnDeleteInfo">Silme onayı iletişim kutusuna \"Yerel kopyayı sakla\" onay kutusu ekler, böylece her silme işlemi için seçim yapabilirsiniz. Yalnızca yukarıdaki otomatik kaydetme kapalıyken gösterilir.</string>
+    <string name="InuKeepLocalCopy">Yerel kopyayı sakla</string>
     <string name="InuDeletePermanently">Kalıcı olarak sil</string>
     <string name="InuDeletePermanentlyDone">Kalıcı olarak silindi</string>
     <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
@@ -1267,6 +1269,9 @@
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmi haptan çıkar ve \"⋮\" düğmesinin yerini alır — dokunmak profili, uzun basmak sohbet menüsünü açar. Kapalıyken profil resmi kompakt hapın içinde kalır.</string>
     <string name="InuScrollToTop">Scroll to top</string>
+    <string name="InuRecentChats">Son sohbetler</string>
+    <string name="InuClearRecentChats">Son sohbetleri temizle</string>
+    <string name="InuClearRecentChatsAlert">Bu, son açılan sohbetlerin listesini temizler. Herhangi bir sohbet veya mesaj silinmez.</string>
     <string name="InuAiProvidersTitle">YZ Sağlayıcıları</string>
     <string name="InuAiProvidersUniversal">Evrensel</string>
     <string name="InuAiProvidersUniversalDesc">Her adın önündeki simge neyi desteklediğini gösterir: sonsuzluk işareti hem sohbet hem de ses için, klavye yalnızca sohbet için, mikrofon yalnızca ses içindir. Yapılandırmak için bir sağlayıcıya dokunun, ardından içindeki anahtarlarla her kapsam için etkin olanı seçin.</string>

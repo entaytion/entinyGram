@@ -171,6 +171,7 @@
     <string name="InuChatTwoFingerSelectInfo">Проведите двумя пальцами по сообщениям, чтобы выделить/снять выделение (как в iOS)</string>
     <string name="InuDisableBotDraftTop">Держать черновики ботов внизу</string>
     <string name="InuChatRememberAllReplies">Запоминать все нажатые ответы</string>
+    <string name="InuInstantMarkReactionsRead">Мгновенно отмечать реакции как прочитанные</string>
     <string name="InuSaveToSavedMessages">Сохранить</string>
     <string name="InuHideSuggestions">Скрыть предложения</string>
     <string name="InuHideSuggestionBirthdaySetup">Указать день рождения</string>
@@ -237,7 +238,7 @@
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderLlm">LLM (совместимый с OpenAI)</string>
     <string name="InuTranslateProviderYandex">Yandex Translate</string>
-    <string name="InuTranslateProviderMicrosoft">Microsoft Translator</string>
+    <string name="InuTranslateProviderMicrosoft">Bing Translate (бесплатно, без ключа)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API-ключ)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (бесплатно, без ключа)</string>
     <string name="InuTranslateProviderLingo">Lingo (Caiyun, бесплатно)</string>
@@ -985,7 +986,9 @@
     <string name="InuCacheTtlDay">Старше 1 дня</string>
     <string name="InuCacheTtlWeek">Старше 1 недели</string>
     <string name="InuCacheTtlMonth">Старше 1 месяца</string>
+    <string name="InuClearCache">Очистить кэш</string>
     <string name="InuClearDeletedCache">Очистить кэш удаленных сообщений</string>
+    <string name="InuClearDeletedCacheAlert">Это навсегда удалит локальный архив сохранённых удалённых сообщений и их медиа. Отменить нельзя.</string>
     <string name="InuDeletedMessageSearch">Поиск по архиву</string>
     <string name="InuDeletedMessageSearchHint">Поиск по сохранённым удалённым и изменённым сообщениям</string>
     <string name="InuDeletedMessageSearchEmpty">Совпадений не найдено.</string>
@@ -1025,7 +1028,6 @@
     <string name="InuRefreshStickerSet">Обновить</string>
     <string name="InuStickerSetRefreshed">Набор обновлен</string>
     <string name="InuStickerSetRefreshFailed">Не удалось обновить набор</string>
-    <string name="InuLegacySettingsLink">Этот формат ссылки устарел. Используйте tg://entinySettings/&lt;slug&gt;.</string>
     <string name="InuTOS">Запрещённые функции</string>
     <string name="InuTranslateOutgoing">Переводить мои сообщения</string>
     <string name="InuTranslateOutgoingInfo">Добавлять отправленные вами сообщения в автоматический перевод чата.</string>
@@ -1102,6 +1104,9 @@
     <string name="InuSaveDeletedChannels">Каналах</string>
     <string name="InuSaveDeletedBots">Ботах</string>
     <string name="InuSaveDeletedOwn">Моих собственных сообщениях</string>
+    <string name="InuPromptKeepLocalOnDelete">Запрос сохранения локальной копии</string>
+    <string name="InuPromptKeepLocalOnDeleteInfo">Добавляет флажок «Сохранить локальную копию» в диалог удаления сообщения — можно выбирать для каждого удаления отдельно. Показывается только когда автоматическое сохранение выше выключено.</string>
+    <string name="InuKeepLocalCopy">Сохранить локальную копию</string>
     <string name="InuDeletePermanently">Удалить навсегда</string>
     <string name="InuDeletePermanentlyDone">Удалено навсегда</string>
     <string name="InuAiTranscribe">Распознавание речи (Voice-to-Text)</string>
@@ -1179,13 +1184,10 @@
     <string name="InuPresenceLogEntries">%1$d записей</string>
     <string name="InuCacheManagement">Управление кэшем</string>
     <string name="InuCacheManagementInfo">Закреплённые чаты, кастомные папки, белый список режима примара и список наблюдения — это не кэш, а ваши настройки, поэтому они управляются на своих страницах и здесь не затрагиваются.</string>
-    <string name="InuCacheCategories">Категории</string>
     <string name="InuCacheClearAll">Очистить кэш…</string>
     <string name="InuCacheClearAllDone">Выбранный кэш очищен</string>
     <string name="InuCacheCalculating">Подсчёт…</string>
-    <string name="InuCacheEmpty">Пусто</string>
     <string name="InuCacheSummarySubtitle">%1$d записей во всех кэшах</string>
-    <string name="InuCacheEntriesFormat">%1$s • %2$d записей</string>
     <string name="InuCacheEntriesShort">%1$d записей</string>
     <string name="InuCacheMessagesCategory">Кэш сообщений</string>
     <string name="InuCachePresenceCategory">Журналы активности</string>
@@ -1340,6 +1342,9 @@
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка выходит из таблетки и занимает место кнопки «⋮» — тап открывает профиль, долгое нажатие открывает меню чата. Если выключено, аватарка остаётся внутри компактной таблетки.</string>
     <string name="InuScrollToTop">Scroll to top</string>
+    <string name="InuRecentChats">Недавние чаты</string>
+    <string name="InuClearRecentChats">Очистить недавние чаты</string>
+    <string name="InuClearRecentChatsAlert">Это очистит список недавно открытых чатов. Никакие чаты или сообщения не будут удалены.</string>
     <string name="InuAiInsertQuoteInfo">Вставляет результат в поле сообщения как цитату вместо замены черновика.</string>
     <string name="InuAiOnlyAnswerInfo">Скрывает ход рассуждений для моделей, которые его передают, показывая только окончательный ответ.</string>
     <string name="InuAiProviderCustomNameHint">Название (необязательно)</string>

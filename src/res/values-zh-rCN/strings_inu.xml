@@ -169,6 +169,7 @@
     <string name="InuChatTwoFingerSelectInfo">用两根手指在消息上滑动以选择/取消选择（类似 iOS）</string>
     <string name="InuDisableBotDraftTop">将机器人草稿保持在底部</string>
     <string name="InuChatRememberAllReplies">记住所有点击过的回复</string>
+    <string name="InuInstantMarkReactionsRead">立即将反应标记为已读</string>
     <string name="InuSaveToSavedMessages">保存</string>
     <string name="InuHideSuggestions">隐藏建议</string>
     <string name="InuHideSuggestionBirthdaySetup">设置生日</string>
@@ -853,7 +854,9 @@
     <string name="InuCacheTtlWeek">1 周前</string>
     <string name="InuCategories">分类</string>
     <string name="InuCenterTitleChats">同时在聊天/频道中居中</string>
+    <string name="InuClearCache">清除缓存</string>
     <string name="InuClearDeletedCache">清除已删除消息缓存</string>
+    <string name="InuClearDeletedCacheAlert">这将永久删除已保存的已删除消息及其媒体的本地存档。此操作无法撤销。</string>
     <string name="InuDeletedMessageSearch">搜索存档</string>
     <string name="InuDeletedMessageSearchHint">搜索已保存的已删除和已编辑消息</string>
     <string name="InuDeletedMessageSearchEmpty">未找到匹配项。</string>
@@ -866,7 +869,6 @@
     <string name="InuSuppressScreenshotNotificationInfo">在密聊中截图时不通知对方。</string>
     <string name="InuHideSponsoredMessages">隐藏赞助消息 (AdBlock)</string>
     <string name="InuHideSponsoredMessagesInfo">禁用频道赞助广告并防止加载推广消息</string>
-    <string name="InuLegacySettingsLink">此设置链接格式已废弃。请使用 tg://entinySettings/&lt;slug&gt;</string>
     <string name="InuNoEditHistory">没有可用的编辑历史</string>
     <string name="InuRefreshStickerSet">刷新</string>
     <string name="InuRegexFilter">AdBlock 与正则表达式过滤器</string>
@@ -1091,13 +1093,10 @@
     <string name="InuPresenceLogEntries">%1$d 条记录</string>
     <string name="InuCacheManagement">缓存管理</string>
     <string name="InuCacheManagementInfo">置顶、自定义文件夹、幽灵模式白名单和监视列表都不是缓存——它们是您的配置信息，因此仍在各自的页面中管理，此处不会更改。</string>
-    <string name="InuCacheCategories">分类</string>
     <string name="InuCacheClearAll">清除缓存…</string>
     <string name="InuCacheClearAllDone">所选缓存已清除</string>
     <string name="InuCacheCalculating">正在计算…</string>
-    <string name="InuCacheEmpty">空</string>
     <string name="InuCacheSummarySubtitle">所有缓存共 %1$d 条记录</string>
-    <string name="InuCacheEntriesFormat">%1$s • %2$d 条记录</string>
     <string name="InuCacheEntriesShort">%1$d 条记录</string>
     <string name="InuCacheMessagesCategory">消息缓存</string>
     <string name="InuCachePresenceCategory">在线状态记录</string>
@@ -1220,7 +1219,7 @@
     <string name="InuTranslateProviderInfo">使用第三方服务替代 Telegram 服务器 API 翻译聊天。提供商负责自动翻译和就地消息翻译，保留文本格式。</string>
     <string name="InuTranslateProviderLingo">Lingo (彩云小译, 免费)</string>
     <string name="InuTranslateProviderLlm">LLM (兼容 OpenAI)</string>
-    <string name="InuTranslateProviderMicrosoft">Microsoft Translator</string>
+    <string name="InuTranslateProviderMicrosoft">必应翻译 (免费, 无需密钥)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API 密钥)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (免费, 无需密钥)</string>
     <string name="InuTranslateProviderNotConfigured">翻译提供商未配置。正在回退到 Telegram 翻译。</string>
@@ -1257,6 +1256,9 @@
     <string name="InuSelectionBottomNoQuote">多选栏中的无引用转发按钮</string>
     <string name="InuSelectionBottomNoQuoteInfo">在选择消息时将“回复”按钮替换为“无引用转发”</string>
     <string name="InuSaveDeletedOwn">我自己的消息</string>
+    <string name="InuPromptKeepLocalOnDelete">保留本地副本提示</string>
+    <string name="InuPromptKeepLocalOnDeleteInfo">在删除消息对话框中添加"保留本地副本"复选框，可为每次删除单独选择。仅在上方的自动保存关闭时显示。</string>
+    <string name="InuKeepLocalCopy">保留本地副本</string>
     <string name="InuDeletePermanently">永久删除</string>
     <string name="InuDeletePermanentlyDone">已永久删除</string>
     <string name="InuSortAlbumsBySize">按大小排序相册</string>
@@ -1269,6 +1271,9 @@
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">头像离开胶囊并取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单。关闭时头像保留在紧凑胶囊内。</string>
     <string name="InuScrollToTop">Scroll to top</string>
+    <string name="InuRecentChats">最近聊天</string>
+    <string name="InuClearRecentChats">清除最近聊天</string>
+    <string name="InuClearRecentChatsAlert">这将清除最近打开的聊天列表。不会删除任何聊天或消息。</string>
     <string name="InuAiProvidersTitle">AI 提供商</string>
     <string name="InuAiProvidersUniversal">通用</string>
     <string name="InuAiProvidersUniversalDesc">每个名称前面的图标代表其支持的功能：无穷符号表示同时支持聊天和语音，键盘表示仅聊天，麦克风表示仅语音。点击提供商进行配置，然后使用内部开关为每个范围选择活跃项。</string>

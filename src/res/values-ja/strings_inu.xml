@@ -169,6 +169,7 @@
     <string name="InuChatTwoFingerSelectInfo">2本指でメッセージをなぞって選択/解除（iOS風）</string>
     <string name="InuDisableBotDraftTop">ボットの下書きを下部に留める</string>
     <string name="InuChatRememberAllReplies">タップしたすべての返信を記憶</string>
+    <string name="InuInstantMarkReactionsRead">リアクションを即座に既読にする</string>
     <string name="InuSaveToSavedMessages">保存</string>
     <string name="InuHideSuggestions">提案を非表示</string>
     <string name="InuHideSuggestionBirthdaySetup">誕生日設定</string>
@@ -856,7 +857,9 @@
     <string name="InuCacheTtlWeek">1週間以上前</string>
     <string name="InuCategories">カテゴリー</string>
     <string name="InuCenterTitleChats">チャット/チャンネルでも中央揃え</string>
+    <string name="InuClearCache">キャッシュを消去</string>
     <string name="InuClearDeletedCache">削除済みメッセージのキャッシュを消去</string>
+    <string name="InuClearDeletedCacheAlert">保存された削除済みメッセージとそのメディアのローカルアーカイブが完全に削除されます。元に戻すことはできません。</string>
     <string name="InuDeletedMessageSearch">アーカイブを検索</string>
     <string name="InuDeletedMessageSearchHint">保存された削除済み・編集済みメッセージを検索</string>
     <string name="InuDeletedMessageSearchEmpty">一致するものが見つかりません。</string>
@@ -869,7 +872,6 @@
     <string name="InuSuppressScreenshotNotificationInfo">シークレットチャットでスクリーンショットを撮っても相手に通知されないようにします。</string>
     <string name="InuHideSponsoredMessages">スポンサーメッセージを非表示（AdBlock）</string>
     <string name="InuHideSponsoredMessagesInfo">チャンネルの広告を無効化し、プロモーションメッセージの読み込みを防ぎます</string>
-    <string name="InuLegacySettingsLink">この設定リンク形式は古い形式です。tg://entinySettings/&lt;slug&gt; を使用してください。</string>
     <string name="InuNoEditHistory">編集履歴はありません</string>
     <string name="InuRefreshStickerSet">更新</string>
     <string name="InuRegexFilter">AdBlock ＆ 正規表現フィルター</string>
@@ -1090,13 +1092,10 @@
     <string name="InuPresenceLogEntries">%1$d件の記録</string>
     <string name="InuCacheManagement">キャッシュ管理</string>
     <string name="InuCacheManagementInfo">ピン留め、カスタムフォルダー、ゴーストモードのホワイトリスト、監視リストはキャッシュではなく設定情報です。そのため、それぞれの専用ページで管理され、ここでは変更されません。</string>
-    <string name="InuCacheCategories">カテゴリー</string>
     <string name="InuCacheClearAll">キャッシュを消去…</string>
     <string name="InuCacheClearAllDone">選択したキャッシュを消去しました</string>
     <string name="InuCacheCalculating">計算中…</string>
-    <string name="InuCacheEmpty">空です</string>
     <string name="InuCacheSummarySubtitle">全キャッシュで%1$d件の記録</string>
-    <string name="InuCacheEntriesFormat">%1$s • %2$d件の記録</string>
     <string name="InuCacheEntriesShort">%1$d件の記録</string>
     <string name="InuCacheMessagesCategory">メッセージキャッシュ</string>
     <string name="InuCachePresenceCategory">オンライン状態の記録</string>
@@ -1219,7 +1218,7 @@
     <string name="InuTranslateProviderInfo">Telegram サーバー API の代わりにサードパーティ製サービスでチャットを翻訳します。自動翻訳とメッセージ内直接翻訳に対応し、書式を維持します。</string>
     <string name="InuTranslateProviderLingo">Lingo (彩雲小訳, 無料)</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI 互換)</string>
-    <string name="InuTranslateProviderMicrosoft">Microsoft Translator</string>
+    <string name="InuTranslateProviderMicrosoft">Bing翻訳 (無料、キー不要)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API キー)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (無料、キー不要)</string>
     <string name="InuTranslateProviderNotConfigured">翻訳プロバイダーが設定されていません。Telegram 翻訳にフォールバックします。</string>
@@ -1257,6 +1256,9 @@
     <string name="InuSelectionBottomNoQuote">選択バーの引用なし転送ボタン</string>
     <string name="InuSelectionBottomNoQuoteInfo">メッセージ選択時に「返信」ボタンを「引用なし転送」に置き換えます</string>
     <string name="InuSaveDeletedOwn">自分のメッセージ</string>
+    <string name="InuPromptKeepLocalOnDelete">ローカルコピーの確認</string>
+    <string name="InuPromptKeepLocalOnDeleteInfo">メッセージ削除ダイアログに「ローカルコピーを保存」のチェックボックスを追加し、削除ごとに選択できるようにします。上記の自動保存がオフの場合のみ表示されます。</string>
+    <string name="InuKeepLocalCopy">ローカルコピーを保存</string>
     <string name="InuDeletePermanently">完全に削除</string>
     <string name="InuDeletePermanentlyDone">完全に削除しました</string>
     <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べ替え</string>
@@ -1269,6 +1271,9 @@
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">アバターがピルから出て「⋮」ボタンの位置に移動します — タップでプロフィール、長押しでチャットメニューを開きます。オフの場合、アバターはコンパクトなピルの中に残ります。</string>
     <string name="InuScrollToTop">Scroll to top</string>
+    <string name="InuRecentChats">最近のチャット</string>
+    <string name="InuClearRecentChats">最近のチャットをクリア</string>
+    <string name="InuClearRecentChatsAlert">最近開いたチャットのリストがクリアされます。チャットやメッセージが削除されることはありません。</string>
     <string name="InuAiProvidersTitle">AIプロバイダー</string>
     <string name="InuAiProvidersUniversal">ユニバーサル</string>
     <string name="InuAiProvidersUniversalDesc">各名前の前のアイコンはサポート内容を示します: 無限記号はチャットと音声の両方、キーボードはチャットのみ、マイクは音声のみです。プロバイダーをタップして設定し、内部のスイッチで各スコープのアクティブなものを選択してください。</string>
