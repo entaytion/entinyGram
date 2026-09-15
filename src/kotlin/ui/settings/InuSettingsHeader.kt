@@ -11,6 +11,8 @@ import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildConfig
+import org.telegram.messenger.BuildVars
+import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
@@ -38,7 +40,14 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
     }
 
     private val title = TextView(context).apply {
-        text = "entinyGram"
+        // Same on-device beta tell UpdateHelper.getVersionInfoString() uses elsewhere
+        // (BuildVars.isBetaApp(), derived from INU_BUILD_TYPE) -- surfaced here too since this
+        // header is the first thing a beta install's Settings page shows.
+        text = if (BuildVars.isBetaApp()) {
+            "entinyGram ${LocaleController.getString(R.string.InuVersionBetaSuffix)}"
+        } else {
+            "entinyGram"
+        }
         setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 18f)
         setTypeface(AndroidUtilities.bold())
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText))
