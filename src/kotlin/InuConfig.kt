@@ -662,6 +662,11 @@ object InuConfig {
     @JvmField
     val CHAT_REMEMBER_ALL_REPLIES = BoolItem("chat_remember_all_replies", true)
 
+    // Long-pressing the unread-reactions side button normally opens a confirm popup before
+    // marking everything read; on skips straight to marking read with haptic feedback instead.
+    @JvmField
+    val INSTANT_MARK_REACTIONS_READ = BoolItem("instant_mark_reactions_read", false)
+
     @JvmField
     val DISABLE_BOT_DRAFT_TOP = BoolItem("disable_bot_draft_top", true)
 

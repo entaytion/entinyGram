@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 15 Sep 2026 19:03:02 +0300
+Subject: entiny(chat): skip the confirm popup on long-press mark-reactions-read
+
+Long-pressing the unread-reactions side button always opened a confirm
+menu before marking everything read. Gated behind InuConfig, on skips
+straight to marking read with haptic feedback (ported/adapted idea
+from exteraless).
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java  | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -47311,6 +47311,18 @@ public class ChatActivity extends BaseFragment implements
+                 }
+             };
+         } else if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_REACTIONS) {
++            if (desu.inugram.InuConfig.INSTANT_MARK_REACTIONS_READ.getValue()) {
++                for (int i = 0; i < messages.size(); i++) {
++                    messages.get(i).markReactionsAsRead();
++                }
++                reactionsMentionCount = 0;
++                updateReactionsMentionButton(true);
++                getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
++                try {
++                    view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
++                } catch (Exception ignored) {}
++                return true;
++            }
+             type = ReadAllMentionsMenu.TYPE_REACTIONS;
+             onRead = () -> {
+                 for (int i = 0; i < messages.size(); i++) {

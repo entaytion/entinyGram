@@ -198,6 +198,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             UItem.asCheck(
+                TOGGLE_INSTANT_MARK_REACTIONS_READ,
+                LocaleController.getString(R.string.InuInstantMarkReactionsRead),
+            ).setChecked(InuConfig.INSTANT_MARK_REACTIONS_READ.value)
+        )
+        items.add(
+            UItem.asCheck(
                 TOGGLE_SHOW_FORWARD_TIME,
                 LocaleController.getString(R.string.InuShowForwardTime),
             ).setChecked(InuConfig.SHOW_FORWARD_TIME.value)
@@ -356,6 +362,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_CHAT_REMEMBER_ALL_REPLIES -> {
                 val new = InuConfig.CHAT_REMEMBER_ALL_REPLIES.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_INSTANT_MARK_REACTIONS_READ -> {
+                val new = InuConfig.INSTANT_MARK_REACTIONS_READ.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
 
@@ -549,6 +560,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_NO_STICKER_EXTRA_PADDING = InuUtils.generateId()
         private val BUTTON_PINNED_REACTIONS = InuUtils.generateId()
         private val BUTTON_MESSAGE_MENU_ORDER = InuUtils.generateId()
+        private val TOGGLE_INSTANT_MARK_REACTIONS_READ = InuUtils.generateId()
         private val TOGGLE_REACTION_BAR_BELOW = InuUtils.generateId()
         private val TOGGLE_CHAT_VIEWS_BOTTOM = InuUtils.generateId()
         private val TOGGLE_HIDE_REACTION_ENTRY = InuUtils.generateId()
@@ -613,6 +625,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("confirm-reaction-non-member", R.string.InuConfirmReactionNonMember, TOGGLE_CONFIRM_REACTION_NON_MEMBER),
                 SearchRegistry.Entry("message-menu-order", R.string.InuMessageMenuOrder, BUTTON_MESSAGE_MENU_ORDER),
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
+                SearchRegistry.Entry("instant-mark-reactions-read", R.string.InuInstantMarkReactionsRead, TOGGLE_INSTANT_MARK_REACTIONS_READ),
                 SearchRegistry.Entry("show-forward-time", R.string.InuShowForwardTime, TOGGLE_SHOW_FORWARD_TIME),
                 SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
