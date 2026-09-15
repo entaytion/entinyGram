@@ -5,7 +5,6 @@ import android.view.ViewConfiguration
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.MessageObject
 import org.telegram.ui.Cells.ChatMessageCell
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.PinchToZoomHelper
@@ -23,8 +22,9 @@ object TwoFingerSelectHelper {
     ) {
         private var active = false
 
-        // gesture started over a photo: wait to tell a select-swipe (fingers move together) apart
-        // from a pinch-to-zoom (fingers spread) before committing to either
+        // two fingers just landed: wait to tell a deliberate select-swipe (fingers move together)
+        // apart from an incidental touch, a pinch-to-zoom (fingers spread), or a 3rd finger
+        // joining (e.g. a screenshot gesture) before committing to selection
         private var pending = false
         private var startDist = 0f
         private var startCx = 0f
@@ -47,15 +47,15 @@ object TwoFingerSelectHelper {
             if (!InuConfig.CHAT_TWO_FINGER_SELECT.value) return false
             if (ev.actionMasked != MotionEvent.ACTION_POINTER_DOWN || ev.pointerCount != 2) return false
             if (!resolveAnchors(ev)) return false
-            if (pointerOnImage(ev, 0) || pointerOnImage(ev, 1)) {
-                pending = true
-                startDist = distance(ev)
-                startCx = (ev.getX(0) + ev.getX(1)) / 2f
-                startCy = (ev.getY(0) + ev.getY(1)) / 2f
-                return false
-            }
-            startSelection(ev)
-            return true
+            // Always wait for a deliberate coordinated swipe (see dispatchPending) before
+            // committing to selection -- committing on the bare touch-down made any incidental
+            // two-finger contact (resting fingers, a 3-finger screenshot swipe's first two
+            // fingers) enter selection mode instantly.
+            pending = true
+            startDist = distance(ev)
+            startCx = (ev.getX(0) + ev.getX(1)) / 2f
+            startCy = (ev.getY(0) + ev.getY(1)) / 2f
+            return false
         }
 
         private fun dispatchActive(ev: MotionEvent): Boolean {
@@ -80,8 +80,14 @@ object TwoFingerSelectHelper {
 
         private fun dispatchPending(ev: MotionEvent): Boolean {
             when (ev.actionMasked) {
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    // a 3rd finger landing mid-gesture (e.g. a 3-finger screenshot swipe) is not
+                    // a deliberate two-finger select -- bail and let the system handle it.
+                    if (ev.pointerCount > 2) pending = false
+                }
+
                 MotionEvent.ACTION_MOVE -> {
-                    if (ev.pointerCount < 2) return false
+                    if (ev.pointerCount != 2) return false
                     // zoom already engaged (slow spread crossed stock's tiny threshold) — yield to it
                     if (pinchHelper()?.isInOverlayMode == true) {
                         pending = false
@@ -236,25 +242,6 @@ object TwoFingerSelectHelper {
 
         private fun cellUnder(x: Float, y: Float): ChatMessageCell? =
             listView.findChildViewUnder(x, y) as? ChatMessageCell
-
-        // true only when the finger lands on the actual drawn photo (where pinch-to-zoom lives),
-        // not the blank margins/caption around it. text messages also reach here for link-preview
-        // images, which reuse photoImage and engage the same pinch helper.
-        private fun pointerOnImage(ev: MotionEvent, i: Int): Boolean {
-            val x = ev.getX(i)
-            val y = ev.getY(i)
-            val cell = cellUnder(x, y) ?: return false
-            val t = cell.messageObject?.type ?: return false
-            val swipable = when (t) {
-                MessageObject.TYPE_PHOTO, MessageObject.TYPE_VIDEO, MessageObject.TYPE_GIF -> true
-                MessageObject.TYPE_TEXT, MessageObject.TYPE_STORY_MENTION -> cell.drawPhotoImage
-                else -> false
-            }
-            if (!swipable) return false
-            val img = cell.photoImage ?: return false
-            if (!img.hasNotThumb()) return false
-            return img.isInsideImage(x - cell.x, y - cell.y)
-        }
 
         // the single shared instance, reachable through any cell's delegate
         private fun pinchHelper(): PinchToZoomHelper? {
