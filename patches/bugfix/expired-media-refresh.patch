@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 15 Sep 2026 18:33:49 +0300
+Subject: fix(media): refresh the chat row when a self-destruct/once-view message is force-expired
+
+- checkDeletingTask marks the SecretMediaViewer message forceExpired and posts
+  updateMessageMedia, but the ChatActivity handler only re-rendered when the
+  media fields were already TL_photoEmpty/TL_documentEmpty, which is not yet
+  true at that point -- the bubble could stay stuck showing live media instead
+  of the "Expired video/photo" placeholder
+- also check forceExpired directly so the row refreshes reliably
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -23571,7 +23571,7 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                     }
+                 }
+-                if (message.media.ttl_seconds != 0 && (message.media.photo instanceof TLRPC.TL_photoEmpty || message.media.document instanceof TLRPC.TL_documentEmpty)) {
++                if (existMessageObject.forceExpired || message.media.ttl_seconds != 0 && (message.media.photo instanceof TLRPC.TL_photoEmpty || message.media.document instanceof TLRPC.TL_documentEmpty)) {
+                     existMessageObject.setType();
+                     if (chatAdapter != null) {
+                         chatAdapter.updateRowWithMessageObject(existMessageObject, false, false);
