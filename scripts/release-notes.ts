@@ -27,6 +27,9 @@ interface BuildInfo {
   commits: Commit[]
 }
 
+/** One entry from settings-registry.json (produced by dump-registry.ts). */
+interface RegistryEntry { slug: string; label: string }
+
 const artifactDir = resolve(process.argv[2] ?? 'out')
 const infoPath = join(artifactDir, 'build-info.json')
 
@@ -82,7 +85,7 @@ function cleanCommits(commits: Commit[]): Commit[] {
     .reverse()
 }
 
-function buildPrompt(info: BuildInfo, commits: Commit[]): string {
+function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry[]): string {
   const list = commits.map(c => {
     const indented = c.message.split('\n').map(l => `  ${l}`).join('\n')
     const authorTag = c.author ? ` (Author: ${c.author})` : ''
@@ -93,7 +96,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
   // "1 commit = 1 line" and "merge related commits" and "group minor fixes", then asked it to
   // judge which applied - so it mixed all three and drifted off the commits. One rule per idea,
   // no rule that contradicts another.
-  return [
+  const lines = [
     'You write release notes for entinyGram, a fork of Telegram for Android.',
     `Release v${info.verName}, repo ${info.repo}.`,
     '',
@@ -119,11 +122,69 @@ function buildPrompt(info: BuildInfo, commits: Commit[]): string {
     'Telegram lines in "tg_en"/"tg_uk": one line per bullet, prefixed',
     '"[+] " new capability, "[*] " fix or refinement, "[-] " removal, "[=] " upstream sync.',
     'No language headers inside them.',
+  ]
+
+  // ── Deep-link injection ─────────────────────────────────────────────────────
+  // The AI already reads the commits and knows what changed. What it lacks is the
+  // list of *valid* slugs — without it, any link it generates would be guessed and
+  // potentially broken. So we give it the registry, but pre-filtered: only entries
+  // whose label shares at least one meaningful keyword with the commit messages.
+  // This typically shrinks the table from ~200 entries to <20, keeping the prompt
+  // focused and the AI accurate.
+  if (registry.length > 0) {
+    // 1. Extract meaningful words from all commit messages (lower-case, 4+ chars,
+    //    no stop-words, no conventional-commit prefixes).
+    const STOP = new Set([
+      'with', 'from', 'that', 'this', 'when', 'will', 'have', 'been', 'were',
+      'into', 'more', 'some', 'also', 'only', 'after', 'before', 'their',
+      'feat', 'feature', 'chore', 'sync', 'entiny', 'inugram', 'telegram',
+      'upstream', 'patch', 'patches', 'build', 'release', 'update',
+    ])
+    const commitWords = new Set<string>()
+    for (const c of commits) {
+      for (const word of c.message.toLowerCase().split(/[\s\W]+/)) {
+        if (word.length >= 4 && !STOP.has(word)) commitWords.add(word)
+      }
+    }
+
+    // 2. Keep only registry entries whose label contains at least one commit keyword,
+    //    and which have 2+ words (single-word labels like "Additional" are too generic).
+    const relevant = registry.filter(e => {
+      if (e.label.split(/\s+/).length < 2) return false
+      const labelWords = e.label.toLowerCase().split(/\s+/)
+      return labelWords.some(w => {
+        // partial match: commit word starts with label word or vice versa (handles
+        // "recording" matching "record", "fps" matching "fps", etc.)
+        return commitWords.has(w) || [...commitWords].some(cw => cw.startsWith(w) || w.startsWith(cw))
+      })
+    })
+
+    if (relevant.length > 0) {
+      const table = relevant.map(e => `  ${e.slug} → "${e.label}"`).join('\n')
+      lines.push(
+        '',
+        'SETTINGS DEEP LINKS (optional):',
+        'entinyGram has in-app deep links of the form tg://entinySettings/<slug>.',
+        'When a changelog bullet mentions a feature whose label closely matches one',
+        'of the entries below, wrap that feature name as a Markdown link in the',
+        '"tg_en" and "tg_uk" lines ONLY — plain text everywhere else.',
+        'Format: [feature name](tg://entinySettings/<slug>)',
+        'Only link when the match is unambiguous. Never invent slugs not in this list.',
+        '',
+        'SLUG → LABEL:',
+        table,
+      )
+    }
+  }
+
+  lines.push(
     '',
     'Reply with JSON only - no code fences - with exactly these keys:',
     '{"en": "...", "uk": "...", "tg_uk": "...", "tg_en": "..."}',
     '"uk" and "tg_uk" are Ukrainian, "en" and "tg_en" are English.',
-  ].join('\n')
+  )
+
+  return lines.join('\n')
 }
 
 async function callGemini(key: string, model: string, prompt: string): Promise<string> {
@@ -192,8 +253,8 @@ function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en
   }
 }
 
-async function aiNotes(key: string, info: BuildInfo, commits: Commit[]) {
-  const prompt = buildPrompt(info, commits)
+async function aiNotes(key: string, info: BuildInfo, commits: Commit[], registry: RegistryEntry[]) {
+  const prompt = buildPrompt(info, commits, registry)
   let lastErr: unknown
   for (const model of MODELS) {
     try {
@@ -269,11 +330,22 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
 const commits = cleanCommits(info.commits ?? [])
 
+// Load settings registry produced by dump-registry.ts (best-effort — absent in dev or if the
+// dump step was skipped). When present, the registry gives the AI a list of known setting slugs
+// so it can embed tg://entinySettings/<slug> deep links in the Telegram changelog lines.
+let registry: RegistryEntry[] = []
+try {
+  registry = JSON.parse(await fs.readFile(join(artifactDir, 'settings-registry.json'), 'utf8'))
+  console.log(`release-notes: loaded ${registry.length} registry entries`)
+} catch {
+  console.warn('release-notes: settings-registry.json not found; deep links disabled')
+}
+
 let notes: { en: string, uk: string, tg: string }
 const key = process.env.GEMINI_API_KEY
 if (key && commits.length > 0) {
   try {
-    notes = await aiNotes(key, info, commits)
+    notes = await aiNotes(key, info, commits, registry)
   } catch (e) {
     console.warn(`release-notes: AI failed (${e}); using rule-based fallback`)
     notes = ruleFallback(commits)
