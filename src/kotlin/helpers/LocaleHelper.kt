@@ -25,7 +25,8 @@ object LocaleHelper {
             key == "AppName" ||
             key == "AppNameBeta" ||
             key == "AppUpdate" ||
-            key == "AppUpdateBeta"
+            key == "AppUpdateBeta" ||
+            key == "Page1Title"
     }
 
     @JvmStatic
@@ -53,6 +54,7 @@ object LocaleHelper {
             "AppNameBeta" -> "Telegram Beta"
             "AppUpdate" -> "Update Telegram"
             "AppUpdateBeta" -> "Update Telegram Beta"
+            "Page1Title" -> "Telegram"
             else -> null
         }
     }
