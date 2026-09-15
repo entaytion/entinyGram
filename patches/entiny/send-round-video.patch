@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -10697,6 +10697,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -10706,6 +10706,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (media.isEmpty()) {
              return;
          }

@@ -6,12 +6,13 @@ Subject: feat(content-protection): allow opted-in access to protected content
 - bypass forwarding restrictions only when the selected messages require it
 - allow copying protected messages under the same setting
 ---
- .../src/main/java/org/telegram/messenger/FileLoader.java    | 4 ++--
- .../src/main/java/org/telegram/messenger/MessageObject.java | 2 +-
- .../java/org/telegram/messenger/MessagesController.java     | 2 ++
- .../main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 2 +-
- .../src/main/java/org/telegram/ui/ChatActivity.java         | 6 +++---
- 5 files changed, 9 insertions(+), 7 deletions(-)
+ .../src/main/java/org/telegram/messenger/FileLoader.java | 4 ++--
+ .../main/java/org/telegram/messenger/MessageObject.java  | 2 +-
+ .../java/org/telegram/messenger/MessagesController.java  | 2 ++
+ .../java/org/telegram/messenger/SendMessagesHelper.java  | 9 +++++++++
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java | 2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java      | 6 +++---
+ 6 files changed, 18 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -65,6 +66,26 @@ index 0000000..0000000 100644
          if (userFull == null) {
              return false;
          }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -2114,6 +2114,15 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 });
+                 return 0;
+             }
++            if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
++                ArrayList<MessageObject> inu_restricted = desu.inugram.helpers.chat.ChatHelper.splitRestrictedForward(messages, getMessagesController());
++                if (inu_restricted != null) {
++                    desu.inugram.helpers.chat.ChatHelper.sendRestrictedForward(this, inu_restricted, peer, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, monoForumPeerId, suggestionParams, hideCaption, payStars);
++                    if (messages.isEmpty()) {
++                        return 0;
++                    }
++                }
++            }
+             if (DialogObject.isUserDialog(peer)) {
+                 TLRPC.User sendToUser = getMessagesController().getUser(peer);
+                 if (sendToUser == null) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java

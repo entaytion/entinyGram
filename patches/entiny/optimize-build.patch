@@ -37,8 +37,8 @@ index 0000000..0000000 100644
      implementation 'org.nanohttpd:nanohttpd:2.3.1'
  
      compileOnly 'org.checkerframework:checker-qual:2.5.2'
-@@ -192,8 +190,8 @@ android {
-             minifyEnabled true
+@@ -196,8 +194,8 @@ android {
+             minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
              shrinkResources false
              multiDexEnabled true
 -            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
@@ -776,9 +776,9 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -91,8 +91,8 @@ android {
-             minifyEnabled true
-             shrinkResources true
+@@ -94,8 +94,8 @@ android {
+             minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
+             shrinkResources System.getenv('INU_BUILD_TYPE') != 'beta'
              multiDexEnabled true
 -            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
 -            ndk.debugSymbolLevel = 'SYMBOL_TABLE'

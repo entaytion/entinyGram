@@ -49,7 +49,10 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagePreviewParams
+import org.telegram.messenger.MessageSuggestionParams
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
+import org.telegram.messenger.SendMessageChatArguments
 import org.telegram.messenger.R
 import org.telegram.messenger.SendMessagesHelper
 import org.telegram.messenger.TranslateController
@@ -1122,76 +1125,239 @@ object ChatHelper {
         quote: ChatActivity.ReplyQuote?,
     ) {
         val helper = SendMessagesHelper.getInstance(activity.currentAccount)
-        val did = activity.dialogId
-        val threadMsg = activity.threadMessage
-        val mono = activity.sendMonoForumPeerId
-        val suggest = activity.sendMessageSuggestionParams
-        val msg = target.messageOwner
+        val handled = sendMessageAsNew(
+            helper, target, activity.dialogId, replyTo, activity.threadMessage, quote,
+            true, 0, 0, activity.sendMonoForumPeerId, activity.sendMessageSuggestionParams,
+            activity.messageChatSendParams,
+        )
+        if (!handled) {
+            activity.forwardMessages(arrayListOf(target), true, false, true, 0, 0L)
+        }
+    }
 
+    /**
+     * Re-sends [target]'s media/text to [did] as a brand-new message referencing the same
+     * photo/document object, instead of a real protocol forward. Used both by "repeat as copy"
+     * and by [sendRestrictedForward] to bypass noforwards content: the server enforces that
+     * restriction on messages.forwardMessages itself, so re-sending as new media is the only
+     * way to honor [InuConfig.ALLOW_FORWARD_RESTRICTED] instead of failing server-side.
+     * Returns false when [target] has no media/text this can resend.
+     */
+    private fun sendMessageAsNew(
+        helper: SendMessagesHelper,
+        target: MessageObject,
+        did: Long,
+        replyTo: MessageObject?,
+        threadMsg: MessageObject?,
+        quote: ChatActivity.ReplyQuote?,
+        notify: Boolean,
+        scheduleDate: Int,
+        scheduleRepeatPeriod: Int,
+        mono: Long,
+        suggest: MessageSuggestionParams?,
+        sendMessageChatArguments: SendMessageChatArguments? = null,
+        hideCaption: Boolean = false,
+        payStars: Long = 0L,
+    ): Boolean {
         if (target.isAnyKindOfSticker) {
             helper.sendSticker(
                 target.document, null, did, replyTo, threadMsg, null, quote, null,
-                true, 0, 0, false, null, activity.messageChatSendParams, 0L, mono, suggest,
+                notify, scheduleDate, scheduleRepeatPeriod, false, target, sendMessageChatArguments, payStars, mono, suggest,
             )
-            return
+            return true
         }
 
+        val params = buildResendParams(
+            target, did, replyTo, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption,
+        ) ?: return false
+        params.replyQuote = quote
+        params.monoForumPeer = mono
+        params.suggestionParams = suggest
+        params.payStars = payStars
+        helper.sendMessage(params)
+        return true
+    }
+
+    /**
+     * Builds the [SendMessagesHelper.SendMessageParams] that re-send [target]'s content as a new
+     * message, or null when nothing here is resendable.
+     *
+     * Media that has no branch below (polls, dice, games, invoices, paid media, extended media)
+     * returns null rather than falling through to the plain-text branch: sending only the caption
+     * of a message whose media we dropped looks like a successful forward while silently losing
+     * the content, and callers have a better answer for null (a real forward, or skipping).
+     */
+    private fun buildResendParams(
+        target: MessageObject,
+        did: Long,
+        replyTo: MessageObject?,
+        threadMsg: MessageObject?,
+        notify: Boolean,
+        scheduleDate: Int,
+        scheduleRepeatPeriod: Int,
+        hideCaption: Boolean,
+    ): SendMessagesHelper.SendMessageParams? {
+        val msg = target.messageOwner ?: return null
         val media = msg.media
-        if (media != null
-            && media !is TLRPC.TL_messageMediaEmpty
-            && media !is TLRPC.TL_messageMediaWebPage
-            && media !is TLRPC.TL_messageMediaGame
-            && media !is TLRPC.TL_messageMediaInvoice
-        ) {
-            val params: SendMessagesHelper.SendMessageParams? = when {
+        val hasMedia = media != null &&
+            media !is TLRPC.TL_messageMediaEmpty &&
+            media !is TLRPC.TL_messageMediaWebPage
+
+        // matches the stock forward path's own caption handling (`!hideCaption || isMediaEmpty`)
+        val caption = if (hideCaption && hasMedia) null else msg.message
+        val entities = if (hideCaption && hasMedia) null else msg.entities
+
+        if (hasMedia) {
+            return when {
                 media.photo is TLRPC.TL_photo -> SendMessagesHelper.SendMessageParams.of(
                     media.photo as TLRPC.TL_photo, null, did, replyTo, threadMsg,
-                    msg.message, msg.entities, null, null, true, 0, 0,
+                    caption, entities, null, null, notify, scheduleDate, scheduleRepeatPeriod,
                     media.ttl_seconds, target, false,
                 )
                 media.document is TLRPC.TL_document -> SendMessagesHelper.SendMessageParams.of(
                     media.document as TLRPC.TL_document, null, msg.attachPath, did, replyTo, threadMsg,
-                    msg.message, msg.entities, null, null, true, 0, 0,
+                    caption, entities, null, null, notify, scheduleDate, scheduleRepeatPeriod,
                     media.ttl_seconds, target, null, false,
                 )
                 media is TLRPC.TL_messageMediaVenue || media is TLRPC.TL_messageMediaGeo ->
-                    SendMessagesHelper.SendMessageParams.of(media, did, replyTo, threadMsg, null, null, true, 0, 0)
+                    SendMessagesHelper.SendMessageParams.of(media, did, replyTo, threadMsg, null, null, notify, scheduleDate, scheduleRepeatPeriod)
                 media.phone_number != null -> {
                     val user = TLRPC.TL_userContact_old2()
                     user.phone = media.phone_number
                     user.first_name = media.first_name
                     user.last_name = media.last_name
                     user.id = media.user_id
-                    SendMessagesHelper.SendMessageParams.of(user, did, replyTo, threadMsg, null, null, true, 0, 0)
+                    SendMessagesHelper.SendMessageParams.of(user, did, replyTo, threadMsg, null, null, notify, scheduleDate, scheduleRepeatPeriod)
                 }
                 else -> null
             }
-            if (params != null) {
-                params.replyQuote = quote
-                params.monoForumPeer = mono
-                params.suggestionParams = suggest
-                helper.sendMessage(params)
-                return
-            }
         }
 
-        if (msg.message != null) {
-            var webPage: TLRPC.WebPage? = null
-            if (media is TLRPC.TL_messageMediaWebPage) {
-                webPage = media.webpage
-            }
-            val params = SendMessagesHelper.SendMessageParams.of(
-                msg.message, did, replyTo, threadMsg,
-                webPage, webPage != null, msg.entities, null, null, true, 0, 0, null, false,
-            )
-            params.replyQuote = quote
-            params.monoForumPeer = mono
-            params.suggestionParams = suggest
-            helper.sendMessage(params)
-            return
-        }
+        val text = msg.message
+        if (text.isNullOrEmpty()) return null
+        val webPage = (media as? TLRPC.TL_messageMediaWebPage)?.webpage
+        return SendMessagesHelper.SendMessageParams.of(
+            text, did, replyTo, threadMsg,
+            webPage, webPage != null, msg.entities, null, null, notify, scheduleDate, scheduleRepeatPeriod, null, false,
+        )
+    }
 
-        activity.forwardMessages(arrayListOf(target), true, false, true, 0, 0L)
+    /**
+     * True when [msg]'s *source* forbids protocol forwarding, read straight off the raw TL data.
+     *
+     * [MessagesController.isPeerNoForwards] can't be used here: the ALLOW_FORWARD_RESTRICTED patch
+     * makes it (and `isChatNoForwards`/`isUserNoForwards`) return false precisely while the toggle
+     * is on, which is the only time this runs — so it would report every peer as unrestricted and
+     * the split would silently never fire for peer-level protection.
+     */
+    private fun isSourceNoForwards(controller: MessagesController, msg: MessageObject): Boolean {
+        if (msg.messageOwner?.noforwards == true) return true
+        val dialogId = msg.dialogId
+        if (dialogId < 0) {
+            val chat = controller.getChat(-dialogId) ?: return false
+            val migratedTo = chat.migrated_to?.let { controller.getChat(it.channel_id) }
+            return (migratedTo ?: chat).noforwards
+        }
+        val userFull = controller.getUserFull(dialogId) ?: return false
+        return userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled
+    }
+
+    /**
+     * Pulls noforwards messages (peer- or message-level) out of [messages] in place and
+     * returns them, or null if none were restricted. Called from [SendMessagesHelper.sendMessage]
+     * before it attempts a real protocol forward, which the server rejects for these regardless
+     * of client-side flags.
+     *
+     * Only messages that would actually reach `messages.forwardMessages` are taken. Stock already
+     * degrades local (`id <= 0`) and blurred-preview (one-time / secret) media to a text-only send
+     * without ever issuing the RPC, so those never hit the server rejection and are left alone —
+     * and their file references can't be re-sent by id anyway. Same for secret-chat sources.
+     */
+    @JvmStatic
+    fun splitRestrictedForward(messages: MutableList<MessageObject>, controller: MessagesController): ArrayList<MessageObject>? {
+        var restricted: ArrayList<MessageObject>? = null
+        val it = messages.iterator()
+        while (it.hasNext()) {
+            val msg = it.next()
+            if (msg.id <= 0 || msg.needDrawBluredPreview()) continue
+            if ((msg.messageOwner?.media?.ttl_seconds ?: 0) != 0) continue
+            if (DialogObject.isEncryptedDialog(msg.dialogId)) continue
+            if (!isSourceNoForwards(controller, msg)) continue
+            if (restricted == null) restricted = ArrayList()
+            restricted.add(msg)
+            it.remove()
+        }
+        return restricted
+    }
+
+    /**
+     * Sends each of [messages] to [did] as a fresh copy (see [sendMessageAsNew]) instead of
+     * forwarding them. Messages that share a `grouped_id` and all resolve to resendable media are
+     * re-grouped under one fresh album id so a 5-photo album stays one album; anything that can't
+     * be resent at all (polls, dice, games, invoices, paid/extended media) is skipped, since the
+     * only fallback — a real forward — is exactly what the server rejects here.
+     */
+    @JvmStatic
+    fun sendRestrictedForward(
+        helper: SendMessagesHelper,
+        messages: List<MessageObject>,
+        did: Long,
+        notify: Boolean,
+        scheduleDate: Int,
+        scheduleRepeatPeriod: Int,
+        threadMsg: MessageObject?,
+        mono: Long,
+        suggest: MessageSuggestionParams?,
+        hideCaption: Boolean,
+        payStars: Long,
+    ) {
+        var index = 0
+        while (index < messages.size) {
+            val target = messages[index]
+            val groupId = target.groupId
+            var end = index + 1
+            if (groupId != 0L) {
+                while (end < messages.size && messages[end].groupId == groupId) end++
+            }
+
+            val album = if (end - index > 1) {
+                messages.subList(index, end).mapNotNull { msg ->
+                    // stickers and voice notes never belong to an album, and the voice branch of
+                    // sendMessage() replaces the shared group DelayedMessage instead of reusing it
+                    // (type 8 is the one type that doesn't guard on `delayedMessage == null`), which
+                    // would strand the whole group unsent
+                    if (msg.isAnyKindOfSticker || msg.isVoice) null
+                    else buildResendParams(msg, did, null, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption)
+                        ?.takeIf { it.photo != null || it.document != null }
+                }
+            } else {
+                emptyList<SendMessagesHelper.SendMessageParams>()
+            }
+
+            if (album.size > 1) {
+                val newGroupId = Utilities.random.nextLong()
+                album.forEachIndexed { i, params ->
+                    params.params = HashMap<String, String>().apply {
+                        put("groupId", newGroupId.toString())
+                        if (i == album.size - 1) put("final", "1")
+                    }
+                    params.monoForumPeer = mono
+                    params.suggestionParams = suggest
+                    // a grouped send skips sendMessage()'s own paid-message confirmation
+                    // (`!isGroup`), so the already-confirmed price has to be carried in
+                    params.payStars = payStars
+                    helper.sendMessage(params)
+                }
+            } else {
+                for (i in index until end) {
+                    sendMessageAsNew(
+                        helper, messages[i], did, null, threadMsg, null, notify, scheduleDate,
+                        scheduleRepeatPeriod, mono, suggest, null, hideCaption, payStars,
+                    )
+                }
+            }
+            index = end
+        }
     }
 
     private fun getPendingReply(activity: ChatActivity): MessageObject? {
