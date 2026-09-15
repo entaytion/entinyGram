@@ -76,8 +76,11 @@ object InuHooks {
         @Suppress("UNCHECKED_CAST")
         val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
         for (msg in messages) onNewMessage(msg, acc)
-        if (desu.inugram.helpers.feed.FeedController.isActiveFor(acc)) {
-            desu.inugram.helpers.feed.FeedController.get(acc).onNewMessages(messages)
+        // Fans out to the cached global controller (once it's ever been opened) and every
+        // folder-scoped Feed screen currently open -- a folder scope isn't cached (see
+        // FeedController.forFolder), so it self-registers for exactly this while its screen is up.
+        for (controller in desu.inugram.helpers.feed.FeedController.allActiveFor(acc)) {
+            controller.onNewMessages(messages)
         }
     }
 
@@ -85,8 +88,8 @@ object InuHooks {
     // historyCleared args: (long dialogId, int maxId)
     // Both confirmed against MessagesController's own postNotificationName call sites.
     private val feedPruneObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
-        if (!desu.inugram.helpers.feed.FeedController.isActiveFor(acc)) return@NotificationCenterDelegate
-        val controller = desu.inugram.helpers.feed.FeedController.get(acc)
+        val controllers = desu.inugram.helpers.feed.FeedController.allActiveFor(acc)
+        if (controllers.isEmpty()) return@NotificationCenterDelegate
         when (id) {
             NotificationCenter.messagesDeleted -> {
                 @Suppress("UNCHECKED_CAST")
@@ -96,13 +99,15 @@ object InuHooks {
                 // dialog id or a positive channel chat id needing negation -- removeMessages() is
                 // a no-op for a dialog id with no matching rows, so trying both is harmless.
                 if (channelId != 0L) {
-                    controller.onMessagesDeleted(channelId, ids)
-                    controller.onMessagesDeleted(-channelId, ids)
+                    for (controller in controllers) {
+                        controller.onMessagesDeleted(channelId, ids)
+                        controller.onMessagesDeleted(-channelId, ids)
+                    }
                 }
             }
             NotificationCenter.historyCleared -> {
                 val dialogId = args.getOrNull(0) as? Long ?: return@NotificationCenterDelegate
-                controller.onHistoryCleared(dialogId)
+                for (controller in controllers) controller.onHistoryCleared(dialogId)
             }
         }
     }

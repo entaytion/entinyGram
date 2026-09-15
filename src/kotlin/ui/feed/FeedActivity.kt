@@ -248,6 +248,12 @@ class FeedActivity @JvmOverloads constructor(
         controller.onLiveMessagesAdded = { added -> appendLive(added) }
         controller.onLiveMessagesRemoved = { dialogId, ids -> removeLive(dialogId, ids) }
         controller.onLiveDialogRemoved = { dialogId -> removeDialogLive(dialogId) }
+        // A gap-fill round that this screen itself triggered (see maybeLoadOlder's backfill
+        // fallback) landed new local history after the screen had already given up and shown
+        // "all read" -- folder scopes hit this constantly, since a handful of channels run out of
+        // locally-cached history far sooner than the whole account's does. Give the search another
+        // try now that there's something new to find.
+        controller.onBackfillCompleted = { retryAfterBackfill() }
         controller.onScreenOpened { _ ->
             if (fragmentView == null) return@onScreenOpened
             // Take the full accumulated snapshot, not just this call's delta: on a second open
@@ -264,12 +270,22 @@ class FeedActivity @JvmOverloads constructor(
             rebuildDisplayItems()
             listView?.adapter?.notifyDataSetChanged()
             updateEmptyView()
-            // An empty first page here only means "nothing already-cached is unread" -- not
-            // "nothing unread exists anywhere". With the list empty there's no scroll gesture left
-            // to trigger maybeLoadOlder()'s own search, so kick it off once explicitly; it already
-            // knows how to page past read backlog and fall through to backfill.
-            if (snapshot.isEmpty()) maybeLoadOlder()
+            // The first page's *raw* window is a fixed number of most-recent messages across every
+            // eligible channel, regardless of read state -- fine for the global feed (dozens of
+            // channels virtually guarantee plenty of unread among the newest batch), but a narrow
+            // folder scope's newest batch is often mostly already-read, leaving only a handful of
+            // unread rows with nothing left to scroll and trigger maybeLoadOlder()'s own search.
+            // Kick it off proactively whenever the page looks thin, not only when it's literally
+            // empty; it already knows how to page past read backlog and fall through to backfill.
+            if (snapshot.size < MIN_INITIAL_UNREAD) maybeLoadOlder()
         }
+    }
+
+    /** Retries the "keep scrolling to top up on unread" search after a triggered backfill lands. */
+    private fun retryAfterBackfill() {
+        if (fragmentView == null) return
+        reachedEnd = false
+        if (rows.size < MIN_INITIAL_UNREAD) maybeLoadOlder()
     }
 
     private fun maybeLoadOlder() {
@@ -314,29 +330,24 @@ class FeedActivity @JvmOverloads constructor(
      * after everything currently shown. In the default order that means the tail, re-reversed to
      * chronological; in newestOnTop mode these are the new newest posts, so they belong at the
      * front, already in the right (newest-first) order.
+     *
+     * Never force-scrolls: the currently visible post stays exactly where it is regardless of
+     * where that happens to sit in the list. A live push used to auto-scroll to the new post
+     * whenever the user was positioned at the live edge -- but that's also exactly where you sit
+     * while reading the current newest post, so a message arriving mid-read yanked the screen out
+     * from under you before you finished it. Same "don't disturb an active read" rule the class
+     * doc already states for scrolled-past posts.
      */
     private fun appendLive(added: List<MessageObject>) {
         if (fragmentView == null) return
-        val lm = listView?.layoutManager as? LinearLayoutManager
         if (newestOnTop) {
-            // Capture "was the user already looking at the top" BEFORE mutating the list, so a
-            // live push doesn't yank someone reading older history up to the new message.
-            val wasAtTop = listView?.let { lv ->
-                !lv.canScrollVertically(-1) || (lm != null && lm.findFirstCompletelyVisibleItemPosition() <= 0)
-            } ?: false
             rows.addAll(0, added)
             val inserted = buildRunRows(added, null)
             displayItems.addAll(0, inserted)
             listView?.adapter?.notifyItemRangeInserted(0, inserted.size)
             updateEmptyView()
-            if (wasAtTop) listView?.post { listView?.scrollToPosition(0) }
             return
         }
-        // Capture "was the user already looking at the bottom" BEFORE mutating the list, so a
-        // live push doesn't yank someone reading older history down to the new message.
-        val wasAtBottom = listView?.let { lv ->
-            !lv.canScrollVertically(1) || (lm != null && lm.findLastCompletelyVisibleItemPosition() >= displayItems.size - 1)
-        } ?: false
         val chronological = added.asReversed()
         rows.addAll(chronological)
         val trailingDialogId = (displayItems.lastOrNull() as? Row.Msg)?.message?.getDialogId()
@@ -345,7 +356,6 @@ class FeedActivity @JvmOverloads constructor(
         displayItems.addAll(inserted)
         listView?.adapter?.notifyItemRangeInserted(start, inserted.size)
         updateEmptyView()
-        if (wasAtBottom) listView?.post { listView?.scrollToPosition(displayItems.size - 1) }
     }
 
     /** A message was deleted elsewhere while this screen is open. */
@@ -403,6 +413,7 @@ class FeedActivity @JvmOverloads constructor(
         controller.onLiveMessagesAdded = null
         controller.onLiveMessagesRemoved = null
         controller.onLiveDialogRemoved = null
+        controller.onBackfillCompleted = null
         controller.onScreenClosed()
         super.onFragmentDestroy()
     }
@@ -636,6 +647,7 @@ class FeedActivity @JvmOverloads constructor(
     companion object {
         private val MENU_OVERFLOW = InuUtils.generateId()
         private const val LOAD_MORE_THRESHOLD = 6
+        private const val MIN_INITIAL_UNREAD = 10
         private const val VIEW_TYPE_MESSAGE = 0
         private const val VIEW_TYPE_HEADER = 1
     }
