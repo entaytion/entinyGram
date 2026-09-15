@@ -419,3 +419,6 @@ entiny/startup-optimizations.patch
 entiny/forward-pro.patch
 entiny/round-recorder-60fps-and-exposure-lock.patch
 entiny/feed-bottom-tab.patch
+bugfix/expired-media-refresh.patch
+entiny/instant-mark-reactions-read.patch
+entiny/recent-chats.patch

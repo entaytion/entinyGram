@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 15 Sep 2026 19:11:26 +0300
+Subject: entiny(dialogs): add a Recent Chats quick-switcher
+
+- track the most recently opened dialogs (own inu_recent_dialogs table)
+  via a hook in ChatActivity view creation
+- popup listing them (avatar, title, tap to open, long-press for
+  profile) reachable from the dialogs-screen options menu, with a
+  clear-history action - inspired by exteraless/NekoGram BackButtonMenuRecent
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -8989,6 +8989,10 @@ public class ChatActivity extends BaseFragment implements
+             FileLog.d("InuRx[" + classGuid + "] init did=" + dialog_id + " topic=" + getTopicId() + " reactions=" + reactionsMentionCount + " pollVotes=" + pollVotesMentionCount);
+         }
+ 
++        if (currentUser != null || currentChat != null) {
++            desu.inugram.helpers.dialogs.RecentChatsHelper.addToRecentDialogs(currentAccount, currentUser != null ? currentUser.id : -currentChat.id);
++        }
++
+         if (getDialogId() == getUserConfig().getClientUserId() && chatMode != MODE_SAVED) {
+             savedMessagesHint = new HintView2(context, HintView2.DIRECTION_TOP);
+             savedMessagesHint.setMultilineText(true);

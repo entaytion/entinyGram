@@ -43,6 +43,7 @@ import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
 import org.telegram.ui.AccountFrozenAlert
+import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.DrawerLayoutContainer
 import org.telegram.ui.ActionBar.INavigationLayout
@@ -749,6 +750,18 @@ object DrawerHelper {
             }
         }
 
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.RECENT_CHATS)) {
+            io.add(R.drawable.msg_recent_solar, getString(R.string.InuRecentChats)) {
+                RecentChatsHelper.show(instance, instance.getActionBar())
+            }
+        }
+
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.CLEAR_CACHE)) {
+            io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
+                showClearCacheOptions(instance)
+            }
+        }
+
         if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.FEED)) {
             io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
                 instance.presentFragment(desu.inugram.ui.feed.FeedActivity())
@@ -776,5 +789,34 @@ object DrawerHelper {
                 instance.presentFragment(SettingsActivity())
             }
         }
+    }
+
+    private fun showClearCacheOptions(instance: DialogsActivity) {
+        ItemOptions.makeOptions(instance, instance.getActionBar())
+            .add(R.drawable.msg_filled_storageusage, getString(R.string.StorageUsage)) {
+                instance.presentFragment(org.telegram.ui.CacheControlActivity())
+            }
+            .add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearDeletedCache)) {
+                confirmClearDeletedMessagesCache(instance)
+            }
+            .show()
+    }
+
+    private fun confirmClearDeletedMessagesCache(instance: DialogsActivity) {
+        val context = instance.parentActivity ?: return
+        AlertDialog.Builder(context, instance.getResourceProvider())
+            .setTitle(getString(R.string.InuClearDeletedCache))
+            .setMessage(getString(R.string.InuClearDeletedCacheAlert))
+            .setPositiveButton(getString(R.string.ClearButton).uppercase()) { _, _ ->
+                val account = instance.currentAccount
+                desu.inugram.helpers.chat.SavedMessagesHelper.clearCache(account, null) {
+                    BulletinFactory.of(instance)
+                        .createSimpleBulletin(R.raw.ic_delete, getString(R.string.InuClearDeletedCacheDone))
+                        .show()
+                }
+            }
+            .setNegativeButton(getString(R.string.Cancel), null)
+            .makeRed(AlertDialog.BUTTON_POSITIVE)
+            .show()
     }
 }

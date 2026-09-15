@@ -46,7 +46,7 @@ index 0000000..0000000 100644
                      int finalMessageId = messageId;
                      AndroidUtilities.runOnUIThread(() -> callback.accept(finalMessageId));
                  });
-@@ -21414,6 +21429,60 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21416,6 +21431,60 @@ public class MessagesController extends BaseController implements NotificationCe
          checkUnreadReactionsInternal(dialogId, topicId, unreadPollVotes, false);
      }
  
@@ -107,7 +107,7 @@ index 0000000..0000000 100644
      private void checkUnreadReactionsInternal(long dialogId, long topicId, SparseBooleanArray unreadReactions, boolean isReactions) {
          final String tableMentionsForDialogs = isReactions ? "reaction_mentions" : "poll_votes_mentions";
          final String tableMentionsForTopics = isReactions ? "reaction_mentions_topics" : "poll_votes_mentions_topics";
-@@ -21666,6 +21735,46 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21668,6 +21737,46 @@ public class MessagesController extends BaseController implements NotificationCe
          }
      }
  

@@ -288,6 +288,8 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
         THEME_TOGGLE("theme_toggle", R.string.InuMenuThemeToggle, R.drawable.menu_night_mode_24),
         COMPOSE("compose", R.string.InuMenuCompose, R.drawable.menu_topic_add),
         SAVED_MESSAGES("saved_messages", R.string.SavedMessages, R.drawable.outline_saved_24),
+        RECENT_CHATS("recent_chats", R.string.InuRecentChats, R.drawable.msg_recent_solar),
+        CLEAR_CACHE("clear_cache", R.string.InuClearCache, R.drawable.inu_tabler_trash_x),
         FEED("feed", R.string.InuFeed, R.drawable.msg_channel),
         SCROLL_TOP("scroll_top", R.string.InuScrollToTop, R.drawable.msg_go_up),
         MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
@@ -306,7 +308,19 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        private val OFF_BY_DEFAULT = emptySet<Item>()
+        // Rows that are genuinely new entinyGram capability (no stock Telegram equivalent at
+        // all) default off, matching rule #4 (default off = stock-identical): enabling the menu
+        // customization itself must not also silently switch on Ghost Mode/Paranoia/Feed/etc.
+        // Rows that just shortcut to something stock already has elsewhere (New Group, Saved
+        // Messages, Scroll to top, My Profile, Contacts, Archived Chats, Settings, theme toggle)
+        // stay on -- hiding those wouldn't make the app more stock-identical, just less convenient.
+        private val OFF_BY_DEFAULT = setOf(
+            Item.GHOST_MODE,
+            Item.PARANOIA,
+            Item.FEED,
+            Item.RECENT_CHATS,
+            Item.CLEAR_CACHE,
+        )
     }
 }
 

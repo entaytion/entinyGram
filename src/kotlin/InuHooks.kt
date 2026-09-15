@@ -132,6 +132,7 @@ object InuHooks {
         MapsHelper.syncMapProvider(messagesController)
         desu.inugram.helpers.dialogs.PinHelper.load(account)
         desu.inugram.helpers.dialogs.FolderMembershipHelper.load(account)
+        desu.inugram.helpers.dialogs.RecentChatsHelper.load(account)
         desu.inugram.helpers.security.PresenceHelper.load(account)
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
         desu.inugram.helpers.media.StarGiftsHelper.refreshDeletedGiftsList()

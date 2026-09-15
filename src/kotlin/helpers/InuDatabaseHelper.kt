@@ -113,6 +113,15 @@ object InuDatabaseHelper {
             version = 10
         }
 
+        if (version == 10) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_recent_dialogs(dialog_id INTEGER PRIMARY KEY, opened_at INTEGER NOT NULL)")
+                .stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_recent_dialogs_opened ON inu_recent_dialogs(opened_at)")
+                .stepThis().dispose()
+            writeKv(db, "version", "11")
+            version = 11
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 
@@ -272,6 +281,42 @@ object InuDatabaseHelper {
             cursor.dispose()
         }
         return map
+    }
+
+    fun saveRecentDialog(db: SQLiteDatabase, dialogId: Long, openedAt: Long) {
+        val query = db.executeFast("REPLACE INTO inu_recent_dialogs(dialog_id, opened_at) VALUES(?, ?)")
+        query.bindLong(1, dialogId)
+        query.bindLong(2, openedAt)
+        query.step()
+        query.dispose()
+    }
+
+    fun trimRecentDialogs(db: SQLiteDatabase, keep: Int) {
+        val query = db.executeFast(
+            "DELETE FROM inu_recent_dialogs WHERE dialog_id NOT IN " +
+                "(SELECT dialog_id FROM inu_recent_dialogs ORDER BY opened_at DESC LIMIT ?)"
+        )
+        query.bindInteger(1, keep)
+        query.step()
+        query.dispose()
+    }
+
+    fun clearRecentDialogs(db: SQLiteDatabase) {
+        db.executeFast("DELETE FROM inu_recent_dialogs").stepThis().dispose()
+    }
+
+    /** most-recently-opened first */
+    fun loadRecentDialogs(db: SQLiteDatabase): List<Long> {
+        val list = ArrayList<Long>()
+        val cursor = db.queryFinalized("SELECT dialog_id FROM inu_recent_dialogs ORDER BY opened_at DESC")
+        try {
+            while (cursor.next()) {
+                list.add(cursor.longValue(0))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
     }
 
     fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, mediaPath: String? = null) {
