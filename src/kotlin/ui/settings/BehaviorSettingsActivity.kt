@@ -216,20 +216,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.AUTO_DISABLE_PROXY_ON_VPN.value)
         )
         items.add(
-            UItem.asCheck(
-                TOGGLE_FASTER_DOWNLOADS,
-                LocaleController.getString(R.string.InuFasterDownloads),
-            ).setChecked(InuConfig.FASTER_DOWNLOADS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_FASTER_UPLOADS,
-                LocaleController.getString(R.string.InuFasterUploads),
-            ).setChecked(InuConfig.FASTER_UPLOADS.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuFasterTransfersInfo)))
-
-        items.add(
             mkTwoLineCheckItem(
                 TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND,
                 R.string.InuKeepDownloadsInBackground,
@@ -455,16 +441,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 ProxyVpnHelper.reconcile()
             }
 
-            TOGGLE_FASTER_DOWNLOADS -> {
-                val new = InuConfig.FASTER_DOWNLOADS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_FASTER_UPLOADS -> {
-                val new = InuConfig.FASTER_UPLOADS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
             TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND -> {
                 val new = InuConfig.KEEP_DOWNLOADS_IN_BACKGROUND.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -609,8 +585,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SEND_MP4_DOCUMENT_AS_VIDEO = InuUtils.generateId()
         private val BUTTON_WEB_PREVIEW_REPLACEMENTS = InuUtils.generateId()
         private val TOGGLE_AUTO_DISABLE_PROXY_ON_VPN = InuUtils.generateId()
-        private val TOGGLE_FASTER_DOWNLOADS = InuUtils.generateId()
-        private val TOGGLE_FASTER_UPLOADS = InuUtils.generateId()
         private val TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND = InuUtils.generateId()
         private val TOGGLE_BLOCK_SLEEP_WHILE_DOWNLOADING = InuUtils.generateId()
         private val SECTION_DELETE_FOR_BOTH = InuUtils.generateId()
@@ -667,8 +641,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("download-directory", R.string.InuDownloadDirectory, BUTTON_DOWNLOAD_DIRECTORY),
                 SearchRegistry.Entry("web-preview-replacements", R.string.InuWebPreviewReplacements, BUTTON_WEB_PREVIEW_REPLACEMENTS),
                 SearchRegistry.Entry("auto-disable-proxy-on-vpn", R.string.InuAutoDisableProxyOnVpn, TOGGLE_AUTO_DISABLE_PROXY_ON_VPN),
-                SearchRegistry.Entry("faster-downloads", R.string.InuFasterDownloads, TOGGLE_FASTER_DOWNLOADS),
-                SearchRegistry.Entry("faster-uploads", R.string.InuFasterUploads, TOGGLE_FASTER_UPLOADS),
                 SearchRegistry.Entry("keep-downloads-in-background", R.string.InuKeepDownloadsInBackground, TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND),
                 SearchRegistry.Entry("block-sleep-while-downloading", R.string.InuBlockSleepWhileDownloading, TOGGLE_BLOCK_SLEEP_WHILE_DOWNLOADING),
                 SearchRegistry.Entry("delete-for-both", R.string.InuDeleteForBoth, SECTION_DELETE_FOR_BOTH),

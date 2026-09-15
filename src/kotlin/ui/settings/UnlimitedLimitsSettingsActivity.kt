@@ -7,6 +7,7 @@ import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
+import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -60,6 +61,22 @@ class UnlimitedLimitsSettingsActivity : SettingsPageActivity() {
                 InuConfig.UNLIMITED_FOLDER_CHATS.value,
             )
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuNetwork)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FASTER_DOWNLOADS,
+                LocaleController.getString(R.string.InuFasterDownloads),
+            ).setChecked(InuConfig.FASTER_DOWNLOADS.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FASTER_UPLOADS,
+                LocaleController.getString(R.string.InuFasterUploads),
+            ).setChecked(InuConfig.FASTER_UPLOADS.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuFasterTransfersInfo)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -77,6 +94,8 @@ class UnlimitedLimitsSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.UNLIMITED_FOLDER_CHATS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_FASTER_DOWNLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_DOWNLOADS.toggle()
+            TOGGLE_FASTER_UPLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_UPLOADS.toggle()
         }
     }
 
@@ -84,6 +103,8 @@ class UnlimitedLimitsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_UNLIMITED_PINNED_CHATS = InuUtils.generateId()
         private val TOGGLE_UNLIMITED_FAVORITE_STICKERS = InuUtils.generateId()
         private val TOGGLE_UNLIMITED_FOLDER_CHATS = InuUtils.generateId()
+        private val TOGGLE_FASTER_DOWNLOADS = InuUtils.generateId()
+        private val TOGGLE_FASTER_UPLOADS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -95,6 +116,8 @@ class UnlimitedLimitsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("unlimited-pinned-chats", R.string.InuUnlimitedPinnedChats, TOGGLE_UNLIMITED_PINNED_CHATS),
                 SearchRegistry.Entry("unlimited-favorite-stickers", R.string.InuUnlimitedFavoriteStickers, TOGGLE_UNLIMITED_FAVORITE_STICKERS),
                 SearchRegistry.Entry("unlimited-folder-chats", R.string.InuUnlimitedFolderChats, TOGGLE_UNLIMITED_FOLDER_CHATS),
+                SearchRegistry.Entry("faster-downloads", R.string.InuFasterDownloads, TOGGLE_FASTER_DOWNLOADS),
+                SearchRegistry.Entry("faster-uploads", R.string.InuFasterUploads, TOGGLE_FASTER_UPLOADS),
             ),
         )
     }
