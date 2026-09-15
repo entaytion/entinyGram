@@ -77,7 +77,7 @@ index 0000000..0000000 100644
 +            if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) {
 +                ArrayList<MessageObject> inu_restricted = desu.inugram.helpers.chat.ChatHelper.splitRestrictedForward(messages, getMessagesController());
 +                if (inu_restricted != null) {
-+                    desu.inugram.helpers.chat.ChatHelper.sendRestrictedForward(this, inu_restricted, peer, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, monoForumPeerId, suggestionParams, hideCaption, payStars);
++                    desu.inugram.helpers.chat.ChatHelper.sendRestrictedForward(this, currentAccount, inu_restricted, peer, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, monoForumPeerId, suggestionParams, hideCaption, payStars);
 +                    if (messages.isEmpty()) {
 +                        return 0;
 +                    }

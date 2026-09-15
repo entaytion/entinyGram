@@ -44,7 +44,9 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.DispatchQueue
 import org.telegram.messenger.FileLoader
+import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MediaController
 import org.telegram.messenger.MessageObject
@@ -52,6 +54,7 @@ import org.telegram.messenger.MessagePreviewParams
 import org.telegram.messenger.MessageSuggestionParams
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.SendMessageChatArguments
 import org.telegram.messenger.R
 import org.telegram.messenger.SendMessagesHelper
@@ -61,6 +64,7 @@ import org.telegram.messenger.UserObject
 import org.telegram.messenger.Utilities
 import org.telegram.messenger.secretmedia.EncryptedFileInputStream
 import org.telegram.messenger.utils.tlutils.TLKeyboardHelper
+import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_keyboard
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
@@ -88,6 +92,8 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import java.io.File
 import java.util.Calendar
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
@@ -96,6 +102,17 @@ object ChatHelper {
 
     private const val COMPACT_FORWARD_ICON_SIZE = 12f
     private const val COMPACT_FORWARD_MIN_NAME_WIDTH = 56f
+
+    /** Upper bound on how long a restricted forward waits for its media to download. */
+    private const val RESTRICTED_FORWARD_TIMEOUT_MS = 10 * 60 * 1000L
+
+    /**
+     * A restricted forward has to download and re-encode media before anything can be sent, so the
+     * whole pipeline runs here and only the final `sendMessage()` calls hop back to the UI thread.
+     * Created lazily — [DispatchQueue] starts its thread in the constructor, and most sessions never
+     * forward from a protected chat.
+     */
+    private val restrictedForwardQueue by lazy { DispatchQueue("inuRestrictedForward") }
 
     const val OPTION_SAVE = 501
     const val OPTION_DETAILS = 502
@@ -1126,7 +1143,7 @@ object ChatHelper {
     ) {
         val helper = SendMessagesHelper.getInstance(activity.currentAccount)
         val handled = sendMessageAsNew(
-            helper, target, activity.dialogId, replyTo, activity.threadMessage, quote,
+            helper, activity.currentAccount, target, activity.dialogId, replyTo, activity.threadMessage, quote,
             true, 0, 0, activity.sendMonoForumPeerId, activity.sendMessageSuggestionParams,
             activity.messageChatSendParams,
         )
@@ -1136,15 +1153,15 @@ object ChatHelper {
     }
 
     /**
-     * Re-sends [target]'s media/text to [did] as a brand-new message referencing the same
-     * photo/document object, instead of a real protocol forward. Used both by "repeat as copy"
-     * and by [sendRestrictedForward] to bypass noforwards content: the server enforces that
-     * restriction on messages.forwardMessages itself, so re-sending as new media is the only
-     * way to honor [InuConfig.ALLOW_FORWARD_RESTRICTED] instead of failing server-side.
-     * Returns false when [target] has no media/text this can resend.
+     * Re-sends [target]'s media/text to [did] as a brand-new message instead of a real protocol
+     * forward. Used by "repeat as copy"; returns false when [target] has nothing this can resend.
+     *
+     * Safe to call on the UI thread — it never re-encodes media, because it always passes
+     * `localFile = null`. The restricted-forward path deliberately does not go through here.
      */
     private fun sendMessageAsNew(
         helper: SendMessagesHelper,
+        account: Int,
         target: MessageObject,
         did: Long,
         replyTo: MessageObject?,
@@ -1159,35 +1176,79 @@ object ChatHelper {
         hideCaption: Boolean = false,
         payStars: Long = 0L,
     ): Boolean {
+        val action = buildResendAction(
+            helper, account, target, did, replyTo, threadMsg, quote, notify, scheduleDate,
+            scheduleRepeatPeriod, mono, suggest, sendMessageChatArguments, hideCaption, payStars, null,
+        ) ?: return false
+        action.run()
+        return true
+    }
+
+    /**
+     * Wraps the "send [target] as a brand-new message" call in a [Runnable] so callers can build it
+     * off the UI thread (see [sendRestrictedForward]) and fire it on the UI thread, where
+     * [SendMessagesHelper] expects to run. Returns null when [target] has nothing resendable.
+     *
+     * When [localFile] is non-null the media is re-uploaded from that file; see [buildResendParams].
+     */
+    private fun buildResendAction(
+        helper: SendMessagesHelper,
+        account: Int,
+        target: MessageObject,
+        did: Long,
+        replyTo: MessageObject?,
+        threadMsg: MessageObject?,
+        quote: ChatActivity.ReplyQuote?,
+        notify: Boolean,
+        scheduleDate: Int,
+        scheduleRepeatPeriod: Int,
+        mono: Long,
+        suggest: MessageSuggestionParams?,
+        sendMessageChatArguments: SendMessageChatArguments?,
+        hideCaption: Boolean,
+        payStars: Long,
+        localFile: File?,
+    ): Runnable? {
         if (target.isAnyKindOfSticker) {
-            helper.sendSticker(
-                target.document, null, did, replyTo, threadMsg, null, quote, null,
-                notify, scheduleDate, scheduleRepeatPeriod, false, target, sendMessageChatArguments, payStars, mono, suggest,
-            )
-            return true
+            // sticker documents live in public stickersets, so referencing one by id keeps working
+            // even when the source chat is protected — nothing to re-upload here
+            return Runnable {
+                helper.sendSticker(
+                    target.document, null, did, replyTo, threadMsg, null, quote, null,
+                    notify, scheduleDate, scheduleRepeatPeriod, false, target, sendMessageChatArguments, payStars, mono, suggest,
+                )
+            }
         }
 
         val params = buildResendParams(
-            target, did, replyTo, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption,
-        ) ?: return false
+            account, target, did, replyTo, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption, localFile,
+        ) ?: return null
         params.replyQuote = quote
         params.monoForumPeer = mono
         params.suggestionParams = suggest
         params.payStars = payStars
-        helper.sendMessage(params)
-        return true
+        return Runnable { helper.sendMessage(params) }
     }
 
     /**
      * Builds the [SendMessagesHelper.SendMessageParams] that re-send [target]'s content as a new
      * message, or null when nothing here is resendable.
      *
+     * With [localFile] set, the photo/document is rebuilt from scratch around that local copy
+     * ([freshPhoto] / [freshDocument]) so the media is genuinely re-uploaded rather than referenced
+     * by its server id — see [sendRestrictedForward] for why that matters. With [localFile] null the
+     * existing photo/document object is reused, which is what "repeat as copy" wants.
+     *
      * Media that has no branch below (polls, dice, games, invoices, paid media, extended media)
      * returns null rather than falling through to the plain-text branch: sending only the caption
      * of a message whose media we dropped looks like a successful forward while silently losing
      * the content, and callers have a better answer for null (a real forward, or skipping).
+     *
+     * Must not run on the UI thread when [localFile] is set — [freshPhoto] decodes and re-encodes
+     * a bitmap.
      */
     private fun buildResendParams(
+        account: Int,
         target: MessageObject,
         did: Long,
         replyTo: MessageObject?,
@@ -1196,6 +1257,7 @@ object ChatHelper {
         scheduleDate: Int,
         scheduleRepeatPeriod: Int,
         hideCaption: Boolean,
+        localFile: File?,
     ): SendMessagesHelper.SendMessageParams? {
         val msg = target.messageOwner ?: return null
         val media = msg.media
@@ -1206,19 +1268,34 @@ object ChatHelper {
         // matches the stock forward path's own caption handling (`!hideCaption || isMediaEmpty`)
         val caption = if (hideCaption && hasMedia) null else msg.message
         val entities = if (hideCaption && hasMedia) null else msg.entities
+        // a re-upload has no server-side file reference left to refresh, so there is nothing for
+        // stock's FileRefController to do with the (restricted) source message
+        val parent = if (localFile == null) target else null
 
         if (hasMedia) {
             return when {
-                media.photo is TLRPC.TL_photo -> SendMessagesHelper.SendMessageParams.of(
-                    media.photo as TLRPC.TL_photo, null, did, replyTo, threadMsg,
-                    caption, entities, null, null, notify, scheduleDate, scheduleRepeatPeriod,
-                    media.ttl_seconds, target, false,
-                )
-                media.document is TLRPC.TL_document -> SendMessagesHelper.SendMessageParams.of(
-                    media.document as TLRPC.TL_document, null, msg.attachPath, did, replyTo, threadMsg,
-                    caption, entities, null, null, notify, scheduleDate, scheduleRepeatPeriod,
-                    media.ttl_seconds, target, null, false,
-                )
+                media.photo is TLRPC.TL_photo -> {
+                    val photo = when {
+                        localFile == null -> media.photo as TLRPC.TL_photo
+                        else -> freshPhoto(account, localFile) ?: return null
+                    }
+                    SendMessagesHelper.SendMessageParams.of(
+                        photo, localFile?.absolutePath, did, replyTo, threadMsg,
+                        caption, entities, null, null, notify, scheduleDate, scheduleRepeatPeriod,
+                        media.ttl_seconds, parent, false,
+                    )
+                }
+                media.document is TLRPC.TL_document -> {
+                    val source = media.document as TLRPC.TL_document
+                    val document = if (localFile == null) source else freshDocument(account, source, localFile)
+                    // stock puts this straight into `newMsg.attachPath` and uploads from it
+                    val path = localFile?.absolutePath ?: msg.attachPath
+                    SendMessagesHelper.SendMessageParams.of(
+                        document, null, path, did, replyTo, threadMsg,
+                        caption, entities, null, null, notify, scheduleDate, scheduleRepeatPeriod,
+                        media.ttl_seconds, parent, null, false,
+                    )
+                }
                 media is TLRPC.TL_messageMediaVenue || media is TLRPC.TL_messageMediaGeo ->
                     SendMessagesHelper.SendMessageParams.of(media, did, replyTo, threadMsg, null, null, notify, scheduleDate, scheduleRepeatPeriod)
                 media.phone_number != null -> {
@@ -1239,6 +1316,61 @@ object ChatHelper {
         return SendMessagesHelper.SendMessageParams.of(
             text, did, replyTo, threadMsg,
             webPage, webPage != null, msg.entities, null, null, notify, scheduleDate, scheduleRepeatPeriod, null, false,
+        )
+    }
+
+    /**
+     * Re-encodes [file] into a brand-new local photo. Stock's own "user picked a photo" path uses
+     * the same call, and it leaves `id`/`access_hash` at 0 with an empty `file_reference`, which is
+     * exactly the shape every `photo.access_hash == 0` branch in `SendMessagesHelper` treats as
+     * "upload this from scratch".
+     *
+     * Decodes and re-compresses a bitmap — never call it on the UI thread.
+     */
+    private fun freshPhoto(account: Int, file: File): TLRPC.TL_photo? =
+        SendMessagesHelper.getInstance(account).generatePhotoSizes(file.absolutePath, null)
+
+    /**
+     * An anonymous copy of [source] pointing at [file]: no id, no access_hash, no file_reference and
+     * no dc_id, so `document.access_hash == 0` sends it down the upload path instead of referencing
+     * the (restricted) server-side file. Mirrors what stock builds for a freshly picked file.
+     *
+     * Attributes are copied into a *new* list because stock mutates them in place (it strips
+     * `TL_documentAttributeAnimated` when the target chat forbids stickers), which would otherwise
+     * corrupt the source message's own document.
+     */
+    private fun freshDocument(account: Int, source: TLRPC.TL_document, file: File): TLRPC.TL_document {
+        val document = TLRPC.TL_document()
+        document.id = 0
+        document.access_hash = 0
+        document.dc_id = 0
+        document.file_reference = ByteArray(0)
+        document.date = ConnectionsManager.getInstance(account).currentTime
+        document.mime_type = source.mime_type ?: "application/octet-stream"
+        document.file_name = source.file_name
+        document.file_name_fixed = source.file_name_fixed
+        document.size = file.length()
+        document.localPath = file.absolutePath
+        document.attributes = ArrayList(source.attributes)
+        // stock uploads thumbs[0] right after the file itself whenever it isn't a stripped size;
+        // a server-side thumb we never cached would fail that upload and error the whole message
+        for (thumb in source.thumbs) {
+            if (thumb is TLRPC.TL_photoStrippedSize || thumbCacheFile(thumb)?.exists() == true) {
+                document.thumbs.add(thumb)
+            }
+        }
+        if (document.thumbs.isNotEmpty()) {
+            document.flags = document.flags or 1
+        }
+        return document
+    }
+
+    // where stock looks for a thumb when it uploads one alongside a document
+    private fun thumbCacheFile(size: TLRPC.PhotoSize): File? {
+        val location = size.location ?: return null
+        return File(
+            FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE),
+            "${location.volume_id}_${location.local_id}.jpg",
         )
     }
 
@@ -1291,15 +1423,27 @@ object ChatHelper {
     }
 
     /**
-     * Sends each of [messages] to [did] as a fresh copy (see [sendMessageAsNew]) instead of
-     * forwarding them. Messages that share a `grouped_id` and all resolve to resendable media are
-     * re-grouped under one fresh album id so a 5-photo album stays one album; anything that can't
-     * be resent at all (polls, dice, games, invoices, paid/extended media) is skipped, since the
-     * only fallback — a real forward — is exactly what the server rejects here.
+     * Sends each of [messages] to [did] as a fresh copy instead of forwarding them.
+     *
+     * Media is always **re-uploaded from a local copy**, never referenced by its server id: a
+     * noforwards file can't be re-attached to a message in another chat by id, so the only
+     * dependable way to honor [InuConfig.ALLOW_FORWARD_RESTRICTED] is to behave exactly like the
+     * user had picked the file from their gallery. [freshPhoto]/[freshDocument] produce the
+     * `access_hash == 0` media objects that make `SendMessagesHelper` take its upload path.
+     *
+     * That means waiting on downloads, so the whole pipeline is pushed onto [restrictedForwardQueue]
+     * and only the `sendMessage()` calls come back to the UI thread — where stock expects them, and
+     * in submission order, which is what keeps albums intact.
+     *
+     * Messages that share a `grouped_id` and all resolve to resendable media are re-grouped under
+     * one fresh album id so a 5-photo album stays one album; anything that can't be resent at all
+     * (polls, dice, games, invoices, paid/extended media) is skipped, since the only fallback — a
+     * real forward — is exactly what the server rejects here.
      */
     @JvmStatic
     fun sendRestrictedForward(
         helper: SendMessagesHelper,
+        account: Int,
         messages: List<MessageObject>,
         did: Long,
         notify: Boolean,
@@ -1311,6 +1455,37 @@ object ChatHelper {
         hideCaption: Boolean,
         payStars: Long,
     ) {
+        // the caller keeps mutating its own list after we return, so take a snapshot
+        val batch = ArrayList(messages)
+        if (batch.isEmpty()) return
+        restrictedForwardQueue.postRunnable {
+            val files = awaitRestrictedMedia(account, batch)
+            val actions = buildRestrictedForwardActions(
+                helper, account, batch, files, did, notify, scheduleDate, scheduleRepeatPeriod,
+                threadMsg, mono, suggest, hideCaption, payStars,
+            )
+            if (actions.isEmpty()) return@postRunnable
+            AndroidUtilities.runOnUIThread { actions.forEach { it.run() } }
+        }
+    }
+
+    /** Builds every send of a restricted forward, off the UI thread. See [sendRestrictedForward]. */
+    private fun buildRestrictedForwardActions(
+        helper: SendMessagesHelper,
+        account: Int,
+        messages: List<MessageObject>,
+        files: Map<MessageObject, File>,
+        did: Long,
+        notify: Boolean,
+        scheduleDate: Int,
+        scheduleRepeatPeriod: Int,
+        threadMsg: MessageObject?,
+        mono: Long,
+        suggest: MessageSuggestionParams?,
+        hideCaption: Boolean,
+        payStars: Long,
+    ): List<Runnable> {
+        val actions = ArrayList<Runnable>()
         var index = 0
         while (index < messages.size) {
             val target = messages[index]
@@ -1327,8 +1502,10 @@ object ChatHelper {
                     // (type 8 is the one type that doesn't guard on `delayedMessage == null`), which
                     // would strand the whole group unsent
                     if (msg.isAnyKindOfSticker || msg.isVoice) null
-                    else buildResendParams(msg, did, null, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption)
-                        ?.takeIf { it.photo != null || it.document != null }
+                    else buildResendParams(
+                        account, msg, did, null, threadMsg, notify, scheduleDate,
+                        scheduleRepeatPeriod, hideCaption, files[msg],
+                    )?.takeIf { it.photo != null || it.document != null }
                 }
             } else {
                 emptyList<SendMessagesHelper.SendMessageParams>()
@@ -1346,17 +1523,157 @@ object ChatHelper {
                     // a grouped send skips sendMessage()'s own paid-message confirmation
                     // (`!isGroup`), so the already-confirmed price has to be carried in
                     params.payStars = payStars
-                    helper.sendMessage(params)
+                    actions.add(Runnable { helper.sendMessage(params) })
                 }
             } else {
                 for (i in index until end) {
-                    sendMessageAsNew(
-                        helper, messages[i], did, null, threadMsg, null, notify, scheduleDate,
-                        scheduleRepeatPeriod, mono, suggest, null, hideCaption, payStars,
-                    )
+                    val msg = messages[i]
+                    buildResendAction(
+                        helper, account, msg, did, null, threadMsg, null, notify, scheduleDate,
+                        scheduleRepeatPeriod, mono, suggest, null, hideCaption, payStars, files[msg],
+                    )?.let { actions.add(it) }
                 }
             }
             index = end
+        }
+        return actions
+    }
+
+    /**
+     * Makes sure every message of a restricted forward that will be re-uploaded has a local copy,
+     * downloading what is missing and blocking *this* (background) thread until the loads settle.
+     *
+     * Returns the resolved file per message; a message left out of the map has no usable local copy
+     * and falls back to being referenced by its server id, which is no worse than the old behavior.
+     */
+    private fun awaitRestrictedMedia(account: Int, messages: List<MessageObject>): Map<MessageObject, File> {
+        val loader = FileLoader.getInstance(account)
+        val resolved = HashMap<MessageObject, File>()
+        // keyed by download name, so the same file referenced twice is only fetched once
+        val pending = LinkedHashMap<String, MessageObject>()
+
+        for (msg in messages) {
+            if (!needsMediaReupload(msg)) continue
+            val existing = localMediaFile(loader, msg)
+            if (existing != null) {
+                resolved[msg] = existing
+                continue
+            }
+            val key = downloadKey(msg) ?: continue
+            pending[key] = msg
+        }
+        if (pending.isEmpty()) return resolved
+
+        val waiter = MediaDownloadWaiter(account, pending.keys)
+        // NotificationCenter only allows add/removeObserver from the main thread and delivers
+        // callbacks there, so everything except the latch lives on it — subscribing before the
+        // loads start (and re-checking for files that landed in between) closes the race
+        AndroidUtilities.runOnUIThread {
+            waiter.subscribe()
+            for ((key, msg) in pending) {
+                if (localMediaFile(loader, msg) != null || !startMediaLoad(loader, msg)) {
+                    waiter.complete(key)
+                }
+            }
+            waiter.settle()
+        }
+        waiter.await(RESTRICTED_FORWARD_TIMEOUT_MS)
+
+        for (msg in messages) {
+            if (!needsMediaReupload(msg) || resolved.containsKey(msg)) continue
+            localMediaFile(loader, msg)?.let { resolved[msg] = it }
+        }
+        return resolved
+    }
+
+    /** Media that has to be re-uploaded byte-for-byte; stickers are referenced by id instead. */
+    private fun needsMediaReupload(message: MessageObject): Boolean {
+        if (message.isAnyKindOfSticker) return false
+        val media = message.messageOwner?.media ?: return false
+        return media.photo is TLRPC.TL_photo || media.document is TLRPC.TL_document
+    }
+
+    private fun localMediaFile(loader: FileLoader, message: MessageObject): File? {
+        val attach = message.messageOwner?.attachPath?.takeIf { it.isNotEmpty() }?.let { File(it) }
+        if (attach != null && attach.exists() && attach.length() > 0L) return attach
+        return loader.getPathToMessage(message.messageOwner)?.takeIf { it.exists() && it.length() > 0L }
+    }
+
+    /** The `fileLoaded`/`fileLoadFailed` name for [message]'s media. */
+    private fun downloadKey(message: MessageObject): String? {
+        val media = message.messageOwner?.media ?: return null
+        (media.document as? TLRPC.TL_document)?.let { return FileLoader.getAttachFileName(it) }
+        return fullPhotoSize(media)?.let { FileLoader.getAttachFileName(it) }
+    }
+
+    // the very size FileLoader.getPathToMessage resolves for a photo, so the file we download and
+    // the file we later look for are always the same one
+    private fun fullPhotoSize(media: TLRPC.MessageMedia): TLRPC.PhotoSize? {
+        val photo = media.photo as? TLRPC.TL_photo ?: return null
+        return FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(true), false, null, true)
+    }
+
+    /** Starts (or joins) the download of [message]'s media. UI thread only. False = nothing to load. */
+    private fun startMediaLoad(loader: FileLoader, message: MessageObject): Boolean {
+        val media = message.messageOwner?.media ?: return false
+        val document = media.document as? TLRPC.TL_document
+        if (document != null) {
+            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 0)
+            return true
+        }
+        val photo = media.photo as? TLRPC.TL_photo ?: return false
+        val size = fullPhotoSize(media) ?: return false
+        val location = ImageLocation.getForPhoto(size, photo) ?: return false
+        loader.loadFile(location, message, null, FileLoader.PRIORITY_NORMAL, 0)
+        return true
+    }
+
+    /**
+     * Blocks a background thread until every tracked download has finished or failed. All of the
+     * pending-set bookkeeping happens on the UI thread (both [subscribe]/[complete]/[settle] callers
+     * and NotificationCenter's own dispatch), so the latch is the only cross-thread state.
+     */
+    private class MediaDownloadWaiter(
+        private val account: Int,
+        keys: Collection<String>,
+    ) : NotificationCenter.NotificationCenterDelegate {
+        private val pending = HashSet(keys)
+        private val latch = CountDownLatch(1)
+
+        fun subscribe() {
+            val center = NotificationCenter.getInstance(account)
+            center.addObserver(this, NotificationCenter.fileLoaded)
+            center.addObserver(this, NotificationCenter.fileLoadFailed)
+        }
+
+        fun complete(key: String) {
+            pending.remove(key)
+        }
+
+        fun settle() {
+            if (pending.isNotEmpty()) return
+            unsubscribe()
+            latch.countDown()
+        }
+
+        fun await(timeoutMs: Long) {
+            latch.await(timeoutMs, TimeUnit.MILLISECONDS)
+            // also covers the timeout path, where settle() never ran
+            AndroidUtilities.runOnUIThread { unsubscribe() }
+        }
+
+        private fun unsubscribe() {
+            val center = NotificationCenter.getInstance(account)
+            center.removeObserver(this, NotificationCenter.fileLoaded)
+            center.removeObserver(this, NotificationCenter.fileLoadFailed)
+        }
+
+        // a failure is treated like a completion: the caller re-checks the disk afterwards and
+        // degrades that one message to a by-reference send rather than stalling the whole batch
+        override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+            val key = args.getOrNull(0) as? String ?: return
+            if (!pending.remove(key)) return
+            settle()
         }
     }
 
