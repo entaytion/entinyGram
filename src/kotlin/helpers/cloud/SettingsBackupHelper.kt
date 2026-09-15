@@ -31,6 +31,12 @@ object SettingsBackupHelper {
         "loopStickers", "noStatusBar", "disableVoiceAudioEffects", "chatSwipeAction",
         "useThreeLinesLayout", "archiveHidden", "distanceSystemType", "mapPreviewType",
         "repeatMode", "shuffleMusic", "playOrderReversed", "raiseToSpeak",
+        // Do Not Translate list (RestrictedLanguagesSelectActivity). Once the user touches this
+        // screen at all, "_changed" latches true forever and permanently disables the
+        // auto-detected-from-device-locale/keyboard default -- without these keys in the reset
+        // allowlist there was no way back to that stock behavior short of clearing app data.
+        "translate_button_restricted_languages", "translate_button_restricted_languages_changed",
+        "translate_button_restricted_languages_version",
     )
 
     internal fun stockPrefs() =
@@ -193,7 +199,24 @@ object SettingsBackupHelper {
             for (item in toRemove) remove(item.key)
         }
         for (item in exportable) item.load(InuConfig.prefs)
-        return toRemove.size
+
+        // A reset must also undo any of our own features that wrote directly into stock's own
+        // "mainconfig" prefs (bubble radius, font size, autoplay, ...) -- otherwise those stay
+        // stuck at whatever we last set them to, even though every InuConfig toggle that drove
+        // them just went back to off. Removing the key lets stock's own code fall back to its
+        // own hardcoded default, same as a fresh stock install.
+        val stock = stockPrefs()
+        val stockStored = stock.all
+        var stockReset = 0
+        stock.edit {
+            for (key in STOCK_KEYS) {
+                if (key in stockStored) {
+                    remove(key)
+                    stockReset++
+                }
+            }
+        }
+        return toRemove.size + stockReset
     }
 
     fun resetAndPromptRestart(fragment: BaseFragment) {
