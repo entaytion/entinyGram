@@ -41,17 +41,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         bindSummary()
         items.add(UItem.asCustom(summaryCell))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCacheCategories)))
-        items.add(
-            UItem.asButton(BUTTON_MESSAGE_CACHE, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheMessagesCategory)).also {
-                it.subtext = categorySubtitle(messageCacheStat)
-            }
-        )
-        items.add(
-            UItem.asButton(BUTTON_PRESENCE_CACHE, R.drawable.inu_tabler_user_scan, LocaleController.getString(R.string.InuCachePresenceCategory)).also {
-                it.subtext = categorySubtitle(presenceLogStat)
-            }
-        )
         items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
             it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
         })
@@ -133,20 +122,8 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         )
     }
 
-    private fun categorySubtitle(stat: InuDatabaseHelper.DialogCacheStat?): String {
-        if (loading || stat == null) return LocaleController.getString(R.string.InuCacheCalculating)
-        if (stat.count == 0) return LocaleController.getString(R.string.InuCacheEmpty)
-        return LocaleController.formatString(
-            R.string.InuCacheEntriesFormat,
-            AndroidUtilities.formatFileSize(stat.estimatedSize),
-            stat.count,
-        )
-    }
-
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_MESSAGE_CACHE -> presentFragment(AntiDeletionSettingsActivity())
-            BUTTON_PRESENCE_CACHE -> presentFragment(PresenceWatchListSettingsActivity())
             BUTTON_LOGS_TTL -> showTtlDialog()
         }
     }
@@ -257,8 +234,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val BUTTON_MESSAGE_CACHE = InuUtils.generateId()
-        private val BUTTON_PRESENCE_CACHE = InuUtils.generateId()
         private val BUTTON_LOGS_TTL = InuUtils.generateId()
 
         @JvmField
@@ -268,8 +243,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_trash_x,
             factory = ::CacheManagementSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("cache-messages", R.string.InuCacheMessagesCategory, BUTTON_MESSAGE_CACHE),
-                SearchRegistry.Entry("cache-presence", R.string.InuCachePresenceCategory, BUTTON_PRESENCE_CACHE),
                 SearchRegistry.Entry("presence-logs-ttl", R.string.InuCacheTtl, BUTTON_LOGS_TTL),
             ),
         )

@@ -63,7 +63,14 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuChatMenuOrder),
             )
         )
-        items.add(UItem.asShadow(null))
+        items.add(
+            mkSubPageButton(
+                BUTTON_DIALOGS_MENU_ORDER,
+                R.drawable.inu_tabler_list,
+                LocaleController.getString(R.string.InuDialogsMenuOrder),
+            )
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuDialogsMenuOrderInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGeneral)))
         items.add(
@@ -155,17 +162,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 attachCameraModeLabel(InuConfig.ATTACH_CAMERA_MODE.value),
             )
         )
-        if (InuConfig.ATTACH_CAMERA_MODE.value != InuConfig.AttachCameraModeItem.FAB) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_CHAT_VOICE_IN_ATTACH,
-                    R.string.InuChatVoiceInAttach,
-                    R.string.InuChatVoiceInAttachInfo,
-                    InuConfig.CHAT_VOICE_IN_ATTACH.value,
-                    experimental = true
-                )
-            )
-        }
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SORT_ALBUMS_BY_SIZE,
@@ -183,14 +179,17 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuVoiceRecorder)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CHAT_VOICE_IN_ATTACH,
-                R.string.InuChatVoiceInAttach,
-                R.string.InuChatVoiceInAttachInfo,
-                InuConfig.CHAT_VOICE_IN_ATTACH.value
+        if (InuConfig.ATTACH_CAMERA_MODE.value != InuConfig.AttachCameraModeItem.FAB) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_CHAT_VOICE_IN_ATTACH,
+                    R.string.InuChatVoiceInAttach,
+                    R.string.InuChatVoiceInAttachInfo,
+                    InuConfig.CHAT_VOICE_IN_ATTACH.value,
+                    experimental = true,
+                )
             )
-        )
+        }
         items.add(
             UItem.asButton(
                 BUTTON_ROUND_DEFAULT_CAMERA,
@@ -455,6 +454,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
             BUTTON_MAIN_PAGE -> presentFragment(DialogsSettingsActivity())
             BUTTON_CHAT_MENU_ORDER -> presentFragment(ChatMenuOrderActivity())
+            BUTTON_DIALOGS_MENU_ORDER -> presentFragment(DialogsMenuOrderActivity())
         }
     }
 
@@ -488,6 +488,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
         private val BUTTON_MAIN_PAGE = InuUtils.generateId()
         private val BUTTON_CHAT_MENU_ORDER = InuUtils.generateId()
+        private val BUTTON_DIALOGS_MENU_ORDER = InuUtils.generateId()
         private val SECTION_HIDE_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_SEARCH_FROM_GLOBAL = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
@@ -544,6 +545,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
                 SearchRegistry.Entry("main-page", R.string.InuMainPage, BUTTON_MAIN_PAGE),
                 SearchRegistry.Entry("chat-menu-order", R.string.InuChatMenuOrder, BUTTON_CHAT_MENU_ORDER),
+                SearchRegistry.Entry("dialogs-menu-order", R.string.InuDialogsMenuOrder, BUTTON_DIALOGS_MENU_ORDER),
                 SearchRegistry.Entry("hide-bottom-bar", R.string.InuHideBottomBar, SECTION_HIDE_BOTTOM_BAR),
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),
                 SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),

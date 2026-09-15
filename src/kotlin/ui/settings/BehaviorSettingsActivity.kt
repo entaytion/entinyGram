@@ -113,7 +113,9 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDeleteProfilePhotos),
             )
         )
-        items.add(UItem.asShadow(null))
+        items.add(mkSubPageButton(BUTTON_PROFILE_SETTINGS_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileSettingsRowsOrder)))
+        items.add(mkSubPageButton(BUTTON_PROFILE_INFO_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileInfoRowsOrder)))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuProfileSettingsRowsOrderInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFormatting)))
         items.add(
@@ -304,27 +306,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (deleteForBothGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
-            TOGGLE_LOCAL_PREMIUM -> {
-                val new = InuConfig.LOCAL_PREMIUM.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                if (new) {
-                    val userConfig = org.telegram.messenger.UserConfig.getInstance(currentAccount)
-                    desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(userConfig.getCurrentUser(), currentAccount)
-                }
-                // Runtime refresh — no restart needed (AyuGram approach)
-                org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
-                    .postNotificationName(org.telegram.messenger.NotificationCenter.currentUserPremiumStatusChanged)
-                org.telegram.messenger.NotificationCenter.getGlobalInstance()
-                    .postNotificationName(org.telegram.messenger.NotificationCenter.premiumStatusChangedGlobal)
-                org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
-                    .postNotificationName(org.telegram.messenger.NotificationCenter.updateInterfaces, 0)
-                org.telegram.messenger.NotificationCenter.getInstance(currentAccount)
-                    .postNotificationName(org.telegram.messenger.NotificationCenter.mainUserInfoChanged)
-                val mdc = org.telegram.messenger.MediaDataController.getInstance(currentAccount)
-                mdc.loadPremiumPromo(false)
-                mdc.loadReactions(false, null)
-            }
-
             TOGGLE_PROFILE_PHOTO_GRADIENT_FADE -> {
                 val new = InuConfig.PROFILE_PHOTO_GRADIENT_FADE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -381,6 +362,10 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 val activity = parentActivity ?: return
                 DeleteProfilePhotosSheet(activity, currentAccount).show()
             }
+
+            BUTTON_PROFILE_SETTINGS_ROWS_ORDER -> presentFragment(ProfileSettingsMenuOrderActivity())
+
+            BUTTON_PROFILE_INFO_ROWS_ORDER -> presentFragment(ProfileInfoMenuOrderActivity())
 
             TOGGLE_DISABLE_CHAT_BUBBLES -> {
                 val new = InuConfig.DISABLE_CHAT_BUBBLES.toggle()
@@ -565,12 +550,13 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_PROFILE_SCROLL_SNAP = InuUtils.generateId()
         private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
         private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
-        private val TOGGLE_LOCAL_PREMIUM = InuUtils.generateId()
         private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val TOGGLE_OPEN_BY_USER_ID = InuUtils.generateId()
         private val BUTTON_OPEN_BY_ID = InuUtils.generateId()
         private val BUTTON_DELETE_PROFILE_PHOTOS = InuUtils.generateId()
+        private val BUTTON_PROFILE_SETTINGS_ROWS_ORDER = InuUtils.generateId()
+        private val BUTTON_PROFILE_INFO_ROWS_ORDER = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_DOWNLOAD_DIRECTORY = InuUtils.generateId()
@@ -629,6 +615,8 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("open-by-user-id", R.string.InuOpenByUserId, TOGGLE_OPEN_BY_USER_ID),
                 SearchRegistry.Entry("open-by-id", R.string.InuOpenById, BUTTON_OPEN_BY_ID),
                 SearchRegistry.Entry("delete-profile-photos", R.string.InuDeleteProfilePhotos, BUTTON_DELETE_PROFILE_PHOTOS),
+                SearchRegistry.Entry("profile-settings-rows-order", R.string.InuProfileSettingsRowsOrder, BUTTON_PROFILE_SETTINGS_ROWS_ORDER),
+                SearchRegistry.Entry("profile-info-rows-order", R.string.InuProfileInfoRowsOrder, BUTTON_PROFILE_INFO_ROWS_ORDER),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),

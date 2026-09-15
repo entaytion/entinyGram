@@ -143,9 +143,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 InuConfig.DISABLE_PROFILE_MUSIC_AUTOPLAY.value
             )
         )
-        items.add(mkSubPageButton(BUTTON_PROFILE_SETTINGS_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileSettingsRowsOrder)))
-        items.add(mkSubPageButton(BUTTON_PROFILE_INFO_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileInfoRowsOrder)))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuProfileSettingsRowsOrderInfo)))
+        items.add(UItem.asShadow(null))
 
         // 3. Gifts & Premium
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesGifts)))
@@ -394,10 +392,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         if (aiFeaturesGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         if (hideSuggestionsGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
-            BUTTON_PROFILE_SETTINGS_ROWS_ORDER -> presentFragment(ProfileSettingsMenuOrderActivity())
-
-            BUTTON_PROFILE_INFO_ROWS_ORDER -> presentFragment(ProfileInfoMenuOrderActivity())
-
             TOGGLE_HIDE_STORIES -> {
                 val new = InuConfig.HIDE_STORIES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -715,8 +709,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_CHANNEL_SHARE_BUTTON = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
-        private val BUTTON_PROFILE_SETTINGS_ROWS_ORDER = InuUtils.generateId()
-        private val BUTTON_PROFILE_INFO_ROWS_ORDER = InuUtils.generateId()
         private val TOGGLE_HIDE_GIFT_AUCTIONS_HINT = InuUtils.generateId()
         private val TOGGLE_HIDE_CACHE_HINT = InuUtils.generateId()
         private val TOGGLE_HIDE_PSA_PROMO_CHAT = InuUtils.generateId()
@@ -800,8 +792,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-gift-cards-in-chat", R.string.InuHideGiftCardsInChat, TOGGLE_HIDE_GIFT_CARDS_IN_CHAT),
                 SearchRegistry.Entry("hide-giveaways", R.string.InuHideGiveaways, TOGGLE_HIDE_GIVEAWAYS),
                 SearchRegistry.Entry("hide-group-sticker-pack", R.string.InuHideGroupStickerPack, TOGGLE_HIDE_GROUP_STICKER_PACK),
-                SearchRegistry.Entry("profile-settings-rows-order", R.string.InuProfileSettingsRowsOrder, BUTTON_PROFILE_SETTINGS_ROWS_ORDER),
-                SearchRegistry.Entry("profile-info-rows-order", R.string.InuProfileInfoRowsOrder, BUTTON_PROFILE_INFO_ROWS_ORDER),
                 SearchRegistry.Entry("hide-ai-features", R.string.InuHideAiFeatures, SECTION_HIDE_AI_FEATURES),
                 SearchRegistry.Entry("hide-suggestions", R.string.InuHideSuggestions, SECTION_HIDE_SUGGESTIONS),
             ),
