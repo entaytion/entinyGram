@@ -24,6 +24,8 @@
     <string name="InuAutoUpdateCheckInfo">Періодично перевіряти канал entinyGram CI на наявність нових релізів і пропонувати їх завантаження.</string>
     <string name="InuUpdatesIncludeBeta">Отримувати бета-оновлення</string>
     <string name="InuUpdatesIncludeBetaInfo">Також пропонувати тестові збірки (бета/pre-release). Якщо стабільний реліз новіший за поточну бету, буде запропоновано саме його.</string>
+    <string name="InuUpdateBetaWarning">⚠️ Це тестова бета-збірка. Вона може бути нестабільною або містити баги — встановлюйте на власний ризик.</string>
+    <string name="InuVersionBetaSuffix">(Бета)</string>
     <string name="InuAnnoyances">Дратівливі елементи</string>
     <string name="InuAnnoyancesStories">Історії</string>
     <string name="InuAnnoyancesProfile">Профіль</string>

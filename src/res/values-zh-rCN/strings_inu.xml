@@ -15,6 +15,8 @@
     <string name="InuAutoUpdateCheckInfo">定期检查 entinyGram CI 频道的新版本并提示下载。</string>
     <string name="InuUpdatesIncludeBeta">接收测试版更新</string>
     <string name="InuUpdatesIncludeBetaInfo">同时提供预发布/测试版构建。如果稳定版比当前测试版更新，则优先提供稳定版。</string>
+    <string name="InuUpdateBetaWarning">⚠️ 这是一个测试版构建，可能不稳定或存在漏洞——安装风险自负。</string>
+    <string name="InuVersionBetaSuffix">(测试版)</string>
     <string name="InuPerformanceClass">性能等级</string>
     <string name="InuPerformanceClassInfo">不建议更改此设置，在低性能的入门设备上可能会严重影响性能</string>
     <string name="InuPerformanceClassMeasured">实测</string>

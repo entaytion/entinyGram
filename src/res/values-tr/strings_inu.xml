@@ -23,6 +23,8 @@
     <string name="InuAutoUpdateCheckInfo">Yeni sürümler için periyodik olarak entinyGram CI kanalını kontrol edin ve indirme teklifi alın.</string>
     <string name="InuUpdatesIncludeBeta">Beta güncellemelerini al</string>
     <string name="InuUpdatesIncludeBetaInfo">Ayrıca ön sürüm/beta test yapılarını sunun. Kararlı sürüm mevcut betanızdan daha yeniyse bunun yerine o sunulur.</string>
+    <string name="InuUpdateBetaWarning">⚠️ Bu bir beta test sürümüdür. Kararsız olabilir veya hatalar içerebilir — kendi sorumluluğunuzda kurun.</string>
+    <string name="InuVersionBetaSuffix">(Beta)</string>
     <string name="InuPerformanceClass">Performans sınıfı</string>
     <string name="InuPerformanceClassInfo">Bu ayarı değiştirmeniz önerilmez, düşük performanslı bütçe dostu cihazlarda performansı ciddi ölçüde düşürebilir</string>
     <string name="InuPerformanceClassMeasured">Ölçülen</string>

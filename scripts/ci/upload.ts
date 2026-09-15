@@ -72,6 +72,34 @@ async function persistSession(session: string) {
   })
 }
 
+/**
+ * Finds the most recent message in the CI channel that carries the `#release` hashtag.
+ * Used to generate the "The last release — download" footer link.
+ * Returns the message id, or null if not found / search failed.
+ */
+async function findLastReleaseMessageId(): Promise<number | null> {
+  try {
+    // searchMessages returns an ArrayPaginated (array-like), not an async iterable.
+    // We search the CI channel for '#release' and pick the first result that is a
+    // proper stable release (has #release but NOT #prerelease in its text).
+    const results = await tg.searchMessages({
+      chatId: channelCI,
+      query: '#release',
+      limit: 20,
+    })
+    for (const msg of results) {
+      const text = msg.text ?? ''
+      if (/#release\b/.test(text) && !/#prerelease\b/.test(text)) {
+        return msg.id
+      }
+    }
+    return null
+  } catch (e) {
+    console.warn(`upload: could not search CI channel for last release: ${e}`)
+    return null
+  }
+}
+
 try {
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const postUrl = (id: number) => `https://t.me/${channelCI}/${id}`
@@ -104,9 +132,40 @@ try {
   const postUk = tgUk || '• Оновлення доступне'
   const postEn = tgEn || (enNotes ? enNotes.slice(0, 500) : '')
 
+  /**
+   * Converts a plain-text changelog block to mtcute entities.
+   *
+   * Handles:
+   *   - Markdown links:  [text](url)  → <a href="url">text</a>
+   *   - Everything else is HTML-escaped and passed through as-is.
+   *
+   * The AI may emit tg://entinySettings/<slug> links in the tg_en/tg_uk lines when it
+   * finds a close match in the settings registry — this parser renders them as proper
+   * Telegram clickable links.
+   */
   function notesToEntities(text: string) {
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
-    return joinTextWithEntities(lines.map(l => html`${esc(l)}`), '\n')
+    const htmlLines = lines.map(line => {
+      // Split the line on [text](url) occurrences and reassemble as HTML
+      const parts: ReturnType<typeof html>[] = []
+      let last = 0
+      const linkRe = /\[([^\]]+)\]\(([^)]+)\)/g
+      let m: RegExpExecArray | null
+      while ((m = linkRe.exec(line)) !== null) {
+        if (m.index > last) {
+          parts.push(html`${esc(line.slice(last, m.index))}`)
+        }
+        const linkText = m[1]
+        const linkUrl = m[2]
+        parts.push(html`<a href="${linkUrl}">${esc(linkText)}</a>`)
+        last = m.index + m[0].length
+      }
+      if (last < line.length) {
+        parts.push(html`${esc(line.slice(last))}`)
+      }
+      return parts.length === 1 ? parts[0] : joinTextWithEntities(parts, '')
+    })
+    return joinTextWithEntities(htmlLines, '\n')
   }
 
   const ukHtml = notesToEntities(postUk)
@@ -118,11 +177,22 @@ try {
 
   const isPreRelease = process.env.PRE_RELEASE === 'true'
 
-  // Pre-releases compile the .beta-suffixed debug buildType (see apk.yml), so they install as a
-  // separate app alongside the main one instead of updating it -- call that out explicitly since
-  // it's easy to miss and testers might otherwise expect it to replace their main install.
+  // Pre-releases now share the main app's applicationId (see apk.yml), so they install *over*
+  // the main app (same package) instead of side-by-side -- call that out explicitly, including a
+  // one-time note for testers who still have the old separate .beta app from before this change.
   const preReleaseBanner = isPreRelease
-    ? html`🧪 <b>PRE-RELEASE BUILD</b><blockquote>⚠️ Test build for fixing reported bugs — expect instability\n📦 Installs as a <b>separate app</b> alongside your main entinyGram install, won't update it</blockquote><br/>`
+    ? html`🧪 <b>PRE-RELEASE BUILD</b><blockquote>⚠️ Test build for fixing reported bugs — expect instability and possible bugs\n📦 Installs <b>over your main entinyGram app</b> (same package), not as a separate app\n♻️ Still have the old separate .beta app? Uninstall it manually once — this build updates the main app only</blockquote><br/>`
+    : ''
+
+  // ── Last stable release link ─────────────────────────────────────────────────
+  // Shown in the CI channel caption between the changelog blockquote and the hashtag line.
+  // For a prerelease: search the CI channel for the most recent non-prerelease #release message.
+  // For a stable release: same — search for the previous release (we haven't posted yet, so the
+  // most recent one in the channel is still the previous stable release).
+  // If the search fails or finds nothing, the line is omitted gracefully.
+  const lastReleaseId = await findLastReleaseMessageId()
+  const lastReleaseHtml = lastReleaseId !== null
+    ? html`<br/>⬇️ The last release — <a href="${postUrl(lastReleaseId)}">download</a>`
     : ''
 
   // 1) Upload the APK document to the CI channel — always happens. The changelog goes in a
@@ -139,7 +209,7 @@ try {
     type: 'document',
     file: `file:${join(artifactDir, file)}`,
     fileName: file,
-    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${ciHtml}</blockquote><br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`,
+    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${ciHtml}</blockquote>${lastReleaseHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`,
   })
 
   // 2) If --ci-only, stop here — no main channel post. Pre-releases are always ci-only (see

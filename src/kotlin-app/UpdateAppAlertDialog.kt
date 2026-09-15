@@ -202,6 +202,26 @@ class UpdateAppAlertDialog(
             ),
         )
 
+        // Release and beta builds share the same applicationId now (see BuildVars.isBetaApp),
+        // so this dialog is the only place a user sees whether the *specific* update being
+        // offered is a beta test build -- UpdateHelper.pendingIsBeta is set from the #prerelease
+        // tag on the channel message this update was found under.
+        if (UpdateHelper.pendingIsBeta) {
+            val betaWarningView = TextView(context).apply {
+                setTextColor(Theme.getColor(Theme.key_text_RedRegular))
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+                gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
+                text = LocaleController.getString(R.string.InuUpdateBetaWarning)
+            }
+            linearLayout.addView(
+                betaWarningView,
+                LayoutHelper.createLinear(
+                    LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT,
+                    Gravity.TOP or Gravity.CENTER_HORIZONTAL, 23, 0, 23, 5,
+                ),
+            )
+        }
+
         val changelogView = TextView(context).apply {
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)

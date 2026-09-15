@@ -155,18 +155,15 @@ jobs:
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          # Pre-release builds compile the debug buildType instead -- it carries the ".beta"
-          # applicationId suffix, so it installs side-by-side with the main app instead of
-          # overwriting it (still signed with the same release keystore, see build.gradle).
-          if [ '${{ inputs.prerelease }}' = 'true' ]; then
-            ./gradlew --no-daemon :TMessagesProj_App:assembleDebug
-            mkdir -p "$GITHUB_WORKSPACE/out"
-            cp TMessagesProj_App/build/outputs/apk/debug/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
-          else
-            ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-            mkdir -p "$GITHUB_WORKSPACE/out"
-            cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
-          fi
+          # Pre-release and stable builds both compile the release buildType -- same
+          # applicationId, same signing key, so a pre-release installs over (updates) the main
+          # app instead of side-by-side. INU_BUILD_TYPE (set above) is what marks the APK as
+          # "beta" at runtime (BuildVars.isBetaApp()), not the package name anymore -- the same
+          # env var also makes build.gradle skip R8 minification for a beta build, so tester
+          # crash logs stay readable instead of obfuscated.
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
 
       - name: Show ccache stats
         if: always()
@@ -214,6 +211,9 @@ jobs:
             --arg     repo         "$GITHUB_REPOSITORY"                     \
             '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,apkFiles:$apkFiles,commitSha:$commitSha,commits:$commits,repo:$repo}' \
             > out/build-info.json
+
+      - name: Dump settings registry
+        run: bun run tsx scripts/dump-registry.ts out
 
       - name: Generate release notes
         env:
@@ -345,16 +345,19 @@ jobs:
             printf 'Release %s\n' "$tag" > release_body.md
           fi
 
-          # Pre-releases compile the .beta-suffixed debug buildType (see the build job above) --
-          # installs as a separate app alongside the main one, doesn't update it. Call that out on
-          # the release page too, same as the Telegram CI channel post (scripts/ci/upload.ts).
-          # GitHub renders "> [!WARNING]" as a colored admonition box, not just a quoted line.
+          # Pre-releases now share the main app's applicationId (see the build job above) -- this
+          # APK overwrites/updates your existing entinyGram install instead of living side-by-side.
+          # Call that out on the release page too, same as the Telegram CI channel post
+          # (scripts/ci/upload.ts). GitHub renders "> [!WARNING]" as a colored admonition box, not
+          # just a quoted line.
           if [ "$PRE_RELEASE" = 'true' ]; then
             {
               printf '> [!WARNING]\n'
-              printf '> **Pre-release build** — a test build for fixing reported bugs. Expect instability.\n'
+              printf '> **Pre-release build** — a test build for fixing reported bugs. Expect instability and possible bugs.\n'
               printf '>\n'
-              printf '> Installs as a **separate app** (different package name) alongside your main entinyGram install — it will **not** update it.\n'
+              printf '> Installs **over your main entinyGram app** (same package) — it will replace your current version, not add a second app.\n'
+              printf '>\n'
+              printf '> Still have the old separate `.beta` app installed from before? Uninstall it manually once — this build can'"'"'t update it, only the main app.\n'
               printf '\n'
               cat release_body.md
             } > release_body.tmp.md

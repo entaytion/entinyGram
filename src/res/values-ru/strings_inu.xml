@@ -15,6 +15,8 @@
     <string name="InuAutoUpdateCheckInfo">Периодически проверять канал entinyGram CI на наличие новых релизов и предлагать их загрузку.</string>
     <string name="InuUpdatesIncludeBeta">Получать бета-обновления</string>
     <string name="InuUpdatesIncludeBetaInfo">Также предлагать тестовые сборки (бета/pre-release). Если стабильный релиз новее текущей беты, будет предложен именно он.</string>
+    <string name="InuUpdateBetaWarning">⚠️ Это тестовая бета-сборка. Она может быть нестабильной или содержать баги — устанавливайте на свой риск.</string>
+    <string name="InuVersionBetaSuffix">(Бета)</string>
     <string name="InuPerformanceClass">Класс производительности</string>
     <string name="InuPerformanceClassInfo">Не рекомендуется менять эту настройку: на слабых бюджетных устройствах это может сильно снизить производительность</string>
     <string name="InuPerformanceClassMeasured">Измеренный</string>

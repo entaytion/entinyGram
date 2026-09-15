@@ -4,12 +4,12 @@ Date: Tue, 1 Sep 2026 11:12:44 +0300
 Subject: Adjust build configuration (branding, versioning, dependency trimming for APK size)
 
 ---
- TMessagesProj/build.gradle                    | 36 ++++++++++++------
- TMessagesProj/proguard-rules.pro              | 18 +++++++--
+ TMessagesProj/build.gradle                    | 42 +++++++++++++------
+ TMessagesProj/proguard-rules.pro              | 18 ++++++--
  .../java/org/telegram/ui/LaunchActivity.java  | 21 ----------
- TMessagesProj_App/build.gradle                | 29 ++++++++++++--
- build.gradle                                  | 38 +++++++++++++++++--
- 5 files changed, 100 insertions(+), 42 deletions(-)
+ TMessagesProj_App/build.gradle                | 34 ++++++++++++---
+ build.gradle                                  | 38 +++++++++++++++--
+ 5 files changed, 109 insertions(+), 44 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -89,6 +89,19 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
+@@ -175,7 +189,11 @@ android {
+ 
+         release {
+             jniDebuggable false
+-            minifyEnabled true
++            // Beta/prerelease CI builds now compile this same release buildType (see
++            // apk.yml/BuildVars.isBetaApp) but skip R8 minification -- testers read raw crash
++            // logs (CrashReporter/LogsHelper) and obfuscated class/method names make those
++            // useless without a saved mapping.txt, which defeats the point of a beta channel.
++            minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
+             shrinkResources false
+             multiDexEnabled true
+             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
 diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
 index 0000000..0000000 100644
 --- a/TMessagesProj/proguard-rules.pro
@@ -221,12 +234,17 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -73,10 +89,10 @@ android {
+@@ -72,11 +88,14 @@ android {
+             debuggable false
              jniDebuggable false
              signingConfig signingConfigs.release
-             minifyEnabled true
+-            minifyEnabled true
 -            shrinkResources false
-+            shrinkResources true
++            // Beta/prerelease CI builds compile this same buildType (see apk.yml) but skip R8
++            // minification/resource shrinking -- keeps crash logs (CrashReporter/LogsHelper)
++            // readable for testers instead of obfuscated class/method names.
++            minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
++            shrinkResources System.getenv('INU_BUILD_TYPE') != 'beta'
              multiDexEnabled true
              proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
 -            ndk.debugSymbolLevel = 'FULL'
@@ -234,7 +252,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -103,7 +119,12 @@ android {
+@@ -103,7 +122,12 @@ android {
          ndkVersion "27.2.12479018"
  
          ndk {

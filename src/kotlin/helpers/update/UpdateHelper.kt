@@ -50,8 +50,12 @@ object UpdateHelper {
         pInfo.versionName?.replace(Regex("-[0-9a-f]{7}$"), "") ?: ""
     }
 
-    fun getVersionInfoString(): String =
-        LocaleController.formatString(R.string.InuVersion, stockVersionName, BuildConfig.STOCK_VERSION_CODE)
+    fun getVersionInfoString(): String {
+        val base = LocaleController.formatString(R.string.InuVersion, stockVersionName, BuildConfig.STOCK_VERSION_CODE)
+        // BuildVars.isBetaApp() is now derived from INU_BUILD_TYPE, not the package name -- this is
+        // the plainest on-device confirmation that a given install is actually a beta build.
+        return if (BuildVars.isBetaApp()) "$base ${LocaleController.getString(R.string.InuVersionBetaSuffix)}" else base
+    }
 
     @JvmStatic
     fun getFullVersionInfo(): String {
@@ -68,6 +72,13 @@ object UpdateHelper {
     @Volatile private var inflightSince = 0L
 
     @Volatile var pendingBetaUpdate: BetaUpdate? = null
+        private set
+
+    // Whether the currently pending update (see pendingBetaUpdate) was itself found under the
+    // #prerelease tag -- release and beta builds now share the same applicationId (see
+    // BuildVars.isBetaApp), so this is the only way to tell a specific offered update apart from
+    // a stable one; UI (UpdateAppAlertDialog) reads this to show a beta disclaimer.
+    @Volatile var pendingIsBeta: Boolean = false
         private set
 
     // cached source message of the current pending update, set by applyUpdate. lets
@@ -104,6 +115,7 @@ object UpdateHelper {
 
     fun clearPending() {
         pendingBetaUpdate = null
+        pendingIsBeta = false
         pendingSourceMessage = null
         isPendingStart = false
         lastProgress = 0f
@@ -317,7 +329,7 @@ object UpdateHelper {
             return
         }
         val (msg, info) = match
-        val updateObj = applyUpdate(msg, info, currentVerCode)
+        val updateObj = applyUpdate(msg, info, currentVerCode, msg.message?.contains("#prerelease") == true)
         finish(callback, CheckResult.Updated(updateObj))
     }
 
@@ -328,7 +340,8 @@ object UpdateHelper {
         val channelId = resolvedChannelId
         if (channelId != null && msg.peer_id?.channel_id != channelId) return
         val text = msg.message ?: return
-        if (text.contains("#prerelease")) {
+        val isBeta = text.contains("#prerelease")
+        if (isBeta) {
             if (!InuConfig.UPDATES_INCLUDE_BETA.value) return
         } else if (!text.contains("#release")) {
             return
@@ -337,13 +350,13 @@ object UpdateHelper {
         val currentVerCode = currentVersionCode()
         if (info.verCode <= currentVerCode) return
         AndroidUtilities.runOnUIThread {
-            applyUpdate(msg, info, currentVerCode)
+            applyUpdate(msg, info, currentVerCode, isBeta)
             revealPendingUpdate()
             InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
         }
     }
 
-    private fun applyUpdate(msg: TLRPC.Message, info: ApkInfo, currentVerCode: Int): TLRPC.TL_help_appUpdate {
+    private fun applyUpdate(msg: TLRPC.Message, info: ApkInfo, currentVerCode: Int, isBeta: Boolean): TLRPC.TL_help_appUpdate {
         val updateObj = TLRPC.TL_help_appUpdate().apply {
             flags = flags or 2
             // stash the source channel message id in the otherwise-unused `id` field
@@ -377,6 +390,7 @@ object UpdateHelper {
         SharedConfig.pendingAppUpdateBuildVersion = currentVerCode
         SharedConfig.saveConfig()
         pendingBetaUpdate = BetaUpdate(info.appVerName, info.verCode, updateObj.text)
+        pendingIsBeta = isBeta
         pendingSourceMessage = msg
         return updateObj
     }

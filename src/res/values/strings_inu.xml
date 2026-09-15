@@ -26,6 +26,8 @@
     <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>
     <string name="InuUpdatesIncludeBeta">Catch beta updates</string>
     <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta test builds. If a stable release is newer than the beta you\'re on, that\'s offered instead.</string>
+    <string name="InuUpdateBetaWarning">⚠️ This is a beta test build. It may be unstable or buggy — install at your own risk.</string>
+    <string name="InuVersionBetaSuffix">(Beta)</string>
     <string name="InuPerformanceClass">Performance class</string>
     <string name="InuPerformanceClassInfo">It is not recommended to change this settings, as this might tank performance on low-performance budget devices</string>
     <string name="InuPerformanceClassMeasured">Measured</string>
