@@ -7,15 +7,15 @@ Subject: feat(history): preserve message history and saved deletions
 - capture outgoing edits before stock state changes
 - render preserved deletions with the configured transparent style
 ---
- .../messenger/MessagesController.java         | 101 ++++++++++++++++--
+ .../messenger/MessagesController.java         | 103 ++++++++++++++++--
  .../telegram/messenger/MessagesStorage.java   |  45 +++++++-
- .../messenger/SendMessagesHelper.java         |   6 ++
+ .../messenger/SendMessagesHelper.java         |   6 +
  .../telegram/ui/Cells/ChatMessageCell.java    |   8 +-
  .../java/org/telegram/ui/ChatActivity.java    |  19 ++++
- .../telegram/ui/Components/AlertsCreator.java |   2 +
+ .../telegram/ui/Components/AlertsCreator.java |  36 +++++-
  .../Components/DeleteMessagesBottomSheet.java |   2 +
  .../org/telegram/ui/MainTabsActivity.java     |  11 +-
- 8 files changed, 173 insertions(+), 21 deletions(-)
+ 8 files changed, 208 insertions(+), 22 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 index 0000000..0000000 100644
@@ -86,15 +86,17 @@ index 0000000..0000000 100644
                          }
                          if (!mids.isEmpty()) {
                              getMessagesStorage().emptyMessagesMedia(dialogId, mids);
-@@ -9311,6 +9329,31 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9311,6 +9329,33 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogMessageAsDeleted(long dialogId, ArrayList<Integer> messages) {
-+        if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) {
++        boolean hasPendingKeepLocal = messages != null && desu.inugram.helpers.chat.SavedMessagesHelper.hasPendingKeepLocal(dialogId, messages);
++        if (desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() || hasPendingKeepLocal) {
 +            if (messages != null) {
 +                ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
 +                for (int a = 0; a < messages.size(); a++) {
 +                    int id = messages.get(a);
++                    boolean forceSave = desu.inugram.helpers.chat.SavedMessagesHelper.consumeKeepLocalRequest(dialogId, id);
 +                    MessageObject found = null;
 +                    if (objs != null) {
 +                        for (int i = 0; i < objs.size(); ++i) {
@@ -108,9 +110,9 @@ index 0000000..0000000 100644
 +                    if (found != null) {
 +                        long fromId = found.messageOwner != null && found.messageOwner.from_id != null ? org.telegram.messenger.DialogObject.getPeerDialogId(found.messageOwner.from_id) : 0;
 +                        String text = found.messageOwner != null ? found.messageOwner.message : "";
-+                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, fromId, text, 0, found.messageOwner);
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, fromId, text, 0, found.messageOwner, forceSave);
 +                    } else {
-+                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, 0L, "", 0, null);
++                        desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(currentAccount, dialogId, id, 0L, "", 0, null, forceSave);
 +                    }
 +                }
 +            }
@@ -118,7 +120,7 @@ index 0000000..0000000 100644
          ArrayList<MessageObject> objs = dialogMessage.get(dialogId);
          if (objs != null) {
              for (int i = 0; i < objs.size(); ++i) {
-@@ -9385,6 +9428,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -9385,6 +9430,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  getMessagesStorage().markMessagesAsDeleted(dialogId, messages, true, false, ChatActivity.MODE_WELCOME_MESSAGES, topicId);
              } else {
                  if (channelId == 0) {
@@ -126,7 +128,7 @@ index 0000000..0000000 100644
                      for (int a = 0; a < messages.size(); a++) {
                          Integer id = messages.get(a);
                          MessageObject obj = dialogMessagesByIds.get(id);
-@@ -18696,6 +18740,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18696,6 +18742,7 @@ public class MessagesController extends BaseController implements NotificationCe
                          messagesArr = new ArrayList<>();
                      }
                      messagesArr.add(message);
@@ -134,7 +136,7 @@ index 0000000..0000000 100644
  
                      ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                      Integer value = read_max.get(message.dialog_id);
-@@ -19546,6 +19591,26 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19546,6 +19593,26 @@ public class MessagesController extends BaseController implements NotificationCe
                  ImageLoader.saveMessageThumbs(message);
                  AndroidUtilities.runOnUIThread(()-> getSendMessagesHelper().onMessageEdited(message));
  
@@ -161,7 +163,7 @@ index 0000000..0000000 100644
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
-@@ -21145,6 +21210,10 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21145,6 +21212,10 @@ public class MessagesController extends BaseController implements NotificationCe
                      getNotificationCenter().postNotificationName(NotificationCenter.messagesReadContent, key, value);
                  }
              }
@@ -172,7 +174,7 @@ index 0000000..0000000 100644
              if (deletedMessagesFinal != null) {
                  for (int a = 0, size = deletedMessagesFinal.size(); a < size; a++) {
                      long dialogId = deletedMessagesFinal.keyAt(a);
-@@ -21269,6 +21338,20 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21269,6 +21340,20 @@ public class MessagesController extends BaseController implements NotificationCe
              for (int a = 0, size = deletedMessages.size(); a < size; a++) {
                  long key = deletedMessages.keyAt(a);
                  ArrayList<Integer> arrayList = deletedMessages.valueAt(a);
@@ -403,22 +405,77 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreato
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
-@@ -8182,6 +8182,7 @@ public class AlertsCreator {
+@@ -7924,6 +7924,7 @@ public class AlertsCreator {
+         }
+ 
+         final boolean[] deleteForAll = new boolean[1];
++        final boolean[] keepLocal = new boolean[1];
+         boolean canRevokeInbox = user != null && MessagesController.getInstance(currentAccount).canRevokePmInbox;
+         int revokeTimeLimit;
+         if (user != null) {
+@@ -8075,6 +8076,18 @@ public class AlertsCreator {
+                 if (desu.inugram.InuConfig.DELETE_FOR_BOTH_MESSAGES.getValue()) {
+                     cell.setChecked(deleteForAll[0] = true, false);
+                 }
++                if (desu.inugram.InuConfig.PROMPT_KEEP_LOCAL_ON_DELETE.getValue() && !desu.inugram.helpers.chat.SavedMessagesHelper.isSaveDeletedEnabled()) {
++                    CheckBoxCell keepLocalCell = new CheckBoxCell(activity, 1, resourcesProvider);
++                    keepLocalCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
++                    keepLocalCell.setText(LocaleController.getString(R.string.InuKeepLocalCopy), "", false, false);
++                    keepLocalCell.setPadding(LocaleController.isRTL ? dp(16) : dp(8), 0, LocaleController.isRTL ? dp(8) : dp(16), 0);
++                    frameLayout.addView(keepLocalCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 0, 48, 0, 0));
++                    keepLocalCell.setOnClickListener(v -> {
++                        CheckBoxCell cell13 = (CheckBoxCell) v;
++                        keepLocal[0] = !keepLocal[0];
++                        cell13.setChecked(keepLocal[0], true);
++                    });
++                }
+                 builder.setView(frameLayout);
+                 builder.setCustomViewOffset(9);
+             }
+@@ -8137,6 +8150,18 @@ public class AlertsCreator {
+                 if (desu.inugram.InuConfig.DELETE_FOR_BOTH_MESSAGES.getValue()) {
+                     cell.setChecked(deleteForAll[0] = true, false);
+                 }
++                if (desu.inugram.InuConfig.PROMPT_KEEP_LOCAL_ON_DELETE.getValue() && !desu.inugram.helpers.chat.SavedMessagesHelper.isSaveDeletedEnabled()) {
++                    CheckBoxCell keepLocalCell = new CheckBoxCell(activity, 1, resourcesProvider);
++                    keepLocalCell.setBackgroundDrawable(Theme.getSelectorDrawable(false));
++                    keepLocalCell.setText(LocaleController.getString(R.string.InuKeepLocalCopy), "", false, false);
++                    keepLocalCell.setPadding(LocaleController.isRTL ? dp(16) : dp(8), 0, LocaleController.isRTL ? dp(8) : dp(16), 0);
++                    frameLayout.addView(keepLocalCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.LEFT, 0, 48, 0, 0));
++                    keepLocalCell.setOnClickListener(v -> {
++                        CheckBoxCell cell13 = (CheckBoxCell) v;
++                        keepLocal[0] = !keepLocal[0];
++                        cell13.setChecked(keepLocal[0], true);
++                    });
++                }
+                 builder.setView(frameLayout);
+                 builder.setCustomViewOffset(9);
+             }
+@@ -8182,6 +8207,10 @@ public class AlertsCreator {
                  if (mergeDialogId != 0 && selectedMessage.messageOwner.peer_id != null && selectedMessage.messageOwner.peer_id.chat_id == -mergeDialogId) {
                      thisDialogId = mergeDialogId;
                  }
++                if (keepLocal[0]) {
++                    desu.inugram.helpers.chat.SavedMessagesHelper.requestKeepLocal(thisDialogId, ids);
++                }
 +                desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, thisDialogId, ids);
                  if (!ids.isEmpty()) {
                      MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, thisDialogId, topicId, deleteForAll[0], mode);
                  }
-@@ -8204,6 +8205,7 @@ public class AlertsCreator {
+@@ -8204,7 +8233,12 @@ public class AlertsCreator {
                              }
                          }
                      }
-+                    desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, ids);
-                     MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, deleteForAll[0], mode);
+-                    MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId, topicId, deleteForAll[0], mode);
++                    long deleteDialogId = (a == 1 && mergeDialogId != 0) ? mergeDialogId : thisDialogId;
++                    if (keepLocal[0]) {
++                        desu.inugram.helpers.chat.SavedMessagesHelper.requestKeepLocal(deleteDialogId, ids);
++                    }
++                    desu.inugram.helpers.chat.SavedMessagesHelper.extractPreserved(currentAccount, deleteDialogId, ids);
++                    MessagesController.getInstance(currentAccount).deleteMessages(ids, random_ids, encryptedChat, deleteDialogId, topicId, deleteForAll[0], mode);
                      selectedMessages[a].clear();
                  }
+             }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/DeleteMessagesBottomSheet.java

@@ -92,6 +92,12 @@ object SavedMessagesHelper {
     // messagesDeleted broadcast has been dispatched.
     private val purgingMessages = HashSet<Pair<Long, Int>>()
 
+    // Messages the user explicitly opted to keep a local copy of via the delete dialog's
+    // "keep local" checkbox, recorded right before the delete request goes out and consumed by
+    // markDialogMessageAsDeleted so that single action bypasses shouldSaveForDialog/SAVE_DELETED_OWN
+    // (see markMessageDeleted's forceSave) without needing the global SAVE_DELETED_MESSAGES toggle.
+    private val pendingKeepLocal = HashSet<Pair<Long, Int>>()
+
     // MessageObjects built for the edit-history screen. They reuse the real message id, so the
     // deleted-mark/transparency lookups would otherwise stamp every history row with the current
     // message's "deleted" state. Identity-keyed and weak: entries die with the screen.
@@ -477,6 +483,32 @@ object SavedMessagesHelper {
         }
         deletePermanently(account, dialogId, preserved)
         return true
+    }
+
+    /** Records the given ids as "keep local" for [dialogId], right before their delete request goes out. */
+    @JvmStatic
+    fun requestKeepLocal(dialogId: Long, msgIds: Collection<Int>) {
+        if (msgIds.isEmpty()) return
+        synchronized(cacheLock) {
+            for (id in msgIds) pendingKeepLocal.add(dialogId to id)
+        }
+    }
+
+    /** Whether any id in [msgIds] has a pending "keep local" request for [dialogId]. */
+    @JvmStatic
+    fun hasPendingKeepLocal(dialogId: Long, msgIds: Collection<Int>): Boolean {
+        if (msgIds.isEmpty()) return false
+        synchronized(cacheLock) {
+            return msgIds.any { dialogId to it in pendingKeepLocal }
+        }
+    }
+
+    /** Consumes (removes) a pending "keep local" request for a single id, returning whether it was set. */
+    @JvmStatic
+    fun consumeKeepLocalRequest(dialogId: Long, msgId: Int): Boolean {
+        synchronized(cacheLock) {
+            return pendingKeepLocal.remove(dialogId to msgId)
+        }
     }
 
     @JvmStatic

@@ -50,6 +50,16 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 InuConfig.SAVE_DELETED_MESSAGES.value,
             )
         )
+        if (!InuConfig.SAVE_DELETED_MESSAGES.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE,
+                    R.string.InuPromptKeepLocalOnDelete,
+                    R.string.InuPromptKeepLocalOnDeleteInfo,
+                    InuConfig.PROMPT_KEEP_LOCAL_ON_DELETE.value,
+                )
+            )
+        }
         if (InuConfig.SAVE_DELETED_MESSAGES.value) {
             if (deletedPreview == null) deletedPreview = DeletedMessagePreviewCell(this.context, this)
             if (deletedMarkColorCell == null) {
@@ -285,6 +295,10 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
                 listView?.adapter?.update(true)
             }
+            TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE -> {
+                val new = InuConfig.PROMPT_KEEP_LOCAL_ON_DELETE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_SAVE_EDITED_MESSAGES -> {
                 val new = InuConfig.SAVE_EDITED_MESSAGES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -343,6 +357,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_SAVE_DELETED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE = InuUtils.generateId()
         private val TOGGLE_DELETED_MESSAGES_TRANSPARENT = InuUtils.generateId()
         private val BUTTON_DELETED_MARK_STYLE = InuUtils.generateId()
         private val TOGGLE_SAVE_DELETED_PRIVATE = InuUtils.generateId()
@@ -366,6 +381,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("save-deleted-categories", R.string.InuSaveDeletedCategories, SECTION_DELETED_CATEGORIES),
                 SearchRegistry.Entry("save-deleted-messages", R.string.InuSaveDeletedMessages, TOGGLE_SAVE_DELETED_MESSAGES),
+                SearchRegistry.Entry("prompt-keep-local-on-delete", R.string.InuPromptKeepLocalOnDelete, TOGGLE_PROMPT_KEEP_LOCAL_ON_DELETE),
                 SearchRegistry.Entry("deleted-transparent", R.string.InuDeletedMessagesTransparent, TOGGLE_DELETED_MESSAGES_TRANSPARENT),
                 SearchRegistry.Entry("deleted-mark-style", R.string.InuDeletedMark, BUTTON_DELETED_MARK_STYLE),
                 SearchRegistry.Entry("save-deleted-private", R.string.InuSaveDeletedPrivate, TOGGLE_SAVE_DELETED_PRIVATE),

@@ -1537,6 +1537,12 @@ object InuConfig {
     @JvmField
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
+    // Adds a per-deletion "keep a local copy" checkbox to the delete-message dialog. Only
+    // meaningful when SAVE_DELETED_MESSAGES is off -- if it's on, every deletion is already
+    // archived and the checkbox would be redundant.
+    @JvmField
+    val PROMPT_KEEP_LOCAL_ON_DELETE = BoolItem("prompt_keep_local_on_delete", false)
+
     @JvmField
     val ALLOW_FORWARD_RESTRICTED = BoolItem("allow_forward_restricted", false)
 
