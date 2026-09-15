@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.menu.MainTabsMenuConfig
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -47,6 +48,11 @@ class MainTabsPreviewCell(
     private var dragFromIndex = -1
     private var dragStartRawX = 0f
 
+    // Shrinks to fit as chips are added (Feed made 6 the normal count, not 5) -- mirrors the real
+    // bottom bar's own shrink-to-fit rather than letting chips run off the edge of this cell on
+    // narrower phones. Recomputed on every measure pass since it depends on the cell's own width.
+    private var chipWidthDp = CHIP_WIDTH_DP
+
     init {
         setWillNotDraw(false)
         addView(row, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
@@ -76,7 +82,7 @@ class MainTabsPreviewCell(
             chip.background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
             chip.setOnTouchListener { _, ev -> handleTouch(item, chip, ev) }
         }
-        row.addView(chip, LayoutHelper.createLinear(CHIP_WIDTH_DP, LayoutHelper.WRAP_CONTENT, 0f, 2, 0, 2, 0))
+        row.addView(chip, LayoutHelper.createLinear(chipWidthDp, LayoutHelper.WRAP_CONTENT, 0f, 2, 0, 2, 0))
     }
 
     private fun handleTouch(item: MainTabsMenuConfig.Item, chip: Chip, ev: MotionEvent): Boolean {
@@ -119,7 +125,7 @@ class MainTabsPreviewCell(
 
     /** shifts [item] to whichever slot the finger has crossed into, sliding the displaced chips out of the way */
     private fun checkSwap(item: MainTabsMenuConfig.Item, dx: Float) {
-        val slotPx = dp(SLOT_WIDTH_DP.toFloat())
+        val slotPx = dp((chipWidthDp + CHIP_GAP_DP).toFloat())
         val curIdx = dragOrder.indexOf(item)
         val targetIdx = (dragFromIndex + (dx / slotPx).roundToInt()).coerceIn(0, dragOrder.size - 1)
         if (targetIdx == curIdx) return
@@ -136,6 +142,21 @@ class MainTabsPreviewCell(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val chipCount = row.childCount
+        if (chipCount > 0 && availableWidth > 0) {
+            // Each chip carries CHIP_GAP_DP total in its own left+right margins (2dp + 2dp), so
+            // that's per-chip overhead to subtract after dividing the room evenly, not a one-time
+            // deduction off the total.
+            val fitWidthDp = availableWidth / AndroidUtilities.density / chipCount - CHIP_GAP_DP
+            val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
+            if (newChipWidthDp != chipWidthDp) {
+                chipWidthDp = newChipWidthDp
+                for (i in 0 until row.childCount) {
+                    (row.getChildAt(i).layoutParams as? LinearLayout.LayoutParams)?.width = dp(chipWidthDp.toFloat())
+                }
+            }
+        }
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(dp(HEIGHT_DP.toFloat()), MeasureSpec.EXACTLY)
@@ -178,7 +199,10 @@ class MainTabsPreviewCell(
 
     companion object {
         private const val CHIP_WIDTH_DP = 64
-        private const val SLOT_WIDTH_DP = CHIP_WIDTH_DP + 4
+        private const val CHIP_GAP_DP = 4
+        // Below this, the icon/label stop being legibly tappable -- narrower phones just get a
+        // preview that no longer quite fits every chip rather than one that's unusable.
+        private const val MIN_CHIP_WIDTH_DP = 40
         private const val HEIGHT_DP = 78
     }
 }

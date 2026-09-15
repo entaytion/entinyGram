@@ -4,17 +4,17 @@ Date: Wed, 9 Sep 2026 21:26:44 +0300
 Subject: iOS-style chat header + adaptive width
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  | 247 ++++++++++++--
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 275 ++++++++++++--
  .../telegram/ui/ActionBar/SimpleTextView.java |  18 +
- .../java/org/telegram/ui/ChatActivity.java    | 114 ++++++-
- .../ui/Components/ChatAvatarContainer.java    | 311 ++++++++++++++++--
- 4 files changed, 634 insertions(+), 56 deletions(-)
+ .../java/org/telegram/ui/ChatActivity.java    | 114 +++++-
+ .../ui/Components/ChatAvatarContainer.java    | 354 ++++++++++++++++--
+ 4 files changed, 705 insertions(+), 56 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -208,6 +208,71 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -208,6 +208,83 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          this.chatAvatarContainer = chatAvatarContainer;
      }
  
@@ -65,6 +65,18 @@ index 0000000..0000000 100644
 +        return chatAvatarContainer != null && chatAvatarContainer.isRightAvatar();
 +    }
 +
++    // Where a NON-centered header's avatar ends up, in this action bar's own coordinates: the
++    // stock pill's left edge (the back button's slot) plus the stock inset from that edge to the
++    // avatar. updateGlassBounds()'s non-centered branch reaches this point by translating the
++    // whole container by (leftDefault - leftMargin - leftPadding + p + dp(3)); the leftPadding it
++    // subtracts is added straight back by the container's own avatar offset, so the avatar's x is
++    // just the slot plus p + dp(3). The static-avatar option needs the same point while the
++    // container is not translated at all, and this is the one place it is defined.
++    public int inu_getStaticAvatarLeft() {
++        final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
++        return (hasBackButton ? dp(46) + dp(6) : 0) + dp(6) + dp(3);
++    }
++
 +    public int inu_getPillTextInsetLeft() {
 +        final int room = inu_pillAvatarRoom();
 +        if (room == 0) {
@@ -86,7 +98,7 @@ index 0000000..0000000 100644
      public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
          setupGlass(factory, colorProvider, false);
      }
-@@ -1406,6 +1471,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1406,6 +1483,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          setMeasuredDimension(width, actionBarHeight + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0) + extraHeight);
  
@@ -98,7 +110,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
-@@ -2240,6 +2310,158 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2240,6 +2322,174 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      public boolean doNotDrawGlassMenu;
  
@@ -124,7 +136,17 @@ index 0000000..0000000 100644
 +        // The back button's own slot. Both the symmetric room below and the placement clamp are
 +        // derived from it, so the centered pill is a pure function of the two fixed slots.
 +        final int baseLeft = hasBackButton ? s + p : 0;
-+        final int leftLimit = baseLeft;
++        // The static-avatar option parks the avatar at its non-centered position and, like the
++        // menu-slot avatar on the other side, it stays there whatever anything else measures - so
++        // the pill has to be kept clear of it geometrically. The placement clamp only, NOT the
++        // symmetric room below: the room's job is to keep the pill centred on the screen, and
++        // widening it into a symmetric reservation would have cost a whole avatar of pill width on
++        // BOTH sides, permanently and for every title, to avoid an overlap only a long one can
++        // reach. The static avatar implies the compact pill (nothing else leaves it behind), so the
++        // pill never spans the room whole here and the clamp is enough: it centres while it fits
++        // beside the avatar, and slides right instead of running under it when it does not.
++        final int leftLimit = Math.max(baseLeft,
++                chatAvatarContainer == null ? 0 : chatAvatarContainer.inu_getStaticAvatarReserve());
 +        int leftDefault = leftLimit;
 +        int rightDefault = width - rightOffset;
 +
@@ -168,7 +190,13 @@ index 0000000..0000000 100644
 +                        + inu_getPillTextInsetLeft() + inu_getPillTextInsetRight()
 +                    : roomRight - roomLeft;
 +            target = Math.max(target, dp(INU_PILL_MIN_WIDTH_DP));
-+            target = Math.min(target, roomRight - roomLeft);
++            // Capped against the room actually left of whichever clamp binds tighter, not always
++            // roomLeft: the static-avatar reserve (leftLimit) can be wider than the symmetric inset
++            // when the avatar itself is the widest thing on that side, and inu_placePill below only
++            // repositions the pill to clear leftLimit - it does not shrink it. Capping against plain
++            // roomLeft let a long title's target stay wider than the room actually between leftLimit
++            // and roomRight, so the pill's right edge ran past roomRight and under the menu.
++            target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
 +
 +            // Snap on the first pass (and whenever the pill was collapsed) so the header does not
 +            // unfold out of nothing every time a chat is opened; animate afterwards.
@@ -257,7 +285,7 @@ index 0000000..0000000 100644
      @Override
      protected void dispatchDraw(Canvas canvas) {
          final int p = dp(6);
-@@ -2255,33 +2477,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2255,33 +2505,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int b = t + s + p * 2;
  
          if (glassDrawable != null && !glassOnlyBack) {
@@ -518,11 +546,11 @@ index 0000000..0000000 100644
                  removeView(subtitleTextLargerCopyView2);
                  this.subtitleTextLargerCopyView.set(null);
 -                if (!allowDrawStories) {
-+                if (!allowDrawStories && !inu_isIosMenuSlotAvatar()) {
++                if (!allowDrawStories && !inu_isIosMenuSlotAvatar() && !inu_isStaticAvatar()) {
                      setClipChildren(true);
                  }
              }
-@@ -806,24 +800,295 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -806,24 +800,338 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          glassMode = true;
      }
  
@@ -622,13 +650,30 @@ index 0000000..0000000 100644
 +        return !isCenteredTitle() && !marquee;
 +    }
 +
-+    // Room the avatar needs inside the pill. Zero once the avatar-in-menu-slot option moves it
-+    // out to the action bar's menu slot, so the pill only has to hold text.
++    // Room the avatar needs inside the pill. Zero once either relocation option takes the avatar
++    // out of the pill - the menu slot, or the static option that leaves it at its non-centered
++    // position - so the pill only has to hold text.
 +    public int inu_getPillAvatarRoom() {
-+        if (!hasVisibleAvatar() || inu_isIosMenuSlotAvatar()) {
++        if (!hasVisibleAvatar() || inu_isIosMenuSlotAvatar() || inu_isStaticAvatar()) {
 +            return 0;
 +        }
 +        return dp(avatarSizeInDp) - 2 + dp(6);
++    }
++
++    // Room the action bar has to keep free on its LEFT while the static-avatar option leaves the
++    // avatar behind at its non-centered position. Same reasoning as the menu-slot reserve on the
++    // other side: the avatar is placed off the action bar's own slots and does not follow the
++    // pill, so the pill - and with it the band a long subtitle is ellipsized against - has to be
++    // kept clear of it geometrically rather than by anything the container happens to measure.
++    public int inu_getStaticAvatarReserve() {
++        if (!inu_isStaticAvatar()) {
++            return 0;
++        }
++        final ActionBar actionBar = inu_actionBar();
++        if (actionBar == null) {
++            return 0;
++        }
++        return actionBar.inu_getStaticAvatarLeft() + dp(avatarSizeInDp) - 2 + dp(6);
 +    }
 +
 +    // Room the action bar has to keep free on its right while the avatar occupies the menu slot.
@@ -716,6 +761,15 @@ index 0000000..0000000 100644
 +        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarInMenuSlot() && hasVisibleAvatar();
 +    }
 +
++    // Compact pill, static-avatar option: the avatar does not travel with the pill at all. It is
++    // left at the position a non-centered header gives it - just past the back button, i.e. where
++    // stock drags this whole container to - while only title and subtitle center. The pill is
++    // then sized to text alone (inu_getPillAvatarRoom() == 0) and the action bar reserves the
++    // avatar's room on its left instead (inu_getStaticAvatarReserve()).
++    public boolean inu_isStaticAvatar() {
++        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarStatic() && hasVisibleAvatar();
++    }
++
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
          final int actionBarHeight = ActionBar.getCurrentActionBarHeight();
@@ -759,6 +813,23 @@ index 0000000..0000000 100644
 +                // That is outside this container's right edge; ActionBar has setClipChildren(false)
 +                // so it still draws, and touches there land on the icon-less header menu item.
 +                avatarLeft = (actionBar.getWidth() - inu_containerLeft()) - dp(29) - avatarW / 2;
++            } else if (inu_isStaticAvatar()) {
++                // Stay where a non-centered header puts the avatar. That position is ActionBar's
++                // to define (it is the stock pill's left edge plus the stock avatar inset, and
++                // updateGlassBounds() applies it as a translation on this whole container while
++                // not centered) - here the container is NOT translated, so the same point is
++                // reached by converting it into container coordinates. The +1 is the container's
++                // own top/left inset, exactly as in the non-centered branch below; leftPadding is
++                // deliberately absent, because the stock translation subtracts it again, so the
++                // avatar lands at the same x either way.
++                //
++                // The same clip assertion as the menu slot: with a short (or no) back button slot
++                // this point can fall left of the container's own left edge, and nothing else
++                // guarantees clipping is off by the time the avatar is drawn.
++                if (getClipChildren()) {
++                    setClipChildren(false);
++                }
++                avatarLeft = actionBar.inu_getStaticAvatarLeft() + 1 - inu_containerLeft();
 +            } else if (isRightAvatar()) {
 +                avatarLeft = actionBar.inu_titlePillRight - inu_containerLeft() - dp(6) - avatarW;
 +            } else {

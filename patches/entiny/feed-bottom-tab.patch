@@ -1,0 +1,58 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 15 Sep 2026 16:04:24 +0300
+Subject: Add Feed as a selectable bottom tab
+
+---
+ .../java/org/telegram/ui/Components/glass/GlassTabView.java | 1 +
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java     | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -581,6 +581,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         WALLET(R.raw.tab_wallet, R.raw.tab_wallet_reverse),
+         LINK(TabAnimationType.STATIC, R.drawable.tabs_link_24),
+         INU_CAMERA(TabAnimationType.STATIC, R.drawable.outline_attach_camera_24),
++        INU_FEED(TabAnimationType.STATIC, R.drawable.msg_channel),
+         ARTICLE(R.raw.tab_article, R.raw.tab_article_reverse),
+ 
+         BOOSTS(R.raw.boosts, 25, 49),
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -99,6 +99,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     private static final int INDEX_SETTINGS = 2;
+     private static final int INDEX_CALLS = 3;
+     private static final int INDEX_PROFILE = 4;
++    private static final int inu_INDEX_FEED = 5;
+ 
+     private static int indexToPosition(int index) {
+         return MainTabsHelper.indexToPosition(index);
+@@ -327,12 +328,13 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         M3MainTabsHelper.applyTabsLayout(tabsView);
+         MainTabsHelper.applyIosTabsLayout(tabsView);
+ 
+-        tabs = new GlassTabView[5];
++        tabs = new GlassTabView[6];
+         tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
+         tabs[INDEX_CONTACTS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CONTACTS, R.string.MainTabsContacts);
+         tabs[INDEX_SETTINGS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.SETTINGS, R.string.Settings);
+         tabs[INDEX_CALLS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CALLS, R.string.MainTabsCalls);
+         tabs[INDEX_PROFILE] = GlassTabView.createAvatar(context, resourceProvider, currentAccount, R.string.MainTabsProfile);
++        tabs[inu_INDEX_FEED] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.INU_FEED, R.string.InuFeed);
+         tabs[INDEX_CONTACTS].setOnLongClickListener(this::openContactsSelector);
+         tabs[INDEX_CALLS].setOnLongClickListener(this::openCallsSelector);
+         desu.inugram.helpers.LongPressDragMenuHelper.attach(tabs[INDEX_PROFILE], this::openAccountSelector);
+@@ -829,6 +831,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             dialogsActivity = new DialogsActivity(args);
+             dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
+             return dialogsActivity;
++        } else if (index == inu_INDEX_FEED) {
++            return new desu.inugram.ui.feed.FeedActivity(desu.inugram.helpers.feed.FeedScope.Global.INSTANCE, true);
+         } else if (index == INDEX_PROFILE) {
+             Bundle args = new Bundle();
+             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());

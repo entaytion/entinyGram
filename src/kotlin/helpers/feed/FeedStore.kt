@@ -13,6 +13,12 @@ import java.util.Locale
  * In-memory merged timeline across every eligible channel for one account, read straight from the
  * LOCAL message cache (`messages_v2`) -- no network here, see [FeedBackfillCoordinator] for that.
  *
+ * [scope] narrows which channels feed the merge (see [FeedScope]). A folder-scoped store runs its
+ * own independent SQL/cursor/merge rather than client-side-filtering a shared global window: a
+ * folder can be an arbitrarily sparse subset of the global timeline, so a shared window would have
+ * to page through huge stretches of non-matching rows to fill one screen. The per-scope query is
+ * cheap (same indexed `uid IN (...)` shape, just a shorter id list).
+ *
  * Ordering key is `(date, dialogId, messageId)`, the only ordering that stays stable when several
  * channels post within the same second (mirrors ExteraGram's own `compareTimeline`). Rows are
  * merged into a single list kept newest-first; [oldestCursor]/[newestCursor] bound what has been
@@ -21,7 +27,7 @@ import java.util.Locale
  * All public methods are safe to call from the UI thread; the actual DB read runs on
  * `MessagesStorage`'s own storage queue and results are delivered back via [onResult].
  */
-class FeedStore(private val account: Int) {
+class FeedStore(private val account: Int, private val scope: FeedScope = FeedScope.Global) {
 
     /** `(date, dialogId, messageId)` triple used as the merge/sort/cursor key throughout. */
     data class Key(val date: Int, val dialogId: Long, val messageId: Int)
@@ -121,7 +127,7 @@ class FeedStore(private val account: Int) {
      * FeedStore result -- so a live-open [FeedActivity] can append them without a second query.
      */
     fun mergeLive(messages: List<MessageObject>): List<MessageObject> {
-        val eligible = messages.filter { FeedChannelSet.isEligibleChannel(account, it.getDialogId()) }
+        val eligible = messages.filter { FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }
         if (eligible.isEmpty()) return emptyList()
         // Push order is whatever the server batched together, not necessarily newest-first; sort
         // before merging so the returned delta honours the same convention queryPage's results do.
@@ -139,7 +145,7 @@ class FeedStore(private val account: Int) {
         limit: Int,
         onResult: (List<MessageObject>) -> Unit,
     ) {
-        val channels = FeedChannelSet.eligibleChannels(account)
+        val channels = FeedChannelSet.eligibleChannels(account, scope)
         if (channels.isEmpty()) {
             AndroidUtilities.runOnUIThread { onResult(emptyList()) }
             return

@@ -188,7 +188,10 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
 
-        // Header centering. Strictly nested: screens -> chats -> compact pill -> avatar slot.
+        // Header centering. Two independent roots - screen titles and chat headers - with the rest
+        // nested under the chat one: chats -> compact pill -> avatar placement. "Center chats,
+        // leave every other screen stock" is a setup people actually ask for, so the chats toggle
+        // is reachable on its own instead of hiding until the screens one is on.
         // InuUtils.centerChatTitle()/compactChatPill()/... mirror this nesting at runtime, so a
         // child left over in prefs can never take effect on its own once its parent is off.
         items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
@@ -200,44 +203,56 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.CENTER_TITLE_MAIN.value,
             )
         )
-        if (InuConfig.CENTER_TITLE_MAIN.value) {
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CENTER_TITLE_CHATS,
+                R.string.InuCenterTitleChats,
+                R.string.InuCenterTitleChatsInfo,
+                InuConfig.CENTER_TITLE_CHATS.value,
+            )
+        )
+        if (InuConfig.CENTER_TITLE_CHATS.value) {
             items.add(
                 mkTwoLineCheckItem(
-                    TOGGLE_CENTER_TITLE_CHATS,
-                    R.string.InuCenterTitleChats,
-                    R.string.InuCenterTitleChatsInfo,
-                    InuConfig.CENTER_TITLE_CHATS.value,
+                    TOGGLE_IOS_CHAT_HEADER,
+                    R.string.InuIosChatHeader,
+                    R.string.InuIosChatHeaderInfo,
+                    InuConfig.IOS_CHAT_HEADER.value,
                 )
             )
-            if (InuConfig.CENTER_TITLE_CHATS.value) {
+            if (InuConfig.IOS_CHAT_HEADER.value) {
                 items.add(
                     mkTwoLineCheckItem(
-                        TOGGLE_IOS_CHAT_HEADER,
-                        R.string.InuIosChatHeader,
-                        R.string.InuIosChatHeaderInfo,
-                        InuConfig.IOS_CHAT_HEADER.value,
+                        TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT,
+                        R.string.InuIosChatHeaderAvatarSlot,
+                        R.string.InuIosChatHeaderAvatarSlotInfo,
+                        InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value,
                     )
                 )
-                if (InuConfig.IOS_CHAT_HEADER.value) {
+                // Same exclusion as the right-hand avatar below, and the same precedence the
+                // predicates use: the menu slot owns the avatar, so hide this one while it is on.
+                if (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value) {
                     items.add(
                         mkTwoLineCheckItem(
-                            TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT,
-                            R.string.InuIosChatHeaderAvatarSlot,
-                            R.string.InuIosChatHeaderAvatarSlotInfo,
-                            InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value,
+                            TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC,
+                            R.string.InuIosChatHeaderAvatarStatic,
+                            R.string.InuIosChatHeaderAvatarStaticInfo,
+                            InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value,
                         )
                     )
                 }
-                // The avatar cannot be at the right end of the pill and in the menu slot at once,
-                // so hide this one entirely while the slot option owns the avatar.
-                if (!InuConfig.IOS_CHAT_HEADER.value || !InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value) {
-                    items.add(
-                        UItem.asCheck(
-                            TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
-                            LocaleController.getString(R.string.InuCenterTitleRightAvatar),
-                        ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
-                    )
-                }
+            }
+            // The avatar cannot be at the right end of the pill and out of the pill at once, so
+            // hide this one entirely while either relocation option owns the avatar.
+            if (!InuConfig.IOS_CHAT_HEADER.value ||
+                (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value && !InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value)
+            ) {
+                items.add(
+                    UItem.asCheck(
+                        TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
+                        LocaleController.getString(R.string.InuCenterTitleRightAvatar),
+                    ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
+                )
             }
         }
         // Not part of the nesting: the marquee also drives screen titles and profile names, so it
@@ -448,6 +463,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
 
+            TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.toggle()
+                listView.adapter.update(true)
+            }
+
             // These two have no children to show or hide, but they still re-render: the item the
             // adapter holds is what a later rebind renders from, so leaving it behind is what made
             // the switch snap back after scrolling the row out of view and back.
@@ -515,6 +535,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT = InuUtils.generateId()
+        private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
@@ -589,6 +610,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("ios-chat-header-avatar-slot", R.string.InuIosChatHeaderAvatarSlot, TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT),
+                SearchRegistry.Entry("ios-chat-header-avatar-static", R.string.InuIosChatHeaderAvatarStatic, TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
                 SearchRegistry.Entry("hide-fade-view", R.string.InuHideFadeView, TOGGLE_HIDE_FADE_VIEW),
             ),

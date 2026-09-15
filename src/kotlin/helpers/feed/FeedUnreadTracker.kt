@@ -23,8 +23,12 @@ import org.telegram.messenger.MessagesController
  *
  * `markDialogAsRead` already composes with `GhostHelper.shouldSuppressLocalRead`, so Ghost Mode
  * users get correct behavior for free on the one path that still calls it.
+ *
+ * ONE instance per account, shared across every [FeedScope] (see [get]) -- the read watermark is a
+ * property of the channel, not of the window you happened to read the post through, so scrolling
+ * past a post in a folder-scoped Feed must remove it from the global Feed too.
  */
-class FeedUnreadTracker(private val account: Int) {
+class FeedUnreadTracker private constructor(private val account: Int) {
 
     private val watermark = HashMap<Long, Int>() // dialogId -> highest real_id already known read
 
@@ -77,5 +81,14 @@ class FeedUnreadTracker(private val account: Int) {
             marked++
         }
         return marked
+    }
+
+    companion object {
+        private val instances = HashMap<Int, FeedUnreadTracker>()
+
+        /** The one tracker for [account]; every [FeedScope] shares it. */
+        @JvmStatic
+        @Synchronized
+        fun get(account: Int): FeedUnreadTracker = instances.getOrPut(account) { FeedUnreadTracker(account) }
     }
 }

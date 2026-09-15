@@ -220,7 +220,7 @@ object ForwardProHelper {
             setImageResource(R.drawable.msg_edit)
             colorFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
             background = Theme.createSimpleSelectorCircleDrawable(
-                dp(40f),
+                dp(38f),
                 Theme.getColor(Theme.key_dialogFloatingButton, theme),
                 Theme.getColor(Theme.key_dialogFloatingButtonPressed, theme),
             )
@@ -232,9 +232,14 @@ object ForwardProHelper {
         }
         state.editButton = editButton
 
+        // 38dp to match the send button's own circle height (SendButton.setCircleSize(52, 38) —
+        // the 38 is what's actually drawn), so both read as a matched pair: with the 4dp left
+        // margin this also centers it exactly within the 46dp strip getExtraCommentPadding()
+        // reserves (4 + 38 + 4 = 46), instead of the old 40dp/4dp-left/0dp-right split that
+        // crowded it 2dp off-center toward the send button.
         writeButtonContainer.addView(
             editButton,
-            LayoutHelper.createFrame(40, 40f, Gravity.LEFT or Gravity.CENTER_VERTICAL, 4f, 0f, 0f, 0f)
+            LayoutHelper.createFrame(38, 38f, Gravity.LEFT or Gravity.CENTER_VERTICAL, 4f, 0f, 4f, 0f)
         )
     }
 

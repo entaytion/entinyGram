@@ -1,8 +1,24 @@
 package desu.inugram.helpers.feed
 
 import desu.inugram.InuConfig
+import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.MessagesController
+
+/**
+ * Which slice of the eligible channel set a Feed screen (and its [FeedStore]) is looking at.
+ *
+ * [Folder] is deliberately an INTERSECTION with the global set, not a parallel configuration:
+ * folder scope = global-eligible ∩ stock folder membership, so the one exclude list and the one
+ * include-archived toggle keep applying uniformly and there is no second per-folder exclude list
+ * to keep in sync.
+ */
+sealed class FeedScope {
+    object Global : FeedScope()
+
+    /** [filterId] is a stock `MessagesController.DialogFilter.id`. */
+    data class Folder(val filterId: Int) : FeedScope()
+}
 
 /**
  * Which dialogs the Feed screen aggregates: broadcast channels the account is still a member of,
@@ -45,12 +61,54 @@ object FeedChannelSet {
         return result.toLongArray()
     }
 
+    /**
+     * [eligibleChannels] narrowed to [scope]. For [FeedScope.Folder] this is the global set
+     * intersected with stock's OWN folder-membership predicate
+     * (`MessagesController.DialogFilter.includesDialog`) -- deliberately not reimplemented here,
+     * because auto-membership by flags (contacts/groups/channels/bots, exclude-read/muted/archived)
+     * plus `alwaysShow`/`neverShow` overrides is non-trivial and stock already owns it.
+     *
+     * Falls back to the global set when the filter id no longer resolves (folder deleted while a
+     * scoped screen was open) or names the default "All chats" filter, whose flags describe the
+     * whole chat list rather than a real subset.
+     */
+    fun eligibleChannels(account: Int, scope: FeedScope): LongArray {
+        val global = eligibleChannels(account)
+        val dialogFilter = resolveFilter(account, scope) ?: return global
+        val accountInstance = AccountInstance.getInstance(account)
+        return global.filter { dialogFilter.includesDialog(accountInstance, it) }.toLongArray()
+    }
+
     fun isEligibleChannel(account: Int, dialogId: Long): Boolean {
         if (dialogId >= 0) return false
         val chat = MessagesController.getInstance(account).getChat(-dialogId) ?: return false
         return ChatObject.isChannelAndNotMegaGroup(chat) &&
             !ChatObject.isCommunity(chat) &&
             !ChatObject.isNotInChat(chat)
+    }
+
+    /** [isEligibleChannel] narrowed to [scope]; same intersection semantics as [eligibleChannels]. */
+    fun isEligibleChannel(account: Int, dialogId: Long, scope: FeedScope): Boolean {
+        if (!isEligibleChannel(account, dialogId)) return false
+        val filter = resolveFilter(account, scope) ?: return true
+        return filter.includesDialog(AccountInstance.getInstance(account), dialogId)
+    }
+
+    /**
+     * The stock filter [scope] points at, or null when the scope imposes no folder narrowing at
+     * all -- global scope, an unknown filter id, or the default "All chats" filter.
+     */
+    private fun resolveFilter(account: Int, scope: FeedScope): MessagesController.DialogFilter? {
+        val folder = scope as? FeedScope.Folder ?: return null
+        val filter = MessagesController.getInstance(account).dialogFilters
+            ?.firstOrNull { it.id == folder.filterId } ?: return null
+        return if (filter.isDefault) null else filter
+    }
+
+    /** Display name for [scope]'s folder, or null for global / an unresolvable folder. */
+    fun folderName(account: Int, scope: FeedScope): String? {
+        val filter = resolveFilter(account, scope) ?: return null
+        return desu.inugram.helpers.dialogs.FolderHelper.getTabInfo(filter).first.takeIf { it.isNotEmpty() }
     }
 
     /**

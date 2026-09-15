@@ -4,14 +4,14 @@ Date: Sun, 13 Sep 2026 09:51:24 +0300
 Subject: Allow hiding individual items from the chats screen options menu
 
 ---
- .../java/org/telegram/ui/DialogsActivity.java | 109 ++++++++++--------
- 1 file changed, 59 insertions(+), 50 deletions(-)
+ .../java/org/telegram/ui/DialogsActivity.java | 105 +++++++++---------
+ 1 file changed, 55 insertions(+), 50 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14000,63 +14000,71 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14000,63 +14000,67 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              isCurrentThemeDark = Theme.isCurrentThemeDark();
          }
@@ -125,14 +125,10 @@ index 0000000..0000000 100644
 +                presentFragment(new ChatActivity(args));
 +            });
 +        }
-+        if (desu.inugram.helpers.menu.DialogsMenuHelper.isEnabled(desu.inugram.helpers.menu.DialogsMenuConfig.Item.FEED)) {
-+            io.add(R.drawable.msg_channel, getString(R.string.InuFeed), () ->
-+                presentFragment(new desu.inugram.ui.feed.FeedActivity()));
-+        }
          if (ApplicationLoader.applicationLoaderInstance != null) {
              ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
          }
-@@ -14084,7 +14092,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14084,7 +14088,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }

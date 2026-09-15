@@ -67,19 +67,25 @@ public object InuUtils {
     }
 
     // ---- header centering matrix ----------------------------------------------------------
-    // Single source of truth for the whole "Centering" group. The toggles are strictly nested,
-    // so every predicate re-checks its parents: a stale pref from an older build (or a deeplink
-    // that flipped a child while its parent was off) can never produce a half-centered header.
-    // Java call sites ask these questions, never InuConfig directly.
+    // Single source of truth for the whole "Centering" group. The group has TWO independent
+    // roots - screen titles and chat headers - and everything below [centerChatTitle] is nested
+    // under it, so every predicate re-checks its parents: a stale pref from an older build (or a
+    // deeplink that flipped a child while its parent was off) can never produce a half-centered
+    // header. Java call sites ask these questions, never InuConfig directly.
 
-    /** Centered action bar titles on every screen except chats. Root of the group. */
+    /** Centered action bar titles on every screen except chats. Independent of the chat chain. */
     @JvmStatic
     fun centerScreenTitles(): Boolean = desu.inugram.InuConfig.CENTER_TITLE_MAIN.value
 
-    /** Centered title/subtitle inside chat and channel headers. */
+    /**
+     * Centered title/subtitle inside chat and channel headers. Root of the chat chain, and
+     * deliberately NOT gated on [centerScreenTitles]: the two halves answer different questions
+     * ("center the app's screens" vs "center the chat header"), and wanting only the second is a
+     * setup the strict nesting made unreachable - the chat header cannot be centered without
+     * dragging every settings/profile/main screen along with it.
+     */
     @JvmStatic
-    fun centerChatTitle(): Boolean =
-        centerScreenTitles() && desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
+    fun centerChatTitle(): Boolean = desu.inugram.InuConfig.CENTER_TITLE_CHATS.value
 
     /** Centered chat pill hugs its content instead of spanning the whole free room. */
     @JvmStatic
@@ -92,13 +98,28 @@ public object InuUtils {
         compactChatPill() && desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value
 
     /**
-     * Avatar sits at the right end of the centered pill. The menu slot wins when both are on:
-     * the avatar cannot be in two places, and moving it out of the pill is the more specific ask.
+     * Avatar never joins the centered pill: it stays at the position a non-centered header gives
+     * it, just past the back button, while title and subtitle center on their own. Compact pill
+     * only, and the menu slot wins when both are on - same precedence as [chatAvatarOnRight]'s,
+     * and for the same reason: the avatar cannot be in two places, and the slot is the more
+     * specific ask (a named destination beats "leave it where it was").
+     */
+    @JvmStatic
+    fun chatAvatarStatic(): Boolean =
+        compactChatPill() &&
+            !chatAvatarInMenuSlot() &&
+            desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value
+
+    /**
+     * Avatar sits at the right end of the centered pill. Loses to both relocation options when
+     * they are on: the avatar cannot be in two places, and either of them has already taken it
+     * out of the pill, so there is no right end of the pill left for it to sit at.
      */
     @JvmStatic
     fun chatAvatarOnRight(): Boolean =
         centerChatTitle() &&
             !chatAvatarInMenuSlot() &&
+            !chatAvatarStatic() &&
             desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.value
 
     @JvmStatic

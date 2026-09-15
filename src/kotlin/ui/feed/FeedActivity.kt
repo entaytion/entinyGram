@@ -10,12 +10,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.dialogs.FolderHelper
+import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.feed.FeedChannelSet
 import desu.inugram.helpers.feed.FeedController
+import desu.inugram.helpers.feed.FeedScope
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
@@ -53,23 +58,53 @@ import org.telegram.ui.Components.SizeNotifierFrameLayout
  * active scroll would be jarring) but is gone the next time Feed is opened, and "Mark all read"
  * clears everything immediately -- down to the empty state once there's nothing left unread.
  *
- * Layout is chat-style: oldest at the top, newest at the bottom, opened scrolled to the bottom --
- * `stackFromEnd(true)` on a plain (non-reversed) [LinearLayoutManager], the same technique stock
- * `ChannelAdminLogActivity` uses for its own single-list-of-heterogeneous-rows screen, rather than
- * `reverseLayout` (which stock does not use here either). [rows] is kept oldest-first to match.
+ * Layout direction depends on [InuConfig.FEED_NEWEST_ON_TOP] (read once into [newestOnTop] per
+ * screen open): off (default) is chat-style -- oldest at the top, newest at the bottom, opened
+ * scrolled to the bottom, `stackFromEnd(true)` on a plain (non-reversed) [LinearLayoutManager],
+ * the same technique stock `ChannelAdminLogActivity` uses for its own single-list-of-heterogeneous-
+ * rows screen. On is feed-style (Twitter/Threads) -- newest at the top, oldest at the bottom,
+ * opened scrolled to the top (`stackFromEnd(false)`, the plain default), scrolling down loads
+ * older history instead of up. Neither mode uses `reverseLayout`; [rows] is simply kept in
+ * whichever direction is this screen's current display order.
  *
  * Because rows come from many different channels interleaved by time, [displayItems] additionally
  * splices a small [ChannelHeaderCell] row in front of every run of consecutive same-channel
  * messages -- otherwise a bare stream of bubbles with no chat header is unreadable noise.
+ *
+ * [scope] optionally narrows the screen to one stock chat folder. Constructed directly with the
+ * scope as an argument rather than through a `Bundle` -- the same direct-construction style this
+ * screen already follows from `AyuMessageHistoryActivity`; `@JvmOverloads` keeps the existing
+ * no-arg `new FeedActivity()` call sites in the stock patches compiling unchanged.
+ *
+ * [hasMainTabs] is this screen's equivalent of the `"hasMainTabs"` bundle flag every tab-hosted
+ * stock fragment (`ContactsActivity`, `CallLogActivity`, `SettingsActivity`) reads: it means "I am
+ * a persistent page inside `MainTabsActivity`'s tab strip", not a pushed screen. Same two
+ * consequences those fragments draw from it -- no back button (there is nothing to go back to from
+ * a tab), and the content is inset by the tab bar's own height so the bottom rows aren't sitting
+ * under it. Passed as a constructor argument rather than a bundle key for the same reason [scope]
+ * is; the default `false` keeps every existing `presentFragment(new FeedActivity())` call site
+ * behaving exactly as before.
  */
-class FeedActivity : BaseFragment() {
+class FeedActivity @JvmOverloads constructor(
+    private val scope: FeedScope = FeedScope.Global,
+    private val hasMainTabs: Boolean = false,
+) : BaseFragment() {
 
     private sealed class Row {
         data class Msg(val message: MessageObject) : Row()
         data class Header(val dialogId: Long) : Row()
     }
 
-    /** Source of truth, oldest first (index 0 = oldest, last = newest). */
+    /**
+     * Top-to-bottom display order: oldest-first (index 0 = oldest, last = newest) when
+     * [InuConfig.FEED_NEWEST_ON_TOP] is off (stock Telegram convention, opens scrolled to the
+     * bottom), or newest-first when it's on (Twitter/Threads convention, opens scrolled to the
+     * top). Read once per screen open -- changing the setting takes effect the next time Feed
+     * is opened, not live.
+     */
+    private val newestOnTop = InuConfig.FEED_NEWEST_ON_TOP.value
+
+    /** Source of truth, in display order -- see [newestOnTop]. */
     private val rows = ArrayList<MessageObject>()
 
     /** [rows] with [Row.Header] rows spliced in before each new channel run. What the adapter binds. */
@@ -80,11 +115,52 @@ class FeedActivity : BaseFragment() {
     private var loadingOlder = false
     private var reachedEnd = false
 
-    private val controller get() = FeedController.get(currentAccount)
+    /**
+     * `by lazy`, not a `get()` accessor: [FeedController.forFolder] is deliberately uncached, so
+     * re-resolving it on every access would hand out a fresh store (and lose the loaded window) each
+     * time. Resolved on first use from [createView], by which point [currentAccount] is valid.
+     */
+    private val controller: FeedController by lazy {
+        val folder = scope as? FeedScope.Folder
+        if (folder != null) FeedController.forFolder(currentAccount, folder.filterId) else FeedController.get(currentAccount)
+    }
+
+    /** Extra bottom inset for the bottom tab bar this screen sits under when [hasMainTabs]. */
+    private val additionNavigationBarHeight: Int
+        get() = if (hasMainTabs && !MainTabsHelper.isHidden) dp(MainTabsHelper.mainTabsHeightWithMargins.toFloat()) else 0
+
+    /** Only ever non-zero in [hasMainTabs] mode -- see [installTabInsetsListener]. */
+    private var navigationBarHeight = 0
+
+    private fun applyBottomInset() {
+        listView?.setPadding(0, dp(8f), 0, dp(8f) + navigationBarHeight + additionNavigationBarHeight)
+    }
+
+    /**
+     * `ViewPagerActivity` (MainTabsActivity's base) dispatches the window insets down to each page's
+     * fragment view and then returns `CONSUMED` itself, so a tab-hosted page gets no system-bar
+     * padding from any parent -- every stock tab page (`ContactsActivity`, `CallLogActivity`,
+     * `SettingsActivity`) applies it on its own. Pushed the normal way, the parent `ActionBarLayout`
+     * still does it and this listener is never installed, which is why `isSupportEdgeToEdge` stays
+     * the constant `false` it inherits rather than becoming conditional on [hasMainTabs].
+     */
+    private fun installTabInsetsListener(root: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            navigationBarHeight = AndroidUtilities.getDefaultWindowInsets(insets, false).bottom
+            applyBottomInset()
+            WindowInsetsCompat.CONSUMED
+        }
+    }
 
     override fun createView(context: Context): View {
-        actionBar.setBackButtonImage(R.drawable.ic_ab_back)
+        // No back button as a tab -- matches ContactsActivity/CallLogActivity, which skip their own
+        // setBackButtonDrawable when hasMainTabs.
+        if (!hasMainTabs) actionBar.setBackButtonImage(R.drawable.ic_ab_back)
         actionBar.setTitle(LocaleController.getString(R.string.InuFeed))
+        // Folder name as the subtitle rather than baked into the title: keeps "Feed" as the stable
+        // screen identity (and avoids squeezing an arbitrarily long folder name into the title's
+        // single line), while still saying which slice is on screen.
+        FeedChannelSet.folderName(currentAccount, scope)?.let { actionBar.setSubtitle(it) }
         actionBar.setAllowOverlayTitle(true)
         val menu = actionBar.createMenu()
         menu.addItem(MENU_OVERFLOW, R.drawable.ic_ab_other)
@@ -108,19 +184,31 @@ class FeedActivity : BaseFragment() {
             setItemAnimator(null)
             setLayoutAnimation(null)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false).apply {
-                stackFromEnd = true
+                // newestOnTop: opens anchored at position 0 (top), which is where the newest post
+                // already is -- the plain default, no stackFromEnd needed.
+                stackFromEnd = !newestOnTop
             }
             setVerticalScrollBarEnabled(true)
             clipToPadding = false
-            setPadding(0, AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(8f))
+            setPadding(0, AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(8f) + additionNavigationBarHeight)
             adapter = FeedAdapter(context)
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
-                    // dy < 0: content is moving down, i.e. the user scrolled toward the top / older
-                    // end of the list -- the only direction that ever needs more history here.
-                    if (dy >= 0) return
                     val lm = rv.layoutManager as? LinearLayoutManager ?: return
-                    if (lm.findFirstVisibleItemPosition() <= LOAD_MORE_THRESHOLD) maybeLoadOlder()
+                    if (newestOnTop) {
+                        // dy > 0: content is moving up, i.e. the user scrolled toward the bottom /
+                        // older end of the list here (oldest end is at the bottom in this mode).
+                        if (dy <= 0) return
+                        val lastVisible = lm.findLastVisibleItemPosition()
+                        if (lastVisible != RecyclerView.NO_POSITION && lastVisible >= displayItems.size - 1 - LOAD_MORE_THRESHOLD) {
+                            maybeLoadOlder()
+                        }
+                    } else {
+                        // dy < 0: content is moving down, i.e. the user scrolled toward the top /
+                        // older end of the list -- the only direction that ever needs more history here.
+                        if (dy >= 0) return
+                        if (lm.findFirstVisibleItemPosition() <= LOAD_MORE_THRESHOLD) maybeLoadOlder()
+                    }
                 }
             })
         }
@@ -147,6 +235,7 @@ class FeedActivity : BaseFragment() {
         frameLayout.addView(empty, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
 
         fragmentView = frameLayout
+        if (hasMainTabs) installTabInsetsListener(frameLayout)
         loadInitial()
         return frameLayout
     }
@@ -164,10 +253,11 @@ class FeedActivity : BaseFragment() {
             // Take the full accumulated snapshot, not just this call's delta: on a second open
             // within the same session everything may already be merged from before, in which case
             // the delta comes back empty even though the store itself is not. The store hands back
-            // newest-first; reverse it to the oldest-first order this screen displays in, filtered
-            // to what's still unread -- see the class doc for why this isn't a full archive.
-            val snapshot = controller.store.snapshot().asReversed()
-                .filter { controller.unreadTracker.isUnread(it.getDialogId(), it.id) }
+            // newest-first; that's already this screen's display order in newestOnTop mode, or
+            // needs reversing to oldest-first otherwise -- filtered to what's still unread, see the
+            // class doc for why this isn't a full archive.
+            val ordered = controller.store.snapshot().let { if (newestOnTop) it else it.asReversed() }
+            val snapshot = ordered.filter { controller.unreadTracker.isUnread(it.getDialogId(), it.id) }
             rows.clear()
             rows.addAll(snapshot)
             reachedEnd = false
@@ -192,30 +282,56 @@ class FeedActivity : BaseFragment() {
                 reachedEnd = true
                 return@loadOlder
             }
-            // `added` is newest-first (same convention as every FeedStore callback); this screen
-            // wants oldest-first, and these rows are older than everything currently shown, so
-            // they belong at the front once re-reversed to chronological order. Always splices its
-            // own leading header rather than trying to detect "this run continues into the old
-            // leading one and that header is now redundant" -- a single possible duplicate header
-            // at a pagination boundary is a acceptable trade for keeping the notify calls below
-            // exactly matched to what actually changed in displayItems.
-            val chronological = added.asReversed()
-            rows.addAll(0, chronological)
-            val inserted = buildRunRows(chronological, null)
-            displayItems.addAll(0, inserted)
-            // notifyItemRangeInserted (not notifyDataSetChanged) so the LayoutManager keeps the
-            // content the user is currently looking at pinned in place instead of jumping.
-            listView?.adapter?.notifyItemRangeInserted(0, inserted.size)
+            // `added` is newest-first (same convention as every FeedStore callback). These rows are
+            // older than everything currently shown, so they go at whichever end of the display
+            // holds the oldest content: the front in the default (oldest-first) order, or the tail
+            // in newestOnTop mode -- in both cases splicing a fresh header rather than trying to
+            // detect "this run continues into the existing edge one and that header is now
+            // redundant"; a single possible duplicate header at a pagination boundary is an
+            // acceptable trade for keeping the notify calls below exactly matched to what actually
+            // changed in displayItems.
+            if (newestOnTop) {
+                rows.addAll(added)
+                val trailingDialogId = (displayItems.lastOrNull() as? Row.Msg)?.message?.getDialogId()
+                val inserted = buildRunRows(added, trailingDialogId)
+                val start = displayItems.size
+                displayItems.addAll(inserted)
+                listView?.adapter?.notifyItemRangeInserted(start, inserted.size)
+            } else {
+                val chronological = added.asReversed()
+                rows.addAll(0, chronological)
+                val inserted = buildRunRows(chronological, null)
+                displayItems.addAll(0, inserted)
+                // notifyItemRangeInserted (not notifyDataSetChanged) so the LayoutManager keeps the
+                // content the user is currently looking at pinned in place instead of jumping.
+                listView?.adapter?.notifyItemRangeInserted(0, inserted.size)
+            }
         }
     }
 
     /**
      * New messages pushed live while this screen is open. [added] is newest-first, chronologically
-     * after everything currently shown, so it's appended at the tail once re-reversed.
+     * after everything currently shown. In the default order that means the tail, re-reversed to
+     * chronological; in newestOnTop mode these are the new newest posts, so they belong at the
+     * front, already in the right (newest-first) order.
      */
     private fun appendLive(added: List<MessageObject>) {
         if (fragmentView == null) return
         val lm = listView?.layoutManager as? LinearLayoutManager
+        if (newestOnTop) {
+            // Capture "was the user already looking at the top" BEFORE mutating the list, so a
+            // live push doesn't yank someone reading older history up to the new message.
+            val wasAtTop = listView?.let { lv ->
+                !lv.canScrollVertically(-1) || (lm != null && lm.findFirstCompletelyVisibleItemPosition() <= 0)
+            } ?: false
+            rows.addAll(0, added)
+            val inserted = buildRunRows(added, null)
+            displayItems.addAll(0, inserted)
+            listView?.adapter?.notifyItemRangeInserted(0, inserted.size)
+            updateEmptyView()
+            if (wasAtTop) listView?.post { listView?.scrollToPosition(0) }
+            return
+        }
         // Capture "was the user already looking at the bottom" BEFORE mutating the list, so a
         // live push doesn't yank someone reading older history down to the new message.
         val wasAtBottom = listView?.let { lv ->
@@ -293,14 +409,24 @@ class FeedActivity : BaseFragment() {
 
     private fun showOverflowMenu() {
         val anchor = actionBar.createMenu().getItem(MENU_OVERFLOW) ?: return
-        ItemOptions.makeOptions(this, anchor)
+        val options = ItemOptions.makeOptions(this, anchor)
+        if (hasPickableFolders()) {
+            options.add(R.drawable.msg_folders, LocaleController.getString(R.string.InuFeedFolders)) {
+                // Re-anchor on the same overflow button once the current popup has finished
+                // dismissing -- showing a second ItemOptions inside the first one's click runnable
+                // races its own dismiss animation.
+                AndroidUtilities.runOnUIThread({ showFolderPicker() }, 100)
+            }
+        }
+        options
             .add(R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedManageChannels)) {
                 presentFragment(FeedExcludedChannelsSettingsActivity())
             }
             .add(R.drawable.msg_markread, LocaleController.getString(R.string.InuFeedMarkAllRead)) {
-                // Every eligible channel, not just the ones currently loaded into rows -- a channel
-                // with unread posts that haven't been paginated into the feed yet should still clear.
-                val marked = controller.unreadTracker.markAllRead(FeedChannelSet.eligibleChannels(currentAccount).toList())
+                // Every eligible channel IN THIS SCOPE, not just the ones currently loaded into rows
+                // -- a channel with unread posts that haven't been paginated into the feed yet should
+                // still clear, but a folder-scoped Feed must not silently clear channels outside it.
+                val marked = controller.unreadTracker.markAllRead(FeedChannelSet.eligibleChannels(currentAccount, scope).toList())
                 // Feed only ever shows unread posts (see class doc) -- prune everything that just
                 // became read straight out of view instead of leaving it sitting there stale.
                 rows.removeAll { !controller.unreadTracker.isUnread(it.getDialogId(), it.id) }
@@ -315,9 +441,53 @@ class FeedActivity : BaseFragment() {
                 } else {
                     LocaleController.getString(R.string.InuFeedAlreadyRead)
                 }
-                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, text).show()
+                // Inside the tab strip this fragment's own container is the wrong bulletin host --
+                // same reason CallLogActivity switches to the global factory when hasMainTabs.
+                val factory = if (hasMainTabs) BulletinFactory.global() else BulletinFactory.of(this)
+                factory.createSimpleBulletin(R.raw.chats_infotip, text).show()
             }
             .show()
+    }
+
+    /** Stock folders worth offering; the default "All chats" filter is [FeedScope.Global] already. */
+    private fun pickableFolders(): List<MessagesController.DialogFilter> =
+        MessagesController.getInstance(currentAccount).dialogFilters?.filter { !it.isDefault }.orEmpty()
+
+    private fun hasPickableFolders(): Boolean = pickableFolders().isNotEmpty()
+
+    /**
+     * Re-opens Feed narrowed to one stock chat folder (or back to every channel). A fresh
+     * [FeedActivity] rather than an in-place re-scope: [scope] decides the controller, the store and
+     * its whole loaded window, so swapping it live would mean tearing all of that down anyway.
+     * Presented with `removeLast = true` so hopping between folders replaces this screen instead of
+     * stacking one Feed per hop -- "back" stays "leave Feed", not "walk back through every scope
+     * you looked at".
+     *
+     * Except when [hasMainTabs]: this screen is then a page of `MainTabsActivity`, and the "last"
+     * fragment on the parent stack is `MainTabsActivity` itself, so `removeLast = true` would tear
+     * the whole tab host down. A folder pick from the tab therefore PUSHES a normal, back-buttoned,
+     * folder-scoped Feed on top of the tabs instead, leaving the tab itself permanently global.
+     */
+    private fun showFolderPicker() {
+        if (fragmentView == null) return
+        val anchor = actionBar.createMenu().getItem(MENU_OVERFLOW) ?: return
+        val currentFolder = scope as? FeedScope.Folder
+        val options = ItemOptions.makeOptions(this, anchor)
+        if (currentFolder != null) {
+            options.add(R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedAllChannels)) {
+                presentFragment(FeedActivity(), !hasMainTabs)
+            }
+        }
+        for (filter in pickableFolders()) {
+            val info = FolderHelper.getTabInfo(filter)
+            val name = info.first.takeIf { it.isNotEmpty() } ?: continue
+            val filterId = filter.id
+            if (currentFolder != null && currentFolder.filterId == filterId) continue
+            options.add(FolderHelper.getTabIcon(info.second), name) {
+                presentFragment(FeedActivity(FeedScope.Folder(filterId)), !hasMainTabs)
+            }
+        }
+        options.show()
     }
 
     private fun openChannel(dialogId: Long) {
@@ -409,7 +579,7 @@ class FeedActivity : BaseFragment() {
             avatarImage.setRoundRadius(dp(11f))
             addView(avatarImage, LayoutHelper.createFrame(22, 22f, Gravity.LEFT or Gravity.CENTER_VERTICAL, 12f, 0f, 0f, 0f))
 
-            titleView.setTextColor(Theme.getColor(Theme.key_chat_serviceText))
+            titleView.setTextColor(Theme.getColor(Theme.key_chats_name))
             titleView.setTypeface(AndroidUtilities.bold())
             titleView.setTextSize(13)
             titleView.setGravity(Gravity.LEFT or Gravity.CENTER_VERTICAL)

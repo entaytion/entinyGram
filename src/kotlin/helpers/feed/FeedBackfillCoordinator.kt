@@ -13,8 +13,12 @@ import org.telegram.tgnet.ConnectionsManager
  * screen uses (`MessagesController.loadMessages`, `LOAD_BACKWARD`); the network response is simply
  * written into `messages_v2` as a side effect, same as any other history load, so the caller just
  * re-queries [FeedStore] locally once a round finishes instead of parsing the response itself.
+ *
+ * ONE instance per account, shared across every [FeedScope] (see [get]) -- the backfilled history
+ * lands in the shared `messages_v2` cache either way, so two scopes covering the same channel must
+ * share one queue rather than each firing their own redundant request for it.
  */
-class FeedBackfillCoordinator(private val account: Int) {
+class FeedBackfillCoordinator private constructor(private val account: Int) {
 
     /** Invoked on the UI thread once a channel's backfill round finishes (success or watchdog). */
     var onChannelBackfilled: ((dialogId: Long) -> Unit)? = null
@@ -94,6 +98,14 @@ class FeedBackfillCoordinator(private val account: Int) {
     }
 
     companion object {
+        private val instances = HashMap<Int, FeedBackfillCoordinator>()
+
+        /** The one coordinator for [account]; every [FeedScope] shares its queue. */
+        @JvmStatic
+        @Synchronized
+        fun get(account: Int): FeedBackfillCoordinator =
+            instances.getOrPut(account) { FeedBackfillCoordinator(account) }
+
         private const val PAGE_SIZE = 20
         private const val MAX_CONCURRENT = 4
         private const val WATCHDOG_MS = 10_000L

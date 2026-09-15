@@ -690,11 +690,15 @@
     <string name="InuFeedOpenChannel">Відкрити канал</string>
     <string name="InuFeedHideChannel">Приховати зі стрічки</string>
     <string name="InuFeedIncludeArchived">Враховувати архівні канали</string>
+    <string name="InuFeedNewestOnTop">Нові пости зверху</string>
+    <string name="InuFeedNewestOnTopInfo">Вимкнено: нові пости з\'являються знизу, як у чаті (стиль Telegram). Увімкнено: нові пости з\'являються зверху (стиль Twitter/Threads).</string>
     <string name="InuFeedNoChannels">Ви ще не підписані на жоден канал</string>
     <string name="InuFeedShownChannels">Показані у стрічці</string>
     <string name="InuFeedHiddenChannels">Приховані зі стрічки</string>
     <string name="InuFeedHideAll">Приховати всі канали</string>
     <string name="InuFeedShowAll">Показати всі канали</string>
+    <string name="InuFeedFolders">Показати папку</string>
+    <string name="InuFeedAllChannels">Усі канали</string>
     <string name="InuLoginViaQr">Увійти за QR-кодом</string>
     <string name="InuLoginViaPasskey">Увійти через Passkey</string>
     <string name="InuLoginViaBotToken">Увійти за токеном бота</string>
@@ -804,7 +808,7 @@
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
     <string name="InuSaveAnyStoryInfo">Дозволяє завантажувати будь-які історії в галерею без вимог Premium та обмежень автора.</string>
     <string name="InuCenteringSection">Центрування</string>
-    <string name="InuCenterTitleChats">Також центрувати в чатах/каналах</string>
+    <string name="InuCenterTitleChats">Центрувати в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Показувати аватарку праворуч</string>
     <string name="InuCenterTitleMain">Центрувати заголовки екранів</string>
     <string name="InuCenterTitleMainInfo">Центрує заголовки на головному екрані, у налаштуваннях і всюди далі. У чатів окремий перемикач нижче.</string>
@@ -1377,9 +1381,11 @@
     <string name="InuDownloadDirectoryApplied">Застосовується лише до нових завантажень</string>
     <string name="InuPreviewMessage">Попередній перегляд</string>
     <string name="InuMinimize">Згорнути</string>
-    <string name="InuCenterTitleChatsInfo">Переносить назву та підпис у середину шапки чату. Аватарка лишається притиснутою ліворуч.</string>
+    <string name="InuCenterTitleChatsInfo">Переносить назву та підпис у середину шапки чату. Аватарка лишається притиснутою ліворуч. Працює окремо — перемикач вище вмикати не обовʼязково.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка виходить з пілюлі й займає місце кнопки «⋮» — тап відкриває профіль, довге натискання відкриває меню чату. Якщо вимкнено, аватарка лишається всередині компактної пілюлі.</string>
+    <string name="InuIosChatHeaderAvatarStatic">Не центрувати аватарку</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">Аватарка лишається там, де й зазвичай, поруч із кнопкою «назад», а центрується лише пілюля з назвою та підписом.</string>
     <string name="InuAiInsertQuoteInfo">Вставляє результат у поле повідомлення як цитату замість заміни вашої чернетки.</string>
     <string name="InuAiOnlyAnswerInfo">Приховує хід міркувань для моделей, які його транслюють, показуючи лише кінцеву відповідь.</string>
     <string name="InuBurnOneTime">Знищити</string>

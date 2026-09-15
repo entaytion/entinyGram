@@ -36,7 +36,7 @@ index 0000000..0000000 100644
  
      public void setGlassOnlyBack() {
          glassOnlyBack = true;
-@@ -538,8 +543,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -550,8 +555,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (subtitleTextView != null) {
              return;
          }
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
          subtitleTextView.setVisibility(GONE);
          subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
          addView(subtitleTextView, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP));
-@@ -591,6 +599,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -603,6 +611,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          if (titleTextView[i] != null) {
              return;
          }
@@ -59,7 +59,7 @@ index 0000000..0000000 100644
          titleTextView[i] = new SimpleTextView(getContext());
          if (desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
              titleTextView[i].setScrollNonFitText(true);
-@@ -627,6 +638,52 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -639,6 +650,52 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
      public void setTitleRightMargin(int value) {
          titleRightMargin = value;
      }
-@@ -1459,6 +1516,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1471,6 +1528,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          int actionBarHeight = getCurrentActionBarHeight();
          int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
  
@@ -126,7 +126,7 @@ index 0000000..0000000 100644
          ignoreLayoutRequest = true;
          if (actionModeTop != null) {
              FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
-@@ -1483,6 +1547,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1495,6 +1559,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -136,7 +136,7 @@ index 0000000..0000000 100644
          // textLeft += additionalTextLeft;
  
          if (menu != null && menu.getVisibility() != GONE) {
-@@ -1541,6 +1608,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1553,6 +1620,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  }
  
                  if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
@@ -146,7 +146,7 @@ index 0000000..0000000 100644
                      titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
                      if (centerScale) {
                          CharSequence text = titleTextView[i].getText();
-@@ -1588,12 +1658,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1600,12 +1670,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
      @Override
      protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -163,7 +163,7 @@ index 0000000..0000000 100644
          int textLeft;
          if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
              backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
-@@ -1601,11 +1675,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1613,11 +1687,39 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          } else {
              textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
          }
@@ -203,7 +203,7 @@ index 0000000..0000000 100644
          }
  
          for (int i = 0; i < 2; i++) {
-@@ -1620,7 +1722,35 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1632,7 +1734,35 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                          textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
                      }
                  }
@@ -240,7 +240,7 @@ index 0000000..0000000 100644
              }
          }
          if (additionalSubTitleOverlayContainer != null) {
-@@ -1629,12 +1759,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1641,12 +1771,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
@@ -271,7 +271,7 @@ index 0000000..0000000 100644
          }
  
          if (avatarSearchImageView != null) {
-@@ -1692,6 +1838,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -1704,6 +1850,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              }
              child.layout(childLeft, childTop, childLeft + width, childTop + height);
          }
@@ -280,7 +280,7 @@ index 0000000..0000000 100644
      }
  
      public void onMenuButtonPressed() {
-@@ -2311,6 +2459,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2323,6 +2471,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
      public boolean doNotDrawGlassMenu;
  
      public void updateGlassBounds(int width, int height) {
@@ -291,7 +291,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
          final int menuWidth = hasForcedMenuWidth ? forcedMenuWidth : (int) animatorMenuItemsWidth.getFactor();
-@@ -2428,7 +2580,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2456,7 +2608,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          // Only the centered pill drives the container's layout. The default bounds follow the
          // menu-width animator and change every frame, so comparing them here would ask for a
          // layout pass on each of those frames for nothing.
@@ -300,7 +300,7 @@ index 0000000..0000000 100644
              inu_requestAvatarContainerLayout();
          }
      }
-@@ -2462,8 +2614,20 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2490,8 +2642,20 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          }
      }
  
@@ -321,7 +321,7 @@ index 0000000..0000000 100644
          final int p = dp(6);
          final int s = dp(46);
  
-@@ -2473,8 +2637,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2501,8 +2665,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
  
          final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
  
@@ -703,7 +703,7 @@ index 0000000..0000000 100644
          return width;
      }
  
-@@ -1091,35 +1125,57 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1134,35 +1168,57 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                  titleTextLargerCopyView.layout(titleL, viewTop + dp(10), titleR, viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
              }
          }
@@ -771,7 +771,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -1133,6 +1189,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1176,6 +1232,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      public void setRightAvatarPadding(int value) {
          rightAvatarPadding = value;
@@ -779,7 +779,7 @@ index 0000000..0000000 100644
      }
  
      public void setCommunityItemVisible(boolean visible) {
-@@ -1221,10 +1278,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1264,10 +1321,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
              if (mutedIcon != null) {
                  rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
@@ -792,7 +792,7 @@ index 0000000..0000000 100644
          }
          checkActionBar(true);
      }
-@@ -1250,6 +1308,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1293,6 +1351,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
          titleTextView.setScrollNonFitText(marquee);
          titleTextView.setEllipsizeByGradient(!marquee, false);
@@ -800,7 +800,7 @@ index 0000000..0000000 100644
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1837,6 +1896,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1880,6 +1939,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      @Override
      protected void onAttachedToWindow() {
          super.onAttachedToWindow();
@@ -808,7 +808,7 @@ index 0000000..0000000 100644
          if (parentFragment != null) {
              NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
              NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-@@ -2027,6 +2087,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2070,6 +2130,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private void checkActionBar(boolean animated) {
@@ -816,7 +816,7 @@ index 0000000..0000000 100644
          if (actionBar != null) {
              actionBar.checkAvatarContainerWidth(animated);
          }
-@@ -2048,7 +2109,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2091,7 +2152,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (hasVisibleAvatar()) {
              width += dp(52 + 18);
          } else {

@@ -12,12 +12,20 @@ import org.telegram.messenger.MessageObject
  * `onMessagesDeleted`, `onHistoryCleared`) rather than a dedicated `NotificationCenter` observer
  * here -- those hooks already fire for every message/account, so Feed just taps into the existing
  * funnel instead of registering a second, redundant one.
+ *
+ * [scope] decides which channels this controller's [store] merges. The global-scope controller is
+ * the cached per-account singleton ([get]); folder-scoped ones come from [forFolder] and are
+ * deliberately NOT cached -- see its doc for what that costs and why it's the right v1 trade.
+ * [unreadTracker] and [backfill] are shared per-account regardless of scope.
  */
-class FeedController private constructor(private val account: Int) {
+class FeedController private constructor(
+    private val account: Int,
+    val scope: FeedScope = FeedScope.Global,
+) {
 
-    val store = FeedStore(account)
-    val unreadTracker = FeedUnreadTracker(account)
-    val backfill = FeedBackfillCoordinator(account)
+    val store = FeedStore(account, scope)
+    val unreadTracker = FeedUnreadTracker.get(account)
+    val backfill = FeedBackfillCoordinator.get(account)
 
     /**
      * Live-open [FeedActivity] hooks, so a screen that's already on screen updates in place
@@ -79,7 +87,7 @@ class FeedController private constructor(private val account: Int) {
     }
 
     private fun requestBackfill() {
-        val channels = FeedChannelSet.eligibleChannels(account)
+        val channels = FeedChannelSet.eligibleChannels(account, scope)
         val candidates = ArrayList<Pair<Long, Int>>()
         for (dialogId in channels) {
             val boundary = store.oldestForChannel(dialogId) ?: continue
@@ -115,9 +123,26 @@ class FeedController private constructor(private val account: Int) {
     companion object {
         private val instances = HashMap<Int, FeedController>()
 
+        /** The cached global-scope controller for [account] -- the one `InuHooks` pushes live into. */
         @JvmStatic
         @Synchronized
         fun get(account: Int): FeedController = instances.getOrPut(account) { FeedController(account) }
+
+        /**
+         * A folder-scoped controller, owned by the [desu.inugram.ui.feed.FeedActivity] instance that
+         * asked for it and GC'd with it. Deliberately NOT cached in [instances]: `InuHooks`'s
+         * new-message/deleted/history-cleared routing keeps talking only to the global controller,
+         * so a folder-scoped screen gets NO live push while it's open.
+         *
+         * That's a deliberate v1 trade, not an oversight. Every load path reads local `messages_v2`,
+         * which stock message ingestion keeps current regardless of Feed, so an open folder feed is
+         * only ever stale by "posts that arrived since you opened it" and picks them up on the next
+         * pagination or reopen. Wiring live push per scope would mean teaching `InuHooks` about a
+         * registry of open scoped controllers -- explicitly out of scope here.
+         */
+        @JvmStatic
+        fun forFolder(account: Int, filterId: Int): FeedController =
+            FeedController(account, FeedScope.Folder(filterId))
 
         /**
          * True once Feed has been opened at least once this session for [account]. Callers on a

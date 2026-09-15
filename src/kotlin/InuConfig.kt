@@ -39,11 +39,11 @@ object InuConfig {
     // independently of CENTER_TITLE_MAIN/CENTER_TITLE_CHATS, and moving the avatar into the "..."
     // slot was simply part of that mode. The key survived the rebuild of the centering group but
     // its meaning did not - it is now "compact pill", readable only through
-    // InuUtils.compactChatPill(), i.e. only under both centering parents, and the avatar-in-slot
+    // InuUtils.compactChatPill(), i.e. only under [CENTER_TITLE_CHATS], and the avatar-in-slot
     // half became its own opt-in ([IOS_CHAT_HEADER_AVATAR_SLOT], default off).
     //
     // Without this step, anyone who had the old mode on lands on a header that is neither what
-    // they had nor off: the parents are false, so the pill does nothing at all, or - once they
+    // they had nor off: the parent is false, so the pill does nothing at all, or - once they
     // turn centering back on - the avatar is back inside the pill it used to sit outside of,
     // eating the room the title needs and pushing a long one into the marquee. Re-state their old
     // setup in the new vocabulary, and only ever for someone who actually had the legacy mode on.
@@ -56,15 +56,21 @@ object InuConfig {
         // The legacy fingerprint has to be unambiguous, because this runs once for everyone and
         // the same key means two different things on either side of the rebuild. Under the NEW
         // nesting, ios_chat_header can only ever have been switched on from a row that is itself
-        // only shown while both parents are on - so "on, with a parent off" is a state the new UI
-        // cannot produce and the old one produced routinely. Anyone already sitting on the new
-        // nesting is left completely alone; the cost is that a legacy user who happened to have
-        // all three on is read as new and keeps the avatar inside the pill rather than in the
-        // menu slot. That is one toggle away, and it is the right way round: never overwrite a
+        // only shown while CENTER_TITLE_CHATS is on - so "on, with chat centering off" is a state
+        // the new UI cannot produce and the old one produced routinely. Anyone already sitting on
+        // the new nesting is left completely alone; the cost is that a legacy user who happened to
+        // have both on is read as new and keeps the avatar inside the pill rather than in the menu
+        // slot. That is one toggle away, and it is the right way round: never overwrite a
         // deliberate choice to repair a guess.
-        val legacyStandaloneMode = IOS_CHAT_HEADER.value && !(CENTER_TITLE_MAIN.value && CENTER_TITLE_CHATS.value)
+        //
+        // CENTER_TITLE_MAIN is deliberately NOT part of the fingerprint or of the repair: the
+        // legacy mode centered the chat header and nothing else, and now that CENTER_TITLE_CHATS
+        // stands on its own that is expressible verbatim. Forcing MAIN on (which the old strict
+        // nesting required) would have centered every other screen in the app for someone who
+        // never asked for it. It also has to stay out of the fingerprint, because "chats on, main
+        // off" is now an ordinary state of the new UI rather than a legacy tell.
+        val legacyStandaloneMode = IOS_CHAT_HEADER.value && !CENTER_TITLE_CHATS.value
         if (legacyStandaloneMode) {
-            CENTER_TITLE_MAIN.value = true
             CENTER_TITLE_CHATS.value = true
             // Only seed the avatar slot if the user has never had an opinion on it - the key is
             // new, so its mere presence means they already made a choice on the new build.
@@ -1445,13 +1451,16 @@ object InuConfig {
     @JvmField
     val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
 
-    // Extends CENTER_TITLE_MAIN into chat/channel headers: title and subtitle move to the middle
-    // of the pill, the avatar stays pinned to its left edge.
+    // Centers chat/channel headers: title and subtitle move to the middle of the pill, the avatar
+    // stays pinned to its left edge. Readable on its own - it is NOT nested under
+    // CENTER_TITLE_MAIN, so "chats centered, every other screen stock" is a state the user can
+    // actually reach; the rest of the group below still nests under this one.
     @JvmField
     val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
 
-    // Moves the avatar to the right end of the centered pill instead of its left. Loses to
-    // IOS_CHAT_HEADER_AVATAR_SLOT when both are on.
+    // Moves the avatar to the right end of the centered pill instead of its left. Loses to both
+    // avatar-relocation options (IOS_CHAT_HEADER_AVATAR_SLOT, IOS_CHAT_HEADER_AVATAR_STATIC) when
+    // they are on - there is no right end of the pill to sit at once the avatar has left it.
     @JvmField
     val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
 
@@ -1471,6 +1480,13 @@ object InuConfig {
     // ("...") slot - tap opens the profile, long press opens the chat menu.
     @JvmField
     val IOS_CHAT_HEADER_AVATAR_SLOT = BoolItem("ios_chat_header_avatar_slot", false)
+
+    // Compact-pill-only: the avatar does not travel with the centered pill at all - it stays
+    // exactly where a non-centered header puts it (just past the back button) while only
+    // title/subtitle move to the middle. Mutually exclusive with IOS_CHAT_HEADER_AVATAR_SLOT,
+    // which wins when both are on (see InuUtils.chatAvatarStatic).
+    @JvmField
+    val IOS_CHAT_HEADER_AVATAR_STATIC = BoolItem("ios_chat_header_avatar_static", false)
 
     @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
@@ -1929,4 +1945,10 @@ object InuConfig {
 
     @JvmField
     val FEED_INCLUDE_ARCHIVED = BoolItem("feed_include_archived", false)
+
+    // false (default) = new posts append at the bottom, screen opens scrolled there (stock
+    // Telegram chat convention). true = new posts prepend at the top, screen opens scrolled
+    // there (Twitter/Threads convention).
+    @JvmField
+    val FEED_NEWEST_ON_TOP = BoolItem("feed_newest_on_top", false)
 }

@@ -186,7 +186,14 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
         CONTACTS("contacts", 1, R.string.MainTabsContacts, R.drawable.msg_contacts),
         SETTINGS("settings", 2, R.string.Settings, R.drawable.msg_settings),
         CALLS("calls", 3, R.string.MainTabsCalls, R.drawable.msg_calls),
-        PROFILE("profile", 4, R.string.MainTabsProfile, R.drawable.msg_openprofile);
+        PROFILE("profile", 4, R.string.MainTabsProfile, R.drawable.msg_openprofile),
+
+        // entinyGram-only identity (index 5) -- hosts desu.inugram.ui.feed.FeedActivity at
+        // FeedScope.Global. Appended after PROFILE rather than slotted in by "logical" position so
+        // the `index` values of the four inherited items keep matching MainTabsActivity's own
+        // INDEX_* constants, and so a saved BOTTOM_TABS_ORDER from before this item existed keeps
+        // its order untouched (MenuOrderConfig.read appends unknown items at the end).
+        FEED("feed", 5, R.string.InuFeed, R.drawable.msg_channel);
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
@@ -200,8 +207,11 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        // matches stock's showCallsTab default (off)
-        private val OFF_BY_DEFAULT = setOf(Item.CALLS)
+        // CALLS matches stock's showCallsTab default (off); FEED is a fork addition, so it is off
+        // by default too -- an untouched install keeps the exact tab bar it had before (rule #4),
+        // and an existing saved order that predates the item gets it appended disabled rather than
+        // silently growing a sixth tab.
+        private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED)
     }
 }
 

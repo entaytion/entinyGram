@@ -18,6 +18,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(mkTwoLineCheckItem(TOGGLE_INCLUDE_ARCHIVED, R.string.InuFeedIncludeArchived, 0, InuConfig.FEED_INCLUDE_ARCHIVED.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_NEWEST_ON_TOP, R.string.InuFeedNewestOnTop, R.string.InuFeedNewestOnTopInfo, InuConfig.FEED_NEWEST_ON_TOP.value))
         items.add(UItem.asShadow(null))
 
         val (shown, hidden) = FeedChannelSet.allChannelsSplit(currentAccount)
@@ -64,6 +65,10 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
                 FeedChannelSet.invalidate()
                 listView?.adapter?.update(true)
             }
+            item.id == TOGGLE_NEWEST_ON_TOP -> {
+                InuConfig.FEED_NEWEST_ON_TOP.value = !InuConfig.FEED_NEWEST_ON_TOP.value
+                listView?.adapter?.update(true)
+            }
             item.id == BUTTON_HIDE_ALL -> {
                 val all = (shownIds + hiddenIds).map { it.toString() }.toSet()
                 InuConfig.FEED_EXCLUDED_CHANNELS.value = all
@@ -100,6 +105,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_INCLUDE_ARCHIVED = InuUtils.generateId()
+        private val TOGGLE_NEWEST_ON_TOP = InuUtils.generateId()
         private val BUTTON_HIDE_ALL = InuUtils.generateId()
         private val BUTTON_SHOW_ALL = InuUtils.generateId()
         private const val CHANNEL_BASE = 10_000
@@ -113,6 +119,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
             factory = ::FeedExcludedChannelsSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
+                SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),
             ),
         )
     }
