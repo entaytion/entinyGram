@@ -2196,6 +2196,11 @@ object ChatHelper {
 
     @JvmStatic
     fun onFragmentDestroy(activity: ChatActivity) {
+        // A third-party-provider translation still in flight when the chat closes used to keep
+        // running, land later, and write into a dialog whose in-memory "manual" state
+        // resetForDialog just cleared -- the result got persisted but nothing ever made it
+        // visible again. Cancel it first so it never completes into that dead state.
+        desu.inugram.helpers.translate.engine.EntinyTranslate.cancelDialog(activity.dialogId)
         TranslateHelper.resetForDialog(activity.dialogId)
         TypingSpoofHelper.stop(activity.dialogId)
     }
