@@ -162,22 +162,12 @@ object SearchRegistry {
 
             else -> return false
         }
-        val legacy = when (segs.size) {
-            1 -> false
-            2 -> if (segs[0].equals("inu", ignoreCase = true) || segs[0].equals("entiny", ignoreCase = true)) true else return false
+        when (segs.size) {
+            1 -> {}
+            2 -> if (!segs[0].equals("inu", ignoreCase = true) && !segs[0].equals("entiny", ignoreCase = true)) return false
             else -> return false
         }
         val target = targetBySlug[segs.last()] ?: return false
-        if (legacy) {
-            val fragment = activity.actionBarLayout?.lastFragment ?: return false
-            org.telegram.ui.Components.BulletinFactory.of(fragment)
-                .createSimpleBulletin(
-                    R.raw.chats_infotip,
-                    LocaleController.getString(R.string.InuLegacySettingsLink)
-                )
-                .show()
-            return true
-        }
         val fragment = target.page.factory()
         target.entry?.let { fragment.withHighlight(it.itemId) }
         activity.actionBarLayout.presentFragment(fragment)
