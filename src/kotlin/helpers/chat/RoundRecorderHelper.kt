@@ -230,37 +230,43 @@ object RoundRecorderHelper {
         }
     }
 
+    // Pure -- no shared state. The result is stashed by the caller on its own Camera2Session
+    // (see Camera2Session.negotiatedFps) rather than here, because in dual-camera mode two
+    // sessions (front + back) call this almost concurrently on session open; a single shared
+    // field here would let whichever call finishes last silently clobber the other's result.
     @JvmStatic
     fun selectFpsRange(characteristics: CameraCharacteristics?, request60Fps: Boolean): Range<Int> {
-        if (!request60Fps || characteristics == null) {
-            return Range(30, 30)
-        }
+        if (!request60Fps || characteristics == null) return Range(30, 30)
         val availableRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
             ?: return Range(30, 30)
 
-        // 1. Look for fixed 60 FPS range [60, 60]
-        val fixed60 = availableRanges.firstOrNull { it.lower >= 60 && it.upper >= 60 }
+        // Only accept a strict 60 FPS range. Wide ranges like [30, 60] or [15, 60]
+        // are still legal on some HALs, but they force the recorder to use a variable
+        // frame envelope. That is the combination most likely to cause a stall or a
+        // post-record send failure, so we safely degrade to the stock 30 FPS profile.
+        val fixed60 = availableRanges.firstOrNull { it.lower == 60 && it.upper == 60 }
         if (fixed60 != null) return fixed60
 
-        // 2. Look for range with max FPS >= 60 (e.g. [30, 60] or [15, 60])
-        val maxFps60 = availableRanges
-            .filter { it.upper >= 60 }
-            .maxByOrNull { it.lower }
-        if (maxFps60 != null) return maxFps60
-
-        // 3. Fallback to fixed 30 or highest available
-        val fixed30 = availableRanges.firstOrNull { it.lower == 30 && it.upper == 30 }
-        if (fixed30 != null) return fixed30
-
-        return availableRanges.maxByOrNull { it.upper } ?: Range(30, 30)
+        return Range(30, 30)
     }
 
+    // Single source of truth for the whole record chain (camera FPS range, dt clamp,
+    // encoder KEY_FRAME_RATE, framerate metadata). Returns 60 only when the toggle is
+    // on AND the given session's HAL actually negotiated a strict 60 FPS range (see
+    // Camera2Session.negotiatedFps); otherwise stock 30. Reading it from the session itself
+    // (instead of a global) keeps the encoder/muxer in sync with the camera that is actually
+    // feeding it -- declaring 60 while the camera delivers 30 corrupts timestamps and breaks
+    // send, and a shared global can't tell two concurrently-negotiating sessions apart.
     @JvmStatic
-    fun getTargetFps(): Int = if (InuConfig.ROUND_RECORDER_60FPS.value) 60 else 30
+    fun getTargetFps(session: Camera2Session?): Int =
+        if (InuConfig.ROUND_RECORDER_60FPS.value && session?.negotiatedFps == 60) 60 else 30
 
     @JvmStatic
-    fun getVideoBitrate(defaultBitrate: Int): Int {
-        return if (InuConfig.ROUND_RECORDER_60FPS.value) {
+    fun getVideoBitrate(defaultBitrate: Int, session: Camera2Session?): Int {
+        // Scale the payload only when true 60 FPS is actually negotiated. Inflating
+        // bitrate for a 30 FPS fallback just bloats the file on devices that cannot
+        // sustain the requested recording profile.
+        return if (InuConfig.ROUND_RECORDER_60FPS.value && session?.negotiatedFps == 60) {
             (defaultBitrate * 1.5f).toInt()
         } else {
             defaultBitrate

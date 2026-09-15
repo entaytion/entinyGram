@@ -4,18 +4,28 @@ Date: Mon, 14 Sep 2026 14:08:33 +0300
 Subject: Add 60 FPS round video messages and round recorder exposure lock
 
 ---
- .../messenger/camera/Camera2Session.java      | 26 +++++++++-
+ .../messenger/camera/Camera2Session.java      | 43 ++++++++++++++++-
  .../ui/Components/InstantCameraView.java      | 48 ++++++++++++++-----
- 2 files changed, 59 insertions(+), 15 deletions(-)
+ 2 files changed, 76 insertions(+), 15 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
-@@ -486,6 +486,17 @@ public class Camera2Session {
+@@ -486,6 +486,27 @@ public class Camera2Session {
          }
      }
  
++    // Per-session, not a global/static flag: in dual-camera mode two Camera2Session instances
++    // (front + back) negotiate FPS almost concurrently on session open, and a single shared
++    // field would let whichever one finishes last silently overwrite the other's result --
++    // mismatching the encoder's declared frame rate against the camera that's actually feeding
++    // it, which corrupts timestamps and breaks send. Keeping it here makes that race impossible.
++    private int negotiatedFps = 30;
++    public int getNegotiatedFps() {
++        return negotiatedFps;
++    }
++
 +    private boolean aeLocked = desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
 +    public void setAeLocked(boolean locked) {
 +        if (aeLocked != locked) {
@@ -30,7 +40,7 @@ index 0000000..0000000 100644
      private void updateCaptureRequest() {
          if (cameraDevice == null || surface == null || captureSession == null) return;
          try {
-@@ -508,11 +519,22 @@ public class Camera2Session {
+@@ -508,11 +529,29 @@ public class Camera2Session {
              captureRequestBuilder.set(CaptureRequest.FLASH_MODE, flashing ? (recordingVideo ? CaptureRequest.FLASH_MODE_TORCH : CaptureRequest.FLASH_MODE_SINGLE) : CaptureRequest.FLASH_MODE_OFF);
  
              if (recordingVideo) {
@@ -42,14 +52,21 @@ index 0000000..0000000 100644
 +                } else {
 +                    fpsRange = new Range<Integer>(30, 30);
 +                }
++                negotiatedFps = fpsRange.getUpper();
 +                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, fpsRange);
                  captureRequestBuilder.set(CaptureRequest.CONTROL_CAPTURE_INTENT, CaptureRequest.CONTROL_CAPTURE_INTENT_VIDEO_RECORD);
              }
  
-+            Boolean aeLockAvailable = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE) : null;
-+            if (aeLockAvailable == null || aeLockAvailable) {
-+                boolean lock = aeLocked || desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
-+                captureRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
++            // Exposure locking is a recorder-only affordance. Applying it to the preview
++            // request path on the same session can pin the sensor/exposure pipeline and
++            // make the follow-up record/send chain stall or fail. Keep the lock scoped to
++            // video capture and let the preview path continue with normal AE.
++            if (recordingVideo) {
++                Boolean aeLockAvailable = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE) : null;
++                if (aeLockAvailable == null || aeLockAvailable) {
++                    boolean lock = aeLocked || desu.inugram.InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.getValue();
++                    captureRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, lock);
++                }
 +            }
 +
              if (sensorSize != null && Math.abs(currentZoom - 1f) >= 0.01f) {
@@ -149,7 +166,7 @@ index 0000000..0000000 100644
              } else {
 -                alphaDt = dt = (timestampNanos - lastTimestamp);
 +                dt = (timestampNanos - lastTimestamp);
-+                long expectedDuration = 1000000000L / RoundRecorderHelper.getTargetFps();
++                long expectedDuration = 1000000000L / RoundRecorderHelper.getTargetFps(camera2SessionCurrent);
 +                if (dt <= 0 || dt > 200000000L) {
 +                    dt = expectedDuration;
 +                }
@@ -162,7 +179,7 @@ index 0000000..0000000 100644
                          videoEditedInfo.key = key;
                          videoEditedInfo.iv = iv;
 -                        videoEditedInfo.framerate = 25;
-+                        videoEditedInfo.framerate = RoundRecorderHelper.getTargetFps();
++                        videoEditedInfo.framerate = RoundRecorderHelper.getTargetFps(camera2SessionCurrent);
                          videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
                          videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
                          videoEditedInfo.originalPath = videoFile.getAbsolutePath();
@@ -171,7 +188,7 @@ index 0000000..0000000 100644
                          videoEditedInfo.key = key;
                          videoEditedInfo.iv = iv;
 -                        videoEditedInfo.framerate = 25;
-+                        videoEditedInfo.framerate = RoundRecorderHelper.getTargetFps();
++                        videoEditedInfo.framerate = RoundRecorderHelper.getTargetFps(camera2SessionCurrent);
                          videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
                          videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
                          videoEditedInfo.originalPath = videoFile.getAbsolutePath();
@@ -181,8 +198,8 @@ index 0000000..0000000 100644
                  format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
 -                format.setInteger(MediaFormat.KEY_BIT_RATE, videoBitrate);
 -                format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-+                format.setInteger(MediaFormat.KEY_BIT_RATE, RoundRecorderHelper.getVideoBitrate(videoBitrate));
-+                format.setInteger(MediaFormat.KEY_FRAME_RATE, RoundRecorderHelper.getTargetFps());
++                format.setInteger(MediaFormat.KEY_BIT_RATE, RoundRecorderHelper.getVideoBitrate(videoBitrate, camera2SessionCurrent));
++                format.setInteger(MediaFormat.KEY_FRAME_RATE, RoundRecorderHelper.getTargetFps(camera2SessionCurrent));
                  format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
  
                  videoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
