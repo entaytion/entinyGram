@@ -294,7 +294,6 @@ entiny/avatar-corners.patch
 entiny/folder-tabs-customization.patch
 entiny/main-tabs-customize.patch
 debloat/remove-dump-canvas.patch
-entiny/hidden-star-gifts.patch
 entiny/keep-downloads-in-background.patch
 entiny/auto-marquee.patch
 entiny/local-premium.patch

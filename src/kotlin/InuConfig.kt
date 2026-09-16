@@ -1922,9 +1922,6 @@ object InuConfig {
     val HIDE_DEV_BADGES = BoolItem("hide_dev_badges", false)
 
     @JvmField
-    val HIDDEN_STAR_GIFTS = BoolItem("hidden_star_gifts", false)
-
-    @JvmField
     val DELETED_MESSAGES_TRANSPARENT = BoolItem("deleted_messages_transparent", false)
 
     @JvmField
