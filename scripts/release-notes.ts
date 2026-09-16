@@ -110,18 +110,23 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
     'build scripts, refactors with no user-visible effect). A reader is a person using the app,',
     'not someone working on it.',
     '',
-    'One bullet per user-visible change. Merge commits that touch the same change into one',
-    'bullet. Group trivial tweaks as a single "Minor fixes and polish" bullet.',
+    'Merge commits that touch the same change into one bullet.',
     'An upstream sync (subject mentioning "sync with upstream inugram") is always exactly one',
     'bullet; never list its internal patches.',
     '',
-    'Sections in "en"/"uk": "### New Features", "### Bug Fixes", "### Improvements & Polish".',
+    'Sections in "en"/"uk" (full GitHub release notes): "### New Features", "### Bug Fixes", "### Improvements & Polish".',
     'Anything the user could not do before goes under New Features, not Improvements.',
     'Omit a section that would be empty. Use "- " for bullets.',
     '',
-    'Telegram lines in "tg_en"/"tg_uk": one line per bullet, prefixed',
-    '"[+] " new capability, "[*] " fix or refinement, "[-] " removal, "[=] " upstream sync.',
-    'No language headers inside them.',
+    'Telegram release notes in "tg_en" and "tg_uk" MUST BE COMPACT AND CONSOLIDATED:',
+    '- Format prefixes: "[+] " added/new capability, "[*] " fixed/improved, "[-] " removal, "[=] " upstream sync.',
+    '- Standalone major or powerful features get their own bullet line (e.g. "[+] Feature Name: concise explanation").',
+    '- Smaller or related additions MUST be grouped into single combined bullets (e.g. "[+] Added: item 1, item 2, item 3").',
+    '- Bug fixes and refinements MUST be grouped into single combined bullets (e.g. "[*] Fixed: ghost mode, save messages, reaction read state, etc.").',
+    '- Removals (if any) grouped: "[-] Removed: item 1, item 2".',
+    '- Upstream sync: "[=] Synced with upstream inugram" / "[=] Синхронізація з upstream inugram".',
+    '- Do NOT write dozens of separate bullets. The entire list in "tg_en" / "tg_uk" should ideally be 4 to 7 lines total and MUST stay under 650 characters.',
+    'No language headers inside "tg_en"/"tg_uk".',
   ]
 
   // ── Deep-link injection ─────────────────────────────────────────────────────
@@ -315,8 +320,32 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
   if (sections.fix.length) uk.push(`[*] Виправлено баги та оптимізовано інтерфейс`)
   if (sections.other.length) uk.push(...sections.other.map(l => `[=] ${l}`))
 
-  const tgUk = uk.slice(0, 12).join('\n')
-  const tgEn = en.slice(0, 12).join('\n')
+  const tgEnLines: string[] = []
+  const tgUkLines: string[] = []
+  if (sections.sync.length) {
+    tgEnLines.push(`[=] Synced with upstream inugram`)
+    tgUkLines.push(`[=] Синхронізація з upstream inugram`)
+  }
+  if (sections.feature.length <= 3) {
+    tgEnLines.push(...sections.feature.map(l => `[+] ${l}`))
+    tgUkLines.push(...sections.feature.map(l => `[+] ${l}`))
+  } else {
+    tgEnLines.push(`[+] ${sections.feature[0]}`)
+    tgEnLines.push(`[+] Added: ${sections.feature.slice(1, 5).join(', ')}`)
+    tgUkLines.push(`[+] ${sections.feature[0]}`)
+    tgUkLines.push(`[+] Додано: ${sections.feature.slice(1, 5).join(', ')}`)
+  }
+  if (sections.fix.length) {
+    tgEnLines.push(`[*] Fixed: ${sections.fix.slice(0, 5).join(', ')}`)
+    tgUkLines.push(`[*] Виправлено: ${sections.fix.slice(0, 5).join(', ')}`)
+  }
+  if (sections.other.length) {
+    tgEnLines.push(`[*] ${sections.other.slice(0, 2).join(', ')}`)
+    tgUkLines.push(`[*] ${sections.other.slice(0, 2).join(', ')}`)
+  }
+
+  const tgUk = tgUkLines.join('\n')
+  const tgEn = tgEnLines.join('\n')
 
   return {
     en: en.join('\n'),

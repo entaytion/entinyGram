@@ -205,12 +205,49 @@ try {
   // pre-release build must never also carry #release, or it would get offered to everyone.
   const releaseTag = isPreRelease ? '#prerelease' : '#release'
   const { file } = info.apkFiles[0]
+
+  // Construct caption safely respecting Telegram's 1024 character limit for media captions
+  const buildCaption = (notesEntity: ReturnType<typeof html>) => html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${notesEntity}</blockquote>${lastReleaseHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
+
+  let caption = buildCaption(ciHtml)
+  let needsCiFollowup = false
+
+  // Max caption length for Telegram media is 1024 characters. Keep safety margin.
+  if (caption.text.length > 1000) {
+    needsCiFollowup = true
+    const postCi = postEn || postUk
+    const rawLines = postCi.split('\n').map(l => l.trim()).filter(Boolean)
+    const keptLines: string[] = []
+    for (const line of rawLines) {
+      const candidateLines = [...keptLines, line, '... (повний список нижче / full changelog below)']
+      const candidateHtml = notesToEntities(candidateLines.join('\n'))
+      const candidateCaption = buildCaption(candidateHtml)
+      if (candidateCaption.text.length > 980) break
+      keptLines.push(line)
+    }
+    if (keptLines.length > 0) {
+      keptLines.push('... (повний список нижче / full changelog below)')
+      caption = buildCaption(notesToEntities(keptLines.join('\n')))
+    } else {
+      caption = buildCaption(html`• Оновлення v${info.verName}\n... (повний список нижче / full changelog below)`)
+    }
+  }
+
   const apkMsg = await tg.sendMedia(channelCI, {
     type: 'document',
     file: `file:${join(artifactDir, file)}`,
     fileName: file,
-    caption: html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${ciHtml}</blockquote>${lastReleaseHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`,
+    caption,
   })
+
+  if (needsCiFollowup) {
+    console.log('CI caption was truncated to fit 1024 limit; sending full notes in reply...')
+    await tg.sendText(
+      channelCI,
+      html`📝 <b>Changelog v${info.verName}:</b>\n\n<blockquote expandable>${ciHtml}</blockquote>`,
+      { replyTo: apkMsg.id }
+    )
+  }
 
   // 2) If --ci-only, stop here — no main channel post. Pre-releases are always ci-only (see
   // apk.yml), so this is also where their message content lives -- the main-channel blocks below
@@ -235,8 +272,27 @@ try {
 
     const release = joinTextWithEntities(blocks, '\n\n')
 
-    // 4) Send clean text release post directly to main channel (no buttons, exteraless style).
-    await tg.sendText(channelMain, release)
+    // Telegram's sendText limit is 4096 chars. If the combined post exceeds 3800 chars,
+    // split into Post 1 (Ukrainian + download link) and Post 2 (English reply).
+    if (release.text.length <= 3800 || !enHtml) {
+      await tg.sendText(channelMain, release)
+    } else {
+      console.log('Main channel post is long; splitting into Ukrainian post and English reply...')
+      const post1Blocks = [
+        html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — ${linksHtml}`,
+        extra ? html`${extra}` : null,
+        ukHtml,
+        html`🏷️ #release • @entinyGram • @entinyGramChat`,
+      ].filter((b): b is NonNullable<typeof b> => b !== null)
+
+      const mainMsg = await tg.sendText(channelMain, joinTextWithEntities(post1Blocks, '\n\n'))
+
+      const post2Blocks = [
+        html`🇬🇧 <b>entinyGram v${info.verName}</b> (build ${info.buildDate})\n\n<blockquote expandable>${enHtml}</blockquote>`,
+        html`🏷️ #release • @entinyGram • @entinyGramChat`,
+      ]
+      await tg.sendText(channelMain, joinTextWithEntities(post2Blocks, '\n\n'), { replyTo: mainMsg.id })
+    }
   }
 } finally {
   const exported = await tg.exportSession()
