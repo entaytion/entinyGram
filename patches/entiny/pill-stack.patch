@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 17 Sep 2026 00:05:12 +0300
+Subject: Add Pill Stack: interactive pills in the chats search bar
+
+Ported from exteraGram/exteraless. Clock, weather, cache size, proxy
+status, Ghost Mode toggle, RAM/CPU/net-speed/DC-ping telemetry,
+battery, free storage, and live currency/crypto rates (BTC, ETH, gold,
+TON, any fiat pair). Configurable which pills show, how many at once,
+and the rate pairs, from Settings -> Pill Stack.
+---
+ .../java/org/telegram/ui/Components/FragmentSearchField.java  | 3 +++
+ .../src/main/java/org/telegram/ui/DialogsActivity.java        | 4 ++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
+@@ -67,6 +67,7 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
+     public final EditTextBoldCursor editText;
+     private BlurredBackgroundDrawable blurredBackgroundDrawable;
+     public desu.inugram.ui.BlurBehindHelper inu_blurHelper;
++    public desu.inugram.helpers.pillstack.PillStackController inu_pillStackController;
+ 
+     public FragmentSearchField(Context context, Theme.ResourcesProvider resourcesProvider) {
+         super(context);
+@@ -304,6 +305,8 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
+             }
+         }
+ 
++        if (inu_pillStackController != null) inu_pillStackController.updateColors();
++
+         invalidate();
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3366,6 +3366,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             fragmentSearchField.updateColors();
+         }
+ 
++        if (initialDialogsType == DIALOGS_TYPE_DEFAULT) {
++            fragmentSearchField.inu_pillStackController = desu.inugram.helpers.pillstack.PillStackHelper.attach(fragmentSearchField, fragmentSearchField.editText);
++        }
++
+         fragmentSearchField.setCloseButtonOnClickListener(() -> {
+             if (searchViewPager != null && searchViewPager.actionModeShowing()) {
+                 searchViewPager.hideActionMode();

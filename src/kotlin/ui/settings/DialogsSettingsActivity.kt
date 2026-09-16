@@ -253,6 +253,9 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
         // end fab section
+
+        items.add(mkSubPageButton(BUTTON_PILL_STACK, LocaleController.getString(R.string.InuPillStack)))
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -434,6 +437,8 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
                 softRebuild()
             }
+
+            BUTTON_PILL_STACK -> presentFragment(PillStackSettingsActivity())
         }
     }
 
@@ -562,6 +567,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         private val BUTTON_COMMUNITY_DISPLAY_MODE = InuUtils.generateId()
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
         private val TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE = InuUtils.generateId()
+        private val BUTTON_PILL_STACK = InuUtils.generateId()
 
         private fun titleTextLabel(value: Int): String = when (value) {
             InuConfig.DialogsTitleTextItem.USERNAME -> LocaleController.getString(R.string.Username)
@@ -617,6 +623,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("dialogs-fab-hide-on-scroll", R.string.InuDialogsFabHideOnScroll, TOGGLE_FAB_HIDE_ON_SCROLL),
                 SearchRegistry.Entry("dialogs-fab-offset-for-bottom-bar", R.string.InuDialogsFabOffsetForBottomBar, TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR),
                 SearchRegistry.Entry("dialogs-fab-left-side", R.string.InuDialogsFabLeftSide, TOGGLE_FAB_LEFT_SIDE),
+                SearchRegistry.Entry("pill-stack-open", R.string.InuPillStack, BUTTON_PILL_STACK),
             ),
         )
     }

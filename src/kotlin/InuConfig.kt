@@ -12,6 +12,7 @@ import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.ProfileInfoMenuConfig
 import desu.inugram.helpers.menu.ProfileMenuConfig
+import desu.inugram.helpers.pillstack.PillStackMenuConfig
 import desu.inugram.ui.FormattingPopupConfig
 
 object InuConfig {
@@ -1959,4 +1960,33 @@ object InuConfig {
     // there (Twitter/Threads convention).
     @JvmField
     val FEED_NEWEST_ON_TOP = BoolItem("feed_newest_on_top", false)
+
+    // entiny: Pill Stack, ported from exteraGram/exteraless -- see src/kotlin/helpers/pillstack/.
+    @JvmField
+    val PILL_STACK_ENABLED = BoolItem("pill_stack_enabled", false)
+
+    @JvmField
+    val PILL_STACK_VISIBLE_COUNT = IntItem("pill_stack_visible_count", 1)
+
+    @JvmField
+    val PILL_STACK_LAYOUT = PillStackMenuConfig("pill_stack_layout")
+
+    @JvmField
+    val PILL_STACK_RATE_INSTANCES = StringItem("pill_stack_rate_instances", "")
+
+    @JvmField
+    val PILL_STACK_RATE_CACHE = StringItem("pill_stack_rate_cache", "", exportable = false)
+
+    @JvmField
+    val PILL_STACK_RATE_CACHE_TIME = LongItem("pill_stack_rate_cache_time", 0L, exportable = false)
+
+    @JvmField
+    val PILL_STACK_GOLD_CACHE = StringItem("pill_stack_gold_cache", "", exportable = false)
+
+    @JvmField
+    val PILL_STACK_GOLD_CACHE_TIME = LongItem("pill_stack_gold_cache_time", 0L, exportable = false)
+
+    // entiny: which pill id each visible slot last settled on, so a rebuild (e.g. reattaching the search bar) doesn't snap back to slot 0.
+    @JvmField
+    val PILL_STACK_LAST_ACTIVE = StringItem("pill_stack_last_active", "", exportable = false)
 }

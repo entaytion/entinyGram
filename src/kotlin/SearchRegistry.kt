@@ -17,6 +17,7 @@ import desu.inugram.ui.settings.GhostModeSettingsActivity
 import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
+import desu.inugram.ui.settings.PillStackSettingsActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
 import desu.inugram.ui.settings.RegexFilterSettingsActivity
 import desu.inugram.ui.settings.SettingsPageActivity
@@ -62,6 +63,7 @@ object SearchRegistry {
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,
             GhostModeSettingsActivity.PAGE,
+            PillStackSettingsActivity.PAGE,
             AntiDeletionSettingsActivity.PAGE,
             StalkerPackSettingsActivity.PAGE,
             RegexFilterSettingsActivity.PAGE,

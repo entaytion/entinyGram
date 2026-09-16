@@ -421,3 +421,4 @@ entiny/feed-bottom-tab.patch
 bugfix/expired-media-refresh.patch
 entiny/instant-mark-reactions-read.patch
 entiny/recent-chats.patch
+entiny/pill-stack.patch
