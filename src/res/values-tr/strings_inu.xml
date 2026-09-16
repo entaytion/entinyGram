@@ -990,6 +990,7 @@
     <string name="InuChatTitleMarqueeInfo">Sığmayan sohbet başlığı ve alt başlığı, ekran başlıkları ve profil adı otomatik kaydırılır</string>
     <string name="InuChats">Sohbetler</string>
     <string name="InuContentProtectionBypass">İçerik Koruması</string>
+    <string name="InuPremiumUnlock">Premium Kilidini Aç</string>
     <string name="InuDeleteAllProfilePhotos">Tüm fotoğrafları sil</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Tüm profil fotoğraflarını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="InuDeleteProfilePhotos">Profil fotoğraflarını sil</string>

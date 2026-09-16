@@ -1103,6 +1103,7 @@
     <string name="InuGhostFeatures">Прихована активність</string>
     <string name="InuGhostHideRead">Не надсилати підтвердження прочитання</string>
     <string name="InuContentProtectionBypass">Обхід захисту контенту</string>
+    <string name="InuPremiumUnlock">Розблокування Premium</string>
     <string name="InuGhostHideVoiceRead">Не позначати голосові та відеоповідомлення прослуханими</string>
     <string name="InuGhostHideStoryRead">Не надсилати перегляди сторіс</string>
     <string name="InuGhostHideTyping">Приховати набір тексту та прогрес завантаження</string>

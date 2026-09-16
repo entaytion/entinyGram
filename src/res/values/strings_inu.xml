@@ -1222,6 +1222,7 @@
     <string name="InuGhostMarkReadLocally">Mark as read locally</string>
     <string name="InuGhostMarkReadLocallyInfo">Reset the unread message counter when opening a chat in Ghost Mode, while keeping it unread on the server.</string>
     <string name="InuContentProtectionBypass">Content Protection</string>
+    <string name="InuPremiumUnlock">Premium Unlock</string>
     <string name="InuGhostHideVoiceRead">Do not mark voice and video messages as played</string>
     <string name="InuGhostHideStoryRead">Do not send story views</string>
     <string name="InuGhostHideTyping">Hide typing and upload progress</string>

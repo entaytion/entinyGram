@@ -25,7 +25,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_REGEX_FILTER, R.drawable.inu_tabler_filter, LocaleController.getString(R.string.InuRegexFilter)))
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuContentProtectionBypass)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuPremiumUnlock)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_LOCAL_PREMIUM,
@@ -42,6 +42,9 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.LOCAL_CUSTOM_EMOJI.value,
             )
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuContentProtectionBypass)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SAVE_ANY_STORY,

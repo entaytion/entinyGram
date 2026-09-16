@@ -994,6 +994,7 @@
     <string name="InuChatTitleMarqueeInfo">チャットヘッダーのタイトルとサブタイトル、画面タイトル、プロフィール名が収まらない場合に自動でスクロールします</string>
     <string name="InuChats">チャット</string>
     <string name="InuContentProtectionBypass">コンテンツ保護</string>
+    <string name="InuPremiumUnlock">プレミアム解除</string>
     <string name="InuDeleteAllProfilePhotos">すべての写真を削除</string>
     <string name="InuDeleteAllProfilePhotosConfirm">すべてのプロフィール写真を削除してもよろしいですか？この操作は取り消せません。</string>
     <string name="InuDeleteProfilePhotos">プロフィール写真を削除</string>

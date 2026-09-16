@@ -1051,6 +1051,7 @@
     <string name="InuGhostFeatures">Скрытая активность</string>
     <string name="InuGhostHideRead">Не отправлять отчеты о прочтении</string>
     <string name="InuContentProtectionBypass">Защита контента</string>
+    <string name="InuPremiumUnlock">Разблокировка Premium</string>
     <string name="InuGhostHideVoiceRead">Не помечать голосовые и видео как прослушанные</string>
     <string name="InuGhostHideStoryRead">Не отправлять просмотры историй</string>
     <string name="InuGhostHideTyping">Скрывать набор текста и загрузку</string>

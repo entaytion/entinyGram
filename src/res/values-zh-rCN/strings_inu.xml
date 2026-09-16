@@ -992,6 +992,7 @@
     <string name="InuChatTitleMarqueeInfo">聊天页头标题与副标题、屏幕标题和资料名称放不下时自动滚动显示</string>
     <string name="InuChats">聊天</string>
     <string name="InuContentProtectionBypass">内容保护</string>
+    <string name="InuPremiumUnlock">解锁 Premium</string>
     <string name="InuDeleteAllProfilePhotos">删除所有头像</string>
     <string name="InuDeleteAllProfilePhotosConfirm">确定要删除所有头像吗？此操作无法撤销。</string>
     <string name="InuDeleteProfilePhotos">删除个人头像</string>
