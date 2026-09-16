@@ -16,7 +16,7 @@ object WebPreviewHelper {
         Replacement("""(?:x|twitter)\.com/(.*)""", "fixupx.com/$1"),
         Replacement("""(?:www)?\.instagram\.com/(.*)""", "kkclip.com/$1"),
         Replacement("""(vm|vt|www)\.tiktok\.com/(.*)""", "$1.kktiktok.com/$2"),
-        Replacement("""(?:www)?\.reddit\.com/(.*)""", "www.rxddit.com/$1"),
+        Replacement("""(?:www\.)?reddit\.com/(.*)""", "vxreddit.com/$1"),
         Replacement("""bsky\.app/(.*)""", "fxbsky.app/$1"),
         Replacement("""www\.pixiv\.net/(.*)""", "www.phixiv.net/$1"),
     )
