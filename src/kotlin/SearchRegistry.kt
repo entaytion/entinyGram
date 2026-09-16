@@ -11,7 +11,6 @@ import desu.inugram.ui.settings.BackupSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
-import desu.inugram.ui.settings.ContentProtectionSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
@@ -20,13 +19,10 @@ import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
 import desu.inugram.ui.settings.RegexFilterSettingsActivity
-import desu.inugram.ui.settings.SelfDestructSettingsActivity
 import desu.inugram.ui.settings.SettingsPageActivity
 import desu.inugram.ui.settings.StalkerPackSettingsActivity
-import desu.inugram.ui.settings.TosProfileActivity
 import desu.inugram.ui.settings.TosSettingsActivity
 import desu.inugram.ui.settings.TranslatorSettingsActivity
-import desu.inugram.ui.settings.UnlimitedLimitsSettingsActivity
 import desu.inugram.ui.settings.fonts.FontStackActivity
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.LocaleController
@@ -65,12 +61,8 @@ object SearchRegistry {
             AnnoyancesSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,
-            TosProfileActivity.PAGE,
             GhostModeSettingsActivity.PAGE,
             AntiDeletionSettingsActivity.PAGE,
-            SelfDestructSettingsActivity.PAGE,
-            ContentProtectionSettingsActivity.PAGE,
-            UnlimitedLimitsSettingsActivity.PAGE,
             StalkerPackSettingsActivity.PAGE,
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,

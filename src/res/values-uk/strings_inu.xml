@@ -36,7 +36,6 @@
     <string name="InuAnnoyancesHints">Підказки та нагадування</string>
     <string name="InuMessages">Повідомлення</string>
     <string name="InuChats">Чати</string>
-    <string name="InuStarGiftsSection">Подарунки</string>
     <string name="InuMainPage">Список чатів</string>
     <string name="InuUserProfile">Профіль користувача</string>
     <string name="InuChatList">Список чатів</string>
@@ -935,7 +934,6 @@
     <string name="InuBiometricLockArchiveEveryTime">Запитувати щоразу</string>
     <string name="InuBiometricLockArchiveEveryTimeInfo">Вимкнено — запитує один раз за сесію; увімкнено — щоразу при відкритті архіву.</string>
 
-    <string name="InuTosProfile">Профіль і Premium</string>
     <string name="InuRegexFilter">Адблок та регекс-фільтр</string>
     <string name="InuRegexFilterEnabled">Увімкнути фільтр контенту</string>
     <string name="InuRegexFilterEnabledInfo">Фільтрує дописи та повідомлення за регекс-шаблонами або ключовими словами</string>
@@ -1257,8 +1255,6 @@
     <string name="InuLocalPremiumInfo">Розблоковує локальні функції Premium на рівні клієнта (зірочка біля профілю, емодзі-статуси, безлімітна панель перекладу, преміум-реакції та анімації). Серверні фічі (4 ГБ завантаження, ліміти хмари) вимагають офіційної підписки.</string>
     <string name="InuLocalCustomEmoji">Локальні кастомні емодзі</string>
     <string name="InuLocalCustomEmojiInfo">Надсилає преміум-емодзі як приховані емодзі-посилання, тож акаунт без Premium може використовувати їх будь-де. Клієнти entinyGram і Nekogram показують їх анімованими; в інших клієнтах видно звичайне емодзі-замінник як посилання. Вмикайте разом із локальним Telegram Premium, щоб розблокувати саму панель емодзі.</string>
-    <string name="InuHiddenStarGifts">Приховані та архівні подарунки</string>
-    <string name="InuHiddenStarGiftsInfo">Повертає видалені, архівні та лімітовані зіркові подарунки (Star Gifts) у каталог Telegram.</string>
     <string name="InuUnlimitedLimits">Зняття обмежень</string>
     <string name="InuUnlimitedPinnedChats">Необмежені закріплені чати</string>
     <string name="InuUnlimitedPinnedChatsInfo">Закріплюйте більше чатів, ніж дозволяє серверний ліміт Telegram. Чати понад ліміт закріплюються лише локально — вони завжди відображаються першими на цьому пристрої, але ніколи не надсилаються в Telegram, тому їх не можна відкріпити з іншого пристрою і вони не враховуються в серверному ліміті.</string>
@@ -1306,6 +1302,8 @@
     <string name="InuCacheEntriesShort">%1$d записів</string>
     <string name="InuCacheMessagesCategory">Кеш повідомлень</string>
     <string name="InuCachePresenceCategory">Журнали активності</string>
+    <string name="InuPresenceLogsTtl">Авто-очищення журналів активності</string>
+    <string name="InuPresenceLogsTtlInfo">Автоматично видаляти журнали активності, старіші за вказаний період.</string>
     <string name="InuTypingSpoofActive">Активно зараз</string>
     <string name="InuTypingSpoofPickChat">Обрати чат</string>
     <string name="InuTypingSpoofQuickListInfo">Відкриває той самий вибір підробки набору тексту, що доступний у меню чату, без потреби спочатку відкривати чат.</string>

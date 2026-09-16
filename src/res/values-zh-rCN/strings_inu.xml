@@ -911,7 +911,6 @@
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
     <string name="InuTOS">服务条款</string>
-    <string name="InuTosProfile">个人资料与 Premium</string>
     <string name="InuAdditional">其他</string>
     <string name="InuAdvanced">高级</string>
     <string name="InuAiApiKeyHint">API 密钥</string>
@@ -1051,8 +1050,6 @@
     <string name="InuGhostReadOnSend">发送时标记已读</string>
     <string name="InuGhostMarkReadLocally">本地标记为已读</string>
     <string name="InuGhostMarkReadLocallyInfo">在幽灵模式下打开聊天时重置未读消息计数器，同时在服务器上保持未读状态。</string>
-    <string name="InuHiddenStarGifts">隐藏与归档的 Star 礼物</string>
-    <string name="InuHiddenStarGiftsInfo">在 Telegram 礼物目录中恢复已下架、归档及限量的 Star 礼物。</string>
     <string name="InuUnlimitedLimits">解除限制</string>
     <string name="InuUnlimitedPinnedChats">无限置顶聊天</string>
     <string name="InuUnlimitedPinnedChatsInfo">置顶的聊天数量超过 Telegram 服务器限制。超出限制的聊天仅在本地置顶 — 它们始终在本设备上排在最前面，但不会发送到 Telegram，因此无法从其他客户端取消置顶，也不计入服务器限制。</string>
@@ -1100,6 +1097,8 @@
     <string name="InuCacheEntriesShort">%1$d 条记录</string>
     <string name="InuCacheMessagesCategory">消息缓存</string>
     <string name="InuCachePresenceCategory">在线状态记录</string>
+    <string name="InuPresenceLogsTtl">自动清理在线状态记录</string>
+    <string name="InuPresenceLogsTtlInfo">自动删除早于所选时段的在线状态记录。</string>
     <string name="InuTypingSpoofActive">当前活跃</string>
     <string name="InuTypingSpoofPickChat">选择聊天</string>
     <string name="InuTypingSpoofQuickListInfo">打开与聊天顶部菜单中相同的输入伪造选择界面，无需先打开该聊天。</string>
@@ -1196,7 +1195,6 @@
     <string name="InuShowMutualContactInChats">在群组和频道成员列表中显示双向联系人图标</string>
     <string name="InuShowMutualContactInChatsInfo">在群组和频道成员列表中显示双向联系人指示图标</string>
     <string name="InuShowProfileRegDate">显示注册日期和数据中心</string>
-    <string name="InuStarGiftsSection">礼物</string>
     <string name="InuCenteringSection">居中</string>
     <string name="InuTranslateDeepLApiKey">DeepL API 密钥</string>
     <string name="InuTranslateLlmApiKey">API 密钥（可选）</string>

@@ -34,7 +34,6 @@
     <string name="InuAnnoyancesHints">Подсказки и напоминания</string>
     <string name="InuMessages">Сообщения</string>
     <string name="InuChats">Чаты</string>
-    <string name="InuStarGiftsSection">Подарки</string>
     <string name="InuMainPage">Список диалогов</string>
     <string name="InuUserProfile">Профиль пользователя</string>
     <string name="InuChatList">Список чатов</string>
@@ -952,7 +951,6 @@
     <string name="InuAiTranslateFrom">С языка</string>
     <string name="InuAiTranslateTo">На %s</string>
     <string name="InuAiTranslateRun">Перевести</string>
-    <string name="InuTosProfile">Профиль и Premium</string>
     <string name="InuSelfDestructMedia">Самоуничтожающиеся медиа</string>
     <string name="InuAntiDeletion">Анти-удаление</string>
     <string name="InuSaveSelfDestructMedia">Сохранять секретные медиа</string>
@@ -1142,8 +1140,6 @@
     <string name="InuAiTranscribeErrorNoFreeQuota">У этой модели нет бесплатной квоты для вашего API-ключа. Выберите модель Flash, включите оплату в проекте Google или смените голосового провайдера.</string>
     <string name="InuLocalPremium">Локальный Telegram Premium</string>
     <string name="InuLocalPremiumInfo"> Разблокирует локальные функции Premium на уровне клиента (звёздочка у профиля, эмодзи-статусы и цвета профиля с локальным сохранением, безлимитная панель перевода, премиум-реакции и анимации). Серверные фичи (4 ГБ загрузка, лимиты облака) требуют официальной подписки.</string>
-    <string name="InuHiddenStarGifts">Скрытые и архивные подарки</string>
-    <string name="InuHiddenStarGiftsInfo">Возвращает удалённые, архивные и лимитированные подарки (Star Gifts) в каталог Telegram.</string>
     <string name="InuUnlimitedLimits">Снятие ограничений</string>
     <string name="InuUnlimitedPinnedChats">Безлимитные закреплённые чаты</string>
     <string name="InuUnlimitedPinnedChatsInfo">Закрепляйте больше чатов, чем позволяет серверный лимит Telegram. Чаты сверх лимита закрепляются только локально — они всегда отображаются первыми на этом устройстве, но никогда не отправляются в Telegram, поэтому их нельзя открепить с другого устройства и они не учитываются в серверном лимите.</string>
@@ -1191,6 +1187,8 @@
     <string name="InuCacheEntriesShort">%1$d записей</string>
     <string name="InuCacheMessagesCategory">Кэш сообщений</string>
     <string name="InuCachePresenceCategory">Журналы активности</string>
+    <string name="InuPresenceLogsTtl">Автоочистка журналов активности</string>
+    <string name="InuPresenceLogsTtlInfo">Автоматически удалять журналы активности старше выбранного периода.</string>
     <string name="InuTypingSpoofActive">Активно сейчас</string>
     <string name="InuTypingSpoofPickChat">Выбрать чат</string>
     <string name="InuTypingSpoofQuickListInfo">Открывает тот же выбор подделки набора текста, что доступен в меню чата, без необходимости сначала открывать чат.</string>

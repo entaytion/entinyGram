@@ -913,7 +913,6 @@
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
     <string name="InuTOS">利用規約</string>
-    <string name="InuTosProfile">プロフィールとPremium</string>
     <string name="InuAdditional">その他</string>
     <string name="InuAdvanced">詳細設定</string>
     <string name="InuAiApiKeyHint">API キー</string>
@@ -1050,8 +1049,6 @@
     <string name="InuGhostModeEnabledForChatDone">このチャットのゴーストモードを有効にしました</string>
     <string name="InuGhostModeInfo">アクティビティを隠します: 受信メッセージは既読にならず、オンライン状態、入力中、ストーリー閲覧も非表示になります。</string>
     <string name="InuGhostModeMaster">ゴーストモード</string>
-    <string name="InuHiddenStarGifts">非表示およびアーカイブされた Star ギフト</string>
-    <string name="InuHiddenStarGiftsInfo">Telegram のギフトカタログで削除、アーカイブ、または限定された Star ギフトを復元します。</string>
     <string name="InuUnlimitedLimits">制限解除</string>
     <string name="InuUnlimitedPinnedChats">無制限ピン留めチャット</string>
     <string name="InuUnlimitedPinnedChatsInfo">Telegram のサーバー上限を超えてチャットをピン留めできます。上限を超えたチャットはローカルでのみピン留めされ、この端末では常に先頭に表示されますが、Telegram には送信されないため、他の端末から解除されず、サーバー上限にもカウントされません。</string>
@@ -1099,6 +1096,8 @@
     <string name="InuCacheEntriesShort">%1$d件の記録</string>
     <string name="InuCacheMessagesCategory">メッセージキャッシュ</string>
     <string name="InuCachePresenceCategory">オンライン状態の記録</string>
+    <string name="InuPresenceLogsTtl">オンライン状態記録の自動消去</string>
+    <string name="InuPresenceLogsTtlInfo">選択した期間より古いオンライン状態の記録を自動消去します。</string>
     <string name="InuTypingSpoofActive">現在有効</string>
     <string name="InuTypingSpoofPickChat">チャットを選択</string>
     <string name="InuTypingSpoofQuickListInfo">チャットを開かなくても、チャットヘッダーメニューと同じ入力偽装の選択画面を開きます。</string>
@@ -1195,7 +1194,6 @@
     <string name="InuShowMutualContactInChats">グループ・チャンネルのメンバー一覧に相互連絡先アイコンを表示</string>
     <string name="InuShowMutualContactInChatsInfo">グループやチャンネルのメンバーリストで相互連絡先アイコンを表示します</string>
     <string name="InuShowProfileRegDate">登録日と DC を表示</string>
-    <string name="InuStarGiftsSection">ギフト</string>
     <string name="InuCenteringSection">中央揃え</string>
     <string name="InuTranslateDeepLApiKey">DeepL API キー</string>
     <string name="InuTranslateLlmApiKey">API キー (任意)</string>

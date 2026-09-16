@@ -909,7 +909,6 @@
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
     <string name="InuTOS">Hizmet Şartları</string>
-    <string name="InuTosProfile">Profil ve Premium</string>
     <string name="InuAdditional">Ek</string>
     <string name="InuAdvanced">Gelişmiş</string>
     <string name="InuAiApiKeyHint">API Anahtarı</string>
@@ -1049,8 +1048,6 @@
     <string name="InuGhostReadOnSend">Gönderirken okundu olarak işaretle</string>
     <string name="InuGhostMarkReadLocally">Yerel olarak okundu işaretle</string>
     <string name="InuGhostMarkReadLocallyInfo">Hayalet Modunda bir sohbet açıldığında okunmamış mesaj sayacını sıfırlar, ancak sunucuda okunmamış olarak tutar.</string>
-    <string name="InuHiddenStarGifts">Gizli ve Arşivlenmiş Star Hediyeleri</string>
-    <string name="InuHiddenStarGiftsInfo">Telegram hediye kataloğundaki kaldırılmış, arşivlenmiş ve sınırlı Star Hediyelerini geri yükler.</string>
     <string name="InuUnlimitedLimits">Sınırsız Limitler</string>
     <string name="InuUnlimitedPinnedChats">Sınırsız Sabitlenmiş Sohbet</string>
     <string name="InuUnlimitedPinnedChatsInfo">Telegram\'ın sunucu sınırının izin verdiğinden daha fazla sohbet sabitleyin. Sınırın üzerindeki sohbetler yalnızca yerel olarak sabitlenir — bu cihazda her zaman önce görünürler ancak Telegram\'a asla gönderilmezler, bu yüzden başka bir istemciden çözülemezler ve sunucu sınırına dahil edilmezler.</string>
@@ -1098,6 +1095,8 @@
     <string name="InuCacheEntriesShort">%1$d kayıt</string>
     <string name="InuCacheMessagesCategory">Mesaj önbelleği</string>
     <string name="InuCachePresenceCategory">Çevrim içi günlükleri</string>
+    <string name="InuPresenceLogsTtl">Çevrim içi günlüklerini otomatik temizle</string>
+    <string name="InuPresenceLogsTtlInfo">Seçilen süreden eski çevrim içi günlüklerini otomatik olarak silin.</string>
     <string name="InuTypingSpoofActive">Şu anda etkin</string>
     <string name="InuTypingSpoofPickChat">Sohbet seç</string>
     <string name="InuTypingSpoofQuickListInfo">Önce sohbeti açmaya gerek kalmadan, sohbet başlığı menüsünde bulunan aynı yazma sahteciliği seçicisini açar.</string>
@@ -1194,7 +1193,6 @@
     <string name="InuShowMutualContactInChats">Grup ve Kanal Üye Listelerinde Karşılıklı Kişi Simgesini Göster</string>
     <string name="InuShowMutualContactInChatsInfo">Grup ve kanal üye listelerinde karşılıklı kişi simgesini görüntüler</string>
     <string name="InuShowProfileRegDate">Kayıt tarihini ve DC\'yi göster</string>
-    <string name="InuStarGiftsSection">Hediyeler</string>
     <string name="InuCenteringSection">Ortalama</string>
     <string name="InuTranslateDeepLApiKey">DeepL API anahtarı</string>
     <string name="InuTranslateLlmApiKey">API anahtarı (isteğe bağlı)</string>

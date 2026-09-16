@@ -32,6 +32,14 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 InuConfig.FORCE_RELAY_CALLS.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SAVE_USER_INFO,
+                R.string.InuSaveUserInfo,
+                R.string.InuSaveUserInfoInfo,
+                InuConfig.SAVE_USER_INFO.value,
+            )
+        )
         items.add(mkSubPageButton(BUTTON_WATCH_LIST, R.drawable.inu_tabler_user_search, LocaleController.getString(R.string.InuPresenceWatchList)))
         items.add(mkSubPageButton(BUTTON_TYPING_SPOOF_LIST, R.drawable.inu_tabler_keyboard, LocaleController.getString(R.string.InuTypingSpoof)))
     }
@@ -46,6 +54,10 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.FORCE_RELAY_CALLS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_SAVE_USER_INFO -> {
+                val new = InuConfig.SAVE_USER_INFO.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             BUTTON_WATCH_LIST -> presentFragment(PresenceWatchListSettingsActivity())
             BUTTON_TYPING_SPOOF_LIST -> presentFragment(TypingSpoofQuickListSettingsActivity())
         }
@@ -54,6 +66,7 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
     companion object {
         private val TOGGLE_PRESENCE_LOGGER_NOTIFY = InuUtils.generateId()
         private val TOGGLE_FORCE_RELAY_CALLS = InuUtils.generateId()
+        private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val BUTTON_WATCH_LIST = InuUtils.generateId()
         private val BUTTON_TYPING_SPOOF_LIST = InuUtils.generateId()
 
@@ -66,6 +79,7 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("presence-logger-notify", R.string.InuPresenceLoggerNotify, TOGGLE_PRESENCE_LOGGER_NOTIFY),
                 SearchRegistry.Entry("force-relay-calls", R.string.InuForceRelayCalls, TOGGLE_FORCE_RELAY_CALLS),
+                SearchRegistry.Entry("save-user-info", R.string.InuSaveUserInfo, TOGGLE_SAVE_USER_INFO),
             ),
         )
     }

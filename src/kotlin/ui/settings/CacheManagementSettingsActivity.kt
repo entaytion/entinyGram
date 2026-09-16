@@ -41,7 +41,10 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         bindSummary()
         items.add(UItem.asCustom(summaryCell))
 
-        items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
+        items.add(UItem.asButton(BUTTON_MESSAGES_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
+            it.subtext = ttlLabel(InuConfig.DELETED_MESSAGES_TTL.value)
+        })
+        items.add(UItem.asButton(BUTTON_LOGS_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuPresenceLogsTtl)).also {
             it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
         })
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuCacheManagementInfo)))
@@ -54,7 +57,38 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         else -> LocaleController.getString(R.string.InuCacheTtlNever)
     }
 
-    private fun showTtlDialog() {
+    private fun showMessagesTtlDialog() {
+        val context = context ?: return
+        val values = intArrayOf(
+            InuConfig.DeletedMessagesTtlItem.NEVER,
+            InuConfig.DeletedMessagesTtlItem.ONE_DAY,
+            InuConfig.DeletedMessagesTtlItem.ONE_WEEK,
+            InuConfig.DeletedMessagesTtlItem.ONE_MONTH,
+        )
+        val radioItems = listOf(
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlNever)),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlDay)),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlWeek)),
+            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlMonth)),
+        )
+        showDialog(
+            RadioDialogBuilder(context, getResourceProvider())
+                .setTitle(LocaleController.getString(R.string.InuCacheTtl))
+                .setSubtitle(LocaleController.getString(R.string.InuCacheTtlInfo))
+                .setItems(radioItems, values.indexOf(InuConfig.DELETED_MESSAGES_TTL.value).coerceAtLeast(0)) { _, which ->
+                    val newVal = values[which]
+                    if (InuConfig.DELETED_MESSAGES_TTL.value == newVal) return@setItems
+                    InuConfig.DELETED_MESSAGES_TTL.value = newVal
+                    if (newVal != InuConfig.DeletedMessagesTtlItem.NEVER) {
+                        SavedMessagesHelper.pruneIfNeeded(UserConfig.selectedAccount)
+                    }
+                    listView?.adapter?.update(true)
+                }
+                .create()
+        )
+    }
+
+    private fun showLogsTtlDialog() {
         val context = context ?: return
         val values = intArrayOf(
             InuConfig.PresenceLogsTtlItem.NEVER,
@@ -70,8 +104,8 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         )
         showDialog(
             RadioDialogBuilder(context, getResourceProvider())
-                .setTitle(LocaleController.getString(R.string.InuCacheTtl))
-                .setSubtitle(LocaleController.getString(R.string.InuCacheTtlInfo))
+                .setTitle(LocaleController.getString(R.string.InuPresenceLogsTtl))
+                .setSubtitle(LocaleController.getString(R.string.InuPresenceLogsTtlInfo))
                 .setItems(radioItems, values.indexOf(InuConfig.PRESENCE_LOGS_TTL.value).coerceAtLeast(0)) { _, which ->
                     val newVal = values[which]
                     if (InuConfig.PRESENCE_LOGS_TTL.value == newVal) return@setItems
@@ -124,7 +158,8 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_LOGS_TTL -> showTtlDialog()
+            BUTTON_MESSAGES_TTL -> showMessagesTtlDialog()
+            BUTTON_LOGS_TTL -> showLogsTtlDialog()
         }
     }
 
@@ -234,6 +269,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val BUTTON_MESSAGES_TTL = InuUtils.generateId()
         private val BUTTON_LOGS_TTL = InuUtils.generateId()
 
         @JvmField
@@ -243,7 +279,8 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_trash_x,
             factory = ::CacheManagementSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("presence-logs-ttl", R.string.InuCacheTtl, BUTTON_LOGS_TTL),
+                SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_MESSAGES_TTL),
+                SearchRegistry.Entry("presence-logs-ttl", R.string.InuPresenceLogsTtl, BUTTON_LOGS_TTL),
             ),
         )
     }

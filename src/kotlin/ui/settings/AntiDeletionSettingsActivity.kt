@@ -41,6 +41,18 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         sectionId = SECTION_DELETED_CATEGORIES,
     ).apply { expanded = true }
 
+    private val selfDestructGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuSelfDestructMedia),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuSaveViewOnceMedia, InuConfig.SAVE_VIEW_ONCE_MEDIA, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
+            ExpandableBoolGroup.Option(R.string.InuSaveTimedMessages, InuConfig.SAVE_TIMED_MESSAGES, TOGGLE_SAVE_TIMED_MESSAGES),
+            ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructMedia, InuConfig.SAVE_SELF_DESTRUCT_MEDIA, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
+            ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructText, InuConfig.SAVE_SELF_DESTRUCT_TEXT, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
+            ExpandableBoolGroup.Option(R.string.InuViewOnceShowNormal, InuConfig.VIEW_ONCE_SHOW_NORMAL, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
+        ),
+        sectionId = SECTION_SELF_DESTRUCT_SAVE,
+    ).apply { expanded = true }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(
             mkTwoLineCheckItem(
@@ -109,56 +121,16 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             )
         }
 
+        selfDestructGroup.addTo(items) { listView?.adapter?.update(true) }
+
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
-            items.add(UItem.asButton(BUTTON_CACHE_TTL, R.drawable.inu_tabler_clock_hour_4, LocaleController.getString(R.string.InuCacheTtl)).also {
-                it.subtext = ttlLabel(InuConfig.DELETED_MESSAGES_TTL.value)
-            })
             items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuClearDeletedCache)).also {
                 if (cachedSizeText != null) {
                     it.subtext = cachedSizeText
                 }
             })
         }
-    }
-
-    private fun ttlLabel(days: Int): String = when (days) {
-        InuConfig.DeletedMessagesTtlItem.ONE_DAY -> LocaleController.getString(R.string.InuCacheTtlDay)
-        InuConfig.DeletedMessagesTtlItem.ONE_WEEK -> LocaleController.getString(R.string.InuCacheTtlWeek)
-        InuConfig.DeletedMessagesTtlItem.ONE_MONTH -> LocaleController.getString(R.string.InuCacheTtlMonth)
-        else -> LocaleController.getString(R.string.InuCacheTtlNever)
-    }
-
-    private fun showTtlDialog() {
-        val context = context ?: return
-        val values = intArrayOf(
-            InuConfig.DeletedMessagesTtlItem.NEVER,
-            InuConfig.DeletedMessagesTtlItem.ONE_DAY,
-            InuConfig.DeletedMessagesTtlItem.ONE_WEEK,
-            InuConfig.DeletedMessagesTtlItem.ONE_MONTH,
-        )
-        val radioItems = listOf(
-            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlNever)),
-            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlDay)),
-            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlWeek)),
-            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuCacheTtlMonth)),
-        )
-        showDialog(
-            RadioDialogBuilder(context, getResourceProvider())
-                .setTitle(LocaleController.getString(R.string.InuCacheTtl))
-                .setSubtitle(LocaleController.getString(R.string.InuCacheTtlInfo))
-                .setItems(radioItems, values.indexOf(InuConfig.DELETED_MESSAGES_TTL.value).coerceAtLeast(0)) { _, which ->
-                    val newVal = values[which]
-                    if (InuConfig.DELETED_MESSAGES_TTL.value == newVal) return@setItems
-                    InuConfig.DELETED_MESSAGES_TTL.value = newVal
-                    // If TTL changed to non-never, immediately prune
-                    if (newVal != InuConfig.DeletedMessagesTtlItem.NEVER) {
-                        SavedMessagesHelper.pruneIfNeeded(UserConfig.selectedAccount)
-                    }
-                    listView?.adapter?.update(true)
-                }
-                .create()
-        )
     }
 
     private fun showClearCacheDialog() {
@@ -289,6 +261,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (deletedCategoriesGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
+        if (selfDestructGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         when (item.id) {
             TOGGLE_SAVE_DELETED_MESSAGES -> {
                 val new = InuConfig.SAVE_DELETED_MESSAGES.toggle()
@@ -316,7 +289,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
             BUTTON_DELETED_MARK_STYLE -> showDeletedMarkStyleSelector()
             BUTTON_SEARCH -> presentFragment(DeletedMessageSearchActivity())
-            BUTTON_CACHE_TTL -> showTtlDialog()
             BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
         }
     }
@@ -368,9 +340,14 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
-        private val BUTTON_CACHE_TTL = InuUtils.generateId()
         private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
         private val BUTTON_SEARCH = InuUtils.generateId()
+        private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
+        private val TOGGLE_SAVE_SELF_DESTRUCT_TEXT = InuUtils.generateId()
+        private val TOGGLE_SAVE_VIEW_ONCE_MEDIA = InuUtils.generateId()
+        private val TOGGLE_SAVE_TIMED_MESSAGES = InuUtils.generateId()
+        private val TOGGLE_VIEW_ONCE_SHOW_NORMAL = InuUtils.generateId()
+        private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -391,7 +368,12 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-deleted-own", R.string.InuSaveDeletedOwn, TOGGLE_SAVE_DELETED_OWN),
                 SearchRegistry.Entry("save-edited-messages", R.string.InuSaveEditedMessages, TOGGLE_SAVE_EDITED_MESSAGES),
                 SearchRegistry.Entry("edit-history-diff", R.string.InuEditHistoryDiff, TOGGLE_SHOW_EDIT_HISTORY_DIFF),
-                SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_CACHE_TTL),
+                SearchRegistry.Entry("self-destruct-save", R.string.InuSelfDestructMedia, SECTION_SELF_DESTRUCT_SAVE),
+                SearchRegistry.Entry("save-view-once-media", R.string.InuSaveViewOnceMedia, TOGGLE_SAVE_VIEW_ONCE_MEDIA),
+                SearchRegistry.Entry("save-timed-messages", R.string.InuSaveTimedMessages, TOGGLE_SAVE_TIMED_MESSAGES),
+                SearchRegistry.Entry("save-self-destruct-media", R.string.InuSaveSelfDestructMedia, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
+                SearchRegistry.Entry("save-self-destruct-text", R.string.InuSaveSelfDestructText, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
+                SearchRegistry.Entry("view-once-show-normal", R.string.InuViewOnceShowNormal, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
             ),
         )
     }

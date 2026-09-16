@@ -235,7 +235,19 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
-        items.add(UItem.asShadow(null))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FASTER_DOWNLOADS,
+                LocaleController.getString(R.string.InuFasterDownloads),
+            ).setChecked(InuConfig.FASTER_DOWNLOADS.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_FASTER_UPLOADS,
+                LocaleController.getString(R.string.InuFasterUploads),
+            ).setChecked(InuConfig.FASTER_UPLOADS.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuFasterTransfersInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMapsHeader)))
         if (mapProviderOptions.size > 1) {
@@ -437,6 +449,9 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_FASTER_DOWNLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_DOWNLOADS.toggle()
+            TOGGLE_FASTER_UPLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_UPLOADS.toggle()
+
             TOGGLE_SHOW_SECONDS -> {
                 val new = InuConfig.SHOW_SECONDS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -573,6 +588,8 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_AUTO_DISABLE_PROXY_ON_VPN = InuUtils.generateId()
         private val TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND = InuUtils.generateId()
         private val TOGGLE_BLOCK_SLEEP_WHILE_DOWNLOADING = InuUtils.generateId()
+        private val TOGGLE_FASTER_DOWNLOADS = InuUtils.generateId()
+        private val TOGGLE_FASTER_UPLOADS = InuUtils.generateId()
         private val SECTION_DELETE_FOR_BOTH = InuUtils.generateId()
         private val BUTTON_MAP_PROVIDER = InuUtils.generateId()
         private val BUTTON_MAP_PREVIEW_PROVIDER = InuUtils.generateId()
@@ -631,6 +648,8 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("auto-disable-proxy-on-vpn", R.string.InuAutoDisableProxyOnVpn, TOGGLE_AUTO_DISABLE_PROXY_ON_VPN),
                 SearchRegistry.Entry("keep-downloads-in-background", R.string.InuKeepDownloadsInBackground, TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND),
                 SearchRegistry.Entry("block-sleep-while-downloading", R.string.InuBlockSleepWhileDownloading, TOGGLE_BLOCK_SLEEP_WHILE_DOWNLOADING),
+                SearchRegistry.Entry("faster-downloads", R.string.InuFasterDownloads, TOGGLE_FASTER_DOWNLOADS),
+                SearchRegistry.Entry("faster-uploads", R.string.InuFasterUploads, TOGGLE_FASTER_UPLOADS),
                 SearchRegistry.Entry("delete-for-both", R.string.InuDeleteForBoth, SECTION_DELETE_FOR_BOTH),
                 SearchRegistry.Entry("map-provider", R.string.InuMapProvider, BUTTON_MAP_PROVIDER),
                 SearchRegistry.Entry("map-preview-provider", R.string.InuMapPreviewProvider, BUTTON_MAP_PREVIEW_PROVIDER),
