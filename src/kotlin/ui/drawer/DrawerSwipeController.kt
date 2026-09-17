@@ -223,16 +223,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         return tabs.visibility == View.VISIBLE && !tabs.isFirstTabSelected
     }
 
-    /**
-     * Hand the left edge back to the drawer instead of the system back gesture.
-     * The platform honours at most 200dp of exclusion per edge (consumed
-     * bottom-up, `config_systemGestureExclusionLimitDp`), so the band is anchored
-     * above the navigation bar rather than spanning the whole screen.
-     *
-     * Pushed unconditionally rather than diffed against a local cache: a detach /
-     * reattach or a new ViewRootImpl drops the registration silently, and the
-     * platform already coalesces unchanged rect lists before reporting them to WM.
-     */
+    /** Exclude left edge from system back gesture for drawer (band anchored above nav bar, max 200dp per edge). */
     private fun updateGestureExclusion() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
         val height = host.height

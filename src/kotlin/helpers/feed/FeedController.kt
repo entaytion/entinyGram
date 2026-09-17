@@ -3,20 +3,8 @@ package desu.inugram.helpers.feed
 import org.telegram.messenger.MessageObject
 
 /**
- * Per-account Feed orchestrator. Lazily created and lazily activated: nothing here runs (no
- * `NotificationCenter` work, no DB reads) until [onScreenOpened] fires for the first time this
- * session, which is what keeps a never-opened Feed stock-identical in cost (rule #4) without
- * needing a separate master on/off toggle.
- *
- * New-message/deleted/history-cleared plumbing lives in [InuHooks] (`onNewMessage`,
- * `onMessagesDeleted`, `onHistoryCleared`) rather than a dedicated `NotificationCenter` observer
- * here -- those hooks already fire for every message/account, so Feed just taps into the existing
- * funnel instead of registering a second, redundant one.
- *
- * [scope] decides which channels this controller's [store] merges. The global-scope controller is
- * the cached per-account singleton ([get]); folder-scoped ones come from [forFolder] and are
- * deliberately NOT cached -- see its doc for what that costs and why it's the right v1 trade.
- * [unreadTracker] and [backfill] are shared per-account regardless of scope.
+ * Per-account Feed orchestrator (lazy: zero-cost if never opened). Message plumbing via InuHooks, not redundant observer.
+ * Scope selects channels; global cached per-account, folder-scoped uncached. unreadTracker/backfill shared per-account.
  */
 class FeedController private constructor(
     private val account: Int,
@@ -38,11 +26,7 @@ class FeedController private constructor(
     var onLiveMessagesRemoved: ((dialogId: Long, messageIds: Collection<Int>) -> Unit)? = null
     var onLiveDialogRemoved: ((dialogId: Long) -> Unit)? = null
 
-    /**
-     * A gap-fill round just landed new history in local storage for some channel. Nothing was
-     * merged in automatically -- the screen decides whether it's still worth re-querying (e.g. it
-     * gave up with "all read" before the backfill it itself triggered had a chance to land).
-     */
+    /** Gap-fill landed new history; screen decides if re-query is still worthwhile. */
     var onBackfillCompleted: (() -> Unit)? = null
 
     @Volatile

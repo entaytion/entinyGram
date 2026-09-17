@@ -120,17 +120,7 @@ object LoginHelper {
         opts.show()
     }
 
-    /**
-     * Countdown override on the login code screens, gated by `InuConfig.FAST_RESEND_LOGIN_CODE`.
-     *
-     * Stock swallows a tap on the "code available in mm:ss" label for as long as the local timer
-     * runs. With the toggle on we ask first, and only then let the caller drop that timer and fall
-     * through to stock's own `auth.resendCode` path -- no new request, no protocol change.
-     *
-     * The confirmation is the point: the wait is a cooldown the server suggested, so skipping it
-     * has to be a deliberate choice rather than a stray tap, and the server is still free to answer
-     * FLOOD_WAIT (which stock already surfaces).
-     */
+    /** Override login code countdown with confirmation (deliberate choice, not stray tap). */
     @JvmStatic
     fun confirmFastResend(loginActivity: LoginActivity, onConfirm: Runnable) {
         val activity = loginActivity.parentActivity ?: return
@@ -187,20 +177,7 @@ object LoginHelper {
         }
     }
 
-    /**
-     * `auth.importBotAuthorization` — logs the client in as a bot using a @BotFather token,
-     * instead of a phone number. Long-standing NekoX/Nagram feature; the request shape mirrors
-     * [showQrLoginDialog]'s `export()`: without-login, cross-DC, unauthorized flags because the
-     * client is not logged into anything yet when this fires. Reuses [LoginActivity.onAuthSuccess]
-     * for everything after a successful response - the same completion path QR and Passkey login
-     * already go through - instead of re-deriving user/storage setup by hand.
-     *
-     * `auth.importBotAuthorization` has no generated `TLRPC.TL_auth_importBotAuthorization` in
-     * this fork's schema snapshot, and golden rule #9 forbids hand-editing the generated
-     * `TLRPC.java` to add one - the same pattern `WebAppHelper.openTlViewer` already uses for a
-     * one-off request: a bare anonymous [TLObject] built and thrown away right here, not a new
-     * named class living in `TLRPC`.
-     */
+    /** Bot token login via auth.importBotAuthorization (QR/Passkey pattern; bare TLObject, not in TLRPC). */
     private fun botTokenLogin(loginActivity: LoginActivity, currentAccount: Int) {
         val activity = loginActivity.parentActivity ?: return
         AlertsCreator.createSimpleTextInputAlert(

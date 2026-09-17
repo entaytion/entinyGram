@@ -14,25 +14,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * Serial translation coordinator for third-party providers.
- *
- * Design goals (unlike ad-hoc implementations):
- * - **No duplicate requests.** A message is queued at most once: in-flight messages are tracked
- *   by (dialog, message, kind), so the stock 150 ms re-check loop cannot pile up identical
- *   provider calls.
- * - **Bounded retries, no permanent poisoning.** A failed message is remembered for
- *   [FAIL_RETRY_WINDOW_MS] so a dead provider is not hammered on every scroll; after the window
- *   expires the next re-push retries it (and a provider switch clears failures immediately).
- *   Previously a single failure marked a message as failed forever, which silently killed
- *   auto-translate even after the user switched providers.
- * - **Bounded parallelism.** A small worker pool drains bulk translations concurrently, while the
- *   queue still deduplicates messages and caps the request burst.
- * - **Clean cancellation.** Toggling a dialog off cancels queued work and drops in-flight
- *   callbacks instead of applying stale translations afterwards.
- * - **Visible failures.** Every final failure is logged (Log.d) and a one-per-dialog-per-minute
- *   error bulletin tells the user why nothing translated.
- *
- * All public methods are safe to call from any thread; callbacks are delivered on the UI thread.
+ * Serial translation coordinator: no duplicates, bounded retries (not permanent), parallelism, clean cancellation, visible failures.
+ * Thread-safe; callbacks on UI thread.
  */
 object TranslateEngine {
 

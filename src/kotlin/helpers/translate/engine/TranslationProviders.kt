@@ -171,22 +171,8 @@ internal fun httpJson(
 }
 
 /**
- * Google's public web translate endpoint (translate.googleapis.com, `client=gtx`) as the primary
- * path. No API key needed; subject to Google's unofficial rate limits, which the engine's serial
- * queue and backoff keep in check. A POST body avoids URL-length limits on long messages; `at` is
- * used as primary less often because as a raw first choice it is more often blocked/throttled
- * from mobile IPs, but it is a genuinely separate service tier (different hostname, different
- * quota) and is tried as a fallback below for exactly that reason.
- *
- * A 429 from this endpoint is usually not "you asked too often" - it is Google refusing the
- * address the request came from. Carrier NAT, VPN exits and datacenter ranges get the /sorry/
- * block page, and once an address is on it every later gtx call answers the same way, which is
- * why the failure looks permanent to one user and invisible to the next on the same build. Since
- * backing off cannot clear that, a blocked address is remembered and translation moves to two
- * fallback tiers in order: the Google Translate Android app's own endpoint (`client=at`, spoofed
- * app User-Agent - a different hostname and quota gtx's block does not reach), then the
- * Chrome-extension dictionary endpoint. All three are independent services, so one being blocked
- * for a given address says nothing about the others.
+ * Google web translate (gtx endpoint, no API key, subject to rate limits).
+ * 429 from IP blocks → fallback to app endpoint (at) or Chrome-extension endpoint (independent quotas).
  */
 object GoogleWebProvider : TranslationProvider {
 

@@ -65,7 +65,7 @@
     <string name="InuOutgoingMessages">Outgoing messages</string>
     <string name="InuChannelMessages">Channels you can post in</string>
     <string name="InuSameAsIncoming">Same as incoming</string>
-    <string name="InuDoubleTapInfo">Note: due to the way Telegram handles double-taps, enabling a double-tap action means that regular taps will be delayed by the above amount of time, making the app feel less responsive.\nYou can tweak the duration, but the only way to completely avoid the delay is to disable the actions.</string>
+    <string name="InuDoubleTapInfo">Enabling a double-tap action delays regular taps by the duration above, since that\'s how Telegram tells them apart — disable the action to remove the delay.</string>
     <string name="InuQuickReaction">Quick Reaction</string>
     <string name="InuShowReactions">Show Reactions</string>
     <string name="InuHideStories">Hide stories</string>
@@ -371,11 +371,11 @@
     <string name="InuTranslateWebPreviews">Translate web previews</string>
     <string name="InuKeepOriginalAfterTranslation">Show original text</string>
     <string name="InuTranslateAutoDetectLang">Detect language for the message menu</string>
-    <string name="InuTranslateAutoDetectLangInfo">Runs on-device detection on messages whose language Telegram has not worked out yet, so the Translate row can be hidden when they turn out to be in a \"Do not translate\" language. Messages with a language Telegram already knows are filtered either way.\nThis might cause the menu to open a bit slower.</string>
+    <string name="InuTranslateAutoDetectLangInfo">Detects the language on-device for messages Telegram hasn\'t identified yet, so the Translate row can stay hidden for \"Do not translate\" languages — may slow the menu down a bit.</string>
     <string name="InuInstantTranslateBanner">Instant translate banner</string>
-    <string name="InuInstantTranslateBannerInfo">Shows the \"Translate to X?\" chat bar as soon as one foreign-language message is detected, instead of waiting for several messages to confirm it (stock needs 6, or 2 with autotranslation on). Useful for chats and single posts you rarely see more than a few messages of.</string>
+    <string name="InuInstantTranslateBannerInfo">Shows the \"Translate to X?\" bar after just one foreign-language message instead of waiting for several (stock needs 6, or 2 with autotranslate).</string>
     <string name="InuIgnoreTranslationsDisabled">Ignore \"Translations disabled\"</string>
-    <string name="InuIgnoreTranslationsDisabledInfo">A channel or user can turn off the translate chat-bar banner via their own Telegram settings. This shows it anyway. The per-message Translate button in the message menu already ignores this setting, so this just makes the banner behave the same way.</string>
+    <string name="InuIgnoreTranslationsDisabledInfo">Shows the translate banner even if the channel or user disabled it in their own Telegram settings — matching how the per-message Translate button already ignores it.</string>
     <string name="InuTranslateInstantView">Translate page</string>
     <string name="InuInstantViewShowOriginal">Show original</string>
     <string name="InuTranslating">Translating…</string>
@@ -417,7 +417,7 @@
     <string name="InuTranslateLlmModel">Model</string>
     <string name="InuTranslateLlmPrompt">System prompt (optional)</string>
     <string name="InuTranslateLlmContext">Conversation context</string>
-    <string name="InuTranslateLlmContextInfo">How many earlier messages from the same chat are sent to the model alongside the one being translated. Context is never translated itself — it is what lets the model get pronouns, gender and short replies right. Costs extra tokens per message.</string>
+    <string name="InuTranslateLlmContextInfo">How many earlier messages from the chat are sent alongside the one being translated, so the model gets pronouns and short replies right — costs extra tokens.</string>
     <string name="InuTranslateLlmTemperature">Temperature</string>
     <string name="InuTranslateLlmTemperatureInfo">Lower values keep translations literal and repeatable; higher values allow looser, more idiomatic wording.</string>
     <string name="InuTranslateProviderNotConfigured">Translation provider is not configured. Falling back to Telegram translation.</string>
@@ -797,7 +797,7 @@
     <string name="InuBackupResetSuccess">Reset %1$d settings</string>
     <string name="InuBackupResetNoChanges">Settings are already at their defaults</string>
     <string name="InuCloudSync">Sync settings</string>
-    <string name="InuCloudSyncDesc">Back up your entinyGram settings to Telegram cloud and restore on another device.\n\nUses [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), your data is never sent to our servers.</string>
+    <string name="InuCloudSyncDesc">Backs up your entinyGram settings to Telegram cloud via [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) — your data never touches our servers.</string>
     <string name="InuCloudSyncNow">Sync now</string>
     <string name="InuCloudSyncing">Syncing…</string>
     <string name="InuCloudRestore">Restore from cloud</string>
@@ -990,7 +990,7 @@
     <string name="InuLogsHeapUsage">Heap: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Make heap dump</string>
     <string name="InuLogsMakingHeapDump">Making a heap dump…</string>
-    <string name="InuLogsHeapDumpWarning">**NEVER** share the resulting .hprof file with anyone — it is a snapshot of the app\'s memory and **contains sensitive information** (messages, tokens, etc.).\n\nInspect it **ONLY** by yourself.\n\nThe app will freeze for a while.</string>
+    <string name="InuLogsHeapDumpWarning">**NEVER** share the .hprof file — it\'s a memory snapshot **containing sensitive data** (messages, tokens, etc.) and should only be inspected by yourself. The app will freeze briefly while it\'s created.</string>
 
     <string name="InuDeleteOwnMessages">Delete my messages</string>
     <string name="InuDeleteOwnMessagesSearching">Looking for your messages…</string>
@@ -1042,7 +1042,7 @@
     <string name="InuIosChatHeader">Compact pill</string>
     <string name="InuIosChatHeaderInfo">Shrinks the chat header pill so it hugs the title, subtitle and avatar and floats in the middle of the header, like Telegram for iOS, instead of spanning the whole width.</string>
     <string name="InuIosChatHeaderAvatarSlot">Move avatar to the menu button</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">The avatar leaves the pill and takes the place of the \"⋮\" button — tap it to open the profile, long-press it to open the chat menu. With this off, the avatar stays inside the compact pill.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Moves the avatar out of the pill to replace the \"⋮\" button — tap for the profile, long-press for the chat menu; off keeps it inside the pill.</string>
     <string name="InuIosChatHeaderAvatarStatic">Do not center the avatar</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">The avatar stays where it normally sits, next to the back button, and only the pill with the title and subtitle is centered.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
@@ -1208,7 +1208,7 @@
     <string name="InuAiReasoningDesc">Allows models supported by this service to spend extra tokens reasoning about the response before providing it.</string>
     <string name="InuAiProvidersTitle">AI Providers</string>
     <string name="InuAiProvidersUniversal">Universal</string>
-    <string name="InuAiProvidersUniversalDesc">The icon before each name shows what it supports: infinity works for both chat and voice, keyboard is chat only, microphone is voice only. Tap a provider to configure it, then pick an active one for each scope with the switches inside.</string>
+    <string name="InuAiProvidersUniversalDesc">The icon before each name shows what it supports (∞ chat+voice, keyboard chat-only, mic voice-only) — tap to configure, then pick an active one per scope.</string>
     <string name="InuAiProvidersChatOnly">Chat only</string>
     <string name="InuAiProvidersVoiceOnly">Voice only</string>
     <string name="InuAiProvidersChatSectionHeader">%1$s -- Chat</string>
@@ -1337,17 +1337,17 @@
     <string name="InuAiTranscribeFetchModelsEmpty">No models found</string>
     <string name="InuAiTranscribeFetchModelsFailed">Couldn\'t fetch models: %1$s</string>
     <string name="InuLocalPremium">Local Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">Unlocks client-side Premium features (star badge, app icons, emoji statuses and profile colors persisted locally, unlimited translation bar, premium reactions and animations). Server-side features (4 GB uploads, server cloud limits) still require an official subscription.</string>
+    <string name="InuLocalPremiumInfo">Unlocks client-side Premium perks: star badge, emoji statuses, unlimited translation bar, premium reactions and animations. Server-side perks like bigger uploads and cloud limits still need an official subscription.</string>
     <string name="InuLocalCustomEmoji">Local Custom Emoji</string>
-    <string name="InuLocalCustomEmojiInfo">Sends Premium custom emoji as hidden emoji links, so a non-Premium account can use them anywhere. entinyGram and Nekogram clients show them animated; every other client sees the fallback emoji as an ordinary link. Pair it with Local Telegram Premium to unlock the emoji picker itself.</string>
+    <string name="InuLocalCustomEmojiInfo">Sends Premium emoji as hidden links so non-Premium accounts can use them anywhere. entinyGram and Nekogram show them animated; other clients see a plain emoji link. Pair with Local Telegram Premium to unlock the emoji picker.</string>
     <string name="InuUnlimitedLimits">Unlimited Limits</string>
     <string name="InuUnlimitedPinnedChats">Unlimited Pinned Chats</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Pin more chats than Telegram\'s server limit allows. Chats beyond the limit are pinned locally only — they always show up first on this device but are never sent to Telegram, so they can\'t be unpinned by another client and don\'t count toward the server limit.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Pins extra chats locally past Telegram\'s server limit — they stay first on this device only, never syncing or counting toward the limit elsewhere.</string>
     <string name="InuUnlimitedPinnedChatsCount">Extra pinned chats</string>
     <string name="InuUnlimitedFavoriteStickers">Unlimited Favorite Stickers &amp; GIFs</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Removes the local cap on how many favorite stickers and GIFs are kept and shown — they\'re already saved on the server, only the on-device cache was trimming them.</string>
     <string name="InuUnlimitedFolderChats">Unlimited chats per folder</string>
-    <string name="InuUnlimitedFolderChatsInfo">Lets a folder include more chats than Telegram\'s server-side limit. Chats past the limit are kept locally on this device only — they won\'t sync to other devices or survive reinstalling the app.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Lets a folder hold more chats than Telegram\'s limit — the extras stay local to this device only and won\'t survive a reinstall.</string>
     <string name="InuStalkerPack">Stalker Pack</string>
     <string name="InuPresenceLoggerNotify">Presence Notifications</string>
     <string name="InuPresenceLoggerNotifyInfo">Show a popup when a watched contact comes online or goes offline. Pick who to watch from that person\'s profile menu; every status change is also logged locally regardless of this toggle.</string>

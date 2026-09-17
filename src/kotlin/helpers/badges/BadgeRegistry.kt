@@ -18,29 +18,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Remote developer-badge registry.
- *
- * The holder list used to be compiled into the fork, so adding one channel meant
- * shipping an APK. It now comes from a manifest that is fetched once an hour, cached in
- * `inu_kv`, and falls back to the compiled-in list when it has never been fetched.
- *
- * How a badge actually reaches the screen: [applyTo] writes the badge's custom-emoji id into
- * `TLRPC.User.bot_verification_icon` / `TLRPC.Chat.bot_verification_icon` as the object is put
- * into MessagesController. Stock already renders that field in seven places (DialogCell,
- * UserCell, ProfileSearchCell, ChatAvatarContainer, ProfileActivity, GroupCallUserCell,
- * UserInfoCell) through AnimatedEmojiDrawable, so the fork needs no drawing code of its own -
- * no spans, no custom drawables, and nothing that can throw the chat header's layout off.
- *
- * Two things this deliberately does NOT do:
- *  - It never asks the server about a single id. The whole list is fetched and matched locally,
- *    because a per-id lookup would tell the maintainer which chats a user has open.
- *  - It never overwrites a real Telegram verification. [applyTo] only writes when the field is
- *    empty or already holds an id this registry put there.
- *
- * Worth knowing: this is a plain HTTPS request, so unlike everything else in the app it does not
- * go through MTProto or the user's proxy - the maintainer's host sees the client IP once an hour.
- * Moving the manifest into a Telegram channel (the way UpdateHelper reads updates) would remove
- * that entirely if it ever becomes a concern.
+ * Remote developer-badge registry (manifest fetched hourly, cached in inu_kv).
+ * Writes custom-emoji id to TLRPC.User/Chat.bot_verification_icon; stock rendering handles display.
+ * Never server-looks single ids (privacy), never overwrites real Telegram verification.
  */
 object BadgeRegistry {
 

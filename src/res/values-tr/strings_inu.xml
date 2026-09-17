@@ -62,7 +62,7 @@
     <string name="InuOutgoingMessages">Giden mesajlar</string>
     <string name="InuChannelMessages">Gönderi paylaşabildiğiniz kanallar</string>
     <string name="InuSameAsIncoming">Gelen ile aynı</string>
-    <string name="InuDoubleTapInfo">Not: Telegram\'ın çift dokunmaları işleme biçimi nedeniyle, bir çift dokunma eylemini etkinleştirmek tek dokunmaların yukarıdaki süre kadar gecikmesine ve uygulamanın daha az tepkisel hissettirmesine neden olur.\nSüreyi ayarlayabilirsiniz, ancak gecikmeyi tamamen önlemenin tek yolu eylemleri devre dışı bırakmaktır.</string>
+    <string name="InuDoubleTapInfo">Çift dokunma eylemini açmak, Telegram bunları ayırt edebilsin diye tek dokunmaları yukarıdaki süre kadar geciktirir — gecikmeyi kaldırmak için eylemi tamamen kapatın.</string>
     <string name="InuQuickReaction">Hızlı Tepki</string>
     <string name="InuShowReactions">Tepkileri Göster</string>
     <string name="InuHideStories">Hikayeleri gizle</string>
@@ -597,7 +597,7 @@
     <string name="InuBackupResetSuccess">%1$d ayar sıfırlandı</string>
     <string name="InuBackupResetNoChanges">Ayarlar zaten varsayılan durumunda</string>
     <string name="InuCloudSync">Ayarları senkronize et</string>
-    <string name="InuCloudSyncDesc">entinyGram ayarlarınızı Telegram bulutuna yedekleyin ve başka bir cihazda geri yükleyin.\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) kullanılır, verileriniz asla bizim sunucularımıza gönderilmez.</string>
+    <string name="InuCloudSyncDesc">entinyGram ayarlarınızı [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) üzerinden Telegram bulutuna yedekler — verileriniz sunucularımıza asla ulaşmaz.</string>
     <string name="InuCloudSyncNow">Şimdi senkronize et</string>
     <string name="InuCloudSyncing">Senkronize ediliyor…</string>
     <string name="InuCloudRestore">Buluttan geri yükle</string>
@@ -767,7 +767,7 @@
     <string name="InuLogsHeapUsage">Bellek Yığını (Heap): %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Bellek dökümü (heap dump) oluştur</string>
     <string name="InuLogsMakingHeapDump">Bellek dökümü oluşturuluyor…</string>
-    <string name="InuLogsHeapDumpWarning">Oluşturulan .hprof dosyasını **ASLA** hiç kimseyle paylaşmayın — bu dosya uygulamanın bellek anlık görüntüsüdür ve **hassas bilgiler** (mesajlar, jetonlar vb.) içerir.\n\nYalnızca **KENDİNİZ** inceleyin.\n\nUygulama bir süreliğine donacaktır.</string>
+    <string name="InuLogsHeapDumpWarning">**ASLA** .hprof dosyasını paylaşmayın — bu, **hassas veriler** (mesajlar, jetonlar vb.) içeren bir bellek anlık görüntüsüdür ve yalnızca kendiniz incelemelisiniz. Uygulama oluşturulurken kısa süreliğine donacaktır.</string>
 
     <string name="InuDeleteOwnMessages">Mesajlarımı sil</string>
     <string name="InuDeleteOwnMessagesSearching">Mesajlarınız aranıyor…</string>
@@ -1051,12 +1051,12 @@
     <string name="InuGhostMarkReadLocallyInfo">Hayalet Modunda bir sohbet açıldığında okunmamış mesaj sayacını sıfırlar, ancak sunucuda okunmamış olarak tutar.</string>
     <string name="InuUnlimitedLimits">Sınırsız Limitler</string>
     <string name="InuUnlimitedPinnedChats">Sınırsız Sabitlenmiş Sohbet</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Telegram\'ın sunucu sınırının izin verdiğinden daha fazla sohbet sabitleyin. Sınırın üzerindeki sohbetler yalnızca yerel olarak sabitlenir — bu cihazda her zaman önce görünürler ancak Telegram\'a asla gönderilmezler, bu yüzden başka bir istemciden çözülemezler ve sunucu sınırına dahil edilmezler.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Telegram\'ın sunucu sınırının üzerindeki sohbetleri yalnızca yerel olarak sabitler — bu cihazda önce görünürler, ancak senkronize olmaz ve sınıra dahil edilmezler.</string>
     <string name="InuUnlimitedPinnedChatsCount">Ekstra sabitlenmiş sohbet</string>
     <string name="InuUnlimitedFavoriteStickers">Sınırsız Favori Çıkartma ve GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Kaç favori çıkartma ve GIF tutulup gösterileceğine dair yerel sınırı kaldırır — bunlar zaten sunucuda kayıtlı, yalnızca cihazdaki önbellek onları buduyordu.</string>
     <string name="InuUnlimitedFolderChats">Klasör başına sınırsız sohbet</string>
-    <string name="InuUnlimitedFolderChatsInfo">Bir klasörün Telegram\'ın sunucu tarafı sınırından daha fazla sohbet içermesine izin verir. Sınırı aşan sohbetler yalnızca bu cihazda yerel olarak tutulur — diğer cihazlarla senkronize olmazlar ve uygulama yeniden yüklendiğinde kaybolurlar.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Bir klasörün Telegram\'ın sınırından daha fazla sohbet içermesine izin verir — fazlalıklar yalnızca bu cihazda kalır ve yeniden yüklemede kaybolur.</string>
     <string name="InuStalkerPack">Takipçi Paketi</string>
     <string name="InuPresenceLoggerNotify">Çevrim İçi Bildirimleri</string>
     <string name="InuPresenceLoggerNotifyInfo">İzlenen bir kişi çevrim içi olduğunda veya çevrim dışı olduğunda bir açılır bildirim gösterin. Kimi izleyeceğinizi o kişinin profil menüsünden seçin; bu anahtar kapalı olsa bile her durum değişikliği yerel olarak kaydedilir.</string>
@@ -1105,7 +1105,7 @@
     <string name="InuHideDevBadgesInfo">Hiçbir anlamı yoktur, herhangi bir ayrıcalık sağlamaz — sadece geliştiriciden bir teşekkürdür</string>
     <string name="InuLanguages">Diller</string>
     <string name="InuLocalPremium">Yerel Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">İstemci düzeyindeki Premium özelliklerin kilidini açar (yıldız rozeti, uygulama simgeleri, yerel olarak kaydedilen ifade durumları ve profil renkleri, sınırsız çeviri çubuğu, premium tepkiler ve animasyonlar). Sunucu tarafı özellikler (4 GB yükleme, bulut sınırları) resmi bir abonelik gerektirir.</string>
+    <string name="InuLocalPremiumInfo">İstemci tarafı Premium özelliklerinin kilidini açar: yıldız rozeti, emoji durumları, sınırsız çeviri çubuğu, premium tepkiler ve animasyonlar. Sunucu özellikleri (yükleme, bulut sınırları) hâlâ resmi abonelik gerektirir.</string>
     <string name="InuMainPhoto">Ana</string>
     <string name="InuMarkChatAsRead">Okundu olarak işaretle</string>
     <string name="InuMarkChatAsReadDone">Sohbet okundu olarak işaretlendi</string>
@@ -1201,7 +1201,7 @@
     <string name="InuTranslateLlmModel">Model</string>
     <string name="InuTranslateLlmPrompt">Sistem istemi (isteğe bağlı)</string>
     <string name="InuTranslateLlmContext">Konuşma bağlamı</string>
-    <string name="InuTranslateLlmContextInfo">Çevrilen mesajla birlikte modele gönderilecek, aynı sohbetteki önceki mesaj sayısı. Bağlamın kendisi asla çevrilmez; zamirlerin, dilbilgisel cinsiyetin ve kısa yanıtların doğru çıkmasını sağlayan şey budur. Mesaj başına daha fazla token harcar.</string>
+    <string name="InuTranslateLlmContextInfo">Çevrilen mesajla birlikte gönderilecek önceki mesaj sayısı; modelin zamirleri ve kısa yanıtları doğru anlamasını sağlar — daha fazla token harcar.</string>
     <string name="InuTranslateLlmTemperature">Sıcaklık</string>
     <string name="InuTranslateLlmTemperatureInfo">Düşük değerler çeviriyi birebir ve tutarlı tutar; yüksek değerler daha serbest ve deyimsel bir anlatıma izin verir.</string>
     <string name="InuTranslateMicrosoftApiKey">Azure Translator API anahtarı</string>
@@ -1266,14 +1266,14 @@
     <string name="InuMinimize">Küçült</string>
     <string name="InuCenterTitleChatsInfo">Başlığı ve alt başlığı sohbet başlığının ortasına taşır. Profil resmi solda sabit kalır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmi haptan çıkar ve \"⋮\" düğmesinin yerini alır — dokunmak profili, uzun basmak sohbet menüsünü açar. Kapalıyken profil resmi kompakt hapın içinde kalır.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmini haptan çıkarıp \"⋮\" düğmesinin yerine koyar — dokunmak profili, uzun basmak sohbet menüsünü açar; kapalıyken hapın içinde kalır.</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">Son sohbetler</string>
     <string name="InuClearRecentChats">Son sohbetleri temizle</string>
     <string name="InuClearRecentChatsAlert">Bu, son açılan sohbetlerin listesini temizler. Herhangi bir sohbet veya mesaj silinmez.</string>
     <string name="InuAiProvidersTitle">YZ Sağlayıcıları</string>
     <string name="InuAiProvidersUniversal">Evrensel</string>
-    <string name="InuAiProvidersUniversalDesc">Her adın önündeki simge neyi desteklediğini gösterir: sonsuzluk işareti hem sohbet hem de ses için, klavye yalnızca sohbet için, mikrofon yalnızca ses içindir. Yapılandırmak için bir sağlayıcıya dokunun, ardından içindeki anahtarlarla her kapsam için etkin olanı seçin.</string>
+    <string name="InuAiProvidersUniversalDesc">Adın önündeki simge desteği gösterir (∞ sohbet+ses, klavye yalnızca sohbet, mikrofon yalnızca ses) — dokunup yapılandırın, ardından her kapsam için birini etkinleştirin.</string>
     <string name="InuAiProvidersChatOnly">Yalnızca sohbet</string>
     <string name="InuAiProvidersVoiceOnly">Yalnızca ses</string>
     <string name="InuAiProvidersChatSectionHeader">%1$s -- Sohbet</string>
@@ -1355,13 +1355,13 @@
     <string name="InuHideGiftAuctionsHint">Hediye açık artırma afişini gizle</string>
     <string name="InuHideCacheHint">\"Yer açın\" kartını gizle</string>
     <string name="InuTranslateAutoDetectLang">Mesaj menüsü için dili algıla</string>
-    <string name="InuTranslateAutoDetectLangInfo">Telegram\'ın dilini henüz çözemediği mesajlarda cihaz üzerinde algılama çalıştırır, böylece \"Çevirme\" dilinde olduklarında Çevir satırı gizlenebilir.\nBu, menünün biraz daha yavaş açılmasına neden olabilir.</string>
+    <string name="InuTranslateAutoDetectLangInfo">Telegram\'ın henüz çözemediği mesajlarda dili cihazda algılar, böylece \"Çevirme\" dilleri için Çevir satırı gizlenebilir — menü biraz yavaşlayabilir.</string>
     <string name="InuInstantTranslateBanner">Anında çeviri başlığı</string>
-    <string name="InuInstantTranslateBannerInfo">Yabancı dilde tek bir mesaj algılandığında, onaylamak için birkaç mesaj beklemek yerine (orijinalde 6 veya otomatik çeviri açıksa 2 gerekir) hemen \"X diline çevrilsin mi?\" sohbet çubuğunu gösterir.</string>
+    <string name="InuInstantTranslateBannerInfo">\"X diline çevrilsin mi?\" çubuğunu birkaç mesaj yerine tek bir yabancı dil mesajından sonra gösterir (orijinalde 6, otomatik çeviride 2 gerekir).</string>
     <string name="InuIgnoreTranslationsDisabled">\"Çeviriler devre dışı\" seçeneğini yoksay</string>
-    <string name="InuIgnoreTranslationsDisabledInfo">Bir kanal veya kullanıcı kendi Telegram ayarlarından sohbet çubuğu çeviri başlığını kapatabilir. Bu ayar yine de gösterir.</string>
+    <string name="InuIgnoreTranslationsDisabledInfo">Kanal veya kullanıcı kendi Telegram ayarlarından çeviri çubuğunu kapatsa bile gösterir — mesaj menüsündeki Çevir düğmesi zaten bu ayarı yok sayar.</string>
     <string name="InuLocalCustomEmoji">Yerel Özel Emoji</string>
-    <string name="InuLocalCustomEmojiInfo">Premium özel emojilerini gizli emoji bağlantıları olarak gönderir, böylece Premium olmayan bir hesap bunları her yerde kullanabilir. entinyGram ve Nekogram istemcileri bunları animasyonlu gösterir; diğer istemciler normal bağlantı olarak görür.</string>
+    <string name="InuLocalCustomEmojiInfo">Premium özel emojileri gizli bağlantı olarak gönderir, Premium olmayan hesaplar da kullanabilir. entinyGram ve Nekogram animasyonlu gösterir, diğer istemciler normal bağlantı görür. Emoji panelini açmak için yerel Premium ile birlikte kullanın.</string>
     <string name="InuDevBadge">entinyGram ekibi</string>
     <string name="InuDevBadgeInfo">Bu hesap entinyGram ekibi tarafından tanınmaktadır.</string>
     <string name="InuMapProviderOsmLite">OpenStreetMap (hafif)</string>

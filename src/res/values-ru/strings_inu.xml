@@ -55,7 +55,7 @@
     <string name="InuOutgoingMessages">Исходящие сообщения</string>
     <string name="InuChannelMessages">Каналы, куда вы можете писать</string>
     <string name="InuSameAsIncoming">Как у входящих</string>
-    <string name="InuDoubleTapInfo">Из-за того, как Telegram обрабатывает двойные тапы, включение действия по двойному тапу приводит к задержке обычных тапов на указанное выше время, отчего приложение ощущается менее отзывчивым.\nВы можете настроить длительность, но полностью избавиться от задержки можно только отключив действия.</string>
+    <string name="InuDoubleTapInfo">Включение действия по двойному тапу задерживает обычный тап на указанное время, так Telegram их различает — чтобы убрать задержку, отключите действие полностью.</string>
     <string name="InuQuickReaction">Быстрая реакция</string>
     <string name="InuShowReactions">Показать реакции</string>
     <string name="InuHideStories">Скрыть истории</string>
@@ -212,8 +212,7 @@
     <string name="InuTranslateWebPreviews">Переводить превью ссылок</string>
     <string name="InuKeepOriginalAfterTranslation">Показывать оригинал</string>
     <string name="InuTranslateAutoDetectLang">Определять язык для меню сообщения</string>
-    <string name="InuTranslateAutoDetectLangInfo">Запускает определение языка на устройстве для сообщений, язык которых Telegram ещё не выяснил, чтобы строку «Перевести» можно было скрыть, если они окажутся на языке из списка «Не переводить». Сообщения с уже известным языком фильтруются в любом случае.
-Из-за этого меню может открываться чуть медленнее.</string>
+    <string name="InuTranslateAutoDetectLangInfo">Определяет язык сообщений на устройстве, если Telegram ещё этого не сделал, чтобы скрывать строку «Перевести» для языков из списка «Не переводить» — меню может открываться чуть медленнее.</string>
     <string name="InuTranslateInstantView">Перевести страницу</string>
     <string name="InuInstantViewShowOriginal">Показать оригинал</string>
     <string name="InuTranslating">Перевод…</string>
@@ -251,7 +250,7 @@
     <string name="InuTranslateLlmModel">Модель</string>
     <string name="InuTranslateLlmPrompt">Системный промпт (необязательно)</string>
     <string name="InuTranslateLlmContext">Контекст разговора</string>
-    <string name="InuTranslateLlmContextInfo">Сколько предыдущих сообщений из этого чата отправлять модели вместе с переводимым. Сам контекст никогда не переводится — именно он помогает правильно передать местоимения, род и короткие ответы. Расходует больше токенов на каждое сообщение.</string>
+    <string name="InuTranslateLlmContextInfo">Сколько предыдущих сообщений чата отправлять вместе с переводимым, чтобы модель правильно передала местоимения и короткие ответы — расходует больше токенов.</string>
     <string name="InuTranslateLlmTemperature">Температура</string>
     <string name="InuTranslateLlmTemperatureInfo">Меньшие значения дают дословный и предсказуемый перевод, большие — более свободный и идиоматичный.</string>
     <string name="InuTranslateProviderNotConfigured">Провайдер перевода не настроен. Использую перевод через Telegram.</string>
@@ -539,7 +538,7 @@
     <string name="InuBackupResetSuccess">Сброшено %1$d настроек</string>
     <string name="InuBackupResetNoChanges">Настройки уже имеют значения по умолчанию</string>
     <string name="InuCloudSync">Синхронизация настроек</string>
-    <string name="InuCloudSyncDesc">Сохраните настройки entinyGram в облако Telegram и восстановите их на другом устройстве.\n\nИспользуется [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), ваши данные не отправляются на наши серверы.</string>
+    <string name="InuCloudSyncDesc">Сохраняет настройки entinyGram в облако Telegram через [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) — ваши данные не попадают на наши серверы.</string>
     <string name="InuCloudSyncNow">Синхронизировать</string>
     <string name="InuCloudSyncing">Синхронизация…</string>
     <string name="InuCloudRestore">Восстановить из облака</string>
@@ -800,7 +799,7 @@
     <string name="InuLogsHeapUsage">Куча: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Сделать хипдамп</string>
     <string name="InuLogsMakingHeapDump">Создание хипдампа…</string>
-    <string name="InuLogsHeapDumpWarning">**НИКОГДА** не делись полученным файлом .hprof ни с кем — это снимок памяти приложения, и он **содержит чувствительную информацию** (сообщения, токены и т. д.).\n\nИзучай его **ТОЛЬКО** сам.\n\nПриложение ненадолго зависнет.</string>
+    <string name="InuLogsHeapDumpWarning">**НИКОГДА** не делись файлом .hprof — это снимок памяти, который **содержит чувствительную информацию** (сообщения, токены и т. д.), изучай его только сам. Приложение ненадолго зависнет при создании дампа.</string>
 
     <string name="InuMaterial3Fabs">Плавающие кнопки</string>
     <string name="InuMaterial3Sections">Элементы списка</string>
@@ -1140,15 +1139,15 @@
     <string name="InuAiTranscribeErrorDailyQuota">У этого API-ключа закончилась бесплатная квота на сегодня. Попробуйте завтра, включите оплату или смените голосового провайдера.</string>
     <string name="InuAiTranscribeErrorNoFreeQuota">У этой модели нет бесплатной квоты для вашего API-ключа. Выберите модель Flash, включите оплату в проекте Google или смените голосового провайдера.</string>
     <string name="InuLocalPremium">Локальный Telegram Premium</string>
-    <string name="InuLocalPremiumInfo"> Разблокирует локальные функции Premium на уровне клиента (звёздочка у профиля, эмодзи-статусы и цвета профиля с локальным сохранением, безлимитная панель перевода, премиум-реакции и анимации). Серверные фичи (4 ГБ загрузка, лимиты облака) требуют официальной подписки.</string>
+    <string name="InuLocalPremiumInfo">Разблокирует локальные Premium-фичи: звёздочка, эмодзи-статусы, безлимитная панель перевода, премиум-реакции и анимации. Серверные фичи (загрузка, лимиты облака) по-прежнему требуют официальной подписки.</string>
     <string name="InuUnlimitedLimits">Снятие ограничений</string>
     <string name="InuUnlimitedPinnedChats">Безлимитные закреплённые чаты</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Закрепляйте больше чатов, чем позволяет серверный лимит Telegram. Чаты сверх лимита закрепляются только локально — они всегда отображаются первыми на этом устройстве, но никогда не отправляются в Telegram, поэтому их нельзя открепить с другого устройства и они не учитываются в серверном лимите.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Закрепляет дополнительные чаты локально сверх серверного лимита Telegram — они первые только на этом устройстве и не синхронизируются и не учитываются в лимите нигде ещё.</string>
     <string name="InuUnlimitedPinnedChatsCount">Дополнительные закреплённые чаты</string>
     <string name="InuUnlimitedFavoriteStickers">Безлимитные избранные стикеры и GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Убирает локальное ограничение на количество избранных стикеров и GIF — они уже сохранены на сервере, ограничивал только локальный кэш на устройстве.</string>
     <string name="InuUnlimitedFolderChats">Безлимитные чаты в папке</string>
-    <string name="InuUnlimitedFolderChatsInfo">Позволяет добавить в папку больше чатов, чем разрешает серверный лимит Telegram. Чаты сверх лимита хранятся только локально на этом устройстве — они не синхронизируются с другими устройствами и не сохранятся при переустановке приложения.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Позволяет добавить в папку больше чатов, чем разрешает лимит Telegram, — лишние остаются только на этом устройстве и не переживут переустановку.</string>
     <string name="InuStalkerPack">Сталкер-пак</string>
     <string name="InuPresenceLoggerNotify">Уведомления о присутствии</string>
     <string name="InuPresenceLoggerNotifyInfo">Показывать всплывающее уведомление, когда отслеживаемый контакт заходит в сеть или выходит из неё. Выберите, за кем следить, в меню профиля этого человека; каждое изменение статуса также сохраняется локально независимо от этой настройки.</string>
@@ -1339,7 +1338,7 @@
     <string name="InuMinimize">Свернуть</string>
     <string name="InuCenterTitleChatsInfo">Переносит название и подпись в середину шапки чата. Аватарка остаётся прижатой слева.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка выходит из таблетки и занимает место кнопки «⋮» — тап открывает профиль, долгое нажатие открывает меню чата. Если выключено, аватарка остаётся внутри компактной таблетки.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Переносит аватарку из таблетки на место кнопки «⋮» — тап открывает профиль, долгое нажатие — меню чата; выключено — аватарка остаётся в таблетке.</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">Недавние чаты</string>
     <string name="InuClearRecentChats">Очистить недавние чаты</string>
@@ -1357,7 +1356,7 @@
     <string name="InuAiProvidersSameModel">Использовать одну модель для обоих</string>
     <string name="InuAiProvidersTitle">Провайдеры ИИ</string>
     <string name="InuAiProvidersUniversal">Универсальный</string>
-    <string name="InuAiProvidersUniversalDesc">Значок перед названием показывает поддерживаемые функции: бесконечность — чат и голос, клавиатура — только чат, микрофон — только голос. Нажмите на провайдера для настройки, затем выберите активный для каждого сценария с помощью переключателей внутри.</string>
+    <string name="InuAiProvidersUniversalDesc">Значок перед названием показывает поддержку (∞ — чат и голос, клавиатура — только чат, микрофон — только голос) — нажмите для настройки и выберите активного для каждого сценария.</string>
     <string name="InuAiProvidersVoiceModelHint">Модель для голоса</string>
     <string name="InuAiProvidersVoiceOnly">Только голос</string>
     <string name="InuAiProvidersVoiceSectionHeader">%1$s — Голос</string>
@@ -1392,11 +1391,11 @@
     <string name="InuGhostAutoOffline">Автоматически переходить в офлайн</string>
     <string name="InuGhostAutoOfflineInfo">Telegram помечает вас в сети при отправке сообщения или реакции, даже если статус скрыт. Эта опция вскоре отправляет статус офлайн повторно.</string>
     <string name="InuIgnoreTranslationsDisabled">Игнорировать «Перевод отключён»</string>
-    <string name="InuIgnoreTranslationsDisabledInfo">Канал или пользователь может отключить панель перевода через настройки Telegram. Эта опция отображает её в любом случае. Кнопка «Перевести» в меню отдельного сообщения уже игнорирует этот запрет, так что баннер будет вести себя так же.</string>
+    <string name="InuIgnoreTranslationsDisabledInfo">Показывает баннер перевода, даже если канал или пользователь отключил его в своих настройках Telegram — так же, как уже ведёт себя кнопка перевода в меню сообщения.</string>
     <string name="InuInstantTranslateBanner">Мгновенный баннер перевода</string>
-    <string name="InuInstantTranslateBannerInfo">Показывает баннер «Перевести на X?» сразу при обнаружении первого сообщения на иностранном языке, не дожидаясь накопления нескольких сообщений (стандартно требуется 6 или 2 с автопереводом). Полезно для чатов и постов, где мало сообщений.</string>
+    <string name="InuInstantTranslateBannerInfo">Показывает баннер «Перевести на X?» уже после одного иностранного сообщения, а не нескольких (стандартно нужно 6, или 2 с автопереводом).</string>
     <string name="InuLocalCustomEmoji">Локальные авторские эмодзи</string>
-    <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, позволяя использовать их без Premium. Клиенты entinyGram и Nekogram показывают их анимированными, а другие клиенты видят обычный эмодзи как ссылку. Включите вместе с локальным Premium для открытия панели выбора.</string>
+    <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, позволяя использовать их без Premium. entinyGram и Nekogram показывают анимацию, другие клиенты видят обычную ссылку. Включите вместе с локальным Premium, чтобы открыть панель эмодзи.</string>
     <string name="InuViewOnceShowNormal">Показывать как обычное фото вместо разового просмотра</string>
     <string name="InuSmallGifs">Маленькие GIF</string>
     <string name="InuDeleteFailedProxies">Удалить недоступные прокси</string>

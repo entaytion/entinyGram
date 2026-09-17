@@ -3,30 +3,8 @@ package desu.inugram.helpers.feed
 import org.telegram.messenger.MessagesController
 
 /**
- * Per-channel read watermark for the Feed screen. Seeded from Telegram's own per-dialog read
- * state (`dialogs.read_inbox_max_id`) so a channel already read outside Feed starts read here too,
- * but [onRowSeen] itself is purely local bookkeeping -- it does NOT call `markDialogAsRead`.
- *
- * Two reasons, not one:
- * - Correctness bug: `MessagesController.markDialogAsRead` treats `countDiff == 0` as "mark this
- *   dialog FULLY read" (`dialog.unread_count = 0` unconditionally -- see its own source), not "zero
- *   messages newly read". Scrolling past a single post in Feed has no accurate countDiff to offer
- *   (unlike the real chat screen, which tracks it precisely against its own visible-item list), so
- *   passing 0 there was quietly zeroing a channel's entire unread count off one scrolled-past post
- *   -- which is exactly what made "Mark all read" look like a no-op afterwards: by the time it ran,
- *   `dialog.unread_count` was already (wrongly) 0 for anything already scrolled past, so
- *   [markAllRead]'s own already-read skip discarded it before the real API call ever fired.
- * - Product judgement: silently telling the server a channel's posts were "read" just because they
- *   scrolled through an aggregated feed is questionable on its own merits, independent of the bug
- *   above. The server-side read state only changes here on an explicit [markAllRead], or naturally
- *   when the user opens the channel itself from Feed (stock `ChatActivity` handles that already).
- *
- * `markDialogAsRead` already composes with `GhostHelper.shouldSuppressLocalRead`, so Ghost Mode
- * users get correct behavior for free on the one path that still calls it.
- *
- * ONE instance per account, shared across every [FeedScope] (see [get]) -- the read watermark is a
- * property of the channel, not of the window you happened to read the post through, so scrolling
- * past a post in a folder-scoped Feed must remove it from the global Feed too.
+ * Per-channel read watermark for Feed (seeded from dialog.read_inbox_max_id, purely local bookkeeping).
+ * Does NOT call markDialogAsRead (bug fix: countDiff==0 wrongly zeros unread_count). One instance per account, shared across all scopes.
  */
 class FeedUnreadTracker private constructor(private val account: Int) {
 

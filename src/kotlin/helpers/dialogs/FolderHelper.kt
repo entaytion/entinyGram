@@ -284,15 +284,7 @@ object FolderHelper {
     @JvmStatic
     fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP
 
-    /**
-     * translationY for [filterTabsView] when [atBottom] is on. Places the tabs pill right
-     * above the bottom navigation bar / main tabs.
-     *
-     * Note: [additionalFloatingTranslation] is intentionally not subtracted here because temporary
-     * bottom alerts (Bulletin, UndoView) already position themselves above the tabs via
-     * [DialogsActivity.getBottomOffset], so the tabs must stay docked at the bottom rather
-     * than jumping up into the alert.
-     */
+    /** translationY for bottom tabs pill (above nav bar; stays docked, not above alerts). */
     @JvmStatic
     @JvmOverloads
     fun bottomTabsTranslationY(

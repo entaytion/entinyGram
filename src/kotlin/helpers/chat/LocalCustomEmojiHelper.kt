@@ -11,18 +11,8 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.AnimatedEmojiDrawable
 
 /**
- * Premium custom emoji for non-premium accounts, carried as message metadata.
- *
- * The server refuses `messageEntityCustomEmoji` from a non-premium account, but it
- * happily accepts a plain text link. So on send every premium custom emoji entity is
- * rewritten into a `tg://emoji?id=<document_id>` text-url over the same fallback emoji
- * character, and on render any such link is turned back into an animated emoji span.
- *
- * Stock clients see the fallback emoji as a harmless link; entinyGram/Nekogram clients
- * see the animated emoji. Nothing about it is server-side, hence "local".
- *
- * All entry points no-op when [desu.inugram.InuConfig.LOCAL_CUSTOM_EMOJI] is off, so
- * default-off is stock-identical.
+ * Premium custom emoji for non-premium (server refuses entity, accepts text-url tg://emoji?id=<id>).
+ * On render: url → animated span. Stock clients see fallback emoji + link. Gated by LOCAL_CUSTOM_EMOJI, default-off = stock.
  */
 object LocalCustomEmojiHelper {
 

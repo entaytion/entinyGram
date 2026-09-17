@@ -54,7 +54,7 @@
     <string name="InuOutgoingMessages">发出的消息</string>
     <string name="InuChannelMessages">你可以发布消息的频道</string>
     <string name="InuSameAsIncoming">与收到的消息相同</string>
-    <string name="InuDoubleTapInfo">注意：由于 Telegram 处理双击的方式，启用双击操作会让普通点击延迟上述时间，使应用响应变慢。\n你可以调整时长，但完全消除延迟的唯一方法是禁用这些操作。</string>
+    <string name="InuDoubleTapInfo">启用双击操作会让普通点击延迟上述时长，因为 Telegram 需要靠这个区分点击类型——要消除延迟，只能禁用该操作。</string>
     <string name="InuQuickReaction">快速回应</string>
     <string name="InuShowReactions">显示回应</string>
     <string name="InuHideStories">隐藏快拍</string>
@@ -487,7 +487,7 @@
     <string name="InuBackupResetSuccess">已重置 %1$d 项设置</string>
     <string name="InuBackupResetNoChanges">设置已是默认值</string>
     <string name="InuCloudSync">同步设置</string>
-    <string name="InuCloudSyncDesc">将 entinyGram 设置备份到 Telegram 云端，并在其他设备上恢复。\n\n使用 [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage)，你的数据不会发送到我们的服务器。</string>
+    <string name="InuCloudSyncDesc">通过 [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) 将 entinyGram 设置备份到 Telegram 云端——数据不会发送到我们的服务器。</string>
     <string name="InuCloudSyncNow">立即同步</string>
     <string name="InuCloudSyncing">同步中…</string>
     <string name="InuCloudRestore">从云端恢复</string>
@@ -729,7 +729,7 @@
     <string name="InuLogsHeapUsage">堆内存: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">生成堆转储</string>
     <string name="InuLogsMakingHeapDump">正在生成堆转储…</string>
-    <string name="InuLogsHeapDumpWarning">**切勿**与任何人分享生成的 .hprof 文件 —— 它是应用内存的快照，**包含敏感信息**（消息、令牌等）。\n\n**仅**自行查看。\n\n应用将会冻结一段时间。</string>
+    <string name="InuLogsHeapDumpWarning">**切勿**分享 .hprof 文件——它是包含**敏感信息**（消息、令牌等）的内存快照，请只自行查看。生成期间应用会短暂冻结。</string>
 
     <string name="InuMaterial3Fabs">悬浮按钮</string>
     <string name="InuMaterial3Sections">列表项</string>
@@ -1053,12 +1053,12 @@
     <string name="InuGhostMarkReadLocallyInfo">在幽灵模式下打开聊天时重置未读消息计数器，同时在服务器上保持未读状态。</string>
     <string name="InuUnlimitedLimits">解除限制</string>
     <string name="InuUnlimitedPinnedChats">无限置顶聊天</string>
-    <string name="InuUnlimitedPinnedChatsInfo">置顶的聊天数量超过 Telegram 服务器限制。超出限制的聊天仅在本地置顶 — 它们始终在本设备上排在最前面，但不会发送到 Telegram，因此无法从其他客户端取消置顶，也不计入服务器限制。</string>
+    <string name="InuUnlimitedPinnedChatsInfo">仅在本地置顶超出 Telegram 服务器限制的聊天——它们只在本设备排在最前，不会同步或计入其他地方的限制。</string>
     <string name="InuUnlimitedPinnedChatsCount">额外置顶聊天数</string>
     <string name="InuUnlimitedFavoriteStickers">无限收藏贴纸和 GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">移除本地保留和显示收藏贴纸及 GIF 数量的限制 — 它们已保存在服务器上，只是设备缓存在裁剪它们。</string>
     <string name="InuUnlimitedFolderChats">文件夹内无限聊天</string>
-    <string name="InuUnlimitedFolderChatsInfo">允许文件夹中包含的聊天数量超过 Telegram 服务器端限制。超出限制的聊天仅保存在本设备本地 — 不会与其他设备同步，也不会在重新安装应用后保留。</string>
+    <string name="InuUnlimitedFolderChatsInfo">允许文件夹容纳超过 Telegram 限制的聊天——超出部分仅保留在本设备，重装后不会保留。</string>
     <string name="InuStalkerPack">监视包</string>
     <string name="InuPresenceLoggerNotify">在线通知</string>
     <string name="InuPresenceLoggerNotifyInfo">当被监视的联系人上线或下线时显示弹出通知。在该人的个人资料菜单中选择要监视的对象；无论此开关状态如何，每次状态变化都会在本地记录。</string>
@@ -1107,7 +1107,7 @@
     <string name="InuHideDevBadgesInfo">它们没有任何含义，也不提供任何优势——只是开发者的一份感谢</string>
     <string name="InuLanguages">语言</string>
     <string name="InuLocalPremium">本地 Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">解锁客户端级别的 Premium 功能（星标徽章、应用图标、本地保存的表情状态和个人资料颜色、无限制翻译栏、高级反应与动画）。服务端功能（4 GB 上传、云端上限）仍需要官方订阅。</string>
+    <string name="InuLocalPremiumInfo">解锁客户端 Premium 功能：星标徽章、表情状态、无限翻译栏、高级反应与动画。服务端功能（上传、云端上限）仍需官方订阅。</string>
     <string name="InuMainPhoto">主头像</string>
     <string name="InuMarkChatAsRead">标记为已读</string>
     <string name="InuMarkChatAsReadDone">聊天已标记为已读</string>
@@ -1203,7 +1203,7 @@
     <string name="InuTranslateLlmModel">模型</string>
     <string name="InuTranslateLlmPrompt">系统提示词（可选）</string>
     <string name="InuTranslateLlmContext">对话上下文</string>
-    <string name="InuTranslateLlmContextInfo">随待翻译消息一起发送给模型的、同一对话中的前序消息数量。上下文本身不会被翻译，它用于让模型正确处理代词、性别和简短回复。每条消息会消耗更多 token。</string>
+    <string name="InuTranslateLlmContextInfo">随待翻译消息一起发送的前序消息数量，帮助模型正确处理代词和简短回复——会消耗更多 token。</string>
     <string name="InuTranslateLlmTemperature">温度</string>
     <string name="InuTranslateLlmTemperatureInfo">数值越低，译文越直白、越稳定；数值越高，措辞越自由、越地道。</string>
     <string name="InuTranslateMicrosoftApiKey">Azure Translator API 密钥</string>
@@ -1268,14 +1268,14 @@
     <string name="InuMinimize">最小化</string>
     <string name="InuCenterTitleChatsInfo">将标题和副标题移到聊天顶栏中央。头像仍固定在左侧。</string>
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">头像离开胶囊并取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单。关闭时头像保留在紧凑胶囊内。</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">将头像移出胶囊，取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单；关闭则保留在胶囊内。</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">最近聊天</string>
     <string name="InuClearRecentChats">清除最近聊天</string>
     <string name="InuClearRecentChatsAlert">这将清除最近打开的聊天列表。不会删除任何聊天或消息。</string>
     <string name="InuAiProvidersTitle">AI 提供商</string>
     <string name="InuAiProvidersUniversal">通用</string>
-    <string name="InuAiProvidersUniversalDesc">每个名称前面的图标代表其支持的功能：无穷符号表示同时支持聊天和语音，键盘表示仅聊天，麦克风表示仅语音。点击提供商进行配置，然后使用内部开关为每个范围选择活跃项。</string>
+    <string name="InuAiProvidersUniversalDesc">名称前的图标显示支持范围（∞ 聊天+语音，键盘仅聊天，麦克风仅语音）——点击配置，再为每个范围选择启用项。</string>
     <string name="InuAiProvidersChatOnly">仅聊天</string>
     <string name="InuAiProvidersVoiceOnly">仅语音</string>
     <string name="InuAiProvidersChatSectionHeader">%1$s -- 聊天</string>
@@ -1357,13 +1357,13 @@
     <string name="InuHideGiftAuctionsHint">隐藏礼物拍卖横幅</string>
     <string name="InuHideCacheHint">隐藏\"释放空间\"卡片</string>
     <string name="InuTranslateAutoDetectLang">为消息菜单检测语言</string>
-    <string name="InuTranslateAutoDetectLangInfo">对 Telegram 尚未确定语言的消息运行设备端检测，若属于\"不翻译\"语言则隐藏翻译行。已识别语言的消息仍按原样过滤。\n这可能会导致菜单打开速度稍慢。</string>
+    <string name="InuTranslateAutoDetectLangInfo">对 Telegram 尚未识别语言的消息进行设备端检测，属于\"不翻译\"语言则隐藏翻译行——菜单可能稍慢打开。</string>
     <string name="InuInstantTranslateBanner">即时翻译横幅</string>
-    <string name="InuInstantTranslateBannerInfo">一旦检测到一条外语消息，立即显示\"翻译为 X？\"聊天栏，而不是等待数条消息以确认（原生需要 6 条，开启自动翻译需要 2 条）。</string>
+    <string name="InuInstantTranslateBannerInfo">仅需一条外语消息即可显示\"翻译为 X？\"栏，无需等待多条（原生需 6 条，自动翻译需 2 条）。</string>
     <string name="InuIgnoreTranslationsDisabled">忽略\"已禁用翻译\"</string>
-    <string name="InuIgnoreTranslationsDisabledInfo">频道或用户可通过其自己的 Telegram 设置关闭翻译聊天栏横幅。此选项仍会强制显示。</string>
+    <string name="InuIgnoreTranslationsDisabledInfo">即使频道或用户在 Telegram 设置中关闭了翻译栏，也照常显示——与消息菜单中的翻译按钮一致，它本就会忽略该设置。</string>
     <string name="InuLocalCustomEmoji">本地自定义表情</string>
-    <string name="InuLocalCustomEmojiInfo">将 Premium 自定义表情作为隐藏表情链接发送，使非 Premium 账户可以在任何地方使用它们。entinyGram 和 Nekogram 客户端会显示动画；其他客户端则显示为普通链接。</string>
+    <string name="InuLocalCustomEmojiInfo">将 Premium 表情作为隐藏链接发送，非 Premium 账户也能使用。entinyGram 和 Nekogram 显示动画，其他客户端显示普通链接。需搭配本地 Premium 才能打开表情面板。</string>
     <string name="InuDevBadge">entinyGram 团队</string>
     <string name="InuDevBadgeInfo">此账户已获 entinyGram 团队认证。</string>
     <string name="InuMapProviderOsmLite">OpenStreetMap (精简)</string>

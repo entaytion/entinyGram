@@ -26,19 +26,8 @@ import java.io.RandomAccessFile
 import kotlin.math.roundToInt
 
 /**
- * Owns the editor **font roster** and the storage behind it: imported font families, discovered device
- * system fonts, the ordered roster + hidden flags, and the media-editor [PaintTypeface] list. The app's
- * font *selection* and rendering (resolve / install / preview) live in [FontHelper], which queries this
- * library for per-token font data.
- *
- * Storage layout under `filesDir/inu_fonts/`:
- * ```
- *   index.json        { "roster": [token,…], "hidden": [token,…] }   ← editor roster order + hidden flags
- *   <id>/pack.json    { "family": "…", "faces": [ {file,ttcIndex,weight,italic,variable,wghtMin,wghtMax}, … ] }
- *   <id>/f*.bin       the raw font files
- * ```
- * Roster entries are typed [FontId]s — built-ins, `font:<id>` imported families, or `sys:<name>` device
- * system fonts — serialized to/from token strings only at the storage boundary.
+ * Font roster storage: imported families, system fonts, order, hidden flags (index.json + <id>/pack.json + font files).
+ * FontHelper queries this for font data; storage at filesDir/inu_fonts/. FontId is built-in/font:<id>/sys:<name>.
  */
 object FontLibrary {
     private const val TAG = "InuFonts"

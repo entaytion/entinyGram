@@ -54,7 +54,7 @@
     <string name="InuOutgoingMessages">送信メッセージ</string>
     <string name="InuChannelMessages">投稿できるチャンネル</string>
     <string name="InuSameAsIncoming">受信メッセージと同じ</string>
-    <string name="InuDoubleTapInfo">注：Telegram のダブルタップ処理の都合上、ダブルタップ動作を有効にすると通常のタップが上記の時間だけ遅延し、アプリの応答が鈍く感じられます。\n時間は調整できますが、遅延を完全になくすには動作を無効にするしかありません。</string>
+    <string name="InuDoubleTapInfo">ダブルタップ操作を有効にすると、Telegram が区別できるよう通常のタップが上記の時間だけ遅延します — 遅延をなくすには操作を無効にしてください。</string>
     <string name="InuQuickReaction">クイックリアクション</string>
     <string name="InuShowReactions">リアクションを表示</string>
     <string name="InuHideStories">ストーリーを非表示</string>
@@ -488,7 +488,7 @@
     <string name="InuBackupResetSuccess">%1$d 件の設定をリセットしました</string>
     <string name="InuBackupResetNoChanges">設定はすでに初期値です</string>
     <string name="InuCloudSync">設定を同期</string>
-    <string name="InuCloudSyncDesc">entinyGram の設定を Telegram クラウドにバックアップし、他のデバイスで復元します。\n\n[CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) を使用するため、データが当方のサーバーに送信されることはありません。</string>
+    <string name="InuCloudSyncDesc">entinyGram の設定を [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) 経由で Telegram クラウドにバックアップします — データが当方のサーバーに送られることはありません。</string>
     <string name="InuCloudSyncNow">今すぐ同期</string>
     <string name="InuCloudSyncing">同期中…</string>
     <string name="InuCloudRestore">クラウドから復元</string>
@@ -730,7 +730,7 @@
     <string name="InuLogsHeapUsage">ヒープ: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">ヒープダンプを作成</string>
     <string name="InuLogsMakingHeapDump">ヒープダンプを作成中…</string>
-    <string name="InuLogsHeapDumpWarning">.hprof ファイルは**絶対に**誰とも共有しないでください — アプリのメモリのスナップショットであり、**メッセージやトークンなどの機密情報を含みます**。\n\n**自分だけで**確認してください。\n\nアプリはしばらくフリーズします。</string>
+    <string name="InuLogsHeapDumpWarning">**絶対に** .hprof ファイルを共有しないでください — **機密情報**（メッセージ、トークンなど）を含むメモリのスナップショットで、確認は自分だけで行ってください。作成中はアプリが一時的にフリーズします。</string>
 
     <string name="InuMaterial3Fabs">フローティングボタン</string>
     <string name="InuMaterial3Sections">リスト項目</string>
@@ -1052,12 +1052,12 @@
     <string name="InuGhostModeMaster">ゴーストモード</string>
     <string name="InuUnlimitedLimits">制限解除</string>
     <string name="InuUnlimitedPinnedChats">無制限ピン留めチャット</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Telegram のサーバー上限を超えてチャットをピン留めできます。上限を超えたチャットはローカルでのみピン留めされ、この端末では常に先頭に表示されますが、Telegram には送信されないため、他の端末から解除されず、サーバー上限にもカウントされません。</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Telegram のサーバー上限を超えてチャットをローカルにのみピン留めします — この端末で先頭に表示されるだけで、同期や上限のカウントはされません。</string>
     <string name="InuUnlimitedPinnedChatsCount">追加のピン留めチャット</string>
     <string name="InuUnlimitedFavoriteStickers">無制限のお気に入りステッカー・GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">保持・表示できるお気に入りステッカーと GIF のローカル上限を解除します。すでにサーバーに保存されているもので、端末内キャッシュだけが数を減らしていました。</string>
     <string name="InuUnlimitedFolderChats">フォルダーごとの無制限チャット</string>
-    <string name="InuUnlimitedFolderChatsInfo">Telegram のサーバー上限を超えてフォルダーにチャットを追加できます。上限を超えたチャットはこの端末にのみローカルで保存され、他の端末とは同期されず、アプリの再インストール後も残りません。</string>
+    <string name="InuUnlimitedFolderChatsInfo">フォルダーに Telegram の上限を超えてチャットを追加できます — 超過分はこの端末のみに残り、再インストールで消えます。</string>
     <string name="InuStalkerPack">ストーカーパック</string>
     <string name="InuPresenceLoggerNotify">在席通知</string>
     <string name="InuPresenceLoggerNotifyInfo">監視中の連絡先がオンラインになったりオフラインになったりしたときにポップアップ通知を表示します。誰を監視するかはその人のプロフィールメニューから選択します。この設定に関わらず、状態変化は常にローカルに記録されます。</string>
@@ -1106,7 +1106,7 @@
     <string name="InuHideDevBadgesInfo">これらには特別な意味も特典もありません。単なる開発者からの感謝の印です</string>
     <string name="InuLanguages">言語</string>
     <string name="InuLocalPremium">ローカル Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">クライアント側で Premium 機能を解放します (星バッジ、アプリアイコン、絵文字ステータスとプロフィール色のローカル保持、無制限翻訳バー、プレミアムリアクション、アニメーション)。サーバー側機能 (4 GB アップロード、クラウドリミット) は公式のサブスクリプションが必要です。</string>
+    <string name="InuLocalPremiumInfo">クライアント側の Premium 機能を解放します: 星バッジ、絵文字ステータス、無制限翻訳バー、プレミアムリアクションとアニメーション。サーバー側機能 (アップロード、クラウド上限) は引き続き公式サブスクリプションが必要です。</string>
     <string name="InuMainPhoto">メイン写真</string>
     <string name="InuMarkChatAsRead">既読にする</string>
     <string name="InuMarkChatAsReadDone">チャットを既読にしました</string>
@@ -1202,7 +1202,7 @@
     <string name="InuTranslateLlmModel">モデル</string>
     <string name="InuTranslateLlmPrompt">システムプロンプト (任意)</string>
     <string name="InuTranslateLlmContext">会話のコンテキスト</string>
-    <string name="InuTranslateLlmContextInfo">翻訳するメッセージと一緒にモデルへ送る、同じチャットの直前のメッセージ数です。コンテキスト自体は翻訳されません。代名詞や性、短い返答を正しく訳すために役立ちます。メッセージごとのトークン消費が増えます。</string>
+    <string name="InuTranslateLlmContextInfo">翻訳するメッセージと一緒に送る直前のメッセージ数で、代名詞や短い返答をモデルが正しく訳す助けになります — トークン消費が増えます。</string>
     <string name="InuTranslateLlmTemperature">温度</string>
     <string name="InuTranslateLlmTemperatureInfo">値が小さいほど直訳的で再現性の高い翻訳になり、大きいほど自由で慣用的な表現になります。</string>
     <string name="InuTranslateMicrosoftApiKey">Azure Translator API キー</string>
@@ -1268,14 +1268,14 @@
     <string name="InuMinimize">最小化</string>
     <string name="InuCenterTitleChatsInfo">タイトルとサブタイトルをチャットヘッダーの中央に移動します。アバターは左端に固定されたままです。</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">アバターがピルから出て「⋮」ボタンの位置に移動します — タップでプロフィール、長押しでチャットメニューを開きます。オフの場合、アバターはコンパクトなピルの中に残ります。</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">アバターをピルから出して「⋮」ボタンの位置に移動します — タップでプロフィール、長押しでチャットメニュー、オフならピルの中に残ります。</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">最近のチャット</string>
     <string name="InuClearRecentChats">最近のチャットをクリア</string>
     <string name="InuClearRecentChatsAlert">最近開いたチャットのリストがクリアされます。チャットやメッセージが削除されることはありません。</string>
     <string name="InuAiProvidersTitle">AIプロバイダー</string>
     <string name="InuAiProvidersUniversal">ユニバーサル</string>
-    <string name="InuAiProvidersUniversalDesc">各名前の前のアイコンはサポート内容を示します: 無限記号はチャットと音声の両方、キーボードはチャットのみ、マイクは音声のみです。プロバイダーをタップして設定し、内部のスイッチで各スコープのアクティブなものを選択してください。</string>
+    <string name="InuAiProvidersUniversalDesc">名前前のアイコンで対応範囲がわかります（∞はチャット+音声、キーボードはチャットのみ、マイクは音声のみ）— タップして設定し、各スコープでアクティブなものを選んでください。</string>
     <string name="InuAiProvidersChatOnly">チャットのみ</string>
     <string name="InuAiProvidersVoiceOnly">音声のみ</string>
     <string name="InuAiProvidersChatSectionHeader">%1$s -- チャット</string>
@@ -1357,13 +1357,13 @@
     <string name="InuHideGiftAuctionsHint">ギフトオークションのバナーを非表示</string>
     <string name="InuHideCacheHint">「空き容量を増やす」カードを非表示</string>
     <string name="InuTranslateAutoDetectLang">メッセージメニューの言語を自動検出</string>
-    <string name="InuTranslateAutoDetectLangInfo">Telegramが言語をまだ判別していないメッセージに対して端末側で検出を行い、「翻訳しない」言語の場合は「翻訳」行を非表示にします。\nメニューを開くのが少し遅くなる場合があります。</string>
+    <string name="InuTranslateAutoDetectLangInfo">Telegram がまだ判別していないメッセージの言語を端末側で検出し、「翻訳しない」言語なら翻訳行を隠します — メニューが少し遅くなることがあります。</string>
     <string name="InuInstantTranslateBanner">即時翻訳バナー</string>
-    <string name="InuInstantTranslateBannerInfo">外国語のメッセージが1件検出されるとすぐに「Xに翻訳しますか？」チャットバーを表示します（通常は6件、自動翻訳時は2件待つ必要があります）。</string>
+    <string name="InuInstantTranslateBannerInfo">外国語メッセージ1件だけで「Xに翻訳しますか？」バーを表示します（通常6件、自動翻訳時は2件必要）。</string>
     <string name="InuIgnoreTranslationsDisabled">「翻訳が無効」を無視</string>
-    <string name="InuIgnoreTranslationsDisabledInfo">チャンネルやユーザーが設定で翻訳チャットバーを無効にしている場合でも、それを無視して強制的に表示します。</string>
+    <string name="InuIgnoreTranslationsDisabledInfo">チャンネルやユーザーが設定で翻訳バーを無効にしていても表示します — メッセージメニューの翻訳ボタンは既にこの設定を無視しています。</string>
     <string name="InuLocalCustomEmoji">ローカルカスタム絵文字</string>
-    <string name="InuLocalCustomEmojiInfo">Premiumカスタム絵文字を非表示の絵文字リンクとして送信し、非Premiumアカウントでもどこでも使用できるようにします。entinyGramとNekogramクライアントではアニメーション表示され、他のクライアントでは通常のリンクとして表示されます。</string>
+    <string name="InuLocalCustomEmojiInfo">Premium絵文字を非表示リンクとして送信し、非Premiumアカウントでも使用できます。entinyGramとNekogramはアニメーション表示、他のクライアントは通常のリンクとして表示します。絵文字パネルを開くにはローカルPremiumと併用してください。</string>
     <string name="InuDevBadge">entinyGramチーム</string>
     <string name="InuDevBadgeInfo">このアカウントはentinyGramチームによって公認されています。</string>
     <string name="InuMapProviderOsmLite">OpenStreetMap (軽量)</string>

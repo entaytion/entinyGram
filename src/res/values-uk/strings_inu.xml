@@ -42,7 +42,7 @@
     <string name="InuDoubleTapActions">Дії подвійного тапу</string>
     <string name="InuIncomingMessages">Вхідні повідомлення</string>
     <string name="InuOutgoingMessages">Вихідні повідомлення</string>
-    <string name="InuDoubleTapInfo">Примітка: через особливості Telegram увімкнення подвійного тапу затримує звичайний тап на вказаний час.\nВи можете налаштувати затримку, але повністю її прибрати можна лише вимкнувши ці дії.</string>
+    <string name="InuDoubleTapInfo">Увімкнення дії подвійного тапу затримує звичайний тап на вказаний час, бо саме так Telegram їх розрізняє — щоб прибрати затримку, вимкніть дію повністю.</string>
     <string name="InuQuickReaction">Швидка реакція</string>
     <string name="InuShowReactions">Показувати реакції</string>
     <string name="InuHideStories">Приховати історії</string>
@@ -297,12 +297,11 @@
     <string name="InuTranslateWebPreviews">Перекладати прев\'ю посилань</string>
     <string name="InuKeepOriginalAfterTranslation">Показувати оригінальний текст</string>
     <string name="InuTranslateAutoDetectLang">Визначати мову для меню повідомлення</string>
-    <string name="InuTranslateAutoDetectLangInfo">Запускає визначення мови на пристрої для повідомлень, мову яких Telegram ще не з\'ясував, щоб рядок «Перекласти» можна було сховати, якщо вони виявляться мовою зі списку «Не перекладати». Повідомлення з уже відомою мовою фільтруються в будь-якому разі.
-Через це меню може відкриватися трохи повільніше.</string>
+    <string name="InuTranslateAutoDetectLangInfo">Визначає мову повідомлень на пристрої, якщо Telegram ще цього не зробив, щоб ховати рядок «Перекласти» для мов зі списку «Не перекладати» — меню може відкриватися трохи повільніше.</string>
     <string name="InuInstantTranslateBanner">Миттєвий банер перекладу</string>
-    <string name="InuInstantTranslateBannerInfo">Показує банер «Перекласти на X?» одразу після першого виявленого іноземномовного повідомлення, замість очікування кількох повідомлень для підтвердження (стоку треба 6, або 2 при увімкненому автоперекладі). Корисно для чатів і окремих постів, де рідко бачиш більше кількох повідомлень.</string>
+    <string name="InuInstantTranslateBannerInfo">Показує банер «Перекласти на X?» вже після одного іноземномовного повідомлення, а не кількох (стоку треба 6, або 2 з автоперекладом).</string>
     <string name="InuIgnoreTranslationsDisabled">Ігнорувати «Переклад вимкнено»</string>
-    <string name="InuIgnoreTranslationsDisabledInfo">Канал чи користувач може вимкнути банер перекладу у своїх власних налаштуваннях Telegram. Цей тумблер показує банер попри це. Кнопка перекладу в меню повідомлення вже й так ігнорує цю настройку — тепер банер поводиться так само.</string>
+    <string name="InuIgnoreTranslationsDisabledInfo">Показує банер перекладу, навіть якщо канал чи користувач вимкнув його у своїх налаштуваннях Telegram — так само, як уже поводиться кнопка перекладу в меню повідомлення.</string>
     <string name="InuTranslateInstantView">Перекласти сторінку</string>
     <string name="InuInstantViewShowOriginal">Показати оригінал</string>
     <string name="InuTranslating">Перекладаємо…</string>
@@ -678,7 +677,7 @@
     <string name="InuBackupResetSuccess">Скинуто %1$d налаштувань</string>
     <string name="InuBackupResetNoChanges">Налаштування вже мають значення за замовчуванням</string>
     <string name="InuCloudSync">Синхронізація налаштувань</string>
-    <string name="InuCloudSyncDesc">Збережіть налаштування entinyGram в хмарі Telegram та відновіть їх на іншому пристрої.\n\nВикористовується [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage), ваші дані не надсилаються на сторонні сервери.</string>
+    <string name="InuCloudSyncDesc">Зберігає налаштування entinyGram у хмарі Telegram через [CloudStorage API](https://core.telegram.org/bots/webapps#cloudstorage) — ваші дані не потрапляють на наші сервери.</string>
     <string name="InuCloudSyncNow">Синхронізувати зараз</string>
     <string name="InuCloudSyncing">Синхронізація…</string>
     <string name="InuCloudRestore">Відновити з хмари</string>
@@ -925,7 +924,7 @@
     <string name="InuLogsHeapUsage">Купа: %1$s / %2$s</string>
     <string name="InuLogsMakeHeapDump">Зробити дамп купи</string>
     <string name="InuLogsMakingHeapDump">Створення дампу купи…</string>
-    <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не ділися отриманим файлом .hprof ні з ким — це знімок пам’яті додатка, який **містить чутливу інформацію** (повідомлення, токени тощо).\n\nДосліджуй його **ТІЛЬКИ** самостійно.\n\nДодаток ненадовго зависне.</string>
+    <string name="InuLogsHeapDumpWarning">**НІКОЛИ** не діліться файлом .hprof — це знімок пам’яті з **чутливими даними** (повідомлення, токени тощо), переглядайте його лише самостійно. Додаток ненадовго зависне під час створення дампу.</string>
     <string name="InuDeleteOwnMessages">Видалити мої повідомлення</string>
     <string name="InuDeleteOwnMessagesSearching">Пошук ваших повідомлень…</string>
     <string name="InuDeleteOwnMessagesFoundProgress">Знайдено %1$d / %2$d</string>
@@ -1074,7 +1073,7 @@
     <string name="InuAiReasoningDesc">Дає можливість моделям, що підтримуються цим сервісом, витрачати додаткові токени на обдумування відповіді перед тим, як її надати.</string>
     <string name="InuAiProvidersTitle">AI-провайдери</string>
     <string name="InuAiProvidersUniversal">Універсальні</string>
-    <string name="InuAiProvidersUniversalDesc">Іконка перед назвою показує, що підтримує провайдер: нескінченність — і чат, і голос, клавіатура — лише чат, мікрофон — лише голос. Тапни на провайдера, щоб налаштувати, і обери активного для кожного сценарію тумблерами всередині.</string>
+    <string name="InuAiProvidersUniversalDesc">Іконка перед назвою показує підтримку (∞ — чат і голос, клавіатура — лише чат, мікрофон — лише голос) — тапни, щоб налаштувати, і обери активного для кожного сценарію.</string>
     <string name="InuAiProvidersChatOnly">Лише чат</string>
     <string name="InuAiProvidersVoiceOnly">Лише голосові</string>
     <string name="InuAiProvidersChatSectionHeader">%1$s — Чат</string>
@@ -1273,17 +1272,17 @@
     <string name="InuAiTranscribeFetchModelsEmpty">Моделей не знайдено</string>
     <string name="InuAiTranscribeFetchModelsFailed">Не вдалося отримати моделі: %1$s</string>
     <string name="InuLocalPremium">Локальний Telegram Premium</string>
-    <string name="InuLocalPremiumInfo">Розблоковує локальні функції Premium на рівні клієнта (зірочка біля профілю, емодзі-статуси, безлімітна панель перекладу, преміум-реакції та анімації). Серверні фічі (4 ГБ завантаження, ліміти хмари) вимагають офіційної підписки.</string>
+    <string name="InuLocalPremiumInfo">Розблоковує клієнтські Premium-фічі: зірочка, емодзі-статуси, безлімітна панель перекладу, преміум-реакції та анімації. Серверні фічі (завантаження, ліміти хмари) досі вимагають офіційної підписки.</string>
     <string name="InuLocalCustomEmoji">Локальні кастомні емодзі</string>
-    <string name="InuLocalCustomEmojiInfo">Надсилає преміум-емодзі як приховані емодзі-посилання, тож акаунт без Premium може використовувати їх будь-де. Клієнти entinyGram і Nekogram показують їх анімованими; в інших клієнтах видно звичайне емодзі-замінник як посилання. Вмикайте разом із локальним Telegram Premium, щоб розблокувати саму панель емодзі.</string>
+    <string name="InuLocalCustomEmojiInfo">Надсилає преміум-емодзі як приховані посилання, тож акаунт без Premium може їх використовувати. entinyGram і Nekogram показують анімацію; інші клієнти бачать звичайне емодзі-посилання. Вмикайте разом із локальним Premium, щоб відкрити панель емодзі.</string>
     <string name="InuUnlimitedLimits">Зняття обмежень</string>
     <string name="InuUnlimitedPinnedChats">Необмежені закріплені чати</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Закріплюйте більше чатів, ніж дозволяє серверний ліміт Telegram. Чати понад ліміт закріплюються лише локально — вони завжди відображаються першими на цьому пристрої, але ніколи не надсилаються в Telegram, тому їх не можна відкріпити з іншого пристрою і вони не враховуються в серверному ліміті.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Закріплює додаткові чати локально понад серверний ліміт Telegram — вони першими лише на цьому пристрої й не синхронізуються та не враховуються в ліміті деінде.</string>
     <string name="InuUnlimitedPinnedChatsCount">Додаткові закріплені чати</string>
     <string name="InuUnlimitedFavoriteStickers">Необмежені улюблені стікери та GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Прибирає локальне обмеження на кількість улюблених стікерів і GIF — вони вже збережені на сервері, обмежував лише локальний кеш на пристрої.</string>
     <string name="InuUnlimitedFolderChats">Необмежені чати в папці</string>
-    <string name="InuUnlimitedFolderChatsInfo">Дозволяє додати в папку більше чатів, ніж дозволяє серверний ліміт Telegram. Чати понад ліміт зберігаються лише локально на цьому пристрої — вони не синхронізуються з іншими пристроями та не збережуться при перевстановленні застосунку.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Дозволяє додати в папку більше чатів, ніж дозволяє ліміт Telegram, — зайві залишаються лише на цьому пристрої й не переживуть перевстановлення.</string>
     <string name="InuStalkerPack">Сталкер-пак</string>
     <string name="InuPresenceLoggerNotify">Сповіщення про присутність</string>
     <string name="InuPresenceLoggerNotifyInfo">Показувати спливаюче сповіщення, коли відстежуваний контакт заходить у мережу або виходить із неї. Оберіть, за ким стежити, у меню профілю цієї людини; кожна зміна статусу також зберігається локально незалежно від цього перемикача.</string>
@@ -1355,7 +1354,7 @@
     <string name="InuTranslateLlmModel">Модель</string>
     <string name="InuTranslateLlmPrompt">Системний запит (необов’язково)</string>
     <string name="InuTranslateLlmContext">Контекст розмови</string>
-    <string name="InuTranslateLlmContextInfo">Скільки попередніх повідомлень із цього чату надсилати моделі разом із тим, що перекладається. Сам контекст ніколи не перекладається — саме він допомагає правильно передати займенники, рід і короткі відповіді. Витрачає більше токенів на кожне повідомлення.</string>
+    <string name="InuTranslateLlmContextInfo">Скільки попередніх повідомлень чату надсилати разом із тим, що перекладається, щоб модель правильно передала займенники й короткі відповіді — коштує додаткових токенів.</string>
     <string name="InuTranslateLlmTemperature">Температура</string>
     <string name="InuTranslateLlmTemperatureInfo">Менші значення дають дослівний і передбачуваний переклад, більші — вільніший та ідіоматичніший.</string>
     <string name="InuTranslateMicrosoftApiKey">API-ключ Azure Translator</string>
@@ -1407,7 +1406,7 @@
     <string name="InuMinimize">Згорнути</string>
     <string name="InuCenterTitleChatsInfo">Переносить назву та підпис у середину шапки чату. Аватарка лишається притиснутою ліворуч. Працює окремо — перемикач вище вмикати не обовʼязково.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Аватарка виходить з пілюлі й займає місце кнопки «⋮» — тап відкриває профіль, довге натискання відкриває меню чату. Якщо вимкнено, аватарка лишається всередині компактної пілюлі.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Переносить аватарку з пілюлі на місце кнопки «⋮» — тап відкриває профіль, довге натискання — меню чату; вимкнено — аватарка лишається в пілюлі.</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрувати аватарку</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Аватарка лишається там, де й зазвичай, поруч із кнопкою «назад», а центрується лише пілюля з назвою та підписом.</string>
     <string name="InuAiInsertQuoteInfo">Вставляє результат у поле повідомлення як цитату замість заміни вашої чернетки.</string>

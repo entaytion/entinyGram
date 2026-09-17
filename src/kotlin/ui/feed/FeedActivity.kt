@@ -45,45 +45,9 @@ import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 
 /**
- * Unread-only queue of posts from every eligible channel, rendered as real native message bubbles
- * ([ChatMessageCell]) -- entirely outside [ChatActivity], following the exact same pattern this
- * fork's own `AyuMessageHistoryActivity` already uses. See the Feed plan for why: patching
- * `ChatActivity`/`ChatMessageCell` themselves (ExteraGram's own approach) is deliberately avoided
- * as an unnecessary stock-hotspot rewrite.
- *
- * Deliberately NOT a persistent archive: this is something you go through, not something you
- * browse back through. Every load path (`loadInitial`, `FeedController.loadOlder`, live pushes)
- * only ever surfaces posts [FeedUnreadTracker] still considers unread; a post that's been scrolled
- * past stays visible for the rest of the current viewing session (removing it out from under an
- * active scroll would be jarring) but is gone the next time Feed is opened, and "Mark all read"
- * clears everything immediately -- down to the empty state once there's nothing left unread.
- *
- * Layout direction depends on [InuConfig.FEED_NEWEST_ON_TOP] (read once into [newestOnTop] per
- * screen open): off (default) is chat-style -- oldest at the top, newest at the bottom, opened
- * scrolled to the bottom, `stackFromEnd(true)` on a plain (non-reversed) [LinearLayoutManager],
- * the same technique stock `ChannelAdminLogActivity` uses for its own single-list-of-heterogeneous-
- * rows screen. On is feed-style (Twitter/Threads) -- newest at the top, oldest at the bottom,
- * opened scrolled to the top (`stackFromEnd(false)`, the plain default), scrolling down loads
- * older history instead of up. Neither mode uses `reverseLayout`; [rows] is simply kept in
- * whichever direction is this screen's current display order.
- *
- * Because rows come from many different channels interleaved by time, [displayItems] additionally
- * splices a small [ChannelHeaderCell] row in front of every run of consecutive same-channel
- * messages -- otherwise a bare stream of bubbles with no chat header is unreadable noise.
- *
- * [scope] optionally narrows the screen to one stock chat folder. Constructed directly with the
- * scope as an argument rather than through a `Bundle` -- the same direct-construction style this
- * screen already follows from `AyuMessageHistoryActivity`; `@JvmOverloads` keeps the existing
- * no-arg `new FeedActivity()` call sites in the stock patches compiling unchanged.
- *
- * [hasMainTabs] is this screen's equivalent of the `"hasMainTabs"` bundle flag every tab-hosted
- * stock fragment (`ContactsActivity`, `CallLogActivity`, `SettingsActivity`) reads: it means "I am
- * a persistent page inside `MainTabsActivity`'s tab strip", not a pushed screen. Same two
- * consequences those fragments draw from it -- no back button (there is nothing to go back to from
- * a tab), and the content is inset by the tab bar's own height so the bottom rows aren't sitting
- * under it. Passed as a constructor argument rather than a bundle key for the same reason [scope]
- * is; the default `false` keeps every existing `presentFragment(new FeedActivity())` call site
- * behaving exactly as before.
+ * Unread-only queue of channel posts rendered as message bubbles. Not a persistent archive.
+ * Layout: chat-style (oldest top, stackFromEnd) or feed-style (newest top). Splices [ChannelHeaderCell] before each channel run.
+ * [scope] and [hasMainTabs] are constructor args to match AyuMessageHistoryActivity pattern.
  */
 class FeedActivity @JvmOverloads constructor(
     private val scope: FeedScope = FeedScope.Global,
