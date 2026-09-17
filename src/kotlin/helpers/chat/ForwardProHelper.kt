@@ -8,211 +8,235 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
+import desu.inugram.helpers.dialogs.FolderHelper
+import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.ActionBarMenuSubItem
+import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.EditTextBoldCursor
-import org.telegram.ui.Components.FragmentSearchField
+import org.telegram.ui.Components.FilterTabsView
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ShareAlert
 import java.util.WeakHashMap
 
 object ForwardProHelper {
 
+    private const val FOLDER_TABS_TOP_MARGIN_DP = 51f // search row ends at 47 (top 7 + height 40) + 4dp gap
+    private const val FOLDER_TABS_BOTTOM_GAP_DP = 6
+
     private class AlertState {
         var hideCaption: Boolean = false
-        var silentSend: Boolean = false
-        var senderIcon: ImageView? = null
-        var captionIcon: ImageView? = null
-        var soundIcon: ImageView? = null
         var editButton: ImageView? = null
+        var silentSend: Boolean = false
+        var silentSendIcon: ImageView? = null
+        var authorIcon: ImageView? = null
+        var captionIcon: ImageView? = null
+        var filterTabsView: FilterTabsView? = null
+        var selectedFilterId: Int = 0 // DialogFilter.isDefault() == (id == 0)
+        var active: Boolean = false
     }
 
     private val states = WeakHashMap<ShareAlert, AlertState>()
 
+    // entiny: one-shot override for the next ShareAlert — true/false forces Forward Pro on/off for that share.
+    private var pendingOverride: Boolean? = null
+
+    @JvmStatic
+    fun requestStockShareOnce() {
+        pendingOverride = false
+    }
+
+    @JvmStatic
+    fun requestForwardProOnce() {
+        pendingOverride = true
+    }
+
+    // entiny: Java gates should use this, not raw InuConfig, so an override isn't skipped.
+    @JvmStatic
+    fun isActive(alert: ShareAlert): Boolean = getState(alert).active
+
     private fun getState(alert: ShareAlert): AlertState {
-        return states.getOrPut(alert) { AlertState() }
+        return states.getOrPut(alert) {
+            AlertState().also {
+                it.active = pendingOverride ?: InuConfig.FORWARD_PRO.value
+                pendingOverride = null
+            }
+        }
     }
 
     @JvmStatic
     fun shouldHideCaption(alert: ShareAlert): Boolean {
-        if (!InuConfig.FORWARD_PRO.value) return false
-        return getState(alert).hideCaption
-    }
-
-    @JvmStatic
-    fun isSilentSend(alert: ShareAlert): Boolean {
-        if (!InuConfig.FORWARD_PRO.value) return false
-        return getState(alert).silentSend
+        val state = getState(alert)
+        if (!state.active) return false
+        return state.hideCaption
     }
 
     @JvmStatic
     fun getExtraCommentPadding(alert: ShareAlert): Int {
-        if (!InuConfig.FORWARD_PRO.value) return 0
+        if (!getState(alert).active) return 0
         val msgs = alert.sendingMessageObjects
         return if (msgs != null && msgs.isNotEmpty()) dp(46f) else 0
     }
 
-    private fun getIconColor(alert: ShareAlert): Int {
-        val theme = alert.resourcesProvider
-        return Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, theme)
-    }
-
     @JvmStatic
-    fun updateTopAuthorIcon(alert: ShareAlert) {
-        val state = states[alert] ?: return
-        val icon = state.senderIcon ?: return
-        val color = getIconColor(alert)
-        icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-        if (alert.showSendersName) {
-            icon.alpha = 1.0f
-            ViewCompat.setTooltipText(icon, LocaleController.getString(R.string.HideSendersName))
-        } else {
-            icon.alpha = 0.35f
-            ViewCompat.setTooltipText(icon, LocaleController.getString(R.string.ShowSendersName))
-        }
-    }
-
-    private fun updateCaptionIcon(alert: ShareAlert) {
-        val state = states[alert] ?: return
-        val icon = state.captionIcon ?: return
-        val color = getIconColor(alert)
-        icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-        if (state.hideCaption) {
-            icon.alpha = 0.35f
-            ViewCompat.setTooltipText(icon, LocaleController.getString(R.string.InuForwardProShowCaption))
-        } else {
-            icon.alpha = 1.0f
-            ViewCompat.setTooltipText(icon, LocaleController.getString(R.string.InuForwardProHideCaption))
-        }
-    }
-
-    private fun updateSoundIcon(alert: ShareAlert) {
-        val state = states[alert] ?: return
-        val icon = state.soundIcon ?: return
-        val color = getIconColor(alert)
-        icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
-        if (state.silentSend) {
-            icon.alpha = 1.0f
-            ViewCompat.setTooltipText(icon, LocaleController.getString(R.string.InuForwardProSendWithSound))
-        } else {
-            icon.alpha = 0.35f
-            ViewCompat.setTooltipText(icon, LocaleController.getString(R.string.SendWithoutSound))
-        }
-    }
-
-    @JvmStatic
-    fun attachTopIcons(alert: ShareAlert, searchField: FragmentSearchField) {
-        if (!InuConfig.FORWARD_PRO.value) return
-        val context = alert.context ?: return
+    fun isSilentSend(alert: ShareAlert): Boolean {
         val state = getState(alert)
-        val hasMessages = alert.sendingMessageObjects != null && alert.sendingMessageObjects.isNotEmpty()
+        if (!state.active) return false
+        return state.silentSend
+    }
 
-        if (hasMessages) {
-            // 1. Author toggle
-            val senderIcon = ImageView(context).apply {
+    // entiny: quick-toggle icons beside the search bar, siblings of searchView not children of it.
+    @JvmStatic
+    fun attachQuickToggles(alert: ShareAlert, frameLayout: FrameLayout) {
+        val state = getState(alert)
+        if (!state.active) return
+        val context = alert.context ?: return
+        val theme = alert.resourcesProvider
+        val tintColor = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, theme)
+        val bgColor = Theme.getColor(Theme.key_actionBarWhiteSelector, theme)
+
+        fun makeToggle(iconRes: Int, descRes: Int): ImageView {
+            return ImageView(context).apply {
                 scaleType = ImageView.ScaleType.CENTER
-                setImageResource(R.drawable.msg_contact)
-                background = Theme.createSelectorDrawable(
-                    Theme.getColor(Theme.key_listSelector, alert.resourcesProvider),
-                    1,
-                    dp(16f)
-                )
-                contentDescription = LocaleController.getString(R.string.ShowSendersName)
-                setOnClickListener {
-                    alert.showSendersName = !alert.showSendersName
-                    updateTopAuthorIcon(alert)
-                    val text = LocaleController.getString(
-                        if (alert.showSendersName) R.string.ShowSendersName else R.string.HideSendersName
-                    )
-                    showBulletin(alert, R.drawable.msg_contact, text)
-                }
+                setImageResource(iconRes)
+                colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
+                background = Theme.createSelectorDrawable(bgColor, Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16f))
+                contentDescription = LocaleController.getString(descRes)
             }
-            state.senderIcon = senderIcon
-            updateTopAuthorIcon(alert)
-            val lp1 = LinearLayout.LayoutParams(dp(32f), dp(32f)).apply {
-                gravity = Gravity.CENTER_VERTICAL
-                marginEnd = dp(2f)
-            }
-            searchField.addAdditionalIcon(senderIcon)
-            senderIcon.layoutParams = lp1
-
-            // 2. Caption toggle
-            val captionIcon = ImageView(context).apply {
-                scaleType = ImageView.ScaleType.CENTER
-                setImageResource(R.drawable.iv_text)
-                background = Theme.createSelectorDrawable(
-                    Theme.getColor(Theme.key_listSelector, alert.resourcesProvider),
-                    1,
-                    dp(16f)
-                )
-                contentDescription = LocaleController.getString(R.string.InuForwardProHideCaption)
-                setOnClickListener {
-                    state.hideCaption = !state.hideCaption
-                    updateCaptionIcon(alert)
-                    val text = LocaleController.getString(
-                        if (state.hideCaption) R.string.InuForwardProHideCaption else R.string.InuForwardProShowCaption
-                    )
-                    showBulletin(alert, R.drawable.iv_text, text)
-                }
-            }
-            state.captionIcon = captionIcon
-            updateCaptionIcon(alert)
-            val lp2 = LinearLayout.LayoutParams(dp(32f), dp(32f)).apply {
-                gravity = Gravity.CENTER_VERTICAL
-                marginEnd = dp(2f)
-            }
-            searchField.addAdditionalIcon(captionIcon)
-            captionIcon.layoutParams = lp2
         }
 
-        // 3. Silent send toggle
-        val soundIcon = ImageView(context).apply {
-            scaleType = ImageView.ScaleType.CENTER
-            setImageResource(R.drawable.input_notify_off)
-            background = Theme.createSelectorDrawable(
-                Theme.getColor(Theme.key_listSelector, alert.resourcesProvider),
-                1,
-                dp(16f)
-            )
-            contentDescription = LocaleController.getString(R.string.SendWithoutSound)
-            setOnClickListener {
-                state.silentSend = !state.silentSend
-                updateSoundIcon(alert)
-                val text = LocaleController.getString(
-                    if (state.silentSend) R.string.SendWithoutSound else R.string.InuForwardProSendWithSound
-                )
-                showBulletin(alert, R.drawable.input_notify_off, text)
+        val authorIcon = makeToggle(R.drawable.msg_openprofile, R.string.ShowSendersName)
+        val silentIcon = makeToggle(R.drawable.input_notify_off, R.string.SendWithoutSound)
+        val captionIcon = makeToggle(R.drawable.outline_caption_24, R.string.InuForwardProHideCaption)
+        state.authorIcon = authorIcon
+        state.silentSendIcon = silentIcon
+        state.captionIcon = captionIcon
+
+        authorIcon.setOnClickListener {
+            alert.showSendersName = !alert.showSendersName
+            updateQuickToggleIcons(alert)
+        }
+        silentIcon.setOnClickListener {
+            state.silentSend = !state.silentSend
+            updateQuickToggleIcons(alert)
+        }
+        captionIcon.setOnClickListener {
+            state.hideCaption = !state.hideCaption
+            updateQuickToggleIcons(alert)
+        }
+
+        frameLayout.addView(authorIcon, LayoutHelper.createFrame(32, 32f, Gravity.TOP or Gravity.RIGHT, 0f, 11f, 11f, 0f))
+        frameLayout.addView(silentIcon, LayoutHelper.createFrame(32, 32f, Gravity.TOP or Gravity.RIGHT, 0f, 11f, 47f, 0f))
+        frameLayout.addView(captionIcon, LayoutHelper.createFrame(32, 32f, Gravity.TOP or Gravity.RIGHT, 0f, 11f, 83f, 0f))
+
+        updateQuickToggleIcons(alert)
+    }
+
+    @JvmStatic
+    fun updateQuickToggleIcons(alert: ShareAlert) {
+        val state = getState(alert)
+        if (!state.active) return
+        state.authorIcon?.alpha = if (alert.showSendersName) 0.5f else 1f
+        state.silentSendIcon?.alpha = if (state.silentSend) 1f else 0.5f
+        state.captionIcon?.alpha = if (state.hideCaption) 1f else 0.5f
+    }
+
+    // entiny: folder-tab strip via stock FilterTabsView; dialogFilters already has the default "All Chats" entry (id 0).
+    @JvmStatic
+    fun attachFolderTabs(alert: ShareAlert, frameLayout: FrameLayout) {
+        val state = getState(alert)
+        if (!state.active) return
+        val context = alert.context ?: return
+        val filters = MessagesController.getInstance(alert.currentAccount).dialogFilters
+        if (filters.isNullOrEmpty()) return
+
+        val tabsView = FilterTabsView(context, alert.resourcesProvider)
+        tabsView.setDelegate(object : FilterTabsView.FilterTabsViewDelegate {
+            override fun onPageSelected(tab: FilterTabsView.Tab, forward: Boolean) {
+                state.selectedFilterId = tab.id
+                alert.inu_refreshDialogsList()
             }
+            override fun onPageScrolled(progress: Float) {}
+            override fun onSamePageSelected() {}
+            override fun getTabCounter(tabId: Int): Int = 0
+            override fun didSelectTab(tabView: FilterTabsView.TabView, selected: Boolean): Boolean = true
+            override fun isTabMenuVisible(): Boolean = false
+            override fun onDeletePressed(id: Int) {}
+            override fun onPageReorder(fromId: Int, toId: Int) {}
+            override fun canPerformActions(): Boolean = true
+        })
+        for (filter in filters) {
+            val title = if (filter.isDefault) LocaleController.getString(R.string.FilterAllChats) else filter.name
+            tabsView.addTab(filter.id, filter.id, title, true, filter.isDefault, false)
         }
-        state.soundIcon = soundIcon
-        updateSoundIcon(alert)
-        val lp3 = LinearLayout.LayoutParams(dp(32f), dp(32f)).apply {
-            gravity = Gravity.CENTER_VERTICAL
-            marginEnd = dp(2f)
+        tabsView.finishAddingTabs(false)
+
+        state.filterTabsView = tabsView
+        state.selectedFilterId = filters.firstOrNull { it.isDefault }?.id ?: filters[0].id
+        frameLayout.addView(
+            tabsView,
+            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP.toFloat(), Gravity.TOP or Gravity.LEFT, 0f, FOLDER_TABS_TOP_MARGIN_DP, 0f, 0f)
+        )
+    }
+
+    @JvmStatic
+    fun isDialogAllowedByFolder(alert: ShareAlert, dialogId: Long): Boolean {
+        val state = getState(alert)
+        if (!state.active) return true
+        val filter = MessagesController.getInstance(alert.currentAccount).dialogFilters
+            ?.firstOrNull { it.id == state.selectedFilterId } ?: return true
+        if (filter.isDefault) return true
+        // entiny: filter.dialogs is only populated when this filter is one of DialogsActivity's own selectedDialogFilter slots — use includesDialog() instead, it's self-contained.
+        return filter.includesDialog(AccountInstance.getInstance(alert.currentAccount), dialogId)
+    }
+
+    @JvmStatic
+    fun getFolderTabsHeightDp(alert: ShareAlert): Int {
+        if (!getState(alert).active) return 0
+        val filters = MessagesController.getInstance(alert.currentAccount).dialogFilters
+        if (filters.isNullOrEmpty()) return 0
+        // entiny: total header needed for the tab strip minus the stock 58dp band search already sits in
+        return (FOLDER_TABS_TOP_MARGIN_DP + FolderHelper.TAB_BAR_HEIGHT_DP + FOLDER_TABS_BOTTOM_GAP_DP - 58).toInt()
+    }
+
+    @JvmStatic
+    fun attachHideCaptionRow(alert: ShareAlert, sendPopupLayout1: ActionBarPopupWindow.ActionBarPopupWindowLayout, darkTheme: Boolean) {
+        val state = getState(alert)
+        if (!state.active) return
+        val context = alert.context ?: return
+        val hideCaptionView = ActionBarMenuSubItem(context, true, false, true, alert.resourcesProvider)
+        if (darkTheme) {
+            hideCaptionView.setTextColor(Theme.getColor(Theme.key_voipgroup_nameText, alert.resourcesProvider))
         }
-        searchField.addAdditionalIcon(soundIcon)
-        soundIcon.layoutParams = lp3
+        sendPopupLayout1.addView(hideCaptionView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))
+        hideCaptionView.setTextAndIcon(LocaleController.getString(R.string.InuForwardProHideCaption), 0)
+        hideCaptionView.setChecked(state.hideCaption)
+        hideCaptionView.setOnClickListener {
+            state.hideCaption = !state.hideCaption
+            hideCaptionView.setChecked(state.hideCaption)
+        }
     }
 
     @JvmStatic
     fun attachEditButton(alert: ShareAlert, writeButtonContainer: FrameLayout) {
-        if (!InuConfig.FORWARD_PRO.value) return
+        val state = getState(alert)
+        if (!state.active) return
         val context = alert.context ?: return
         val msgs = alert.sendingMessageObjects
         if (msgs == null || msgs.isEmpty()) return
 
-        val state = getState(alert)
         val theme = alert.resourcesProvider
 
         val editButton = ImageView(context).apply {
@@ -232,14 +256,10 @@ object ForwardProHelper {
         }
         state.editButton = editButton
 
-        // 38dp to match the send button's own circle height (SendButton.setCircleSize(52, 38) —
-        // the 38 is what's actually drawn), so both read as a matched pair: with the 4dp left
-        // margin this also centers it exactly within the 46dp strip getExtraCommentPadding()
-        // reserves (4 + 38 + 4 = 46), instead of the old 40dp/4dp-left/0dp-right split that
-        // crowded it 2dp off-center toward the send button.
+        // entiny: anchored from the container's right edge (where the send circle sits), not the left.
         writeButtonContainer.addView(
             editButton,
-            LayoutHelper.createFrame(38, 38f, Gravity.LEFT or Gravity.CENTER_VERTICAL, 4f, 0f, 4f, 0f)
+            LayoutHelper.createFrame(38, 38f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 65f, 10f)
         )
     }
 
@@ -300,7 +320,6 @@ object ForwardProHelper {
 
                 // Editing text must send without author header
                 alert.showSendersName = false
-                updateTopAuthorIcon(alert)
 
                 showBulletin(alert, R.drawable.msg_edit, LocaleController.getString(R.string.InuForwardProEditedNotice))
             }

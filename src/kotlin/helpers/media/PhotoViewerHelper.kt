@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.FrameLayout
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.chat.ForwardProHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.FileLog
@@ -26,6 +27,7 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.PhotoViewer
 import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.ui.Stories.recorder.StoryEntry
@@ -270,6 +272,24 @@ object PhotoViewerHelper {
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
         menuItem.addSubItem(MENU_DELETE_PROFILE_PHOTOS, R.drawable.inu_tabler_photo_x, LocaleController.getString(R.string.InuDeleteProfilePhotos))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
+    }
+
+    // entiny: long-press on the share icon offers a one-off stock-vs-Forward-Pro choice.
+    @JvmStatic
+    fun attachSendLongPress(viewer: PhotoViewer, sendItem: ActionBarMenuItem) {
+        if (!InuConfig.FORWARD_PRO.value) return
+        sendItem.setOnLongClickListener {
+            ItemOptions.makeOptions(viewer.containerView, null, sendItem)
+                .add(R.drawable.msg_forward, LocaleController.getString(R.string.InuForwardProUseStock)) {
+                    ForwardProHelper.requestStockShareOnce()
+                    viewer.onSharePressed()
+                }
+                .add(R.drawable.msg_edit, LocaleController.getString(R.string.InuForwardPro)) {
+                    viewer.onSharePressed()
+                }
+                .show()
+            true
+        }
     }
 
     @JvmStatic

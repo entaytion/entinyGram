@@ -1425,7 +1425,6 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Quick toggles for author, caption, and silent sending in the forward dialog, plus editing before forwarding.</string>
     <string name="InuForwardProHideCaption">Hide captions</string>
-    <string name="InuForwardProShowCaption">Show captions</string>
-    <string name="InuForwardProSendWithSound">Send with sound</string>
     <string name="InuForwardProEditedNotice">Edited (sending without author)</string>
+    <string name="InuForwardProUseStock">Stock Telegram</string>
 </resources>

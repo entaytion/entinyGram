@@ -1383,7 +1383,5 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">転送ダイアログでの送信者名、キャプション、通知音のクイック切り替えおよび転送前の編集。</string>
     <string name="InuForwardProHideCaption">キャプションを非表示</string>
-    <string name="InuForwardProShowCaption">キャプションを表示</string>
-    <string name="InuForwardProSendWithSound">通知音付きで送信</string>
     <string name="InuForwardProEditedNotice">編集済み（送信者なしで送信）</string>
 </resources>

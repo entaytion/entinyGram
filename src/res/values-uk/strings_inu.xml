@@ -1424,7 +1424,6 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Швидкі перемикачі автора, підпису та беззвучного надсилання у меню пересилання, а також редагування перед відправкою.</string>
     <string name="InuForwardProHideCaption">Приховати підпис</string>
-    <string name="InuForwardProShowCaption">Показати підпис</string>
-    <string name="InuForwardProSendWithSound">Надіслати зі звуком</string>
     <string name="InuForwardProEditedNotice">Відредаговано (надсилається без автора)</string>
+    <string name="InuForwardProUseStock">Стоковий Telegram</string>
 </resources>

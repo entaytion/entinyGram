@@ -1405,7 +1405,5 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">Быстрые переключатели автора, подписи и беззвучной отправки в окне пересылки, а также редактирование перед отправкой.</string>
     <string name="InuForwardProHideCaption">Скрыть подпись</string>
-    <string name="InuForwardProShowCaption">Показать подпись</string>
-    <string name="InuForwardProSendWithSound">Отправить со звуком</string>
     <string name="InuForwardProEditedNotice">Отредактировано (отправляется без автора)</string>
 </resources>

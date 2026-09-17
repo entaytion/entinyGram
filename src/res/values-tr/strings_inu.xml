@@ -1381,7 +1381,5 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">İletme penceresinde yazar, başlık ve sessiz gönderme için hızlı geçişler ve iletmeden önce düzenleme.</string>
     <string name="InuForwardProHideCaption">Başlıkları gizle</string>
-    <string name="InuForwardProShowCaption">Başlıkları göster</string>
-    <string name="InuForwardProSendWithSound">Sesli gönder</string>
     <string name="InuForwardProEditedNotice">Düzenlendi (yazarsız gönderiliyor)</string>
 </resources>

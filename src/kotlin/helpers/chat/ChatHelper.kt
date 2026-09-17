@@ -86,6 +86,7 @@ import org.telegram.ui.Components.RLottieDrawable
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.ReactionsContainerLayout
 import org.telegram.ui.Components.ScaleStateListAnimator
+import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.URLSpanUserMention
 import org.telegram.ui.Components.UndoView
 import org.telegram.ui.DialogsActivity
@@ -136,6 +137,7 @@ object ChatHelper {
     const val OPTION_DELETE_PERMANENTLY = 525
     const val OPTION_BURN_ONE_TIME = 526
     const val OPTION_SAVE_ONE_TIME = 527
+    const val OPTION_FORWARD_PRO = 528
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -443,6 +445,11 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuForwardNoQuote))
             options.add(OPTION_FORWARD_NO_QUOTE)
             icons.add(R.drawable.msg_forward_noquote)
+
+            // entiny: always offered — forces Forward Pro for this one share regardless of the global setting.
+            items.add(LocaleController.getString(R.string.InuForwardPro))
+            options.add(OPTION_FORWARD_PRO)
+            icons.add(R.drawable.msg_forward)
         }
 
         if (allowSendActions && isMenuItemEnabled(MessageMenuConfig.Item.REPEAT) &&
@@ -765,6 +772,23 @@ object ChatHelper {
                     messages.add(selectedObject)
                 }
                 forwardToSavedMessages(activity, messages)
+            }
+
+            OPTION_FORWARD_PRO -> {
+                val context = activity.parentActivity ?: return true
+                val messages = ArrayList<MessageObject>()
+                if (selectedObjectGroup != null) {
+                    messages.addAll(selectedObjectGroup.messages)
+                } else {
+                    messages.add(selectedObject)
+                }
+                ForwardProHelper.requestForwardProOnce()
+                val alert = ShareAlert(
+                    context, activity, messages, null, null,
+                    ChatObject.isChannel(activity.currentChat), null, null,
+                    false, false, false, null, activity.themeDelegate
+                )
+                activity.showDialog(alert)
             }
 
             OPTION_REPLY_IN -> {

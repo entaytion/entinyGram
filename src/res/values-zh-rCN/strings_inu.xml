@@ -1383,7 +1383,5 @@
     <string name="InuForwardPro">Forward Pro</string>
     <string name="InuForwardProInfo">在转发对话框中提供发送者、文字说明和静音发送的快速开关，以及转发前编辑。</string>
     <string name="InuForwardProHideCaption">隐藏文字说明</string>
-    <string name="InuForwardProShowCaption">显示文字说明</string>
-    <string name="InuForwardProSendWithSound">带声音发送</string>
     <string name="InuForwardProEditedNotice">已编辑（将不带作者发送）</string>
 </resources>
