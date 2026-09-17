@@ -22,7 +22,7 @@ object ExchangeRates {
     private const val CACHE_TTL_MS = 5 * 60 * 1000L
 
     val MAIN_CURRENCIES = arrayOf(
-        "USD", "EUR", "RUB", "GBP", "KZT", "TRY", "UAH", "PLN", "AED", "CNY", "JPY", "BYN", "ILS", "CZK", "INR",
+        "USD", "EUR", "RUB", "GBP", "KZT", "TRY", "UAH", "PLN", "AED", "CNY", "JPY", "BYN", "ILS", "CZK", "INR", "IRR",
         "TON", "BTC", "ETH"
     )
 

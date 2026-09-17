@@ -64,7 +64,8 @@ abstract class TelemetryPill(context: Context, resourcesProvider: Theme.Resource
             AndroidUtilities.runOnUIThread {
                 if (generation != measureGeneration) return@runOnUIThread
                 if (text == null) {
-                    // entiny: CpuPill's first read only seeds a baseline -- keep the shimmer instead of flashing a placeholder.
+                    // entiny: a pill whose first read only seeds a baseline (e.g. a delta-based reading)
+                    // returns null here -- keep the shimmer instead of flashing a placeholder.
                     startLoading()
                     return@runOnUIThread
                 }

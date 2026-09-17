@@ -6,7 +6,6 @@ import desu.inugram.helpers.pillstack.pills.BasePill
 import desu.inugram.helpers.pillstack.pills.BatteryPill
 import desu.inugram.helpers.pillstack.pills.CachePill
 import desu.inugram.helpers.pillstack.pills.ClockPill
-import desu.inugram.helpers.pillstack.pills.CpuPill
 import desu.inugram.helpers.pillstack.pills.DcPingPill
 import desu.inugram.helpers.pillstack.pills.GhostPill
 import desu.inugram.helpers.pillstack.pills.NetSpeedPill
@@ -35,7 +34,6 @@ object PillRegistry {
         register(PillInfo(PillType.PROXY.id, PillType.PROXY.iconRes) { c, r -> ProxyPill(c, r) })
         register(PillInfo(PillType.GHOST.id, PillType.GHOST.iconRes) { c, r -> GhostPill(c, r) })
         register(PillInfo(PillType.RAM.id, PillType.RAM.iconRes) { c, r -> RamPill(c, r) })
-        register(PillInfo(PillType.CPU.id, PillType.CPU.iconRes) { c, r -> CpuPill(c, r) })
         register(PillInfo(PillType.NET_SPEED.id, PillType.NET_SPEED.iconRes) { c, r -> NetSpeedPill(c, r) })
         register(PillInfo(PillType.DC_PING.id, PillType.DC_PING.iconRes) { c, r -> DcPingPill(c, r) })
         register(PillInfo(PillType.BATTERY.id, PillType.BATTERY.iconRes) { c, r -> BatteryPill(c, r) })

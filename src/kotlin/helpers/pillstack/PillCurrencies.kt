@@ -14,7 +14,7 @@ object PillCurrencies {
     const val AUTO = "AUTO"
 
     val TARGET_CURRENCIES = arrayOf(
-        AUTO, "USD", "EUR", "RUB", "GBP", "KZT", "TRY", "UAH", "PLN", "AED", "CNY", "JPY", "BYN", "ILS", "CZK", "INR"
+        AUTO, "USD", "EUR", "RUB", "GBP", "KZT", "TRY", "UAH", "PLN", "AED", "CNY", "JPY", "BYN", "ILS", "CZK", "INR", "IRR"
     )
 
     fun normalize(code: String?): String = code?.trim()?.uppercase(Locale.ROOT).orEmpty()

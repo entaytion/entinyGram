@@ -90,7 +90,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **customizable My Profile info rows**: independent reordering and show/hide toggles for the phone number, bio, username, ID, and estimated registration date rows on your own profile
 - 📡 **wide channel posts**: channel posts stretch to the full available width instead of narrow bubbles, with accurate proportional album layout (no squished 3-item rows or aspect ratio distortion)
 - 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
-- 📡 **pill stack (beta)**, ported from [exteraGram](https://github.com/exteraless/exteraless): small interactive pills in the chats search bar — clock, weather, cache size, proxy status, Ghost Mode toggle, RAM/CPU/network-speed/DC-ping telemetry, and live currency/crypto rates (BTC, ETH, gold, TON, and any fiat pair you add). Pick how many are visible at once, enable/reorder which pills show, and manage your own rate pairs from Settings
+- 📡 **pill stack (beta)**, ported from [exteraGram](https://github.com/exteraless/exteraless): small interactive pills in the chats search bar — clock, weather, cache size, proxy status, Ghost Mode toggle, RAM/network-speed/DC-ping telemetry, and live currency/crypto rates (BTC, ETH, gold, TON, and any fiat pair you add). Pick how many are visible at once, enable/reorder which pills show, and manage your own rate pairs from Settings
 
 ### profile & identity tools
 

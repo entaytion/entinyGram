@@ -150,7 +150,6 @@
     <string name="InuPillStackWeather">Погода</string>
     <string name="InuPillStackProxy">Проксі</string>
     <string name="InuPillStackRam">RAM</string>
-    <string name="InuPillStackCpu">CPU</string>
     <string name="InuPillStackNetSpeed">Швидкість мережі</string>
     <string name="InuPillStackDcPing">Пінг дата-центру</string>
     <string name="InuPillStackBattery">Батарея</string>

@@ -9,7 +9,7 @@ class PillStackMenuConfig(key: String) : MenuOrderConfig<PillType>(key, PillType
 
     companion object {
         private val OFF_BY_DEFAULT = setOf(
-            PillType.WEATHER, PillType.RAM, PillType.CPU, PillType.NET_SPEED, PillType.DC_PING,
+            PillType.WEATHER, PillType.RAM, PillType.NET_SPEED, PillType.DC_PING,
             PillType.BATTERY, PillType.STORAGE,
         )
     }

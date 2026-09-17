@@ -217,7 +217,6 @@
     <string name="InuPillStackWeather">Weather</string>
     <string name="InuPillStackProxy">Proxy</string>
     <string name="InuPillStackRam">RAM</string>
-    <string name="InuPillStackCpu">CPU</string>
     <string name="InuPillStackNetSpeed">Network speed</string>
     <string name="InuPillStackDcPing">Data center ping</string>
     <string name="InuPillStackBattery">Battery</string>

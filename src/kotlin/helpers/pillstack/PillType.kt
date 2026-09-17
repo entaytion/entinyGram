@@ -16,7 +16,6 @@ enum class PillType(
     PROXY(4, "proxy", R.string.InuPillStackProxy, R.drawable.proxy_on_solar),
     GHOST(5, "ghost", R.string.InuGhostMode, R.drawable.inu_ghost),
     RAM(6, "ram", R.string.InuPillStackRam, R.drawable.pillstack_ram),
-    CPU(7, "cpu", R.string.InuPillStackCpu, R.drawable.pillstack_cpu),
     NET_SPEED(8, "net_speed", R.string.InuPillStackNetSpeed, R.drawable.pillstack_netspeed),
     DC_PING(9, "dc_ping", R.string.InuPillStackDcPing, R.drawable.pillstack_ping),
     BATTERY(10, "battery", R.string.InuPillStackBattery, R.drawable.phosphor_battery_charging),
