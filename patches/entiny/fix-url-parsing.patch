@@ -14,9 +14,9 @@ Content-Transfer-Encoding: 8bit
 - keep multi-component TLDs (is-a.dev, github.io, co.uk) and hyphenated subdomains working
 - bio and channel/group description links were gated behind Telegram Premium (non-premium accounts got no links at all); always parse them now
 ---
- .../main/java/org/telegram/messenger/AndroidUtilities.java  | 1 +
- .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ .../java/org/telegram/messenger/AndroidUtilities.java    | 9 ++++++++-
+ .../src/main/java/org/telegram/ui/ProfileActivity.java   | 6 +++---
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 index 0000000..0000000 100644
@@ -30,6 +30,28 @@ index 0000000..0000000 100644
          }
          return success;
      }
+@@ -1364,7 +1365,7 @@ public class AndroidUtilities {
+ 
+     @Deprecated // use addLinksSafe
+     public static boolean addLinks(Spannable text, int mask, boolean internalOnly, boolean removeOldReplacements) {
+-        if (text == null || containsUnsupportedCharacters(text.toString()) || mask == 0) {
++        if (text == null || mask == 0) {
+             return false;
+         }
+         URLSpan[] old = text.getSpans(0, text.length(), URLSpan.class);
+@@ -1387,6 +1388,12 @@ public class AndroidUtilities {
+         }
+         for (int a = 0, N = links.size(); a < N; a++) {
+             LinkSpec link = links.get(a);
++            // Reject only matches whose own matched text contains box-drawing/geometric-shape
++            // characters (possible link-spoofing); a decorative bullet elsewhere in the same
++            // string used to abort detection for every other, unrelated URL in it.
++            if (containsUnsupportedCharacters(text.subSequence(link.start, link.end).toString())) {
++                continue;
++            }
+             URLSpan[] oldSpans = text.getSpans(link.start, link.end, URLSpan.class);
+             if (oldSpans != null && oldSpans.length > 0) {
+                 for (int b = 0; b < oldSpans.length; b++) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
