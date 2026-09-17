@@ -364,14 +364,28 @@ jobs:
             mv release_body.tmp.md release_body.md
           fi
 
-          # Append compare link using the previous release tag. GitHub only auto-marks
-          # non-prerelease releases as "latest", so this list naturally still reflects the last
-          # real release even once pre-releases start showing up in it.
-          prev_tag=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+          # Append compare link using the previous release tag. `gh release list` without
+          # --exclude-pre-releases returns the single most recent tag of ANY kind, so a stable
+          # release landing after a run of prereleases would otherwise diff against the last
+          # prerelease instead of the last stable one -- shrinking "full changelog" down to
+          # just that last prerelease's handful of commits. Mirrors the LAST_RELEASE_SHA vs
+          # LAST_BUILD_SHA split below: a stable release always diffs from the last stable
+          # release; a prerelease diffs from the last build of any kind, same as before, so
+          # consecutive prereleases each stay incremental.
+          if [ "$PRE_RELEASE" = 'true' ]; then
+            prev_tag=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+          else
+            prev_tag=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+          fi
           if [ -n "$prev_tag" ] && [ "$prev_tag" != "$tag" ]; then
             printf '\n\n**Full Changelog**: https://github.com/%s/compare/%s...%s\n' \
               "$GITHUB_REPOSITORY" "$prev_tag" "$tag" >> release_body.md
           fi
+
+          # Handed to the next step (Upload to Telegram) so the CI channel post can carry the
+          # same compare link instead of only the AI-trimmed changelog.
+          echo "RELEASE_TAG=$tag"        >> "$GITHUB_ENV"
+          echo "PREV_RELEASE_TAG=$prev_tag" >> "$GITHUB_ENV"
 
           flags=()
           if [ "$PRE_RELEASE" = 'true' ]; then
@@ -389,6 +403,9 @@ jobs:
             "$apk"
 
       - name: Upload to Telegram (CI channel + optional main channel)
+        # RELEASE_TAG / PREV_RELEASE_TAG come from the "Create GitHub release" step above via
+        # $GITHUB_ENV, not listed here — upload.ts reads them to build the same compare-diff
+        # link that step already appends to the GitHub release body.
         env:
           TELEGRAM_API_ID:       ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH:     ${{ secrets.TELEGRAM_API_HASH }}

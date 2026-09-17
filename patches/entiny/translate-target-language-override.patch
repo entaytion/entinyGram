@@ -18,9 +18,9 @@ clobber the user's global preference.
 - RestrictedLanguagesSelectActivity.isManualChanged() lets a user's Do Not Translate
   edits stick instead of being silently re-derived from system locale
 ---
- .../messenger/TranslateController.java        | 50 +++++++++++++------
- .../ui/RestrictedLanguagesSelectActivity.java | 45 ++++++++---------
- 2 files changed, 57 insertions(+), 38 deletions(-)
+ .../messenger/TranslateController.java        | 73 +++++++++----------
+ .../ui/RestrictedLanguagesSelectActivity.java | 45 ++++++------
+ 2 files changed, 55 insertions(+), 63 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 index 0000000..0000000 100644
@@ -110,25 +110,34 @@ index 0000000..0000000 100644
                  return;
              }
              final PollText translatedText = message.messageOwner.translatedPoll;
-@@ -1832,7 +1839,7 @@ public class TranslateController extends BaseController {
+@@ -1832,48 +1839,34 @@ public class TranslateController extends BaseController {
      }
  
      private boolean isLanguageRestricted(String lng) {
 -        return isLanguageRestricted(lng, null);
+-    }
+-
+-    // entinyGram: `message` is the message the language was read off, where the caller has one.
+-    //
+-    // TRANSLATE_OUTGOING needs an exemption from the do-not-translate list because an outgoing
+-    // message is written in the user's own language, and that language is in the list by default -
+-    // without it, "translate my messages" could never translate anything. But the exemption belongs
+-    // to the outgoing message, not to the setting: checking the flag alone (all this could do with
+-    // no message in hand) switched the entire list off for INCOMING messages, story captions and
+-    // photo captions too. The user's three do-not-translate languages silently stopped applying
+-    // anywhere the moment they turned on a toggle whose description only mentions their own
+-    // messages. Every caller that has a message now passes it, and the two dialog-level callers
+-    // (which have only a cached language) correctly get no exemption at all.
+-    //
+-    // INSTANT_TRANSLATE_BANNER used to sit in this same early return, which was pure duplication:
+-    // ignoring the do-not-translate list is what FORCE_TRANSLATE is for, and FORCE_TRANSLATE also
+-    // makes every dialog translatable outright (see isDialogTranslatable), so the banner toggle's
+-    // copy of that behaviour could never be observed on its own. What is actually its own is the
+-    // one-message quorum in checkLanguage(); that stays.
 +        return isLanguageRestricted(lng, null, true);
-     }
- 
-     // entinyGram: `message` is the message the language was read off, where the caller has one.
-@@ -1852,9 +1859,19 @@ public class TranslateController extends BaseController {
-     // makes every dialog translatable outright (see isDialogTranslatable), so the banner toggle's
-     // copy of that behaviour could never be observed on its own. What is actually its own is the
-     // one-message quorum in checkLanguage(); that stays.
-+    //
-+    // `respectForceTranslate` separates the two things FORCE_TRANSLATE does: it should override the
-+    // language gate when deciding whether to *translate a message*, but not when deciding whether to
-+    // *show the banner* - the banner is a Telegram UI element that belongs to the dialog's own
-+    // language, and forcing it on for every chat makes the toggle useless when off and annoying when
-+    // on. Callers that need the override pass true (the default); the banner decision passes false.
++    }
++
++    // entiny: `message` enables per-message exceptions (e.g. TRANSLATE_OUTGOING) without breaking dialog-level calls; respectForceTranslate gates override vs banner-show logic.
      private boolean isLanguageRestricted(String lng, MessageObject message) {
 +        return isLanguageRestricted(lng, message, true);
 +    }
@@ -140,7 +149,15 @@ index 0000000..0000000 100644
              return false;
          }
          if (message != null && message.isOutOwner() && desu.inugram.InuConfig.TRANSLATE_OUTGOING.getValue()) {
-@@ -1869,11 +1886,14 @@ public class TranslateController extends BaseController {
+             return false;
+         }
+-        // entinyGram: chat translation is no longer premium-gated (see isFeatureAvailable), so the
+-        // Do Not Translate list has to apply to non-premium users too. Stock only consulted it for
+-        // premium and fell back to "the app locale is the single exempt language", which - now that
+-        // the banner is unlocked for everyone - made it pop up in every foreign-language chat with
+-        // no way to opt a language out. getRestrictedLanguages() already defaults to the app locale
+-        // when the user never touched the list, so the locale check below is only a floor.
++        // entiny: Do Not Translate list applies to non-premium users too now that chat translation is unlocked for everyone (stock only consulted it for premium).
          if (RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(lng)) {
              return true;
          }

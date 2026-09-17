@@ -137,27 +137,33 @@ try {
    *
    * Handles:
    *   - Markdown links:  [text](url)  → <a href="url">text</a>
+   *   - Markdown bold:   **text**     → <b>text</b>
    *   - Everything else is HTML-escaped and passed through as-is.
    *
-   * The AI may emit tg://entinySettings/<slug> links in the tg_en/tg_uk lines when it
-   * finds a close match in the settings registry — this parser renders them as proper
-   * Telegram clickable links.
+   * The AI may emit tg://entinySettings/<slug> links and **bold** spans in the tg_uk
+   * line when it finds a close match in the settings registry / wants to anchor a
+   * flagship feature name — this parser renders them as proper Telegram entities.
    */
   function notesToEntities(text: string) {
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
     const htmlLines = lines.map(line => {
-      // Split the line on [text](url) occurrences and reassemble as HTML
+      // Split the line on [text](url) and **text** occurrences (in order) and
+      // reassemble as HTML.
       const parts: ReturnType<typeof html>[] = []
       let last = 0
-      const linkRe = /\[([^\]]+)\]\(([^)]+)\)/g
+      const tokenRe = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g
       let m: RegExpExecArray | null
-      while ((m = linkRe.exec(line)) !== null) {
+      while ((m = tokenRe.exec(line)) !== null) {
         if (m.index > last) {
           parts.push(html`${esc(line.slice(last, m.index))}`)
         }
-        const linkText = m[1]
-        const linkUrl = m[2]
-        parts.push(html`<a href="${linkUrl}">${esc(linkText)}</a>`)
+        if (m[1] !== undefined) {
+          const linkText = m[1]
+          const linkUrl = m[2]
+          parts.push(html`<a href="${linkUrl}">${esc(linkText)}</a>`)
+        } else {
+          parts.push(html`<b>${esc(m[3])}</b>`)
+        }
         last = m.index + m[0].length
       }
       if (last < line.length) {
@@ -195,6 +201,18 @@ try {
     ? html`<br/>⬇️ The last release — <a href="${postUrl(lastReleaseId)}">download</a>`
     : ''
 
+  // ── GitHub compare link ─────────────────────────────────────────────────────
+  // The GitHub release itself already gets a "Full Changelog: .../compare/prev...tag" line
+  // (see the "Create GitHub release" step in apk.yml, which exports both tags via $GITHUB_ENV
+  // ahead of this script). Mirrored here so the CI channel — where testers actually watch for
+  // builds — always has the same full-diff link, not just the AI-trimmed changelog above.
+  // Omitted gracefully if either tag is missing (e.g. a manual/local run) or there's no prior tag.
+  const releaseTagName = process.env.RELEASE_TAG ?? ''
+  const prevReleaseTag = process.env.PREV_RELEASE_TAG ?? ''
+  const compareHtml = releaseTagName && prevReleaseTag && prevReleaseTag !== releaseTagName
+    ? html`<br/>📝 <a href="https://github.com/${info.repo}/compare/${prevReleaseTag}...${releaseTagName}">Full diff on GitHub</a>`
+    : ''
+
   // 1) Upload the APK document to the CI channel — always happens. The changelog goes in a
   // <blockquote>: UpdateHelper.kt's extractApkInfo/applyUpdate clips the update-dialog text to
   // exactly this entity, discarding the #release/label wrapper text around it.
@@ -207,7 +225,7 @@ try {
   const { file } = info.apkFiles[0]
 
   // Construct caption safely respecting Telegram's 1024 character limit for media captions
-  const buildCaption = (notesEntity: ReturnType<typeof html>) => html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${notesEntity}</blockquote>${lastReleaseHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
+  const buildCaption = (notesEntity: ReturnType<typeof html>) => html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${notesEntity}</blockquote>${lastReleaseHtml}${compareHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
 
   let caption = buildCaption(ciHtml)
   let needsCiFollowup = false

@@ -1,9 +1,10 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sat, 29 Aug 2026 10:59:02 +0300
-Subject: Remove unused Android Auto integration and Play Store referrer receiver
+Subject: chore(build): remove unused Android Auto/referrer integration and ignore local CMake artifacts
 
 ---
+ .gitignore                                    |   3 +
  TMessagesProj/build.gradle                    |   6 +-
  TMessagesProj/src/main/AndroidManifest.xml    |  25 -
  .../telegram/messenger/RefererReceiver.java   |  23 -
@@ -14,7 +15,7 @@ Subject: Remove unused Android Auto integration and Play Store referrer receiver
  .../src/main/res/xml/automotive_app_desc.xml  |   5 -
  TMessagesProj_App/build.gradle                |   4 +-
  gradle.properties                             |   3 +
- 13 files changed, 13 insertions(+), 961 deletions(-)
+ 14 files changed, 16 insertions(+), 961 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
@@ -24,6 +25,23 @@ Subject: Remove unused Android Auto integration and Play Store referrer receiver
  delete mode 100644 TMessagesProj_AppHuawei/google-services.json
  delete mode 100644 TMessagesProj_AppStandalone/google-services.json
 
+diff --git a/.gitignore b/.gitignore
+index 0000000..0000000 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,5 +1,6 @@
+ .idea/
+ .gradle/
++.kotlin/
+ build/
+ obj/
+ *.iml
+@@ -14,3 +15,5 @@ TMessagesProj_AppHockeyApp/afat/
+ TMessagesProj_AppStandalone/afat/
+ TMessagesProj_AppHuawei/afat/
+ TMessagesProj/jni/ffmpeg/build_android
++**/.cxx/
++.local_build_number
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle

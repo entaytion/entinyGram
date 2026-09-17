@@ -118,6 +118,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_channel,
             factory = ::FeedExcludedChannelsSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("feed", R.string.InuFeed),
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
                 SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),
             ),

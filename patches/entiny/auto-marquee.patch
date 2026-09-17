@@ -1,21 +1,112 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 23 Aug 2026 23:56:36 +0300
-Subject: Add auto-scrolling marquee for long titles across the app
+Subject: feat(chat-header): auto-scrolling marquee for long titles + iOS-style header with centered alignment
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  |  4 ++
- .../ui/Components/ChatAvatarContainer.java    | 59 +++++++++++++++++--
- .../java/org/telegram/ui/ProfileActivity.java |  3 +
- 3 files changed, 60 insertions(+), 6 deletions(-)
+ .../org/telegram/ui/ActionBar/ActionBar.java  | 342 ++++++++++++++++--
+ .../telegram/ui/ActionBar/SimpleTextView.java | 129 ++++---
+ .../java/org/telegram/ui/ChatActivity.java    |  84 ++++-
+ .../BottomSheetWithRecyclerListView.java      |   1 +
+ .../ui/Components/ChatAvatarContainer.java    | 339 +++++++++++++++--
+ .../java/org/telegram/ui/DialogsActivity.java |   4 +
+ .../java/org/telegram/ui/ProfileActivity.java |   3 +
+ .../ui/Stories/DialogStoriesCell.java         |  14 +-
+ 8 files changed, 790 insertions(+), 126 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -527,6 +527,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -94,6 +94,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     private BlurredBackgroundDrawable glassDrawable;
+     private BlurredBackgroundDrawable glassDrawableBack;
+     private BlurredBackgroundDrawable glassDrawableMenu;
++    private Drawable glassDrawableAvatar;
+     public boolean inu_nonIsland;
+     private INavigationLayout.BackButtonState backButtonState = INavigationLayout.BackButtonState.BACK;
+     public ImageView backButtonImageView;
+@@ -199,6 +200,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     private boolean glassModeIsForum;
+ 
+     private ChatAvatarContainer chatAvatarContainer;
++    public int inu_glassTitleLeft;
++    public int inu_glassTitleRight;
++    public int inu_glassTop;
++    public int inu_glassBottom;
+ 
+     public void setGlassOnlyBack() {
+         glassOnlyBack = true;
+@@ -208,6 +213,49 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         this.chatAvatarContainer = chatAvatarContainer;
+     }
+ 
++    // entiny: centered chat header pill geometry (CherryGram-style) -- see entinyProto/comment-cleanup-notes.md.
++    public int inu_titlePillLeft;
++    public int inu_titlePillRight;
++    private final FactorAnimator inu_animatorPillWidth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320);
++
++    private static final int INU_PILL_TEXT_PADDING_DP = 16;
++    private static final int INU_PILL_MIN_WIDTH_DP = 120;
++    // entiny: absorbs the Paint#measureText vs StaticLayout#getLineWidth gap so subtitles don't false-trigger the ellipsis fade.
++    private static final int INU_PILL_TEXT_SLACK_DP = 3;
++
++    // entiny: symmetric avatar-room reservation only while the pill spans full width; compact pills reserve it on the avatar's side only.
++    private int inu_pillAvatarRoom() {
++        return chatAvatarContainer != null ? chatAvatarContainer.inu_getPillAvatarRoom() : 0;
++    }
++
++    private boolean inu_pillAvatarOnRight() {
++        return chatAvatarContainer != null && chatAvatarContainer.isRightAvatar();
++    }
++
++    // entiny: non-centered header's avatar x, in this action bar's own coords -- see entinyProto/comment-cleanup-notes.md.
++    public int inu_getStaticAvatarLeft() {
++        final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
++        return (hasBackButton ? dp(46) + dp(6) : 0) + dp(6) + dp(3);
++    }
++
++    public int inu_getPillTextInsetLeft() {
++        final int room = inu_pillAvatarRoom();
++        if (room == 0) {
++            return dp(INU_PILL_TEXT_PADDING_DP);
++        }
++        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
++        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || !inu_pillAvatarOnRight() ? room : 0);
++    }
++
++    public int inu_getPillTextInsetRight() {
++        final int room = inu_pillAvatarRoom();
++        if (room == 0) {
++            return dp(INU_PILL_TEXT_PADDING_DP);
++        }
++        final boolean symmetric = !desu.inugram.helpers.InuUtils.compactChatPill();
++        return dp(INU_PILL_TEXT_PADDING_DP) + (symmetric || inu_pillAvatarOnRight() ? room : 0);
++    }
++
+     public void setupGlass(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProvider colorProvider) {
+         setupGlass(factory, colorProvider, false);
+     }
+@@ -473,8 +521,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (subtitleTextView != null) {
              return;
          }
++        if (inu_shouldCenterActionBarTitle()) {
++            isCenterTitle = true;
++        }
+         subtitleTextView = new SimpleTextView(getContext());
+-        subtitleTextView.setGravity(Gravity.LEFT);
++        subtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
+         subtitleTextView.setVisibility(GONE);
+         subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
+         addView(subtitleTextView, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP));
+@@ -526,7 +577,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         if (titleTextView[i] != null) {
+             return;
+         }
++        if (inu_shouldCenterActionBarTitle()) {
++            isCenterTitle = true;
++        }
          titleTextView[i] = new SimpleTextView(getContext());
 +        if (desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue()) {
 +            titleTextView[i].setScrollNonFitText(true);
@@ -24,15 +115,776 @@ index 0000000..0000000 100644
          titleTextView[i].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
          if (titleColorToSet != 0) {
              titleTextView[i].setTextColor(titleColorToSet);
+@@ -558,6 +616,46 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+     }
+ 
++    // entiny: clamp to measured width -- with marquee on, getTextWidth() reports the full untruncated (dp(2000)) layout, which shoved the centering box past the edge.
++    private int inu_clampedTextHalfWidth(SimpleTextView view) {
++        return Math.min(view.getTextWidth(), view.getMeasuredWidth()) / 2;
++    }
++
++    private boolean inu_forceDisableCenterTitle;
++
++    private boolean inu_shouldCenterActionBarTitle() {
++        return !inu_forceDisableCenterTitle && desu.inugram.helpers.InuUtils.shouldCenterTitle(parentFragment);
++    }
++
++    private boolean inu_isRealDialogsMainScreen() {
++        return parentFragment != null && parentFragment.getClass().getSimpleName().equals("DialogsActivity");
++    }
++
++    private void syncInuCenteredGravities() {
++        if (titleTextView != null) {
++            for (int a = 0; a < titleTextView.length; a++) {
++                if (titleTextView[a] != null) {
++                    titleTextView[a].setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT | Gravity.CENTER_VERTICAL);
++                }
++            }
++        }
++        if (subtitleTextView != null) {
++            subtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
++        }
++        if (additionalSubtitleTextView != null) {
++            additionalSubtitleTextView.setGravity(isCenterTitle ? Gravity.CENTER : Gravity.LEFT);
++        }
++    }
++
++    public void inu_setForceDisableCenterTitle(boolean value) {
++        if (inu_forceDisableCenterTitle == value) {
++            return;
++        }
++        inu_forceDisableCenterTitle = value;
++        syncInuCenteredGravities();
++        requestLayout();
++    }
++
+     public void setTitleRightMargin(int value) {
+         titleRightMargin = value;
+     }
+@@ -1390,6 +1488,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         int actionBarHeight = getCurrentActionBarHeight();
+         int actionBarHeightSpec = MeasureSpec.makeMeasureSpec(actionBarHeight, MeasureSpec.EXACTLY);
+ 
++        // inu: sync the centered-title flag BEFORE anything is measured so that
++        // widthWrapContent and gravity always agree with the current screen state.
++        // Gravities are re-asserted unconditionally on every pass - a stale LEFT
++        // gravity combined with the symmetric layout throws the title off-center.
++        isCenterTitle = inu_shouldCenterActionBarTitle();
++        syncInuCenteredGravities();
++
+         ignoreLayoutRequest = true;
+         if (actionModeTop != null) {
+             FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) actionModeTop.getLayoutParams();
+@@ -1402,6 +1507,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+         setMeasuredDimension(width, actionBarHeight + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0) + extraHeight);
+ 
++        // inu: the centered-title pill has to be known before chatAvatarContainer is measured -
++        // that measure sizes title and subtitle to the pill's inner band, so a stale pill here
++        // would ellipsize them against the previous chat's width for a frame.
++        updateGlassBounds(width, getMeasuredHeight());
++
+         int textLeft;
+         if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
+             backButtonImageView.measure(MeasureSpec.makeMeasureSpec(dp(54), MeasureSpec.EXACTLY), actionBarHeightSpec);
+@@ -1409,6 +1519,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         } else {
+             textLeft = dp(AndroidUtilities.isTablet() ? 26 : 18);
+         }
++        if (avatarSearchImageView != null && avatarSearchImageView.getVisibility() != GONE) {
++            textLeft = Math.max(textLeft, dp(56 + 8) + avatarSearchImageView.getMeasuredWidth() + dp(8));
++        }
+         // textLeft += additionalTextLeft;
+ 
+         if (menu != null && menu.getVisibility() != GONE) {
+@@ -1467,6 +1580,9 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                 }
+ 
+                 if (titleTextView[i] != null && titleTextView[i].getVisibility() != GONE) {
++                    // inu: keep stock full-width measuring here - the symmetric placement in
++                    // onLayout plus CENTER gravity does the centering; wrapping the view to the
++                    // text width breaks SimpleTextView's internal offsetX and throws it right.
+                     titleTextView[i].measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24) + titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom(), MeasureSpec.AT_MOST));
+                     if (centerScale) {
+                         CharSequence text = titleTextView[i].getText();
+@@ -1514,12 +1630,16 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+     @Override
+     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
++        updateGlassBounds(right - left, bottom - top);
+         int additionalTop = occupyStatusBar ? AndroidUtilities.statusBarHeight : 0;
+         if (prevWidth != getMeasuredWidth()) {
+             prevWidth = getMeasuredWidth();
+             checkAvatarContainerWidth(animatorAvatarContainerWidth.isAnimating());
+         }
+ 
++        // inu: centered-title state is synced at the top of onMeasure so that
++        // measure (widthWrapContent) and layout always agree with each other.
++
+         int textLeft;
+         if (backButtonImageView != null && backButtonImageView.getVisibility() != GONE) {
+             backButtonImageView.layout(0, additionalTop, backButtonImageView.getMeasuredWidth(), additionalTop + backButtonImageView.getMeasuredHeight());
+@@ -1527,11 +1647,30 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         } else {
+             textLeft = glassMode ? dp(24) : dp(AndroidUtilities.isTablet() ? 26 : 18);
+         }
++        if (avatarSearchImageView != null && avatarSearchImageView.getVisibility() != GONE) {
++            textLeft = Math.max(textLeft, dp(56 + 8) + avatarSearchImageView.getMeasuredWidth() + dp(8));
++        }
+         textLeft += additionalTextLeft;
+ 
++        // inu: real right edge of the reserved title band for centered-title layout below —
++        // mirrors menuLeft so the overlap guard adapts to however many menu icons are actually
++        // visible, instead of assuming the full action bar width is free on the right.
++        int inu_centerRightBound = (right - left) - titleRightMargin;
+         if (menu != null && menu.getVisibility() != GONE) {
+             int menuLeft = menu.searchFieldVisible() ? dp(menuOccupyBack ? 0 : AndroidUtilities.isTablet() ? 74 : 66) : (getMeasuredWidth()) - menu.getMeasuredWidth();
+             menu.layout(menuLeft, additionalTop, menuLeft + menu.getMeasuredWidth(), additionalTop + menu.getMeasuredHeight());
++            if (!menu.searchFieldVisible()) {
++                inu_centerRightBound = menuLeft;
++            }
++        }
++        // entiny: on the main dialogs screen, blend the (structurally lopsided) free-band center with the true screen center so the title still reacts to icon count without sitting off-center; elsewhere just use true center.
++        int inu_trueCenter = (right - left) / 2;
++        int inu_centerX;
++        if (inu_isRealDialogsMainScreen()) {
++            int inu_bandCenter = (textLeft + inu_centerRightBound) / 2;
++            inu_centerX = (inu_bandCenter + inu_trueCenter) / 2;
++        } else {
++            inu_centerX = inu_trueCenter;
+         }
+ 
+         for (int i = 0; i < 2; i++) {
+@@ -1546,7 +1685,17 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                         textTop = (getCurrentActionBarHeight() - titleTextView[i].getTextHeight()) / 2;
+                     }
+                 }
+-                titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                if (isCenterTitle) {
++                    // entiny: port of exteraless/exteraGram centered-title layout, symmetric around inu_centerX. Clamp uses actual text width, not measured width (view is measured to full AT_MOST); layout box keeps the full measured width since SimpleTextView bakes its CENTER offset against that.
++                    int halfWidth = titleTextView[i].getMeasuredWidth() / 2;
++                    int textHalfWidth = inu_clampedTextHalfWidth(titleTextView[i]);
++                    // entiny: shift the box by the drawable bias so the TEXT, not text+badge unit, lands on true center (a status/premium badge otherwise pulls it off).
++                    int drawableBias = titleTextView[i].getCenteringDrawableBias();
++                    int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX + drawableBias));
++                    titleTextView[i].layout(centerX - halfWidth, additionalTop + textTop - titleTextView[i].getPaddingTop(), centerX + halfWidth, additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                } else {
++                    titleTextView[i].layout(textLeft, additionalTop + textTop - titleTextView[i].getPaddingTop(), textLeft + titleTextView[i].getMeasuredWidth(), additionalTop + textTop + titleTextView[i].getTextHeight() - titleTextView[i].getPaddingTop() + titleTextView[i].getPaddingBottom());
++                }
+             }
+         }
+         if (additionalSubTitleOverlayContainer != null) {
+@@ -1555,12 +1704,28 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         }
+         if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
+             int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - subtitleTextView.getTextHeight()) / 2 - dp(2);
+-            subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
++            if (isCenterTitle) {
++                // See the centered-title comment above: clamp by real text width, layout box by measured width.
++                int halfWidth = subtitleTextView.getMeasuredWidth() / 2;
++                int textHalfWidth = inu_clampedTextHalfWidth(subtitleTextView);
++                int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX));
++                subtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + subtitleTextView.getTextHeight());
++            } else {
++                subtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + subtitleTextView.getMeasuredWidth(), additionalTop + textTop + subtitleTextView.getTextHeight());
++            }
+         }
+ 
+         if (additionalSubtitleTextView != null && additionalSubtitleTextView.getVisibility() != GONE) {
+             int textTop = getCurrentActionBarHeight() / 2 + (getCurrentActionBarHeight() / 2 - additionalSubtitleTextView.getTextHeight()) / 2 - dp(!AndroidUtilities.isTablet() && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? 1 : 1);
+-            additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++            if (isCenterTitle) {
++                // See the centered-title comment above: clamp by real text width, layout box by measured width.
++                int halfWidth = additionalSubtitleTextView.getMeasuredWidth() / 2;
++                int textHalfWidth = inu_clampedTextHalfWidth(additionalSubtitleTextView);
++                int centerX = Math.max(textLeft + textHalfWidth, Math.min(inu_centerRightBound - textHalfWidth, inu_centerX));
++                additionalSubtitleTextView.layout(centerX - halfWidth, additionalTop + textTop, centerX + halfWidth, additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++            } else {
++                additionalSubtitleTextView.layout(textLeft, additionalTop + textTop, textLeft + additionalSubtitleTextView.getMeasuredWidth(), additionalTop + textTop + additionalSubtitleTextView.getTextHeight());
++            }
+         }
+ 
+         if (avatarSearchImageView != null) {
+@@ -1618,6 +1783,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             }
+             child.layout(childLeft, childTop, childLeft + width, childTop + height);
+         }
++
++        updateGlassBounds(right - left, bottom - top);
+     }
+ 
+     public void onMenuButtonPressed() {
+@@ -2221,8 +2388,146 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+     public boolean doNotDrawGlassMenu;
+ 
++    public void updateGlassBounds(int width, int height) {
++        updateGlassBounds(width, height, true);
++    }
++
++    public void updateGlassBounds(int width, int height, boolean allowRequestLayout) {
++        final int p = dp(6);
++        final int s = dp(46);
++        final int menuWidth = hasForcedMenuWidth ? forcedMenuWidth : (int) animatorMenuItemsWidth.getFactor();
++        final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
++
++        final int t = height - (getCurrentActionBarHeight() + s) / 2 - p;
++        final int b = t + s + p * 2;
++
++        final int menuWidthWithPadding = menuWidth + (hasForcedMenuWidth ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
++        // entiny: bound by the menu-slot avatar's own geometry, not the menu's animated width -- the latter measures small before layout/mid-animation and let the pill run under the avatar.
++        final int rightOffset = Math.max(menuWidthWithPadding,
++                chatAvatarContainer == null ? 0 : chatAvatarContainer.inu_getMenuSlotAvatarReserve());
++
++        // entiny: back button's own slot; both the symmetric room and the placement clamp derive from it.
++        final int baseLeft = hasBackButton ? s + p : 0;
++        // entiny: static avatar only needs the placement clamp, not the symmetric room -- it implies the compact pill, so clamping is enough to keep clear of it.
++        final int leftLimit = Math.max(baseLeft,
++                chatAvatarContainer == null ? 0 : chatAvatarContainer.inu_getStaticAvatarReserve());
++        int leftDefault = leftLimit;
++        int rightDefault = width - rightOffset;
++
++        final int prevPillLeft = inu_titlePillLeft;
++        final int prevPillRight = inu_titlePillRight;
++
++        final boolean centered = chatAvatarContainer != null
++                && chatAvatarContainer.isTitleCenteredMode()
++                && !isSearchFieldVisible
++                && !isActionModeShowed();
++        if (centered) {
++            // The centered pill positions the container through inu_titlePill* instead of the
++            // stock translation below; drop a translation left over from search or action mode.
++            if (chatAvatarContainer.getTranslationX() != 0) {
++                chatAvatarContainer.setTranslationX(0);
++            }
++            final float inu_centeredTextWidth = chatAvatarContainer.inu_getCenteredTextWidth();
++
++            // entiny: room is symmetric around the screen midpoint (inset by whichever slot is wider) so an uneven back-button/menu pair doesn't drift the pill off-center.
++            final int symmetricInset = Math.max(baseLeft, rightOffset);
++            final int roomLeft = symmetricInset;
++            final int roomRight = Math.max(roomLeft + dp(INU_PILL_MIN_WIDTH_DP), width - symmetricInset);
++            final int centerX = (roomLeft + roomRight) / 2;
++
++            // entiny: compact pill hugs its content; plain centered mode spans the whole room and centers text inside it.
++            int target = desu.inugram.helpers.InuUtils.compactChatPill()
++                    ? (int) Math.ceil(inu_centeredTextWidth) + dp(INU_PILL_TEXT_SLACK_DP)
++                        + inu_getPillTextInsetLeft() + inu_getPillTextInsetRight()
++                    : roomRight - roomLeft;
++            target = Math.max(target, dp(INU_PILL_MIN_WIDTH_DP));
++            // entiny: cap against leftLimit, not just roomLeft -- the static-avatar reserve can be wider than the symmetric inset.
++            target = Math.min(target, roomRight - Math.max(roomLeft, leftLimit));
++
++            // entiny: snap on the first pass so the header doesn't unfold from nothing on chat open; animate afterwards.
++            if (inu_animatorPillWidth.getFactor() <= 0f) {
++                inu_animatorPillWidth.forceFactor(target);
++            } else if (inu_animatorPillWidth.getToFactor() != target) {
++                inu_animatorPillWidth.animateTo(target);
++            }
++            final int drawn = Math.max(0, (int) inu_animatorPillWidth.getFactor());
++
++            final int pillLeftLimit = Math.max(roomLeft, leftLimit);
++            inu_titlePillLeft = inu_placePill(centerX, target, pillLeftLimit, roomRight);
++            inu_titlePillRight = inu_titlePillLeft + target;
++
++            leftDefault = inu_placePill(centerX, drawn, pillLeftLimit, roomRight);
++            rightDefault = leftDefault + drawn;
++        } else {
++            // entiny: not centered -- pill spans the full back-button-to-menu room, container stays at its own margins (left-aligned), unlike stock's shrink-then-recenter.
++            final int stockRightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
++            final int stockLeft = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
++            leftDefault = stockLeft;
++            rightDefault = width - stockRightOffset;
++            if (chatAvatarContainer != null && chatAvatarContainer.getLayoutParams() instanceof MarginLayoutParams) {
++                // entiny: keep stock's pill-edge-to-avatar inset (p + dp(3)) so the avatar doesn't touch the back button.
++                final float translationX = leftDefault
++                    - ((MarginLayoutParams) chatAvatarContainer.getLayoutParams()).leftMargin
++                    - chatAvatarContainer.getLeftPadding()
++                    + p + dp(3);
++                chatAvatarContainer.setTranslationX(translationX);
++                chatAvatarContainer.setPivotX(chatAvatarContainer.getMeasuredWidth() / 2f - translationX);
++            }
++            inu_titlePillLeft = leftDefault;
++            inu_titlePillRight = rightDefault;
++            inu_animatorPillWidth.forceFactor(0);
++        }
++
++        inu_glassTitleLeft = leftDefault;
++        inu_glassTitleRight = rightDefault;
++        inu_glassTop = t;
++        inu_glassBottom = b;
++
++        // entiny: only the centered pill drives layout -- default bounds change every frame with the menu-width animator.
++        if (allowRequestLayout && centered && (inu_titlePillLeft != prevPillLeft || inu_titlePillRight != prevPillRight)) {
++            inu_requestAvatarContainerLayout();
++        }
++    }
++
++    // Center a pill of the given width, then keep it clear of the back button and the menu.
++    private int inu_placePill(int centerX, int pillWidth, int leftLimit, int rightLimit) {
++        int left = centerX - pillWidth / 2;
++        if (left + pillWidth > rightLimit) {
++            left = rightLimit - pillWidth;
++        }
++        if (left < leftLimit) {
++            left = leftLimit;
++        }
++        return left;
++    }
++
++    // entiny: pill moved outside a layout pass (new subtitle, menu item) -- ask for one; skipped if already pending (self-terminating, pill is a pure function of slot geometry).
++    private void inu_requestAvatarContainerLayout() {
++        final ChatAvatarContainer container = chatAvatarContainer;
++        if (container == null || container.isLayoutRequested() || isLayoutRequested()) {
++            return;
++        }
++        if (isInLayout() || container.isInLayout()) {
++            AndroidUtilities.runOnUIThread(container::requestLayout);
++        } else {
++            container.requestLayout();
++        }
++    }
++
++    private boolean inu_needsUpdateGlassBounds() {
++        return inu_glassTitleRight == 0
++                || (inu_animatorPillWidth != null && inu_animatorPillWidth.isAnimating())
++                || (animatorMenuItemsWidth != null && animatorMenuItemsWidth.isAnimating())
++                || (animatorHasMenuItems != null && animatorHasMenuItems.isAnimating())
++                || (animatorAvatarContainerWidth != null && animatorAvatarContainerWidth.isAnimating())
++                || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
++    }
++
+     @Override
+     protected void dispatchDraw(Canvas canvas) {
++        if (inu_needsUpdateGlassBounds()) {
++            updateGlassBounds(getWidth(), getHeight(), false);
++        }
+         final int p = dp(6);
+         final int s = dp(46);
+ 
+@@ -2232,37 +2537,14 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+         final boolean hasBackButton = backButtonImageView != null && backButtonImageView.getVisibility() == View.VISIBLE;
+ 
+-        final int t = getHeight() - (getCurrentActionBarHeight() + s) / 2 - p;
+-        final int b = t + s + p * 2;
++        final int t = inu_glassTop;
++        final int b = inu_glassBottom;
+ 
+         if (glassDrawable != null && !glassOnlyBack) {
+-            final int menuWidthWithPadding = menuWidth + ((hasForcedMenuWidth || hasForcedMenuMinWidth) ? (menuWidth > 0 ? p : 0) : (int) (p * animatorHasMenuItems.getFloatValue()));
+-            final int rightOffset = lerp(menuWidthWithPadding, Math.max(menuWidthWithPadding, p + s), chatAvatarContainer == null ? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+-
+-            final int leftDefault = lerp(hasBackButton ? s + p : 0, s + p, chatAvatarContainer == null? 0f : 1f - animatorAvatarContainerHasAvatar.getFloatValue());
+-            final int rightDefault = getWidth() - rightOffset;
+-            final int widthDefault = rightDefault - leftDefault;
+-            final int left, right;
+-            if (chatAvatarContainer != null) {
+-                final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
+-                left = (rightDefault + leftDefault - width) / 2;
+-                right = left + width;
+-
+-                final float translationX = left
+-                    - ((MarginLayoutParams)(chatAvatarContainer.getLayoutParams())).leftMargin
+-                    - chatAvatarContainer.getLeftPadding()
+-                    + p + dp(3);
+-                chatAvatarContainer.setTranslationX(translationX);
+-                chatAvatarContainer.setPivotX((chatAvatarContainer.getMeasuredWidth()) / 2f - translationX );
+-            } else {
+-                left = leftDefault;
+-                right = rightDefault;
+-            }
+-
+             if (inu_nonIsland) {
+                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
+             } else {
+-                glassDrawable.setBounds(left, t, right, b);
++                glassDrawable.setBounds(inu_glassTitleLeft, t, inu_glassTitleRight, b);
+             }
+             glassDrawable.draw(canvas);
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/SimpleTextView.java
+@@ -94,10 +94,13 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     private int offsetX;
+     private int offsetY;
+     private int textWidth;
++    private float cachedExactTextWidth = -1f;
+     private int totalWidth;
+     private int textHeight;
+     public int rightDrawableX;
+     public int rightDrawableY;
++    public int rightDrawable2X;
++    public int rightDrawable2Y;
+     private boolean wasLayout;
+ 
+     private boolean leftDrawableOutside, rightDrawableOutside;
+@@ -129,6 +132,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+     private boolean rightDrawableHidden;
+     private OnClickListener rightDrawableOnClickListener;
+     private boolean maybeClick;
++    private OnClickListener rightDrawable2OnClickListener;
++    private boolean maybeClick2;
+     private float touchDownX, touchDownY;
+ 
+     private AnimatedEmojiSpan.EmojiGroupedSpans emojiStack;
+@@ -205,6 +210,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+             return;
+         }
+         textPaint.setTextSize(newSize);
++        cachedExactTextWidth = -1f;
+         if (!recreateLayoutMaybe()) {
+             invalidate();
+         }
+@@ -302,6 +308,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+ 
+     public void setTypeface(Typeface typeface) {
+         textPaint.setTypeface(typeface);
++        cachedExactTextWidth = -1f;
+     }
+ 
+     public int getSideDrawablesSize() {
+@@ -320,6 +327,12 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         return size;
+     }
+ 
++    // entiny: offset so the NAME (text + leading drawable, e.g. our dev badge) centers, not the whole leftDrawable|text|rightDrawables unit -- only trailing decorations (verified/star/status/bell) are discounted.
++    public int getCenteringDrawableBias() {
++        final int left = leftDrawable != null ? leftDrawable.getIntrinsicWidth() + drawablePadding : 0;
++        return Math.max(0, getSideDrawablesSize() - left) / 2;
++    }
++
+     public TextPaint getPaint() {
+         return textPaint;
+     }
+@@ -339,7 +352,8 @@ public class SimpleTextView extends View implements Drawable.Callback {
+             }
+ 
+             if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.CENTER_HORIZONTAL) {
+-                offsetX = Math.max(0, (width - textWidth) / 2) - (int) layout.getLineLeft(0);
++                int totalContentWidth = textWidth + getSideDrawablesSize();
++                offsetX = Math.max(0, (width - totalContentWidth) / 2) - (int) layout.getLineLeft(0);
+             } else if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.LEFT) {
+                 if (firstLineLayout != null) {
+                     offsetX = -(int) firstLineLayout.getLineLeft(0);
+@@ -704,6 +718,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+             return false;
+         }
+         text = value;
++        cachedExactTextWidth = -1f;
+         currentScrollDelay = SCROLL_DELAY_MS;
+         recreateLayoutMaybe();
+         return true;
+@@ -1180,17 +1195,22 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         return getMeasuredWidth() - (rightDrawableOutside && rightDrawable != null ? rightDrawable.getIntrinsicWidth() + drawablePadding : 0) - (rightDrawableOutside && rightDrawable2 != null ? rightDrawable2.getIntrinsicWidth() + drawablePadding : 0);
+     }
+ 
++    private float getExactTextWidthOnly() {
++        if (cachedExactTextWidth < 0) {
++            CharSequence t = getText();
++            cachedExactTextWidth = (t != null && t.length() > 0) ? getPaint().measureText(t.toString()) : 0f;
++        }
++        return cachedExactTextWidth;
++    }
++
+     public float getExactWidth() {
+-        return getPaint().measureText(getText().toString())
++        return getExactTextWidthOnly()
+                 + getSideDrawablesSize()
+                 - (leftDrawable != null || rightDrawable != null || rightDrawable2 != null ? drawablePadding : 0);
+     }
+ 
+     public float getExactWidthIncludeDrawables() {
+-        return getExactWidth()
+-            + (leftDrawable != null ? leftDrawable.getIntrinsicWidth() : 0)
+-            + (rightDrawable != null ? rightDrawable.getIntrinsicWidth() : 0)
+-            + (rightDrawable2 != null ? rightDrawable2.getIntrinsicWidth() : 0);
++        return getExactTextWidthOnly() + getSideDrawablesSize();
+     }
+ 
+     private void drawLayout(Canvas canvas) {
+@@ -1342,14 +1362,6 @@ public class SimpleTextView extends View implements Drawable.Callback {
+         return rightDrawableOutside;
+     }
+ 
+-    private int rightDrawableX, rightDrawableY;
+-    private OnClickListener rightDrawableOnClickListener;
+-    private boolean maybeClick;
+-
+-    private int rightDrawable2X, rightDrawable2Y;
+-    private OnClickListener rightDrawable2OnClickListener;
+-    private boolean maybeClick2;
+-
+     public void setRightDrawableOnClick(OnClickListener onClickListener) {
+         rightDrawableOnClickListener = onClickListener;
+     }
+@@ -1360,9 +1372,27 @@ public class SimpleTextView extends View implements Drawable.Callback {
+ 
+     @Override
+     public boolean onTouchEvent(MotionEvent event) {
+-        if (rightDrawableOnClickListener != null && rightDrawable != null) {
+-            AndroidUtilities.rectTmp.set(rightDrawableX - dp(16), rightDrawableY - dp(16), rightDrawableX + dp(16), rightDrawableY + dp(16));
+-            if (event.getAction() == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
++        if (event.getAction() == MotionEvent.ACTION_DOWN) {
++            boolean in1 = false;
++            boolean in2 = false;
++            if (rightDrawableOnClickListener != null && rightDrawable != null) {
++                AndroidUtilities.rectTmp.set(rightDrawableX - dp(16), rightDrawableY - dp(16), rightDrawableX + dp(16), rightDrawableY + dp(16));
++                in1 = AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY());
++            }
++            if (rightDrawable2OnClickListener != null && rightDrawable2 != null) {
++                AndroidUtilities.rectTmp.set(rightDrawable2X - dp(16), rightDrawable2Y - dp(16), rightDrawable2X + dp(16), rightDrawable2Y + dp(16));
++                in2 = AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY());
++            }
++            if (in1 && in2) {
++                float dist1 = Math.abs(event.getX() - rightDrawableX);
++                float dist2 = Math.abs(event.getX() - rightDrawable2X);
++                if (dist1 <= dist2) {
++                    in2 = false;
++                } else {
++                    in1 = false;
++                }
++            }
++            if (in1) {
+                 maybeClick = true;
+                 touchDownX = event.getX();
+                 touchDownY = event.getY();
+@@ -1370,28 +1400,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 if (rightDrawable instanceof PressableDrawable) {
+                     ((PressableDrawable) rightDrawable).setPressed(true);
+                 }
+-            } else if (event.getAction() == MotionEvent.ACTION_MOVE && maybeClick) {
+-                if (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop) {
+-                    maybeClick = false;
+-                    getParent().requestDisallowInterceptTouchEvent(false);
+-                    if (rightDrawable instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable).setPressed(false);
+-                    }
+-                }
+-            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+-                if (maybeClick && event.getAction() == MotionEvent.ACTION_UP) {
+-                    rightDrawableOnClickListener.onClick(this);
+-                    if (rightDrawable instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable).setPressed(false);
+-                    }
+-                }
+-                maybeClick = false;
+-                getParent().requestDisallowInterceptTouchEvent(false);
+-            }
+-        }
+-        if (rightDrawable2OnClickListener != null && rightDrawable2 != null) {
+-            AndroidUtilities.rectTmp.set(rightDrawable2X - dp(16), rightDrawable2Y - dp(16), rightDrawable2X + dp(16), rightDrawable2Y + dp(16));
+-            if (event.getAction() == MotionEvent.ACTION_DOWN && AndroidUtilities.rectTmp.contains((int) event.getX(), (int) event.getY())) {
++            } else if (in2) {
+                 maybeClick2 = true;
+                 touchDownX = event.getX();
+                 touchDownY = event.getY();
+@@ -1399,24 +1408,38 @@ public class SimpleTextView extends View implements Drawable.Callback {
+                 if (rightDrawable2 instanceof PressableDrawable) {
+                     ((PressableDrawable) rightDrawable2).setPressed(true);
+                 }
+-            } else if (event.getAction() == MotionEvent.ACTION_MOVE && maybeClick2) {
+-                if (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop) {
+-                    maybeClick2 = false;
+-                    getParent().requestDisallowInterceptTouchEvent(false);
+-                    if (rightDrawable2 instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable2).setPressed(false);
+-                    }
+-                }
+-            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+-                if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
+-                    rightDrawable2OnClickListener.onClick(this);
+-                    if (rightDrawable2 instanceof PressableDrawable) {
+-                        ((PressableDrawable) rightDrawable2).setPressed(false);
+-                    }
++            }
++        } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
++            if (maybeClick && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
++                maybeClick = false;
++                getParent().requestDisallowInterceptTouchEvent(false);
++                if (rightDrawable instanceof PressableDrawable) {
++                    ((PressableDrawable) rightDrawable).setPressed(false);
+                 }
++            }
++            if (maybeClick2 && (Math.abs(event.getX() - touchDownX) >= AndroidUtilities.touchSlop || Math.abs(event.getY() - touchDownY) >= AndroidUtilities.touchSlop)) {
+                 maybeClick2 = false;
+                 getParent().requestDisallowInterceptTouchEvent(false);
++                if (rightDrawable2 instanceof PressableDrawable) {
++                    ((PressableDrawable) rightDrawable2).setPressed(false);
++                }
++            }
++        } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
++            if (maybeClick && event.getAction() == MotionEvent.ACTION_UP) {
++                rightDrawableOnClickListener.onClick(this);
++            }
++            if (maybeClick2 && event.getAction() == MotionEvent.ACTION_UP) {
++                rightDrawable2OnClickListener.onClick(this);
++            }
++            if (rightDrawable instanceof PressableDrawable) {
++                ((PressableDrawable) rightDrawable).setPressed(false);
++            }
++            if (rightDrawable2 instanceof PressableDrawable) {
++                ((PressableDrawable) rightDrawable2).setPressed(false);
+             }
++            maybeClick = false;
++            maybeClick2 = false;
++            getParent().requestDisallowInterceptTouchEvent(false);
+         }
+         return super.onTouchEvent(event) || maybeClick || maybeClick2;
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -4164,7 +4164,7 @@ public class ChatActivity extends BaseFragment implements
+         }
+         avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
+             @Override
+-            protected boolean onAvatarClick() {
++            public boolean onAvatarClick() {
+                 if (currentUser != null && currentUser.linked_community_id != 0) {
+                     showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
+                     return true;
+@@ -4349,6 +4349,38 @@ public class ChatActivity extends BaseFragment implements
+             headerItem.inu_reorderable = true;
+             otherIcon.addView(headerItem.getIconView());
+             headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
++            if (avatarContainer != null) {
++                // entiny: avatar takes over this slot when it moves here (see ChatAvatarContainer#onLayout) -- tap opens profile, long press falls back to the chat menu. Both listeners branch on live state (installed once, can't be undone since ActionBarMenu#addItem owns the stock listener).
++                final ActionBarMenuItem inu_headerItem = headerItem;
++                final ActionBarMenu inu_menu = menu;
++                headerItem.setOnClickListener(v -> {
++                    if (!avatarContainer.inu_isIosMenuSlotAvatar()) {
++                        // entiny: verbatim copy of ActionBarMenu#addItem's own click listener, so the slot behaves exactly like stock when the option is off.
++                        if (inu_headerItem.hasSubMenu()) {
++                            if (actionBar.actionBarMenuOnItemClick == null || actionBar.actionBarMenuOnItemClick.canOpenMenu()) {
++                                inu_headerItem.toggleSubMenu();
++                            }
++                        } else if (inu_headerItem.isSearchField()) {
++                            actionBar.onSearchFieldVisibilityChanged(inu_headerItem.toggleSearch(true));
++                        } else if (v.getTag() instanceof Integer) {
++                            inu_menu.onItemClick((Integer) v.getTag());
++                        }
++                        return;
++                    }
++                    // entiny: mirror ChatAvatarContainer's own avatar click -- a linked community takes over the tap and opens CommunitySheet instead.
++                    if (!avatarContainer.onAvatarClick()) {
++                        avatarContainer.openProfile(true);
++                    }
++                });
++                headerItem.setOnLongClickListener(v -> {
++                    if (!avatarContainer.inu_isIosMenuSlotAvatar()) {
++                        return false;
++                    }
++                    inu_headerItem.toggleSubMenu();
++                    return true;
++                });
++                inu_updateMenuSlotAvatar();
++            }
+ 
+             if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
+                 savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
+@@ -4560,7 +4592,11 @@ public class ChatActivity extends BaseFragment implements
+ 
+         if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
+             attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
+-            attachItem.onView(cell -> otherIcon.addView(cell.getIconView()));
++            attachItem.onView(cell -> {
++                otherIcon.addView(cell.getIconView());
++                // entiny: attachItem shares this slot and can cover the avatar too -- re-sync visibility.
++                inu_updateMenuSlotAvatar();
++            });
+             attachItem.setOverrideMenuClick(true);
+             attachItem.setAllowCloseAnimation(false);
+             attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
+@@ -4611,18 +4647,14 @@ public class ChatActivity extends BaseFragment implements
+             BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
+             ChatObject.isForum(currentChat));
+ 
+-        if (chatMode == MODE_PINNED) {
+-            actionBar.setChatAvatarContainer(avatarContainer);
+-            avatarContainer.setActionBar(actionBar);
+-        } else if (chatMode == MODE_WELCOME_MESSAGES) {
+-            actionBar.setChatAvatarContainer(avatarContainer);
++        // entiny: always wire chatAvatarContainer (was MODE_PINNED/WELCOME/comments-only) so ActionBar's centered-header checks don't silently no-op for the default chat mode.
++        actionBar.setChatAvatarContainer(avatarContainer);
++        avatarContainer.setActionBar(actionBar);
++        if (chatMode == MODE_WELCOME_MESSAGES) {
+             actionBar.setForcedMenuWidth(dp(46));
+             actionBar.doNotDrawGlassMenu = true;
+-            avatarContainer.setActionBar(actionBar);
+         } else if (isComments) {
+-            actionBar.setChatAvatarContainer(avatarContainer);
+             actionBar.setForcedMenuMinWidth(dp(46));
+-            avatarContainer.setActionBar(actionBar);
+         }
+ 
+         chatInputViewsContainer = new ChatInputViewsContainer(context);
+@@ -30021,10 +30053,42 @@ public class ChatActivity extends BaseFragment implements
+ 
+     Bulletin.Delegate bulletinDelegate;
+ 
++    // entiny: only ever set once the avatar-in-menu-slot option has been on, so an untouched chat leaves stock icons alone.
++    private boolean inu_menuSlotAvatarActive;
++
++    // entiny: re-assert the menu-slot avatar/icon visibility whenever the fragment resumes -- ChatAvatarContainer reads the option live, but the "..." icon it replaces was only hidden once in createView(), so toggling the option in the back stack left them disagreeing.
++    public void inu_updateMenuSlotAvatar() {
++        if (avatarContainer == null) {
++            return;
++        }
++        final boolean active = avatarContainer.inu_isIosMenuSlotAvatar();
++        if (!active && !inu_menuSlotAvatarActive) {
++            return;
++        }
++        inu_menuSlotAvatarActive = active;
++        // entiny: INVISIBLE not alpha 0 -- ActionBarMenu resets every icon's alpha to 1 when search closes, which brought an alpha-hidden "..." back over the avatar.
++        final int visibility = active ? View.INVISIBLE : View.VISIBLE;
++        boolean changed = false;
++        if (headerItem != null && headerItem.getIconView() != null && headerItem.getIconView().getVisibility() != visibility) {
++            headerItem.getIconView().setVisibility(visibility);
++            changed = true;
++        }
++        // entiny: attachItem shares this slot and takes over when the composer has something to attach -- hide its icon too (lazy, may not exist yet).
++        final ActionBarMenuItem attachCell = attachItem == null ? null : attachItem.getView();
++        if (attachCell != null && attachCell.getIconView() != null && attachCell.getIconView().getVisibility() != visibility) {
++            attachCell.getIconView().setVisibility(visibility);
++            changed = true;
++        }
++        if (changed && actionBar != null) {
++            actionBar.requestLayout();
++        }
++    }
++
+     @Override
+     public void onResume() {
+         super.onResume();
+         checkShowBlur(false);
++        inu_updateMenuSlotAvatar();
+         activityResumeTime = System.currentTimeMillis();
+         if (openImport && getSendMessagesHelper().getImportingHistory(dialog_id) != null) {
+             ImportingAlert alert = new ImportingAlert(getParentActivity(), null, this, themeDelegate);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
+@@ -407,6 +407,7 @@ public abstract class BottomSheetWithRecyclerListView extends BottomSheet {
+                 }
+             });
+ 
++            actionBar.inu_setForceDisableCenterTitle(true); // inu: sheet titles are left-aligned by design
+             containerView.addView(recyclerListView);
+             containerView.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 6, 0, 6, 0));
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -276,8 +276,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -276,15 +276,17 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              });
          }
  
-+        boolean centerChatTitle = isCenteredTitle();
 +        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
 +
          titleTextView = new SimpleTextConnectedView(context, titleTextLargerCopyView);
@@ -41,8 +893,22 @@ index 0000000..0000000 100644
 +        titleTextView.setEllipsizeByGradient(!marquee, false);
          titleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
          titleTextView.setTextSize(18);
-         titleTextView.setGravity(Gravity.LEFT);
-@@ -301,7 +305,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+-        titleTextView.setGravity(Gravity.LEFT);
+         titleTextView.setTypeface(AndroidUtilities.bold());
+         titleTextView.setLeftDrawableTopPadding(-dp(1.3f));
+         titleTextView.setCanHideRightDrawable(false);
+-        titleTextView.setRightDrawableOutside(true);
++        titleTextView.setRightDrawableOutside(inu_titleRightDrawableOutside(marquee));
+         titleTextView.setPadding(0, dp(6), 0, dp(12));
+         addView(titleTextView);
+ 
+@@ -295,17 +297,16 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             animatedSubtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
+             animatedSubtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
+             animatedSubtitleTextView.setTextSize(dp(14));
+-            animatedSubtitleTextView.setGravity(Gravity.LEFT);
+             animatedSubtitleTextView.setPadding(0, 0, dp(10), 0);
+             animatedSubtitleTextView.setTranslationY(-dp(1));
              addView(animatedSubtitleTextView);
          } else {
              subtitleTextView = new SimpleTextConnectedView(context, subtitleTextLargerCopyView);
@@ -52,7 +918,20 @@ index 0000000..0000000 100644
              subtitleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultSubtitle));
              subtitleTextView.setTag(Theme.key_actionBarDefaultSubtitle);
              subtitleTextView.setTextSize(14);
-@@ -663,12 +668,48 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+-            subtitleTextView.setGravity(Gravity.LEFT);
+             subtitleTextView.setPadding(0, 0, dp(10), 0);
+             addView(subtitleTextView);
+         }
+@@ -469,7 +470,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+ 
+     }
+ 
+-    protected boolean onAvatarClick() {
++    public boolean onAvatarClick() {
+         return false;
+     }
+ 
+@@ -663,12 +664,32 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -60,23 +939,15 @@ index 0000000..0000000 100644
 -        final int availableWidth = width - dp((avatarImageView.getVisibility() == VISIBLE ? 54 : 0) + 16);
 +        int width = MeasureSpec.getSize(widthMeasureSpec);
 +        boolean centerChatTitle = isCenteredTitle();
-+        if (centerChatTitle && actionBar != null) {
-+            int targetPill = actionBar.inu_glassTitleRight - actionBar.inu_glassTitleLeft;
-+            if (targetPill > 0) {
-+                width = Math.min(width, targetPill);
-+            }
-+        }
++        inu_syncCenteredGravity();
 +        final int availableWidth;
-+        if (centerChatTitle) {
-+            // Mirror onLayout's textLeftBound/textRightBound math so the EXACTLY-measured
-+            // width used for ellipsizing matches the box the text is actually laid out into —
-+            // otherwise long subtitles (e.g. member count + online) get visually clipped
-+            // instead of ellipsized because the layout box in onLayout is narrower than this.
-+            boolean rightAvatar = isRightAvatar();
++        if (centerChatTitle && inu_hasPillBand()) {
++            // entiny: measure text to the exact pill band so an overlong subtitle ellipsizes at the pill edge, not past it.
++            availableWidth = Math.max(0, inu_bandRight() - inu_bandLeft() - rightAvatarPadding);
++        } else if (centerChatTitle) {
++            // entiny: no action bar yet -- fall back to a symmetric inset; count the avatar whenever visible, matching onLayout's branch.
 +            int avatarW = hasVisibleAvatar() ? dp(avatarSizeInDp) - 2 : 0;
-+            int inset = hasVisibleAvatar()
-+                    ? (1 + leftPadding + avatarW + dp(4))
-+                    : dp(rightAvatar ? (glassMode ? 14 : 10) : (glassMode ? 20 : 16));
++            int inset = avatarW > 0 ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);
 +            availableWidth = Math.max(0, width - 2 * inset - rightAvatarPadding);
 +        } else {
 +            availableWidth = width - dp((hasVisibleAvatar() ? 54 : 0) + (glassMode ? 24 : 16));
@@ -87,15 +958,7 @@ index 0000000..0000000 100644
 +        }
          avatarImageView.measure(MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(avatarSizeInDp) - 2, MeasureSpec.EXACTLY));
 -        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
-+        // Never size these wrap_content (this matches stock). SimpleTextView#setText goes through
-+        // recreateLayoutMaybe(), which — once the view has been laid out once — rebuilds the layout
-+        // against the CURRENT getMaxTextWidth() and deliberately does NOT requestLayout(). With
-+        // wrap_content the measured width is min(availableWidth, textWidth), i.e. the width of
-+        // whatever text was set at the last measure pass. A later, longer subtitle (e.g. "14
-+        // members" -> "14 members, 2 online") is then clipped/gradient-faded at the previous,
-+        // shorter text's width and nothing ever re-measures it. Measuring to the full availableWidth
-+        // keeps the drawing window at the real box width; the layout bounds below and getVisualWidth()
-+        // do not depend on this view being shrink-wrapped.
++        // entiny: never wrap_content here -- setText doesn't requestLayout, so a later longer subtitle would clip at the old measured width.
 +        titleTextView.setWidthWrapContent(false);
 +        titleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, centerChatTitle ? MeasureSpec.EXACTLY : MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(dp(24 + 8), MeasureSpec.AT_MOST));
          if (subtitleTextView != null) {
@@ -105,17 +968,376 @@ index 0000000..0000000 100644
          } else if (animatedSubtitleTextView != null) {
              animatedSubtitleTextView.measure(MeasureSpec.makeMeasureSpec(availableWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(20), MeasureSpec.AT_MOST));
          }
-@@ -941,6 +982,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -743,7 +764,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             if (subtitleTextLargerCopyView2 != null) {
+                 removeView(subtitleTextLargerCopyView2);
+                 this.subtitleTextLargerCopyView.set(null);
+-                if (!allowDrawStories) {
++                if (!allowDrawStories && !inu_isIosMenuSlotAvatar() && !inu_isStaticAvatar()) {
+                     setClipChildren(true);
+                 }
+             }
+@@ -765,55 +786,304 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         glassMode = true;
+     }
+ 
++    private boolean isCenteredTitle() {
++        return desu.inugram.helpers.InuUtils.centerChatTitle() && inu_isRealChatHeader();
++    }
++
++    public boolean isTitleCenteredMode() {
++        return isCenteredTitle();
++    }
++
++    // entiny: gravity is a field, not re-derived per pass -- re-assert it every onMeasure so a centering toggle flipped in the back stack doesn't leave text half-centered.
++    private void inu_syncCenteredGravity() {
++        final int gravity = isCenteredTitle() ? Gravity.CENTER_HORIZONTAL : Gravity.LEFT;
++        if (titleTextView != null) {
++            titleTextView.setGravity(gravity);
++        }
++        if (subtitleTextView != null) {
++            subtitleTextView.setGravity(gravity);
++        }
++        if (animatedSubtitleTextView != null) {
++            animatedSubtitleTextView.setGravity(gravity);
++        }
++        // entiny: largerCopy views are left at Gravity.LEFT (stock) -- they only live for the profile-open fade.
++    }
++
++    // entiny: pill width = max(title, subtitle) measured width + each view's own horizontal padding, not SimpleTextView#getTextWidth (stale after a post-measure setText).
++    private float inu_cachedCenteredTextWidth = -1f;
++
++    public void inu_invalidateCenteredTextWidth() {
++        inu_cachedCenteredTextWidth = -1f;
++    }
++
++    public float inu_getCenteredTextWidth() {
++        if (inu_cachedCenteredTextWidth >= 0) {
++            return inu_cachedCenteredTextWidth;
++        }
++        float width = 0;
++        if (titleTextView != null) {
++            width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
++                    + titleTextView.getPaddingLeft() + titleTextView.getPaddingRight()
++                    + inu_getTitleBiasRoom());
++        }
++        if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
++            width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables()
++                    + subtitleTextView.getPaddingLeft() + subtitleTextView.getPaddingRight());
++        }
++        if (animatedSubtitleTextView != null && animatedSubtitleTextView.getVisibility() != GONE) {
++            // entiny: getAnimateToWidth (settle target), not getCurrentWidth -- the latter fed back into the pill's own width animation and pumped indefinitely.
++            width = Math.max(width, animatedSubtitleTextView.getDrawable().getAnimateToWidth()
++                    + animatedSubtitleTextView.getPaddingLeft() + animatedSubtitleTextView.getPaddingRight());
++        }
++        inu_cachedCenteredTextWidth = width;
++        return width;
++    }
++
++    // entiny: extra room for onLayout's drawableBias shift (centers the WORD, not word+trailing-badge) so the badge doesn't push past the pill edge.
++    private float inu_getTitleBiasRoom() {
++        return titleTextView != null ? titleTextView.getCenteringDrawableBias() : 0f;
++    }
++
++    // entiny: half the horizontal padding imbalance of a centered text view, clamped to the band's leftover room -- see onLayout.
++    private int inu_centeredPaddingBias(View view, int availableWidth) {
++        if (view == null) {
++            return 0;
++        }
++        final int bias = (view.getPaddingRight() - view.getPaddingLeft()) / 2;
++        if (bias <= 0) {
++            return 0;
++        }
++        final int contentWidth;
++        if (view instanceof SimpleTextView) {
++            contentWidth = (int) Math.ceil(((SimpleTextView) view).getExactWidthIncludeDrawables())
++                    + view.getPaddingLeft() + view.getPaddingRight();
++        } else if (view instanceof AnimatedTextView) {
++            contentWidth = (int) Math.ceil(((AnimatedTextView) view).getDrawable().getAnimateToWidth())
++                    + view.getPaddingLeft() + view.getPaddingRight();
++        } else {
++            return 0;
++        }
++        return Math.min(bias, Math.max(0, availableWidth - contentWidth));
++    }
++
++    // entiny: right drawables (bell/verified/status) pin outside the text box only when NOT marquee/centered -- marquee needs them scrolling with the text (else they sit still while the name slides), and centering measures the pill off text width so an outside drawable would be invisible to that math.
++    private boolean inu_titleRightDrawableOutside(boolean marquee) {
++        return !isCenteredTitle() && !marquee;
++    }
++
++    // Room the avatar needs inside the pill. Zero once either relocation option takes the avatar
++    // out of the pill - the menu slot, or the static option that leaves it at its non-centered
++    // position - so the pill only has to hold text.
++    public int inu_getPillAvatarRoom() {
++        if (!hasVisibleAvatar() || inu_isIosMenuSlotAvatar() || inu_isStaticAvatar()) {
++            return 0;
++        }
++        return dp(avatarSizeInDp) - 2 + dp(6);
++    }
++
++    // entiny: reserve room on the action bar's left for the static avatar -- it doesn't follow the pill, so the pill must be kept clear of it geometrically.
++    public int inu_getStaticAvatarReserve() {
++        if (!inu_isStaticAvatar()) {
++            return 0;
++        }
++        final ActionBar actionBar = inu_actionBar();
++        if (actionBar == null) {
++            return 0;
++        }
++        return actionBar.inu_getStaticAvatarLeft() + dp(avatarSizeInDp) - 2 + dp(6);
++    }
++
++    // entiny: reserve a constant gap for the menu-slot avatar -- bounding it by the menu's measured width instead ran the pill under the avatar whenever the menu was empty/mid-animation.
++    public int inu_getMenuSlotAvatarReserve() {
++        if (!inu_isIosMenuSlotAvatar()) {
++            return 0;
++        }
++        return dp(29) + (dp(avatarSizeInDp) - 2) / 2 + dp(6);
++    }
++
++    private ActionBar inu_actionBar() {
++        if (actionBar != null) {
++            return actionBar;
++        }
++        if (parentFragment != null && parentFragment.getActionBar() != null) {
++            return parentFragment.getActionBar();
++        }
++        return getParent() instanceof ActionBar ? (ActionBar) getParent() : null;
++    }
++
++    // entiny: text band = action bar's settled pill, inset both sides, in this container's coordinates -- measure and layout both read it.
++    private boolean inu_hasPillBand() {
++        final ActionBar actionBar = inu_actionBar();
++        return actionBar != null && actionBar.inu_titlePillRight > actionBar.inu_titlePillLeft;
++    }
++
++    // entiny: getLeft() is 0 on the first measure pass -- fall back to the left margin so the box isn't off by that margin from then on.
++    private int inu_containerLeft() {
++        if (getLeft() != 0) {
++            return getLeft();
++        }
++        final android.view.ViewGroup.LayoutParams lp = getLayoutParams();
++        return lp instanceof android.view.ViewGroup.MarginLayoutParams
++                ? ((android.view.ViewGroup.MarginLayoutParams) lp).leftMargin
++                : 0;
++    }
++
++    private int inu_bandLeft() {
++        final ActionBar actionBar = inu_actionBar();
++        return actionBar.inu_titlePillLeft + actionBar.inu_getPillTextInsetLeft() - inu_containerLeft();
++    }
++
++    private int inu_bandRight() {
++        final ActionBar actionBar = inu_actionBar();
++        return actionBar.inu_titlePillRight - actionBar.inu_getPillTextInsetRight() - inu_containerLeft();
++    }
++
++    // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.
++    private boolean inu_isRealChatHeader() {
++        return parentFragment != null
++                && !parentFragment.isReplyChatComment()
++                && parentFragment.getDialogId() != 0
++                && parentFragment.getDialogId() != UserObject.REPLY_BOT;
++    }
++
++    // entiny: not gated on glassMode -- classic UI shares the same pill geometry, just a flat bar behind it.
++    public boolean isRightAvatar() {
++        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarOnRight();
++    }
++
++    // entiny: avatar moves into the action bar's menu slot, replacing "..." (ChatActivity hides/rewires it); pill then only holds text.
++    public boolean inu_isIosMenuSlotAvatar() {
++        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarInMenuSlot() && hasVisibleAvatar();
++    }
++
++    // entiny: avatar stays at its non-centered (post-back-button) position while title/subtitle center; action bar reserves its room instead.
++    public boolean inu_isStaticAvatar() {
++        return isCenteredTitle() && desu.inugram.helpers.InuUtils.chatAvatarStatic() && hasVisibleAvatar();
++    }
++
+     @Override
+     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+         final int actionBarHeight = ActionBar.getCurrentActionBarHeight();
+         final int viewTop = (actionBarHeight - avatarImageView.getMeasuredHeight() - 2) / 2 + (occupyStatusBar ? AndroidUtilities.statusBarHeight : 0);
+         final int subtitleTop = viewTop + dp(glassMode ? 23.66f : 24);
+ 
+-        avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarImageView.getMeasuredWidth(), 1 + viewTop + avatarImageView.getMeasuredHeight());
+-        int l = leftPadding + (avatarImageView.getVisibility() == VISIBLE ? dp(glassMode ? 49.66f : 55) : dp(glassMode ? 13 : 1)) + rightAvatarPadding;
++        boolean centerChatTitle = isCenteredTitle();
++        final int avatarW = avatarImageView.getMeasuredWidth();
++        final int avatarH = avatarImageView.getMeasuredHeight();
++        final ActionBar actionBar = inu_actionBar();
++
++        int textLeftBound;
++        int textRightBound;
++
++        if (centerChatTitle && inu_hasPillBand()) {
++            // entiny: band is already expressed against the action bar's own pill, so no translationX needed -- reset it since stock uses it outside this branch.
++            setTranslationX(0);
++            avatarImageView.setTranslationX(0);
++
++            textLeftBound = inu_bandLeft() + rightAvatarPadding;
++            textRightBound = Math.max(textLeftBound, inu_bandRight());
++
++            final int avatarLeft;
++            if (inu_isIosMenuSlotAvatar()) {
++                // The slot sits a good 40dp past this container's own right edge (the container is
++                // inset by the back-button and menu margins), so it is only ever drawn because
++                // nothing clips it. Assert that here instead of relying on fadeOutToLessWidth
++                // having happened to leave clipping off.
++                if (getClipChildren()) {
++                    setClipChildren(false);
++                }
++                // The avatar takes over the action bar's right menu slot, mirroring the back
++                // button's left one (dp(6) padding + dp(46) slot => center dp(29) from the edge).
++                // That is outside this container's right edge; ActionBar has setClipChildren(false)
++                // so it still draws, and touches there land on the icon-less header menu item.
++                avatarLeft = (actionBar.getWidth() - inu_containerLeft()) - dp(29) - avatarW / 2;
++            } else if (inu_isStaticAvatar()) {
++                // entiny: same point a non-centered header's translation would put the avatar at, converted to container coords since we're not translated here.
++                if (getClipChildren()) {
++                    setClipChildren(false);
++                }
++                avatarLeft = actionBar.inu_getStaticAvatarLeft() + 1 - inu_containerLeft();
++            } else if (isRightAvatar()) {
++                avatarLeft = actionBar.inu_titlePillRight - inu_containerLeft() - dp(6) - avatarW;
++            } else {
++                avatarLeft = actionBar.inu_titlePillLeft - inu_containerLeft() + dp(6);
++            }
++            avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
++        } else {
++            avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarW, 1 + viewTop + avatarH);
++            int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);
++            // entiny: track avatar visibility the same way onMeasure's availableWidth does, or an avatar-less header over-indents and overflows the container.
++            textLeftBound = (centerChatTitle ? inset : (hasVisibleAvatar() ? (1 + leftPadding + avatarW + dp(8)) : dp(glassMode ? 13 : 1) + leftPadding)) + rightAvatarPadding;
++            textRightBound = (right - left) - (centerChatTitle ? inset : dp(glassMode ? 20 : 16));
++        }
++
++        int availableWidth = Math.max(0, textRightBound - textLeftBound);
++
++        int l = textLeftBound;
++        int r = centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + titleTextView.getMeasuredWidth());
++        // entiny: bias the title's own box (not the shared band) by half a trailing icon's width so the TEXT, not text+icon, lands centered -- mirrors ActionBar's titleTextView centering.
++        final int titleContentWidth = (int) Math.ceil(titleTextView.getExactWidthIncludeDrawables());
++        final int titleBiasSlack = Math.max(0, availableWidth - titleContentWidth);
++        // entiny: getCenteringDrawableBias, not getSideDrawablesSize/2 -- that counted the LEADING drawable (our dev badge) too and pushed a badged title off-center.
++        final int titleDrawableBias = centerChatTitle
++                ? Math.min(titleTextView.getCenteringDrawableBias(), titleBiasSlack)
++                : 0;
++        final int titleL = l + titleDrawableBias;
++        final int titleR = r + titleDrawableBias;
+         SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
+         if (getSubtitleTextView().getVisibility() != GONE) {
+-            titleTextView.layout(l, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
++            titleTextView.layout(titleL, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
+             if (titleTextLargerCopyView != null) {
+-                titleTextLargerCopyView.layout(l, viewTop + dp(1.66f), l + titleTextLargerCopyView.getMeasuredWidth(), viewTop + titleTextLargerCopyView.getTextHeight() + dp(1.66f));
++                titleTextLargerCopyView.layout(titleL, viewTop + dp(1.66f), titleR, viewTop + titleTextLargerCopyView.getTextHeight() + dp(1.66f));
+             }
+         } else {
+-            titleTextView.layout(l, viewTop + dp(11) - titleTextView.getPaddingTop(), l + titleTextView.getMeasuredWidth(), viewTop + titleTextView.getTextHeight() + dp(11) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
++            titleTextView.layout(titleL, viewTop + dp(11) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(11) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
+             if (titleTextLargerCopyView != null) {
+-                titleTextLargerCopyView.layout(l, viewTop + dp(10), l + titleTextLargerCopyView.getMeasuredWidth(), viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
++                titleTextLargerCopyView.layout(titleL, viewTop + dp(10), titleR, viewTop + titleTextLargerCopyView.getTextHeight() + dp(10));
+             }
+         }
++        int avatarLeftPos = avatarImageView.getLeft();
++        float transX = 0;
+         if (communityItem != null) {
++            communityItem.setTranslationX(transX);
+             communityItem.layout(
+-                leftPadding + dp(29f),
++                avatarLeftPos + dp(28f),
+                 viewTop + dp(27.33f),
+-                leftPadding + dp(29f) + communityItem.getMeasuredWidth(),
++                avatarLeftPos + dp(28f) + communityItem.getMeasuredWidth(),
+                 viewTop + dp(27.33f) + communityItem.getMeasuredHeight());
+         }
+         if (timeItem != null) {
++            timeItem.setTranslationX(transX);
+             timeItem.layout(
+-                leftPadding + dp(19.333f),
++                avatarLeftPos + dp(19.333f),
+                 viewTop - dp(8),
+-                leftPadding + dp(19.333f) + timeItem.getMeasuredWidth(),
++                avatarLeftPos + dp(19.333f) + timeItem.getMeasuredWidth(),
+                 viewTop - dp(8) + timeItem.getMeasuredHeight()
+             );
+         }
+         if (starBgItem != null) {
+-            starBgItem.layout(leftPadding + dp(28), viewTop + dp(24), leftPadding + dp(28) + starBgItem.getMeasuredWidth(), viewTop + dp(24) + starBgItem.getMeasuredHeight());
++            starBgItem.setTranslationX(transX);
++            starBgItem.layout(avatarLeftPos + dp(28), viewTop + dp(24), avatarLeftPos + dp(28) + starBgItem.getMeasuredWidth(), viewTop + dp(24) + starBgItem.getMeasuredHeight());
+         }
+         if (starFgItem != null) {
+-            starFgItem.layout(leftPadding + dp(28), viewTop + dp(24), leftPadding + dp(28) + starFgItem.getMeasuredWidth(), viewTop + dp(24) + starFgItem.getMeasuredHeight());
++            starFgItem.setTranslationX(transX);
++            starFgItem.layout(avatarLeftPos + dp(28), viewTop + dp(24), avatarLeftPos + dp(28) + starFgItem.getMeasuredWidth(), viewTop + dp(24) + starFgItem.getMeasuredHeight());
+         }
++
++        // entiny: subtitle's own gradient-tail padding (dp(10) right, none on title) settled it half that padding left of the title -- shift right by half the difference so glyphs, not the padded box, center.
++        final int subtitlePaddingBias = centerChatTitle
++                ? inu_centeredPaddingBias(subtitleTextView != null ? subtitleTextView : animatedSubtitleTextView, availableWidth)
++                : 0;
++        final int subL = textLeftBound + subtitlePaddingBias;
++        int subR = (centerChatTitle ? (textLeftBound + availableWidth) : (textLeftBound + (subtitleTextView != null ? subtitleTextView.getMeasuredWidth() : (animatedSubtitleTextView != null ? animatedSubtitleTextView.getMeasuredWidth() : 0)))) + subtitlePaddingBias;
+         if (subtitleTextView != null) {
+-            subtitleTextView.layout(l, subtitleTop, l + subtitleTextView.getMeasuredWidth(), subtitleTop + subtitleTextView.getTextHeight());
++            subtitleTextView.layout(subL, subtitleTop, subR, subtitleTop + subtitleTextView.getTextHeight());
+         } else if (animatedSubtitleTextView != null) {
+-            animatedSubtitleTextView.layout(l, subtitleTop, l + animatedSubtitleTextView.getMeasuredWidth(), subtitleTop + animatedSubtitleTextView.getTextHeight());
++            animatedSubtitleTextView.layout(subL, subtitleTop, subR, subtitleTop + animatedSubtitleTextView.getTextHeight());
+         }
+         SimpleTextView subtitleTextLargerCopyView = this.subtitleTextLargerCopyView.get();
+         if (subtitleTextLargerCopyView != null) {
+-            subtitleTextLargerCopyView.layout(l, subtitleTop, l + subtitleTextLargerCopyView.getMeasuredWidth(), subtitleTop + subtitleTextLargerCopyView.getTextHeight());
++            subtitleTextLargerCopyView.layout(textLeftBound, subtitleTop, subR, subtitleTop + subtitleTextLargerCopyView.getTextHeight());
+         }
+     }
+ 
+@@ -827,6 +1097,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+ 
+     public void setRightAvatarPadding(int value) {
+         rightAvatarPadding = value;
++        inu_invalidateCenteredTextWidth();
+     }
+ 
+     public void setCommunityItemVisible(boolean visible) {
+@@ -915,10 +1186,11 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
+             if (mutedIcon != null) {
+                 rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
++                titleTextView.setRightDrawable2(mutedIcon);
+             } else {
+                 rightDrawable2ContentDescription = null;
++                titleTextView.setRightDrawable2(null);
+             }
+-            titleTextView.setRightDrawable2(mutedIcon);
+         }
+         checkActionBar(true);
+     }
+@@ -941,6 +1213,10 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (value != null) {
              value = Emoji.replaceEmoji(value, titleTextView.getPaint().getFontMetricsInt(), false);
          }
 +        boolean marquee = desu.inugram.InuConfig.CHAT_TITLE_MARQUEE.getValue();
 +        titleTextView.setScrollNonFitText(marquee);
 +        titleTextView.setEllipsizeByGradient(!marquee, false);
++        titleTextView.setRightDrawableOutside(inu_titleRightDrawableOutside(marquee));
          titleTextView.setText(value);
          rightDrawableIsScam = false;
          if (scam || fake) {
-@@ -1602,6 +1646,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1528,6 +1804,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     @Override
+     protected void onAttachedToWindow() {
+         super.onAttachedToWindow();
++        post(this::requestLayout);
+         if (parentFragment != null) {
+             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdateConnectionState);
+             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
+@@ -1602,6 +1879,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          if (title == null) {
              if (lastSubtitle != null) {
                  if (subtitleTextView != null) {
@@ -125,6 +1347,38 @@ index 0000000..0000000 100644
                      subtitleTextView.setText(lastSubtitle);
                      lastSubtitle = null;
                      if (overrideSubtitleColor != null) {
+@@ -1715,6 +1995,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     private void checkActionBar(boolean animated) {
++        inu_invalidateCenteredTextWidth();
+         if (actionBar != null) {
+             actionBar.checkAvatarContainerWidth(animated);
+         }
+@@ -1736,7 +2017,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         if (hasVisibleAvatar()) {
+             width += dp(52 + 18);
+         } else {
+-            width += dp(34);
++            width += dp(44);
+         }
+         return (int) width;
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3245,6 +3245,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+     }
+ 
++    public boolean inu_isMainDialogsScreen() {
++        return !onlySelect && folderId == 0 && communityId == 0 && initialDialogsType == DIALOGS_TYPE_DEFAULT;
++    }
++
+     @Override
+     public View createView(final Context context) {
+         searching = false;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
@@ -139,3 +1393,28 @@ index 0000000..0000000 100644
              if (a == 1) {
                  nameTextView[a].setScrollNonFitText(true);
                  nameTextView[a].setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+@@ -940,10 +940,16 @@ public class DialogStoriesCell extends FrameLayout implements NotificationCenter
+             titleView.setTranslationY(bottomY + dp(14) - offset + dp(FAKE_TOP_PADDING) - dp(6) * subtitleOverlayContainer.getTotalVisibility());
+             int cellWidth = dp(72);
+             lastViewRight += -cellWidth + getAvatarRight(cellWidth, collapsedProgress) + dp(12);
+-            titleView.setTranslationX(lastViewRight);
+-            titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
+-
+-            telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
++            if (desu.inugram.InuConfig.CENTER_TITLE_MAIN.getValue()) {
++                float titleX = (getMeasuredWidth() - titleView.getDrawable().getCurrentWidth()) / 2f;
++                titleView.setTranslationX(titleX);
++                titleView.getDrawable().setRightPadding(0);
++                telegramLogoView.setTranslationX((getMeasuredWidth() - telegramLogoView.getMeasuredWidth()) / 2f);
++            } else {
++                titleView.setTranslationX(lastViewRight);
++                titleView.getDrawable().setRightPadding(lastViewRight - dp(12) + actionBar.menu.getVisibleItemsMeasuredWidthWithAlpha() * progress);
++                telegramLogoView.setTranslationX(titleView.getTranslationX() + dp(1));
++            }
+             telegramLogoView.setTranslationY(bottomY + dp(14 + FAKE_TOP_PADDING + 4.333f) + translationOffset /*titleView.getTranslationY() + dpf2(37.33f)*/);
+ 
+             if (desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
