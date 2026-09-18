@@ -10,12 +10,6 @@ import org.telegram.ui.Components.AnimatedFloat
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 
-/**
- * Shared media selection bar for non-island mode, filling the band of the tab strip it covers.
- *
- * Owns its own background, so [setBackgroundColor] is deliberately inert — stock drives it from the
- * action mode's theme descriptions and would otherwise fight the docked crossfade.
- */
 @SuppressLint("ViewConstructor")
 open class MediaActionModeLayout(
     context: Context,
@@ -39,6 +33,7 @@ open class MediaActionModeLayout(
 
     open fun processColor(color: Int): Int = color
 
+    // entiny: ignore background color from stock theme descriptions to avoid fighting docked crossfade
     override fun setBackgroundColor(color: Int) {}
 
     override fun dispatchDraw(canvas: Canvas) {

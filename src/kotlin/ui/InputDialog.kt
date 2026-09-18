@@ -16,11 +16,6 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.LayoutHelper
-
-/**
- * Single-line text-input dialog. onSubmit returns true to dismiss, false to keep
- * the dialog open and shake the input.
- */
 fun showInputDialog(
     fragment: BaseFragment,
     title: CharSequence,

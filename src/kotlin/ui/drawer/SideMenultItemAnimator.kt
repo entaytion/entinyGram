@@ -13,7 +13,6 @@ import org.telegram.ui.Components.RecyclerListView
 
 class SideMenultItemAnimator(view: RecyclerListView) : SimpleItemAnimator() {
 
-    // adapted for 12.x androidx: 11.14 had no such hook; no-op preserves old behavior
     override fun listenToAnimationUpdates(listener: Runnable) {}
 
     private val mPendingRemovals = ArrayList<RecyclerView.ViewHolder>()

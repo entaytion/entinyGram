@@ -9,13 +9,6 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 
-/**
- * Attachable blur-behind + shadow drawer for views that can't extend BlurredFrameLayout.
- *
- * Used primarily to visually match the legacy blur pipeline for tab bars in non-island mode.
- * Ideally we shouldn't need this at all and just use blur3 throughout, but that requires tweaking a bunch of stuff
- * and seems to be a lot more prone to break in future releases, so for the time being we use this crutch.
- */
 class BlurBehindHelper(
     private val view: View,
     private val contentView: SizeNotifierFrameLayout,

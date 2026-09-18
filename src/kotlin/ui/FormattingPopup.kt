@@ -558,7 +558,6 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
             ScaleStateListAnimator.apply(icon, 0.15f, 2f)
         }
 
-        // tl, tr, br, bl
         fun setCorners(left: Float, right: Float) {
             content.cornerRadii = floatArrayOf(left, left, right, right, right, right, left, left)
         }

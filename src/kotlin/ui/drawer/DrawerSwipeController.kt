@@ -30,12 +30,6 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.MainTabsActivity
 
-/**
- * Old Layout side drawer mechanics for [DrawerLayoutContainer]: swipe
- * tracking, open/close animation, scrim + edge-shadow rendering. Ported from
- * 11.14.1's stock DrawerLayoutContainer so the stock patch stays a thin set of
- * delegating overrides instead of carrying the whole state machine.
- */
 class DrawerSwipeController(private val host: DrawerLayoutContainer) {
 
     private var drawerLayout: FrameLayout? = null
@@ -192,12 +186,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         }
     }
 
-    /**
-     * Once the drawer is open (or mid-drag) gestures must keep working to close it.
-     * Forum (right-sliding container) owns the left-edge swipe to close itself —
-     * yield fully there. Non-first folder tab owns horizontal swipe for tab paging,
-     * but we still allow drawer from a thin edge zone — see [tabsOwnHorizontalSwipe].
-     */
     private fun canTrackGesture(): Boolean {
         if (drawerOpened || drawerPosition > 0) return true
         if (host.parentActionBarLayout.fragmentStack.size != 1) return false
@@ -209,7 +197,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         return true
     }
 
-    /** Unwraps the bottom tabs pager, whose pages are fragments in their own right. */
     private fun getVisibleFragment(): BaseFragment? {
         val top = host.parentActionBarLayout.lastFragment
         return if (top is MainTabsActivity) top.currentVisibleFragment else top
@@ -223,7 +210,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         return tabs.visibility == View.VISIBLE && !tabs.isFirstTabSelected
     }
 
-    /** Exclude left edge from system back gesture for drawer (band anchored above nav bar, max 200dp per edge). */
     private fun updateGestureExclusion() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
         val height = host.height
@@ -244,8 +230,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
     fun onTouchEvent(ev: MotionEvent?): Boolean {
         val layout = drawerLayout
         if (layout == null || host.parentActionBarLayout.checkTransitionAnimation()) {
-            // A fragment transition mid-drag aborts the gesture; drop the stale
-            // tracking state so the next gesture doesn't resume from it.
             if (startedTracking || maybeStartTracking) {
                 startedTracking = false
                 maybeStartTracking = false
@@ -255,11 +239,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
             return false
         }
         if (ev != null && ev.action == MotionEvent.ACTION_DOWN && !startedTracking && maybeStartTracking) {
-            // Fresh gesture, yet maybeStartTracking is still set: the previous
-            // gesture's ACTION_UP never reached us — a child (the folder pager)
-            // claimed it via requestDisallowInterceptTouchEvent, so our intercept
-            // stopped being polled mid-gesture. Drop the stale state, else the
-            // DOWN below won't re-init tracking and this swipe-to-open is eaten.
+            // entiny: clear stale tracking if child stole previous gesture so next DOWN can re-init tracking
             maybeStartTracking = false
             velocityTracker?.recycle()
             velocityTracker = null
@@ -277,8 +257,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
                 startedTrackingPointerId = ev.getPointerId(0)
                 maybeStartTracking = true
                 cancelCurrentAnimation()
-                // Seed velocity tracker from DOWN — otherwise a short fast fling
-                // (DOWN → 1 MOVE → UP) computes ~0 velocity and the drawer snaps back.
+                // entiny: seed velocity tracker from DOWN so short fast flings do not compute zero velocity
                 if (velocityTracker == null) velocityTracker = VelocityTracker.obtain()
                 else velocityTracker!!.clear()
                 velocityTracker!!.addMovement(ev)
@@ -290,9 +269,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
                 val dx = ev.x - startedTrackingX
                 val dy = Math.abs(ev.y - startedTrackingY)
                 val inEdgeZone = startedTrackingX <= AndroidUtilities.dp(EDGE_SAFE_ZONE_DP.toFloat())
-                // Edge-zone swipes skip the angle check entirely (gesture-nav swipes
-                // come at any angle); mid-screen keeps stock strict ~18° so vertical
-                // scrolls with rightward drift aren't hijacked.
                 val openAngleOk = inEdgeZone || dx / 3f > dy
                 val openSwipe = dx > 0 && openAngleOk && Math.abs(dx) >= AndroidUtilities.getPixelsInCM(0.2f, true)
                     && (!tabsOwnHorizontalSwipe() || inEdgeZone)
@@ -301,9 +277,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
                     maybeStartTracking = false
                     startedTracking = true
                     beginTrackingSent = false
-                    // Apply accumulated dx in-line — a fast fling that crosses the
-                    // threshold in one MOVE otherwise wouldn't move the drawer at
-                    // all before UP arrives.
                     setDrawerPosition(drawerPosition + dx)
                     startedTrackingX = ev.x.toInt()
                     host.requestDisallowInterceptTouchEvent(true)
@@ -351,15 +324,7 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         return startedTracking
     }
 
-    /**
-     * A descendant claimed the gesture via requestDisallowInterceptTouchEvent.
-     * If we weren't already tracking, run the settle path: a touch that lands
-     * mid-animation cancels currentAnimation via the ACTION_DOWN branch above,
-     * then the child eats every subsequent event — so without this, the drawer
-     * freezes at the in-between position because we never see ACTION_UP.
-     * Guarded so the controller's own self-disallow (after it wins the gesture)
-     * doesn't immediately settle out of a valid drag.
-     */
+    // entiny: settle drawer position on descendant disallow so mid-animation touch does not freeze in place
     fun onParentDisallowIntercept() {
         if (startedTracking) return
         onTouchEvent(null)
@@ -416,8 +381,6 @@ class DrawerSwipeController(private val host: DrawerLayoutContainer) {
         private const val EDGE_SAFE_ZONE_DP = 25
         private const val EXCLUSION_HEIGHT_DP = 200
 
-        // ObjectAnimator with a string property name uses JavaBeans naming; an
-        // explicit Property bypasses that.
         @JvmField
         val DRAWER_POSITION: Property<DrawerSwipeController, Float> =
             object : Property<DrawerSwipeController, Float>(Float::class.java, "drawerPosition") {

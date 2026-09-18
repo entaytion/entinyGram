@@ -1,11 +1,3 @@
-/*
- * This is the source code of Telegram for Android v. 5.x.x.
- * It is licensed under GNU GPL v. 2 or later.
- * You should have received a copy of the license in this archive (see LICENSE).
- *
- * Copyright Nikolai Kudashov, 2013-2018.
- */
-
 package desu.inugram.ui.drawer
 
 import android.content.Context
@@ -71,7 +63,6 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
 
             val x = countLeft - AndroidUtilities.dp(5.5f)
             rect.set(x.toFloat(), countTop.toFloat(), (x + countWidth + AndroidUtilities.dp(14f)).toFloat(), (countTop + AndroidUtilities.dp(23f)).toFloat())
-            // redError is always false after removing currentError; badge always uses archiveBackground
             Theme.chat_docBackPaint.color = Theme.getColor(Theme.key_chats_archiveBackground)
             canvas.drawRoundRect(rect, 11.5f * AndroidUtilities.density, 11.5f * AndroidUtilities.density, Theme.chat_docBackPaint)
 

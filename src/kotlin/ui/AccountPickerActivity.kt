@@ -12,9 +12,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.LaunchActivity
 
-// Standalone picker for the launcher shortcut: LaunchActivity is the only thing that clears
-// ApplicationLoader.mainInterfacePaused, so while we're the only activity up no account can report
-// itself online. Cancelling here leaves the app closed entirely.
+// entiny: standalone activity keeps mainInterfacePaused active so accounts cannot report online before selection
 class AccountPickerActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +24,6 @@ class AccountPickerActivity : Activity() {
         AndroidUtilities.fillStatusBarHeight(this, false)
         Theme.createDialogsResources(this)
 
-        // names and avatars must stay behind the lock screen, so hand off and let LaunchActivity show
-        // the picker once the passcode is entered.
         if (SharedConfig.passcodeHash.isNotEmpty()) {
             openApp(Intent(this, LaunchActivity::class.java).setAction(ShortcutHelper.SWITCH_ACCOUNT_ACTION))
             return

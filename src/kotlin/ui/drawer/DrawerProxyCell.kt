@@ -49,7 +49,6 @@ class DrawerProxyCell(context: Context) : FrameLayout(context) {
         addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat(), startGravity or Gravity.TOP, if (isRTL) 70f else 72f, 0f, if (isRTL) 72f else 70f, 0f))
         addView(checkBox, LayoutHelper.createFrame(37, 24f, endGravity or Gravity.CENTER_VERTICAL, if (isRTL) 22f else 0f, 0f, if (isRTL) 0f else 22f, 0f))
 
-        // Switch draws a larger thumb/ripple than its measured bounds — allow it to overdraw.
         setClipChildren(false)
     }
 
@@ -65,7 +64,6 @@ class DrawerProxyCell(context: Context) : FrameLayout(context) {
 
     private fun isInSwitchZone(x: Float): Boolean {
         if (checkBox.visibility != VISIBLE) return false
-        // hit zone: from the switch edge (with extra padding) to the near edge of the cell
         return if (isRTL) x <= checkBox.right + AndroidUtilities.dp(12f)
         else x >= checkBox.left - AndroidUtilities.dp(12f)
     }
@@ -97,7 +95,6 @@ class DrawerProxyCell(context: Context) : FrameLayout(context) {
             MotionEvent.ACTION_CANCEL -> {
                 inSwitchZone = false
             }
-            // ACTION_MOVE: consumed silently to prevent the row click from firing mid-drag
         }
         return true
     }

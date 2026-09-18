@@ -55,8 +55,7 @@ class DrawerLayoutAdapter(
         return count
     }
 
-    // accountNumbers excludes hidden accounts, so it can't gate the add-account
-    // row — use the real activated count against the hard cap instead.
+    // entiny: gate against activated count rather than accountNumbers because accountNumbers excludes hidden accounts
     private fun canAddAccount(): Boolean =
         UserConfig.getActivatedAccountsCount() < UserConfig.MAX_ACCOUNT_COUNT
 
@@ -258,9 +257,8 @@ class DrawerLayoutAdapter(
                 }
             }
         }
-        items.add(null) // divider
+        items.add(null)
         items.add(Item(ITEM_SCROLL_TOP, LocaleController.getString(R.string.InuScrollToTop), R.drawable.msg_go_up))
-        // Mirrors the overflow menu: a pending compose-draft swaps "New Group" for "New Message".
         if (DialogsFabHelper.hasNewMessage()) {
             items.add(Item(17, LocaleController.getString(R.string.NewMessageTitle), R.drawable.menu_topic_add))
         } else {

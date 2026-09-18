@@ -1,4 +1,4 @@
-﻿package desu.inugram.ui
+package desu.inugram.ui
 
 import android.app.Activity
 import android.content.Context
@@ -140,8 +140,6 @@ class UpdateRowView(context: Context) : FrameLayout(context) {
             animated,
         )
     }
-
-    /** Called periodically to refresh progress during an active download */
     fun applyProgress(args: Array<out Any?>?) {
         if (!SharedConfig.isAppUpdateAvailable()) return
         val p = UpdateHelper.getDownloadProgress() ?: return

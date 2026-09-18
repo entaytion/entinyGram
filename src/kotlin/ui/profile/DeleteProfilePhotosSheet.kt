@@ -67,7 +67,6 @@ class DeleteProfilePhotosSheet(
             setPadding(0, AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(8f))
         }
 
-        // Header bar
         val headerLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -110,7 +109,6 @@ class DeleteProfilePhotosSheet(
 
         rootLayout.addView(headerLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        // Content Area (Grid / Progress / Empty)
         val contentFrame = FrameLayout(context)
 
         progressView = RadialProgressView(context).apply {
@@ -153,7 +151,6 @@ class DeleteProfilePhotosSheet(
 
         rootLayout.addView(contentFrame, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 300, 0f, 4f, 0f, 4f))
 
-        // Bottom Action Buttons
         val buttonsLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(4f), AndroidUtilities.dp(16f), AndroidUtilities.dp(8f))
@@ -241,7 +238,6 @@ class DeleteProfilePhotosSheet(
             return
         }
 
-        // Check local cache first
         val cached = MessagesController.getInstance(currentAccount).getDialogPhotos(clientUserId)
         if (cached != null && cached.photos.isNotEmpty()) {
             val list = cached.photos.filterNotNull()
@@ -256,7 +252,6 @@ class DeleteProfilePhotosSheet(
             }
         }
 
-        // Fetch full fresh list from MTProto
         val req = TLRPC.TL_photos_getUserPhotos().apply {
             this.user_id = MessagesController.getInstance(currentAccount).getInputUser(user)
             this.offset = 0

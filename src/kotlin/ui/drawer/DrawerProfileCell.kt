@@ -91,7 +91,6 @@ class DrawerProfileCell(
     private var premiumStar: Drawable? = null
 
     companion object {
-        // Shared across instances so the animation state persists when cells are recycled/rebound.
         private var sunDrawable: RLottieDrawable? = null
     }
 
@@ -116,7 +115,6 @@ class DrawerProfileCell(
         addView(avatarImageView, LayoutHelper.createFrame(64, 64f, Gravity.LEFT or Gravity.BOTTOM, 16f, 0f, 0f, 67f))
 
         nameTextView = object : SimpleTextView(context) {
-            // HwEmojis hooks: hardware emoji rendering batches invalidations; skip them here.
             override fun invalidate() {
                 if (HwEmojis.grab(this)) return
                 super.invalidate()
@@ -256,9 +254,7 @@ class DrawerProfileCell(
                 sunDrawable!!.setCustomEndFrame(0)
             }
             if (!toDark) {
-                // dark→light: hide icon and wait for a composed frame before snapshot, otherwise
-                // PixelCopy reads the prior surfaceflinger buffer and old sun bleeds through.
-                // Floating sun overlay (sourceView path in LaunchActivity) renders the morph on top.
+                // entiny: wait for composed frame before theme switch snapshot so PixelCopy buffer does not bleed old sun
                 val fromColor = currentIconColor
                 pendingCrossfadeFrom = fromColor
                 if (fromColor != null) {
@@ -276,8 +272,6 @@ class DrawerProfileCell(
                 switchTheme(themeInfo, toDark)
             }
 
-            // Adapted from 11.14.1: 12.x turnOffAutoNight takes BulletinFactory instead of a host FrameLayout.
-            // Build a BulletinFactory from the currently-presented fragment so the bulletin shows on the host.
             val openSettings = Runnable {
                 drawerLayoutContainer.inu_drawer?.closeDrawer(false)
                 drawerLayoutContainer.parentActionBarLayout.presentFragment(ThemeActivity(ThemeActivity.THEME_TYPE_NIGHT))
@@ -532,9 +526,7 @@ class DrawerProfileCell(
         applyBackground(true)
     }
 
-    // Stock uses key_chats_menuName for the sun/arrow which is white on dark themes
-    // but also lands on header backgrounds that are nearly white (e.g. Monet Light).
-    // Fall back to the dark drawer-item icon color when the header is bright.
+    // entiny: fallback to dark icon color when both header and chats_menuName are light
     private fun pickIconColor(backgroundKey: Int, useImageBackground: Boolean): Int {
         val nameColor = Theme.getColor(Theme.key_chats_menuName)
         if (useImageBackground) return nameColor

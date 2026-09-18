@@ -117,8 +117,6 @@ class CrashReportBottomSheet(context: Context) : BottomSheet(context, false) {
             if (primary) primaryButton(R.string.InuCrashShareHeapDump, onSaveHeapDump)
             else secondaryButton(R.string.InuCrashShareHeapDump, onSaveHeapDump)
 
-        // OOM crash logs are near-useless, so don't prompt to share them; offer the heap dump
-        // (or just a way out) instead.
         if (isOom) {
             if (hasHeapDump) {
                 val row = LinearLayout(context).apply {

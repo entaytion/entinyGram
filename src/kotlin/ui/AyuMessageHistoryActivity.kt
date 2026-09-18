@@ -41,20 +41,12 @@ class AyuMessageHistoryActivity(
 ) : BaseFragment() {
 
     private val historyEntries = ArrayList<EditEntry>()
-    // Built once per entry instead of per bind: every rebuild re-runs entity application and a
-    // full StaticLayout pass, which is not something to redo on every scroll frame.
     private val messageObjects = ArrayList<MessageObject?>()
     private var listView: RecyclerListView? = null
     private var emptyView: View? = null
     private var loaded = false
 
-    /**
-     * Peer of the message the history belongs to. `MessageObject.checkLayout()` and
-     * `generateLayout()` both return early when `messageOwner.peer_id` is null, so a row built
-     * without one renders as a bubble with a timestamp and no text at all -- which is what the
-     * screen looked like whenever it was opened through the id-based entry point, since the
-     * stand-in message that path synthesizes carried no peer.
-     */
+    // entiny: checkLayout and generateLayout return early if peer_id is null so synthesized messages need a fallback peer
     private val peer: TLRPC.Peer?
         get() = targetMessageObject.messageOwner?.peer_id
             ?: messagesController?.getPeer(targetMessageObject.getDialogId())
@@ -72,9 +64,7 @@ class AyuMessageHistoryActivity(
                 historyEntries.add(EditEntry(entry.timestamp, entry.text, media, entry.entities, entry.media))
             }
 
-            // The live message is the newest revision and is never part of the stored history.
-            // Take the raw `message`, not `messageText`: entity offsets address the former, and
-            // the latter can be a caption, a translation or a service description.
+            // entiny: use raw message rather than messageText because entity offsets address the unformatted raw string
             val owner = targetMessageObject.messageOwner
             val rawCurrent = owner?.message ?: ""
             val currentText = if (rawCurrent.isNotEmpty()) rawCurrent else targetMessageObject.messageText?.toString().orEmpty()
@@ -111,8 +101,6 @@ class AyuMessageHistoryActivity(
         }
     }
 
-    /** True for rows that came out of the archive; the appended "current version" row has no
-     *  stored counterpart, so there is nothing to delete for it. */
     private fun isStoredRevision(position: Int): Boolean =
         position >= 0 && position < historyEntries.size && position != currentVersionIndex
 
@@ -145,23 +133,18 @@ class AyuMessageHistoryActivity(
                 }
             }
         })
-        // Comparing revisions is the reason to be on this screen -- reaching Settings to flip it
-        // is not something anyone should have to do mid-comparison.
         diffItem = actionBar.createMenu()
             .addItem(MENU_MAIN, R.drawable.ic_ab_other)
             .addSubItem(MENU_TOGGLE_DIFF, R.drawable.msg_customize, LocaleController.getString(R.string.InuEditHistoryDiff), true)
         diffItem?.setChecked(InuConfig.SHOW_EDIT_HISTORY_DIFF.value)
 
-        // Bubbles are drawn with the chat's in/out drawables, which are cut for the wallpaper --
-        // on a flat settings background they read as washed-out slabs.
         val frameLayout = object : SizeNotifierFrameLayout(context) {
             override fun isActionBarVisible(): Boolean = false
             override fun isStatusBarVisible(): Boolean = false
             override fun useRootView(): Boolean = false
         }
         frameLayout.setOccupyStatusBar(false)
-        // Fallback for themes with no cached wallpaper -- setBackgroundImage(null) is a no-op and
-        // would leave the fragment transparent.
+        // entiny: set solid color fallback because setBackgroundImage(null) no-ops when theme has no cached wallpaper
         frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray))
         frameLayout.setBackgroundImage(Theme.getCachedWallpaper(), Theme.isWallpaperMotion())
 
@@ -236,7 +219,6 @@ class AyuMessageHistoryActivity(
         if (position < messageObjects.size) {
             messageObjects.removeAt(position)
         }
-        // The next row's diff was computed against the row that just went away.
         if (position < messageObjects.size) {
             messageObjects[position] = null
         }
@@ -299,25 +281,19 @@ class AyuMessageHistoryActivity(
                 edit_hide = true
             }
 
-            // Diff mode replaces the text wholesale, so the stored offsets no longer address it.
             val entities = if (diff == null) entry.entities else null
             if (!entities.isNullOrEmpty()) {
                 msg.entities = ArrayList(entities)
                 msg.flags = msg.flags or TLRPC.MESSAGE_FLAG_HAS_ENTITIES
             }
 
-            // Only the revision's own snapshot may bring media along. Copying the live message's
-            // media onto text rows pushed them out of MessageObject.TYPE_TEXT, and a non-text
-            // type makes checkLayout() skip building the text layout entirely.
+            // entiny: only stored revisions carry media so text revisions stay TYPE_TEXT and build their text layout
             val savedFile = entry.mediaPath?.takeIf { it.isNotBlank() }?.let { File(it) }?.takeIf { it.exists() }
             val storedMedia = entry.media
             if (storedMedia != null && storedMedia !is TLRPC.TL_messageMediaEmpty) {
                 msg.media = storedMedia
                 if (!isLive) {
-                    // A one-time/TTL photo would otherwise render as an already-expired
-                    // placeholder -- the archived copy is precisely the one that does not expire.
-                    // Never on the live row: that MessageMedia is the real message's own, and
-                    // clearing its ttl would un-expire the bubble sitting in the chat.
+                    // entiny: clear ttl on archived copies so one-time media does not render as an expired placeholder
                     storedMedia.ttl_seconds = 0
                 }
                 msg.flags = msg.flags or TLRPC.MESSAGE_FLAG_HAS_MEDIA
@@ -325,7 +301,6 @@ class AyuMessageHistoryActivity(
                     msg.attachPath = savedFile.absolutePath
                 }
             } else if (savedFile != null) {
-                // Rows written before the media blob existed: all we have is a file on disk.
                 msg.media = TLRPC.TL_messageMediaPhoto().apply { photo = TLRPC.TL_photo() }
                 msg.flags = msg.flags or TLRPC.MESSAGE_FLAG_HAS_MEDIA
                 msg.attachPath = savedFile.absolutePath
@@ -338,7 +313,6 @@ class AyuMessageHistoryActivity(
 
             val msgObj = MessageObject(currentAccount, msg, false, true)
             if (savedFile != null) {
-                // Stops the bubble from offering a download for a file that is already local.
                 msgObj.attachPathExists = true
                 msgObj.mediaExists = true
             }
@@ -346,8 +320,7 @@ class AyuMessageHistoryActivity(
                 msgObj.messageText = diff
             }
             msgObj.checkLayout()
-            // Keeps the bubble from inheriting the target's "deleted" mark and dimming: rows
-            // reuse the real message id, which is what those lookups key on.
+            // entiny: mark as history preview so revisions sharing message id do not inherit deleted styling
             SavedMessagesHelper.markAsHistoryPreview(msgObj)
             return msgObj
         }
@@ -360,8 +333,7 @@ class AyuMessageHistoryActivity(
         init {
             setFullyDraw(true)
             isChat = false
-            // Deliberately inert: canPerformActions() stays false so ChatMessageCell does not
-            // consume touches and the row's own click listener (copy / open media) still fires.
+            // entiny: empty delegate keeps canPerformActions false so row click listener handles touches
             setDelegate(object : ChatMessageCellDelegate {})
 
             setOnClickListener {
@@ -403,9 +375,7 @@ class AyuMessageHistoryActivity(
         override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
             super.onLayout(changed, left, top, right, bottom)
             val currentEntry = entry ?: return
-            // Only revisions saved before the media blob existed need this: without a real
-            // TL media object the cell has nothing to load, so point its image at the file
-            // we copied. Newer rows carry the original media and render themselves.
+            // entiny: legacy fallback points photo image at local file when revision predates media blob
             if (currentEntry.media != null) return
             val path: String? = currentEntry.mediaPath
             if (!path.isNullOrEmpty()) {
