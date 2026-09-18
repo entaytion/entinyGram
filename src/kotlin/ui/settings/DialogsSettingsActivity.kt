@@ -26,7 +26,6 @@ class DialogsSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // folders section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFolders)))
         if (filterTabsPreview == null) {
             filterTabsPreview = FilterTabsPreviewCell(this.context)
@@ -91,9 +90,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         )
 
         items.add(UItem.asShadow(null))
-        // end folders section
 
-        // chat list section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatList)))
         items.add(
             UItem.asButton(
@@ -163,10 +160,16 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 communityDisplayModeLabel(InuConfig.COMMUNITY_DISPLAY_MODE.value),
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DIALOG_AVATAR_OPENS_PROFILE,
+                R.string.InuDialogAvatarOpensProfile,
+                R.string.InuDialogAvatarOpensProfileInfo,
+                InuConfig.DIALOG_AVATAR_OPENS_PROFILE.value
+            )
+        )
         items.add(UItem.asShadow(null))
-        // end chat list section
 
-        // bottom tabs section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuBottomTabs)))
         items.add(
             mkTwoLineCheckItem(
@@ -209,9 +212,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             )
         }
         items.add(UItem.asShadow(null))
-        // end bottom tabs section
 
-        // fab section
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDialogsFab)))
         val mainAction = DialogsFabHelper.Action.fromValue(InuConfig.DIALOGS_FAB_MAIN_ACTION.value)
         items.add(
@@ -252,7 +253,6 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.DIALOGS_FAB_LEFT_SIDE.value)
         )
         items.add(UItem.asShadow(null))
-        // end fab section
 
         items.add(mkSubPageButton(BUTTON_PILL_STACK, LocaleController.getString(R.string.InuPillStack)))
         items.add(UItem.asShadow(null))
@@ -303,7 +303,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 InuConfig.FOLDERS_UNREAD_COUNTER_MODE.value = which
                 filterTabsPreview?.refreshCounters()
                 filterTabsPreview?.refresh()
-                // resetAllUnreadCounters dispatches updateInterfaces; DialogsActivity/MainTabsActivity listen.
+                // entiny: resetAllUnreadCounters dispatches updateInterfaces so DialogsActivity and MainTabsActivity update
                 for (i in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
                     if (!UserConfig.getInstance(i).isClientActivated) continue
                     val storage = MessagesStorage.getInstance(i)
@@ -363,6 +363,11 @@ class DialogsSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_INTERACTIVE_CHAT_PREVIEW -> {
                 val new = InuConfig.INTERACTIVE_CHAT_PREVIEW.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_DIALOG_AVATAR_OPENS_PROFILE -> {
+                val new = InuConfig.DIALOG_AVATAR_OPENS_PROFILE.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -563,6 +568,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_FAB_LEFT_SIDE = InuUtils.generateId()
         private val TOGGLE_INTERACTIVE_CHAT_PREVIEW = InuUtils.generateId()
+        private val TOGGLE_DIALOG_AVATAR_OPENS_PROFILE = InuUtils.generateId()
         private val TOGGLE_HIDE_ALL_CHATS_TAB = InuUtils.generateId()
         private val BUTTON_COMMUNITY_DISPLAY_MODE = InuUtils.generateId()
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
@@ -613,6 +619,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ios-chats-tab-first-folder", R.string.InuIosChatsTabFirstFolder, TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER),
                 SearchRegistry.Entry("hide-bot-webview-dialogs", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
                 SearchRegistry.Entry("disable-chat-preview-expand", R.string.InuDisableChatPreviewExpand, TOGGLE_INTERACTIVE_CHAT_PREVIEW),
+                SearchRegistry.Entry("dialog-avatar-opens-profile", R.string.InuDialogAvatarOpensProfile, TOGGLE_DIALOG_AVATAR_OPENS_PROFILE),
                 SearchRegistry.Entry("community-display-mode", R.string.InuCommunityDisplayMode, BUTTON_COMMUNITY_DISPLAY_MODE),
                 SearchRegistry.Entry("bottom-tabs-hide", R.string.InuBottomTabsHide, TOGGLE_BOTTOM_TABS_HIDE),
                 SearchRegistry.Entry("compact-mode", R.string.InuCompactMode, TOGGLE_COMPACT_MODE),

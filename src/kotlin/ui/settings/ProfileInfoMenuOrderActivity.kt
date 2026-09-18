@@ -5,8 +5,6 @@ import desu.inugram.helpers.menu.ProfileInfoMenuConfig
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 
-/** Reorder/hide the phone / bio / username rows on the "My Profile" screen.
- * See [desu.inugram.helpers.ProfileSettingsHelper]. */
 class ProfileInfoMenuOrderActivity : MenuOrderActivity<ProfileInfoMenuConfig.Item>() {
     override val config get() = InuConfig.PROFILE_INFO_ROWS
     override val infoStringRes = R.string.InuProfileInfoRowsOrderInfo

@@ -42,7 +42,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // User Profile (Merged into Behavior & Profile)
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuUserProfile)))
         items.add(
             UItem.asCheck(
@@ -598,7 +597,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
         private val TOGGLE_FAST_RESEND_LOGIN_CODE = InuUtils.generateId()
 
-        // (InuConfig.MapProviderItem value, label res) for every renderer actually present in this build
         private val mapProviderOptions: List<Pair<Int, Int>> = buildList {
             add(InuConfig.MapProviderItem.GOOGLE to R.string.InuMapProviderGoogle)
             if (MapsHelper.hasOsmdroid) add(InuConfig.MapProviderItem.OSM_LITE to R.string.InuMapProviderOsmLite)

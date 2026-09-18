@@ -14,17 +14,14 @@ object RadioItemOptions {
         onSelect: (Int) -> Unit,
     ) {
         val options = ItemOptions.makeOptions(fragment, anchor)
-        // ItemOptions only dismisses after the click runnable, and its dismiss is animated, so a
-        // second tap can still land on another entry and re-run the whole update.
+        // entiny: guard with handled flag because animated ItemOptions dismiss allows double-tap
         var handled = false
         items.forEachIndexed { index, text ->
             options.addChecked(index == selectedIndex, text) {
                 if (handled || index == selectedIndex) return@addChecked
                 handled = true
                 onSelect(index)
-                // UItem.equals() compares textValue, so an animated diff sees a changed value as
-                // remove+insert and cross-fades the old and new name over each other. Rebind
-                // without animation instead — the value row updates in place.
+                // entiny: rebind without animation because UItem textValue diff would trigger remove and insert crossfade
                 val adapter = (fragment as? SettingsPageActivity)?.listView?.adapter
                 if (adapter != null) {
                     adapter.update(false)

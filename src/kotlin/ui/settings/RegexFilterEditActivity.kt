@@ -11,12 +11,6 @@ import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/**
- * Add/edit screen for a single regex filter. [filterId] null = creating a new filter (not
- * persisted until a non-blank pattern is set); [scopeDialogId] null = global/shared filter,
- * otherwise scoped to that chat. Existing filters ignore [scopeDialogId] (their scope is fixed
- * at creation).
- */
 class RegexFilterEditActivity(
     private var filterId: String?,
     private val scopeDialogId: Long?,

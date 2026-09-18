@@ -13,12 +13,6 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/**
- * Saved AI persona presets -- switch, add, or remove the role used by AI Compose. Tapping the
- * active preset expands it in place for editing, same accordion pattern as AI Providers: a short
- * Name (the "you are X" label) and an optional longer Prompt that replaces that label entirely
- * when set, for personas that need more than one line of instruction.
- */
 class AiRolesSettingsActivity : SettingsPageActivity() {
 
     private var expandedId: String? = null

@@ -41,7 +41,6 @@ class IconPackPreviewCell(context: Context) : FrameLayout(context) {
         }
         addView(cardLayout, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
 
-        // 1. Message Context Menu Bar Mockup
         val menuBar = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
@@ -72,7 +71,6 @@ class IconPackPreviewCell(context: Context) : FrameLayout(context) {
         }
         cardLayout.addView(menuBar, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 10f))
 
-        // 2. Chat Input Bar Mockup
         val chatBar = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -127,7 +125,6 @@ class IconPackPreviewCell(context: Context) : FrameLayout(context) {
 
         cardLayout.addView(chatBar, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 0f, 10f))
 
-        // 3. Navigation & Settings Showcase Row
         val showcaseRow = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER

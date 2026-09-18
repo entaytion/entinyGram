@@ -12,7 +12,6 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/** AI Chat settings page matching the modern reference design. */
 class AiSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAiChatTitle)
@@ -25,7 +24,6 @@ class AiSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val ctx = context ?: return
 
-        // Section: Загальні
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneral)))
         items.add(
             UItem.asButton(
@@ -61,14 +59,12 @@ class AiSettingsActivity : SettingsPageActivity() {
                 InuConfig.AI_SUMMARY_ENABLED.value
             )
         )
-        // Section: Роль AI-персони
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiRoles)))
         items.add(
             UItem.asButton(BUTTON_AI_ROLE, LocaleController.getString(R.string.InuAiRoles), aiRoleSummary())
         )
         items.add(UItem.asShadow(null))
 
-        // Section: Генерація відповіді
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneration)))
         items.add(
             mkTwoLineCheckItem(

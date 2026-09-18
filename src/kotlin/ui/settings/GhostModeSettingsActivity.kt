@@ -30,9 +30,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
     ).apply { expanded = true }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // Master switch: mirrors the drawer/burger quick-toggle (GhostHelper.toggleGhostMode),
-        // so the settings page itself has an obvious single on/off instead of only exposing the
-        // sub-toggle group below it.
         items.add(
             UItem.asCheck(TOGGLE_MASTER, LocaleController.getString(R.string.InuGhostModeMaster))
                 .setChecked(GhostHelper.isGhostActive())
@@ -43,9 +40,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }
-        // Both presence rows are inert while the master switch is off (GhostHelper.shouldSuppress
-        // hard-gates on it), so grey them out instead of showing an active-looking value — same
-        // .setEnabled() convention BackupSettingsActivity uses for its unusable rows.
         val masterOn = GhostHelper.isGhostActive()
         items.add(
             UItem.asButton(
@@ -63,8 +57,6 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostAutoOfflineInfo)))
         items.add(mkSubPageButton(BUTTON_MANAGE_WHITELIST, LocaleController.getString(R.string.InuGhostWhitelist)))
         items.add(UItem.asShadow(null))
-        // Independent of the group above — not part of "is ghost active" (same as
-        // AyuGram/NagramX's markReadAfterSend, which lives outside ghostToggleItems).
         items.add(
             UItem.asCheck(
                 TOGGLE_READ_ON_SEND,

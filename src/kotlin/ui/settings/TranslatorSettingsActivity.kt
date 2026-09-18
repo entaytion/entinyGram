@@ -73,11 +73,6 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateProviderInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAdvanced)))
-        // In-place translation owns the next two outright: TranslateHelper gates web previews on
-        // `IN_PLACE_TRANSLATION && TRANSLATE_WEB_PREVIEWS`, and "show original" reads a merged body
-        // that only the in-place path ever stores. Shown flat, as siblings, both stayed switched on
-        // and did nothing the moment in-place went off, which is exactly the dead-toggle shape the
-        // Centering group was rebuilt to get rid of. Nest them so the screen cannot claim that.
         items.add(check(TOGGLE_IN_PLACE_TRANSLATION, R.string.InuInPlaceTranslation, InuConfig.IN_PLACE_TRANSLATION))
         if (InuConfig.IN_PLACE_TRANSLATION.value) {
             items.add(check(TOGGLE_TRANSLATE_WEB_PREVIEWS, R.string.InuTranslateWebPreviews, InuConfig.TRANSLATE_WEB_PREVIEWS))
@@ -90,8 +85,6 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(check(TOGGLE_TRANSLATE_OUTGOING, R.string.InuTranslateOutgoing, InuConfig.TRANSLATE_OUTGOING))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateOutgoingInfo)))
 
-        // The three "overrule what Telegram decided" toggles, kept adjacent because they are one
-        // idea and read as contradictory when scattered between unrelated rows.
         items.add(check(TOGGLE_FORCE_TRANSLATE, R.string.InuForceTranslate, InuConfig.FORCE_TRANSLATE))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
         items.add(check(TOGGLE_INSTANT_TRANSLATE_BANNER, R.string.InuInstantTranslateBanner, InuConfig.INSTANT_TRANSLATE_BANNER))
@@ -104,15 +97,11 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         UItem.asCheck(id, LocaleController.getString(textRes)).setChecked(item.value)
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        // Every plain InuConfig-backed row behaves identically, so route them through one table
-        // instead of ten copies of toggle()+isChecked. The list is always rebuilt afterwards:
-        // UItem.itemEquals() does not compare `checked`, so the adapter keeps the item it already
-        // has and a later recycle-driven rebind would re-render the stale value - and In-place
-        // translation additionally has to show or hide its two children in the same frame.
+        // entiny: rebuild list on click because UItem.itemEquals ignores checked state
         BOOL_TOGGLES[item.id]?.let { config ->
             (view as? TextCheckCell)?.isChecked = config.toggle()
             if (item.id == TOGGLE_KEEP_ORIGINAL) {
-                // Already-drawn bubbles keep the merged body until something asks them to re-read it.
+                // entiny: updateInterfaces forces drawn message bubbles to reload merged translated bodies
                 NotificationCenter.getInstance(currentAccount)
                     .postNotificationName(NotificationCenter.updateInterfaces, 0)
             }

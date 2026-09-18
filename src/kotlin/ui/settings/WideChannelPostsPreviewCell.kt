@@ -29,10 +29,6 @@ import org.telegram.ui.Components.BackgroundGradientDrawable
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.MotionBackgroundDrawable
 
-/**
- * Live before/after preview for InuConfig.WIDE_CHANNEL_POSTS -- ported from exteraless
- * (https://github.com/exteraless/exteraless), app/exteraless/chats/WideChannelPostsPreviewCell.java.
- */
 @SuppressLint("ViewConstructor")
 class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : FrameLayout(context) {
 

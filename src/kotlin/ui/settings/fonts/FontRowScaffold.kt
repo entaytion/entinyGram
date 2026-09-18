@@ -14,14 +14,8 @@ import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
 
-/** Parts of the shared font-row scaffold the owning row binds against. */
 class FontRowViews(val handle: ImageView, val trailing: ImageView, val text: TextView, val tag: TextView)
 
-/**
- * Builds the layout shared by the font roster row and the app-font-stack row into [host]: a leading
- * drag [handle][FontRowViews.handle], a name + source-tag column, and a trailing 48×48 icon button
- * (the caller configures its image / description). Returns the views for binding.
- */
 fun buildFontRow(host: FrameLayout): FontRowViews {
     val context = host.context
     host.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))

@@ -13,7 +13,6 @@ import org.telegram.messenger.UserConfig
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/** Provider selection and credentials for third-party chat translation. */
 class TranslateProviderSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuTranslateProvider)
@@ -41,8 +40,7 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
                 keyField(items, LocaleController.getString(R.string.InuTranslateLlmModel), InuConfig.TRANSLATE_LLM_MODEL.value) { InuConfig.TRANSLATE_LLM_MODEL.value = it }
                 keyField(items, LocaleController.getString(R.string.InuTranslateLlmPrompt), InuConfig.TRANSLATE_LLM_PROMPT.value) { InuConfig.TRANSLATE_LLM_PROMPT.value = it }
 
-                // Sliders are kept as fields: rebuilding them on every fillItems() pass would
-                // reset the thumb mid-drag.
+                // entiny: keep slider instances as fields so rebuilding items does not reset thumb mid-drag
                 if (contextSlider == null) contextSlider = SliderCell(
                     context,
                     min = 0f,
@@ -98,7 +96,6 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
             val newProvider = item.id - PROVIDER_BASE
             if (newProvider != InuConfig.TRANSLATE_PROVIDER.value) {
                 InuConfig.TRANSLATE_PROVIDER.value = newProvider
-                // retry messages that failed under the previous provider with the new one
                 EntinyTranslate.onProviderChanged()
                 unlockStockTranslateButton()
             }
@@ -106,11 +103,7 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    // Stock gates the per-message "Translate" context menu item and the chat-bar banner behind
-    // their own opt-in flags (translate_button / translate_chat_button), defaulting OFF and
-    // otherwise only ever flipped on by the user finding Settings > Language > Show Translate
-    // Button. Picking a provider here is a clear enough signal of intent that we flip them for
-    // the user instead of leaving them stuck with a configured provider and no visible button.
+    // entiny: enable stock translate buttons automatically so configured provider is immediately accessible
     private fun unlockStockTranslateButton() {
         val controller = MessagesController.getInstance(UserConfig.selectedAccount).translateController
         if (!controller.isContextTranslateEnabled) controller.setContextTranslateEnabled(true)

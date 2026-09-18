@@ -9,8 +9,6 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
-
-/** Color-coded source chip (Stock / System / Custom) shared by the font roster, stack and picker rows. */
 object FontSourceTag {
     private fun of(token: FontId): Pair<Int, Int> = when (token) {
         is FontId.System -> R.string.InuFontTagSystem to Theme.key_color_purple

@@ -11,7 +11,6 @@ import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/** Filters scoped to one chat, plus which global/shared filters this chat opts out of. */
 class RegexChatFilterSettingsActivity(private val dialogId: Long) : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuRegexChatFilters)

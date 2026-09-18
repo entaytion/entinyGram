@@ -13,10 +13,6 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
 
-/**
- * Modern inline text input row matching the reference design for AI service details.
- * Supports clean borders, hint placeholders, password masking, and right-aligned character count.
- */
 class AiServiceFieldCell(
     context: Context,
     hintText: String,

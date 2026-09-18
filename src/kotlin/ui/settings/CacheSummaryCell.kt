@@ -15,7 +15,6 @@ import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
 
-/** Hero card at the top of [CacheManagementSettingsActivity] — total reclaimable size + one-tap clear. */
 @SuppressLint("ViewConstructor")
 class CacheSummaryCell(
     context: Context,

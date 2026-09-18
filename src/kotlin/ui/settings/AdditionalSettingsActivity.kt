@@ -399,7 +399,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             setCanCancel(false)
         }
         progress.show()
-        // let the dialog draw a frame before the (blocking) dump freezes the UI thread
+        // entiny: delay heap dump so dialog can render a frame before thread freezes
         AndroidUtilities.runOnUIThread({
             var ok = true
             try {

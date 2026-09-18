@@ -35,7 +35,6 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     protected abstract val headerStringRes: Int
     protected abstract val resetStringRes: Int
 
-    /** override to prepend an interactive live preview above the list (unused since bottom tabs moved to [DialogsSettingsActivity]) */
     protected open fun buildPreviewCell(context: Context): View? = null
     protected var previewCell: View? = null
     protected open fun refreshPreviewCell(cell: View) {}
@@ -47,13 +46,8 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         val onClick: (MenuOrderRow) -> Unit,
     )
 
-    /** override to attach a long-tap sub-cell to a row (e.g. Reply / Forward long-tap pickers) */
     protected open fun subCell(item: I): SubCell? = null
 
-    /**
-     * default flips `enabled`, persists, refreshes the row switch. Override for capacity gating
-     * or post-toggle invalidation; call `super` to perform the default flip.
-     */
     protected open fun onRowToggle(entry: MenuOrderEntry<I>, row: MenuOrderRow?) {
         val idx = entries.indexOfFirst { it.item == entry.item }
         if (idx < 0) return
@@ -103,16 +97,13 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         )
     }
 
-    /** opens a reorder section AND registers its drag dispatch (so the base listener routes it) */
     protected fun openReorderSection(adapter: UniversalAdapter, toBottom: Boolean): Int {
         val id = adapter.reorderSectionStart()
-        // adapter resets its section list on each rebuild, so id 0 marks a fresh fillItems pass
         if (id == 0) reorderHandlers.clear()
         reorderHandlers[id] = { applyReorder(it, toBottom) }
         return id
     }
 
-    /** reorders `entries` to match the dragged UItems of a section */
     @Suppress("UNCHECKED_CAST")
     protected fun applyReorder(items: List<UItem>, toBottom: Boolean) {
         val byItem = entries.associateBy { it.item }
@@ -177,8 +168,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
 
     companion object {
         private val BUTTON_RESET = InuUtils.generateId()
-        // distinct from any null-text shadow elsewhere in the page; DiffUtil aliases identical
-        // shadows during structural changes and crashes the animated diff
+        // entiny: distinct from null-text shadow because DiffUtil aliases identical shadows and crashes animated diff
         private val SHADOW_END = InuUtils.generateId()
         private const val ITEM_BASE = 10000
     }
@@ -244,7 +234,7 @@ class MenuOrderRow(context: Context) : LinearLayout(context) {
         }
         main.addView(
             switch,
-            // 24dp tall so the MD3 switch track (~22dp) fits without clipping
+            // entiny: 24dp height prevents MD3 switch track from clipping
             LayoutHelper.createFrame(37, 24f, (if (rtl) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL, 22f, 0f, 22f, 0f)
         )
 

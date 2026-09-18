@@ -4,6 +4,12 @@
     <string name="InuBanUserConfirm">Ban %1$s from this group?</string>
     <string name="InuSendToDiscussWithoutJoin">Write to discuss groups without joining</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Skip the client-only membership check for discussion groups</string>
+    <string name="InuConfirmSendVoice">Confirm before sending voice messages</string>
+    <string name="InuConfirmSendVoiceMessage">Send this voice message?</string>
+    <string name="InuConfirmSendSticker">Confirm before sending stickers</string>
+    <string name="InuConfirmSendStickerMessage">Send this sticker?</string>
+    <string name="InuConfirmSendGif">Confirm before sending GIFs</string>
+    <string name="InuConfirmSendGifMessage">Send this GIF?</string>
     <string name="InuNavigationDrawer">Navigation drawer</string>
     <string name="InuNavigationDrawerInfo">Brings back the pre-12.0 hamburger side drawer. Requires restart.</string>
     <string name="InuDrawerBackGesture">Open drawer with back gesture</string>
@@ -291,6 +297,8 @@
     <string name="InuDeleteForBothGroups">Group chats</string>
     <string name="InuDeleteFailedProxies">Delete Failed Proxies</string>
     <string name="InuDeleteFailedProxiesConfirm">Are you sure you want to delete all unavailable proxies?</string>
+    <string name="InuPingAllProxies">Ping All Proxies</string>
+    <string name="InuConnectProxyImmediately">Connect immediately</string>
     <string name="InuSimpleAttachPopupAnimation">Simple attach popup animation</string>
     <string name="InuHidePaidReactionUpsell">Hide paid reaction upsell</string>
     <string name="InuHideHashtagSuggestions">Hide hashtag suggestions</string>
@@ -433,6 +441,8 @@
     <string name="InuSearchFromGlobalInfo">When filtering chat search by sender, also include users matched globally — not just chat members</string>
     <string name="InuDisableChatPreviewExpand">Interactive chat preview</string>
     <string name="InuDisableChatPreviewExpandInfo">Disable tap-to-expand, and make the bubbles interactive instead</string>
+    <string name="InuDialogAvatarOpensProfile">Tap avatar to open profile</string>
+    <string name="InuDialogAvatarOpensProfileInfo">Tapping a chat\'s avatar in the chat list opens their profile directly instead of the chat.</string>
     <string name="InuHideMyPhoneNumber">Hide my phone number</string>
     <string name="InuFonts">Fonts</string>
     <string name="InuAppFont">App font</string>
@@ -1036,6 +1046,9 @@
     <string name="InuCenteringSection">Centering</string>
     <string name="InuCenterTitleMain">Center screen titles</string>
     <string name="InuCenterTitleMainInfo">Centers action bar titles on the main screen, settings and everywhere else. Chats keep their own toggle below.</string>
+    <string name="InuChatHeaderSettings">Chat header</string>
+    <string name="InuChatHeaderSettingsInfo">Live preview above updates instantly as you change the options below.</string>
+    <string name="InuChatHeaderPreviewName">Alex</string>
     <string name="InuCenterTitleChats">Center in chats/channels</string>
     <string name="InuCenterTitleChatsInfo">Moves the title and subtitle to the middle of the chat header. The avatar stays pinned to the left. Works on its own — the setting above is not required.</string>
     <string name="InuCenterTitleRightAvatar">Show avatar on the right</string>

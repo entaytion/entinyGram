@@ -269,7 +269,7 @@ class PinnedReactionsActivity : SettingsPageActivity() {
 
             override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
                 super.onLayout(changed, left, top, right, bottom)
-                // picker is normally a popup; embedded usage needs a manual onShow to start emoji loads
+                // entiny: trigger onShow manually on embedded reactions picker to start emoji loads
                 if (firstLayout) {
                     firstLayout = false
                     onShow(null)
@@ -286,8 +286,7 @@ class PinnedReactionsActivity : SettingsPageActivity() {
             override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
                 super.requestDisallowInterceptTouchEvent(disallowIntercept)
                 if (!disallowIntercept) {
-                    // inner RecyclerListView clears the flag on every touch event;
-                    // re-assert it so the outer list never intercepts mid-gesture
+                    // entiny: re-assert disallow intercept because inner RecyclerListView clears flag on every touch
                     parent?.requestDisallowInterceptTouchEvent(true)
                 }
             }

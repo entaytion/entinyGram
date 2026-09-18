@@ -19,14 +19,6 @@ import org.telegram.ui.Components.URLSpanNoUnderline
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/**
- * Every AI provider (chat compose + voice transcription) in one flat list -- no Universal/Chat/
- * Voice sections, just a small leading glyph per row marking what a provider supports (infinity =
- * both, keyboard = chat only, mic = voice only). Tapping a provider expands it in place. Named
- * providers (Gemini/OpenAI/Groq) take one shared API key for both scopes and one shared model
- * field/fetch button -- writing the model updates whichever scope(s) are switched on -- with the
- * "Use for Chat" / "Use for Voice" switches at the bottom of the block.
- */
 class AiProvidersSettingsActivity : SettingsPageActivity() {
 
     private var expandedProvider: Int = InuConfig.AI_CHAT_ACTIVE_PROVIDER.value
@@ -43,7 +35,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         ALL_PROVIDERS.forEach { addProviderRow(items, it) }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiProvidersUniversalDesc)))
 
-        // Applies to whichever voice provider is active, so it lives outside the per-provider blocks.
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiTranscribe)))
         keyField(items, R.string.InuAiTranscribeLanguage, InuConfig.AI_TRANSCRIBE_LANGUAGE.value, InputType.TYPE_CLASS_TEXT) {
             InuConfig.AI_TRANSCRIBE_LANGUAGE.value = it.trim()
@@ -135,8 +126,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
     }
 
     private fun addCustomBlock(items: ArrayList<UItem>, meta: ProviderMeta, chatOn: Boolean, voiceOn: Boolean) {
-        // Custom endpoints are genuinely independent per scope -- an arbitrary URL isn't "the same
-        // account" the way a named provider's key is -- so nothing here is shared between them.
         keyField(items, R.string.InuAiProviderCustomNameHint, InuConfig.AI_CHAT_CUSTOM_NAME.value, InputType.TYPE_CLASS_TEXT) { InuConfig.AI_CHAT_CUSTOM_NAME.value = it }
         keyField(items, R.string.InuAiEndpointUrl, InuConfig.AI_CHAT_CUSTOM_URL.value, InputType.TYPE_TEXT_VARIATION_URI) { InuConfig.AI_CHAT_CUSTOM_URL.value = it }
         keyField(items, R.string.InuAiApiKeyHint, InuConfig.AI_CHAT_CUSTOM_KEY.value) { InuConfig.AI_CHAT_CUSTOM_KEY.value = it }
@@ -192,8 +181,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    // ---------------- named-provider scope helpers ----------------
-
     private fun setChatModel(id: Int, value: String) {
         when (id) {
             InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_CHAT_GEMINI_MODEL.value = value
@@ -217,9 +204,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    /** The primary Fetch button for a named provider: chat's broader listing when chat is
-     * visible (writes to both scopes if they're merged into one model field), otherwise the
-     * voice-side listing when only voice is on. */
     private fun fetchModels() {
         val id = expandedProvider
         val chatOn = InuConfig.AI_CHAT_ACTIVE_PROVIDER.value == id
@@ -239,7 +223,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    /** Only reached when both scopes are on with separate models -- fetches the voice-side listing. */
     private fun fetchNamedVoiceModels() {
         val id = expandedProvider
         fetchVoiceListing(id) { model -> setVoiceModel(id, model) }
@@ -262,8 +245,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         val key = InuConfig.AI_TRANSCRIBE_CUSTOM_KEY.value.trim()
         AiModelsHelper.fetchOpenAiCompatModels(base, key, callback = { onModelsFetched(it) { model -> InuConfig.AI_TRANSCRIBE_CUSTOM_MODEL.value = model } })
     }
-
-    // ---------------- shared UI plumbing ----------------
 
     private fun onModelsFetched(result: Result<List<String>>, onPick: (String) -> Unit) {
         result.onSuccess { models ->
@@ -316,8 +297,6 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         else -> R.drawable.inu_tabler_microphone
     }
 
-    /** Small leading glyph (same mechanism as [addExperimentalSpan]'s beta badge) marking scope,
-     * not brand -- what it means is explained once in the screen's footer, not repeated per row. */
     private fun badgeLabel(meta: ProviderMeta): CharSequence {
         val span = ColoredImageSpan(scopeIconRes(meta), ColoredImageSpan.ALIGN_CENTER)
         span.setSize(AndroidUtilities.dp(14f))

@@ -17,10 +17,6 @@ import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
 
-/**
- * Compact brand header: app icon in a Monet-tinted rounded square, app name and a subtitle.
- * Reusable across pages; set [onHeaderClick] to turn it into a tappable row with ripple.
- */
 class InuSettingsHeader(context: Context) : LinearLayout(context) {
 
     private val iconBg = GradientDrawable().apply {
@@ -40,9 +36,6 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
     }
 
     private val title = TextView(context).apply {
-        // Same on-device beta tell UpdateHelper.getVersionInfoString() uses elsewhere
-        // (BuildVars.isBetaApp(), derived from INU_BUILD_TYPE) -- surfaced here too since this
-        // header is the first thing a beta install's Settings page shows.
         text = if (BuildVars.isBetaApp()) {
             "entinyGram ${LocaleController.getString(R.string.InuVersionBetaSuffix)}"
         } else {
@@ -63,7 +56,6 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
         ellipsize = android.text.TextUtils.TruncateAt.END
     }
 
-    /** When set, the header becomes clickable (ripple + haptic) and calls this on tap. */
     var onHeaderClick: (() -> Unit)? = null
         set(value) {
             field = value

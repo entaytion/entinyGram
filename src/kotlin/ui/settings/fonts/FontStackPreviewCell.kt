@@ -14,11 +14,6 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.TypefaceSpan
 
-/**
- * Lightweight live preview for the font stack: a single text view whose sample carries bold / italic /
- * underline / strike / mono spans, each rendered directly in the draft stack's typeface. No real
- * [org.telegram.ui.Cells.ChatMessageCell] / global typeface swap — spans are styled in place.
- */
 @SuppressLint("ViewConstructor")
 class FontStackPreviewCell(context: Context, private val fragment: BaseFragment) : TextView(context) {
     private var primary: String? = null
@@ -29,7 +24,7 @@ class FontStackPreviewCell(context: Context, private val fragment: BaseFragment)
         textSize = 16f
         setLineSpacing(AndroidUtilities.dp(3f).toFloat(), 1f)
         setPadding(AndroidUtilities.dp(20f), AndroidUtilities.dp(14f), AndroidUtilities.dp(20f), AndroidUtilities.dp(14f))
-        includeFontPadding = false // CJK fonts have tall metrics; keep it compact
+        includeFontPadding = false
     }
 
     fun setStack(primary: String?, fallbacks: List<String>, monoToken: String) {
@@ -41,12 +36,12 @@ class FontStackPreviewCell(context: Context, private val fragment: BaseFragment)
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        refresh() // pick up a theme change while scrolled away
+        refresh()
     }
 
     private fun refresh() {
         val tfs = resolveTypefaces()
-        typeface = tfs.regular // base for unspanned text; narrower spans override the styled runs
+        typeface = tfs.regular
         setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, fragment.resourceProvider))
         text = buildText(tfs)
     }
@@ -60,7 +55,6 @@ class FontStackPreviewCell(context: Context, private val fragment: BaseFragment)
     }
 
     private fun buildText(tfs: FontHelper.PreviewTypefaces): CharSequence {
-        // Latin + Cyrillic + CJK across the styled lines; bold / italic / underline / strike + a mono block
         val l1 = "The quick brown fox. Съешь ещё этих булочек. 日本語 中文 한국어. Inline mono: rm -rf\n"
         val l2 = "Mixed weights: bold, italic, underline, strike. 漢字 かな 가나 0123\n"
         val code = "function greet(name: string) {\n  console.log(`Привет, \${name}`)\n}"

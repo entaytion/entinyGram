@@ -20,7 +20,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** Contacts currently being presence-watched — remove, add, or view their local status-change log. */
 class PresenceWatchListSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuPresenceWatchList)
@@ -59,7 +58,6 @@ class PresenceWatchListSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    /** Bottom sheet letting the user pick exactly which watched contacts' logs to wipe. */
     private fun confirmClearAllLogs() {
         val context = context ?: return
         PresenceHelper.getLogsStatsByUser(currentAccount) { stats ->
@@ -177,8 +175,6 @@ class PresenceWatchListSettingsActivity : SettingsPageActivity() {
             BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuPresenceWatchDisabledDone)).show()
             return
         }
-        // Ask instead of silently keeping (surprising leftover data) or silently
-        // deleting (surprising data loss) — the log outlives the watch toggle either way.
         AlertDialog.Builder(context, resourceProvider)
             .setTitle(LocaleController.getString(R.string.InuPresenceWatchDisabledDone))
             .setMessage(LocaleController.getString(R.string.InuPresenceUnwatchClearLogPrompt))

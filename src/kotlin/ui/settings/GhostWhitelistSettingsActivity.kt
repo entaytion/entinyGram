@@ -12,7 +12,6 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/** Chats exempt from Ghost Mode — tap a row to remove it, "Add" to whitelist a new one. */
 class GhostWhitelistSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuGhostWhitelist)

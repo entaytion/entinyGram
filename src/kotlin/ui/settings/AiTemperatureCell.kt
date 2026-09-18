@@ -16,10 +16,6 @@ import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.SeekBar
 import kotlin.math.roundToInt
 
-/**
- * Temperature slider cell featuring discrete markers 0.0, 1.0, 2.0 and a smooth seekbar.
- * Matches the reference design in AI Chat generation settings.
- */
 @SuppressLint("ViewConstructor")
 class AiTemperatureCell(
     context: Context,

@@ -18,14 +18,12 @@ class IconPacksSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val ctx = context ?: return
 
-        // Preview Section
         if (previewCell == null) {
             previewCell = IconPackPreviewCell(ctx)
         }
         previewCell?.setPack(InuConfig.ICON_REPLACEMENT.value)
         items.add(UItem.asCustom(PREVIEW_ID, previewCell))
 
-        // Packs Header & Radios
         val current = InuConfig.ICON_REPLACEMENT.value
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuIconReplacement)))
 

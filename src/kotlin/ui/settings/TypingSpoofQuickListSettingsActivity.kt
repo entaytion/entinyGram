@@ -11,7 +11,6 @@ import org.telegram.messenger.UserObject
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/** Quick access to the typing-spoof action picker without first opening the target chat. */
 class TypingSpoofQuickListSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuTypingSpoof)

@@ -37,10 +37,7 @@ class TranslationTargetActivity : SettingsPageActivity() {
             val id = nextId++
             idToCode[id] = code
             val title = lang.displayName
-            // Always pass the native name, even when it's spelled the same as the English name
-            // (English, Afrikaans, ...) -- an empty value switches DialogRadioCell into its
-            // single-column layout, which puts the radio button on the opposite (trailing) edge
-            // from every two-column row around it, so those rows looked mirrored/reversed.
+            // entiny: always supply native name to keep DialogRadioCell in two-column layout
             items.add(UItem.asRadio(id, title, lang.ownDisplayName).setChecked(code == current))
         }
         items.add(UItem.asShadow(null))

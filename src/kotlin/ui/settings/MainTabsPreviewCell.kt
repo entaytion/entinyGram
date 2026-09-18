@@ -23,14 +23,6 @@ import org.telegram.ui.Components.LayoutHelper
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-/**
- * Live, directly-interactive preview of the bottom tab bar: tap a tab to enable/disable it
- * (dims to 50% like a disabled state, matching what the real bar does once restarted — see
- * `MainTabsHelper.isEnabled`/`visualOrder`), drag it to reorder. Uses touch listeners
- * (not click listeners) on the chips — same mechanism [MenuOrderRow]'s drag handle already uses
- * reliably inside this RecyclerView, unlike a plain click listener which can get shadowed by the
- * list's own item-click dispatch.
- */
 @SuppressLint("ViewConstructor", "ClickableViewAccessibility")
 class MainTabsPreviewCell(
     context: Context,
@@ -48,9 +40,6 @@ class MainTabsPreviewCell(
     private var dragFromIndex = -1
     private var dragStartRawX = 0f
 
-    // Shrinks to fit as chips are added (Feed made 6 the normal count, not 5) -- mirrors the real
-    // bottom bar's own shrink-to-fit rather than letting chips run off the edge of this cell on
-    // narrower phones. Recomputed on every measure pass since it depends on the cell's own width.
     private var chipWidthDp = CHIP_WIDTH_DP
 
     init {
@@ -58,7 +47,6 @@ class MainTabsPreviewCell(
         addView(row, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
     }
 
-    /** [order] excludes Chats — it's fixed, always first, non-interactive. */
     fun setState(order: List<MainTabsMenuConfig.Item>, enabledItems: Set<MainTabsMenuConfig.Item>) {
         this.order = order
         this.dragOrder = order
@@ -123,7 +111,6 @@ class MainTabsPreviewCell(
         return true
     }
 
-    /** shifts [item] to whichever slot the finger has crossed into, sliding the displaced chips out of the way */
     private fun checkSwap(item: MainTabsMenuConfig.Item, dx: Float) {
         val slotPx = dp((chipWidthDp + CHIP_GAP_DP).toFloat())
         val curIdx = dragOrder.indexOf(item)
@@ -145,9 +132,6 @@ class MainTabsPreviewCell(
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
         val chipCount = row.childCount
         if (chipCount > 0 && availableWidth > 0) {
-            // Each chip carries CHIP_GAP_DP total in its own left+right margins (2dp + 2dp), so
-            // that's per-chip overhead to subtract after dividing the room evenly, not a one-time
-            // deduction off the total.
             val fitWidthDp = availableWidth / AndroidUtilities.density / chipCount - CHIP_GAP_DP
             val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
             if (newChipWidthDp != chipWidthDp) {
@@ -200,8 +184,6 @@ class MainTabsPreviewCell(
     companion object {
         private const val CHIP_WIDTH_DP = 64
         private const val CHIP_GAP_DP = 4
-        // Below this, the icon/label stop being legibly tappable -- narrower phones just get a
-        // preview that no longer quite fits every chip rather than one that's unusable.
         private const val MIN_CHIP_WIDTH_DP = 40
         private const val HEIGHT_DP = 78
     }

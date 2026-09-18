@@ -22,7 +22,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
 
     private fun bottomEnabled() = InuConfig.MESSAGE_MENU_BOTTOM_ROW.value
 
-    // custom items parked in the bottom can't be hidden (only moved back); slots and main items can
     private fun canToggle(entry: MenuOrderEntry<MessageMenuConfig.Item>): Boolean =
         !entry.bottom || entry.item.isSlot
 
@@ -94,13 +93,11 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
 
     override fun onRowToggle(entry: MenuOrderEntry<MessageMenuConfig.Item>, row: MenuOrderRow?) {
         if (!canToggle(entry)) return
-        // bottom row is capped — block re-enabling a slot when there's no room
         if (!entry.enabled && entry.bottom && entries.count { it.bottom && it.enabled } >= MAX_BOTTOM) {
             BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuMenuBottomRowFull)).show()
             return
         }
         super.onRowToggle(entry, row)
-        // toggling a bottom slot changes the header's enabled count
         if (entry.bottom) listView.adapter.update(true)
     }
 
@@ -110,7 +107,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
             ?: return super.onLongClick(item, view, position, x, y)
         val entry = entries.firstOrNull { it.item == key } ?: return false
 
-        // bottom items have a dedicated "move back" button (customs) or are pinned (slots) — no long-tap menu
         if (entry.bottom) return false
 
         if (!bottomEnabled()) return false
@@ -157,7 +153,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
     private fun setBottomRowEnabled(enabled: Boolean) {
         InuConfig.MESSAGE_MENU_BOTTOM_ROW.value = enabled
         if (!enabled) {
-            // hidden bottom row can't host customs; send them back to main, preserving relative order
             entries = entries
                 .map { if (it.bottom && !it.item.isSlot) it.copy(bottom = false) else it }
                 .sortedBy { it.bottom }
@@ -167,11 +162,9 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
         listView.adapter.update(true)
     }
 
-    // moved item lands at the end of the target group; the two groups stay contiguous (main, bottom)
     private fun moveItem(key: MessageMenuConfig.Item, toBottom: Boolean) {
         val idx = entries.indexOfFirst { it.item == key }
         if (idx < 0) return
-        // customs in the bottom row have no hide switch — force enabled to avoid stranding a hidden one
         val moved = entries[idx].copy(bottom = toBottom, enabled = true)
         val (main, bottom) = entries.filter { it.item != key }.partition { !it.bottom }
         entries = (if (toBottom) main + bottom + moved else main + moved + bottom).toMutableList()
@@ -189,7 +182,7 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
     companion object {
         private val MASTER_TOGGLE_ID = InuUtils.generateId()
         private val PLACEMENT_ID = InuUtils.generateId()
-        // distinct from base's SHADOW_END so DiffUtil doesn't alias them on structural change
+        // entiny: distinct from base SHADOW_END so DiffUtil does not alias shadows on structural change
         private val SHADOW_MID = InuUtils.generateId()
         private val HEADER_BOTTOM = InuUtils.generateId()
         private const val MAX_BOTTOM = 4
@@ -199,7 +192,6 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
             val options: List<Pair<Int, Int>>,
             val getter: () -> Int,
             val setter: (Int) -> Unit,
-            /** subtitle under the sub-cell; re-evaluated whenever the value changes */
             val note: (() -> CharSequence?)? = null,
         )
 

@@ -56,9 +56,7 @@ class InuSettingsActivity : SettingsPageActivity() {
                 }
 
                 override fun onTextChanged(searchField: EditText) {
-                    // SearchAdapter lowercases only the entry titles it matches against, so the
-                    // query has to arrive lowercased too -- otherwise typing a capital letter
-                    // matches nothing at all. Same default-locale lowercasing the adapter uses.
+                    // entiny: lowercase query to match SearchAdapter lowercased entry titles
                     sAdapter.search(searchField.text.toString().lowercase(Locale.getDefault()))
                 }
             })
@@ -94,7 +92,6 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuCategoryBackup)))
         items.add(UItem.asShadow(null))
 
-        // Channel & GitHub links
         items.add(
             UItem.asButton(
                 BUTTON_CHANNEL_LINK,

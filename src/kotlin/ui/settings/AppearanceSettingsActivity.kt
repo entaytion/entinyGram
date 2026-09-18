@@ -41,7 +41,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // Design Header
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
         items.add(mkSubPageButton(BUTTON_ICON_REPLACEMENT, LocaleController.getString(R.string.InuIconReplacement)))
@@ -59,7 +58,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // Material 3 (Collapsible Group)
         m3Group.addTo(items) { changed ->
             invalidateVisibleRows()
             softRebuild()
@@ -93,7 +91,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
-        // Avatar corners
         if (avatarCornerPreview == null) {
             avatarCornerPreview = AvatarCornerPreviewCell(this.context)
         } else {
@@ -110,7 +107,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // Classic UI / Non-Island UI (Flat section, NOT expandable!)
         items.add(
             UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuNonIslandUI)))
         )
@@ -188,12 +184,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
 
-        // Header centering. Two independent roots - screen titles and chat headers - with the rest
-        // nested under the chat one: chats -> compact pill -> avatar placement. "Center chats,
-        // leave every other screen stock" is a setup people actually ask for, so the chats toggle
-        // is reachable on its own instead of hiding until the screens one is on.
-        // InuUtils.centerChatTitle()/compactChatPill()/... mirror this nesting at runtime, so a
-        // child left over in prefs can never take effect on its own once its parent is off.
         items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
         items.add(
             mkTwoLineCheckItem(
@@ -203,69 +193,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.CENTER_TITLE_MAIN.value,
             )
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CENTER_TITLE_CHATS,
-                R.string.InuCenterTitleChats,
-                R.string.InuCenterTitleChatsInfo,
-                InuConfig.CENTER_TITLE_CHATS.value,
-            )
-        )
-        if (InuConfig.CENTER_TITLE_CHATS.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_IOS_CHAT_HEADER,
-                    R.string.InuIosChatHeader,
-                    R.string.InuIosChatHeaderInfo,
-                    InuConfig.IOS_CHAT_HEADER.value,
-                )
-            )
-            if (InuConfig.IOS_CHAT_HEADER.value) {
-                items.add(
-                    mkTwoLineCheckItem(
-                        TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT,
-                        R.string.InuIosChatHeaderAvatarSlot,
-                        R.string.InuIosChatHeaderAvatarSlotInfo,
-                        InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value,
-                    )
-                )
-                // Same exclusion as the right-hand avatar below, and the same precedence the
-                // predicates use: the menu slot owns the avatar, so hide this one while it is on.
-                if (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value) {
-                    items.add(
-                        mkTwoLineCheckItem(
-                            TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC,
-                            R.string.InuIosChatHeaderAvatarStatic,
-                            R.string.InuIosChatHeaderAvatarStaticInfo,
-                            InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value,
-                        )
-                    )
-                }
-            }
-            // The avatar cannot be at the right end of the pill and out of the pill at once, so
-            // hide this one entirely while either relocation option owns the avatar.
-            if (!InuConfig.IOS_CHAT_HEADER.value ||
-                (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value && !InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value)
-            ) {
-                items.add(
-                    UItem.asCheck(
-                        TOGGLE_CENTER_TITLE_RIGHT_AVATAR,
-                        LocaleController.getString(R.string.InuCenterTitleRightAvatar),
-                    ).setChecked(InuConfig.CENTER_TITLE_RIGHT_AVATAR.value)
-                )
-            }
-        }
-        // Not part of the nesting: the marquee also drives screen titles and profile names, so it
-        // stays reachable with centering off.
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CHAT_TITLE_MARQUEE,
-                R.string.InuChatTitleMarquee,
-                R.string.InuChatTitleMarqueeInfo,
-                InuConfig.CHAT_TITLE_MARQUEE.value,
-                experimental = true,
-            )
-        )
+        items.add(mkSubPageButton(BUTTON_CHAT_HEADER, R.drawable.inu_tabler_app_window, LocaleController.getString(R.string.InuChatHeaderSettings)))
         items.add(UItem.asShadow(null))
 
         if (animationSpeedSlider == null) {
@@ -315,9 +243,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
                 TOGGLE_M3_SECTIONS_STYLE -> inu_rebuildSelf()
                 TOGGLE_M3_BOTTOM_TABS -> {
-                    // Mirror of the IOS_BOTTOM_NAVIGATION_BAR toggle below: both bottom-tabs
-                    // styles fighting over the same row makes iOS's own toggle a no-op, so
-                    // turning M3 tabs on must switch iOS bottom bar off, not just the reverse.
                     if (InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
                         InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
                         invalidateVisibleRows()
@@ -336,8 +261,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_IOS_BOTTOM_BAR -> {
                 val new = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.toggle()
                 if (new && InuConfig.M3_BOTTOM_TABS.value) {
-                    // iOS style's visibility check makes it a no-op while M3 bottom tabs is also
-                    // on, so leaving M3 enabled would look broken - mirror exteraless and force it off.
                     InuConfig.M3_BOTTOM_TABS.value = false
                 }
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -438,48 +361,13 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuHooks.syncChatInputRowHeight()
             }
 
-            // Every parent in the centering group re-renders the list: turning one off has to
-            // take its children off screen in the same frame.
-            // No restart bulletin on any of these: ActionBar.onMeasure re-reads
-            // inu_shouldCenterActionBarTitle() and re-asserts the gravities on every pass, and the
-            // chat header derives everything from InuUtils live, so the next layout picks it up.
+            // entiny: omit restart bulletin because ActionBar.onMeasure re-reads center title live on every pass
             TOGGLE_CENTER_TITLE_MAIN -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_MAIN.toggle()
                 listView.adapter.update(true)
             }
 
-            TOGGLE_CENTER_TITLE_CHATS -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_CHATS.toggle()
-                listView.adapter.update(true)
-            }
-
-            TOGGLE_IOS_CHAT_HEADER -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER.toggle()
-                listView.adapter.update(true)
-            }
-
-            TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.toggle()
-                listView.adapter.update(true)
-            }
-
-            TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.toggle()
-                listView.adapter.update(true)
-            }
-
-            // These two have no children to show or hide, but they still re-render: the item the
-            // adapter holds is what a later rebind renders from, so leaving it behind is what made
-            // the switch snap back after scrolling the row out of view and back.
-            TOGGLE_CENTER_TITLE_RIGHT_AVATAR -> {
-                (view as? TextCheckCell)?.isChecked = InuConfig.CENTER_TITLE_RIGHT_AVATAR.toggle()
-                listView.adapter.update(true)
-            }
-
-            TOGGLE_CHAT_TITLE_MARQUEE -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
-                listView.adapter.update(true)
-            }
+            BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
 
             BUTTON_MONET_THEME -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val context = context ?: return
@@ -531,12 +419,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_NON_ISLAND_GLOBAL_SEARCH = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_CHAT_ELEMENTS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
-        private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
-        private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
-        private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
-        private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT = InuUtils.generateId()
-        private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
-        private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
+        private val BUTTON_CHAT_HEADER = InuUtils.generateId()
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
         private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
@@ -603,15 +486,9 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),
                 SearchRegistry.Entry("non-island-chat-elements", R.string.InuNonIslandChatElements, TOGGLE_NON_ISLAND_CHAT_ELEMENTS),
-                // Slugs kept verbatim from the old Chats page so existing tg://settings/inu/<slug>
-                // deeplinks and search recents keep resolving, just to this page now.
+                // entiny: preserve legacy slug so existing tg://settings/inu deeplinks and search recents still resolve
                 SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
-                SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
-                SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
-                SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
-                SearchRegistry.Entry("ios-chat-header-avatar-slot", R.string.InuIosChatHeaderAvatarSlot, TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT),
-                SearchRegistry.Entry("ios-chat-header-avatar-static", R.string.InuIosChatHeaderAvatarStatic, TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC),
-                SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
+                SearchRegistry.Entry("chat-header-settings", R.string.InuChatHeaderSettings, BUTTON_CHAT_HEADER),
                 SearchRegistry.Entry("hide-fade-view", R.string.InuHideFadeView, TOGGLE_HIDE_FADE_VIEW),
             ),
         )

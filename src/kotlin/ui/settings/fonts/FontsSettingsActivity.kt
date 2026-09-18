@@ -38,11 +38,6 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/**
- * Manages the font roster: built-in editor fonts (pinned, reorderable, not deletable) plus
- * user-imported families (add / remove / reorder). The list order drives the media-editor text
- * tool; the separate "App font" row picks the whole-app UI font (Default / System / a family).
- */
 class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
     private var reorderSectionId = -1
     private val rows = HashMap<String, FontRow>()
@@ -91,7 +86,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAppFontInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAvailableFonts)))
-        // device system fonts are only enumerable on API Q+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             items.add(
                 mkTwoLineCheckItem(
@@ -159,8 +153,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
                 val token = item.`object` as? String ?: return
                 val font = FontId.parse(token)
                 when {
-                    // tap on the eye toggles visibility; elsewhere opens the font menu.
-                    // the row is wrapped in a FrameLayout, so look it up rather than casting `view`.
                     rows[token]?.isInEye(x) == true -> setHidden(font, !FontLibrary.isHidden(font))
                     else -> showFontMenu(font, view)
                 }
@@ -181,7 +173,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
     }
 
     private fun showFontMenu(font: FontId, anchor: View) {
-        // for imported/system families, list individual faces as disabled rows (in their own face) on top
         val faces = FontLibrary.getFontFaces(font)
 
         val opts = ItemOptions.makeOptions(this, anchor)
@@ -197,10 +188,8 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             opts.addGap()
         }
 
-        // only imported families can be the app font / removed
         if (font is FontId.Family) {
             opts.add(R.drawable.msg_text_outlined, LocaleController.getString(R.string.InuFontSetAsApp)) {
-                // keep any existing fallback stack; only the primary changes
                 FontConfig.FONT.value = FontMode.Custom(font, FontHelper.getActiveFallbackIds())
                 listView.adapter.update(true)
                 showRestartBulletin()
@@ -216,8 +205,7 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
 
     private fun setHidden(font: FontId, hidden: Boolean) {
         FontLibrary.setHidden(font, hidden)
-        // hiding the active app / mono font (family or built-in) reverts it to the default — otherwise
-        // the editor would hide it while the app keeps rendering everything in it.
+        // entiny: revert active app or mono font to default when hidden so hidden font cannot remain active
         if (hidden) {
             var changed = false
             if (FontHelper.isActiveCustomFont(font)) {
@@ -236,7 +224,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
 
     private fun removeFont(font: FontId.Family) {
         val wasAppFont = FontHelper.isActiveCustomFont(font)
-        // removeFamily clears the mono selection itself; check before it runs
         val wasMonoFont = FontHelper.isActiveMonoFont(font)
         FontLibrary.removeFamily(font.id)
         rows.remove(font.token())
@@ -386,7 +373,6 @@ class FontsSettingsActivity : SettingsPageActivity(), NotificationCenter.Notific
             handle.setOnTouchListener(listener)
         }
 
-        /** True if [x] (relative to the row) falls within the eye toggle's bounds. */
         fun isInEye(x: Float): Boolean = x >= eye.left && x <= eye.right
     }
 

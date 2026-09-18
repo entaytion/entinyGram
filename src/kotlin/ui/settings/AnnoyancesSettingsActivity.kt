@@ -51,7 +51,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // 1. Stories
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesStories)))
         items.add(
             mkTwoLineCheckItem(
@@ -81,7 +80,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // 2. Profile
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesProfile)))
         items.add(
             UItem.asCheck(
@@ -145,7 +143,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // 3. Gifts & Premium
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesGifts)))
         items.add(
             mkTwoLineCheckItem(
@@ -223,7 +220,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // 4. Chats & Interface
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesInterface)))
         items.add(
             UItem.asCheck(
@@ -275,7 +271,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // 5. Channels & Recommendations
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesChannels)))
         items.add(
             UItem.asCheck(
@@ -305,7 +300,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // 6. Media
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesMedia)))
         items.add(
             mkTwoLineCheckItem(
@@ -341,12 +335,10 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // 7. Artificial Intelligence
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesAi)))
         aiFeaturesGroup.addTo(items) { listView.adapter.update(true) }
         items.add(UItem.asShadow(null))
 
-        // 8. Hints & Prompts
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesHints)))
         hideSuggestionsGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
@@ -618,7 +610,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_CLEAR_HINTS -> {
-                // holy fucking shit how is it so inconsistent
                 SharedConfig.dayNightWallpaperSwitchHint = 99
                 SharedConfig.increaseTextSelectionHintShowed()
                 SharedConfig.increaseDayNightWallpaperSiwtchHint()

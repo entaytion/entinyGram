@@ -11,7 +11,6 @@ import org.telegram.messenger.R
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/** Per-channel show/hide list for the Feed screen, plus the include-archived toggle. */
 class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuFeedManageChannels)
@@ -48,9 +47,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
                 items.add(UItem.asCheck(HIDDEN_BASE + index, channelName(dialogId)).also { it.checked = false })
             }
         }
-        // Item ids only need to round-trip through onClick within a single fillItems() call, so
-        // stashing the actual dialog ids alongside the shown/hidden lists (rather than re-deriving
-        // them from a list index that can shift between rebuilds) keeps onClick simple below.
+        // entiny: stash dialog ids alongside lists so onClick avoids re-deriving shifted list indices
         shownIds = shown
         hiddenIds = hidden
     }

@@ -30,7 +30,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     private var doubleTapDelaySlider: SliderCell? = null
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        // Stickers
         if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(this.context, this)
         if (stickerSizeSlider == null) {
             stickerSizeSlider = SliderCell(
@@ -72,7 +71,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // Reactions
         if (reactionsInRowSlider == null) reactionsInRowSlider = SliderCell(
             context,
             min = 6f,
@@ -131,7 +129,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // Spoilers
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSpoilers)))
         items.add(
             mkTwoLineCheckItem(
@@ -143,7 +140,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuSpoilerStyle)))
-        // Text-only spoiler settings - moot once text spoilers are shown directly.
         if (!InuConfig.SHOW_SPOILERS_DIRECTLY.value) {
             items.add(
                 UItem.asButton(
@@ -161,7 +157,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
-        // Media spoiler settings apply regardless -- they cover photos/videos/round videos, not text.
         items.add(
             UItem.asButton(
                 BUTTON_MEDIA_SPOILER_MODE,
@@ -179,7 +174,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        // Miscellaneous
         if (miscPreview == null) miscPreview = MiscPreviewMessagesCell(this.context, this)
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
         items.add(UItem.asCustom(miscPreview))
@@ -274,9 +268,26 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CONFIRM_SEND_VOICE,
+                LocaleController.getString(R.string.InuConfirmSendVoice),
+            ).setChecked(InuConfig.CONFIRM_SEND_VOICE.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CONFIRM_SEND_STICKER,
+                LocaleController.getString(R.string.InuConfirmSendSticker),
+            ).setChecked(InuConfig.CONFIRM_SEND_STICKER.value)
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CONFIRM_SEND_GIF,
+                LocaleController.getString(R.string.InuConfirmSendGif),
+            ).setChecked(InuConfig.CONFIRM_SEND_GIF.value)
+        )
         items.add(UItem.asShadow(null))
 
-        // Double Tap
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDoubleTapActions)))
         items.add(
             UItem.asButton(
@@ -409,6 +420,21 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE -> {
                 val new = InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_CONFIRM_SEND_VOICE -> {
+                val new = InuConfig.CONFIRM_SEND_VOICE.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_CONFIRM_SEND_STICKER -> {
+                val new = InuConfig.CONFIRM_SEND_STICKER.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_CONFIRM_SEND_GIF -> {
+                val new = InuConfig.CONFIRM_SEND_GIF.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
 
@@ -574,6 +600,9 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val TOGGLE_SMALL_GIFS = InuUtils.generateId()
         private val TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE = InuUtils.generateId()
+        private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
+        private val TOGGLE_CONFIRM_SEND_STICKER = InuUtils.generateId()
+        private val TOGGLE_CONFIRM_SEND_GIF = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()
@@ -634,6 +663,9 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("small-gifs", R.string.InuSmallGifs, TOGGLE_SMALL_GIFS),
                 SearchRegistry.Entry("show-poll-results-before-vote", R.string.InuShowPollResultsBeforeVote, TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE),
+                SearchRegistry.Entry("confirm-send-voice", R.string.InuConfirmSendVoice, TOGGLE_CONFIRM_SEND_VOICE),
+                SearchRegistry.Entry("confirm-send-sticker", R.string.InuConfirmSendSticker, TOGGLE_CONFIRM_SEND_STICKER),
+                SearchRegistry.Entry("confirm-send-gif", R.string.InuConfirmSendGif, TOGGLE_CONFIRM_SEND_GIF),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),
                 SearchRegistry.Entry("double-tap-channel", R.string.InuChannelMessages, BUTTON_DOUBLE_TAP_CHANNEL),

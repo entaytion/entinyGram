@@ -16,12 +16,6 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-/**
- * Overview of the fork's on-device caches (deleted/edited-message history, presence logs)
- * with one-tap clearing. Deliberately excludes data that lives in the same DB but isn't
- * cache — local pins, custom-folder overlays, ghost whitelist, presence watch list are user
- * configuration, not reclaimable junk, and stay managed from their own pages.
- */
 class CacheManagementSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCacheManagement)
@@ -163,7 +157,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    /** Bottom sheet letting the user pick exactly which cache categories to clear. */
     private fun confirmClearAll() {
         val context = context ?: return
         val categories = buildList {

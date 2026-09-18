@@ -46,17 +46,9 @@ import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView
 import java.util.Locale
 
-/**
- * Edits the app-font *stack*: an ordered list whose first entry is the primary UI font and the rest
- * are fallbacks (CJK / other scripts the primary lacks). Edits are staged into [draft] and only
- * committed (+ restart) via the sticky Apply button. A live bubble preview and coverage warnings
- * track the draft.
- */
 class FontStackActivity : SettingsPageActivity() {
-    // draft tokens: real roster tokens, or the STACK_DEFAULT / SYSTEM_STACK_ID sentinels
-    // (which are only ever the sole entry).
     private val draft = ArrayList<String>()
-    private var draftMono: String = "" // "" = stock monospace
+    private var draftMono: String = ""
     private val stackRows = HashMap<String, StackFontRow>()
     private var reorderSectionId = -1
     private var warnings: List<String> = emptyList()
@@ -71,7 +63,6 @@ class FontStackActivity : SettingsPageActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun createView(context: Context): View {
         loadDraft()
-        // create before super.createView so the first fillItems pass includes the preview row
         preview = FontStackPreviewCell(context, this)
         val view = super.createView(context)
         attachStickyButton(view, run {
@@ -104,7 +95,7 @@ class FontStackActivity : SettingsPageActivity() {
             FontMode.System -> draft.add(SYSTEM_STACK_ID)
             is FontMode.Custom -> {
                 val id = FontHelper.maybeResolveLegacyEmpty(m.fontId)
-                if (id == null) { // edge case: legacy cant be resolved
+                if (id == null) {
                     draft.add(BUNDLED_STACK_ID)
                 } else {
                     draft.add(id.token())
@@ -147,7 +138,6 @@ class FontStackActivity : SettingsPageActivity() {
         adapter.reorderSectionEnd()
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuAppFontStackInfo)))
 
-        // with only a Default/System sentinel, picking replaces it rather than extending a stack
         val addLabel = if (draft.size == 1 && isSentinel(draft[0])) R.string.InuFontStackChoose else R.string.InuFontStackAdd
         items.add(UItem.asButton(BUTTON_ADD, R.drawable.msg_add, LocaleController.getString(addLabel)))
 
@@ -201,7 +191,6 @@ class FontStackActivity : SettingsPageActivity() {
 
     private fun pick(choice: String) {
         when {
-            // a sentinel choice, or replacing a lone sentinel, resets the stack to just that choice
             isSentinel(choice) || (draft.size == 1 && isSentinel(draft[0])) -> {
                 draft.clear(); draft.add(choice)
             }
@@ -212,7 +201,6 @@ class FontStackActivity : SettingsPageActivity() {
         listView.adapter.update(true)
     }
 
-    /** Refreshes the preview + warnings for the current draft (call after any draft mutation). */
     private fun onDraftChanged() {
         val primary = draftPrimary()
         val fallbacks = currentFallbacks()
@@ -225,7 +213,6 @@ class FontStackActivity : SettingsPageActivity() {
         return if (primary == null || primary == SYSTEM_STACK_ID) emptyList() else draft.drop(1)
     }
 
-    /** draft[0] as a FontHelper token: null (bundled default), SYSTEM_STACK_ID, or a roster token. */
     private fun draftPrimary(): String? = when (val p = draft.firstOrNull()) {
         null, BUNDLED_STACK_ID -> null
         else -> p
@@ -242,7 +229,7 @@ class FontStackActivity : SettingsPageActivity() {
         Utilities.globalQueue.postRunnable {
             val coverage = StackCoverage.scripts(primary, fallbacks) ?: emptySet()
             val out = ArrayList<String>()
-            // a font that only has a bold (or italic) face renders *normal* text bold/italic
+            // entiny: warn when font lacks regular face because normal text will render in bold or italic
             if (!style.regular) out.add(LocaleController.getString(R.string.InuFontStackWarnBoldOnly))
             if (!style.upright) out.add(LocaleController.getString(R.string.InuFontStackWarnItalicOnly))
             if (!style.bold) out.add(LocaleController.getString(R.string.InuFontStackWarnBold))
@@ -260,17 +247,14 @@ class FontStackActivity : SettingsPageActivity() {
         }
     }
 
-    /** Scripts the user actually reads (app + device locales) → display label, for coverage warnings. */
     private fun userScripts(): Map<Script, String> {
         val langs = LinkedHashSet<String>()
         LocaleController.getInstance().getCurrentLocale()?.language?.let { langs.add(it) }
         langs.add(Locale.getDefault().language)
-        // device locales (the user may read scripts beyond the app language)
         val cfg = Resources.getSystem().configuration.locales
         for (i in 0 until cfg.size()) langs.add(cfg[i].language)
 
         val out = LinkedHashMap<Script, String>()
-        // Latin underlies the UI itself (usernames, latin loanwords, the app chrome) — always check it
         out[Script.LATIN] = LocaleController.getString(R.string.InuFontScriptLatin)
         for (lang in langs) {
             val script = scriptForLanguage(lang) ?: continue
@@ -291,7 +275,6 @@ class FontStackActivity : SettingsPageActivity() {
         else -> null
     }
 
-    /** Scrollable font-picker dialog; [populate] fills it via the supplied row builder. */
     private fun showFontPickerDialog(
         titleRes: Int,
         onPick: (String) -> Unit,
@@ -323,7 +306,6 @@ class FontStackActivity : SettingsPageActivity() {
             addRow(LocaleController.getString(R.string.InuFontSystem), Typeface.DEFAULT, null, SYSTEM_STACK_ID)
         }
         for (font in FontLibrary.getCachedRoster()) {
-            // only imported families can be the app font; built-in / system fonts stay editor-only
             if (font !is FontId.Family) continue
             val token = font.token()
             if (FontLibrary.isHidden(font) || token in draft) continue
@@ -334,8 +316,7 @@ class FontStackActivity : SettingsPageActivity() {
     private fun showMonoDialog() = showFontPickerDialog(R.string.InuMonoFont, ::pickMono) { addRow ->
         addRow(LocaleController.getString(R.string.InuFontDefault), FontHelper.stockMonospace, null, "")
         for (font in FontLibrary.getCachedRoster()) {
-            // device system fonts are discovered lazily, long after the mono font is installed at
-            // startup — they'd silently render as stock monospace, so keep them out
+            // entiny: exclude system fonts from mono picker because lazy discovery renders them as stock monospace
             if (font is FontId.System) continue
             if (FontLibrary.isHidden(font)) continue
             addRow(FontLibrary.getFontName(font), FontLibrary.getTypefaceFor(font), font.token(), font.token())
@@ -359,7 +340,6 @@ class FontStackActivity : SettingsPageActivity() {
         }
     }
 
-    /** A picker row mirroring the roster page: name rendered in the font + a source tag chip. */
     private fun pickerRow(ctx: Context, label: CharSequence, tf: Typeface?, tagToken: String?, onClick: () -> Unit): View {
         val row = LinearLayout(ctx).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -377,10 +357,9 @@ class FontStackActivity : SettingsPageActivity() {
             ellipsize = TextUtils.TruncateAt.END
             text = label
             typeface = tf ?: Typeface.DEFAULT
-            includeFontPadding = false // CJK fonts have tall metrics; keep the row compact
+            includeFontPadding = false
         }
         row.addView(name, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-        // source tag only for real fonts; Default / System rows are self-explanatory by name
         if (tagToken != null) {
             val tag = FontSourceTag.newView(ctx)
             FontSourceTag.bind(tag, FontId.parse(tagToken))
@@ -400,7 +379,6 @@ class FontStackActivity : SettingsPageActivity() {
             SYSTEM_STACK_ID -> FontMode.System
             else -> {
                 val primaryId = FontId.parse(primary)
-                // a font can't be its own fallback; keep order, drop dups & the primary
                 val seen = HashSet<FontId>().apply { add(primaryId) }
                 FontMode.Custom(
                     primaryId,
@@ -409,7 +387,6 @@ class FontStackActivity : SettingsPageActivity() {
             }
         }
 
-        // need to commit because we're gonna restart
         InuConfig.prefs.edit(true) {
             FontConfig.FONT.unsafeSet(mode, this)
             FontConfig.MONO_FONT.unsafeSet(draftMono, this)
@@ -439,10 +416,6 @@ class FontStackActivity : SettingsPageActivity() {
     }
 }
 
-/**
- * One app-font-stack row: drag handle (when reorderable) + the font's name in that font, a source
- * tag, and a trailing remove (×). Sentinel rows (Default / System) show neither handle nor remove.
- */
 @SuppressLint("ViewConstructor")
 class StackFontRow(context: Context) : FrameLayout(context) {
     val heightDp = 58
@@ -480,7 +453,6 @@ class StackFontRow(context: Context) : FrameLayout(context) {
         }
     }
 
-    // Default/System rows have no source tag, so the chip doubles as the role label (Primary/Fallback).
     private fun primaryLabel(primary: Boolean): String =
         LocaleController.getString(if (primary) R.string.InuFontStackPrimary else R.string.InuFontStackFallback)
 
@@ -488,11 +460,9 @@ class StackFontRow(context: Context) : FrameLayout(context) {
         handle.setOnTouchListener(listener)
     }
 
-    /** True if [x] (relative to the row) falls within the trailing remove button. */
     fun isInRemove(x: Float): Boolean = remove.visibility == VISIBLE && x >= remove.left && x <= remove.right
 }
 
-/** Coverage / style warnings as a card of icon + red-text rows (one per warning). */
 @SuppressLint("ViewConstructor")
 class StackWarningsView(context: Context) : LinearLayout(context) {
     init {

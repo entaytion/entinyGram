@@ -47,7 +47,6 @@ class DeletedMarkColorCell(
         orientation = VERTICAL
         setPadding(AndroidUtilities.dp(21f), AndroidUtilities.dp(12f), AndroidUtilities.dp(21f), AndroidUtilities.dp(16f))
 
-        // Top Row: Title + Deleted Icon
         val topRow = LinearLayout(context).apply {
             orientation = HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -67,7 +66,6 @@ class DeletedMarkColorCell(
         addView(topRow, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         updateIconTint()
 
-        // Bottom Row: Color Circles
         colorRow = LinearLayout(context).apply {
             orientation = HORIZONTAL
             gravity = Gravity.CENTER
@@ -141,9 +139,7 @@ class DeletedMarkColorCell(
             val outerRadius = minOf(width, height) / 2f - AndroidUtilities.dpf2(1f)
 
             if (isChecked) {
-                // Outer ring
                 canvas.drawCircle(cx, cy, outerRadius, ringPaint)
-                // Inner circle with gap
                 val innerRadius = outerRadius - AndroidUtilities.dpf2(4f)
                 canvas.drawCircle(cx, cy, innerRadius, fillPaint)
             } else {

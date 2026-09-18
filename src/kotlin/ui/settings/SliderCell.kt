@@ -156,7 +156,7 @@ class SliderCell(
         }
     }
 
-    // lower-level SeekBar is used instead of SeekBarView so we avoid the step-change haptic.
+    // entiny: use lower-level SeekBar instead of SeekBarView to avoid step-change haptic feedback
     private class SeekBarWrapper(
         context: Context,
         private val snapProgress: ((Float) -> Float)? = null,

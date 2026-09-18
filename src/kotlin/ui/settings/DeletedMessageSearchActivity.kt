@@ -18,7 +18,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** Search across the locally saved deleted-message and edit-history archive. */
 class DeletedMessageSearchActivity : SettingsPageActivity() {
 
     private var query: String = ""

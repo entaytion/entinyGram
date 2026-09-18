@@ -42,6 +42,7 @@ import org.telegram.ui.Components.ColoredImageSpan
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
+import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Components.UniversalFragment
 import org.telegram.ui.Components.UniversalRecyclerView
 import org.telegram.ui.LaunchActivity
@@ -54,8 +55,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
     fun withHighlight(itemId: Int) = apply { highlightItemId = itemId }
 
     override fun createView(context: Context): View {
-        // Settings use editable inline fields. Resize the content when the IME opens so the
-        // focused field remains reachable instead of letting the keyboard cover the page.
+        // entiny: resize content for IME so focused inline fields remain reachable when keyboard opens
         parentActivity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         return super.createView(context).also {
             if (actionBar.backButtonImageView == null) {
@@ -71,7 +71,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
             listView.setSections()
             actionBar.setAdaptiveBackground(listView)
             listView.clipToPadding = false
-            // pre-scroll before first layout so the row is on-screen at open, no jump after transition.
+            // entiny: pre-scroll before first layout so target row is on-screen without post-transition jump
             if (highlightItemId != -1) {
                 val index = indexOfItem(listView, highlightItemId)
                 if (index >= 0) {
@@ -116,9 +116,6 @@ abstract class SettingsPageActivity : UniversalFragment() {
 
     private var stickyButtonContainer: FrameLayout? = null
 
-    // Sticky bottom button bar (à la CloudSyncActivity): wraps `button` in a windowBackgroundWhite
-    // bar, reserves matching list padding, and offsets bulletins above it. Call from createView
-    // after super.createView. Cleanup is handled in onFragmentDestroy.
     protected fun attachStickyButton(rootView: View, button: View) {
         val container = FrameLayout(rootView.context).apply {
             setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
@@ -146,13 +143,10 @@ abstract class SettingsPageActivity : UniversalFragment() {
         }
     }
 
-    // rebuilds views of all fragments below this one — settings page itself stays.
     protected fun softRebuild() {
         LaunchActivity.instance?.rebuildAllFragments(false)
     }
 
-    // redraws all visible rows; softRebuild skips the current page, so toggles that change how
-    // cells draw (e.g. material 3 switches) need this to take effect live.
     protected fun invalidateVisibleRows() {
         fun walk(view: View) {
             view.invalidate()
@@ -187,11 +181,7 @@ abstract class SettingsPageActivity : UniversalFragment() {
         return UItem.asButtonCheck(id, text, subtext).also {
             it.checked = checked
             it.bind = Utilities.Callback { view ->
-                // it.checked, NOT the captured `checked` local: UItem.itemEquals() does not
-                // compare `checked`, so DiffUtil treats a flipped row as unchanged and the adapter
-                // keeps the item it already has. A closure that had baked the old value in then
-                // re-asserted it on the next recycle-driven rebind, and the switch silently flipped
-                // back while the pref underneath stayed on.
+                // entiny: read it.checked instead of captured local because DiffUtil treats flipped row as unchanged
                 (view as? NotificationsCheckCell)?.setTextAndValueAndCheck(
                     text,
                     subtext,
@@ -199,6 +189,39 @@ abstract class SettingsPageActivity : UniversalFragment() {
                     0,
                     subtext != null,
                     !InuConfig.M3_SECTIONS_STYLE.value
+                )
+                (view as? NotificationsCheckCell)?.setDrawLine(false)
+            }
+        }
+    }
+
+    // entiny: like mkTwoLineCheckItem, but with a leading icon
+    protected fun mkIconCheckItem(
+        id: Int,
+        iconRes: Int,
+        textRes: Int,
+        infoRes: Int,
+        checked: Boolean,
+        experimental: Boolean = false
+    ): UItem {
+        val rawText = LocaleController.getString(textRes)
+        val text = if (experimental) addExperimentalSpan(rawText) else rawText
+        val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
+        return UItem(UniversalAdapter.VIEW_TYPE_ICON_TEXT_CHECK, false).also {
+            it.id = id
+            it.text = text
+            it.subtext = subtext
+            it.iconResId = iconRes
+            it.checked = checked
+            it.bind = Utilities.Callback { view ->
+                (view as? NotificationsCheckCell)?.setTextAndValueAndIconAndCheck(
+                    text,
+                    subtext,
+                    iconRes,
+                    it.checked,
+                    0,
+                    subtext != null,
+                    !InuConfig.M3_SECTIONS_STYLE.value,
                 )
                 (view as? NotificationsCheckCell)?.setDrawLine(false)
             }
