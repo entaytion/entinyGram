@@ -12,20 +12,13 @@ import org.telegram.tgnet.TLRPC
 import java.util.UUID
 import java.util.regex.Pattern
 
-/**
- * Regex message filters — global (shared across every chat) or scoped to one dialog, with
- * per-filter enabled/case-insensitive/reversed(allow-list) flags and per-chat exclusions for
- * global filters. Feeds into [BlockedMessagesHelper]'s existing hide/mask pipeline, which is
- * already wired into stock via patches/feature/hide-blocked-messages.patch — this object only
- * owns the filter set and the match decision, not rendering.
- */
 object RegexFilterHelper {
     private const val TAG = "RegexFilterHelper"
 
     data class FilterEntry(
         val id: String,
         val pattern: String,
-        val dialogId: Long?, // null = global/shared
+        val dialogId: Long?,
         val enabled: Boolean,
         val caseInsensitive: Boolean,
         val reversed: Boolean,
@@ -33,8 +26,6 @@ object RegexFilterHelper {
 
     private data class MatchCacheEntry(val textHash: Int, val matched: Boolean)
 
-    /** access-order LRU bounded per dialog; a message's cached entry self-invalidates on edit
-     * because the stored textHash no longer matches the (changed) message text. */
     private class BoundedCache(private val maxSize: Int) : LinkedHashMap<Int, MatchCacheEntry>(16, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Int, MatchCacheEntry>?) = size > maxSize
     }
@@ -52,8 +43,6 @@ object RegexFilterHelper {
     @JvmStatic
     fun getMode(): Int = InuConfig.REGEX_FILTER_MODE.value
 
-    // ---- message-level API used by BlockedMessagesHelper ----
-
     @JvmStatic
     fun isMessageFiltered(messageObject: MessageObject?): Boolean {
         if (!isEnabled() || messageObject?.messageOwner == null) return false
@@ -65,8 +54,7 @@ object RegexFilterHelper {
         val hasLinks = !linkUrls.isNullOrEmpty()
         if (!hasText && !hasCaption && !hasLinks) return false
 
-        // called on every cell bind while a filter is active — hash without allocating the
-        // concatenated string; only build it on a cache miss.
+        // entiny: hash components without string allocation and only build text on cache miss
         val textHash = 31 * (31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)) +
             (if (hasLinks) linkUrls.hashCode() else 0)
         val dialogId = messageObject.dialogId
@@ -87,11 +75,7 @@ object RegexFilterHelper {
         return result
     }
 
-    /**
-     * Filters were matching only the rendered message text, so a masked markdown link
-     * (`[click here](evil.example)`) or a link preview's own url slipped past a pattern that
-     * targeted the actual domain. Pull both in as extra match text, same as the visible caption.
-     */
+    // entiny: include masked link urls and preview targets so domain filters match markdown links
     private fun extractLinkUrls(message: TLRPC.Message): String? {
         val urls = LinkedHashSet<String>()
         message.entities?.forEach { entity ->
@@ -144,8 +128,6 @@ object RegexFilterHelper {
         return compiled
     }
 
-    // ---- CRUD ----
-
     @JvmStatic
     fun getGlobalFilters(): List<FilterEntry> {
         ensureLoaded()
@@ -191,8 +173,6 @@ object RegexFilterHelper {
 
     private fun allFilters(): List<FilterEntry> = globalFilters!! + chatFilters!!.values.flatten()
 
-    // ---- import / export ----
-
     @JvmStatic
     fun exportJson(): String {
         ensureLoaded()
@@ -213,9 +193,6 @@ object RegexFilterHelper {
         }.toString()
     }
 
-    /** Merges filters from [json] (as produced by [exportJson]) into the existing set — never
-     * replaces/wipes. Imported filters always get fresh ids to avoid colliding with existing
-     * ones; exclusions are remapped to the new ids. Returns how many filters were imported. */
     @JvmStatic
     fun importJson(json: String): Int {
         ensureLoaded()
@@ -258,8 +235,6 @@ object RegexFilterHelper {
         }
     }
 
-    // ---- exclusions (a dialog opting out of a global filter) ----
-
     @JvmStatic
     fun isExcluded(dialogId: Long, filterId: String): Boolean {
         ensureLoaded()
@@ -286,8 +261,6 @@ object RegexFilterHelper {
         }
         saveExclusions(current)
     }
-
-    // ---- persistence ----
 
     private fun ensureLoaded() {
         if (globalFilters != null && chatFilters != null && exclusions != null) return

@@ -8,16 +8,8 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-/**
- * Fetches the list of models a provider currently exposes, so settings screens can offer a
- * picker instead of asking the user to type a model id from memory.
- */
 object AiModelsHelper {
 
-    /**
-     * Gemini's native REST API (not the OpenAI-compat layer) -- used by [ai_transcribe] since it
-     * calls generateContent directly. Filters to models that actually support generateContent.
-     */
     @JvmStatic
     fun fetchGeminiModels(apiKey: String, callback: (Result<List<String>>) -> Unit) {
         Utilities.globalQueue.postRunnable {
@@ -49,11 +41,6 @@ object AiModelsHelper {
         }
     }
 
-    /**
-     * Cloudflare Workers AI's own model catalog search (not OpenAI-compatible). Filters to
-     * speech-recognition models so the picker doesn't also list every chat/image/embedding model
-     * on the account.
-     */
     @JvmStatic
     fun fetchCloudflareModels(accountId: String, apiToken: String, callback: (Result<List<String>>) -> Unit) {
         Utilities.globalQueue.postRunnable {
@@ -87,12 +74,6 @@ object AiModelsHelper {
         }
     }
 
-    /**
-     * Any OpenAI-compatible `/v1/models` endpoint (OpenAI, Groq, OpenRouter, Gemini's own
-     * OpenAI-compat layer, and user-provided Custom endpoints used by AI Compose). Optionally
-     * filters ids by a substring, since e.g. Groq and OpenAI's `/models` also list every chat
-     * model on the account, not just the transcription-capable ones.
-     */
     @JvmStatic
     @JvmOverloads
     fun fetchOpenAiCompatModels(baseUrl: String, apiKey: String, filterSubstring: String? = null, callback: (Result<List<String>>) -> Unit) {

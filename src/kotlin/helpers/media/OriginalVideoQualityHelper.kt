@@ -36,13 +36,6 @@ object OriginalVideoQualityHelper {
         MessagesController.getGlobalMainSettings().edit().putBoolean(PREF_KEY, checked).apply()
     }
 
-    /**
-     * Builds the "Original" checkbox row and attaches it right above [anchor]
-     * (PhotoViewer's qualityChooseView, which must already be in its parent).
-     * The row mirrors the anchor's translationY/visibility every frame, so the
-     * stock show/hide animation needs no extra wiring; while active it also dims
-     * the anchor and swallows its touches (quality slider becomes inert).
-     */
     @JvmStatic
     fun createRow(
         viewer: PhotoViewer,
@@ -97,8 +90,6 @@ object OriginalVideoQualityHelper {
         rowLp.bottomMargin = anchorLp.bottomMargin + anchorLp.height
         parent.addView(row, rowLp)
 
-        // dimming the anchor via view alpha would also fade its panel background,
-        // so the background moves onto a standalone backdrop view behind it
         val backdrop = View(context).apply {
             background = anchor.background
             visibility = anchor.visibility
@@ -122,8 +113,7 @@ object OriginalVideoQualityHelper {
         anchor.setOnTouchListener { _, _ ->
             viewer.inu_originalVideoQualityAvailable() && viewer.inu_originalQualitySelected
         }
-        // ViewTreeObserver doesn't survive detach/reattach (PhotoViewer close/reopen),
-        // so the listener has to be re-registered on every attach
+        // entiny: re-register on attach because ViewTreeObserver becomes inactive across detach/reattach
         anchor.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 v.viewTreeObserver.addOnPreDrawListener(preDrawListener)
@@ -160,10 +150,6 @@ object OriginalVideoQualityHelper {
     @JvmStatic
     fun isHevc(codecMime: String?): Boolean = codecMime == HEVC_MIME
 
-    /**
-     * Whether the file can be uploaded byte-for-byte instead of being remuxed:
-     * a codec every client can decode, inside a container Telegram labels as mp4.
-     */
     @JvmStatic
     fun canSendAsIs(videoPath: String?, codecMime: String?): Boolean {
         if (codecMime != MediaController.VIDEO_MIME_TYPE && codecMime != HEVC_MIME) return false
@@ -171,11 +157,6 @@ object OriginalVideoQualityHelper {
         return name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")
     }
 
-    /**
-     * Stock only trusts an Exynos allowlist here (stories have no avc fallback, so a
-     * broken encoder there means a broken story). Re-encoding at original quality does
-     * fall back to avc, so any hardware encoder that reports the target size/rate will do.
-     */
     @JvmStatic
     fun findHevcEncoderName(width: Int, height: Int, framerate: Int): String? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null

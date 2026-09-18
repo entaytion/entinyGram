@@ -20,8 +20,6 @@ import desu.inugram.helpers.InuUtils
 object SettingsBackupHelper {
     const val FORMAT_VERSION = 1
 
-    // curated allowlist of stock mainconfig keys worth roundtripping.
-    // values are typed at runtime via prefs.all; long/float distinguished with key suffix.
     internal const val STOCK_PREF_NAME = "mainconfig"
     internal val STOCK_KEYS: Set<String> = setOf(
         "saveToGallery", "autoplayGifs", "autoplayVideo", "customTabs", "directShare",
@@ -31,10 +29,7 @@ object SettingsBackupHelper {
         "loopStickers", "noStatusBar", "disableVoiceAudioEffects", "chatSwipeAction",
         "useThreeLinesLayout", "archiveHidden", "distanceSystemType", "mapPreviewType",
         "repeatMode", "shuffleMusic", "playOrderReversed", "raiseToSpeak",
-        // Do Not Translate list (RestrictedLanguagesSelectActivity). Once the user touches this
-        // screen at all, "_changed" latches true forever and permanently disables the
-        // auto-detected-from-device-locale/keyboard default -- without these keys in the reset
-        // allowlist there was no way back to that stock behavior short of clearing app data.
+        // entiny: reset doNotTranslate keys because _changed permanently disables device-locale fallback
         "translate_button_restricted_languages", "translate_button_restricted_languages_changed",
         "translate_button_restricted_languages_version",
     )
@@ -86,8 +81,6 @@ object SettingsBackupHelper {
     }
 
     private fun differsFromInu(item: InuConfig.Item<*>, raw: Any?): Boolean {
-        // items with a non-primitive default (json-backed lists etc) have no comparable raw default,
-        // so an unset key counts as differing
         val stored = InuConfig.prefs.all[item.key]
             ?: item.default.takeIf { it is Boolean || it is Number || it is String }
         return when (item.prefType) {
@@ -200,11 +193,7 @@ object SettingsBackupHelper {
         }
         for (item in exportable) item.load(InuConfig.prefs)
 
-        // A reset must also undo any of our own features that wrote directly into stock's own
-        // "mainconfig" prefs (bubble radius, font size, autoplay, ...) -- otherwise those stay
-        // stuck at whatever we last set them to, even though every InuConfig toggle that drove
-        // them just went back to off. Removing the key lets stock's own code fall back to its
-        // own hardcoded default, same as a fresh stock install.
+        // entiny: remove mainconfig keys on reset so stock falls back to hardcoded defaults
         val stock = stockPrefs()
         val stockStored = stock.all
         var stockReset = 0

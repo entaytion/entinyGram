@@ -104,15 +104,8 @@ object ChatHelper {
     private const val COMPACT_FORWARD_ICON_SIZE = 12f
     private const val COMPACT_FORWARD_MIN_NAME_WIDTH = 56f
 
-    /** Upper bound on how long a restricted forward waits for its media to download. */
     private const val RESTRICTED_FORWARD_TIMEOUT_MS = 10 * 60 * 1000L
 
-    /**
-     * A restricted forward has to download and re-encode media before anything can be sent, so the
-     * whole pipeline runs here and only the final `sendMessage()` calls hop back to the UI thread.
-     * Created lazily — [DispatchQueue] starts its thread in the constructor, and most sessions never
-     * forward from a protected chat.
-     */
     private val restrictedForwardQueue by lazy { DispatchQueue("inuRestrictedForward") }
 
     const val OPTION_SAVE = 501
@@ -232,10 +225,6 @@ object ChatHelper {
         else -> R.drawable.inu_tabler_trash_filled
     }
 
-    /**
-     * When no mark icon is selected (DELETED_MARK_STYLE == NOTHING), render the localized
-     * "deleted" word in the message footer instead, tinted with the chosen mark color.
-     */
     @JvmStatic
     fun appendDeletedMarkText(sb: SpannableStringBuilder) {
         val text = LocaleController.getString(R.string.InuDeletedMarkText)
@@ -258,15 +247,7 @@ object ChatHelper {
         return SavedMessagesHelper.isMessageDeleted(msg.currentAccount, msg.getDialogId(), msg.id)
     }
 
-    /**
-     * Alpha a bubble must be drawn with. `1f` for everything but a preserved deleted message
-     * while [InuConfig.DELETED_MESSAGES_TRANSPARENT] is on.
-     *
-     * `ChatMessageCell.setAlpha` clamps to this instead of assigning it once at bind time:
-     * the chat list's item animator resets `itemView.setAlpha(1)` whenever it starts or ends a
-     * move/add/change animation (sending a message runs one over every visible row), which
-     * silently dropped the dimming until the cell was rebound.
-     */
+    // entiny: clamped in setAlpha because RecyclerView item animator resets alpha to 1 during animations
     @JvmStatic
     fun deletedAlpha(msg: MessageObject?): Float {
         if (msg == null) return 1f
@@ -489,7 +470,7 @@ object ChatHelper {
             icons.add(R.drawable.msg_block2)
         }
 
-        // stock OPTION_COPY only covers text/caption — add a fallback that copies the media file URI
+        // entiny: OPTION_COPY fallback copies media URI since stock only covers text/caption
         if (!noforwards && !options.contains(ChatActivity.OPTION_COPY) &&
             mediaFileForCopy(activity.currentAccount, selectedObject) != null
         ) {
@@ -524,15 +505,7 @@ object ChatHelper {
             icons.add(R.drawable.inu_tabler_trash_x)
         }
 
-        // Gated mode keeps the stock one-time reveal/blur, so the stock menu itself skips
-        // "Save to Gallery" for it (guarded by needDrawBluredPreview() in ChatActivity's own
-        // menu builder) even though the file is already preserved locally. Offer Save here
-        // directly.
-        //
-        // Voice notes and round videos need the entry in *both* modes: ChatActivity's menu builder
-        // gates every save/share branch on `!isVoiceOnce() && !isRoundOnce()` on top of the blur
-        // check (createMenu, the type == 4 / 5 / 6 / 10 branches), so unlike a one-time photo or
-        // video they still get no stock Save entry once VIEW_ONCE_SHOW_NORMAL lifts the blur gate.
+        // entiny: gated mode preserves stock blur-gated save; offer direct save here instead
         val oneTimeVoiceOrRound = selectedObject.isVoiceOnce() || selectedObject.isRoundOnce()
         if (selectedObject.isSecretMedia() &&
             SelfDestructHelper.shouldPreserveMedia(dialogId) &&
@@ -544,10 +517,7 @@ object ChatHelper {
             icons.add(if (toDownloads) R.drawable.msg_download else R.drawable.msg_gallery)
         }
 
-        // Burn replays the same read+expire flow the stock "hold to view" viewer runs on close
-        // (sendSecretMessageRead + sendSecretMediaDelete), so it consumes server-side exactly
-        // like actually viewing it would, no delete confirmation involved. Both stock methods
-        // no-op on your own outgoing media, hence the isOut() guard here too.
+        // entiny: burn follows stock read+expire flow server-side; no delete confirm needed, isOut() guard
         if (selectedObject.isSecretMedia() &&
             !selectedObject.isOut() &&
             SelfDestructHelper.shouldPreserveMedia(dialogId) &&
@@ -600,14 +570,6 @@ object ChatHelper {
         }
     }
 
-    /**
-     * Builds the bottom action row from the user's config and strips whatever it resolves to
-     * from the inline lists, so nothing is duplicated in the vertical menu. Scrim popup only —
-     * the shared todo/poll menus must keep these inline.
-     *
-     * Each entry is `{option, icon, enabled}` with `enabled == 0` for a greyed slot placeholder
-     * (its fallback chain matched nothing). Returns an empty list when disabled → stock-identical.
-     */
     @JvmStatic
     fun extractBottomMenu(
         items: ArrayList<CharSequence>,
@@ -621,7 +583,6 @@ object ChatHelper {
             val option = if (entry.item.isSlot) resolveSlot(entry.item, options)
             else options.firstOrNull { MessageMenuConfig.Item.forOption(it) == entry.item }
             if (option == null) {
-                // slots keep their place as a greyed placeholder NagramX-style; customs are dropped
                 if (entry.item.isSlot) result.add(intArrayOf(-1, entry.item.iconRes, 0))
                 continue
             }
@@ -651,14 +612,6 @@ object ChatHelper {
         return null
     }
 
-    /**
-     * Renders the menu's bottom region in one shared block: a single gap, then the optional
-     * icon-button row, then the seen/reactions row (kept bottommost) via [viewsAdder]. No-op —
-     * and so stock-identical — when neither the button row nor [viewsAdder] is present.
-     *
-     * @return true when content was added; callers use this to suppress redundant separators
-     *         that stock adds further down (e.g. the gap above the emoji-packs row).
-     */
     @JvmStatic
     fun addBottomRegion(
         activity: ChatActivity,
@@ -755,7 +708,6 @@ object ChatHelper {
         return row
     }
 
-    /** @return true if the option was handled */
     @JvmStatic
     fun processMenuOption(
         option: Int,
@@ -812,8 +764,7 @@ object ChatHelper {
                     putBoolean("canSelectTopics", true)
                 }
                 val fragment = DialogsActivity(args)
-                // set replyingMessageObject only when a dialog is selected, not before,
-                // so the reply panel doesn't linger if the user presses back
+                // entiny: set replyingMessageObject only after dialog selection so panel doesn't linger on back
                 val capturedReply = replyMsg
                 fragment.setDelegate { dlg, dids, message, param, notifyFlag, scheduleDate, scheduleRepeatPeriod, topicsFragment ->
                     activity.replyingMessageObject = capturedReply
@@ -922,9 +873,7 @@ object ChatHelper {
             }
 
             OPTION_EDIT_HISTORY -> {
-                // Pass the real MessageObject: the id-based overload has to synthesize a stand-in
-                // when the message is not a dialog's preview message, and the history screen
-                // derives peer/sender/current text from whatever it is handed.
+                // entiny: pass real MessageObject so history screen does not synthesize stand-in without peer
                 SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject)
             }
 
@@ -944,18 +893,12 @@ object ChatHelper {
             }
 
             OPTION_BURN_ONE_TIME -> {
-                // sendSecretMessageRead/sendSecretMediaDelete gate on messageOwner.ttl, which
-                // SecretChatHelper populates from the decrypted payload for secret chats but
-                // nothing ever sets for a *received* regular-chat view-once message (only the
-                // outgoing send path mirrors it into media.ttl_seconds). Without this, both
-                // stock methods silently return null and the viewer never opens.
+                // entiny: populate messageOwner.ttl from media.ttl_seconds so stock secret viewer does not return null
                 val media = selectedObject.messageOwner.media
                 if (selectedObject.messageOwner.ttl <= 0 && media != null && media.ttl_seconds != 0) {
                     selectedObject.messageOwner.ttl = media.ttl_seconds
                 }
-                // Open the real one-time viewer (same as tapping the bubble) instead of firing
-                // read+expire blind: burning without ever showing the content behaved like a
-                // delete, not like the regular one-time view a normal recipient gets.
+                // entiny: open secret media viewer to follow normal view-once playback flow before expiring
                 activity.inu_openSecretMediaViewer(selectedObject)
             }
 
@@ -976,25 +919,7 @@ object ChatHelper {
         return true
     }
 
-    /**
-     * "Save" for preserved one-time media.
-     *
-     * Can't just delegate to [ChatActivity.OPTION_SAVE_TO_GALLERY]: view-once media is downloaded
-     * with `ImageLoader.CACHE_TYPE_ENCRYPTED` (`MessageObject.shouldEncryptPhotoOrVideo()` is true
-     * for anything with `ttl_seconds != 0`), so what survives on disk is an AES-CTR `.enc` blob
-     * plus a key file in the internal cache dir. `MediaController.saveFile` copies bytes verbatim
-     * and MediaStore derives the mime type from the extension — "enc" resolves to null, the insert
-     * is rejected, and the save silently produced nothing.
-     *
-     * One-time photos and videos usually dodge that because opening them in PhotoViewer (only
-     * reachable once VIEW_ONCE_SHOW_NORMAL lifts the blur gate) re-downloads them unencrypted.
-     * Voice notes and round videos have no such path — `MediaController.playMessage` always asks
-     * for cacheType 2 and decrypts during playback — so for them the ciphertext is all there is.
-     *
-     * So: decrypt into a scratch file named with the real extension, hand *that* to saveFile with
-     * the bucket the media actually belongs in (round videos report `isVideo() == false`, so the
-     * stock `isVideo() ? 1 : 0` would file them under Images), then drop the scratch copy.
-     */
+    // entiny: decrypt encrypted one-time media to scratch file before saving to gallery
     private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject) {
         val parent = activity.parentActivity ?: return
         if (!StickerDownloadHelper.ensureStoragePermission(parent)) return
@@ -1007,7 +932,6 @@ object ChatHelper {
 
         val document = message.document
         val isRound = message.isRoundVideo
-        // MediaController.saveFile types: 0 = Pictures, 1 = Movies, 2 = Downloads, 3 = Music.
         val type = when {
             message.isVoice -> 2
             message.isMusic -> 3
@@ -1021,10 +945,7 @@ object ChatHelper {
             else -> BulletinFactory.FileType.PHOTO
         }
 
-        // The cache name ("<dc>_<id>.ogg.enc") minus the ciphertext suffix already carries the real
-        // extension, and saveFileInternal infers the MediaStore mime type from the extension of the
-        // file it is handed — so the scratch copy must keep it. The display name can be prettier
-        // when the document carries a filename (voice notes and round videos never do).
+        // entiny: preserve stripped .enc extension on scratch file so saveFileInternal infers correct mime type
         var plainName = source.name.removeSuffix(".enc").takeIf { it.isNotEmpty() } ?: "media"
         if (!plainName.contains('.')) {
             val ext = FileLoader.getExtensionByMimeType(document?.mime_type)
@@ -1054,12 +975,7 @@ object ChatHelper {
         }
     }
 
-    /**
-     * Streams [source] through stock's AES-CTR reader into [target]. Reads are sized to the exact
-     * number of bytes still left in the file because [EncryptedFileInputStream] advances its
-     * counter by the *requested* length, not the returned one — a short read mid-stream would
-     * desync the keystream for everything after it.
-     */
+    // entiny: size reads to remaining bytes because EncryptedFileInputStream advances keystream by requested length
     private fun decryptOneTimeFile(source: File, keyFile: File, target: File): Boolean {
         return try {
             EncryptedFileInputStream(source, keyFile).use { input ->
@@ -1095,7 +1011,6 @@ object ChatHelper {
         return availableRepeatModes(activity, selected, group).isNotEmpty()
     }
 
-    /** [InuConfig.RepeatModeItem] COPY/FORWARD values usable for this message, in menu order */
     private fun availableRepeatModes(
         activity: ChatActivity,
         selected: MessageObject,
@@ -1176,13 +1091,6 @@ object ChatHelper {
         }
     }
 
-    /**
-     * Re-sends [target]'s media/text to [did] as a brand-new message instead of a real protocol
-     * forward. Used by "repeat as copy"; returns false when [target] has nothing this can resend.
-     *
-     * Safe to call on the UI thread — it never re-encodes media, because it always passes
-     * `localFile = null`. The restricted-forward path deliberately does not go through here.
-     */
     private fun sendMessageAsNew(
         helper: SendMessagesHelper,
         account: Int,
@@ -1208,13 +1116,6 @@ object ChatHelper {
         return true
     }
 
-    /**
-     * Wraps the "send [target] as a brand-new message" call in a [Runnable] so callers can build it
-     * off the UI thread (see [sendRestrictedForward]) and fire it on the UI thread, where
-     * [SendMessagesHelper] expects to run. Returns null when [target] has nothing resendable.
-     *
-     * When [localFile] is non-null the media is re-uploaded from that file; see [buildResendParams].
-     */
     private fun buildResendAction(
         helper: SendMessagesHelper,
         account: Int,
@@ -1234,8 +1135,7 @@ object ChatHelper {
         localFile: File?,
     ): Runnable? {
         if (target.isAnyKindOfSticker) {
-            // sticker documents live in public stickersets, so referencing one by id keeps working
-            // even when the source chat is protected — nothing to re-upload here
+            // entiny: stickers in public sets can be referenced by ID even in protected chats without re-upload
             return Runnable {
                 helper.sendSticker(
                     target.document, null, did, replyTo, threadMsg, null, quote, null,
@@ -1254,23 +1154,6 @@ object ChatHelper {
         return Runnable { helper.sendMessage(params) }
     }
 
-    /**
-     * Builds the [SendMessagesHelper.SendMessageParams] that re-send [target]'s content as a new
-     * message, or null when nothing here is resendable.
-     *
-     * With [localFile] set, the photo/document is rebuilt from scratch around that local copy
-     * ([freshPhoto] / [freshDocument]) so the media is genuinely re-uploaded rather than referenced
-     * by its server id — see [sendRestrictedForward] for why that matters. With [localFile] null the
-     * existing photo/document object is reused, which is what "repeat as copy" wants.
-     *
-     * Media that has no branch below (polls, dice, games, invoices, paid media, extended media)
-     * returns null rather than falling through to the plain-text branch: sending only the caption
-     * of a message whose media we dropped looks like a successful forward while silently losing
-     * the content, and callers have a better answer for null (a real forward, or skipping).
-     *
-     * Must not run on the UI thread when [localFile] is set — [freshPhoto] decodes and re-encodes
-     * a bitmap.
-     */
     private fun buildResendParams(
         account: Int,
         target: MessageObject,
@@ -1289,11 +1172,9 @@ object ChatHelper {
             media !is TLRPC.TL_messageMediaEmpty &&
             media !is TLRPC.TL_messageMediaWebPage
 
-        // matches the stock forward path's own caption handling (`!hideCaption || isMediaEmpty`)
         val caption = if (hideCaption && hasMedia) null else msg.message
         val entities = if (hideCaption && hasMedia) null else msg.entities
-        // a re-upload has no server-side file reference left to refresh, so there is nothing for
-        // stock's FileRefController to do with the (restricted) source message
+        // entiny: re-uploaded media clears parent to skip unnecessary stock FileRefController refresh
         val parent = if (localFile == null) target else null
 
         if (hasMedia) {
@@ -1312,7 +1193,6 @@ object ChatHelper {
                 media.document is TLRPC.TL_document -> {
                     val source = media.document as TLRPC.TL_document
                     val document = if (localFile == null) source else freshDocument(account, source, localFile)
-                    // stock puts this straight into `newMsg.attachPath` and uploads from it
                     val path = localFile?.absolutePath ?: msg.attachPath
                     SendMessagesHelper.SendMessageParams.of(
                         document, null, path, did, replyTo, threadMsg,
@@ -1343,26 +1223,9 @@ object ChatHelper {
         )
     }
 
-    /**
-     * Re-encodes [file] into a brand-new local photo. Stock's own "user picked a photo" path uses
-     * the same call, and it leaves `id`/`access_hash` at 0 with an empty `file_reference`, which is
-     * exactly the shape every `photo.access_hash == 0` branch in `SendMessagesHelper` treats as
-     * "upload this from scratch".
-     *
-     * Decodes and re-compresses a bitmap — never call it on the UI thread.
-     */
     private fun freshPhoto(account: Int, file: File): TLRPC.TL_photo? =
         SendMessagesHelper.getInstance(account).generatePhotoSizes(file.absolutePath, null)
 
-    /**
-     * An anonymous copy of [source] pointing at [file]: no id, no access_hash, no file_reference and
-     * no dc_id, so `document.access_hash == 0` sends it down the upload path instead of referencing
-     * the (restricted) server-side file. Mirrors what stock builds for a freshly picked file.
-     *
-     * Attributes are copied into a *new* list because stock mutates them in place (it strips
-     * `TL_documentAttributeAnimated` when the target chat forbids stickers), which would otherwise
-     * corrupt the source message's own document.
-     */
     private fun freshDocument(account: Int, source: TLRPC.TL_document, file: File): TLRPC.TL_document {
         val document = TLRPC.TL_document()
         document.id = 0
@@ -1376,8 +1239,7 @@ object ChatHelper {
         document.size = file.length()
         document.localPath = file.absolutePath
         document.attributes = ArrayList(source.attributes)
-        // stock uploads thumbs[0] right after the file itself whenever it isn't a stripped size;
-        // a server-side thumb we never cached would fail that upload and error the whole message
+        // entiny: only attach cached or stripped thumbs so missing server thumbs don't fail upload
         for (thumb in source.thumbs) {
             if (thumb is TLRPC.TL_photoStrippedSize || thumbCacheFile(thumb)?.exists() == true) {
                 document.thumbs.add(thumb)
@@ -1389,7 +1251,6 @@ object ChatHelper {
         return document
     }
 
-    // where stock looks for a thumb when it uploads one alongside a document
     private fun thumbCacheFile(size: TLRPC.PhotoSize): File? {
         val location = size.location ?: return null
         return File(
@@ -1398,14 +1259,7 @@ object ChatHelper {
         )
     }
 
-    /**
-     * True when [msg]'s *source* forbids protocol forwarding, read straight off the raw TL data.
-     *
-     * [MessagesController.isPeerNoForwards] can't be used here: the ALLOW_FORWARD_RESTRICTED patch
-     * makes it (and `isChatNoForwards`/`isUserNoForwards`) return false precisely while the toggle
-     * is on, which is the only time this runs — so it would report every peer as unrestricted and
-     * the split would silently never fire for peer-level protection.
-     */
+    // entiny: check raw noforwards flags because isPeerNoForwards returns false when toggle is on
     private fun isSourceNoForwards(controller: MessagesController, msg: MessageObject): Boolean {
         if (msg.messageOwner?.noforwards == true) return true
         val dialogId = msg.dialogId
@@ -1418,17 +1272,6 @@ object ChatHelper {
         return userFull.noforwards_peer_enabled || userFull.noforwards_my_enabled
     }
 
-    /**
-     * Pulls noforwards messages (peer- or message-level) out of [messages] in place and
-     * returns them, or null if none were restricted. Called from [SendMessagesHelper.sendMessage]
-     * before it attempts a real protocol forward, which the server rejects for these regardless
-     * of client-side flags.
-     *
-     * Only messages that would actually reach `messages.forwardMessages` are taken. Stock already
-     * degrades local (`id <= 0`) and blurred-preview (one-time / secret) media to a text-only send
-     * without ever issuing the RPC, so those never hit the server rejection and are left alone —
-     * and their file references can't be re-sent by id anyway. Same for secret-chat sources.
-     */
     @JvmStatic
     fun splitRestrictedForward(messages: MutableList<MessageObject>, controller: MessagesController): ArrayList<MessageObject>? {
         var restricted: ArrayList<MessageObject>? = null
@@ -1446,24 +1289,6 @@ object ChatHelper {
         return restricted
     }
 
-    /**
-     * Sends each of [messages] to [did] as a fresh copy instead of forwarding them.
-     *
-     * Media is always **re-uploaded from a local copy**, never referenced by its server id: a
-     * noforwards file can't be re-attached to a message in another chat by id, so the only
-     * dependable way to honor [InuConfig.ALLOW_FORWARD_RESTRICTED] is to behave exactly like the
-     * user had picked the file from their gallery. [freshPhoto]/[freshDocument] produce the
-     * `access_hash == 0` media objects that make `SendMessagesHelper` take its upload path.
-     *
-     * That means waiting on downloads, so the whole pipeline is pushed onto [restrictedForwardQueue]
-     * and only the `sendMessage()` calls come back to the UI thread — where stock expects them, and
-     * in submission order, which is what keeps albums intact.
-     *
-     * Messages that share a `grouped_id` and all resolve to resendable media are re-grouped under
-     * one fresh album id so a 5-photo album stays one album; anything that can't be resent at all
-     * (polls, dice, games, invoices, paid/extended media) is skipped, since the only fallback — a
-     * real forward — is exactly what the server rejects here.
-     */
     @JvmStatic
     fun sendRestrictedForward(
         helper: SendMessagesHelper,
@@ -1479,7 +1304,6 @@ object ChatHelper {
         hideCaption: Boolean,
         payStars: Long,
     ) {
-        // the caller keeps mutating its own list after we return, so take a snapshot
         val batch = ArrayList(messages)
         if (batch.isEmpty()) return
         restrictedForwardQueue.postRunnable {
@@ -1493,7 +1317,6 @@ object ChatHelper {
         }
     }
 
-    /** Builds every send of a restricted forward, off the UI thread. See [sendRestrictedForward]. */
     private fun buildRestrictedForwardActions(
         helper: SendMessagesHelper,
         account: Int,
@@ -1521,10 +1344,7 @@ object ChatHelper {
 
             val album = if (end - index > 1) {
                 messages.subList(index, end).mapNotNull { msg ->
-                    // stickers and voice notes never belong to an album, and the voice branch of
-                    // sendMessage() replaces the shared group DelayedMessage instead of reusing it
-                    // (type 8 is the one type that doesn't guard on `delayedMessage == null`), which
-                    // would strand the whole group unsent
+                    // entiny: exclude stickers and voice from albums to prevent replacing shared group DelayedMessage
                     if (msg.isAnyKindOfSticker || msg.isVoice) null
                     else buildResendParams(
                         account, msg, did, null, threadMsg, notify, scheduleDate,
@@ -1544,8 +1364,7 @@ object ChatHelper {
                     }
                     params.monoForumPeer = mono
                     params.suggestionParams = suggest
-                    // a grouped send skips sendMessage()'s own paid-message confirmation
-                    // (`!isGroup`), so the already-confirmed price has to be carried in
+                    // entiny: pass payStars explicitly because grouped send skips sendMessage's paid confirmation
                     params.payStars = payStars
                     actions.add(Runnable { helper.sendMessage(params) })
                 }
@@ -1563,17 +1382,9 @@ object ChatHelper {
         return actions
     }
 
-    /**
-     * Makes sure every message of a restricted forward that will be re-uploaded has a local copy,
-     * downloading what is missing and blocking *this* (background) thread until the loads settle.
-     *
-     * Returns the resolved file per message; a message left out of the map has no usable local copy
-     * and falls back to being referenced by its server id, which is no worse than the old behavior.
-     */
     private fun awaitRestrictedMedia(account: Int, messages: List<MessageObject>): Map<MessageObject, File> {
         val loader = FileLoader.getInstance(account)
         val resolved = HashMap<MessageObject, File>()
-        // keyed by download name, so the same file referenced twice is only fetched once
         val pending = LinkedHashMap<String, MessageObject>()
 
         for (msg in messages) {
@@ -1589,9 +1400,7 @@ object ChatHelper {
         if (pending.isEmpty()) return resolved
 
         val waiter = MediaDownloadWaiter(account, pending.keys)
-        // NotificationCenter only allows add/removeObserver from the main thread and delivers
-        // callbacks there, so everything except the latch lives on it — subscribing before the
-        // loads start (and re-checking for files that landed in between) closes the race
+        // entiny: subscribe NotificationCenter observer on main thread before starting downloads to close race
         AndroidUtilities.runOnUIThread {
             waiter.subscribe()
             for ((key, msg) in pending) {
@@ -1610,7 +1419,6 @@ object ChatHelper {
         return resolved
     }
 
-    /** Media that has to be re-uploaded byte-for-byte; stickers are referenced by id instead. */
     private fun needsMediaReupload(message: MessageObject): Boolean {
         if (message.isAnyKindOfSticker) return false
         val media = message.messageOwner?.media ?: return false
@@ -1623,21 +1431,18 @@ object ChatHelper {
         return loader.getPathToMessage(message.messageOwner)?.takeIf { it.exists() && it.length() > 0L }
     }
 
-    /** The `fileLoaded`/`fileLoadFailed` name for [message]'s media. */
     private fun downloadKey(message: MessageObject): String? {
         val media = message.messageOwner?.media ?: return null
         (media.document as? TLRPC.TL_document)?.let { return FileLoader.getAttachFileName(it) }
         return fullPhotoSize(media)?.let { FileLoader.getAttachFileName(it) }
     }
 
-    // the very size FileLoader.getPathToMessage resolves for a photo, so the file we download and
-    // the file we later look for are always the same one
+    // entiny: match the photo size FileLoader.getPathToMessage resolves so download and lookup paths align
     private fun fullPhotoSize(media: TLRPC.MessageMedia): TLRPC.PhotoSize? {
         val photo = media.photo as? TLRPC.TL_photo ?: return null
         return FileLoader.getClosestPhotoSizeWithSize(photo.sizes, AndroidUtilities.getPhotoSize(true), false, null, true)
     }
 
-    /** Starts (or joins) the download of [message]'s media. UI thread only. False = nothing to load. */
     private fun startMediaLoad(loader: FileLoader, message: MessageObject): Boolean {
         val media = message.messageOwner?.media ?: return false
         val document = media.document as? TLRPC.TL_document
@@ -1652,11 +1457,6 @@ object ChatHelper {
         return true
     }
 
-    /**
-     * Blocks a background thread until every tracked download has finished or failed. All of the
-     * pending-set bookkeeping happens on the UI thread (both [subscribe]/[complete]/[settle] callers
-     * and NotificationCenter's own dispatch), so the latch is the only cross-thread state.
-     */
     private class MediaDownloadWaiter(
         private val account: Int,
         keys: Collection<String>,
@@ -1682,7 +1482,6 @@ object ChatHelper {
 
         fun await(timeoutMs: Long) {
             latch.await(timeoutMs, TimeUnit.MILLISECONDS)
-            // also covers the timeout path, where settle() never ran
             AndroidUtilities.runOnUIThread { unsubscribe() }
         }
 
@@ -1692,8 +1491,7 @@ object ChatHelper {
             center.removeObserver(this, NotificationCenter.fileLoadFailed)
         }
 
-        // a failure is treated like a completion: the caller re-checks the disk afterwards and
-        // degrades that one message to a by-reference send rather than stalling the whole batch
+        // entiny: treat load failure like completion so caller falls back to by-reference send instead of stalling
         override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
             val key = args.getOrNull(0) as? String ?: return
             if (!pending.remove(key)) return
@@ -1707,8 +1505,7 @@ object ChatHelper {
         return reply
     }
 
-    // photo → full cached photo file; video/gif/round → cached poster thumb (matches photo viewer's "copy frame" intent).
-    // null when nothing is cached locally — the menu entry isn't added in that case.
+    // entiny: returns full photo file or cached poster thumb matching photo viewer copy frame intent
     private fun mediaFileForCopy(currentAccount: Int, message: MessageObject): File? {
         if (message.isSticker || message.isAnimatedSticker) return null
         val loader = FileLoader.getInstance(currentAccount)
@@ -1723,7 +1520,6 @@ object ChatHelper {
         return null
     }
 
-    // opens dialogId scrolled to messageId in a fresh activity, keeping the current one on the backstack
     @JvmStatic
     fun openInNewChat(activity: ChatActivity, dialogId: Long, messageId: Int) {
         val args = Bundle()
@@ -1762,13 +1558,12 @@ object ChatHelper {
         if (ChatObject.isChannelAndNotMegaGroup(chat)) return false
         if (!ChatObject.isNotInChat(chat)) return false
         if (message.hasChosenReaction(visibleReaction)) return false
-        // skip for auto-forwarded messages
         if (message.messageOwner?.fwd_from?.channel_post != null && message.messageOwner?.fwd_from?.saved_from_msg_id != null) return false
 
         AlertDialog.Builder(fragment.context)
             .setTitle(LocaleController.getString(R.string.InuConfirmReactionTitle))
             .setMessage(run {
-                val emojiToken = "🐶" // placeholder, replaced by AnimatedEmojiSpan for custom emojis
+                val emojiToken = "🐶"
                 val emojiText = visibleReaction.emojicon ?: emojiToken
                 val raw = LocaleController.formatString(R.string.InuConfirmReactionText, emojiText, chat.title ?: "")
                 val text = AndroidUtilities.replaceTags(raw)
@@ -1827,14 +1622,12 @@ object ChatHelper {
 
         val chat = activity.currentChat ?: return false
         if (ChatObject.isMonoForum(chat)) return false
-        // stock skips the JOIN bar in non-forum threads w/o join_to_send (e.g. channel-post comments) —
-        // don't force-hide there, or we'd also hide the chat input
+        // entiny: don't force-hide in non-forum threads without join_to_send to avoid hiding chat input
         if (activity.isThreadChat && !chat.join_to_send && !ChatObject.isForum(chat)) return false
         val member = ChatObject.isInChat(chat)
         if (
             ChatObject.canSendMessages(chat) &&
-            // canSendMessages reflects server-side permissions, but stock still shows the JOIN bar for non-members
-            // unless we actually let them write (discuss-without-join). also covers the join_request edge case.
+            // entiny: stock still shows JOIN bar for non-members unless discuss-without-join applies
             (member || isEffectivelyInChat(chat))
         ) return false
 
@@ -1901,7 +1694,7 @@ object ChatHelper {
     private fun clearMessageCaches(activity: ChatActivity, messages: List<MessageObject>) {
         val account = activity.currentAccount
         val loader = FileLoader.getInstance(account)
-        // cancel in-progress downloads on the UI thread (cheap) so the loader doesn't race the delete
+        // entiny: cancel active downloads on UI thread so loader does not race deletion
         for (msg in messages) {
             msg.getDocument()?.let { loader.cancelLoadFile(it, true) }
             FileLoader.getClosestPhotoSizeWithSize(msg.photoThumbs, AndroidUtilities.getPhotoSize(true))
@@ -1943,9 +1736,7 @@ object ChatHelper {
             return true
         }
 
-        // Not downloaded yet: fetch it ourselves rather than falling through to stock's
-        // click handling, which for an undownloaded, non-"attheme" document ends up routing
-        // to the system's "open with" chooser instead of our import flow.
+        // entiny: trigger download manually so stock does not route un-cached file to system open-with chooser
         val doc = message.getDocument() ?: return false
         FileLoader.getInstance(activity.currentAccount).loadFile(doc, message, FileLoader.PRIORITY_NORMAL, 1)
         pollFileDownload(activity, message, name, isSettings)
@@ -1973,8 +1764,6 @@ object ChatHelper {
         }
     }
 
-    /** Mirrors [desu.inugram.helpers.chat.TranscribeHelper]'s download-then-process pattern: poll every
-     * 500ms for up to 30s, since there is no direct download-completion callback wired up here. */
     private fun pollFileDownload(
         activity: ChatActivity,
         message: MessageObject,
@@ -2123,8 +1912,7 @@ object ChatHelper {
     fun maybeCompactForwardLayouts(layouts: Array<StaticLayout>, width: Int, messageObject: MessageObject) {
         if (!isCompactForward(messageObject)) return
         layouts[0] = layouts[1]
-        // Builder, not the deprecated ctor. Note the argument order flips: the ctor took
-        // (spacingMultiplier, spacingAdd), setLineSpacing takes (spacingAdd, spacingMultiplier).
+        // entiny: Builder setLineSpacing flips legacy constructor arg order to (spacingAdd, spacingMultiplier)
         layouts[1] = StaticLayout.Builder
             .obtain("", 0, 0, Theme.chat_forwardNamePaint, width)
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
@@ -2199,7 +1987,7 @@ object ChatHelper {
         dismiss.run()
         val activity = LaunchActivity.getLastFragment() as? ChatActivity
         if (activity == null) {
-            // non-ChatActivity callsites (e.g. admin log) ignore the date in their callback anyway
+            // entiny: non-ChatActivity callsites ignore date in callback anyway
             fallback.run(0)
             return
         }
@@ -2213,17 +2001,13 @@ object ChatHelper {
             return
         }
         if (DialogObject.isEncryptedDialog(activity.dialogId)) return
-        // date=1 routes through stock's loadMessages-by-date path — handles merged dialogs,
-        // loading state, and the "already at end" case
+        // entiny: date=1 routes through stock loadMessages-by-date to handle merged dialogs and loading state
         activity.jumpToDate(1)
     }
 
     @JvmStatic
     fun onFragmentDestroy(activity: ChatActivity) {
-        // A third-party-provider translation still in flight when the chat closes used to keep
-        // running, land later, and write into a dialog whose in-memory "manual" state
-        // resetForDialog just cleared -- the result got persisted but nothing ever made it
-        // visible again. Cancel it first so it never completes into that dead state.
+        // entiny: cancel in-flight translations before resetting state so late results don't write to dead dialog
         desu.inugram.helpers.translate.engine.EntinyTranslate.cancelDialog(activity.dialogId)
         TranslateHelper.resetForDialog(activity.dialogId)
         TypingSpoofHelper.stop(activity.dialogId)
@@ -2294,7 +2078,6 @@ object ChatHelper {
         return LocaleController.getString(res)
     }
 
-    /** @return true if the fork consumed the click (stock must not process the option) */
     @JvmStatic
     fun onMenuOptionClick(
         activity: ChatActivity,
@@ -2310,7 +2093,6 @@ object ChatHelper {
         }
         if (option != OPTION_REPEAT) return false
         if (InuConfig.REPEAT_MODE.value != InuConfig.RepeatModeItem.ASK) return false
-        // with a single mode available there's nothing to ask about
         if (availableRepeatModes(activity, message, group).size < 2) return false
         return openLongTapSubmenu(activity, popupLayout, cell) { swb ->
             swb.add(R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
@@ -2367,7 +2149,6 @@ object ChatHelper {
                 else -> false
             }
 
-            // tap repeats in the configured mode, long-tap in the other one (ask mode already offers both)
             OPTION_REPEAT -> {
                 val preferred = InuConfig.REPEAT_MODE.value
                 if (preferred == InuConfig.RepeatModeItem.ASK) return false
@@ -2440,7 +2221,7 @@ object ChatHelper {
         (swb.linearLayout.layoutParams as? FrameLayout.LayoutParams)?.gravity = Gravity.TOP
         swipeBack.inu_pinnedScrimForegroundIndex = foregroundIndex
 
-        // anchorCell may be a narrow bottom-row button; size the submenu to the full menu width
+        // entiny: size submenu to full menu width when anchor is a narrow bottom-row button
         val menuWidthPx = popupLayout.measuredWidth - popupLayout.paddingLeft - popupLayout.paddingRight
         swb.setMinWidth((menuWidthPx / AndroidUtilities.density).roundToInt())
         swb.add(R.drawable.ic_ab_back, LocaleController.getString(R.string.Back)) { swipeBack.closeForeground() }

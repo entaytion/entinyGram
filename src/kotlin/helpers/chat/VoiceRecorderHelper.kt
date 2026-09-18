@@ -28,7 +28,6 @@ import org.telegram.ui.Components.LayoutHelper
 object VoiceRecorderHelper {
     private const val RECORD_DELAY_MS = 150L
 
-    // read by InstantCameraView.showCamera to pick initial camera
     @JvmField
     var nextCameraFront: Boolean = true
     private var skipIntercept = false
@@ -37,17 +36,11 @@ object VoiceRecorderHelper {
     fun isMovedToAttach(): Boolean =
         InuConfig.CHAT_VOICE_IN_ATTACH.value && !AttachCameraHelper.isFab()
 
-    // when enabled, attachButton/attachLayout are shifted right into the sendButton slot
-    // since the frame margin stays at DEFAULT_HEIGHT but the audio/video button is gone
+    // entiny: shift attach layout right into sendButton slot when voice button is moved to attach
     @JvmStatic
     fun attachTranslationXOffset(): Float =
         if (isMovedToAttach()) AndroidUtilities.dp(48f).toFloat() else 0f
 
-    /**
-     * Called from ChatActivityEnterView.recordAudioVideoRunnable.
-     * Sets nextCameraFront for options 1/2, shows a picker for option 3.
-     * @return true if intercepted (caller should return early)
-     */
     @JvmStatic
     fun interceptForCameraChoice(enterView: ChatActivityEnterView): Boolean {
         if (skipIntercept) {
@@ -79,7 +72,7 @@ object VoiceRecorderHelper {
             private var runnableStarted = false
 
             private val iconView = ChatActivityEnterViewAnimatedIconView(context, 24).apply {
-                inu_legacy = false // fab keeps the stock filled icon regardless of non-island mode
+                inu_legacy = false
                 colorFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
                 scaleType = ImageView.ScaleType.CENTER
             }

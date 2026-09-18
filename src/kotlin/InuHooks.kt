@@ -54,16 +54,10 @@ object InuHooks {
             MonetHelper.registerOverlayChangeReceiver(context)
             MonetHelper.registerThemeReloadReceiver(context)
         }
-        // APK housekeeping is not needed to render the first frame. Keep it off
-        // Application.onCreate's critical path; the work is independent and safe
-        // to perform after core config/theme wiring has started.
         Utilities.globalQueue.postRunnable {
             UpdateHelper.clearPendingIfInstalled()
             ApkInstaller.dismissInstalledNotification()
         }
-        // Listener registration and VPN reconciliation do not affect the first
-        // frame. Keep them off Application.onCreate's critical path; both
-        // helpers marshal user-visible work back to the appropriate queue.
         Utilities.globalQueue.postRunnable {
             CloudSettingsHelper.attachAutoSyncListener()
             ProxyVpnHelper.init(context)
@@ -76,17 +70,11 @@ object InuHooks {
         @Suppress("UNCHECKED_CAST")
         val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
         for (msg in messages) onNewMessage(msg, acc)
-        // Fans out to the cached global controller (once it's ever been opened) and every
-        // folder-scoped Feed screen currently open -- a folder scope isn't cached (see
-        // FeedController.forFolder), so it self-registers for exactly this while its screen is up.
         for (controller in desu.inugram.helpers.feed.FeedController.allActiveFor(acc)) {
             controller.onNewMessages(messages)
         }
     }
 
-    // messagesDeleted args: (ArrayList<Integer> markAsDeletedMessages, long channelId, boolean scheduled)
-    // historyCleared args: (long dialogId, int maxId)
-    // Both confirmed against MessagesController's own postNotificationName call sites.
     private val feedPruneObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
         val controllers = desu.inugram.helpers.feed.FeedController.allActiveFor(acc)
         if (controllers.isEmpty()) return@NotificationCenterDelegate
@@ -95,11 +83,9 @@ object InuHooks {
                 @Suppress("UNCHECKED_CAST")
                 val ids = args[0] as? ArrayList<Int> ?: return@NotificationCenterDelegate
                 val channelId = args.getOrNull(1) as? Long ?: 0L
-                // Stock call sites disagree on whether this second arg is already a negative
-                // dialog id or a positive channel chat id needing negation -- removeMessages() is
-                // a no-op for a dialog id with no matching rows, so trying both is harmless.
                 if (channelId != 0L) {
                     for (controller in controllers) {
+                        // entiny: try both signed and negated channelId because stock notification sites disagree on sign convention
                         controller.onMessagesDeleted(channelId, ids)
                         controller.onMessagesDeleted(-channelId, ids)
                     }
@@ -112,18 +98,7 @@ object InuHooks {
         }
     }
 
-    // Re-asserts the desired presence on every reconnect (stock resets connection-level state on
-    // reconnect, e.g. via MessagesController.cleanup / VoIPService teardown).
-    //
-    // HIDDEN presence is enforced entirely at the packet level -- GhostHelper.processSendRequest,
-    // called from ConnectionsManager.sendRequestInternal (the single choke point behind every
-    // sendRequest overload), force-rewrites `offline = true` on any outgoing TL_account.updateStatus
-    // while GHOST_MODE_ENABLED + GHOST_PRESENCE_MODE == HIDDEN. syncPresence() here does NOT touch
-    // MessagesController.ignoreSetOnline -- that stock field also gates ChatActivity's local
-    // read-marking block, so a Ghost Mode component setting it true previously broke marking
-    // messages as read while a chat was open (see GhostHelper.syncPresence's own doc). This
-    // observer only re-sends the offline/online status itself; DELAYED presence relies on
-    // scheduleOffline() letting a real "online" through first and scheduling the offline after.
+    // entiny: re-assert presence on reconnect because stock resets connection-level online state
     private val connectionStateObserver = NotificationCenter.NotificationCenterDelegate { id, acc, _ ->
         if (id != NotificationCenter.didUpdateConnectionState) return@NotificationCenterDelegate
         if (org.telegram.tgnet.ConnectionsManager.getInstance(acc).connectionState
@@ -141,16 +116,11 @@ object InuHooks {
         desu.inugram.helpers.security.PresenceHelper.load(account)
         desu.inugram.helpers.security.GhostHelper.syncPresence(account)
         desu.inugram.helpers.badges.BadgeRegistry.init(account)
-        // TTL-based cache pruning only ran when the TTL setting itself was changed — accounts
-        // that never touch the setting (or just leave the app running for weeks) never got
-        // pruned. Run it once per account on every cold start instead.
         desu.inugram.helpers.chat.SavedMessagesHelper.pruneIfNeeded(account)
         desu.inugram.helpers.security.PresenceHelper.pruneIfNeeded(account)
         AndroidUtilities.runOnUIThread {
             val nc = NotificationCenter.getInstance(account)
-            // MessagesController (and thus its NotificationCenter instance) can be recreated for the
-            // same account (relogin, account reset) — drop any stale observer before re-adding so
-            // onNewMessage doesn't fire multiple times per message.
+            // entiny: drop stale observers before adding because MessagesController can recreate without clearing them
             nc.removeObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
             nc.addObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
             nc.removeObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
@@ -194,7 +164,6 @@ object InuHooks {
             || ShortcutHelper.handleAction(activity, intent)
     }
 
-    // tg://update — runs the fork custom update check (stock doesn't route it).
     private fun tryHandleUpdateDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {
         val uri = intent?.data ?: return false
         if (uri.scheme != "tg") return false

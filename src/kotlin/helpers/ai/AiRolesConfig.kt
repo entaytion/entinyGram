@@ -11,7 +11,6 @@ data class AiRole(
     val prompt: String = "",
 )
 
-/** List of user-saved AI persona presets, persisted as JSON in SharedPreferences. */
 class AiRolesConfig(key: String) : InuConfig.Item<List<AiRole>>(key, emptyList()) {
 
     override val prefType = InuConfig.PrefType.STRING

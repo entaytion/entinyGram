@@ -34,7 +34,6 @@ object UrlCleanerHelper {
     @Volatile
     private var loaded = false
 
-    /** Date prefix of `! TimeUpdated:` from the active filter source, or null. */
     @Volatile
     var lastUpdated: String? = null
         private set
@@ -76,10 +75,6 @@ object UrlCleanerHelper {
         getCleaner()
     }
 
-    /**
-     * Download latest filter. Blocks — call from a background queue.
-     * Returns true if the downloaded copy was written; false if it matches the active source.
-     */
     @Throws(java.io.IOException::class)
     fun fetchLatest(): Boolean {
         getCleaner()
@@ -136,7 +131,6 @@ object UrlCleanerHelper {
         return if (cleaned === s) url else cleaned
     }
 
-    /** Scans URLs in [text]; returns same ref if nothing matched/changed. */
     @JvmStatic
     fun cleanText(text: CharSequence?): CharSequence? {
         if (text.isNullOrEmpty() || !InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.value) return text
@@ -162,7 +156,6 @@ object UrlCleanerHelper {
         return out ?: text
     }
 
-    /** Returns true if the paste was consumed (text inserted). */
     @JvmStatic
     fun handleContextMenuPaste(editText: EditText): Boolean {
         if (!InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.value) return false
@@ -185,7 +178,6 @@ object UrlCleanerHelper {
         }
     }
 
-    /** Intercepts IME commits (Gboard clipboard chips etc.). */
     @JvmStatic
     fun wrapInputConnection(ic: InputConnection?): InputConnection? {
         if (ic == null) return null

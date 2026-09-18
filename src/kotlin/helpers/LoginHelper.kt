@@ -120,7 +120,6 @@ object LoginHelper {
         opts.show()
     }
 
-    /** Override login code countdown with confirmation (deliberate choice, not stray tap). */
     @JvmStatic
     fun confirmFastResend(loginActivity: LoginActivity, onConfirm: Runnable) {
         val activity = loginActivity.parentActivity ?: return
@@ -177,7 +176,6 @@ object LoginHelper {
         }
     }
 
-    /** Bot token login via auth.importBotAuthorization (QR/Passkey pattern; bare TLObject, not in TLRPC). */
     private fun botTokenLogin(loginActivity: LoginActivity, currentAccount: Int) {
         val activity = loginActivity.parentActivity ?: return
         AlertsCreator.createSimpleTextInputAlert(
@@ -189,8 +187,8 @@ object LoginHelper {
         ) { token ->
             val req = object : TLObject() {
                 override fun serializeToStream(stream: OutputSerializedData) {
-                    stream.writeInt32(0x67a3ff2c) // auth.importBotAuthorization
-                    stream.writeInt32(0) // flags
+                    stream.writeInt32(0x67a3ff2c) // entiny: auth.importBotAuthorization Telegram payload
+                    stream.writeInt32(0) // entiny: flags field
                     stream.writeInt32(BuildVars.APP_ID)
                     stream.writeString(BuildVars.APP_HASH)
                     stream.writeString(token)

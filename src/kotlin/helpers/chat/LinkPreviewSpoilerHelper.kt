@@ -60,7 +60,6 @@ object LinkPreviewSpoilerHelper {
     private val bitmapPaint = Paint(Paint.FILTER_BITMAP_FLAG)
     private val clipPath = Path()
 
-    /** whether the cover is currently painted over the card — nothing stock draws may show through it. */
     @JvmStatic
     fun isCardCovered(cell: ChatMessageCell): Boolean {
         val state = states[cell] ?: return false
@@ -69,12 +68,7 @@ object LinkPreviewSpoilerHelper {
         return state.revealProgress < 1f && cell.messageObject?.isSpoilersRevealed != true
     }
 
-    /**
-     * media overlays (play button, duration, menu) outlive the cover: they stay suppressed until the
-     * reveal is committed, i.e. until the rebind re-decided autoplay. isSpoilersRevealed stands in for
-     * that — both reveal paths rebind right after setting it — and the cover animation may well end
-     * first, which would flash a play button that autoplay is about to take away.
-     */
+    // entiny: keep media overlays hidden until reveal commits so autoplay doesn't flash buttons
     @JvmStatic
     fun shouldHideMediaOverlays(cell: ChatMessageCell): Boolean {
         val state = states[cell] ?: return false
@@ -82,17 +76,12 @@ object LinkPreviewSpoilerHelper {
         return state.revealAnimator != null || cell.messageObject?.isSpoilersRevealed != true
     }
 
-    /**
-     * whether the message's preview is spoilered at all, regardless of it having been revealed in the
-     * chat — list surfaces keep covering it either way, like stock does with hasMediaSpoilers().
-     */
     @JvmStatic
     fun hasLinkPreviewSpoiler(msg: MessageObject?): Boolean {
         if (!InuConfig.LINK_PREVIEW_SPOILER.value || msg == null) return false
         return isLinkCoveredBySpoiler(msg)
     }
 
-    /** message-level gate for stock autoplay decisions, which run before the cell state is bound. */
     @JvmStatic
     fun isMediaCovered(msg: MessageObject?): Boolean {
         if (msg == null || msg.isSpoilersRevealed) return false
@@ -175,22 +164,15 @@ object LinkPreviewSpoilerHelper {
         animator.start()
     }
 
-    /**
-     * re-runs the bind so stock re-decides autoplay for a message that is no longer covered.
-     * only safe once the text spoiler's ripple is done: the rebind rebuilds the text layout blocks,
-     * dropping the SpoilerEffect instances the ripple (and its reveal callback) is attached to.
-     */
+    // entiny: rebind after ripple completes so stock re-evaluates autoplay on uncovered card
     private fun rebindForReveal(cell: ChatMessageCell, state: State) {
         val msg = cell.messageObject ?: return
         state.rebinding = true
         try {
             msg.forceUpdate = true
-            // the pinned/chat flags are read as fields, like stock does when revealing media spoilers:
-            // the getters answer for the pending message while a deferred bind is queued up
             cell.setMessageContent(msg, cell.currentMessagesGroup, cell.pinnedBottom, cell.pinnedTop, cell.firstInChat, cell.lastInChatList)
             msg.forceUpdate = false
-            // the buttons were left in their pre-autoplay state (play + download) while the card was
-            // covered, and the rebind above animates them away over the now-revealed video — snap instead
+            // entiny: snap button state instead of animating away over now-revealed video
             cell.updateButtonState(false, false, true)
             cell.animatingDrawVideoImageButton = 0
             cell.animatingDrawVideoImageButtonProgress = if (cell.drawVideoImageButton) 1f else 0f
@@ -399,9 +381,7 @@ object LinkPreviewSpoilerHelper {
             }
             if (!covered) allCovered = false
         }
-        // the preview is often generated from a url that isn't the one in the text (web preview
-        // replacements rewrite it, and media/redirect canonicalization changes it server-side),
-        // so when nothing matches it, fall back to every link in the message being spoilered
+        // entiny: fallback to covering when all text links are spoilered if url was rewritten
         return !matchedTarget && anyUrl && allCovered
     }
 

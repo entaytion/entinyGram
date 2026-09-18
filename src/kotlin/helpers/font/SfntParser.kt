@@ -125,7 +125,7 @@ object SfntParser {
         return RawFace(ttcIndex, weight, italic, variable, wMin, wMax, family, scripts)
     }
 
-    // OS/2 ulUnicodeRange bit → script group. r1 = bits 0-31, r2 = bits 32-63 (CJK/kana/hangul live here).
+    // entiny: OS/2 ulUnicodeRange bit to script group mapping
     private fun unicodeRangeScripts(r1: Int, r2: Int): Set<Script> {
         fun b1(bit: Int) = (r1 ushr bit) and 1 != 0
         fun b2(bit: Int) = (r2 ushr (bit - 32)) and 1 != 0
@@ -136,15 +136,15 @@ object SfntParser {
         if (b1(11)) out.add(Script.HEBREW)
         if (b1(13)) out.add(Script.ARABIC)
         if (b1(24)) out.add(Script.THAI)
-        if (b2(59) || b2(48)) out.add(Script.CJK) // CJK Unified Ideographs / Symbols
-        if (b2(49) || b2(50)) out.add(Script.KANA) // Hiragana / Katakana
-        if (b2(52) || b2(56)) out.add(Script.HANGUL) // Hangul Jamo / Syllables
+        if (b2(59) || b2(48)) out.add(Script.CJK)
+        if (b2(49) || b2(50)) out.add(Script.KANA)
+        if (b2(52) || b2(56)) out.add(Script.HANGUL)
         return out
     }
 
     private fun readFamily(raf: RandomAccessFile, nameOff: Int): String? {
         raf.seek(nameOff.toLong())
-        raf.readShort() // format
+        raf.readShort()
         val count = raf.readShort().toInt() and 0xffff
         val stringOffset = raf.readShort().toInt() and 0xffff
 
@@ -154,12 +154,12 @@ object SfntParser {
         for (i in 0 until count) {
             val platformID = raf.readShort().toInt() and 0xffff
             val encodingID = raf.readShort().toInt() and 0xffff
-            raf.readShort() // languageID
+            raf.readShort()
             val nameID = raf.readShort().toInt() and 0xffff
             val length = raf.readShort().toInt() and 0xffff
             val offset = raf.readShort().toInt() and 0xffff
             if (nameID != 1 && nameID != 16) continue
-            // prefer typographic family (16) over family (1); prefer Windows Unicode
+            // entiny: prefer typographic family (16) over family (1) and Windows Unicode
             val p = when {
                 platformID == 3 && (encodingID == 1 || encodingID == 10) -> if (nameID == 16) 0 else 2
                 platformID == 0 -> if (nameID == 16) 1 else 3

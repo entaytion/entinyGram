@@ -13,10 +13,6 @@ import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
-/**
- * Serial translation coordinator: no duplicates, bounded retries (not permanent), parallelism, clean cancellation, visible failures.
- * Thread-safe; callbacks on UI thread.
- */
 object TranslateEngine {
 
     private const val TAG = "EntinyTranslate"
@@ -26,10 +22,7 @@ object TranslateEngine {
     private const val KIND_POLL = 2
     private const val KIND_WEBPAGE = 3
 
-    /** How long a failed message stays deduped before the stock re-push loop may retry it. */
     private const val FAIL_RETRY_WINDOW_MS = 5_000L
-
-    /** How often a failure bulletin may pop for the same dialog. */
     private const val BULLETIN_COOLDOWN_MS = 60_000L
 
     private class JobKey(val dialogId: Long, val msgId: Int, val kind: Int) {
@@ -49,10 +42,7 @@ object TranslateEngine {
         val provider: TranslationProvider
         val epoch: Int
 
-        /** Performs the translation; returns the result object. Throws on failure. */
         fun run(): Any
-
-        /** Delivers the result (or null) to the caller on the UI thread. */
         fun deliver(result: Any?)
     }
 
@@ -70,9 +60,6 @@ object TranslateEngine {
         val entities: List<TLRPC.MessageEntity>?,
         toLang: String,
         epoch: Int,
-        // Preceding messages of the same chat, oldest first. Captured at enqueue time on the UI
-        // thread (the chat's loaded message list is not safe to read from the worker) and used
-        // only by providers that can make sense of it - see TranslationProvider.translate.
         val context: List<String>,
         val callback: Utilities.Callback4<Boolean, Int, TLRPC.TL_textWithEntities, String>,
     ) : BaseJob(key, provider, toLang, epoch) {
@@ -138,12 +125,6 @@ object TranslateEngine {
         }
     }
 
-    /**
-     * Translates a message web preview (title / description / site name / author parts) as one
-     * job, so third-party providers are used for previews too instead of the stock Telegram API.
-     * Returns a cloned [TLRPC.TL_webPage] with the translated parts; on failure the caller simply
-     * keeps the original preview (the engine already surfaced the error bulletin).
-     */
     private class WebPageJob(
         key: JobKey,
         provider: TranslationProvider,
@@ -205,7 +186,6 @@ object TranslateEngine {
         Thread(r, "entiny-translate").apply { isDaemon = true }
     }
 
-    /** Translates a message body or voice transcription. Returns true when the engine took it over. */
     fun enqueueText(
         dialogId: Long,
         msgId: Int,
@@ -220,14 +200,13 @@ object TranslateEngine {
         val kind = if (transcription) KIND_TRANSCRIPTION else KIND_TEXT
         val key = JobKey(dialogId, msgId, kind)
         synchronized(lock) {
-            if (inFlight.contains(key)) return true // already queued or running
+            if (inFlight.contains(key)) return true
             val failedAtTs = failedAt[key]
             if (failedAtTs != null && System.currentTimeMillis() - failedAtTs < FAIL_RETRY_WINDOW_MS) {
-                return true // still deduped; retry after the window
+                return true
             }
-            if (failedAtTs != null) failedAt.remove(key) // window expired -> retry
+            if (failedAtTs != null) failedAt.remove(key)
             if (text.isBlank()) {
-                // Nothing to translate; still complete the contract so the caller stops re-pushing.
                 AndroidUtilities.runOnUIThread {
                     callback.run(transcription, msgId, TLRPC.TL_textWithEntities().apply { this.text = "" }, toLang)
                 }
@@ -241,10 +220,6 @@ object TranslateEngine {
         return true
     }
 
-    /**
-     * Translates a web preview. Returns true when the engine took it over; false when [text] is
-     * empty (nothing to do) — the caller then keeps its own stock path.
-     */
     fun enqueueWebPage(
         dialogId: Long,
         msgId: Int,
@@ -271,7 +246,6 @@ object TranslateEngine {
         return true
     }
 
-    /** Translates a poll. Returns true when the engine took it over. */
     fun enqueuePoll(
         dialogId: Long,
         msgId: Int,
@@ -301,7 +275,6 @@ object TranslateEngine {
             inFlight.contains(JobKey(dialogId, msgId, if (transcription) KIND_TRANSCRIPTION else KIND_TEXT))
         }
 
-    /** Cancels queued and in-flight work for one dialog; in-flight results are discarded. */
     fun cancelDialog(dialogId: Long) {
         synchronized(lock) {
             epochs[dialogId] = (epochs[dialogId] ?: 0) + 1
@@ -316,14 +289,12 @@ object TranslateEngine {
         }
     }
 
-    /** Clears failure marks for a dialog so previously failed messages can be retried. */
     fun resetDialog(dialogId: Long) {
         synchronized(lock) {
             failedAt.keys.removeIf { it.dialogId == dialogId }
         }
     }
 
-    /** Clears failure marks and bulletin cooldowns for every dialog (provider switch / app start). */
     fun resetAll() {
         synchronized(lock) {
             failedAt.clear()
@@ -331,7 +302,6 @@ object TranslateEngine {
         }
     }
 
-    /** Cancels everything (app teardown / account switch). */
     fun cancelAll() {
         synchronized(lock) {
             epochs.clear()
@@ -341,7 +311,6 @@ object TranslateEngine {
         }
     }
 
-    /** Clears the failure mark for a single message (e.g. after the user invalidates a translation). */
     fun unfailMessage(dialogId: Long, msgId: Int, transcription: Boolean) {
         synchronized(lock) {
             failedAt.remove(JobKey(dialogId, msgId, if (transcription) KIND_TRANSCRIPTION else KIND_TEXT))
@@ -396,7 +365,7 @@ object TranslateEngine {
         synchronized(lock) {
             inFlight.remove(job.key)
         }
-        if (cancelled) return // toggled off mid-flight: do not apply stale translations
+        if (cancelled) return
         AndroidUtilities.runOnUIThread { job.deliver(result) }
     }
 
@@ -417,11 +386,6 @@ object TranslateEngine {
         }
     }
 
-    /**
-     * Translates [text] with entity preservation and retry/backoff.
-     * Throws the last failure when the provider is unreachable; [ProviderConfigException] is
-     * rethrown immediately (bad key / unsupported language — no retry).
-     */
     private fun translateWithEntities(
         provider: TranslationProvider,
         text: String,
@@ -433,11 +397,7 @@ object TranslateEngine {
         while (true) {
             try {
                 val marked = EntityKeeper.mark(text, entities)
-                // Urls, @mentions, emails and hashtags go to the provider as opaque tokens and come
-                // back byte-for-byte. Marking alone kept the ENTITY across the round trip but still
-                // sent its payload through the translator, so a link's own text was translated and
-                // the link died with it. restore() runs before unmark() so the entity spans are
-                // measured against the final text.
+                // entiny: restore runs before unmark so entity spans are measured against the final text
                 val (guarded, vault) = EntityKeeper.protect(marked)
                 val translated = EntityKeeper.restore(provider.translate(guarded, toLang, context), vault)
                 val (resultText, resultEntities) = EntityKeeper.unmark(translated, entities)
@@ -448,13 +408,13 @@ object TranslateEngine {
                 if (attempt > MAX_ATTEMPTS) throw e
                 sleepBackoff(attempt)
             } catch (e: ProviderConfigException) {
-                throw e // permanent — do not retry
+                throw e
             } catch (e: IOException) {
                 attempt++
                 if (attempt > MAX_ATTEMPTS) throw e
                 sleepBackoff(attempt)
             } catch (e: Exception) {
-                throw e // unexpected — fail fast
+                throw e
             }
         }
     }

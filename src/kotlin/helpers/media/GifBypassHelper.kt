@@ -14,9 +14,7 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_stories
 import org.telegram.ui.ChatActivity
 
-// GIFs sent through Telegram are always silent, already-encoded mp4 documents - there's nothing
-// to transcode. Chats that ban GIFs (send_stickers, per stock's own bundling of the two) but
-// allow video can be sent the exact same file re-flagged as a regular video document instead.
+// entiny: send GIFs as regular video documents to bypass chats that ban GIFs via send_stickers
 object GifBypassHelper {
     @JvmStatic
     fun shouldBypass(account: Int, peer: Long, document: TLRPC.Document?): Boolean {

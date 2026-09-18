@@ -37,7 +37,6 @@ object SpoilerHelper {
         var nextRight: Float = Float.NaN
     }
 
-    // UI-thread only; weak so released effects don't pin entries.
     private val states = WeakHashMap<SpoilerEffect, State>()
     private fun stateOf(e: SpoilerEffect) = states.getOrPut(e) { State() }
 
@@ -66,13 +65,7 @@ object SpoilerHelper {
             return true
         }
 
-        // SIMPLE: text color overlay. Outgoing (sent) bubbles have a saturated bg that
-        // absorbs a stronger tint; incoming bubbles are near-grayscale and need a softer
-        // overlay to avoid stark contrast.
-        // During reveal, stock blends lastColor toward the opaque text color and fades
-        // mAlpha to 0 — both would visibly change the overlay. We pin a constant color
-        // (captured pre-reveal) and constant alpha, letting the ripple-path PorterDuff.CLEAR
-        // be the only visible change.
+        // entiny: pin pre-reveal baseColor and alpha so ripple PorterDuff.CLEAR is the only visible change
         val state = stateOf(effect)
         if (effect.rippleProgress < 0) state.baseColor = lastColor
         val alphaScale = if (isOutgoingBubble(parent)) 0.45f else 0.25f
@@ -90,7 +83,6 @@ object SpoilerHelper {
         tempPath.addRoundRect(tempRect, floatArrayOf(tlR, tlR, trR, trR, brR, brR, blR, blR), Path.Direction.CW)
         canvas.drawPath(tempPath, solidPaint)
 
-        // Concave-step fillets where a neighbor extends past our edge.
         if (state.prevLeft < bounds.left)
             drawFillet(canvas, bounds.left.toFloat(), bounds.top.toFloat(), dx = -1, dy = +1, r = r)
         if (state.prevRight > bounds.right)
@@ -113,9 +105,7 @@ object SpoilerHelper {
         val mode = InuConfig.MEDIA_SPOILER_MODE.value
         if (mode == InuConfig.MediaSpoilerModeItem.TELEGRAM) return false
         val photoImage = cell.photoImage
-        // Self-destruct media (view-once / timed) carries its own stock indicator, and
-        // not-yet-downloaded media draws a centered download/loading button — in both cases
-        // our indicator would collide, so keep just the overlay.
+        // entiny: skip custom indicator when stock draws self-destruct indicator or download button
         val msg = cell.messageObject
         val isSelfDestruct = msg != null && msg.needDrawBluredPreview()
         val isNotLoaded = cell.buttonState == 0 || cell.buttonState == 1
@@ -141,7 +131,6 @@ object SpoilerHelper {
 
         if (!drawIndicator) return
 
-        // Both styles borrow the stock media preloader's palette.
         val loaderColor = Theme.getColor(Theme.key_chat_mediaLoaderPhoto, resourcesProvider)
         val iconColor = Theme.getColor(Theme.key_chat_mediaLoaderPhotoIcon, resourcesProvider)
         val cx = (left + right) / 2f
@@ -149,8 +138,7 @@ object SpoilerHelper {
         val pad = dp(8f).toFloat()
 
         if (mode == InuConfig.MediaSpoilerModeItem.CIRCLE) {
-            // Mirror the media download button so it themes correctly (incl. Monet, where the icon
-            // color can be dark): disc in the loader background color, eye in the loader icon color.
+            // entiny: theme disc and eye icon after stock media loader palette for proper contrast
             val radius = dp(22f).toFloat()
             if (right - left >= radius * 2 + pad && bottom - top >= radius * 2 + pad) {
                 solidPaint.color = loaderColor
@@ -167,7 +155,6 @@ object SpoilerHelper {
             return
         }
 
-        // PILL (discord-style): label inside a rounded pill.
         val label = LocaleController.getString(R.string.InuMediaSpoilerLabel).uppercase()
         val padH = dp(16f).toFloat()
         val padV = dp(7f).toFloat()
@@ -198,8 +185,6 @@ object SpoilerHelper {
             .firstOrNull()?.messageObject?.isOutOwner == true
     }
 
-    // Fills the curved-triangle pocket adjacent to a concave 90° corner at (cx, cy).
-    // dx, dy ∈ {-1, +1} point into the empty pocket.
     private fun drawFillet(canvas: Canvas, cx: Float, cy: Float, dx: Int, dy: Int, r: Float) {
         tempPath.rewind()
         tempPath.moveTo(cx, cy + dy * r)
@@ -214,10 +199,7 @@ object SpoilerHelper {
 
     @JvmStatic
     fun linkNeighbors(spoilers: List<SpoilerEffect>) {
-        // getSelectionPath emits an extra trailing-whitespace rect per line
-        // sometimes this overlaps the main rect (visible duplicate overdraw);
-        // without it the two rects are adjacent and create a visible seam in SIMPLE
-        // mode. Merge same-line rects that touch or overlap into one continuous run.
+        // entiny: merge adjacent same-line rects to eliminate visible seams from getSelectionPath whitespace
         for (i in spoilers.indices) {
             val a = spoilers[i]
             if (!a.inu_isTextSpoiler || a.bounds.isEmpty) continue
@@ -238,10 +220,7 @@ object SpoilerHelper {
                 }
             } while (merged)
         }
-        // Snap sub-radius edge misalignments between vertically-adjacent line spoilers.
-        // Otherwise one line rounds its corner while its neighbor draws a concave fillet
-        // for the same offset — the curves don't mate and leave a visible sliver.
-        // Shrink to the inner edge to avoid covering text just outside the span.
+        // entiny: snap sub-radius edge misalignments between adjacent lines to prevent curve-mating slivers
         val snap = dp(4f).toFloat()
         for (i in spoilers.indices) {
             val a = spoilers[i]
@@ -298,7 +277,7 @@ object SpoilerHelper {
         }
     }
 
-    // fix for a stock-ish bug causing the layout to be incorrectly calculated which resurfaced with our simple spoilers
+    // entiny: fix incorrect layout calculation bug triggered by simple spoilers
     class TransparentMetricSpan(private val source: TextStyleSpan) : MetricAffectingSpan() {
         override fun updateMeasureState(p: TextPaint) {
             source.updateMeasureState(p);

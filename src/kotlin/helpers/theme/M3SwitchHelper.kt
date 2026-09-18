@@ -11,21 +11,9 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 import kotlin.math.roundToInt
 
-/**
- * Material 3 styling for [org.telegram.ui.Components.Switch], drawn in place of the stock
- * pill+thumb when [desu.inugram.InuConfig.MATERIAL3_SWITCHES] is on.
- *
- * Geometry mirrors the MDC `MaterialSwitch` spec (track 52x32 r16, thumb 16/24dp), rendered at a
- * fixed size derived from [TARGET_TRACK_W] and centered in the host frame.
- */
 object M3SwitchHelper {
-    // MDC spec in track-viewport units (52x32); everything is multiplied by `scale` to fit the view.
     private const val TRACK_W = 52f
     private const val TRACK_H = 32f
-    // Default rendered track width in dp; height follows from the MDC ratio. Kept <= the narrowest
-    // switch frame (37dp) so it never clips. When the host frame is wide enough (≥52dp), the helper
-    // grows the track to the full MDC spec (`TRACK_W`) so callers that opt in (e.g. the ripple-check
-    // pill) get a proper MD3-sized switch.
     private const val TARGET_TRACK_W = 36f
     private const val FULL_TRACK_W = TRACK_W
     private const val RADIUS = 16f
@@ -33,11 +21,8 @@ object M3SwitchHelper {
     private const val THUMB_R_ON = 12f
     private const val THUMB_CX_OFF = 16f
     private const val THUMB_CX_ON = 36f
-    // Thumb icons (e.g. the locked-switch padlock) drawn slightly inside the thumb, nudged up since
-    // the padlock's visual mass sits low.
     private const val ICON_SCALE = 0.7f
     private const val ICON_NUDGE_UP = 0.5f
-    // Stock checkmark is sized for the stock thumb; shrink it for the smaller M3 thumb.
     private const val CHECK_SCALE = 0.8f
     private const val CHECK_NUDGE_RIGHT = 0.5f
     private const val ICON_STROKE = 2f
@@ -55,8 +40,6 @@ object M3SwitchHelper {
     }
     private val rectF = RectF()
 
-    // Thumb icons (padlock) are forced white; the stock track-color tint is grey, invisible on our
-    // grey thumb. Shared filter so we don't reallocate one per frame.
     private val whiteFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
 
     @JvmStatic
@@ -79,10 +62,6 @@ object M3SwitchHelper {
         val onColor = Theme.getColor(trackCheckedColorKey, resourcesProvider)
         val thumbOnColor = Theme.getColor(thumbCheckedColorKey, resourcesProvider)
 
-        // Centered in the host frame. Track grows to fill the frame (with a 1dp horizontal buffer
-        // so round caps never clip), clamped to [TARGET_TRACK_W, FULL_TRACK_W]. Default 37dp stock
-        // frames stay at `TARGET_TRACK_W` (36dp); wider frames (e.g. the ripple-check pill at
-        // 46–52dp) grow toward the full MDC spec.
         val frameWidthDp = measuredWidth / AndroidUtilities.density
         val targetW = (frameWidthDp - 1f).coerceIn(TARGET_TRACK_W, FULL_TRACK_W)
         val scale = AndroidUtilities.dpf2(targetW) / TRACK_W
@@ -91,8 +70,6 @@ object M3SwitchHelper {
         val left = (measuredWidth - trackW) / 2f
         val top = (measuredHeight - h) / 2f
 
-        // Track snaps to the checked state the moment it flips — MD3 switches jump the track color
-        // rather than crossfading or sliding it with the thumb.
         rectF.set(left, top, left + trackW, top + h)
         val radius = RADIUS * scale
         if (isChecked) {
@@ -106,15 +83,12 @@ object M3SwitchHelper {
             canvas.drawRoundRect(rectF, radius - sw / 2f, radius - sw / 2f, strokePaint)
         }
 
-        // Thumb just translates across the track and scales up from the off radius to the on radius.
         val cx = left + scale * (THUMB_CX_OFF + (THUMB_CX_ON - THUMB_CX_OFF) * progress)
         val cy = top + h / 2f
         val rest = scale * (THUMB_R_OFF + (THUMB_R_ON - THUMB_R_OFF) * progress)
-        // Thumb color snaps with the track rather than crossfading along the slide.
         thumbPaint.color = if (isChecked) thumbOnColor else offColor
         canvas.drawCircle(cx, cy, rest, thumbPaint)
 
-        // Cross (off) is white, check (on) is the accent — snaps with the checked state.
         val iconColor = if (isChecked) onColor else Color.WHITE
         if (iconDrawable != null) {
             if (iconDrawable.colorFilter !== whiteFilter) iconDrawable.colorFilter = whiteFilter
@@ -139,17 +113,11 @@ object M3SwitchHelper {
         }
     }
 
-    // Ported from stock Switch.onDraw (drawIconType 1): an X (off) / checkmark (on). The shape snaps
-    // with `checked`; only the size keeps tracking the thumb as it scales.
     private fun drawCheckmark(canvas: Canvas, cx0: Int, cy0: Int, checked: Boolean, sizeProgress: Float, color: Int) {
         val shape = if (checked) 1f else 0f
         iconPaint.color = color
         iconPaint.alpha = 255
-        // Thinner for the X, full weight for the check.
         iconPaint.strokeWidth = AndroidUtilities.dpf2(CROSS_STROKE + (ICON_STROKE - CROSS_STROKE) * shape)
-        // Scale about (cx0,cy0), baked into coords so stroke width is controlled separately. Tracks
-        // the thumb size — the off-state (X) thumb is smaller than the checked one. Nudge applies to
-        // the check only; the X is already centered.
         val s = CHECK_SCALE * (THUMB_R_OFF + (THUMB_R_ON - THUMB_R_OFF) * sizeProgress) / THUMB_R_ON
         val nudge = AndroidUtilities.dpf2(CHECK_NUDGE_RIGHT) * shape
         fun fx(x: Int) = cx0 + (x - cx0) * s + nudge
@@ -180,7 +148,6 @@ object M3SwitchHelper {
         canvas.drawLine(fx(startX), fy(startY), fx(endX), fy(endY), iconPaint)
     }
 
-    // Ported from stock Switch.onDraw (drawIconType 2): a dot folding into an L by `iconProgress`.
     private fun drawDot(canvas: Canvas, cx: Int, cy: Int, iconProgress: Float, color: Int) {
         iconPaint.color = color
         iconPaint.alpha = (255 * (1f - iconProgress)).toInt()

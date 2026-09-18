@@ -216,7 +216,6 @@ object PhotoViewerHelper {
         if (visible) item.setTextAndIcon(text, 0)
     }
 
-    // thanks https://github.com/kukuruzka165/materialgram/blob/64dd8f3c43b9f7c169473fe464eec8cc5b097ede/Telegram/SourceFiles/media/view/media_view_overlay_widget.cpp#L8097
     private val PHOTO_HEADERS: List<Pair<ByteArray, String>> = listOf(
         "FFD8FFE000104A46494600010100000100010000FFDB004300090607" to "iOS",
         "FFD8FFE000104A46494600010101004800480000FFE201D84943435F50524F46494C45" to "Android",
@@ -381,12 +380,7 @@ object PhotoViewerHelper {
         }
     }
 
-    // applyCurrentEditMode bakes the crop into entry.imagePath from centerImage's bitmap; when
-    // that bitmap is unavailable the bake used to fail silently *after* makeCrop committed
-    // entry.cropState, so the viewer kept rendering the crop while the un-cropped original got
-    // sent (still photos are sent from imagePath alone — cropState is video-only at send time).
-    // These decode the source from disk instead, like stock PhotoEntry.rebuildPhoto does.
-    // (part of bugfix__photo-crop-not-applied-on-send)
+    // entiny: decode source from disk when centerImage bitmap is missing so crop bakes into imagePath before send
     @JvmStatic
     fun loadEditSourceBitmap(entry: MediaController.MediaEditState, orientation: IntArray): Bitmap? {
         val path = getEditSourcePath(entry)

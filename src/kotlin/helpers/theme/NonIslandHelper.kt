@@ -62,7 +62,6 @@ object NonIslandHelper {
         )
     }
 
-    // ChatActivity.java
     @JvmStatic
     fun needChatLightNavBar(
         inputBubbleHeight: Float,
@@ -81,7 +80,6 @@ object NonIslandHelper {
         return AndroidUtilities.computePerceivedBrightness(color) > 0.721f
     }
 
-    // ChatAttachAlert.java
     const val ATTACH_TAB_SHADOW_DP = 3f
 
     @JvmStatic
@@ -103,18 +101,13 @@ object NonIslandHelper {
         recyclerLp.topMargin = shadowH
         val lp = wrapper.layoutParams as? FrameLayout.LayoutParams ?: return
         lp.height = shadowH + dp(48f) + innerPaddingTop + AndroidUtilities.navigationBarHeight
-        // container's onLayout already offsets BOTTOM children by navigationBarHeight,
-        // so use negative bottomMargin to extend the wrapper into the nav bar area
         lp.bottomMargin = -AndroidUtilities.navigationBarHeight
     }
 
-    // DialogsActivity.java
     const val FOLDERS_BAR_HEIGHT_DP = 44
     const val FOLDERS_BAR_OVERLAP_DP = 10
     const val FOLDERS_BAR_VISIBLE_HEIGHT_DP = FOLDERS_BAR_HEIGHT_DP - FOLDERS_BAR_OVERLAP_DP
 
-    // the classic folders bar tucks under the classic search bar; with the island search
-    // pill there is nothing to tuck under, so the overlap must not be applied
     @JvmStatic
     fun foldersBarOverlapDp(): Int = if (globalSearch()) FOLDERS_BAR_OVERLAP_DP else 0
 
@@ -177,15 +170,10 @@ object NonIslandHelper {
         updateGlobalSearchBarInsets(field)
     }
 
-    // statusBarHeight is 0 at createView under the non-legacy inset system (only the live
-    // window insets fill it in, after createView). The field's top padding pushes the input
-    // below the status bar while the blur covers the area above it; the per-draw translationY
-    // subtracts the same statusBarHeight. Baking a stale (0) value here leaves the bar
-    // statusBarHeight too high once insets land, so re-apply on every inset change.
+    // entiny: re-apply on inset changes because statusBarHeight is 0 at createView under non-legacy insets
     @JvmStatic
     fun updateGlobalSearchBarInsets(field: FragmentSearchField) {
         if (!globalSearch()) return
-        // extra padding to cover with blur the area above the search bar
         val extraTopPadding = AndroidUtilities.statusBarHeight + dp(8f)
         field.setPadding(0, extraTopPadding, 0, 0)
         val lp = field.layoutParams as? FrameLayout.LayoutParams ?: return
@@ -210,11 +198,10 @@ object NonIslandHelper {
         lp.rightMargin = 0
     }
 
-    // ChatActivity.java
     @JvmStatic
     fun applyChatTopPanelButton(view: TextView) {
         if (!chatElements()) return
-        view.stateListAnimator = null // disable ScaleStateListAnimator in case there is one
+        view.stateListAnimator = null
         view.background = Theme.createSelectorDrawable(
             Theme.multAlpha(view.currentTextColor, 0.10f), Theme.RIPPLE_MASK_ALL
         )
@@ -230,14 +217,12 @@ object NonIslandHelper {
         actionBarBottom: Int,
     ) {
         if (!chatElements()) {
-            // upstream no longer draws an action-bar header shadow in island mode
             return
         }
 
         val hasPanel = topPanelLayout != null && actionBarBottom > 0;
         val panelH = if (hasPanel) topPanelLayout.getAnimatedHeightWithPadding(0f).toInt() else 0;
         if (!(mentionContainer != null && mentionContainer.isVisible)) {
-            // dont draw shadow if mention container is visible (todo: probably need a smoother way but im too lazy rn)
             parentLayout.drawHeaderShadow(canvas, actionBarBottom + topicsTabsHeight.toInt() + panelH);
         }
     }

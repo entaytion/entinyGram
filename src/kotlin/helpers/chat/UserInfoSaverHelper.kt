@@ -9,17 +9,6 @@ import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.tgnet.TLRPC
 
-/**
- * Saves the "precious" user info fields that the server stops returning after
- * a while (phone country, registration month, name/photo change dates) and
- * merges them back into [TLRPC.PeerSettings] so profile info rows keep working.
- *
- * Native port of the MaterialGram "user_info_saver" plugin:
- * - persistence keyed by dialog (user) id, stored as JSON in the `inu_kv` table
- * - on save: keeps the old precious values when the server sends empty ones
- * - on read: fills missing precious fields in place (no flag bits touched, so
- *   the object is never persisted back to stock storage)
- */
 object UserInfoSaverHelper {
     private data class StoredInfo(
         val phoneCountry: String?,
@@ -51,7 +40,6 @@ object UserInfoSaverHelper {
         }
     }
 
-    // account -> (dialogId -> stored info); UI thread only, mirrors SavedMessagesHelper
     private val cache = LongSparseArray<LongSparseArray<StoredInfo>>()
     private val loadedAccounts = HashSet<Int>()
 
@@ -90,7 +78,6 @@ object UserInfoSaverHelper {
             if (loadedAccounts.contains(account)) return@runOnUIThread
             cache.put(account.toLong(), dialogArray)
             loadedAccounts.add(account)
-            // trigger a re-read of peer settings so merged values show up in already-open UIs
             for (i in 0 until dialogArray.size()) {
                 NotificationCenter.getInstance(account)
                     .postNotificationName(NotificationCenter.peerSettingsDidLoad, dialogArray.keyAt(i))
@@ -110,10 +97,6 @@ object UserInfoSaverHelper {
         dialogArray.put(dialogId, info)
     }
 
-    /**
-     * Called from MessagesController.savePeerSettings after stock persistence.
-     * All call sites are on the UI thread; the DB write goes to the storage queue.
-     */
     @JvmStatic
     fun onSavePeerSettings(account: Int, dialogId: Long, settings: TLRPC.PeerSettings?) {
         if (!isEnabled() || settings == null) return
@@ -125,7 +108,6 @@ object UserInfoSaverHelper {
         )
         if (new.isEmpty()) return
 
-        // merge: keep old precious values when the server no longer sends them
         val prev = getFromCache(account, dialogId)
         val merged = StoredInfo(
             phoneCountry = new.phoneCountry ?: prev?.phoneCountry,
@@ -144,10 +126,6 @@ object UserInfoSaverHelper {
         }
     }
 
-    /**
-     * Called from MessagesController.getPeerSettings (UI thread hot path).
-     * Never does a DB read here; fills missing precious fields in place from cache.
-     */
     @JvmStatic
     fun onGetPeerSettings(account: Int, dialogId: Long, current: TLRPC.PeerSettings?): TLRPC.PeerSettings? {
         if (!isEnabled() || current == null) return current

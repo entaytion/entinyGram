@@ -11,15 +11,6 @@ import org.telegram.messenger.MessageObject
 import org.telegram.messenger.UserConfig
 import java.util.ArrayList
 
-/**
- * Keeps in-progress chat downloads alive after the message cell that started them
- * is scrolled off screen or the chat is closed, instead of Telegram auto-cancelling
- * them (see ChatMessageCell.fileDetach). Optionally also holds a partial wake lock
- * while a download is running so Doze/App Standby can't pause it mid-transfer.
- *
- * Ported from the "Don't kill the download!" plugin (materialgram/exteraGram
- * plugin ecosystem, originally @shareui, fixed by @itNotMax/@MaxExteraPlugins).
- */
 object DownloadKeepAliveHelper {
 
     private const val POLL_INTERVAL_MS = 7_000L

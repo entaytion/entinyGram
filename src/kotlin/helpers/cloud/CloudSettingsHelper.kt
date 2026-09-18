@@ -15,7 +15,6 @@ import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
 object CloudSettingsHelper {
-    // chunk count is stored at KEY_PREFIX itself; chunks at "${KEY_PREFIX}_<i>"; metadata at suffixed keys.
     private const val KEY_PREFIX = "inu_settings"
     private const val CHUNK_KEY_PREFIX = "${KEY_PREFIX}_"
     private const val UPDATED_AT_KEY = "${CHUNK_KEY_PREFIX}updated_at"

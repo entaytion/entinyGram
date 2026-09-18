@@ -240,7 +240,6 @@ class SearchFilterHelper(
     }
 
     companion object {
-        // crutch to avoid passing more stuff
         private val registry = mutableMapOf<Int, WeakReference<SearchFilterHelper>>()
 
         @JvmStatic
@@ -262,7 +261,6 @@ class SearchFilterHelper(
             FilterItem.POLL,
         )
 
-        // every subset representable as a single MessagesFilter
         private val VALID_COMBOS: Set<Set<FilterItem>> = setOf(
             emptySet(),
             setOf(FilterItem.GIFS),

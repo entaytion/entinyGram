@@ -9,8 +9,6 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_bots
 import desu.inugram.helpers.WebAppHelper
 
-// per-user key/value storage backed by the helper bot's webview cloud storage.
-// bot-side must implement saveStorageValue / getStorageValues / deleteStorageValues / getStorageKeys.
 object CloudStorageHelper {
     private val gson = Gson()
     private val mapType = object : TypeToken<HashMap<String, String>>() {}.type

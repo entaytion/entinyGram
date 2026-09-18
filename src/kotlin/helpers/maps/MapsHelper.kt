@@ -5,8 +5,7 @@ import org.telegram.messenger.IMapsProvider
 import org.telegram.messenger.MessagesController
 
 object MapsHelper {
-    // osmdroid is pure java and always shipped, but probe it anyway so a build that
-    // ever trims it degrades to Google Maps instead of crashing.
+    // entiny: probe osmdroid presence at runtime so trimming it degrades to Google Maps without crashing
     @JvmField
     val hasOsmdroid: Boolean = try {
         Class.forName("org.osmdroid.views.MapView")
@@ -21,22 +20,15 @@ object MapsHelper {
             .getDeclaredConstructor()
             .newInstance() as IMapsProvider
 
-    /** true when the currently selected renderer can show a real hybrid (satellite + labels) layer. */
     @JvmStatic
     fun isHybridAvailable(): Boolean = InuConfig.MAP_PROVIDER.value != InuConfig.MapProviderItem.OSM_LITE
 
     @JvmStatic
-    // MessagesController.mapProvider values:
-    // -1 = disabled
-    // 1 = yandex, direct
-    // 2 = telegram, via inputWebFileGeoPointLocation
-    // 3 = yandex, via webFile proxy
-    // 4 = google, via webFile proxy
-    // (any other) = google, direct
     fun overrideMapProvider(stock: Int): Int = when (InuConfig.MAP_PREVIEW_PROVIDER.value) {
         InuConfig.MapPreviewProviderItem.DEFAULT -> stock
         InuConfig.MapPreviewProviderItem.TELEGRAM -> 2
-        InuConfig.MapPreviewProviderItem.GOOGLE -> 101 // override to 101 to disambiguate with server-pushed google in syncMapProvider
+        // entiny: 101 disambiguates manual Google override from server-pushed Google in syncMapProvider
+        InuConfig.MapPreviewProviderItem.GOOGLE -> 101
         InuConfig.MapPreviewProviderItem.YANDEX -> 1
         InuConfig.MapPreviewProviderItem.DISABLED -> -1
         else -> stock

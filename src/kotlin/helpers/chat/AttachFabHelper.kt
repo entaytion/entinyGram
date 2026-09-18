@@ -22,13 +22,11 @@ object AttachFabHelper {
     private val fabLocation = IntArray(2)
     private val anchorLocation = IntArray(2)
 
-    /** the grid cell the photo viewer opens from / closes back into, if any */
     @JvmStatic
     fun setPhotoTransitionAnchor(view: View?) {
         photoTransitionAnchor = if (view == null) null else WeakReference(view)
     }
 
-    // leaving the gallery hides the fab right away, arriving shows it once the switch settles
     private fun isShowingGallery(alert: ChatAttachAlert): Boolean {
         val photoLayout = alert.photoLayout ?: return false
         val next = alert.nextAttachLayout
@@ -75,8 +73,7 @@ object AttachFabHelper {
 
         val buttonsWrapper = alert.buttonsRecyclerViewWrapper
         val sync = Runnable {
-            // the sheet's window is shown/hidden as the photo viewer's background fades, which
-            // flashes the fab in and out over the cell the viewer is animating from
+            // entiny: avoid flashing over the transitioning photo viewer cell
             val visible = buttonsWrapper.isVisible && buttonsWrapper.alpha > 0.01f &&
                 isShowingGallery(alert) &&
                 alert.photoLayout?.cameraOpened != true &&
@@ -87,7 +84,7 @@ object AttachFabHelper {
             fab.translationY = buttonsWrapper.translationY
         }
         val preDraw = ViewTreeObserver.OnPreDrawListener { sync.run(); true }
-        // VTO is window-scoped; rebind on each attach so reused alert instances stay synced
+        // entiny: rebind VTO on attach because it's window-scoped
         buttonsWrapper.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 v.viewTreeObserver.addOnPreDrawListener(preDraw)

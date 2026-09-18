@@ -33,17 +33,9 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-/**
- * Client-side AI compose: rewrites / continues the chat draft via a user-configured
- * OpenAI-compatible endpoint (chat completions). Replaces the stock server-side
- * aiCompose flow when [InuConfig.AI_COMPOSE_ENABLED] is on.
- */
 object AiComposeHelper {
 
-    // ---------------- unified provider config (AI Providers screen) ----------------
-    // One chat slot per known provider instead of an arbitrary named endpoint list -- see
-    // [InuConfig.migrateAiProviders]. [AiEndpoint] is now just a resolved-at-read-time DTO for
-    // whichever provider is active, so request()/requestStream() below don't need to change.
+    // entiny: one chat slot per known provider; [AiEndpoint] is a resolved-at-read-time DTO for whichever is active
 
     @JvmStatic
     fun chatProviderBaseUrl(id: Int): String = when (id) {
@@ -65,7 +57,6 @@ object AiComposeHelper {
         else -> ""
     }
 
-    /** Setter counterpart of [chatProviderKey], shared with the voice scope for named providers. */
     @JvmStatic
     fun setProviderKey(id: Int, value: String) {
         when (id) {
@@ -105,7 +96,6 @@ object AiComposeHelper {
         else -> null
     }
 
-    /** The provider currently active for chat compose, resolved into the shape request()/requestStream() expect. */
     @JvmStatic
     fun activeEndpoint(): AiEndpoint? {
         val id = InuConfig.AI_CHAT_ACTIVE_PROVIDER.value
@@ -122,14 +112,11 @@ object AiComposeHelper {
         ""
     }
 
-    // ---------------- entry point (called from the stock patch) ----------------
-
     @JvmStatic
     fun showEditor(context: Context, text: CharSequence, onUse: Utilities.Callback<CharSequence>) {
         val isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium()
         val hasEndpoint = activeEndpoint()?.url?.isNotBlank() == true
         if (!isPremium && !hasEndpoint) {
-            // Show a proper alert instead of silently failing
             org.telegram.ui.ActionBar.AlertDialog.Builder(context)
                 .setTitle(LocaleController.getString(R.string.InuAiCompose))
                 .setMessage(LocaleController.getString(R.string.InuAiPremiumRequired))
@@ -146,9 +133,6 @@ object AiComposeHelper {
         AiComposeSheet(context, text, onUse).show()
     }
 
-    // ---------------- request ----------------
-
-    /** Prefixes the system prompt with the user's configured AI persona, if any. */
     private fun withRole(systemPrompt: String): String {
         val role = AiRolesHelper.activeRole()
         val customPrompt = role?.prompt?.trim().orEmpty()
@@ -237,11 +221,6 @@ object AiComposeHelper {
         }
     }
 
-    /**
-     * Same request as [request] but streams the OpenAI-compatible SSE response, calling
-     * [onChunk] on the UI thread with the accumulated text after every delta. Reasoning-model
-     * "reasoning_content" deltas aren't split out here — only the final answer streams live.
-     */
     fun requestStream(
         endpoint: AiEndpoint,
         systemPrompt: String,
@@ -311,8 +290,6 @@ object AiComposeHelper {
         }
     }
 
-    // ---------------- actions (Fix tab) ----------------
-
     class Action(val labelRes: Int, val systemPrompt: String)
 
     internal val ACTIONS = listOf(
@@ -321,8 +298,6 @@ object AiComposeHelper {
         Action(R.string.InuAiActionSummarize, "Summarize the following text concisely. Return only the summary."),
         Action(R.string.InuAiActionFixGrammar, "Fix grammar, spelling and punctuation in the following text. Do not change the meaning. Return only the corrected text."),
     )
-
-    // ---------------- style presets (Style tab) ----------------
 
     class StylePreset(val labelRes: Int, val emoji: String, val systemPrompt: String)
 
@@ -338,8 +313,6 @@ object AiComposeHelper {
         StylePreset(R.string.InuAiStylePoetic, "📜", "Rewrite as a short poem or poetic prose with rhythm and vivid imagery. Return only the rewritten text."),
     )
 
-    // ---------------- translate languages ----------------
-
     class TranslateLang(val code: String, val displayName: String, val nativeName: String)
 
     internal val TRANSLATE_LANGS = listOf(
@@ -354,9 +327,6 @@ object AiComposeHelper {
         TranslateLang("ja", "Japanese", "日本語"),
     )
 }
-
-
-// ==================== AiComposeSheet ====================
 
 private class AiComposeSheet(
     context: Context,
@@ -387,20 +357,16 @@ private class AiComposeSheet(
 
         val root = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
-        // Header: "ШІ-редактор" + Close button
         root.addView(buildHeader(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
         val endpoint = AiComposeHelper.activeEndpoint()
         if (endpoint == null || endpoint.url.isBlank()) {
             root.addView(noEndpointView(endpoint == null), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
         } else {
-            // Tab bar (Icon + Text tabs)
             root.addView(buildTabBar(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 16f, 8f, 16f, 16f))
 
-            // Tab content
             root.addView(contentArea, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-            // Loading indicator
             loadingText = TextView(context).apply {
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
                 setTextColor(Theme.getColor(Theme.key_dialogTextGray3))
@@ -410,7 +376,6 @@ private class AiComposeSheet(
             }
             root.addView(loadingText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
             
-            // Result text card
             resultText = TextView(context).apply {
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
                 setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
@@ -425,7 +390,6 @@ private class AiComposeSheet(
             }
             root.addView(resultText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0, 16, 8, 16, 8))
 
-            // Use / Copy buttons
             resultActions = LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
                 visibility = View.GONE
@@ -445,8 +409,6 @@ private class AiComposeSheet(
         }
         setCustomView(scroll)
     }
-
-    // ------------------------------------------------------------------ Header & Tab bar
 
     private fun buildHeader(): View {
         val container = LinearLayout(context).apply {
@@ -559,12 +521,9 @@ private class AiComposeSheet(
         contentArea.addView(content, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
     }
 
-    // ------------------------------------------------------------------ Style tab
-
     private fun buildStyleContent(): LinearLayout {
         val root = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
-        // Horizontally scrollable vertical style cards
         val scrollView = HorizontalScrollView(context).apply { isHorizontalScrollBarEnabled = false }
         val cardsRow = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -582,7 +541,6 @@ private class AiComposeSheet(
         scrollView.addView(cardsRow)
         root.addView(scrollView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        // Middle sub-header row: "Виберіть стиль" pill + "емоджі" toggle button
         val subHeaderRow = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -605,7 +563,6 @@ private class AiComposeSheet(
         subHeaderRow.addView(buildEmojiToggle())
         root.addView(subHeaderRow, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        // Text preview card (selectable & full text display)
         val textPreviewCard = TextView(context).apply {
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
@@ -622,12 +579,9 @@ private class AiComposeSheet(
         return root
     }
 
-    // ------------------------------------------------------------------ Translate tab
-
     private fun buildTranslateContent(): LinearLayout {
         val root = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
-        // Source text section
         val sourceHeader = TextView(context).apply {
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
             typeface = AndroidUtilities.bold()
@@ -651,7 +605,6 @@ private class AiComposeSheet(
 
         root.addView(divider(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0, 16, 4, 16, 12))
 
-        // Target language row: Interactive picker chip + emoji toggle
         val targetRow = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -676,7 +629,6 @@ private class AiComposeSheet(
         targetRow.addView(buildEmojiToggle())
         root.addView(targetRow, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
 
-        // Translate run button
         val translateBtn = roundedButton(LocaleController.getString(R.string.InuAiTranslateRun)) {
             val lang = AiComposeHelper.TRANSLATE_LANGS[translateToIdx]
             val extra = if (emojiEnabled) " Include relevant emoji." else ""
@@ -702,12 +654,9 @@ private class AiComposeSheet(
             .show()
     }
 
-    // ------------------------------------------------------------------ Fix tab
-
     private fun buildFixContent(): LinearLayout {
         val root = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
-        // Source text card
         val sourceText = TextView(context).apply {
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15f)
             setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
@@ -723,7 +672,6 @@ private class AiComposeSheet(
 
         root.addView(divider(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0, 16, 4, 16, 12))
 
-        // Clean action cards list
         val actionsContainer = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         for (action in AiComposeHelper.ACTIONS) {
             actionsContainer.addView(
@@ -737,7 +685,6 @@ private class AiComposeSheet(
 
         root.addView(divider(), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 1, 0, 16, 10, 16, 10))
 
-        // Custom prompt input card
         val customCard = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
@@ -770,8 +717,6 @@ private class AiComposeSheet(
 
         return root
     }
-
-    // ------------------------------------------------------------------ Widgets
 
     private fun styleCard(emoji: String, label: String, onClick: () -> Unit): View {
         val card = LinearLayout(context).apply {
@@ -898,13 +843,10 @@ private class AiComposeSheet(
         return box
     }
 
-    // ------------------------------------------------------------------ Request
-
     private fun runPrompt(prompt: String) {
         if (running) return
         val endpoint = AiComposeHelper.activeEndpoint() ?: return
-        // With history on, chain off the previous result instead of the original draft, so
-        // consecutive actions (e.g. Rewrite, then Shorten) refine each other's output.
+        // entiny: chain off previous result when history is on so consecutive actions refine output
         val inputText = if (InuConfig.AI_HISTORY_ENABLED.value) (lastResult ?: userText) else userText
         if (inputText.isEmpty()) return
         clearResult()

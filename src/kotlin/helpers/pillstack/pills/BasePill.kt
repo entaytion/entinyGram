@@ -19,7 +19,6 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.LoadingDrawable
 
-/** Shared base for every pill: auto-refresh scheduling, loading shimmer, size-change animation. */
 abstract class BasePill(context: Context, val resourcesProvider: Theme.ResourcesProvider?) :
     FrameLayout(context) {
 
@@ -51,7 +50,6 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
 
     abstract fun getPillId(): Int
 
-    /** 0 = never auto-refresh. */
     abstract fun getRefreshInterval(): Long
 
     abstract fun onUpdateData(force: Boolean)

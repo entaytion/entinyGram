@@ -17,11 +17,6 @@ import java.util.Locale
 
 private fun newTimeFormat() = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
 
-/**
- * Opt-in per-contact online/offline logger. Never watches everyone by default — logging every
- * status update for hundreds of contacts is noisy and wasteful; users pick who to watch from
- * that person's profile menu (see ProfileHelper.ACTION_TOGGLE_PRESENCE_WATCH).
- */
 object PresenceHelper {
     private val watched = SparseArray<MutableSet<Long>>()
 
@@ -80,19 +75,15 @@ object PresenceHelper {
         val user = MessagesController.getInstance(account).getUser(update.user_id) ?: return
         val name = UserObject.getFirstName(user)
         AndroidUtilities.runOnUIThread {
-            // formatted on the UI thread — SimpleDateFormat isn't thread-safe and onStatusUpdate can
-            // be invoked concurrently from update-dispatch threads across multiple accounts
             val time = newTimeFormat().format(Date(nowSeconds * 1000L))
             val text = if (statusType == "online") "$name online [$time]" else "$name offline [$time]"
             Toast.makeText(ApplicationLoader.applicationContext, text, Toast.LENGTH_SHORT).show()
         }
     }
 
-    /** Clears the local status-change log for [userId], or every watched user's log if null. */
     @JvmStatic
     fun clearLog(account: Int, userId: Long, onDone: Runnable? = null) = clearLogs(account, listOf(userId), onDone)
 
-    /** Clears logs for [userIds] (or every logged user if null). */
     @JvmStatic
     fun clearLogs(account: Int, userIds: Collection<Long>? = null, onDone: Runnable? = null) {
         val storage = MessagesStorage.getInstance(account) ?: return
@@ -103,7 +94,6 @@ object PresenceHelper {
         }
     }
 
-    /** Prunes logs older than [InuConfig.PRESENCE_LOGS_TTL] days. No-op when TTL is NEVER. */
     @JvmStatic
     fun pruneIfNeeded(account: Int) {
         val ttlDays = InuConfig.PRESENCE_LOGS_TTL.value

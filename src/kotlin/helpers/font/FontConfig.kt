@@ -8,16 +8,13 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 object FontConfig {
-    // ids used inside the serialized [FontMode] to mark the two non-custom modes
     internal const val SYSTEM_STACK_ID = "@system@"
     internal const val BUNDLED_STACK_ID = "@default@"
 
-    /** App UI font selection: the bundled font, the device default, or a custom primary + fallbacks. */
     sealed class FontMode {
         object Bundled : FontMode()
         object System : FontMode()
 
-        // fontId: a [Family] with an empty id is the legacy "first family" marker (resolved by FontHelper)
         data class Custom(val fontId: FontId, val fallbacks: List<FontId>) : FontMode()
 
         fun toJson(): String {
@@ -55,9 +52,7 @@ object FontConfig {
 
         override fun read(prefs: SharedPreferences): FontMode {
             prefs.getString(key, null)?.let { return FontMode.fromJson(it) ?: default }
-            // migrate the legacy split keys (font_mode int + active_font_id + font_fallbacks), then the
-            // even older use_system_font bool. Legacy keys are left in place — re-read harmlessly until
-            // the next save writes font_config.
+            // entiny: migrate legacy split keys (font_mode, active_font_id, font_fallbacks, use_system_font)
             return when {
                 prefs.contains("font_mode") -> when (prefs.getInt("font_mode", 0)) {
                     1 -> FontMode.System
@@ -86,13 +81,9 @@ object FontConfig {
     }
 
     val FONT = FontModeItem()
-
-    // include device system fonts (e.g. Google Sans, Coming Soon) in the editor roster + app font list
     val FONT_INCLUDE_SYSTEM = BoolItem("font_include_system", false)
-
-    // roster token of the font used for monospace blocks (inline code + pre); "" = stock monospace
     val MONO_FONT = StringItem("mono_font", "")
 
-    // crutch for [InuConfig.load] to populate _items correctly. check if needed.
+    // entiny: forces class initialization for InuConfig.load to populate items
     fun register() = Unit
 }

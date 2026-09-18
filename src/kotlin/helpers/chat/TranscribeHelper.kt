@@ -31,35 +31,20 @@ object TranscribeHelper {
     private val inFlight = ConcurrentHashMap<String, Boolean>()
     private val cancelled = ConcurrentHashMap.newKeySet<String>()
 
-    // This used to run on Utilities.globalQueue, which is a single DispatchQueue thread shared by
-    // the whole app: one upload plus a two-minute read timeout stalled every other background task
-    // queued behind it, and the two-slot semaphore that was supposed to cap concurrency could never
-    // admit a second request anyway because the queue is serial. Own pool - concurrency is real,
-    // extra taps queue instead of being rejected, and nothing else in the app waits on us.
+    // entiny: dedicated thread pool avoids stalling Utilities.globalQueue during long uploads
     private val worker: ExecutorService = Executors.newFixedThreadPool(2) { r ->
         Thread(r, "inu-transcribe").apply { isDaemon = true }
     }
 
-    // Keep transcription off the general memory cliff.
     private const val MAX_TRANSCRIPTION_BYTES = 32L * 1024L * 1024L
 
-    // Gemini and most of Cloudflare's whisper family take audio inline, Base64'd inside the JSON
-    // body, and reject any request over 20MB. Base64 inflates by 4/3, so this is the largest file
-    // that can still fit - past it the request would come back as an opaque 400 rather than "your
-    // voice message is too long".
+    // entiny: cap inline audio before Base64 4/3 expansion exceeds 20MB provider limits
     private const val MAX_INLINE_AUDIO_BYTES = 14L * 1024L * 1024L
 
     private const val MAX_ATTEMPTS = 3
 
-    /** Longest we will sit on a retry before giving the user the error instead of a spinner. */
     private const val MAX_RETRY_DELAY_MS = 15_000L
 
-    /**
-     * HTTP 429 / 5xx: the provider is busy or briefly broken, so the request is worth repeating.
-     * [retryAfterMs] is how long the provider itself asked us to wait, when it said so - Google
-     * and OpenAI both do, and their answer is usually tens of seconds, not the 1.5s a blind
-     * backoff would have picked.
-     */
     private class TransientHttpException(message: String, val retryAfterMs: Long = 0L) : IOException(message)
 
     @JvmStatic
@@ -69,10 +54,6 @@ object TranscribeHelper {
         return inFlight[key] == true
     }
 
-    /**
-     * Invalidates a pending transcription. A provider request already blocked in
-     * HttpURLConnection is allowed to finish, but its result is discarded.
-     */
     @JvmStatic
     fun cancel(messageObject: MessageObject?) {
         if (messageObject == null) return
@@ -83,22 +64,9 @@ object TranscribeHelper {
         }
     }
 
-    /**
-      * Whether a tap on the transcribe button goes to our provider instead of Telegram's endpoint.
-      *
-      * Deliberately just the toggle: it used to also require the account to be non-Premium, which
-      * meant a Premium user who had gone to the trouble of configuring Gemini silently kept getting
-      * Telegram's transcription instead. The toggle is off by default and switching it on is an
-      * explicit choice - honour it either way.
-      */
     @JvmStatic
     fun shouldUseCustomTranscribe(account: Int): Boolean = InuConfig.AI_TRANSCRIBE_ENABLED.value
 
-    /**
-     * Whether the selected provider has everything it needs to be called. Checked before anything
-     * is marked in-flight, so an unconfigured provider produces one bulletin pointing at the
-     * settings rather than a spinner that dies with a raw HTTP error.
-     */
     private fun isProviderConfigured(): Boolean = when (InuConfig.AI_TRANSCRIBE_PROVIDER.value) {
         InuConfig.TRANSCRIBE_PROVIDER_CF ->
             InuConfig.AI_TRANSCRIBE_CF_ACCOUNT_ID.value.isNotBlank() && InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value.isNotBlank()
@@ -246,16 +214,6 @@ object TranscribeHelper {
         }
     }
 
-    /**
-     * Repeats the request when the provider answers 429 or 5xx. Everything else - a rejected key,
-     * an unknown model, audio the provider will not accept - is permanent and fails immediately;
-     * retrying those just burns the user's quota and their patience.
-     *
-     * When the provider names its own cooldown we wait that long rather than guessing, and when
-     * the cooldown is longer than a user will hold a spinner for we stop and report it. Guessing
-     * short is what made the old backoff useless against a per-minute quota: three attempts
-     * 1.5s apart all land inside the same minute the provider already refused.
-     */
     private fun <T> withRetry(block: () -> T): T {
         var attempt = 0
         while (true) {
@@ -274,11 +232,6 @@ object TranscribeHelper {
         }
     }
 
-    /**
-     * ISO code of the spoken language, or empty for provider auto-detection. Whisper-family models
-     * guess from the first seconds of audio, which is exactly where short or noisy voice notes go
-     * wrong - a pinned language is the single biggest accuracy win available here.
-     */
     private fun languageHint(): String = InuConfig.AI_TRANSCRIBE_LANGUAGE.value.trim()
 
     private fun isCancelled(key: String): Boolean = cancelled.contains(key)
@@ -301,8 +254,6 @@ object TranscribeHelper {
             LocaleController.formatString(R.string.InuAiTranscribeFailed, msg)
         ).show()
     }
-
-    // ------------------------------------------------------------------ Providers
 
     private fun transcribeGroq(file: File, fileName: String, mime: String, prompt: String): String {
         val apiKey = InuConfig.AI_PROVIDER_GROQ_KEY.value.trim()
@@ -396,16 +347,11 @@ object TranscribeHelper {
             connectTimeout = 30_000
             readTimeout = 120_000
             doOutput = true
-            // Without a streaming mode HttpURLConnection buffers the entire body in memory before
-            // sending - and this body is the audio Base64'd, so it is the single largest allocation
-            // the fork makes. Chunked keeps it to one buffer at a time.
+            // entiny: chunked streaming prevents buffering entire Base64 audio in memory
             setChunkedStreamingMode(0)
             setRequestProperty("Content-Type", "application/json")
         }
 
-        // The JSON is assembled around the payload rather than built as one object: the alternative
-        // materialises the Base64 string, then the JSONObject copy of it, then the byte array of
-        // the whole document - three copies of an already-inflated file.
         val head = "{\"contents\":[{\"parts\":[" +
             JSONObject().put("text", instruction).toString() +
             ",{\"inlineData\":{\"mimeType\":" + JSONObject.quote(mime) + ",\"data\":\""
@@ -428,7 +374,7 @@ object TranscribeHelper {
             .optJSONArray("candidates")?.optJSONObject(0)
             ?.optJSONObject("content")?.optJSONArray("parts")
             ?: return ""
-        // Long answers arrive split across several parts; taking only the first truncated them.
+        // entiny: concatenate all candidate parts to avoid truncating long Gemini transcripts
         return buildString {
             for (i in 0 until parts.length()) {
                 append(parts.optJSONObject(i)?.optString("text").orEmpty())
@@ -436,17 +382,6 @@ object TranscribeHelper {
         }.trim()
     }
 
-    /**
-     * Turns a Gemini failure into the right exception, and into something the user can act on.
-     *
-     * A 429 from the free tier is three different situations wearing one status code: going too
-     * fast for the per-minute limit (wait, the response says how long), spending the day's
-     * requests (nothing will work until Google's midnight), and a model whose free allowance in
-     * this project is zero (nothing will ever work without billing - which is what a user hits
-     * when they try model after model and every one of them answers 429). The quota id and value
-     * in the response body are the only things that separate them, so they are read rather than
-     * all three being reported as "rate limited, retrying".
-     */
     private fun geminiError(code: Int, resp: String): IOException {
         val error = runCatching { JSONObject(resp).getJSONObject("error") }.getOrNull()
         val detail = error?.optString("message").orEmpty().ifBlank { resp }.take(300)
@@ -487,29 +422,18 @@ object TranscribeHelper {
         )
     }
 
-    /** google.protobuf.Duration as it appears in an API error: "29s", "1.5s". */
     private fun parseProtoDuration(value: String): Long {
         val seconds = value.trim().removeSuffix("s").toDoubleOrNull() ?: return 0L
         return (seconds * 1000).toLong().coerceAtLeast(0L)
     }
 
-    /**
-     * The provider's own cooldown, in milliseconds, from a `Retry-After` header. Seconds and
-     * HTTP-dates are both legal there; only the seconds form is worth parsing, since that is what
-     * every provider here actually sends.
-     */
     private fun retryAfterMs(conn: HttpURLConnection): Long {
         val header = conn.getHeaderField("Retry-After")?.trim().orEmpty()
         val seconds = header.toLongOrNull() ?: return 0L
         return (seconds * 1000).coerceAtLeast(0L)
     }
 
-    /**
-     * Base64-encodes [file] straight into [out]. Every chunk but the last is a multiple of three
-     * bytes on purpose: Base64 of concatenated chunks only equals Base64 of the whole file when
-     * each chunk is 3-byte aligned, otherwise padding lands in the middle of the stream and the
-     * provider decodes garbage.
-     */
+    // entiny: stream Base64 in 3-byte-aligned chunks to avoid mid-stream padding corruption
     private fun streamBase64(file: File, out: OutputStream) {
         val buf = ByteArray(3 * 16 * 1024)
         FileInputStream(file).use { input ->
@@ -527,13 +451,7 @@ object TranscribeHelper {
         }
     }
 
-    /**
-     * The whisper models that take the audio as the raw request body. The rest of Cloudflare's
-     * whisper family - large-v3-turbo included, which is what the model picker lists right next to
-     * the default - takes JSON with the audio Base64'd in an "audio" field and answers 400 to a
-     * binary body. Sending the binary shape to every model is why Cloudflare transcription failed
-     * for anyone who picked a model other than the default.
-     */
+    // entiny: only standard whisper models accept raw binary; others require Base64 JSON payload
     private val CF_BINARY_MODELS = setOf("@cf/openai/whisper", "@cf/openai/whisper-tiny-en")
 
     private fun transcribeCloudflare(file: File, prompt: String): String {
@@ -563,8 +481,6 @@ object TranscribeHelper {
                 conn.outputStream.use { output -> input.copyTo(output) }
             }
         } else {
-            // Written around the Base64 stream rather than built as a JSONObject, for the same
-            // reason as Gemini: the encoded audio is never held in memory in full.
             val head = StringBuilder("{\"task\":\"transcribe\"")
             languageHint().takeIf { it.isNotBlank() }?.let { head.append(",\"language\":").append(JSONObject.quote(it)) }
             prompt.takeIf { it.isNotBlank() }?.let { head.append(",\"prompt\":").append(JSONObject.quote(it)) }
@@ -596,8 +512,6 @@ object TranscribeHelper {
         throw IOException(errMsg)
     }
 
-    // ------------------------------------------------------------------ Multipart HTTP
-
     private fun postMultipart(
         urlStr: String,
         headers: Map<String, String>,
@@ -616,8 +530,7 @@ object TranscribeHelper {
             connectTimeout = 30_000
             readTimeout = 120_000
             doOutput = true
-            // Buffering the whole multipart body (audio included) in memory is what made large
-            // voice messages an OOM risk rather than a slow request.
+            // entiny: chunked streaming avoids OOM from buffering multipart audio in memory
             setChunkedStreamingMode(0)
             setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
             for ((k, v) in headers) setRequestProperty(k, v)

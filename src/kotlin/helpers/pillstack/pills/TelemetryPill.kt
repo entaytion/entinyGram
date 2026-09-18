@@ -54,7 +54,6 @@ abstract class TelemetryPill(context: Context, resourcesProvider: Theme.Resource
         startLoading()
     }
 
-    /** Take a measurement and return the pill's text; null means no data yet (keeps shimmering). */
     protected abstract fun measureText(): String?
 
     override fun onUpdateData(force: Boolean) {
@@ -64,8 +63,7 @@ abstract class TelemetryPill(context: Context, resourcesProvider: Theme.Resource
             AndroidUtilities.runOnUIThread {
                 if (generation != measureGeneration) return@runOnUIThread
                 if (text == null) {
-                    // entiny: a pill whose first read only seeds a baseline (e.g. a delta-based reading)
-                    // returns null here -- keep the shimmer instead of flashing a placeholder.
+                    // entiny: keep shimmer when baseline seed returns null instead of flashing a placeholder
                     startLoading()
                     return@runOnUIThread
                 }

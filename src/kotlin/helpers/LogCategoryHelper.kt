@@ -9,12 +9,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
- * Mirrors every FileLog.d/w/e/fatal call into a per-category file, categorized automatically
- * from the calling class's package -- no per-call-site tagging needed. "Fork-<area>" for
- * desu.inugram.helpers.<area>.*, "Fork" for other desu.inugram.* classes (InuHooks, InuConfig,
- * ui.settings.*), "Stock" for org.telegram.* (all stock/UI logging), "Other" otherwise.
- */
 object LogCategoryHelper {
     private val writers = HashMap<String, FileWriter>()
     private val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.US)
@@ -72,7 +66,6 @@ object LogCategoryHelper {
         return writer
     }
 
-    /** Distinct category names with a log file for today (or any cached day still on disk). */
     fun availableCategories(): List<String> {
         val dir = getCategoriesDir() ?: return emptyList()
         if (!dir.isDirectory) return emptyList()

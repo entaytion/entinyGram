@@ -103,7 +103,7 @@ object ProfileHelper {
         openAnimationInProgress: Boolean
     ): Float = when {
         playProfileAnimation == 2 -> 1f
-        // during the normal open animation stock reuses currentExpandAnimatorValue as the open progress (= avatarAnimationProgress), not the real pull-down expand — trusting it makes the chips jump by 8dp on the last frame before it resets
+        // entiny: stock reuses currentExpandAnimatorValue during open animation which causes 8dp jump on last frame
         openAnimationInProgress -> 0f
         avatarAnimationProgress >= 1f || playProfileAnimation == 0 -> currentExpandAnimatorValue.coerceIn(0f, 1f)
         else -> 0f
@@ -596,8 +596,6 @@ object ProfileHelper {
 
     @JvmStatic
     fun getRegDateSubtitle(userId: Long, chat: TLRPC.Chat?, user: TLRPC.User?): String {
-        // The date itself is already shown in the primary value row. Keep this
-        // subtitle to a label only and append the useful server/DC information.
         val base = LocaleController.getString(R.string.InuProfileRegDate)
         val dc = getDcString(user, chat)
         return if (dc.isNotEmpty()) "$base • $dc" else base

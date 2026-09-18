@@ -20,7 +20,7 @@ import java.util.Hashtable
 object FontHelper {
     private const val TAG = "InuFonts"
 
-    // "real" default/mono fonts captured before they are replaced with reflection
+    // entiny: default/mono fonts captured before replacing via reflection
     val stockDefault: Typeface = Typeface.DEFAULT
     val stockMonospace: Typeface = Typeface.MONOSPACE
     private var emojiScale = 1f
@@ -45,17 +45,12 @@ object FontHelper {
         }
     }
 
-    /**
-     * Reverts the app font to the bundled default when the active custom selection no longer resolves.
-     * Only imported families can be the app font; built-in / system fonts are editor-roster-only.
-     */
     fun validateActiveAppFont() {
         val m = FontConfig.FONT.value as? FontMode.Custom ?: return
         val id = m.fontId as? FontId.Family ?: run {
             FileLog.d("$TAG: validateActiveAppFont: non-family app font ${m.fontId.token()}, resetting to bundled")
             return resetAppFont()
         }
-        // a Family with an empty id is the legacy "first family" marker → valid as long as any family exists
         if (if (id.id.isEmpty()) !FontLibrary.hasAnyFamily() else !FontLibrary.containsFamily(id.id)) {
             FileLog.d("$TAG: validateActiveAppFont: family ${id.id} not loaded, resetting to bundled")
             resetAppFont()
@@ -66,11 +61,6 @@ object FontHelper {
         FontConfig.FONT.value = FontMode.Bundled
     }
 
-    /**
-     * Reverts the monospace font to the stock one when the selection can't be applied: a removed family,
-     * or a device system font (those are discovered lazily, long after [installGlobal] runs, so they
-     * would silently render as stock monospace anyway).
-     */
     fun validateMonoFont() {
         when (val id = FontId.parse(FontConfig.MONO_FONT.value.ifEmpty { return })) {
             is FontId.Builtin -> Unit
@@ -100,7 +90,6 @@ object FontHelper {
         return token.isNotEmpty() && FontId.parse(token) == id
     }
 
-    /** resolve the legacy font id marker (empty string) to the first available family */
     fun maybeResolveLegacyEmpty(fontId: FontId): FontId? {
         if (fontId is FontId.Family && fontId.id.isEmpty()) {
             return FontLibrary.firstFamilyId()?.let { FontId.Family(it) }
@@ -108,28 +97,22 @@ object FontHelper {
         return fontId
     }
 
-    /** Ordered fallbacks of the active custom stack (empty for bundled / system). */
     fun getActiveFallbackIds(): List<FontId> =
         (FontConfig.FONT.value as? FontMode.Custom)?.fallbacks ?: emptyList()
-
-    // ---- app UI font resolution ------------------------------------------------------------
 
     private fun resolve(targetWeight: Int, targetItalic: Boolean): Typeface? {
         val m = FontConfig.FONT.value as? FontMode.Custom ?: return null
         val primary = maybeResolveLegacyEmpty(m.fontId) ?: return null
-        // composite (primary + fallbacks) needs the FontFamily APIs (Q+); below that, single typeface.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             composite(primary, m.fallbacks, targetWeight, targetItalic)?.let { return it }
         }
         return singleTokenTypeface(primary, targetWeight, targetItalic)
     }
 
-    /** Single imported-family weighted typeface; the below-Q & no-fallback path. */
     private fun singleTokenTypeface(token: FontId?, weight: Int, italic: Boolean): Typeface? {
         return FontLibrary.getFamilyTypeface(token ?: return null, weight, italic)
     }
 
-    /** A single imported family as a [FontFamily] at the requested style, for stack composition (Q+). */
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun fontFamilyForToken(token: FontId, weight: Int, italic: Boolean): FontFamily? {
         val font = FontLibrary.getFont(token, weight, italic) ?: run {
@@ -144,17 +127,7 @@ object FontHelper {
         }
     }
 
-    /**
-     * Composes [primary] + [fallbacks] into one typeface via [Typeface.CustomFallbackBuilder]; the builder's
-     * implicit final fallback is whatever [Typeface.DEFAULT] points at when [build][Typeface.CustomFallbackBuilder.build]
-     * runs. Returns null when the primary is a single face with no fallbacks (the cheaper single-typeface
-     * path suffices) or it can't be built (caller falls back).
-     *
-     * [forceSystemFallback] keeps the builder even for that single-face case, so the implicit fallback is
-     * present to render missing glyphs (e.g. Cyrillic in a Latin-only font). For the editor preview that
-     * implicit fallback must be the *genuine* system font, not the applied app font our `installGlobal`
-     * swap repointed [Typeface.DEFAULT] at — [buildPreviewTypefaces] restores the genuine default around the build.
-     */
+    // entiny: forceSystemFallback retains builder so implicit system fallback renders missing glyphs
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun composite(
         primary: FontId,
@@ -174,13 +147,12 @@ object FontHelper {
                     b.addCustomFallback(fam)
                 } catch (_: Throwable) {
                     break
-                } // 64-family cap
+                }
             }
             b.setStyle(FontStyle(weight.coerceIn(1, 1000), if (italic) FontStyle.FONT_SLANT_ITALIC else FontStyle.FONT_SLANT_UPRIGHT))
             val tf = b.build()
 
-            // setStyle won't fake-bold a medium-ish request (see Family.resolve) — force it when the
-            // primary has no face that heavy, else "bold" in the stack would render like regular.
+            // entiny: setStyle won't fake-bold medium weights; force bold when primary lacks heavier face
             val primaryLacksWeight = weight >= 500 &&
                 (FontLibrary.getFontFamily(primary)?.lacksWeight(weight, italic) ?: false)
             if (primaryLacksWeight) {
@@ -194,12 +166,6 @@ object FontHelper {
         }
     }
 
-    // ---- stack preview (draft state, not config) -------------------------------------------
-
-    /**
-     * Builds a typeface for an arbitrary draft stack: [primary] is null (bundled default → caller uses
-     * [Typeface.DEFAULT]), [FontConfig.SYSTEM_STACK_ID] (device default), or a roster token. Used by the stack editor.
-     */
     @RequiresApi(Build.VERSION_CODES.P)
     fun getPreviewTypeface(primary: String?, fallbacks: List<String>, weight: Int, italic: Boolean): Typeface? {
         primary ?: return null
@@ -207,13 +173,11 @@ object FontHelper {
         val primaryId = FontId.parse(primary)
         val fallbackIds = fallbacks.filter { it != FontConfig.SYSTEM_STACK_ID }.map { FontId.parse(it) }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // forceSystemFallback: preview missing glyphs in the genuine system font, not the applied one
             composite(primaryId, fallbackIds, weight, italic, forceSystemFallback = true)?.let { return it }
         }
         return singleTokenTypeface(primaryId, weight, italic)
     }
 
-    /** Draft-stack typefaces for the settings preview: regular / bold / italic spans + the mono override. */
     class PreviewTypefaces(
         val regular: Typeface,
         val bold: Typeface,
@@ -221,12 +185,6 @@ object FontHelper {
         val mono: Typeface,
     )
 
-    /**
-     * Builds the draft stack's typefaces for the (span-rendered) settings preview. [Typeface.DEFAULT] is
-     * restored to the genuine system default around the build so a composite's implicit fallback renders
-     * missing glyphs in the real system font, not whatever `installGlobal` may have applied app-wide.
-     * UI thread only.
-     */
     @RequiresApi(Build.VERSION_CODES.P)
     fun buildPreviewTypefaces(primary: String?, fallbacks: List<String>, monoToken: String): PreviewTypefaces {
         val savedDefault = Typeface.DEFAULT
@@ -253,16 +211,7 @@ object FontHelper {
         else -> null
     }
 
-    /**
-     * Installs the configured app + monospace fonts process-wide by swapping the global [Typeface] statics
-     * ([Typeface.DEFAULT]/[Typeface.DEFAULT_BOLD]/[Typeface.SANS_SERIF]/[Typeface.MONOSPACE]) and the
-     * matching `sSystemFontMap` entries, so UI widgets that don't go through [Typeface.create] from an asset
-     * path (TextView default, chat_msgTextPaint, code spans…) also pick them up.
-     *
-     * Reflection, best-effort — failures are non-fatal (a blocked `sSystemFontMap` still leaves the static
-     * swaps, which cover most cases). Run before the Theme paints are created (from [InuHooks.init]) so they
-     * capture the swapped values.
-     */
+    // entiny: process-wide font install via Typeface statics and sSystemFontMap reflection swaps
     @Suppress("UNCHECKED_CAST")
     @SuppressLint("DiscouragedPrivateApi")
     @RequiresApi(Build.VERSION_CODES.P)
@@ -274,7 +223,6 @@ object FontHelper {
             null
         }
 
-        // app UI font (sans-serif*) — only when a custom font is selected
         val mode = FontConfig.FONT.value
         val regular = (mode as? FontMode.Custom)?.let { resolve(400, false) }
         if (mode is FontMode.Custom && regular == null) {
@@ -307,7 +255,6 @@ object FontHelper {
             )) map?.put(k, regular)
             for (k in arrayOf("sans-serif-medium", "sans-serif-black")) map?.put(k, bold)
         }
-        // monospace font (inline code + blocks) — no-op when unset
         FontLibrary.getTypefaceFor(FontConfig.MONO_FONT.value)?.let { mono ->
             trySetStatic(typefaceMonospaceField, mono)
             map?.put("monospace", mono)
@@ -349,11 +296,7 @@ object FontHelper {
         resolve(400, false)?.let { view.typeface = it }
     }
 
-    /**
-     * Stock creates many `chat_*Paint`/`dialogs_*Paint`/`profile_*Paint` `TextPaint`s in
-     * [org.telegram.ui.ActionBar.Theme] without an explicit typeface. Sweep them after creation
-     * so message bubble text, dialog cell previews, profile bio, etc. pick up the custom font.
-     */
+    // entiny: apply custom font to stock Theme TextPaints created without an explicit typeface
     @JvmStatic
     fun onThemePaintsCreated() {
         if (FontConfig.FONT.value !is FontMode.Custom) return
@@ -379,7 +322,6 @@ object FontHelper {
     @JvmStatic
     fun onGetTypeface(cache: Hashtable<String, Typeface>, assetPath: String): Typeface? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
-        // cheap filter first: only a handful of asset paths carry a style — the rest skip the key build
         val (weight, italic) = styleForAsset(assetPath) ?: return null
         val mode = FontConfig.FONT.value
         val keyPart = when (mode) {

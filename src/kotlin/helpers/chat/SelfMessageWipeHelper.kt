@@ -12,11 +12,6 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.BulletinFactory
 
-/**
- * Bulk-deletes every message the current account sent in a dialog: pages backwards through
- * messages.search filtered to fromId=self, deleting each page as it comes in. Reuses
- * MessagesController.deleteMessages, which already chunks batches over the server's 100-id limit.
- */
 object SelfMessageWipeHelper {
 
     private const val PAGE_SIZE = 100

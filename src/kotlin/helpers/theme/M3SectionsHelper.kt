@@ -36,11 +36,6 @@ object M3SectionsHelper {
     @JvmStatic
     fun isEnabled(): Boolean = InuConfig.M3_SECTIONS_STYLE.value
 
-    /**
-     * Round M3 tiles for colorful list/settings icons. circleColor()/iconColor() derive the tile's
-     * hue from the row's own gradient colors, so this renders consistently on any theme (Monet or
-     * not) once the M3 sections toggle is on.
-     */
     @JvmStatic
     fun isCircleIconsEnabled(): Boolean = isEnabled()
 
@@ -82,9 +77,6 @@ object M3SectionsHelper {
     private val innerR get() = AndroidUtilities.dp(4f).toFloat()
     private val gap get() = AndroidUtilities.dp(2f)
 
-    // ripple-check (asRippleCheck) rows render as the MD3 "primary toggle" pill — full pill rounding
-    // (height/2) when the row stands alone; if stacked with content, the inner side falls back to
-    // `innerR` like any other section corner.
     private fun outerRForChild(child: View): Float {
         if (child is TextCheckCell && child.drawCheckRipple) return child.height / 2f
         return outerR
@@ -160,8 +152,6 @@ object M3SectionsHelper {
         return null
     }
 
-    // M3 corner radii for an attached section child, via the same visual-sibling walk the
-    // background/clip paths use. null = not a section / not attached → caller falls back to stock.
     private fun sectionRadiiFor(listView: RecyclerListView, child: View): Pair<Float, Float>? {
         val deco = listView.sectionsItemDecoration ?: return null
         val isSection = deco.isSectionItem
@@ -231,7 +221,6 @@ object M3SectionsHelper {
             setRadii(tR, bR)
             path.addRoundRect(rect, radii, Path.Direction.CW)
         } else {
-            // stock-fallback: mirror stock clipChild's adapter-position neighbour lookup
             val position = listView.getChildAdapterPosition(child)
             val prevView = if (position != RecyclerView.NO_POSITION) listView.findViewByPosition(position - 1) else null
             val nextView = if (position != RecyclerView.NO_POSITION) listView.findViewByPosition(position + 1) else null
@@ -249,9 +238,7 @@ object M3SectionsHelper {
 
     @JvmStatic
     fun augmentItemOffsets(outRect: Rect, listView: RecyclerView, view: View) {
-        // disappearing holders in a change animation have no adapter position anymore; without the
-        // layout-position fallback they'd lose the gap and jump while fading out. their layout
-        // position indexes the old list, so the is-last test against the new count is skipped too
+        // entiny: fallback to layout position for disappearing view holders in animations
         val adapterPosition = listView.getChildAdapterPosition(view)
         val disappearing = adapterPosition == RecyclerView.NO_POSITION
         val position = if (disappearing) listView.getChildLayoutPosition(view) else adapterPosition
@@ -280,7 +267,6 @@ object M3SectionsHelper {
         }
 
         if (!isCircleIconsEnabled()) {
-            // Restore the stock square tile and clear any stale M3 circle state on recycled cells.
             resizeSquare(iconLayout, 28)
             iconView.clearColorFilter()
             cellBackground.inu_monetColor = 0
@@ -288,14 +274,11 @@ object M3SectionsHelper {
         }
 
         resizeSquare(iconLayout, 36)
-        // Keep the stock drawable viewport: forcing 22dp clips several list icons and makes
-        // their strokes look flattened. The 36dp container still provides the M3 visual size.
         resizeSquare(iconView, 24)
         iconView.setColorFilter(iconColor(topColor, bottomColor))
         cellBackground.inu_monetColor = circleColor(topColor, bottomColor)
     }
 
-    /** MD3 circle fill: midpoint hue, clamped saturation, light tone (L 0.82). */
     @JvmStatic
     fun circleColor(topColor: Int, bottomColor: Int): Int {
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)
@@ -324,7 +307,6 @@ object M3SectionsHelper {
         return circleColor(topColor, bottomColor) to iconColor(topColor, bottomColor)
     }
 
-    /** MD3 icon tint: same hue family as [circleColor] but dark (L 0.32). */
     @JvmStatic
     fun iconColor(topColor: Int, bottomColor: Int): Int {
         val flat = ColorUtils.blendARGB(topColor, bottomColor, 0.5f)

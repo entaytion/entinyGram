@@ -54,11 +54,9 @@ object WebPreviewHelper {
 
     @JvmStatic
     fun shouldShowAllLines(webPage: TLRPC.WebPage): Boolean {
-        // crutch to make the admin log "original message" (which is a fake web preview lol) to show all lines
+        // entiny: admin log original message uses a fake webpage preview that needs all lines
         if (webPage.site_name == LocaleController.getString(R.string.EventLogOriginalMessages)) return true;
 
-        // stock only checks for site_name.lower() == "twitter", which is the old name that no longer applies
-        // fix + expand it a bit
         val siteName = webPage.site_name.lowercase()
         if (siteName == "twitter" || siteName == "x (formerly twitter)") return true
         if (
@@ -70,7 +68,6 @@ object WebPreviewHelper {
         ) return true
 
         if (webPage.cached_page == null) {
-            // also apply to fixupx and friends without instant view (i.e. non-threads)
             return siteName.contains("fixupx")
                 || siteName.contains("fxtwitter")
                 || siteName.contains("vxtwitter")
@@ -99,7 +96,6 @@ object WebPreviewHelper {
                     return newUrl
                 }
             } catch (_: Exception) {
-                // skip invalid regexes
             }
         }
         Log.d("WebPreviewHelper", "not replacing url: $url")

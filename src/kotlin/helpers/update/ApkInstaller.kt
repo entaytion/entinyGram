@@ -71,7 +71,6 @@ object ApkInstaller {
         installFromFile(activity, apk)
     }
 
-    /** Install an APK already resolved to a local file. */
     fun installFromFile(activity: Activity, apk: File) {
         if (!apk.exists()) return
         if (dialog?.isShowing == true) return
@@ -104,8 +103,6 @@ object ApkInstaller {
         }
     }
 
-    // Drives the dialog progress bar off the system's install progress. Some OEMs/ROMs
-    // never emit progress events — the bar then stays indeterminate for the whole install.
     private fun registerProgressCallback(context: Context, sessionId: Int, progressBar: ProgressBar) {
         val installer = context.packageManager.packageInstaller
         runCatching {
@@ -160,8 +157,7 @@ object ApkInstaller {
         return receiver
     }
 
-    // MIUI silently blocks PackageInstaller.commit() (broadcast never fires) regardless of which
-    // installer is set as default, so always fall back to Intent.ACTION_VIEW there.
+    // entiny: fallback to Intent.ACTION_VIEW on MIUI because PackageInstaller.commit() broadcast never fires
     fun hasBrokenPackageInstaller(): Boolean = XiaomiUtilities.isMIUI()
 
     private fun buildProgressBar(context: Context): ProgressBar {
@@ -262,15 +258,11 @@ object ApkInstaller {
                 PackageInstaller.STATUS_FAILURE_INVALID,
             )
             if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
-                // system wants the user to confirm — hand off to its installer UI,
-                // stay registered for the follow-up terminal status.
                 @Suppress("DEPRECATION")
                 val confirm = i.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
                 if (confirm != null && runCatching { context.startActivity(confirm) }.isSuccess) {
                     return
                 }
-                // handoff failed (missing intent / no activity) — abandon the session
-                // and fall through so the non-cancelable progress dialog isn't stuck.
                 abandonSession(i.getIntExtra(PackageInstaller.EXTRA_SESSION_ID, 0))
             }
             if (isFailure(status)) {

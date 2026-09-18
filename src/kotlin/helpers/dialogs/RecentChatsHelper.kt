@@ -39,16 +39,9 @@ import org.telegram.ui.TopicsFragment
 import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
 
-/**
- * Quick-switcher popup listing the most recently opened dialogs. Purely client-side (own
- * [InuDatabaseHelper] table, populated by [addToRecentDialogs] — see the stock hook in
- * ChatActivity's view creation) - inspired by exteraless/NekoGram's BackButtonMenuRecent, adapted
- * to this fork's storage conventions instead of a dedicated SharedPreferences file.
- */
 object RecentChatsHelper {
     private const val MAX_RECENT_DIALOGS = 25
 
-    // account -> most-recently-opened first
     private val cache = SparseArray<LinkedList<Long>>()
 
     @JvmStatic

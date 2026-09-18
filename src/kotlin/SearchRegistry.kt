@@ -11,6 +11,7 @@ import desu.inugram.ui.settings.BackupSettingsActivity
 import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
+import desu.inugram.ui.settings.ChatHeaderSettingsActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
@@ -33,9 +34,6 @@ import org.telegram.ui.LaunchActivity
 import org.telegram.ui.ProfileActivity
 
 object SearchRegistry {
-    /**
-     * @param itemId optional — runtime [org.telegram.ui.Components.UItem.id] to highlight on open.
-     */
     data class Entry(val slug: String, val titleRes: Int, val itemId: Int = -1)
 
     data class Page(
@@ -52,6 +50,7 @@ object SearchRegistry {
             CacheManagementSettingsActivity.PAGE,
             InuSettingsActivity.PAGE,
             AppearanceSettingsActivity.PAGE,
+            ChatHeaderSettingsActivity.PAGE,
             IconPacksSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
@@ -139,11 +138,7 @@ object SearchRegistry {
         if (ParanoiaHelper.shouldHideSettings()) return false
         val uri = intent?.data ?: return false
         if (uri.scheme != "tg") return false
-        // canonical: `tg://entinySettings/<slug>` (host=entinySettings) or `tg:entinySettings/<slug>` (opaque)
-        // legacy: `tg://settings/{inu,entiny}/<slug>` (host=settings) or `tg:settings/{inu,entiny}/<slug>` (opaque)
-        // Host and the {inu,entiny} legacy segment come from outside our control (typed by hand,
-        // pasted from elsewhere), so match them case-insensitively; only the trailing per-entry
-        // slug is ours end to end and stays exact.
+        // entiny: match host and legacy {inu,entiny} segments case-insensitively while preserving trailing slug
         val segs = when {
             uri.host.equals("entinySettings", ignoreCase = true) || uri.host.equals("settings", ignoreCase = true) -> uri.pathSegments
             uri.host == null -> uri.schemeSpecificPart?.removePrefix("//")?.let { ssp ->
@@ -168,6 +163,6 @@ object SearchRegistry {
         return true
     }
 
-    // stable guid from slug, high bit set to avoid stock guid range (<1000).
+    // entiny: set high bit to avoid collision with stock guid range (<1000)
     private fun guidFor(slug: String): Int = 0x10000000 or (slug.hashCode() and 0x00FFFFFF)
 }

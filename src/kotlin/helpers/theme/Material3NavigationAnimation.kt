@@ -31,11 +31,10 @@ internal inline fun ViewGroup.eachChild(action: (View) -> Unit) {
 }
 
 object Material3BackMotion {
-    const val ENTER_OFFSET_DP = 96f // entering screen starts this far off the left edge; closing slides this far off on commit
-    const val SCRIM_ALPHA_BYTE = 77 // ~0.3 * 255 (AOSP uses 0.2 light / 0.8 dark; fixed 0.3 reads better in-app)
-    const val SCRIM_FADE = 0.5f // scrim lifts by this much of commit progress (AOSP fades it over the full duration, which lingers past the motion)
+    const val ENTER_OFFSET_DP = 96f
+    const val SCRIM_ALPHA_BYTE = 77
+    const val SCRIM_FADE = 0.5f
 
-    // AOSP fast_out_extra_slow_in (M3 "emphasized")
     val EMPHASIZED: Interpolator = PathInterpolator(
         Path().apply {
             moveTo(0f, 0f)
@@ -44,18 +43,12 @@ object Material3BackMotion {
         }
     )
 
-    // The fragment's own background to fill the M3 gap. ViewPagerActivity (e.g.
-    // MainTabsActivity) sets hasOwnBackground but draws nothing itself — the visible color comes
-    // from the current tab's inner fragment, so descend into it.
     fun getFragmentBackground(fragment: BaseFragment?): Drawable? {
         var f = fragment
         while (f is ViewPagerActivity) f = f.currentVisibleFragment
-        // ProfileActivity keeps fragmentView transparent and paints via its children (gray listView),
-        // so use the gray window background directly.
+        // entiny: ProfileActivity fragmentView is transparent so resolve window background gray directly
         if (f is ProfileActivity) return ColorDrawable(Theme.getColor(Theme.key_windowBackgroundGray))
         val bg = f?.fragmentView?.background
-        // A transparent fill can't fill the gap — it would show the black window behind. Reject it so
-        // the caller falls back to a solid color.
         if (bg is ColorDrawable && Color.alpha(bg.color) == 0) return null
         return bg
     }
@@ -65,11 +58,6 @@ private interface ReleasableDrawable {
     fun release()
 }
 
-// AOSP activity_{open,close}_{enter,exit}: both surfaces translate over 450ms on
-// fast_out_extra_slow_in; the top (new/closing) one crossfades linearly over 83ms — from 50ms on
-// open, from 35ms on close; the below one stays fully opaque and only parallaxes by 96dp.
-// We run the same choreography at 300ms — fade windows are fractions of the total, so they scale
-// proportionally rather than keeping AOSP's absolute offsets.
 object Material3NavigationAnimation {
     const val DURATION = 300f
     private const val CLOSING_FADE_START = 35f / 450f
@@ -118,10 +106,6 @@ object Material3NavigationAnimation {
         return true
     }
 
-    // Tracked swipe-back: below screen parallaxes linearly with the finger; the release animators
-    // drive innerTranslationX too, so this covers the settle as well. Replaces the per-fragment
-    // onSlideProgress parallax (Dialogs' 40dp slide) with the uniform 96dp one — returning false
-    // hands the frame back to stock. Stock predictive back has its own transitions, keep out.
     @JvmStatic
     fun applySlideProgress(layout: ActionBarLayout, progress: Float): Boolean {
         if (layout.predictiveBackInProgress || !isEnabled()) return false
@@ -132,14 +116,8 @@ object Material3NavigationAnimation {
         return true
     }
 
-    // Children are translated instead of the container so the revealed strip on the right stays
-    // covered by the container's own background (emulates AOSP's window <extend>). Translation is
-    // a pure RenderNode matrix op — no layer promotion needed (and a HW layer would re-render per
-    // frame under self-animating content like the dialogs list).
     private fun prepareBelow(layout: ActionBarLayout, below: ViewGroup) {
         if (below.background is BelowBackground) return
-        // The plain fill stays underneath the extension: it covers a failed capture and a last column
-        // that happens to be translucent (rounded corners, antialiased edges).
         val fill = Material3BackMotion.getFragmentBackground(layout.backgroundFragment)?.constantState?.newDrawable()
             ?: ColorDrawable(Theme.getColor(Theme.key_windowBackgroundWhite))
         below.background = BelowBackground(listOfNotNull(fill, captureEdgeExtension(below)))
@@ -169,13 +147,6 @@ object Material3NavigationAnimation {
     }
 }
 
-// AOSP extends a window past its edge by mirroring the edge pixels on the compositor
-// (TransitionAnimation.edgeExtendWindow). We have no SurfaceControl to crop, so the equivalent is a
-// RenderNode holding a 1px-wide recording of one content column, promoted to a compositing layer so
-// it rasterizes once at 1px and is then stretched by the node's own matrix — no readback, no
-// software draw, and no glyph-cache blowup from re-rasterizing text at 300x scale.
-// A single column is constant along x once stretched, so the drawable can just fill its whole
-// bounds and let the translated children cover the left part; nothing has to follow the animation.
 @RequiresApi(Build.VERSION_CODES.Q)
 private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), ReleasableDrawable {
     override fun draw(canvas: Canvas) {
@@ -188,9 +159,6 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
         canvas.drawRenderNode(node)
     }
 
-    // The display list keeps every op it recorded alive (bitmaps, shaders, text), and the
-    // compositing layer keeps a GPU texture. Dropping the reference only frees those on the next GC,
-    // so release explicitly when the background is torn down.
     override fun release() {
         node.setUseCompositingLayer(false, null)
         node.discardDisplayList()
@@ -207,10 +175,6 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
         private class Band(val x: IntRange, val y: IntRange)
         private class Slice(val y: IntRange, val sampleX: Int)
 
-        // Scrollbars live exactly on the column we would sample, so one caught mid-fade smears across
-        // the whole gap. Where they are is knowable without looking at pixels: size, style and
-        // position give the track, and the same scroll metrics ScrollBarDrawable uses give the thumb
-        // inside it. The sample column then steps left out of the rects it hits.
         private fun collectScrollBarBands(view: View, offsetX: Int, offsetY: Int, bands: MutableList<Band>) {
             addScrollBarBand(view, offsetX, offsetY, bands)
             if (view !is ViewGroup) return
@@ -227,8 +191,7 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
 
         private fun addScrollBarBand(view: View, offsetX: Int, offsetY: Int, bands: MutableList<Band>) {
             if (!view.isVerticalScrollBarEnabled) return
-            // onDrawScrollBars fades the scrollbar by setting its alpha, so a faded-out one reads as 0
-            // here. The cache's own state flag has no accessor; this is as close as public API gets.
+            // entiny: check thumb drawable alpha because scrollbar cache state flag has no public accessor
             if (view.verticalScrollbarThumbDrawable?.alpha == 0) return
 
             val size = if (view.scrollBarSize > 0) view.scrollBarSize else ViewConfiguration.get(view.context).scaledScrollBarSize
@@ -247,8 +210,6 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
             bands += Band((right - size)..right, rows)
         }
 
-        // ScrollBarDrawable.onDraw, verbatim: length from the unclamped ratio, offset from that same
-        // unclamped length, then the min-length and overflow clamps in that order.
         private fun computeThumbRows(view: RecyclerView, trackTop: Int, trackSize: Int, thickness: Int): IntRange? {
             val range = view.computeVerticalScrollRange()
             val extent = view.computeVerticalScrollExtent()
@@ -264,8 +225,6 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
 
         private fun findSampleX(bands: List<Band>, rows: IntRange, width: Int): Int {
             var x = width - 1
-            // Bands can abut (a list inside a pager inside...), so keep stepping until the column is
-            // clear rather than stepping once past the rightmost one.
             while (true) {
                 val hit = bands.firstOrNull { x in it.x && it.y.first <= rows.last && rows.first <= it.y.last } ?: break
                 x = hit.x.first - 1
@@ -274,8 +233,6 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
             return x
         }
 
-        // One slice per run of rows that agree on a sample column: rows beside a scrollbar sample from
-        // its left, the rest keep the true edge.
         private fun buildSlices(below: ViewGroup): List<Slice> {
             val width = below.width
             val height = below.height
@@ -305,7 +262,6 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
             return slices
         }
 
-        // clipRect can only intersect, so the complement of the kept rows is clipped out instead.
         private fun clipToRows(canvas: Canvas, slices: List<Slice>, height: Int) {
             var top = 0
             slices.forEach { slice ->
@@ -325,16 +281,11 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
             node.setPosition(0, 0, STRIP_PX, height)
             val canvas = node.beginRecording(STRIP_PX, height)
             try {
-                // Grouped by sample column, not per slice: re-recording the hierarchy is the expensive
-                // part, and the rows above and below a scrollbar thumb share the true edge column.
                 slices.groupBy { it.sampleX }.forEach { (sampleX, group) ->
                     canvas.save()
                     clipToRows(canvas, group, height)
                     canvas.translate(-sampleX.toFloat(), 0f)
-                    // Per child with the public draw(): ViewGroup.dispatchDraw would emit
-                    // drawRenderNode() for nodes the live container already parents, which records
-                    // nothing here. The public entry point re-records the child's own background/onDraw.
-                    // left/top rather than x/y — the extension mirrors the content at rest.
+                    // entiny: use public draw() because dispatchDraw emits drawRenderNode for already-parented nodes
                     below.eachChild { child ->
                         if (child.visibility != View.VISIBLE) return@eachChild
                         canvas.save()

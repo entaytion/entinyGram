@@ -29,7 +29,6 @@ object ExchangeRates {
     class State(private val usdRates: Map<String, BigDecimal>) {
         fun getUsdRate(code: String?): BigDecimal? = code?.let { usdRates[it] }
 
-        /** How many units of [target] one unit of [base] is worth. */
         fun getRate(base: String, target: String): BigDecimal? {
             val baseRate = getUsdRate(base) ?: return null
             val targetRate = getUsdRate(target) ?: return null
@@ -130,7 +129,6 @@ object ExchangeRates {
         null
     }
 
-    /** Coinbase reports "units of currency per 1 USD"; we want the inverse. */
     private fun parseUsdRate(code: String, rates: JSONObject): BigDecimal? {
         if (code == "USD") return BigDecimal.ONE
         val value = rates.optString(code)
@@ -150,7 +148,6 @@ object ExchangeRates {
 
     private fun serialize(state: State): String {
         val builder = StringBuilder()
-        // usdRates is private; re-derive from MAIN_CURRENCIES since that's all we ever store.
         for (code in MAIN_CURRENCIES) {
             val rate = state.getUsdRate(code) ?: continue
             if (builder.isNotEmpty()) builder.append(',')
@@ -167,7 +164,6 @@ object ExchangeRates {
             try {
                 result[part.substring(0, index)] = BigDecimal(part.substring(index + 1))
             } catch (e: Exception) {
-                // skip malformed entry
             }
         }
         return if (result.isEmpty()) null else State(result)
@@ -175,7 +171,6 @@ object ExchangeRates {
 
     fun isSupportedCurrency(code: String?): Boolean = MAIN_CURRENCIES.contains(PillCurrencies.normalize(code))
 
-    /** AUTO -> the current account phone number's country currency, falling back to USD. */
     fun resolveTargetCurrency(selection: String?): String {
         val normalized = PillCurrencies.normalize(selection)
         if (!PillCurrencies.AUTO.equals(normalized, ignoreCase = true)) {

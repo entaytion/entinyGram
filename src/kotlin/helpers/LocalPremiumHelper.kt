@@ -7,18 +7,6 @@ import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.DialogObject
 import org.telegram.tgnet.TLRPC
 
-/**
- * Local (fake) Telegram Premium state layer.
- *
- * When [desu.inugram.InuConfig.LOCAL_PREMIUM] is on, the server still rejects
- * premium-only writes (emoji status, profile/name color), so anything the user
- * sets is stored here per-account and re-applied to the self user object every
- * time it arrives from the server (`MessagesController.putUser`) or is loaded
- * from config (`UserConfig.setCurrentUser`).
- *
- * All methods are no-ops when local premium is disabled — the app stays
- * stock-identical.
- */
 public object LocalPremiumHelper {
 
     private const val PREFS = "inupremium_local"
@@ -32,13 +20,10 @@ public object LocalPremiumHelper {
     private const val KEY_PROFILE_BG_EMOJI = "profile_bg_emoji_"
 
     private data class UserOverrides(
-        /** >0 document id; -1 explicit clear; 0 nothing stored */
         val emojiDocId: Long = 0L,
         val emojiUntil: Int = 0,
-        /** -1 not stored */
         val nameColor: Int = -1,
         val nameBgEmoji: Long = 0L,
-        /** -1 not stored */
         val profileColor: Int = -1,
         val profileBgEmoji: Long = 0L,
     )
@@ -64,11 +49,6 @@ public object LocalPremiumHelper {
         return o
     }
 
-    /**
-     * Re-applies the local premium state onto the self user whenever it arrives
-     * from the server or is loaded from config. Hot path — keep it allocation-free
-     * for non-self users.
-     */
     @JvmStatic
     fun applyToSelfUser(user: TLRPC.User?, accountId: Int) {
         if (user == null || !user.self) return
@@ -114,12 +94,7 @@ public object LocalPremiumHelper {
         }
     }
 
-    /**
-     * Reverts the spoofed fields on the self user object when local premium is turned off.
-     * Without this, a user who set an emoji status/color while spoofed stays stuck showing
-     * fake premium in the UI until the next full account refetch or app restart, since
-     * [applyToSelfUser] no-ops (rather than reverting) once the toggle is off.
-     */
+    // entiny: clear spoofed fields explicitly because turning toggle off does not trigger a user refetch
     @JvmStatic
     fun clearSelfUser(user: TLRPC.User?) {
         if (user == null || !user.self) return
@@ -130,7 +105,6 @@ public object LocalPremiumHelper {
         user.flags2 = user.flags2 and 256.inv() and 512.inv()
     }
 
-    /** Persists the emoji status the user just picked so it survives reloads. */
     @JvmStatic
     fun persistEmojiStatus(status: TLRPC.EmojiStatus?, accountId: Int) {
         if (!InuConfig.LOCAL_PREMIUM.value) return
@@ -151,7 +125,6 @@ public object LocalPremiumHelper {
         }
     }
 
-    /** Persists the name/profile colors the user just applied in PeerColorActivity. */
     @JvmStatic
     fun onSelfColorsApplied(me: TLRPC.User?, accountId: Int) {
         if (me == null || !InuConfig.LOCAL_PREMIUM.value) return

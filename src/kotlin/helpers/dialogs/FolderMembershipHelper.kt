@@ -7,15 +7,8 @@ import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 
-/**
- * "Include more chats in a folder than the server limit" overlay, entirely client-side —
- * mirrors [PinHelper]'s local-pin design for the same reason: `messages.updateDialogFilter`
- * enforces `dialogFiltersChatsLimitDefault/Premium` on `include_peers` server-side, so overflow
- * chats are never added to the real `filter.alwaysShow`/sent to the server. They're merged in
- * purely at the [org.telegram.messenger.MessagesController.DialogFilter.includesDialog] chokepoint.
- */
+// entiny: telegram server rejects folder chat limit overflow so extra chats are merged purely client-side
 object FolderMembershipHelper {
-    // account -> filterId -> overlay dialog ids
     private val cache = SparseArray<MutableMap<Int, MutableSet<Long>>>()
 
     @JvmStatic

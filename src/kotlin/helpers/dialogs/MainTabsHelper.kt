@@ -49,9 +49,6 @@ object MainTabsHelper {
     val isMaterial: Boolean
         get() = InuConfig.M3_BOTTOM_TABS.value
 
-    // iOS style is a no-op whenever M3 bottom tabs is also enabled, mirroring the settings-page
-    // mutual exclusion (turning iOS on force-disables M3, but this keeps every geometry getter
-    // safe even if InuConfig ever ends up with both flags set at once).
     @JvmStatic
     val isIos: Boolean
         get() = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value && !isMaterial
@@ -80,20 +77,12 @@ object MainTabsHelper {
     @JvmStatic
     val showTitles: Boolean
         get() = !isCompact && InuConfig.BOTTOM_TABS_SHOW_TITLES.value
-    // index scheme matches MainTabsActivity's INDEX_* constants: 0=Chats,1=Contacts,2=Settings,3=Calls,4=Profile
 
-    // snapshotted once per process: MainTabsActivity builds its tab bar/ViewPager positions once at
-    // creation and never rebuilds them live, so re-reading InuConfig on every call would let a mid-session
-    // toggle (from DialogsSettingsActivity's bottom tabs preview, before the user actually restarts)
-    // desync the ViewPager's position count from the already-built tab bar and crash in
-    // ViewPagerFixed.scrollToPosition with a null fragment. Changes to BOTTOM_TABS_ORDER only take effect
-    // on the next process restart anyway (see DialogsSettingsActivity's showRestartBulletin calls), so a
-    // process-lifetime cache is exactly correct.
+    // entiny: snapshot order for process lifetime so mid-session toggle preview does not desync ViewPager and crash
     private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {
         InuConfig.BOTTOM_TABS_ORDER.value.filter { it.enabled }.map { it.item }
     }
 
-    /** ordered list of enabled non-Chats tabs from [InuConfig.BOTTOM_TABS_ORDER]. Chats is always first and implicit. */
     @JvmStatic
     fun enabledOrder(): List<MainTabsMenuConfig.Item> = cachedEnabledOrder
 
@@ -118,7 +107,6 @@ object MainTabsHelper {
         return if (pos < 0) -1 else pos + 1
     }
 
-    /** reverse of [indexToPosition]: tab type index visible at ViewPager [position], or -1 */
     @JvmStatic
     fun indexAtPosition(position: Int): Int {
         if (position == 0) return 0
@@ -127,7 +115,6 @@ object MainTabsHelper {
         return if (i in order.indices) order[i].index else -1
     }
 
-    /** view-add order for [tabs] array: enabled types first (in user order), disabled ones appended (hidden but still instantiated) */
     @JvmStatic
     fun visualOrder(): IntArray {
         val enabled = enabledOrder()
@@ -156,17 +143,14 @@ object MainTabsHelper {
     val mainTabsHeightWithMargins: Int
         get() = mainTabsHeight + mainTabsMargin * 2
 
-    /** vertical padding baked into the tabs strip itself; iOS style adds +2dp over the stock/M3-off value so its capsule reads taller. */
     @JvmStatic
     val tabsInnerPaddingVertical: Int
         get() = mainTabsMargin + if (isIos) TABS_INNER_PADDING_IOS else TABS_INNER_PADDING
 
-    /** extra left/right padding stacked on top of the system nav-bar inset, iOS-only (M3 handles its own insets via [M3MainTabsHelper.applyTabsInsets]). */
     @JvmStatic
     val iosSidePaddingExtra: Int
         get() = if (isIos) dp(TABS_SIDE_PADDING_EXTRA_IOS.toFloat()) else 0
 
-    /** iOS style, like M3, spreads tabs evenly across the full width instead of capping at a fixed [tabsViewWidth]. */
     @JvmStatic
     fun applyIosTabsLayout(tabsView: org.telegram.ui.MainTabsLayout) {
         if (!isIos) return
@@ -268,12 +252,6 @@ object MainTabsHelper {
         return true
     }
 
-    // BulletinWindow (the old approach here) is its own top-level Dialog/Window, outside the
-    // single-bulletin-per-fragment queue every other bulletin in the app uses (e.g. the updater's
-    // "Hotfix deployed!"). Two independent bulletin mechanisms showing at once don't dedupe or
-    // account for each other's position — that's what produced the garbled double-bulletin overlap.
-    // `BaseFragment.setBulletinDelegate` is already public stock API: registering our offset there
-    // routes everything through the normal `Bulletin.make(fragment, ...)` path instead.
     @JvmStatic
     fun resolveBulletinContainer(fragment: BaseFragment?): FrameLayout? {
         Log.d(

@@ -8,14 +8,8 @@ import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.tgnet.TLRPC
 
-/**
- * "Pin beyond the server limit" overlay, kept entirely client-side. Telegram's server rejects
- * toggleDialogPin once the account's real pin limit is hit, so overflow pins are never sent
- * there — they live in inu_local_pins (via [InuDatabaseHelper]) and get merged into the sorted
- * dialog list after every stock sort ([reorderLocalPins]), right after the really-pinned prefix.
- */
+// entiny: telegram server rejects pins beyond limit so extra pins are stored in inu_local_pins and merged client-side
 object PinHelper {
-    // account -> scope -> (dialogId -> pin_order), scope = filter.id or folderId
     private val cache = SparseArray<MutableMap<Int, LinkedHashMap<Long, Int>>>()
 
     private fun scopeFor(folderId: Int, filter: MessagesController.DialogFilter?): Int =
@@ -93,7 +87,6 @@ object PinHelper {
         NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.dialogsNeedReload)
     }
 
-    /** Called at the end of MessagesController.sortDialogs() — pure in-memory, no DB access. */
     @JvmStatic
     fun reorderLocalPins(controller: MessagesController, account: Int) {
         if (!InuConfig.UNLIMITED_PINNED_CHATS.value) return

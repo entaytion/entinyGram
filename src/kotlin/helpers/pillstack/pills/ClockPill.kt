@@ -18,7 +18,6 @@ import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ScaleStateListAnimator
 import java.util.Date
 
-/** entinyGram-only pill: current time, follows the device's 12h/24h setting. */
 @SuppressLint("ViewConstructor")
 class ClockPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) : BasePill(context, resourcesProvider) {
 

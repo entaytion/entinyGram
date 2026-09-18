@@ -40,14 +40,12 @@ class PillStackView(context: Context) : FrameLayout(context) {
         clipChildren = false
     }
 
-    /** Fired after a swipe settles on a different pill, so the controller can remember it. */
     var onCurrentPillChanged: (() -> Unit)? = null
 
     fun getPillsCount(): Int = pills.size
 
     fun getCurrentPillId(): Int? = pills.getOrNull(currentIndex)?.getPillId()
 
-    /** Selects the pill with this id if it's in this slot; no-op otherwise. */
     fun selectPillId(pillId: Int) {
         val index = pills.indexOfFirst { it.getPillId() == pillId }
         if (index >= 0) setCurrentIndex(index)
@@ -99,7 +97,6 @@ class PillStackView(context: Context) : FrameLayout(context) {
 
     private var visibilityFactor = -1f
 
-    /** 0 = hidden, 1 = fully shown. */
     fun setVisibilityFactor(factor: Float) {
         if (visibilityFactor == factor) return
         visibilityFactor = factor
@@ -119,8 +116,6 @@ class PillStackView(context: Context) : FrameLayout(context) {
         stackOnScreen = isVisible
         for (pill in pills) pill.onStackVisibilityChanged(isVisible)
     }
-
-    // ---- Gestures ----
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
         if (pills.isEmpty()) return super.onInterceptTouchEvent(event)
@@ -239,7 +234,6 @@ class PillStackView(context: Context) : FrameLayout(context) {
             }
         }
         if (next >= pills.size || next < 0) {
-            // nowhere to swipe -- drag the current pill with resistance
             val overscroll = height * (1.0 - 1.0 / (progress * 0.18 + 1.0)).toFloat()
             current.translationY = if (up) -overscroll else overscroll
             current.alpha = 1f

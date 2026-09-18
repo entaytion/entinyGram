@@ -2,10 +2,6 @@ package desu.inugram.helpers.feed
 
 import org.telegram.messenger.MessageObject
 
-/**
- * Per-account Feed orchestrator (lazy: zero-cost if never opened). Message plumbing via InuHooks, not redundant observer.
- * Scope selects channels; global cached per-account, folder-scoped uncached. unreadTracker/backfill shared per-account.
- */
 class FeedController private constructor(
     private val account: Int,
     val scope: FeedScope = FeedScope.Global,
@@ -15,18 +11,10 @@ class FeedController private constructor(
     val unreadTracker = FeedUnreadTracker.get(account)
     val backfill = FeedBackfillCoordinator.get(account)
 
-    /**
-     * Live-open [FeedActivity] hooks, so a screen that's already on screen updates in place
-     * instead of only picking up changes the next time it's opened. All nullable: the controller
-     * outlives any single screen instance (it's per-account, not per-fragment), so these are set
-     * on [onScreenOpened] and cleared on [onScreenClosed] rather than passed through the
-     * constructor.
-     */
     var onLiveMessagesAdded: ((List<MessageObject>) -> Unit)? = null
     var onLiveMessagesRemoved: ((dialogId: Long, messageIds: Collection<Int>) -> Unit)? = null
     var onLiveDialogRemoved: ((dialogId: Long) -> Unit)? = null
 
-    /** Gap-fill landed new history; screen decides if re-query is still worthwhile. */
     var onBackfillCompleted: (() -> Unit)? = null
 
     @Volatile
@@ -35,7 +23,6 @@ class FeedController private constructor(
 
     private var openCount = 0
 
-    /** Feed screen entered the foreground; loads the first page. */
     fun onScreenOpened(onReady: (List<MessageObject>) -> Unit) {
         openCount++
         if (!isActive) {
@@ -43,10 +30,6 @@ class FeedController private constructor(
             FeedChannelSet.pruneStaleExclusions(account)
             backfill.onChannelBackfilled = { _ -> onBackfillCompleted?.invoke() }
         }
-        // The global controller is the shared per-account singleton (see [get]) -- InuHooks
-        // already knows to reach it. A folder-scoped one is fresh per screen (see [forFolder]) and
-        // otherwise invisible to the outside world, so it has to opt itself into live delivery for
-        // as long as its screen is open, and opt back out in onScreenClosed.
         if (scope is FeedScope.Folder) registerOpenFolder(this)
         store.loadInitial(onReady)
     }
@@ -56,14 +39,6 @@ class FeedController private constructor(
         if (scope is FeedScope.Folder) unregisterOpenFolder(this)
     }
 
-    /**
-     * Extends the loaded window older, filtered to still-unread posts -- Feed only ever shows
-     * things the user hasn't read yet, not a full archive (see [FeedActivity]'s doc). When a whole
-     * fetched page turns out to be already-read, keeps paging automatically instead of surfacing
-     * an empty result, so scrolling doesn't look stuck just because there's a read backlog behind
-     * it; when the local cache comes up genuinely empty, opportunistically requests backfill for
-     * whichever already-represented channels might have a gap there.
-     */
     fun loadOlder(onResult: (List<MessageObject>) -> Unit) {
         store.loadOlder { added ->
             if (added.isEmpty()) {
@@ -90,7 +65,6 @@ class FeedController private constructor(
         backfill.request(candidates)
     }
 
-    /** New messages pushed live for an eligible channel; folds straight into the store. */
     fun onNewMessages(messages: List<MessageObject>) {
         if (!isActive) return
         val added = store.mergeLive(messages)
@@ -117,34 +91,16 @@ class FeedController private constructor(
     companion object {
         private val instances = HashMap<Int, FeedController>()
 
-        // account -> folder-scoped controllers whose screen is currently open. Unlike [instances]
-        // this is a live "who wants pushes right now" registry, not a cache: entries come and go
-        // with FeedActivity.onScreenOpened/onScreenClosed, since forFolder() controllers are
-        // otherwise thrown away with their screen (see [forFolder]).
         private val openFolderControllers = HashMap<Int, MutableSet<FeedController>>()
 
-        /** The cached global-scope controller for [account] -- the one `InuHooks` pushes live into. */
         @JvmStatic
         @Synchronized
         fun get(account: Int): FeedController = instances.getOrPut(account) { FeedController(account) }
 
-        /**
-         * A folder-scoped controller, owned by the [desu.inugram.ui.feed.FeedActivity] instance that
-         * asked for it and GC'd with it. Deliberately NOT cached in [instances] -- a folder is an
-         * arbitrarily narrow slice of the account, so caching one per filter would mean keeping a
-         * separate loaded window warm for every folder the user has ever opened Feed on, most of
-         * which would go stale the moment they're not looking. It self-registers into
-         * [openFolderControllers] for the duration its screen is open instead (see [onScreenOpened]),
-         * which is enough for [allActiveFor] to reach it live.
-         */
         @JvmStatic
         fun forFolder(account: Int, filterId: Int): FeedController =
             FeedController(account, FeedScope.Folder(filterId))
 
-        /** Every controller for [account] that should receive a live push right now: the cached
-         * global controller once it's ever been opened, plus every folder-scoped screen open now.
-         * Empty for an account that has never opened Feed -- callers on a hot path (every incoming
-         * message) get an early exit for free by just iterating this instead of calling [get]. */
         @JvmStatic
         @Synchronized
         fun allActiveFor(account: Int): List<FeedController> {

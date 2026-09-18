@@ -41,8 +41,6 @@ object BiometricHelper {
         gate(context, enabled, onSuccess, null)
     }
 
-    /** [onCancel] fires on explicit dismissal/failure — use when the caller must not silently
-     * proceed as if authenticated (e.g. gating visibility of content, not just confirming an action). */
     @JvmStatic
     fun gate(context: Context?, enabled: Boolean, onSuccess: Runnable, onCancel: Runnable?) {
         val activity = context as? Activity

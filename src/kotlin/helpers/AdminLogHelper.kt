@@ -168,8 +168,7 @@ object AdminLogHelper {
         val headerItem = menu.addItem(MENU_HEADER, R.drawable.ic_ab_other)
         headerItem.contentDescription = LocaleController.getString(R.string.AccDescrMoreOptions)
 
-        // this "more options" item sits next to search; the ActionBar doesn't subtract menu
-        // width for the custom title view, so reserve room for both items (+ the -9 menu shift)
+        // entiny: reserve room for search and more-options menu because ActionBar does not subtract menu width for custom title
         (activity.avatarContainer.layoutParams as FrameLayout.LayoutParams).rightMargin = AndroidUtilities.dp(48f + 48f + 9f)
         headerItem.addSubItem(
             MENU_TOGGLE_DIFF,
@@ -178,7 +177,7 @@ object AdminLogHelper {
             false,
         ).apply {
             makeCheckView(2)
-            // makeCheckView clobbers textView padding; restore the icon-side gap
+            // entiny: restore icon-side gap because makeCheckView clobbers textView padding
             val pad = AndroidUtilities.dp(43f)
             textView.setPadding(
                 if (LocaleController.isRTL) pad else pad,

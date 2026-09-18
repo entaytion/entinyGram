@@ -36,22 +36,11 @@ import java.util.concurrent.atomic.AtomicReference
 object TranslateHelper {
     private const val ORIGINAL_SEPARATOR = "\n\n--------\n\n"
 
-    // dialog id -> message ids whose body is manually translated
     private val manual = ConcurrentHashMap<Long, MutableSet<Int>>()
-
-    // dialog id -> message id -> translated text with original appended (per-session)
     private val bodies = ConcurrentHashMap<Long, ConcurrentHashMap<Int, TLRPC.TL_textWithEntities>>()
-
-    // dialog id -> message id -> translated webpage clone
     private val webPages = ConcurrentHashMap<Long, ConcurrentHashMap<Int, TLRPC.TL_webPage>>()
-
-    // dialog id -> message ids whose webpage is currently being translated
     private val webPagesLoading = ConcurrentHashMap<Long, MutableSet<Int>>()
-
-    // dialog id -> message id -> (detected src lang, target lang) for the webpage
     private val webPagesLangs = ConcurrentHashMap<Long, ConcurrentHashMap<Int, Pair<String?, String>>>()
-
-    // dialog id -> message id -> source text at the time it was translated
     private val originals = ConcurrentHashMap<Long, ConcurrentHashMap<Int, String>>()
 
     @JvmStatic
@@ -88,7 +77,6 @@ object TranslateHelper {
 
     private fun hasTranslatedWebPage(msg: MessageObject?): Boolean = translatedWebPageClone(msg) != null
 
-    /** Returns a translated clone if available, otherwise [original]. */
     @JvmStatic
     fun viewWebPage(msg: MessageObject?, original: TLRPC.TL_webPage): TLRPC.TL_webPage =
         translatedWebPageClone(msg) ?: original
@@ -112,7 +100,6 @@ object TranslateHelper {
         }
     }
 
-    /** @return true if handled in-place; false → caller should fall back to stock TranslateAlert. */
     @JvmStatic
     fun startTranslate(
         activity: ChatActivity,
@@ -144,7 +131,6 @@ object TranslateHelper {
         return true
     }
 
-    // entry point for OPTION_TRANSLATE, replicates the stock translate menu cell's trigger
     fun triggerTranslate(
         activity: ChatActivity,
         selected: MessageObject?,
@@ -246,13 +232,6 @@ object TranslateHelper {
         }
 
         val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
-        // Whether to spend an ML Kit pass classifying a message whose language Telegram has not
-        // resolved yet. That is ALL this flag does - it was named `respectDnt`, which read as if
-        // turning it off stopped the don't-translate list from applying, and the comment here
-        // argued at length against a coupling the code never had: the known-language branch below
-        // goes through shouldShowTranslateRow() unconditionally, and that is where the list is
-        // consulted. Off, an unknown-language message simply keeps the Translate row rather than
-        // paying for detection to find out whether to hide it.
         val detectUnknownLanguage = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
 
         fun shouldShowTranslateRow(fromLang: String): Boolean {
@@ -265,10 +244,7 @@ object TranslateHelper {
         if (originalLanguage != null) {
             cell.visibility = if (shouldShowTranslateRow(originalLanguage)) View.VISIBLE else View.GONE
         } else if (detectUnknownLanguage && LanguageDetector.hasSupport()) {
-            // hasSupport() is not optional: stock guarded this same detection call with it, and
-            // LanguageDetector's own comment says MLKit's native lib can abort the whole process
-            // on emulators / x86 ABIs. Without the guard the cell is also set GONE right below
-            // and, if detection never calls back, the Translate row just never reappears.
+            // entiny: MLKit native lib can abort on emulators/x86 ABIs without hasSupport guard
             val text = selected.getMessageTextToTranslate(group, intArrayOf(selected.id))
             if (text != null) {
                 cell.visibility = View.GONE
@@ -278,7 +254,7 @@ object TranslateHelper {
                     { lang ->
                         if (lang == null || shouldShowTranslateRow(lang)) cell.visibility = View.VISIBLE
                         if (lang != null && selected.messageOwner != null) {
-                            selected.messageOwner.originalLanguage = lang // avoid doing that trice
+                            selected.messageOwner.originalLanguage = lang
                         }
                         waitForLangDetection.set(false)
                         onLangDetectionDone.getAndSet(null)?.run()
@@ -401,8 +377,6 @@ object TranslateHelper {
             return
         }
 
-        // entinyGram: route the web preview through the selected third-party provider; only fall
-        // back to the stock Telegram API when no provider is active.
         if (desu.inugram.helpers.translate.engine.EntinyTranslate.handleWebPage(
                 target.dialogId, target.id, original, parts, toLang, { _, _, translated, lang ->
                     markLoading(target, false)
@@ -551,11 +525,7 @@ object TranslateHelper {
         originals[msg.dialogId]?.remove(msg.id)
     }
 
-    /**
-     * True when the fork holds an in-place translation for [msg] and its source text is
-     * still the one that was translated. Stock invalidates translations on every edit update,
-     * and reactions arrive as edit updates.
-     */
+    // entiny: stock invalidates translations on every edit update, and reactions arrive as edit updates
     @JvmStatic
     fun shouldKeepTranslation(msg: MessageObject?): Boolean {
         if (msg == null || !InuConfig.IN_PLACE_TRANSLATION.value) return false
@@ -564,7 +534,6 @@ object TranslateHelper {
         return TextUtils.equals(original, msg.messageOwner?.message)
     }
 
-    /** Carries the in-place translation from a replaced message object onto its replacement. */
     @JvmStatic
     fun carryTranslation(old: MessageObject?, updated: MessageObject?) {
         if (old == null || updated == null || old === updated) return
@@ -595,7 +564,6 @@ object TranslateHelper {
         originals.remove(dialogId)
     }
 
-    /** Returns the translated body with original appended when the toggle is on; otherwise [original]. */
     @JvmStatic
     fun viewTranslatedText(
         msg: MessageObject?,
@@ -604,8 +572,6 @@ object TranslateHelper {
         if (msg == null || original == null) return original
         if (!InuConfig.KEEP_ORIGINAL_AFTER_TRANSLATION.value) return original
         val cached = bodies[msg.dialogId]?.get(msg.id) ?: return original
-        // owner.translatedText may have been replaced by a different translation
-        // (e.g. stock chat-translate flipping language). drop the stale merge.
         if (original.text == null || !cached.text.startsWith(original.text + ORIGINAL_SEPARATOR)) {
             bodies[msg.dialogId]?.remove(msg.id)
             return original

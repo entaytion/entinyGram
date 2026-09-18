@@ -94,14 +94,12 @@ object DrawerHelper {
         return main
     }
 
-    /** Root fragment on startup: stock `addFragmentToStack` + navigation drawer wiring. */
     @JvmStatic
     fun setupMainFragment(activity: LaunchActivity, layout: INavigationLayout, dlc: DrawerLayoutContainer) {
         layout.addFragmentToStack(createMainFragment())
         if (InuConfig.NAVIGATION_DRAWER.value) setup(activity, dlc, layout)
     }
 
-    /** Push the main fragment, forwarding a pending search query when tabs are present. */
     @JvmStatic
     fun addMainFragmentToStack(layout: INavigationLayout, searchQuery: String?) {
         val main = createMainFragment()
@@ -111,12 +109,6 @@ object DrawerHelper {
         ensureSetup(layout)
     }
 
-    /**
-     * Wire the side drawer onto the activity's container once (idempotent), or
-     * refresh its contents if already wired. Needed for login/relogin flows that
-     * present the main fragment outside [setupMainFragment] — without this the
-     * post-login `DialogsActivity` has no drawer.
-     */
     @JvmStatic
     fun ensureSetup(layout: INavigationLayout?) {
         if (!InuConfig.NAVIGATION_DRAWER.value || layout == null) return
@@ -245,8 +237,6 @@ object DrawerHelper {
         sm: RecyclerListView,
     ) {
         if (activity == null) return
-        // Stock UpdateLayoutWrapper: paints accent across the navbar inset, propagates
-        // paddingBottom to the row so centered content stays in the visible 44dp.
         val wrapper = UpdateLayoutWrapper(activity)
         container.addView(
             wrapper,
@@ -256,9 +246,7 @@ object DrawerHelper {
                 Gravity.BOTTOM,
             ),
         )
-        // UpdateLayoutWrapper.setPadding propagates to children — but only children that exist
-        // at call time. The row is added later by UpdateLayout.createUpdateUI, so always
-        // re-propagate on every inset dispatch instead of guarding by current value.
+        // entiny: re-propagate padding on every inset dispatch because the child row is added later by createUpdateUI
         wrapper.setOnApplyWindowInsetsListener { v, insets ->
             v.setPadding(0, 0, 0, insets.systemWindowInsetBottom)
             v.requestLayout()
@@ -266,14 +254,12 @@ object DrawerHelper {
         }
         wrapper.setPadding(0, 0, 0, AndroidUtilities.navigationBarHeight)
 
-        // Overwrites any prior UpdateLayout, releasing its Activity ref (Activity.recreate path).
         val ul = ApplicationLoader.applicationLoaderInstance
             ?.takeUpdateLayout(activity, wrapper) ?: return
         updateLayout = ul
         applySideMenuBottomPadding(sm)
         ul.updateAppUpdateViews(UserConfig.selectedAccount, false)
 
-        // Observer lambda closes only over singleton state — registered once per process.
         if (updateObserver == null) {
             val obs = NotificationCenter.NotificationCenterDelegate { id, _, args ->
                 val current = updateLayout ?: return@NotificationCenterDelegate
@@ -332,16 +318,8 @@ object DrawerHelper {
         acct.addObserver(obs, NotificationCenter.fileLoadFailed)
     }
 
-    /**
-     * Updates the menu drawable used as a back-button in the drawer-mode DialogsActivity to reflect
-     * the current pending-update state: exclamation when available, circular progress while
-     * downloading. Mirrors stock Telegram 11.4.2's `updateMenuButton`.
-     */
     @JvmStatic
     fun refreshMenuButton(drawable: MenuDrawable?, animated: Boolean) {
-        // The patch seeds with a non-null drawable on DialogsActivity creation; we cache the
-        // reference so notification observers can update the icon even when DialogsActivity
-        // isn't the top fragment (e.g. user is in AboutActivity when the check completes).
         if (drawable != null) menuDrawableRef = drawable
         val d = drawable ?: menuDrawableRef ?: return
         val type: Int
@@ -437,8 +415,7 @@ object DrawerHelper {
         sideMenuContainer?.setBackgroundColor(Theme.getColor(Theme.key_chats_menuBackground))
         sideMenu?.let { applySideMenuColors(it) }
         adapter?.notifyDataSetChanged()
-        // Static sunDrawable persists across theme changes; notifyDataSetChanged
-        // rebinds the cell but never re-syncs the day/night frame.
+        // entiny: sync sunDrawable frame on theme change because static drawable persists across rebinding
         adapter?.profileCell?.updateSunDrawable(Theme.isCurrentThemeDark())
     }
 
@@ -447,11 +424,6 @@ object DrawerHelper {
         statusPopup = null
     }
 
-    /**
-     * Emoji status selector anchored to the drawer profile cell. Ported from
-     * 11.14.1 stock LaunchActivity.showSelectStatusDialog, selection handling
-     * mirrors 12.x DialogsActivity.showSelectStatusDialog (gift statuses).
-     */
     fun showSelectStatusDialog(cell: DrawerProfileCell, drawerLayoutContainer: DrawerLayoutContainer) {
         if (statusPopup != null || SharedConfig.appLocked) return
         val fragment = drawerLayoutContainer.parentActionBarLayout?.lastFragment ?: return
@@ -571,14 +543,12 @@ object DrawerHelper {
             return
         }
 
-        // Account row tap: switch to that account.
         if (view is DrawerUserCell) {
             LaunchActivity.instance?.switchToAccount(view.accountNumber, true)
             close()
             return
         }
 
-        // "Add account" row.
         if (view is DrawerAddCell) {
             val availableAccount = (UserConfig.MAX_ACCOUNT_COUNT - 1 downTo 0)
                 .firstOrNull { !UserConfig.getInstance(it).isClientActivated }
@@ -589,7 +559,6 @@ object DrawerHelper {
             return
         }
 
-        // Side-menu attach bot.
         adapter.getAttachMenuBot(position)?.let { bot ->
             val activity = LaunchActivity.instance ?: return
             LaunchActivity.showAttachMenuBot(activity, account, bot, null, true)
@@ -610,7 +579,6 @@ object DrawerHelper {
             }
 
             ITEM_NEW_GROUP -> {
-                // mirrors the "New Group" row in ContactsActivity
                 if (MessagesController.getInstance(account).isFrozen) {
                     AccountFrozenAlert.show(account)
                 } else {
@@ -620,7 +588,6 @@ object DrawerHelper {
             }
 
             ITEM_NEW_MESSAGE -> {
-                // swapped in for New Group when a compose draft is pending
                 val top = nav.lastFragment
                 val dialogs = if (top is MainTabsActivity) top.currentVisibleFragment else top
                 (dialogs as? DialogsActivity)?.openWriteContacts()
@@ -640,7 +607,7 @@ object DrawerHelper {
             }
 
             ITEM_SAVED_MESSAGES -> {
-                // ChatActivity expects user_id, not dialog_id
+                // entiny: ChatActivity expects user_id parameter for bots instead of dialog_id
                 val args = Bundle()
                 args.putLong("user_id", UserConfig.getInstance(account).getClientUserId())
                 nav.presentFragment(ChatActivity(args))
@@ -686,7 +653,6 @@ object DrawerHelper {
         drawerLayoutContainer.inu_drawer?.closeDrawer(false)
     }
 
-    // Stock DrawerLayoutAdapter item IDs — these are stable identifiers from the stock drawer.
     private const val ITEM_MY_PROFILE = 16
     private const val ITEM_NEW_GROUP = 2
     private const val ITEM_NEW_MESSAGE = 17
@@ -705,7 +671,6 @@ object DrawerHelper {
         adapter?.notifyDataSetChanged()
     }
 
-    /** Old Layout back-button hook: toggles the side drawer. Returns false if unavailable. */
     @JvmStatic
     fun toggleDrawer(parentLayout: INavigationLayout?): Boolean {
         val controller = parentLayout?.drawerLayoutContainer?.inu_drawer ?: return false

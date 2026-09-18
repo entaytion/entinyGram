@@ -24,10 +24,7 @@ class IconsResources(private val resources: Resources) : Resources(resources.ass
         return this.resources === resources
     }
 
-    // Pushes the base resources' current configuration/metrics into this instance's own
-    // Android Resources internals (bypassing our updateConfiguration override, which only
-    // delegates to the wrapped `resources`) — otherwise this instance's own config stays
-    // frozen at construction time and drifts after rotation/locale changes.
+    // entiny: sync base resources config directly to prevent wrapped internals from freezing across rotation
     fun syncConfigurationFrom(base: Resources) {
         super.updateConfiguration(base.configuration, base.displayMetrics)
     }

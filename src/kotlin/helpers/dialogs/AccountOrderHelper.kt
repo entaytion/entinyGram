@@ -21,12 +21,7 @@ object AccountOrderHelper {
         InuConfig.ACCOUNT_ORDER.value = accounts.joinToString(",")
     }
 
-    /**
-     * Persist a reorder that only saw the visible accounts (the drawer hides
-     * passcode-locked ones). Hidden accounts stay anchored right after the
-     * visible account they previously followed, so locking an account doesn't
-     * scramble its stored position. Idempotent.
-     */
+    // entiny: anchor hidden accounts after their preceding visible account so drawer reorder does not scramble locked accounts
     fun setVisibleOrder(visibleOrder: List<Int>) {
         val all = mutableListOf<Int>()
         for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {

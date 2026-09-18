@@ -136,7 +136,6 @@ object FolderHelper {
         return Pair.create("", "")
     }
 
-    /** resolve (name, emoticon) for a non-default filter, with flag-based fallbacks */
     @JvmStatic
     fun getTabInfo(filter: MessagesController.DialogFilter): Pair<String, String> {
         val defaults = getDefaultsFromFlags(filter.flags)
@@ -154,7 +153,6 @@ object FolderHelper {
         return R.drawable.filter_custom
     }
 
-    /** extra dp to add to titleWidth measurement when icon is shown alongside title */
     @JvmStatic
     fun getContentWidth(title: CharSequence?, textPaint: TextPaint): Int {
         val mode = InuConfig.FOLDERS_DISPLAY_MODE.value;
@@ -181,14 +179,12 @@ object FolderHelper {
         return InuConfig.FOLDERS_DISPLAY_MODE.value == InuConfig.FoldersDisplayModeItem.TITLES
     }
 
-    /** text x offset to make room for icon in titles+icons mode */
     @JvmStatic
     fun getTextXOffset(): Float {
         if (InuConfig.FOLDERS_DISPLAY_MODE.value != InuConfig.FoldersDisplayModeItem.TITLES_AND_ICONS) return 0f
         return AndroidUtilities.dp((getIconSize() + ICON_GAP).toFloat()).toFloat()
     }
 
-    /** draw the folder icon on the tab. call before drawing text. */
     @JvmStatic
     fun drawTabIcon(
         canvas: Canvas,
@@ -209,20 +205,17 @@ object FolderHelper {
         }
     }
 
-    /** adjusted tab padding between tabs */
     @JvmStatic
     fun getTabPadding(): Float {
         if (isIconsOnly()) return 16f
         return FilterTabsView.TAB_PADDING_WIDTH
     }
 
-    /** skip adding default "All Chats" tab when toggle is on AND user has other filters */
     @JvmStatic
     fun shouldSkipDefaultTab(totalFilters: Int): Boolean {
         return InuConfig.HIDE_ALL_CHATS_TAB.value && totalFilters > 1
     }
 
-    /** if selectedType lands on the (now hidden) default filter, return first non-default index */
     @JvmStatic
     fun snapOffDefault(filters: List<MessagesController.DialogFilter>, selectedType: Int): Int {
         if (!shouldSkipDefaultTab(filters.size)) return selectedType
@@ -230,7 +223,6 @@ object FolderHelper {
         return filters.indexOfFirst { !it.isDefault }.takeIf { it >= 0 } ?: selectedType
     }
 
-    /** after a rebuild that skipped the default tab, refresh selectedTabId + currentPosition */
     @JvmStatic
     fun refreshSelectedTab(filterTabsView: FilterTabsView, selectedType: Int, filtersSize: Int) {
         if (!InuConfig.HIDE_ALL_CHATS_TAB.value) return
@@ -251,7 +243,6 @@ object FolderHelper {
         if (ParanoiaHelper.isHidden(currentAccount, dialogId)) return true
         val mode = InuConfig.FOLDERS_UNREAD_COUNTER_MODE.value
         if (mode == InuConfig.FoldersUnreadCounterModeItem.EXCLUDE_MUTED_NON_DMS && dialogId > 0) {
-            // human DM → never excluded; bot → excluded if muted; user info missing → defer to a later call
             if (user == null || !user.bot) return false
         }
         if (mode != InuConfig.FoldersUnreadCounterModeItem.EXCLUDE_MUTED &&
@@ -260,7 +251,6 @@ object FolderHelper {
         return MessagesController.getInstance(currentAccount).isDialogMuted(dialogId, 0)
     }
 
-    /** adjusted tab internal padding (indicator overshoot) */
     @JvmStatic
     fun getTabInternalPadding(): Float {
         if (isIconsOnly()) return FilterTabsView.TAB_INTERNAL_PADDING / 2f
@@ -268,23 +258,19 @@ object FolderHelper {
         return FilterTabsView.TAB_INTERNAL_PADDING
     }
 
-    /** height (dp) of the pill row itself, matches the 36+7+7 addView height used both top and bottom */
     const val TAB_BAR_HEIGHT_DP = 36 + 7 + 7
 
     @JvmStatic
     fun getTabBarHeightDp(): Int = TAB_BAR_HEIGHT_DP
 
-    /** bottom margin (dp) reserved for the pill when anchored to the bottom of the screen */
     const val TAB_BAR_BOTTOM_MARGIN_DP = 14
 
     @JvmStatic
     fun atBottom(): Boolean = InuConfig.FOLDERS_AT_BOTTOM.value
 
-    /** total vertical space (dp) the bottom-anchored pill reserves above the nav bar / FAB */
     @JvmStatic
     fun bottomReservedHeightDp(): Int = getTabBarHeightDp() + TAB_BAR_BOTTOM_MARGIN_DP
 
-    /** translationY for bottom tabs pill (above nav bar; stays docked, not above alerts). */
     @JvmStatic
     @JvmOverloads
     fun bottomTabsTranslationY(

@@ -11,7 +11,6 @@ import android.widget.TextView
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.Utilities
 
-/** Row of round fixed-zoom-level buttons (1x/2x/3x/5x/10x) for the round-video recorder. */
 class ZoomLevelButtonsView(context: Context) : LinearLayout(context) {
 
     private var onLevel: Utilities.Callback<Float>? = null
@@ -65,8 +64,7 @@ class ZoomLevelButtonsView(context: Context) : LinearLayout(context) {
     }
 
     private fun applyStyle(button: TextView, selected: Boolean) {
-        // a dark fill would blend into the (usually near-black) camera preview behind it,
-        // so unselected pills stay white-tinted too, just fainter than the selected one.
+        // entiny: unselected pills stay translucent white to contrast with dark camera previews
         button.setTextColor(if (selected) Color.BLACK else Color.WHITE)
         button.background = GradientDrawable().apply {
             shape = GradientDrawable.OVAL

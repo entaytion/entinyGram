@@ -35,9 +35,7 @@ object NotificationsHelper {
             || ParanoiaHelper.isHidden(messageObject.currentAccount, messageObject.dialogId)
     }
 
-    // Stock's `NotificationsController.wearNotificationsIds` (dialogId -> notification id) is the only record of
-    // what is on screen, and every cancel path diffs against it — but it is in-memory only, while posted
-    // notifications outlive the process. Mirroring it to disk is what makes those cancel paths survive a restart.
+    // entiny: mirror in-memory wearNotificationsIds to disk so stock cancel paths survive process restart
     private fun getWearIdsKey(account: Int) = "wear_ids_$account"
 
     @JvmStatic
@@ -53,14 +51,7 @@ object NotificationsHelper {
         }
     }
 
-    // Every showOrUpdateNotification re-notify()s ALL per-chat notifications, and notification bridges
-    // (Mi Fitness etc.) re-forward every onNotificationPosted without deduping by key or respecting
-    // FLAG_ONLY_ALERT_ONCE — so unchanged reposts must be skipped on our side.
-    //
-    // Signatures are keyed by dialogId+topicId, NOT by the Android notification id: stock derives that id
-    // from dialogId alone, so two forum topics of the same supergroup collide on it and one topic's
-    // notification would be silently skipped as "unchanged" against the other topic's signature.
-    // Per-account maps are only touched from that account's notificationsQueue.
+    // entiny: dedupe reposts because bridges like Mi Fitness re-alert on unchanged onNotificationPosted calls
     private val postedSignatures = ConcurrentHashMap<Int, MutableMap<String, String>>()
 
     @JvmStatic
@@ -93,8 +84,6 @@ object NotificationsHelper {
         return false
     }
 
-    // Cancel paths only know the dialogId (stock's wearNotificationsIds is dialog-keyed), so drop every
-    // topic's signature for that dialog.
     @JvmStatic
     fun removePostedSignatures(account: Int, dialogId: Long) {
         val map = postedSignatures[account] ?: return
@@ -112,7 +101,7 @@ object NotificationsHelper {
         val key = getWearIdsKey(account)
         val stored = (0 until ids.size()).joinToString(",") { "${ids.keyAt(it)}:${ids.valueAt(it)}" }
         if (prefs.getString(key, "") == stored) return
-        // commit: this races a process death that may come right after posting the notifications
+        // entiny: synchronous commit avoids losing wear id state if process dies right after posting
         prefs.edit(commit = true) {
             if (stored.isEmpty()) remove(key) else putString(key, stored)
         }

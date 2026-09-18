@@ -12,7 +12,6 @@ import org.telegram.tgnet.TLRPC
 import java.io.File
 
 object MediaSendDebugHelper {
-    // outgoing temp files (converted videos, generated thumbs) are all named <Integer.MIN_VALUE>_<localId>.<ext>
     private val LOCAL_PREFIX = "${Int.MIN_VALUE}_"
 
     private const val MAX_LISTED_MESSAGES = 20

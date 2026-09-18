@@ -22,9 +22,7 @@ object TwoFingerSelectHelper {
     ) {
         private var active = false
 
-        // two fingers just landed: wait to tell a deliberate select-swipe (fingers move together)
-        // apart from an incidental touch, a pinch-to-zoom (fingers spread), or a 3rd finger
-        // joining (e.g. a screenshot gesture) before committing to selection
+        // entiny: wait to distinguish deliberate swipe from pinch or 3-finger gesture
         private var pending = false
         private var startDist = 0f
         private var startCx = 0f
@@ -37,7 +35,7 @@ object TwoFingerSelectHelper {
         private val lastPos = IntArray(2) { -1 }
         private var anchorMin = 0
         private var anchorMax = 0
-        private var scrollSpeed = 0f // signed dp/frame, ramps with edge penetration; 0 = idle
+        private var scrollSpeed = 0f
         private val scrollRunnable = Runnable { runAutoScroll() }
         private val touchSlop = ViewConfiguration.get(listView.context).scaledTouchSlop.toFloat()
 
@@ -47,10 +45,6 @@ object TwoFingerSelectHelper {
             if (!InuConfig.CHAT_TWO_FINGER_SELECT.value) return false
             if (ev.actionMasked != MotionEvent.ACTION_POINTER_DOWN || ev.pointerCount != 2) return false
             if (!resolveAnchors(ev)) return false
-            // Always wait for a deliberate coordinated swipe (see dispatchPending) before
-            // committing to selection -- committing on the bare touch-down made any incidental
-            // two-finger contact (resting fingers, a 3-finger screenshot swipe's first two
-            // fingers) enter selection mode instantly.
             pending = true
             startDist = distance(ev)
             startCx = (ev.getX(0) + ev.getX(1)) / 2f
@@ -81,14 +75,11 @@ object TwoFingerSelectHelper {
         private fun dispatchPending(ev: MotionEvent): Boolean {
             when (ev.actionMasked) {
                 MotionEvent.ACTION_POINTER_DOWN -> {
-                    // a 3rd finger landing mid-gesture (e.g. a 3-finger screenshot swipe) is not
-                    // a deliberate two-finger select -- bail and let the system handle it.
                     if (ev.pointerCount > 2) pending = false
                 }
 
                 MotionEvent.ACTION_MOVE -> {
                     if (ev.pointerCount != 2) return false
-                    // zoom already engaged (slow spread crossed stock's tiny threshold) — yield to it
                     if (pinchHelper()?.isInOverlayMode == true) {
                         pending = false
                         return false
@@ -103,7 +94,7 @@ object TwoFingerSelectHelper {
                         startSelection(ev)
                         return true
                     }
-                    if (distDelta > touchSlop) pending = false // pinch wins, let stock zoom
+                    if (distDelta > touchSlop) pending = false
                 }
 
                 MotionEvent.ACTION_POINTER_UP,
@@ -131,7 +122,6 @@ object TwoFingerSelectHelper {
             updateAutoScroll()
         }
 
-        // resolve the selection anchors from the two down points; both must be over message cells
         private fun resolveAnchors(ev: MotionEvent): Boolean {
             anchorMin = Int.MAX_VALUE
             anchorMax = Int.MIN_VALUE
@@ -149,7 +139,6 @@ object TwoFingerSelectHelper {
             return true
         }
 
-        // reset stock's pinch tracking so the just-taken-over swipe doesn't leave it half-armed
         private fun cancelPinch(ev: MotionEvent) {
             val helper = pinchHelper() ?: return
             for (i in 0 until 2) {
@@ -243,7 +232,6 @@ object TwoFingerSelectHelper {
         private fun cellUnder(x: Float, y: Float): ChatMessageCell? =
             listView.findChildViewUnder(x, y) as? ChatMessageCell
 
-        // the single shared instance, reachable through any cell's delegate
         private fun pinchHelper(): PinchToZoomHelper? {
             for (i in 0 until listView.childCount) {
                 val cell = listView.getChildAt(i) as? ChatMessageCell ?: continue

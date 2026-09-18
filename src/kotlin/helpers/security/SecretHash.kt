@@ -7,8 +7,6 @@ import org.telegram.messenger.FileLog
 import org.telegram.messenger.Utilities
 import java.nio.charset.StandardCharsets
 
-// Salted SHA-256 for fork-local secrets (account passcodes, hidden-chats exit code).
-// Kept out of InuConfig/backups by design — callers store into their own prefs file.
 object SecretHash {
     private fun hash(code: String, salt: ByteArray): String {
         val pwd = code.toByteArray(StandardCharsets.UTF_8)

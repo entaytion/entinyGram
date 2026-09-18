@@ -7,9 +7,6 @@ import org.telegram.messenger.LocaleController
 import java.util.Locale
 import desu.inugram.helpers.security.ParanoiaHelper
 
-// resolves fork ("local-only") strings against the Telegram-selected locale instead of the
-// system locale. builds candidate Locales from LocaleInfo (pluralLangCode/baseLangCode/shortName,
-// to cover official + third-party packs) and picks the first whose value differs from values/.
 object LocaleHelper {
     @Volatile
     private var cachedKey: String? = null
@@ -46,7 +43,7 @@ object LocaleHelper {
         return resolve(id)
     }
 
-    // when disguised, the app name must read as stock Telegram regardless of locale.
+    // entiny: disguised app name must read as stock Telegram regardless of locale
     private fun disguiseName(key: String?): String? {
         if (!ParanoiaHelper.isDisguised()) return null
         return when (key) {

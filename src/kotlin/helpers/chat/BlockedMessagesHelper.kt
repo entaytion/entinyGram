@@ -61,16 +61,11 @@ object BlockedMessagesHelper {
             InuConfig.HIDE_CHANNEL_RECOMMENDATIONS.value
     }
 
-    // "Similar channels" discovery card Telegram injects into a channel right after you join.
-    // It is a synthetic MessageObject retyped to TYPE_JOINED_CHANNEL and rendered by
-    // ChannelRecommendationsCell, so it is dropped list-side like the other hidden types
-    // instead of patching the cell.
+    // entiny: similar channels card is synthetic TYPE_JOINED_CHANNEL; drop list-side instead of patching cell
     private fun isChannelRecommendations(messageObject: MessageObject?): Boolean =
         messageObject?.type == MessageObject.TYPE_JOINED_CHANNEL
 
-    // Gift service/action messages ("X sent you a gift", star gifts, gift codes, premium/stars/TON
-    // gifts). These render as ChatActionCell items, so hiding them is a list-level filter like the
-    // blocked/regex ones rather than a ChatActionCell patch.
+    // entiny: gift messages render as ChatActionCell; hide at list level like blocked/regex messages
     private fun isGiftMessage(messageObject: MessageObject?): Boolean {
         val action = messageObject?.messageOwner?.action ?: return false
         return action is TLRPC.TL_messageActionStarGift ||
@@ -148,8 +143,7 @@ object BlockedMessagesHelper {
                 if (!msg.isDateObject && msg.contentType != 2) activeDays.add(msg.dateKeyInt)
             }
         }
-        // single reverse pass: drop date headers with no message left in their day, and drop the
-        // unread divider if nothing real follows it — replaces the previous O(n^2) nested scans.
+        // entiny: single reverse pass replaces O(n^2) nested scans for dropping empty date headers
         var hasMessageAfter = false
         for (i in buffer.indices.reversed()) {
             val msg = buffer[i]
@@ -175,10 +169,7 @@ object BlockedMessagesHelper {
 
     private fun isBlockedMessage(messageObject: MessageObject?): Boolean {
         if (messageObject?.messageOwner == null || messageObject.storyItem != null) return false
-        // A linked channel's own post auto-crossposted into its discussion group carries the
-        // channel's peer id as both fromChatId and fwd_from.from_id (isForwardedChannelPost()).
-        // Blocking that channel/peer identity (deliberately, or via an anonymous-admin block that
-        // has no other target) must not blackout the channel's real announcements in the group.
+        // entiny: forwarded channel post carries peer id as both fromChatId and fwd_from.from_id; don't blackout real announcements
         if (messageObject.isForwardedChannelPost) return false
         if (isBlockedPeer(messageObject.currentAccount, messageObject.fromChatId)) return true
         val forwardedFrom = messageObject.messageOwner.fwd_from?.from_id ?: return false

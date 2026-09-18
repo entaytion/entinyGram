@@ -4,8 +4,6 @@ import android.os.Bundle
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.DialogsActivity
 
-/** Shared "pick one chat/contact" flow, reused by any settings screen that manages a list of
- * dialog ids (Ghost whitelist, presence watch-list, typing-spoof quick list, ...). */
 object DialogPicker {
     @JvmStatic
     fun pick(fragment: BaseFragment, onPicked: (Long) -> Unit) {

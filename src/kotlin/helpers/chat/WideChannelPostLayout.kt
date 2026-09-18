@@ -3,11 +3,6 @@ package desu.inugram.helpers.chat
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 
-/**
- * Width math for "wide" channel posts (InuConfig.WIDE_CHANNEL_POSTS) -- ported
- * from exteraless (https://github.com/exteraless/exteraless), app/exteraless/chats/WideChannelPostLayout.java.
- * Pure math, no view/state dependencies, so it ports as-is.
- */
 object WideChannelPostLayout {
     private const val OUTER_INSET_DP = 9
     private const val MEDIA_BACKGROUND_CONTENT_INSET_DP = 8
@@ -25,14 +20,12 @@ object WideChannelPostLayout {
         return maxOf(dp(1f), backgroundWidth(viewportWidth, leadingInset, false) - dp(31f))
     }
 
-    /** Content width given an already-computed background width. */
     @JvmStatic
     fun mediaContentWidthFromBackground(backgroundWidth: Int, mediaBackground: Boolean): Int {
         val contentInset = if (mediaBackground) MEDIA_BACKGROUND_CONTENT_INSET_DP else REGULAR_BACKGROUND_CONTENT_INSET_DP
         return maxOf(dp(1f), backgroundWidth - dp(contentInset.toFloat()))
     }
 
-    /** Content width computed from the viewport directly (mediaBackground always false here, matching upstream). */
     @JvmStatic
     fun mediaContentWidth(viewportWidth: Int, leadingInset: Int): Int {
         return mediaContentWidthFromBackground(backgroundWidth(viewportWidth, leadingInset, false), false)

@@ -17,24 +17,15 @@ import java.io.BufferedReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-/**
- * Remote developer-badge registry (manifest fetched hourly, cached in inu_kv).
- * Writes custom-emoji id to TLRPC.User/Chat.bot_verification_icon; stock rendering handles display.
- * Never server-looks single ids (privacy), never overwrites real Telegram verification.
- */
 object BadgeRegistry {
 
-    /** Every locale the manifest and the app's own translations carry a badge string in. */
     private val LOCALES = listOf("en", "uk", "ru", "tr", "ja", "zh")
 
     data class Badge(
         val slug: String,
-        /** Keyed by language tag (see [LOCALES]); a missing key means untranslated. */
         val titles: Map<String, String>,
         val descriptions: Map<String, String>,
-        /** Bundled drawable name - the offline and Lite-mode fallback. */
         val icon: String,
-        /** Custom emoji document id, or 0 when the badge has no remote icon yet. */
         val emojiId: Long,
     )
 
@@ -45,34 +36,19 @@ object BadgeRegistry {
     private const val KV_ETAG = "badges:etag"
     private const val KV_FETCHED_AT = "badges:fetched_at"
 
-    /**
-     * Every emoji id this registry has ever written into a stock object, not just the ones in
-     * the current manifest. Without the history a revoked badge could never be cleared: the id
-     * would be gone from the manifest, [applyTo] would no longer recognise it as ours, and it
-     * would sit in the cached user blob forever looking like a genuine Telegram verification.
-     */
+    // entiny: retain all historical badge emoji ids so revoked badges can still be recognized and cleared
     private const val KV_OWNED_IDS = "badges:owned_ids"
 
     @Volatile
     private var holders: Map<Long, Badge> = bundledHolders()
 
-    /**
-     * Seeded from the compiled-in ids rather than left empty: on the very first frames, before
-     * the cached list has been read back, a user object may already carry one of our ids from
-     * the local cache. Starting empty would make [resolveIcon] mistake it for a real Telegram
-     * verification and refuse to ever clear it.
-     */
     @Volatile
     private var ownedEmojiIds: Set<Long> = holders.values.mapNotNull { it.emojiId.takeIf { id -> id != 0L } }.toSet()
 
     @Volatile
     private var loaded = false
 
-    /**
-     * Dialog ids arrive in several shapes for the same entity - positive for users, negative for
-     * chats, and channels additionally offset by 1_000_000_000_000. The manifest stores the bare
-     * id, so everything is folded to that form before lookup.
-     */
+    // entiny: fold users, chats, and channel offsets to bare ids before manifest lookup
     private fun normalizeId(rawId: Long): Long {
         var id = kotlin.math.abs(rawId)
         if (id > 1_000_000_000_000L) {
@@ -81,7 +57,6 @@ object BadgeRegistry {
         return id
     }
 
-    /** Draw-path safe: a map lookup, no I/O, no parsing, no allocation. */
     @JvmStatic
     fun badgeFor(rawId: Long): Badge? {
         if (rawId == 0L) return null
@@ -97,18 +72,11 @@ object BadgeRegistry {
     @JvmStatic
     fun localizedDescription(badge: Badge): String = pickLocalized(badge.descriptions)
 
-    /** Device language, else English, else whatever the manifest did bother to translate. */
     private fun pickLocalized(strings: Map<String, String>): String {
         val lang = LocaleController.getInstance().currentLocale?.language
         return strings[lang] ?: strings["en"] ?: strings.values.firstOrNull { it.isNotEmpty() }.orEmpty()
     }
 
-    /**
-     * The badge is drawn through stock's own bot-verification rendering (see the class doc), which
-     * has no click handling of its own for it - tapping it used to fall through to whatever
-     * happened to sit underneath (the avatar, the header), popping an unrelated bulletin. Wired
-     * from [org.telegram.ui.ProfileActivity]'s bot-verification leftDrawable click.
-     */
     @JvmStatic
     fun showInfoBulletin(fragment: org.telegram.ui.ActionBar.BaseFragment?, rawId: Long) {
         if (fragment == null) return
@@ -132,33 +100,15 @@ object BadgeRegistry {
         chat.bot_verification_icon = resolveIcon(-chat.id, chat.bot_verification_icon)
     }
 
-    /**
-     * Decide what `bot_verification_icon` should hold. Returns [current] untouched whenever it
-     * carries a real Telegram verification, so a badge of ours can never hide one of theirs.
-     */
     private fun resolveIcon(rawId: Long, current: Long): Long {
         if (current != 0L && !ownedEmojiIds.contains(current)) {
             return current
         }
-        // Turning the setting off has to clear ids already written, not just stop writing new
-        // ones - the field survives in the cached user blob otherwise.
+        // entiny: hide dev badges must clear existing ids, not just stop writing new ones
         if (InuConfig.HIDE_DEV_BADGES.value) return 0L
         return badgeFor(rawId)?.emojiId ?: 0L
     }
 
-    /**
-     * Re-runs [resolveIcon] over everything MessagesController is already holding, then asks the
-     * UI to redraw.
-     *
-     * Needed because [applyTo] is only ever reached from putUser/putChat, i.e. as an object
-     * *enters* the controller. Flipping [InuConfig.HIDE_DEV_BADGES] left every already-cached user
-     * and chat carrying the id it was given on the way in, and re-putting them would not have
-     * helped either - putUser() returns early when handed the same instance it already holds, so
-     * resolveIcon() would never run. The setting looked completely dead until the process was
-     * restarted and the caches were rebuilt from scratch.
-     *
-     * Call on the UI thread: it mutates objects the UI reads and then publishes a rebuild.
-     */
     @JvmStatic
     fun refreshCached() {
         for (account in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
@@ -167,27 +117,12 @@ object BadgeRegistry {
             for (user in controller.users.values) applyTo(user)
             for (chat in controller.chats.values) applyTo(chat)
         }
-        // Deliberately NOT NotificationCenter.updateInterfaces. That path updates each surface
-        // through its own incremental route, and for this field the routes run on three different
-        // clocks: the chat header drops the drawable in the frame it is told, the pill behind it
-        // eases to its new width over 320ms, and a dialog row cross-fades the badge out while
-        // rebuilding its name layout in one frame - so the badge ghosts over a name that has
-        // already moved. Every one of those is correct on its own and they still do not agree,
-        // which is what reads as the toggle glitching rather than switching.
-        //
-        // reloadInterface rebuilds the fragments outright, so the whole UI arrives in the new
-        // state at once with nothing left mid-animation. It is what the other appearance toggles
-        // in this fork already use, and rebuildAllFragments() skips the topmost fragment, so the
-        // settings page the switch lives on does not flicker under the finger.
+        // entiny: reloadInterface avoids desynced animation clocks across chat header, pill, and dialog row
         AndroidUtilities.runOnUIThread {
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
         }
     }
 
-    /**
-     * Loads the cached manifest and refreshes it when stale. Cheap to call repeatedly - the
-     * first call wins and the rest return immediately.
-     */
     @JvmStatic
     fun init(account: Int) {
         if (loaded) return
@@ -215,7 +150,6 @@ object BadgeRegistry {
 
     private fun refresh(account: Int, etag: String?) {
         val (status, body, newEtag) = runCatching { fetch(etag) }.getOrElse {
-            // Offline, DNS blocked, host down - the cached manifest (or the bundled list) stands.
             return
         }
         if (status == 304) {
@@ -291,7 +225,6 @@ object BadgeRegistry {
         }
     }
 
-    /** Returns null on malformed input so a bad deploy leaves the previous list in place. */
     private fun parse(body: String): Map<Long, Badge>? = runCatching {
         val root = JSONObject(body)
         val badgesJson = root.getJSONArray("badges")
@@ -305,7 +238,7 @@ object BadgeRegistry {
                 titles = localeStrings(o.optJSONObject("title")),
                 descriptions = localeStrings(o.optJSONObject("description")),
                 icon = o.optString("icon"),
-                // Sent as a string: a document id does not survive a JSON double intact.
+                // entiny: parse as string because a 64-bit document id does not survive a JSON double intact
                 emojiId = o.optString("emojiId").toLongOrNull() ?: 0L,
             )
         }
@@ -321,7 +254,6 @@ object BadgeRegistry {
         if (result.isEmpty()) null else result
     }.getOrNull()
 
-    /** Reads whichever of [LOCALES] the manifest actually set; skips the rest instead of storing "". */
     private fun localeStrings(obj: JSONObject?): Map<String, String> {
         if (obj == null) return emptyMap()
         val map = HashMap<String, String>(LOCALES.size)
@@ -332,17 +264,6 @@ object BadgeRegistry {
         return map
     }
 
-    /**
-     * Compiled-in fallback so a fresh install shows badges before its first fetch and an
-     * offline one keeps showing them. This used to be a hand-typed `hashMapOf` here that had
-     * to be kept in sync with the database by eyeballing a diff every time a badge or holder
-     * changed on entaytion-is.a.dev - the two lists had already drifted (a holder present in
-     * the database was missing here). Instead this parses the same manifest shape [parse]
-     * reads over the network, from a JSON snapshot bundled as a raw resource.
-     *
-     * Refresh it with `bun run scripts/sync-badges-bundle.ts` after changing badges/holders
-     * on the server - not by hand-editing Kotlin.
-     */
     private fun bundledHolders(): Map<Long, Badge> {
         val json = runCatching {
             ApplicationLoader.applicationContext

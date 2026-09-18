@@ -25,10 +25,6 @@ import java.io.FileOutputStream
 import java.io.RandomAccessFile
 import kotlin.math.roundToInt
 
-/**
- * Font roster storage: imported families, system fonts, order, hidden flags (index.json + <id>/pack.json + font files).
- * FontHelper queries this for font data; storage at filesDir/inu_fonts/. FontId is built-in/font:<id>/sys:<name>.
- */
 object FontLibrary {
     private const val TAG = "InuFonts"
     private const val DIR = "inu_fonts"
@@ -36,7 +32,6 @@ object FontLibrary {
     private const val MANIFEST = "pack.json"
     private const val STAGING = ".staging"
 
-    // 8K (the stdlib default) means ~1600 read+write syscall pairs per 13MB face file
     private const val COPY_BUFFER = 256 * 1024
 
     data class Face(
@@ -49,7 +44,6 @@ object FontLibrary {
         val wghtMax: Int,
     )
 
-    /** One imported font family (a directory with a manifest + face files). */
     class Family(
         val id: String,
         val dir: File,
@@ -57,9 +51,8 @@ object FontLibrary {
         val faces: List<Face>,
     ) {
         private val cache = HashMap<String, Typeface>()
-        private var cachedScripts: Set<Script>? = null // faces are immutable, so the OS/2 scan is one-shot
+        private var cachedScripts: Set<Script>? = null
 
-        // imported faces store a name relative to [dir]; system faces store an absolute path.
         private fun faceFile(f: Face): File = File(f.file).let { if (it.isAbsolute) it else File(dir, f.file) }
 
         @Synchronized
@@ -90,12 +83,9 @@ object FontLibrary {
                 return null
             }
 
-            // synthesize italic / weight tweaks when the picked face doesn't match exactly
             val needSynth = (targetItalic && !pick.italic) ||
                 (!pick.variable && pick.weight != targetWeight)
-            // Telegram's "bold" is Medium (500); Typeface.create(weight) only emboldens at a large delta,
-            // so a font whose heaviest face is lighter than the request would render bold ≈ regular. The
-            // style API fake-bolds reliably — use it when an emphasis weight (≥500) can't be satisfied.
+            // entiny: Telegram's bold is 500; fake-bold via style API when emphasis weight cannot be satisfied
             val fakeBold = !pick.variable && targetWeight >= 500 && pick.weight < targetWeight
             val finalTf = if (needSynth && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 try {
@@ -118,7 +108,6 @@ object FontLibrary {
             pool.firstOrNull { it.variable && targetWeight in it.wghtMin..it.wghtMax }
                 ?.let { return it }
 
-            // css font-matching algorithm by weight
             val sorted = pool.sortedBy { it.weight }
             return when {
                 targetWeight in 400..500 ->
@@ -136,10 +125,6 @@ object FontLibrary {
             }
         }
 
-        /**
-         * (style label, typeface) per face — for the disabled face list shown in the tap menu.
-         * Collapsed by label so a variable family doesn't render dozens of identical "Variable" rows.
-         */
         @Synchronized
         fun faceInfos(): List<Pair<String, Typeface?>> {
             val seen = HashSet<String>()
@@ -178,7 +163,6 @@ object FontLibrary {
             }
         }
 
-        /** Best-matching face as a [Font] (style pinned to the request) for use in a font stack. */
         @RequiresApi(Build.VERSION_CODES.Q)
         @Synchronized
         fun fontFor(targetWeight: Int, targetItalic: Boolean): Font? {
@@ -202,7 +186,6 @@ object FontLibrary {
             }
         }
 
-        /** True if no face reaches [weight] (so emphasis at that weight must be synthesized). */
         @Synchronized
         fun lacksWeight(weight: Int, italic: Boolean): Boolean {
             val pick = pickBestFace(weight, italic) ?: return false
@@ -210,7 +193,6 @@ object FontLibrary {
             return pick.weight < weight
         }
 
-        /** Which styles the family's faces actually provide — drives the "synthesized style" warnings. */
         @Synchronized
         fun styleCoverage(): StyleCoverage {
             var regular = false
@@ -227,7 +209,6 @@ object FontLibrary {
             return StyleCoverage(regular, bold, upright, italic)
         }
 
-        /** Declared script coverage (OS/2 ranges) unioned over the face files. Does file I/O. */
         @Synchronized
         fun scriptCoverage(): Set<Script> {
             cachedScripts?.let { return it }
@@ -242,14 +223,11 @@ object FontLibrary {
         }
     }
 
-    // importing parses & rewrites multi-MB files for tens of seconds; a shared queue would stall
-    // every other subsystem posting to it meanwhile
+    // entiny: dedicated thread pool so multi-MB font parsing and rewriting does not stall shared queues
     val importQueue: DispatchQueue by lazy { DispatchQueue("inuFontImport") }
 
     private var rootDir: File? = null
     private val families = LinkedHashMap<String, Family>()
-
-    // discovered device system fonts (keyed by family name), independent of the include-system toggle.
     private val systemFamilies = LinkedHashMap<String, Family>()
 
     @Volatile
@@ -262,14 +240,11 @@ object FontLibrary {
 
     private val lock = Any()
 
-    /** Loads the imported-font roster from disk. System fonts bootstrap separately (see [FontHelper.init]). */
     fun loadStorage(context: Context) {
         rootDir = File(context.filesDir, DIR).apply { mkdirs() }
         migrateLegacy()
         load()
     }
-
-    // ---- loading / persistence -------------------------------------------------------------
 
     private fun load() {
         val dir = rootDir ?: return
@@ -282,8 +257,6 @@ object FontLibrary {
         val (saved, savedHidden) = readIndex()
         val roster: MutableList<FontId> = saved ?: builtinIds.toMutableList()
 
-        // reconcile: keep saved order, drop font tokens whose dir is gone, append newly-found families,
-        // then append any current built-in missing from the roster (e.g. added in an app update)
         val seenFonts = HashSet<String>()
         val cleaned = ArrayList<FontId>(roster.size)
         for (tok in roster) {
@@ -356,16 +329,12 @@ object FontLibrary {
         File(sub, MANIFEST).writeText(root.toString())
     }
 
-    /**
-     * Some Google Fonts downloads (notably Google Sans variable) carry a reasonable line box but a wildly
-     * oversized safety bbox/win box. Android can let those outer boxes leak into text metrics, which shifts
-     * Telegram text and makes emoji spans huge. Replace pathological vertical metrics with stock UI ratios.
-     */
+    // entiny: patch pathological vertical metrics leaking from oversized win box into Android text metrics
     private fun normalizeVerticalMetrics(file: File) {
         try {
             RandomAccessFile(file, "rw").use { raf ->
                 when (val magic = raf.readInt()) {
-                    0x74746366 -> Unit // TTC checkSumAdjustment is per-face; skip rather than risk corrupting it.
+                    0x74746366 -> Unit // entiny: TTC checkSumAdjustment is per-face; skip to avoid corruption
 
                     0x00010000, 0x4F54544F, 0x74727565 -> {
                         if (normalizeFaceVerticalMetrics(raf, 0)) {
@@ -398,9 +367,9 @@ object FontLibrary {
             val off = raf.readInt()
             val length = raf.readInt()
             when (tag) {
-                0x4F532F32 -> os2 = SfntTable(recordOffset, off, length) // OS/2
-                0x68656164 -> head = SfntTable(recordOffset, off, length) // head
-                0x68686561 -> hhea = SfntTable(recordOffset, off, length) // hhea
+                0x4F532F32 -> os2 = SfntTable(recordOffset, off, length)
+                0x68656164 -> head = SfntTable(recordOffset, off, length)
+                0x68686561 -> hhea = SfntTable(recordOffset, off, length)
             }
         }
         val os2Table = os2 ?: return false
@@ -560,7 +529,6 @@ object FontLibrary {
         return sum.toInt()
     }
 
-    /** Returns (roster entries or null if absent, hidden entry set). */
     private fun readIndex(): Pair<MutableList<FontId>?, Set<FontId>> {
         val dir = rootDir ?: return null to emptySet()
         val f = File(dir, INDEX)
@@ -580,7 +548,6 @@ object FontLibrary {
 
     private fun saveRoster() {
         val dir = rootDir ?: return
-        // snapshot under the lock so JSONArray doesn't iterate a list being mutated on another thread
         val (rosterSnapshot, hiddenSnapshot) = synchronized(lock) {
             rosterFonts.map { it.token() } to hiddenFonts.map { it.token() }
         }
@@ -596,9 +563,7 @@ object FontLibrary {
         }
     }
 
-    /** Pre-multi-family installs stored a single pack at `inu_fonts/pack.json`; fold it into a family dir. */
     private fun migrateLegacy() {
-        // todo: remove a few versions later
         val dir = rootDir ?: return
         val legacy = File(dir, MANIFEST)
         if (!legacy.isFile) return
@@ -608,7 +573,6 @@ object FontLibrary {
             if (f.isFile && f.name != INDEX) {
                 val dst = File(sub, f.name)
                 if (!f.renameTo(dst)) {
-                    // cross-volume / locked file — fall back to copy + delete so the pack isn't orphaned
                     try {
                         f.copyTo(dst, overwrite = true)
                         f.delete()
@@ -631,21 +595,11 @@ object FontLibrary {
         return id
     }
 
-
-    /**
-     * Editor roster entries in display order, including hidden ones. System fonts are filtered out while
-     * the include-system toggle is off.
-     */
     fun getCachedRoster(): List<FontId> = synchronized(lock) {
         if (FontConfig.FONT_INCLUDE_SYSTEM.value) rosterFonts.toList()
         else rosterFonts.filter { it !is FontId.System }
     }
 
-    /**
-     * Restores the default editor order: built-ins first (in their natural order), then system
-     * families in allowlist order, then imported families in import order (family ids are
-     * time-ordered). Keeps hidden flags untouched.
-     */
     fun resetOrder() {
         synchronized(lock) {
             val familyIds = families.keys.sorted()
@@ -667,14 +621,12 @@ object FontLibrary {
         }
     }
 
-    /** Display name for any roster entry: imported family, device system font, or built-in. */
     fun getFontName(fontId: FontId): String = when (fontId) {
         is FontId.System -> fontId.name
         is FontId.Family -> synchronized(lock) { families[fontId.id]?.name } ?: fontId.id
         is FontId.Builtin -> getBuiltinName(fontId.key) ?: fontId.key
     }
 
-    /** Preview typeface for any roster entry (null below API P). */
     fun getTypefaceFor(fontId: FontId): Typeface? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
         return when (fontId) {
@@ -689,7 +641,6 @@ object FontLibrary {
         return getTypefaceFor(FontId.parse(token))
     }
 
-    /** (style label, typeface) per face for an imported or system roster entry. */
     fun getFontFaces(fontId: FontId): List<Pair<String, Typeface?>> {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return emptyList()
         return getFontFamily(fontId)?.faceInfos() ?: emptyList()
@@ -706,7 +657,6 @@ object FontLibrary {
 
     fun setRoster(fonts: List<FontId>) {
         synchronized(lock) {
-            // keep system fonts hidden from the reorder list (toggle off) so they aren't dropped
             val missing = rosterFonts.filter { it !in fonts && it is FontId.System }
             rosterFonts = (fonts + missing).toMutableList()
             val reordered = LinkedHashMap<String, Family>()
@@ -722,11 +672,6 @@ object FontLibrary {
 
     class ImportResult(val addedFaces: Int, val rejectedBySystem: Int)
 
-    /**
-     * Imports the given URIs, grouping faces by family name. Files whose family matches an existing
-     * family (or each other) merge into one entry instead of creating duplicates. Returns the number
-     * of face entries added plus the number of files Android's font engine rejected.
-     */
     fun importFromUris(context: Context, uris: List<Uri>): ImportResult {
         val dir = rootDir ?: run {
             FileLog.d("$TAG: importFromUris: rootDir not initialized")
@@ -735,7 +680,6 @@ object FontLibrary {
         val staging = File(dir, STAGING).apply { mkdirs() }
         val cr = context.contentResolver
 
-        // 1. save + parse each file, tagging it with its (majority) family name
         val staged = ArrayList<StagedFile>()
         var rejected = 0
         for ((i, uri) in uris.withIndex()) {
@@ -784,7 +728,6 @@ object FontLibrary {
         val variable get() = faces.any { it.variable }
     }
 
-    /** True when Android's font engine accepts the file — [SfntParser] is far more lenient than Minikin. */
     fun isLoadableBySystem(file: File): Boolean {
         val loadable = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) Typeface.Builder(file).build() != null
@@ -840,30 +783,23 @@ object FontLibrary {
     }
 
     private fun mergeStagedFiles(dir: File, staging: File, staged: List<StagedFile>): Int {
-        // 2. bucket files by family name; files with no name each get their own bucket
         val buckets = LinkedHashMap<String, MutableList<StagedFile>>()
         for (s in staged) {
             val key = s.family?.lowercase() ?: " ${s.file.name}"
             buckets.getOrPut(key) { mutableListOf() }.add(s)
         }
 
-        // 3. merge each bucket into a matching existing family, or create a new one
         var addedFaces = 0
         for ((_, group) in buckets) {
             val familyName = group.firstNotNullOfOrNull { it.family }
             try {
-                // resolve `existing` under lock; reading the LinkedHashMap concurrently with mutations is unsafe.
                 val existing = synchronized(lock) {
                     familyName?.let { name -> families.values.firstOrNull { it.name.equals(name, ignoreCase = true) } }
                 }
                 val targetId = existing?.id ?: newId()
                 val targetDir = existing?.dir ?: File(dir, targetId).apply { mkdirs() }
-                // use in-memory faces from the loaded Family — re-reading the manifest here would
-                // silently drop every existing face if the file is momentarily corrupted/unreadable.
                 val faces = existing?.faces?.toMutableList() ?: mutableListOf()
 
-                // counter ensures unique destination names even when called twice in the same nanosecond
-                // or when faces.size collides with a previously-imported file name.
                 var nameCounter = 0
                 for (s in group) {
                     var name: String
@@ -881,7 +817,6 @@ object FontLibrary {
                             continue
                         }
                     }
-                    // replace any existing face with the same weight/italic; drop its blob if now orphaned
                     val incomingKeys = s.faces.mapTo(HashSet()) { it.weight to it.italic }
                     val replaced = faces.filter { (it.weight to it.italic) in incomingKeys }
                     if (replaced.isNotEmpty()) {
@@ -906,12 +841,10 @@ object FontLibrary {
                 }
                 FileLog.d("$TAG: mergeStagedFiles: family=$familyName id=$targetId faces=${faces.size} existing=${existing != null}")
                 synchronized(lock) {
-                    families[targetId] = refreshed // replaces (refreshes cache) or adds
+                    families[targetId] = refreshed
                     if (existing == null) {
                         rosterFonts.add(FontId.Family(targetId))
                     } else {
-                        // re-importing into an existing (possibly hidden) family makes it visible again,
-                        // otherwise the user's new faces are silently missing from the editor.
                         hiddenFonts.remove(FontId.Family(targetId))
                     }
                 }
@@ -935,7 +868,6 @@ object FontLibrary {
             f
         }
         (fam?.dir ?: rootDir?.let { File(it, id) })?.deleteRecursively()
-        // drop the removed family from the app-font fallback stack so it doesn't dangle
         (FontConfig.FONT.value as? FontConfig.FontMode.Custom)?.takeIf { tok in it.fallbacks }?.let {
             FontConfig.FONT.value = it.copy(fallbacks = it.fallbacks - tok)
         }
@@ -963,11 +895,9 @@ object FontLibrary {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun discoverSystemFonts(): LinkedHashMap<String, Family> {
-        // adapted from stock
         val discovered = LinkedHashMap<String, Family>()
         try {
             val byFamily = LinkedHashMap<String, MutableList<Face>>()
-            // some families say the same file a bunch of times
             val seenFiles = HashSet<String>()
             for (font in SystemFonts.getAvailableFonts()) {
                 val file = font.file ?: continue
@@ -982,7 +912,6 @@ object FontLibrary {
                     faces.add(Face(file.absolutePath, r.ttcIndex, r.weight, r.italic, r.variable, r.wghtMin, r.wghtMax))
                 }
             }
-            // preserve allowlist order so the roster is stable across devices
             for (name in PaintTypeface.preferable) {
                 val faces = byFamily[name] ?: continue
                 discovered[name] = Family(name, rootDir ?: File(name), name, faces)
@@ -993,8 +922,7 @@ object FontLibrary {
         return discovered
     }
 
-    // notify=false for the blocking startup path: NotificationCenter isn't initialized during
-    // ApplicationLoader.onCreate (posting NPEs), and there's no open editor to refresh yet anyway.
+    // entiny: notify=false on startup because NotificationCenter is uninitialized during ApplicationLoader.onCreate
     private fun applySystemFonts(discovered: LinkedHashMap<String, Family>, notify: Boolean) {
         synchronized(lock) {
             systemFamilies.clear()
@@ -1007,15 +935,12 @@ object FontLibrary {
         if (notify) invalidateEditorRoster()
     }
 
-    /** Reconciles system fonts into the roster: prune vanished families, insert newly-found ones. */
-    private fun mergeSystemFonts() { // caller holds lock
+    private fun mergeSystemFonts() {
         rosterFonts.removeAll { it is FontId.System && it.name !in systemFamilies }
         hiddenFonts.removeAll { it is FontId.System && it.name !in systemFamilies }
         for (name in systemFamilies.keys) {
             val tok = FontId.System(name)
             if (tok in rosterFonts) continue
-            // default grouping is stock → system → custom, so slot new system fonts before the first
-            // imported family (allowlist order is preserved as each insert pushes the anchor right)
             val insertAt = rosterFonts.indexOfFirst { it is FontId.Family }
             if (insertAt < 0) rosterFonts.add(tok) else rosterFonts.add(insertAt, tok)
         }
@@ -1023,14 +948,12 @@ object FontLibrary {
 
     private fun getSystemFamily(name: String): Family? = synchronized(lock) { systemFamilies[name] }
 
-    /** Imported / system family typeface at the requested style; null for built-in or unknown fonts. */
     fun getFamilyTypeface(fontId: FontId, weight: Int, italic: Boolean): Typeface? = when (fontId) {
         is FontId.Family -> synchronized(lock) { families[fontId.id] }?.resolve(weight, italic)
         is FontId.System -> getSystemFamily(fontId.name)?.resolve(weight, italic)
         is FontId.Builtin -> null
     }
 
-    /** Imported / system family best face as a [Font]; null for built-in or unknown fonts. */
     @RequiresApi(Build.VERSION_CODES.Q)
     fun getFont(fontId: FontId, weight: Int, italic: Boolean): Font? = when (fontId) {
         is FontId.Family -> synchronized(lock) { families[fontId.id] }?.fontFor(weight, italic)
@@ -1038,7 +961,6 @@ object FontLibrary {
         is FontId.Builtin -> null
     }
 
-    // todo: mainly used for legacy migration, remove
     fun containsFamily(id: String): Boolean = synchronized(lock) { families.containsKey(id) }
     fun hasAnyFamily(): Boolean = synchronized(lock) { families.isNotEmpty() }
     fun firstFamilyId(): String? = synchronized(lock) { families.keys.firstOrNull() }
@@ -1047,8 +969,7 @@ object FontLibrary {
         PaintTypeface.BUILT_IN_FONTS.map { FontId.Builtin(it.key) }
     }
 
-    // resolve from the static list, NOT PaintTypeface.find() — find() searches the live editor roster,
-    // which omits hidden fonts, so a hidden built-in would fail to resolve its name/typeface.
+    // entiny: resolve from static list because PaintTypeface.find omits hidden fonts from live roster
     private fun getBuiltinFont(key: String): PaintTypeface? =
         if (key.isEmpty()) null else PaintTypeface.BUILT_IN_FONTS.firstOrNull { it.key == key }
 
@@ -1056,7 +977,6 @@ object FontLibrary {
 
     fun getBuiltinName(key: String): String? = getBuiltinFont(key)?.name
 
-    /** A built-in editor font selected as the app font: weight/italic synthesized from its base face. */
     fun getBuiltinTypeface(key: String, weight: Int, italic: Boolean): Typeface? {
         val base = getBuiltinFont(key)?.typeface ?: return null
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) Typeface.create(base, weight, italic) else base
@@ -1064,21 +984,14 @@ object FontLibrary {
 
     internal fun getStyleCoverageFor(fontId: FontId): StyleCoverage? = getFontFamily(fontId)?.styleCoverage()
 
-    /** Parses font files. Call off the main thread. */
     internal fun getScriptCoverageFor(fontId: FontId): Set<Script>? = getFontFamily(fontId)?.scriptCoverage()
 
-    // ---- media editor ----------------------------------------------------------------------
-
-    // Bumped (UI thread only) whenever the editor roster changes; in-flight PaintTypeface roster
-    // builds compare against it at commit time and drop stale results.
     @Volatile
     private var rosterGeneration = 0
 
-    /** True if no roster change happened since [generation] was handed out by [buildEditorRoster]. */
     @JvmStatic
     fun isRosterCurrent(generation: Int): Boolean = generation == rosterGeneration
 
-    /** Drops PaintTypeface's cached list so the next get() rebuilds it; lets an open editor refresh live. */
     fun invalidateEditorRoster() {
         rosterGeneration++
         PaintTypeface.typefaces = null
@@ -1088,8 +1001,6 @@ object FontLibrary {
 
     fun getEditorTypeface(id: String): Typeface? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
-        // pull the Family out under lock, then resolve outside (Family.resolve has its own lock and
-        // does file I/O — holding the outer lock here would serialize unrelated readers).
         val family = synchronized(lock) { families[id] } ?: return null
         return family.resolve(400, false)
     }
@@ -1099,19 +1010,11 @@ object FontLibrary {
         return getSystemFamily(name)?.resolve(400, false)
     }
 
-    // Builds the editor's PaintTypeface list from the roster. `load()` prunes `font:$id` tokens whose
-    // family is gone, so by the time we read them here every imported entry resolves; Typeface
-    // construction is deferred to LazyTypeface so opening the editor doesn't read every font file.
-    // Returns the roster generation for the caller's [isRosterCurrent] check at commit time.
     @JvmStatic
     fun buildEditorRoster(out: ArrayList<PaintTypeface>): Int {
-        // kick off system-font discovery if not done — completion invalidates and rebuilds
         ensureSystemFontsLoaded()
-        // generation first: a bump between here and the snapshot makes the build look stale, which
-        // only costs a redundant rebuild — capturing after could commit a genuinely stale roster
         val gen = rosterGeneration
         val includeSystem = FontConfig.FONT_INCLUDE_SYSTEM.value
-        // snapshot fontIds + names atomically so a concurrent removeFamily doesn't desync them
         val (fontIds, names, systemNames) = synchronized(lock) {
             Triple(
                 rosterFonts.filter { it !in hiddenFonts && (includeSystem || it !is FontId.System) },

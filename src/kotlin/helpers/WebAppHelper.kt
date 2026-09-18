@@ -17,7 +17,6 @@ import org.telegram.ui.bots.WebViewRequestProps
 
 
 object WebAppHelper {
-    // using a bot seems to be the the easiest way to force a webview
     const val HELPER_BOT_USERNAME = "inu_helper_bot"
     const val HELPER_BOT_ID = 8589894659L
     const val TYPE_TLV = 1
@@ -43,9 +42,7 @@ object WebAppHelper {
         })
     }
 
-    // serialized message without attach path. stack-inspection monkeypatch —
-    // we can't actually override Message.writeAttachPath without a hooking lib,
-    // so we no-op the writes it would issue when we detect it in the stack.
+    // entiny: no-op writeAttachPath writes detected via stack inspection to avoid writing attach path without a hooking lib
     class CleanSerializedData(size: Int) : SerializedData(size) {
         private fun inWriteAttachPath(): Boolean {
             val stack = Thread.currentThread().stackTrace

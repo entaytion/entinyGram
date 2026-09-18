@@ -23,7 +23,6 @@ import org.telegram.ui.Components.BulletinFactory
 object StickerDownloadHelper {
     const val MENU_OPTION_SAVE_TO_DOWNLOADS = 520
 
-    // stock ContentPreviewViewer action codes for the removal options of the sticker/emoji preview menus
     private val REMOVAL_ACTIONS = setOf(4, 5, 8)
 
     @JvmStatic

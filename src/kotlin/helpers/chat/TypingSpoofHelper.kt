@@ -7,10 +7,6 @@ import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.BaseFragment
 
-/**
- * Loops messages.setTyping so the other side perpetually sees "typing…", "recording…" or
- * "uploading…" — purely a prank/mindgame tool, session-scoped by design (no persistence).
- */
 object TypingSpoofHelper {
     const val ACTION_TYPING = 0
     const val ACTION_RECORD_AUDIO = 1
@@ -19,8 +15,7 @@ object TypingSpoofHelper {
 
     private const val RESEND_DELAY_MS = 4000L
 
-    // safety cap: if nothing ever stops the loop (crash, process kept alive in the background,
-    // a missed ChatHelper.onFragmentDestroy call), it auto-stops instead of spoofing forever.
+    // entiny: safety cap auto-stops loop if cleanup is missed
     private const val MAX_DURATION_MS = 10 * 60 * 1000L
 
     private class Loop(val account: Int, val dialogId: Long, val threadId: Long, val action: Int) {
@@ -38,12 +33,7 @@ object TypingSpoofHelper {
 
     private val active = HashMap<Long, Loop>()
 
-    /**
-     * Stock's [MessagesController.sendTyping] silently no-ops `messages.setTyping` for
-     * broadcast channels (non-megagroup) — subscribers never see a "typing" indicator on a
-     * channel post, so there's nothing to spoof there. Megagroups (channel-flagged but with
-     * `megagroup = true`) behave like regular groups and are unaffected.
-     */
+    // entiny: stock silently no-ops sendTyping for broadcast channels
     @JvmStatic
     fun canSpoofTyping(account: Int, dialogId: Long): Boolean {
         if (dialogId >= 0) return true
@@ -76,9 +66,6 @@ object TypingSpoofHelper {
     @JvmStatic
     fun getActiveDialogIds(): List<Long> = active.keys.toList()
 
-    /** Shared action picker (Off/Typing/Recording voice/Recording round/Uploading file), used
-     * both from the chat header menu ([desu.inugram.helpers.chat.ChatActionsHelper]) and from
-     * the Stalker Pack settings quick-launch list — same UI, same behavior either way. */
     @JvmStatic
     fun showPicker(fragment: BaseFragment, account: Int, dialogId: Long, threadId: Long) {
         val parent = fragment.parentActivity ?: return

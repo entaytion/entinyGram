@@ -9,11 +9,7 @@ import desu.inugram.InuConfig
 import desu.inugram.ui.drawer.DrawerSwipeController
 import org.telegram.ui.LaunchActivity
 
-/**
- * Turns a left-edge system back gesture into a drawer open, covering the part of
- * the edge that [DrawerSwipeController]'s gesture exclusion band can't reach —
- * the platform caps exclusion at 200dp per edge. The right edge keeps plain back.
- */
+// entiny: route left-edge predictive back to drawer open because platform caps gesture exclusion at 200dp
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 object DrawerBackGesture {
 

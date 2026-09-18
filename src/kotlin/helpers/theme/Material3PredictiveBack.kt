@@ -34,7 +34,7 @@ object Material3PredictiveBack {
     private const val LAZY_START = 0.015f
     private const val MAX_SCALE = 0.9f
     private const val EDGE_MARGIN_DP = 16f
-    private const val CLOSING_ALPHA_FADE = 0.2f // leaving screen is fully faded by this much of commit progress (AOSP)
+    private const val CLOSING_ALPHA_FADE = 0.2f
     private const val COMMIT_DURATION = 450L
     private const val CANCEL_DURATION = 200L
 
@@ -78,10 +78,7 @@ object Material3PredictiveBack {
         }
 
         override fun onBackStarted(backEvent: BackEvent) {
-            // A new gesture can arrive before the previous finish animation (or gesture) has settled.
-            // Stock's onBackStarted bails out while predictiveInput is still set, so we must finalize the
-            // previous one synchronously here — relying on the animator's end-callback is racy (it may
-            // run after this), which would leave cvb un-prepared and the reveal gap unpainted (black).
+            // entiny: finalize previous predictive back synchronously to avoid nav lockup if gesture arrives before animator settles
             runningAnim?.let {
                 it.removeAllListeners()
                 it.cancel()
@@ -91,11 +88,7 @@ object Material3PredictiveBack {
             if (attached) {
                 finalizeStock(cancel = true)
             } else if (layout.predictiveInput) {
-                // Previous gesture set stock prep (we call layout.onBackStarted eagerly, before
-                // LAZY_START) but was preempted in the invisible phase — the system never delivered
-                // its cancel/invoke, so neither runningAnim nor attached reflects it. Left as-is,
-                // stock's onBackStarted below bails on the stale predictiveInput and strands
-                // startedTracking → nav locks up. Roll it back as a cancel.
+                // entiny: roll back eager stock prep if previous gesture was preempted before lazy start
                 undoStockPrep()
             }
             invoked = false
@@ -107,8 +100,6 @@ object Material3PredictiveBack {
             } else 0
             edgeMarginPx = dpf2(EDGE_MARGIN_DP)
             enterOffsetPx = dpf2(Material3BackMotion.ENTER_OFFSET_DP)
-            // Run stock's heavy prep (attach previous fragment, relayout, onResume, HW layer) during the
-            // pre-LAZY_START invisible phase so the first visible frame is just a transform.
             layout.onBackStarted(backEvent.touchX, backEvent.touchY)
         }
 
@@ -145,9 +136,6 @@ object Material3PredictiveBack {
             runFinishAnim(cancel = false)
         }
 
-        // Quick swipe that never crossed LAZY_START: stock's onBackStarted (run during our invisible
-        // phase) attached the previous fragment off-screen. Undo that without running stock's swipe
-        // commit animator, so plainBack can play the regular cross-fragment transition instead.
         private fun undoStockPrep() {
             if (!layout.predictiveInput) return
             layout.predictiveInput = false
@@ -155,11 +143,7 @@ object Material3PredictiveBack {
             endStockSlide(true)
         }
 
-        // onSlideAnimationEnd removes the off-screen fragment's view; since that view holds focus,
-        // ViewGroup re-homes it through rootViewRequestFocus() into the first focusable descendant
-        // of the outgoing container. Nothing there was focused before the gesture, and screens with
-        // focus-driven side effects (channel reactions opens its emoji panel on editText focus) act
-        // on the phantom focus. Block that subtree for the duration so focus is simply cleared.
+        // entiny: block descendant focus during onSlideAnimationEnd to prevent phantom focus on view removal
         private fun endStockSlide(cancel: Boolean) {
             val cv = layout.containerView
             val saved = cv?.descendantFocusability
@@ -178,10 +162,6 @@ object Material3PredictiveBack {
             cv.outlineProvider = outlineProvider
             cv.clipToOutline = true
 
-            // Translating cvb's children leaves the parent in place; paint it with the entering
-            // fragment's own background so the gap matches it (stock only forces white when the
-            // fragment has none — settings use gray, chat uses a wallpaper drawable), then overlay
-            // a black scrim.
             val cvb = layout.containerViewBack ?: return
             savedCvbBackground = cvb.background
             savedCvbForeground = cvb.foreground
@@ -189,8 +169,6 @@ object Material3PredictiveBack {
             cvb.background = enterBg?.constantState?.newDrawable()
                 ?: ColorDrawable(Theme.getColor(Theme.key_windowBackgroundWhite))
             cvb.foreground = scrim
-            // Promote entering children to HW layers so per-frame scale/translate is texture-only.
-            // (stock already put cv on a HW layer in prepareForMoving.)
             cvb.eachChild { it.setLayerType(View.LAYER_TYPE_HARDWARE, null) }
         }
 
@@ -202,13 +180,9 @@ object Material3PredictiveBack {
             if (w <= 0f || h <= 0f) return
 
             val scale = 1f - (1f - MAX_SCALE) * p
-            // AOSP keeps the closing window centered for a right-edge swipe and only pushes it toward
-            // the right edge for a left-edge swipe; the off-edge slide happens on commit either way.
             val maxDx = ((w - scale * w) / 2f - edgeMarginPx).coerceAtLeast(0f)
             val tx = if (swipeEdge == BackEvent.EDGE_RIGHT) 0f else maxDx * p
 
-            // Vertical follow tracks touch-Y, capped by the room the shrink frees up (0 at p=0, grows
-            // as the window shrinks) so no separate progress factor is needed.
             val deltaY = touchY - startTouchY
             val dyCap = ((h - scale * h) / 2f - edgeMarginPx).coerceAtLeast(0f)
             val ySign = if (deltaY >= 0f) 1f else -1f
@@ -223,8 +197,6 @@ object Material3PredictiveBack {
             cv.translationY = ty
             cv.invalidateOutline()
 
-            // Entering screen shrinks in sync with the closing one (same scale) at a fixed off-edge
-            // offset, then grows to full on commit.
             cvb.eachChild {
                 it.translationX = -enterOffsetPx
                 it.translationY = ty
@@ -247,13 +219,10 @@ object Material3PredictiveBack {
             val cv = layout.containerView ?: run { finalizeStock(cancel); return }
             val cvb = layout.containerViewBack ?: run { finalizeStock(cancel); return }
 
-            // Both paths scale back to full size: cancel settles in place, commit grows back to 1
-            // while sliding off-edge + fading (M3 — the leaving screen leaves at full size, not shrunk).
             val cvTargetTx = if (cancel) 0f else cv.translationX + enterOffsetPx
             val childTargetTx = if (cancel) -enterOffsetPx else 0f
 
             val first = cvb.getChildAt(0)
-            // Spatial motion rides the emphasized curve.
             val spatial = mutableListOf<Animator>(
                 ObjectAnimator.ofFloat(cv, View.SCALE_X, 1f).apply {
                     addUpdateListener { cv.invalidateOutline() }
@@ -267,8 +236,6 @@ object Material3PredictiveBack {
             )
             val animators = spatial.toMutableList()
             if (!cancel) {
-                // AOSP fades the leaving screen out over just the first CLOSING_ALPHA_FADE of progress,
-                // and the scrim linearly — both on raw progress, not the emphasized spatial curve.
                 val startScrim = scrim.alpha
                 animators += ValueAnimator.ofFloat(0f, 1f).apply {
                     interpolator = LinearInterpolator()

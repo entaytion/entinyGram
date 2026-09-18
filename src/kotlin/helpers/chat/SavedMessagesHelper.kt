@@ -34,12 +34,7 @@ object SavedMessagesHelper {
         return dir
     }
 
-    /**
-     * Where a message's media *will* live in the archive, plus the copy still to be performed.
-     * Resolving the path is a couple of stat calls; the copy itself can be hundreds of megabytes,
-     * and both capture points (an incoming deletion, an incoming edit) run on the main thread --
-     * so the copy is handed to the storage queue and only the path is decided inline.
-     */
+    // entiny: resolve archive paths on main thread but defer heavy media copies to storage queue
     private data class PendingMediaCopy(val source: File, val target: File)
 
     private fun planMediaCopy(account: Int, message: TLRPC.Message?): PendingMediaCopy? {
@@ -66,52 +61,35 @@ object SavedMessagesHelper {
         }
     }
 
-    // In-memory cache for deleted message IDs per account (account -> (dialogId -> Set<msgId>))
     private val deletedMessageIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
     private val deletedMessageDates = LongSparseArray<LongSparseArray<LongSparseArray<Long>>>()
-    // account -> (dialogId -> (msgId -> archived copy path)). Only entries with a copy are present.
-    // Read by FileLoader.getPathToMessage as a last-resort fallback when the stock cache no longer
-    // has the file (autoclean, or the user clearing cache by hand) -- must stay synchronous, no
-    // SQLite query on that path, hence keeping a full in-memory copy alongside the DB rows.
+    // entiny: keep in-memory media paths for synchronous fallback in FileLoader without SQLite queries
     private val deletedMessageMediaPaths = LongSparseArray<LongSparseArray<LongSparseArray<String>>>()
     private val loadedAccounts = HashSet<Int>()
     private val cacheLock = Any()
 
-    // In-memory cache for edit history (account -> (dialogId -> (msgId -> List<EditEntry>)))
     private val editHistoryCache = LongSparseArray<LongSparseArray<LongSparseArray<ArrayList<EditEntry>>>>()
 
-    // Presence-only index of which messages have stored edit history, loaded alongside the
-    // deleted-message cache. hasEditHistory is asked for every un-edited bubble that gets laid
-    // out (see ChatHelper.canClickTime); answering it through getEditHistory ran a SQLite query
-    // on the UI thread for each one, holding cacheLock while the storage queue needed it.
+    // entiny: presence index avoids UI-thread SQLite queries during message layout
     private val editHistoryIds = LongSparseArray<LongSparseArray<HashSet<Int>>>()
 
-    // Messages the user is deleting *for good* right now (a saved ghost being deleted a second
-    // time). The archive drops them asynchronously, but ChatActivity has to decide whether to keep
-    // the bubble on the spot, so the intent is recorded synchronously and cleared once the
-    // messagesDeleted broadcast has been dispatched.
+    // entiny: synchronous record of permanent deletions so ChatActivity drops bubbles immediately
     private val purgingMessages = HashSet<Pair<Long, Int>>()
 
-    // Messages the user explicitly opted to keep a local copy of via the delete dialog's
-    // "keep local" checkbox, recorded right before the delete request goes out and consumed by
-    // markDialogMessageAsDeleted so that single action bypasses shouldSaveForDialog/SAVE_DELETED_OWN
-    // (see markMessageDeleted's forceSave) without needing the global SAVE_DELETED_MESSAGES toggle.
+    // entiny: bypasses global toggle when user explicitly checks keep-local in delete dialog
     private val pendingKeepLocal = HashSet<Pair<Long, Int>>()
 
-    // MessageObjects built for the edit-history screen. They reuse the real message id, so the
-    // deleted-mark/transparency lookups would otherwise stamp every history row with the current
-    // message's "deleted" state. Identity-keyed and weak: entries die with the screen.
-    private val historyPreviewObjects: MutableSet<MessageObject> =
-        java.util.Collections.newSetFromMap(java.util.WeakHashMap<MessageObject, Boolean>())
+    // entiny: synthetic history rows are exempted from deleted-message styling
+    private val syntheticHistoryMessages = java.util.Collections.newSetFromMap(java.util.WeakHashMap<MessageObject, Boolean>())
 
-    // Independent shadow cache of message text/media presence, populated for every message as
-    // it's first seen off the wire (see rememberMessage), regardless of whether its chat is
-    // open or it's the dialog's current preview message. Needed because dialogMessagesByIds
-    // (stock's per-dialog cache, used as the primary edit-history source) only ever tracks each
-    // dialog's newest message -- editing any other message in an unread/unopened chat had no
-    // fallback to recover the pre-edit text from, since messages_v2 may not have a row for it
-    // yet either (see recordEditHistoryFromShadow, called when both other sources miss).
-    private const val SHADOW_CACHE_MAX_PER_ACCOUNT = 500
+    // entiny: shadow cache preserves pre-edit content when messages_v2 and stock caches miss
+    private data class ShadowMessage(val text: String, val hasMedia: Boolean, val entities: ArrayList<TLRPC.MessageEntity>? = null, val media: TLRPC.MessageMedia? = null)
+    private val shadowMessages = LongSparseArray<LongSparseArray<ShadowMessage>>()
+    private val shadowLoadedAccounts = HashSet<Int>()
+    private const val MAX_SHADOW_PER_DIALOG = 50
+
+    data class EditEntry(val text: String, val date: Int, val entities: ArrayList<TLRPC.MessageEntity>? = null, val media: TLRPC.MessageMedia? = null, val mediaPath: String? = null)
+    const val SHADOW_CACHE_MAX_PER_ACCOUNT = 500
 
     private class BoundedLinkedHashMap<K, V>(private val maxSize: Int) :
         LinkedHashMap<K, V>(16, 0.75f, true) {
@@ -128,11 +106,6 @@ object SavedMessagesHelper {
 
     private val shadowMessageCache = LongSparseArray<LinkedHashMap<Pair<Long, Int>, ShadowEntry>>()
 
-    /**
-     * One stored revision. [entities] and [media] are what make a revision render as the message
-     * it actually was -- bold/links/spoilers intact, a video as a video instead of an empty photo
-     * bubble. Rows written before the schema carried them come back with both null.
-     */
     data class EditEntry(
         val timestamp: Long,
         val text: String,
@@ -190,7 +163,6 @@ object SavedMessagesHelper {
             if (loadedAccounts.contains(account)) return
         }
 
-        // Prune stale entries before loading into memory
         val ttlDays = InuConfig.DELETED_MESSAGES_TTL.value
         if (ttlDays > 0) {
             val cutoff = System.currentTimeMillis() / 1000L - ttlDays * 86400L
@@ -198,9 +170,6 @@ object SavedMessagesHelper {
             InuDatabaseHelper.pruneEditHistory(db, cutoff)
         }
 
-        // Build the final sparse caches directly while reading the cursor. The old
-        // path materialized HashMaps first and copied them into LongSparseArrays,
-        // briefly keeping two complete representations of the cache in memory.
         val deletedArray = LongSparseArray<HashSet<Int>>()
         val dateArray = LongSparseArray<LongSparseArray<Long>>()
         InuDatabaseHelper.forEachDeletedMessageInfo(db) { dialogId, msgId, date ->
@@ -306,10 +275,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /**
-     * Manually trigger a prune pass for [account] with the current TTL setting.
-     * Safe to call from any thread; runs on the storage queue.
-     */
     @JvmStatic
     fun pruneIfNeeded(account: Int) {
         val ttlDays = InuConfig.DELETED_MESSAGES_TTL.value
@@ -320,7 +285,6 @@ object SavedMessagesHelper {
             val db = storage.database ?: return@postRunnable
             InuDatabaseHelper.pruneDeletedMessages(db, cutoff)
             InuDatabaseHelper.pruneEditHistory(db, cutoff)
-            // Invalidate in-memory cache so it's reloaded fresh on next access
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
                 synchronized(cacheLock) {
                     deletedMessageIds.remove(account.toLong())
@@ -334,11 +298,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /**
-     * Clear deleted message cache for [dialogIds] (or all if null) for [account].
-     * Saved-deleted messages are also physically removed from the chat so they disappear,
-     * not just downgraded to a "deleted" placeholder.
-     */
     private fun getChannelId(account: Int, dialogId: Long): Long {
         if (!org.telegram.messenger.DialogObject.isChatDialog(dialogId)) return 0L
         val controller = org.telegram.messenger.MessagesController.getInstance(account) ?: return 0L
@@ -346,11 +305,6 @@ object SavedMessagesHelper {
         return if (chat != null && org.telegram.messenger.ChatObject.isChannel(chat)) chat.id else 0L
     }
 
-    /**
-     * Clear deleted message cache for [dialogIds] (or all if null) for [account].
-     * Saved-deleted messages are also physically removed from the chat so they disappear,
-     * not just downgraded to a "deleted" placeholder.
-     */
     @JvmStatic
     fun clearCache(account: Int, dialogIds: Collection<Long>? = null, onDone: Runnable? = null) {
         val storage = MessagesStorage.getInstance(account) ?: return
@@ -398,11 +352,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /**
-     * Permanently removes a single saved-deleted message: drops its `inu_deleted_messages` row
-     * (so it stops being shown as a "deleted" placeholder) and the underlying `messages_v2` row
-     * (so the bubble disappears from the chat entirely), mirroring [clearCache] but scoped to one message.
-     */
     @JvmStatic
     @JvmOverloads
     fun deletePermanently(account: Int, dialogId: Long, msgId: Int, onDone: Runnable? = null) {
@@ -414,9 +363,7 @@ object SavedMessagesHelper {
     fun deletePermanently(account: Int, dialogId: Long, msgIds: List<Int>, onDone: Runnable? = null) {
         if (msgIds.isEmpty()) return
         val storage = MessagesStorage.getInstance(account) ?: return
-        // Drop them from the in-memory set first: ChatActivity decides whether a bubble stays
-        // visible by asking isMessageDeleted, and the messagesDeleted broadcast below has to
-        // find them already gone or the ghost survives its own deletion.
+        // entiny: drop from in-memory set before broadcasting deletion so ghost bubbles don't survive
         synchronized(cacheLock) {
             val ids = deletedMessageIds.get(account.toLong())?.get(dialogId)
             val dates = deletedMessageDates.get(account.toLong())?.get(dialogId)
@@ -465,13 +412,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /**
-     * Removes from [msgIds] every id that is already preserved as a saved deletion, wiping those
-     * for good instead. Deleting such a ghost through the stock path never worked: the message is
-     * already gone server-side, markMessagesAsDeleted keeps its messages_v2 row while
-     * SAVE_DELETED_MESSAGES is on, and markDialogMessageAsDeleted simply re-records it -- so the
-     * bubble always came back. Returns true when anything was purged.
-     */
     @JvmStatic
     fun extractPreserved(account: Int, dialogId: Long, msgIds: MutableList<Int>?): Boolean {
         if (msgIds.isNullOrEmpty() || !isSaveDeletedEnabled()) return false
@@ -485,7 +425,6 @@ object SavedMessagesHelper {
         return true
     }
 
-    /** Records the given ids as "keep local" for [dialogId], right before their delete request goes out. */
     @JvmStatic
     fun requestKeepLocal(dialogId: Long, msgIds: Collection<Int>) {
         if (msgIds.isEmpty()) return
@@ -494,7 +433,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /** Whether any id in [msgIds] has a pending "keep local" request for [dialogId]. */
     @JvmStatic
     fun hasPendingKeepLocal(dialogId: Long, msgIds: Collection<Int>): Boolean {
         if (msgIds.isEmpty()) return false
@@ -503,7 +441,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /** Consumes (removes) a pending "keep local" request for a single id, returning whether it was set. */
     @JvmStatic
     fun consumeKeepLocalRequest(dialogId: Long, msgId: Int): Boolean {
         synchronized(cacheLock) {
@@ -514,18 +451,12 @@ object SavedMessagesHelper {
     @JvmStatic
     @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
-        // No dialog owns id 0: this is the non-channel TL_updateDeleteMessages path (key == 0)
-        // failing to resolve the message through dialogMessagesByIds, which only holds each
-        // dialog's preview message. Such a row carries no text or sender either, and message ids
-        // restart per dialog, so keeping it would mark every unrelated chat's message of the same
-        // id as deleted.
+        // entiny: reject dialog id 0 to prevent marking matching IDs in unrelated chats as deleted
         if (dialogId == 0L) return
         if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
         if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && fromId == UserConfig.getInstance(account).clientUserId) return
         ensureAccountLoaded(account)
-        // Several paths can report the same deletion (the update, then the storage pass). The row
-        // is written with INSERT OR REPLACE, so a later report carrying no text must not overwrite
-        // the one that had it.
+        // entiny: prevent empty text from subsequent delete reports overwriting preserved text
         val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
         if (alreadyRecorded && text.isNullOrEmpty() && message?.media == null) return
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
@@ -556,9 +487,6 @@ object SavedMessagesHelper {
             }
             dateDialog.put(msgId.toLong(), deletionTime)
 
-            // The copy itself is still pending on the storage queue below; the entry just
-            // means "check this path", and getArchivedMediaPath's own File.exists() covers
-            // the gap until runMediaCopy actually finishes writing it.
             if (mediaPath != null) {
                 var mediaAcc = deletedMessageMediaPaths.get(account.toLong())
                 if (mediaAcc == null) {
@@ -582,14 +510,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /**
-     * Whether the chat should keep showing this message after its deletion.
-     *
-     * Recording is asynchronous -- for a private chat the dialog id is not even known until
-     * MessagesStorage resolves it against `messages_v2` -- so asking [isMessageDeleted] here loses
-     * the race and the bubble disappears before the archive learns about it. This answers from the
-     * same rules the recorder uses, synchronously.
-     */
     @JvmStatic
     fun isPreservedOrWillBe(account: Int, msg: MessageObject?): Boolean {
         if (msg == null) return false
@@ -604,16 +524,7 @@ object SavedMessagesHelper {
         return true
     }
 
-    /**
-     * Records a batch of deletions using the dialog ids MessagesStorage resolved from
-     * `messages_v2`.
-     *
-     * The update path cannot do this itself: `TL_updateDeleteMessages` carries no peer, so the
-     * controller falls back to `dialogMessagesByIds`, which only ever holds each dialog's newest
-     * message. Every deletion in a private chat that was not the last message went unrecorded --
-     * and while the bubble used to linger anyway (ChatActivity kept it on a dialog-wide check), it
-     * carried no archive row behind it and was gone after a restart.
-     */
+    // entiny: record deletions with dialog ids resolved by MessagesStorage from messages_v2
     @JvmStatic
     fun markMessagesDeletedFromStorage(
         account: Int,
@@ -663,12 +574,6 @@ object SavedMessagesHelper {
         return getDeletedDate(UserConfig.selectedAccount, dialogId, msgId)
     }
 
-    /**
-     * FileLoader.getPathToMessage's last-resort fallback for a deleted-but-preserved message
-     * whose media has fallen out of the stock cache (autoclean, or the user clearing cache by
-     * hand): the archived copy in [getSavedMediaDir] this account saved on deletion, if the file
-     * is actually still there. Synchronous, cache-only -- no SQLite on the file-loading path.
-     */
     @JvmStatic
     fun getArchivedMediaPath(account: Int, dialogId: Long, msgId: Int): File? {
         if (!isSaveDeletedEnabled()) return null
@@ -722,11 +627,8 @@ object SavedMessagesHelper {
         val trimmed = oldText.trim()
         if (trimmed.isBlank() && mediaPath.isNullOrBlank()) return
         val now = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000
-        // Entity offsets address the untrimmed text. The row stores the trimmed one, so keep
-        // formatting only when trimming was a no-op -- which it is for anything Telegram sent,
-        // since outgoing messages are trimmed before they leave the client.
+        // entiny: preserve formatting entities only when text trimming did not shift entity offsets
         val keptEntities = if (entities.isNullOrEmpty() || trimmed != oldText) null else ArrayList(entities)
-        // Detached from the live message: the screen clears one-time TTLs on archived media.
         val keptMedia = InuDatabaseHelper.cloneMedia(media)
         
         synchronized(cacheLock) {
@@ -775,15 +677,11 @@ object SavedMessagesHelper {
         recordEditHistory(account, dialogId, msgId, oldText, date, null)
     }
 
-    /** Called for every incoming message (see MessagesController's new-message ingestion) so an
-     *  edit later has something to diff against even if this message is never opened/read. */
     @JvmStatic
     fun rememberMessageText(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int) {
         rememberMessage(account, dialogId, msgId, text, hasMedia, date, null, null)
     }
 
-    /** Full-fidelity variant: keeps formatting and media so a shadow-recovered revision is not
-     *  downgraded to plain text just because the chat was never opened. */
     @JvmStatic
     fun rememberMessage(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int, entities: ArrayList<TLRPC.MessageEntity>?, media: TLRPC.MessageMedia?) {
         if (!isSaveEditedEnabled()) return
@@ -796,16 +694,11 @@ object SavedMessagesHelper {
                 hasMedia,
                 date,
                 if (entities.isNullOrEmpty()) null else ArrayList(entities),
-                // Held by reference only -- recordEditHistory detaches it if this entry is ever
-                // promoted into the archive, and cloning here would cost a serialization pass on
-                // every single incoming message.
                 if (media is TLRPC.TL_messageMediaEmpty) null else media,
             )
         }
     }
 
-    /** Last-resort fallback when neither dialogMessagesByIds nor the messages_v2 row had the
-     *  pre-edit text (both only reliably cover a dialog's current preview message). */
     @JvmStatic
     fun recordEditHistoryFromShadow(account: Int, dialogId: Long, msgId: Int, newText: String?, newHasMedia: Boolean) {
         if (!isSaveEditedEnabled()) return
@@ -824,10 +717,6 @@ object SavedMessagesHelper {
         recordEditHistory(UserConfig.selectedAccount, dialogId, msgId, oldText, 0, null)
     }
 
-    /**
-     * Loads the history off the UI thread. The screen is the only place that needs the entries
-     * themselves; everything else asks [hasEditHistory], which never touches SQLite.
-     */
     @JvmStatic
     fun getEditHistoryAsync(account: Int, dialogId: Long, msgId: Int, onLoaded: (List<EditEntry>) -> Unit) {
         val cached = synchronized(cacheLock) {
@@ -871,7 +760,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /** Drops a single stored revision (the history screen's per-row delete). */
     @JvmStatic
     @JvmOverloads
     fun deleteEditHistoryEntry(account: Int, dialogId: Long, msgId: Int, timestamp: Long, onDone: Runnable? = null) {
@@ -890,7 +778,6 @@ object SavedMessagesHelper {
         }
     }
 
-    /** Memory-only presence check -- safe to call from measure/layout. */
     @JvmStatic
     fun hasEditHistory(account: Int, dialogId: Long, msgId: Int): Boolean {
         if (!isSaveEditedEnabled()) return false
@@ -928,8 +815,7 @@ object SavedMessagesHelper {
             val dummyMsg = TLRPC.TL_message().apply {
                 id = msgId
                 dialog_id = dialogId
-                // Without a peer MessageObject.generateLayout()/checkLayout() bail out, and every
-                // row on the history screen renders as a bubble with a timestamp and no text.
+                // entiny: require peer so MessageObject layout generation does not bail out without text
                 peer_id = controller.getPeer(dialogId)
                 date = (System.currentTimeMillis() / 1000L).toInt()
             }

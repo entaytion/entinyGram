@@ -40,7 +40,6 @@ object PillCurrencies {
         return normalize(code)
     }
 
-    /** "$95 240.12" / "95 240.12 CZK". Null if the code can't be resolved. */
     fun formatFiatPrice(value: BigDecimal?, code: String?): String? {
         if (value == null || code.isNullOrEmpty()) return null
         val normalized = normalize(code)

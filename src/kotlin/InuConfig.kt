@@ -24,146 +24,14 @@ object InuConfig {
 
     fun load(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        FontConfig.register() // force-init so its items join _items before we load them
+        FontConfig.register() // entiny: ensure config items register before load
         for (item in _items) item.load(prefs)
         migrateGhostMasterFlag()
         migrateGhostModeEnabledDefault()
         migrateGhostAutoOffline()
         migrateSelfDestructCategories()
-        migrateAiRoles()
-        migrateAiProviders()
-        migrateSharedProviderKeys()
-        migrateCenteringGroup()
     }
 
-    // "ios_chat_header" used to be a standalone iOS chat header: it centered the header by itself,
-    // independently of CENTER_TITLE_MAIN/CENTER_TITLE_CHATS, and moving the avatar into the "..."
-    // slot was simply part of that mode. The key survived the rebuild of the centering group but
-    // its meaning did not - it is now "compact pill", readable only through
-    // InuUtils.compactChatPill(), i.e. only under [CENTER_TITLE_CHATS], and the avatar-in-slot
-    // half became its own opt-in ([IOS_CHAT_HEADER_AVATAR_SLOT], default off).
-    //
-    // Without this step, anyone who had the old mode on lands on a header that is neither what
-    // they had nor off: the parent is false, so the pill does nothing at all, or - once they
-    // turn centering back on - the avatar is back inside the pill it used to sit outside of,
-    // eating the room the title needs and pushing a long one into the marquee. Re-state their old
-    // setup in the new vocabulary, and only ever for someone who actually had the legacy mode on.
-    private fun migrateCenteringGroup() {
-        if (CENTERING_GROUP_MIGRATED.value) {
-            dropLegacyCenteringKeys()
-            return
-        }
-        CENTERING_GROUP_MIGRATED.value = true
-        // The legacy fingerprint has to be unambiguous, because this runs once for everyone and
-        // the same key means two different things on either side of the rebuild. Under the NEW
-        // nesting, ios_chat_header can only ever have been switched on from a row that is itself
-        // only shown while CENTER_TITLE_CHATS is on - so "on, with chat centering off" is a state
-        // the new UI cannot produce and the old one produced routinely. Anyone already sitting on
-        // the new nesting is left completely alone; the cost is that a legacy user who happened to
-        // have both on is read as new and keeps the avatar inside the pill rather than in the menu
-        // slot. That is one toggle away, and it is the right way round: never overwrite a
-        // deliberate choice to repair a guess.
-        //
-        // CENTER_TITLE_MAIN is deliberately NOT part of the fingerprint or of the repair: the
-        // legacy mode centered the chat header and nothing else, and now that CENTER_TITLE_CHATS
-        // stands on its own that is expressible verbatim. Forcing MAIN on (which the old strict
-        // nesting required) would have centered every other screen in the app for someone who
-        // never asked for it. It also has to stay out of the fingerprint, because "chats on, main
-        // off" is now an ordinary state of the new UI rather than a legacy tell.
-        val legacyStandaloneMode = IOS_CHAT_HEADER.value && !CENTER_TITLE_CHATS.value
-        if (legacyStandaloneMode) {
-            CENTER_TITLE_CHATS.value = true
-            // Only seed the avatar slot if the user has never had an opinion on it - the key is
-            // new, so its mere presence means they already made a choice on the new build.
-            if (!prefs.contains(IOS_CHAT_HEADER_AVATAR_SLOT.key)) {
-                IOS_CHAT_HEADER_AVATAR_SLOT.value = true
-            }
-        }
-        dropLegacyCenteringKeys()
-    }
-
-    // center_title_fixed / center_title_adaptive_width were dropped outright - the compact pill is
-    // the adaptive-width mode now, and the fixed placement is what the symmetric room does. Nothing
-    // reads them any more, so they are just dead weight in an export.
-    private fun dropLegacyCenteringKeys() {
-        if (!prefs.contains("center_title_fixed") && !prefs.contains("center_title_adaptive_width")) {
-            return
-        }
-        prefs.edit(commit = true) {
-            remove("center_title_fixed")
-            remove("center_title_adaptive_width")
-        }
-    }
-
-    // AI Compose used to store an arbitrary named list of endpoints ([AI_COMPOSE_ENDPOINTS]) you
-    // picked one active one from. The unified AI Providers screen replaces that with exactly one
-    // chat slot per known provider, so there is nothing left to "pick a name" for. One-time seed:
-    // whichever endpoint was active becomes that provider's chat slot, so an already-configured
-    // user doesn't silently lose their key on update. Extra endpoints beyond the active one (a
-    // second saved Custom config, say) are not preserved -- the new model has room for one.
-    private fun migrateAiProviders() {
-        if (AI_PROVIDERS_MIGRATED.value) return
-        AI_PROVIDERS_MIGRATED.value = true
-        val list = AI_COMPOSE_ENDPOINTS.value
-        if (list.isEmpty()) return
-        val activeId = AI_COMPOSE_ACTIVE_ENDPOINT.value
-        val endpoint = list.firstOrNull { it.id == activeId } ?: list.first()
-        val url = endpoint.url
-        val providerId = when {
-            url.contains("generativelanguage.googleapis.com", ignoreCase = true) -> TRANSCRIBE_PROVIDER_GEMINI
-            url.contains("api.openai.com", ignoreCase = true) -> TRANSCRIBE_PROVIDER_OPENAI
-            url.contains("api.groq.com", ignoreCase = true) -> TRANSCRIBE_PROVIDER_GROQ
-            url.contains("openrouter.ai", ignoreCase = true) -> AI_PROVIDER_OPENROUTER
-            else -> TRANSCRIBE_PROVIDER_CUSTOM
-        }
-        when (providerId) {
-            TRANSCRIBE_PROVIDER_GEMINI -> { AI_PROVIDER_GEMINI_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_GEMINI_MODEL.value = endpoint.model }
-            TRANSCRIBE_PROVIDER_OPENAI -> { AI_PROVIDER_OPENAI_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_OPENAI_MODEL.value = endpoint.model }
-            TRANSCRIBE_PROVIDER_GROQ -> { AI_PROVIDER_GROQ_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_GROQ_MODEL.value = endpoint.model }
-            AI_PROVIDER_OPENROUTER -> { AI_CHAT_OPENROUTER_KEY.value = endpoint.apiKey; if (endpoint.model.isNotBlank()) AI_CHAT_OPENROUTER_MODEL.value = endpoint.model }
-            else -> { AI_CHAT_CUSTOM_URL.value = url; AI_CHAT_CUSTOM_KEY.value = endpoint.apiKey; AI_CHAT_CUSTOM_MODEL.value = endpoint.model }
-        }
-        AI_CHAT_ACTIVE_PROVIDER.value = providerId
-    }
-
-    // Gemini/OpenAI/Groq used to store a separate API key per scope (chat vs voice), which meant
-    // pasting the same account's key twice. Now there's one shared key per provider -- this
-    // one-time step copies whichever scope-specific key was already set (voice, since that
-    // screen shipped first) into the new shared slot, so nobody has to re-paste it.
-    private fun migrateSharedProviderKeys() {
-        if (AI_SHARED_PROVIDER_KEYS_MIGRATED.value) return
-        AI_SHARED_PROVIDER_KEYS_MIGRATED.value = true
-        if (AI_PROVIDER_GEMINI_KEY.value.isBlank()) AI_PROVIDER_GEMINI_KEY.value = AI_TRANSCRIBE_GEMINI_KEY.value
-        if (AI_PROVIDER_OPENAI_KEY.value.isBlank()) AI_PROVIDER_OPENAI_KEY.value = AI_TRANSCRIBE_OPENAI_KEY.value
-        if (AI_PROVIDER_GROQ_KEY.value.isBlank()) AI_PROVIDER_GROQ_KEY.value = AI_TRANSCRIBE_GROQ_KEY.value
-    }
-
-    // AI_ROLE used to be a single free-text persona string with no way to save more than one.
-    // It's now a list of named presets ([AI_ROLES]) you switch between from their own screen.
-    // One-time seed: whatever the user had typed into the old field becomes their first preset,
-    // so nobody's existing persona silently vanishes on update. Guarded by its own run-record so
-    // a later backup restore can't re-seed over presets the user has since edited or deleted.
-    private fun migrateAiRoles() {
-        if (AI_ROLES_MIGRATED.value) return
-        AI_ROLES_MIGRATED.value = true
-        val legacy = AI_ROLE.value.trim()
-        if (legacy.isNotEmpty() && AI_ROLES.value.isEmpty()) {
-            val role = desu.inugram.helpers.ai.AiRole(id = "legacy", text = legacy)
-            AI_ROLES.value = listOf(role)
-            AI_ACTIVE_ROLE.value = role.id
-        }
-    }
-
-    // The periodic "go offline again" re-assert used to be welded to GHOST_PRESENCE_MODE.DELAYED;
-    // it is now its own switch ([GHOST_AUTO_OFFLINE]) that works with any presence mode.
-    //
-    // Minimal, non-stranding migration: GHOST_PRESENCE_MODE keeps all three of its values (NORMAL /
-    // HIDDEN / DELAYED) so nobody's stored choice is reinterpreted, and DELAYED keeps meaning
-    // exactly what it meant. The one-time step just turns the new independent toggle ON for anyone
-    // who was on DELAYED, so their behaviour after the update is identical to before. HIDDEN and
-    // NORMAL users are untouched (auto-offline stays off = stock-identical); HIDDEN users can now
-    // opt into the re-assert they could never get before. Guarded by its own non-exportable
-    // run-record so a restored backup can't re-arm it over a later explicit choice.
     private fun migrateGhostAutoOffline() {
         if (GHOST_AUTO_OFFLINE_MIGRATED.value) return
         GHOST_AUTO_OFFLINE_MIGRATED.value = true
@@ -172,27 +40,10 @@ object InuConfig {
         }
     }
 
-    // GHOST_MODE (a single master on/off) was removed in favor of independent sub-toggles with
-    // no stored master flag (see GhostHelper's class doc). Without this, anyone who had the old
-    // master switch on silently lost every bit of Ghost Mode protection the moment they updated
-    // past that change -- the new sub-toggles all default to false, so nothing carries over.
-    //
-    // This migration is destructive (it force-sets five sub-toggles), so it MUST be strictly
-    // one-time. Its original guard was the mere presence of the legacy key, with the removal of
-    // that key as the only record that it had run -- i.e. the run-record lived in the same
-    // prefs file the migration writes, and nowhere else. Anything that reintroduces an older
-    // `inugram.xml` (Android Auto Backup / device-to-device restore -- the manifest ships
-    // allowBackup="true" + restoreAnyVersion="true" with no dataExtractionRules exclusion --
-    // or any external prefs restore) re-arms the legacy key and re-fires the migration, stomping
-    // the user's real per-toggle choices back to "all ghost on". That is the reported
-    // "all four sub-toggles are active after an update even though only one is enabled" bug.
-    //
-    // [GHOST_MASTER_FLAG_MIGRATED] is an independent, non-exportable run-record: once it is set,
-    // the migration never applies again regardless of whether the legacy key comes back.
+    // entiny: ghost mode migrated from single master flag to independent sub-toggles; old master flag lost on update since sub-toggles default to false
     private fun migrateGhostMasterFlag() {
         if (GHOST_MASTER_FLAG_MIGRATED.value) {
-            // Legacy key resurfaced (restore/import) after we had already migrated -- drop it
-            // without touching the user's sub-toggles.
+            // entiny: legacy ghost_mode key resurfaced after migration -- drop it without affecting sub-toggles
             if (prefs.contains("ghost_mode")) {
                 logGhostMigration("skipped (already migrated), dropping resurfaced legacy ghost_mode key")
                 prefs.edit(commit = true) { remove("ghost_mode") }
@@ -210,23 +61,12 @@ object InuConfig {
         } else {
             logGhostMigration("skipped: no legacy ghost_mode=true (contains=${prefs.contains("ghost_mode")})")
         }
-        // Record the run first, then clear the legacy key. If the process dies between the two,
-        // the worst case is a stale key that the already-migrated branch above cleans up later --
-        // never a second stomp.
+        // entiny: record migration run first, then clear legacy key; prevents double-stomp if process dies
         GHOST_MASTER_FLAG_MIGRATED.value = true
         if (prefs.contains("ghost_mode")) prefs.edit(commit = true) { remove("ghost_mode") }
     }
 
-    // GHOST_MODE_ENABLED reintroduces a real, persisted master flag (see GhostHelper's class doc
-    // for why): with sub-toggles alone, there was no way to "pause" ghost mode without wiping the
-    // user's per-toggle picks, and turning the drawer quick-toggle back on forced every sub-toggle
-    // to true regardless of what had actually been configured. Unlike the legacy `ghost_mode` key
-    // this replaces a second time, this migration is guarded by its OWN non-exportable run-record
-    // ([GHOST_MODE_ENABLED_MIGRATED]), not by the presence of the key it writes -- so a restored
-    // backup that reintroduces an old `ghost_mode_enabled` value cannot re-arm it and stomp a
-    // later choice. It only runs once, ever, on the upgrade that introduces this flag: if any
-    // sub-toggle was already active (from the no-master-flag era), it flips the new master on so
-    // existing protection doesn't silently vanish; a fresh install with everything off stays off.
+    // entiny: ghost mode enabled default depends on whether any sub-toggles were already active
     private fun migrateGhostModeEnabledDefault() {
         if (GHOST_MODE_ENABLED_MIGRATED.value) return
         GHOST_MODE_ENABLED_MIGRATED.value = true
@@ -238,18 +78,13 @@ object InuConfig {
         }
     }
 
-    // Mirrors GhostHelper.shouldSuppress's convention: Log.d for adb, FileLog.d so a release-build
-    // tester can capture it via Settings -> Additional -> Logs -> Send.
+    // entiny: log ghost migration using GhostHelper convention (Log.d adb, FileLog.d for release testers)
     private fun logGhostMigration(what: String) {
         android.util.Log.d("GhostMode", "migrateGhostMasterFlag $what")
         org.telegram.messenger.FileLog.d("GhostMode: migrateGhostMasterFlag $what")
     }
 
-    // SAVE_SELF_DESTRUCT and SAVE_SECRET_CHAT_CONTENT (two single bools) were split into the
-    // per-category items below. The split isn't a clean 1:1 rename, so migrate conservatively:
-    // if either old flag was on, turn on every new category rather than guessing which ones the
-    // old flag actually covered -- silently narrowing what a user had opted into is worse than
-    // temporarily over-covering it (they can turn categories back off in Settings).
+    // entiny: self-destruct categories migrated from two bools; if either old flag was on, turn on all categories to avoid narrowing user choices
     private fun migrateSelfDestructCategories() {
         val hadOld = prefs.contains("save_self_destruct") || prefs.contains("save_secret_chat_content")
         if (!hadOld) return
@@ -270,7 +105,6 @@ object InuConfig {
     abstract class Item<T>(val key: String, val default: T, val exportable: Boolean = true) {
         private var currentValue: T = default
 
-        // underlying SharedPreferences type this item serializes into
         abstract val prefType: PrefType
 
         open var value: T
@@ -288,18 +122,12 @@ object InuConfig {
             currentValue = read(prefs)
         }
 
-        // commit=true (synchronous) is deliberate: apply() only queues the write to a background
-        // thread, and does not survive the process dying before that flush lands -- which is
-        // exactly what happens when an app update replaces the running process (MY_PACKAGE_REPLACED
-        // kills it). A toggle flipped right before an update could silently lose that write and
-        // revert to its last-flushed value. The sync cost here is negligible (a handful of ms on
-        // a small prefs file, on a UI-triggered settings write, not a hot path).
+        // entiny: save() uses commit=true for atomic write; unsafeSet stages writes without commit
         fun save() {
             prefs.edit(commit = true) { write() }
         }
 
-        // batched write: set currentValue and stage it onto [editor] (call inside a prefs.edit {} block,
-        // passing that block's editor, to commit several items in one transaction)
+        // entiny: unsafeSet stages value+editor for batched writes without commit
         fun unsafeSet(value: T, editor: SharedPreferences.Editor) {
             currentValue = value
             editor.write()
@@ -351,9 +179,7 @@ object InuConfig {
 
     open class StringSetItem(key: String, default: Set<String> = emptySet(), exportable: Boolean = true) :
         Item<Set<String>>(key, default, exportable) {
-        // No dedicated PrefType for string sets; STRING is a harmless placeholder here since the
-        // backup export/import path branches on the *runtime* prefs value type (Set<String> matches
-        // none of Boolean/Int/Long/Float/Double/String there), not on this field, for this item.
+        // entiny: STRING is a placeholder for string sets because backup import/export checks the runtime prefs type
         override val prefType = PrefType.STRING
         override fun read(prefs: SharedPreferences): Set<String> =
             prefs.getStringSet(key, default)?.toSet() ?: default
@@ -370,7 +196,6 @@ object InuConfig {
         }
     }
 
-    // visible in ui
     @JvmField
     val HIDE_STORIES = BoolItem("hide_stories", false)
 
@@ -407,15 +232,12 @@ object InuConfig {
     @JvmField
     val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
 
-    // snapshot of theme state before Monet was enabled, "day|night|autoNightType"; empty = none
+    // entiny: monet_prev stores theme state snapshot before monet enabled ("day"|"night"|"autoNightType")
     @JvmField
     val MONET_PREV = StringItem("monet_prev", "", exportable = false)
 
     class PredictiveBackModeItem : IntItem("predictive_back_mode", OFF) {
-        // Migrate the old DISABLE_PREDICTIVE_BACK boolean (removed when this became a 3-way
-        // mode): disabled=true mapped to OFF, disabled=false mapped to STOCK (the only "on"
-        // state that existed before MATERIAL3 was added) — otherwise the setting silently
-        // reset to OFF for anyone who had predictive back enabled under the old scheme.
+        // entiny: predictive back mode migrated from boolean to 3-way; old disable flag maps to OFF
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("disable_predictive_back")) return default
@@ -437,8 +259,6 @@ object InuConfig {
     @JvmField
     val PREDICTIVE_BACK_MODE = PredictiveBackModeItem()
 
-    // Skips SpoilerEffect.addSpoilers()/SpoilersTextView's tap-to-reveal entirely — text spoilers
-    // render already-revealed everywhere, same idea as NagramX's showSpoilersDirectly.
     @JvmField
     val SHOW_SPOILERS_DIRECTLY = BoolItem("show_spoilers_directly", false)
 
@@ -463,7 +283,6 @@ object InuConfig {
     val LINK_PREVIEW_SPOILER = BoolItem("link_preview_spoiler", true)
 
     class MediaSpoilerModeItem : IntItem("media_spoiler_mode", PILL) {
-        // Migrate the old `simple_media_spoilers` boolean toggle: on → pill, off → telegram.
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("simple_media_spoilers")) return default
@@ -497,7 +316,6 @@ object InuConfig {
     val BLOCKED_MESSAGES_MODE = BlockedMessagesModeItem()
 
     class AttachCameraModeItem : IntItem("attach_camera_mode", STATIC) {
-        // Migrate the old `disable_instant_camera` boolean toggle: on → static, off → instant.
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("disable_instant_camera")) return default
@@ -577,7 +395,6 @@ object InuConfig {
     @JvmField
     val BOTTOM_TABS_COMPACT_MODE = BoolItem("bottom_tabs_hide_compact_mode", false)
 
-    /** order + enabled state for non-Chats bottom tabs; Chats is always first and mandatory */
     @JvmField
     val BOTTOM_TABS_ORDER = MainTabsMenuConfig("bottom_tabs_order")
 
@@ -630,7 +447,6 @@ object InuConfig {
     val DISABLE_LOCKSCREEN_PERMISSION_NAG = BoolItem("disable_lockscreen_permission_nag", false)
 
     class PullDownActionItem : IntItem("pull_down_action", REVEAL_ARCHIVE) {
-        // Migrate the old `open_archive_on_pull` boolean toggle: on → open archive, off → reveal (stock).
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("open_archive_on_pull")) return default
@@ -663,8 +479,6 @@ object InuConfig {
     @JvmField
     val CHAT_REMEMBER_ALL_REPLIES = BoolItem("chat_remember_all_replies", true)
 
-    // Long-pressing the unread-reactions side button normally opens a confirm popup before
-    // marking everything read; on skips straight to marking read with haptic feedback instead.
     @JvmField
     val INSTANT_MARK_REACTIONS_READ = BoolItem("instant_mark_reactions_read", false)
 
@@ -702,30 +516,26 @@ object InuConfig {
     val SEND_TO_DISCUSS_WITHOUT_JOIN = BoolItem("send_to_discuss_without_join", true)
 
     @JvmField
+    val CONFIRM_SEND_VOICE = BoolItem("confirm_send_voice", false)
+
+    @JvmField
+    val CONFIRM_SEND_STICKER = BoolItem("confirm_send_sticker", false)
+
+    @JvmField
+    val CONFIRM_SEND_GIF = BoolItem("confirm_send_gif", false)
+
+    @JvmField
     val HIDE_BOT_WEBVIEW_DIALOGS = BoolItem("hide_bot_webview_dialogs", true)
 
     @JvmField
     val HIDE_AI_EDITOR = BoolItem("hide_ai_editor", false)
 
-    // AI compose — client-side rewrite/continue of the draft via a user-configured OpenAI-compatible endpoint
     @JvmField
     val AI_COMPOSE_ENABLED = BoolItem("ai_compose_enabled", false)
 
     @JvmField
-    val AI_COMPOSE_ACTIVE_ENDPOINT = StringItem("ai_compose_active_endpoint", "", exportable = false)
-
-    // Legacy multi-endpoint list, kept only so [migrateAiProviders] can seed the new per-provider
-    // fields below from whatever endpoint was active. Superseded by the unified AI Providers
-    // screen, where each provider has exactly one chat slot instead of an arbitrary named list.
-    @JvmField
-    val AI_COMPOSE_ENDPOINTS = desu.inugram.helpers.ai.AiEndpointsConfig("ai_compose_endpoints")
-
-    @JvmField
     val AI_CHAT_ACTIVE_PROVIDER = IntItem("ai_chat_active_provider", TRANSCRIBE_PROVIDER_GEMINI)
 
-    // One API key per named provider, shared by chat and voice -- it's the same account either
-    // way, so asking twice was pure duplication. Only the model differs per scope (a chat
-    // completion model isn't a transcription model), so models stay split below.
     @JvmField
     val AI_PROVIDER_GROQ_KEY = StringItem("ai_provider_groq_key", "", exportable = false)
 
@@ -744,9 +554,6 @@ object InuConfig {
     @JvmField
     val AI_CHAT_OPENAI_MODEL = StringItem("ai_chat_openai_model", "gpt-4o-mini", exportable = false)
 
-    // When a named provider is active for both scopes, defaults to one shared model field; flip
-    // off to pick a different model per scope (e.g. a fast chat model but a specific transcription
-    // model for the same Gemini account).
     @JvmField
     val AI_SAME_MODEL_GROQ = BoolItem("ai_same_model_groq", true)
 
@@ -775,12 +582,6 @@ object InuConfig {
     val AI_CHAT_CUSTOM_NAME = StringItem("ai_chat_custom_name", "", exportable = false)
 
     @JvmField
-    val AI_PROVIDERS_MIGRATED = BoolItem("ai_providers_migrated", false, exportable = false)
-
-    @JvmField
-    val AI_SHARED_PROVIDER_KEYS_MIGRATED = BoolItem("ai_shared_provider_keys_migrated", false, exportable = false)
-
-    @JvmField
     val AI_SUMMARY_ENABLED = BoolItem("ai_summary_enabled", false)
 
     @JvmField
@@ -789,19 +590,11 @@ object InuConfig {
     @JvmField
     val AI_REASONING_EFFORT = StringItem("ai_reasoning_effort", "medium")
 
-    // Legacy single-string persona field, kept only so [migrateAiRoles] can seed the first
-    // preset in [AI_ROLES] from whatever the user had typed here. Not read anywhere else.
-    @JvmField
-    val AI_ROLE = StringItem("ai_role", "Assistant", exportable = false)
-
     @JvmField
     val AI_ROLES = desu.inugram.helpers.ai.AiRolesConfig("ai_roles")
 
     @JvmField
     val AI_ACTIVE_ROLE = StringItem("ai_active_role", "", exportable = false)
-
-    @JvmField
-    val AI_ROLES_MIGRATED = BoolItem("ai_roles_migrated", false, exportable = false)
 
     @JvmField
     val AI_HISTORY_ENABLED = BoolItem("ai_history_enabled", true)
@@ -818,9 +611,6 @@ object InuConfig {
     @JvmField
     val AI_TEMPERATURE = FloatItem("ai_temperature", 1.0f)
 
-    // AI Transcription (Voice-to-Text)
-    // Unified provider id space, shared by the AI Providers screen's chat and voice sections.
-    // Cloudflare has no chat API here (voice-only); OpenRouter has no transcription API (chat-only).
     const val TRANSCRIBE_PROVIDER_GROQ = 0
     const val TRANSCRIBE_PROVIDER_GEMINI = 1
     const val TRANSCRIBE_PROVIDER_OPENAI = 2
@@ -876,9 +666,6 @@ object InuConfig {
     @JvmField
     val AI_TRANSCRIBE_PROMPT = StringItem("ai_transcribe_prompt", "")
 
-    // ISO code of the language spoken in voice messages; empty means the provider guesses. Whisper
-    // decides from the first seconds of audio, which is exactly where short or noisy voice notes go
-    // wrong, so pinning this is the single biggest accuracy win available on the transcription path.
     @JvmField
     val AI_TRANSCRIBE_LANGUAGE = StringItem("ai_transcribe_language", "")
 
@@ -1140,7 +927,6 @@ object InuConfig {
     @JvmField
     val PRESENCE_LOGGER_NOTIFY = BoolItem("presence_logger_notify", false)
 
-    // Days to keep local presence logs. 0 = never auto-clear. Mirrors DeletedMessagesTtlItem.
     class PresenceLogsTtlItem : IntItem("presence_logs_ttl", NEVER) {
         companion object {
             const val NEVER = 0
@@ -1200,8 +986,9 @@ object InuConfig {
     @JvmField
     val DISABLE_DRAFT_UPLOAD = BoolItem("disable_draft_upload", false)
 
+    // entiny: 1=Front, 2=Rear, 3=Ask
     @JvmField
-    val ROUND_DEFAULT_CAMERA = IntItem("round_default_camera", 1) // 1=Front, 2=Rear, 3=Ask
+    val ROUND_DEFAULT_CAMERA = IntItem("round_default_camera", 1)
 
     @JvmField
     val ROUND_RECORDER_KEEP_ZOOM = BoolItem("round_recorder_keep_zoom", false)
@@ -1227,7 +1014,6 @@ object InuConfig {
     @JvmField
     val ROUND_RECORDER_EXPOSURE_BUTTON = BoolItem("round_recorder_exposure_button", true)
 
-    // todo: remove in 40
     class NonIslandSplitFromTabBarsItem(key: String) : BoolItem(key, false) {
         override fun read(prefs: SharedPreferences): Boolean {
             if (prefs.contains(key)) return prefs.getBoolean(key, default)
@@ -1259,11 +1045,6 @@ object InuConfig {
     @JvmField
     val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", true)
 
-    // Channel posts stretch to the full available width instead of a narrow auto-sized bubble.
-    // Ported from exteraless (https://github.com/exteraless/exteraless) -- see WideChannelPostLayout.kt.
-    // Only applies to actual broadcast-channel posts -- there is no "Feed" surface in this fork
-    // to apply a separate wide-in-feed variant to (exteraless's WIDE_FEED_POSTS counterpart gates
-    // on a searchType==4 that only exists alongside their own Feed feature).
     @JvmField
     val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
 
@@ -1378,7 +1159,6 @@ object InuConfig {
     @JvmField
     val MESSAGE_MENU_BOTTOM_ROW = BoolItem("message_menu_bottom_row", false)
 
-    // false = bottom (default), true = top
     @JvmField
     val MESSAGE_MENU_QUICK_ACTIONS_TOP = BoolItem("message_menu_quick_actions_top", false)
 
@@ -1394,7 +1174,6 @@ object InuConfig {
     @JvmField
     val DIALOGS_MENU_ITEMS = DialogsMenuConfig("dialogs_menu_items")
 
-    // hide entries from ProfileActivity's ⋮ overflow menu (default off = stock)
     @JvmField
     val HIDE_PROFILE_MENU_SEND_GIFT = BoolItem("hide_profile_menu_send_gift", false)
 
@@ -1451,22 +1230,12 @@ object InuConfig {
     @JvmField
     val ICON_REPLACEMENT = IconReplacementItem()
 
-    // Header centering, top of the group: centers action bar titles on every screen EXCEPT
-    // chats. Everything below is nested under it and is meaningless on its own - InuUtils owns
-    // the whole decision matrix, nothing else reads these items directly.
     @JvmField
     val CENTER_TITLE_MAIN = BoolItem("center_title_main", false)
 
-    // Centers chat/channel headers: title and subtitle move to the middle of the pill, the avatar
-    // stays pinned to its left edge. Readable on its own - it is NOT nested under
-    // CENTER_TITLE_MAIN, so "chats centered, every other screen stock" is a state the user can
-    // actually reach; the rest of the group below still nests under this one.
     @JvmField
     val CENTER_TITLE_CHATS = BoolItem("center_title_chats", false)
 
-    // Moves the avatar to the right end of the centered pill instead of its left. Loses to both
-    // avatar-relocation options (IOS_CHAT_HEADER_AVATAR_SLOT, IOS_CHAT_HEADER_AVATAR_STATIC) when
-    // they are on - there is no right end of the pill to sit at once the avatar has left it.
     @JvmField
     val CENTER_TITLE_RIGHT_AVATAR = BoolItem("center_title_right_avatar", false)
 
@@ -1476,34 +1245,21 @@ object InuConfig {
     @JvmField
     val IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER = BoolItem("ios_chats_tab_returns_to_first_folder", false)
 
-    // Compact pill: the centered chat pill shrinks to hug title/subtitle (and the avatar, unless
-    // that moved out to the menu slot) instead of spanning the whole room between the back button
-    // and the menu, like Telegram for iOS. Nested under CENTER_TITLE_CHATS.
+    @JvmField
+    val DIALOG_AVATAR_OPENS_PROFILE = BoolItem("dialog_avatar_opens_profile", false)
+
     @JvmField
     val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
-    // Compact-pill-only: the avatar leaves the pill and takes over the action bar's overflow
-    // ("...") slot - tap opens the profile, long press opens the chat menu.
     @JvmField
     val IOS_CHAT_HEADER_AVATAR_SLOT = BoolItem("ios_chat_header_avatar_slot", false)
 
-    // Compact-pill-only: the avatar does not travel with the centered pill at all - it stays
-    // exactly where a non-centered header puts it (just past the back button) while only
-    // title/subtitle move to the middle. Mutually exclusive with IOS_CHAT_HEADER_AVATAR_SLOT,
-    // which wins when both are on (see InuUtils.chatAvatarStatic).
     @JvmField
     val IOS_CHAT_HEADER_AVATAR_STATIC = BoolItem("ios_chat_header_avatar_static", false)
 
     @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
-    // Non-exportable run-record for [migrateCenteringGroup]. Independent of the keys it rewrites,
-    // so a restored backup that resurrects the legacy layout can never re-fire it over a choice
-    // the user has made since.
-    @JvmField
-    val CENTERING_GROUP_MIGRATED = BoolItem("centering_group_migrated", false, exportable = false)
-
-    // Per-category local preservation of self-destruct content. All default off = stock behavior.
     @JvmField
     val SAVE_SELF_DESTRUCT_MEDIA = BoolItem("save_self_destruct_media", false)
 
@@ -1513,9 +1269,6 @@ object InuConfig {
     @JvmField
     val SAVE_VIEW_ONCE_MEDIA = BoolItem("save_view_once_media", false)
 
-    // Only meaningful when SAVE_SELF_DESTRUCT_MEDIA/SAVE_VIEW_ONCE_MEDIA keeps a local copy: off
-    // (default) still gates the view behind the stock one-time reveal/blur; on shows it as a
-    // regular reopenable photo right away.
     @JvmField
     val VIEW_ONCE_SHOW_NORMAL = BoolItem("view_once_show_normal", false)
 
@@ -1543,9 +1296,6 @@ object InuConfig {
     @JvmField
     val SAVE_DELETED_OWN = BoolItem("save_deleted_own", false)
 
-    // Adds a per-deletion "keep a local copy" checkbox to the delete-message dialog. Only
-    // meaningful when SAVE_DELETED_MESSAGES is off -- if it's on, every deletion is already
-    // archived and the checkbox would be redundant.
     @JvmField
     val PROMPT_KEEP_LOCAL_ON_DELETE = BoolItem("prompt_keep_local_on_delete", false)
 
@@ -1579,7 +1329,6 @@ object InuConfig {
     @JvmField
     val MASK_SERVER_APP_NAME = BoolItem("mask_server_app_name", true)
 
-    // Days to keep deleted/edited message cache. 0 = never auto-clear.
     class DeletedMessagesTtlItem : IntItem("deleted_messages_ttl", NEVER) {
         companion object {
             const val NEVER = 0
@@ -1656,7 +1405,6 @@ object InuConfig {
 
     class UpdatesEnabledItem : BoolItem("updates_enabled", true, exportable = false) {
         override fun read(prefs: SharedPreferences): Boolean {
-            // compat, remove after a few months
             if (!prefs.contains(key) && prefs.contains("update_channel")) {
                 val value = prefs.getInt("update_channel", 1) != 0
                 prefs.edit { putBoolean(key, value) }
@@ -1669,16 +1417,12 @@ object InuConfig {
     @JvmField
     val UPDATES_ENABLED = UpdatesEnabledItem()
 
-    // Opts into also matching #prerelease-tagged CI posts (see scripts/ci/upload.ts /
-    // UpdateHelper.searchByTag). Off by default -- regular users only ever match #release, so a
-    // beta/pre-release build can never get offered to someone who didn't ask for it.
     @JvmField
     val UPDATES_INCLUDE_BETA = BoolItem("updates_include_beta", false)
 
     @JvmField
     val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
 
-    // internal state
     @JvmField
     val VOICE_HINT_SHOWN = BoolItem("voice_hint_shown", false, exportable = false)
 
@@ -1712,46 +1456,26 @@ object InuConfig {
     @JvmField
     val TRANSLATE_AUTO_DETECT_LANG = BoolItem("translate_auto_detect_lang", true)
 
-    // Fork-owned copy of Telegram's target language. Keeping this separately prevents a
-    // per-dialog language choice from overwriting the user's global translation preference.
+    // entiny: keep global target language separate so per-dialog translations do not overwrite user preference
     @JvmField
     val TRANSLATE_TARGET_LANGUAGE = StringItem("translate_target_language", "")
 
-    // Force translation even for messages Telegram considers to be in the user's own language
     @JvmField
     val FORCE_TRANSLATE = BoolItem("force_translate", false)
 
-    // OwlGram-style "auto-translate everything": the DEFAULT translating state for a dialog the
-    // user has not decided about yet. Deliberately not a second list of chats - stock already
-    // persists every explicit per-dialog choice (TranslateController.translatingDialogs, saved as
-    // `translating_dialog_languages2`), and that override wins over this default. So switching a
-    // single chat off from its own translate bar is remembered as an exception for free, the same
-    // way OwlGram's AutoTranslateConfig behaves, without a parallel exceptions store to keep in
-    // sync. Per-topic granularity is the one thing stock's dialog-keyed map cannot express.
     @JvmField
     val AUTO_TRANSLATE_ALL = BoolItem("auto_translate_all", false)
 
     @JvmField
     val TRANSLATE_OUTGOING = BoolItem("translate_outgoing", false)
 
-    // Third-party translation providers (0 = Telegram API, stock behavior)
     @JvmField
     val TRANSLATE_PROVIDER = IntItem("translate_provider", 0)
 
-    // Stock only shows the chat-bar "Translate to X?" banner after on-device language detection
-    // has accumulated 6 sampled messages agreeing the dialog is in a foreign language (2 if the
-    // chat has autotranslation on) -- see TranslateController.checkDialogTranslatable. A single
-    // opened post/deep-link rarely reaches that sample size, so the banner silently never
-    // appears even though the per-message Translate button (which has no such threshold) works
-    // fine. This skips the sample-size wait: the dialog is marked translatable off the very first
-    // confidently-detected foreign-language message.
+    // entiny: skip stock 6-message detection sample threshold so translate banner shows on first detected foreign message
     @JvmField
     val INSTANT_TRANSLATE_BANNER = BoolItem("instant_translate_banner", true)
 
-    // A channel/user can opt out of the translate banner + button-menu suggestion via
-    // `translations_disabled` (set by the channel owner in Telegram's own channel settings).
-    // Stock respects it only for the banner -- the per-message context-menu Translate button
-    // ignores it entirely already. This makes the banner ignore it too, for consistency.
     @JvmField
     val IGNORE_TRANSLATIONS_DISABLED = BoolItem("ignore_translations_disabled", false)
 
@@ -1779,16 +1503,9 @@ object InuConfig {
     @JvmField
     val TRANSLATE_LLM_PROMPT = StringItem("translate_llm_prompt", "")
 
-    // How many preceding messages of the same chat are handed to the LLM as conversation context
-    // (0 = off). They are quoted for reference and never translated themselves. This is what a
-    // plain per-message translator cannot do: pronouns, grammatical gender, honorifics and
-    // one-word replies ("yes", "his") only resolve correctly when the model can see what was said
-    // before. Costs tokens, hence the explicit size rather than a boolean.
     @JvmField
     val TRANSLATE_LLM_CONTEXT = IntItem("translate_llm_context", 0)
 
-    // Sampling temperature for the LLM provider. Translation wants determinism, so the default is
-    // low; raising it helps only with deliberately loose/idiomatic rewrites.
     @JvmField
     val TRANSLATE_LLM_TEMPERATURE = FloatItem("translate_llm_temperature", 0.3f)
 
@@ -1798,10 +1515,6 @@ object InuConfig {
     @JvmField
     val ACCOUNT_SWITCH_SHORTCUT = BoolItem("account_switch_shortcut", false)
 
-    // Lets a tap on the login screen's "code available in mm:ss" label offer to skip the local
-    // countdown and resend right away (after a confirmation). Purely client-side: it drops our own
-    // timer and runs stock's existing auth.resendCode path -- the server's own rate limit still
-    // applies, so a too-eager resend just comes back as FLOOD_WAIT. Off = stock-identical.
     @JvmField
     val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
 
@@ -1832,20 +1545,10 @@ object InuConfig {
     @JvmField
     val BIOMETRIC_LOCK_ARCHIVE_EVERY_TIME = BoolItem("biometric_lock_archive_every_time", false)
 
-    // --- ghost mode (invisible mode) ---
-    // Real, persisted master switch: GHOST_MODE_ENABLED gates every sub-toggle below (see
-    // GhostHelper.shouldSuppress). While it's off, nothing is suppressed no matter what the
-    // sub-toggles say -- they keep their own values so turning the master back on resumes
-    // exactly what was configured, instead of forcing everything to "all on". All suppression
-    // defaults stay off so a fresh install remains stock-identical without needing a gate.
-    // GHOST_READ_ON_SEND defaults to true, matching AyuGram's markReadAfterSend.
-    // Run-record for [migrateGhostMasterFlag]. Never exported: a backup taken before the
-    // migration must not be able to un-set it and re-arm the stomp on restore.
+    // entiny: run-records are non-exportable so restoring a backup cannot re-arm the migration
     @JvmField
     val GHOST_MASTER_FLAG_MIGRATED = BoolItem("ghost_master_flag_migrated", false, exportable = false)
 
-    // Run-record for [migrateGhostModeEnabledDefault]. Never exported, same reasoning as
-    // GHOST_MASTER_FLAG_MIGRATED above.
     @JvmField
     val GHOST_MODE_ENABLED_MIGRATED = BoolItem("ghost_mode_enabled_migrated", false, exportable = false)
 
@@ -1871,10 +1574,6 @@ object InuConfig {
     val GHOST_HIDE_TYPING = BoolItem("ghost_hide_typing", false)
 
     class GhostPresenceModeItem : IntItem("ghost_presence_mode", NORMAL) {
-        // Migrate the old GHOST_HIDE_ONLINE boolean toggle (removed when presence became a
-        // 3-way mode): without this, everyone who had "hide online" on under the old scheme
-        // silently reverted to NORMAL on the update that introduced this enum, since the new
-        // key never existed for them and just fell back to its own default.
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("ghost_hide_online")) return default
@@ -1896,17 +1595,10 @@ object InuConfig {
     @JvmField
     val GHOST_PRESENCE_MODE = GhostPresenceModeItem()
 
-    // Independent of GHOST_PRESENCE_MODE (AyuGram's design: "don't send online" and "auto go
-    // offline" are two separate switches). Telegram's server flips the account online implicitly
-    // on any live action (sending a message, a reaction, ...), which no client-side packet filter
-    // can prevent -- so even a HIDDEN-presence user leaks "online" until something re-asserts
-    // offline. Previously only the DELAYED mode scheduled that re-assert, which meant HIDDEN --
-    // the strictest setting -- was paradoxically the least protected.
+    // entiny: auto-offline re-asserts offline after live actions because server flips account online implicitly
     @JvmField
     val GHOST_AUTO_OFFLINE = BoolItem("ghost_auto_offline", false)
 
-    // Run-record for [migrateGhostAutoOffline]. Non-exportable, same reasoning as the other ghost
-    // run-records above.
     @JvmField
     val GHOST_AUTO_OFFLINE_MIGRATED = BoolItem("ghost_auto_offline_migrated", false, exportable = false)
 
@@ -1947,17 +1639,12 @@ object InuConfig {
     @JvmField
     val SELECTION_BOTTOM_NO_QUOTE = BoolItem("selection_bottom_no_quote", false)
 
-    // Dialog ids (as strings, same convention as GHOST_WHITELIST_DIALOGS) excluded from the
-    // aggregated Feed screen. Absence from this set is the default (all eligible channels shown).
     @JvmField
     val FEED_EXCLUDED_CHANNELS = StringSetItem("feed_excluded_channels", emptySet())
 
     @JvmField
     val FEED_INCLUDE_ARCHIVED = BoolItem("feed_include_archived", false)
 
-    // false (default) = new posts append at the bottom, screen opens scrolled there (stock
-    // Telegram chat convention). true = new posts prepend at the top, screen opens scrolled
-    // there (Twitter/Threads convention).
     @JvmField
     val FEED_NEWEST_ON_TOP = BoolItem("feed_newest_on_top", false)
 

@@ -3,7 +3,6 @@ package desu.inugram.helpers.ai
 import desu.inugram.InuConfig
 import java.util.UUID
 
-/** CRUD for saved AI persona presets ([AiRole]), used by the AI Roles settings screen and [AiComposeHelper]. */
 object AiRolesHelper {
 
     @JvmStatic

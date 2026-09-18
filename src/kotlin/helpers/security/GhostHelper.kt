@@ -33,36 +33,14 @@ enum class SuppressKind {
     STORY_READ,
 }
 
-/**
- * Ghost mode ("invisible mode"), modeled after AyuGram/NagramX's ghost mode.
- *
- * Real, persisted master flag: [InuConfig.GHOST_MODE_ENABLED]. It's a hard gate in
- * [shouldSuppress] — while it's off, nothing is suppressed regardless of what the sub-toggles
- * (read/voice/story/typing/presence) say. The sub-toggles keep their own values the whole time;
- * flipping the master back on resumes exactly the combination that was configured instead of
- * forcing everything to "all on" (that used to be a real bug: a "no stored master flag, master
- * switch = every sub-toggle in its ghost state" design meant re-enabling from the drawer quick
- * toggle stomped a user's partial setup, e.g. only "hide typing", back to all four).
- *
- * [isGhostActive] mirrors the master flag and drives the display-only indicators (chat-title
- * ghost icon, Invisible status label, drawer/burger icon, settings-page master switch).
- *
- * Unified single source of truth for both network packet filtering
- * ([ConnectionsManager.sendRequestInternal]) and local UI/DB suppression
- * ([MessagesController.markDialogAsRead]).
- */
 object GhostHelper {
 
     private val temporarilyAllowedDialogs: MutableSet<Long> = Collections.newSetFromMap(ConcurrentHashMap())
-    // Per-account: a single shared field made one account's scheduleOffline cancel another
-    // account's still-pending offline re-assert.
     private val offlineRunnables: ConcurrentHashMap<Int, Runnable> = ConcurrentHashMap()
 
-    /** True if the master switch is on. Sub-toggles decide *what* gets suppressed while it is. */
     @JvmStatic
     fun isGhostActive(): Boolean = InuConfig.GHOST_MODE_ENABLED.value
 
-    /** Flips only the master flag — sub-toggles and presence mode are left exactly as configured. */
     @JvmStatic
     fun setGhostMode(enabled: Boolean) {
         InuConfig.GHOST_MODE_ENABLED.value = enabled
@@ -114,10 +92,6 @@ object GhostHelper {
         return isNowWhitelisted
     }
 
-    /**
-     * All whitelisted dialogs still known to this account, pruning stale ids (deleted dialogs)
-     * lazily — avoids the whitelist growing unboundedly with dialogs that no longer exist.
-     */
     @JvmStatic
     fun getWhitelistedDialogs(account: Int): List<Long> {
         val current = InuConfig.GHOST_WHITELIST_DIALOGS.value
@@ -143,10 +117,6 @@ object GhostHelper {
         return isGhostActive()
     }
 
-    /**
-     * Single source of truth for checking if an action should be suppressed by Ghost Mode.
-     * Hard-gated by the master flag first, then reads the specific sub-toggle for [kind].
-     */
     @JvmStatic
     fun shouldSuppress(dialogId: Long, kind: SuppressKind): Boolean {
         if (!InuConfig.GHOST_MODE_ENABLED.value) {
@@ -165,18 +135,11 @@ object GhostHelper {
             SuppressKind.VOICE_READ -> InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value
             SuppressKind.STORY_READ -> InuConfig.GHOST_HIDE_STORY_READ.value
         }
-        // Diagnostic for the "settings show off, behavior acts like on" report — dump every
-        // sub-toggle whenever a suppression actually fires, so a live logcat can catch a real
-        // divergence between what shouldSuppress() reads and what the Settings UI shows for the
-        // same InuConfig fields, instead of guessing again via static analysis.
         if (suppress) {
             val dump = "suppress dialogId=$dialogId kind=$kind read=${InuConfig.GHOST_HIDE_READ.value} " +
                 "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
                 "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}"
             android.util.Log.d("GhostMode", dump)
-            // Also mirrored to FileLog (no-ops unless LogsHelper/BuildVars.LOGS_ENABLED is on) so
-            // a release-build user can capture this via Settings -> Additional -> Logs -> Send,
-            // without needing adb.
             org.telegram.messenger.FileLog.d("GhostMode: $dump")
         }
         return suppress
@@ -190,9 +153,6 @@ object GhostHelper {
         return !InuConfig.GHOST_MARK_READ_LOCALLY.value && shouldSuppress(dialogId, SuppressKind.READ)
     }
 
-    /**
-     * Choke-point filter for outgoing MTProto requests in ConnectionsManager.sendRequestInternal.
-     */
     @JvmStatic
     fun processSendRequest(
         request: TLObject,
@@ -230,9 +190,6 @@ object GhostHelper {
                 shouldSuppress(dialogId, SuppressKind.STORY_READ)
             }
             is TL_account.updateStatus -> {
-                // Two INDEPENDENT effects. They used to be if/else-if, which meant a HIDDEN-presence
-                // user never got the offline re-assert scheduled — so once the server implicitly
-                // flipped them online from an unrelated action, nothing pulled them back down.
                 if (shouldSuppress(0L, SuppressKind.ONLINE)) {
                     request.offline = true
                 }
@@ -254,11 +211,7 @@ object GhostHelper {
                         markDialogAsRead(account, dialogId)
                     }
                 }
-                // Sending anything flips the account online server-side no matter what the client
-                // sends in updateStatus — queue a re-assert so that implicit online is short-lived.
-                // Scheduling here (before the request goes out) is fine: the delay is measured to
-                // land after the send round-trip, and a burst of sends just keeps replacing this
-                // account's own pending runnable.
+                // entiny: server flips account online upon sending messages; re-assert offline after send round-trip
                 if (autoOfflineEnabled()) {
                     scheduleOffline(account)
                 }
@@ -296,9 +249,6 @@ object GhostHelper {
         }
     }
 
-    /**
-     * Manually sends read request to Telegram servers bypassing Ghost Mode filter.
-     */
     @JvmStatic
     fun markDialogAsRead(account: Int, dialogId: Long, maxId: Int = 0) {
         val controller = MessagesController.getInstance(account) ?: return
@@ -340,20 +290,7 @@ object GhostHelper {
         }
     }
 
-    /**
-     * Re-asserts the desired presence right after a settings change:
-     *  - hide/delay presence → send offline immediately (drop the stale "online")
-     *  - normal presence → send online to restore stock presence
-     *
-     * Deliberately does NOT touch [MessagesController.ignoreSetOnline]. That stock field is
-     * also the gate for ChatActivity's local read-marking block (see the read-history hunk in
-     * markDialogAsRead's caller) — setting it true to keep presence hidden silently disabled
-     * marking messages as read while a chat was open, since ChatActivity only runs that block
-     * when `!ignoreSetOnline`. Presence hiding is already fully handled at the packet level by
-     * [processSendRequest]'s `TL_account.updateStatus` case, which force-rewrites every status
-     * update to offline regardless of this flag, so ignoreSetOnline was redundant here and only
-     * caused the "unread badge never clears in ghost mode" bug.
-     */
+    // entiny: do not touch MessagesController.ignoreSetOnline because ChatActivity uses it to gate local read marking
     @JvmStatic
     fun syncPresence(account: Int) {
         val hide = InuConfig.GHOST_MODE_ENABLED.value &&
@@ -361,10 +298,6 @@ object GhostHelper {
         sendStatus(account, offline = hide)
     }
 
-    /**
-     * Sends `account.updateStatus(offline = ...)`. Safe to call even while ghost mode is on:
-     * the request re-enters [processSendRequest] and is handled idempotently.
-     */
     @JvmStatic
     fun sendStatus(account: Int, offline: Boolean) {
         val req = TL_account.updateStatus()
@@ -375,21 +308,9 @@ object GhostHelper {
         }
     }
 
-    /** True when the "automatically go back offline" switch is armed for this account. */
     private fun autoOfflineEnabled(): Boolean =
         InuConfig.GHOST_MODE_ENABLED.value && InuConfig.GHOST_AUTO_OFFLINE.value
 
-    /**
-     * Queues a delayed `updateStatus(offline = true)`, replacing this account's own pending one
-     * (and only its own — see [offlineRunnables]).
-     *
-     * The delay must outlast the round-trip of whatever action implicitly flipped the account
-     * online server-side; re-asserting offline before the server has processed that action just
-     * gets overwritten again. 1500ms was tuned for the settings-change path only and is too tight
-     * for the send path (upload + send + server ack), so it's 2500ms — long enough to land after a
-     * typical send completes, short enough that the "online" blip stays brief. Cannot be verified
-     * on-device from here; if reports still show a lingering online status, this is the knob.
-     */
     private fun scheduleOffline(account: Int) {
         offlineRunnables.remove(account)?.let { Utilities.stageQueue.cancelRunnable(it) }
         val runnable = Runnable {

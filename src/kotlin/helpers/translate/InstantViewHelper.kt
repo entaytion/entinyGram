@@ -67,7 +67,6 @@ object InstantViewHelper {
         return states[viewer]?.get(page.id)
     }
 
-    /** For TL_textPlain root inside getText() and for plain-string fields. */
     @JvmStatic
     fun translate(viewer: ArticleViewer?, original: CharSequence?): CharSequence? {
         if (original.isNullOrEmpty()) return original
@@ -76,7 +75,6 @@ object InstantViewHelper {
         return st.stringCache[original.toString()] ?: original
     }
 
-    /** Top-level rich-text root substitution; returns cached styled CharSequence or null. */
     @JvmStatic
     fun lookupRich(viewer: ArticleViewer?, richText: TL_iv.RichText?): CharSequence? {
         if (richText == null) return null
@@ -440,7 +438,6 @@ object InstantViewHelper {
         fun str(s: String): Boolean
     }
 
-    /** Visit each top-level RichText and plain-string field in [block]. */
     private fun walkBlock(block: TL_iv.PageBlock?, visitor: Visitor): Boolean {
         if (block == null) return true
         return when (block) {
@@ -554,12 +551,6 @@ object InstantViewHelper {
         return b.build()
     }
 
-    /**
-     * Walks a top-level RichText into a TextWithEntities preserving formatting boundaries,
-     * so the server sees the full sentence with markup as context. Also collects urls whose
-     * source TL_textUrl carried a webpage preview, so [rewireLinkSpans] can restore the
-     * IV-preview accent after translation.
-     */
     private class RichExtractBuilder {
         private val sb = StringBuilder()
         private val ents = ArrayList<TLRPC.MessageEntity>()

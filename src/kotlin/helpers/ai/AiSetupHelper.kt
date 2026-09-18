@@ -7,21 +7,13 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
-/**
- * Helpers for the AI provider setup wizard.
- * Knows about built-in providers and handles the model-list fetch.
- */
 object AiSetupHelper {
-
-    // ---- Known providers ----
 
     data class Provider(
         val id: String,
         val displayName: String,
         val endpointUrl: String,
-        /** null = provider uses key in URL param, not Bearer header */
         val authHeader: String? = "Bearer",
-        /** How to fetch models for this provider. */
         val modelsUrl: (apiKey: String) -> String,
     )
 
@@ -29,7 +21,7 @@ object AiSetupHelper {
         id = "google",
         displayName = "Google Gemini",
         endpointUrl = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-        authHeader = null, // key goes as ?key= in modelsUrl; chat completions use Bearer separately
+        authHeader = null,
         modelsUrl = { key -> "https://generativelanguage.googleapis.com/v1beta/models?key=$key" },
     )
 
@@ -51,10 +43,8 @@ object AiSetupHelper {
 
     val PROVIDERS: List<Provider> = listOf(GOOGLE, OPENAI, OPENROUTER)
 
-    // ---- Model fetch ----
-
     data class AiModel(
-        val id: String,       // e.g. "gemini-2.5-flash", "gpt-4o", "anthropic/claude-3.7-sonnet"
+        val id: String,
         val displayName: String,
     )
 
@@ -63,10 +53,6 @@ object AiSetupHelper {
         data class Error(val message: String) : FetchResult()
     }
 
-    /**
-     * Fetches available chat-completion models for [provider] using [apiKey].
-     * Runs on a background thread and posts [onResult] on the UI thread.
-     */
     @JvmStatic
     fun fetchModels(
         provider: Provider,

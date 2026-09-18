@@ -26,9 +26,6 @@ object GalleryHelper {
 
     private val cache = ConcurrentHashMap<Int, Entry>()
 
-    // ASCII byte signatures present in motion-photo / micro-video XMP only.
-    // generic XMP (lightroom edits, copyright, etc.) doesn't contain these.
-    // quick byte scan to skip the expensive xml parsing for photos that are definitely not "live"
     private val MOTION_SIGNATURES = arrayOf(
         "MotionPhoto".toByteArray(Charsets.US_ASCII),
         "MicroVideo".toByteArray(Charsets.US_ASCII),
@@ -53,8 +50,6 @@ object GalleryHelper {
         return description
     }
 
-    // unbounded growth would otherwise track one entry per gallery photo forever;
-    // mirrors PhotoViewerHelper.platformCache's threshold-clear.
     private fun put(imageId: Int, entry: Entry) {
         if (cache.size >= 5000) cache.clear()
         cache[imageId] = entry
@@ -78,8 +73,6 @@ object GalleryHelper {
         }
         return -1
     }
-
-    // ---------------- incremental updates ----------------
 
     private val pendingInserts = HashSet<Long>()
     private val pendingUpdates = HashSet<Long>()
@@ -192,9 +185,7 @@ object GalleryHelper {
                 if (!isImage) {
                     forceFullRescan = true
                 } else {
-                    // IS_PENDING finalization: row appears in default queries only after the
-                    // writer flips IS_PENDING=0, which fires as UPDATE. If we don't have this id
-                    // yet, treat it as a fresh insert.
+                    // entiny: MediaStore fires UPDATE when IS_PENDING flips to 0, so treat unknown ids as inserts
                     val existingPhoto = MediaController.allPhotosAlbumEntry?.photosByIds?.get(id.toInt())
                     if (existingPhoto == null) {
                         synchronized(pendingLock) { pendingInserts.add(id) }
@@ -215,8 +206,6 @@ object GalleryHelper {
 
     @JvmStatic
     fun markFullScanComplete(cameraAlbumId: Int?) {
-        // do NOT clear pendingInserts/pendingUpdates: events that arrived during the scan stay
-        // queued so the next debounce picks them up incrementally; apply dedupes via photosByIds.
         cachedCameraAlbumId = cameraAlbumId
         incrementalEligible = true
         invalidatedThumbIds.clear()
@@ -237,9 +226,6 @@ object GalleryHelper {
         }
     }
 
-    /**
-     * @return true if caller should skip full rescan (incremental handled or no-op).
-     */
     @JvmStatic
     fun tryConsumeIncremental(guid: Int): Boolean {
         if (Build.VERSION.SDK_INT < 30) return false
@@ -252,10 +238,7 @@ object GalleryHelper {
             forceFullRescan = false
             return false
         }
-        // inserting into album photo lists shifts positions that an open PhotoViewer's
-        // placeProvider maps back via getPhotoEntryAtPosition(index); merging now would make it
-        // resolve a different photo than the one on screen. Defer inserts until it closes.
-        // In-place updates keep object identity and positions, so they are always safe to apply.
+        // entiny: defer inserts while PhotoViewer is open so placeProvider index mapping does not shift
         val blocked = isPhotoViewerBlockingGalleryUpdate()
         val inserts: LongArray
         val updates: LongArray
@@ -298,9 +281,7 @@ object GalleryHelper {
         if (missing.isEmpty()) {
             missingRowRetryAttempts = 0
         } else if (missingRowRetryAttempts < 5) {
-            // IS_PENDING rows are hidden from default queries, and events can arrive before the
-            // row becomes visible to other processes. Requeue instead of silently dropping,
-            // otherwise a fresh screenshot may never show up until an unrelated full rescan.
+            // entiny: requeue missing rows because MediaStore events can arrive before row is visible to queries
             missingRowRetryAttempts++
             android.util.Log.d("inu-gallery", "applyIncrementalRows: ${missing.size} rows not visible yet, retrying (attempt $missingRowRetryAttempts)")
             val updateIds = updates.toHashSet()
@@ -490,7 +471,6 @@ object GalleryHelper {
     private fun mergeIntoAlbums(newPhotos: List<MediaController.PhotoEntry>) {
         val allMediaEntry = MediaController.allMediaAlbumEntry ?: return
         val allPhotosEntry = MediaController.allPhotosAlbumEntry ?: return
-        // bucketId=0 is reserved for the synthetic "All X" albums — exclude from per-bucket lookup
         val bucketMap = HashMap<Int, MediaController.AlbumEntry>()
         for (a in MediaController.allMediaAlbums) if (a.bucketId != 0) bucketMap[a.bucketId] = a
         val photoBucketMap = HashMap<Int, MediaController.AlbumEntry>()

@@ -45,12 +45,7 @@ import org.telegram.ui.RestrictedLanguagesSelectActivity
 import org.telegram.ui.StatisticActivity
 import java.util.WeakHashMap
 
-/**
- * Owns the customizable chat-header overflow menu, the message-selection action bar
- * (extra buttons + overflow), and the per-dialog pinned-panel hide toggle.
- */
 object ChatActionsHelper {
-    // header overflow custom actions
     const val ACTION_OPEN_IN_DISCUSSION = 504
     const val ACTION_SHOW_PINNED_PANEL = 506
     const val ACTION_PINNED_UNPIN_ALL = 507
@@ -65,7 +60,6 @@ object ChatActionsHelper {
     const val ACTION_TYPING_SPOOF = 521
     const val ACTION_REGEX_CHAT_FILTERS = 522
 
-    // selection action mode
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
     const val ACTION_SEL_SAVE = 1502
@@ -75,8 +69,6 @@ object ChatActionsHelper {
     const val ACTION_SEL_UNPIN = 1506
     const val ACTION_SEL_FORWARD_NO_QUOTE = 1507
 
-    // --- chat header menu ---
-
     @JvmStatic
     fun reorder(lazyList: ArrayList<ActionBarMenuItem.Item>) {
         val entries = InuConfig.CHAT_MENU_ITEMS.value
@@ -85,17 +77,9 @@ object ChatActionsHelper {
         lazyList.addAll(ordered)
     }
 
-    /** Menu order revision each already-materialized header menu was last built with. */
     private val menuRevisions = WeakHashMap<ActionBarMenuItem, Int>()
 
-    /**
-     * `ActionBarMenuItem` materializes its lazy sub-items exactly once and then empties the lazy
-     * list, so [reorder] would read the config a single time per menu. A chat still alive in the
-     * back stack therefore kept the menu it was built with, and toggling anything on the Chat menu
-     * settings page looked like it did nothing until the chat was fully reopened.
-     *
-     * Called right before the menu opens: rebuilds it when the saved order changed since.
-     */
+    // entiny: rematerialize lazy items when menu order config changed while in back stack
     @JvmStatic
     fun checkMenuRevision(menu: ActionBarMenuItem) {
         val revision = InuConfig.CHAT_MENU_ITEMS.value.hashCode()
@@ -237,8 +221,6 @@ object ChatActionsHelper {
         activity.presentFragment(ChatActivity(args))
     }
 
-    // visibility predicates mirror the matching cells in ChatEditActivity
-
     private fun canViewAdminLog(chat: TLRPC.Chat?): Boolean {
         if (chat == null) return false
         if (!ChatObject.isChannel(chat) && !chat.gigagroup) return false
@@ -281,10 +263,7 @@ object ChatActionsHelper {
         }
     }
 
-    // --- pinned panel ---
-    // reuses stock's "pin_<dialogId>" key in notifications settings: panel hides
-    // when the stored id matches the top pin, so a new pin reopens it automatically.
-
+    // entiny: reuse stock pin key so top-pin match hides panel until a new message is pinned
     private fun stockPinKey(dialogId: Long) = "pin_$dialogId"
 
     @JvmStatic
@@ -322,8 +301,6 @@ object ChatActionsHelper {
         val hidden = prefs.getInt(stockPinKey(activity.dialogId), 0) == activity.pinnedMessageIds[0]
         headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, hidden)
     }
-
-    // --- selection action mode ---
 
     @JvmStatic
     fun addActionModeItems(activity: ChatActivity, actionMode: ActionBarMenu, anchorAfterId: Int) {
@@ -431,7 +408,7 @@ object ChatActionsHelper {
     }
 
     private inline fun forEachSelectedMessage(activity: ChatActivity, action: (MessageObject) -> Unit) {
-        // index 1 (merged dialog) first, then 0; SparseArray iteration is id-ascending within each
+        // entiny: iterate selected messages index 1 first (merged dialog), then 0; SparseArray is id-ascending
         for (a in 1 downTo 0) {
             val arr = activity.selectedMessagesIds[a]
             for (i in 0 until arr.size()) action(arr.valueAt(i))
@@ -475,7 +452,6 @@ object ChatActionsHelper {
             val fromLang = target.messageOwner?.originalLanguage
             val force = InuConfig.FORCE_TRANSLATE.value
             if (!force && fromLang != null && restricted.contains(fromLang)) continue
-            // mirror the message menu: a message already in the target language is translated to the app locale
             val toLangValue = if (fromLang == toLang) toLangDefault else toLang
             if (!force && fromLang != null && fromLang == toLangValue) continue
             if (TranslateHelper.startTranslate(activity, msg, group, fromLang, toLangValue)) {
@@ -632,8 +608,6 @@ object ChatActionsHelper {
             bulletin.show()
             bulletin.layout.postDelayed({
                 try {
-                    // FLAG_IGNORE_GLOBAL_SETTING is deprecated (API 33+) — respecting the user's
-                    // haptics toggle instead of overriding it is the recommended replacement.
                     bulletin.layout.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 } catch (_: Exception) {
                 }
@@ -717,19 +691,15 @@ object ChatActionsHelper {
         activity.updateVisibleRows()
     }
 
-    // -- avatar long tap actions --
     private class AvatarModeration(val canRestrict: Boolean, val canBan: Boolean)
 
     private fun resolveModeration(activity: ChatActivity, peerId: Long): AvatarModeration {
         val chat = activity.currentChat
         if (chat == null || !ChatObject.canBlockUsers(chat)) return AvatarModeration(false, false)
-        // can't moderate yourself, nor the chat posting as itself
         if (peerId == UserConfig.getInstance(activity.currentAccount).clientUserId || peerId == -chat.id) {
             return AvatarModeration(false, false)
         }
-        // the linked broadcast channel (its auto-forwarded posts + comments) isn't a moderable member
         if (peerId < 0 && activity.currentChatInfo?.linked_chat_id == -peerId) return AvatarModeration(false, false)
-        // never offer moderation on admins/owners
         val isPrivileged = run {
             if (ChatObject.isChannel(chat)) return@run activity.messagesController.getAdminInChannel(peerId, chat.id) != null
             val participant = activity.currentChatInfo?.participants?.participants
@@ -737,7 +707,6 @@ object ChatActionsHelper {
             return@run participant is TLRPC.TL_chatParticipantAdmin || participant is TLRPC.TL_chatParticipantCreator
         }
         if (isPrivileged) return AvatarModeration(false, false)
-        // channel senders can only be banned
         val canRestrict = peerId > 0 && ChatObject.isChannel(chat) && chat.megagroup && !chat.gigagroup
         return AvatarModeration(canRestrict = canRestrict, canBan = true)
     }

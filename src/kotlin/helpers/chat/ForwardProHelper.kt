@@ -33,7 +33,7 @@ import java.util.WeakHashMap
 
 object ForwardProHelper {
 
-    private const val FOLDER_TABS_TOP_MARGIN_DP = 51f // search row ends at 47 (top 7 + height 40) + 4dp gap
+    private const val FOLDER_TABS_TOP_MARGIN_DP = 51f
     private const val FOLDER_TABS_BOTTOM_GAP_DP = 6
 
     private class AlertState {
@@ -44,7 +44,7 @@ object ForwardProHelper {
         var authorIcon: ImageView? = null
         var captionIcon: ImageView? = null
         var filterTabsView: FilterTabsView? = null
-        var selectedFilterId: Int = 0 // DialogFilter.isDefault() == (id == 0)
+        var selectedFilterId: Int = 0
         var active: Boolean = false
     }
 
@@ -318,7 +318,6 @@ object ForwardProHelper {
                 msg.caption = newText
                 msg.messageOwner.entities = null
 
-                // Editing text must send without author header
                 alert.showSendersName = false
 
                 showBulletin(alert, R.drawable.msg_edit, LocaleController.getString(R.string.InuForwardProEditedNotice))

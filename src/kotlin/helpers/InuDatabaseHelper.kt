@@ -35,7 +35,6 @@ object InuDatabaseHelper {
         }
 
         if (version == 2) {
-            // no schema changes; just bump to enable TTL prune support
             writeKv(db, "version", "3")
             version = 3
         }
@@ -61,9 +60,6 @@ object InuDatabaseHelper {
         }
 
         if (version == 5) {
-            // These columns are used by dialog-scoped loads and TTL pruning. Without
-            // dedicated indexes both operations degrade to full table scans as the
-            // deleted-message cache grows.
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_dialog ON inu_deleted_messages(dialog_id)")
                 .stepThis().dispose()
             db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_deleted_messages_date ON inu_deleted_messages(date)")
@@ -100,9 +96,6 @@ object InuDatabaseHelper {
         }
 
         if (version == 9) {
-            // Edit history used to keep the plain text only, so every stored revision rendered as
-            // unformatted text with a stand-in photo bubble regardless of what the message really
-            // was. Both blobs are optional: rows written before this migration simply have none.
             try {
                 db.executeFast("ALTER TABLE inu_edit_history ADD COLUMN entities BLOB").stepThis().dispose()
             } catch (e: Throwable) { }
@@ -141,7 +134,6 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
-    /** filterId -> set of locally-overlaid dialog ids */
     fun loadLocalFolderChats(db: SQLiteDatabase): Map<Int, Set<Long>> {
         val map = HashMap<Int, HashSet<Long>>()
         val cursor = db.queryFinalized("SELECT filter_id, dialog_id FROM inu_local_folder_chats")
@@ -189,7 +181,6 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
-    /** most recent entries first */
     fun loadPresenceLogs(db: SQLiteDatabase, userId: Long, limit: Int = 200): List<Triple<Long, String, Int>> {
         val list = ArrayList<Triple<Long, String, Int>>()
         val cursor = db.queryFinalized("SELECT user_id, status_type, timestamp FROM inu_presence_logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT ?", userId, limit)
@@ -203,7 +194,6 @@ object InuDatabaseHelper {
         return list
     }
 
-    /** Row count + a rough byte estimate (fixed per-row overhead + status string length). */
     fun getPresenceLogsStats(db: SQLiteDatabase): DialogCacheStat {
         val cursor = db.queryFinalized("SELECT COUNT(*), SUM(LENGTH(status_type)) FROM inu_presence_logs")
         try {
@@ -218,7 +208,6 @@ object InuDatabaseHelper {
         return DialogCacheStat(0L, 0, 0L)
     }
 
-    /** Per-user breakdown (dialogId field repurposed as userId) — most logged first. */
     fun getPresenceLogsStatsByUser(db: SQLiteDatabase): List<DialogCacheStat> {
         val list = ArrayList<DialogCacheStat>()
         val cursor = db.queryFinalized("SELECT user_id, COUNT(*), SUM(LENGTH(status_type)) FROM inu_presence_logs GROUP BY user_id")
@@ -235,7 +224,6 @@ object InuDatabaseHelper {
         return list.sortedByDescending { it.estimatedSize }
     }
 
-    /** Clears presence logs for [userIds] (or every logged user if null). */
     fun clearPresenceLogs(db: SQLiteDatabase, userIds: Collection<Long>? = null) {
         if (userIds == null) {
             db.executeFast("DELETE FROM inu_presence_logs").stepThis().dispose()
@@ -244,7 +232,6 @@ object InuDatabaseHelper {
         }
     }
 
-    /** Removes presence log entries older than [cutoffUnixSec]. */
     fun prunePresenceLogs(db: SQLiteDatabase, cutoffUnixSec: Long) {
         val query = db.executeFast("DELETE FROM inu_presence_logs WHERE timestamp < ?")
         query.bindLong(1, cutoffUnixSec)
@@ -269,7 +256,6 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
-    /** scope -> (dialogId -> pin_order), ordered ascending by pin_order within each scope */
     fun loadLocalPins(db: SQLiteDatabase): Map<Int, LinkedHashMap<Long, Int>> {
         val map = HashMap<Int, LinkedHashMap<Long, Int>>()
         val cursor = db.queryFinalized("SELECT scope, dialog_id, pin_order FROM inu_local_pins ORDER BY pin_order ASC")
@@ -305,7 +291,6 @@ object InuDatabaseHelper {
         db.executeFast("DELETE FROM inu_recent_dialogs").stepThis().dispose()
     }
 
-    /** most-recently-opened first */
     fun loadRecentDialogs(db: SQLiteDatabase): List<Long> {
         val list = ArrayList<Long>()
         val cursor = db.queryFinalized("SELECT dialog_id FROM inu_recent_dialogs ORDER BY opened_at DESC")
@@ -342,8 +327,6 @@ object InuDatabaseHelper {
         }
     }
 
-    // Feeds SavedMessagesHelper's in-memory archived-media cache. Only rows with a stored copy
-    // (the stock cache path can go stale/get cleared independently of this DB) are worth loading.
     fun forEachDeletedMessageMedia(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int, mediaPath: String) -> Unit) {
         val cursor = db.queryFinalized("SELECT dialog_id, msg_id, media_path FROM inu_deleted_messages WHERE media_path IS NOT NULL")
         try {
@@ -358,11 +341,7 @@ object InuDatabaseHelper {
         }
     }
 
-    /**
-     * Streams just the (dialog, message) keys that have stored edit history, so the presence
-     * check can be answered from memory. Reading the rows themselves on demand meant every
-     * un-edited bubble in every chat ran a SQLite query on the UI thread to learn it had none.
-     */
+    // entiny: pre-stream edit history keys so chat bubbles avoid SQLite queries on UI thread
     fun forEachEditHistoryKey(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int) -> Unit) {
         val cursor = db.queryFinalized("SELECT DISTINCT dialog_id, msg_id FROM inu_edit_history")
         try {
@@ -487,7 +466,6 @@ object InuDatabaseHelper {
             }
         }
 
-        // Entity offsets address `text` as stored, so the two travel together in one blob.
         val entitiesObject = if (entities.isNullOrEmpty()) {
             null
         } else {
@@ -512,7 +490,6 @@ object InuDatabaseHelper {
         }
     }
 
-    /** One stored revision of a message, with whatever fidelity the row was written at. */
     data class EditHistoryRow(
         val date: Long,
         val text: String,
@@ -521,12 +498,7 @@ object InuDatabaseHelper {
         val media: TLRPC.MessageMedia?,
     )
 
-    /**
-     * Independent copy of a media object, via one serialization round-trip. The capture points
-     * hand us the media instance owned by a live `TLRPC.Message`; anything stored in a cache and
-     * later adjusted for display (clearing a one-time TTL, say) must not be that same object, or
-     * the edit archive starts mutating the message still sitting in the chat.
-     */
+    // entiny: deep-clone media via serialization so displaying cached revisions does not mutate live chat messages
     fun cloneMedia(media: TLRPC.MessageMedia?): TLRPC.MessageMedia? {
         if (media == null || media is TLRPC.TL_messageMediaEmpty) return null
         var buffer: NativeByteBuffer? = null
@@ -585,15 +557,10 @@ object InuDatabaseHelper {
         return list
     }
 
-    /** Drops one stored revision. Revisions have no id of their own; (dialog, message, date) is unique enough. */
     fun deleteEditHistoryEntry(db: SQLiteDatabase, dialogId: Long, msgId: Int, date: Long) {
         db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id = $msgId AND date = $date").stepThis().dispose()
     }
 
-    /**
-     * Removes deleted messages older than [cutoffUnixSec] from the DB.
-     * Returns the number of rows deleted.
-     */
     fun pruneDeletedMessages(db: SQLiteDatabase, cutoffUnixSec: Long): Int {
         val mediaPaths = getMediaPaths(db, "inu_deleted_messages", "date < ?", cutoffUnixSec)
         db.executeFast("DELETE FROM inu_deleted_messages WHERE date > 0 AND date < ?")
@@ -603,13 +570,9 @@ object InuDatabaseHelper {
                 it.dispose()
             }
         deleteUnreferencedMediaFiles(db, mediaPaths)
-        // SQLite doesn't give us rows-affected easily via this API, that's fine
         return 0
     }
 
-    /**
-     * Removes edit history entries older than [cutoffUnixSec] from the DB.
-     */
     fun pruneEditHistory(db: SQLiteDatabase, cutoffUnixSec: Long) {
         val mediaPaths = getMediaPaths(db, "inu_edit_history", "date < ?", cutoffUnixSec)
         db.executeFast("DELETE FROM inu_edit_history WHERE date > 0 AND date < ?")
@@ -666,11 +629,6 @@ object InuDatabaseHelper {
         }.sortedByDescending { it.estimatedSize }
     }
 
-    /**
-     * Actual on-disk size of media files referenced by [inu_deleted_messages]/[inu_edit_history],
-     * grouped by dialog. The text-length estimate in [getDeletedMessagesStats] alone badly
-     * undercounts dialogs with saved photos/videos — this fills that gap for the cache-management UI.
-     */
     private fun getMediaSizeByDialog(db: SQLiteDatabase): Map<Long, Long> {
         val pathsByDialog = HashMap<Long, MutableSet<String>>()
         for (table in arrayOf("inu_deleted_messages", "inu_edit_history")) {
@@ -758,10 +716,6 @@ object InuDatabaseHelper {
         }
     }
 
-    /**
-     * Returns the saved-deleted message ids grouped by dialog, optionally restricted to [dialogIds].
-     * Used by the clear-cache flow to know which real messages must also be dropped from the chat.
-     */
     fun getDeletedMessageIds(db: SQLiteDatabase, dialogIds: Collection<Long>? = null): Map<Long, List<Int>> {
         val map = HashMap<Long, MutableList<Int>>()
         val where = if (dialogIds == null) "" else "WHERE dialog_id IN (${dialogIds.joinToString(",")})"
@@ -776,10 +730,6 @@ object InuDatabaseHelper {
         return map
     }
 
-    /**
-     * Drops specific rows from inu_deleted_messages (single-message "delete permanently"),
-     * cleaning up their media file if no other row still references it.
-     */
     fun deleteDeletedMessageEntries(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
         if (mids.isEmpty()) return
         val idsStr = mids.joinToString(",")
@@ -801,18 +751,13 @@ object InuDatabaseHelper {
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }
 
-    /** Drops the stored edit history of specific messages (used by "delete permanently"). */
     fun deleteEditHistory(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
         if (mids.isEmpty()) return
         val idsStr = mids.joinToString(",")
         db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id = $dialogId AND msg_id IN ($idsStr)").stepThis().dispose()
     }
 
-    /**
-     * Physically removes saved-deleted messages from the chat dialogs.
-     * The stock delete path (MessagesStorage.markMessagesAsDeleted) skips these rows while
-     * SAVE_DELETED_MESSAGES is on, so clearing the cache must delete them directly.
-     */
+    // entiny: delete directly from messages_v2 because markMessagesAsDeleted skips rows while save-deleted is enabled
     fun deleteSavedMessages(db: SQLiteDatabase, dialogId: Long, mids: List<Int>) {
         if (mids.isEmpty()) return
         val idsStr = mids.joinToString(",")

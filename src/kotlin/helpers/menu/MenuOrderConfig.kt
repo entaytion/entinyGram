@@ -15,7 +15,6 @@ interface MenuOrderItem {
     val iconRes: Int
     val ordinal: Int
 
-    /** synthetic "smart slot" that lives only in the bottom row and resolves to an action at render */
     val isSlot: Boolean get() = false
 }
 
@@ -70,11 +69,6 @@ abstract class MenuOrderConfig<I : MenuOrderItem>(
     }
 }
 
-/**
- * Permutes `rows` to match the saved order in `entries`. Each row is
- * classified to an item via [classify]; unclassified rows anchor to the
- * preceding classified row (or the head if none). Disabled items are dropped.
- */
 inline fun <Row, I : MenuOrderItem> reorderByMenu(
     rows: List<Row>,
     entries: List<MenuOrderEntry<I>>,
@@ -100,12 +94,10 @@ inline fun <Row, I : MenuOrderItem> reorderByMenu(
         if (rs != null && entry.enabled) ordered.addAll(rs)
         unknownAfter.remove(entry.item)?.let { ordered.addAll(it) }
     }
-    // items absent from saved order (e.g. enum extended after save) — append at end
     for ((item, rs) in byItem) {
         ordered.addAll(rs)
         unknownAfter.remove(item)?.let { ordered.addAll(it) }
     }
-    // unknowns anchored to a disabled-and-missing item (shouldn't happen, but safe): append
     for ((_, rs) in unknownAfter) ordered.addAll(rs)
 
     return ordered
@@ -176,7 +168,6 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
 }
 
 class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
-    // Chats is always first and mandatory, handled separately by MainTabsActivity/MainTabsHelper — not a member here.
     enum class Item(
         override val key: String,
         val index: Int,
@@ -187,12 +178,6 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
         SETTINGS("settings", 2, R.string.Settings, R.drawable.msg_settings),
         CALLS("calls", 3, R.string.MainTabsCalls, R.drawable.msg_calls),
         PROFILE("profile", 4, R.string.MainTabsProfile, R.drawable.msg_openprofile),
-
-        // entinyGram-only identity (index 5) -- hosts desu.inugram.ui.feed.FeedActivity at
-        // FeedScope.Global. Appended after PROFILE rather than slotted in by "logical" position so
-        // the `index` values of the four inherited items keep matching MainTabsActivity's own
-        // INDEX_* constants, and so a saved BOTTOM_TABS_ORDER from before this item existed keeps
-        // its order untouched (MenuOrderConfig.read appends unknown items at the end).
         FEED("feed", 5, R.string.InuFeed, R.drawable.msg_channel);
 
         companion object {
@@ -207,27 +192,13 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        // CALLS matches stock's showCallsTab default (off); FEED is a fork addition, so it is off
-        // by default too -- an untouched install keeps the exact tab bar it had before (rule #4),
-        // and an existing saved order that predates the item gets it appended disabled rather than
-        // silently growing a sixth tab.
         private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED)
     }
 }
 
-/**
- * The rows of the stock Settings screen (`SettingsActivity.fillItems`) — Inugram Settings,
- * Account, Chat Settings, Privacy, ... down to the help block. Reorderable/hideable via
- * [desu.inugram.ui.settings.ProfileSettingsMenuOrderActivity]; consumed from Java through
- * `ProfileSettingsHelper.reorder`.
- *
- * Declaration order MUST match the order `fillItems` builds the rows in — that is what makes
- * an untouched config render byte-identical to stock (see [reorderByMenu]).
- */
 class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,
-        /** `UItem.id` used by `SettingsActivity.fillItems`; 0 = not identified by id (wallet bot) */
         val settingsId: Int,
         override val labelRes: Int,
         override val iconRes: Int,
@@ -269,16 +240,6 @@ class ProfileMenuConfig(key: String) : MenuOrderConfig<ProfileMenuConfig.Item>(k
     }
 }
 
-/**
- * The chats-screen action bar options menu (the "burger"/overflow button, top-right of
- * `DialogsActivity`) — [org.telegram.ui.DialogsActivity.showItemOptions]'s own static rows plus
- * the ones [desu.inugram.helpers.dialogs.DrawerHelper.addDialogsActivityOptions] appends onto the
- * same `ItemOptions` instance. Deliberately excludes rows that are already conditionally shown
- * based on other state (proxy visibility, community/archive-context submenus, third-party
- * attach-menu bots) — those keep their own governance rather than gaining a second, conflicting
- * toggle here. A disabled item here is ANDed with its existing precondition at each call site, so
- * turning everything on reproduces stock-identical behavior (rule #4).
- */
 class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,
@@ -308,12 +269,6 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        // Rows that are genuinely new entinyGram capability (no stock Telegram equivalent at
-        // all) default off, matching rule #4 (default off = stock-identical): enabling the menu
-        // customization itself must not also silently switch on Ghost Mode/Paranoia/Feed/etc.
-        // Rows that just shortcut to something stock already has elsewhere (New Group, Saved
-        // Messages, Scroll to top, My Profile, Contacts, Archived Chats, Settings, theme toggle)
-        // stay on -- hiding those wouldn't make the app more stock-identical, just less convenient.
         private val OFF_BY_DEFAULT = setOf(
             Item.GHOST_MODE,
             Item.PARANOIA,
@@ -324,9 +279,6 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
     }
 }
 
-/** The three account-info rows on the self ("My Profile") screen — phone, bio, username.
- * Consumed from `ProfileActivity.updateRowsIds` through `ProfileSettingsHelper.orderedEnabledInfoRows`.
- * Declaration order matches stock's row order. */
 class ProfileInfoMenuConfig(key: String) : MenuOrderConfig<ProfileInfoMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
     enum class Item(
         override val key: String,
@@ -408,8 +360,6 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         ADD_FILTER("add_filter", listOf(ChatHelper.OPTION_ADD_FILTER), R.string.InuRegexFilterAddFromMessage, R.drawable.inu_tabler_filter),
         DELETE_PERMANENTLY("delete_permanently", listOf(ChatHelper.OPTION_DELETE_PERMANENTLY), R.string.InuDeletePermanently, R.drawable.inu_tabler_trash_x),
 
-        // bottom-row "smart slots" — no real option id; resolved via fallback chains at render
-        // (see ChatHelper.resolveSlot). Default to the bottom row, NagramX-style.
         SLOT_REPLY("slot_reply", emptyList(), R.string.Reply, R.drawable.menu_reply, true),
         SLOT_COPY("slot_copy", emptyList(), R.string.Copy, R.drawable.msg_copy, true),
         SLOT_DELETE("slot_delete", emptyList(), R.string.InuMenuSlotDelete, R.drawable.msg_delete, true),

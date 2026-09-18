@@ -22,8 +22,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 object RoundRecorderHelper {
-    // physical finger spread is capped by the small recorder container;
-    // 3x finger ratio is what comfortably reaches edge-to-edge.
+    // entiny: 3x finger ratio comfortably reaches container edge-to-edge
     private const val MAX_PINCH_RATIO = 3f
 
     @JvmStatic
@@ -54,14 +53,12 @@ object RoundRecorderHelper {
     @JvmStatic
     fun zoomToT(zoom: Float, min: Float, max: Float): Float = tFromZoom(zoom, min, max)
 
-    // fixed levels a round-camera button row can snap to, capped by what the active lens supports
     private val ZOOM_BUTTON_CANDIDATES = floatArrayOf(1f, 2f, 3f, 5f, 10f)
 
     @JvmStatic
     fun zoomLevelsFor(maxZoom: Float): List<Float> =
         ZOOM_BUTTON_CANDIDATES.filter { it <= maxZoom + 0.01f }.ifEmpty { listOf(1f) }
 
-    // c2 and c1 are mutually exclusive (depends on useCamera2); pass both, only the live one matters
     @JvmStatic
     fun currentZoomT(c2: Camera2Session?, c1: CameraSession?): Float = when {
         c2 != null -> tFromZoom(c2.zoom, c2.minZoom, c2.maxZoom)
@@ -72,7 +69,6 @@ object RoundRecorderHelper {
     @JvmStatic
     fun applyZoomT(slider: ZoomControlView?, c2: Camera2Session?, c1: CameraSession?, t: Float) {
         val clamped = t.coerceIn(0f, 1f)
-        // Camera1 driver maps [0,1] through a log ratio table; Camera2 gets the explicit zoom factor.
         c2?.setZoom(mapZoomT(clamped, c2.minZoom, c2.maxZoom))
         c1?.setZoom(clamped)
         slider?.setZoom(clamped, false)
@@ -148,12 +144,10 @@ object RoundRecorderHelper {
         }
     }
 
-    // c2/c1 mutually exclusive, same convention as currentZoomT/syncSlider
     @JvmStatic
     fun syncZoomButtons(buttons: ZoomLevelButtonsView?, c2: Camera2Session?, c1: CameraSession?) {
         if (buttons == null) return
         if (c2 == null) {
-            // Camera1 has no real x-ratio to snap to (see Camera2Session.getMinZoom TODO), hide the row
             buttons.setLevels(emptyList())
             return
         }
@@ -161,9 +155,6 @@ object RoundRecorderHelper {
         buttons.setActiveLevel(nearestLevel(c2.zoom, c2.maxZoom))
     }
 
-    // cheaper than syncZoomButtons: only re-highlights the closest button, doesn't rebuild the row.
-    // call this after every zoom change (slider drag, pinch move, reset animation) so the highlighted
-    // level never goes stale relative to the actual camera zoom.
     @JvmStatic
     fun refreshActiveFromZoom(buttons: ZoomLevelButtonsView?, c2: Camera2Session?, c1: CameraSession?) {
         if (buttons == null || c2 == null) return
@@ -189,9 +180,7 @@ object RoundRecorderHelper {
         }
     }
 
-    // cancel triggers cameraDevice.close() which can take 100-300ms per camera.
-    // run sync closes off the UI thread in parallel and gate the next dual open on completion
-    // to avoid HAL re-open races with not-yet-released sensors.
+    // entiny: close cameras in parallel background threads to avoid UI stalls and HAL reopen races
     @JvmStatic
     fun destroyDualAsync(sessions: Array<Camera2Session?>) {
         val toClose = sessions.copyOf()
@@ -211,8 +200,7 @@ object RoundRecorderHelper {
         }, "inu-camera2-cleanup").start()
     }
 
-    // configuring both CaptureSessions concurrently races in the HAL and silently starves
-    // the secondary's stream (rear-first init repro). serialize: primary first, secondary chains via whenDone.
+    // entiny: serialize capture session config primary-first to avoid HAL race on secondary stream
     @JvmStatic
     fun openDualSerialized(
         sessions: Array<Camera2Session?>,
@@ -230,42 +218,26 @@ object RoundRecorderHelper {
         }
     }
 
-    // Pure -- no shared state. The result is stashed by the caller on its own Camera2Session
-    // (see Camera2Session.negotiatedFps) rather than here, because in dual-camera mode two
-    // sessions (front + back) call this almost concurrently on session open; a single shared
-    // field here would let whichever call finishes last silently clobber the other's result.
     @JvmStatic
     fun selectFpsRange(characteristics: CameraCharacteristics?, request60Fps: Boolean): Range<Int> {
         if (!request60Fps || characteristics == null) return Range(30, 30)
         val availableRanges = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)
             ?: return Range(30, 30)
 
-        // Only accept a strict 60 FPS range. Wide ranges like [30, 60] or [15, 60]
-        // are still legal on some HALs, but they force the recorder to use a variable
-        // frame envelope. That is the combination most likely to cause a stall or a
-        // post-record send failure, so we safely degrade to the stock 30 FPS profile.
+        // entiny: require strict 60 FPS range; variable ranges cause encoder stalls and send failures
         val fixed60 = availableRanges.firstOrNull { it.lower == 60 && it.upper == 60 }
         if (fixed60 != null) return fixed60
 
         return Range(30, 30)
     }
 
-    // Single source of truth for the whole record chain (camera FPS range, dt clamp,
-    // encoder KEY_FRAME_RATE, framerate metadata). Returns 60 only when the toggle is
-    // on AND the given session's HAL actually negotiated a strict 60 FPS range (see
-    // Camera2Session.negotiatedFps); otherwise stock 30. Reading it from the session itself
-    // (instead of a global) keeps the encoder/muxer in sync with the camera that is actually
-    // feeding it -- declaring 60 while the camera delivers 30 corrupts timestamps and breaks
-    // send, and a shared global can't tell two concurrently-negotiating sessions apart.
+    // entiny: only report 60 FPS when HAL actually negotiated it to prevent timestamp corruption
     @JvmStatic
     fun getTargetFps(session: Camera2Session?): Int =
         if (InuConfig.ROUND_RECORDER_60FPS.value && session?.negotiatedFps == 60) 60 else 30
 
     @JvmStatic
     fun getVideoBitrate(defaultBitrate: Int, session: Camera2Session?): Int {
-        // Scale the payload only when true 60 FPS is actually negotiated. Inflating
-        // bitrate for a 30 FPS fallback just bloats the file on devices that cannot
-        // sustain the requested recording profile.
         return if (InuConfig.ROUND_RECORDER_60FPS.value && session?.negotiatedFps == 60) {
             (defaultBitrate * 1.5f).toInt()
         } else {

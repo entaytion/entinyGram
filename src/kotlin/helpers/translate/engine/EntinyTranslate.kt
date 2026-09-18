@@ -13,23 +13,13 @@ import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.LaunchActivity
 
-/**
- * Facade for the stock Java code (`TranslateController`). Keeps the patch surface to a handful
- * of one-line hooks:
- *
- * - [handle] routes `pushToTranslate` into the engine when a third-party provider is selected;
- * - [isInFlight] feeds the translating-spinner state;
- * - [cancelDialog] / [resetDialog] / [unfailMessage] keep engine state in sync with dialog
- *   toggling, language changes and manual "show original".
- */
 object EntinyTranslate {
 
     @JvmStatic
     @JvmOverloads
     fun isActive(account: Int = UserConfig.selectedAccount): Boolean {
         if (InuConfig.TRANSLATE_PROVIDER.value != TranslationProviders.PROVIDER_TELEGRAM) return true
-        // Telegram API MTProto rejects chat translation for non-premium accounts.
-        // Route through our fast engine instead of waiting for MTProto to reject it.
+        // entiny: MTProto rejects chat translation for non-premium accounts; route through local engine
         return !UserConfig.getInstance(account).isPremium
     }
 
@@ -39,13 +29,6 @@ object EntinyTranslate {
         return LocaleController.getString(provider.nameRes)
     }
 
-    /**
-     * Routes one `pushToTranslate` request. Returns true when the engine took it over (the
-     * caller must not continue to the stock Telegram path).
-     *
-     * When the selected provider is not configured yet, shows a one-time bulletin per dialog and
-     * returns false so stock (server-side) translation keeps working as a graceful fallback.
-     */
     @JvmStatic
     @JvmOverloads
     fun handle(
@@ -72,8 +55,7 @@ object EntinyTranslate {
             }
             return false
         }
-        // If the chosen provider cannot translate into the target language (e.g. Lingo and
-        // TranSmart lack Ukrainian), silently use a broader provider instead of failing.
+        // entiny: fall back to a broader provider when selected provider lacks target language support
         val effective = TranslationProviders.effectiveProvider(provider, toLang)
         if (effective !== provider) {
             Log.d(TAG, "provider ${provider.nameRes} lacks target $toLang; using ${effective.nameRes}")
@@ -91,18 +73,6 @@ object EntinyTranslate {
         )
     }
 
-    /**
-     * The messages immediately preceding [msgId] in the same chat, oldest first, capped by
-     * [InuConfig.TRANSLATE_LLM_CONTEXT]. This is what lets an LLM resolve what a per-message
-     * translator structurally cannot: pronouns, grammatical gender, honorifics and one-word
-     * replies only come out right when the model can see what was said before them.
-     *
-     * Read here rather than in the engine on purpose - this runs on the UI thread, where the
-     * chat's loaded message list is safe to touch, and the result is then carried into the worker
-     * as an immutable snapshot. Everything about it is best-effort: no open chat, a different
-     * chat in front, or a message that has since scrolled out of the loaded window simply means
-     * no context, never a failed translation.
-     */
     private fun conversationContext(dialogId: Long, msgId: Int, provider: TranslationProvider): List<String> {
         if (provider !== LlmProvider) return emptyList()
         val limit = InuConfig.TRANSLATE_LLM_CONTEXT.value
@@ -114,15 +84,14 @@ object EntinyTranslate {
             val index = messages.indexOfFirst { it != null && it.id == msgId }
             if (index < 0) return emptyList()
             messages.asSequence()
-                .drop(index + 1) // the list runs newest-first, so everything past it is older
+                .drop(index + 1)
                 .mapNotNull { it?.messageOwner?.message?.trim()?.takeIf(String::isNotEmpty) }
                 .take(limit)
                 .toList()
-                .asReversed() // hand them over in the order they were actually said
+                .asReversed()
         }.getOrDefault(emptyList())
     }
 
-    /** Routes one poll translation request; returns true when the engine took it over. */
     @JvmStatic
     @JvmOverloads
     fun handlePoll(
@@ -160,11 +129,6 @@ object EntinyTranslate {
         )
     }
 
-    /**
-     * Routes one web-preview translation request through the engine when a third-party provider
-     * is selected. Returns true when taken over; false lets the caller keep the stock Telegram
-     * API path (used when no provider is selected or it is not configured).
-     */
     @JvmStatic
     fun handleWebPage(
         dialogId: Long,
@@ -202,10 +166,6 @@ object EntinyTranslate {
         )
     }
 
-    /**
-     * Called when the user switches translation provider. Clears per-message failure marks so
-     * messages that failed under the previous provider are retried with the new one.
-     */
     @JvmStatic
     fun onProviderChanged() {
         Log.d(TAG, "provider changed to ${currentProviderName()}; resetting engine failures")

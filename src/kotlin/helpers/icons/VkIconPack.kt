@@ -3,13 +3,8 @@ package desu.inugram.helpers.icons
 import android.util.SparseIntArray
 import org.telegram.messenger.R
 
-/*
- * VKUI icon pack, ported from Catogram (ua.itaysonlab.catogram.vkui)
- * Icons: https://github.com/VKCOM/icons (MIT)
- */
 object VkIconPack : IconPack() {
     override fun buildIcons() = SparseIntArray(46).apply {
-        // Settings
         put(R.drawable.msg_settings, R.drawable.vkui_settings_outline_28)
         put(R.drawable.msg2_language, R.drawable.vkui_globe_outline_28)
         put(R.drawable.msg2_secret, R.drawable.vkui_lock_outline_28)
@@ -26,7 +21,6 @@ object VkIconPack : IconPack() {
         put(R.drawable.msg_payment_card, R.drawable.vkui_payment_card_outline_28)
         put(R.drawable.msg_clearcache, R.drawable.vkui_clear_data_outline_28)
 
-        // Chat input
         put(R.drawable.input_attach, R.drawable.vkui_attach_outline_28)
         put(R.drawable.input_mic, R.drawable.vkui_voice_outline_28)
         put(R.drawable.input_video, R.drawable.vkui_videocam_outline_28)
@@ -40,14 +34,12 @@ object VkIconPack : IconPack() {
         put(R.drawable.smiles_tab_stickers, R.drawable.vkui_sticker_outline_28)
         put(R.drawable.smiles_tab_gif, R.drawable.vkui_picture_outline_28)
 
-        // Drawer
         put(R.drawable.msg_archive, R.drawable.vkui_archive_outline_28)
         put(R.drawable.msg_contacts, R.drawable.vkui_user_outline_28)
         put(R.drawable.msg_calls, R.drawable.vkui_phone_outline_28)
         put(R.drawable.msg_saved, R.drawable.vkui_bookmark_outline_28)
         put(R.drawable.msg_addcontact, R.drawable.vkui_user_add_outline_24)
 
-        // Message context menu
         put(R.drawable.menu_reply, R.drawable.vkui_reply_outline_28)
         put(R.drawable.msg_link, R.drawable.vkui_link_circle_outline_28)
         put(R.drawable.msg_viewreplies, R.drawable.vkui_message_reply_outline_28)

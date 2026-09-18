@@ -123,7 +123,6 @@ private class NativeLocationProvider(private val ctx: Context) : LocationProvide
                 manager.getLastKnownLocation(LocationManager.GPS_PROVIDER) else null
             val net = if (manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
                 manager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) else null
-            // pick freshest
             callback(
                 when {
                     gps == null -> net
@@ -141,8 +140,6 @@ private class NativeLocationProvider(private val ctx: Context) : LocationProvide
 private const val FRESHNESS_THRESHOLD_NS = 30_000_000_000L // 30s in nanoseconds
 private const val SIGNIFICANT_ACCURACY_DROP_M = 200f
 
-// adapted from android docs' LocationProvider best-practices sample, with a tighter freshness window
-// suitable for live tracking (we update at 1Hz, not occasional polls).
 private fun isBetterLocation(candidate: Location, current: Location?): Boolean {
     if (current == null) return true
     val timeDelta = candidate.elapsedRealtimeNanos - current.elapsedRealtimeNanos

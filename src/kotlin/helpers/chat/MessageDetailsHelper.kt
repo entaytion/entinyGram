@@ -52,7 +52,7 @@ object MessageDetailsHelper {
         var subtitle: CharSequence? = null,
         val iconRes: Int,
         var realValue: String? = null,
-        val itemId: Int = -1, // 0 = owner, 1 = file_path
+        val itemId: Int = -1,
         val ownerId: Long = 0L,
         val mimeType: String? = null,
         val inputStickerSet: TLRPC.InputStickerSet? = null,
@@ -107,7 +107,6 @@ object MessageDetailsHelper {
             addItemView(context, activity, swb.linearLayout, swipeBack, dcItem, rp, minWidthDp)
         }
 
-        // Root container for swipeback page with fixed header & scrolling body
         val rootLayout = object : LinearLayout(context) {
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                 val maxH = (popupLayout.measuredHeight - popupLayout.paddingTop - popupLayout.paddingBottom).takeIf { it > 0 } ?: AndroidUtilities.dp(400f)
@@ -120,7 +119,6 @@ object MessageDetailsHelper {
             minimumWidth = AndroidUtilities.dp(minWidthDp.toFloat())
         }
 
-        // Fixed Back button at top
         val backItem = ActionBarMenuSubItem(context, false, false, rp)
         backItem.setTextAndIcon(LocaleController.getString(R.string.Back), R.drawable.ic_ab_back)
         backItem.setMinimumWidth(AndroidUtilities.dp(minWidthDp.toFloat()))
@@ -135,7 +133,6 @@ object MessageDetailsHelper {
         }
         rootLayout.addView(headerGap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8))
 
-        // ScrollView for the detail items with dynamic max height constraint
         val scrollView = object : ScrollView(context) {
             override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
                 val currentMaxH = (popupLayout.measuredHeight - popupLayout.paddingTop - popupLayout.paddingBottom - AndroidUtilities.dp(56f)).coerceAtLeast(AndroidUtilities.dp(100f))
@@ -194,12 +191,10 @@ object MessageDetailsHelper {
             height = 48
         }
 
-        // Async resolution of cached owner username/name
         if (item.itemId == 0 && item.ownerId > 0) {
             resolveCachedOwnerAsync(activity.currentAccount, item.ownerId, item, subItem)
         }
 
-        // Async resolution of sticker set pack name/index
         if (item.inputStickerSet != null) {
             fetchStickerSetAsync(activity.currentAccount, item.inputStickerSet, item.doc, item, subItem)
         }
@@ -233,9 +228,7 @@ object MessageDetailsHelper {
             }
 
             if (item.itemId == 0 && item.ownerId > 0) {
-                // the sender of a message already visible in this chat is virtually always in
-                // MessagesController's in-memory cache; avoid a synchronous DB hit on the UI thread
-                // for the rare miss instead of blocking the click on storage.getUserSync.
+                // entiny: avoid synchronous DB read on UI thread for sender profile navigation
                 val mc = MessagesController.getInstance(activity.currentAccount)
                 val user = mc?.getUser(item.ownerId)
 
@@ -399,7 +392,6 @@ object MessageDetailsHelper {
         val middleItems = mutableListOf<DetailItem>()
         var dcItem: DetailItem? = null
 
-        // 1. Header Section: Views, Shares
         if (owner.views > 0) {
             headerItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailViews), owner.views.toString(), R.drawable.msg_view_file))
         }
@@ -407,7 +399,6 @@ object MessageDetailsHelper {
             headerItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailForwards), owner.forwards.toString(), R.drawable.msg_forward))
         }
 
-        // 2. Dates & IDs Section
         val idVal = if (messageObject.currentEvent != null) messageObject.currentEvent.id.toString() else owner.id.toString()
         datesItems.add(DetailItem("ID", idVal, R.drawable.msg_info))
 
@@ -483,7 +474,6 @@ object MessageDetailsHelper {
             datesItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailForwardDate), formatDate(fwd.date), R.drawable.msg_recent))
         }
 
-        // Only show edited if message was legitimately marked as edited or has saved edit history
         val isEdited = messageObject.isEdited || SavedMessagesHelper.hasEditHistory(activity.currentAccount, messageObject.dialogId, messageObject.id)
         if (isEdited && owner.edit_date > 0) {
             datesItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailEdited), formatDate(owner.edit_date), R.drawable.msg_edit))
@@ -494,7 +484,6 @@ object MessageDetailsHelper {
             datesItems.add(DetailItem(LocaleController.getString(R.string.InuMsgDetailAutoDelete), formatDate(autoDeleteAt), R.drawable.msg_autodelete))
         }
 
-        // 3. Middle Section: Media specifics
         var filePath: String? = null
         var docSize: Long = if (doc != null) doc.size else messageObject.size
         var streamSize: Long = 0L
@@ -544,7 +533,6 @@ object MessageDetailsHelper {
             }
         }
 
-        // 4. Bottom Datacenter
         val dcId = extractDatacenterId(owner)
         if (dcId > 0) {
             val dcLoc = getDcLocation(dcId)

@@ -13,17 +13,13 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.ItemOptions
 import kotlin.math.abs
 
-// Stock ItemOptions ships press-hold-drag-release (installHoverReleaseListener), so we no longer
-// drive the gesture ourselves. We keep two things on top of stock:
-//  - early open on upward swipe (stock has no equivalent; dragging up cancels the native long-press)
-//  - a flat background highlight on hover instead of stock's ripple (see ItemOptions.updateHover)
 object LongPressDragMenuHelper {
     @JvmStatic
     fun attach(source: View, factory: (View) -> ItemOptions?) {
         installEarlySwipe(source)
         source.setOnLongClickListener { v ->
             val o = factory(v) ?: return@setOnLongClickListener false
-            // stock nulls scrimView's touch listener on release, dropping our early-swipe listener
+            // entiny: stock nulls scrimView touch listener on release which drops our early-swipe listener
             o.setOnDismiss { installEarlySwipe(v) }
             o.show()
             true
@@ -48,7 +44,6 @@ object LongPressDragMenuHelper {
                 MotionEvent.ACTION_MOVE -> if (!fired) {
                     val up = downY - event.rawY
                     val sideways = abs(event.rawX - downX)
-                    // claim the upward drag before a parent container can steal it
                     if (up > sideways && up > grabSlop) {
                         v.parent?.requestDisallowInterceptTouchEvent(true)
                     }
@@ -62,7 +57,6 @@ object LongPressDragMenuHelper {
         }
     }
 
-    // only one menu is open and one item hovered at a time, so a single saved background is enough
     private var hoverItem: View? = null
     private var hoverSaved: Drawable? = null
 

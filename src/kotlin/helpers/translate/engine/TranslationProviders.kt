@@ -12,50 +12,24 @@ import java.net.URL
 import java.net.URLEncoder
 import java.util.UUID
 
-/**
- * A text translation backend. Implementations are plain text → text and must be called off the
- * main thread. Entity/formatting preservation is handled by [EntityKeeper] on top of the raw
- * translation, so providers do not need to know anything about Telegram entities.
- */
 interface TranslationProvider {
 
-    /** Stable id matching [TranslationProviders] constants and the stored config value. */
     val id: Int
-
     val nameRes: Int
 
-    /** Whether the user has configured everything this provider needs. */
     fun isConfigured(): Boolean = true
 
-    /**
-     * Translates [text] into [toLang] (a Telegram-style code like "en", "ru", "zh-cn").
-     * Blocking; throws [ProviderRateLimitException] on rate limiting and [IOException] on
-     * transient network failures so the engine can retry.
-     */
     @Throws(Exception::class)
     fun translate(text: String, toLang: String): String
 
-    /**
-     * Same as [translate], plus up to N preceding messages of the same conversation, oldest first,
-     * for providers that can make use of them. Only [LlmProvider] can; every stateless HTTP
-     * translation API takes one string and knows nothing about who said what, so this default
-     * forwards to the plain overload and the context is dropped.
-     */
     @Throws(Exception::class)
     fun translate(text: String, toLang: String, context: List<String>): String = translate(text, toLang)
 
-    /**
-     * Whether this provider can translate into [toLang]. Providers with a limited language set
-     * (Lingo, TranSmart) override this; the engine falls back to a broader provider (Google,
-     * Bing) when the selected one does not support the target language.
-     */
     fun supportsLanguage(toLang: String): Boolean = true
 }
 
-/** Transient HTTP 429 / provider rate limit — retry with backoff. */
 class ProviderRateLimitException(message: String) : IOException(message)
 
-/** Permanent configuration/API errors (bad key, unsupported language) — do not retry. */
 class ProviderConfigException(message: String) : IOException(message)
 
 object TranslationProviders {
@@ -71,7 +45,6 @@ object TranslationProviders {
     const val PROVIDER_TRANSMART = 8
     const val PROVIDER_BING = 9
 
-    /** Providers selectable in settings, in display order. Telegram API is handled by stock code. */
     val all: List<TranslationProvider> = listOf(
         GoogleWebProvider,
         DeepLProvider,
@@ -97,23 +70,12 @@ object TranslationProviders {
         else -> null
     }
 
-    /**
-     * Returns [provider] when it supports [toLang], otherwise the first fallback provider that
-     * does (Google and Bing both cover ~all Telegram languages, including Ukrainian, which
-     * Lingo and TranSmart lack). Never returns a provider that cannot handle the target, so the
-     * engine surfaces an accurate error instead of retrying forever.
-     */
     fun effectiveProvider(provider: TranslationProvider, toLang: String): TranslationProvider {
         if (provider.supportsLanguage(toLang)) return provider
         val fallback = if (provider == GoogleWebProvider) BingProvider else GoogleWebProvider
         return if (fallback.supportsLanguage(toLang)) fallback else provider
     }
 
-    /**
-     * Whether the currently selected provider can translate into [code] (a Telegram-style code
-     * like "en", "uk", "zh-cn"). Used to filter language pickers so they only list languages
-     * the chosen provider actually knows instead of the full stock list.
-     */
     @JvmStatic
     fun providerSupportsTarget(code: String): Boolean {
         val provider = current() ?: return true
@@ -124,19 +86,13 @@ object TranslationProviders {
 private fun encodeURIComponent(s: String): String =
     URLEncoder.encode(s, "UTF-8").replace("+", "%20").replace("%7E", "~")
 
-/**
- * Trims a provider's error body down to something worth putting in a bulletin. Google's abuse
- * block does not answer with JSON at all - it answers with a full HTML "Sorry..." page, and the
- * first 200 characters of that are a stylesheet, which is what users were being shown as the
- * reason their translation failed.
- */
+// entiny: strips HTML style blocks from Google abuse block error response
 private fun errorSnippet(text: String): String {
     val trimmed = text.trim()
     if (trimmed.startsWith("<")) return "blocked by the service (HTML error page)"
     return trimmed.take(200)
 }
 
-/** Minimal blocking HTTP helper shared by providers. */
 internal fun httpJson(
     url: String,
     method: String = "GET",
@@ -170,36 +126,14 @@ internal fun httpJson(
     }
 }
 
-/**
- * Google web translate (gtx endpoint, no API key, subject to rate limits).
- * 429 from IP blocks → fallback to app endpoint (at) or Chrome-extension endpoint (independent quotas).
- */
 object GoogleWebProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_GOOGLE
     override val nameRes: Int = R.string.InuTranslateProviderGoogle
 
-    /** How long gtx is skipped after it blocks us, before the next request tries it again. */
     private const val BLOCK_COOLDOWN_MS = 10 * 60 * 1000L
-
-    /**
-     * Longest text the fallback will attempt. That endpoint only accepts GET, so the whole
-     * message travels in the URL; past roughly this length Google answers 414 instead of a
-     * translation and the original 429 is the more useful thing to report.
-     */
     private const val MAX_FALLBACK_CHARS = 1800
-
-    /** Same URL-length concern as the dictionary endpoint, just a longer practical limit. */
     private const val MAX_APP_CHARS = 3500
-
-    /**
-     * gtx blocks are IP-based (see class doc), so a short connect/read timeout matters: on a
-     * blocked address the socket does not fail fast, it hangs for the full timeout. The default
-     * [httpJson] timeouts (10s/15s) were sized for arbitrary API calls; a translate request is a
-     * few hundred bytes and any of the three endpoints below should answer well within this or
-     * not at all, so cutting it lets a blocked gtx call fail fast enough to still try the other
-     * two endpoints inside one user-perceived request instead of eating the timeout three times.
-     */
     private const val FAST_CONNECT_TIMEOUT_MS = 5_000
     private const val FAST_READ_TIMEOUT_MS = 7_000
 
@@ -211,7 +145,7 @@ object GoogleWebProvider : TranslationProvider {
         if (System.currentTimeMillis() < blockedUntil) {
             return translateViaApp(text, tl)
                 ?: translateViaDictionary(text, tl)
-                ?: translateViaGtx(text, tl) // last resort: try the primary anyway
+                ?: translateViaGtx(text, tl)
         }
         return try {
             translateViaGtx(text, tl)
@@ -246,15 +180,6 @@ object GoogleWebProvider : TranslationProvider {
         return sb.toString()
     }
 
-    /**
-     * The endpoint the official Google Translate Android app uses (`client=at`, spoofed app
-     * User-Agent). A separate service tier from gtx on a different hostname
-     * (translate.google.com, not translate.googleapis.com); an address the gtx abuse filter has
-     * blocked is frequently not blocked here, and vice versa, so trying this before giving up
-     * roughly doubles the odds of a fast success instead of falling through to the much more
-     * limited dictionary endpoint. Returns null - never throws - so the caller keeps whatever
-     * more diagnostic error the other endpoints produced.
-     */
     private fun translateViaApp(text: String, tl: String): String? {
         if (text.length > MAX_APP_CHARS) return null
         return try {
@@ -278,11 +203,6 @@ object GoogleWebProvider : TranslationProvider {
         }
     }
 
-    /**
-     * The endpoint Chrome's built-in dictionary uses. Returns null - never throws - when it
-     * cannot help, so the caller reports the original rate limit rather than a second, less
-     * recognisable error. Line breaks and the `<inuN>` entity markers survive it intact.
-     */
     private fun translateViaDictionary(text: String, tl: String): String? {
         if (text.length > MAX_FALLBACK_CHARS) return null
         return try {
@@ -295,8 +215,6 @@ object GoogleWebProvider : TranslationProvider {
                 connectTimeout = FAST_CONNECT_TIMEOUT_MS,
                 readTimeout = FAST_READ_TIMEOUT_MS,
             )
-            // Single strings for one sentence, [text, detectedLang] pairs once Google splits the
-            // input; both shapes appear for the same request depending on length.
             val root = JSONArray(resp)
             val sb = StringBuilder(text.length)
             for (i in 0 until root.length()) {
@@ -312,7 +230,6 @@ object GoogleWebProvider : TranslationProvider {
     }
 
     private fun normalizeToLang(code: String): String {
-        // Google uses "no" for Norwegian; region suffixes like "zh-cn" are uppercased to "zh-CN".
         if (code.equals("nb", ignoreCase = true)) return "no"
         val dash = code.indexOf('-')
         if (dash > 0) {
@@ -323,11 +240,8 @@ object GoogleWebProvider : TranslationProvider {
 }
 
 private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36"
-
-/** Spoofs the real Google Translate Android app, matching what `client=at` expects to see. */
 private const val APP_USER_AGENT = "GoogleTranslate/6.14.0.04.343003216 (Linux; U; Android 10; Redmi K20 Pro)"
 
-/** DeepL API v2. Uses the free endpoint automatically when the key carries the ":fx" suffix. */
 object DeepLProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_DEEPL
@@ -361,11 +275,6 @@ object DeepLProvider : TranslationProvider {
     }
 }
 
-/**
- * Any OpenAI-compatible chat completions endpoint. The user points it at their own server/LLM
- * gateway; the system prompt tells the model to translate only and preserve the `<inuN>` markup
- * used for entity preservation.
- */
 object LlmProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_LLM
@@ -382,10 +291,7 @@ object LlmProvider : TranslationProvider {
         val system = InuConfig.TRANSLATE_LLM_PROMPT.value.trim().ifBlank { DEFAULT_SYSTEM_PROMPT }
         val langName = TranslateAlert2.languageName(toLang) ?: toLang
 
-        // Context goes in as its own turn with an acknowledgement after it, rather than being
-        // glued in front of the text to translate. Models reliably translate everything handed to
-        // them inside a single user message, so a flat "context: ... / now translate: ..." prompt
-        // comes back with the context translated too.
+        // entiny: conversation context goes as separate user turn so model does not translate the context itself
         val messages = JSONArray().put(JSONObject().put("role", "system").put("content", system))
         if (context.isNotEmpty()) {
             messages.put(
@@ -438,11 +344,6 @@ object LlmProvider : TranslationProvider {
     """.trimIndent()
 }
 
-/**
- * Yandex Cloud Translate API v2. New Yandex Cloud accounts include a free trial allocation
- * (1M chars/month); the API key is created in the cloud console. Source language is left out
- * so the service auto-detects it.
- */
 object YandexProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_YANDEX
@@ -474,10 +375,6 @@ object YandexProvider : TranslationProvider {
     }
 }
 
-/**
- * Microsoft Translator (Azure Cognitive Services). The F0 tier is free (2M chars/month) and
- * only needs an API key; the region header is optional when the resource is global.
- */
 object MicrosoftProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_MICROSOFT
@@ -512,18 +409,11 @@ object MicrosoftProvider : TranslationProvider {
     }
 }
 
-/**
- * MyMemory — free translation API, no key required (Google-backed MT plus community memory).
- * Anonymous use is rate-limited (~5k chars/day per IP), so it suits light use; the engine's
- * serial queue keeps bursts in check. The free GET endpoint caps `q` at 500 chars, so longer
- * messages are split into chunks (on line boundaries where possible) and translated per part.
- */
 object MyMemoryProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_MYMEMORY
     override val nameRes: Int = R.string.InuTranslateProviderMyMemory
 
-    /** Hard cap of the free GET API; stay below it to leave room for URL escaping. */
     private const val MAX_CHUNK_CHARS = 450
 
     override fun translate(text: String, toLang: String): String {
@@ -554,7 +444,6 @@ object MyMemoryProvider : TranslationProvider {
         return translated
     }
 
-    /** Splits [text] into ≤ [MAX_CHUNK_CHARS]-char pieces, preferring line boundaries. */
     private fun splitChunks(text: String): List<String> {
         val out = ArrayList<String>()
         var current = StringBuilder()
@@ -593,11 +482,6 @@ object MyMemoryProvider : TranslationProvider {
     }
 }
 
-/**
- * Bing Translator — the free web endpoint used by translator.bing.com (no API key).
- * Requires scraping the IG/IID/key/token values from the translator page; they are cached
- * for their expiry window. Adapted from NagramX's BingTranslatorRaw. Verified live.
- */
 object BingProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_BING
@@ -667,10 +551,6 @@ object BingProvider : TranslationProvider {
     }
 }
 
-/**
- * Lingo (Caiyun Xiaoyi) — free Chinese translation service with a public shared token,
- * no registration. Only supports zh/en/es/fr/ja/ru targets. Adapted from NagramX; verified live.
- */
 object LingoProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_LINGO
@@ -708,7 +588,8 @@ object LingoProvider : TranslationProvider {
         val sb = StringBuilder(text.length)
         for (i in 0 until target.length()) {
             val line = target.getString(i)
-            if (line == "\ud835") continue // NagramX: bogus surrogate emitted for empty lines
+            // entiny: skip bogus surrogate emitted for empty lines
+            if (line == "\ud835") continue
             if (sb.isNotEmpty()) sb.append('\n')
             sb.append(line)
         }
@@ -722,10 +603,6 @@ object LingoProvider : TranslationProvider {
     }
 }
 
-/**
- * TranSmart (Tencent) — free web translator with a spoofed browser client_key, no API key.
- * Adapted from NagramX; verified live with source.lang=auto.
- */
 object TranSmartProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_TRANSMART

@@ -19,9 +19,6 @@ import org.telegram.messenger.UserConfig
 import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.LaunchActivity
 
-// Fork-owned launcher (long-press) shortcuts. Re-applied on every stock buildShortcuts() pass, since that
-// wipes all dynamic shortcuts. Add an Entry here to expose a new one.
-// Stock ranks its own: 0 = compose, 1+ = top chats. Launchers only render the first few by rank.
 object ShortcutHelper {
     const val SWITCH_ACCOUNT_ACTION = "desu.inugram.action.SWITCH_ACCOUNT"
 
@@ -87,8 +84,7 @@ object ShortcutHelper {
     fun handleAction(activity: LaunchActivity, intent: Intent?): Boolean {
         val action = intent?.action ?: return false
         val entry = entries.firstOrNull { it.action == action } ?: return false
-        // returning false lets stock stash the intent and replay handleIntent() once unlocked,
-        // instead of us drawing over the passcode screen.
+        // entiny: returning false lets stock stash intent and replay handleIntent after passcode unlock
         if (entry.requiresUnlocked && (AndroidUtilities.needShowPasscode() || SharedConfig.isWaitingForPasscodeEnter)) {
             return false
         }
@@ -101,12 +97,11 @@ object ShortcutHelper {
             UserConfig.getInstance(it).currentUser != null && !PasscodeHelper.isAccountHidden(it)
         }
 
-    // in-app fallback, used when AccountPickerActivity handed off because a passcode is set. the app is
-    // already resuming here, so the account we're about to leave would otherwise report itself online.
     private fun showAccountPicker(activity: LaunchActivity) {
         if (countSelectableAccounts() < 2) return
         val previous = UserConfig.selectedAccount
         val controller = MessagesController.getInstance(previous)
+        // entiny: ignoreSetOnline prevents resuming account from reporting online before switch completes
         controller.ignoreSetOnline = true
 
         val dialog = AlertsCreator.createAccountSelectDialog(activity) { account ->

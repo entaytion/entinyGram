@@ -29,7 +29,6 @@ object AttachCameraHelper {
 
     fun isTab(): Boolean = InuConfig.ATTACH_CAMERA_MODE.value == TAB
 
-    /** whether the camera lives outside the gallery grid, i.e. as a fab or a bottom tab */
     @JvmStatic
     fun hasCameraOutsideGrid(alert: ChatAttachAlert): Boolean {
         val mode = InuConfig.ATTACH_CAMERA_MODE.value
@@ -59,7 +58,6 @@ object AttachCameraHelper {
         AttachFabHelper.install(alert, container, fab, AttachFabHelper.createLayoutParams())
     }
 
-    /** opens the camera, switching to the gallery layout first if some other layout is shown */
     @JvmStatic
     fun openCamera(alert: ChatAttachAlert) {
         val layout = alert.photoLayout ?: return
@@ -71,7 +69,6 @@ object AttachCameraHelper {
         openCameraNow(layout)
     }
 
-    /** the camera tab can be tapped from any layout, so opening it may have to wait for the switch */
     @JvmStatic
     fun onLayoutShown(layout: ChatAttachAlertPhotoLayout) {
         if (pendingOpen?.get() !== layout) return
@@ -86,7 +83,6 @@ object AttachCameraHelper {
         return true
     }
 
-    /** same as long tapping the camera cell in the gallery grid */
     @JvmStatic
     fun openSystemCamera(alert: ChatAttachAlert) {
         alert.delegate?.didPressedButton(0, false, true, 0, 0, 0L, alert.isCaptionAbove, false, 0L)

@@ -23,16 +23,11 @@ object SuggestionFilter {
         if (InuConfig.HIDE_SUGGESTION_CUSTOM.value) {
             res.custom_pending_suggestion = null
         }
-        // proxy owners can attach a "sponsor" chat/channel that Telegram pins atop the dialog
-        // list while their proxy is in use (TL_help_getPromoData's `proxy` flag + `peer`) —
-        // strip it here so no promo dialog is ever created for it.
+        // entiny: clearing peer prevents MessagesController from resolving promoDialogId into a pinned promo dialog
         if (res.proxy && InuConfig.HIDE_PROXY_SPONSOR_CHAT.value) {
             res.proxy = false
             res.peer = null
         }
-        // non-proxy promo chats: Telegram's PSA slots (psa_type non-empty -> PROMO_TYPE_PSA) and
-        // plain sponsored promo chats (PROMO_TYPE_OTHER). Both are pinned atop the dialog list the
-        // same way; clearing `peer` makes MessagesController resolve promoDialogId to 0 -> no dialog.
         if (!res.proxy && InuConfig.HIDE_PSA_PROMO_CHAT.value) {
             res.peer = null
             res.psa_type = null

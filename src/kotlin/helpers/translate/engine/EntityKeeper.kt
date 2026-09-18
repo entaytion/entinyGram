@@ -3,37 +3,16 @@ package desu.inugram.helpers.translate.engine
 import desu.inugram.helpers.InuUtils
 import org.telegram.tgnet.TLRPC
 
-/**
- * Preserves [TLRPC.MessageEntity] formatting across a text → translation → text round trip.
- *
- * Entities are wrapped into sentinel `<inuN>…</inuN>` markup before sending the text to a
- * translation provider and unwrapped afterwards by mapping translated spans back onto cloned
- * entities. Providers are instructed (or naturally inclined) to keep such markup intact, and
- * anything that gets mangled is dropped rather than crashing the message layout.
- */
 object EntityKeeper {
 
     private const val OPEN = "<inu"
     private const val CLOSE = "</inu"
     private const val TAG_END = '>'
 
-    // Placeholder for a run of text that must reach the other side byte-for-byte. Deliberately the
-    // same `<inu…>` tag family as the entity markers: every provider this engine talks to already
-    // has to leave those alone for entity preservation to work at all, and the LLM prompt names
-    // them explicitly. The infix letter keeps them out of unmark()'s parser, which wants a digit
-    // right after "<inu" - so a token the provider mangled past restore() degrades to literal text
-    // instead of being mistaken for an entity marker.
+    // entiny: <inuxN> placeholder protects machine-readable tokens (urls, mentions) from being translated
     private const val VAULT_OPEN = "<inux"
     private val VAULT_TOKEN = Regex("<inux(\\d+)>")
 
-    // Runs whose CONTENT is machine-readable, not prose. Wrapping them in <inuN> markers preserved
-    // the entity but still handed the payload to the translator, which is what broke links: a
-    // TL_messageEntityUrl's text IS the url, so "https://example.com/page" came back translated
-    // word by word and the tap target with it. Bare urls carry no entity at all - Telegram
-    // linkifies them at render time from the text - so an entity-driven guard would have missed
-    // them entirely; matching on the marked string catches both in one pass.
-    //
-    // Ordered longest-construct-first: a url is matched before the @ or # inside it can be.
     private val PROTECTED = listOf(
         Regex("""\b(?:https?|tg|ton)://[^\s<]+"""),
         Regex("""\bwww\.[^\s<]+"""),
@@ -43,10 +22,6 @@ object EntityKeeper {
         Regex("""(?<![\w#])#\w+"""),
     )
 
-    /**
-     * Replaces every protected run in [marked] with an opaque token, returning the rewritten text
-     * and the vault of originals to hand back to [restore].
-     */
     fun protect(marked: String): Pair<String, List<String>> {
         if (marked.isEmpty()) return marked to emptyList()
         val vault = ArrayList<String>()
@@ -65,31 +40,21 @@ object EntityKeeper {
         return text to vault
     }
 
-    /**
-     * Puts the protected runs back. A token the provider dropped simply takes its content with it;
-     * one it duplicated restores twice, which is harmless. Tokens naming a slot that does not exist
-     * are stripped rather than left as visible junk.
-     */
     fun restore(translated: String, vault: List<String>): String {
         if (vault.isEmpty() || translated.indexOf(VAULT_OPEN) < 0) return translated
-        // The lambda overload of Regex.replace appends its result verbatim - no group syntax, so a
-        // restored url full of $ and \ needs no escaping here (and must not get any).
+        // entiny: Regex.replace lambda appends result verbatim, so restored url needs no $/\ escaping
         return VAULT_TOKEN.replace(translated) { m ->
             val idx = m.groupValues[1].toIntOrNull()
             if (idx != null && idx in vault.indices) vault[idx] else ""
         }
     }
 
-    // A ceiling on the vault so a pathological message (a wall of links) cannot turn into a string
-    // of tokens with no prose left for the provider to work on.
     private const val MAX_PROTECTED = 64
 
-    /** Wraps entity ranges of [text] in `<inuN>` markers, resolving crossing overlaps safely. */
     fun mark(text: String, entities: List<TLRPC.MessageEntity>?): String {
         if (text.isEmpty() || entities.isNullOrEmpty()) return text
 
-        // Drop entities that cross an already-open span (they can't be nested in valid markup).
-        // Sorting by start asc / length desc processes parents before their children.
+        // entiny: drop crossing entities and sort by start asc / length desc to process parents first
         val sorted = entities
             .filter { it.offset >= 0 && it.length > 0 && it.offset + it.length <= text.length }
             .sortedWith(compareBy({ it.offset }, { -it.length }))
@@ -97,13 +62,12 @@ object EntityKeeper {
         var frontier = -1
         for (e in sorted) {
             val end = e.offset + e.length
-            if (e.offset < frontier && end > frontier) continue // crossing → drop
+            if (e.offset < frontier && end > frontier) continue
             kept.add(e)
             if (end > frontier) frontier = end
         }
         if (kept.isEmpty()) return text
 
-        // Events: [position, kind (0 = open, 1 = close), keptIndex]
         val events = ArrayList<IntArray>(kept.size * 2)
         for ((i, e) in kept.withIndex()) {
             events.add(intArrayOf(e.offset, 0, i))
@@ -112,13 +76,12 @@ object EntityKeeper {
         events.sortWith { a, b ->
             val byPos = a[0].compareTo(b[0])
             if (byPos != 0) return@sortWith byPos
-            // closes (1) before opens (0): a span ending here and one starting here are adjacent,
-            // never nested, so the previous span must close before the next one opens
+            // entiny: closes before opens so adjacent spans close before next one opens
             val byKind = b[1].compareTo(a[1])
             if (byKind != 0) return@sortWith byKind
             val la = kept[a[2]].length
             val lb = kept[b[2]].length
-            if (a[1] == 0) lb.compareTo(la) else la.compareTo(lb) // longest opens first, shortest closes first
+            if (a[1] == 0) lb.compareTo(la) else la.compareTo(lb)
         }
 
         val sb = StringBuilder(text.length + events.size * 12)
@@ -134,10 +97,6 @@ object EntityKeeper {
         return sb.toString()
     }
 
-    /**
-     * Unwraps `<inuN>` markup left in [marked] after translation and rebuilds entities on the
-     * translated text. Entities whose markers were mangled by the provider are skipped.
-     */
     fun unmark(marked: String, originalEntities: List<TLRPC.MessageEntity>?): Pair<String, ArrayList<TLRPC.MessageEntity>> {
         if (marked.isEmpty() || originalEntities.isNullOrEmpty()) return marked to ArrayList()
         if (marked.indexOf(OPEN) < 0) return marked to ArrayList()
@@ -167,12 +126,11 @@ object EntityKeeper {
                     isClose = true
                 }
             }
-            // plain text before the tag is translated output
             out.append(marked, i, nextTag)
 
             var j = nextTag + (if (isClose) CLOSE.length else OPEN.length)
             if (j >= n || !marked[j].isDigit()) {
-                out.append(marked, nextTag, j) // stray text, keep literally
+                out.append(marked, nextTag, j)
                 i = j
                 continue
             }
@@ -197,7 +155,6 @@ object EntityKeeper {
                 continue
             }
 
-            // close tag: the span ends at the current output length (the tag itself is not part of it)
             var match = -1
             for (k in stack.indices.reversed()) {
                 if (stack[k] == idx) {
@@ -206,7 +163,7 @@ object EntityKeeper {
                 }
             }
             if (match < 0) {
-                out.append(marked, nextTag, j + 1) // orphan close → literal text
+                out.append(marked, nextTag, j + 1)
                 i = j + 1
                 continue
             }
@@ -219,7 +176,6 @@ object EntityKeeper {
             i = j + 1
         }
 
-        // Entities close in nesting order (inner first), so sort by translated position.
         result.sortWith(compareBy({ it.offset }, { -it.length }))
         return out.toString() to result
     }

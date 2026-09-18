@@ -8,7 +8,6 @@ import org.telegram.messenger.utils.ViewOutlineProviderImpl
 import org.telegram.ui.ActionBar.Theme
 
 object M3FabHelper {
-    // MD3 standard FAB is 16dp on 56dp; scaled proportionally to TG's 48dp FABs.
     private const val RADIUS_DP = 14f
 
     @JvmStatic

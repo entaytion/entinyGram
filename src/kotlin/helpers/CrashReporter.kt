@@ -39,9 +39,8 @@ object CrashReporter {
     private var previousCrashMtime = 0L
 
     fun install() {
-        // if (BuildConfig.INU_BUILD_TYPE == "debug") return
         if (!installed.compareAndSet(false, true)) return
-        // force BuildVars static init so our handler wraps stock's FileLog.fatal chain
+        // entiny: force BuildVars static init so our uncaught handler wraps stock FileLog.fatal chain
         @Suppress("UNUSED_EXPRESSION") BuildVars.LOGS_ENABLED
         previousCrashMtime = getLogFile().takeIf { it.exists() }?.lastModified() ?: 0L
         val previous = Thread.getDefaultUncaughtExceptionHandler()
@@ -196,7 +195,6 @@ object CrashReporter {
             val bytes = ByteArray((len - start).toInt())
             raf.readFully(bytes)
             val text = String(bytes, Charsets.UTF_8)
-            // drop the (likely partial) first line when we started mid-file
             if (start > 0) text.substringAfter('\n', text) else text
         }
     } catch (_: Throwable) {

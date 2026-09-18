@@ -15,9 +15,6 @@ import org.telegram.ui.LauncherIconController.LauncherIcon
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 
-// "Hidden chats" aka "Paranoia mode": a per-account set of dialogs that vanishes from every surface while
-// paranoia mode is on. Secret (encrypted) chats are hidden unconditionally in that mode.
-// State lives in its own prefs file (like PasscodeHelper) so it never lands in settings backups.
 object ParanoiaHelper {
     private val prefs by lazy {
         ApplicationLoader.applicationContext.getSharedPreferences("inugram_hidden", Context.MODE_PRIVATE)
@@ -26,7 +23,6 @@ object ParanoiaHelper {
     @Volatile
     private var paranoiaCache: Boolean? = null
 
-    // immutable snapshots, swapped wholesale on mutation → lock-free reads from any thread.
     @Volatile
     private var hiddenCache: Map<Int, Set<Long>>? = null
 
@@ -37,7 +33,7 @@ object ParanoiaHelper {
     fun isHidden(account: Int, dialogId: Long): Boolean {
         if (!isParanoia()) return false
         if (DialogObject.isEncryptedDialog(dialogId)) return true
-        // service notifications (login codes, etc.) — never hide, would lock user out
+        // entiny: never hide Telegram service notifications (777000) to prevent login lockout
         if (dialogId == 777000L) return false
         val selected = getHidden(account).contains(dialogId)
         return if (whitelist) !selected else selected
@@ -71,7 +67,6 @@ object ParanoiaHelper {
         get() = prefs.getBoolean("hideSettings", false)
         set(value) = prefs.edit { putBoolean("hideSettings", value) }
 
-    // opt-in: drop the Inugram entry from stock Settings while armed
     @JvmStatic
     fun shouldHideSettings(): Boolean = isParanoia() && hideSettings
 
@@ -79,7 +74,6 @@ object ParanoiaHelper {
         get() = prefs.getBoolean("disableNotifications", false)
         set(value) = prefs.edit { putBoolean("disableNotifications", value) }
 
-    // opt-in: silence all notifications while armed.
     @JvmStatic
     fun shouldSuppressNotifications(): Boolean = isParanoia() && disableNotifications
 
@@ -87,7 +81,6 @@ object ParanoiaHelper {
         get() = prefs.getBoolean("hideOtherAccounts", false)
         set(value) = prefs.edit { putBoolean("hideOtherAccounts", value) }
 
-    // opt-in: while armed, hide every account except the active one from switchers.
     @JvmStatic
     fun hidesOtherAccounts(): Boolean = isParanoia() && hideOtherAccounts
 
@@ -95,11 +88,9 @@ object ParanoiaHelper {
         get() = prefs.getBoolean("hideFolders", false)
         set(value) = prefs.edit { putBoolean("hideFolders", value) }
 
-    // opt-in: collapse the folder tab strip and "Add to folder" submenu while armed.
     @JvmStatic
     fun shouldHideFolders(): Boolean = isParanoia() && hideFolders
 
-    // read on every story hot path (per dialog cell), so keep it off SharedPreferences.
     @Volatile
     private var hideMyStoriesCache: Boolean? = null
 
@@ -110,7 +101,6 @@ object ParanoiaHelper {
             hideMyStoriesCache = value
         }
 
-    // opt-in: while armed, act as if we never posted a story (own ring, profile tabs, story archive).
     @JvmStatic
     fun shouldHideMyStories(): Boolean = isParanoia() && hideMyStories
 
@@ -122,21 +112,17 @@ object ParanoiaHelper {
         get() = prefs.getBoolean("disguiseIcon", false)
         set(value) = prefs.edit { putBoolean("disguiseIcon", value) }
 
-    // opt-in: expose a launcher long-press shortcut to enter paranoia mode.
     var launcherShortcut: Boolean
         get() = prefs.getBoolean("launcherShortcut", false)
         set(value) = prefs.edit { putBoolean("launcherShortcut", value) }
 
-    // same precondition as entering via the settings button: an exit code and at least one picked chat.
     fun canUseLauncherShortcut(account: Int = UserConfig.selectedAccount): Boolean =
         hasExitCode() && getHidden(account).isNotEmpty()
 
-    // shown only when armed-able and not already armed (while armed it must vanish).
     @JvmStatic
     fun shouldShowLauncherShortcut(): Boolean =
         launcherShortcut && !isParanoia() && canUseLauncherShortcut()
 
-    // force the toggle off once its preconditions no longer hold (e.g. hidden set cleared).
     private fun reconcileLauncherShortcut() {
         if (launcherShortcut && !canUseLauncherShortcut()) launcherShortcut = false
     }
@@ -144,13 +130,10 @@ object ParanoiaHelper {
     @Volatile
     private var disguisedCache: Boolean? = null
 
-    // opt-in: while armed, masquerade as stock Telegram (icon + launcher name + in-app branding).
-    // constant per process (toggling restarts the app), so cache it for animation hot-path callers.
     @JvmStatic
     fun isDisguised(): Boolean = disguisedCache ?: (isParanoia() && disguiseIcon).also { disguisedCache = it }
 
-    // The server names this client by its registered api_id title (currently "Inugram"), so the
-    // session list in Settings > Devices shows the wrong app name. Surface the real one instead.
+    // entiny: Telegram server reports client by registered api_id title; mask with AppName in session list
     @JvmStatic
     fun getSessionAppName(serverName: String): String {
         if (!InuConfig.MASK_SERVER_APP_NAME.value) return serverName
@@ -160,11 +143,7 @@ object ParanoiaHelper {
         return serverName
     }
 
-    // The app_version we report to the server (ConnectionsManager) is versionName + "-<7-char
-    // git sha>" (see build.gradle verName) followed by " (versionCode)" and an optional
-    // " pbeta"/" beta" tag — e.g. "12.10.1-6d61858 (100050323) pbeta". That raw string is exactly
-    // what's useful in bug reports/support, so it's kept as-is server-side; only the Devices/
-    // Sessions display (SessionCell, SessionBottomSheet) is cosmetically cleaned up here.
+    // entiny: strip git SHA suffix from app_version for cosmetic display in sessions list
     private val GIT_SHA_SUFFIX = Regex("-[0-9a-fA-F]{6,40}(?=[ (]|$)")
 
     @JvmStatic
@@ -208,15 +187,12 @@ object ParanoiaHelper {
         reconcileLauncherShortcut()
     }
 
-    // strips hidden peers from frequent-contacts hints (search "People" row + app shortcuts).
     @JvmStatic
     fun filterTopPeers(account: Int, peers: MutableList<TLRPC.TL_topPeer>) {
         if (!isParanoia()) return
         peers.removeAll { isHidden(account, DialogObject.getPeerDialogId(it.peer)) }
     }
 
-    // every consumer of getAllDialogs() (pickers, share sheets, mention suggestions) reads through this.
-    // while armed it hands out a copy, so callers that mutate the result must use `allDialogs` directly.
     @JvmStatic
     fun filterDialogs(account: Int, dialogs: ArrayList<TLRPC.Dialog>): ArrayList<TLRPC.Dialog> {
         if (!isParanoia()) return dialogs
@@ -229,9 +205,6 @@ object ParanoiaHelper {
         list.removeAll { isHidden(account, it.user_id) }
     }
 
-    // blocked peers: hidden ones never enter the loaded list, so paging offsets and the total
-    // count have to account for what was skipped. a set, not a counter — blocking an already-skipped
-    // peer again must not drift the offset.
     private val skippedBlocked = Array(UserConfig.MAX_ACCOUNT_COUNT) { HashSet<Long>() }
 
     @JvmStatic
@@ -276,8 +249,7 @@ object ParanoiaHelper {
             strippedExceptions.remove(key)
             return
         }
-        // an empty list carries no information about what the server still holds, so it must not clear
-        // what a previous pass stashed, or the ids it holds would never make it back into the next upload.
+        // entiny: preserve previously stashed exceptions when empty rules arrive to avoid dropping ids on next upload
         if (rules.isNullOrEmpty()) return
         val stripped = StrippedExceptions()
         for (rule in rules) {
@@ -303,8 +275,7 @@ object ParanoiaHelper {
         chats.removeAll { if (isHidden(account, -it)) into.add(-it) else false }
     }
 
-    // the exception editor rebuilds the whole rule set out of what it was given, so ids stripped on
-    // load have to go back in before it uploads, or they would be dropped server-side.
+    // entiny: re-inject hidden peer ids before upload so server does not drop them
     @JvmStatic
     fun restorePrivacyExceptions(account: Int, type: Int, allowed: MutableList<Long>, disallowed: MutableList<Long>) {
         val stripped = strippedExceptions[getExceptionsKey(account, type)] ?: return
@@ -349,7 +320,6 @@ object ParanoiaHelper {
         } else {
             disableDisguise()
         }
-        // need commit synchronously
         prefs.edit(commit = true) { putBoolean("paranoia", value) }
         paranoiaCache = value
         InuUtils.restartApp(activity)

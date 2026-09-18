@@ -24,18 +24,12 @@ import kotlin.math.max
 import kotlin.math.min
 
 object UpdateHelper {
-    // CI channel entinygram-ci-upload.ts posts the APK document to, tagged #release.
     const val USERNAME = "entinyGramCI"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
 
-    // entinygram[-beta]-arm64-{appVerName}-{verCode}.apk (see scripts/ci/version.ts). The
-    // optional "-beta" segment marks a pre-release build; it isn't captured, so group
-    // numbering (appVerName, verCode) is the same for both.
     private val APK_RE = Regex("^entinygram(?:-beta)?-arm64-(.+)-(\\d+)\\.apk$")
 
-    // bare channel id for USERNAME, cached from the first successful username resolve so we
-    // never have to hardcode entinyGramCI's numeric id (which can differ per-environment/test).
     @Volatile
     private var resolvedChannelId: Long? = null
 
@@ -52,16 +46,12 @@ object UpdateHelper {
 
     fun getVersionInfoString(): String {
         val base = LocaleController.formatString(R.string.InuVersion, stockVersionName, BuildConfig.STOCK_VERSION_CODE)
-        // BuildVars.isBetaApp() is now derived from INU_BUILD_TYPE, not the package name -- this is
-        // the plainest on-device confirmation that a given install is actually a beta build.
         return if (BuildVars.isBetaApp()) "$base ${LocaleController.getString(R.string.InuVersionBetaSuffix)}" else base
     }
 
     @JvmStatic
     fun getFullVersionInfo(): String {
         if (ParanoiaHelper.isDisguised()) {
-            // Build.CPU_ABI/CPU_ABI2 are deprecated (API 21+) in favor of SUPPORTED_ABIS,
-            // which lists the same primary/secondary ABIs in preference order.
             val abis = Build.SUPPORTED_ABIS
             return "Telegram for Android v${stockVersionName} (${BuildConfig.STOCK_VERSION_CODE})\ndirect ${abis.getOrNull(0)} ${abis.getOrNull(1)}"
         }
@@ -74,31 +64,17 @@ object UpdateHelper {
     @Volatile var pendingBetaUpdate: BetaUpdate? = null
         private set
 
-    // Whether the currently pending update (see pendingBetaUpdate) was itself found under the
-    // #prerelease tag -- release and beta builds now share the same applicationId (see
-    // BuildVars.isBetaApp), so this is the only way to tell a specific offered update apart from
-    // a stable one; UI (UpdateAppAlertDialog) reads this to show a beta disclaimer.
     @Volatile var pendingIsBeta: Boolean = false
         private set
 
-    // cached source message of the current pending update, set by applyUpdate. lets
-    // startDownload skip the resolver+RPC dance when the update was detected this session.
     @Volatile
     private var pendingSourceMessage: TLRPC.Message? = null
 
-    // true between the click on Update and FileLoader.loadFile actually firing. lets the row
-    // show the Downloading state immediately even while the async file-ref refresh dance is
-    // still running.
     @Volatile var isPendingStart: Boolean = false
         private set
 
-    // last known progress for the pending document's download, fed by onFileProgress
-    // (NotificationCenter.fileLoadProgressChanged), since FileLoader has no synchronous getter.
     @Volatile private var lastProgress: Float = 0f
 
-    // applyUpdate doesn't post appUpdateAvailable itself — the caller does it, via
-    // revealPendingUpdate, once the changelog dialog is on screen (so the bar slides in behind
-    // the dialog instead of visibly popping into the page underneath).
     @JvmStatic
     fun revealPendingUpdate() {
         NotificationCenter.getGlobalInstance()
@@ -220,7 +196,6 @@ object UpdateHelper {
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateLoading)
     }
 
-    /** Feed from NotificationCenter.fileLoadProgressChanged (args = [fileName, loadedSize, totalSize]). */
     @JvmStatic
     fun onFileProgress(fileName: String, loadedSize: Long, totalSize: Long) {
         val doc = SharedConfig.pendingAppUpdate?.document ?: return
@@ -268,10 +243,6 @@ object UpdateHelper {
         }
     }
 
-    // Regular users only ever search #release. Users who opted into InuConfig.UPDATES_INCLUDE_BETA
-    // additionally search #prerelease -- the two tags are mutually exclusive per CI post (see
-    // scripts/ci/upload.ts), so a plain "#release" search on its own already excludes every
-    // pre-release/beta build for everyone who hasn't opted in.
     private fun performSearch(account: Int, peerId: Long, callback: ((CheckResult) -> Unit)?) {
         searchByTag(account, peerId, "#release") { releaseMessages, err ->
             if (err != null) {
@@ -316,9 +287,6 @@ object UpdateHelper {
         }
     }
 
-    // Picks the single best candidate across every tag search that was allowed to run -- always
-    // the highest verCode, so a newer stable release naturally wins over an older pending beta
-    // even for opted-in users ("catch beta too, but a real release always wins" per spec).
     private fun resolveBestUpdate(candidates: List<TLRPC.Message>, callback: ((CheckResult) -> Unit)?) {
         val match = candidates.mapNotNull { msg -> extractApkInfo(msg)?.let { msg to it } }
             .maxByOrNull { it.second.verCode }
@@ -359,7 +327,6 @@ object UpdateHelper {
     private fun applyUpdate(msg: TLRPC.Message, info: ApkInfo, currentVerCode: Int, isBeta: Boolean): TLRPC.TL_help_appUpdate {
         val updateObj = TLRPC.TL_help_appUpdate().apply {
             flags = flags or 2
-            // stash the source channel message id in the otherwise-unused `id` field
             id = msg.id
             version = info.verCode.toString()
             text = msg.message ?: ""
@@ -405,8 +372,6 @@ object UpdateHelper {
 
     private fun finish(callback: ((CheckResult) -> Unit)?, result: CheckResult) {
         inflight = false
-        // Do not suppress future checks after a transient network/resolve error.
-        // The interval is a successful-check throttle, not a failure backoff.
         if (result is CheckResult.UpToDate || result is CheckResult.Updated) {
             InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
         }

@@ -103,8 +103,7 @@ object PullActionHelper {
 
         private fun getCellHeight(): Int = dp(if (SharedConfig.useThreeLinesLayout) 76f else 70f)
 
-        // Stock's DialogsItemAnimator.onRemoveStarting force-hides the page drawable on any
-        // row removal at the top; that state machine only makes sense for the archive cell.
+        // entiny: ignore stock doNotShow because item animator force-hides page drawable on top row removal
         override fun doNotShow() = Unit
 
         override fun getViewOffset(): Float = (list.viewOffset - getCellHeight()).coerceAtLeast(0f)
@@ -161,8 +160,6 @@ object PullActionHelper {
                     else -> DialogsFabHelper.Action.SAVED_MESSAGES
                 }
                 DialogsFabHelper.perform(activity, action)
-                // Snap back after the presented fragment covers the list, mirroring the
-                // open-archive-on-pull behavior.
                 resetScheduled = true
                 AndroidUtilities.runOnUIThread({
                     resetScheduled = false

@@ -17,9 +17,7 @@ object LogsHelper {
     private const val SYSTEM_PREFS = "systemConfig"
     private const val LOGS_ENABLED_KEY = "logsEnabled"
 
-    // Gated on the .beta app variant (testers), not BuildVars.DEBUG_VERSION -- the main/production
-    // release build shouldn't surface debug tooling to regular users at all, but beta testers
-    // (who report most bugs) need a way to capture logs without a separate debug-only APK.
+    // entiny: gate debug logs on beta app variant so testers can capture logs without a debug build
     fun isEnabled(): Boolean = BuildVars.isBetaApp() && BuildVars.LOGS_ENABLED
 
     fun setEnabled(enabled: Boolean) {
@@ -43,20 +41,16 @@ object LogsHelper {
         return sum
     }
 
-    /** Stage the current session log with a SystemInfo header, then share via the in-app picker. */
     fun shareCurrent(activity: LaunchActivity, onDone: (ok: Boolean) -> Unit) {
         stageThenShare(activity, onDone, mime = "text/plain") { stageCurrentLog() }
     }
 
-    /** Zip the whole logs dir + a system_info.txt entry, then share via the in-app picker. */
     fun shareZip(activity: LaunchActivity, onDone: (ok: Boolean) -> Unit) {
         stageThenShare(activity, onDone, mime = "application/zip") { stageZip() }
     }
 
-    /** Categories with a log file on disk, e.g. "Fork-Security", "Fork-Chat", "Stock", "Other". */
     fun availableCategories(): List<String> = LogCategoryHelper.availableCategories()
 
-    /** Zip only the selected categories (see [LogCategoryHelper]) + system_info.txt, then share. */
     fun shareCategories(activity: LaunchActivity, categories: Set<String>, onDone: (ok: Boolean) -> Unit) {
         stageThenShare(activity, onDone, mime = "application/zip") { stageCategoriesZip(categories) }
     }
@@ -96,7 +90,6 @@ object LogsHelper {
         return dst
     }
 
-    /** Latest non-mtproto FileLog session file, or null. */
     fun currentLogFile(): File? {
         val dir = AndroidUtilities.getLogsDir() ?: return null
         return dir.listFiles { f ->

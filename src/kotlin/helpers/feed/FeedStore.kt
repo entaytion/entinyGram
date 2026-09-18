@@ -9,36 +9,25 @@ import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import java.util.Locale
 
-/**
- * In-memory merged timeline from local cache (no network). Scope-aware queries avoid sparse-folder paging.
- * Ordering: (date, dialogId, messageId) stable across same-second posts. Thread-safe: DB reads on storage queue.
- */
 class FeedStore(private val account: Int, private val scope: FeedScope = FeedScope.Global) {
 
-    /** `(date, dialogId, messageId)` triple used as the merge/sort/cursor key throughout. */
     data class Key(val date: Int, val dialogId: Long, val messageId: Int)
 
     private val lock = Object()
-    private val rows = ArrayList<MessageObject>() // newest first, deduplicated by (dialogId, id)
-    private val seen = HashSet<Pair<Long, Int>>() // (dialogId, messageId) keys already in `rows`
-    private val oldestPerChannel = HashMap<Long, Int>() // dialogId -> lowest message id merged in so far
+    private val rows = ArrayList<MessageObject>()
+    private val seen = HashSet<Pair<Long, Int>>()
+    private val oldestPerChannel = HashMap<Long, Int>()
     private var oldestCursor: Key? = null
     private var newestCursor: Key? = null
     private var channelGenerationSeen = -1
 
-    /** Current merged rows, newest first. Safe to call from the UI thread. */
     fun snapshot(): List<MessageObject> = synchronized(lock) { ArrayList(rows) }
 
     fun oldestLoaded(): Key? = synchronized(lock) { oldestCursor }
     fun newestLoaded(): Key? = synchronized(lock) { newestCursor }
 
-    /**
-     * Lowest message id merged in so far for [dialogId] (the boundary a backfill request should
-     * page further back from), or null if nothing from that channel has been loaded yet.
-     */
     fun oldestForChannel(dialogId: Long): Int? = synchronized(lock) { oldestPerChannel[dialogId] }
 
-    /** Clears everything -- the eligible channel set changed underneath us. */
     fun reset() {
         synchronized(lock) {
             rows.clear()
@@ -56,28 +45,21 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
-    /** First page: the most recent [PAGE_SIZE] messages across every eligible channel. */
     fun loadInitial(onResult: (added: List<MessageObject>) -> Unit) {
         rebuildIfChannelsChanged()
         queryPage(before = null, limit = PAGE_SIZE, onResult = onResult)
     }
 
-    /** Older page, resuming from [oldestCursor]. No-op (empty result) if nothing is loaded yet. */
     fun loadOlder(onResult: (added: List<MessageObject>) -> Unit) {
         val before = synchronized(lock) { oldestCursor } ?: run { loadInitial(onResult); return }
         queryPage(before = before, limit = PAGE_SIZE, onResult = onResult)
     }
 
-    /**
-     * Anything newer than [newestCursor]. Used both on open (catch up since last session) and on
-     * `didReceiveNewMessages` for an eligible channel while the store is warm.
-     */
     fun loadNewer(onResult: (added: List<MessageObject>) -> Unit) {
         val after = synchronized(lock) { newestCursor } ?: run { loadInitial(onResult); return }
         queryPage(after = after, limit = PAGE_SIZE_NEWER, onResult = onResult)
     }
 
-    /** Drops rows belonging to [dialogId]/[messageIds] (message deletion). */
     fun removeMessages(dialogId: Long, messageIds: Collection<Int>) {
         if (messageIds.isEmpty()) return
         synchronized(lock) {
@@ -93,7 +75,6 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
-    /** Drops every row belonging to [dialogId] (history cleared / channel left). */
     fun removeDialog(dialogId: Long) {
         synchronized(lock) {
             val it = rows.iterator()
@@ -107,16 +88,9 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
-    /**
-     * Merges freshly-arrived [messages] (from a push) straight in, no DB round trip needed.
-     * Returns the genuinely-new rows (post-dedup), newest-first -- same convention as every other
-     * FeedStore result -- so a live-open [FeedActivity] can append them without a second query.
-     */
     fun mergeLive(messages: List<MessageObject>): List<MessageObject> {
         val eligible = messages.filter { FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }
         if (eligible.isEmpty()) return emptyList()
-        // Push order is whatever the server batched together, not necessarily newest-first; sort
-        // before merging so the returned delta honours the same convention queryPage's results do.
         val sorted = eligible.sortedWith(
             compareByDescending<MessageObject> { it.messageOwner?.date ?: 0 }
                 .thenByDescending { it.getDialogId() }
@@ -170,8 +144,6 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
                     message?.readAttachPath(data, clientUserId)
                     data.reuse()
                     if (message == null) continue
-                    // messages_v2's own `uid`/`date` columns are authoritative for cursoring even
-                    // though the deserialized TL object usually carries the same values itself.
                     loaded.add(MessageObject(account, message, false, false))
                 }
             } catch (e: Exception) {
@@ -179,7 +151,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
             } finally {
                 cursor?.dispose()
             }
-            if (after != null) loaded.reverse() // keep the merge step newest-first regardless of scan direction
+            if (after != null) loaded.reverse()
             AndroidUtilities.runOnUIThread {
                 val added = insertSorted(loaded)
                 onResult(added)
@@ -187,7 +159,6 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
-    /** Inserts [incoming] into [rows] (newest-first), deduplicating and updating both cursors. */
     private fun insertSorted(incoming: List<MessageObject>): List<MessageObject> {
         val added = ArrayList<MessageObject>(incoming.size)
         synchronized(lock) {

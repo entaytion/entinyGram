@@ -10,15 +10,10 @@ import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.AnimatedEmojiDrawable
 
-/**
- * Premium custom emoji for non-premium (server refuses entity, accepts text-url tg://emoji?id=<id>).
- * On render: url → animated span. Stock clients see fallback emoji + link. Gated by LOCAL_CUSTOM_EMOJI, default-off = stock.
- */
 object LocalCustomEmojiHelper {
 
     private const val LINK_PREFIX = "tg://emoji?id="
 
-    /** True for a text-url entity that carries a custom emoji id instead of a real link. */
     @JvmStatic
     fun isLocalCustomEmoji(entity: TLRPC.MessageEntity?): Boolean {
         if (!InuConfig.LOCAL_CUSTOM_EMOJI.value) return false
@@ -27,30 +22,13 @@ object LocalCustomEmojiHelper {
         return url.length > LINK_PREFIX.length && url.startsWith(LINK_PREFIX)
     }
 
-    /**
-     * Converts a local custom emoji link back into the custom emoji entity it encodes.
-     *
-     * Returns null unless the link spans exactly one emoji character — that keeps a
-     * hand-written `tg://emoji?id=` link over arbitrary text from swallowing that text
-     * into an emoji span.
-     */
     @JvmStatic
     fun parseLocalCustomEmoji(spannable: Spannable, entity: TLRPC.MessageEntity): TLRPC.TL_messageEntityCustomEmoji? {
         if (!isLocalCustomEmoji(entity)) return null
         if (entity.offset < 0 || entity.length <= 0) return null
         if (spannable.length < entity.offset + entity.length) return null
         val documentId = entity.url.substring(LINK_PREFIX.length).toLongOrNull() ?: return null
-        // "exactly one emoji and nothing besides it", asserted from the span itself rather than
-        // from Emoji.parseEmojis' emojiOnly out-param.
-        //
-        // That out-param cannot express this for a KEYCAP emoji. 6️⃣ is U+0036 U+FE0F U+20E3, and
-        // parseEmojis walks it left to right: the leading '6' is a plain ASCII char, matching none
-        // of the emoji branches, so it sets notOnlyEmoji and the very next statement does
-        // `emojiOnly[0] = 0; emojiOnly = null`. Two characters later the U+20E3 branch looks back,
-        // recognises the keycap and reports the span - but the counter it would have incremented
-        // has already been detached. So parseEmojis returns one emoji with emojiOnly[0] == 0, this
-        // returned null, the link stayed a link, and stock then offered to sell the reader Premium
-        // for an emoji the fork had already unlocked. Same for 5️⃣, #️⃣ and *️⃣.
+        // entiny: validate span boundaries directly because parseEmojis emojiOnly breaks on keycap digits
         val range = spannable.subSequence(entity.offset, entity.offset + entity.length)
         val emojis = Emoji.parseEmojis(range)
         if (emojis.size != 1) return null
@@ -63,26 +41,12 @@ object LocalCustomEmojiHelper {
         return parsed
     }
 
-    /**
-     * Whether outgoing custom emoji have to be smuggled as links for [account].
-     *
-     * A genuinely premium account sends them natively, so it is left alone. Local premium
-     * spoofs [UserConfig.isPremium], so while that toggle is on the account is treated as
-     * non-premium here — that is the whole point of the pairing.
-     */
     @JvmStatic
     fun canSendLocalCustomEmoji(account: Int): Boolean {
         if (!InuConfig.LOCAL_CUSTOM_EMOJI.value) return false
         return InuConfig.LOCAL_PREMIUM.value || !UserConfig.getInstance(account).isPremium()
     }
 
-    /**
-     * Rewrites premium custom emoji entities into local custom emoji links.
-     *
-     * Returns [entities] itself when nothing needs rewriting, so the common path stays
-     * allocation-free. Free emoji, group-pack emoji and Saved Messages are left alone —
-     * the server accepts real custom emoji entities there from anyone.
-     */
     @JvmStatic
     fun replaceCustomEmojis(
         account: Int,
@@ -109,7 +73,6 @@ object LocalCustomEmojiHelper {
         return result ?: entities
     }
 
-    /** Document ids of the emoji pack a group has attached, if any — those are free to send there. */
     private fun groupEmojiIds(account: Int, dialogId: Long): Set<Long>? {
         if (dialogId > 0) return null
         val chatFull = MessagesController.getInstance(account).getChatFull(-dialogId) ?: return null

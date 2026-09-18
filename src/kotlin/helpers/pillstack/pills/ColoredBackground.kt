@@ -11,11 +11,6 @@ import android.graphics.drawable.Drawable
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 
-/**
- * Rounded pill background: a vertical two-color gradient, ported from exteraGram's
- * crypto/utils/ColoredBackground. A hairline stroke (fading top-to-bottom) is drawn on top
- * in dark theme only, skipped in Monet where it just looks like dirt on the gradient.
- */
 class ColoredBackground(colorTop: Int = 0xFF1BA4ED.toInt(), colorBottom: Int = 0xFF1488E1.toInt()) : Drawable() {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -23,8 +18,6 @@ class ColoredBackground(colorTop: Int = 0xFF1BA4ED.toInt(), colorBottom: Int = 0
     private val rectF = RectF()
 
     init {
-        // Gradient height matches the pill's fixed height (dp(28)), not bounds -- while loading
-        // the pill is shorter and the gradient must not shift.
         paint.shader = LinearGradient(
             0f, 0f, 0f, AndroidUtilities.dp(28f).toFloat(),
             intArrayOf(colorTop, colorBottom), floatArrayOf(0f, 1f), Shader.TileMode.CLAMP

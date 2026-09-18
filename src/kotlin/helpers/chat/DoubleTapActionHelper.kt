@@ -59,7 +59,6 @@ object DoubleTapActionHelper {
     }
 
     private fun canPerformAction(activity: ChatActivity, message: MessageObject, action: DoubleTapAction): Boolean {
-        // Reject actions on special messages
         if (message.isDateObject || message.isSending() || message.isEditing() || message.isSponsored()) {
             return false
         }
@@ -80,7 +79,6 @@ object DoubleTapActionHelper {
         val action = getAction(activity, message)
 
         return when (action) {
-            // fallback to the default handling
             DoubleTapAction.QUICK_REACTION -> null
             DoubleTapAction.NONE -> false
             DoubleTapAction.SHOW_REACTIONS -> hasReactionMenu(activity, message)

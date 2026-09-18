@@ -38,11 +38,7 @@ class PillStackController(private val container: FrameLayout, private val editTe
                 updateVisibility()
             }
         })
-        // Tapping the search field focuses it immediately, before any text is typed -- watching
-        // only text (below) left the pills sitting on top of the "Search Chats" hint the whole
-        // time the keyboard was up and empty. A global focus listener (not editText's own
-        // setOnFocusChangeListener) so this doesn't clobber whatever focus handling stock/other
-        // fork code already attaches to the same EditText.
+        // entiny: use global focus listener instead of setOnFocusChangeListener to avoid clobbering stock handler
         editText?.viewTreeObserver?.addOnGlobalFocusChangeListener { oldFocus, newFocus ->
             if (newFocus === editText || oldFocus === editText) updateVisibility()
         }
@@ -134,8 +130,6 @@ class PillStackController(private val container: FrameLayout, private val editTe
         rowLayout = null
     }
 
-    // entiny: pills hide as soon as search is focused (even before typing) so they don't sit on
-    // top of the "Search Chats" hint, and stay hidden while there's text.
     private fun updateVisibility() {
         val searchActive = editText?.hasFocus() == true || !editText?.text.isNullOrEmpty()
         for (slot in slots) {

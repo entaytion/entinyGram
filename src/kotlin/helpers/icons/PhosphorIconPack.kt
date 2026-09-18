@@ -3,10 +3,6 @@ package desu.inugram.helpers.icons
 import android.util.SparseIntArray
 import org.telegram.messenger.R
 
-/*
- * Phosphor Icons (Regular), by Phosphor Icons (MIT)
- * https://phosphoricons.com
- */
 object PhosphorIconPack : IconPack() {
     override fun buildIcons() = SparseIntArray(486).apply {
         put(R.drawable.arrow_more, R.drawable.phosphor_caret_down)
