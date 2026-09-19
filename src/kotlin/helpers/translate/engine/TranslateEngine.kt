@@ -91,15 +91,19 @@ object TranslateEngine {
 
         override fun run(): Any {
             val out = TranslateController.PollText()
+            var attempted = false
+            var succeeded = false
             poll.question?.let { q ->
-                val r = translateWithEntities(provider, q.text, q.entities, toLang)
+                attempted = true
+                val r = translateField(provider, q.text, q.entities, toLang) { succeeded = true }
                 out.question = TLRPC.TL_textWithEntities().apply {
                     this.text = r.first
                     if (r.second.isNotEmpty()) this.entities = r.second
                 }
             }
             for (answer in poll.answers) {
-                val r = translateWithEntities(provider, answer.text.text, answer.text.entities, toLang)
+                attempted = true
+                val r = translateField(provider, answer.text.text, answer.text.entities, toLang) { succeeded = true }
                 out.answers.add(
                     TLRPC.TL_pollAnswer().apply {
                         this.text = TLRPC.TL_textWithEntities().apply {
@@ -111,12 +115,17 @@ object TranslateEngine {
                 )
             }
             poll.solution?.let { s ->
-                val r = translateWithEntities(provider, s.text, s.entities, toLang)
+                attempted = true
+                val r = translateField(provider, s.text, s.entities, toLang) { succeeded = true }
                 out.solution = TLRPC.TL_textWithEntities().apply {
                     this.text = r.first
                     if (r.second.isNotEmpty()) this.entities = r.second
                 }
             }
+            // entiny: one bad answer/question/solution used to throw away every other field's
+            // completed translation (translateField below keeps the original text for that one
+            // field instead) - only surface a hard failure when literally nothing came through
+            if (attempted && !succeeded) throw IOException("All poll fields failed to translate")
             return out
         }
 
@@ -138,8 +147,9 @@ object TranslateEngine {
         override fun run(): Any {
             val clone = cloneWebPage(original)
             val translated = ArrayList<Pair<Char, TLRPC.TL_textWithEntities>>(parts.size)
+            var succeeded = false
             for ((tag, text) in parts) {
-                val r = translateWithEntities(provider, text, null, toLang)
+                val r = translateField(provider, text, null, toLang) { succeeded = true }
                 translated.add(
                     tag to TLRPC.TL_textWithEntities().apply {
                         this.text = r.first
@@ -147,6 +157,8 @@ object TranslateEngine {
                     }
                 )
             }
+            // entiny: same reasoning as PollJob - one field failing must not blank out the rest
+            if (parts.isNotEmpty() && !succeeded) throw IOException("All webpage parts failed to translate")
             if (clone != null) {
                 for ((tag, twe) in translated) {
                     val text = twe.text ?: continue
@@ -418,6 +430,25 @@ object TranslateEngine {
                 if (attempt > MAX_ATTEMPTS) throw e
                 sleepBackoff(attempt)
             }
+        }
+    }
+
+    // entiny: used by PollJob/WebPageJob for their per-field sub-translations - a single field
+    // failing (rate limit, empty result, whatever) falls back to the original text for that one
+    // field instead of throwing away every other field's already-completed translation. Callers
+    // pass onSuccess to track whether *anything* in the batch actually translated.
+    private fun translateField(
+        provider: TranslationProvider,
+        text: String,
+        entities: List<TLRPC.MessageEntity>?,
+        toLang: String,
+        onSuccess: () -> Unit,
+    ): Pair<String, ArrayList<TLRPC.MessageEntity>> {
+        return try {
+            translateWithEntities(provider, text, entities, toLang).also { onSuccess() }
+        } catch (e: Exception) {
+            Log.d(TAG, "field translate failed, keeping original: ${e.message}")
+            text to ArrayList(entities ?: emptyList())
         }
     }
 
