@@ -229,6 +229,13 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'gift',
       'crown',
       'star',
+      'app-window',
+      'layout-align-center',
+      'focus-2',
+      'dots-vertical',
+      'pin',
+      'arrow-bar-to-right',
+      'marquee-2',
     ],
   },
 ]

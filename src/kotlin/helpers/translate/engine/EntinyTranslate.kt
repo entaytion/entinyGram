@@ -170,6 +170,9 @@ object EntinyTranslate {
     }
 
     @JvmStatic
+    fun cancelAll() = TranslateEngine.cancelAll()
+
+    @JvmStatic
     fun unfailMessage(dialogId: Long, msgId: Int, isTranscription: Boolean) =
         TranslateEngine.unfailMessage(dialogId, msgId, isTranscription)
 

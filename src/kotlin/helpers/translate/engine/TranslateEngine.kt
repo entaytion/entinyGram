@@ -319,6 +319,15 @@ object TranslateEngine {
         }
     }
 
+    fun cancelAll() {
+        synchronized(lock) {
+            epochs.clear()
+            queue.clear()
+            inFlight.clear()
+            failedAt.clear()
+        }
+    }
+
     fun unfailMessage(dialogId: Long, msgId: Int, transcription: Boolean) {
         synchronized(lock) {
             failedAt.remove(JobKey(dialogId, msgId, if (transcription) KIND_TRANSCRIPTION else KIND_TEXT))

@@ -79,17 +79,11 @@ object SavedMessagesHelper {
     // entiny: bypasses global toggle when user explicitly checks keep-local in delete dialog
     private val pendingKeepLocal = HashSet<Pair<Long, Int>>()
 
-    // entiny: synthetic history rows are exempted from deleted-message styling
-    private val syntheticHistoryMessages = java.util.Collections.newSetFromMap(java.util.WeakHashMap<MessageObject, Boolean>())
+    // entiny: history preview objects avoid stamping history rows with current message's deleted state
+    private val historyPreviewObjects: MutableSet<MessageObject> =
+        java.util.Collections.newSetFromMap(java.util.WeakHashMap<MessageObject, Boolean>())
 
-    // entiny: shadow cache preserves pre-edit content when messages_v2 and stock caches miss
-    private data class ShadowMessage(val text: String, val hasMedia: Boolean, val entities: ArrayList<TLRPC.MessageEntity>? = null, val media: TLRPC.MessageMedia? = null)
-    private val shadowMessages = LongSparseArray<LongSparseArray<ShadowMessage>>()
-    private val shadowLoadedAccounts = HashSet<Int>()
-    private const val MAX_SHADOW_PER_DIALOG = 50
-
-    data class EditEntry(val text: String, val date: Int, val entities: ArrayList<TLRPC.MessageEntity>? = null, val media: TLRPC.MessageMedia? = null, val mediaPath: String? = null)
-    const val SHADOW_CACHE_MAX_PER_ACCOUNT = 500
+    private const val SHADOW_CACHE_MAX_PER_ACCOUNT = 500
 
     private class BoundedLinkedHashMap<K, V>(private val maxSize: Int) :
         LinkedHashMap<K, V>(16, 0.75f, true) {
