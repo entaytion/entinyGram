@@ -6,13 +6,13 @@ Subject: feat(chat-header): auto-scrolling marquee for long titles + iOS-style h
 ---
  .../org/telegram/ui/ActionBar/ActionBar.java  | 346 +++++++++++++++--
  .../telegram/ui/ActionBar/SimpleTextView.java | 129 ++++---
- .../java/org/telegram/ui/ChatActivity.java    |  93 ++++-
+ .../java/org/telegram/ui/ChatActivity.java    |  98 ++++-
  .../BottomSheetWithRecyclerListView.java      |   1 +
  .../ui/Components/ChatAvatarContainer.java    | 356 ++++++++++++++++--
  .../java/org/telegram/ui/DialogsActivity.java |   4 +
  .../java/org/telegram/ui/ProfileActivity.java |   3 +
  .../ui/Stories/DialogStoriesCell.java         |  14 +-
- 8 files changed, 820 insertions(+), 126 deletions(-)
+ 8 files changed, 825 insertions(+), 126 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -751,7 +751,7 @@ index 0000000..0000000 100644
                  if (currentUser != null && currentUser.linked_community_id != 0) {
                      showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
                      return true;
-@@ -4175,6 +4175,15 @@ public class ChatActivity extends BaseFragment implements
+@@ -4175,6 +4175,16 @@ public class ChatActivity extends BaseFragment implements
                  return false;
              }
  
@@ -760,6 +760,7 @@ index 0000000..0000000 100644
 +                if (headerItem == null) {
 +                    return false;
 +                }
++                headerItem.setShowSubmenuByMove(false);
 +                headerItem.toggleSubMenu();
 +                return true;
 +            }
@@ -767,7 +768,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean useAnimatedSubtitle() {
                  return chatMode == MODE_SAVED;
-@@ -4349,6 +4358,38 @@ public class ChatActivity extends BaseFragment implements
+@@ -4349,6 +4359,39 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
@@ -798,6 +799,7 @@ index 0000000..0000000 100644
 +                    if (!avatarContainer.inu_isIosMenuSlotAvatar()) {
 +                        return false;
 +                    }
++                    inu_headerItem.setShowSubmenuByMove(false);
 +                    inu_headerItem.toggleSubMenu();
 +                    return true;
 +                });
@@ -806,7 +808,7 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4560,7 +4601,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -4560,7 +4603,11 @@ public class ChatActivity extends BaseFragment implements
  
          if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
              attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
@@ -819,7 +821,7 @@ index 0000000..0000000 100644
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4611,18 +4656,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -4611,18 +4658,14 @@ public class ChatActivity extends BaseFragment implements
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
              ChatObject.isForum(currentChat));
  
@@ -842,7 +844,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -30021,10 +30062,42 @@ public class ChatActivity extends BaseFragment implements
+@@ -30021,10 +30064,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -862,9 +864,12 @@ index 0000000..0000000 100644
 +        // entiny: INVISIBLE not alpha 0 -- ActionBarMenu resets every icon's alpha to 1 when search closes, which brought an alpha-hidden "..." back over the avatar.
 +        final int visibility = active ? View.INVISIBLE : View.VISIBLE;
 +        boolean changed = false;
-+        if (headerItem != null && headerItem.getIconView() != null && headerItem.getIconView().getVisibility() != visibility) {
-+            headerItem.getIconView().setVisibility(visibility);
-+            changed = true;
++        if (headerItem != null) {
++            headerItem.setShowSubmenuByMove(!active);
++            if (headerItem.getIconView() != null && headerItem.getIconView().getVisibility() != visibility) {
++                headerItem.getIconView().setVisibility(visibility);
++                changed = true;
++            }
 +        }
 +        // entiny: attachItem shares this slot and takes over when the composer has something to attach -- hide its icon too (lazy, may not exist yet).
 +        final ActionBarMenuItem attachCell = attachItem == null ? null : attachItem.getView();
