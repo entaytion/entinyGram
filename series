@@ -335,9 +335,6 @@ bugfix/playback-progress-on-message-replace.patch
 bugfix/action-bar-overlay-animation.patch
 feature/hdr-images.patch
 entiny/poll-show-results-before-vote.patch
-misc/remove-unused-huawei.patch
-misc/remove-unused-hockeyapp.patch
-misc/remove-unused-apptests.patch
 entiny/send-round-video.patch
 entiny/gif-restriction-bypass.patch
 entiny/ios-chats-tab-first-folder.patch
@@ -371,7 +368,6 @@ feature/minimize-attach-panel.patch
 bugfix/link-scrim-offset.patch
 bugfix/scrim-touch-lock.patch
 entiny/branding.patch
-misc/remove-unused-appstandalone.patch
 entiny/amoled-theme.patch
 entiny/hide-dialogs-banners.patch
 entiny/hide-attach-emoji-premium-upsells.patch
