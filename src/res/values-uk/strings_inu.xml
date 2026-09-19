@@ -166,6 +166,10 @@
     <string name="InuPredictiveBackOff">Вимкнено</string>
     <string name="InuPredictiveBackStock">Стандартний</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuCalendarSystem">Календарна система</string>
+    <string name="InuCalendarSystemGregorian">Григоріанський</string>
+    <string name="InuCalendarSystemHijri">Хіджра Камарі (місячна)</string>
+    <string name="InuCalendarSystemPersian">Хіджра Шамсі (Джалалі)</string>
     <string name="InuShowSpoilersDirectly">Показувати спойлери одразу</string>
     <string name="InuShowSpoilersDirectlyInfo">Пропускає крок «торкніться, щоб розкрити» — текстові спойлери одразу показують вміст, скрізь.</string>
     <string name="InuTextSpoilerMode">Стиль текстового спойлера</string>

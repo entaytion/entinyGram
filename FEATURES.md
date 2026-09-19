@@ -116,6 +116,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **trimmed APK size**: dropped unused firebase-appindexing/datatransport and unnecessary transitives to cut binary bloat
 - 📡 **Forward Pro**: forwarding dialog toolbar with silent send, hide captions, hide author, folder filters, and on-the-fly message editing - *inspired by Turbotel / NagramX*
 - 📡 **instant mark reactions as read**: long-press the unread-reactions side button to mark read immediately - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
+- 📡 **calendar system**: display dates in Gregorian, Hijri (lunar), or Persian / Solar Hijri (Jalali) systems
 
 ### debloat & premium noise
 

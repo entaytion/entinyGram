@@ -1,0 +1,103 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 19 Sep 2026 15:43:47 +0300
+Subject: Add Hijri/Persian calendar display option
+
+---
+ .../telegram/messenger/LocaleController.java  | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+@@ -156,6 +156,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat formatterDayMonth;
+     public FastDateFormat getFormatterDayMonth() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("dd MMM", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (formatterDayMonth == null) {
+             synchronized (this) {
+                 if (formatterDayMonth == null) {
+@@ -169,6 +172,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat formatterYear;
+     public FastDateFormat getFormatterYear() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("d MMM yyyy", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (formatterYear == null) {
+             synchronized (this) {
+                 if (formatterYear == null) {
+@@ -234,6 +240,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat chatDate;
+     public FastDateFormat getChatDate() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("d MMMM", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (chatDate == null) {
+             synchronized (this) {
+                 if (chatDate == null) {
+@@ -247,6 +256,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat chatDateShort;
+     public FastDateFormat getChatDateShort() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("d MMM", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (chatDateShort == null) {
+             synchronized (this) {
+                 if (chatDateShort == null) {
+@@ -260,6 +272,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat chatFullDate;
+     public FastDateFormat getChatFullDate() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("d MMMM yyyy", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (chatFullDate == null) {
+             synchronized (this) {
+                 if (chatFullDate == null) {
+@@ -273,6 +288,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat formatterScheduleDay;
+     public FastDateFormat getFormatterScheduleDay() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("MMM d", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (formatterScheduleDay == null) {
+             synchronized (this) {
+                 if (formatterScheduleDay == null) {
+@@ -286,6 +304,9 @@ public class LocaleController {
+ 
+     private volatile FastDateFormat formatterScheduleYear;
+     public FastDateFormat getFormatterScheduleYear() {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.altFormatter("MMM d yyyy", currentLocale == null ? Locale.getDefault() : currentLocale);
++        }
+         if (formatterScheduleYear == null) {
+             synchronized (this) {
+                 if (formatterScheduleYear == null) {
+@@ -2844,6 +2865,9 @@ public class LocaleController {
+     }
+ 
+     public static String formatYearMonthDay(long date, boolean alwaysShowYear) {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.formatYearMonthDay(date * 1000, alwaysShowYear, getInstance().currentLocale == null ? Locale.getDefault() : getInstance().currentLocale);
++        }
+         try {
+             date *= 1000;
+             Calendar rightNow = Calendar.getInstance();
+@@ -2879,6 +2903,9 @@ public class LocaleController {
+     }
+ 
+     public static String formatYearMont(long date, boolean alwaysShowYear) {
++        if (desu.inugram.helpers.CalendarHelper.isEnabled()) {
++            return desu.inugram.helpers.CalendarHelper.formatYearMonth(date * 1000, alwaysShowYear, getInstance().currentLocale == null ? Locale.getDefault() : getInstance().currentLocale);
++        }
+         try {
+             date *= 1000;
+             Calendar rightNow = Calendar.getInstance();

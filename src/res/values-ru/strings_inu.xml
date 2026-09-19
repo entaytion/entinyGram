@@ -124,6 +124,10 @@
     <string name="InuPredictiveBackOff">Откл.</string>
     <string name="InuPredictiveBackStock">Стандартная</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuCalendarSystem">Календарная система</string>
+    <string name="InuCalendarSystemGregorian">Григорианский</string>
+    <string name="InuCalendarSystemHijri">Хиджра Камари (лунная)</string>
+    <string name="InuCalendarSystemPersian">Хиджра Шамси (Джалали)</string>
     <string name="InuHideAiFeatures">Скрыть ИИ функции</string>
     <string name="InuHideAiEditor">Кнопка ИИ-редактора</string>
     <string name="InuHideMessageSummary">Кнопка пересказа сообщения</string>

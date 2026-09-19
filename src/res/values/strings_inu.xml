@@ -241,6 +241,10 @@
     <string name="InuPredictiveBackOff">Off</string>
     <string name="InuPredictiveBackStock">Stock</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
+    <string name="InuCalendarSystem">Calendar system</string>
+    <string name="InuCalendarSystemGregorian">Gregorian</string>
+    <string name="InuCalendarSystemHijri">Hijri Qamari (lunar)</string>
+    <string name="InuCalendarSystemPersian">Hijri Shamsi (Jalali)</string>
     <string name="InuShowSpoilersDirectly">Show spoilers directly</string>
     <string name="InuShowSpoilersDirectlyInfo">Skip the tap-to-reveal step — text and media (photos, videos, round videos) spoilers show their content right away, everywhere.</string>
     <string name="InuTextSpoilerMode">Text spoiler style</string>

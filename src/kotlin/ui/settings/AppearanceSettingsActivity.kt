@@ -89,6 +89,13 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(
+            UItem.asButton(
+                BUTTON_CALENDAR_SYSTEM,
+                LocaleController.getString(R.string.InuCalendarSystem),
+                calendarSystemLabel(InuConfig.CALENDAR_SYSTEM.value),
+            )
+        )
         items.add(UItem.asShadow(null))
 
         if (avatarCornerPreview == null) {
@@ -404,6 +411,21 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.PREDICTIVE_BACK_MODE.value = which
                 showRestartBulletin()
             }
+
+            BUTTON_CALENDAR_SYSTEM -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuCalendarSystemGregorian),
+                    LocaleController.getString(R.string.InuCalendarSystemHijri),
+                    LocaleController.getString(R.string.InuCalendarSystemPersian),
+                ),
+                InuConfig.CALENDAR_SYSTEM.value,
+            ) { which ->
+                if (InuConfig.CALENDAR_SYSTEM.value == which) return@show
+                InuConfig.CALENDAR_SYSTEM.value = which
+                invalidateVisibleRows()
+                listView.adapter.update(true)
+            }
         }
     }
 
@@ -437,6 +459,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
+        private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
 
         @RequiresApi(Build.VERSION_CODES.S)
         private fun monetThemeModeLabel(mode: MonetHelper.ThemeMode): String = when (mode) {
@@ -452,6 +475,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             InuConfig.PredictiveBackModeItem.OFF -> LocaleController.getString(R.string.InuPredictiveBackOff)
             InuConfig.PredictiveBackModeItem.STOCK -> LocaleController.getString(R.string.InuPredictiveBackStock)
             else -> LocaleController.getString(R.string.InuPredictiveBackMaterial3)
+        }
+
+        private fun calendarSystemLabel(value: Int): String = when (value) {
+            InuConfig.CalendarSystemItem.HIJRI -> LocaleController.getString(R.string.InuCalendarSystemHijri)
+            InuConfig.CalendarSystemItem.PERSIAN -> LocaleController.getString(R.string.InuCalendarSystemPersian)
+            else -> LocaleController.getString(R.string.InuCalendarSystemGregorian)
         }
 
         @JvmField
@@ -478,6 +507,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
+                SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
                 SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
                 SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),

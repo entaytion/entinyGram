@@ -5,9 +5,10 @@ Subject: Forward Pro: quick toggles and edit before forward in ShareAlert
 
 ---
  .../messenger/SendMessagesHelper.java         |  2 +-
+ .../ui/Components/FilterTabsView.java         |  2 +-
  .../telegram/ui/Components/ShareAlert.java    | 76 +++++++++++++++----
  .../java/org/telegram/ui/PhotoViewer.java     |  5 +-
- 3 files changed, 65 insertions(+), 18 deletions(-)
+ 4 files changed, 66 insertions(+), 19 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 index 0000000..0000000 100644
@@ -22,6 +23,19 @@ index 0000000..0000000 100644
                      newMsg.flags |= TLRPC.MESSAGE_FLAG_HAS_ENTITIES;
                  }
                  if (newMsg.attachPath == null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+@@ -248,7 +248,7 @@ public class FilterTabsView extends FrameLayout {
+             currentTab = tab;
+             currentPosition = position;
+             setContentDescription(tab.title);
+-            inu_iconDrawable = FolderHelper.needIcons() ? getContext().getResources().getDrawable(tab.inu_iconResId).mutate() : null;
++            inu_iconDrawable = FolderHelper.needIcons() && tab.inu_iconResId != 0 ? getContext().getResources().getDrawable(tab.inu_iconResId).mutate() : null;
+             requestLayout();
+ 
+             if (currentNoanimate != (currentTab != null && currentTab.noanimate)) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java

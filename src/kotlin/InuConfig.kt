@@ -259,6 +259,17 @@ object InuConfig {
     @JvmField
     val PREDICTIVE_BACK_MODE = PredictiveBackModeItem()
 
+    class CalendarSystemItem : IntItem("calendar_system", GREGORIAN) {
+        companion object {
+            const val GREGORIAN = 0
+            const val HIJRI = 1
+            const val PERSIAN = 2
+        }
+    }
+
+    @JvmField
+    val CALENDAR_SYSTEM = CalendarSystemItem()
+
     @JvmField
     val SHOW_SPOILERS_DIRECTLY = BoolItem("show_spoilers_directly", false)
 
