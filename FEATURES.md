@@ -14,114 +14,108 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 ### privacy & protection
 
-- 📡 **ghost mode (stealth)**: privacy suite with granular toggles:
-  - **quick toggle** in the drawer header, drawer menu, and chat-list menu — flips every option to full stealth at once (AyuGram-style); its indicator lights up only in that full state
-  - **quick-toggle locks** 🔒: exclude individual options from the quick toggle, like exteraless/NagramX
-  - **status indicator** with a ghost icon in the dialogs list and active chat header
-  - **quick access** to full Ghost settings by long-pressing the drawer button
+- 📡 **ghost mode (stealth)**:
+  - **quick toggle** in drawer header, drawer menu, and chats menu with quick-toggle locks 🔒 - *inspired by [AyuGram](https://github.com/AyuGram)*
+  - **status indicator** with ghost icon in dialogs list and active chat header
   - hide read receipts for messages, voice notes, and video messages
-  - **read on send**: mark incoming messages read only when replying (enabled by default)
-  - **mark as read locally**: clear unread counter badges on open while keeping messages unread on the server (configurable toggle)
+  - **read on send**: mark incoming messages read only when replying
+  - **mark as read locally**: clear unread counter badges on open while keeping unread on server
   - hide story views, online status, typing, recording, and upload indicators
-  - **automatically go offline**: independent toggle that re-sends an offline status shortly after sending, countering Telegram's server-side implicit "online" flip (works with any online-status mode)
-  - **whitelist management**: dedicated screen listing every chat exempt from Ghost Mode, with one-tap add/remove
+  - **automatically go offline**: re-send offline status shortly after sending
+  - **whitelist management**: exempt specific chats from Ghost Mode
 - 📡 **anti-deletion & edit history**:
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
-  - **per-category controls** for private chats, groups, channels, and bots, plus a separate toggle to skip saving your own outgoing deleted messages; secret chats are never saved
-  - **delete permanently** from a saved-deleted message's own long-press menu, wiping just that one entry (and its media) instead of clearing the whole cache
-  - **keep local copy prompt**: optional checkbox in the delete-message dialog to archive just that deletion, without turning on automatic saving for everything
-  - **save edit history** (marked with ✏️) in an interactive message sheet, where every revision is rendered as the message it actually was — formatting, links and spoilers intact, media as the real photo/video/voice/document rather than a stand-in
-  - **text diff mode** with inline color-coded changes, toggleable straight from the history screen's "⋮" menu
-  - **delete a single revision** from the history screen's long-press menu
-  - **deleted-message styling** with transparency, custom mark and accent color, plus a live settings preview
-  - **cache TTL and storage manager** with automatic expiration and per-dialog cleanup
-  - **search the local archive**: full-text search across saved deleted messages and edit history
+  - **per-category controls** for private chats, groups, channels, and bots
+  - **delete permanently** option for individual saved-deleted entries
+  - **save edit history** (marked with ✏️) with full formatting, media preservation, and text diff mode
+  - **deleted-message styling**: custom transparency, mark, and accent color with live preview
+  - **local archive search**: full-text search across saved deleted messages and edit history
+  - **storage manager**: cache TTL and automatic expiration
 - 📡 **self-destructing & expiring media**:
-  - **save view-once media**: view-once photos, videos and video messages show as standard media without auto-destruction
-  - **keep self-destruct content per-category**: keep secret-chat media, secret-chat text, view-once media and auto-delete (timed) messages locally after timers expire
-  - **persistent media playback**: view-once voice notes, round videos, and encrypted media remain playable inline and surviving sender deletion or expiration
+  - **save view-once media**: view-once photos, videos and video notes without auto-destruction
+  - **keep self-destruct content per-category**: keep secret-chat media, text, view-once media and timed messages
+  - **persistent media playback**: expired voice notes and round videos remain playable inline
 - 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
-- 📡 **stalker pack**:
-  - **presence logger**: opt-in per-contact online/offline tracking — pick who to watch from their profile menu or a dedicated watch-list screen (which also shows each contact's local status-change log), every status change is logged locally, with an optional popup notification the moment they come online or go offline
-  - **anti-P2P call IP leak**: force voice/video calls through Telegram's relay servers so the other party can never learn your real IP
-  - **typing status spoofing**: loop a fake typing/recording/uploading indicator in any chat, reachable from the chat header menu or a quick-launch list in settings
+- 📡 **presence logger**: per-contact online/offline tracking with local history, notifications, and auto-cleanup
+- 📡 **force relay calls**: route voice/video calls through Telegram relay servers to prevent P2P IP leaks
 - 📡 **adblock & content filtering**:
   - **hide sponsored messages**: completely disables Telegram sponsored channel ads and video ads
   - **hide proxy sponsor chat**: blocks the promoted chat/channel some MTProto proxies pin to the top of your chat list while connected
-  - **regex content filter**: manage multiple named filters (not just one combined pattern) with per-filter enable/case-insensitive/allow-list toggles, global or scoped to a single chat, with per-chat exclusions for global filters. Add a filter straight from a message's long-press menu, or manage the full list from settings. Hides or spoiler-covers matches; caches match results locally so scrolling stays fast even with many filters. Export/import the full filter set as JSON. Matches hidden markdown-link URLs and link-preview URLs too, not just the visible message text.
+  - **regex content filter**: hide or spoiler-cover messages matching custom regex rules, with per-chat scope, allowlists, and JSON export/import
 
 ### restricted features
 
-- 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories (now including no-forwards stories)
+- 📡 allow screenshots and screen recording in protected windows, secret chats, expiring media, and protected stories
 - 📡 **hide screenshot notifications**: taking a screenshot in a secret chat no longer alerts the other person
 - 📡 copy text and select messages in protected chats when restricted forwarding bypass is enabled
-- 📡 **local Telegram Premium**: unlock client-side premium UI and limits, including badges, custom icons, emoji statuses, colors, translation bar, reactions, animations, and transcription. The toggle applies instantly; server-side premium-only writes remain unavailable.
-- 📡 **local custom emoji**: send Premium custom emoji without Premium — each one travels as a hidden emoji link over its fallback character, so entinyGram and Nekogram clients render it animated while every other client just sees a plain link. Saved Messages, free emoji and a group's own emoji pack keep using real entities.
+- 📡 **local Telegram Premium**: unlock client-side premium UI and limits (badges, custom icons, emoji statuses, translation bar, reactions, animations, and transcription)
+- 📡 **local custom emoji**: send Premium custom emoji without Premium via fallback links
 - 📡 **content protection & forward bypass**:
-  - **save any story**: direct download of any story to gallery, bypassing Telegram Premium requirements and download restrictions
-  - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels where saving/forwarding is restricted
-  - **forward as own message**: download and re-send forwards as your own new message without the "Forwarded from" header
-- 📡 **whole-chat translation without telegram premium**: the translation bar and real-time chat translation are ungated for every provider — free accounts automatically route whole-chat translations through the fast parallel engine (Google Web by default) so translation happens instantly in parallel without server-side MTProto rejections or timeouts. The opt-out is fully reliable: user selections in the **Do Not Translate** list are permanently preserved and never wiped or overwritten by system keyboards. Instant translate banner is enabled by default so translation appears immediately, and high-concurrency parallel workers translate entire chats in seconds without aborting when an individual message fails
-- 📡 **third-party translation providers**: use Google, DeepL, an OpenAI-compatible LLM, Yandex, Bing, Microsoft Azure, or MyMemory for chat and message translation. Retries, fallback, force-translate mode, optional translation of your own messages, and translated link previews. Formatting survives the round trip, and urls, @mentions, emails and hashtags are handed to the provider as opaque tokens so a link's own text never comes back translated
-- 📡 **auto-translate every chat**: chat translation on by default everywhere, with each chat you switch off remembered as an exception — *the idea is [OwlGram](https://github.com/OwlGramDev/OwlGram)'s, riding Telegram's own per-dialog store instead of a second exceptions list*
-- 📡 **LLM translation with conversation context**: the AI provider can be given the previous N messages of the chat as reference (never translated themselves), so pronouns, grammatical gender and one-word replies come out right — plus a temperature control. No other fork feeds the conversation to the translator.
-- 📡 **free voice transcription**: voice-to-text for voice notes and video messages through configurable AI providers (Groq Whisper, Gemini Flash, OpenAI, Cloudflare). Switching it on takes over the transcribe button outright — no Premium prompt, no trial counter, and an unconfigured provider says so in a bulletin instead. Comes with an optional spoken-language hint that sharply improves short or noisy recordings, streaming uploads, and automatic retries when a provider is busy
+  - **save any story**: direct download of any story to gallery, bypassing restrictions
+  - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels
+  - **forward as own message**: download and re-send forwards without the "Forwarded from" header
+- 📡 **whole-chat translation without Premium**: real-time chat translation bar ungated for free accounts, with parallel message translation and permanent "Do Not Translate" list
+- 📡 **third-party translation providers**: Google, DeepL, OpenAI-compatible LLM, Yandex, Bing, Azure, or MyMemory with entity preservation and automatic fallbacks
+- 📡 **auto-translate every chat**: chat translation on by default everywhere with per-dialog exception memory - *inspired by [OwlGram](https://github.com/OwlGramDev/OwlGram)*
+- 📡 **LLM translation with conversation context**: feeds recent chat messages as context for improved accuracy, gender, and tone, with temperature control
+- 📡 **free voice transcription**: transcribe voice notes and video messages via Groq Whisper, Gemini Flash, OpenAI, or Cloudflare AI without Premium
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
-- 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings — pinned chats and folder chats beyond the server limit (5/10 pins, 100/200 folder chats with Premium) are tracked client-only and never revert on resync; favorite stickers/GIFs simply stop being trimmed from the local cache
-- 📡 **force relay calls**: always route voice/video calls through Telegram's relay servers, never peer-to-peer, so the other party's client can never learn your real IP address
-- 📡 **skip the login code countdown**: tap the "code available in mm:ss" line on the login code screen to confirm and request a new code immediately, instead of waiting out the timer that swallows the tap. The countdown is purely local, so this drops it and runs Telegram's own resend — the server's rate limit is untouched and can still answer with a flood wait. Off by default; covers both the code and phrase login screens - *the idea is [NiagramX](https://github.com/HSSkyBoy/NiagramX/pull/18)'s; the "prioritize email code" half of that PR is deliberately not ported, since `codeSettings` has no such flag in the real MTProto schema*
+- 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings without server sync reverts
+- 📡 **skip login code countdown**: tap the countdown timer on the login screen to request a new code immediately - *inspired by [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
 
 ### appearance & customization
 
-- 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator (`SHARP`, `ROUND`, or radius), live interactive dialog mock preview card with squareness-aware online dot cutout, and `Unified corner radius` toggle for regular and forum avatars - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **standalone AMOLED theme**: a true-black theme selectable from the regular theme list, independent of Monet (no dynamic accent tracking) - *ported from NagramX Turbo*
-- 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (chat input bar, message action strip, settings/navigation showcase). Supports Stock Telegram, Solar by @Design480, VKUI by VK, and Phosphor Icons (Regular style).
-- 📡 **iOS-style design**, ported from [exteraless](https://github.com/exteraless/exteraless):
-  - wide, full-width bottom navigation bar (60dp, evenly-spread tabs, like Telegram for iOS)
-  - Chats tab tap returns to the first folder before scrolling to top
-  - compact chat header pill: the centered header shrinks to hug the title, subtitle and avatar and floats in the middle of the bar instead of spanning it, like Telegram for iOS. Optionally the avatar leaves the pill — either taking over the "⋮" menu slot (tap for the profile, long-press for the chat menu), or staying put next to the back button while only the title/subtitle pill centers. Built on [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)'s model — the pill's size and position come from the action bar's own slots plus the painted text width, and the title/subtitle are then laid out into it, so the text can no longer drift off the pill or spill out of it; the pill also hands the full width back during search and selection mode. Touch-target overlap with extra header icons is still a known rough edge, and pull requests are welcome
-- 📡 **header centering**: center screen titles everywhere (in Appearance), and/or center chat/channel headers on their own dedicated "Chat header" settings page (text centers, avatar stays left by default) with a live mock preview at the top that updates instantly as toggles below it change. On the chat-header page: switch the pill to compact mode, move the avatar to the right end of the pill, or keep the avatar out of the centering entirely (menu slot, or left where it normally sits). Every toggle off leaves the header full-width and left-aligned in both the island and classic UI
-- 📡 **auto marquee for long titles**: chat header titles/subtitles, action bar screen titles and profile names smoothly auto-scroll instead of fading out - *inspired by the auto_marquee plugin (@chestertech)*
-- 📡 **show spoilers directly**: skip the tap-to-reveal step everywhere — text and media (photos, videos, round videos) spoilers show their content right away
-- 📡 **customizable bottom tabs (beta)**: independent reordering and show/hide toggles for Contacts, Settings, Calls, Profile and Feed tabs in MainTabsActivity, with separate tab title visibility toggle. Feed is an entinyGram-only tab (off by default) that puts the cross-channel unread-post screen one tap away, showing every eligible channel; its own overflow menu still narrows it to a single folder
-- 📡 **recent chats quick-switcher**: a popup listing the most recently opened chats (avatar + title, tap to open, long-press for their profile), reachable from the chats screen's "☰" options menu, with a one-tap clear-history action - *inspired by exteraless*
-- 📡 **clear cache shortcut**: a "Clear cache" entry in the chats screen's "☰" options menu, opening stock's own Storage Usage screen or directly wiping the local saved-deleted-messages archive (with confirmation), without hunting through Settings first
-- 📡 **customizable settings screen**: reorder and hide the rows of Telegram's own Settings screen (Inugram Settings, Account, Chat Settings, Privacy, Notifications, Data, Folders, Devices, Power Saving, Language, Premium, Stars, TON, Wallet, Business, Gift, Ask a Question, FAQ, Features, Privacy Policy) — untouched it renders exactly like stock, customized it collapses into one flat section
-- 📡 **customizable My Profile info rows**: independent reordering and show/hide toggles for the phone number, bio, username, ID, and estimated registration date rows on your own profile
-- 📡 **wide channel posts**: channel posts stretch to the full available width instead of narrow bubbles, with accurate proportional album layout (no squished 3-item rows or aspect ratio distortion)
-- 📡 **branded first-run intro**: replaces the stock Telegram wordmark and plane logo on the first onboarding slide with entinyGram's name and glyph/brand color
-- 📡 **pill stack (beta)**, ported from [exteraGram](https://github.com/exteraless/exteraless): small interactive pills in the chats search bar — clock, weather, cache size, proxy status, Ghost Mode toggle, RAM/network-speed/DC-ping telemetry, and live currency/crypto rates (BTC, ETH, gold, TON, and any fiat pair you add). Pick how many are visible at once, enable/reorder which pills show, and manage your own rate pairs from Settings
+- 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator, live interactive dialog preview, and unified corner radius toggle - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
+- 📡 **standalone AMOLED theme**: true-black theme selectable from regular theme list, independent of Monet - *ported from NagramX Turbo*
+- 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (Stock Telegram, Solar, VKUI, Phosphor Icons)
+- 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless) and [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*:
+  - wide, full-width bottom navigation bar (60dp evenly-spaced tabs)
+  - tapping active Chats tab returns to the first folder before scrolling to top
+  - compact chat header pill hugging title and avatar, with optional avatar placement in the menu slot or left aligned
+- 📡 **header centering**: center screen titles across the app and customize chat headers (compact pill, avatar position, live settings preview)
+- 📡 **auto marquee for long titles**: auto-scroll long header titles, action bar titles, and profile names - *inspired by auto_marquee plugin (@chestertech)*
+- 📡 **show spoilers directly**: skip tap-to-reveal on text, photos, and videos
+- 📡 **customizable bottom tabs (beta)**: reorder and toggle visibility of Contacts, Settings, Calls, Profile, and Feed tabs
+- 📡 **recent chats quick-switcher**: popup listing recently opened chats in the main menu with one-tap history clear - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
+- 📡 **clear cache shortcut**: quick entry in chats menu to open storage settings or clear local archive
+- 📡 **customizable settings screen**: reorder and hide individual rows of the main Telegram settings list
+- 📡 **no accounts list in settings**: hide the redundant accounts block from the main settings screen
+- 📡 **customizable My Profile info rows**: reorder and toggle phone, bio, username, ID, and registration date rows on your profile
+- 📡 **wide channel posts**: channel posts stretch to full available width with proportional album layout
+- 📡 **branded first-run intro**: branded first slide during onboarding
+- 📡 **pill stack (beta)**: interactive pills in chats search bar (clock, weather, proxy, storage, telemetry, currency/crypto rates) - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
 
 ### profile & identity tools
 
-- 📡 **developer badges**: show entinyGram, inuGram, and official-channel badges in chat headers and profiles. Tap a badge for details or disable them in Settings → Chats. The badge is a custom emoji written into the same field Telegram's own bot verification uses, so it renders through stock machinery wherever a verification mark appears; the holder list is fetched once a day from a public manifest instead of being compiled in, so adding one never needs a release. The whole list is fetched and matched on-device — the app never asks the server about a single id.
-- 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags & toggle in settings
+- 📡 **developer badges**: display entinyGram and official badges in chat headers and profiles, synced daily via remote manifest
+- 📡 **mutual contact icon**: icon in user lists and chats with auto-shifted role tags
 - 📡 **estimated registration date & DC**: profile info card with fast copy and DC location resolution
 - 📡 **delete profile photos**: one-tap delete all or selected profile photos from profile menu, photo viewer, or settings
-- 📡 **delete my messages**: wipe every message you sent in a chat, group, or channel with one confirmation — good for leaving without a trace
+- 📡 **delete my messages**: wipe every message you sent in a chat, group, or channel with one confirmation
 - 📡 **emoji picker in name and surname fields**: built-in emoji selection button in account profile editor
-- 📡 **open by numeric Telegram ID**: open any user profile directly by numeric ID — tap numeric IDs in messages to open their profile via a context menu shortcut, type an ID in the global search bar to jump straight to their profile, or use the "Open by ID" tool in settings
+- 📡 **open by numeric ID**: open user profiles by numeric Telegram ID via search bar, context menu, or settings tool
 
 ### messages & media tools
 
 - 📡 **extended message details & JSON view**: inspect raw message objects and properties
-- 📡 **url parsing improvements**: support multi-component TLDs, hyphens in subdomains, preserve clickable ASCII domains after Cyrillic text, and make bio/description links clickable without `http(s)://`
+- 📡 **url parsing improvements**: support multi-component TLDs, subdomains with hyphens, and preserve links without `http(s)://`
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
-- 📡 **typing status spoof**: per-chat menu option to loop a fake "typing…", "recording…" or "uploading a file…" indicator to the other side; stops automatically when you leave the chat
-- 📡 **keep downloads running in background**: don't cancel in-progress downloads when a message scrolls off screen or you leave the chat, with an optional wake lock to keep transfers alive while the screen is off - *ported from a "Don't kill the download!" plugin (@shareui, fixed by @itNotMax/@MaxExteraPlugins)*
-- 📡 **show poll results before you vote**: always reveal vote percentages, even for anonymous polls you haven't voted in yet
-- 📡 **show small GIFs**: display animated GIFs in chat bubbles as compact 120dp thumbnails (similar to stickers) rather than full-width media - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
-- 📡 **send as round video**: crop any gallery video square and send it as a real round video-note message (only offered for videos ≤60s — Telegram's round-message format has a hard duration cap and silently fails to send past it)
-- 📡 **round recorder zoom-level buttons**: fixed zoom presets (1×/2×/3×/5×/10×, capped to what the lens supports) below the video feed - tap to snap and lock zoom instead of only pinching or dragging the slider
-- 📡 **60 FPS round video messages**: record smooth 60 FPS video notes with intelligent HAL frame rate negotiation (prioritizing 60 FPS fixed, then 30–60 FPS variable, with proper MediaCodec bitrate scaling and strictly monotonic timestamp clamping to completely eliminate audio/video desynchronization drift)
-- 📡 **round recorder exposure lock (AE lock)**: lock camera auto-exposure during round video recording (either automatically via a toggle or on-demand via a dedicated lock button in the recorder controls) to prevent distracting brightness flickers and exposure shifts - *inspired by Cherrygram*
-- 📡 **round recorder exposure (EV) buttons**: fixed exposure-compensation presets (-2/-1/0/+1/+2, capped to what the sensor supports) below the video feed - tap to brighten or darken the shot live, independent of the AE lock toggle above
-- 📡 **proxy management**: delete every failed proxy in one tap, force-recheck all proxies on demand ("Ping All Proxies", ignoring the usual 2-minute per-proxy check cooldown), and an option when adding a new proxy to save it to the list without switching to/enabling it right away
-- 📡 **tap avatar to open profile**: optionally makes tapping a chat's avatar in the chat list open their profile directly instead of opening the chat
-- 📡 **confirm before sending**: optional "are you sure?" prompt before a voice message, sticker, or GIF actually goes out, each independently toggleable
-- 📡 **fast cold start & locale caching**: binary serialization cache for downloaded translations drops locale parsing from ~1.6s to ~20ms, eliminates the redundant second XML parse on configuration change, and skips reconstructing background controllers and CPU telemetry loops for inactive account slots on startup
-- 📡 **Forward Pro (quick toggles & edit before forward)**: adds quick-action icons next to the search bar in the forwarding dialog to send silently, hide captions, and show/hide the original author, folder tabs to filter the share-target list, and a dedicated edit button to modify message text and captions on the fly before sending; also reachable from the message long-press menu, and a long-press on the fullscreen share icon offers a one-off choice between stock Telegram sharing and Forward Pro - *inspired by Nagram X Turbo / Turbotel*
-- 📡 **instant mark reactions as read**: long-press the unread-reactions side button to mark everything read immediately, skipping the confirm popup - *inspired by exteraless*
+- 📡 **typing status spoof**: loop a fake "typing…", "recording…" or "uploading…" indicator in any chat
+- 📡 **keep downloads running in background**: prevent transfer cancellations on scroll/leave, with optional wake lock - *ported from [MaxExteraPlugins](https://github.com/MaxExteraPlugins)*
+- 📡 **show poll results before you vote**: reveal vote percentages for anonymous polls before voting
+- 📡 **show small GIFs**: compact 120dp thumbnails for animated GIFs in chat bubbles - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
+- 📡 **send as round video**: crop any gallery video (up to 60s) to square and send it as a native video note
+- 📡 **round recorder zoom buttons**: quick zoom presets (1×, 2×, 3×, 5×, 10×) during video note recording
+- 📡 **60 FPS round video messages**: record smooth 60 FPS video notes with frame rate negotiation and audio/video sync protection
+- 📡 **round recorder exposure lock (AE lock)**: lock camera exposure during video note recording to prevent brightness flickers - *inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*
+- 📡 **round recorder exposure (EV) buttons**: quick exposure presets (-2 to +2) during video note recording
+- 📡 **proxy management**: delete failed proxies in one tap, on-demand "Ping All Proxies", and save without auto-connecting
+- 📡 **tap avatar to open profile**: tapping a chat's avatar in the chat list opens their profile directly
+- 📡 **confirm before sending**: optional confirmation prompt before sending voice messages, stickers, or GIFs
+- 📡 **fast cold start & locale caching**: binary cache for translations and startup optimization for inactive account slots
+- 📡 **trimmed APK size**: dropped unused firebase-appindexing/datatransport and unnecessary transitives to cut binary bloat
+- 📡 **Forward Pro**: forwarding dialog toolbar with silent send, hide captions, hide author, folder filters, and on-the-fly message editing - *inspired by Turbotel / NagramX*
+- 📡 **instant mark reactions as read**: long-press the unread-reactions side button to mark read immediately - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 
 ### debloat & premium noise
 
@@ -154,13 +148,10 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 - navigation drawer, like in older Telegram versions; can be used alongside or instead of the bottom tabs
   - 🐶 an option to (ab)use predictive back to open the drawer
-- 📡 **no accounts list in settings**: the redundant accounts block is always hidden from the settings screen - switching happens from the avatar menu or the drawer - *ported from [inugram PR #34](https://github.com/teidesu/inugram/pull/34), made unconditional*
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
-- icon replacement (currently: solar pack, [480 Design](https://t.me/Design480)) - *ported from [NagramX](https://github.com/risin42/NagramX)*
-- notification icon: Telegram (default) or entinyGram
 - icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
-- notification icon: Telegram (default) or Inugram
+- notification icon: Telegram (default) or entinyGram
 - show seconds in timestamps
 - override Telegram's detected device performance class
 - 🐶 customizable animation speed multiplier (incl. instant)
@@ -190,7 +181,6 @@ the sections below contain the broader feature set: inugram functionality, featu
 - cloud sync of settings via web app storage api
 - search and deeplinks for fork settings, incl. `tg://settings/...` links tapped from inside a chat message
 - osmdroid-based map view (default) — pure-Java OpenStreetMap renderer with no native libraries, replacing the old MapLibre view to cut ~12MB of native code from the APK
-- 📡 trimmed APK size: dropped unused firebase-appindexing/datatransport and com.google.android.material (which only existed for an opt-in wavy progress bar), and unused annotation-only Guava transitives
 - customizable map preview provider
 - in-app updater - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 crash report sheet: catches uncaught exceptions, offers to share the log on next launch, posts a tap-to-restart notification

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="108" height="108">
+  <defs>
+    <linearGradient id="entinyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF2855"/>
+      <stop offset="100%" stop-color="#D6002A"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.18" />
+    </filter>
+  </defs>
+  <!-- Google / AOSP Adaptive Icon Squircle -->
+  <path d="M50,2 C12,2 2,12 2,50 C2,88 12,98 50,98 C88,98 98,88 98,50 C98,12 88,2 50,2 Z" fill="url(#entinyGrad)" filter="url(#shadow)"/>
+  <svg x="20" y="20" width="60" height="60" viewBox="0 0 24 24" fill="none">
+    <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+      <path d="M4 10a7.31 7.31 0 0 0 10 10Z" />
+      <path d="m9 15 3-3" />
+      <path d="M17 13a6 6 0 0 0-6-6" />
+      <path d="M21 13A10 10 0 0 0 11 3" />
+    </g>
+  </svg>
+</svg>

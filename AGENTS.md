@@ -1,99 +1,198 @@
-# Inugram Agent Guide
+# entinyGram Agent Guide
 
-Inugram is a **patchset**, not a fork. `worktree/` is a stock Telegram checkout with
-stgit patches applied on top. Fork code lives in `src/kotlin`/`src/res` (symlinked
-into the worktree). `patches/` and `series` are export targets, not source of truth.
+**entinyGram** is our independent fork of **inugram** (`teidesu/inugram`), which is built as
+an stgit patchset on stock Telegram Android. Fork code lives in `src/kotlin` and `src/res`
+(symlinked into the `worktree/`). `patches/` and `series` are stgit export targets, not the source of truth.
 
 `FEATURES.md` is the user-facing list of fork features/bugfixes. Keep it in sync —
-when adding, removing or meaningfully changing a patch, update `FEATURES.md` in
-the same change.
+when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in the same change.
 
-## Golden rules (never violate)
+---
 
-1. **Edit `worktree/` directly.** Never hand-edit `patches/*.patch` or `series` — they regenerate from stgit.
-2. **Do not run `stg` or `git` yourself** unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
-3. **Stock patches stay tiny & code-only.** Only Java wiring/hooks/guards in `TMessagesProj/src/main/java/...`. Real logic goes in `src/kotlin`. **NEVER include XML resources, drawables, or non-Java assets in stgit patches.** New icons, drawables, and XML resources MUST be placed in `src/res/drawable/` or `src/res/`, NOT tracked inside `patches/*.patch`. A patch touching only `src/**` or resource XMLs is WRONG.
-4. **Default off = stock-identical.** Every behavior change gated behind an `InuConfig.*.getValue()` check. Verify every call site is gated.
-5. **Check if stock or origin (inugram) already does it** before implementing a toggle (Lite Mode, `InuConfig`, `src/kotlin` helpers, `series`). Tell the user, don't silently re-implement. Duplicating origin is a hard error — see rule 20.
-6. **Confirm bug repro in unpatched worktree** before treating a visual/behavior issue as a patch regression.
-7. **No renames in stock. No removing stock imports** (except `desu.inugram.*`).
-8. **Prefer data-layer patches over UI-layer** — one hook in a controller beats fifteen hooks in views.
-9. **Never touch `TLRPC.java`** — auto-generated, rebasing changes there is hell.
-10. **Never touch stock DB schema or `LAST_DB_VERSION`** — fork state goes in `inu_*` tables / `inu_kv` via `InuDatabaseHelper`.
-11. **No LSP, no local build.** Don't try to compile.
-12. **Debug logs use `android.util.Log.d`**, not `FileLog`.
-13. **Prefer non-`_solar` icons** when an alternative exists.
-14. **Never install/launch the app yourself.** No `adb install`, `adb shell am start`, `adb uninstall`, `adb logcat` — nothing that touches the user's device. Ask them to install/run and paste logs.
-15. **Format Commits Carefully.** Use the exact format: `type(scope): subject` followed by an empty line, an optional short summary paragraph, and an explicit bulleted list of changes starting with `- `. 
-**Important for upstream syncs:** When syncing changes from upstream inugram, clearly denote it as `sync with upstream inugram` in the commit subject so the release notes AI knows to group it. For our own specific changes, list them clearly with `- ` bullets. If the changes are very minor, you can just write a single-line commit message without bullets.
-Example:
-```
-chore(maintainer): migrate owned patches to entiny/ namespace...
+## 0. THE PARANOIA PROTOCOL (Read First, Always Obey)
 
-...it-history stats crash, remove premium translation lock, and harden media-session lifecycle
+1. **Be Paranoid — Ask 100 Times Before Doing:**
+   - If ANY instruction is ambiguous, vague, or shorthand: **STOP AND ASK**. Never assume, guess, or take liberties.
+   - Present a clear, concise plan of action before modifying files or stack state.
+   - Better to clarify 100 times than to introduce unrequested changes, corrupt patches, or touch external remotes.
 
-- migrate 16 authored patches into patches/entiny/
-- document entiny/ ownership and merge behavior in AGENTS.md
-- fix InuDatabaseHelper SQLite crash: old_text -> text in inu_edit_history stats
-```
-16. **Release Bumping:** The APK `versionCode` and release tag are date-based, controlled by the `INU_DAY_STATE` GitHub variable (format `YYYYMMDD:N`), not `gradle.properties`. There is no separate all-time release counter — `INU_BUILD` was removed (it only ever fed cosmetic labels, never the real versionCode). To check current state, run `gh variable list --repo entaytion/entinyGram` in the terminal.
-    - **The `versionCode` is `YYYYMMDD*100 + dailyCounter*10 + variant(1=full/0=lite)`**, computed by `scripts/ci/version.ts` from the CI's own UTC date. `dailyCounter` comes from `INU_DAY_STATE`: if its date matches today, `N` is the slot (`00`, `01`, `02`, ...); otherwise the counter resets to `00`. The "Bump build variables" step in `apk.yml` writes back `date:N+1` after every release.
-    - **The release tag/`gh release list` entry is `v<ver>-<YYYYMMDD><dailyCounter>`** (e.g. `v12.10.1-202608270`, then `...271`, `...272` for same-day releases) — same slot as the versionCode, just without the `*10+variant` split. Telegram/GitHub post captions show the plain date (`build 20260827`), not this combined number.
-    - **Before touching `INU_DAY_STATE` (manual reset, troubleshooting a failed release, or explaining versionCode math to the user), check the actual UTC date** (`date -u`, not local time) against the date encoded in the last shipped `versionCode`/APK filename — CI runs in UTC and a same-day assumption made in local time can be off by one. Cross-check with `gh variable list --repo entaytion/entinyGram` for `INU_DAY_STATE`, and `gh release list --repo entaytion/entinyGram --limit 1` for the last tag/date actually shipped.
-    - **`dailyCounter` is the same-day release slot (0-9).** More than 10 releases on the same UTC day exhausts it — `version.ts` throws once `dailyCounter > 9` rather than silently wrapping and repeating a `versionCode`, which Android/Play would reject as non-increasing. If a user is about to ship a rapid string of same-day bugfix releases, warn them of this ceiling before it's hit — don't wait for the rejected upload to explain it.
-17. **Check stgit Stack Before Patch Operations:** Always check `stg top` and `stg series` BEFORE creating, modifying, or refreshing patches. Verify if a patch for the feature already exists in `patches/` or `series`. Never run `stg refresh` blindly on whatever patch happens to be at the top of the stack.
-18. **Take Over Existing Patches Properly:** When modifying an existing inugram base patch, float and rename it (`stg float <patch>`, `stg rename <old> entiny__<name>`) BEFORE refreshing changes so that changes don't spill into unrelated patches or create duplicate entries in `series`.
-19. **Commit & Push Only On Explicit Approval:** NEVER automatically run `git commit` or `git push` unless the user explicitly gives approval to commit or push. Always present the prepared changes and wait for user confirmation before executing git commits or pushes.
-20. **Never duplicate origin. Never rewrite a hotspot for a feature origin already has.** If inugram already has the feature, take theirs — do not add a parallel `entiny/` patch, a second toggle, or a rewrite of `ChatMessageCell` / other 10k+ stock files. Bubble metadata (time, views, forwards, edited) goes through `ChatHelper.timePrefix` / `extraTimeWidth` / `timeAdditionsHash`, not a new cell patch. Checklist: `.claude/skills/write-patches/SKILL.md`. Code comparison: `.claude/skills/write-patches/dont-reinvent.md`.
-21. **Before calling any feature/patch done, run the automated checks — don't just eyeball it.** A duplicate `SearchRegistry` slug shipped to prod and hard-crashed settings search because this step got skipped. Every time you touch settings pages, patches, or translations, run before declaring done:
-    - `bun run tsx scripts/entinychecker.ts` — catches duplicate `SearchRegistry` slugs and unused app variants. Mandatory after adding/editing any `*SettingsActivity` `PAGE`/`Entry`.
-    - `bun run tsx scripts/check-translations.ts` — catches missing/stale translations after touching `strings_inu.xml`.
-    - `bun run lint-patches` — catches unexpected patch overwrites after any `stg refresh`/`bun run export`.
-    None of these require a build; they're static and fast — there's no excuse to skip them.
+2. **Commit & Push ONLY on Explicit, Per-Action Approval & Per-Feature Scope:**
+   - **Never auto-commit.** An earlier "commit this" applies ONLY to that single change. It NEVER grants permission to commit follow-up fixes or chain commits on momentum.
+   - **One Feature = One Commit:** When adding a new feature, commit EXCLUSIVELY that feature alone. Never lump unrelated fixes, refactors, or multiple features into one kitchen sink. (Global cleanup/chores can be batched before release).
+   - Present the diff/summary and STOP. Wait for an explicit "commit" / "зроби" / "ок".
+   - **Never auto-push.** Pushing to remote requires its own separate explicit confirmation.
 
-> you are allowed to violate them if the user explicitly asks for this
+3. **Strict Fork Isolation — ZERO Upstream Pollution:**
+   - All tasks, code, and bugfixes belong **exclusively** to THIS fork (`entinyGram`).
+   - **NEVER open Pull Requests or issues to upstream inugram (`teidesu/inugram`) or official Telegram.** We do not work for upstream and do not submit our changes to them.
+   - When using `gh` CLI for ANY reason, **ALWAYS explicitly pass `--repo entaytion/entinyGram`**. Never rely on default remote resolution (gh can default to upstream and create an irreversible public PR).
+   - Our standard workflow is local commit and direct push to `main` on `origin` (entaytion/entinyGram) upon explicit approval — no PRs.
 
-## Patch groups & naming
+4. **Zero Comment Spam / Zero Bloat (Keep it Clean):**
+   - **Default to NO comments at all.** Only comment when code is completely inexplicable.
+   - If a comment is strictly required: **max 1 line**, tagged `// entiny: <one sentence>`.
+   - **NEVER** write multi-paragraph explanations, rationale tirades, or class/function `/** ... */` docblocks.
+   - If design rationale or notes are genuinely needed for future reference, put them in a scratch file under `entinyProto/<feature-name>/NOTES.md`, NEVER inline in code or patches.
+   - No orphan files, no temporary experiment junk, no unnecessary abstractions or wrappers.
+
+5. **Never Touch the User's Device:**
+   - No `adb install`, `adb shell`, `adb logcat`, `adb push`, or app-launching commands.
+   - Ask the user to run/install and paste logs if needed.
+
+---
+
+## 1. Golden Rules (Never Violate)
+
+1. **entinyGram Owns `patches/entiny/`:** All our features, bugfixes, and tweaks live under `patches/entiny/` and are named `entiny__<name>`. Upstream groups (`bugfix`, `feature`, `debloat`, `hooks`, `misc`) belong to the inugram base. NEVER create a new entinyGram patch under `feature/` or `debloat/`.
+2. **Search Origin First (Do NOT Reinvent):** Check if stock or inugram already has the feature before writing anything (`InuConfig`, `src/kotlin/helpers`, `series`). If inugram has it, use theirs. Never build parallel toggles, duplicate drawables, or rewrite stock hotspots.
+3. **Stock Patches Stay Tiny & Code-Only:** Only 1–5 lines of Java hooks/guards in `worktree/TMessagesProj/src/main/java/...`. Real logic goes into Kotlin helpers (`src/kotlin/helpers/`). **NEVER put drawables, assets, or XML resources inside `.patch` files.** All assets live in `src/res/`.
+4. **Edit `worktree/` Directly:** Never hand-edit `patches/*.patch` or `series` — they regenerate from stgit.
+5. **Do Not Run `stg` or `git` Yourself:** Unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
+6. **Default Off = Stock-Identical:** Every behavior change must be gated behind `InuConfig.*.getValue()`. Default is false/stock.
+7. **Take Over Existing Patches Properly:** When modifying an inherited inugram patch, float and rename it first: `stg float <patch>`, `stg rename <old> entiny__<name>` before refreshing.
+8. **Never Touch Stock Hotspots for Metadata:** Bubble metadata (time, views, forwards, edited, deleted) MUST go through `ChatHelper.timePrefix`, `ChatHelper.extraTimeWidth`, and `ChatHelper.timeAdditionsHash`. Never patch `ChatMessageCell.java` for this.
+9. **Untouchables:**
+   - Never touch `TLRPC.java` (auto-generated, rebasing is hell).
+   - Never touch stock DB schema or `LAST_DB_VERSION` (fork state goes in `inu_*` tables / `inu_kv` via `InuDatabaseHelper`).
+   - No renames in stock, no removing stock imports (except `desu.inugram.*`).
+10. **No Local Builds or LSP:** Don't run `./gradlew` or try to compile locally.
+11. **Patch Author Name:** Exported patches (`patches/**/*.patch`) must carry `From: Oleksii Kulinich <entaytion@gmail.com>`. Ordinary git commits do not need `--author`.
+12. **Debug Logs:** Use `android.util.Log.d`, not `FileLog`.
+13. **Icons:** Prefer non-`_solar` icons when an alternative exists. Tabler pack preferred.
+14. **Mandatory Pre-Completion Verification:** Run before declaring ANY task done:
+    - `bun run tsx scripts/entinychecker.ts` (catches duplicate `SearchRegistry` slugs and unused variants)
+    - `bun run tsx scripts/check-translations.ts` (catches missing/stale translations)
+    - `bun run lint-patches` (catches patch series overwrites)
+    - Update `FEATURES.md` under `## entinyGram additions` (never buried unmarked in `## inuGram additions`).
+15. **Release & Version Codes:** Controlled by UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`), dailyCounter 0–9. Check with `gh variable list --repo entaytion/entinyGram`.
+16. **Commit Format & Granularity — No AI Essays (`[+]`, `[-]`, `[*]`, `[=]`):**
+    - **Never write Conventional Commits or AI Tirades:** No `fix(entiny): ...` essays explaining internal class call stacks or why listeners were changed. Keep it short, human, and directly to the point ("змістовно, але не канцелярно").
+    - **NEVER add `Co-Authored-By: ...`** or AI email signatures.
+    - **Commit Prefixes:**
+      - `[+] <subject>` — New feature / capability added (e.g. `[+] hijri calendar`).
+      - `[-] <subject>` — Removing / dropping dead code, providers, or old patches.
+      - `[*] <subject>` — Bugfixes, refactoring, or logic modifications (e.g. `[*] translator logic`).
+      - `[=] <subject>` — Chores, formatting, maintenance, or upstream syncs (e.g. `[=] sync with upstream inugram`).
+    - **Body Structure:** Short description or concise `- ` bullet points:
+      ```text
+      [+] hijri calendar
+
+      - add hijri calendar support to date picker
+      - gate behind InuConfig.HIJRI_CALENDAR
+      ```
+      ```text
+      [*] translator logic
+
+      - collapse provider resolution into unified path
+      - fix entity marker resolution indexing
+      - drop dead TranSmart and Lingo providers
+      ```
+    - **One Feature Per Commit:** Each feature gets its own dedicated commit containing EXCLUSIVELY that feature. Batch commits are reserved only for pre-release cleanup or mass sync passes.
+17. **Confirm Bug Repro in Unpatched Worktree:** Before treating a visual/behavior issue as a patch regression, verify if stock behaves the same way.
+18. **Prefer Data-Layer over UI-Layer:** One hook in a controller beats fifteen hooks in views.
+19. **Attribution & Borrowing from Other Forks:** When porting or adapting an existing feature or implementation from another open-source Telegram fork (e.g. AyuGram, ExteraGram, CherryGram, Nekogram, OwlGram, NagramX, etc):
+    - Always respect the original creators and credit the source at the end: e.g. `*inspired by / ported from <Fork> (@author)*`.
+    - Never claim borrowed implementations as built entirely from scratch.
+20. **Concise `FEATURES.md` Entries (Inugram Style):**
+    - Keep `FEATURES.md` feature descriptions short, crisp, and directly to the point — mirroring the concise inugram style.
+    - **NEVER write essays, design tirades, or multi-paragraph changelog entries in `FEATURES.md`.** One clear sentence or a few compact sub-bullets explaining what the user gets.
+
+> You are allowed to violate these rules only if the user explicitly asks.
+
+---
+
+## 2. Patch Groups & Ownership
 
 Format: `group__name` → `patches/<group>/<name>.patch`. Commit subject = plain human sentence (`Allow editing by double tapping a message`).
 
-| group | when |
+| Group | Ownership & Scope |
 | --- | --- |
-| `bugfix` | fixes an upstream bug |
-| `feature` | adds user-facing capability (qol, ui tweak, customization) |
-| `debloat` | hides/disables stock behavior behind a toggle |
-| `hooks` | thin stock hooks for fork code to attach to; no user-visible change alone |
-| `misc` | build, branding, infra |
-| `entiny` | **entinyGram-owned patches** — our work, not inugram's. Ghost mode, adblock, save-deleted, branding, updater, etc. Live in `patches/entiny/`. Inugram merges never touch this folder. **Always include this group** when listing, searching, auditing, or exporting patches; skipping it means you are looking at origin's fork, not ours. |
+| `entiny` | **entinyGram-owned patches** — our work, not inugram's. Ghost mode, adblock, save-deleted, branding, updater, etc. Live in `patches/entiny/`. Inugram merges never touch this folder. **Always include this group** when listing, searching, auditing, or exporting patches. |
+| `bugfix` | Inherited inugram base: upstream bug fixes. |
+| `feature` | Inherited inugram base: upstream user-facing capabilities. |
+| `debloat` | Inherited inugram base: hides/disables stock behavior behind a toggle. |
+| `hooks` | Inherited inugram base: thin stock hooks for fork code to attach to. |
+| `misc` | Inherited inugram base: build, branding, infra. |
 
-`debloat` vs `feature`: only *removes/toggles off* stock → `debloat`. Adds new capability → `feature`. `visual__`, `ui__`, etc. are **not** valid groups.
+**A brand-new entinyGram feature is ALWAYS `entiny__<name>`, NEVER `feature__`/`debloat__`/`bugfix__`/`hooks__`/`misc__`.**
+Naming our patch `feature__x` misclassifies ownership, breaks merge tracking, and causes accidental overwrites.
 
-The first five groups (`bugfix`, `feature`, `debloat`, `hooks`, `misc`) are the **inherited inugram base**. `entiny` is **this fork**. A complete patch list is `series` (or `patches/*/` including `patches/entiny/`). If your search or table omits `entiny/`, you missed our patches.
-
-**Ownership boundary:** everything under `patches/<bugfix|feature|debloat|hooks|misc>/` is the inherited inugram base — don't rename it. When you *take over* a patch (meaningfully modify it for entinygram), move it into `entiny/` via `stg rename <old> entiny__<name>`; at that point you own its maintenance (upstream fixes won't auto-apply). `entiny/` is your layer, so merging upstream stays clean.
-
-**Merge behavior — will a patch duplicate?** Before taking over (or when planning a merge), check whether inugram also has the patch:
+**Taking Over an Inugram Patch:**
+When you meaningfully modify an inugram base patch, move it into `entiny/`:
 ```bash
-git show upstream/HEAD:series | grep <name>
+stg float <patch>
+stg rename <old> entiny__<name>
 ```
-- **New `entiny__` patches** (inugram doesn't have them) → **zero merge conflict**; inugram never touches them.
-- **Taken-over patches** (you renamed an inugram patch to `entiny__`) → on each inugram merge, inugram's original `<group>/<name>` comes back → **duplication**. Resolve by dropping inugram's `<group>/<name>` from `series` (keep your `entiny__` version), or manually port inugram's fixes into yours.
-- **Shared inugram patches you only tweak** (e.g. `misc/branding`) → don't take over; inugram overwrites them every merge, so re-assert your values post-merge (see merge hygiene). Taking over wouldn't avoid this.
+At that point you own its maintenance.
 
-As of writing, all `entiny__*` patches are **new** (not in inugram) — only `feature__translator` and `misc__branding` remain shared inugram base patches.
+**Documentation in `FEATURES.md`:**
+Every entinyGram feature gets its own bullet under `## entinyGram additions` in `FEATURES.md`, in the topical subsection that fits it (privacy & protection / restricted features / power-user tools / debloat & premium noise) — never left as an unmarked line inside `## inuGram additions`.
+- Keep descriptions short, clear, and human-friendly (mirroring inugram style). No AI essays.
+- If ported or inspired by another fork, always append a short credit (e.g. `*ported from <Fork>*` or `*inspired by <Fork> (@author)*`).
 
-**A brand-new entinyGram feature is ALWAYS `entiny__<name>`, never `feature__`/`debloat__`/`bugfix__`/`hooks__`/`misc__`.** Those five groups are the inherited inugram base — a patch that never existed upstream does not belong there, no matter how "feature-shaped" the name feels while writing it. Naming it `feature__x` instead of `entiny__x` misclassifies who owns and maintains it, and breaks the merge-duplication check above (it'll look like a shared inugram patch needing re-assertion, when actually it's ours and inugram will never touch it). **Case study:** the round-video-recorder zoom-level buttons (a purely entinyGram feature) was created as `patches/feature/round-recorder-zoom-buttons.patch` — sitting in the inugram-base folder — and its FEATURES.md line was left unmarked in the inuGram section too (see the FEATURES.md rule right below). Both mistakes were the same root cause: not stopping to ask "did inugram ship this, or did we?" before naming/filing it. Renamed to `entiny__round-recorder-zoom-buttons` once caught. Always sanity-check the group against rule 6 above before creating or naming a patch.
+---
 
-**Every entinyGram feature gets its own bullet under `## entinyGram additions` in `FEATURES.md`, in the topical subsection that fits it (privacy & protection / restricted features / power-user tools / debloat & premium noise) — never left as an unmarked or inline-📡 line buried inside `## inuGram additions`.** The `## inuGram additions` section is for what inugram itself ships (occasionally inline-marked 🐶/📡 when a *sub-item* of an inugram feature happens to be ours, e.g. a toggle option within a larger inugram-owned settings block) — but a whole standalone feature that's entirely ours belongs at the top, as its own bullet, full stop. When in doubt, treat it like the patch group question above: "did inugram ship this, or did we?" — same case study, same fix.
+## 3. Writing Patches & Feature Workflow (The write-patches Rule)
 
-If `patches/entiny/` gets unwieldy to browse, it's fine to mirror the `src/kotlin/helpers/` convention and group by feature area (e.g. `patches/entiny/media/`, `patches/entiny/privacy/`) instead of one flat folder — ask before doing a mass reshuffle of existing patches, since renaming/moving many at once is a bigger stgit operation, but default new patches into a sensible subfolder going forward once there's an obvious cluster.
+### Hard Stop — Search Origin First
+Before writing **any** new feature or toggle:
+1. Search **this repo**: `InuConfig`, `src/kotlin/helpers`, `series`, `patches/hooks/`.
+2. Search **origin** (`teidesu/inugram`): same names, plus the helper that owns the surface (`ChatHelper` for bubbles, `ProfileHelper` for profile menu, `PullActionHelper` for dialogs pull, etc.).
+3. If origin already has it → **keep/use theirs**. Do NOT add `patches/entiny/<same-thing>.patch`, a second `InuConfig` toggle, a second drawable, or a second settings row.
+4. Duplicating origin is not "our version" — it is two implementations that fight and break on every upstream merge.
 
-Propose a patch name (and comment) for every newly made patch — don't touch stgit yourself.
+### Where Code Goes
 
-## Writing a stock patch
+| What | Where |
+| --- | --- |
+| Feature logic | `src/kotlin/helpers/<area>/` (`ChatHelper`, etc.) |
+| Toggle | `InuConfig` + existing settings page (`MessagesSettingsActivity` for bubble chrome) |
+| Strings / drawables | `src/res/` — never inside a `.patch` |
+| Stock Java | 1–3 line hook: `if (InuConfig.X.getValue()) Helper.foo(this);` or a call already in `patches/hooks/` |
+| Bugfix of a stock class | inline in that Java file (this is *not* a feature) |
 
-### Minimal wiring pattern
+### Bubble Metadata Rule (ChatMessageCell is Off-Limits)
+Bubble metadata (time, forwards, views, edited, deleted) **must** go through:
+- `ChatHelper.timePrefix`
+- `ChatHelper.extraTimeWidth`
+- `ChatHelper.timeAdditionsHash`
 
+Those three already have Java hooks in the cell. Opening `ChatMessageCell.java` for a new icon or text next to the time is automatically wrong unless you first prove those hooks cannot express it.
+
+### Case Study: Forward Count (Do Not Reinvent Origin)
+- **What we wanted:** Show how many times a post was forwarded, next to the timestamp.
+- **Origin already did this:** `InuConfig.SHOW_FORWARDS_COUNT` + `ChatHelper.timePrefix`.
+- **We did it anyway (dropped):** Wrote `patches/entiny/post-forwards-count.patch` — 53 lines in `ChatMessageCell.java`, 4 new fields on the 29k-line cell, custom `ic_repost_mini`, second toggle `SHOW_POST_FORWARDS_COUNT`. It lacked `timeAdditionsHash`, so the cell failed to relayout on appearance.
+- **Origin's clean approach (kept):** 0 lines in `ChatMessageCell.java`. Added forwards count into `ChatHelper.timePrefix`, handled `extraTimeWidth` and `timeAdditionsHash`.
+- **Side by side:**
+  | | Ours (dropped) | Origin (kept) |
+  | --- | --- | --- |
+  | Where | `ChatMessageCell.java` (4 call sites) | `ChatHelper.kt` |
+  | Stock hotspot | Yes (29k lines, #1 rebase casualty) | No |
+  | Toggle | `SHOW_POST_FORWARDS_COUNT` (dup) | `SHOW_FORWARDS_COUNT` |
+  | Drawable | New `ic_repost_mini` | Stock `mini_forwarded` |
+  | Relayout | Missed `timeAdditionsHash` | Hash + extra width |
+  | Origin merge | Conflicts + broken braces | Untouched |
+  | Java lines | 53 lines in cell | 0 lines in cell |
+
+**Why origin's is better:**
+1. One owner: Timestamp extras already live in `ChatHelper`.
+2. Layout works: Hash + width invalidate correctly.
+3. The cell is poison: Every Telegram update touches `ChatMessageCell`. 53 lines there is endless rebase conflict debt.
+4. One toggle: Two settings rows fight in preferences.
+5. It already existed.
+
+We deleted `post-forwards-count`. Never bring it back.
+
+### Checklist Before Writing a Patch
+- [ ] Origin does **not** already have this (`InuConfig` / helpers / `series`).
+- [ ] Existing helper/hook cannot express it (`timePrefix`, `addMenuItems`, etc.).
+- [ ] New Java is a guard + helper call, not a rewrite of stock.
+- [ ] New resources are in `src/res/`, not in the patch.
+- [ ] Default-off is stock-identical.
+- [ ] You are **not** editing `ChatMessageCell` for timestamp-adjacent UI.
+
+### Minimal Wiring Pattern
 ```java
 public void doSomething() {
     if (desu.inugram.InuConfig.MY_TOGGLE.getValue()) {
@@ -103,284 +202,165 @@ public void doSomething() {
     // ...stock code unchanged...
 }
 ```
-
 - Guard goes **before** stock, early-returns when fork takes over.
 - For mode-dependent behavior, prefer an `if`/`else` wrapper with **no re-indentation** of the stock branch — keeps rebases trivial.
 - When extending behavior rather than replacing it, **run fork logic after** the stock block. Don't rewrite stock.
-- When figuring out stock code history/regressions, make sure to run git **inside** the `worktree/` dir. Root dir is just the fork code, it DOES NOT track stock code.
+- When figuring out stock code history/regressions, make sure to run git **inside** the `worktree/` dir. Root dir does NOT track stock history.
 
-### Exposing stock internals
-
+### Exposing Stock Internals
 - `private` field/method needed from fork? Change to `public`. That is the whole patch.
-- Adding a new field/method/overload to a stock class? Prefix `inu_` (Java fields too: `inu_addTab`, `inu_internalType`, etc.).
-- Prefer exposing over adding. Adding to a base class is especially rebase-fragile — look for an existing extension point first.
+- Adding a new field/method/overload to a stock class? Prefix `inu_` (e.g. `inu_addTab`, `inu_internalType`).
+- Prefer exposing over adding. Adding to a base class is rebase-fragile — look for an existing extension point first.
 
-### Helper boundary
-
-- <~5–7 lines of logic → **inline** in the patch.
-- Bigger → extract to a Kotlin helper.
+### Helper Boundary
+- <~5–7 lines of logic → inline in the patch.
+- Bigger → extract to a Kotlin helper in `src/kotlin/helpers/<area>/`.
 - Helper reads `InuConfig` itself; don't pass config values as parameters.
-- Helper references stock constants directly (make them `public` if needed).
 - One helper per feature area (e.g. `FolderHelper` owns icons + DB + layout + drawing).
 
-### Where logic must live
+---
 
-- Bugfix in a specific stock class → write the fix **inline in that Java class**. `EditTextBoldCursor` bugs get fixed in `EditTextBoldCursor.java`. Don't detour through a Kotlin helper just to keep the patch "clean".
-- Non-trivial feature logic → Kotlin helper.
-- Pure config toggle with no Java wiring → don't write a stock patch at all.
+## 4. Commonly Touched Stock Files
 
-## Do not reinvent origin
+Paths under `worktree/TMessagesProj/src/main/java/`. Files >2k lines: never read top-to-bottom. Use `rg` for the exact symbol, then read with small offsets.
 
-If inugram already has the feature, use it. Do not add a parallel `entiny/` patch, a second toggle, or a `ChatMessageCell` rewrite.
-
-**Code comparison (ours vs origin, forward count):** `.claude/skills/write-patches/dont-reinvent.md`
-
-Checklist: `.claude/skills/write-patches/SKILL.md`. Rule 20 above.
-
-## Commonly touched stock files
-
-Paths under `worktree/TMessagesProj/src/main/java/`. Line counts approximate.
-**Files >2k lines: never Read top-to-bottom.** `rg` for the exact symbol, then Read with `offset` + small `limit`.
-
-| file | ~lines | owns |
+| File | ~Lines | Owns |
 | --- | ---: | --- |
-| `org/telegram/ui/ChatActivity.java` | 46k | chat screen |
-| `org/telegram/ui/Cells/ChatMessageCell.java` | 29k | message bubble |
-| `org/telegram/ui/PhotoViewer.java` | 24k | photo/video viewer + preview for ChatAttachAlert |
-| `org/telegram/messenger/MessagesController.java` | 24k | messages domain state |
-| `org/telegram/ui/ProfileActivity.java` | 17k | profile screen |
-| `org/telegram/ui/Components/ChatActivityEnterView.java` | 15k | message input — voice, attach, text |
-| `org/telegram/ui/DialogsActivity.java` | 14k | main page / dialogs list |
-| `org/telegram/ui/Components/SharedMediaLayout.java` | 13k | profile shared-media player |
-| `org/telegram/messenger/MediaDataController.java` | 10k | stickers, reactions, recent data |
-| `org/telegram/ui/LoginActivity.java` | 10k | login flow |
-| `org/telegram/ui/LaunchActivity.java` | 9k | root activity |
-| `org/telegram/ui/Components/ChatAttachAlert.java` | 7k | attachments panel |
-| `org/telegram/ui/Cells/DialogCell.java` | 6k | single dialog row |
-| `org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java` | 5k | attach panel photo grid |
+| `org/telegram/ui/ChatActivity.java` | 46k | Chat screen |
+| `org/telegram/ui/Cells/ChatMessageCell.java` | 29k | Message bubble |
+| `org/telegram/ui/PhotoViewer.java` | 24k | Photo/video viewer + preview for ChatAttachAlert |
+| `org/telegram/messenger/MessagesController.java` | 24k | Messages domain state |
+| `org/telegram/ui/ProfileActivity.java` | 17k | Profile screen |
+| `org/telegram/ui/Components/ChatActivityEnterView.java` | 15k | Message input — voice, attach, text |
+| `org/telegram/ui/DialogsActivity.java` | 14k | Main page / dialogs list |
+| `org/telegram/ui/Components/SharedMediaLayout.java` | 13k | Profile shared-media player |
+| `org/telegram/messenger/MediaDataController.java` | 10k | Stickers, reactions, recent data |
+| `org/telegram/ui/LoginActivity.java` | 10k | Login flow |
+| `org/telegram/ui/LaunchActivity.java` | 9k | Root activity |
+| `org/telegram/ui/Components/ChatAttachAlert.java` | 7k | Attachments panel |
+| `org/telegram/ui/Cells/DialogCell.java` | 6k | Single dialog row |
+| `org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java` | 5k | Attach panel photo grid |
 | `org/telegram/messenger/LocaleController.java` | 4.5k | i18n |
-| `org/telegram/ui/Components/ReactionsContainerLayout.java` | 2.6k | reactions bar in message menu |
-| `org/telegram/ui/Components/FilterTabsView.java` | 2k | folder tabs strip in DialogsActivity |
-| `org/telegram/messenger/SharedConfig.java` | 2k | stock prefs |
-| `org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java` | 1.9k | inline reaction chips on messages |
-| `org/telegram/ui/Components/EditTextBoldCursor.java` | 1.3k | text input base (used by ~every input) |
-| `org/telegram/ui/MainTabsActivity.java` | 1k | main bottom tabs |
-| `org/telegram/ui/Components/glass/GlassTabView.java` | 0.6k | liquid-glass tab rendering |
-| `org/telegram/messenger/LiteMode.java` | 0.4k | perf flag presets |
+| `org/telegram/ui/Components/ReactionsContainerLayout.java` | 2.6k | Reactions bar in message menu |
+| `org/telegram/ui/Components/FilterTabsView.java` | 2k | Folder tabs strip in DialogsActivity |
+| `org/telegram/messenger/SharedConfig.java` | 2k | Stock prefs |
+| `org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java` | 1.9k | Inline reaction chips on messages |
+| `org/telegram/ui/Components/EditTextBoldCursor.java` | 1.3k | Text input base |
+| `org/telegram/ui/MainTabsActivity.java` | 1k | Main bottom tabs |
+| `org/telegram/ui/Components/glass/GlassTabView.java` | 0.6k | Liquid-glass tab rendering |
+| `org/telegram/messenger/LiteMode.java` | 0.4k | Perf flag presets |
 
-When adding to a hotspot, check `patches/hooks/` first — it likely already exposes the surface you need.
+---
 
-## `patches/hooks/` — shared extension points
+## 5. Shared Extension Points (`patches/hooks/`)
 
-Standalone hook patches expose surfaces (menu builders, callbacks, `public` field promotions, `inu_*` helpers) that multiple features consume. Intentionally **no user-visible effect on their own**.
+Standalone hook patches expose surfaces that multiple features consume. Intentionally no user-visible effect on their own.
 
-| patch | what it exposes |
+| Patch | What it Exposes |
 | --- | --- |
-| `admin-logs.patch` | hooks inside admin logs activity |
-| `app-loader.patch` | custom `ApplicationLoaderImpl` instead of stock |
-| `chat-activity.patch` | various ChatActivity hooks — message menu (`ChatHelper.addMenuItems`/`processMenuOption`), `undoView`, `replyingMessageObject` etc. |
-| `icon-replacement.patch` | custom resource loader for icon replacement |
-| `internal-web-app.patch` | `WebViewRequestProps.inu_internalType` + `WebAppHelper.getInternalBotName` for internal bot web sheets |
-| `loginactivity.patch` | hooks inside LoginActivity |
-| `messagescontroller.patch` | access `MessagesController` instances as they're created |
-| `notifications-controller.patch` | hooks inside NotificationsController |
-| `photo-viewer-menu.patch` | `PhotoViewerHelper.{addMenuItems,updateMenuItems,resetMenuItems,handleMenuClick}` + `inu_getCurrentPhotoFile`; exposes `containerView`, `menuItem`, `showDownloadAlert` |
-| `popup-swipeback.patch` | foreground translation + unified touch coords on swipeback popup |
+| `admin-logs.patch` | Hooks inside admin logs activity |
+| `app-loader.patch` | Custom `ApplicationLoaderImpl` instead of stock |
+| `chat-activity.patch` | ChatActivity hooks — message menu (`ChatHelper.addMenuItems`/`processMenuOption`), `undoView`, etc. |
+| `icon-replacement.patch` | Custom resource loader for icon replacement |
+| `internal-web-app.patch` | `WebViewRequestProps.inu_internalType` + `WebAppHelper.getInternalBotName` |
+| `loginactivity.patch` | Hooks inside LoginActivity |
+| `messagescontroller.patch` | Access `MessagesController` instances as created |
+| `notifications-controller.patch` | Hooks inside NotificationsController |
+| `photo-viewer-menu.patch` | `PhotoViewerHelper.{addMenuItems,updateMenuItems,resetMenuItems,handleMenuClick}` + `inu_getCurrentPhotoFile` |
+| `popup-swipeback.patch` | Foreground translation + touch coords on swipeback popup |
 | `profile-menu.patch` | `ProfileHelper.addMenuItems` + `ProfileHelper.handleMenuClick` |
-| `universal-recycler.patch` | extra features in `UniversalRecyclerView` used by settings pages |
+| `universal-recycler.patch` | Extra features in `UniversalRecyclerView` used by settings pages |
 
-**When to add a `hooks/` patch vs a normal patch:**
+---
 
-- New stock surface that **>1 future patch will wire into** → `hooks/`.
-- One-off wiring for a single feature → keep inside the `feature/`/`debloat/` patch.
-- **Rule of 3**: if 3+ existing patches touch roughly the same stock surface, consolidate.
-- A `hooks/` patch must be functionally a no-op with its consumers stubbed out.
+## 6. Central Lifecycle (`InuHooks`)
 
-Conventions: expose the minimum, promote `private` → `public` over duplicating data, `inu_` prefix on new fields, entry point is always a call to `desu.inugram.helpers.XxxHelper.*` — never inline logic.
+`src/kotlin/InuHooks.kt` dispatches generic lifecycle events. Feature logic stays in its own helper.
 
-## Helpers
-
-Live in `src/kotlin/helpers/`. Sub-packages by feature area: `chat/`, `dialogs/`, `menu/`, `translate/`, `search/`, `media/`, `font/`, `update/`, `cloud/`, `security/`, `theme/`, `profile/`, `icons/`, `maps/`, `notifications/`. Cross-cutting / standalone ones stay flat.
-
-Naming (don't mass-rename):
-- `*Helper` = feature-coordinator singleton
-- `*Config` = `InuConfig.Item` subclass / data model
-- `*Utils`/`*Parser`/`*Drawable`/`*Resources` = concrete type or algorithm
-
-Common entry-point helpers: `ChatHelper` (chat features), `ProfileHelper` (profile menu), `PhotoViewerHelper` (photo viewer), `FolderHelper` (folder tabs), `MainTabsHelper` (bottom tabs), `MonetHelper` (theming), `NonIslandHelper` (non-island UI gating), `InuDatabaseHelper` (fork DB), `InuUtils` (id generation etc.).
-
-Before creating a new helper, check whether an existing one owns the area.
-
-## `InuHooks` — central lifecycle bus
-
-`src/kotlin/InuHooks.kt`. Generic lifecycle dispatch only — feature-specific code goes on its own helper.
-
-Currently exposed (update this table when adding):
-
-| method | called from | purpose |
+| Method | Called From | Purpose |
 | --- | --- | --- |
-| `init(Context)` | `ApplicationLoader.onCreate` | bootstrap `InuConfig`, fonts, crash reporter, etc. |
-| `onResume(LaunchActivity)` | `LaunchActivity.onResume` | monet refresh, crash sheet |
-| `onUpdate(TLObject?, Int)` | update dispatch | fork `LoginHelper` hook; also feeds `TL_updateUserStatus` to `PresenceHelper.onStatusUpdate` |
-| `onDeepLink(LaunchActivity, Intent?)` | deeplink handling | passcode + settings deeplinks |
-| `onAuthSuccess(Int)` | login flow | clear per-account passcode |
-| `onMessagesControllerCreated(MessagesController, Int)` | `MessagesController.<init>` | per-account setup (maps provider; loads `PinHelper`'s local-pins cache, `PresenceHelper`'s watch-list cache, `RecentChatsHelper`'s recent-dialogs cache and `BadgeRegistry`'s remote badge manifest; registers the `didReceiveNewMessages` → `onNewMessage` and `didUpdateConnectionState` → `GhostHelper.syncPresence` observers; runs `SavedMessagesHelper`/`PresenceHelper` TTL pruning) |
-| `onNewMessage(TLRPC.Message, Int)` | `didReceiveNewMessages` observer | generic new-message dispatch (all arrival paths incl. difference catch-up); fans out to `UpdateHelper` etc. |
-| `syncDoubleTapDelay()` | fork + `init` | propagate `DOUBLE_TAP_DELAY` into stock gesture detectors |
-| `syncAnimationSpeed()` | fork + `init` | propagate `ANIMATION_SPEED` into stock animators |
-| `syncChatInputRowHeight()` | fork + `init` | propagate classic-ui input row height/padding into `ChatActivityEnterView` statics |
-| `getCurrentAppIconLicense()` | About page | current launcher icon's license string |
+| `init(Context)` | `ApplicationLoader.onCreate` | Bootstrap `InuConfig`, fonts, crash reporter, etc. |
+| `onResume(LaunchActivity)` | `LaunchActivity.onResume` | Monet refresh, crash sheet |
+| `onUpdate(TLObject?, Int)` | update dispatch | Fork `LoginHelper` hook; feeds status to `PresenceHelper` |
+| `onDeepLink(LaunchActivity, Intent?)` | deeplink handling | Passcode + settings deeplinks |
+| `onAuthSuccess(Int)` | login flow | Clear per-account passcode |
+| `onMessagesControllerCreated(MessagesController, Int)` | `MessagesController.<init>` | Per-account setup (maps, pins, presence, recent chats, badge manifest) |
+| `onNewMessage(TLRPC.Message, Int)` | `didReceiveNewMessages` observer | Generic message dispatch (fans out to `UpdateHelper` etc.) |
+| `syncDoubleTapDelay()` | fork + `init` | Propagate `DOUBLE_TAP_DELAY` into gesture detectors |
+| `syncAnimationSpeed()` | fork + `init` | Propagate `ANIMATION_SPEED` into animators |
+| `syncChatInputRowHeight()` | fork + `init` | Propagate classic-ui row height/padding into EnterView statics |
+| `getCurrentAppIconLicense()` | About page | Current launcher icon's license string |
 
-New hook → `@JvmStatic fun` on `InuHooks`, one-line call site in the patch, **update this table**.
+---
 
-## `InuConfig` pattern
+## 7. `InuConfig` Pattern
 
 ```kotlin
 @JvmField val HIDE_STORIES = BoolItem("hide_stories", false)
 ```
-
 - Always `@JvmField` so Java sees a field, not `getHIDE_STORIES()`.
-- Types: `BoolItem`, `IntItem`, `FloatItem`, `StringItem`. Subclass `Item<T>` for anything else (enums — see `FoldersDisplayModeItem`, `FormattingPopupConfig`).
-- `BoolItem` has `.toggle()`.
-- From Java: `InuConfig.HIDE_STORIES.getValue()` — **never `.value`** (`@JvmField` exposes the wrapper, not its inner value).
-- Pref key = snake_case of the field name; default is the second arg. SharedPreferences name: `inugram`. Loaded once from `InuHooks.init`.
+- Types: `BoolItem`, `IntItem`, `FloatItem`, `StringItem`, or subclass `Item<T>` for enums.
+- From Java: `InuConfig.HIDE_STORIES.getValue()` — **never `.value`**.
+- Pref key is snake_case. SharedPreferences name: `inugram`.
 
-## Database
+---
 
-- Stock schema and `LAST_DB_VERSION` are off-limits.
+## 8. Database (`InuDatabaseHelper`)
+
+- Stock schema and `LAST_DB_VERSION` are strictly off-limits.
 - Fork versioning lives in `inu_kv`, managed by `InuDatabaseHelper`.
-- Fork tables: `inu_*` prefix, created/migrated in `InuDatabaseHelper.migrate()`.
-- Populate fork fields by **hooking** stock load/save calls (see `patches/feature/folders-display-mode.patch`) — don't edit stock SQL.
+- Fork tables use `inu_*` prefix, created and migrated in `InuDatabaseHelper.migrate()`.
+- Populate fork fields by **hooking** stock load/save calls — never edit stock SQL schemas.
 
-## Settings UI
+---
 
-- Extend `desu.inugram.ui.settings.SettingsPageActivity` (wraps `UniversalFragment` with edge-to-edge + insets + `showRestartBulletin()`). Register pages in `InuSettingsActivity`.
-- Prefer adding to an existing page:
+## 9. Settings UI & Search Registry
+
+- Extend `desu.inugram.ui.settings.SettingsPageActivity`.
+- Add toggles to existing categories:
   - `AppearanceSettingsActivity` — general appearance
-  - `ChatsSettingsActivity` — chat-related appearance (bubbles, menus)
-  - `MessagesSettingsActivity` — message bubble / inline reactions / sticker size
-  - `DialogsSettingsActivity` — dialogs list (main page) appearance
-  - `AnnoyancesSettingsActivity` — removes annoying stock stuff (only when user explicitly asks)
+  - `ChatsSettingsActivity` — chat appearance, headers, menus
+  - `MessagesSettingsActivity` — bubbles, reactions, sticker size
+  - `DialogsSettingsActivity` — chat list appearance, pills, FAB
+  - `AnnoyancesSettingsActivity` — removing stock annoyances
   - `BehaviorSettingsActivity` — general behavior
-- Any toggle needing a restart → call `showRestartBulletin()` in the click handler (verify restart is actually needed).
-- Custom cells: `SliderCell`, `ExpandableBoolGroup`, `RadioDialogBuilder`, `StickerSizePreviewMessagesCell`.
+- **Settings Search (`SearchRegistry`):**
+  - Each searchable `*SettingsActivity` declares `@JvmField val PAGE = SearchRegistry.Page(...)` in its companion.
+  - Register in `SearchRegistry.pages`. Slugs MUST be globally unique (enforced by `entinychecker.ts`). Renaming a slug is breaking.
 
-### Settings search & deeplinks
+---
 
-- `desu.inugram.SearchRegistry` wires fork pages into stock settings search (`ProfileActivity.SearchAdapter`) and routes `tg://settings/inu/<slug>` deeplinks.
-- Each searchable `*SettingsActivity` declares a `@JvmField val PAGE = SearchRegistry.Page(...)` in its companion: page `slug`, title res, icon res, factory, list of `SearchRegistry.Entry(slug, titleRes, itemId)` — one per searchable `UItem`. `itemId` reuses the page's `InuUtils.generateId()` constant (also used as the `UItem.id`).
-- Register in `SearchRegistry.pages`. Slugs are persistent identity (deeplinks + recents), globally unique — uniqueness asserted at first access. Renaming a slug is a breaking change.
-- Row highlight on open: `SettingsPageActivity.withHighlight(itemId)` + existing `onTransitionAnimationEnd` hook. No extra wiring per page.
+## 10. Strings & Assets
 
-## Strings
+- Strings: `src/res/values/strings_inu.xml`. Keys prefixed `Inu` (`InuHideStories`). Info/subtitles end in `Info` (`InuHideStoriesInfo`).
+- Assets: `src/res/drawable/`, `src/res/drawable-xxhdpi/`, `src/res/assets/`.
+- New asset dir → register in `scripts/config.ts` → `forkSyncFiles`.
 
-- `src/res/values/strings_inu.xml`. All keys prefixed `Inu` (`InuHideStories`).
-- Subtitle/info strings: same key + `Info` suffix (`InuHideStoriesInfo`).
-- Access: `LocaleController.getString(R.string.InuXxx)`.
+---
 
-## Drawables / assets
+## 11. Java ↔ Kotlin Gotchas
 
-- `src/res/drawable/` (density-independent), `src/res/drawable-xxhdpi/` (bitmaps), `src/res/assets/`.
-- New asset dir → add path to `scripts/config.ts` → `forkSyncFiles`.
-- Icons: lucide pre-bundled; selection list in `scripts/config.ts` → `ICON_SELECTION`. Tabler pack preferred for visual consistency.
+- **`.value` vs `.getValue()`:** From Java, always call `InuConfig.FOO.getValue()`. `.value` is a Kotlin property wrapper.
+- **Kotlin `object`:** Accessed as `MyHelper.INSTANCE.method()` from Java unless annotated with `@JvmStatic`.
+- **`LayoutHelper` margins:** `createLinear` / `createFrame` margin parameters take dp. Overloads like the 6-arg `createLinear(w, h, l, t, r, b)` exist **only in the Float variant**. Always write `12f`, not `12`, to avoid Kotlin compile errors.
+- **No re-indentation:** Never re-indent stock code to wrap it in an `if`. Use early returns or keep indentation identical to avoid merge conflicts.
 
-## Monet themes
+---
 
-`src/res/assets/monet_{light,dark,amoled}.attheme` — stock attheme format, values resolved by
-`MonetHelper.getColor` (hooked into `Theme.getThemeFileValues` by `feature/monet-theme.patch`).
+## 12. Upstream Inugram Sync & Merge Hygiene
 
-- Values are palette tones (`a1_600`, `n1_50`), M3 semantic tokens (`monet_surface_container_light`), custom names (`monetGreen`), or raw ints.
-- Modifiers: `(a=)` alpha %, `(s=)` blend→white %, `(l=)` blend→black %, `(t=)` absolute HCT tone, `(c=)` HCT chroma multiplier % (0–400, relative so monochrome palettes stay gray). Comma-separated: `monet_secondary_container_light(t=90,c=75)`.
-- Debug hot reload: `bun run push-theme [light|dark|amoled] [--watch] [--clear] [-s <serial>]` — adb-pushes the asset to the app's external files dir and broadcasts `desu.inugram.RELOAD_THEME`. Debug builds only (`getThemeOverrideFile` is a no-op otherwise); the app must be running.
+Upstream (`teidesu/inugram`) is an external dependency. Merges from upstream frequently overwrite branding or leave silent regressions.
 
-## Java ↔ Kotlin gotchas
-
-- `.value` (Kotlin) → `.getValue()` from Java.
-- Kotlin `object` → `InuXxx.INSTANCE.method()` from Java unless `@JvmStatic`.
-- For hooks called from stock Java, default to `@JvmStatic fun foo(...)` on a Kotlin `object` — cleanest call site.
-- Inside stgit patches, the `worktree/` prefix is omitted from paths.
-- `LayoutHelper.createLinear` / `createFrame` margin args are dp either way (both int and float overloads pass through `AndroidUtilities.dp(...)`). But Kotlin won't auto-promote `Int → Float`, and several overloads exist **only in the Float variant** — notably the 6-arg `createLinear(w, h, l, t, r, b)`. Write `12f` not `12` for margins or you'll hit "actual type is Int, but Float was expected".
-
-Don't overuse `@JvmStatic`, only add it if the method/field is actually accessed from Java.
-
-## Common pitfalls (from prior sessions)
-
-1. **Running `stg`/`git`.** Don't. Read-only `stg top` / `stg show` only.
-2. **Hand-editing `patches/*.patch`.** They're exports. Edit `worktree/`; user re-exports.
-3. **Oversized stock patches.** Logic beyond a guard + helper call → move to Kotlin.
-4. **Helper for 2–5 lines.** Inline it. Only extract when >5–7 lines or genuinely reused.
-5. **Replacing stock behavior instead of running after it.** Stock stays intact; fork logic runs before (early return) or after, gated by config.
-6. **Routing a trivial set through a helper method.** If the patch just assigns a field based on config, assign in-place at the stock call site.
-7. **Modifying stock base classes.** Look for an existing extension hook first (stock often has setup hooks for themed things). Base-class edits rebase poorly.
-8. **Writing Kotlin helpers for what must be a Java fix.** Bug in `EditTextCaption` → fix it **in** `EditTextCaption.java`. Don't detour.
-9. **Ungated fork behavior.** Default-off must equal stock. Verify every call site.
-10. **Java using `.value`.** It's `.getValue()`. Kotlin `.value` is a property; `@JvmField` only exposes the wrapper.
-11. **Forgetting `inu_` prefix** when adding fields/methods/overloads to stock classes. Including Java fields.
-12. **Re-indenting stock** to wrap it in an `if`. Kills rebases. Use early returns, add-after-stock, or keep indentation the same.
-13. **Reimplementing an origin feature** as a parallel `entiny/` patch (second toggle, second drawable, `ChatMessageCell` rewrite). Search origin first. See write-patches skill / forward-count case study.
-14. **Opening `ChatMessageCell.java` for bubble metadata.** Time, forwards, views, edited, deleted icons go through `ChatHelper.timePrefix` and friends. If that hook is missing, add a 1-line call there — do not patch the cell.
-
-## stgit workflow (user-initiated only)
-
-You never run these unless explicitly asked — documented so you can answer questions / suggest commands.
-
-```bash
-# create a new patch
-stg new feature__my-patch -m 'Allow editing by double tapping a message'
-# ...edit worktree/...
-stg refresh
-bun run export
-
-# modify existing patch in-place
-# ...edit worktree/...
-stg refresh -p feature__my-patch  # --index for staged-only
-
-# modify existing patch, floating to top (preferred for non-trivial changes)
-stg float feature__my-patch
-# ...edit...
-stg refresh
-bun run export
-```
-
-`bun run export` rewrites `patches/` + `series` from the stack. User runs it.
-
-If user asks "which patch am I on" → `stg top`.
-
-## Merge hygiene — read before/after EVERY merge (do not skip)
-
-A merge from upstream (inugram) frequently lands in a **broken, half-finished** state:
-upstream branding/APIs overwrite fork files, and conflict markers get left behind in odd
-places. Never treat an upstream merge as "done" or "safe" just because source control
-reported no conflict. Every merge breakage seen here was silent or half-applied.
-
-Golden merge attitude:
-1. **Assume the merge is broken until proven otherwise.** Treat "no conflict reported" as
-   a lie. Actually verify the build/identity matches the fork, not the upstream.
-2. **Never leave a merge unfinished.** Any `<<<<<<<`, `=======`, `>>>>>>>` marker — even a
-   lone marker with no matching pair (which still kills XML parsing) — is a hard error.
-   Resolve all of them before moving on. Do not "commit" around them.
-3. **Verify branding survived the merge.** The fork identity must be restored every time by running `bun run scripts/apply-branding.ts`. This script automatically:
-   - Updates `google-services.json` `package_name` values to `ua.entaytion.entinygram` and applies `skip-worktree` so Git ignores them in the future.
-   - Restores the `entiny__branding` patch (which changes `TMessagesProj_App/build.gradle` `applicationId`).
-   Do NOT manually edit `misc/build-support.patch` to hardcode `ua.entaytion.entinygram`, as this causes merge conflicts with upstream. Use `entiny__branding` instead.
-4. **Post-merge static scan (all must come back empty)** across fork-relevant code:
-   - `<<<<<<<` / `=======` / `>>>>>>>` markers anywhere (`*.xml`, `*.kt`, `*.java`, `*.gradle`).
-   - Well-formedness of every touched `res/values/*.xml` (malformed XML is a silent
-     resource-build failure — `packageDebugResources`).
-   - In `src/kotlin`: `\.getValue\(\)` (must be `.value` per Java↔Kotlin gotchas) and any
-     stock API that may have been renamed by the merge.
-5. **Verify fork Kotlin against current stock APIs.** A merge can rename stock
-   fields/methods the fork relies on (e.g. `UItem.text2` → `UItem.subtext`) or change
-   signatures. Before assuming a bad symbol is a fork bug, confirm the current stock API:
-   `rg` the exact symbol in `worktree/TMessagesProj/src/main/java/...`, then fix the fork
-   call site to match. Do the same for Kotlin-side access of `InuConfig` items.
-6. **Do not "fix forward" a half-merge by patching symptoms.** First fully resolve the merge
-   (markers, branding, API drift), then validate holistically. If any check raises a doubt,
-   stop and tell the user instead of guessing.
-7. **Final gate before declaring done:** every item above is green, and reason through the
-   runtime path (not just symbols). Because we follow rule 11 (no local build), be explicit
-   about what was verified statically vs what remains unverified, and flag residual risk.
-
-## Self-maintenance
-
-When adding a new `InuHooks` method, settings page, or shared `hooks/` patch — update this file. When a feature is dropped because origin already had a cleaner version, add it to the write-patches case studies. Tribal knowledge rots.
+1. **Assume the merge is broken until proven otherwise.**
+2. **Never leave conflict markers:** Any `<<<<<<<`, `=======`, `>>>>>>>` is a hard stop.
+3. **Restore Branding Immediately:**
+   ```bash
+   bun run scripts/apply-branding.ts
+   ```
+   Updates `google-services.json` (`ua.entaytion.entinygram`) and restores `entiny__branding`. Never edit `misc/build-support.patch` for branding.
+4. **Post-Merge Checks:**
+   - Scan for markers across `.xml`, `.kt`, `.java`, `.gradle`.
+   - Check well-formedness of touched `res/values/*.xml`.
+   - Verify stock API renames (e.g. `UItem.text2` → `UItem.subtext`).
+5. **Known Upstream Bugs to Leave Off:**
+   - `NON_ISLAND_SHARED_MEDIA_TABS` (`SharedMediaLayout.inu_dockOffset()` clips profile media tabs). Upstream bug; keep toggle OFF.
