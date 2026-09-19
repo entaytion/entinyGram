@@ -2,8 +2,8 @@ package desu.inugram.ui.settings
 
 import android.view.View
 import desu.inugram.InuConfig
+import desu.inugram.helpers.translate.TranslateHelper
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.TranslateController
 import org.telegram.ui.Components.TranslateAlert2
@@ -58,14 +58,7 @@ class TranslationTargetActivity : SettingsPageActivity() {
         listView?.adapter?.update(true)
     }
 
-    private fun currentValue(): String {
-        val stored = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
-        if (stored.isNotEmpty()) return stored
-        if (!MessagesController.getGlobalMainSettings().contains(PREF_KEY)) return ""
-        val legacy = TranslateAlert2.getToLanguage().orEmpty()
-        if (legacy.isNotEmpty()) InuConfig.TRANSLATE_TARGET_LANGUAGE.value = legacy
-        return legacy
-    }
+    private fun currentValue(): String = TranslateHelper.resolveTargetLanguage()
 
     private fun select(newValue: String) {
         if (newValue == currentValue()) return
@@ -75,10 +68,6 @@ class TranslationTargetActivity : SettingsPageActivity() {
         } else {
             TranslateAlert2.setToLanguage(newValue)
         }
-    }
-
-    companion object {
-        private const val PREF_KEY = "translate_to_language"
     }
 }
 

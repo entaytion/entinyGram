@@ -1,0 +1,234 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 12 Sep 2026 17:37:06 +0300
+Subject: Add proxy list management: bulk delete/ping, and save without connecting
+
+- "Delete Failed Proxies": remove every saved proxy that failed its last check in one tap
+- "Ping All Proxies": force-recheck every saved proxy now, ignoring the usual cooldown
+- adding a new proxy has a "Connect immediately" toggle, so it can be saved without switching to it
+---
+ .../org/telegram/ui/ProxyListActivity.java    | 86 ++++++++++++++++++-
+ .../telegram/ui/ProxySettingsActivity.java    | 26 +++++-
+ 2 files changed, 104 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
+@@ -104,6 +104,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+     private int rotationTimeoutInfoRow;
+     private int callsDetailRow;
+     private int deleteAllRow;
++    private int deleteFailedRow;
++    private int inu_pingAllRow;
+ 
+     private ItemTouchHelper itemTouchHelper;
+     private NumberTextView selectedCountTextView;
+@@ -496,6 +498,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 ConnectionsManager.setProxySettings(useProxySettings, SharedConfig.currentProxy.address, SharedConfig.currentProxy.port, SharedConfig.currentProxy.username, SharedConfig.currentProxy.password, SharedConfig.currentProxy.secret);
+             } else if (position == proxyAddRow) {
+                 presentFragment(new ProxySettingsActivity());
++            } else if (position == inu_pingAllRow) {
++                inu_forceCheckProxyList();
+             } else if (position == deleteAllRow) {
+                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+                 builder.setMessage(getString(R.string.DeleteAllProxiesConfirm));
+@@ -523,6 +527,41 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 if (button != null) {
+                     button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                 }
++            } else if (position == deleteFailedRow) {
++                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
++                builder.setMessage(getString(R.string.InuDeleteFailedProxiesConfirm));
++                builder.setNegativeButton(getString(R.string.Cancel), null);
++                builder.setTitle(getString(R.string.InuDeleteFailedProxies));
++                builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
++                    boolean removedCurrent = false;
++                    for (SharedConfig.ProxyInfo info : proxyList) {
++                        if (!info.checking && info.availableCheckTime != 0 && !info.available) {
++                            if (SharedConfig.currentProxy == info) {
++                                removedCurrent = true;
++                            }
++                            SharedConfig.deleteProxy(info);
++                        }
++                    }
++                    if (removedCurrent) {
++                        useProxyForCalls = false;
++                        useProxySettings = false;
++                    }
++                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
++                    NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++                    updateRows(true);
++                    if (listAdapter != null) {
++                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++                        listAdapter.notifyItemChanged(callsRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++                        listAdapter.clearSelected();
++                    }
++                });
++                AlertDialog failedDialog = builder.create();
++                showDialog(failedDialog);
++                TextView failedButton = (TextView) failedDialog.getButton(DialogInterface.BUTTON_POSITIVE);
++                if (failedButton != null) {
++                    failedButton.setTextColor(Theme.getColor(Theme.key_text_RedBold));
++                }
+             }
+         });
+         listView.setOnItemLongClickListener((view, position) -> {
+@@ -708,17 +747,49 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 listAdapter.notifyItemRangeRemoved(proxyShadowRow + 1, 2);
+             }
+         }
++        if (proxyList.size() >= 2) {
++            inu_pingAllRow = rowCount++;
++        } else {
++            inu_pingAllRow = -1;
++        }
+         if (proxyList.size() >= 10) {
+             deleteAllRow = rowCount++;
+         } else {
+             deleteAllRow = -1;
+         }
++        int inu_failedProxyCount = 0;
++        for (SharedConfig.ProxyInfo info : proxyList) {
++            if (!info.checking && info.availableCheckTime != 0 && !info.available) {
++                inu_failedProxyCount++;
++            }
++        }
++        if (inu_failedProxyCount > 0) {
++            deleteFailedRow = rowCount++;
++        } else {
++            deleteFailedRow = -1;
++        }
+         checkProxyList();
+         if (notify && listAdapter != null) {
+             listAdapter.notifyDataSetChanged();
+         }
+     }
+ 
++    // entiny: bypasses checkProxyList's 2-minute per-proxy cooldown for an on-demand "ping all" action
++    private void inu_forceCheckProxyList() {
++        for (SharedConfig.ProxyInfo info : proxyList) {
++            if (!info.checking) {
++                info.availableCheckTime = 0;
++            }
++        }
++        checkProxyList();
++        for (int a = proxyStartRow; a < proxyEndRow; a++) {
++            RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForAdapterPosition(a);
++            if (holder != null) {
++                ((TextDetailProxyCell) holder.itemView).updateStatus();
++            }
++        }
++    }
++
+     private void checkProxyList() {
+         for (int a = 0, count = proxyList.size(); a < count; a++) {
+             final SharedConfig.ProxyInfo proxyInfo = proxyList.get(a);
+@@ -890,10 +961,15 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                     TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
+                     textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+                     if (position == proxyAddRow) {
+-                        textCell.setText(getString(R.string.AddProxy), deleteAllRow != -1);
++                        textCell.setText(getString(R.string.AddProxy), inu_pingAllRow != -1 || deleteAllRow != -1 || deleteFailedRow != -1);
++                    } else if (position == inu_pingAllRow) {
++                        textCell.setText(getString(R.string.InuPingAllProxies), deleteAllRow != -1 || deleteFailedRow != -1);
+                     } else if (position == deleteAllRow) {
+                         textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+-                        textCell.setText(getString(R.string.DeleteAllProxies), false);
++                        textCell.setText(getString(R.string.DeleteAllProxies), deleteFailedRow != -1);
++                    } else if (position == deleteFailedRow) {
++                        textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
++                        textCell.setText(getString(R.string.InuDeleteFailedProxies), false);
+                     }
+                     break;
+                 }
+@@ -996,7 +1072,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         @Override
+         public boolean isEnabled(RecyclerView.ViewHolder holder) {
+             int position = holder.getAdapterPosition();
+-            return position == useProxyRow || position == rotationRow || position == callsRow || position == proxyAddRow || position == deleteAllRow || position >= proxyStartRow && position < proxyEndRow;
++            return position == useProxyRow || position == rotationRow || position == callsRow || position == proxyAddRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow || position >= proxyStartRow && position < proxyEndRow;
+         }
+ 
+         @Override
+@@ -1047,6 +1123,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 return -6;
+             } else if (position == deleteAllRow) {
+                 return -8;
++            } else if (position == deleteFailedRow) {
++                return -12;
+             } else if (position == rotationRow) {
+                 return -9;
+             } else if (position == rotationTimeoutRow) {
+@@ -1064,7 +1142,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         public int getItemViewType(int position) {
+             if (position == useProxyShadowRow || position == proxyShadowRow) {
+                 return VIEW_TYPE_SHADOW;
+-            } else if (position == proxyAddRow || position == deleteAllRow) {
++            } else if (position == proxyAddRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow) {
+                 return VIEW_TYPE_TEXT_SETTING;
+             } else if (position == useProxyRow || position == rotationRow || position == callsRow) {
+                 return VIEW_TYPE_TEXT_CHECK;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java
+@@ -60,6 +60,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
+ import org.telegram.ui.Cells.HeaderCell;
+ import org.telegram.ui.Cells.RadioCell;
+ import org.telegram.ui.Cells.ShadowSectionCell;
++import org.telegram.ui.Cells.TextCheckCell;
+ import org.telegram.ui.Cells.TextInfoPrivacyCell;
+ import org.telegram.ui.Cells.TextSettingsCell;
+ import org.telegram.ui.Components.CubicBezierInterpolator;
+@@ -93,6 +94,8 @@ public class ProxySettingsActivity extends BaseFragment {
+     private TextInfoPrivacyCell[] bottomCells = new TextInfoPrivacyCell[2];
+     private TextSettingsCell shareCell;
+     private TextSettingsCell pasteCell;
++    private TextCheckCell inu_connectImmediatelyCell;
++    private boolean inu_connectImmediately = true;
+     private ActionBarMenuItem doneItem;
+     private RadioCell[] typeCell = new RadioCell[2];
+     private int currentType = -1;
+@@ -228,14 +231,18 @@ public class ProxySettingsActivity extends BaseFragment {
+                     boolean enabled;
+                     if (addingNewProxy) {
+                         SharedConfig.addProxy(currentProxyInfo);
+-                        SharedConfig.currentProxy = currentProxyInfo;
+-                        editor.putBoolean("proxy_enabled", true);
+-                        enabled = true;
++                        if (inu_connectImmediately) {
++                            SharedConfig.currentProxy = currentProxyInfo;
++                            editor.putBoolean("proxy_enabled", true);
++                            enabled = true;
++                        } else {
++                            enabled = preferences.getBoolean("proxy_enabled", false);
++                        }
+                     } else {
+                         enabled = preferences.getBoolean("proxy_enabled", false);
+                         SharedConfig.saveProxyList();
+                     }
+-                    if (addingNewProxy || SharedConfig.currentProxy == currentProxyInfo) {
++                    if ((addingNewProxy && inu_connectImmediately) || SharedConfig.currentProxy == currentProxyInfo) {
+                         editor.putString("proxy_ip", currentProxyInfo.address);
+                         editor.putString("proxy_pass", currentProxyInfo.password);
+                         editor.putString("proxy_user", currentProxyInfo.username);
+@@ -448,6 +455,17 @@ public class ProxySettingsActivity extends BaseFragment {
+             linearLayout2.addView(bottomCells[i], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+         }
+ 
++        // entiny: lets a new proxy be saved to the list without switching to/enabling it right away
++        inu_connectImmediatelyCell = new TextCheckCell(context);
++        inu_connectImmediatelyCell.setTextAndCheck(LocaleController.getString(R.string.InuConnectProxyImmediately), inu_connectImmediately, false);
++        inu_connectImmediatelyCell.setBackground(Theme.getSelectorDrawable(true));
++        inu_connectImmediatelyCell.setVisibility(addingNewProxy ? View.VISIBLE : View.GONE);
++        inu_connectImmediatelyCell.setOnClickListener(v -> {
++            inu_connectImmediately = !inu_connectImmediately;
++            inu_connectImmediatelyCell.setChecked(inu_connectImmediately);
++        });
++        linearLayout2.addView(inu_connectImmediatelyCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
++
+         pasteCell = new TextSettingsCell(fragmentView.getContext());
+         pasteCell.setBackground(Theme.getSelectorDrawable(true));
+         pasteCell.setText(LocaleController.getString(R.string.PasteFromClipboard), false);

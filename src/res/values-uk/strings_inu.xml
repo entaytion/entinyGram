@@ -1361,11 +1361,10 @@
     <string name="InuTranslateMicrosoftRegion">Регіон Azure (необов’язково)</string>
     <string name="InuTranslateProvider">Постачальник перекладу</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
-    <string name="InuTranslateProviderFailed">Помилка перекладу: %1$s. Повідомлення буде повторено.</string>
+    <string name="InuTranslateProviderFailed">Помилка перекладу: %1$s. Спробуйте ще раз за хвилину.</string>
     <string name="InuTranslateGoogleBlocked">Google відхиляє запити перекладу з цієї мережі (HTTP 429). Змініть підключення або виберіть іншого провайдера в налаштуваннях перекладу.</string>
     <string name="InuTranslateProviderGoogle">Google Перекладач</string>
     <string name="InuTranslateProviderInfo">Перекладати чати стороннім сервісом замість сервера Telegram; форматування тексту зберігається.</string>
-    <string name="InuTranslateProviderLingo">Lingo (Caiyun, безкоштовний)</string>
     <string name="InuTranslateProviderLlm">LLM (сумісний з OpenAI)</string>
     <string name="InuTranslateProviderMicrosoft">Bing Translate (безкоштовний)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API-ключ)</string>
@@ -1373,7 +1372,6 @@
     <string name="InuTranslateProviderNotConfigured">Постачальник не налаштовано. Використовується переклад Telegram.</string>
     <string name="InuTranslateProviderSection">Постачальники перекладу</string>
     <string name="InuTranslateProviderTelegram">API Telegram</string>
-    <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, безкоштовний)</string>
     <string name="InuTranslateProviderYandex">Yandex Перекладач</string>
     <string name="InuTranslateYandexApiKey">API-ключ Yandex</string>
     <string name="InuAccountSwitchShortcut">Ярлик перемикання акаунтів</string>

@@ -19,7 +19,6 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.TextPaintUrlSpan
 import org.telegram.ui.Components.TextPaintWebpageUrlSpan
-import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.RestrictedLanguagesSelectActivity
 import java.util.WeakHashMap
 
@@ -116,7 +115,7 @@ object InstantViewHelper {
     private fun ensureDetected(state: State) {
         if (state.detectionDone || state.detectionInFlight) return
         detectLanguage(state) { src ->
-            val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
+            val toLang = TranslateHelper.currentTargetLanguage()
             if (src == null || toLang == null) return@detectLanguage
             if (InuConfig.FORCE_TRANSLATE.value) return@detectLanguage
             val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
@@ -171,7 +170,7 @@ object InstantViewHelper {
     }
 
     private fun startTranslate(viewer: ArticleViewer, state: State) {
-        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
+        val toLang = TranslateHelper.currentTargetLanguage()
         if (toLang.isNullOrEmpty()) return
 
         val proceed: (String?) -> Unit = { src ->

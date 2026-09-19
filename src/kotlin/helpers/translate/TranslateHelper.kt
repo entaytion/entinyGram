@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 object TranslateHelper {
     private const val ORIGINAL_SEPARATOR = "\n\n--------\n\n"
+    private const val LEGACY_TARGET_LANGUAGE_PREF = "translate_to_language"
 
     private val manual = ConcurrentHashMap<Long, MutableSet<Int>>()
     private val bodies = ConcurrentHashMap<Long, ConcurrentHashMap<Int, TLRPC.TL_textWithEntities>>()
@@ -42,6 +43,35 @@ object TranslateHelper {
     private val webPagesLoading = ConcurrentHashMap<Long, MutableSet<Int>>()
     private val webPagesLangs = ConcurrentHashMap<Long, ConcurrentHashMap<Int, Pair<String?, String>>>()
     private val originals = ConcurrentHashMap<Long, ConcurrentHashMap<Int, String>>()
+
+    // entiny: single source of truth for "what is the global translate-to language" - both
+    // TranslationTargetActivity and TranslatorSettingsActivity used to reimplement this, and their
+    // near-duplicate versions were how the settings regression below happened.
+    //
+    // Empty string means "Follow app language". TRANSLATE_TARGET_LANGUAGE_MIGRATED gates a
+    // ONE-TIME adoption of stock's legacy per-session "translate to" pick (the
+    // "translate_to_language" pref TranslateAlert2 itself writes on every in-chat pick) into our
+    // persistent setting. Without the gate, simply opening a translator settings screen after ever
+    // translating a single message anywhere would silently replace "Follow app language" with
+    // whatever language happened to be picked in that unrelated in-chat dialog, every time.
+    @JvmStatic
+    fun resolveTargetLanguage(): String {
+        val stored = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
+        if (stored.isNotEmpty()) return stored
+        if (InuConfig.TRANSLATE_TARGET_LANGUAGE_MIGRATED.value) return ""
+        InuConfig.TRANSLATE_TARGET_LANGUAGE_MIGRATED.value = true
+        if (!MessagesController.getGlobalMainSettings().contains(LEGACY_TARGET_LANGUAGE_PREF)) return ""
+        val legacy = TranslateAlert2.getToLanguage().orEmpty()
+        if (legacy.isEmpty()) return ""
+        InuConfig.TRANSLATE_TARGET_LANGUAGE.value = legacy
+        return legacy
+    }
+
+    // entiny: the actual per-translate target language - same fallback chain, repeated verbatim
+    // across ChatActionsHelper/TranslateHelper/InstantViewHelper before being collected here
+    @JvmStatic
+    fun currentTargetLanguage(): String =
+        InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
 
     @JvmStatic
     fun isWebPageTranslating(msg: MessageObject?): Boolean {
@@ -125,7 +155,7 @@ object TranslateHelper {
         if (!hasBody && !hasWebPage) return false
 
         activity.dimBehindView(false)
-        originals.computeIfAbsent(target.dialogId) { ConcurrentHashMap() }[target.id] = owner.message.orEmpty()
+        recordTranslationBaseline(target)
         if (hasBody) startBodyTranslate(activity, target, owner, fromLang, toLang)
         if (hasWebPage) startWebPageTranslate(activity, target, webPage!!, toLang)
         return true
@@ -140,7 +170,7 @@ object TranslateHelper {
         val parent = activity.parentActivity ?: return
         val account = activity.currentAccount
 
-        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
+        val toLang = currentTargetLanguage()
         val toLangDefault = LocaleController.getInstance().currentLocale.language
         val messageIdToTranslate = intArrayOf(selected.id)
 
@@ -231,11 +261,15 @@ object TranslateHelper {
             return
         }
 
-        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
+        val toLang = currentTargetLanguage()
         val detectUnknownLanguage = InuConfig.TRANSLATE_AUTO_DETECT_LANG.value
 
+        // entiny: mirror startBodyTranslate's own gate exactly, or the menu row can hide itself for
+        // a case the actual translate call would have allowed (own messages with TRANSLATE_OUTGOING
+        // on, when the source language happens to match the target) - previously unreachable from the menu
         fun shouldShowTranslateRow(fromLang: String): Boolean {
             if (InuConfig.FORCE_TRANSLATE.value) return true
+            if (InuConfig.TRANSLATE_OUTGOING.value && selected.isOutOwner()) return true
             if (RestrictedLanguagesSelectActivity.getRestrictedLanguages().contains(fromLang)) return false
             return fromLang != toLang || fromLang == TranslateController.UNKNOWN_LANGUAGE
         }
@@ -278,6 +312,10 @@ object TranslateHelper {
         fromLang: String?,
         toLang: String,
     ) {
+        // entiny: stock's own pushToTranslate no-ops for a not-yet-sent (negative id) message, but
+        // does so *after* our caller already marked it "translating" - guard here instead, or the
+        // message gets permanently stuck showing the translating shimmer
+        if (target.id < 0) return
         val srcLang = fromLang?.takeIf { it != "und" } ?: owner.originalLanguage
         if (!InuConfig.FORCE_TRANSLATE.value && !(InuConfig.TRANSLATE_OUTGOING.value && target.isOutOwner()) && srcLang != null && srcLang == toLang) return
         val account = activity.currentAccount
@@ -514,7 +552,12 @@ object TranslateHelper {
             .postNotificationName(NotificationCenter.messageTranslated, msg)
     }
 
-    private fun clearState(msg: MessageObject) {
+    // entiny: called from stock TranslateController.invalidateTranslation() too, so the fork's own
+    // shadow maps (webPages/bodies/manual/...) never outlive the stock translation fields they
+    // shadow - previously only revert() cleared these, so an edit-triggered stock invalidation left
+    // a stale translated link preview rendering via viewWebPage() for a message whose URL changed
+    @JvmStatic
+    fun clearState(msg: MessageObject) {
         manual[msg.dialogId]?.remove(msg.id)
         bodies[msg.dialogId]?.remove(msg.id)
         if (webPages[msg.dialogId]?.remove(msg.id) != null) {
@@ -525,20 +568,39 @@ object TranslateHelper {
         originals[msg.dialogId]?.remove(msg.id)
     }
 
-    // entiny: stock invalidates translations on every edit update, and reactions arrive as edit updates
+    // entiny: stock invalidates translations on every edit update, and reactions arrive as edit
+    // updates too. Gating on the originals snapshot alone (rather than requiring
+    // isManualTranslated/hasTranslatedWebPage first) protects whole-chat auto-translate the same
+    // way - it used to only protect messages translated via the manual long-press menu, so an
+    // auto-translated dialog lost its translations on every reaction to a translated message.
     @JvmStatic
     fun shouldKeepTranslation(msg: MessageObject?): Boolean {
         if (msg == null || !InuConfig.IN_PLACE_TRANSLATION.value) return false
-        if (!isManualTranslated(msg) && !hasTranslatedWebPage(msg)) return false
         val original = originals[msg.dialogId]?.get(msg.id) ?: return false
         return TextUtils.equals(original, msg.messageOwner?.message)
+    }
+
+    // entiny: records the pre-translation text so shouldKeepTranslation() can tell a same-content
+    // "edit" update (reaction/view-count bump) apart from a real edit. Call this right before
+    // handing a message to pushToTranslate() - both the manual path (startTranslate, above) and
+    // stock's own auto/dialog-translate flow (TranslateController.checkTranslation) use it.
+    @JvmStatic
+    fun recordTranslationBaseline(msg: MessageObject) {
+        originals.computeIfAbsent(msg.dialogId) { ConcurrentHashMap() }[msg.id] = msg.messageOwner?.message.orEmpty()
+    }
+
+    // entiny: lets stock's auto/dialog-translate flow build the same "keep original" merged body
+    // as the manual path (storeMergedBody, below) - KEEP_ORIGINAL_AFTER_TRANSLATION used to only
+    // work for messages translated via the manual long-press menu.
+    @JvmStatic
+    fun recordAutoTranslatedBody(target: MessageObject, translated: TLRPC.TL_textWithEntities?) {
+        if (translated != null) storeMergedBody(target, translated)
     }
 
     @JvmStatic
     fun carryTranslation(old: MessageObject?, updated: MessageObject?) {
         if (old == null || updated == null || old === updated) return
         if (!InuConfig.IN_PLACE_TRANSLATION.value) return
-        if (!isManualTranslated(old) && !hasTranslatedWebPage(old)) return
         val oldOwner = old.messageOwner ?: return
         val newOwner = updated.messageOwner ?: return
         if (!shouldKeepTranslation(updated)) {

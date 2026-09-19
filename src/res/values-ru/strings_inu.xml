@@ -239,8 +239,6 @@
     <string name="InuTranslateProviderMicrosoft">Bing Translate (бесплатно, без ключа)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API-ключ)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (бесплатно, без ключа)</string>
-    <string name="InuTranslateProviderLingo">Lingo (Caiyun, бесплатно)</string>
-    <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, бесплатно)</string>
     <string name="InuTranslateDeepLApiKey">API-ключ DeepL</string>
     <string name="InuTranslateYandexApiKey">API-ключ Yandex</string>
     <string name="InuTranslateMicrosoftApiKey">API-ключ Azure Translator</string>
@@ -254,7 +252,7 @@
     <string name="InuTranslateLlmTemperature">Температура</string>
     <string name="InuTranslateLlmTemperatureInfo">Меньшие значения дают дословный и предсказуемый перевод, большие — более свободный и идиоматичный.</string>
     <string name="InuTranslateProviderNotConfigured">Провайдер перевода не настроен. Использую перевод через Telegram.</string>
-    <string name="InuTranslateProviderFailed">Не удалось перевести: %1$s. Сообщения будут повторены автоматически.</string>
+    <string name="InuTranslateProviderFailed">Не удалось перевести: %1$s. Повторите попытку через минуту.</string>
     <string name="InuTranslateGoogleBlocked">Google отклоняет запросы перевода из этой сети (HTTP 429). Смените подключение или выберите другого провайдера в настройках перевода.</string>
     <string name="InuPoweredByProvider">Переводы работают на %1$s.</string>
     <string name="InuHideReactionEntry">Скрыть анимацию появления реакции</string>

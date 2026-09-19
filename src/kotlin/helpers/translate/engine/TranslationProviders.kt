@@ -1,5 +1,6 @@
 package desu.inugram.helpers.translate.engine
 
+import android.util.Log
 import desu.inugram.InuConfig
 import org.json.JSONArray
 import org.json.JSONObject
@@ -10,7 +11,6 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
-import java.util.UUID
 
 interface TranslationProvider {
 
@@ -24,8 +24,6 @@ interface TranslationProvider {
 
     @Throws(Exception::class)
     fun translate(text: String, toLang: String, context: List<String>): String = translate(text, toLang)
-
-    fun supportsLanguage(toLang: String): Boolean = true
 }
 
 class ProviderRateLimitException(message: String) : IOException(message)
@@ -41,8 +39,6 @@ object TranslationProviders {
     const val PROVIDER_YANDEX = 4
     const val PROVIDER_MICROSOFT = 5
     const val PROVIDER_MYMEMORY = 6
-    const val PROVIDER_LINGO = 7
-    const val PROVIDER_TRANSMART = 8
     const val PROVIDER_BING = 9
 
     val all: List<TranslationProvider> = listOf(
@@ -53,8 +49,6 @@ object TranslationProviders {
         BingProvider,
         MicrosoftProvider,
         MyMemoryProvider,
-        LingoProvider,
-        TranSmartProvider,
     )
 
     fun current(): TranslationProvider? = when (InuConfig.TRANSLATE_PROVIDER.value) {
@@ -64,23 +58,10 @@ object TranslationProviders {
         PROVIDER_YANDEX -> YandexProvider
         PROVIDER_MICROSOFT -> MicrosoftProvider
         PROVIDER_MYMEMORY -> MyMemoryProvider
-        PROVIDER_LINGO -> LingoProvider
-        PROVIDER_TRANSMART -> TranSmartProvider
         PROVIDER_BING -> BingProvider
         else -> null
     }
 
-    fun effectiveProvider(provider: TranslationProvider, toLang: String): TranslationProvider {
-        if (provider.supportsLanguage(toLang)) return provider
-        val fallback = if (provider == GoogleWebProvider) BingProvider else GoogleWebProvider
-        return if (fallback.supportsLanguage(toLang)) fallback else provider
-    }
-
-    @JvmStatic
-    fun providerSupportsTarget(code: String): Boolean {
-        val provider = current() ?: return true
-        return provider.supportsLanguage(code)
-    }
 }
 
 private fun encodeURIComponent(s: String): String =
@@ -131,6 +112,7 @@ object GoogleWebProvider : TranslationProvider {
     override val id: Int = TranslationProviders.PROVIDER_GOOGLE
     override val nameRes: Int = R.string.InuTranslateProviderGoogle
 
+    private const val TAG = "EntinyTranslate"
     private const val BLOCK_COOLDOWN_MS = 10 * 60 * 1000L
     private const val MAX_FALLBACK_CHARS = 1800
     private const val MAX_APP_CHARS = 3500
@@ -149,8 +131,10 @@ object GoogleWebProvider : TranslationProvider {
         }
         return try {
             translateViaGtx(text, tl)
-        } catch (e: Exception) {
-            if (e !is ProviderRateLimitException && e !is IOException) throw e
+        } catch (e: ProviderRateLimitException) {
+            // entiny: only an actual detected block (HTTP 429) should trip the cooldown+fallback
+            // chain - a plain IOException (offline, DNS, timeout) used to trip it too, which then
+            // mislabeled every unrelated network error as "Google blocked this network"
             blockedUntil = System.currentTimeMillis() + BLOCK_COOLDOWN_MS
             translateViaApp(text, tl)
                 ?: translateViaDictionary(text, tl)
@@ -198,7 +182,8 @@ object GoogleWebProvider : TranslationProvider {
                 sb.append(sentences.getJSONObject(i).optString("trans", ""))
             }
             sb.toString().ifBlank { null }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.d(TAG, "translateViaApp failed: ${e.message}")
             null
         }
     }
@@ -224,7 +209,8 @@ object GoogleWebProvider : TranslationProvider {
                 }
             }
             sb.toString().ifBlank { null }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            Log.d(TAG, "translateViaDictionary failed: ${e.message}")
             null
         }
     }
@@ -252,10 +238,15 @@ object DeepLProvider : TranslationProvider {
     override fun translate(text: String, toLang: String): String {
         val key = InuConfig.TRANSLATE_DEEPL_KEY.value.trim()
         val host = if (key.endsWith(":fx")) "https://api-free.deepl.com" else "https://api.deepl.com"
+        // entiny: `ignore_tags` tells DeepL to skip translating the CONTENT of those tags, which is
+        // the opposite of what we want (we want the enclosed text translated, just re-wrapped in the
+        // same marker) - and "inu" never matched the actual "inue0"/"inux0" tag names anyway. Plain
+        // tag_handling=xml already preserves inline tag positions around translated text, which is
+        // the behavior EntityKeeper's markers need.
         val body = "auth_key=" + encodeURIComponent(key) +
-            "&text=" + encodeURIComponent(text) +
+            "&text=" + encodeURIComponent(escapeXmlKeepingMarkers(text)) +
             "&target_lang=" + encodeURIComponent(normalizeToLang(toLang)) +
-            "&tag_handling=xml&ignore_tags=inu"
+            "&tag_handling=xml"
         val resp = httpJson(
             host + "/v2/translate",
             method = "POST",
@@ -265,6 +256,32 @@ object DeepLProvider : TranslationProvider {
         val translations = JSONObject(resp).optJSONArray("translations") ?: JSONArray()
         if (translations.length() == 0) throw IOException("DeepL returned an empty result")
         return translations.getJSONObject(0).optString("text", "")
+    }
+
+    // entiny: tag_handling=xml means DeepL parses the body as XML - a literal '<', '>' or '&' in the
+    // user's own text (outside our own markers) would otherwise break the parse or corrupt the round trip
+    private fun escapeXmlKeepingMarkers(text: String): String {
+        if (text.isEmpty()) return text
+        val sb = StringBuilder(text.length + 16)
+        var last = 0
+        for (m in EntityKeeper.MARKER_PATTERN.findAll(text)) {
+            appendXmlEscaped(sb, text, last, m.range.first)
+            sb.append(m.value)
+            last = m.range.last + 1
+        }
+        appendXmlEscaped(sb, text, last, text.length)
+        return sb.toString()
+    }
+
+    private fun appendXmlEscaped(sb: StringBuilder, text: String, start: Int, end: Int) {
+        for (i in start until end) {
+            when (val c = text[i]) {
+                '&' -> sb.append("&amp;")
+                '<' -> sb.append("&lt;")
+                '>' -> sb.append("&gt;")
+                else -> sb.append(c)
+            }
+        }
     }
 
     private fun normalizeToLang(code: String): String = when (code.lowercase()) {
@@ -547,124 +564,6 @@ object BingProvider : TranslationProvider {
         "zh", "zh-cn", "zh-hans" -> "zh-Hans"
         "zh-hant", "zh-tw" -> "zh-Hant"
         "no" -> "nb"
-        else -> code.lowercase()
-    }
-}
-
-object LingoProvider : TranslationProvider {
-
-    override val id: Int = TranslationProviders.PROVIDER_LINGO
-    override val nameRes: Int = R.string.InuTranslateProviderLingo
-
-    private const val TOKEN = "9sdftiq37bnv410eon2l"
-    private val supported = setOf("zh", "en", "es", "fr", "ja", "ru")
-
-    override fun supportsLanguage(toLang: String): Boolean = normalizeToLang(toLang) in supported
-
-    override fun translate(text: String, toLang: String): String {
-        val lang = normalizeToLang(toLang)
-        if (lang !in supported) throw ProviderConfigException("Lingo does not support target $toLang")
-        val lines = text.split("\n")
-        val payload = JSONObject()
-            .put("source", JSONArray().apply { lines.forEach { put(it) } })
-            .put("trans_type", "auto2$lang")
-            .put("request_id", System.currentTimeMillis().toString())
-            .put("detect", true)
-        val resp = httpJson(
-            "https://api.interpreter.caiyunai.com/v1/translator",
-            method = "POST",
-            body = payload.toString(),
-            contentType = "application/json",
-            headers = mapOf(
-                "X-Authorization" to "token $TOKEN",
-                "User-Agent" to "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X)",
-            ),
-        )
-        val json = JSONObject(resp)
-        if (json.optInt("rc", -1) != 0) {
-            throw ProviderConfigException("Lingo rc=" + json.optInt("rc", -1))
-        }
-        val target = json.optJSONArray("target") ?: JSONArray()
-        val sb = StringBuilder(text.length)
-        for (i in 0 until target.length()) {
-            val line = target.getString(i)
-            // entiny: skip bogus surrogate emitted for empty lines
-            if (line == "\ud835") continue
-            if (sb.isNotEmpty()) sb.append('\n')
-            sb.append(line)
-        }
-        if (sb.isEmpty()) throw IOException("Lingo returned an empty result")
-        return sb.toString()
-    }
-
-    private fun normalizeToLang(code: String): String = when (code.lowercase()) {
-        "zh-cn", "zh-hans", "zh-hant", "zh-tw" -> "zh"
-        else -> code.lowercase()
-    }
-}
-
-object TranSmartProvider : TranslationProvider {
-
-    override val id: Int = TranslationProviders.PROVIDER_TRANSMART
-    override val nameRes: Int = R.string.InuTranslateProviderTranSmart
-
-    private val supported = setOf(
-        "ar", "fr", "fil", "lo", "ja", "it", "hi", "id", "vi", "de",
-        "km", "ms", "th", "tr", "zh", "ru", "ko", "pt", "es",
-    )
-    private val operatingSystems = arrayOf("Mac OS", "Windows")
-
-    override fun supportsLanguage(toLang: String): Boolean = normalizeToLang(toLang) in supported
-
-    override fun translate(text: String, toLang: String): String {
-        val lang = normalizeToLang(toLang)
-        if (lang !in supported) throw ProviderConfigException("TranSmart does not support target $toLang")
-        val clientKey = "browser-chrome-${randomVersion()}-${operatingSystems.random()}-" +
-            UUID.randomUUID() + "-" + System.currentTimeMillis()
-        val lines = JSONArray().apply { text.split("\n").forEach { put(it) } }
-        val payload = JSONObject()
-            .put(
-                "header",
-                JSONObject()
-                    .put("client_key", clientKey)
-                    .put("fn", "auto_translation")
-                    .put("session", "")
-                    .put("user", ""),
-            )
-            .put("source", JSONObject().put("lang", "auto").put("text_list", lines))
-            .put("target", JSONObject().put("lang", lang))
-            .put("model_category", "normal")
-            .put("text_domain", "")
-            .put("type", "plain")
-        val resp = httpJson(
-            "https://transmart.qq.com/api/imt",
-            method = "POST",
-            body = payload.toString(),
-            contentType = "application/json",
-            headers = mapOf("User-Agent" to "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X)"),
-        )
-        val json = JSONObject(resp)
-        val ret = json.optJSONObject("header")?.optString("ret_code", "").orEmpty()
-        if (ret != "succ") throw ProviderConfigException("TranSmart failed: $ret")
-        val result = json.optJSONArray("auto_translation") ?: JSONArray()
-        val sb = StringBuilder(text.length)
-        for (i in 0 until result.length()) {
-            if (sb.isNotEmpty()) sb.append('\n')
-            sb.append(result.getString(i))
-        }
-        if (sb.isEmpty()) throw IOException("TranSmart returned an empty result")
-        return sb.toString()
-    }
-
-    private fun randomVersion(): String {
-        val major = (Math.random() * 17).toInt() + 100
-        val minor = (Math.random() * 20).toInt()
-        val patch = (Math.random() * 20).toInt()
-        return "$major.$minor.$patch"
-    }
-
-    private fun normalizeToLang(code: String): String = when (code.lowercase()) {
-        "zh-cn", "zh-hans", "zh-hant", "zh-tw" -> "zh"
         else -> code.lowercase()
     }
 }

@@ -1210,11 +1210,10 @@
     <string name="InuTranslateOutgoingInfo">Gönderdiğiniz mesajları otomatik sohbet çevirisine dahil edin.</string>
     <string name="InuTranslateProvider">Çeviri sağlayıcısı</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
-    <string name="InuTranslateProviderFailed">Çeviri başarısız oldu: %1$s. Mesajlar otomatik olarak yeniden denenecek.</string>
+    <string name="InuTranslateProviderFailed">Çeviri başarısız oldu: %1$s. Bir süre sonra tekrar deneyin.</string>
     <string name="InuTranslateGoogleBlocked">Google bu ağdan gelen çeviri isteklerini reddediyor (HTTP 429). Bağlantınızı değiştirin ya da çeviri ayarlarından başka bir sağlayıcı seçin.</string>
     <string name="InuTranslateProviderGoogle">Google Çeviri</string>
     <string name="InuTranslateProviderInfo">Sohbetleri Telegram\'ın sunucu API\'si yerine üçüncü taraf bir servisle çevirin. Sağlayıcı otomatik çeviriyi ve yerinde mesaj çevirisini yönetir; metin biçimlendirmesi korunur.</string>
-    <string name="InuTranslateProviderLingo">Lingo (Caiyun, ücretsiz)</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI uyumlu)</string>
     <string name="InuTranslateProviderMicrosoft">Bing Translate (ücretsiz, anahtar gerekmez)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API anahtarı)</string>
@@ -1222,7 +1221,6 @@
     <string name="InuTranslateProviderNotConfigured">Çeviri sağlayıcısı yapılandırılmadı. Telegram çevirisine geri dönülüyor.</string>
     <string name="InuTranslateProviderSection">Çeviri sağlayıcıları</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
-    <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, ücretsiz)</string>
     <string name="InuTranslateProviderYandex">Yandex Çeviri</string>
     <string name="InuTranslateYandexApiKey">Yandex API anahtarı</string>
     <string name="InuYes">Evet</string>

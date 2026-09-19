@@ -39,7 +39,6 @@ import org.telegram.ui.ChatUsersActivity
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
-import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.ManageLinksActivity
 import org.telegram.ui.RestrictedLanguagesSelectActivity
 import org.telegram.ui.StatisticActivity
@@ -435,7 +434,7 @@ object ChatActionsHelper {
 
     private fun translateSelection(activity: ChatActivity) {
         if (!InuConfig.IN_PLACE_TRANSLATION.value) return
-        val toLang = InuConfig.TRANSLATE_TARGET_LANGUAGE.value.ifEmpty { TranslateAlert2.getToLanguage() }
+        val toLang = TranslateHelper.currentTargetLanguage()
         val toLangDefault = LocaleController.getInstance().currentLocale.language
         val restricted = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
         val seenGroups = HashSet<Long>()

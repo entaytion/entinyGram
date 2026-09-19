@@ -1460,6 +1460,13 @@ object InuConfig {
     @JvmField
     val TRANSLATE_TARGET_LANGUAGE = StringItem("translate_target_language", "")
 
+    // entiny: one-shot guard for adopting stock's legacy per-session "translate to" pick into
+    // TRANSLATE_TARGET_LANGUAGE - without it, every settings screen visit re-adopts whatever
+    // language was last picked in an in-chat translate dialog, silently replacing "Follow app
+    // language" the moment the user ever translates a single message anywhere
+    @JvmField
+    val TRANSLATE_TARGET_LANGUAGE_MIGRATED = BoolItem("translate_target_language_migrated", false)
+
     @JvmField
     val FORCE_TRANSLATE = BoolItem("force_translate", false)
 

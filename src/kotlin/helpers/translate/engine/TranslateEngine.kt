@@ -203,6 +203,9 @@ object TranslateEngine {
             if (inFlight.contains(key)) return true
             val failedAtTs = failedAt[key]
             if (failedAtTs != null && System.currentTimeMillis() - failedAtTs < FAIL_RETRY_WINDOW_MS) {
+                // entiny: still deliver failure so the caller's "translating" UI state clears
+                // instead of getting stuck until the cooldown window happens to be retried
+                AndroidUtilities.runOnUIThread { callback.run(transcription, msgId, null, toLang) }
                 return true
             }
             if (failedAtTs != null) failedAt.remove(key)
@@ -229,12 +232,12 @@ object TranslateEngine {
         provider: TranslationProvider,
         callback: Utilities.Callback4<Boolean, Int, TLRPC.TL_webPage, String>,
     ): Boolean {
-        if (parts.isEmpty()) return false
         val key = JobKey(dialogId, msgId, KIND_WEBPAGE)
         synchronized(lock) {
             if (inFlight.contains(key)) return true
             val failedAtTs = failedAt[key]
             if (failedAtTs != null && System.currentTimeMillis() - failedAtTs < FAIL_RETRY_WINDOW_MS) {
+                AndroidUtilities.runOnUIThread { callback.run(false, msgId, null, toLang) }
                 return true
             }
             if (failedAtTs != null) failedAt.remove(key)
@@ -259,6 +262,7 @@ object TranslateEngine {
             if (inFlight.contains(key)) return true
             val failedAtTs = failedAt[key]
             if (failedAtTs != null && System.currentTimeMillis() - failedAtTs < FAIL_RETRY_WINDOW_MS) {
+                AndroidUtilities.runOnUIThread { callback.run(msgId, null, toLang) }
                 return true
             }
             if (failedAtTs != null) failedAt.remove(key)
@@ -292,6 +296,7 @@ object TranslateEngine {
     fun resetDialog(dialogId: Long) {
         synchronized(lock) {
             failedAt.keys.removeIf { it.dialogId == dialogId }
+            bulletinsShown.remove(dialogId)
         }
     }
 
@@ -299,15 +304,6 @@ object TranslateEngine {
         synchronized(lock) {
             failedAt.clear()
             bulletinsShown.clear()
-        }
-    }
-
-    fun cancelAll() {
-        synchronized(lock) {
-            epochs.clear()
-            queue.clear()
-            inFlight.clear()
-            failedAt.clear()
         }
     }
 
@@ -319,7 +315,11 @@ object TranslateEngine {
 
     private fun pump() {
         synchronized(lock) {
-            while (queue.isNotEmpty() && activeWorkers.get() < WORKER_COUNT) {
+            // entiny: cap spawned workers to actual queue depth - `queue.isNotEmpty()` alone
+            // doesn't shrink as workers are submitted (pump() never dequeues), so it used to
+            // spin up all WORKER_COUNT threads for a single queued job
+            val toSpawn = minOf(queue.size, WORKER_COUNT - activeWorkers.get())
+            repeat(toSpawn) {
                 activeWorkers.incrementAndGet()
                 worker.execute { loop() }
             }
@@ -362,10 +362,14 @@ object TranslateEngine {
     }
 
     private fun finish(job: Job, result: Any?, cancelled: Boolean) {
-        synchronized(lock) {
+        // entiny: re-check the epoch here, not just before run() - cancelDialog() can bump it
+        // while the job's HTTP call is in flight, and a stale result must not land on a dialog
+        // whose state was already reset
+        val stale = synchronized(lock) {
             inFlight.remove(job.key)
+            job.epoch != (epochs[job.key.dialogId] ?: 0)
         }
-        if (cancelled) return
+        if (cancelled || stale) return
         AndroidUtilities.runOnUIThread { job.deliver(result) }
     }
 
@@ -396,11 +400,11 @@ object TranslateEngine {
         var attempt = 0
         while (true) {
             try {
-                val marked = EntityKeeper.mark(text, entities)
+                val (marked, kept) = EntityKeeper.mark(text, entities)
                 // entiny: restore runs before unmark so entity spans are measured against the final text
                 val (guarded, vault) = EntityKeeper.protect(marked)
                 val translated = EntityKeeper.restore(provider.translate(guarded, toLang, context), vault)
-                val (resultText, resultEntities) = EntityKeeper.unmark(translated, entities)
+                val (resultText, resultEntities) = EntityKeeper.unmark(translated, kept)
                 if (resultText.isBlank()) throw IOException("Provider returned empty translation")
                 return resultText to resultEntities
             } catch (e: ProviderRateLimitException) {
@@ -413,8 +417,6 @@ object TranslateEngine {
                 attempt++
                 if (attempt > MAX_ATTEMPTS) throw e
                 sleepBackoff(attempt)
-            } catch (e: Exception) {
-                throw e
             }
         }
     }

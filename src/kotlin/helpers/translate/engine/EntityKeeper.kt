@@ -5,13 +5,19 @@ import org.telegram.tgnet.TLRPC
 
 object EntityKeeper {
 
-    private const val OPEN = "<inu"
-    private const val CLOSE = "</inu"
+    // entiny: OPEN/CLOSE must not be a prefix of VAULT_OPEN (or vice versa) - a mangled vault
+    // token surviving into unmark() must never be misread as an entity marker
+    private const val OPEN = "<inue"
+    private const val CLOSE = "</inue"
     private const val TAG_END = '>'
 
     // entiny: <inuxN> placeholder protects machine-readable tokens (urls, mentions) from being translated
     private const val VAULT_OPEN = "<inux"
     private val VAULT_TOKEN = Regex("<inux(\\d+)>")
+
+    // entiny: matches every marker this file ever emits (entity + vault) - providers that need to
+    // XML-escape the surrounding text (DeepL's tag_handling=xml) must skip exactly these spans
+    val MARKER_PATTERN = Regex("</?inue\\d+>|<inux\\d+>")
 
     private val PROTECTED = listOf(
         Regex("""\b(?:https?|tg|ton)://[^\s<]+"""),
@@ -51,8 +57,11 @@ object EntityKeeper {
 
     private const val MAX_PROTECTED = 64
 
-    fun mark(text: String, entities: List<TLRPC.MessageEntity>?): String {
-        if (text.isEmpty() || entities.isNullOrEmpty()) return text
+    // entiny: returns the marked text plus the exact (filtered, index-stable) entity list the
+    // markers reference - unmark() MUST be given this same list, never the caller's raw entities,
+    // or marker index N resolves against the wrong entity once anything gets dropped/reordered
+    fun mark(text: String, entities: List<TLRPC.MessageEntity>?): Pair<String, List<TLRPC.MessageEntity>> {
+        if (text.isEmpty() || entities.isNullOrEmpty()) return text to emptyList()
 
         // entiny: drop crossing entities and sort by start asc / length desc to process parents first
         val sorted = entities
@@ -66,7 +75,7 @@ object EntityKeeper {
             kept.add(e)
             if (end > frontier) frontier = end
         }
-        if (kept.isEmpty()) return text
+        if (kept.isEmpty()) return text to emptyList()
 
         val events = ArrayList<IntArray>(kept.size * 2)
         for ((i, e) in kept.withIndex()) {
@@ -94,15 +103,16 @@ object EntityKeeper {
             else sb.append(CLOSE).append(ev[2]).append(TAG_END)
         }
         sb.append(text, pos, text.length)
-        return sb.toString()
+        return sb.toString() to kept
     }
 
-    fun unmark(marked: String, originalEntities: List<TLRPC.MessageEntity>?): Pair<String, ArrayList<TLRPC.MessageEntity>> {
-        if (marked.isEmpty() || originalEntities.isNullOrEmpty()) return marked to ArrayList()
+    // entiny: `kept` must be the exact list mark() returned alongside `marked` - see mark() doc
+    fun unmark(marked: String, kept: List<TLRPC.MessageEntity>?): Pair<String, ArrayList<TLRPC.MessageEntity>> {
+        if (marked.isEmpty() || kept.isNullOrEmpty()) return marked to ArrayList()
         if (marked.indexOf(OPEN) < 0) return marked to ArrayList()
 
         val out = StringBuilder(marked.length)
-        val result = ArrayList<TLRPC.MessageEntity>(originalEntities.size)
+        val result = ArrayList<TLRPC.MessageEntity>(kept.size)
         val stack = ArrayList<Int>(4)  // original indices of currently open markers
         val starts = ArrayList<Int>(4) // translated offset where each open marker began
         var i = 0
@@ -128,22 +138,22 @@ object EntityKeeper {
             }
             out.append(marked, i, nextTag)
 
+            // entiny: anything that isn't a well-formed <inueN>/</inueN> marker is dropped rather
+            // than re-appended - a provider-mangled marker leaking into the visible message is
+            // worse than losing the few stray characters of a malformed tag
             var j = nextTag + (if (isClose) CLOSE.length else OPEN.length)
             if (j >= n || !marked[j].isDigit()) {
-                out.append(marked, nextTag, j)
                 i = j
                 continue
             }
             val idxStart = j
             while (j < n && marked[j].isDigit()) j++
             if (j >= n || marked[j] != TAG_END) {
-                out.append(marked, nextTag, j)
                 i = j
                 continue
             }
             val idx = marked.substring(idxStart, j).toIntOrNull()
-            if (idx == null || idx !in originalEntities.indices) {
-                out.append(marked, nextTag, j + 1)
+            if (idx == null || idx !in kept.indices) {
                 i = j + 1
                 continue
             }
@@ -163,7 +173,6 @@ object EntityKeeper {
                 }
             }
             if (match < 0) {
-                out.append(marked, nextTag, j + 1)
                 i = j + 1
                 continue
             }
@@ -171,7 +180,7 @@ object EntityKeeper {
             stack.removeAt(match)
             val length = out.length - start
             if (length > 0) {
-                cloneEntity(originalEntities[idx], start, length)?.let { result.add(it) }
+                cloneEntity(kept[idx], start, length)?.let { result.add(it) }
             }
             i = j + 1
         }

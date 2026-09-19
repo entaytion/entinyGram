@@ -4,6 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.helpers.translate.engine.EntinyTranslate
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
@@ -134,15 +135,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     }
 
     private fun targetLangLabel(): String {
-        val configured = InuConfig.TRANSLATE_TARGET_LANGUAGE.value
-        if (configured.isEmpty() && !MessagesController.getGlobalMainSettings().contains("translate_to_language")) {
-            return LocaleController.getString(R.string.InuTranslationTargetFollowApp)
-        }
-        val code = configured.ifEmpty {
-            TranslateAlert2.getToLanguage().orEmpty().also {
-                if (it.isNotEmpty()) InuConfig.TRANSLATE_TARGET_LANGUAGE.value = it
-            }
-        }
+        val code = TranslateHelper.resolveTargetLanguage()
+        if (code.isEmpty()) return LocaleController.getString(R.string.InuTranslationTargetFollowApp)
         return TranslateAlert2.languageName(code)?.let { TranslateAlert2.capitalFirst(it) } ?: code.uppercase()
     }
 

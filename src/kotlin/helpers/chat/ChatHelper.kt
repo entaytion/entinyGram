@@ -2009,6 +2009,9 @@ object ChatHelper {
     fun onFragmentDestroy(activity: ChatActivity) {
         // entiny: cancel in-flight translations before resetting state so late results don't write to dead dialog
         desu.inugram.helpers.translate.engine.EntinyTranslate.cancelDialog(activity.dialogId)
+        // entiny: also clears the engine's per-dialog failedAt/bulletinsShown cooldown entries -
+        // without this they only ever grew, one per dialog ever touched, for the app's lifetime
+        desu.inugram.helpers.translate.engine.EntinyTranslate.resetDialog(activity.dialogId)
         TranslateHelper.resetForDialog(activity.dialogId)
         TypingSpoofHelper.stop(activity.dialogId)
     }

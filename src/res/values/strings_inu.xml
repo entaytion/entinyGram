@@ -414,8 +414,6 @@
     <string name="InuTranslateProviderMicrosoft">Bing Translate (free, no key)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API key)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (free, no key)</string>
-    <string name="InuTranslateProviderLingo">Lingo (Caiyun, free)</string>
-    <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, free)</string>
     <string name="InuTranslateDeepLApiKey">DeepL API key</string>
     <string name="InuTranslateYandexApiKey">Yandex API key</string>
     <string name="InuTranslateMicrosoftApiKey">Azure Translator API key</string>
@@ -429,7 +427,7 @@
     <string name="InuTranslateLlmTemperature">Temperature</string>
     <string name="InuTranslateLlmTemperatureInfo">Lower values keep translations literal and repeatable; higher values allow looser, more idiomatic wording.</string>
     <string name="InuTranslateProviderNotConfigured">Translation provider is not configured. Falling back to Telegram translation.</string>
-    <string name="InuTranslateProviderFailed">Translation failed: %1$s. Messages will retry automatically.</string>
+    <string name="InuTranslateProviderFailed">Translation failed: %1$s. Try again in a moment.</string>
     <string name="InuTranslateGoogleBlocked">Google is refusing translation requests from this network (HTTP 429). Change connection, or pick another provider in Translation settings.</string>
     <string name="InuPoweredByProvider">Translations are powered by %1$s.</string>
     <string name="InuHideReactionEntry">Hide reaction appear animation</string>

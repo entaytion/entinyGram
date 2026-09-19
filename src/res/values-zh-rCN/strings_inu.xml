@@ -1212,11 +1212,10 @@
     <string name="InuTranslateOutgoingInfo">在聊天自动翻译中包含您自己发送的消息。</string>
     <string name="InuTranslateProvider">翻译提供商</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
-    <string name="InuTranslateProviderFailed">翻译失败：%1$s。消息将自动重试。</string>
+    <string name="InuTranslateProviderFailed">翻译失败：%1$s。请稍后重试。</string>
     <string name="InuTranslateGoogleBlocked">Google 拒绝了来自该网络的翻译请求（HTTP 429）。请更换网络，或在翻译设置中选择其他服务商。</string>
     <string name="InuTranslateProviderGoogle">Google 翻译</string>
     <string name="InuTranslateProviderInfo">使用第三方服务替代 Telegram 服务器 API 翻译聊天。提供商负责自动翻译和就地消息翻译，保留文本格式。</string>
-    <string name="InuTranslateProviderLingo">Lingo (彩云小译, 免费)</string>
     <string name="InuTranslateProviderLlm">LLM (兼容 OpenAI)</string>
     <string name="InuTranslateProviderMicrosoft">必应翻译 (免费, 无需密钥)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API 密钥)</string>
@@ -1224,7 +1223,6 @@
     <string name="InuTranslateProviderNotConfigured">翻译提供商未配置。正在回退到 Telegram 翻译。</string>
     <string name="InuTranslateProviderSection">翻译提供商</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
-    <string name="InuTranslateProviderTranSmart">TranSmart (腾讯, 免费)</string>
     <string name="InuTranslateProviderYandex">Yandex 翻译</string>
     <string name="InuTranslateYandexApiKey">Yandex API 密钥</string>
     <string name="InuYes">是</string>

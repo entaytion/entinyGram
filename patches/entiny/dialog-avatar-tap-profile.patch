@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 18 Sep 2026 13:20:21 +0300
+Subject: Add an option to open a chat's profile by tapping its avatar in the chat list
+
+Off by default. DialogsActivity already computed the avatar's tap rect for an
+unrelated stock feature but never used it for anything, so this reuses that
+rect instead of adding new hit-testing.
+---
+ .../main/java/org/telegram/ui/DialogsActivity.java   | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -4547,6 +4547,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                             dialogCell.avatarImage.getImageX(), dialogCell.avatarImage.getImageY(),
+                             dialogCell.avatarImage.getImageX2(), dialogCell.avatarImage.getImageY2()
+                     );
++                    // entiny: tapping the row avatar opens the profile straight away instead of the chat
++                    if (desu.inugram.InuConfig.DIALOG_AVATAR_OPENS_PROFILE.getValue() && AndroidUtilities.rectTmp.contains(x, y)) {
++                        long dialogId = dialogCell.getDialogId();
++                        Bundle args = new Bundle();
++                        if (dialogId < 0) {
++                            args.putLong("chat_id", -dialogId);
++                        } else {
++                            args.putLong("user_id", dialogId);
++                        }
++                        presentFragment(new ProfileActivity(args));
++                        return;
++                    }
+                 }
+                 onItemClick(view, position, viewPage.dialogsAdapter, x, y);
+             });

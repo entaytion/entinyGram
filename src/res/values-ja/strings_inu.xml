@@ -1211,11 +1211,10 @@
     <string name="InuTranslateOutgoingInfo">チャットの自動翻訳に自分が送信したメッセージも含めます。</string>
     <string name="InuTranslateProvider">翻訳プロバイダー</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
-    <string name="InuTranslateProviderFailed">翻訳に失敗しました: %1$s。メッセージは自動的に再試行されます。</string>
+    <string name="InuTranslateProviderFailed">翻訳に失敗しました: %1$s。しばらくしてからもう一度お試しください。</string>
     <string name="InuTranslateGoogleBlocked">Google がこのネットワークからの翻訳リクエストを拒否しています (HTTP 429)。接続を変えるか、翻訳設定で別のプロバイダーを選んでください。</string>
     <string name="InuTranslateProviderGoogle">Google 翻訳</string>
     <string name="InuTranslateProviderInfo">Telegram サーバー API の代わりにサードパーティ製サービスでチャットを翻訳します。自動翻訳とメッセージ内直接翻訳に対応し、書式を維持します。</string>
-    <string name="InuTranslateProviderLingo">Lingo (彩雲小訳, 無料)</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI 互換)</string>
     <string name="InuTranslateProviderMicrosoft">Bing翻訳 (無料、キー不要)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API キー)</string>
@@ -1223,7 +1222,6 @@
     <string name="InuTranslateProviderNotConfigured">翻訳プロバイダーが設定されていません。Telegram 翻訳にフォールバックします。</string>
     <string name="InuTranslateProviderSection">翻訳プロバイダー</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
-    <string name="InuTranslateProviderTranSmart">TranSmart (Tencent, 無料)</string>
     <string name="InuTranslateProviderYandex">Yandex 翻訳</string>
     <string name="InuTranslateYandexApiKey">Yandex API キー</string>
     <string name="InuYes">はい</string>
