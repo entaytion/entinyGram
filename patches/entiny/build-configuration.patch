@@ -4,12 +4,12 @@ Date: Tue, 1 Sep 2026 11:12:44 +0300
 Subject: Adjust build configuration (branding, versioning, dependency trimming for APK size)
 
 ---
- TMessagesProj/build.gradle                    | 42 +++++++++++++------
+ TMessagesProj/build.gradle                    | 44 +++++++++++++------
  TMessagesProj/proguard-rules.pro              | 18 ++++++--
- .../java/org/telegram/ui/LaunchActivity.java  | 21 ----------
- TMessagesProj_App/build.gradle                | 34 ++++++++++++---
- build.gradle                                  | 38 +++++++++++++++--
- 5 files changed, 109 insertions(+), 44 deletions(-)
+ .../java/org/telegram/ui/LaunchActivity.java  | 21 ---------
+ TMessagesProj_App/build.gradle                | 36 ++++++++++++---
+ build.gradle                                  | 38 ++++++++++++++--
+ 5 files changed, 111 insertions(+), 46 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -89,6 +89,15 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
+@@ -162,7 +176,7 @@ android {
+             minifyEnabled false
+             shrinkResources false
+             multiDexEnabled true
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
+             ndk.debugSymbolLevel = 'FULL'
+             buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
+             buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
 @@ -175,7 +189,11 @@ android {
  
          release {
@@ -234,6 +243,15 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
+@@ -64,7 +80,7 @@ android {
+             minifyEnabled false
+             shrinkResources false
+             multiDexEnabled true
+-            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
++            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
+             ndk.debugSymbolLevel = 'FULL'
+         }
+ 
 @@ -72,11 +88,14 @@ android {
              debuggable false
              jniDebuggable false
