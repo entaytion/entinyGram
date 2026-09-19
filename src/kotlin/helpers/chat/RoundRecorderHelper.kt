@@ -286,4 +286,59 @@ object RoundRecorderHelper {
         val resId = if (locked) R.drawable.inu_camera_ae_locked else R.drawable.inu_camera_ae_unlocked
         button.setImageResource(resId)
     }
+
+    // entiny: fixed EV stops, filtered to whatever the device's CONTROL_AE_COMPENSATION_RANGE covers
+    private val EXPOSURE_EV_CANDIDATES = floatArrayOf(-2f, -1f, 0f, 1f, 2f)
+
+    @JvmStatic
+    fun exposureLevelsFor(range: Range<Int>?, step: Float): List<Float> {
+        if (range == null) return listOf(0f)
+        val safeStep = if (step > 0f) step else 1f
+        return EXPOSURE_EV_CANDIDATES
+            .filter { ev -> range.contains(Math.round(ev / safeStep)) }
+            .ifEmpty { listOf(0f) }
+    }
+
+    @JvmStatic
+    fun attachExposureButtons(parent: FrameLayout, onLevel: Utilities.Callback<Float>): ExposureLevelButtonsView? {
+        if (!InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.value) return null
+        val view = ExposureLevelButtonsView(parent.context)
+        view.alpha = 0f
+        view.visibility = View.GONE
+        view.setDelegate(onLevel)
+        parent.addView(
+            view,
+            LayoutHelper.createFrame(
+                LayoutHelper.WRAP_CONTENT, 30f,
+                Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM,
+                24f, 0f, 24f, 150f,
+            ),
+        )
+        return view
+    }
+
+    @JvmStatic
+    fun setExposureButtonsVisible(buttons: ExposureLevelButtonsView?, visible: Boolean) {
+        if (buttons == null) return
+        buttons.animate().cancel()
+        if (visible) {
+            buttons.visibility = View.VISIBLE
+            buttons.animate().alpha(1f).setDuration(180).start()
+        } else {
+            buttons.animate().alpha(0f).setDuration(180)
+                .withEndAction { buttons.visibility = View.GONE }
+                .start()
+        }
+    }
+
+    @JvmStatic
+    fun syncExposureButtons(buttons: ExposureLevelButtonsView?, session: Camera2Session?) {
+        if (buttons == null) return
+        if (session == null) {
+            buttons.setLevels(emptyList())
+            return
+        }
+        buttons.setLevels(exposureLevelsFor(session.exposureCompensationRange, session.exposureCompensationStep))
+        buttons.setActiveLevel(session.exposureCompensationEv)
+    }
 }

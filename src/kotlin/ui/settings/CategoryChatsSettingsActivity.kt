@@ -264,6 +264,14 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.value
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS,
+                R.string.InuRoundRecorderExposureLevels,
+                R.string.InuRoundRecorderExposureLevelsInfo,
+                InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.value
+            )
+        )
         val cameraApiText = LocaleController.formatString(
             R.string.InuRoundRecorderCameraApi,
             if (SharedConfig.isUsingCamera2(currentAccount)) "Camera2" else "Camera1",
@@ -427,6 +435,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_LOCK_EXPOSURE.toggle()
             TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.toggle()
+            TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS ->
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.toggle()
             TOGGLE_BOT_WEBVIEW_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_BOT_WEBVIEW_INPUT.toggle()
             TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
@@ -479,6 +489,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ROUND_RECORDER_60FPS = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON = InuUtils.generateId()
+        private val TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS = InuUtils.generateId()
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
         private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER = InuUtils.generateId()
@@ -536,6 +547,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-60fps", R.string.InuRoundRecorder60Fps, TOGGLE_ROUND_RECORDER_60FPS),
                 SearchRegistry.Entry("round-recorder-lock-exposure", R.string.InuRoundRecorderLockExposure, TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE),
                 SearchRegistry.Entry("round-recorder-exposure-button", R.string.InuRoundRecorderExposureButton, TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON),
+                SearchRegistry.Entry("round-recorder-exposure-levels", R.string.InuRoundRecorderExposureLevels, TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS),
                 SearchRegistry.Entry("hide-bot-webview-input", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
                 SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
                 SearchRegistry.Entry("suggest-custom-emoji-after", R.string.InuSuggestCustomEmojiAfter, TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER),

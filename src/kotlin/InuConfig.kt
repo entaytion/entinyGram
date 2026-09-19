@@ -1014,6 +1014,9 @@ object InuConfig {
     @JvmField
     val ROUND_RECORDER_EXPOSURE_BUTTON = BoolItem("round_recorder_exposure_button", true)
 
+    @JvmField
+    val ROUND_RECORDER_EXPOSURE_LEVELS = BoolItem("round_recorder_exposure_levels", true)
+
     class NonIslandSplitFromTabBarsItem(key: String) : BoolItem(key, false) {
         override fun read(prefs: SharedPreferences): Boolean {
             if (prefs.contains(key)) return prefs.getBoolean(key, default)

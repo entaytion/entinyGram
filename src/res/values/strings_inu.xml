@@ -119,6 +119,8 @@
     <string name="InuRoundRecorderLockExposureInfo">Lock auto-exposure during recording to prevent flickering and brightness jumps.</string>
     <string name="InuRoundRecorderExposureButton">Exposure lock button</string>
     <string name="InuRoundRecorderExposureButtonInfo">Show a button to quickly lock or unlock exposure while recording.</string>
+    <string name="InuRoundRecorderExposureLevels">Exposure level buttons</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Show EV buttons to brighten or darken the shot while recording.</string>
     <string name="InuShowAllRecentStickers">Show all recent stickers</string>
     <string name="InuNoStickerExtraPadding">Remove extra bottom padding</string>
     <string name="InuHideKeyboardOnScroll">Hide keyboard on scroll</string>
