@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 19 Sep 2026 13:31:12 +0300
+Subject: Add confirm-before-sending prompts for voice, stickers and GIFs
+
+- CONFIRM_SEND_VOICE / CONFIRM_SEND_STICKER / CONFIRM_SEND_GIF, each
+  independently toggleable, default off
+- shows a plain yes/no AlertsCreator prompt right before the actual
+  send call, same place the stock forward/noforwards confirm already
+  hooks into
+---
+ .../ui/Components/ChatActivityEnterView.java  | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -7388,6 +7388,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+             })) {
+                 return;
+             }
++            // entiny: optional "are you sure" prompt before actually sending a recorded voice message
++            if (audioToSend != null && desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
++                AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendVoiceMessage), LocaleController.getString(R.string.Send), () ->
++                        sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, false), resourcesProvider).show();
++                return;
++            }
+             dismissSendPreviewSent = true;
+             if (videoToSendMessageObject != null) {
+                 delegate.needStartRecordVideo(4, notify, scheduleDate, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, payStars);
+@@ -12414,7 +12420,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+                             }
+                         };
+                         if (!showConfirmAlert(runnable)) {
+-                            runnable.run();
++                            // entiny: optional "are you sure" prompt before actually sending the GIF
++                            if (desu.inugram.InuConfig.CONFIRM_SEND_GIF.getValue()) {
++                                AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendGifMessage), LocaleController.getString(R.string.Send), runnable, resourcesProvider).show();
++                            } else {
++                                runnable.run();
++                            }
+                         }
+                     });
+                 }
+@@ -12688,7 +12699,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     MediaDataController.getInstance(currentAccount).addRecentSticker(MediaDataController.TYPE_IMAGE, parent, sticker, (int) (System.currentTimeMillis() / 1000), false);
+                 };
+                 if (!showConfirmAlert(runnable)) {
+-                    runnable.run();
++                    // entiny: optional "are you sure" prompt before actually sending the sticker
++                    if (desu.inugram.InuConfig.CONFIRM_SEND_STICKER.getValue()) {
++                        AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendStickerMessage), LocaleController.getString(R.string.Send), runnable, resourcesProvider).show();
++                    } else {
++                        runnable.run();
++                    }
+                 }
+             });
+         }

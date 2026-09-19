@@ -419,3 +419,4 @@ entiny/pill-stack.patch
 entiny/proxy-management.patch
 entiny/dialog-avatar-tap-profile.patch
 entiny/translate-bugfixes.patch
+entiny/confirm-before-sending.patch
