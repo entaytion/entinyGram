@@ -185,10 +185,13 @@ object ForwardProHelper {
 
         state.filterTabsView = tabsView
         state.selectedFilterId = filters.firstOrNull { it.isDefault }?.id ?: filters[0].id
-        frameLayout.addView(
-            tabsView,
-            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP.toFloat(), Gravity.TOP or Gravity.LEFT, 0f, FOLDER_TABS_TOP_MARGIN_DP, 0f, 0f)
-        )
+        // entiny: deferred - adding this inline re-entered FilterTabsView's listView mid-layout and crashed RecyclerView.State.
+        frameLayout.post {
+            frameLayout.addView(
+                tabsView,
+                LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP.toFloat(), Gravity.TOP or Gravity.LEFT, 0f, FOLDER_TABS_TOP_MARGIN_DP, 0f, 0f)
+            )
+        }
     }
 
     @JvmStatic
