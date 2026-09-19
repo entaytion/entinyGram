@@ -49,13 +49,18 @@ object ChatInputMenuHelper {
         }
 
         val size = ChatActivityEnterView.DEFAULT_HEIGHT
-        container.addView(button, LayoutHelper.createFrame(size, size, Gravity.BOTTOM or Gravity.RIGHT))
+        container.addView(button, LayoutHelper.createFrame(size, size, Gravity.BOTTOM or if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT))
+    }
+
+    @JvmStatic
+    fun getMenuButton(enterView: ChatActivityEnterView): View? {
+        return enterView.messageEditTextContainer?.findViewWithTag<View>(MENU_BUTTON_TAG)
     }
 
     @JvmStatic
     fun isMenuButtonVisible(enterView: ChatActivityEnterView): Boolean {
         if (!InuConfig.INPUT_TRANSLATE.value) return false
-        val button = enterView.messageEditTextContainer?.findViewWithTag<View>(MENU_BUTTON_TAG) ?: return false
+        val button = getMenuButton(enterView) ?: return false
         return button.visibility == View.VISIBLE
     }
 
@@ -68,6 +73,7 @@ object ChatInputMenuHelper {
         if (!InuConfig.INPUT_TRANSLATE.value) {
             if (button.visibility != View.GONE) {
                 button.visibility = View.GONE
+                enterView.inu_updateFieldRight()
             }
             return
         }
@@ -80,6 +86,7 @@ object ChatInputMenuHelper {
 
         if (shouldShow) {
             button.visibility = View.VISIBLE
+            enterView.inu_updateFieldRight()
             if (animated) {
                 button.alpha = 0f
                 button.scaleX = 0.5f
@@ -97,6 +104,7 @@ object ChatInputMenuHelper {
                 button.scaleY = 1f
             }
         } else {
+            enterView.inu_updateFieldRight()
             if (animated) {
                 button.animate()
                     .alpha(0f)
@@ -188,6 +196,7 @@ object ChatInputMenuHelper {
 
         val findField = EditTextBoldCursor(context).apply {
             background = null
+            gravity = (if (LocaleController.isRTL) Gravity.RIGHT else Gravity.LEFT) or Gravity.CENTER_VERTICAL
             setLineColors(
                 Theme.getColor(Theme.key_dialogInputField, theme),
                 Theme.getColor(Theme.key_dialogInputFieldActivated, theme),
@@ -205,6 +214,7 @@ object ChatInputMenuHelper {
 
         val replaceField = EditTextBoldCursor(context).apply {
             background = null
+            gravity = (if (LocaleController.isRTL) Gravity.RIGHT else Gravity.LEFT) or Gravity.CENTER_VERTICAL
             setLineColors(
                 Theme.getColor(Theme.key_dialogInputField, theme),
                 Theme.getColor(Theme.key_dialogInputFieldActivated, theme),
