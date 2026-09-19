@@ -1208,6 +1208,14 @@
     <string name="InuTranslateMicrosoftRegion">Azure bölgesi (isteğe bağlı)</string>
     <string name="InuTranslateOutgoing">Mesajlarımı çevir</string>
     <string name="InuTranslateOutgoingInfo">Gönderdiğiniz mesajları otomatik sohbet çevirisine dahil edin.</string>
+    <string name="InuInputTranslate">Göndermeden önce çevir</string>
+    <string name="InuInputTranslateInfo">Metin seçim menüsüne ve giriş alanı işlemlerine çeviri seçenekleri ekler.</string>
+    <string name="InuDisableLinkPreview">Bağlantı Önizlemesini Devre Dışı Bırak</string>
+    <string name="InuEnableLinkPreview">Bağlantı Önizlemesini Etkinleştir</string>
+    <string name="InuReplaceText">Metni Değiştir</string>
+    <string name="InuReplaceTextFind">Bul</string>
+    <string name="InuReplaceTextWith">Şununla değiştir</string>
+    <string name="InuReplaceTextApply">Değiştir</string>
     <string name="InuTranslateProvider">Çeviri sağlayıcısı</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">Çeviri başarısız oldu: %1$s. Bir süre sonra tekrar deneyin.</string>

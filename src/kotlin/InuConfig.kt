@@ -1491,6 +1491,9 @@ object InuConfig {
     val TRANSLATE_OUTGOING = BoolItem("translate_outgoing", false)
 
     @JvmField
+    val INPUT_TRANSLATE = BoolItem("input_translate", false)
+
+    @JvmField
     val TRANSLATE_PROVIDER = IntItem("translate_provider", 0)
 
     // entiny: skip stock 6-message detection sample threshold so translate banner shows on first detected foreign message

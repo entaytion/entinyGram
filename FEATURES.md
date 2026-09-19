@@ -58,6 +58,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **third-party translation providers**: Google, DeepL, OpenAI-compatible LLM, Yandex, Bing, Azure, or MyMemory with entity preservation and automatic fallbacks
 - 📡 **auto-translate every chat**: chat translation on by default everywhere with per-dialog exception memory - *inspired by [OwlGram](https://github.com/OwlGramDev/OwlGram)*
 - 📡 **LLM translation with conversation context**: feeds recent chat messages as context for improved accuracy, gender, and tone, with temperature control
+- 📡 **translate before sending & input actions**: 3-dots menu on input field with instant draft translation, link preview toggle, find & replace text dialog, and attachment picker, plus text selection translation
 - 📡 **free voice transcription**: transcribe voice notes and video messages via Groq Whisper, Gemini Flash, OpenAI, or Cloudflare AI without Premium
 - 📡 **official-app emulation** (APP_ID 4): direct purchases and premium checkout without official app blocks
 - 📡 **unlimited limits override**: locally raise Telegram's pin, favorites, and folder ceilings without server sync reverts

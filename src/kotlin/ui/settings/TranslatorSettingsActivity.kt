@@ -85,6 +85,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateAutoDetectLangInfo)))
         items.add(check(TOGGLE_TRANSLATE_OUTGOING, R.string.InuTranslateOutgoing, InuConfig.TRANSLATE_OUTGOING))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateOutgoingInfo)))
+        items.add(check(TOGGLE_INPUT_TRANSLATE, R.string.InuInputTranslate, InuConfig.INPUT_TRANSLATE))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuInputTranslateInfo)))
 
         items.add(check(TOGGLE_FORCE_TRANSLATE, R.string.InuForceTranslate, InuConfig.FORCE_TRANSLATE))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
@@ -154,6 +156,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_AUTO_TRANSLATE_ALL = InuUtils.generateId()
         private val TOGGLE_FORCE_TRANSLATE = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_OUTGOING = InuUtils.generateId()
+        private val TOGGLE_INPUT_TRANSLATE = InuUtils.generateId()
         private val TOGGLE_IN_PLACE_TRANSLATION = InuUtils.generateId()
         private val TOGGLE_TRANSLATE_WEB_PREVIEWS = InuUtils.generateId()
         private val TOGGLE_KEEP_ORIGINAL = InuUtils.generateId()
@@ -169,6 +172,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
             TOGGLE_AUTO_TRANSLATE_ALL to InuConfig.AUTO_TRANSLATE_ALL,
             TOGGLE_FORCE_TRANSLATE to InuConfig.FORCE_TRANSLATE,
             TOGGLE_TRANSLATE_OUTGOING to InuConfig.TRANSLATE_OUTGOING,
+            TOGGLE_INPUT_TRANSLATE to InuConfig.INPUT_TRANSLATE,
             TOGGLE_IN_PLACE_TRANSLATION to InuConfig.IN_PLACE_TRANSLATION,
             TOGGLE_TRANSLATE_WEB_PREVIEWS to InuConfig.TRANSLATE_WEB_PREVIEWS,
             TOGGLE_KEEP_ORIGINAL to InuConfig.KEEP_ORIGINAL_AFTER_TRANSLATION,
@@ -187,6 +191,7 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("auto-translate-all", R.string.InuAutoTranslateAll, TOGGLE_AUTO_TRANSLATE_ALL),
                 SearchRegistry.Entry("force-translate", R.string.InuForceTranslate, TOGGLE_FORCE_TRANSLATE),
                 SearchRegistry.Entry("translate-outgoing", R.string.InuTranslateOutgoing, TOGGLE_TRANSLATE_OUTGOING),
+                SearchRegistry.Entry("input-translate", R.string.InuInputTranslate, TOGGLE_INPUT_TRANSLATE),
                 SearchRegistry.Entry("show-translate-button", R.string.ShowTranslateButton, TOGGLE_SHOW_TRANSLATE_BUTTON),
                 SearchRegistry.Entry("show-translate-chat-button", R.string.ShowTranslateChatButton, TOGGLE_SHOW_TRANSLATE_CHAT_BUTTON),
                 SearchRegistry.Entry("translation-target", R.string.InuTranslationTarget, BUTTON_TARGET_LANG),

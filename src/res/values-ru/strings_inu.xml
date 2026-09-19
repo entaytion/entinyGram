@@ -1030,6 +1030,14 @@
     <string name="InuTOS">Запрещённые функции</string>
     <string name="InuTranslateOutgoing">Переводить мои сообщения</string>
     <string name="InuTranslateOutgoingInfo">Добавлять отправленные вами сообщения в автоматический перевод чата.</string>
+    <string name="InuInputTranslate">Перевод перед отправкой</string>
+    <string name="InuInputTranslateInfo">Добавляет возможность перевода в контекстное меню выделения и действия в поле ввода.</string>
+    <string name="InuDisableLinkPreview">Отключить предпросмотр</string>
+    <string name="InuEnableLinkPreview">Включить предпросмотр</string>
+    <string name="InuReplaceText">Заменить текст</string>
+    <string name="InuReplaceTextFind">Найти</string>
+    <string name="InuReplaceTextWith">Заменить на</string>
+    <string name="InuReplaceTextApply">Заменить</string>
     <string name="InuShowMutualContactIcon">Значок взаимного контакта</string>
     <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
     <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>

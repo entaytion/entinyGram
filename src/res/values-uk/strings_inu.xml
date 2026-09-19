@@ -827,6 +827,14 @@
     <string name="InuTOS">Заборонені функції</string>
     <string name="InuTranslateOutgoing">Перекладати мої повідомлення</string>
     <string name="InuTranslateOutgoingInfo">Додавати надіслані вами повідомлення до автоматичного перекладу чату.</string>
+    <string name="InuInputTranslate">Переклад перед відправкою</string>
+    <string name="InuInputTranslateInfo">Додає можливість перекладу до контекстного меню виділення та дій у полі введення.</string>
+    <string name="InuDisableLinkPreview">Вимкнути попередній перегляд</string>
+    <string name="InuEnableLinkPreview">Увімкнути попередній перегляд</string>
+    <string name="InuReplaceText">Замінити текст</string>
+    <string name="InuReplaceTextFind">Знайти</string>
+    <string name="InuReplaceTextWith">Замінити на</string>
+    <string name="InuReplaceTextApply">Замінити</string>
     <string name="InuSelfDestructMedia">Самознищуване медіа</string>
     <string name="InuAllowForwardRestricted">Дозволити пересилання з захищених чатів</string>
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>

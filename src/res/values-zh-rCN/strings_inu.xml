@@ -1210,6 +1210,14 @@
     <string name="InuTranslateMicrosoftRegion">Azure 区域（可选）</string>
     <string name="InuTranslateOutgoing">翻译我发送的消息</string>
     <string name="InuTranslateOutgoingInfo">在聊天自动翻译中包含您自己发送的消息。</string>
+    <string name="InuInputTranslate">发送前翻译</string>
+    <string name="InuInputTranslateInfo">在文本选择菜单和输入栏操作中添加翻译选项。</string>
+    <string name="InuDisableLinkPreview">禁用链接预览</string>
+    <string name="InuEnableLinkPreview">启用链接预览</string>
+    <string name="InuReplaceText">替换文本</string>
+    <string name="InuReplaceTextFind">查找</string>
+    <string name="InuReplaceTextWith">替换为</string>
+    <string name="InuReplaceTextApply">替换</string>
     <string name="InuTranslateProvider">翻译提供商</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">翻译失败：%1$s。请稍后重试。</string>

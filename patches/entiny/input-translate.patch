@@ -1,0 +1,92 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 19 Sep 2026 16:23:19 +0300
+Subject: Input message translation and enter view actions
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    | 22 ++++++++++++++++---
+ .../ui/Components/ChatActivityEnterView.java  | 10 +++++++++
+ 2 files changed, 29 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -14501,6 +14501,22 @@ public class ChatActivity extends BaseFragment implements
+         }
+     }
+ 
++    public void inu_toggleLinkPreview() {
++        if (chatActivityEnterView == null) return;
++        boolean enabled = chatActivityEnterView.isMessageWebPageSearchEnabled();
++        if (enabled || foundWebPage != null) {
++            chatActivityEnterView.setWebPage(null, false);
++            foundWebPage = null;
++            if (messagePreviewParams != null) {
++                messagePreviewParams.updateLink(currentAccount, null, chatActivityEnterView.getFieldText(), replyingMessageObject == threadMessageObject ? null : replyingMessageObject, replyingQuote, editingMessageObject);
++            }
++            fallbackFieldPanel();
++        } else {
++            chatActivityEnterView.setWebPage(null, true);
++            inu_refetchWebPreview();
++        }
++    }
++
+     private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
+         cancelSearchLinks();
+         linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
+@@ -28036,9 +28052,9 @@ public class ChatActivity extends BaseFragment implements
+         if (chat && encryptedChat == null) {
+             menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
+         }
+-//        if (MessagesController.getInstance(UserConfig.selectedAccount).getTranslateController().isContextTranslateEnabled()) {
+-//            menu.add(R.id.menu_groupbolditalic, R.id.menu_translate, order++, "Translate");
+-//        }
++        if (desu.inugram.InuConfig.INPUT_TRANSLATE.getValue()) {
++            menu.add(R.id.menu_groupbolditalic, R.id.menu_translate, order++, LocaleController.getString(R.string.TranslateMessage));
++        }
+         menu.add(R.id.menu_groupbolditalic, R.id.menu_regular, order++, LocaleController.getString(R.string.Regular));
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -2838,6 +2838,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             attachButton.setContentDescription(getString(R.string.AccDescrAttachButton));
+             updateFieldRight(1);
+         }
++        desu.inugram.helpers.chat.ChatInputMenuHelper.attach(this);
+ 
+         aiButton = new ImageView(context);
+         aiButton.setImageDrawable(aiButtonIcon = new AiButtonDrawable(context));
+@@ -6270,6 +6271,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+         setRecordVideoButtonVisible(!isInVideoMode(), true);
+     }
+ 
++    public void inu_openAttach() {
++        if (delegate != null) {
++            delegate.didPressAttachButton();
++        }
++    }
++
+     public void inu_startRecordingLocked(boolean video) {
+         createRecordCircle();
+         setRecordVideoButtonVisible(video, false);
+@@ -8846,6 +8853,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
+             }
+         }
++        desu.inugram.helpers.chat.ChatInputMenuHelper.updateVisibility(this, animated);
+     }
+ 
+     private void setSlowModeButtonVisible(boolean visible) {
+@@ -8877,6 +8885,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+         } else {
+             if (scheduledButton != null && scheduledButton.getTag() != null) {
+                 layoutParams.rightMargin = dp(50);
++            } else if (desu.inugram.helpers.chat.ChatInputMenuHelper.isMenuButtonVisible(this)) {
++                layoutParams.rightMargin = dp(50);
+             } else {
+                 layoutParams.rightMargin = dp(2);
+             }
