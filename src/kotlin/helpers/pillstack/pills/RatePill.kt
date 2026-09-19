@@ -32,10 +32,10 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
     }
 
     companion object {
-        private val caches = HashMap<String, RateCache>()
+        private val caches = HashMap<Int, RateCache>()
 
-        private fun cacheFor(base: String): RateCache = synchronized(caches) {
-            caches.getOrPut(base) { RateCache() }
+        private fun cacheFor(instanceId: Int): RateCache = synchronized(caches) {
+            caches.getOrPut(instanceId) { RateCache() }
         }
     }
 
@@ -80,7 +80,7 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
 
     private fun targetSelection(): String = instance()?.to ?: PillCurrencies.AUTO
 
-    private fun cache(): RateCache = cacheFor(baseCurrency())
+    private fun cache(): RateCache = cacheFor(instanceId)
 
     override fun getRefreshInterval(): Long = 5 * 60 * 1000L
 

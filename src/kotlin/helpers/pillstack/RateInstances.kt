@@ -148,5 +148,5 @@ object RateInstances {
 
     fun getScale(code: String): Int = if (code == "TON") 3 else 2
 
-    fun defaultBase(): String = "USD"
+    fun defaultBase(): String = "BTC"
 }

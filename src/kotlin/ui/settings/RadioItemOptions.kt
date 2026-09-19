@@ -18,7 +18,7 @@ object RadioItemOptions {
         var handled = false
         items.forEachIndexed { index, text ->
             options.addChecked(index == selectedIndex, text) {
-                if (handled || index == selectedIndex) return@addChecked
+                if (handled) return@addChecked
                 handled = true
                 onSelect(index)
                 // entiny: rebind without animation because UItem textValue diff would trigger remove and insert crossfade
