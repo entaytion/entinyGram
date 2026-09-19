@@ -1412,7 +1412,10 @@
     <string name="InuDeleteFailedProxiesConfirm">Вы уверены, что хотите удалить все недоступные прокси?</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">Быстрые переключатели автора, подписи и беззвучной отправки в окне пересылки, а также редактирование перед отправкой.</string>
+    <string name="InuForwardProInfo">Быстрые переключатели автора, подписи и беззвучной отправки в окне пересылки, а также редактирование перед отправкой. Экспериментально: функция нестабильна и может работать некорректно.</string>
     <string name="InuForwardProHideCaption">Скрыть подпись</string>
-    <string name="InuForwardProEditedNotice">Отредактировано (отправляется без автора)</string>
+    <string name="InuForwardProEditedNotice">Отправится копией — от вашего имени, без пометки «Переслано от»</string>
+    <string name="InuForwardProUseStock">Обычный Telegram</string>
+    <string name="InuForwardProPlaceholder">Текст сообщения</string>
+    <string name="InuForwardProEmptyNotice">Текст сообщения не может быть пустым</string>
 </resources>

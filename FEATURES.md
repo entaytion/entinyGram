@@ -115,7 +115,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **confirm before sending**: optional confirmation prompt before sending voice messages, stickers, or GIFs
 - 📡 **fast cold start & locale caching**: binary cache for translations and startup optimization for inactive account slots
 - 📡 **trimmed APK size**: dropped unused firebase-appindexing/datatransport and unnecessary transitives to cut binary bloat
-- 📡 **Forward Pro**: forwarding dialog toolbar with silent send, hide captions, hide author, folder filters, and on-the-fly message editing - *inspired by Turbotel / NagramX*
+- 📡 **Forward Pro (Beta)**: edit text or captions before forwarding from message menu or share alert, with quick toggles for author, captions, and silent send (unstable, experimental) - *inspired by Turbotel / NagramX*
 - 📡 **instant mark reactions as read**: long-press the unread-reactions side button to mark read immediately - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **calendar system**: display dates in Gregorian, Hijri (lunar), or Persian / Solar Hijri (Jalali) systems
 

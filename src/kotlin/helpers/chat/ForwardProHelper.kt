@@ -1,15 +1,17 @@
 package desu.inugram.helpers.chat
 
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.text.InputType
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
@@ -17,18 +19,27 @@ import desu.inugram.helpers.dialogs.FolderHelper
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
+import org.telegram.messenger.ChatObject
+import org.telegram.messenger.DialogObject
+import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MediaDataController
+import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
+import org.telegram.messenger.SendMessagesHelper
+import org.telegram.messenger.VideoEditedInfo
+import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
-import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.FilterTabsView
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ShareAlert
+import java.io.File
 import java.util.WeakHashMap
 
 object ForwardProHelper {
@@ -37,33 +48,43 @@ object ForwardProHelper {
     private const val FOLDER_TABS_BOTTOM_GAP_DP = 6
 
     private class AlertState {
+        var active: Boolean = false
         var hideCaption: Boolean = false
-        var editButton: ImageView? = null
         var silentSend: Boolean = false
-        var silentSendIcon: ImageView? = null
+        var isEditMode: Boolean = false
+        var savedComment: CharSequence? = null
+        var editedText: String? = null
+        var editButton: ImageView? = null
+        var copyNotice: TextView? = null
         var authorIcon: ImageView? = null
+        var silentSendIcon: ImageView? = null
         var captionIcon: ImageView? = null
         var filterTabsView: FilterTabsView? = null
         var selectedFilterId: Int = 0
-        var active: Boolean = false
     }
 
     private val states = WeakHashMap<ShareAlert, AlertState>()
-
-    // entiny: one-shot override for the next ShareAlert — true/false forces Forward Pro on/off for that share.
     private var pendingOverride: Boolean? = null
+    private var pendingInitialEditedText: String? = null
 
     @JvmStatic
     fun requestStockShareOnce() {
         pendingOverride = false
+        pendingInitialEditedText = null
     }
 
     @JvmStatic
     fun requestForwardProOnce() {
         pendingOverride = true
+        pendingInitialEditedText = null
     }
 
-    // entiny: Java gates should use this, not raw InuConfig, so an override isn't skipped.
+    @JvmStatic
+    fun requestForwardProWithEditedText(text: String) {
+        pendingOverride = true
+        pendingInitialEditedText = text
+    }
+
     @JvmStatic
     fun isActive(alert: ShareAlert): Boolean = getState(alert).active
 
@@ -71,7 +92,9 @@ object ForwardProHelper {
         return states.getOrPut(alert) {
             AlertState().also {
                 it.active = pendingOverride ?: InuConfig.FORWARD_PRO.value
+                it.editedText = pendingInitialEditedText
                 pendingOverride = null
+                pendingInitialEditedText = null
             }
         }
     }
@@ -79,29 +102,29 @@ object ForwardProHelper {
     @JvmStatic
     fun shouldHideCaption(alert: ShareAlert): Boolean {
         val state = getState(alert)
-        if (!state.active) return false
-        return state.hideCaption
+        return state.active && state.hideCaption
+    }
+
+    @JvmStatic
+    fun isSilentSend(alert: ShareAlert): Boolean {
+        val state = getState(alert)
+        return state.active && state.silentSend
     }
 
     @JvmStatic
     fun getExtraCommentPadding(alert: ShareAlert): Int {
         if (!getState(alert).active) return 0
         val msgs = alert.sendingMessageObjects
-        return if (msgs != null && msgs.isNotEmpty()) dp(46f) else 0
+        return if (getEditableMessage(msgs) != null) dp(44f) else 0
     }
 
     @JvmStatic
-    fun isSilentSend(alert: ShareAlert): Boolean {
+    fun attachSearchRow(alert: ShareAlert, frameLayout: FrameLayout, searchView: View) {
         val state = getState(alert)
-        if (!state.active) return false
-        return state.silentSend
-    }
-
-    // entiny: quick-toggle icons beside the search bar, siblings of searchView not children of it.
-    @JvmStatic
-    fun attachQuickToggles(alert: ShareAlert, frameLayout: FrameLayout) {
-        val state = getState(alert)
-        if (!state.active) return
+        if (!state.active) {
+            frameLayout.addView(searchView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 40f, Gravity.BOTTOM or Gravity.LEFT, 11f, 7f, 11f, 11f))
+            return
+        }
         val context = alert.context ?: return
         val theme = alert.resourcesProvider
         val tintColor = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, theme)
@@ -137,10 +160,22 @@ object ForwardProHelper {
             updateQuickToggleIcons(alert)
         }
 
-        frameLayout.addView(authorIcon, LayoutHelper.createFrame(32, 32f, Gravity.TOP or Gravity.RIGHT, 0f, 11f, 11f, 0f))
-        frameLayout.addView(silentIcon, LayoutHelper.createFrame(32, 32f, Gravity.TOP or Gravity.RIGHT, 0f, 11f, 47f, 0f))
-        frameLayout.addView(captionIcon, LayoutHelper.createFrame(32, 32f, Gravity.TOP or Gravity.RIGHT, 0f, 11f, 83f, 0f))
+        val toggleContainer = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(captionIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
+            addView(silentIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
+            addView(authorIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
+        }
 
+        val searchRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            addView(searchView, LinearLayout.LayoutParams(0, LayoutHelper.WRAP_CONTENT, 1f))
+            addView(toggleContainer, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        }
+
+        frameLayout.addView(searchRow, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 40f, Gravity.TOP or Gravity.LEFT, 11f, 7f, 11f, 0f))
         updateQuickToggleIcons(alert)
     }
 
@@ -153,14 +188,13 @@ object ForwardProHelper {
         state.captionIcon?.alpha = if (state.hideCaption) 1f else 0.5f
     }
 
-    // entiny: folder-tab strip via stock FilterTabsView; dialogFilters already has the default "All Chats" entry (id 0).
     @JvmStatic
     fun attachFolderTabs(alert: ShareAlert, frameLayout: FrameLayout) {
         val state = getState(alert)
         if (!state.active) return
         val context = alert.context ?: return
         val filters = MessagesController.getInstance(alert.currentAccount).dialogFilters
-        if (filters.isNullOrEmpty()) return
+        if (filters.isNullOrEmpty() || filters.size <= 1) return
 
         val tabsView = FilterTabsView(context, alert.resourcesProvider)
         tabsView.setDelegate(object : FilterTabsView.FilterTabsViewDelegate {
@@ -185,13 +219,10 @@ object ForwardProHelper {
 
         state.filterTabsView = tabsView
         state.selectedFilterId = filters.firstOrNull { it.isDefault }?.id ?: filters[0].id
-        // entiny: deferred - adding this inline re-entered FilterTabsView's listView mid-layout and crashed RecyclerView.State.
-        frameLayout.post {
-            frameLayout.addView(
-                tabsView,
-                LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP.toFloat(), Gravity.TOP or Gravity.LEFT, 0f, FOLDER_TABS_TOP_MARGIN_DP, 0f, 0f)
-            )
-        }
+        frameLayout.addView(
+            tabsView,
+            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP.toFloat(), Gravity.TOP or Gravity.LEFT, 0f, FOLDER_TABS_TOP_MARGIN_DP, 0f, 0f)
+        )
     }
 
     @JvmStatic
@@ -201,7 +232,6 @@ object ForwardProHelper {
         val filter = MessagesController.getInstance(alert.currentAccount).dialogFilters
             ?.firstOrNull { it.id == state.selectedFilterId } ?: return true
         if (filter.isDefault) return true
-        // entiny: filter.dialogs is only populated when this filter is one of DialogsActivity's own selectedDialogFilter slots — use includesDialog() instead, it's self-contained.
         return filter.includesDialog(AccountInstance.getInstance(alert.currentAccount), dialogId)
     }
 
@@ -209,13 +239,12 @@ object ForwardProHelper {
     fun getFolderTabsHeightDp(alert: ShareAlert): Int {
         if (!getState(alert).active) return 0
         val filters = MessagesController.getInstance(alert.currentAccount).dialogFilters
-        if (filters.isNullOrEmpty()) return 0
-        // entiny: total header needed for the tab strip minus the stock 58dp band search already sits in
+        if (filters.isNullOrEmpty() || filters.size <= 1) return 0
         return (FOLDER_TABS_TOP_MARGIN_DP + FolderHelper.TAB_BAR_HEIGHT_DP + FOLDER_TABS_BOTTOM_GAP_DP - 58).toInt()
     }
 
     @JvmStatic
-    fun attachHideCaptionRow(alert: ShareAlert, sendPopupLayout1: ActionBarPopupWindow.ActionBarPopupWindowLayout, darkTheme: Boolean) {
+    fun attachHideCaptionRow(alert: ShareAlert, sendPopupLayout: ActionBarPopupWindow.ActionBarPopupWindowLayout, darkTheme: Boolean) {
         val state = getState(alert)
         if (!state.active) return
         val context = alert.context ?: return
@@ -223,56 +252,313 @@ object ForwardProHelper {
         if (darkTheme) {
             hideCaptionView.setTextColor(Theme.getColor(Theme.key_voipgroup_nameText, alert.resourcesProvider))
         }
-        sendPopupLayout1.addView(hideCaptionView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))
+        sendPopupLayout.addView(hideCaptionView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))
         hideCaptionView.setTextAndIcon(LocaleController.getString(R.string.InuForwardProHideCaption), 0)
         hideCaptionView.setChecked(state.hideCaption)
         hideCaptionView.setOnClickListener {
             state.hideCaption = !state.hideCaption
             hideCaptionView.setChecked(state.hideCaption)
+            updateQuickToggleIcons(alert)
         }
     }
 
     @JvmStatic
-    fun attachEditButton(alert: ShareAlert, writeButtonContainer: FrameLayout) {
+    fun attachCommentRow(alert: ShareAlert) {
         val state = getState(alert)
         if (!state.active) return
         val context = alert.context ?: return
-        val msgs = alert.sendingMessageObjects
-        if (msgs == null || msgs.isEmpty()) return
-
         val theme = alert.resourcesProvider
+        val frame2 = alert.frameLayout2 ?: return
+        val msgs = alert.sendingMessageObjects
+        val editable = getEditableMessage(msgs) ?: return
 
         val editButton = ImageView(context).apply {
             scaleType = ImageView.ScaleType.CENTER
             setImageResource(R.drawable.msg_edit)
-            colorFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
-            background = Theme.createSimpleSelectorCircleDrawable(
-                dp(38f),
-                Theme.getColor(Theme.key_dialogFloatingButton, theme),
-                Theme.getColor(Theme.key_dialogFloatingButtonPressed, theme),
-            )
+            setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon, theme), PorterDuff.Mode.SRC_IN)
+            background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector, theme), Theme.RIPPLE_MASK_CIRCLE_TO_BOUND_EDGE)
             contentDescription = LocaleController.getString(R.string.Edit)
             ViewCompat.setTooltipText(this, LocaleController.getString(R.string.Edit))
             setOnClickListener {
-                onEditClick(alert)
+                toggleEditMode(alert)
             }
         }
         state.editButton = editButton
 
-        // entiny: anchored from the container's right edge (where the send circle sits), not the left.
-        writeButtonContainer.addView(
-            editButton,
-            LayoutHelper.createFrame(38, 38f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 65f, 10f)
-        )
+        val copyNotice = TextView(context).apply {
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+            setTextColor(Theme.getColor(Theme.key_undo_infoColor, theme))
+            background = Theme.createRoundRectDrawable(dp(10f), Theme.getColor(Theme.key_undo_background, theme))
+            setPadding(dp(10f), dp(6f), dp(10f), dp(6f))
+            text = LocaleController.getString(R.string.InuForwardProEditedNotice)
+            visibility = View.GONE
+        }
+        state.copyNotice = copyNotice
+
+        frame2.addView(copyNotice, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, -2f, Gravity.TOP or Gravity.CENTER_HORIZONTAL, 0f, -34f, 0f, 0f))
+        frame2.addView(editButton, LayoutHelper.createFrame(40, 40f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 68f, 5f))
+
+        if (state.editedText != null) {
+            enterEditMode(alert, state.editedText)
+        }
     }
 
-    private fun onEditClick(alert: ShareAlert) {
-        val messages = alert.sendingMessageObjects ?: return
-        if (messages.isEmpty()) return
-        val msg = messages[0]
-        val currentText = msg.messageOwner?.message.orEmpty()
-        val context = alert.context ?: return
-        val theme = alert.resourcesProvider
+    @JvmStatic
+    fun onShowCommentTextView(alert: ShareAlert, show: Boolean) {
+        val state = getState(alert)
+        if (!state.active) return
+        if (!show && state.isEditMode) {
+            exitEditMode(alert)
+        }
+    }
+
+    private fun toggleEditMode(alert: ShareAlert) {
+        val state = getState(alert)
+        if (state.isEditMode) {
+            exitEditMode(alert)
+        } else {
+            enterEditMode(alert, null)
+        }
+    }
+
+    private fun enterEditMode(alert: ShareAlert, prefillText: String?) {
+        val state = getState(alert)
+        val msgs = alert.sendingMessageObjects ?: return
+        val editable = getEditableMessage(msgs) ?: return
+        val commentView = alert.commentTextView ?: return
+
+        state.isEditMode = true
+        state.savedComment = commentView.text
+        commentView.setHint(LocaleController.getString(R.string.InuForwardProPlaceholder))
+        val textToLoad = prefillText ?: getForwardText(editable).toString()
+        commentView.setText(textToLoad)
+        commentView.getEditText().setSelection(commentView.text?.length ?: 0)
+        state.editButton?.setImageResource(R.drawable.msg_close)
+        state.editButton?.contentDescription = LocaleController.getString(R.string.Cancel)
+        state.copyNotice?.visibility = View.VISIBLE
+        commentView.openKeyboard()
+    }
+
+    private fun exitEditMode(alert: ShareAlert) {
+        val state = getState(alert)
+        if (!state.isEditMode) return
+        val commentView = alert.commentTextView ?: return
+
+        state.isEditMode = false
+        state.editedText = null
+        commentView.setHint(LocaleController.getString(R.string.ShareComment))
+        commentView.setText(state.savedComment ?: "")
+        state.editButton?.setImageResource(R.drawable.msg_edit)
+        state.editButton?.contentDescription = LocaleController.getString(R.string.Edit)
+        state.copyNotice?.visibility = View.GONE
+    }
+
+    @JvmStatic
+    fun handleSend(alert: ShareAlert, withSound: Boolean): Boolean {
+        val state = getState(alert)
+        if (!state.active) return false
+        val msgs = alert.sendingMessageObjects ?: return false
+        val editable = getEditableMessage(msgs) ?: return false
+
+        val commentView = alert.commentTextView
+        val currentFieldText = commentView?.text?.toString() ?: ""
+
+        val isTextEdited = state.isEditMode && hasTextChanged(currentFieldText, editable)
+        val isPreEdited = state.editedText != null && hasTextChanged(state.editedText.orEmpty(), editable)
+
+        if (!isTextEdited && !isPreEdited) {
+            if (state.isEditMode) exitEditMode(alert)
+            return false
+        }
+
+        val textToSend = if (isTextEdited) currentFieldText else state.editedText.orEmpty()
+        if (isTextOnly(editable) && textToSend.trim().isEmpty()) {
+            Toast.makeText(alert.context, LocaleController.getString(R.string.InuForwardProEmptyNotice), Toast.LENGTH_SHORT).show()
+            return true
+        }
+
+        return sendEditedAsCopy(alert, editable, textToSend, withSound)
+    }
+
+    private fun sendEditedAsCopy(alert: ShareAlert, editable: MessageObject, editedText: String, withSound: Boolean): Boolean {
+        val messages = alert.sendingMessageObjects ?: return false
+        val state = getState(alert)
+        val account = alert.currentAccount
+
+        val entities = MediaDataController.getInstance(account).getEntities(arrayOf(editedText), true) ?: ArrayList()
+        val comment = state.savedComment
+        val hasComment = !comment.isNullOrEmpty()
+        val commentEntities = if (hasComment) MediaDataController.getInstance(account).getEntities(arrayOf(comment), true) ?: ArrayList() else ArrayList()
+
+        var hasSentAny = false
+        val selectedDialogs = alert.selectedDialogs
+        val selectedTopics = alert.selectedDialogTopics
+
+        for (a in 0 until selectedDialogs.size()) {
+            val did = selectedDialogs.keyAt(a)
+            val isMonoForum = MessagesController.getInstance(account).isMonoForum(did)
+            val topic = selectedTopics[selectedDialogs.get(did)]
+            val monoForumPeerId = if (topic != null && isMonoForum) DialogObject.getPeerDialogId(topic.from_id) else 0L
+            val replyTopMsg = if (topic != null && !isMonoForum) MessageObject(account, topic.topicStartMessage, false, false).apply { isTopicMainMessage = true } else null
+
+            if (hasComment) {
+                val params = SendMessagesHelper.SendMessageParams.of(
+                    comment.toString(), did, null, replyTopMsg, null, true,
+                    commentEntities, null, null, withSound, 0, 0, null, false
+                )
+                params.monoForumPeer = monoForumPeerId
+                SendMessagesHelper.getInstance(account).sendMessage(params)
+            }
+
+            val sent = withEditedText(editable, editedText, entities) {
+                sendSingleOrBatchAsCopy(messages, did, replyTopMsg, withSound, account, monoForumPeerId)
+            }
+            if (sent) {
+                hasSentAny = true
+            }
+        }
+
+        alert.dismiss()
+        return hasSentAny
+    }
+
+    private inline fun <T> withEditedText(
+        editable: MessageObject,
+        newText: String,
+        entities: ArrayList<TLRPC.MessageEntity>,
+        action: () -> T
+    ): T {
+        val owner = editable.messageOwner ?: return action()
+        val origMessage = owner.message
+        val origEntities = owner.entities
+        val origCaption = editable.caption
+        val origText = editable.messageText
+
+        try {
+            owner.message = newText
+            owner.entities = entities
+            editable.caption = if (newText.isNotEmpty()) newText else null
+            editable.messageText = newText
+            return action()
+        } finally {
+            owner.message = origMessage
+            owner.entities = origEntities
+            editable.caption = origCaption
+            editable.messageText = origText
+        }
+    }
+
+    private fun sendSingleOrBatchAsCopy(
+        messages: ArrayList<MessageObject>,
+        targetDialogId: Long,
+        replyTopMsg: MessageObject?,
+        withSound: Boolean,
+        account: Int,
+        monoForumPeerId: Long
+    ): Boolean {
+        if (messages.isEmpty()) return false
+        val accountInstance = AccountInstance.getInstance(account)
+
+        val isAlbum = messages.size > 1 && messages.all { it.isPhoto || it.isVideo }
+        if (isAlbum) {
+            val allPaths = messages.map { getPathToMessage(it, account) }
+            if (allPaths.all { !it.isNullOrEmpty() && File(it).exists() }) {
+                val mediaList = ArrayList<SendMessagesHelper.SendingMediaInfo>()
+                for (i in messages.indices) {
+                    val msg = messages[i]
+                    val path = allPaths[i]!!
+                    val info = SendMessagesHelper.SendingMediaInfo().apply {
+                        this.path = path
+                        this.caption = msg.caption?.toString()
+                        this.entities = msg.messageOwner?.entities ?: ArrayList()
+                        this.isVideo = msg.isVideo
+                    }
+                    mediaList.add(info)
+                }
+                SendMessagesHelper.prepareSendingMedia(
+                    accountInstance, mediaList, targetDialogId, null,
+                    replyTopMsg, null, null, false, true, null, withSound, 0, 0, 0,
+                    false, null, null, 0, messages[0].messageOwner?.invert_media ?: false, 0, monoForumPeerId, null
+                )
+                return true
+            }
+        }
+
+        var sentAny = false
+        for (msg in messages) {
+            if (sendSingleMessageAsCopy(msg, targetDialogId, replyTopMsg, withSound, account, monoForumPeerId)) {
+                sentAny = true
+            }
+        }
+        return sentAny
+    }
+
+    private fun sendSingleMessageAsCopy(
+        msg: MessageObject,
+        targetDialogId: Long,
+        replyTopMsg: MessageObject?,
+        withSound: Boolean,
+        account: Int,
+        monoForumPeerId: Long
+    ): Boolean {
+        val owner = msg.messageOwner ?: return false
+        val path = getPathToMessage(msg, account)
+        val caption = msg.caption?.toString()
+        val entities = owner.entities ?: ArrayList()
+
+        if (msg.type == MessageObject.TYPE_TEXT || msg.isAnimatedEmoji) {
+            val text = owner.message.orEmpty()
+            if (text.isEmpty()) return false
+            val params = SendMessagesHelper.SendMessageParams.of(
+                text, targetDialogId, null, replyTopMsg, null, false,
+                entities, null, null, withSound, 0, 0, null, false
+            )
+            params.monoForumPeer = monoForumPeerId
+            SendMessagesHelper.getInstance(account).sendMessage(params)
+            return true
+        }
+
+        val photo = owner.media?.photo as? TLRPC.TL_photo
+        if (photo != null) {
+            val params = SendMessagesHelper.SendMessageParams.of(
+                photo, path, targetDialogId, null, replyTopMsg, caption, entities,
+                null, null, withSound, 0, 0, owner.ttl, null, false, msg.hasMediaSpoilers()
+            )
+            params.monoForumPeer = monoForumPeerId
+            params.invert_media = owner.invert_media
+            SendMessagesHelper.getInstance(account).sendMessage(params)
+            return true
+        }
+
+        val document = (owner.media?.document ?: msg.document) as? TLRPC.TL_document
+        if (document != null) {
+            val videoEditedInfo = if (msg.isRoundVideo) {
+                msg.videoEditedInfo ?: VideoEditedInfo().apply { roundVideo = true }
+            } else {
+                msg.videoEditedInfo
+            }
+            val params = SendMessagesHelper.SendMessageParams.of(
+                document, videoEditedInfo, path, targetDialogId, null, replyTopMsg, caption, entities,
+                null, null, withSound, 0, 0, owner.ttl, null, null, false, msg.hasMediaSpoilers()
+            )
+            params.monoForumPeer = monoForumPeerId
+            params.invert_media = owner.invert_media
+            SendMessagesHelper.getInstance(account).sendMessage(params)
+            return true
+        }
+
+        return false
+    }
+
+    @JvmStatic
+    fun openEditorDialog(activity: ChatActivity, message: MessageObject, group: MessageObject.GroupedMessages?) {
+        val messages = group?.messages ?: listOf(message)
+        val editable = getEditableMessage(messages)
+        val context = activity.parentActivity ?: return
+        val theme = activity.resourceProvider
+
+        val originalText = if (editable != null) getForwardText(editable).toString() else ""
+        val isMedia = editable != null && !isTextOnly(editable)
 
         val editText = EditTextBoldCursor(context).apply {
             background = null
@@ -282,9 +568,13 @@ object ForwardProHelper {
                 Theme.getColor(Theme.key_text_RedBold, theme),
             )
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
-            setTextColor(Theme.getColor(Theme.key_dialogTextBlack, theme))
+            val textColor = Theme.getColor(Theme.key_dialogTextBlack, theme)
+            setTextColor(textColor)
             setHintTextColor(Theme.getColor(Theme.key_dialogTextHint, theme))
-            hint = LocaleController.getString(R.string.Message)
+            try {
+                backgroundTintList = ColorStateList.valueOf(textColor)
+            } catch (_: Throwable) {}
+            hint = LocaleController.getString(if (isMedia) R.string.InuForwardProPlaceholder else R.string.Message)
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
             maxLines = 10
             minLines = 3
@@ -294,36 +584,33 @@ object ForwardProHelper {
             setCursorSize(dp(20f))
             setCursorWidth(1.5f)
             setPadding(0, dp(8f), 0, dp(8f))
-            setText(currentText)
+            setText(originalText)
             setSelection(text?.length ?: 0)
         }
 
         val scrollView = NestedScrollView(context).apply {
             val pad = dp(24f)
             setPadding(pad, dp(8f), pad, 0)
-            addView(
-                editText,
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT
-                )
-            )
+            addView(editText, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT))
         }
 
         val dialog = AlertDialog.Builder(context, theme)
-            .setTitle(LocaleController.getString(R.string.Edit))
+            .setTitle(LocaleController.getString(R.string.InuForwardPro))
             .setView(scrollView)
             .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-            .setPositiveButton(LocaleController.getString(R.string.Done)) { _, _ ->
+            .setPositiveButton(LocaleController.getString(R.string.Forward)) { _, _ ->
                 val newText = editText.text?.toString().orEmpty()
-                msg.messageOwner.message = newText
-                msg.messageText = newText
-                msg.caption = newText
-                msg.messageOwner.entities = null
-
-                alert.showSendersName = false
-
-                showBulletin(alert, R.drawable.msg_edit, LocaleController.getString(R.string.InuForwardProEditedNotice))
+                if (!isMedia && newText.trim().isEmpty()) {
+                    Toast.makeText(context, LocaleController.getString(R.string.InuForwardProEmptyNotice), Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                requestForwardProWithEditedText(newText)
+                val alert = ShareAlert(
+                    context, activity, ArrayList(messages), null, null,
+                    ChatObject.isChannel(activity.currentChat), null, null,
+                    false, false, false, null, activity.themeDelegate
+                )
+                activity.showDialog(alert)
             }
             .create()
 
@@ -336,23 +623,84 @@ object ForwardProHelper {
         dialog.show()
     }
 
-    private fun showBulletin(alert: ShareAlert, iconRes: Int, text: CharSequence) {
-        try {
-            val container = alert.bulletinContainer2 ?: alert.container
-            val context = alert.context
-            if (container != null && context != null) {
-                val drawable = ContextCompat.getDrawable(context, iconRes)
-                if (drawable != null) {
-                    BulletinFactory.of(container, alert.resourcesProvider)
-                        .createSimpleBulletin(drawable, text)
-                        .show()
-                    return
-                }
+    @JvmStatic
+    fun onDismiss(alert: ShareAlert) {
+        states.remove(alert)
+    }
+
+    fun getEditableMessage(messages: List<MessageObject>?): MessageObject? {
+        if (messages.isNullOrEmpty()) return null
+        val groupId = messages[0].groupIdForUse
+        val isAlbum = messages.size > 1
+        var captionCarrier: MessageObject? = null
+        for (msg in messages) {
+            if (msg.messageOwner == null) return null
+            if (isAlbum && msg.groupIdForUse != groupId) return null
+            if (!isTextCarrier(msg)) return null
+            if (captionCarrier == null && msg.caption != null) {
+                captionCarrier = msg
             }
-        } catch (_: Throwable) {}
-        AndroidUtilities.runOnUIThread {
-            Toast.makeText(alert.context, text, Toast.LENGTH_SHORT).show()
         }
+        if (!isAlbum) return messages[0]
+        if (groupId == 0L) return null
+        return captionCarrier ?: messages[0]
+    }
+
+    private fun isTextCarrier(msg: MessageObject): Boolean {
+        if (msg.isPoll || msg.isTodo || msg.isLocation || msg.isLiveLocation ||
+            msg.isGame || msg.isInvoice || msg.isStoryMedia || msg.isVoiceOnce ||
+            msg.isRoundOnce || msg.isSticker || msg.isAnimatedSticker
+        ) {
+            return false
+        }
+        return msg.type == MessageObject.TYPE_TEXT || msg.isAnimatedEmoji ||
+                msg.isPhoto || msg.isVideo || msg.isRoundVideo ||
+                msg.document != null || msg.caption != null
+    }
+
+    fun isTextOnly(msg: MessageObject): Boolean {
+        return msg.type == MessageObject.TYPE_TEXT || msg.isAnimatedEmoji
+    }
+
+    fun getForwardText(msg: MessageObject): CharSequence {
+        var text = ChatActivity.getMessageCaption(msg, null, null)
+        if (text == null && isTextOnly(msg)) {
+            text = ChatActivity.getMessageContent(msg, 0, false)
+        }
+        return text ?: ""
+    }
+
+    private fun hasTextChanged(newText: String, editable: MessageObject): Boolean {
+        val original = getForwardText(editable).toString()
+        return original != newText
+    }
+
+    private fun getPathToMessage(msg: MessageObject, account: Int): String? {
+        val owner = msg.messageOwner ?: return null
+        if (!owner.attachPath.isNullOrEmpty() && File(owner.attachPath).exists()) {
+            return owner.attachPath
+        }
+        val loader = FileLoader.getInstance(account)
+        val doc = msg.document
+        if (doc != null) {
+            val f1 = loader.getPathToAttach(doc, false)
+            if (f1 != null && f1.exists() && f1.length() > 0) return f1.absolutePath
+            val f2 = loader.getPathToAttach(doc, true)
+            if (f2 != null && f2.exists() && f2.length() > 0) return f2.absolutePath
+        }
+        val photo = owner.media?.photo
+        if (photo != null && !photo.sizes.isNullOrEmpty()) {
+            for (i in photo.sizes.indices.reversed()) {
+                val f = loader.getPathToAttach(photo.sizes[i], false)
+                if (f != null && f.exists() && f.length() > 0) return f.absolutePath
+                val fCache = loader.getPathToAttach(photo.sizes[i], true)
+                if (fCache != null && fCache.exists() && fCache.length() > 0) return fCache.absolutePath
+            }
+        }
+        val fPath = loader.getPathToMessage(owner)
+        if (fPath != null && fPath.exists() && fPath.length() > 0 && !fPath.absolutePath.endsWith("/cache")) {
+            return fPath.absolutePath
+        }
+        return null
     }
 }
-

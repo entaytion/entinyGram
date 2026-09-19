@@ -1385,7 +1385,10 @@
     <string name="InuDeleteFailedProxiesConfirm">Tüm kullanılamayan vekil sunucuları silmek istediğinizden emin misiniz?</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">İletme penceresinde yazar, başlık ve sessiz gönderme için hızlı geçişler ve iletmeden önce düzenleme.</string>
+    <string name="InuForwardProInfo">İletme penceresinde yazar, başlık ve sessiz gönderme için hızlı geçişler ve iletmeden önce düzenleme. Deneysel: kararsızdır, hatalı çalışabilir.</string>
     <string name="InuForwardProHideCaption">Başlıkları gizle</string>
-    <string name="InuForwardProEditedNotice">Düzenlendi (yazarsız gönderiliyor)</string>
+    <string name="InuForwardProEditedNotice">Sizden bir kopya olarak, iletildi etiketi olmadan gönderilecektir</string>
+    <string name="InuForwardProUseStock">Standart Telegram</string>
+    <string name="InuForwardProPlaceholder">Mesaj metni</string>
+    <string name="InuForwardProEmptyNotice">Mesaj metni boş olamaz</string>
 </resources>

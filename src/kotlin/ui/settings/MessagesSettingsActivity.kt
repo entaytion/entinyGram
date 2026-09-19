@@ -221,6 +221,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 R.string.InuForwardPro,
                 R.string.InuForwardProInfo,
                 InuConfig.FORWARD_PRO.value,
+                experimental = true,
             )
         )
         items.add(

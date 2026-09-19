@@ -1430,8 +1430,10 @@
     <string name="InuDeleteFailedProxiesConfirm">Ви впевнені, що хочете видалити всі недоступні проксі?</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">Швидкі перемикачі автора, підпису та беззвучного надсилання у меню пересилання, а також редагування перед відправкою.</string>
+    <string name="InuForwardProInfo">Швидкі перемикачі автора, підпису та беззвучного надсилання у меню пересилання, а також редагування перед відправкою. Експериментально: функція нестабільна і може працювати некоректно.</string>
     <string name="InuForwardProHideCaption">Приховати підпис</string>
-    <string name="InuForwardProEditedNotice">Відредаговано (надсилається без автора)</string>
+    <string name="InuForwardProEditedNotice">Надішлеться копією — від вашого імені, без мітки «Переслано від»</string>
     <string name="InuForwardProUseStock">Стоковий Telegram</string>
+    <string name="InuForwardProPlaceholder">Текст повідомлення</string>
+    <string name="InuForwardProEmptyNotice">Текст повідомлення не може бути порожнім</string>
 </resources>

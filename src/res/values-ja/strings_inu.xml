@@ -1379,7 +1379,10 @@
     <string name="InuDeleteFailedProxiesConfirm">利用できないすべてのプロキシを削除してもよろしいですか？</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">転送ダイアログでの送信者名、キャプション、通知音のクイック切り替えおよび転送前の編集。</string>
+    <string name="InuForwardProInfo">転送ダイアログでの送信者名、キャプション、通知音のクイック切り替えおよび転送前の編集。実験的：不安定であり、正しく動作しない場合があります。</string>
     <string name="InuForwardProHideCaption">キャプションを非表示</string>
-    <string name="InuForwardProEditedNotice">編集済み（送信者なしで送信）</string>
+    <string name="InuForwardProEditedNotice">転送ラベルなしで、あなたのコピーとして送信されます</string>
+    <string name="InuForwardProUseStock">公式Telegram</string>
+    <string name="InuForwardProPlaceholder">メッセージのテキスト</string>
+    <string name="InuForwardProEmptyNotice">メッセージのテキストを空にすることはできません</string>
 </resources>

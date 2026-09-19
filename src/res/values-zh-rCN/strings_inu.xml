@@ -1387,7 +1387,10 @@
     <string name="InuDeleteFailedProxiesConfirm">确定要删除所有不可用的代理吗？</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">在转发对话框中提供发送者、文字说明和静音发送的快速开关，以及转发前编辑。</string>
+    <string name="InuForwardProInfo">在转发对话框中提供发送者、文字说明和静音发送的快速开关，以及转发前编辑。实验性功能：不稳定，可能无法正常工作。</string>
     <string name="InuForwardProHideCaption">隐藏文字说明</string>
-    <string name="InuForwardProEditedNotice">已编辑（将不带作者发送）</string>
+    <string name="InuForwardProEditedNotice">将作为您的副本发送，不带转发标签</string>
+    <string name="InuForwardProUseStock">官方 Telegram</string>
+    <string name="InuForwardProPlaceholder">消息文本</string>
+    <string name="InuForwardProEmptyNotice">消息文本不能为空</string>
 </resources>

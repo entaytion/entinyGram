@@ -1447,8 +1447,10 @@
     <string name="InuSmallGifs">Show small GIFs</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">Quick toggles for author, caption, and silent sending in the forward dialog, plus editing before forwarding.</string>
+    <string name="InuForwardProInfo">Quick toggles for author, caption, and silent sending in the forward dialog, plus editing before forwarding. Experimental: unstable, may work incorrectly.</string>
     <string name="InuForwardProHideCaption">Hide captions</string>
-    <string name="InuForwardProEditedNotice">Edited (sending without author)</string>
+    <string name="InuForwardProEditedNotice">Will be sent as a copy from you, without a forward label</string>
     <string name="InuForwardProUseStock">Stock Telegram</string>
+    <string name="InuForwardProPlaceholder">Message text</string>
+    <string name="InuForwardProEmptyNotice">Message text can\'t be empty</string>
 </resources>

@@ -727,20 +727,7 @@ object ChatHelper {
             }
 
             OPTION_FORWARD_PRO -> {
-                val context = activity.parentActivity ?: return true
-                val messages = ArrayList<MessageObject>()
-                if (selectedObjectGroup != null) {
-                    messages.addAll(selectedObjectGroup.messages)
-                } else {
-                    messages.add(selectedObject)
-                }
-                ForwardProHelper.requestForwardProOnce()
-                val alert = ShareAlert(
-                    context, activity, messages, null, null,
-                    ChatObject.isChannel(activity.currentChat), null, null,
-                    false, false, false, null, activity.themeDelegate
-                )
-                activity.showDialog(alert)
+                ForwardProHelper.openEditorDialog(activity, selectedObject, selectedObjectGroup)
             }
 
             OPTION_REPLY_IN -> {
