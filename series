@@ -418,3 +418,4 @@ entiny/translate-bugfixes.patch
 entiny/confirm-before-sending.patch
 entiny/hijri-calendar.patch
 entiny/input-translate.patch
+entiny/ios-input-bar.patch

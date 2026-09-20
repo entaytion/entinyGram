@@ -1,0 +1,1130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 20 Sep 2026 00:14:19 +0300
+Subject: [+] ios input bar
+
+---
+ .../java/org/telegram/ui/ChatActivity.java    |  25 +
+ .../ui/Components/ChatActivityEnterView.java  | 592 ++++++++++++++++--
+ ...ChatActivityEnterViewAnimatedIconView.java |   3 +-
+ .../org/telegram/ui/MessageSendPreview.java   |  26 +-
+ .../java/org/telegram/ui/iv/RichEditor.java   |   6 +-
+ .../org/telegram/ui/iv/RichEditorToolbar.java |   6 +-
+ 6 files changed, 598 insertions(+), 60 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -410,6 +410,8 @@ public class ChatActivity extends BaseFragment implements
+ 
+     private BlurredBackgroundColorProviderThemed blurredBackgroundColorProvider;
+     private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderWhite;
++    private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderWhiteSend;
++    private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderAccentSend;
+ 
+     private final ReferenceList<View> glassAttachedViews = new ReferenceList<>();
+     private final ReferenceList<BlurredBackgroundDrawable> glassAttachedDrawables = new ReferenceList<>();
+@@ -3626,6 +3628,17 @@ public class ChatActivity extends BaseFragment implements
+                 return super.getBackgroundColor();
+             }
+         };
++        blurredBackgroundColorProviderWhiteSend = new BlurredBackgroundColorProviderThemed(themeDelegate, Theme.key_windowBackgroundWhite) {
++            @Override
++            public int getBackgroundColor() {
++                if (!BlurredBackgroundProviderImpl.checkBlurEnabled(currentAccount, themeDelegate)) {
++                    return 0xFFFFFFFF;
++                }
++                final boolean isThemeLight = themeDelegate != null && !themeDelegate.isDark();
++                return isThemeLight ? 0xD9FFFFFF : 0xC2FFFFFF;
++            }
++        };
++        blurredBackgroundColorProviderAccentSend = new BlurredBackgroundColorProviderThemed(themeDelegate, Theme.key_chat_messagePanelSend);
+ 
+         if (textSelectionHelper == null) {
+             Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
+@@ -7977,6 +7990,10 @@ public class ChatActivity extends BaseFragment implements
+             public void setVisibility(int visibility) {
+                 super.setVisibility(visibility);
+                 bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
++                if (chatInputViewsContainer != null) {
++                    chatInputViewsContainer.drawInputBackground = !isIosInputAppearance() || visibility != View.VISIBLE;
++                    chatInputViewsContainer.invalidate();
++                }
+             }
+ 
+             @Override
+@@ -8192,6 +8209,8 @@ public class ChatActivity extends BaseFragment implements
+         checkSendButtonBlockedByTyping(false);
+ 
+         chatInputBubbleContainer.addView(chatActivityEnterView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, NonIslandHelper.chatElements() ? 0 : 7, 0, NonIslandHelper.chatElements() ? 0 : 7, NonIslandHelper.chatElements() ? -9 : 0));
++        chatActivityEnterView.setInputBarGlassFactory(glassBackgroundDrawableFactory, blurredBackgroundColorProvider, blurredBackgroundColorProviderWhiteSend, blurredBackgroundColorProviderAccentSend);
++        chatInputViewsContainer.drawInputBackground = !chatActivityEnterView.isIosInputAppearance() || chatActivityEnterView.getVisibility() != View.VISIBLE;
+ 
+         int chatListIndex = contentView.indexOfChild(chatListView);
+         chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
+@@ -42909,6 +42928,12 @@ public class ChatActivity extends BaseFragment implements
+             if (blurredBackgroundColorProviderWhite != null) {
+                 blurredBackgroundColorProviderWhite.updateColors();
+             }
++            if (blurredBackgroundColorProviderWhiteSend != null) {
++                blurredBackgroundColorProviderWhiteSend.updateColors();
++            }
++            if (blurredBackgroundColorProviderAccentSend != null) {
++                blurredBackgroundColorProviderAccentSend.updateColors();
++            }
+ 
+             if (chatActivityEnterView != null) {
+                 chatActivityEnterView.updateColors();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -260,6 +260,31 @@ public class ChatActivityEnterView extends FrameLayout implements
+     private float messageTextTranslationX;
+     private float messageTextPaddingTranslationX;
+     private float horizontalPadding = 0;
++    private int attachGravity;
++    private int attachButtonRightDp;
++    private int fieldLeftDp;
++    private int attachLayoutRightDp;
++    private int emojiGravity;
++    private int fieldRightDp;
++    private int emojiLeftDp;
++    private int emojiRightDp;
++    private int iosGapDp;
++    private int aiButtonGravity;
++    private int aiButtonRightMarginDp;
++    private static final int IOS_LEFT_EDGE_MARGIN_DP = 0;
++    private static final int CAPSULE_INSET_DP = 4;
++    private static final int NO_ICON_TEXT_INSET_DP = 8;
++    private static final int COMPACT_TEXT_INSET_DP = 4;
++    private static final int RIGHT_CLUSTER_GAP_DP = 4;
++    private static final int IOS_BUBBLE_RADIUS_DP = 22;
++    private static final int SENDER_SELECT_WIDTH_DP = 36;
++    private static final int BOT_BUTTON_WIDTH_DP = 36;
++    private static final int BOT_COMMANDS_MIN_WIDTH_DP = 40;
++    private static final int AI_RICH_LINE_THRESHOLD = 3;
++    private float sendButtonLastDrawAlpha;
++    private boolean isSendBubbleDismissed;
++    private boolean isAttachRestorePending;
++    private boolean isSenderSelectSlotReserved;
+     private boolean sendButtonEnabled = true;
+     private TLRPC.UserFull userInfo;
+     public HintView2 birthdayHint;
+@@ -2580,6 +2605,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+         super(context);
+         this.resourcesProvider = resourcesProvider;
+         this.isChat = isChat;
++        updateIosLayoutSeeds();
++        attachButtonRightDp = isIosButtonPlacement() ? 0 : (isIosInputAppearance() ? iosGapDp : 0);
+ 
+         smoothKeyboard = isChat && !AndroidUtilities.isInMultiwindow && (fragment == null || !fragment.isInBubbleMode());
+         dotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+@@ -2627,6 +2654,20 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 }
+                 return super.dispatchTouchEvent(ev);
+             }
++
++            @Override
++            protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
++                if (isIosInputAppearance()) {
++                    if (child == doneButton) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubble(canvas, doneBubbleDrawable, child);
++                    } else if (!isIosButtonPlacement() && child == aiButton) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubble(canvas, aiBubbleDrawable, child);
++                    } else if (child == richButton) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubble(canvas, richBubbleDrawable, child);
++                    }
++                }
++                return super.drawChild(canvas, child, drawingTime);
++            }
+         };
+         textFieldContainer.setClipChildren(false);
+         textFieldContainer.setClipToPadding(false);
+@@ -2664,6 +2705,13 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+             @Override
+             protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
++                if (isIosInputAppearance()) {
++                    BlurredBackgroundDrawable outsideLeftBubble = isIosButtonPlacement() ? attachBubbleDrawable : emojiBubbleDrawable;
++                    View outsideLeftButton = isIosButtonPlacement() ? attachButton : emojiButton;
++                    if (child == outsideLeftButton) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubble(canvas, outsideLeftBubble, child);
++                    }
++                }
+                 if (child != null && child == messageEditText) {
+                     return drawMessageEditText(canvas, () -> super.drawChild(canvas, child, drawingTime));
+                 }
+@@ -2734,7 +2782,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 return true;
+             });
+         }
+-        messageEditTextContainer.addView(emojiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 2, 0, 0, 0));
++        messageEditTextContainer.addView(emojiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, emojiGravity, emojiLeftDp, 0, emojiRightDp, 0));
+         setEmojiButtonImage(false, false);
+ 
+         deleteRichDraftButton = new ImageView(context);
+@@ -2758,12 +2806,19 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 .makeRed(AlertDialog.BUTTON_POSITIVE)
+                 .show();
+         });
+-        messageEditTextContainer.addView(deleteRichDraftButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.LEFT, 2, 0, 0, 0));
++        messageEditTextContainer.addView(deleteRichDraftButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, emojiGravity, emojiLeftDp, 0, emojiRightDp, 0));
+ 
+         if (isChat) {
+             final int chatMode = fragment != null ? fragment.getChatMode() : -1;
+ 
+             attachLayout = new LinearLayout(context) {
++                @Override
++                public void setAlpha(float alpha) {
++                    super.setAlpha(alpha);
++                    if (isIosButtonPlacement() && messageEditTextContainer != null) {
++                        messageEditTextContainer.requestLayout();
++                    }
++                }
+                 @Override
+                 protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                     super.onLayout(changed, l, t, r, b);
+@@ -2773,7 +2828,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             attachLayout.setOrientation(LinearLayout.HORIZONTAL);
+             attachLayout.setEnabled(false);
+             attachLayout.setClipChildren(false);
+-            messageEditTextContainer.addView(attachLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT, 0, 0, DEFAULT_HEIGHT, 0));
++            messageEditTextContainer.addView(attachLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, DEFAULT_HEIGHT, attachGravity, 0, 0, attachLayoutRightDp, 0));
+             attachLayout.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset());
+ 
+             if (chatMode != ChatActivity.MODE_WELCOME_MESSAGES) {
+@@ -2827,7 +2882,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             attachButton.setImageResource(R.drawable.msg_input_attach2);
+             attachButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
+             if (!VoiceRecorderHelper.isMovedToAttach()) {
+-                messageEditTextContainer.addView(attachButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
++                messageEditTextContainer.addView(attachButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, attachGravity, 0, 0, attachButtonRightDp, 0));
+             }
+             attachButton.setOnClickListener(v -> {
+                 if (adjustPanLayoutHelper != null && adjustPanLayoutHelper.animationInProgress() || attachLayoutPaddingAlpha == 0f) {
+@@ -2845,7 +2900,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         aiButton.setScaleType(ImageView.ScaleType.CENTER);
+         aiButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
+         aiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16)));
+-        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.TOP | Gravity.LEFT, 0, 1, 0, 0));
++        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, 1, aiButtonRightMarginDp, 0));
+         aiButton.setContentDescription(getString(R.string.AIEditor));
+         ScaleStateListAnimator.apply(aiButton);
+         aiButton.setOnClickListener(v -> {
+@@ -2958,9 +3013,29 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+             @Override
+             protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+-                if (child == sendButton && textTransitionIsRunning) {
++                if (child == sendButton && textTransitionIsRunning && !isIosInputAppearance()) {
+                     return true;
+                 }
++                if (isIosInputAppearance()) {
++                    if (child == sendButton) {
++                        float sendButtonAlpha = child.getAlpha();
++                        if (textTransitionIsRunning) {
++                            isSendBubbleDismissed = true;
++                        } else if (sendButtonAlpha > sendButtonLastDrawAlpha || sendButtonAlpha >= 1f) {
++                            isSendBubbleDismissed = false;
++                        }
++                        if (sendBubbleDrawable != null && child.getVisibility() == VISIBLE && !isSendBubbleDismissed) {
++                            sendBubbleDrawable.setBounds(child.getRight() - dp(DEFAULT_HEIGHT), child.getBottom() - dp(DEFAULT_HEIGHT), child.getRight(), child.getBottom());
++                            sendBubbleDrawable.setAlpha((int) (255 * sendButtonAlpha));
++                            DrawableUtils.drawWithScale(canvas, sendBubbleDrawable, child.getScaleX());
++                        }
++                        sendButtonLastDrawAlpha = sendButtonAlpha;
++                    } else if (child == expandStickersButton) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubbleSquare(canvas, expandStickersBubbleDrawable, child, DEFAULT_HEIGHT);
++                    } else if (child == cancelBotButton) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubbleSquare(canvas, cancelBotBubbleDrawable, child, DEFAULT_HEIGHT);
++                    }
++                }
+                 return super.drawChild(canvas, child, drawingTime);
+             }
+ 
+@@ -3248,7 +3323,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+             @Override
+             protected void dispatchDraw(@NonNull Canvas canvas) {
+-                if (!audioVideoButtonContainerForbidden) {
++                boolean isMenuState = audioVideoSendButton != null
++                        && audioVideoSendButton.getCurrentState() == ChatActivityEnterViewAnimatedIconView.State.MENU;
++                if ((!audioVideoButtonContainerForbidden || isIosInputAppearance()) && (!isMenuState || isIosInputAppearance())) {
+                     float s = 1;
+                     if (expandStickersButton != null) {
+                         if (expandStickersButton.getVisibility() == View.VISIBLE) {
+@@ -3256,22 +3333,27 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         }
+                     }
+ 
+-                    final float r = dpf2(19);
+-                    paint.setColor(getThemedColor(Theme.key_chat_messagePanelSend));
+-                    final float margin = dpf2(3);
+-                    final float height = dpf2(38);
+-                    final float width = dpf2(38);
+-                    backgroundRect.set(
+-                            getMeasuredWidth() - width - margin,
+-                            getMeasuredHeight() - height - margin,
+-                            getMeasuredWidth() - margin,
+-                            getMeasuredHeight() - margin
+-                    );
+-
+                     canvas.save();
+-                    canvas.scale(s, s, backgroundRect.centerX(), backgroundRect.centerY());
+-                    if (!desu.inugram.helpers.theme.NonIslandHelper.chatElements()) {
+-                        canvas.drawRoundRect(backgroundRect, r, r, paint);
++                    canvas.scale(s, s, getMeasuredWidth() - dpf2(22), getMeasuredHeight() - dpf2(22));
++                    if (isIosInputAppearance() && voiceBubbleDrawable != null) {
++                        voiceBubbleDrawable.setBounds(getMeasuredWidth() - dp(DEFAULT_HEIGHT), getMeasuredHeight() - dp(DEFAULT_HEIGHT), getMeasuredWidth(), getMeasuredHeight());
++                        voiceBubbleDrawable.setAlpha((int) (255 * s * audioVideoSendButton.getAlpha()));
++                        DrawableUtils.drawWithScale(canvas, voiceBubbleDrawable, audioVideoSendButton.getScaleX());
++                    } else {
++                        final float r = dpf2(19);
++                        paint.setColor(desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
++                        final float margin = dpf2(3);
++                        final float height = dpf2(38);
++                        final float width = dpf2(38);
++                        backgroundRect.set(
++                                getMeasuredWidth() - width - margin,
++                                getMeasuredHeight() - height - margin,
++                                getMeasuredWidth() - margin,
++                                getMeasuredHeight() - margin
++                        );
++                        if (!desu.inugram.helpers.theme.NonIslandHelper.chatElements()) {
++                            canvas.drawRoundRect(backgroundRect, r, r, paint);
++                        }
+                     }
+                     canvas.restore();
+                 }
+@@ -3527,6 +3609,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 return shouldDrawBackground || desu.inugram.helpers.theme.NonIslandHelper.chatElements() && inu_isSendButtonLongPressed();
+             }
+ 
++            @Override
++            public boolean shouldDrawInternalCircle() {
++                return !isIosInputAppearance();
++            }
++
+             @Override
+             public void setAlpha(float alpha) {
+                 super.setAlpha(alpha);
+@@ -3728,6 +3815,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+             @Override
+             public void setTranslationX(float translationX) {
+                 innerTranslationX = translationX;
++                if (isIosButtonPlacement()) {
++                    super.setTranslationX(translationX);
++                    return;
++                }
+                 super.setTranslationX(
+                     dp(-DEFAULT_HEIGHT) + VoiceRecorderHelper.attachTranslationXOffset() +
+                     innerTranslationX + attachLayoutPaddingTranslationX + attachLayoutTranslationX +
+@@ -3748,6 +3839,28 @@ public class ChatActivityEnterView extends FrameLayout implements
+             }
+         });
+         scheduledButton.setTranslationX(0);
++        updateScheduledButtonLayoutParams();
++    }
++
++    private void updateScheduledButtonLayoutParams() {
++        if (scheduledButton == null) {
++            return;
++        }
++        int newRightMargin;
++        if (isIosButtonPlacement()) {
++            newRightMargin = dp(iosGapDp);
++        } else {
++            boolean isPaperclipVisible = attachButton != null && attachButton.getVisibility() == VISIBLE;
++            boolean isBotVisible = botButton != null && botButton.getVisibility() == VISIBLE;
++            boolean isGiftVisible = giftButton != null && giftButton.getVisibility() == VISIBLE;
++            int slotsDp = (isPaperclipVisible ? DEFAULT_HEIGHT : 0) + (isBotVisible ? DEFAULT_HEIGHT : 0) + (isGiftVisible ? DEFAULT_HEIGHT : 0);
++            newRightMargin = dp(slotsDp);
++        }
++        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) scheduledButton.getLayoutParams();
++        if (layoutParams != null && layoutParams.rightMargin != newRightMargin) {
++            layoutParams.rightMargin = newRightMargin;
++            scheduledButton.setLayoutParams(layoutParams);
++        }
+     }
+ 
+     private ValueAnimator animateScheduledTranslationX(float to) {
+@@ -3776,6 +3889,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     scheduledButton.setTranslationX(scheduledButton.getTranslationX());
+                 }
+             }
++            @Override
++            public void setVisibility(int visibility) {
++                super.setVisibility(visibility);
++                updateScheduledButtonLayoutParams();
++            }
+         };
+         giftButton.setImageResource(R.drawable.msg_input_gift);
+         giftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
+@@ -3918,6 +4036,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     scheduledButton.setTranslationX(scheduledButton.getTranslationX());
+                 }
+             }
++            @Override
++            public void setVisibility(int visibility) {
++                super.setVisibility(visibility);
++                updateScheduledButtonLayoutParams();
++            }
+         };
+         botButton.setImageDrawable(botButtonDrawable = new ReplaceableIconDrawable(getContext()));
+         botButtonDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
+@@ -3926,7 +4049,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         botButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
+         botButton.setVisibility(GONE);
+         AndroidUtilities.updateViewVisibilityAnimated(botButton, false, 0.1f, false);
+-        attachLayout.addView(botButton, 0, LayoutHelper.createLinear(DEFAULT_HEIGHT, DEFAULT_HEIGHT));
++        attachLayout.addView(botButton, 0, LayoutHelper.createLinear(BOT_BUTTON_WIDTH_DP, BOT_BUTTON_WIDTH_DP, Gravity.CENTER_VERTICAL));
+         botButton.setOnClickListener(v -> {
+ //            if (hasBotWebView() && botCommandsMenuIsShowing()) {
+ //                botWebViewMenuContainer.dismiss(v::callOnClick);
+@@ -3973,11 +4096,17 @@ public class ChatActivityEnterView extends FrameLayout implements
+             public boolean isInactive() {
+                 return !doneButtonEnabled;
+             }
++
++            @Override
++            public boolean shouldDrawInternalCircle() {
++                return !isIosInputAppearance();
++            }
+         };
+         doneButton.setContentDescription(getString(R.string.EditMessage));
+         if (bounceable) {
+             ScaleStateListAnimator.apply(doneButton);
+         }
++        doneButton.setActionBubbleColorProvider(resolveSendBubbleColorProvider());
+         textFieldContainer.addView(doneButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.BOTTOM | Gravity.RIGHT));
+     }
+ 
+@@ -4058,6 +4187,19 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 super.setVisibility(visibility);
+                 updateSendAsButton();
+             }
++
++            @Override
++            protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
++                if (!isStories && isIosInputAppearance() && child == recordDeleteImageView) {
++                    if (recordDeleteBubbleDrawable == null) {
++                        initRecordDeleteBubble();
++                    }
++                    if (recordDeleteBubbleDrawable != null) {
++                        desu.inugram.helpers.chat.IosInputHelper.drawBubble(canvas, recordDeleteBubbleDrawable, child);
++                    }
++                }
++                return super.drawChild(canvas, child, drawingTime);
++            }
+         };
+         recordedAudioPanel.setVisibility(audioToSend == null ? GONE : VISIBLE);
+         recordedAudioPanel.setFocusable(true);
+@@ -4738,6 +4880,13 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 canvas.clipRect(0, top, getMeasuredWidth(), separatorY);
+             }
+         }
++        if (isIosInputAppearance() && topViewBubbleDrawable != null && child == topView && child.getVisibility() == VISIBLE && child.getAlpha() > 0) {
++            int translationY = (int) child.getTranslationY();
++            topViewBubbleDrawable.setRadius(child.getHeight() / 2f);
++            topViewBubbleDrawable.setBounds(child.getLeft(), child.getTop() + translationY, child.getRight(), child.getBottom() + translationY);
++            topViewBubbleDrawable.setAlpha((int) (255 * child.getAlpha()));
++            topViewBubbleDrawable.draw(canvas);
++        }
+         boolean result = super.drawChild(canvas, child, drawingTime);
+         if (clip) {
+             canvas.restore();
+@@ -4756,6 +4905,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+     @Override
+     protected void onDraw(Canvas canvas) {
+         drawBackground(canvas, true);
++        drawIosFieldPill(canvas);
+     }
+ 
+     public void drawBackground(Canvas canvas, boolean withComposeShadowDrawable) {
+@@ -4788,6 +4938,204 @@ public class ChatActivityEnterView extends FrameLayout implements
+         }
+     }
+ 
++    public boolean isIosButtonPlacement() {
++        return desu.inugram.InuConfig.IOS_INPUT_BUTTON_PLACEMENT.getValue();
++    }
++
++    public boolean isIosInputAppearance() {
++        return desu.inugram.InuConfig.IOS_INPUT_APPEARANCE.getValue();
++    }
++
++    public boolean isCompactInputSize() {
++        return desu.inugram.InuConfig.COMPACT_INPUT_SIZE.getValue() && isIosInputAppearance();
++    }
++
++    private BlurredBackgroundDrawableViewFactory glassBackgroundDrawableFactory;
++    private BlurredBackgroundColorProviderThemed blurredBackgroundColorProvider;
++    private BlurredBackgroundColorProviderThemed whiteSendBubbleColorProvider;
++    private BlurredBackgroundColorProviderThemed accentSendBubbleColorProvider;
++    private BlurredBackgroundColorProviderThemed currentSendBubbleColorProvider;
++    private BlurredBackgroundDrawable fieldPillDrawable;
++    private BlurredBackgroundDrawable attachBubbleDrawable;
++    private BlurredBackgroundDrawable topViewBubbleDrawable;
++    private BlurredBackgroundDrawable sendBubbleDrawable;
++    private BlurredBackgroundDrawable voiceBubbleDrawable;
++    private BlurredBackgroundDrawable doneBubbleDrawable;
++    private BlurredBackgroundDrawable emojiBubbleDrawable;
++    private BlurredBackgroundDrawable expandStickersBubbleDrawable;
++    private BlurredBackgroundDrawable cancelBotBubbleDrawable;
++    private BlurredBackgroundDrawable aiBubbleDrawable;
++    private BlurredBackgroundDrawable richBubbleDrawable;
++    private BlurredBackgroundDrawable recordDeleteBubbleDrawable;
++
++    public void setInputBarGlassFactory(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProviderThemed colorProvider, BlurredBackgroundColorProviderThemed whiteColorProvider, BlurredBackgroundColorProviderThemed accentColorProvider) {
++        glassBackgroundDrawableFactory = factory;
++        blurredBackgroundColorProvider = colorProvider;
++        whiteSendBubbleColorProvider = whiteColorProvider;
++        accentSendBubbleColorProvider = accentColorProvider;
++        initIosBubbles(factory, colorProvider);
++    }
++
++    private BlurredBackgroundColorProviderThemed resolveSendBubbleColorProvider() {
++        return desu.inugram.helpers.chat.ActionButtonStyle.resolveBubbleColorProvider(whiteSendBubbleColorProvider, blurredBackgroundColorProvider, accentSendBubbleColorProvider);
++    }
++
++    private void updateSendBubbleGlass() {
++        if (sendBubbleDrawable == null || blurredBackgroundColorProvider == null) return;
++        BlurredBackgroundColorProviderThemed target = resolveSendBubbleColorProvider();
++        if (target != currentSendBubbleColorProvider) {
++            currentSendBubbleColorProvider = target;
++            sendBubbleDrawable.setColorProvider(target);
++            if (voiceBubbleDrawable != null) {
++                voiceBubbleDrawable.setColorProvider(target);
++            }
++            if (doneBubbleDrawable != null) {
++                doneBubbleDrawable.setColorProvider(target);
++            }
++        }
++        if (sendButton != null) {
++            sendButton.setActionBubbleColorProvider(target);
++        }
++        if (doneButton != null) {
++            doneButton.setActionBubbleColorProvider(target);
++        }
++    }
++
++    private void initIosBubbles(BlurredBackgroundDrawableViewFactory factory, BlurredBackgroundColorProviderThemed colorProvider) {
++        fieldPillDrawable = factory.create(messageEditTextContainer, colorProvider);
++        fieldPillDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        attachBubbleDrawable = factory.create(messageEditTextContainer, colorProvider);
++        attachBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        topViewBubbleDrawable = factory.create(this, colorProvider);
++        topViewBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        sendBubbleDrawable = factory.create(sendButtonContainer, resolveSendBubbleColorProvider());
++        sendBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        voiceBubbleDrawable = factory.create(sendButtonContainer, resolveSendBubbleColorProvider());
++        voiceBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        doneBubbleDrawable = factory.create(textFieldContainer, resolveSendBubbleColorProvider());
++        doneBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        emojiBubbleDrawable = factory.create(messageEditTextContainer, colorProvider);
++        emojiBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        expandStickersBubbleDrawable = factory.create(sendButtonContainer, colorProvider);
++        expandStickersBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        cancelBotBubbleDrawable = factory.create(sendButtonContainer, colorProvider);
++        cancelBotBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        aiBubbleDrawable = factory.create(textFieldContainer, colorProvider);
++        aiBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        richBubbleDrawable = factory.create(textFieldContainer, colorProvider);
++        richBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        initRecordDeleteBubble();
++        if (doneButton != null) {
++            doneButton.setActionBubbleColorProvider(resolveSendBubbleColorProvider());
++        }
++    }
++
++    private void initRecordDeleteBubble() {
++        if (recordDeleteBubbleDrawable == null && recordedAudioPanel != null && glassBackgroundDrawableFactory != null && blurredBackgroundColorProvider != null) {
++            recordDeleteBubbleDrawable = glassBackgroundDrawableFactory.create(recordedAudioPanel, blurredBackgroundColorProvider);
++            recordDeleteBubbleDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
++        }
++    }
++
++    private void drawIosFieldPill(Canvas canvas) {
++        if (fieldPillDrawable == null || !isIosInputAppearance() || messageEditTextContainer == null || messageEditTextContainer.getWidth() == 0) {
++            return;
++        }
++        View outsideLeftButton = (!isStories && isIosButtonPlacement() && attachButton != null) ? attachButton
++                : (!isStories && !isIosButtonPlacement() && emojiButton != null) ? emojiButton : null;
++        int pillLeft = (outsideLeftButton != null && outsideLeftButton.getVisibility() == VISIBLE && outsideLeftButton.getAlpha() > 0) ? outsideLeftButton.getRight() + dp(iosGapDp) : 0;
++        if (pillLeft == 0 && !isStories && recordedAudioPanel != null && recordDeleteImageView != null
++                && recordedAudioPanel.getVisibility() == VISIBLE && recordedAudioPanel.getAlpha() > 0) {
++            pillLeft = recordDeleteImageView.getRight() + dp(iosGapDp);
++        }
++        canvas.save();
++        canvas.translate(textFieldContainer.getLeft() + messageEditTextContainer.getLeft(), textFieldContainer.getTop() + messageEditTextContainer.getTop());
++        fieldPillDrawable.setBounds(pillLeft, 0, messageEditTextContainer.getWidth() - dp(iosGapDp), messageEditTextContainer.getHeight());
++        fieldPillDrawable.draw(canvas);
++        canvas.restore();
++    }
++
++    private void updateIosLayoutSeeds() {
++        iosGapDp = isCompactInputSize() ? 2 : 8;
++        attachGravity = isIosButtonPlacement() ? (Gravity.BOTTOM | Gravity.LEFT) : (Gravity.BOTTOM | Gravity.RIGHT);
++        fieldLeftDp = isIosButtonPlacement() ? (IOS_LEFT_EDGE_MARGIN_DP + DEFAULT_HEIGHT + iosGapDp) : 52;
++        attachLayoutRightDp = isIosButtonPlacement() ? 0 : DEFAULT_HEIGHT;
++        emojiGravity = isIosButtonPlacement() ? (Gravity.BOTTOM | Gravity.RIGHT) : (Gravity.BOTTOM | Gravity.LEFT);
++        fieldRightDp = isIosButtonPlacement() ? (DEFAULT_HEIGHT + iosGapDp * 2) : (isChat ? 50 : 2);
++        emojiLeftDp = isIosButtonPlacement() ? 0 : 2;
++        emojiRightDp = isIosButtonPlacement() ? iosGapDp : 0;
++        aiButtonGravity = isIosButtonPlacement() ? (Gravity.TOP | Gravity.RIGHT) : (Gravity.TOP | Gravity.LEFT);
++        aiButtonRightMarginDp = isIosButtonPlacement() ? (DEFAULT_HEIGHT + iosGapDp) : 0;
++    }
++
++    private void updateFieldLeftIos() {
++        if (messageEditText == null) {
++            return;
++        }
++        if (!isIosButtonPlacement() && editingMessageObject != null && !editingMessageObject.needResendWhenEdit()) {
++            return;
++        }
++        int cursorDp = IOS_LEFT_EDGE_MARGIN_DP;
++        boolean hasLeftAttach = false;
++        if (attachButton != null && attachButton.getVisibility() == VISIBLE && (attachButton.getAlpha() > 0 || isAttachRestorePending)) {
++            setLeftMarginDp(attachButton, IOS_LEFT_EDGE_MARGIN_DP);
++            cursorDp += DEFAULT_HEIGHT + iosGapDp;
++            hasLeftAttach = true;
++        } else if (editingMessageObject != null) {
++            cursorDp += iosGapDp;
++        } else if (!isIosInputAppearance()) {
++            cursorDp += NO_ICON_TEXT_INSET_DP;
++        }
++        if (isIosInputAppearance() && !(isStories && isIosButtonPlacement() && hasLeftAttach)) {
++            cursorDp += CAPSULE_INSET_DP;
++        }
++        if (senderSelectView != null && (senderSelectView.getVisibility() == VISIBLE || isSenderSelectSlotReserved)) {
++            if (senderSelectView.getVisibility() == VISIBLE) {
++                setLeftMarginDp(senderSelectView, cursorDp);
++            }
++            cursorDp += SENDER_SELECT_WIDTH_DP + iosGapDp;
++        }
++        int attachGroupWidthDp = 0;
++        if (attachLayout != null && attachLayout.getVisibility() == VISIBLE) {
++            for (int i = 0; i < attachLayout.getChildCount(); i++) {
++                View child = attachLayout.getChildAt(i);
++                if (child.getVisibility() == VISIBLE && child.getAlpha() > 0) {
++                    attachGroupWidthDp += child == botButton ? BOT_BUTTON_WIDTH_DP : DEFAULT_HEIGHT;
++                }
++            }
++            if (attachGroupWidthDp > 0) {
++                setLeftMarginDp(attachLayout, cursorDp);
++                cursorDp += attachGroupWidthDp + iosGapDp;
++            }
++        }
++        if (botCommandsMenuButton != null && botCommandsMenuButton.getVisibility() == VISIBLE) {
++            int botCommandsWidthDp = botCommandsMenuButton.getMeasuredWidth() > 0
++                    ? Math.round(botCommandsMenuButton.getMeasuredWidth() / AndroidUtilities.density)
++                    : BOT_COMMANDS_MIN_WIDTH_DP;
++            setLeftMarginDp(botCommandsMenuButton, cursorDp);
++            cursorDp += botCommandsWidthDp + (isCompactInputSize() ? COMPACT_TEXT_INSET_DP : NO_ICON_TEXT_INSET_DP);
++        }
++        boolean hasInsideIcon = attachGroupWidthDp > 0
++                || (senderSelectView != null && (senderSelectView.getVisibility() == VISIBLE || isSenderSelectSlotReserved))
++                || (botCommandsMenuButton != null && botCommandsMenuButton.getVisibility() == VISIBLE);
++        if (isIosInputAppearance() && !hasInsideIcon) {
++            cursorDp += NO_ICON_TEXT_INSET_DP;
++        }
++        setLeftMarginDp(messageEditText, cursorDp);
++        if (richDraftPreview != null) {
++            setLeftMarginDp(richDraftPreview, cursorDp - 8);
++        }
++    }
++
++    private void setLeftMarginDp(View view, int leftMarginDp) {
++        MarginLayoutParams layoutParams = (MarginLayoutParams) view.getLayoutParams();
++        int leftMarginPx = dp(leftMarginDp);
++        if (layoutParams.leftMargin != leftMarginPx) {
++            layoutParams.leftMargin = leftMarginPx;
++            view.setLayoutParams(layoutParams);
++        }
++    }
++
+     public float getVisualHeight() {
+         float top = animatedTop;
+         if (topView != null && topView.getVisibility() == View.VISIBLE) {
+@@ -4964,6 +5312,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+         };
+         messageSendPreview.setOnDismissListener(di -> {
+             messageSendPreview = null;
++            if (sendButton != null) {
++                sendButton.setAlpha(1f);
++                checkSendButton(true);
++                sendButtonContainer.invalidate();
++            }
+         });
+ 
+         final boolean containsSendMessage = audioToSendMessageObject != null || messageEditText != null && !TextUtils.isEmpty(messageEditText.getText());
+@@ -6241,6 +6594,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             preferences.edit().putBoolean(isChannel ? "currentModeVideoChannel" : "currentModeVideo", visible).apply();
+         }
+         audioVideoSendButton.setState(isInVideoMode() ? ChatActivityEnterViewAnimatedIconView.State.VIDEO : ChatActivityEnterViewAnimatedIconView.State.VOICE, animated);
++        updateAudioVideoSendButtonColor();
+         audioVideoSendButton.setContentDescription(getString(isInVideoMode() ? R.string.AccDescrVideoMessage : R.string.AccDescrVoiceMessage));
+         audioVideoButtonContainer.setContentDescription(getString(isInVideoMode() ? R.string.AccDescrVideoMessage : R.string.AccDescrVoiceMessage));
+         audioVideoSendButton.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+@@ -6670,8 +7024,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+         audioVideoButtonContainer.setAlpha(audioVideoButtonContainerForbidden ? 0.5f : 1.0f);
+         audioVideoButtonContainer.invalidate();
+-        audioVideoSendButton.setColorFilter(new PorterDuffColorFilter(audioVideoButtonContainerForbidden || desu.inugram.helpers.theme.NonIslandHelper.chatElements() ?
+-            getThemedColor(Theme.key_glass_defaultIcon) : Color.WHITE, PorterDuff.Mode.SRC_IN));
++        updateAudioVideoSendButtonColor();
+         audioVideoSendButton.invalidate();
+         updateFieldHint(false);
+         boolean currentModeVideo = isInVideoMode;
+@@ -6725,6 +7078,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+     public void onResume() {
+         isPaused = false;
++        updateSendBubbleGlass();
++        updateAudioVideoSendButtonColor();
+         if (hideKeyboardRunnable != null) {
+             AndroidUtilities.cancelRunOnUIThread(hideKeyboardRunnable);
+             hideKeyboardRunnable = null;
+@@ -8043,7 +8398,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         attachButtonAnimator = null;
+                     }
+ 
+-                    if (attachLayout != null) {
++                    if (attachLayout != null && !isIosInputAppearance()) {
+                         runningAnimation2 = new AnimatorSet();
+                         ArrayList<Animator> animators = new ArrayList<>();
+                         animators.add(ObjectAnimator.ofFloat(attachLayout, ATTACH_LAYOUT_ALPHA, 0.0f));
+@@ -8180,7 +8535,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         expandStickersButton.setAlpha(0.0f);
+                         expandStickersButton.setVisibility(GONE);
+                     }
+-                    if (attachLayout != null) {
++                    if (attachLayout != null && !isIosInputAppearance()) {
+                         attachLayout.setVisibility(GONE);
+                         if (delegate != null && getVisibility() == VISIBLE) {
+                             delegate.onAttachButtonHidden();
+@@ -8224,7 +8579,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             } else {
+                 color = getThemedColor(Theme.key_chat_messagePanelSend);
+             }
+-            boolean captionNearAttach = VoiceRecorderHelper.isMovedToAttach() || messageEditText != null && (!TextUtils.isEmpty(messageEditText.getCaption()) || messageEditText.isNearRightCaption(dp(DEFAULT_HEIGHT))) || LocaleController.isRTL;
++            boolean captionNearAttach = !isIosInputAppearance() && (VoiceRecorderHelper.isMovedToAttach() || messageEditText != null && (!TextUtils.isEmpty(messageEditText.getCaption()) || messageEditText.isNearRightCaption(dp(DEFAULT_HEIGHT))) || LocaleController.isRTL);
+ 
+             if (color != sendButtonBackgroundColor) {
+                 sendButtonBackgroundColor = color;
+@@ -8245,7 +8600,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         runningAnimation2 = null;
+                     }
+ 
+-                    if (attachLayout != null) {
++                    if (attachLayout != null && !isIosInputAppearance()) {
+                         runningAnimation2 = new AnimatorSet();
+                         ArrayList<Animator> animators = new ArrayList<>();
+                         animators.add(ObjectAnimator.ofFloat(attachLayout, ATTACH_LAYOUT_ALPHA, 0.0f));
+@@ -8414,7 +8769,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         expandStickersButton.setAlpha(0.0f);
+                         expandStickersButton.setVisibility(GONE);
+                     }
+-                    if (attachLayout != null) {
++                    if (attachLayout != null && !isIosInputAppearance()) {
+                         attachLayout.setVisibility(GONE);
+                         if (delegate != null && getVisibility() == VISIBLE) {
+                             delegate.onAttachButtonHidden();
+@@ -8867,11 +9222,42 @@ public class ChatActivityEnterView extends FrameLayout implements
+     private int lastAttachVisible;
+     private void updateFieldRight(int attachVisible) {
+         lastAttachVisible = attachVisible;
+-        if (messageEditText == null || (editingMessageObject != null && !editingMessageObject.needResendWhenEdit())) {
++        if (messageEditText == null || (!isIosButtonPlacement() && editingMessageObject != null && !editingMessageObject.needResendWhenEdit())) {
+             return;
+         }
++        updateScheduledButtonLayoutParams();
+         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) messageEditText.getLayoutParams();
+         int oldRightMargin = layoutParams.rightMargin;
++        if (isIosButtonPlacement()) {
++            int reserve = (editingMessageObject == null && scheduledButton != null && scheduledButton.getVisibility() == VISIBLE) ? DEFAULT_HEIGHT : 0;
++            int fieldRightMarginDp = fieldRightDp;
++            boolean hasInsideRightIcon = emojiButton != null && emojiButton.getVisibility() == VISIBLE && emojiButton.getAlpha() > 0;
++            if (isIosInputAppearance() && !hasInsideRightIcon) {
++                fieldRightMarginDp = DEFAULT_HEIGHT + iosGapDp + NO_ICON_TEXT_INSET_DP;
++            }
++            layoutParams.rightMargin = dp(fieldRightMarginDp + reserve);
++            if (oldRightMargin != layoutParams.rightMargin) {
++                messageEditText.setLayoutParams(layoutParams);
++            }
++            if (emojiButton != null) {
++                MarginLayoutParams emojiLayoutParams = (MarginLayoutParams) emojiButton.getLayoutParams();
++                int emojiRightMarginPx = dp(emojiRightDp + reserve);
++                if (emojiLayoutParams.rightMargin != emojiRightMarginPx) {
++                    emojiLayoutParams.rightMargin = emojiRightMarginPx;
++                    emojiButton.setLayoutParams(emojiLayoutParams);
++                }
++            }
++            if (recordedAudioPanel != null) {
++                FrameLayout.LayoutParams recordedLayoutParams = (FrameLayout.LayoutParams) recordedAudioPanel.getLayoutParams();
++                recordedLayoutParams.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
++                recordedAudioPanel.setLayoutParams(recordedLayoutParams);
++            }
++            View inu_menuBtn = desu.inugram.helpers.chat.ChatInputMenuHelper.getMenuButton(this);
++            if (inu_menuBtn != null) {
++                inu_menuBtn.setTranslationX(hasInsideRightIcon ? -dp(DEFAULT_HEIGHT + iosGapDp) : 0);
++            }
++            return;
++        }
+         if (isStories && isLiveComment) {
+             layoutParams.rightMargin = dp(suggestButtonVisible ? 50 : 2) + Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT));
+         } else if (attachVisible == 1 || attachVisible == 2/* && layoutParams.rightMargin != dp(2)*/) {
+@@ -10524,7 +10910,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         if (botKeyboardView != null) {
+             botKeyboardView.updateColors();
+         }
+-        audioVideoSendButton.setColorFilter(new PorterDuffColorFilter(audioVideoButtonContainerForbidden ? getThemedColor(Theme.key_glass_defaultIcon) : Color.WHITE, PorterDuff.Mode.SRC_IN));
++        updateAudioVideoSendButtonColor();
+         emojiButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
+         emojiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
+         deleteRichDraftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
+@@ -10533,6 +10919,23 @@ public class ChatActivityEnterView extends FrameLayout implements
+         desu.inugram.helpers.theme.NonIslandHelper.applySendButtonRipple(sendButton, 100, getThemedColor(Theme.key_listSelector));
+     }
+ 
++    private void updateAudioVideoSendButtonColor() {
++        if (audioVideoSendButton == null || audioVideoButtonContainer == null) {
++            return;
++        }
++        boolean isMenuState = audioVideoSendButton.getCurrentState() == ChatActivityEnterViewAnimatedIconView.State.MENU;
++        int color;
++        if (!isIosInputAppearance() && (audioVideoButtonContainerForbidden || isMenuState || desu.inugram.helpers.theme.NonIslandHelper.chatElements())) {
++            color = getThemedColor(Theme.key_glass_defaultIcon);
++        } else {
++            color = desu.inugram.helpers.chat.ActionButtonStyle.resolveIconColor(resourcesProvider);
++        }
++        audioVideoSendButton.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
++        audioVideoButtonContainer.setBackground(isMenuState
++                ? Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector))
++                : null);
++    }
++
+     private void updateRecordedDeleteIconColors() {
+         int dotColor = getThemedColor(Theme.key_chat_recordedVoiceDot);
+         int background = getThemedColor(Theme.key_chat_messagePanelBackground);
+@@ -14592,30 +14995,82 @@ public class ChatActivityEnterView extends FrameLayout implements
+     @Override
+     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+         int wasHeight = textFieldContainer.getMeasuredHeight();
+-        if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() != null) {
+-            botCommandsMenuButton.measure(widthMeasureSpec, heightMeasureSpec);
+-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(10) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
+-            if (deleteRichDraftButton != null) {
+-                ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(10) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
+-            }
+-            if (messageEditText != null) {
+-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(57) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
++        updateIosLayoutSeeds();
++        if (isIosButtonPlacement()) {
++            if (botCommandsMenuButton != null && botCommandsMenuButton.getVisibility() == VISIBLE) {
++                botCommandsMenuButton.measure(widthMeasureSpec, heightMeasureSpec);
+             }
+-            if (richDraftPreview != null) {
+-                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(57) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
++            updateFieldLeftIos();
++        } else if (botCommandsMenuButton != null && botCommandsMenuButton.getTag() != null) {
++            botCommandsMenuButton.measure(widthMeasureSpec, heightMeasureSpec);
++            if (isIosInputAppearance()) {
++                int cursorDp = IOS_LEFT_EDGE_MARGIN_DP + DEFAULT_HEIGHT + iosGapDp + CAPSULE_INSET_DP;
++                ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(IOS_LEFT_EDGE_MARGIN_DP);
++                if (deleteRichDraftButton != null) {
++                    ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(IOS_LEFT_EDGE_MARGIN_DP);
++                }
++                ((MarginLayoutParams) botCommandsMenuButton.getLayoutParams()).leftMargin = dp(cursorDp);
++                cursorDp += Math.round(botCommandsMenuButton.getMeasuredWidth() / AndroidUtilities.density)
++                        + (isCompactInputSize() ? COMPACT_TEXT_INSET_DP : NO_ICON_TEXT_INSET_DP);
++                if (messageEditText != null) {
++                    ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(cursorDp);
++                }
++                if (richDraftPreview != null) {
++                    ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(cursorDp - 8);
++                }
++            } else {
++                ((MarginLayoutParams) botCommandsMenuButton.getLayoutParams()).leftMargin = dp(8);
++                ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(10) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
++                if (deleteRichDraftButton != null) {
++                    ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(10) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
++                }
++                if (messageEditText != null) {
++                    ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(57) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
++                }
++                if (richDraftPreview != null) {
++                    ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(57) + (botCommandsMenuButton == null ? 0 : botCommandsMenuButton.getMeasuredWidth());
++                }
+             }
+         } else if (senderSelectView != null && senderSelectView.getVisibility() == View.VISIBLE) {
+             int width = senderSelectView.getLayoutParams().width, height = senderSelectView.getLayoutParams().height;
+             senderSelectView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+-            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(7) + width;
++            if (isIosInputAppearance()) {
++                int cursorDp = IOS_LEFT_EDGE_MARGIN_DP + DEFAULT_HEIGHT + iosGapDp + CAPSULE_INSET_DP;
++                ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(IOS_LEFT_EDGE_MARGIN_DP);
++                ((MarginLayoutParams) senderSelectView.getLayoutParams()).leftMargin = dp(cursorDp);
++                cursorDp += SENDER_SELECT_WIDTH_DP + iosGapDp;
++                if (deleteRichDraftButton != null) {
++                    ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(IOS_LEFT_EDGE_MARGIN_DP);
++                }
++                if (messageEditText != null) {
++                    ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(cursorDp);
++                }
++                if (richDraftPreview != null) {
++                    ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(cursorDp);
++                }
++            } else {
++                ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(7) + width;
++                if (deleteRichDraftButton != null) {
++                    ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(7) + width;
++                }
++                if (messageEditText != null) {
++                    ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(54) + width;
++                }
++                if (richDraftPreview != null) {
++                    ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(54) + width;
++                }
++            }
++        } else if (isIosInputAppearance()) {
++            int cursorDp = IOS_LEFT_EDGE_MARGIN_DP + DEFAULT_HEIGHT + iosGapDp + CAPSULE_INSET_DP;
++            ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(IOS_LEFT_EDGE_MARGIN_DP);
+             if (deleteRichDraftButton != null) {
+-                ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(7) + width;
++                ((MarginLayoutParams) deleteRichDraftButton.getLayoutParams()).leftMargin = dp(IOS_LEFT_EDGE_MARGIN_DP);
+             }
+             if (messageEditText != null) {
+-                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(54) + width;
++                ((MarginLayoutParams) messageEditText.getLayoutParams()).leftMargin = dp(cursorDp + NO_ICON_TEXT_INSET_DP);
+             }
+             if (richDraftPreview != null) {
+-                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(54) + width;
++                ((MarginLayoutParams) richDraftPreview.getLayoutParams()).leftMargin = dp(cursorDp);
+             }
+         } else {
+             ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(3);
+@@ -14859,7 +15314,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+     private void updateAttachLayoutParams() {
+         updateAttachButtonTranslationX();
+         if (attachLayout != null) {
+-            attachLayout.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset() + attachLayoutPaddingTranslationX + attachLayoutTranslationX);
++            attachLayout.setTranslationX(isIosButtonPlacement() ? 0 : (VoiceRecorderHelper.attachTranslationXOffset() + attachLayoutPaddingTranslationX + attachLayoutTranslationX));
+             attachLayout.setAlpha(attachLayoutAlpha * attachLayoutPaddingAlpha);
+             attachLayout.setVisibility(attachLayout.getAlpha() > 0 ? View.VISIBLE : View.GONE);
+             if (attachButton != null && isStories) {
+@@ -14877,6 +15332,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+     private void updateAttachButtonTranslationX() {
+         if (attachButton == null || VoiceRecorderHelper.isMovedToAttach()) return;
++        if (isIosButtonPlacement()) {
++            attachButton.setTranslationX(0);
++            return;
++        }
+         attachButton.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset() + attachLayoutPaddingTranslationX + attachLayoutTranslationX + (sendButton != null ? (
+             -Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT + 12)) * sendButton.getAlpha()
+         ) : 0));
+@@ -15243,7 +15702,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             }
+             updateColors();
+             checkBackgroundRect();
+-            if (isNewDesignSendButton) {
++            if (isNewDesignSendButton && shouldDrawInternalCircle()) {
+                 canvas.drawRoundRect(backgroundRect, dp(RADIUS), dp(RADIUS), backgroundPaint);
+             }
+ 
+@@ -15337,7 +15796,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     blurredBackgroundDrawable.draw(canvas);
+                 }
+ 
+-                if (!isNewDesignSendButton) {
++                if (!isNewDesignSendButton && shouldDrawInternalCircle()) {
+                     canvas.drawPath(path, backgroundPaint);
+                 }
+                 canvas.clipPath(path);
+@@ -15465,13 +15924,26 @@ public class ChatActivityEnterView extends FrameLayout implements
+         }
+ 
+         private BlurredBackgroundDrawable blurredBackgroundDrawable;
++        private BlurredBackgroundColorProviderThemed actionBubbleColorProvider;
++
++        public void setActionBubbleColorProvider(BlurredBackgroundColorProviderThemed actionBubbleColorProvider) {
++            this.actionBubbleColorProvider = actionBubbleColorProvider;
++        }
++
++        public BlurredBackgroundColorProviderThemed getActionBubbleColorProvider() {
++            return actionBubbleColorProvider;
++        }
+ 
+         public void setBlurredBackgroundDrawable(BlurredBackgroundDrawable blurredBackgroundDrawable) {
+             this.blurredBackgroundDrawable = blurredBackgroundDrawable;
+-            this.blurredBackgroundDrawable.setRadius(dp(22));
++            this.blurredBackgroundDrawable.setRadius(dp(IOS_BUBBLE_RADIUS_DP));
+             this.blurredBackgroundDrawable.setPadding(dp(4));
+         }
+ 
++        public boolean shouldDrawInternalCircle() {
++            return true;
++        }
++
+         public boolean newCounterPos;
+ 
+         public int width() {
+@@ -15506,8 +15978,22 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+         private int drawableColor;
+ 
++        public int resolveSendIconColor(int themeColor) {
++            if (desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() == desu.inugram.helpers.chat.ActionButtonStyle.ACCENT) {
++                return isNewDesignSendButton ? Color.WHITE : themeColor;
++            }
++            if (shouldUseActionStyleColors()) {
++                return desu.inugram.helpers.chat.ActionButtonStyle.resolveIconColor(resourcesProvider);
++            }
++            return themeColor;
++        }
++
++        private boolean shouldUseActionStyleColors() {
++            return isNewDesignSendButton || shouldDrawBackground();
++        }
++
+         public void updateColors() {
+-            int color = isNewDesignSendButton ? Color.WHITE : Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider);
++            int color = resolveSendIconColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
+             if (color != drawableColor) {
+                 drawableColor = color;
+                 drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
+@@ -15515,7 +16001,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 inactiveDrawable.setColorFilter(new PorterDuffColorFilter(Color.argb(0xb4, Color.red(c), Color.green(c), Color.blue(c)), PorterDuff.Mode.SRC_IN));
+                 drawableInverse.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider), PorterDuff.Mode.SRC_IN));
+             }
+-            if (isNewDesignSendButton) {
++            if (desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() != desu.inugram.helpers.chat.ActionButtonStyle.ACCENT && shouldUseActionStyleColors()) {
++                backgroundPaint.setColor(desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
++            } else if (isNewDesignSendButton) {
+                 backgroundPaint.setColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
+             } else if (shouldDrawBackground()) {
+                 backgroundPaint.setColor(getFillColor());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterViewAnimatedIconView.java
+@@ -148,6 +148,7 @@ public class ChatActivityEnterViewAnimatedIconView extends RLottieImageView {
+         STICKER,
+         KEYBOARD,
+         SMILE,
+-        GIF
++        GIF,
++        MENU
+     }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+@@ -74,6 +74,7 @@ import org.telegram.ui.Components.ScrimOptions;
+ import org.telegram.ui.Components.SizeNotifierFrameLayout;
+ import org.telegram.ui.Components.Text;
+ import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory;
++import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable;
+ import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl;
+ import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceBitmap;
+ import org.telegram.ui.Components.blur3.utils.Blur3Utils;
+@@ -148,6 +149,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+ 
+     private final BlurredBackgroundSourceBitmap iBlur3SourceBitmap;
+     private final BlurredBackgroundDrawableViewFactory iBlur3Factory;
++    private BlurredBackgroundDrawable sendButtonGlassDrawable;
+ 
+     public MessageSendPreview(Context context, Theme.ResourcesProvider resourcesProvider) {
+         super(context, R.style.TransparentDialog);
+@@ -390,10 +392,12 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+                         firstOpenFrame2 = false;
+                     }
+                     canvas.save();
+-                    canvas.translate(
+-                        AndroidUtilities.lerp(sendButtonInitialPosition[0] - (sendButton.getWidth() - sendButton.width(sendButton.getHeight())) + dp(6), sendButton.getX(), openProgress),
+-                        AndroidUtilities.lerp(sendButtonInitialPosition[1], sendButton.getY(), openProgress)
+-                    );
++                    float drawnX = AndroidUtilities.lerp(sendButtonInitialPosition[0] - (sendButton.getWidth() - sendButton.width(sendButton.getHeight())) + dp(6), sendButton.getX(), openProgress);
++                    float drawnY = AndroidUtilities.lerp(sendButtonInitialPosition[1], sendButton.getY(), openProgress);
++                    canvas.translate(drawnX, drawnY);
++                    if (sendButtonGlassDrawable != null) {
++                        sendButtonGlassDrawable.setSourceOffset(containerView.getX() + drawnX, containerView.getY() + drawnY);
++                    }
+                     if (closing && sent) {
+                         canvas.saveLayerAlpha(0, 0, sendButton.getWidth(), sendButton.getHeight(), (int) (0xFF * openProgress), Canvas.ALL_SAVE_FLAG);
+                     }
+@@ -1245,7 +1249,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+             }
+             @Override
+             public boolean isOpen() {
+-                return (fillWhenClose ? !dismissing : true) || super.isOpen();
++                return true;
+             }
+             @Override
+             public boolean isInactive() {
+@@ -1256,6 +1260,14 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+                 return sendButton.shouldDrawBackground();
+             }
+             @Override
++            public boolean shouldDrawInternalCircle() {
++                return anchorSendButton.shouldDrawInternalCircle() || anchorSendButton.getActionBubbleColorProvider() == null;
++            }
++            @Override
++            public int resolveSendIconColor(int themeColor) {
++                return sendButton.resolveSendIconColor(themeColor);
++            }
++            @Override
+             public int getFillColor() {
+                 return sendButton.getFillColor();
+             }
+@@ -1266,6 +1278,10 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+         this.sendButton.open.set(sendButton.open.get(), true);
+         this.sendButton.setOnClickListener(onClick);
+         containerView.addView(this.sendButton, new ViewGroup.LayoutParams(sendButton.getWidth(), sendButton.getHeight()));
++        if (!anchorSendButton.shouldDrawInternalCircle() && anchorSendButton.getActionBubbleColorProvider() != null) {
++            sendButtonGlassDrawable = iBlur3Factory.create(this.sendButton, anchorSendButton.getActionBubbleColorProvider());
++            this.sendButton.setBlurredBackgroundDrawable(sendButtonGlassDrawable);
++        }
+         sendButtonWidth = anchorSendButton.width(sendButton.getHeight());
+         sendButtonInitialPosition[0] += anchorSendButton.getWidth() - anchorSendButton.width(sendButton.getHeight()) - dp(6);
+         return this.sendButton;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+@@ -994,8 +994,12 @@ public class RichEditor extends BaseFragment implements NotificationCenter.Notif
+             public boolean isInScheduleMode() {
+                 return RichEditor.this.isInScheduleMode();
+             }
++            @Override
++            public boolean shouldDrawInternalCircle() {
++                return false;
++            }
+         };
+-        sendButton.setBackground(withShadow(Theme.createRoundRectDrawable(dp(22), getThemedColor(Theme.key_chat_messagePanelSend))));
++        sendButton.setBackground(withShadow(Theme.createRoundRectDrawable(dp(22), desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(getResourceProvider()))));
+         ScaleStateListAnimator.apply(sendButton);
+         bottomPanel.addView(sendButton, LayoutHelper.createLinear(44, 44, 0, Gravity.RIGHT, 8, 0, 0, 0));
+         sendButton.setContentDescription(getString(R.string.Send));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorToolbar.java
+@@ -408,8 +408,12 @@ public class RichEditorToolbar extends FrameLayout {
+             public boolean isOpen() {
+                 return sendLoading || super.isOpen();
+             }
++            @Override
++            public boolean shouldDrawInternalCircle() {
++                return false;
++            }
+         };
+-        sendButton.setBackground(RichEditor.withShadow(Theme.createRoundRectDrawable(dp(22), color(Theme.key_chat_messagePanelSend))));
++        sendButton.setBackground(RichEditor.withShadow(Theme.createRoundRectDrawable(dp(22), desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider))));
+         ScaleStateListAnimator.apply(sendButton);
+         bottomPanel.addView(sendButton, LayoutHelper.createLinear(44, 44, 0, Gravity.RIGHT, 8, 0, 0, 0));
+         sendButton.setContentDescription("Send");

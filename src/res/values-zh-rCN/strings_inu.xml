@@ -1393,4 +1393,16 @@
     <string name="InuForwardProUseStock">官方 Telegram</string>
     <string name="InuForwardProPlaceholder">消息文本</string>
     <string name="InuForwardProEmptyNotice">消息文本不能为空</string>
+
+    <string name="InuIosButtonPlacement">按钮布局 (iOS)</string>
+    <string name="InuIosButtonPlacementInfo">将附件按钮移至左侧，将表情按钮移至输入框内部右侧。</string>
+    <string name="InuIosInputAppearance">外观 (iOS)</string>
+    <string name="InuIosInputAppearanceInfo">毛玻璃胶囊输入框与圆角操作按钮。</string>
+    <string name="InuCompactInputSize">紧凑模式</string>
+    <string name="InuCompactInputSizeInfo">减小输入框周围的边距和内边距。</string>
+    <string name="InuActionButtonStyle">操作按钮样式</string>
+    <string name="InuActionButtonStyleInfo">所有屏幕中发送、语音和确认按钮的颜色样式。</string>
+    <string name="InuActionButtonStyleAccent">强调色</string>
+    <string name="InuActionButtonStyleNeutral">中性色</string>
+    <string name="InuActionButtonStyleWhite">白色</string>
 </resources>

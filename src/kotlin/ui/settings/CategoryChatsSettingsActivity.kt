@@ -5,6 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.badges.BadgeRegistry
+import desu.inugram.helpers.chat.ActionButtonStyle
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -24,6 +25,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         listView?.adapter?.update(true)
     }
 
+    private var inputBarPreviewCell: InputBarPreviewCell? = null
     private var chatInputMaxLinesSlider: SliderCell? = null
     private var wideChannelPostsPreview: WideChannelPostsPreviewCell? = null
 
@@ -290,6 +292,46 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         )
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMessageInput)))
+        if (inputBarPreviewCell == null) inputBarPreviewCell = InputBarPreviewCell(context, getResourceProvider())
+        items.add(UItem.asCustom(inputBarPreviewCell))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_IOS_BUTTON_PLACEMENT,
+                R.string.InuIosButtonPlacement,
+                R.string.InuIosButtonPlacementInfo,
+                InuConfig.IOS_INPUT_BUTTON_PLACEMENT.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_IOS_INPUT_APPEARANCE,
+                R.string.InuIosInputAppearance,
+                R.string.InuIosInputAppearanceInfo,
+                InuConfig.IOS_INPUT_APPEARANCE.value,
+            )
+        )
+        if (InuConfig.IOS_INPUT_APPEARANCE.value) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_COMPACT_INPUT_SIZE,
+                    R.string.InuCompactInputSize,
+                    R.string.InuCompactInputSizeInfo,
+                    InuConfig.COMPACT_INPUT_SIZE.value,
+                )
+            )
+        }
+        items.add(
+            UItem.asButton(
+                BUTTON_ACTION_BUTTON_STYLE,
+                LocaleController.getString(R.string.InuActionButtonStyle),
+                when (InuConfig.ACTION_BUTTON_STYLE.value) {
+                    ActionButtonStyle.NEUTRAL -> LocaleController.getString(R.string.InuActionButtonStyleNeutral)
+                    ActionButtonStyle.WHITE -> LocaleController.getString(R.string.InuActionButtonStyleWhite)
+                    else -> LocaleController.getString(R.string.InuActionButtonStyleAccent)
+                }
+            )
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuActionButtonStyleInfo)))
         items.add(
             mkSplitCheckItem(
                 BUTTON_FORMATTING_POPUP,
@@ -437,6 +479,39 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.toggle()
             TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.toggle()
+            TOGGLE_IOS_BUTTON_PLACEMENT -> {
+                val new = InuConfig.IOS_INPUT_BUTTON_PLACEMENT.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                inputBarPreviewCell?.updateInputBarState()
+            }
+            TOGGLE_IOS_INPUT_APPEARANCE -> {
+                InuConfig.IOS_INPUT_APPEARANCE.toggle()
+                inputBarPreviewCell?.updateInputBarState()
+                listView.adapter.update(true)
+            }
+            TOGGLE_COMPACT_INPUT_SIZE -> {
+                val new = InuConfig.COMPACT_INPUT_SIZE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                inputBarPreviewCell?.updateInputBarState()
+            }
+            BUTTON_ACTION_BUTTON_STYLE -> {
+                val ctx = context ?: return
+                val styleItems = listOf(
+                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuActionButtonStyleAccent)),
+                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuActionButtonStyleNeutral)),
+                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuActionButtonStyleWhite)),
+                )
+                showDialog(
+                    RadioDialogBuilder(ctx, getResourceProvider())
+                        .setTitle(LocaleController.getString(R.string.InuActionButtonStyle))
+                        .setItems(styleItems, InuConfig.ACTION_BUTTON_STYLE.value) { _, which ->
+                            if (InuConfig.ACTION_BUTTON_STYLE.value == which) return@setItems
+                            InuConfig.ACTION_BUTTON_STYLE.value = which
+                            inputBarPreviewCell?.updateInputBarState()
+                            listView.adapter.update(true)
+                        }.create()
+                )
+            }
             TOGGLE_BOT_WEBVIEW_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_BOT_WEBVIEW_INPUT.toggle()
             TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
@@ -467,6 +542,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
+        private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
+        private val TOGGLE_IOS_INPUT_APPEARANCE = InuUtils.generateId()
+        private val TOGGLE_COMPACT_INPUT_SIZE = InuUtils.generateId()
+        private val BUTTON_ACTION_BUTTON_STYLE = InuUtils.generateId()
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_WIDE_CHANNEL_POSTS = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
@@ -562,6 +641,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
                 SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
                 SearchRegistry.Entry("send-to-discuss-without-join", R.string.InuSendToDiscussWithoutJoin, TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN),
+                SearchRegistry.Entry("ios-button-placement", R.string.InuIosButtonPlacement, TOGGLE_IOS_BUTTON_PLACEMENT),
+                SearchRegistry.Entry("ios-input-appearance", R.string.InuIosInputAppearance, TOGGLE_IOS_INPUT_APPEARANCE),
+                SearchRegistry.Entry("compact-input-size", R.string.InuCompactInputSize, TOGGLE_COMPACT_INPUT_SIZE),
+                SearchRegistry.Entry("action-button-style", R.string.InuActionButtonStyle, BUTTON_ACTION_BUTTON_STYLE),
             ),
         )
     }

@@ -1093,6 +1093,18 @@ object InuConfig {
     val CHAT_INPUT_MAX_LINES = IntItem("chat_input_max_lines", 8)
 
     @JvmField
+    val IOS_INPUT_BUTTON_PLACEMENT = BoolItem("ios_button_placement", false)
+
+    @JvmField
+    val IOS_INPUT_APPEARANCE = BoolItem("ios_input_appearance", false)
+
+    @JvmField
+    val COMPACT_INPUT_SIZE = BoolItem("compact_input_size", false)
+
+    @JvmField
+    val ACTION_BUTTON_STYLE = IntItem("action_button_style", 0)
+
+    @JvmField
     val REACTION_BAR_BELOW = BoolItem("reaction_bar_below", false)
 
     @JvmField

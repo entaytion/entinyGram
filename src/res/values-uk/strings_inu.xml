@@ -1436,4 +1436,16 @@
     <string name="InuForwardProUseStock">Стоковий Telegram</string>
     <string name="InuForwardProPlaceholder">Текст повідомлення</string>
     <string name="InuForwardProEmptyNotice">Текст повідомлення не може бути порожнім</string>
+
+    <string name="InuIosButtonPlacement">Розташування кнопок як в iOS</string>
+    <string name="InuIosButtonPlacementInfo">Переносить кнопку вкладень ліворуч, а емодзі всередину поля вводу праворуч.</string>
+    <string name="InuIosInputAppearance">Оформлення як в iOS</string>
+    <string name="InuIosInputAppearanceInfo">Скляна капсула поля вводу з круглими кнопками дій.</string>
+    <string name="InuCompactInputSize">Компактний режим</string>
+    <string name="InuCompactInputSizeInfo">Зменшує відступи навколо поля вводу.</string>
+    <string name="InuActionButtonStyle">Стиль кнопки дії</string>
+    <string name="InuActionButtonStyleInfo">Колірний стиль кнопок надсилання, голосу та застосування на всіх екранах.</string>
+    <string name="InuActionButtonStyleAccent">Акцентна</string>
+    <string name="InuActionButtonStyleNeutral">Нейтральна</string>
+    <string name="InuActionButtonStyleWhite">Біла</string>
 </resources>

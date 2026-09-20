@@ -1391,4 +1391,16 @@
     <string name="InuForwardProUseStock">Standart Telegram</string>
     <string name="InuForwardProPlaceholder">Mesaj metni</string>
     <string name="InuForwardProEmptyNotice">Mesaj metni boş olamaz</string>
+
+    <string name="InuIosButtonPlacement">Düğme yerleşimi (iOS)</string>
+    <string name="InuIosButtonPlacementInfo">Ek dosya düğmesini sola ve ifade düğmesini giriş alanının sağına taşır.</string>
+    <string name="InuIosInputAppearance">Görünüm (iOS)</string>
+    <string name="InuIosInputAppearanceInfo">Yuvarlatılmış işlem düğmelerine sahip cam kapsül giriş alanı.</string>
+    <string name="InuCompactInputSize">Kompakt mod</string>
+    <string name="InuCompactInputSizeInfo">Giriş alanı etrafındaki kenar boşluklarını azaltır.</string>
+    <string name="InuActionButtonStyle">İşlem düğmesi stili</string>
+    <string name="InuActionButtonStyleInfo">Tüm ekranlardaki gönderme, ses ve onay düğmelerinin renk stili.</string>
+    <string name="InuActionButtonStyleAccent">Vurgu</string>
+    <string name="InuActionButtonStyleNeutral">Nötr</string>
+    <string name="InuActionButtonStyleWhite">Beyaz</string>
 </resources>

@@ -69,10 +69,12 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator, live interactive dialog preview, and unified corner radius toggle - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **standalone AMOLED theme**: true-black theme selectable from regular theme list, independent of Monet - *ported from NagramX Turbo*
 - 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (Stock Telegram, Solar, VKUI, Phosphor Icons)
-- 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless) and [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*:
+- 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - wide, full-width bottom navigation bar (60dp evenly-spaced tabs)
   - tapping active Chats tab returns to the first folder before scrolling to top
   - compact chat header pill hugging title and avatar, with optional avatar placement in the menu slot or left aligned
+  - iOS-style input bar: attachment on the left, emoji inside-right, glass capsule field with round button bubbles, and optional compact mode
+- 📡 **action button style**: Accent, Neutral, or White for send, voice, and apply buttons across the app (in glass form on iOS bar, solid circle elsewhere) - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - 📡 **header centering**: center screen titles across the app and customize chat headers (compact pill, avatar position, live settings preview)
 - 📡 **auto marquee for long titles**: auto-scroll long header titles, action bar titles, and profile names - *inspired by auto_marquee plugin (@chestertech)*
 - 📡 **show spoilers directly**: skip tap-to-reveal on text, photos, and videos

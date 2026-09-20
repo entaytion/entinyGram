@@ -1418,4 +1418,16 @@
     <string name="InuForwardProUseStock">Обычный Telegram</string>
     <string name="InuForwardProPlaceholder">Текст сообщения</string>
     <string name="InuForwardProEmptyNotice">Текст сообщения не может быть пустым</string>
+
+    <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>
+    <string name="InuIosButtonPlacementInfo">Переносит кнопку вложений влево, а эмодзи внутрь поля ввода справа.</string>
+    <string name="InuIosInputAppearance">Оформление как в iOS</string>
+    <string name="InuIosInputAppearanceInfo">Стеклянная капсула поля ввода с круглыми кнопками действий.</string>
+    <string name="InuCompactInputSize">Компактный размер</string>
+    <string name="InuCompactInputSizeInfo">Уменьшает отступы вокруг поля ввода.</string>
+    <string name="InuActionButtonStyle">Стиль кнопки действия</string>
+    <string name="InuActionButtonStyleInfo">Цветовой стиль кнопок отправки, голоса и применения во всех экранах.</string>
+    <string name="InuActionButtonStyleAccent">Акцентная</string>
+    <string name="InuActionButtonStyleNeutral">Нейтральная</string>
+    <string name="InuActionButtonStyleWhite">Белая</string>
 </resources>
