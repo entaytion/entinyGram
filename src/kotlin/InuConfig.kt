@@ -383,6 +383,9 @@ object InuConfig {
     val UNLIMITED_FOLDER_CHATS = BoolItem("unlimited_folder_chats", false)
 
     @JvmField
+    val LOCAL_FOLDERS = BoolItem("local_folders", false)
+
+    @JvmField
     val UNLIMITED_PINNED_CHATS_COUNT = IntItem("unlimited_pinned_chats_count", 20)
 
     @JvmField

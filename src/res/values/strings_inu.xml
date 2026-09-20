@@ -1373,6 +1373,8 @@
     <string name="InuUnlimitedFavoriteStickersInfo">Removes the local cap on how many favorite stickers and GIFs are kept and shown — they\'re already saved on the server, only the on-device cache was trimming them.</string>
     <string name="InuUnlimitedFolderChats">Unlimited chats per folder</string>
     <string name="InuUnlimitedFolderChatsInfo">Lets a folder hold more chats than Telegram\'s limit — the extras stay local to this device only and won\'t survive a reinstall.</string>
+    <string name="InuLocalFolders">Local folders</string>
+    <string name="InuLocalFoldersInfo">Create chat folders beyond Telegram\'s limit — the extra folders live only on this device and are never synced to the server.</string>
     <string name="InuStalkerPack">Stalker Pack</string>
     <string name="InuPresenceLoggerNotify">Presence Notifications</string>
     <string name="InuPresenceLoggerNotifyInfo">Show a popup when a watched contact comes online or goes offline. Pick who to watch from that person\'s profile menu; every status change is also logged locally regardless of this toggle.</string>

@@ -1058,6 +1058,10 @@
     <string name="InuUnlimitedFavoriteStickersInfo">保持・表示できるお気に入りステッカーと GIF のローカル上限を解除します。すでにサーバーに保存されているもので、端末内キャッシュだけが数を減らしていました。</string>
     <string name="InuUnlimitedFolderChats">フォルダーごとの無制限チャット</string>
     <string name="InuUnlimitedFolderChatsInfo">フォルダーに Telegram の上限を超えてチャットを追加できます — 超過分はこの端末のみに残り、再インストールで消えます。</string>
+    <string name="InuLocalFolders">ローカルフォルダー</string>
+    <string name="InuLocalFoldersInfo">Telegram の上限を超えてチャットフォルダーを作成できます — 追加のフォルダーはこの端末のみに保存され、サーバーとは同期されません。</string>
+    <string name="InuFolderIcon">フォルダーアイコン</string>
+    <string name="InuFolderIconDefault">デフォルト</string>
     <string name="InuStalkerPack">ストーカーパック</string>
     <string name="InuPresenceLoggerNotify">在席通知</string>
     <string name="InuPresenceLoggerNotifyInfo">監視中の連絡先がオンラインになったりオフラインになったりしたときにポップアップ通知を表示します。誰を監視するかはその人のプロフィールメニューから選択します。この設定に関わらず、状態変化は常にローカルに記録されます。</string>

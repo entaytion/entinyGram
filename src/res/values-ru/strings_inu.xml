@@ -1158,6 +1158,10 @@
     <string name="InuUnlimitedFavoriteStickersInfo">Убирает локальное ограничение на количество избранных стикеров и GIF — они уже сохранены на сервере, ограничивал только локальный кэш на устройстве.</string>
     <string name="InuUnlimitedFolderChats">Безлимитные чаты в папке</string>
     <string name="InuUnlimitedFolderChatsInfo">Позволяет добавить в папку больше чатов, чем разрешает лимит Telegram, — лишние остаются только на этом устройстве и не переживут переустановку.</string>
+    <string name="InuLocalFolders">Локальные папки</string>
+    <string name="InuLocalFoldersInfo">Создавайте папки чатов сверх лимита Telegram — дополнительные папки хранятся только на этом устройстве и никогда не синхронизируются с сервером.</string>
+    <string name="InuFolderIcon">Значок папки</string>
+    <string name="InuFolderIconDefault">По умолчанию</string>
     <string name="InuStalkerPack">Сталкер-пак</string>
     <string name="InuPresenceLoggerNotify">Уведомления о присутствии</string>
     <string name="InuPresenceLoggerNotifyInfo">Показывать всплывающее уведомление, когда отслеживаемый контакт заходит в сеть или выходит из неё. Выберите, за кем следить, в меню профиля этого человека; каждое изменение статуса также сохраняется локально независимо от этой настройки.</string>

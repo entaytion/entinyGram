@@ -1057,6 +1057,10 @@
     <string name="InuUnlimitedFavoriteStickersInfo">Kaç favori çıkartma ve GIF tutulup gösterileceğine dair yerel sınırı kaldırır — bunlar zaten sunucuda kayıtlı, yalnızca cihazdaki önbellek onları buduyordu.</string>
     <string name="InuUnlimitedFolderChats">Klasör başına sınırsız sohbet</string>
     <string name="InuUnlimitedFolderChatsInfo">Bir klasörün Telegram\'ın sınırından daha fazla sohbet içermesine izin verir — fazlalıklar yalnızca bu cihazda kalır ve yeniden yüklemede kaybolur.</string>
+    <string name="InuLocalFolders">Yerel klasörler</string>
+    <string name="InuLocalFoldersInfo">Telegram\'ın sınırının ötesinde sohbet klasörleri oluşturun — ek klasörler yalnızca bu cihazda saklanır ve sunucuya asla senkronize edilmez.</string>
+    <string name="InuFolderIcon">Klasör simgesi</string>
+    <string name="InuFolderIconDefault">Varsayılan</string>
     <string name="InuStalkerPack">Takipçi Paketi</string>
     <string name="InuPresenceLoggerNotify">Çevrim İçi Bildirimleri</string>
     <string name="InuPresenceLoggerNotifyInfo">İzlenen bir kişi çevrim içi olduğunda veya çevrim dışı olduğunda bir açılır bildirim gösterin. Kimi izleyeceğinizi o kişinin profil menüsünden seçin; bu anahtar kapalı olsa bile her durum değişikliği yerel olarak kaydedilir.</string>

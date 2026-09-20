@@ -1059,6 +1059,10 @@
     <string name="InuUnlimitedFavoriteStickersInfo">移除本地保留和显示收藏贴纸及 GIF 数量的限制 — 它们已保存在服务器上，只是设备缓存在裁剪它们。</string>
     <string name="InuUnlimitedFolderChats">文件夹内无限聊天</string>
     <string name="InuUnlimitedFolderChatsInfo">允许文件夹容纳超过 Telegram 限制的聊天——超出部分仅保留在本设备，重装后不会保留。</string>
+    <string name="InuLocalFolders">本地文件夹</string>
+    <string name="InuLocalFoldersInfo">创建超出 Telegram 限制的聊天文件夹——额外的文件夹仅保存在此设备上，绝不会同步到服务器。</string>
+    <string name="InuFolderIcon">文件夹图标</string>
+    <string name="InuFolderIconDefault">默认</string>
     <string name="InuStalkerPack">监视包</string>
     <string name="InuPresenceLoggerNotify">在线通知</string>
     <string name="InuPresenceLoggerNotifyInfo">当被监视的联系人上线或下线时显示弹出通知。在该人的个人资料菜单中选择要监视的对象；无论此开关状态如何，每次状态变化都会在本地记录。</string>

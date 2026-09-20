@@ -122,6 +122,14 @@ class TosSettingsActivity : SettingsPageActivity() {
                 InuConfig.UNLIMITED_FOLDER_CHATS.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_LOCAL_FOLDERS,
+                R.string.InuLocalFolders,
+                R.string.InuLocalFoldersInfo,
+                InuConfig.LOCAL_FOLDERS.value,
+            )
+        )
         items.add(UItem.asShadow(null))
     }
 
@@ -178,6 +186,10 @@ class TosSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.UNLIMITED_FOLDER_CHATS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_LOCAL_FOLDERS -> {
+                val new = InuConfig.LOCAL_FOLDERS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
         }
     }
 
@@ -197,6 +209,7 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_UNLIMITED_PINNED_CHATS = InuUtils.generateId()
         private val TOGGLE_UNLIMITED_FAVORITE_STICKERS = InuUtils.generateId()
         private val TOGGLE_UNLIMITED_FOLDER_CHATS = InuUtils.generateId()
+        private val TOGGLE_LOCAL_FOLDERS = InuUtils.generateId()
 
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "tos",
@@ -213,6 +226,7 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("unlimited-pinned-chats", R.string.InuUnlimitedPinnedChats, TOGGLE_UNLIMITED_PINNED_CHATS),
                 SearchRegistry.Entry("unlimited-favorite-stickers", R.string.InuUnlimitedFavoriteStickers, TOGGLE_UNLIMITED_FAVORITE_STICKERS),
                 SearchRegistry.Entry("unlimited-folder-chats", R.string.InuUnlimitedFolderChats, TOGGLE_UNLIMITED_FOLDER_CHATS),
+                SearchRegistry.Entry("local-folders", R.string.InuLocalFolders, TOGGLE_LOCAL_FOLDERS),
             ),
         )
     }
