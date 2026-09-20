@@ -5,12 +5,12 @@ Subject: [+] ios input bar
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    |  25 +
- .../ui/Components/ChatActivityEnterView.java  | 592 ++++++++++++++++--
+ .../ui/Components/ChatActivityEnterView.java  | 594 ++++++++++++++++--
  ...ChatActivityEnterViewAnimatedIconView.java |   3 +-
  .../org/telegram/ui/MessageSendPreview.java   |  26 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   6 +-
  .../org/telegram/ui/iv/RichEditorToolbar.java |   6 +-
- 6 files changed, 598 insertions(+), 60 deletions(-)
+ 6 files changed, 600 insertions(+), 60 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -732,7 +732,7 @@ index 0000000..0000000 100644
                          attachLayout.setVisibility(GONE);
                          if (delegate != null && getVisibility() == VISIBLE) {
                              delegate.onAttachButtonHidden();
-@@ -8867,11 +9222,42 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8867,11 +9222,44 @@ public class ChatActivityEnterView extends FrameLayout implements
      private int lastAttachVisible;
      private void updateFieldRight(int attachVisible) {
          lastAttachVisible = attachVisible;
@@ -749,6 +749,8 @@ index 0000000..0000000 100644
 +            boolean hasInsideRightIcon = emojiButton != null && emojiButton.getVisibility() == VISIBLE && emojiButton.getAlpha() > 0;
 +            if (isIosInputAppearance() && !hasInsideRightIcon) {
 +                fieldRightMarginDp = DEFAULT_HEIGHT + iosGapDp + NO_ICON_TEXT_INSET_DP;
++            } else if (desu.inugram.helpers.chat.ChatInputMenuHelper.isMenuButtonVisible(this)) {
++                fieldRightMarginDp += DEFAULT_HEIGHT + iosGapDp;
 +            }
 +            layoutParams.rightMargin = dp(fieldRightMarginDp + reserve);
 +            if (oldRightMargin != layoutParams.rightMargin) {
@@ -776,7 +778,7 @@ index 0000000..0000000 100644
          if (isStories && isLiveComment) {
              layoutParams.rightMargin = dp(suggestButtonVisible ? 50 : 2) + Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT));
          } else if (attachVisible == 1 || attachVisible == 2/* && layoutParams.rightMargin != dp(2)*/) {
-@@ -10524,7 +10910,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -10524,7 +10912,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          if (botKeyboardView != null) {
              botKeyboardView.updateColors();
          }
@@ -785,7 +787,7 @@ index 0000000..0000000 100644
          emojiButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
          emojiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
          deleteRichDraftButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.SRC_IN));
-@@ -10533,6 +10919,23 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -10533,6 +10921,23 @@ public class ChatActivityEnterView extends FrameLayout implements
          desu.inugram.helpers.theme.NonIslandHelper.applySendButtonRipple(sendButton, 100, getThemedColor(Theme.key_listSelector));
      }
  
@@ -809,7 +811,7 @@ index 0000000..0000000 100644
      private void updateRecordedDeleteIconColors() {
          int dotColor = getThemedColor(Theme.key_chat_recordedVoiceDot);
          int background = getThemedColor(Theme.key_chat_messagePanelBackground);
-@@ -14592,30 +14995,82 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -14592,30 +14997,82 @@ public class ChatActivityEnterView extends FrameLayout implements
      @Override
      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
          int wasHeight = textFieldContainer.getMeasuredHeight();
@@ -906,7 +908,7 @@ index 0000000..0000000 100644
              }
          } else {
              ((MarginLayoutParams) emojiButton.getLayoutParams()).leftMargin = dp(3);
-@@ -14859,7 +15314,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -14859,7 +15316,7 @@ public class ChatActivityEnterView extends FrameLayout implements
      private void updateAttachLayoutParams() {
          updateAttachButtonTranslationX();
          if (attachLayout != null) {
@@ -915,7 +917,7 @@ index 0000000..0000000 100644
              attachLayout.setAlpha(attachLayoutAlpha * attachLayoutPaddingAlpha);
              attachLayout.setVisibility(attachLayout.getAlpha() > 0 ? View.VISIBLE : View.GONE);
              if (attachButton != null && isStories) {
-@@ -14877,6 +15332,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -14877,6 +15334,10 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private void updateAttachButtonTranslationX() {
          if (attachButton == null || VoiceRecorderHelper.isMovedToAttach()) return;
@@ -926,7 +928,7 @@ index 0000000..0000000 100644
          attachButton.setTranslationX(VoiceRecorderHelper.attachTranslationXOffset() + attachLayoutPaddingTranslationX + attachLayoutTranslationX + (sendButton != null ? (
              -Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT + 12)) * sendButton.getAlpha()
          ) : 0));
-@@ -15243,7 +15702,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15243,7 +15704,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
              updateColors();
              checkBackgroundRect();
@@ -935,7 +937,7 @@ index 0000000..0000000 100644
                  canvas.drawRoundRect(backgroundRect, dp(RADIUS), dp(RADIUS), backgroundPaint);
              }
  
-@@ -15337,7 +15796,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15337,7 +15798,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                      blurredBackgroundDrawable.draw(canvas);
                  }
  
@@ -944,7 +946,7 @@ index 0000000..0000000 100644
                      canvas.drawPath(path, backgroundPaint);
                  }
                  canvas.clipPath(path);
-@@ -15465,13 +15924,26 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15465,13 +15926,26 @@ public class ChatActivityEnterView extends FrameLayout implements
          }
  
          private BlurredBackgroundDrawable blurredBackgroundDrawable;
@@ -972,7 +974,7 @@ index 0000000..0000000 100644
          public boolean newCounterPos;
  
          public int width() {
-@@ -15506,8 +15978,22 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15506,8 +15980,22 @@ public class ChatActivityEnterView extends FrameLayout implements
  
          private int drawableColor;
  
@@ -996,7 +998,7 @@ index 0000000..0000000 100644
              if (color != drawableColor) {
                  drawableColor = color;
                  drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
-@@ -15515,7 +16001,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15515,7 +16003,9 @@ public class ChatActivityEnterView extends FrameLayout implements
                  inactiveDrawable.setColorFilter(new PorterDuffColorFilter(Color.argb(0xb4, Color.red(c), Color.green(c), Color.blue(c)), PorterDuff.Mode.SRC_IN));
                  drawableInverse.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider), PorterDuff.Mode.SRC_IN));
              }

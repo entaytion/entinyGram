@@ -1,0 +1,205 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 20 Sep 2026 23:05:33 +0300
+Subject:
+
+---
+ .../messenger/MessagesController.java         |  2 +-
+ .../telegram/messenger/MessagesStorage.java   |  6 ++
+ .../ui/Components/FilterTabsView.java         |  3 +
+ .../ui/Components/ViewPagerFixed.java         |  4 +-
+ .../org/telegram/ui/FilterCreateActivity.java | 58 ++++++++++++++++---
+ .../org/telegram/ui/FiltersSetupActivity.java |  5 ++
+ 6 files changed, 68 insertions(+), 10 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -896,7 +896,7 @@ public class MessagesController extends BaseController implements NotificationCe
+ 
+     public void lockFiltersInternal() {
+         boolean changed = false;
+-        if (!getUserConfig().isPremium() && dialogFilters.size() - 1 > dialogFiltersLimitDefault) {
++        if (!desu.inugram.InuConfig.LOCAL_FOLDERS.getValue() && !desu.inugram.helpers.dialogs.LocalFoldersHelper.hasLocalFolders() && !getUserConfig().isPremium() && dialogFilters.size() - 1 > dialogFiltersLimitDefault) {
+             int n = dialogFilters.size() - 1 - dialogFiltersLimitDefault;
+             ArrayList<DialogFilter> filtersSortedById = new ArrayList<>(dialogFilters);
+             Collections.reverse(filtersSortedById);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -3285,6 +3285,9 @@ public class MessagesStorage extends BaseController {
+                 SparseArray<MessagesController.DialogFilter> filtersToDelete = new SparseArray<>();
+                 for (int a = 0, N = dialogFilters.size(); a < N; a++) {
+                     MessagesController.DialogFilter filter = dialogFilters.get(a);
++                    if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++                        continue;
++                    }
+                     filtersToDelete.put(filter.id, filter);
+                 }
+                 ArrayList<Integer> filtersOrder = new ArrayList<>();
+@@ -3629,6 +3632,9 @@ public class MessagesStorage extends BaseController {
+         boolean orderChanged = false;
+         for (int a = 0, N = dialogFilters.size(); a < N; a++) {
+             MessagesController.DialogFilter filter = dialogFilters.get(a);
++            if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++                continue;
++            }
+             int order = filtersOrder.indexOf(filter.id);
+             if (filter.order != order) {
+                 filter.order = order;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+@@ -1743,6 +1743,9 @@ public class FilterTabsView extends FrameLayout {
+             ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).getDialogFilters();
+             for (int a = 0, N = filters.size(); a < N; a++) {
+                 MessagesController.DialogFilter filter = filters.get(a);
++                if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++                    continue;
++                }
+                 if (filter.isDefault()) {
+                     req.order.add(0);
+                 } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFixed.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFixed.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFixed.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ViewPagerFixed.java
+@@ -2253,7 +2253,9 @@ public class ViewPagerFixed extends FrameLayout {
+                 TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
+                 ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).dialogFilters;
+                 for (int a = 0, N = filters.size(); a < N; a++) {
+-                    MessagesController.DialogFilter filter = filters.get(a);
++                    if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filters.get(a).id)) {
++                        continue;
++                    }
+                     req.order.add(filters.get(a).id);
+                 }
+                 ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
+@@ -196,6 +196,16 @@ public class FilterCreateActivity extends BaseFragment {
+             while (getMessagesController().dialogFiltersById.get(filter.id) != null) {
+                 filter.id++;
+             }
++            // entiny: when server folder slots are exhausted, new folders get local ids
++            if (desu.inugram.InuConfig.LOCAL_FOLDERS.getValue()) {
++                final int count = getMessagesController().getDialogFilters().size();
++                boolean serverFull =
++                    count - 1 >= getMessagesController().dialogFiltersLimitDefault && !getUserConfig().isPremium() ||
++                    count >= getMessagesController().dialogFiltersLimitPremium;
++                if (serverFull) {
++                    filter.id = desu.inugram.helpers.dialogs.LocalFoldersHelper.nextLocalFilterId();
++                }
++            }
+             filter.name = "";
+             filter.color = (int) (Math.random() * 8);
+             creatingNew = true;
+@@ -605,16 +615,28 @@ public class FilterCreateActivity extends BaseFragment {
+         itemAnimator.setDurations(350);
+         listView.setItemAnimator(itemAnimator);
+         listView.setOnScrollListener(new RecyclerView.OnScrollListener() {
++            private void dismissNameEditorInput() {
++                if (nameEditTextCell != null && nameEditTextCell.editTextEmoji != null) {
++                    if (nameEditTextCell.editTextEmoji.isPopupShowing()) {
++                        nameEditTextCell.editTextEmoji.hidePopup(true);
++                    } else {
++                        nameEditTextCell.editTextEmoji.closeKeyboard();
++                    }
++                }
++            }
++
++            @Override
++            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
++                super.onScrollStateChanged(recyclerView, newState);
++                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
++                    dismissNameEditorInput();
++                }
++            }
++
+             @Override
+             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                 if (listView.scrollingByUser) {
+-                    if (nameEditTextCell != null && nameEditTextCell.editTextEmoji != null) {
+-                        if (nameEditTextCell.editTextEmoji.isPopupShowing()) {
+-                            nameEditTextCell.editTextEmoji.hidePopup(true);
+-                        } else {
+-                            nameEditTextCell.editTextEmoji.closeKeyboard();
+-                        }
+-                    }
++                    dismissNameEditorInput();
+                 }
+             }
+         });
+@@ -819,7 +841,19 @@ public class FilterCreateActivity extends BaseFragment {
+                 final AlertDialog progressDialogFinal = progressDialog;
+                 TLRPC.TL_messages_updateDialogFilter req = new TLRPC.TL_messages_updateDialogFilter();
+                 req.id = filter.id;
+-                getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
++                // entiny: local folders are deleted locally, no server request
++                if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++                    try {
++                        if (progressDialogFinal != null) {
++                            progressDialogFinal.dismiss();
++                        }
++                    } catch (Exception e) {
++                        FileLog.e(e);
++                    }
++                    getMessagesController().removeFilter(filter);
++                    getMessagesStorage().deleteDialogFilter(filter);
++                    finishFragment();
++                } else getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+                     try {
+                         if (progressDialogFinal != null) {
+                             progressDialogFinal.dismiss();
+@@ -1133,6 +1167,10 @@ public class FilterCreateActivity extends BaseFragment {
+             TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
+             ArrayList<MessagesController.DialogFilter> filters = fragment.getMessagesController().getDialogFilters();
+             for (int a = 0, N = filters.size(); a < N; a++) {
++                // entiny: server only knows about server folders
++                if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filters.get(a).id)) {
++                    continue;
++                }
+                 req.order.add(filters.get(a).id);
+             }
+             fragment.getConnectionsManager().sendRequest(req, null);
+@@ -1146,6 +1184,10 @@ public class FilterCreateActivity extends BaseFragment {
+         if (fragment == null || fragment.getParentActivity() == null) {
+             return;
+         }
++        if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++            desu.inugram.helpers.dialogs.LocalFoldersHelper.processAddLocalFilter(filter, newFilterFlags, newFilterName, newFilterNameEntities, newFilterNoanimate, newFilterColor, newAlwaysShow, newNeverShow, newPinned, creatingNew, atBegin, hasUserChanged, resetUnreadCounter, progress, fragment, onFinish);
++            return;
++        }
+         AlertDialog progressDialog;
+         if (progress) {
+             progressDialog = new AlertDialog(fragment.getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+@@ -623,6 +623,9 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+             ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
+             for (int a = 0, N = filters.size(); a < N; a++) {
+                 MessagesController.DialogFilter filter = filters.get(a);
++                if (desu.inugram.helpers.dialogs.LocalFoldersHelper.isLocal(filter.id)) {
++                    continue;
++                }
+                 req.order.add(filter.id);
+             }
+             getConnectionsManager().sendRequest(req, (response, error) -> {
+@@ -734,8 +737,10 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+     public void createFolder(INavigationLayout navigationLayout) {
+         final int count = getMessagesController().getDialogFilters().size();
+         if (
++            !desu.inugram.InuConfig.LOCAL_FOLDERS.getValue() && (
+             count - 1 >= getMessagesController().dialogFiltersLimitDefault && !getUserConfig().isPremium() ||
+             count >= getMessagesController().dialogFiltersLimitPremium
++            )
+         ) {
+             showDialog(new LimitReachedBottomSheet(this, getContext(), LimitReachedBottomSheet.TYPE_FOLDERS, currentAccount, null));
+         } else if (navigationLayout != null) {

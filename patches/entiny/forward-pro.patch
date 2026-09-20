@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2432,7 +2432,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2433,7 +2433,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          newMsg.flags &=~ 64;
                      }
                  }
@@ -247,7 +247,7 @@ index 0000000..0000000 100644
                      }
 -                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName,false, withSound, 0, 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
 +                    boolean inu_hideCaption = desu.inugram.helpers.chat.ForwardProHelper.shouldHideCaption(this);
-+                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName, inu_hideCaption, withSound, 0, 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
++                    result = SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingMessageObjects, key, !showSendersName, inu_hideCaption, withSound, desu.inugram.helpers.chat.ForwardProHelper.getScheduleDate(this), 0, replyTopMsg, video_timestamp, price == null ? 0 : price, monoForumPeerId, null);
                      if (result != 0) {
                          removeKeys.add(key);
                      }

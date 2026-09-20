@@ -5,11 +5,11 @@ Subject: Adjust build configuration (branding, versioning, dependency trimming f
 
 ---
  TMessagesProj/build.gradle                    | 44 +++++++++++++------
- TMessagesProj/proguard-rules.pro              | 18 ++++++--
+ TMessagesProj/proguard-rules.pro              | 16 +++++--
  .../java/org/telegram/ui/LaunchActivity.java  | 21 ---------
  TMessagesProj_App/build.gradle                | 36 ++++++++++++---
  build.gradle                                  | 38 ++++++++++++++--
- 5 files changed, 111 insertions(+), 46 deletions(-)
+ 5 files changed, 108 insertions(+), 47 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -138,20 +138,24 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -119,11 +123,19 @@
+@@ -112,18 +116,22 @@
+ -dontwarn org.scilab.forge.jlatexmath.**
+ 
+ # inu
+-# fixes for some libs
+ -dontwarn java.awt.**
+ -dontwarn javax.imageio.**
+ -dontwarn com.googlecode.mp4parser.authoring.tracks.mjpeg.**
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
-+# inu: without maplibre (removed) nothing else pulls in enough of org.bouncycastle
-+# to satisfy R8 for com.nimbusds's optional JWK/X.509 code paths (unused at
-+# runtime here). Silence R8 instead of depending on an unrelated dependency for it.
 +-dontwarn org.bouncycastle.**
  -dontwarn org.objectweb.asm.**
  -dontwarn com.google.crypto.tink.**
-+
-+# inu: guava's j2objc annotations are Objective-C transpilation hints only, never present
-+# at runtime on Android; R8 treats the unresolved reference as a hard error otherwise.
 +-dontwarn com.google.j2objc.annotations.**
++-dontwarn a.a.a.a.**
++-dontwarn com.stripe.android.stripe3ds2.**
++-dontwarn com.stripe.**
  -keep class desu.inugram.** { *; }
  # /inu
  

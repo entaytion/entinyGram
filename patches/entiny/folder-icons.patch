@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 20 Sep 2026 23:05:51 +0300
+Subject:
+
+---
+ .../java/org/telegram/ui/FilterCreateActivity.java    | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
+@@ -372,6 +372,16 @@ public class FilterCreateActivity extends BaseFragment {
+             items.add(ItemInner.asShadow(LocaleController.getString(R.string.FilterExcludeInfo)));
+         }
+ 
++        // entiny: custom folder icon picker (grid of filter_* icons, stored as mapped emoji)
++        if (desu.inugram.helpers.dialogs.FolderHelper.needIcons()) {
++            items.add(ItemInner.asButton(
++                desu.inugram.helpers.dialogs.FolderHelper.getTabIcon(filter.inu_emoticon),
++                LocaleController.getString(R.string.InuFolderIcon),
++                false
++            ).whenClicked(v -> desu.inugram.helpers.dialogs.FolderIconPicker.pick(this, filter, this::updateRows)));
++            items.add(ItemInner.asShadow(null));
++        }
++
+         if (getMessagesController().folderTags || !getUserConfig().isPremium()) {
+             items.add(new ItemInner(VIEW_TYPE_HEADER_COLOR_PREVIEW, false));
+             items.add(new ItemInner(VIEW_TYPE_COLOR, false));
+@@ -1163,6 +1173,7 @@ public class FilterCreateActivity extends BaseFragment {
+             fragment.getMessagesController().onFilterUpdate(filter);
+         }
+         fragment.getMessagesStorage().saveDialogFilter(filter, atBegin, true);
++        desu.inugram.helpers.dialogs.LocalFoldersHelper.saveIconsLater(fragment.getMessagesStorage(), fragment.getMessagesController().getDialogFilters());
+         if (atBegin) {
+             TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
+             ArrayList<MessagesController.DialogFilter> filters = fragment.getMessagesController().getDialogFilters();
