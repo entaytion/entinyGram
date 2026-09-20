@@ -1,15 +1,21 @@
 package desu.inugram.helpers.chat
 
+import android.app.Activity
 import android.os.Environment
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.util.SparseArray
+import android.view.Gravity
+import android.widget.FrameLayout
 import androidx.collection.LongSparseArray
+import androidx.core.content.res.ResourcesCompat
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import java.io.File
 import org.json.JSONArray
 import org.json.JSONObject
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
@@ -18,6 +24,12 @@ import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.ActionBar.BaseFragment
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.CheckBoxCell
+import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.LayoutHelper
 
 object SavedMessagesHelper {
     private const val TAG = "SavedMessagesHelper"
@@ -78,6 +90,10 @@ object SavedMessagesHelper {
 
     // entiny: bypasses global toggle when user explicitly checks keep-local in delete dialog
     private val pendingKeepLocal = HashSet<Pair<Long, Int>>()
+
+    // entiny: user-initiated deletes must never be archived; timestamped because several readers poll it
+    private val pendingPermanentDelete = HashMap<Pair<Long, Int>, Long>()
+    private const val PERMANENT_PENDING_TTL_MS = 120_000L
 
     // entiny: history preview objects avoid stamping history rows with current message's deleted state
     private val historyPreviewObjects: MutableSet<MessageObject> =
@@ -348,40 +364,45 @@ object SavedMessagesHelper {
 
     @JvmStatic
     @JvmOverloads
-    fun deletePermanently(account: Int, dialogId: Long, msgId: Int, onDone: Runnable? = null) {
-        deletePermanently(account, dialogId, listOf(msgId), onDone)
+    fun deletePermanently(account: Int, dialogId: Long, msgIds: List<Int>, onDone: Runnable? = null) {
+        dropGhostsFromChat(account, dialogId, msgIds, true, onDone)
     }
 
-    @JvmStatic
-    @JvmOverloads
-    fun deletePermanently(account: Int, dialogId: Long, msgIds: List<Int>, onDone: Runnable? = null) {
+    // entiny: purgeArchive=false hides the ghost bubble but keeps the saved copy (archive row, media, edit history)
+    private fun dropGhostsFromChat(account: Int, dialogId: Long, msgIds: List<Int>, purgeArchive: Boolean, onDone: Runnable? = null) {
         if (msgIds.isEmpty()) return
         val storage = MessagesStorage.getInstance(account) ?: return
         // entiny: drop from in-memory set before broadcasting deletion so ghost bubbles don't survive
-        synchronized(cacheLock) {
-            val ids = deletedMessageIds.get(account.toLong())?.get(dialogId)
-            val dates = deletedMessageDates.get(account.toLong())?.get(dialogId)
-            for (msgId in msgIds) {
-                ids?.remove(msgId)
-                dates?.remove(msgId.toLong())
+        if (purgeArchive) {
+            synchronized(cacheLock) {
+                val ids = deletedMessageIds.get(account.toLong())?.get(dialogId)
+                val dates = deletedMessageDates.get(account.toLong())?.get(dialogId)
+                for (msgId in msgIds) {
+                    ids?.remove(msgId)
+                    dates?.remove(msgId.toLong())
+                }
             }
         }
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
-            InuDatabaseHelper.deleteDeletedMessageEntries(db, dialogId, msgIds)
-            InuDatabaseHelper.deleteEditHistory(db, dialogId, msgIds)
+            if (purgeArchive) {
+                InuDatabaseHelper.deleteDeletedMessageEntries(db, dialogId, msgIds)
+                InuDatabaseHelper.deleteEditHistory(db, dialogId, msgIds)
+            }
             InuDatabaseHelper.deleteSavedMessages(db, dialogId, msgIds)
             val channelId = getChannelId(account, dialogId)
             storage.updateDialogsWithDeletedMessages(dialogId, channelId, ArrayList(msgIds), null)
             org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                synchronized(cacheLock) {
-                    val ids = deletedMessageIds.get(account.toLong())?.get(dialogId)
-                    val dates = deletedMessageDates.get(account.toLong())?.get(dialogId)
-                    val edits = editHistoryCache.get(account.toLong())?.get(dialogId)
-                    for (msgId in msgIds) {
-                        ids?.remove(msgId)
-                        dates?.remove(msgId.toLong())
-                        edits?.remove(msgId.toLong())
+                if (purgeArchive) {
+                    synchronized(cacheLock) {
+                        val ids = deletedMessageIds.get(account.toLong())?.get(dialogId)
+                        val dates = deletedMessageDates.get(account.toLong())?.get(dialogId)
+                        val edits = editHistoryCache.get(account.toLong())?.get(dialogId)
+                        for (msgId in msgIds) {
+                            ids?.remove(msgId)
+                            dates?.remove(msgId.toLong())
+                            edits?.remove(msgId.toLong())
+                        }
                     }
                 }
                 val controller = MessagesController.getInstance(account)
@@ -407,7 +428,14 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
-    fun extractPreserved(account: Int, dialogId: Long, msgIds: MutableList<Int>?): Boolean {
+    @JvmOverloads
+    fun extractPreserved(
+        account: Int,
+        dialogId: Long,
+        msgIds: MutableList<Int>?,
+        permanent: Boolean,
+        fragment: BaseFragment? = null,
+    ): Boolean {
         if (msgIds.isNullOrEmpty() || !isSaveDeletedEnabled()) return false
         val preserved = msgIds.filter { isMessageDeleted(account, dialogId, it) }
         if (preserved.isEmpty()) return false
@@ -415,8 +443,91 @@ object SavedMessagesHelper {
         synchronized(cacheLock) {
             for (id in preserved) purgingMessages.add(dialogId to id)
         }
-        deletePermanently(account, dialogId, preserved)
+        if (permanent) {
+            deletePermanently(account, dialogId, preserved) { showPurgedBulletin(fragment) }
+        } else {
+            dropGhostsFromChat(account, dialogId, preserved, false, null)
+        }
         return true
+    }
+
+    private fun showPurgedBulletin(fragment: BaseFragment?) {
+        val activity = fragment?.parentActivity ?: return
+        val drawable = ResourcesCompat.getDrawable(activity.resources, R.drawable.inu_tabler_trash_x, null)?.mutate() ?: return
+        BulletinFactory.of(fragment).createSimpleBulletin(
+            drawable,
+            LocaleController.getString(R.string.InuDeletePermanentlyDone),
+        ).show()
+    }
+
+    @JvmStatic
+    fun hasPreservedSelection(
+        account: Int,
+        selectedMessage: MessageObject?,
+        selectedMessages: Array<SparseArray<MessageObject>>?,
+        selectedGroup: MessageObject.GroupedMessages?,
+    ): Boolean {
+        if (!isSaveDeletedEnabled()) return false
+        val targets = ArrayList<Pair<Long, Int>>()
+        if (selectedMessage != null) {
+            if (selectedGroup != null) {
+                for (msg in selectedGroup.messages) targets.add(msg.dialogId to msg.id)
+            } else {
+                targets.add(selectedMessage.dialogId to selectedMessage.id)
+            }
+        } else if (selectedMessages != null) {
+            for (sparse in selectedMessages) {
+                if (sparse == null) continue
+                for (i in 0 until sparse.size()) {
+                    val msg = sparse.valueAt(i) ?: continue
+                    targets.add(msg.dialogId to msg.id)
+                }
+            }
+        }
+        return targets.any { isMessageDeleted(account, it.first, it.second) }
+    }
+
+    @JvmStatic
+    fun decorateDeleteAlert(
+        builder: AlertDialog.Builder,
+        box: FrameLayout?,
+        activity: Activity,
+        resourcesProvider: Theme.ResourcesProvider?,
+        account: Int,
+        selectedMessage: MessageObject?,
+        selectedMessages: Array<SparseArray<MessageObject>>?,
+        selectedGroup: MessageObject.GroupedMessages?,
+        state: BooleanArray,
+    ) {
+        if (!hasPreservedSelection(account, selectedMessage, selectedMessages, selectedGroup)) return
+        var container = box
+        if (container == null) {
+            container = FrameLayout(activity)
+            builder.setView(container)
+            builder.setCustomViewOffset(9)
+        }
+        val cell = CheckBoxCell(activity, 1, resourcesProvider)
+        cell.background = Theme.getSelectorDrawable(false)
+        cell.setText(LocaleController.getString(R.string.InuDeletePermanently), "", false, false)
+        cell.setPadding(
+            AndroidUtilities.dp(if (LocaleController.isRTL) 16f else 8f), 0,
+            AndroidUtilities.dp(if (LocaleController.isRTL) 8f else 16f), 0,
+        )
+        container.addView(
+            cell,
+            LayoutHelper.createFrame(
+                LayoutHelper.MATCH_PARENT.toFloat(), 48f,
+                Gravity.TOP or Gravity.LEFT,
+                0f, 48f * container.childCount, 0f, 0f,
+            ),
+        )
+        cell.setOnClickListener { v ->
+            state[0] = !state[0]
+            (v as CheckBoxCell).setChecked(state[0], true)
+        }
+        // entiny: manual delete of a ghost defaults to a full purge, matching the old menu item
+        state[0] = true
+        cell.setChecked(true, false)
     }
 
     @JvmStatic
@@ -443,12 +554,54 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
+    fun requestPermanentDelete(dialogId: Long, msgIds: Collection<Int>) {
+        if (msgIds.isEmpty()) return
+        val now = System.currentTimeMillis()
+        synchronized(cacheLock) {
+            for (id in msgIds) pendingPermanentDelete[dialogId to id] = now
+        }
+    }
+
+    @JvmStatic
+    fun isPermanentDeleteRequested(dialogId: Long, msgId: Int): Boolean {
+        val key = dialogId to msgId
+        val now = System.currentTimeMillis()
+        synchronized(cacheLock) {
+            val ts = pendingPermanentDelete[key] ?: return false
+            if (now - ts > PERMANENT_PENDING_TTL_MS) {
+                pendingPermanentDelete.remove(key)
+                return false
+            }
+            return true
+        }
+    }
+
+    // entiny: with save-deleted on, stock skips messages_v2 cleanup for every row; delete the ones that
+    // were not archived (own delete, off-category, permanent request) so their bubbles don't resurrect on reload
+    @JvmStatic
+    fun deleteNonPreservedFromStorage(
+        account: Int,
+        db: org.telegram.SQLite.SQLiteDatabase,
+        dialogId: Long,
+        mids: List<Int>?,
+    ) {
+        if (mids.isNullOrEmpty()) return
+        val doomed = mids.filter {
+            !isMessageDeleted(account, dialogId, it) || isPermanentDeleteRequested(dialogId, it)
+        }
+        if (doomed.isNotEmpty()) {
+            InuDatabaseHelper.deleteSavedMessages(db, dialogId, doomed)
+        }
+    }
+
+    @JvmStatic
     @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
         // entiny: reject dialog id 0 to prevent marking matching IDs in unrelated chats as deleted
         if (dialogId == 0L) return
         if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
-        if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && fromId == UserConfig.getInstance(account).clientUserId) return
+        if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && (fromId == UserConfig.getInstance(account).clientUserId || message?.out == true)) return
+        if (!forceSave && isPermanentDeleteRequested(dialogId, msgId)) return
         ensureAccountLoaded(account)
         // entiny: prevent empty text from subsequent delete reports overwriting preserved text
         val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
@@ -512,6 +665,7 @@ object SavedMessagesHelper {
         synchronized(cacheLock) {
             if (purgingMessages.contains(dialogId to msgId)) return false
         }
+        if (isPermanentDeleteRequested(dialogId, msgId)) return false
         if (isMessageDeleted(account, dialogId, msgId)) return true
         if (!shouldSaveForDialog(account, dialogId)) return false
         if (!InuConfig.SAVE_DELETED_OWN.value && msg.isOutOwner) return false
@@ -703,6 +857,29 @@ object SavedMessagesHelper {
         val mediaChanged = old.hadMedia != newHasMedia
         if (textChanged || mediaChanged) {
             recordEditHistory(account, dialogId, msgId, old.text, old.date, null, old.entities, old.media)
+        }
+    }
+
+    @JvmStatic
+    fun recordEditHistoryIfChanged(account: Int, dialogId: Long, msgId: Int, oldMessage: TLRPC.Message?, newMessage: TLRPC.Message) {
+        if (oldMessage == null || !isSaveEditedEnabled()) return
+        val textChanged = oldMessage.message != null && oldMessage.message != newMessage.message
+        // entiny: compare the actual attachment, "has media" is set on every ordinary update
+        val mediaChanged = MessageObject.getFileName(oldMessage) != MessageObject.getFileName(newMessage)
+        if (textChanged || mediaChanged) {
+            recordEditHistory(account, dialogId, msgId, oldMessage.message ?: "", oldMessage.date, oldMessage)
+        }
+    }
+
+    @JvmStatic
+    fun handleMessageEdited(account: Int, newMessage: TLRPC.Message, cached: MessageObject?) {
+        if (!isSaveEditedEnabled()) return
+        val old = cached?.messageOwner
+        if (old != null) {
+            recordEditHistoryIfChanged(account, newMessage.dialog_id, newMessage.id, old, newMessage)
+        } else {
+            // entiny: dialogMessagesByIds holds only the dialog preview, so fall back to the shadow cache
+            recordEditHistoryFromShadow(account, newMessage.dialog_id, newMessage.id, newMessage.message, newMessage.media != null)
         }
     }
 

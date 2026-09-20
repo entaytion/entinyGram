@@ -15,7 +15,7 @@ on:
           - release
           - release+tg
       prerelease:
-        description: 'Mark as a pre-release build (CI-channel-only, creates a GitHub pre-release, adds a "‼️ PRE RELEASE" banner to both)'
+        description: 'Mark as a pre-release build (CI-channel-only, no GitHub release, adds a "‼️ PRE RELEASE" banner)'
         required: false
         default: false
         type: boolean
@@ -107,9 +107,6 @@ jobs:
         id: info
         env:
           INU_DAY_STATE: ${{ vars.INU_DAY_STATE || '' }}
-          # `prerelease` is declared `type: boolean` -- see the LAST_UPLOADED_SHA comment
-          # below for why `== 'true'` alone doesn't reliably match it. Rendered here to a
-          # plain 'true'/'false' string, which is safe to compare once it's env/process.env.
           PRERELEASE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'true' || 'false' }}
         run: bun run tsx scripts/ci/version.ts
 
@@ -148,19 +145,13 @@ jobs:
         env:
           COMMIT_ID: ${{ github.sha }}
           INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          # See the note on LAST_UPLOADED_SHA below: `== 'true'` never matches a boolean input.
           INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
           ABI_FILTERS: arm64-v8a
           CCACHE_COMPILERCHECK: content
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          # Pre-release and stable builds both compile the release buildType -- same
-          # applicationId, same signing key, so a pre-release installs over (updates) the main
-          # app instead of side-by-side. INU_BUILD_TYPE (set above) is what marks the APK as
-          # "beta" at runtime (BuildVars.isBetaApp()), not the package name anymore -- the same
-          # env var also makes build.gradle skip R8 minification for a beta build, so tester
-          # crash logs stay readable instead of obfuscated.
+          # Pre-release and stable builds both compile the release buildType.
           ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
           mkdir -p "$GITHUB_WORKSPACE/out"
           cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
@@ -171,19 +162,7 @@ jobs:
 
       - name: Stage artifacts
         env:
-          # Real releases diff from the last REAL release (LAST_RELEASE_SHA), so nothing
-          # announced only to the CI channel via a pre-release build gets silently dropped
-          # from the public changelog. Pre-releases diff from the last build of any kind
-          # (LAST_BUILD_SHA), which keeps each test build's own notes incremental.
-          #
-          # `prerelease` is declared `type: boolean`, so in an expression it is a real boolean.
-          # GitHub compares mismatched types by coercing to number - true becomes 1, the string
-          # 'true' becomes NaN, and NaN matches nothing - so `== 'true'` was always false here and
-          # every pre-release silently diffed from the last full RELEASE instead. That is why
-          # consecutive pre-release changelogs kept repeating each other's contents. The shell
-          # tests elsewhere in this file are unaffected: there the value is already rendered to
-          # the literal text `true` before the shell compares it. Both shapes accepted below,
-          # since the REST API can still deliver this input as a string.
+          # Boolean input quirk: `== 'true'` never matches a real boolean, so accept both shapes.
           LAST_UPLOADED_SHA: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && vars.LAST_BUILD_SHA || vars.LAST_RELEASE_SHA }}
         run: |
           mkdir -p out
@@ -327,14 +306,14 @@ jobs:
           path: out
 
       - name: Create GitHub release
+        if: ${{ inputs.prerelease != true && inputs.prerelease != 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          PRE_RELEASE: ${{ inputs.prerelease }}
         run: |
           tag='${{ needs.build.outputs.tag }}'
           apk="out/${{ needs.build.outputs.apk-arm64 }}"
 
-          # Use AI-generated English notes for GitHub (full markdown); guard against null
+          # AI-generated English notes for GitHub (full markdown).
           notes_en=''
           if [ -f "out/release-notes.json" ]; then
             notes_en=$(jq -r '.en // empty' out/release-notes.json)
@@ -345,67 +324,27 @@ jobs:
             printf 'Release %s\n' "$tag" > release_body.md
           fi
 
-          # Pre-releases now share the main app's applicationId (see the build job above) -- this
-          # APK overwrites/updates your existing entinyGram install instead of living side-by-side.
-          # Call that out on the release page too, same as the Telegram CI channel post
-          # (scripts/ci/upload.ts). GitHub renders "> [!WARNING]" as a colored admonition box, not
-          # just a quoted line.
-          if [ "$PRE_RELEASE" = 'true' ]; then
-            {
-              printf '> [!WARNING]\n'
-              printf '> **Pre-release build** — a test build for fixing reported bugs. Expect instability and possible bugs.\n'
-              printf '>\n'
-              printf '> Installs **over your main entinyGram app** (same package) — it will replace your current version, not add a second app.\n'
-              printf '>\n'
-              printf '> Still have the old separate `.beta` app installed from before? Uninstall it manually once — this build can'"'"'t update it, only the main app.\n'
-              printf '\n'
-              cat release_body.md
-            } > release_body.tmp.md
-            mv release_body.tmp.md release_body.md
-          fi
-
-          # Append compare link using the previous release tag. `gh release list` without
-          # --exclude-pre-releases returns the single most recent tag of ANY kind, so a stable
-          # release landing after a run of prereleases would otherwise diff against the last
-          # prerelease instead of the last stable one -- shrinking "full changelog" down to
-          # just that last prerelease's handful of commits. Mirrors the LAST_RELEASE_SHA vs
-          # LAST_BUILD_SHA split below: a stable release always diffs from the last stable
-          # release; a prerelease diffs from the last build of any kind, same as before, so
-          # consecutive prereleases each stay incremental.
-          if [ "$PRE_RELEASE" = 'true' ]; then
-            prev_tag=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
-          else
-            prev_tag=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
-          fi
+          # Pre-releases skip this step (see `if:` above).
+          prev_tag=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
           if [ -n "$prev_tag" ] && [ "$prev_tag" != "$tag" ]; then
             printf '\n\n**Full Changelog**: https://github.com/%s/compare/%s...%s\n' \
               "$GITHUB_REPOSITORY" "$prev_tag" "$tag" >> release_body.md
           fi
 
-          # Handed to the next step (Upload to Telegram) so the CI channel post can carry the
-          # same compare link instead of only the AI-trimmed changelog.
+          # Same compare link goes into the CI channel post (next step).
           echo "RELEASE_TAG=$tag"        >> "$GITHUB_ENV"
           echo "PREV_RELEASE_TAG=$prev_tag" >> "$GITHUB_ENV"
-
-          flags=()
-          if [ "$PRE_RELEASE" = 'true' ]; then
-            flags+=(--prerelease)
-          fi
 
           gh release create "$tag" \
             --target "$GITHUB_SHA" \
             --title  "$tag" \
             --notes-file release_body.md \
-            "${flags[@]}" \
             "$apk" || \
           gh release upload "$tag" \
             --clobber \
             "$apk"
 
       - name: Upload to Telegram (CI channel + optional main channel)
-        # RELEASE_TAG / PREV_RELEASE_TAG come from the "Create GitHub release" step above via
-        # $GITHUB_ENV, not listed here — upload.ts reads them to build the same compare-diff
-        # link that step already appends to the GitHub release body.
         env:
           TELEGRAM_API_ID:       ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH:     ${{ secrets.TELEGRAM_API_HASH }}
@@ -415,11 +354,15 @@ jobs:
           MTPROTO_SESSION:       ${{ secrets.MTPROTO_SESSION }}
           GH_VARS_TOKEN:         ${{ secrets.GH_VARS_TOKEN }}
           PRE_RELEASE:           ${{ inputs.prerelease }}
+          GH_TOKEN:              ${{ github.token }}
         run: |
-          # Always upload to CI channel.
-          # Only post to main channel when mode is "release+tg" -- and never for a pre-release,
-          # even if release+tg was selected alongside it by mistake; pre-releases are test builds
-          # for the CI channel only.
+          # Tags for the compare link. The release step is skipped for pre-releases,
+          # so use the commit SHA as the diff endpoint (the tag never exists on GitHub).
+          if [ -z "${RELEASE_TAG:-}" ]; then
+            export PREV_RELEASE_TAG=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+            export RELEASE_TAG="$GITHUB_SHA"
+          fi
+          # CI channel always. Main channel only for stable release+tg.
           if [ '${{ inputs.mode }}' = 'release+tg' ] && [ '${{ inputs.prerelease }}' != 'true' ]; then
             bun run tsx scripts/ci/upload.ts out
           else
@@ -434,9 +377,7 @@ jobs:
         run: |
           next_day_counter=$((${{ needs.build.outputs.day-counter }} + 1))
           gh variable set INU_DAY_STATE --body "${{ needs.build.outputs.date }}:$next_day_counter"
-          # LAST_BUILD_SHA moves on every build so pre-release changelogs stay incremental.
-          # LAST_RELEASE_SHA only moves on a real release, so the next real release's
-          # changelog still spans everything since the last one, prereleases included.
+          # LAST_BUILD_SHA moves on every build; LAST_RELEASE_SHA only on stable.
           gh variable set LAST_BUILD_SHA --body "$GITHUB_SHA"
           if [ "$PRE_RELEASE" != 'true' ]; then
             gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"

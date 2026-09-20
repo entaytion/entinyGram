@@ -25,8 +25,9 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **whitelist management**: exempt specific chats from Ghost Mode
 - 📡 **anti-deletion & edit history**:
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
+  - **your own deletions are never preserved** — only what the other side deleted becomes a ghost
   - **per-category controls** for private chats, groups, channels, and bots
-  - **delete permanently** option for individual saved-deleted entries
+  - **delete permanently** checkbox (pre-checked) in the delete confirmation for saved-deleted messages — unchecking hides the ghost but keeps the saved copy
   - **save edit history** (marked with ✏️) with full formatting, media preservation, and text diff mode
   - **deleted-message styling**: custom transparency, mark, and accent color with live preview
   - **local archive search**: full-text search across saved deleted messages and edit history

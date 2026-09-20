@@ -73,15 +73,11 @@ async function persistSession(session: string) {
 }
 
 /**
- * Finds the most recent message in the CI channel that carries the `#release` hashtag.
- * Used to generate the "The last release — download" footer link.
- * Returns the message id, or null if not found / search failed.
+ * Most recent stable #release message in the CI channel, for the footer download link.
+ * Returns null when not found / search failed.
  */
 async function findLastReleaseMessageId(): Promise<number | null> {
   try {
-    // searchMessages returns an ArrayPaginated (array-like), not an async iterable.
-    // We search the CI channel for '#release' and pick the first result that is a
-    // proper stable release (has #release but NOT #prerelease in its text).
     const results = await tg.searchMessages({
       chatId: channelCI,
       query: '#release',
@@ -104,9 +100,8 @@ try {
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const postUrl = (id: number) => `https://t.me/${channelCI}/${id}`
 
-  // Parse AI-generated release notes up front — the CI channel caption embeds the real
-  // changelog in a <blockquote> too, since UpdateHelper.kt (on-device) reads its update-dialog
-  // text straight from this channel's message, not from the main channel's text-only post.
+  // On-device updater clips its dialog to the caption <blockquote>, so the real
+  // changelog lives in the CI caption too — not only in the main-channel post.
   let tgUk = ''
   let tgEn = ''
   let enNotes = ''
@@ -132,23 +127,11 @@ try {
   const postUk = tgUk || '• Оновлення доступне'
   const postEn = tgEn || (enNotes ? enNotes.slice(0, 500) : '')
 
-  /**
-   * Converts a plain-text changelog block to mtcute entities.
-   *
-   * Handles:
-   *   - Markdown links:  [text](url)  → <a href="url">text</a>
-   *   - Markdown bold:   **text**     → <b>text</b>
-   *   - Everything else is HTML-escaped and passed through as-is.
-   *
-   * The AI may emit tg://entinySettings/<slug> links and **bold** spans in the tg_uk
-   * line when it finds a close match in the settings registry / wants to anchor a
-   * flagship feature name — this parser renders them as proper Telegram entities.
-   */
+  /** [text](url) → link, **text** → bold. Everything else is escaped as-is. */
   function notesToEntities(text: string) {
     const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
     const htmlLines = lines.map(line => {
-      // Split the line on [text](url) and **text** occurrences (in order) and
-      // reassemble as HTML.
+      // Split on link / bold tokens, reassemble as HTML.
       const parts: ReturnType<typeof html>[] = []
       let last = 0
       const tokenRe = /\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*/g
@@ -176,56 +159,32 @@ try {
 
   const ukHtml = notesToEntities(postUk)
   const enHtml = postEn ? notesToEntities(postEn) : null
-  // CI channel caption is English — UpdateHelper.kt's extractApkInfo/applyUpdate clips the
-  // update-dialog text to exactly this <blockquote> entity, so whatever goes here is what
-  // shows up in the on-device update dialog too. Fall back to Ukrainian only if no EN notes.
   const ciHtml = enHtml ?? ukHtml
-
   const isPreRelease = process.env.PRE_RELEASE === 'true'
+  const appLabel = isPreRelease ? 'entinyGram Beta' : 'entinyGram'
 
-  // Pre-releases now share the main app's applicationId (see apk.yml), so they install *over*
-  // the main app (same package) instead of side-by-side -- call that out explicitly, including a
-  // one-time note for testers who still have the old separate .beta app from before this change.
   const preReleaseBanner = isPreRelease
-    ? html`🧪 <b>PRE-RELEASE BUILD</b><blockquote>⚠️ Test build for fixing reported bugs — expect instability and possible bugs\n📦 Installs <b>over your main entinyGram app</b> (same package), not as a separate app\n♻️ Still have the old separate .beta app? Uninstall it manually once — this build updates the main app only</blockquote><br/>`
+    ? html`<i>‼️ Pre-release build — for testing new features and bug fixes. This version is unstable and may crash or misbehave.</i><br/>`
     : ''
 
-  // ── Last stable release link ─────────────────────────────────────────────────
-  // Shown in the CI channel caption between the changelog blockquote and the hashtag line.
-  // For a prerelease: search the CI channel for the most recent non-prerelease #release message.
-  // For a stable release: same — search for the previous release (we haven't posted yet, so the
-  // most recent one in the channel is still the previous stable release).
-  // If the search fails or finds nothing, the line is omitted gracefully.
+  // Footer links: last stable release + full GitHub diff. Omitted when unresolvable.
   const lastReleaseId = await findLastReleaseMessageId()
   const lastReleaseHtml = lastReleaseId !== null
     ? html`<br/>⬇️ The last release — <a href="${postUrl(lastReleaseId)}">download</a>`
     : ''
 
-  // ── GitHub compare link ─────────────────────────────────────────────────────
-  // The GitHub release itself already gets a "Full Changelog: .../compare/prev...tag" line
-  // (see the "Create GitHub release" step in apk.yml, which exports both tags via $GITHUB_ENV
-  // ahead of this script). Mirrored here so the CI channel — where testers actually watch for
-  // builds — always has the same full-diff link, not just the AI-trimmed changelog above.
-  // Omitted gracefully if either tag is missing (e.g. a manual/local run) or there's no prior tag.
   const releaseTagName = process.env.RELEASE_TAG ?? ''
   const prevReleaseTag = process.env.PREV_RELEASE_TAG ?? ''
   const compareHtml = releaseTagName && prevReleaseTag && prevReleaseTag !== releaseTagName
     ? html`<br/>📝 <a href="https://github.com/${info.repo}/compare/${prevReleaseTag}...${releaseTagName}">Full diff on GitHub</a>`
     : ''
 
-  // 1) Upload the APK document to the CI channel — always happens. The changelog goes in a
-  // <blockquote>: UpdateHelper.kt's extractApkInfo/applyUpdate clips the update-dialog text to
-  // exactly this entity, discarding the #release/label wrapper text around it.
-  //
-  // Tag is #release XOR #prerelease (never both) — UpdateHelper.kt's on-device update checker
-  // searches the CI channel by this tag to decide what to offer a given user. Regular users only
-  // ever search #release; only users who opted into the beta toggle also search #prerelease. A
-  // pre-release build must never also carry #release, or it would get offered to everyone.
+  // Updater clips its dialog to the caption <blockquote>; tag is #release XOR #prerelease.
   const releaseTag = isPreRelease ? '#prerelease' : '#release'
   const { file } = info.apkFiles[0]
 
-  // Construct caption safely respecting Telegram's 1024 character limit for media captions
-  const buildCaption = (notesEntity: ReturnType<typeof html>) => html`<b>entinyGram v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${notesEntity}</blockquote>${lastReleaseHtml}${compareHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
+  // Caption limit is 1024 chars; trim lines until it fits, full notes go in a reply.
+  const buildCaption = (notesEntity: ReturnType<typeof html>) => html`<b>${appLabel} v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${notesEntity}</blockquote>${lastReleaseHtml}${compareHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
 
   let caption = buildCaption(ciHtml)
   let needsCiFollowup = false
@@ -267,9 +226,7 @@ try {
     )
   }
 
-  // 2) If --ci-only, stop here — no main channel post. Pre-releases are always ci-only (see
-  // apk.yml), so this is also where their message content lives -- the main-channel blocks below
-  // never run for a pre-release.
+  // 2) --ci-only stops here: no main-channel post. Pre-releases are always ci-only (apk.yml).
   if (ciOnly) {
     console.log('CI-only mode: APK uploaded to CI channel, skipping main channel post.')
   } else {
@@ -277,9 +234,7 @@ try {
 
     const linksHtml = html`<a href="${postUrl(apkMsg.id)}">Завантажити / Download</a>`
 
-    // Build as discrete blocks joined by a single blank line each -- avoids the stray empty
-    // paragraph that mixing literal template-literal newlines with <br/> tags used to leave
-    // behind whenever `extra` (or any other optional block) was empty.
+    // Discrete blocks joined by a blank line each — no stray empty paragraphs.
     const blocks = [
       html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — ${linksHtml}`,
       extra ? html`${extra}` : null,
@@ -290,8 +245,7 @@ try {
 
     const release = joinTextWithEntities(blocks, '\n\n')
 
-    // Telegram's sendText limit is 4096 chars. If the combined post exceeds 3800 chars,
-    // split into Post 1 (Ukrainian + download link) and Post 2 (English reply).
+    // >3800 chars → split into UA post + EN reply (sendText limit is 4096).
     if (release.text.length <= 3800 || !enHtml) {
       await tg.sendText(channelMain, release)
     } else {

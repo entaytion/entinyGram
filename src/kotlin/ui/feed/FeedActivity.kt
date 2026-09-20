@@ -351,6 +351,8 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     private fun openRow(msg: MessageObject) {
+        // entiny: a row counts as read only on tap -- plain scrolling must not advance the watermark
+        controller.unreadTracker.onRowSeen(msg.getDialogId(), msg.id)
         val args = Bundle()
         args.putLong("chat_id", -msg.getDialogId())
         args.putInt("message_id", msg.id)
@@ -410,7 +412,6 @@ class FeedActivity @JvmOverloads constructor(
                 is Row.Msg -> {
                     val cell = holder.itemView as FeedMessageCell
                     cell.bind(row.message)
-                    controller.unreadTracker.onRowSeen(row.message.getDialogId(), row.message.id)
                 }
             }
         }

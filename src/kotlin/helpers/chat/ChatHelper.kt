@@ -24,7 +24,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.core.content.edit
-import androidx.core.content.res.ResourcesCompat
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.StickerDownloadHelper
@@ -127,7 +126,6 @@ object ChatHelper {
     const val OPTION_MARK_AS_READ = 522
     const val OPTION_AI_SUMMARIZE = 523
     const val OPTION_ADD_FILTER = 524
-    const val OPTION_DELETE_PERMANENTLY = 525
     const val OPTION_BURN_ONE_TIME = 526
     const val OPTION_SAVE_ONE_TIME = 527
     const val OPTION_FORWARD_PRO = 528
@@ -499,12 +497,6 @@ object ChatHelper {
             icons.add(R.drawable.group_edit)
         }
 
-        if (InuConfig.SAVE_DELETED_MESSAGES.value && SavedMessagesHelper.isMessageDeleted(activity.currentAccount, selectedObject.dialogId, selectedObject.id)) {
-            items.add(LocaleController.getString(R.string.InuDeletePermanently))
-            options.add(OPTION_DELETE_PERMANENTLY)
-            icons.add(R.drawable.inu_tabler_trash_x)
-        }
-
         // entiny: gated mode preserves stock blur-gated save; offer direct save here instead
         val oneTimeVoiceOrRound = selectedObject.isVoiceOnce() || selectedObject.isRoundOnce()
         if (selectedObject.isSecretMedia() &&
@@ -862,17 +854,6 @@ object ChatHelper {
             OPTION_EDIT_HISTORY -> {
                 // entiny: pass real MessageObject so history screen does not synthesize stand-in without peer
                 SavedMessagesHelper.showEditHistoryDialog(activity.parentActivity, activity, selectedObject)
-            }
-
-            OPTION_DELETE_PERMANENTLY -> {
-                val dialogId = selectedObject.dialogId
-                val msgId = selectedObject.id
-                SavedMessagesHelper.deletePermanently(activity.currentAccount, dialogId, msgId) {
-                    BulletinFactory.of(activity).createSimpleBulletin(
-                        ResourcesCompat.getDrawable(activity.context.resources, R.drawable.inu_tabler_trash_x, null)!!.mutate(),
-                        LocaleController.getString(R.string.InuDeletePermanentlyDone),
-                    ).show()
-                }
             }
 
             OPTION_SAVE_ONE_TIME -> {
