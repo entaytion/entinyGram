@@ -21,13 +21,16 @@ object ExchangeRates {
     private const val URL_STRING = "https://api.coinbase.com/v2/exchange-rates?currency=USD"
     private const val CACHE_TTL_MS = 5 * 60 * 1000L
 
-    val MAIN_CURRENCIES = arrayOf(
+    // entiny: guaranteed-known codes so pickers work offline before the first fetch.
+    val SEED_CURRENCIES = arrayOf(
         "USD", "EUR", "RUB", "GBP", "KZT", "TRY", "UAH", "PLN", "AED", "CNY", "JPY", "BYN", "ILS", "CZK", "INR", "IRR",
         "TON", "BTC", "ETH"
     )
 
     class State(private val usdRates: Map<String, BigDecimal>) {
         fun getUsdRate(code: String?): BigDecimal? = code?.let { usdRates[it] }
+
+        fun codes(): Set<String> = usdRates.keys
 
         fun getRate(base: String, target: String): BigDecimal? {
             val baseRate = getUsdRate(base) ?: return null
@@ -119,26 +122,22 @@ object ExchangeRates {
     private fun parse(json: String): State? = try {
         val rates = JSONObject(json).getJSONObject("data").getJSONObject("rates")
         val result = HashMap<String, BigDecimal>()
-        for (code in MAIN_CURRENCIES) {
-            val usdRate = parseUsdRate(code, rates)
-            if (usdRate != null) result[code] = usdRate
+        result["USD"] = BigDecimal.ONE
+        for (key in rates.keys()) {
+            val code = PillCurrencies.normalize(key)
+            if (code.isEmpty() || code == "USD") continue
+            val value = rates.optString(key)
+            if (value.isEmpty()) continue
+            try {
+                val decimal = BigDecimal(value)
+                if (decimal.signum() != 0) result[code] = BigDecimal.ONE.divide(decimal, 16, RoundingMode.HALF_UP)
+            } catch (_: Exception) {
+            }
         }
-        if (result.isEmpty()) null else State(result)
+        if (result.size <= 1) null else State(result)
     } catch (e: Exception) {
         FileLog.e(e)
         null
-    }
-
-    private fun parseUsdRate(code: String, rates: JSONObject): BigDecimal? {
-        if (code == "USD") return BigDecimal.ONE
-        val value = rates.optString(code)
-        if (value.isEmpty()) return null
-        return try {
-            val decimal = BigDecimal(value)
-            if (decimal.signum() == 0) null else BigDecimal.ONE.divide(decimal, 16, RoundingMode.HALF_UP)
-        } catch (e: Exception) {
-            null
-        }
     }
 
     private fun saveCache(state: State) {
@@ -148,7 +147,7 @@ object ExchangeRates {
 
     private fun serialize(state: State): String {
         val builder = StringBuilder()
-        for (code in MAIN_CURRENCIES) {
+        for (code in state.codes().sorted()) {
             val rate = state.getUsdRate(code) ?: continue
             if (builder.isNotEmpty()) builder.append(',')
             builder.append(code).append('=').append(rate.toPlainString())
@@ -169,7 +168,21 @@ object ExchangeRates {
         return if (result.isEmpty()) null else State(result)
     }
 
-    fun isSupportedCurrency(code: String?): Boolean = MAIN_CURRENCIES.contains(PillCurrencies.normalize(code))
+    fun isSupportedCurrency(code: String?): Boolean {
+        val normalized = PillCurrencies.normalize(code)
+        if (normalized.isEmpty()) return false
+        if (SEED_CURRENCIES.contains(normalized)) return true
+        return getCached()?.getUsdRate(normalized) != null
+    }
+
+    fun allSupportedCodes(): List<String> {
+        val codes = HashSet<String>()
+        codes.addAll(SEED_CURRENCIES)
+        getCached()?.codes()?.let { codes.addAll(it) }
+        codes.remove("GRAM")
+        codes.remove(PillCurrencies.AUTO)
+        return codes.sorted()
+    }
 
     fun resolveTargetCurrency(selection: String?): String {
         val normalized = PillCurrencies.normalize(selection)

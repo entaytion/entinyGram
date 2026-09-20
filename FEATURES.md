@@ -87,7 +87,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **customizable My Profile info rows**: reorder and toggle phone, bio, username, ID, and registration date rows on your profile
 - 📡 **wide channel posts**: channel posts stretch to full available width with proportional album layout
 - 📡 **branded first-run intro**: branded first slide during onboarding
-- 📡 **pill stack (beta)**: interactive pills in chats search bar (clock, weather, proxy, storage, telemetry, currency/crypto rates) - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
+- 📡 **pill stack (beta)**: interactive pills in chats search bar (clock, weather, proxy, storage, telemetry, currency/crypto rates) with a searchable rate-pair editor over every currency the rate source offers; inactive with non-island global search - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
 
 ### profile & identity tools
 

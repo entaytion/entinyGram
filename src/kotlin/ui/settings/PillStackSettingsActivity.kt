@@ -4,13 +4,11 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.pillstack.PillCurrencies
 import desu.inugram.helpers.pillstack.PillRegistry
 import desu.inugram.helpers.pillstack.RateInstances
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Cells.NotificationsCheckCell
-import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -64,7 +62,8 @@ class PillStackSettingsActivity : SettingsPageActivity() {
             item.id == TOGGLE_MASTER -> {
                 val new = InuConfig.PILL_STACK_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-                softRebuild()
+                // entiny: rows are rebuilt in fillItems; adapter.update re-runs it, softRebuild didn't refresh this screen's list
+                listView?.adapter?.update(true)
             }
 
             item.id == BUTTON_VISIBLE_COUNT -> RadioItemOptions.show(
@@ -73,55 +72,24 @@ class PillStackSettingsActivity : SettingsPageActivity() {
                 InuConfig.PILL_STACK_VISIBLE_COUNT.value - 1,
             ) { which ->
                 InuConfig.PILL_STACK_VISIBLE_COUNT.value = which + 1
-                softRebuild()
+                listView?.adapter?.update(true)
             }
 
             item.id == BUTTON_PILLS -> presentFragment(PillStackLayoutActivity())
 
-            item.id == BUTTON_ADD_RATE -> pickBase(view) { base ->
-                pickTarget(view, base) { target ->
-                    RateInstances.create(base, target)
-                    softRebuild()
-                }
-            }
+            item.id == BUTTON_ADD_RATE -> presentFragment(RatePairEditActivity())
 
             item.id >= RATE_ROW_ID_BASE -> {
                 val instanceId = item.id - RATE_ROW_ID_BASE
-                val instance = RateInstances.get(instanceId) ?: return
-                ItemOptions.makeOptions(this, view)
-                    .add(R.drawable.msg_edit, LocaleController.getString(R.string.Edit)) {
-                        pickBase(view, instance.from) { base ->
-                            pickTarget(view, base, instance.to) { target ->
-                                RateInstances.setPair(instanceId, base, target)
-                                softRebuild()
-                            }
-                        }
-                    }
-                    .add(R.drawable.msg_delete, LocaleController.getString(R.string.Delete)) {
-                        RateInstances.remove(instanceId)
-                        softRebuild()
-                    }
-                    .show()
+                if (RateInstances.get(instanceId) != null) presentFragment(RatePairEditActivity(instanceId))
             }
         }
     }
 
-    private fun pickBase(anchor: View, current: String? = null, onPicked: (String) -> Unit) {
-        val bases = RateInstances.BASE_CURRENCIES
-        RadioItemOptions.show(
-            this, anchor,
-            bases.map { RateInstances.getBaseLabel(it) },
-            bases.indexOf(current ?: "").coerceAtLeast(0),
-        ) { which -> onPicked(bases[which]) }
-    }
-
-    private fun pickTarget(anchor: View, base: String, current: String? = null, onPicked: (String) -> Unit) {
-        val targets = PillCurrencies.getTargetCurrencies(base)
-        RadioItemOptions.show(
-            this, anchor,
-            targets.map { PillCurrencies.getTargetCurrencyLabel(it) },
-            targets.indexOf(current ?: "").coerceAtLeast(0),
-        ) { which -> onPicked(targets[which]) }
+    // entiny: rate pairs are edited on a child screen -- re-fill rows when we come back
+    override fun onResume() {
+        super.onResume()
+        listView?.adapter?.update(true)
     }
 
     companion object {

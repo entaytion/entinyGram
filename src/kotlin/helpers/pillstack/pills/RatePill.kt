@@ -37,6 +37,11 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
         private fun cacheFor(instanceId: Int): RateCache = synchronized(caches) {
             caches.getOrPut(instanceId) { RateCache() }
         }
+
+        // entiny: pair changed under us -- the remembered price belongs to the old pair
+        fun clearCache(instanceId: Int) {
+            synchronized(caches) { caches.remove(instanceId) }
+        }
     }
 
     private val layout = LinearLayout(context)

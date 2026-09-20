@@ -10,7 +10,16 @@ object RateInstances {
     const val FIRST_ID = 100
     const val MAX_COUNT = 8
 
-    val BASE_CURRENCIES = arrayOf("BTC", "ETH", "XAU", "TON", "EUR", "USD")
+    // entiny: always-offered bases; every other supported code joins the list dynamically from the rate source.
+    val PINNED_BASES = listOf("BTC", "ETH", "XAU", "TON")
+
+    fun getBases(): List<String> {
+        val bases = ArrayList(PINNED_BASES)
+        for (code in ExchangeRates.allSupportedCodes()) {
+            if (!bases.contains(code)) bases.add(code)
+        }
+        return bases
+    }
 
     class Instance(val id: Int, var from: String, var to: String)
 
@@ -95,6 +104,7 @@ object RateInstances {
         ensureLoaded()
         synchronized(sync) {
             if (instances.remove(id) == null) return
+            RatePill.clearCache(id)
             persist()
         }
         PillRegistry.unregister(id)
@@ -105,6 +115,7 @@ object RateInstances {
         synchronized(sync) {
             instance.from = normalizeBase(from)
             instance.to = PillCurrencies.normalize(to)
+            RatePill.clearCache(id)
             persist()
         }
         PillRegistry.register(describe(instance))

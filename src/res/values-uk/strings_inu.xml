@@ -143,7 +143,7 @@
     <string name="InuDialogsFabActionOpenSearch">Відкрити пошук</string>
     <string name="InuDialogsFabActionSavedMessages">Збережене</string>
     <string name="InuPillStack">Pill Stack</string>
-    <string name="InuPillStackInfo">Невеликі інтерактивні піллюлі в рядку пошуку чатів</string>
+    <string name="InuPillStackInfo">Невеликі інтерактивні піллюлі в рядку пошуку чатів\nНеактивні з неострівним глобальним пошуком</string>
     <string name="InuPillStackVisibleCount">Видно одночасно</string>
     <string name="InuPillStackPills">Піллюлі</string>
     <string name="InuPillStackClock">Годинник</string>
@@ -159,6 +159,9 @@
     <string name="InuPillStackRates">Курси валют</string>
     <string name="InuPillStackAddRate">Додати пару</string>
     <string name="InuPillStackCurrencyAuto">Авто (за країною номера)</string>
+    <string name="InuPillStackRateBase">База</string>
+    <string name="InuPillStackRateTarget">Ціль</string>
+    <string name="InuPillStackRatePreview">1 %1$s ≈ %2$s</string>
     <string name="InuPillStackReset">Скинути піллюлі до типових</string>
     <string name="InuGhostModeEnabled">Ghost Mode увімкнено</string>
     <string name="InuGhostModeDisabled">Ghost Mode вимкнено</string>

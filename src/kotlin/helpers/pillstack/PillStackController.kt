@@ -1,5 +1,6 @@
 package desu.inugram.helpers.pillstack
 
+import android.content.SharedPreferences
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import desu.inugram.InuConfig
+import desu.inugram.helpers.theme.NonIslandHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
@@ -19,15 +21,21 @@ class PillStackController(private val container: FrameLayout, private val editTe
     private val slots = ArrayList<PillStackView>()
     private var attached = false
 
+    private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key != null && key in REFRESH_KEYS) rebuild()
+    }
+
     init {
         container.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 attached = true
+                InuConfig.prefs.registerOnSharedPreferenceChangeListener(prefsListener)
                 rebuild()
             }
 
             override fun onViewDetachedFromWindow(v: View) {
                 attached = false
+                InuConfig.prefs.unregisterOnSharedPreferenceChangeListener(prefsListener)
             }
         })
 
@@ -45,6 +53,7 @@ class PillStackController(private val container: FrameLayout, private val editTe
 
         if (container.isAttachedToWindow) {
             attached = true
+            InuConfig.prefs.registerOnSharedPreferenceChangeListener(prefsListener)
             rebuild()
         }
     }
@@ -52,6 +61,10 @@ class PillStackController(private val container: FrameLayout, private val editTe
     fun isAttached(): Boolean = attached
 
     fun rebuild() {
+        if (!InuConfig.PILL_STACK_ENABLED.value || NonIslandHelper.globalSearch()) {
+            removeRow()
+            return
+        }
         val ids = PillRegistry.activePillIds()
         if (ids.isEmpty()) {
             removeRow()
@@ -140,5 +153,15 @@ class PillStackController(private val container: FrameLayout, private val editTe
 
     fun updateColors() {
         for (slot in slots) slot.updateColors()
+    }
+
+    companion object {
+        private val REFRESH_KEYS = setOf(
+            InuConfig.PILL_STACK_ENABLED.key,
+            InuConfig.PILL_STACK_VISIBLE_COUNT.key,
+            InuConfig.PILL_STACK_LAYOUT.key,
+            InuConfig.PILL_STACK_RATE_INSTANCES.key,
+            InuConfig.NON_ISLAND_GLOBAL_SEARCH.key,
+        )
     }
 }
