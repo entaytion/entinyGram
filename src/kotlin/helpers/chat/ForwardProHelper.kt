@@ -22,10 +22,12 @@ import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
+import org.telegram.messenger.ImageLocation
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MediaDataController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.SendMessagesHelper
 import org.telegram.messenger.VideoEditedInfo
@@ -35,6 +37,7 @@ import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
+import org.telegram.ui.Components.AlertsCreator
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.FilterTabsView
 import org.telegram.ui.Components.LayoutHelper
@@ -51,6 +54,7 @@ object ForwardProHelper {
         var active: Boolean = false
         var hideCaption: Boolean = false
         var silentSend: Boolean = false
+        var scheduleDate: Int = 0
         var isEditMode: Boolean = false
         var savedComment: CharSequence? = null
         var editedText: String? = null
@@ -58,7 +62,10 @@ object ForwardProHelper {
         var copyNotice: TextView? = null
         var authorIcon: ImageView? = null
         var silentSendIcon: ImageView? = null
+        var scheduleIcon: ImageView? = null
         var captionIcon: ImageView? = null
+        var toggleActiveColor: Int = 0
+        var toggleInactiveColor: Int = 0
         var filterTabsView: FilterTabsView? = null
         var selectedFilterId: Int = 0
     }
@@ -129,6 +136,10 @@ object ForwardProHelper {
         val theme = alert.resourcesProvider
         val tintColor = Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2, theme)
         val bgColor = Theme.getColor(Theme.key_actionBarWhiteSelector, theme)
+        state.toggleActiveColor = Theme.getColor(
+            if (Theme.isCurrentThemeDark()) Theme.key_voipgroup_listeningText else Theme.key_dialogTextBlue2, theme,
+        )
+        state.toggleInactiveColor = tintColor
 
         fun makeToggle(iconRes: Int, descRes: Int): ImageView {
             return ImageView(context).apply {
@@ -137,14 +148,20 @@ object ForwardProHelper {
                 colorFilter = PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
                 background = Theme.createSelectorDrawable(bgColor, Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16f))
                 contentDescription = LocaleController.getString(descRes)
+                setOnLongClickListener {
+                    Toast.makeText(context, LocaleController.getString(descRes), Toast.LENGTH_SHORT).show()
+                    true
+                }
             }
         }
 
         val authorIcon = makeToggle(R.drawable.msg_openprofile, R.string.ShowSendersName)
         val silentIcon = makeToggle(R.drawable.input_notify_off, R.string.SendWithoutSound)
+        val scheduleIcon = makeToggle(R.drawable.msg_calendar2_solar, R.string.ScheduleMessage)
         val captionIcon = makeToggle(R.drawable.outline_caption_24, R.string.InuForwardProHideCaption)
         state.authorIcon = authorIcon
         state.silentSendIcon = silentIcon
+        state.scheduleIcon = scheduleIcon
         state.captionIcon = captionIcon
 
         authorIcon.setOnClickListener {
@@ -154,6 +171,21 @@ object ForwardProHelper {
         silentIcon.setOnClickListener {
             state.silentSend = !state.silentSend
             updateQuickToggleIcons(alert)
+        }
+        scheduleIcon.setOnClickListener {
+            if (state.scheduleDate != 0) {
+                state.scheduleDate = 0
+                updateQuickToggleIcons(alert)
+                return@setOnClickListener
+            }
+            val dialogId = if (alert.selectedDialogs.size() > 0) alert.selectedDialogs.keyAt(0) else 0L
+            AlertsCreator.createScheduleDatePickerDialog(context, dialogId, AlertsCreator.ScheduleDatePickerDelegate { notify, date, _ ->
+                if (date != 0) {
+                    state.scheduleDate = date
+                    if (!notify) state.silentSend = true
+                }
+                updateQuickToggleIcons(alert)
+            }, theme)
         }
         captionIcon.setOnClickListener {
             state.hideCaption = !state.hideCaption
@@ -165,6 +197,7 @@ object ForwardProHelper {
             gravity = Gravity.CENTER_VERTICAL
             addView(captionIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(silentIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
+            addView(scheduleIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
             addView(authorIcon, LinearLayout.LayoutParams(dp(32f), dp(32f)))
         }
 
@@ -183,9 +216,23 @@ object ForwardProHelper {
     fun updateQuickToggleIcons(alert: ShareAlert) {
         val state = getState(alert)
         if (!state.active) return
-        state.authorIcon?.alpha = if (alert.showSendersName) 0.5f else 1f
-        state.silentSendIcon?.alpha = if (state.silentSend) 1f else 0.5f
-        state.captionIcon?.alpha = if (state.hideCaption) 1f else 0.5f
+        fun ImageView.paint(on: Boolean) {
+            alpha = 1f
+            colorFilter = PorterDuffColorFilter(
+                if (on) state.toggleActiveColor else state.toggleInactiveColor,
+                PorterDuff.Mode.SRC_IN,
+            )
+        }
+        state.authorIcon?.paint(!alert.showSendersName)
+        state.silentSendIcon?.paint(state.silentSend)
+        state.scheduleIcon?.paint(state.scheduleDate != 0)
+        state.captionIcon?.paint(state.hideCaption)
+    }
+
+    @JvmStatic
+    fun getScheduleDate(alert: ShareAlert): Int {
+        val state = getState(alert)
+        return if (state.active) state.scheduleDate else 0
     }
 
     @JvmStatic
@@ -407,11 +454,12 @@ object ForwardProHelper {
                     commentEntities, null, null, withSound, 0, 0, null, false
                 )
                 params.monoForumPeer = monoForumPeerId
+                params.scheduleDate = state.scheduleDate
                 SendMessagesHelper.getInstance(account).sendMessage(params)
             }
 
             val sent = withEditedText(editable, editedText, entities) {
-                sendSingleOrBatchAsCopy(messages, did, replyTopMsg, withSound, account, monoForumPeerId)
+                sendSingleOrBatchAsCopy(messages, did, replyTopMsg, withSound, account, monoForumPeerId, state.scheduleDate)
             }
             if (sent) {
                 hasSentAny = true
@@ -454,43 +502,147 @@ object ForwardProHelper {
         replyTopMsg: MessageObject?,
         withSound: Boolean,
         account: Int,
-        monoForumPeerId: Long
+        monoForumPeerId: Long,
+        scheduleDate: Int
     ): Boolean {
         if (messages.isEmpty()) return false
         val accountInstance = AccountInstance.getInstance(account)
 
-        val isAlbum = messages.size > 1 && messages.all { it.isPhoto || it.isVideo }
-        if (isAlbum) {
-            val allPaths = messages.map { getPathToMessage(it, account) }
-            if (allPaths.all { !it.isNullOrEmpty() && File(it).exists() }) {
-                val mediaList = ArrayList<SendMessagesHelper.SendingMediaInfo>()
-                for (i in messages.indices) {
-                    val msg = messages[i]
-                    val path = allPaths[i]!!
-                    val info = SendMessagesHelper.SendingMediaInfo().apply {
-                        this.path = path
-                        this.caption = msg.caption?.toString()
-                        this.entities = msg.messageOwner?.entities ?: ArrayList()
-                        this.isVideo = msg.isVideo
-                    }
-                    mediaList.add(info)
+        if (isAlbumGroup(messages)) {
+            val mediaList = ArrayList<SendMessagesHelper.SendingMediaInfo>()
+            val pending = ArrayList<Int>()
+            for (i in messages.indices) {
+                val msg = messages[i]
+                val info = SendMessagesHelper.SendingMediaInfo().apply {
+                    this.path = getPathToMessage(msg, account)
+                    this.caption = msg.caption?.toString()
+                    this.entities = msg.messageOwner?.entities ?: ArrayList()
+                    this.isVideo = msg.isVideo
                 }
-                SendMessagesHelper.prepareSendingMedia(
-                    accountInstance, mediaList, targetDialogId, null,
-                    replyTopMsg, null, null, false, true, null, withSound, 0, 0, 0,
-                    false, null, null, 0, messages[0].messageOwner?.invert_media ?: false, 0, monoForumPeerId, null
-                )
+                mediaList.add(info)
+                val path = info.path
+                if (path.isNullOrEmpty() || !File(path).exists()) {
+                    info.path = null
+                    pending.add(i)
+                }
+            }
+            if (pending.isEmpty()) {
+                prepareAlbumCopy(mediaList, messages, accountInstance, targetDialogId, replyTopMsg, withSound, monoForumPeerId, scheduleDate)
                 return true
             }
+            waitForDownloads(
+                account, messages, mediaList, pending,
+                onReady = {
+                    prepareAlbumCopy(mediaList, messages, accountInstance, targetDialogId, replyTopMsg, withSound, monoForumPeerId, scheduleDate)
+                },
+                onFailure = {
+                    for (msg in messages) {
+                        sendSingleMessageAsCopy(msg, targetDialogId, replyTopMsg, withSound, account, monoForumPeerId, scheduleDate)
+                    }
+                },
+            )
+            return true
         }
 
         var sentAny = false
         for (msg in messages) {
-            if (sendSingleMessageAsCopy(msg, targetDialogId, replyTopMsg, withSound, account, monoForumPeerId)) {
+            if (sendSingleMessageAsCopy(msg, targetDialogId, replyTopMsg, withSound, account, monoForumPeerId, scheduleDate)) {
                 sentAny = true
             }
         }
         return sentAny
+    }
+
+    // entiny: photos, videos and files can share one album; round/voice/sticker items must go solo
+    private fun isAlbumGroup(messages: ArrayList<MessageObject>): Boolean {
+        if (messages.size < 2) return false
+        return messages.all {
+            it.isPhoto || (it.isVideo && !it.isRoundVideo) ||
+                (it.document != null && !it.isSticker && !it.isAnimatedSticker && !it.isVoice())
+        }
+    }
+
+    private fun prepareAlbumCopy(
+        mediaList: ArrayList<SendMessagesHelper.SendingMediaInfo>,
+        messages: ArrayList<MessageObject>,
+        accountInstance: AccountInstance,
+        targetDialogId: Long,
+        replyTopMsg: MessageObject?,
+        withSound: Boolean,
+        monoForumPeerId: Long,
+        scheduleDate: Int
+    ) {
+        SendMessagesHelper.prepareSendingMedia(
+            accountInstance, mediaList, targetDialogId, null,
+            replyTopMsg, null, null, false, true, null, withSound, scheduleDate, 0, 0,
+            false, null, null, 0, messages[0].messageOwner?.invert_media ?: false, 0, monoForumPeerId, null
+        )
+    }
+
+    private fun waitForDownloads(
+        account: Int,
+        messages: ArrayList<MessageObject>,
+        mediaList: ArrayList<SendMessagesHelper.SendingMediaInfo>,
+        pending: ArrayList<Int>,
+        onReady: () -> Unit,
+        onFailure: () -> Unit,
+    ) {
+        val loader = FileLoader.getInstance(account)
+        val center = NotificationCenter.getInstance(account)
+        var settled = false
+        var observer: NotificationCenter.NotificationCenterDelegate? = null
+        var timeoutRunnable: Runnable? = null
+
+        fun finish(allResolved: Boolean) {
+            if (settled) return
+            settled = true
+            observer?.let {
+                center.removeObserver(it, NotificationCenter.fileLoaded)
+                center.removeObserver(it, NotificationCenter.fileLoadFailed)
+            }
+            timeoutRunnable?.let { AndroidUtilities.cancelRunOnUIThread(it) }
+            if (allResolved) onReady() else onFailure()
+        }
+        fun resolveAll(): Boolean {
+            var all = true
+            for (i in pending) {
+                if (mediaList[i].path.isNullOrEmpty()) {
+                    mediaList[i].path = getPathToMessage(messages[i], account)
+                }
+                if (mediaList[i].path.isNullOrEmpty()) all = false
+            }
+            return all
+        }
+        val delegate = object : NotificationCenter.NotificationCenterDelegate {
+            override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+                if (id == NotificationCenter.fileLoaded) finish(resolveAll())
+            }
+        }
+        observer = delegate
+        center.addObserver(delegate, NotificationCenter.fileLoaded)
+        center.addObserver(delegate, NotificationCenter.fileLoadFailed)
+        if (resolveAll()) {
+            finish(true)
+            return
+        }
+        for (i in pending) triggerDownload(messages[i], loader)
+        val timeout = Runnable { finish(resolveAll()) }
+        timeoutRunnable = timeout
+        AndroidUtilities.runOnUIThread(timeout, 60_000)
+    }
+
+    private fun triggerDownload(msg: MessageObject, loader: FileLoader) {
+        val owner = msg.messageOwner ?: return
+        val document = owner.media?.document ?: msg.document
+        if (document != null) {
+            loader.loadFile(document, msg, FileLoader.PRIORITY_HIGH, 1)
+            return
+        }
+        val photo = owner.media?.photo
+        if (photo != null && !photo.sizes.isEmpty()) {
+            val size = photo.sizes[photo.sizes.size - 1]
+            loader.loadFile(ImageLocation.getForPhoto(size, photo), photo, "jpg", FileLoader.PRIORITY_HIGH, 1)
+        }
     }
 
     private fun sendSingleMessageAsCopy(
@@ -499,7 +651,8 @@ object ForwardProHelper {
         replyTopMsg: MessageObject?,
         withSound: Boolean,
         account: Int,
-        monoForumPeerId: Long
+        monoForumPeerId: Long,
+        scheduleDate: Int
     ): Boolean {
         val owner = msg.messageOwner ?: return false
         val path = getPathToMessage(msg, account)
@@ -514,6 +667,7 @@ object ForwardProHelper {
                 entities, null, null, withSound, 0, 0, null, false
             )
             params.monoForumPeer = monoForumPeerId
+            params.scheduleDate = scheduleDate
             SendMessagesHelper.getInstance(account).sendMessage(params)
             return true
         }
@@ -525,6 +679,7 @@ object ForwardProHelper {
                 null, null, withSound, 0, 0, owner.ttl, null, false, msg.hasMediaSpoilers()
             )
             params.monoForumPeer = monoForumPeerId
+            params.scheduleDate = scheduleDate
             params.invert_media = owner.invert_media
             SendMessagesHelper.getInstance(account).sendMessage(params)
             return true
@@ -542,6 +697,7 @@ object ForwardProHelper {
                 null, null, withSound, 0, 0, owner.ttl, null, null, false, msg.hasMediaSpoilers()
             )
             params.monoForumPeer = monoForumPeerId
+            params.scheduleDate = scheduleDate
             params.invert_media = owner.invert_media
             SendMessagesHelper.getInstance(account).sendMessage(params)
             return true

@@ -48,6 +48,8 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
 
     protected open fun subCell(item: I): SubCell? = null
 
+    protected open fun rowVisible(entry: MenuOrderEntry<I>): Boolean = true
+
     protected open fun onRowToggle(entry: MenuOrderEntry<I>, row: MenuOrderRow?) {
         val idx = entries.indexOfFirst { it.item == entry.item }
         if (idx < 0) return
@@ -80,7 +82,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         items.add(UItem.asShadow(LocaleController.getString(infoStringRes)))
         items.add(UItem.asHeader(LocaleController.getString(headerStringRes)))
         openReorderSection(adapter, toBottom = false)
-        for (entry in entries.filter { !it.bottom }) {
+        for (entry in entries.filter { !it.bottom && rowVisible(it) }) {
             items.add(buildRow(entry))
         }
         adapter.reorderSectionEnd()
@@ -108,7 +110,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
     protected fun applyReorder(items: List<UItem>, toBottom: Boolean) {
         val byItem = entries.associateBy { it.item }
         val reordered = items.mapNotNull { byItem[it.`object` as? I] }
-        if (reordered.size != entries.count { it.bottom == toBottom }) return
+        if (reordered.size != entries.count { it.bottom == toBottom && rowVisible(it) }) return
         val others = entries.filter { it.bottom != toBottom }
         entries = (if (toBottom) others + reordered else reordered + others).toMutableList()
         config.value = entries

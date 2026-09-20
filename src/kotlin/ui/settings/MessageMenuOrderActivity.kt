@@ -25,6 +25,10 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
     private fun canToggle(entry: MenuOrderEntry<MessageMenuConfig.Item>): Boolean =
         !entry.bottom || entry.item.isSlot
 
+    // entiny: the forward pro row only makes sense while the feature is on
+    override fun rowVisible(entry: MenuOrderEntry<MessageMenuConfig.Item>): Boolean =
+        entry.item != MessageMenuConfig.Item.FORWARD_PRO || InuConfig.FORWARD_PRO.value
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         fillMainSection(items, adapter)
 
@@ -47,7 +51,7 @@ class MessageMenuOrderActivity : MenuOrderActivity<MessageMenuConfig.Item>() {
                 )
             )
             openReorderSection(adapter, toBottom = true)
-            for (entry in entries.filter { it.bottom }) {
+            for (entry in entries.filter { it.bottom && rowVisible(it) }) {
                 items.add(buildRow(entry) { row ->
                     if (canToggle(entry)) return@buildRow
                     row.setSwitchVisible(false)

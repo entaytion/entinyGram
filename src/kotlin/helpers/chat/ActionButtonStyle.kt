@@ -26,7 +26,7 @@ object ActionButtonStyle {
     fun resolveIconColor(resourcesProvider: Theme.ResourcesProvider?): Int {
         return when (getCurrentStyle()) {
             NEUTRAL -> Theme.getColor(Theme.key_glass_defaultIcon, resourcesProvider)
-            WHITE -> Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider)
+            WHITE -> Color.BLACK
             else -> Color.WHITE
         }
     }
