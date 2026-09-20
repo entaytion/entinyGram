@@ -56,20 +56,28 @@ object FolderHelper {
 
     const val ICON_GAP = 4
 
+    @JvmStatic
+    fun getIconChoices(): List<Pair<String, Int>> = folderIcons.entries.map { Pair(it.key, it.value) }
+
     private fun getIconSize(): Int {
         return if (isIconsOnly()) 28 else 24
     }
 
     @JvmStatic
     fun saveMeta(storage: MessagesStorage, filters: List<MessagesController.DialogFilter>) {
+        saveMetaMap(storage, HashMap<Int, String?>().also { map -> for (filter in filters) map[filter.id] = filter.inu_emoticon })
+    }
+
+    @JvmStatic
+    fun saveMetaMap(storage: MessagesStorage, emoticons: Map<Int, String?>) {
         val db = storage.database ?: return
         db.executeFast("DELETE FROM inu_folder_meta").stepThis().dispose()
         val state = db.executeFast("REPLACE INTO inu_folder_meta VALUES(?, ?)")
         try {
-            for (filter in filters) {
+            for ((id, emoticon) in emoticons) {
                 state.requery()
-                state.bindInteger(1, filter.id)
-                state.bindString(2, filter.inu_emoticon ?: "")
+                state.bindInteger(1, id)
+                state.bindString(2, emoticon ?: "")
                 state.step()
             }
         } finally {

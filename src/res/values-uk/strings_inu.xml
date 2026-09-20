@@ -1297,6 +1297,8 @@
     <string name="InuUnlimitedFolderChatsInfo">Дозволяє додати в папку більше чатів, ніж дозволяє ліміт Telegram, — зайві залишаються лише на цьому пристрої й не переживуть перевстановлення.</string>
     <string name="InuLocalFolders">Локальні папки</string>
     <string name="InuLocalFoldersInfo">Створюйте папки чатів понад ліміт Telegram — додаткові папки зберігаються лише на цьому пристрої та не синхронізуються з сервером.</string>
+    <string name="InuFolderIcon">Іконка папки</string>
+    <string name="InuFolderIconDefault">Типова</string>
     <string name="InuStalkerPack">Сталкер-пак</string>
     <string name="InuPresenceLoggerNotify">Сповіщення про присутність</string>
     <string name="InuPresenceLoggerNotifyInfo">Показувати спливаюче сповіщення, коли відстежуваний контакт заходить у мережу або виходить із неї. Оберіть, за ким стежити, у меню профілю цієї людини; кожна зміна статусу також зберігається локально незалежно від цього перемикача.</string>
