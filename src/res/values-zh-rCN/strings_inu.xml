@@ -517,6 +517,14 @@
     <string name="InuFeedManageChannels">管理频道</string>
     <string name="InuFeedMarkAllRead">全部标为已读</string>
     <string name="InuFeedMarkedAllRead">已将 %1$d 个频道标为已读</string>
+    <string name="InuFeedMarkReadOnScroll">滚动时标记为已读</string>
+    <string name="InuFeedMarkReadOnScrollInfo">滚动浏览过的帖子会在服务器端标记为已读，未读角标同步更新。关闭时，仅点击的帖子和“全部标记已读”会计为已读。</string>
+    <string name="InuFeedNewPosts">%1$d 条新消息</string>
+    <string name="InuFeedUnreadDivider">未读</string>
+    <string name="InuFeedAllChannels">全部频道</string>
+    <string name="InuFeedFolders">显示文件夹</string>
+    <string name="InuFeedNewestOnTop">最新帖子在顶部</string>
+    <string name="InuFeedNewestOnTopInfo">关闭时：新帖子像聊天一样显示在底部（Telegram 风格）。开启时：显示在顶部（Twitter/Threads 风格）。</string>
     <string name="InuFeedAlreadyRead">全部已经是已读状态</string>
     <string name="InuFeedOpenChannel">打开频道</string>
     <string name="InuFeedHideChannel">从动态中隐藏</string>

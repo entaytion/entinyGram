@@ -1687,6 +1687,9 @@ object InuConfig {
     @JvmField
     val FEED_NEWEST_ON_TOP = BoolItem("feed_newest_on_top", false)
 
+    @JvmField
+    val FEED_MARK_READ_ON_SCROLL = BoolItem("feed_mark_read_on_scroll", true)
+
     // entiny: Pill Stack, ported from exteraGram/exteraless -- see src/kotlin/helpers/pillstack/.
     @JvmField
     val PILL_STACK_ENABLED = BoolItem("pill_stack_enabled", false)

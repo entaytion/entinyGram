@@ -86,6 +86,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **no accounts list in settings**: hide the redundant accounts block from the main settings screen
 - 📡 **customizable My Profile info rows**: reorder and toggle phone, bio, username, ID, and registration date rows on your profile
 - 📡 **wide channel posts**: channel posts stretch to full available width with proportional album layout
+- 📡 **feed**: posts from all subscribed channels merged into one chronological timeline with an unread divider — reactions, per-folder feeds, channel list management, newest-on-top option, mark as read while scrolling (synced to the server), scroll position memory with a "%d new" pill (*inspired on [exteraless](https://github.com/exteraless/exteraless)*)
 - 📡 **branded first-run intro**: branded first slide during onboarding
 - 📡 **pill stack (beta)**: interactive pills in chats search bar (clock, weather, proxy, storage, telemetry, currency/crypto rates) with a searchable rate-pair editor over every currency the rate source offers; inactive with non-island global search - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
 

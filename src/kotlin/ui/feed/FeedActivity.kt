@@ -3,13 +3,17 @@ package desu.inugram.ui.feed
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,10 +28,12 @@ import desu.inugram.helpers.feed.FeedScope
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
+import org.telegram.messenger.SendMessagesHelper
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBar
 import org.telegram.ui.ActionBar.BaseFragment
@@ -41,6 +47,7 @@ import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 
@@ -52,14 +59,23 @@ class FeedActivity @JvmOverloads constructor(
     private sealed class Row {
         data class Msg(val message: MessageObject) : Row()
         data class Header(val dialogId: Long) : Row()
+        object Divider : Row()
     }
 
     private val newestOnTop = InuConfig.FEED_NEWEST_ON_TOP.value
+    private val markReadOnScroll = InuConfig.FEED_MARK_READ_ON_SCROLL.value
     private val rows = ArrayList<MessageObject>()
     private val displayItems = ArrayList<Row>()
 
+    private val prefs by lazy {
+        ApplicationLoader.applicationContext.getSharedPreferences("inu_feed", Context.MODE_PRIVATE)
+    }
+    private val scopeTag: String
+        get() = (scope as? FeedScope.Folder)?.let { "f${it.filterId}" } ?: "g"
+
     private var listView: RecyclerListView? = null
     private var emptyView: View? = null
+    private var newPostsPill: TextView? = null
     private var loadingOlder = false
     private var reachedEnd = false
 
@@ -75,6 +91,12 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun applyBottomInset() {
         listView?.setPadding(0, dp(8f), 0, dp(8f) + navigationBarHeight + additionNavigationBarHeight)
+        val pill = newPostsPill ?: return
+        if (newestOnTop) return
+        (pill.layoutParams as? FrameLayout.LayoutParams)?.let {
+            it.bottomMargin = dp(8f) + navigationBarHeight + additionNavigationBarHeight
+            pill.requestLayout()
+        }
     }
 
     // entiny: tab pages receive consumed insets from ViewPagerActivity so bottom tab padding must be applied manually
@@ -122,13 +144,16 @@ class FeedActivity @JvmOverloads constructor(
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
                     val lm = rv.layoutManager as? LinearLayoutManager ?: return
+                    if (markReadOnScroll && dy != 0) markVisibleRead(lm)
                     if (newestOnTop) {
+                        if (lm.findFirstVisibleItemPosition() == 0) hidePill()
                         if (dy <= 0) return
                         val lastVisible = lm.findLastVisibleItemPosition()
                         if (lastVisible != RecyclerView.NO_POSITION && lastVisible >= displayItems.size - 1 - LOAD_MORE_THRESHOLD) {
                             maybeLoadOlder()
                         }
                     } else {
+                        if (lm.findLastVisibleItemPosition() >= displayItems.size - 1) hidePill()
                         if (dy >= 0) return
                         if (lm.findFirstVisibleItemPosition() <= LOAD_MORE_THRESHOLD) maybeLoadOlder()
                     }
@@ -157,6 +182,28 @@ class FeedActivity @JvmOverloads constructor(
         emptyView = empty
         frameLayout.addView(empty, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
 
+        val pill = TextView(context)
+        pill.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+        pill.typeface = AndroidUtilities.bold()
+        pill.setTextColor(Theme.getColor(Theme.key_chat_serviceText))
+        pill.gravity = Gravity.CENTER
+        pill.setPadding(dp(14f), dp(6f), dp(14f), dp(6f))
+        pill.background = GradientDrawable().apply {
+            cornerRadius = dp(16f).toFloat()
+            setColor(Theme.getColor(Theme.key_chat_serviceBackground))
+        }
+        pill.elevation = dp(3f).toFloat()
+        pill.visibility = View.GONE
+        pill.setOnClickListener {
+            scrollToNewest()
+            hidePill()
+        }
+        newPostsPill = pill
+        val pillLp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+        pillLp.gravity = Gravity.CENTER_HORIZONTAL or if (newestOnTop) Gravity.TOP else Gravity.BOTTOM
+        if (newestOnTop) pillLp.topMargin = dp(8f) else pillLp.bottomMargin = dp(8f) + additionNavigationBarHeight
+        frameLayout.addView(pill, pillLp)
+
         fragmentView = frameLayout
         if (hasMainTabs) installTabInsetsListener(frameLayout)
         loadInitial()
@@ -171,21 +218,26 @@ class FeedActivity @JvmOverloads constructor(
         controller.onScreenOpened { _ ->
             if (fragmentView == null) return@onScreenOpened
             val ordered = controller.store.snapshot().let { if (newestOnTop) it else it.asReversed() }
-            val snapshot = ordered.filter { controller.unreadTracker.isUnread(it.getDialogId(), it.id) }
             rows.clear()
-            rows.addAll(snapshot)
+            rows.addAll(ordered)
             reachedEnd = false
             rebuildDisplayItems()
             listView?.adapter?.notifyDataSetChanged()
             updateEmptyView()
-            if (snapshot.size < MIN_INITIAL_UNREAD) maybeLoadOlder()
+            if (!restorePosition()) scrollToDivider()
+            if (rows.size < MIN_INITIAL_ROWS) maybeLoadOlder()
+            val anchor = oldestUnreadRow()
+            val oldestLoaded = if (newestOnTop) rows.lastOrNull() else rows.firstOrNull()
+            if (anchor != null && anchor === oldestLoaded) maybeLoadOlder()
         }
     }
+
+    private fun isUnread(msg: MessageObject): Boolean = controller.unreadTracker.isUnread(msg.getDialogId(), msg.id)
 
     private fun retryAfterBackfill() {
         if (fragmentView == null) return
         reachedEnd = false
-        if (rows.size < MIN_INITIAL_UNREAD) maybeLoadOlder()
+        if (rows.size < MIN_INITIAL_ROWS) maybeLoadOlder()
     }
 
     private fun maybeLoadOlder() {
@@ -198,21 +250,36 @@ class FeedActivity @JvmOverloads constructor(
                 reachedEnd = true
                 return@loadOlder
             }
-            if (newestOnTop) {
-                rows.addAll(added)
-                val trailingDialogId = (displayItems.lastOrNull() as? Row.Msg)?.message?.getDialogId()
-                val inserted = buildRunRows(added, trailingDialogId)
-                val start = displayItems.size
-                displayItems.addAll(inserted)
-                listView?.adapter?.notifyItemRangeInserted(start, inserted.size)
-            } else {
-                val chronological = added.asReversed()
-                rows.addAll(0, chronological)
-                val inserted = buildRunRows(chronological, null)
-                displayItems.addAll(0, inserted)
-                listView?.adapter?.notifyItemRangeInserted(0, inserted.size)
-            }
+            if (newestOnTop) rows.addAll(added) else rows.addAll(0, added.asReversed())
+            // entiny: full rebuild keeps the unread divider in sync; re-anchor on the same message to avoid a jump
+            val anchor = captureMsgAnchor()
+            rebuildDisplayItems()
+            listView?.adapter?.notifyDataSetChanged()
+            if (!newestOnTop) applyMsgAnchor(anchor)
         }
+    }
+
+    private data class MsgAnchor(val dialogId: Long, val messageId: Int, val offset: Int)
+
+    private fun captureMsgAnchor(): MsgAnchor? {
+        val rv = listView ?: return null
+        val lm = rv.layoutManager as? LinearLayoutManager ?: return null
+        var idx = lm.findFirstVisibleItemPosition()
+        val last = lm.findLastVisibleItemPosition()
+        while (idx != RecyclerView.NO_POSITION && idx <= last && displayItems.getOrNull(idx) !is Row.Msg) idx++
+        val msg = (displayItems.getOrNull(idx) as? Row.Msg)?.message ?: return null
+        val view = lm.findViewByPosition(idx) ?: return null
+        return MsgAnchor(msg.getDialogId(), msg.id, view.top - rv.paddingTop)
+    }
+
+    private fun applyMsgAnchor(anchor: MsgAnchor?) {
+        if (anchor == null) return
+        val lm = listView?.layoutManager as? LinearLayoutManager ?: return
+        val idx = displayItems.indexOfFirst {
+            val m = (it as? Row.Msg)?.message
+            m != null && m.getDialogId() == anchor.dialogId && m.id == anchor.messageId
+        }
+        if (idx >= 0) lm.scrollToPositionWithOffset(idx, anchor.offset)
     }
 
     private fun appendLive(added: List<MessageObject>) {
@@ -223,6 +290,7 @@ class FeedActivity @JvmOverloads constructor(
             displayItems.addAll(0, inserted)
             listView?.adapter?.notifyItemRangeInserted(0, inserted.size)
             updateEmptyView()
+            maybeShowPillFor(added.size)
             return
         }
         val chronological = added.asReversed()
@@ -233,6 +301,21 @@ class FeedActivity @JvmOverloads constructor(
         displayItems.addAll(inserted)
         listView?.adapter?.notifyItemRangeInserted(start, inserted.size)
         updateEmptyView()
+        maybeShowPillFor(added.size)
+    }
+
+    private fun maybeShowPillFor(count: Int) {
+        if (count <= 0 || isAtNewest()) return
+        val unread = countUnread()
+        if (unread > 0) showPill(unread)
+    }
+
+    private fun countUnread(): Int = rows.count { isUnread(it) }
+
+    private fun isAtNewest(): Boolean {
+        val lm = listView?.layoutManager as? LinearLayoutManager ?: return true
+        return if (newestOnTop) lm.findFirstVisibleItemPosition() == 0
+        else lm.findLastVisibleItemPosition() >= displayItems.size - 1
     }
 
     private fun removeLive(dialogId: Long, messageIds: Collection<Int>) {
@@ -270,14 +353,101 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun rebuildDisplayItems() {
         displayItems.clear()
-        displayItems.addAll(buildRunRows(rows, null))
+        val out = buildRunRows(rows, null)
+        val anchor = oldestUnreadRow()
+        if (anchor != null) {
+            val pos = out.indexOfFirst { (it as? Row.Msg)?.message === anchor }
+            if (pos >= 0) out.add(pos, Row.Divider)
+        }
+        displayItems.addAll(out)
+    }
+
+    private fun oldestUnreadRow(): MessageObject? {
+        var candidate: MessageObject? = null
+        var candidateDate = Int.MAX_VALUE
+        for (msg in rows) {
+            val date = msg.messageOwner?.date ?: continue
+            if (date < candidateDate && isUnread(msg)) {
+                candidate = msg
+                candidateDate = date
+            }
+        }
+        return candidate
+    }
+
+    private fun scrollToDivider() {
+        val idx = displayItems.indexOfFirst { it is Row.Divider }
+        if (idx < 0) return
+        (listView?.layoutManager as? LinearLayoutManager)?.scrollToPositionWithOffset(idx, dp(8f))
     }
 
     private fun updateEmptyView() {
         emptyView?.visibility = if (rows.isEmpty()) View.VISIBLE else View.GONE
     }
 
+    private fun markVisibleRead(lm: LinearLayoutManager) {
+        val first = lm.findFirstVisibleItemPosition()
+        val last = lm.findLastVisibleItemPosition()
+        if (first == RecyclerView.NO_POSITION || last == RecyclerView.NO_POSITION) return
+        for (i in first..last) {
+            val msg = (displayItems.getOrNull(i) as? Row.Msg)?.message ?: continue
+            controller.unreadTracker.onRowSeen(msg.getDialogId(), msg.id)
+        }
+    }
+
+    private fun savePosition() {
+        val rv = listView ?: return
+        val lm = rv.layoutManager as? LinearLayoutManager ?: return
+        var idx = lm.findFirstVisibleItemPosition()
+        val last = lm.findLastVisibleItemPosition()
+        while (idx != RecyclerView.NO_POSITION && idx <= last && displayItems.getOrNull(idx) !is Row.Msg) idx++
+        val msg = (displayItems.getOrNull(idx) as? Row.Msg)?.message ?: return
+        val view = lm.findViewByPosition(idx) ?: return
+        prefs.edit { putString("pos$currentAccount-$scopeTag", "${msg.getDialogId()}:${msg.id}:${view.top - rv.paddingTop}") }
+    }
+
+    private fun restorePosition(): Boolean {
+        val raw = prefs.getString("pos$currentAccount-$scopeTag", null) ?: return false
+        val parts = raw.split(":")
+        if (parts.size != 3) return false
+        val dialogId = parts[0].toLongOrNull() ?: return false
+        val mid = parts[1].toIntOrNull() ?: return false
+        val offset = parts[2].toIntOrNull() ?: return false
+        val idx = displayItems.indexOfFirst {
+            val m = (it as? Row.Msg)?.message
+            m != null && m.getDialogId() == dialogId && m.id == mid
+        }
+        if (idx < 0) return false
+        val lm = listView?.layoutManager as? LinearLayoutManager ?: return false
+        lm.scrollToPositionWithOffset(idx, offset)
+        val unread = countUnread()
+        if (unread > 0) showPill(unread)
+        return true
+    }
+
+    private fun showPill(count: Int) {
+        val pill = newPostsPill ?: return
+        pill.text = LocaleController.formatString(R.string.InuFeedNewPosts, count)
+        if (pill.visibility == View.VISIBLE) return
+        pill.alpha = 0f
+        pill.visibility = View.VISIBLE
+        pill.animate().alpha(1f).setDuration(150).start()
+    }
+
+    private fun hidePill() {
+        newPostsPill?.visibility = View.GONE
+    }
+
+    private fun scrollToNewest() {
+        val rv = listView ?: return
+        val lm = rv.layoutManager as? LinearLayoutManager ?: return
+        if (displayItems.isEmpty()) return
+        if (newestOnTop) lm.scrollToPositionWithOffset(0, 0) else rv.scrollToPosition(displayItems.size - 1)
+    }
+
     override fun onFragmentDestroy() {
+        savePosition()
+        controller.unreadTracker.flush()
         controller.onLiveMessagesAdded = null
         controller.onLiveMessagesRemoved = null
         controller.onLiveDialogRemoved = null
@@ -301,10 +471,9 @@ class FeedActivity @JvmOverloads constructor(
             }
             .add(R.drawable.msg_markread, LocaleController.getString(R.string.InuFeedMarkAllRead)) {
                 val marked = controller.unreadTracker.markAllRead(FeedChannelSet.eligibleChannels(currentAccount, scope).toList())
-                rows.removeAll { !controller.unreadTracker.isUnread(it.getDialogId(), it.id) }
                 rebuildDisplayItems()
                 listView?.adapter?.notifyDataSetChanged()
-                updateEmptyView()
+                hidePill()
                 val text = if (marked > 0) {
                     LocaleController.formatString(R.string.InuFeedMarkedAllRead, marked)
                 } else {
@@ -351,7 +520,6 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     private fun openRow(msg: MessageObject) {
-        // entiny: a row counts as read only on tap -- plain scrolling must not advance the watermark
         controller.unreadTracker.onRowSeen(msg.getDialogId(), msg.id)
         val args = Bundle()
         args.putLong("chat_id", -msg.getDialogId())
@@ -399,10 +567,15 @@ class FeedActivity @JvmOverloads constructor(
         override fun getItemViewType(position: Int): Int = when (displayItems[position]) {
             is Row.Header -> VIEW_TYPE_HEADER
             is Row.Msg -> VIEW_TYPE_MESSAGE
+            is Row.Divider -> VIEW_TYPE_DIVIDER
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val view = if (viewType == VIEW_TYPE_HEADER) ChannelHeaderCell(context) else FeedMessageCell(context)
+            val view = when (viewType) {
+                VIEW_TYPE_HEADER -> ChannelHeaderCell(context)
+                VIEW_TYPE_DIVIDER -> DividerCell(context)
+                else -> FeedMessageCell(context)
+            }
             return RecyclerListView.Holder(view)
         }
 
@@ -413,7 +586,33 @@ class FeedActivity @JvmOverloads constructor(
                     val cell = holder.itemView as FeedMessageCell
                     cell.bind(row.message)
                 }
+                is Row.Divider -> {}
             }
+        }
+    }
+
+    private inner class DividerCell(context: Context) : View(context) {
+        private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 11f, resources.displayMetrics)
+            typeface = AndroidUtilities.bold()
+        }
+
+        override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(dp(26f), MeasureSpec.EXACTLY))
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            linePaint.color = Theme.getColor(Theme.key_windowBackgroundGrayShadow)
+            textPaint.color = Theme.getColor(Theme.key_windowBackgroundWhiteHintText)
+            val label = LocaleController.getString(R.string.InuFeedUnreadDivider)
+            val textWidth = textPaint.measureText(label)
+            val centerY = height / 2f
+            val textCenterX = width / 2f
+            val pad = dp(12f)
+            canvas.drawLine(pad.toFloat(), centerY, textCenterX - textWidth / 2f - pad, centerY, linePaint)
+            canvas.drawText(label, textCenterX - textWidth / 2f, centerY - (textPaint.descent() + textPaint.ascent()) / 2f, textPaint)
+            canvas.drawLine(textCenterX + textWidth / 2f + pad, centerY, width - pad.toFloat(), centerY, linePaint)
         }
     }
 
@@ -463,8 +662,13 @@ class FeedActivity @JvmOverloads constructor(
         init {
             setFullyDraw(true)
             isChat = false
-            // entiny: empty delegate keeps canPerformActions false so row click listener handles touches
-            setDelegate(object : ChatMessageCellDelegate {})
+            // entiny: delegate only consumes reaction taps; every other touch falls through to the row click listener
+            setDelegate(object : ChatMessageCellDelegate {
+                override fun didPressReaction(cell: ChatMessageCell?, reaction: TLRPC.ReactionCount?, longpress: Boolean, x: Float, y: Float) {
+                    if (longpress || reaction == null) return
+                    toggleReaction(reaction)
+                }
+            })
             setOnClickListener {
                 messageObject?.let { openRow(it) }
             }
@@ -472,6 +676,33 @@ class FeedActivity @JvmOverloads constructor(
                 showRowMenu(this)
                 true
             }
+        }
+
+        override fun onTouchEvent(event: MotionEvent): Boolean {
+            if (messageObject != null && reactionsLayout?.checkTouchEvent(event) == true) {
+                return true
+            }
+            return super.onTouchEvent(event)
+        }
+
+        private fun toggleReaction(reaction: TLRPC.ReactionCount) {
+            val msg = messageObject ?: return
+            val visible = ReactionsLayoutInBubble.VisibleReaction.fromTL(reaction.reaction) ?: return
+            try {
+                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING)
+            } catch (_: Exception) {
+            }
+            val added = msg.selectReaction(visible, false, false)
+            val chosen = ArrayList(msg.choosenReactions)
+            SendMessagesHelper.getInstance(currentAccount).sendReaction(
+                msg, chosen, if (added) visible else null, false, false, this@FeedActivity,
+                Runnable {
+                    // entiny: refresh with the server-confirmed counts once the send lands
+                    if (messageObject === msg) bind(msg)
+                },
+            )
+            // entiny: deferred rebind -- setMessageObject must not run inside touch dispatch
+            post { if (messageObject === msg) bind(msg) }
         }
 
         fun bind(msg: MessageObject) {
@@ -482,8 +713,9 @@ class FeedActivity @JvmOverloads constructor(
     companion object {
         private val MENU_OVERFLOW = InuUtils.generateId()
         private const val LOAD_MORE_THRESHOLD = 6
-        private const val MIN_INITIAL_UNREAD = 10
+        private const val MIN_INITIAL_ROWS = 20
         private const val VIEW_TYPE_MESSAGE = 0
         private const val VIEW_TYPE_HEADER = 1
+        private const val VIEW_TYPE_DIVIDER = 2
     }
 }

@@ -626,6 +626,14 @@
     <string name="InuFeedManageChannels">Kanalları yönet</string>
     <string name="InuFeedMarkAllRead">Tümünü okundu işaretle</string>
     <string name="InuFeedMarkedAllRead">%1$d kanal okundu olarak işaretlendi</string>
+    <string name="InuFeedMarkReadOnScroll">Kaydırırken okundu olarak işaretle</string>
+    <string name="InuFeedMarkReadOnScrollInfo">Kaydırırken görülen gönderiler sunucuda okundu olarak işaretlenir ve okunmadı rozetleri her yerde güncellenir. Kapalıyken yalnızca dokunulan gönderiler ve „Tümünü okundu işaretle“ sayılır.</string>
+    <string name="InuFeedNewPosts">%1$d yeni</string>
+    <string name="InuFeedUnreadDivider">Okunmamış</string>
+    <string name="InuFeedAllChannels">Tüm kanallar</string>
+    <string name="InuFeedFolders">Bir klasör göster</string>
+    <string name="InuFeedNewestOnTop">Yeni gönderiler üstte</string>
+    <string name="InuFeedNewestOnTopInfo">Kapalı: yeni gönderiler sohbetteki gibi altta görünür (Telegram tarzı). Açık: üstte görünür (Twitter/Threads tarzı).</string>
     <string name="InuFeedAlreadyRead">Zaten hepsi okundu</string>
     <string name="InuFeedOpenChannel">Kanalı aç</string>
     <string name="InuFeedHideChannel">Akıştan gizle</string>

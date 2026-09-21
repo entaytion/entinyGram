@@ -866,6 +866,10 @@
     <string name="InuFeedShowAll">Show all channels</string>
     <string name="InuFeedFolders">Show a folder</string>
     <string name="InuFeedAllChannels">All channels</string>
+    <string name="InuFeedMarkReadOnScroll">Mark as read while scrolling</string>
+    <string name="InuFeedMarkReadOnScrollInfo">Posts you scroll past are marked as read on the server, so unread badges update everywhere. When off, only tapped posts and “Mark all read” count.</string>
+    <string name="InuFeedNewPosts">%1$d new</string>
+    <string name="InuFeedUnreadDivider">Unread</string>
     <string name="InuLoginViaQr">Log in via QR code</string>
     <string name="InuLoginViaPasskey">Log in via Passkey</string>
     <string name="InuLoginViaBotToken">Log in via bot token</string>

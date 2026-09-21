@@ -713,6 +713,10 @@
     <string name="InuFeedManageChannels">Керування каналами</string>
     <string name="InuFeedMarkAllRead">Позначити все прочитаним</string>
     <string name="InuFeedMarkedAllRead">Позначено прочитаними каналів: %1$d</string>
+    <string name="InuFeedMarkReadOnScroll">Позначати прочитаним під час прокрутки</string>
+    <string name="InuFeedMarkReadOnScrollInfo">Переглянуті при прокрутці записи позначаються прочитаними на сервері — лічильники непрочитаних оновлюються всюди. Вимкнено — враховуються лише натиснуті записи та «Прочитати всі».</string>
+    <string name="InuFeedNewPosts">%1$d нових</string>
+    <string name="InuFeedUnreadDivider">Непрочитані</string>
     <string name="InuFeedAlreadyRead">Усе вже прочитано</string>
     <string name="InuFeedOpenChannel">Відкрити канал</string>
     <string name="InuFeedHideChannel">Приховати зі стрічки</string>

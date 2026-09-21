@@ -570,6 +570,14 @@
     <string name="InuFeedManageChannels">Управление каналами</string>
     <string name="InuFeedMarkAllRead">Отметить всё прочитанным</string>
     <string name="InuFeedMarkedAllRead">Отмечено прочитанными каналов: %1$d</string>
+    <string name="InuFeedMarkReadOnScroll">Отмечать прочитанным при прокрутке</string>
+    <string name="InuFeedMarkReadOnScrollInfo">Просмотренные при прокрутке записи отмечаются прочитанными на сервере — счётчики непрочитанного обновляются везде. Если выключено — засчитываются только нажатые записи и «Прочитать все».</string>
+    <string name="InuFeedNewPosts">%1$d новых</string>
+    <string name="InuFeedUnreadDivider">Непрочитанные</string>
+    <string name="InuFeedAllChannels">Все каналы</string>
+    <string name="InuFeedFolders">Показать папку</string>
+    <string name="InuFeedNewestOnTop">Новые посты сверху</string>
+    <string name="InuFeedNewestOnTopInfo">Выкл.: новые посты появляются снизу, как в чате (стиль Telegram). Вкл.: сверху (стиль Twitter/Threads).</string>
     <string name="InuFeedAlreadyRead">Всё уже прочитано</string>
     <string name="InuFeedOpenChannel">Открыть канал</string>
     <string name="InuFeedHideChannel">Скрыть из ленты</string>

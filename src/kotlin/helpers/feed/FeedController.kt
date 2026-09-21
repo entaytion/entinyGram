@@ -28,6 +28,7 @@ class FeedController private constructor(
         if (!isActive) {
             isActive = true
             FeedChannelSet.pruneStaleExclusions(account)
+            unreadTracker.refresh(FeedChannelSet.eligibleChannels(account, scope))
             backfill.onChannelBackfilled = { _ -> onBackfillCompleted?.invoke() }
         }
         if (scope is FeedScope.Folder) registerOpenFolder(this)
@@ -41,13 +42,8 @@ class FeedController private constructor(
 
     fun loadOlder(onResult: (List<MessageObject>) -> Unit) {
         store.loadOlder { added ->
-            if (added.isEmpty()) {
-                onResult(added)
-                requestBackfill()
-                return@loadOlder
-            }
-            val unread = added.filter { unreadTracker.isUnread(it.getDialogId(), it.id) }
-            if (unread.isNotEmpty()) onResult(unread) else loadOlder(onResult)
+            if (added.isEmpty()) requestBackfill()
+            onResult(added)
         }
     }
 
@@ -68,8 +64,7 @@ class FeedController private constructor(
     fun onNewMessages(messages: List<MessageObject>) {
         if (!isActive) return
         val added = store.mergeLive(messages)
-        val unread = added.filter { unreadTracker.isUnread(it.getDialogId(), it.id) }
-        if (unread.isNotEmpty()) onLiveMessagesAdded?.invoke(unread)
+        if (added.isNotEmpty()) onLiveMessagesAdded?.invoke(added)
     }
 
     fun onMessagesDeleted(dialogId: Long, messageIds: Collection<Int>) {
@@ -91,15 +86,20 @@ class FeedController private constructor(
     companion object {
         private val instances = HashMap<Int, FeedController>()
 
+        private val folderInstances = HashMap<Int, HashMap<Int, FeedController>>()
+
         private val openFolderControllers = HashMap<Int, MutableSet<FeedController>>()
 
         @JvmStatic
         @Synchronized
         fun get(account: Int): FeedController = instances.getOrPut(account) { FeedController(account) }
 
+        // entiny: folder controllers are cached so a folder feed keeps its loaded rows between visits
         @JvmStatic
+        @Synchronized
         fun forFolder(account: Int, filterId: Int): FeedController =
-            FeedController(account, FeedScope.Folder(filterId))
+            folderInstances.getOrPut(account) { HashMap() }
+                .getOrPut(filterId) { FeedController(account, FeedScope.Folder(filterId)) }
 
         @JvmStatic
         @Synchronized
