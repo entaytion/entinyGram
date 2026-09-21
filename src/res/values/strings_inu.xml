@@ -4,6 +4,8 @@
     <string name="InuBanUserConfirm">Ban %1$s from this group?</string>
     <string name="InuSendToDiscussWithoutJoin">Write to discuss groups without joining</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Skip the client-only membership check for discussion groups</string>
+    <string name="InuIosStyle">iOS style</string>
+    <string name="InuConfirmBeforeSending">Confirm before sending</string>
     <string name="InuConfirmSendVoice">Confirm before sending voice messages</string>
     <string name="InuConfirmSendVoiceMessage">Send this voice message?</string>
     <string name="InuConfirmSendSticker">Confirm before sending stickers</string>
@@ -272,7 +274,6 @@
     <string name="InuHideMessages">Hide messages</string>
     <string name="InuShowHiddenMessages">Show messages</string>
     <string name="InuSpoilers">Spoilers</string>
-    <string name="InuSpoilerStyle">Style</string>
     <string name="InuHideAiFeatures">Hide AI features</string>
     <string name="InuHideAiEditor">AI editor button</string>
     <string name="InuAiEditorButtonInfo">Shows AI actions next to the message field for rewriting, continuing, summarizing, and fixing text.</string>

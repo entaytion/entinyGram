@@ -29,6 +29,18 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     private var reactionsInRowSlider: SliderCell? = null
     private var doubleTapDelaySlider: SliderCell? = null
 
+    private val confirmSendGroup by lazy {
+        ExpandableBoolGroup(
+            LocaleController.getString(R.string.InuConfirmBeforeSending),
+            listOf(
+                ExpandableBoolGroup.Option(R.string.InuConfirmSendVoice, InuConfig.CONFIRM_SEND_VOICE, TOGGLE_CONFIRM_SEND_VOICE),
+                ExpandableBoolGroup.Option(R.string.InuConfirmSendSticker, InuConfig.CONFIRM_SEND_STICKER, TOGGLE_CONFIRM_SEND_STICKER),
+                ExpandableBoolGroup.Option(R.string.InuConfirmSendGif, InuConfig.CONFIRM_SEND_GIF, TOGGLE_CONFIRM_SEND_GIF),
+            ),
+            sectionId = SECTION_CONFIRM_SEND,
+        ).apply { expanded = true }
+    }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(this.context, this)
         if (stickerSizeSlider == null) {
@@ -138,8 +150,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 InuConfig.SHOW_SPOILERS_DIRECTLY.value,
             )
         )
-        items.add(UItem.asShadow(null))
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuSpoilerStyle)))
         if (!InuConfig.SHOW_SPOILERS_DIRECTLY.value) {
             items.add(
                 UItem.asButton(
@@ -156,22 +166,22 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                     InuConfig.SPOILER_EXTEND_TO_LINE_END.value,
                 )
             )
+            items.add(
+                UItem.asButton(
+                    BUTTON_MEDIA_SPOILER_MODE,
+                    LocaleController.getString(R.string.InuMediaSpoilerMode),
+                    mediaSpoilerModeLabel(InuConfig.MEDIA_SPOILER_MODE.value),
+                )
+            )
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_LINK_PREVIEW_SPOILER,
+                    R.string.InuLinkPreviewSpoiler,
+                    R.string.InuLinkPreviewSpoilerInfo,
+                    InuConfig.LINK_PREVIEW_SPOILER.value,
+                )
+            )
         }
-        items.add(
-            UItem.asButton(
-                BUTTON_MEDIA_SPOILER_MODE,
-                LocaleController.getString(R.string.InuMediaSpoilerMode),
-                mediaSpoilerModeLabel(InuConfig.MEDIA_SPOILER_MODE.value),
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_LINK_PREVIEW_SPOILER,
-                R.string.InuLinkPreviewSpoiler,
-                R.string.InuLinkPreviewSpoilerInfo,
-                InuConfig.LINK_PREVIEW_SPOILER.value,
-            )
-        )
         items.add(UItem.asShadow(null))
 
         if (miscPreview == null) miscPreview = MiscPreviewMessagesCell(this.context, this)
@@ -269,24 +279,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CONFIRM_SEND_VOICE,
-                LocaleController.getString(R.string.InuConfirmSendVoice),
-            ).setChecked(InuConfig.CONFIRM_SEND_VOICE.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CONFIRM_SEND_STICKER,
-                LocaleController.getString(R.string.InuConfirmSendSticker),
-            ).setChecked(InuConfig.CONFIRM_SEND_STICKER.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CONFIRM_SEND_GIF,
-                LocaleController.getString(R.string.InuConfirmSendGif),
-            ).setChecked(InuConfig.CONFIRM_SEND_GIF.value)
-        )
+        confirmSendGroup.addTo(items) { listView?.adapter?.update(true) }
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDoubleTapActions)))
@@ -331,6 +324,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (confirmSendGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         when (item.id) {
             BUTTON_STICKER_TIME_MODE -> RadioItemOptions.show(
                 this, view,
@@ -421,21 +415,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE -> {
                 val new = InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_CONFIRM_SEND_VOICE -> {
-                val new = InuConfig.CONFIRM_SEND_VOICE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_CONFIRM_SEND_STICKER -> {
-                val new = InuConfig.CONFIRM_SEND_STICKER.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_CONFIRM_SEND_GIF -> {
-                val new = InuConfig.CONFIRM_SEND_GIF.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
 
@@ -604,6 +583,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_STICKER = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_GIF = InuUtils.generateId()
+        private val SECTION_CONFIRM_SEND = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_CHANNEL = InuUtils.generateId()

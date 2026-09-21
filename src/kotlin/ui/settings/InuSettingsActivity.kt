@@ -144,9 +144,6 @@ class InuSettingsActivity : SettingsPageActivity() {
         UpdateHelper.check { result ->
             AndroidUtilities.runOnUIThread {
                 val msg: CharSequence = when (result) {
-                    UpdateHelper.CheckResult.InFlight ->
-                        LocaleController.getString(R.string.Checking)
-
                     UpdateHelper.CheckResult.UpToDate ->
                         LocaleController.getString(R.string.InuUpdateUpToDate)
 

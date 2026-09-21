@@ -3,15 +3,10 @@ package desu.inugram.ui.settings
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
-import desu.inugram.helpers.InuDatabaseHelper
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.chat.SavedMessagesHelper
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
@@ -20,7 +15,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAntiDeletion)
 
-    private var cachedSizeText: String? = null
     private var deletedPreview: DeletedMessagePreviewCell? = null
     private var deletedMarkColorCell: DeletedMarkColorCell? = null
 
@@ -125,137 +119,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
-            items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuClearDeletedCache)).also {
-                if (cachedSizeText != null) {
-                    it.subtext = cachedSizeText
-                }
-            })
-        }
-    }
-
-    private fun showClearCacheDialog() {
-        val context = context ?: return
-        val account = UserConfig.selectedAccount
-        val storage = org.telegram.messenger.MessagesStorage.getInstance(account) ?: return
-        storage.storageQueue.postRunnable {
-            val db = storage.database ?: return@postRunnable
-            val stats = InuDatabaseHelper.getDeletedMessagesStats(db)
-            org.telegram.messenger.AndroidUtilities.runOnUIThread {
-                if (stats.isEmpty()) {
-                    cachedSizeText = AndroidUtilities.formatFileSize(0)
-                    listView?.adapter?.update(true)
-                    org.telegram.ui.Components.BulletinFactory.of(this@AntiDeletionSettingsActivity)
-                        .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuClearDeletedCacheEmpty))
-                        .show()
-                    return@runOnUIThread
-                }
-
-                val totalSize = stats.sumOf { it.estimatedSize }
-                cachedSizeText = AndroidUtilities.formatFileSize(totalSize)
-                listView?.adapter?.update(true)
-
-                val selected = BooleanArray(stats.size) { true }
-
-                val builder = org.telegram.ui.ActionBar.BottomSheet.Builder(context)
-                builder.setTitle(LocaleController.getString(R.string.InuClearDeletedCache))
-
-                val container = android.widget.LinearLayout(context).apply {
-                    orientation = android.widget.LinearLayout.VERTICAL
-                    setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(8f), AndroidUtilities.dp(16f), AndroidUtilities.dp(16f))
-                }
-
-                val linearLayout = android.widget.LinearLayout(context).apply {
-                    orientation = android.widget.LinearLayout.VERTICAL
-                }
-
-                fun calcSelectedSize(): Long {
-                    var sum = 0L
-                    stats.forEachIndexed { i, stat ->
-                        if (selected[i]) sum += stat.estimatedSize
-                    }
-                    return sum
-                }
-
-                val buttonTextView = android.widget.TextView(context).apply {
-                    setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(12f), AndroidUtilities.dp(16f), AndroidUtilities.dp(12f))
-                    setGravity(android.view.Gravity.CENTER)
-                    setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_buttonText))
-                    setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15f)
-                    setTypeface(AndroidUtilities.bold())
-                    background = org.telegram.ui.ActionBar.Theme.createSimpleSelectorRoundRectDrawable(
-                        AndroidUtilities.dp(8f),
-                        org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_addButton),
-                        org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_addButtonPressed)
-                    )
-                }
-
-                fun updateButtonText() {
-                    val selSize = calcSelectedSize()
-                    buttonTextView.text = LocaleController.getString(R.string.Delete) + " (" + AndroidUtilities.formatFileSize(selSize) + ")"
-                }
-
-                stats.forEachIndexed { i, stat ->
-                    val name = if (stat.dialogId == 0L) {
-                        LocaleController.getString(R.string.SavedMessages)
-                    } else {
-                        val user = MessagesController.getInstance(account).getUser(stat.dialogId)
-                        val chat = MessagesController.getInstance(account).getChat(-stat.dialogId)
-                        val userName = if (user != null) org.telegram.messenger.UserObject.getUserName(user) else null
-                        userName ?: chat?.title ?: "ID ${stat.dialogId}"
-                    }
-                    val sizeFormatted = AndroidUtilities.formatFileSize(stat.estimatedSize)
-                    val text = "$name ($sizeFormatted)"
-                    val value = LocaleController.formatPluralString("messages", stat.count)
-
-                    val cell = org.telegram.ui.Cells.CheckBoxCell(context, 1, getResourceProvider()).apply {
-                        setText(text, value, true, true)
-                        setChecked(selected[i], false)
-                        setTag(i)
-                        setOnClickListener {
-                            val idx = tag as Int
-                            selected[idx] = !selected[idx]
-                            setChecked(selected[idx], true)
-                            updateButtonText()
-                        }
-                    }
-                    linearLayout.addView(cell)
-                }
-
-                val scrollView = android.widget.ScrollView(context).apply {
-                    addView(linearLayout)
-                }
-
-                val scrollParams = android.widget.LinearLayout.LayoutParams(
-                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                    0,
-                    1.0f
-                ).apply {
-                    bottomMargin = AndroidUtilities.dp(12f)
-                }
-                container.addView(scrollView, scrollParams)
-                container.addView(buttonTextView, org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT))
-
-                updateButtonText()
-
-                builder.setCustomView(container)
-                val sheet = builder.create()
-
-                buttonTextView.setOnClickListener {
-                    val toDelete = stats.filterIndexed { index, _ -> selected[index] }.map { it.dialogId }
-                    if (toDelete.isNotEmpty()) {
-                        sheet.dismiss()
-                        SavedMessagesHelper.clearCache(account, if (toDelete.size == stats.size) null else toDelete) {
-                            cachedSizeText = null
-                            listView?.adapter?.update(true)
-                            org.telegram.ui.Components.BulletinFactory.of(this@AntiDeletionSettingsActivity)
-                                .createSimpleBulletin(R.raw.ic_delete, LocaleController.getString(R.string.InuClearDeletedCacheDone))
-                                .show()
-                        }
-                    }
-                }
-
-                showDialog(sheet)
-            }
         }
     }
 
@@ -289,7 +152,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
             BUTTON_DELETED_MARK_STYLE -> showDeletedMarkStyleSelector()
             BUTTON_SEARCH -> presentFragment(DeletedMessageSearchActivity())
-            BUTTON_CLEAR_DELETED_CACHE -> showClearCacheDialog()
         }
     }
 
@@ -340,7 +202,6 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SAVE_EDITED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
-        private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
         private val BUTTON_SEARCH = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_TEXT = InuUtils.generateId()

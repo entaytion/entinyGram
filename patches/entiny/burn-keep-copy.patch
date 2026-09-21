@@ -1,0 +1,28 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 21 Sep 2026 12:52:34 +0300
+Subject: burn once-view media after saving a copy
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java       | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -15838,7 +15838,13 @@ public class ChatActivity extends BaseFragment implements
+             return null;
+         }
+         if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {
+-            return null;
++            TLRPC.Peer from = messageObject.messageOwner.from_id;
++            // entiny: keep-once-view now saves a local copy and lets the real burn proceed, instead of skipping deletion
++            desu.inugram.helpers.chat.SavedMessagesHelper.markMessageDeleted(
++                currentAccount, dialog_id, messageObject.getId(),
++                from != null ? DialogObject.getPeerDialogId(from) : dialog_id,
++                messageObject.messageOwner.message != null ? messageObject.messageOwner.message : "",
++                0, messageObject.messageOwner, true);
+         }
+         final long taskId = getMessagesController().createDeleteShowOnceTask(dialog_id, messageObject.getId());
+         messageObject.forceExpired = true;

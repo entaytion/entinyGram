@@ -9,8 +9,6 @@ import desu.inugram.helpers.ProxyVpnHelper
 import desu.inugram.helpers.ShortcutHelper
 import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.maps.MapsHelper
-import desu.inugram.helpers.search.UserIdOpenHelper
-import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -96,20 +94,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 R.string.InuOpenByUserId,
                 R.string.InuOpenByUserIdInfo,
                 InuConfig.OPEN_BY_USER_ID.value,
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_OPEN_BY_ID,
-                R.drawable.inu_tabler_id,
-                LocaleController.getString(R.string.InuOpenById),
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_DELETE_PROFILE_PHOTOS,
-                R.drawable.inu_tabler_photo_x,
-                LocaleController.getString(R.string.InuDeleteProfilePhotos),
             )
         )
         items.add(mkSubPageButton(BUTTON_PROFILE_SETTINGS_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileSettingsRowsOrder)))
@@ -364,16 +348,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
-            BUTTON_OPEN_BY_ID -> {
-                val ctx = context ?: return
-                UserIdOpenHelper.showOpenByIdDialog(ctx, this, currentAccount)
-            }
-
-            BUTTON_DELETE_PROFILE_PHOTOS -> {
-                val activity = parentActivity ?: return
-                DeleteProfilePhotosSheet(activity, currentAccount).show()
-            }
-
             BUTTON_PROFILE_SETTINGS_ROWS_ORDER -> presentFragment(ProfileSettingsMenuOrderActivity())
 
             BUTTON_PROFILE_INFO_ROWS_ORDER -> presentFragment(ProfileInfoMenuOrderActivity())
@@ -567,8 +541,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val TOGGLE_OPEN_BY_USER_ID = InuUtils.generateId()
-        private val BUTTON_OPEN_BY_ID = InuUtils.generateId()
-        private val BUTTON_DELETE_PROFILE_PHOTOS = InuUtils.generateId()
         private val BUTTON_PROFILE_SETTINGS_ROWS_ORDER = InuUtils.generateId()
         private val BUTTON_PROFILE_INFO_ROWS_ORDER = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
@@ -628,8 +600,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
                 SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
                 SearchRegistry.Entry("open-by-user-id", R.string.InuOpenByUserId, TOGGLE_OPEN_BY_USER_ID),
-                SearchRegistry.Entry("open-by-id", R.string.InuOpenById, BUTTON_OPEN_BY_ID),
-                SearchRegistry.Entry("delete-profile-photos", R.string.InuDeleteProfilePhotos, BUTTON_DELETE_PROFILE_PHOTOS),
                 SearchRegistry.Entry("profile-settings-rows-order", R.string.InuProfileSettingsRowsOrder, BUTTON_PROFILE_SETTINGS_ROWS_ORDER),
                 SearchRegistry.Entry("profile-info-rows-order", R.string.InuProfileInfoRowsOrder, BUTTON_PROFILE_INFO_ROWS_ORDER),
                 SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),

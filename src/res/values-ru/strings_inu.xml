@@ -729,7 +729,6 @@
     <string name="InuHideMessages">Скрыть сообщения</string>
     <string name="InuShowHiddenMessages">Показать сообщения</string>
     <string name="InuSpoilers">Спойлеры</string>
-    <string name="InuSpoilerStyle">Стиль</string>
     <string name="InuDisableVolumePlayVideo">Отключить запуск видео клавишами громкости</string>
     <string name="InuDisableVolumePlayVideoInfo">Не запускать видимое видео со звуком при нажатии клавиш громкости в чате</string>
     <string name="InuConfirmInternalLinks">Подтверждать открытие внутренних ссылок</string>

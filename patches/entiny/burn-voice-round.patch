@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 21 Sep 2026 13:47:44 +0300
+Subject: burn one-time voice and round videos
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -15834,7 +15834,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     public Runnable sendSecretMediaDelete(MessageObject messageObject) {
+-        if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() || messageObject.messageOwner.ttl != 0x7FFFFFFF) {
++        if (messageObject == null || messageObject.isOut() || !messageObject.isSecretMedia() && (messageObject.messageOwner.media == null || messageObject.messageOwner.media.ttl_seconds == 0) || messageObject.messageOwner.ttl != 0x7FFFFFFF) {
+             return null;
+         }
+         if (desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {

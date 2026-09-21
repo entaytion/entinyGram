@@ -58,8 +58,11 @@ object UpdateHelper {
         return "${getVersionInfoString()}\nBuilt on: ${BuildVars.BUILD_DATE}"
     }
 
-    @Volatile private var inflight = false
-    @Volatile private var inflightSince = 0L
+    @Volatile
+    private var inflight = false
+    @Volatile
+    private var inflightSince = 0L
+    private val queuedCallbacks = ArrayList<(CheckResult) -> Unit>()
 
     @Volatile var pendingBetaUpdate: BetaUpdate? = null
         private set
@@ -224,13 +227,22 @@ object UpdateHelper {
 
     fun check(callback: ((CheckResult) -> Unit)?) {
         val account = UserConfig.selectedAccount
+        if (!InuConfig.UPDATES_ENABLED.value) {
+            callback?.invoke(CheckResult.Error("updates are disabled"))
+            return
+        }
         if (!UserConfig.getInstance(account).isClientActivated) {
             callback?.invoke(CheckResult.Error("Not logged in"))
             return
         }
         if (BuildConfig.INU_BUILD_TYPE == "debug") { callback?.invoke(CheckResult.UpToDate); return }
         val now = System.currentTimeMillis()
-        if (inflight && now - inflightSince < INFLIGHT_TIMEOUT_MS) { callback?.invoke(CheckResult.InFlight); return }
+        if (inflight && now - inflightSince < INFLIGHT_TIMEOUT_MS) {
+            if (callback != null) {
+                synchronized(queuedCallbacks) { queuedCallbacks.add(callback) }
+            }
+            return
+        }
         inflight = true
         inflightSince = now
         MessagesController.getInstance(account).userNameResolver.resolve(USERNAME) { peerId ->
@@ -306,7 +318,11 @@ object UpdateHelper {
         if (!InuConfig.UPDATES_ENABLED.value) return
         if (BuildConfig.INU_BUILD_TYPE == "debug") return
         val channelId = resolvedChannelId
-        if (channelId != null && msg.peer_id?.channel_id != channelId) return
+        if (channelId == null) {
+            check(null)
+            return
+        }
+        if (msg.peer_id?.channel_id != channelId) return
         val text = msg.message ?: return
         val isBeta = text.contains("#prerelease")
         if (isBeta) {
@@ -376,6 +392,11 @@ object UpdateHelper {
             InuConfig.UPDATE_LAST_CHECK_MS.value = System.currentTimeMillis()
         }
         callback?.invoke(result)
+        val queued = synchronized(queuedCallbacks) {
+            if (queuedCallbacks.isEmpty()) null
+            else ArrayList(queuedCallbacks).also { queuedCallbacks.clear() }
+        }
+        queued?.forEach { it.invoke(result) }
     }
 
     @Suppress("DEPRECATION")
@@ -393,7 +414,6 @@ object UpdateHelper {
     }
 
     sealed class CheckResult {
-        object InFlight : CheckResult()
         object UpToDate : CheckResult()
         data class Updated(val update: TLRPC.TL_help_appUpdate) : CheckResult()
         data class Error(val message: String) : CheckResult()

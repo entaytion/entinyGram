@@ -254,7 +254,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
-@@ -1558,10 +1558,10 @@ public class SharedConfig {
+@@ -1554,10 +1554,10 @@ public class SharedConfig {
      public static void checkSaveToGalleryFiles() {
          Utilities.globalQueue.postRunnable(() -> {
              try {

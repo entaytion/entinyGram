@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 21 Sep 2026 14:06:16 +0300
+Subject: fix poll results before vote
+
+---
+ .../java/org/telegram/ui/Cells/ChatMessageCell.java  | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -6838,7 +6838,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             if (!pollChanged && newResults != lastPollResults) {
+                 pollChanged = true;
+             }
+-            final boolean newPollResultsPreview = messageObject.forceShowPollResults || (desu.inugram.InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.getValue() && newPoll != null && !newPoll.closed && !messageObject.isVoted());
++            final boolean newPollResultsPreview = messageObject.forceShowPollResults || desu.inugram.helpers.chat.PollResultsHelper.canShowBeforeVote(messageObject);
+             if (!pollChanged && (newPollResultsPreview != pollResultsPreview)) {
+                 pollChanged = true;
+             }
+@@ -11435,7 +11435,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             total_voters = media.results.total_voters;
+             timerTransitionProgress = media.poll.close_date - ConnectionsManager.getInstance(currentAccount).getCurrentTime() < 60 ? 0.0f : 1.0f;
+             pollClosed = media.poll.closed;
+-            pollResultsPreview = messageObject.forceShowPollResults || (desu.inugram.InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.getValue() && !pollClosed && !messageObject.isVoted());
++            pollResultsPreview = messageObject.forceShowPollResults || desu.inugram.helpers.chat.PollResultsHelper.canShowBeforeVote(messageObject);
+             pollHideResults = media.poll.hide_results_until_close;
+             title = media.poll.question;
+             if (pollClosed) {
+@@ -12067,7 +12067,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         }
+ 
+         final TLRPC.PollResults results = media.results;
+-        final boolean canViewHiddenResultsWithoutVote = !pollVoted && !pollClosed && pollHasResults && results != null && results.total_voters != 0 && media.poll.creator; //pollHideResults;
++        final boolean showPollResultsBeforeVote = desu.inugram.InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.getValue();
++        final boolean canViewHiddenResultsWithoutVote = !pollVoted && !pollClosed && pollHasResults && results != null && results.total_voters != 0 && (media.poll.creator || desu.inugram.helpers.chat.PollResultsHelper.canShowBeforeVote(messageObject)); //pollHideResults;
++        final boolean canViewPollResultsAfterVote = showPollResultsBeforeVote && pollVoted && results != null && results.total_voters != 0 && (!pollHideResults || pollHasResults || pollClosed);
+         final boolean canVote = !pollVoted && !pollClosed && !pollHasVoteRestrictions;
+         final boolean isAnonymousPoll = !media.poll.public_voters;
+ 
+@@ -12076,8 +12078,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             instantViewType = INSTANT_BUTTON_TYPE_ADD_OPTION;
+             instantViewText = getString(R.string.PollButtonSave);
+         } else {
+-            if (canViewHiddenResultsWithoutVote && !(media.poll.multiple_choice && canVote && hasCheckedCheckboxes)) {
+-                if (isAnonymousPoll) {
++            if ((canViewHiddenResultsWithoutVote || canViewPollResultsAfterVote) && !(media.poll.multiple_choice && canVote && hasCheckedCheckboxes)) {
++                if (isAnonymousPoll && media.poll.creator && !pollVoted) {
+                     if (messageObject.forceShowPollResults) {
+                         instantViewType = INSTANT_BUTTON_TYPE_BACK_TO_VOTE;
+                         instantViewText = AndroidUtilities.replaceArrows(getString(R.string.PollViewBack), false, -dp(8f / 3f), 0, 1.0f);

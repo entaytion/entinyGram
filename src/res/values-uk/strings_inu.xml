@@ -197,7 +197,6 @@
     <string name="InuHideMessages">Приховати повідомлення</string>
     <string name="InuShowHiddenMessages">Показати повідомлення</string>
     <string name="InuSpoilers">Спойлери</string>
-    <string name="InuSpoilerStyle">Стиль</string>
     <string name="InuHideAiFeatures">Приховати AI функції</string>
     <string name="InuHideAiEditor">Кнопка AI редактора</string>
     <string name="InuAiEditorButtonInfo">Показує AI-дії біля поля повідомлення: переписати, продовжити, скоротити або виправити текст.</string>

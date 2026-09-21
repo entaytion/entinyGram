@@ -666,7 +666,6 @@
     <string name="InuHideMessages">隐藏消息</string>
     <string name="InuShowHiddenMessages">显示消息</string>
     <string name="InuSpoilers">剧透</string>
-    <string name="InuSpoilerStyle">样式</string>
     <string name="InuDisableVolumePlayVideo">禁用音量键播放视频</string>
     <string name="InuDisableVolumePlayVideoInfo">在聊天中按音量键时不让可见视频开始有声播放</string>
     <string name="InuConfirmInternalLinks">打开内部链接前确认</string>

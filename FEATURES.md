@@ -33,7 +33,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **local archive search**: full-text search across saved deleted messages and edit history
   - **storage manager**: cache TTL and automatic expiration
 - 📡 **self-destructing & expiring media**:
-  - **save view-once media**: view-once photos, videos and video notes without auto-destruction
+  - **save view-once media**: view-once photos, videos, video notes and voice notes still burn, but a copy is kept in the saved cache; with "show normally" on they can also be force-forwarded (re-uploaded as regular media)
   - **keep self-destruct content per-category**: keep secret-chat media, text, view-once media and timed messages
   - **persistent media playback**: expired voice notes and round videos remain playable inline
 - 📡 **save user info** (beta): locally preserve phone country, registration date, and name/avatar change history
@@ -106,7 +106,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **ai compose & tools**: draft rewriting, translation, and formatting with configurable providers
 - 📡 **typing status spoof**: loop a fake "typing…", "recording…" or "uploading…" indicator in any chat
 - 📡 **keep downloads running in background**: prevent transfer cancellations on scroll/leave, with optional wake lock - *ported from [MaxExteraPlugins](https://github.com/MaxExteraPlugins)*
-- 📡 **show poll results before you vote**: reveal vote percentages for anonymous polls before voting
+- 📡 **show poll results before you vote**: reveal real vote percentages for open polls before voting (only once the server has sent results — quizzes and hide-until-close polls stay stock); also opens the voters dialog via "View votes"
 - 📡 **show small GIFs**: compact 120dp thumbnails for animated GIFs in chat bubbles - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
 - 📡 **send as round video**: crop any gallery video (up to 60s) to square and send it as a native video note
 - 📡 **round recorder zoom buttons**: quick zoom presets (1×, 2×, 3×, 5×, 10×) during video note recording

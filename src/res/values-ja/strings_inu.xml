@@ -667,7 +667,6 @@
     <string name="InuHideMessages">メッセージを非表示にする</string>
     <string name="InuShowHiddenMessages">メッセージを表示する</string>
     <string name="InuSpoilers">スポイラー</string>
-    <string name="InuSpoilerStyle">スタイル</string>
     <string name="InuDisableVolumePlayVideo">音量キーで動画再生を無効化</string>
     <string name="InuDisableVolumePlayVideoInfo">チャットで音量キーを押したときに表示中の動画を音付きで再生しない</string>
     <string name="InuConfirmInternalLinks">内部リンクを開く前に確認</string>

@@ -194,7 +194,6 @@
     <string name="InuHideMessages">Mesajları gizle</string>
     <string name="InuShowHiddenMessages">Mesajları göster</string>
     <string name="InuSpoilers">Sürprizler (Spoilers)</string>
-    <string name="InuSpoilerStyle">Stil</string>
     <string name="InuHideAiFeatures">Yapay zeka özelliklerini gizle</string>
     <string name="InuHideAiEditor">Yapay zeka düzenleyici düğmesi</string>
     <string name="InuHideMessageSummary">Mesaj özeti düğmesi</string>

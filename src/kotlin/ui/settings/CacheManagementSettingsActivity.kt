@@ -42,6 +42,8 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             it.subtext = ttlLabel(InuConfig.PRESENCE_LOGS_TTL.value)
         })
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuCacheManagementInfo)))
+        items.add(UItem.asButton(BUTTON_CLEAR_DELETED_CACHE, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuClearDeletedCache)))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuClearDeletedCacheAlert)))
     }
 
     private fun ttlLabel(days: Int): String = when (days) {
@@ -154,6 +156,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_MESSAGES_TTL -> showMessagesTtlDialog()
             BUTTON_LOGS_TTL -> showLogsTtlDialog()
+            BUTTON_CLEAR_DELETED_CACHE -> showClearDeletedCacheDialog()
         }
     }
 
@@ -261,9 +264,110 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         if (clearPresence) PresenceHelper.clearLogs(account) { onOneDone() }
     }
 
+    private fun showClearDeletedCacheDialog() {
+        val context = context ?: return
+        val account = UserConfig.selectedAccount
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            val stats = InuDatabaseHelper.getDeletedMessagesStats(db)
+            AndroidUtilities.runOnUIThread {
+                if (stats.isEmpty()) {
+                    BulletinFactory.of(this)
+                        .createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuClearDeletedCacheEmpty))
+                        .show()
+                    return@runOnUIThread
+                }
+
+                val selected = BooleanArray(stats.size) { true }
+
+                val builder = org.telegram.ui.ActionBar.BottomSheet.Builder(context)
+                builder.setTitle(LocaleController.getString(R.string.InuClearDeletedCache))
+
+                val container = android.widget.LinearLayout(context).apply {
+                    orientation = android.widget.LinearLayout.VERTICAL
+                    setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(8f), AndroidUtilities.dp(16f), AndroidUtilities.dp(16f))
+                }
+                val linearLayout = android.widget.LinearLayout(context).apply { orientation = android.widget.LinearLayout.VERTICAL }
+
+                fun calcSelectedSize(): Long =
+                    stats.filterIndexed { i, _ -> selected[i] }.sumOf { it.estimatedSize }
+
+                val buttonTextView = android.widget.TextView(context).apply {
+                    setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(12f), AndroidUtilities.dp(16f), AndroidUtilities.dp(12f))
+                    setGravity(android.view.Gravity.CENTER)
+                    setTextColor(org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_buttonText))
+                    setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP, 15f)
+                    setTypeface(AndroidUtilities.bold())
+                    background = org.telegram.ui.ActionBar.Theme.createSimpleSelectorRoundRectDrawable(
+                        AndroidUtilities.dp(8f),
+                        org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_addButton),
+                        org.telegram.ui.ActionBar.Theme.getColor(org.telegram.ui.ActionBar.Theme.key_featuredStickers_addButtonPressed),
+                    )
+                }
+
+                fun updateButtonText() {
+                    buttonTextView.text = LocaleController.getString(R.string.Delete) + " (" + AndroidUtilities.formatFileSize(calcSelectedSize()) + ")"
+                }
+
+                stats.forEachIndexed { i, stat ->
+                    val name = if (stat.dialogId == 0L) {
+                        LocaleController.getString(R.string.SavedMessages)
+                    } else {
+                        val user = org.telegram.messenger.MessagesController.getInstance(account).getUser(stat.dialogId)
+                        val chat = org.telegram.messenger.MessagesController.getInstance(account).getChat(-stat.dialogId)
+                        val userName = if (user != null) org.telegram.messenger.UserObject.getUserName(user) else null
+                        userName ?: chat?.title ?: "ID ${stat.dialogId}"
+                    }
+                    val sizeFormatted = AndroidUtilities.formatFileSize(stat.estimatedSize)
+                    val cell = org.telegram.ui.Cells.CheckBoxCell(context, 1, resourceProvider).apply {
+                        setText("$name ($sizeFormatted)", LocaleController.formatPluralString("messages", stat.count), true, true)
+                        setChecked(selected[i], false)
+                        setTag(i)
+                        setOnClickListener {
+                            val idx = tag as Int
+                            selected[idx] = !selected[idx]
+                            setChecked(selected[idx], true)
+                            updateButtonText()
+                        }
+                    }
+                    linearLayout.addView(cell)
+                }
+
+                val scrollView = android.widget.ScrollView(context).apply { addView(linearLayout) }
+                val scrollParams = android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 0, 1.0f,
+                ).apply { bottomMargin = AndroidUtilities.dp(12f) }
+                container.addView(scrollView, scrollParams)
+                container.addView(
+                    buttonTextView,
+                    org.telegram.ui.Components.LayoutHelper.createLinear(org.telegram.ui.Components.LayoutHelper.MATCH_PARENT, org.telegram.ui.Components.LayoutHelper.WRAP_CONTENT),
+                )
+                updateButtonText()
+
+                builder.setCustomView(container)
+                val sheet = builder.create()
+                buttonTextView.setOnClickListener {
+                    val toDelete = stats.filterIndexed { index, _ -> selected[index] }.map { it.dialogId }
+                    if (toDelete.isNotEmpty()) {
+                        sheet.dismiss()
+                        SavedMessagesHelper.clearCache(account, if (toDelete.size == stats.size) null else toDelete) {
+                            refreshStats()
+                            BulletinFactory.of(this)
+                                .createSimpleBulletin(R.raw.ic_delete, LocaleController.getString(R.string.InuClearDeletedCacheDone))
+                                .show()
+                        }
+                    }
+                }
+                showDialog(sheet)
+            }
+        }
+    }
+
     companion object {
         private val BUTTON_MESSAGES_TTL = InuUtils.generateId()
         private val BUTTON_LOGS_TTL = InuUtils.generateId()
+        private val BUTTON_CLEAR_DELETED_CACHE = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -274,6 +378,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("cache-ttl", R.string.InuCacheTtl, BUTTON_MESSAGES_TTL),
                 SearchRegistry.Entry("presence-logs-ttl", R.string.InuPresenceLogsTtl, BUTTON_LOGS_TTL),
+                SearchRegistry.Entry("clear-deleted-cache", R.string.InuClearDeletedCache, BUTTON_CLEAR_DELETED_CACHE),
             ),
         )
     }

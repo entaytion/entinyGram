@@ -1246,10 +1246,17 @@ object ChatHelper {
         val it = messages.iterator()
         while (it.hasNext()) {
             val msg = it.next()
-            if (msg.id <= 0 || msg.needDrawBluredPreview()) continue
-            if ((msg.messageOwner?.media?.ttl_seconds ?: 0) != 0) continue
-            if (DialogObject.isEncryptedDialog(msg.dialogId)) continue
-            if (!isSourceNoForwards(controller, msg)) continue
+            if (msg.id <= 0) continue
+            // entiny: cloud view-once media joins the force-forward re-upload path when the one-time gate is bypassed
+            val onceView = (msg.messageOwner?.media?.ttl_seconds ?: 0) != 0 &&
+                desu.inugram.helpers.security.SelfDestructHelper.shouldBypassOneTimeGate(msg.dialogId) &&
+                !DialogObject.isEncryptedDialog(msg.dialogId)
+            if (!onceView) {
+                if (msg.needDrawBluredPreview()) continue
+                if ((msg.messageOwner?.media?.ttl_seconds ?: 0) != 0) continue
+                if (DialogObject.isEncryptedDialog(msg.dialogId)) continue
+                if (!isSourceNoForwards(controller, msg)) continue
+            }
             if (restricted == null) restricted = ArrayList()
             restricted.add(msg)
             it.remove()

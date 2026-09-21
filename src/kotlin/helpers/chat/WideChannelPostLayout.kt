@@ -4,9 +4,11 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 
 object WideChannelPostLayout {
-    private const val OUTER_INSET_DP = 9
+    private const val OUTER_INSET_DP = 8
     private const val MEDIA_BACKGROUND_CONTENT_INSET_DP = 8
     private const val REGULAR_BACKGROUND_CONTENT_INSET_DP = 17
+    // entiny: ChatMessageCell always trims dp(9) off a grouped photo's width, so the grid viewport must account for it
+    private const val GROUP_CELL_INSET_DP = 9
 
     @JvmStatic
     fun backgroundWidth(viewportWidth: Int, leadingInset: Int, mediaBackground: Boolean): Int {
@@ -33,7 +35,7 @@ object WideChannelPostLayout {
 
     @JvmStatic
     fun groupedMediaViewportWidth(viewportWidth: Int, leadingInset: Int): Int {
-        return maxOf(dp(1f), viewportWidth - leadingInset)
+        return maxOf(dp(1f), viewportWidth - leadingInset - dp((OUTER_INSET_DP * 2 - GROUP_CELL_INSET_DP).toFloat()))
     }
 
     @JvmStatic

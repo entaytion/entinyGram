@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 21 Sep 2026 13:00:00 +0300
+Subject: lift 100-message selection cap in search and profile media
+
+---
+ .../java/org/telegram/ui/Components/SearchViewPager.java    | 3 ---
+ .../java/org/telegram/ui/Components/SharedMediaLayout.java  | 6 ------
+ 2 files changed, 9 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+@@ -1068,9 +1068,6 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+         if (selectedFiles.containsKey(hashId)) {
+             selectedFiles.remove(hashId);
+         } else {
+-            if (selectedFiles.size() >= 100) {
+-                return;
+-            }
+             selectedFiles.put(hashId, message);
+         }
+         if (selectedFiles.size() == 0) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -2477,9 +2477,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                     if (messageObject == null) return false;
+                     final int loadIndex = messageObject.getDialogId() == dialog_id ? 0 : 1;
+                     if (selectedFiles[loadIndex].indexOfKey(messageObject.getId()) < 0) {
+-                        if (selectedFiles[0].size() + selectedFiles[1].size() >= 100) {
+-                            return false;
+-                        }
+                         selectedFiles[loadIndex].put(messageObject.getId(), messageObject);
+                         if (!messageObject.canDeleteMessage(false, null)) {
+                             cantDeleteMessagesCount++;
+@@ -7907,9 +7904,6 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                     cantDeleteMessagesCount--;
+                 }
+             } else {
+-                if (selectedFiles[0].size() + selectedFiles[1].size() >= 100) {
+-                    return;
+-                }
+                 selectedFiles[loadIndex].put(message.getId(), message);
+                 if (!message.canDeleteMessage(false, null)) {
+                     cantDeleteMessagesCount++;

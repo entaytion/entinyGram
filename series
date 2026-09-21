@@ -265,7 +265,6 @@ entiny/colorful-icons-and-popups.patch
 entiny/fix-url-parsing.patch
 feature/message-menu.patch
 entiny/adblock.patch
-entiny/github-updater.patch
 entiny/mutual-contact-icon.patch
 entiny/id-in-profile.patch
 entiny/free-transcription.patch
@@ -421,3 +420,8 @@ entiny/input-translate.patch
 entiny/ios-input-bar.patch
 entiny/local-folders.patch
 entiny/folder-icons.patch
+entiny/burn-keep-copy.patch
+entiny/no-forward-selection-cap.patch
+entiny/ios-editor-send-icon.patch
+entiny/burn-voice-round.patch
+entiny/poll-results-before-vote-fix.patch
