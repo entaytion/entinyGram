@@ -1180,6 +1180,11 @@
     <string name="InuDeleteMyMessagesConfirm">Усі повідомлення, які ти надіслав(-ла) у цьому чаті, будуть видалені для всіх. Це не можна скасувати.</string>
     <string name="InuDeleteMyMessagesStarted">Видалення твоїх повідомлень…</string>
     <string name="InuDeleteMyMessagesDone">Видалено %1$d твоїх повідомлень</string>
+
+    <string name="InuChatExport">Експорт чату</string>
+    <string name="InuChatExportInfo">Показувати «Експорт чату» в меню профілю. Поки що експортується лише текст повідомлень</string>
+    <string name="InuChatExportCollected">Зібрано %1$d повідомлень</string>
+    <string name="InuChatExportFailed">Не вдалося виконати експорт</string>
     <string name="InuDeleteAllProfilePhotos">Видалити всі фото</string>
     <string name="InuDeleteSelectedProfilePhotos">Видалити вибрані (%1$d)</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Ви впевнені, що хочете видалити всі фотографії профілю? Цю дію неможливо скасувати.</string>

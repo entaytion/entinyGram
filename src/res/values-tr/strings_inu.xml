@@ -1017,6 +1017,11 @@
     <string name="InuDeleteMyMessagesConfirm">Bu sohbette gönderdiğin tüm mesajlar herkes için silinecek. Bu işlem geri alınamaz.</string>
     <string name="InuDeleteMyMessagesStarted">Mesajların siliniyor…</string>
     <string name="InuDeleteMyMessagesDone">%1$d mesajın silindi</string>
+
+    <string name="InuChatExport">Sohbeti dışa aktar</string>
+    <string name="InuChatExportInfo">Profil menüsünde Sohbeti dışa aktar seçeneğini göster. Şimdilik yalnızca mesaj metinleri dışa aktarılır</string>
+    <string name="InuChatExportCollected">%1$d mesaj toplandı</string>
+    <string name="InuChatExportFailed">Dışa aktarma başarısız</string>
     <string name="InuDeleteSelectedProfilePhotos">Seçilenleri sil (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">Seçilen %1$d profil fotoğrafını silmek istediğinizden emin misiniz?</string>
     <string name="InuDeletedAt">Silindi: %1$s</string>

@@ -156,6 +156,15 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CHAT_EXPORT,
+                R.string.InuChatExport,
+                R.string.InuChatExportInfo,
+                InuConfig.CHAT_EXPORT.value,
+                experimental = true,
+            )
+        )
+        items.add(
             UItem.asButton(
                 BUTTON_DOWNLOAD_DIRECTORY,
                 LocaleController.getString(R.string.InuDownloadDirectory),
@@ -405,6 +414,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_CHAT_EXPORT -> {
+                val new = InuConfig.CHAT_EXPORT.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_AUTO_DISABLE_PROXY_ON_VPN -> {
                 val new = InuConfig.AUTO_DISABLE_PROXY_ON_VPN.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -555,6 +569,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE = InuUtils.generateId()
         private val TOGGLE_GIF_SEEKBAR = InuUtils.generateId()
         private val TOGGLE_SEND_MP4_DOCUMENT_AS_VIDEO = InuUtils.generateId()
+        private val TOGGLE_CHAT_EXPORT = InuUtils.generateId()
         private val BUTTON_WEB_PREVIEW_REPLACEMENTS = InuUtils.generateId()
         private val TOGGLE_AUTO_DISABLE_PROXY_ON_VPN = InuUtils.generateId()
         private val TOGGLE_KEEP_DOWNLOADS_IN_BACKGROUND = InuUtils.generateId()
@@ -611,6 +626,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-browser-swipe-collapse", R.string.InuDisableBrowserSwipeCollapse, TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE),
                 SearchRegistry.Entry("gif-seekbar", R.string.InuGifSeekbar, TOGGLE_GIF_SEEKBAR),
                 SearchRegistry.Entry("send-mp4-document-as-video", R.string.InuSendMp4DocumentAsVideo, TOGGLE_SEND_MP4_DOCUMENT_AS_VIDEO),
+                SearchRegistry.Entry("chat-export", R.string.InuChatExport, TOGGLE_CHAT_EXPORT),
                 SearchRegistry.Entry("download-directory", R.string.InuDownloadDirectory, BUTTON_DOWNLOAD_DIRECTORY),
                 SearchRegistry.Entry("web-preview-replacements", R.string.InuWebPreviewReplacements, BUTTON_WEB_PREVIEW_REPLACEMENTS),
                 SearchRegistry.Entry("auto-disable-proxy-on-vpn", R.string.InuAutoDisableProxyOnVpn, TOGGLE_AUTO_DISABLE_PROXY_ON_VPN),

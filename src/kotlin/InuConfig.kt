@@ -1564,6 +1564,9 @@ object InuConfig {
     val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
 
     @JvmField
+    val CHAT_EXPORT = BoolItem("chat_export", false)
+
+    @JvmField
     val FASTER_DOWNLOADS = BoolItem("faster_downloads", true)
 
     @JvmField

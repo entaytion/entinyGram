@@ -1019,6 +1019,11 @@
     <string name="InuDeleteMyMessagesConfirm">你在此聊天中发送的所有消息都将为所有人删除。此操作无法撤销。</string>
     <string name="InuDeleteMyMessagesStarted">正在删除你的消息…</string>
     <string name="InuDeleteMyMessagesDone">已删除 %1$d 条你的消息</string>
+
+    <string name="InuChatExport">导出聊天</string>
+    <string name="InuChatExportInfo">在个人资料菜单中显示导出聊天选项。目前仅导出消息文本</string>
+    <string name="InuChatExportCollected">已收集 %1$d 条消息</string>
+    <string name="InuChatExportFailed">导出失败</string>
     <string name="InuDeleteSelectedProfilePhotos">删除选中的头像 (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">确定要删除选中的 %1$d 张头像吗？</string>
     <string name="InuDeletedAt">已删除 %1$s</string>

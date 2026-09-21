@@ -1107,6 +1107,11 @@
     <string name="InuDeleteMyMessagesConfirm">Все отправленные тобой в этом чате сообщения будут удалены для всех. Это нельзя отменить.</string>
     <string name="InuDeleteMyMessagesStarted">Удаление твоих сообщений…</string>
     <string name="InuDeleteMyMessagesDone">Удалено %1$d твоих сообщений</string>
+
+    <string name="InuChatExport">Экспорт чата</string>
+    <string name="InuChatExportInfo">Показывать «Экспорт чата» в меню профиля. Пока экспортируется только текст сообщений</string>
+    <string name="InuChatExportCollected">Собрано %1$d сообщений</string>
+    <string name="InuChatExportFailed">Не удалось выполнить экспорт</string>
     <string name="InuDeleteAllProfilePhotos">Удалить все фото</string>
     <string name="InuDeleteSelectedProfilePhotos">Удалить выбранные (%1$d)</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Вы уверены, что хотите удалить все фотографии профиля? Это действие нельзя отменить.</string>

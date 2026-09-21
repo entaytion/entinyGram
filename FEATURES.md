@@ -265,6 +265,7 @@ the sections below contain the broader feature set: inugram functionality, featu
   - Go to beginning
   - Go to message by ID
   - Delete my messages
+  - Export chat (experimental): collect the whole history in background and share it as a JSON file — text only for now
   - Statistics / Administrators / Permissions / Invite links (admin shortcuts)
 - 🐶 disable custom wallpaper and theme per chat
 - per-forum client-side topics layout override (tabs/list) from the profile menu

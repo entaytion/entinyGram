@@ -1021,6 +1021,11 @@
     <string name="InuDeleteMyMessagesConfirm">このチャットで送信したすべてのメッセージが全員に対して削除されます。元に戻せません。</string>
     <string name="InuDeleteMyMessagesStarted">メッセージを削除しています…</string>
     <string name="InuDeleteMyMessagesDone">%1$d件のメッセージを削除しました</string>
+
+    <string name="InuChatExport">チャットをエクスポート</string>
+    <string name="InuChatExportInfo">プロフィールメニューにエクスポートを表示。現時点ではメッセージのテキストのみエクスポートされます</string>
+    <string name="InuChatExportCollected">%1$d件のメッセージを収集しました</string>
+    <string name="InuChatExportFailed">エクスポートに失敗しました</string>
     <string name="InuDeleteSelectedProfilePhotos">選択した写真を削除 (%1$d)</string>
     <string name="InuDeleteSelectedProfilePhotosConfirm">選択した %1$d 枚のプロフィール写真を削除してもよろしいですか？</string>
     <string name="InuDeletedAt">削除日時: %1$s</string>

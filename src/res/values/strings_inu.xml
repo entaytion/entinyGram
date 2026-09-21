@@ -1318,6 +1318,11 @@
     <string name="InuDeleteMyMessagesConfirm">Every message you sent in this chat will be deleted for everyone. This can\'t be undone.</string>
     <string name="InuDeleteMyMessagesStarted">Deleting your messages…</string>
     <string name="InuDeleteMyMessagesDone">Deleted %1$d of your messages</string>
+
+    <string name="InuChatExport">Export chat</string>
+    <string name="InuChatExportInfo">Show Export chat in the profile menu. Only message text is exported for now</string>
+    <string name="InuChatExportCollected">Collected %1$d messages</string>
+    <string name="InuChatExportFailed">Export failed</string>
     <string name="InuDeleteAllProfilePhotos">Delete all photos</string>
     <string name="InuDeleteSelectedProfilePhotos">Delete selected (%1$d)</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Are you sure you want to delete all profile photos? This action cannot be undone.</string>

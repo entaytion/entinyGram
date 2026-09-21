@@ -17,6 +17,7 @@ import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
 import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.chat.BlockedMessagesHelper
+import desu.inugram.helpers.chat.ChatExportHelper
 import desu.inugram.helpers.chat.ChatHelper
 import desu.inugram.helpers.chat.ForumDisplayHelper
 import desu.inugram.helpers.security.GhostHelper
@@ -27,6 +28,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.ChatObject
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
@@ -61,6 +63,7 @@ object ProfileHelper {
     const val ACTION_DELETE_PROFILE_PHOTOS = 510
     const val ACTION_TOGGLE_PRESENCE_WATCH = 511
     const val ACTION_DELETE_MY_MESSAGES = 512
+    const val ACTION_EXPORT_CHAT = 513
     const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
@@ -284,6 +287,13 @@ object ProfileHelper {
                 )
             }
         }
+        if (InuConfig.CHAT_EXPORT.value && dialogId != 0L && !DialogObject.isEncryptedDialog(dialogId)) {
+            otherItem.addSubItem(
+                ACTION_EXPORT_CHAT,
+                R.drawable.msg_share_solar,
+                LocaleController.getString(R.string.InuChatExport),
+            )
+        }
         if (isSelf) {
             otherItem.addSubItem(
                 ACTION_DELETE_PROFILE_PHOTOS,
@@ -346,6 +356,10 @@ object ProfileHelper {
             ACTION_DELETE_MY_MESSAGES -> {
                 val fragment = LaunchActivity.getLastFragment() ?: return true
                 desu.inugram.helpers.chat.SelfMessageWipeHelper.confirmAndDelete(fragment, currentAccount, dialogId)
+            }
+            ACTION_EXPORT_CHAT -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                ChatExportHelper.start(fragment, currentAccount, dialogId)
             }
             ACTION_DEBUG_CLEAR_CACHE -> debugClearProfileCache(currentAccount, dialogId)
             else -> return false
