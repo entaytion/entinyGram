@@ -168,6 +168,15 @@
     <string name="InuChatTwoFingerSelect">2本指スワイプで選択</string>
     <string name="InuChatTwoFingerSelectInfo">2本指でメッセージをなぞって選択/解除（iOS風）</string>
     <string name="InuDisableBotDraftTop">ボットの下書きを下部に留める</string>
+    <string name="InuMentionSeparator">メンション後の区切り文字</string>
+    <string name="InuMentionSeparatorBots">ボットにも適用</string>
+    <string name="InuMentionSeparatorBotsInfo">ボットのメンションにも区切り文字を追加します</string>
+    <string name="InuMentionSepSpace">スペース（デフォルト）</string>
+    <string name="InuMentionSepComma">カンマ</string>
+    <string name="InuMentionSepPeriod">ピリオド</string>
+    <string name="InuMentionSepColon">コロン</string>
+    <string name="InuMentionSepCustom">カスタム…</string>
+    <string name="InuMentionSepCustomHint">区切り文字を入力</string>
     <string name="InuChatRememberAllReplies">タップしたすべての返信を記憶</string>
     <string name="InuInstantMarkReactionsRead">リアクションを即座に既読にする</string>
     <string name="InuSaveToSavedMessages">保存</string>

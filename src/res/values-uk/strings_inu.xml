@@ -243,6 +243,15 @@
     <string name="InuChatTwoFingerSelect">Виділення двома пальцями</string>
     <string name="InuChatTwoFingerSelectInfo">Проведення двома пальцями по повідомленнях для виділення (як на iOS)</string>
     <string name="InuDisableBotDraftTop">Тримати чернетки ботів знизу</string>
+    <string name="InuMentionSeparator">Розділювач після згадки</string>
+    <string name="InuMentionSeparatorBots">Застосовувати розділювач до ботів</string>
+    <string name="InuMentionSeparatorBotsInfo">Також додавати розділювач після згадки ботів</string>
+    <string name="InuMentionSepSpace">Пробіл (типово)</string>
+    <string name="InuMentionSepComma">Кома</string>
+    <string name="InuMentionSepPeriod">Крапка</string>
+    <string name="InuMentionSepColon">Двокрапка</string>
+    <string name="InuMentionSepCustom">Свій…</string>
+    <string name="InuMentionSepCustomHint">Текст розділювача</string>
     <string name="InuChatRememberAllReplies">Пам\'ятати всі натиснуті відповіді</string>
     <string name="InuInstantMarkReactionsRead">Миттєво позначати реакції як прочитані</string>
     <string name="InuSaveToSavedMessages">Зберегти</string>

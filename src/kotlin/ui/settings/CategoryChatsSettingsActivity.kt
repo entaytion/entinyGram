@@ -5,6 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.badges.BadgeRegistry
+import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -123,6 +124,23 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableBotDraftTop),
             ).setChecked(InuConfig.DISABLE_BOT_DRAFT_TOP.value)
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_MENTION_SEPARATOR,
+                LocaleController.getString(R.string.InuMentionSeparator),
+                mentionSeparatorLabel(InuConfig.MENTION_SEPARATOR.value),
+            )
+        )
+        if (InuConfig.MENTION_SEPARATOR.value.isNotEmpty()) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_MENTION_SEPARATOR_BOTS,
+                    R.string.InuMentionSeparatorBots,
+                    R.string.InuMentionSeparatorBotsInfo,
+                    InuConfig.MENTION_SEPARATOR_FOR_BOTS.value,
+                )
+            )
+        }
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_SHOW_MUTUAL_CONTACT_ICON,
@@ -370,6 +388,19 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
     }
 
+    private fun showCustomMentionSeparatorDialog() {
+        showInputDialog(
+            this,
+            LocaleController.getString(R.string.InuMentionSeparator),
+            LocaleController.getString(R.string.InuMentionSepCustomHint),
+            InuConfig.MENTION_SEPARATOR.value.ifEmpty { null },
+        ) { text ->
+            InuConfig.MENTION_SEPARATOR.value = if (text.isEmpty() || text == " ") "" else text
+            listView.adapter.update(true)
+            true
+        }
+    }
+
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (hideBotSlashGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         if (hideBottomBarGroup.handleClick(item, view) { listView.adapter.update(true) }) return
@@ -391,6 +422,31 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_CHAT_TWO_FINGER_SELECT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TWO_FINGER_SELECT.toggle()
             TOGGLE_SELECTION_BOTTOM_NO_QUOTE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SELECTION_BOTTOM_NO_QUOTE.toggle()
             TOGGLE_DISABLE_BOT_DRAFT_TOP -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_BOT_DRAFT_TOP.toggle()
+            BUTTON_MENTION_SEPARATOR -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuMentionSepComma),
+                    LocaleController.getString(R.string.InuMentionSepPeriod),
+                    LocaleController.getString(R.string.InuMentionSepColon),
+                    LocaleController.getString(R.string.InuMentionSepSpace),
+                    LocaleController.getString(R.string.InuMentionSepCustom),
+                ),
+                when (InuConfig.MENTION_SEPARATOR.value) {
+                    ", " -> 0
+                    ". " -> 1
+                    ": " -> 2
+                    "" -> 3
+                    else -> 4
+                },
+            ) { which ->
+                if (which == 4) {
+                    showCustomMentionSeparatorDialog()
+                } else {
+                    InuConfig.MENTION_SEPARATOR.value = listOf(", ", ". ", ": ", "")[which]
+                    listView.adapter.update(true)
+                }
+            }
+            TOGGLE_MENTION_SEPARATOR_BOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.MENTION_SEPARATOR_FOR_BOTS.toggle()
             TOGGLE_SHOW_ALL_RECENT_STICKERS -> (view as? TextCheckCell)?.isChecked = InuConfig.SHOW_ALL_RECENT_STICKERS.toggle()
             BUTTON_ATTACH_CAMERA_MODE -> RadioItemOptions.show(
                 this, view,
@@ -475,6 +531,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CHAT_TWO_FINGER_SELECT = InuUtils.generateId()
         private val TOGGLE_SELECTION_BOTTOM_NO_QUOTE = InuUtils.generateId()
         private val TOGGLE_DISABLE_BOT_DRAFT_TOP = InuUtils.generateId()
+        private val BUTTON_MENTION_SEPARATOR = InuUtils.generateId()
+        private val TOGGLE_MENTION_SEPARATOR_BOTS = InuUtils.generateId()
         private val TOGGLE_SHOW_ALL_RECENT_STICKERS = InuUtils.generateId()
         private val BUTTON_ATTACH_CAMERA_MODE = InuUtils.generateId()
         private val TOGGLE_CHAT_VOICE_IN_ATTACH = InuUtils.generateId()
@@ -505,6 +563,14 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
         private val TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN = InuUtils.generateId()
 
+        private fun mentionSeparatorLabel(value: String): String = when (value) {
+            ", " -> LocaleController.getString(R.string.InuMentionSepComma)
+            ". " -> LocaleController.getString(R.string.InuMentionSepPeriod)
+            ": " -> LocaleController.getString(R.string.InuMentionSepColon)
+            "" -> LocaleController.getString(R.string.InuMentionSepSpace)
+            else -> value.trim()
+        }
+
         private fun attachCameraModeLabel(value: Int): String = when (value) {
             InuConfig.AttachCameraModeItem.INSTANT -> LocaleController.getString(R.string.InuAttachCameraModeInstant)
             InuConfig.AttachCameraModeItem.FAB -> LocaleController.getString(R.string.InuAttachCameraModeFab)
@@ -533,6 +599,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-two-finger-select", R.string.InuChatTwoFingerSelect, TOGGLE_CHAT_TWO_FINGER_SELECT),
                 SearchRegistry.Entry("selection-bottom-no-quote", R.string.InuSelectionBottomNoQuote, TOGGLE_SELECTION_BOTTOM_NO_QUOTE),
                 SearchRegistry.Entry("disable-bot-draft-top", R.string.InuDisableBotDraftTop, TOGGLE_DISABLE_BOT_DRAFT_TOP),
+                SearchRegistry.Entry("mention-separator", R.string.InuMentionSeparator, BUTTON_MENTION_SEPARATOR),
                 SearchRegistry.Entry("show-all-recent-stickers", R.string.InuShowAllRecentStickers, TOGGLE_SHOW_ALL_RECENT_STICKERS),
                 SearchRegistry.Entry("attach-camera-mode", R.string.InuAttachCameraMode, BUTTON_ATTACH_CAMERA_MODE),
                 SearchRegistry.Entry("chat-voice-in-attach", R.string.InuChatVoiceInAttach, TOGGLE_CHAT_VOICE_IN_ATTACH),

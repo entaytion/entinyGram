@@ -325,6 +325,15 @@
     <string name="InuChatTwoFingerSelect">Two-finger swipe to select</string>
     <string name="InuChatTwoFingerSelectInfo">Drag with two fingers over messages to select/deselect them (like on iOS)</string>
     <string name="InuDisableBotDraftTop">Keep bot drafts at bottom</string>
+    <string name="InuMentionSeparator">Separator after mention</string>
+    <string name="InuMentionSeparatorBots">Apply separator to bots</string>
+    <string name="InuMentionSeparatorBotsInfo">Also append the separator after bot mentions</string>
+    <string name="InuMentionSepSpace">Space (default)</string>
+    <string name="InuMentionSepComma">Comma</string>
+    <string name="InuMentionSepPeriod">Period</string>
+    <string name="InuMentionSepColon">Colon</string>
+    <string name="InuMentionSepCustom">Custom…</string>
+    <string name="InuMentionSepCustomHint">Separator text</string>
     <string name="InuChatRememberAllReplies">Remember all clicked replies</string>
     <string name="InuInstantMarkReactionsRead">Instantly mark reactions as read</string>
     <string name="InuSaveToSavedMessages">Save</string>

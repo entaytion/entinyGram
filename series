@@ -417,7 +417,6 @@ entiny/translate-bugfixes.patch
 entiny/confirm-before-sending.patch
 entiny/hijri-calendar.patch
 entiny/input-translate.patch
-entiny/ios-input-bar.patch
 entiny/local-folders.patch
 entiny/folder-icons.patch
 entiny/burn-keep-copy.patch
@@ -425,3 +424,5 @@ entiny/no-forward-selection-cap.patch
 entiny/ios-editor-send-icon.patch
 entiny/burn-voice-round.patch
 entiny/poll-results-before-vote-fix.patch
+entiny/mention-separator.patch
+entiny/ios-input-bar.patch

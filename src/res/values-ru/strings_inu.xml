@@ -173,6 +173,15 @@
     <string name="InuChatTwoFingerSelect">Выделение свайпом двумя пальцами</string>
     <string name="InuChatTwoFingerSelectInfo">Проведите двумя пальцами по сообщениям, чтобы выделить/снять выделение (как в iOS)</string>
     <string name="InuDisableBotDraftTop">Держать черновики ботов внизу</string>
+    <string name="InuMentionSeparator">Разделитель после упоминания</string>
+    <string name="InuMentionSeparatorBots">Применять разделитель к ботам</string>
+    <string name="InuMentionSeparatorBotsInfo">Также добавлять разделитель после упоминания ботов</string>
+    <string name="InuMentionSepSpace">Пробел (по умолчанию)</string>
+    <string name="InuMentionSepComma">Запятая</string>
+    <string name="InuMentionSepPeriod">Точка</string>
+    <string name="InuMentionSepColon">Двоеточие</string>
+    <string name="InuMentionSepCustom">Свой…</string>
+    <string name="InuMentionSepCustomHint">Текст разделителя</string>
     <string name="InuChatRememberAllReplies">Запоминать все нажатые ответы</string>
     <string name="InuInstantMarkReactionsRead">Мгновенно отмечать реакции как прочитанные</string>
     <string name="InuSaveToSavedMessages">Сохранить</string>

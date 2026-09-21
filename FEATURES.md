@@ -124,6 +124,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **calendar system**: display dates in Gregorian, Hijri (lunar), or Persian / Solar Hijri (Jalali) systems
 - 📡 **local folders**: once the server folder limit is reached, new folders are stored on this device only and never synced to the server
 - 📡 **folder icon picker**: grid of clean vector icons per folder, replacing the emoji in folder tabs (with icons shown in the folder tabs display mode)
+- 📡 **separator after mention**: customizable separator inserted after @mentions and name mentions in the input (comma, period, colon, or any custom text; bots opt-in) — *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 
 ### debloat & premium noise
 

@@ -500,6 +500,12 @@ object InuConfig {
     val DISABLE_BOT_DRAFT_TOP = BoolItem("disable_bot_draft_top", true)
 
     @JvmField
+    val MENTION_SEPARATOR = StringItem("mention_separator", "")
+
+    @JvmField
+    val MENTION_SEPARATOR_FOR_BOTS = BoolItem("mention_separator_for_bots", false)
+
+    @JvmField
     val HIDE_BOTTOM_BAR_JOINED = BoolItem("hide_bottom_bar_joined", false)
 
     @JvmField

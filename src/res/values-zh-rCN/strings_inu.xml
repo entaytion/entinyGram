@@ -168,6 +168,15 @@
     <string name="InuChatTwoFingerSelect">双指滑动选择</string>
     <string name="InuChatTwoFingerSelectInfo">用两根手指在消息上滑动以选择/取消选择（类似 iOS）</string>
     <string name="InuDisableBotDraftTop">将机器人草稿保持在底部</string>
+    <string name="InuMentionSeparator">提及后的分隔符</string>
+    <string name="InuMentionSeparatorBots">对机器人也应用分隔符</string>
+    <string name="InuMentionSeparatorBotsInfo">提及机器人后同样添加分隔符</string>
+    <string name="InuMentionSepSpace">空格（默认）</string>
+    <string name="InuMentionSepComma">逗号</string>
+    <string name="InuMentionSepPeriod">句号</string>
+    <string name="InuMentionSepColon">冒号</string>
+    <string name="InuMentionSepCustom">自定义…</string>
+    <string name="InuMentionSepCustomHint">分隔符文本</string>
     <string name="InuChatRememberAllReplies">记住所有点击过的回复</string>
     <string name="InuInstantMarkReactionsRead">立即将反应标记为已读</string>
     <string name="InuSaveToSavedMessages">保存</string>

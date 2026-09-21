@@ -236,6 +236,15 @@
     <string name="InuChatTwoFingerSelect">Seçmek için iki parmakla kaydır</string>
     <string name="InuChatTwoFingerSelectInfo">Mesajları seçmek/seçimi kaldırmak için üzerlerinde iki parmakla sürükleyin (iOS\'teki gibi)</string>
     <string name="InuDisableBotDraftTop">Bot taslaklarını en altta tut</string>
+    <string name="InuMentionSeparator">Bahsetmeden sonra ayırıcı</string>
+    <string name="InuMentionSeparatorBots">Ayırıcıyı botlara da uygula</string>
+    <string name="InuMentionSeparatorBotsInfo">Botlardan sonra da ayırıcı ekler</string>
+    <string name="InuMentionSepSpace">Boşluk (varsayılan)</string>
+    <string name="InuMentionSepComma">Virgül</string>
+    <string name="InuMentionSepPeriod">Nokta</string>
+    <string name="InuMentionSepColon">İki nokta</string>
+    <string name="InuMentionSepCustom">Özel…</string>
+    <string name="InuMentionSepCustomHint">Ayırıcı metni</string>
     <string name="InuChatRememberAllReplies">Tıklanan tüm yanıtları hatırla</string>
     <string name="InuInstantMarkReactionsRead">Tepkileri anında okundu olarak işaretle</string>
     <string name="InuSaveToSavedMessages">Kaydet</string>
