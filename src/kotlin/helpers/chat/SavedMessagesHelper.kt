@@ -438,7 +438,15 @@ object SavedMessagesHelper {
     ): Boolean {
         if (msgIds.isNullOrEmpty() || !isSaveDeletedEnabled()) return false
         val preserved = msgIds.filter { isMessageDeleted(account, dialogId, it) }
-        if (preserved.isEmpty()) return false
+        if (preserved.isEmpty()) {
+            val stale = findStaleArchiveEntries(account, msgIds)
+            if (stale.isEmpty()) return false
+            if (permanent) {
+                for ((did, mids) in stale) deletePermanently(account, did, mids, null)
+                showPurgedBulletin(fragment)
+            }
+            return true
+        }
         msgIds.removeAll(preserved.toHashSet())
         synchronized(cacheLock) {
             for (id in preserved) purgingMessages.add(dialogId to id)
@@ -449,6 +457,22 @@ object SavedMessagesHelper {
             dropGhostsFromChat(account, dialogId, preserved, false, null)
         }
         return true
+    }
+
+    // entiny: archive rows stored under a wrong dialog key (storage-guess / saved-subfolder mismatch) stay purgeable
+    private fun findStaleArchiveEntries(account: Int, msgIds: List<Int>): Map<Long, List<Int>> {
+        val stale = HashMap<Long, ArrayList<Int>>()
+        synchronized(cacheLock) {
+            val dialogs = deletedMessageIds.get(account.toLong()) ?: return@synchronized
+            for (mid in msgIds) {
+                for (i in 0 until dialogs.size()) {
+                    if (dialogs.valueAt(i)?.contains(mid) == true) {
+                        stale.getOrPut(dialogs.keyAt(i)) { ArrayList() }.add(mid)
+                    }
+                }
+            }
+        }
+        return stale
     }
 
     private fun showPurgedBulletin(fragment: BaseFragment?) {
@@ -576,6 +600,24 @@ object SavedMessagesHelper {
         }
     }
 
+    // entiny: mids are account-unique; cancel-upload keys may be recorded under a different dialog than the archive hook
+    @JvmStatic
+    fun isPermanentDeleteRequestedForMid(msgId: Int): Boolean {
+        val now = System.currentTimeMillis()
+        synchronized(cacheLock) {
+            val iterator = pendingPermanentDelete.entries.iterator()
+            while (iterator.hasNext()) {
+                val entry = iterator.next()
+                if (now - entry.value > PERMANENT_PENDING_TTL_MS) {
+                    iterator.remove()
+                } else if (entry.key.second == msgId) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     // entiny: with save-deleted on, stock skips messages_v2 cleanup for every row; delete the ones that
     // were not archived (own delete, off-category, permanent request) so their bubbles don't resurrect on reload
     @JvmStatic
@@ -587,11 +629,18 @@ object SavedMessagesHelper {
     ) {
         if (mids.isNullOrEmpty()) return
         val doomed = mids.filter {
-            !isMessageDeleted(account, dialogId, it) || isPermanentDeleteRequested(dialogId, it)
+            !isMessageDeleted(account, dialogId, it) || isPermanentDeleteRequested(dialogId, it) || isPermanentDeleteRequestedForMid(it)
         }
         if (doomed.isNotEmpty()) {
             InuDatabaseHelper.deleteSavedMessages(db, dialogId, doomed)
         }
+    }
+
+    // entiny: a deletion is only worth archiving when we actually hold something to preserve
+    private fun hasPreservableData(text: String?, message: TLRPC.Message?): Boolean {
+        if (!text.isNullOrBlank()) return true
+        val media = message?.media ?: return false
+        return media !is TLRPC.TL_messageMediaEmpty
     }
 
     @JvmStatic
@@ -602,10 +651,14 @@ object SavedMessagesHelper {
         if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
         if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && (fromId == UserConfig.getInstance(account).clientUserId || message?.out == true)) return
         if (!forceSave && isPermanentDeleteRequested(dialogId, msgId)) return
-        ensureAccountLoaded(account)
+        if (!forceSave && isPermanentDeleteRequestedForMid(msgId)) return
         // entiny: prevent empty text from subsequent delete reports overwriting preserved text
         val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
         if (alreadyRecorded && text.isNullOrEmpty() && message?.media == null) return
+        // entiny: deletions for messages never loaded locally carry no data; recording them
+        // created phantom ghosts that littered chats with deleted-media placeholders
+        if (!forceSave && !alreadyRecorded && !hasPreservableData(text, message)) return
+        ensureAccountLoaded(account)
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
         val mediaCopy = planMediaCopy(account, message)
         val mediaPath = mediaCopy?.target?.absolutePath
@@ -667,6 +720,9 @@ object SavedMessagesHelper {
         }
         if (isPermanentDeleteRequested(dialogId, msgId)) return false
         if (isMessageDeleted(account, dialogId, msgId)) return true
+        // entiny: nothing to archive means nothing to preserve — drop the bubble instead of
+        // leaving an in-memory ghost that survives until cache clear
+        if (!hasPreservableData(msg.messageOwner?.message, msg.messageOwner)) return false
         if (!shouldSaveForDialog(account, dialogId)) return false
         if (!InuConfig.SAVE_DELETED_OWN.value && msg.isOutOwner) return false
         return true

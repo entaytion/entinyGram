@@ -310,6 +310,13 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                     buttonTextView.text = LocaleController.getString(R.string.Delete) + " (" + AndroidUtilities.formatFileSize(calcSelectedSize()) + ")"
                 }
 
+                var allCell: org.telegram.ui.Cells.CheckBoxCell? = null
+                fun refreshAllCell() {
+                    val all = selected.all { it }
+                    allCell?.setText(LocaleController.getString(if (all) R.string.DeselectAll else R.string.SelectAll), "", true, true)
+                    allCell?.setChecked(all, false)
+                }
+
                 stats.forEachIndexed { i, stat ->
                     val name = if (stat.dialogId == 0L) {
                         LocaleController.getString(R.string.SavedMessages)
@@ -329,10 +336,27 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                             selected[idx] = !selected[idx]
                             setChecked(selected[idx], true)
                             updateButtonText()
+                            refreshAllCell()
                         }
                     }
                     linearLayout.addView(cell)
                 }
+
+                allCell = org.telegram.ui.Cells.CheckBoxCell(context, 1, resourceProvider).apply {
+                    setOnClickListener {
+                        val target = !selected.all { it }
+                        for (i in selected.indices) selected[i] = target
+                        for (c in 0 until linearLayout.childCount) {
+                            val cell = linearLayout.getChildAt(c) as? org.telegram.ui.Cells.CheckBoxCell ?: continue
+                            val idx = cell.tag as? Int ?: continue
+                            cell.setChecked(selected[idx], false)
+                        }
+                        refreshAllCell()
+                        updateButtonText()
+                    }
+                }
+                linearLayout.addView(allCell, 0)
+                refreshAllCell()
 
                 val scrollView = android.widget.ScrollView(context).apply { addView(linearLayout) }
                 val scrollParams = android.widget.LinearLayout.LayoutParams(

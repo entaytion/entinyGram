@@ -20,12 +20,23 @@ class PillStackController(private val container: FrameLayout, private val editTe
     private var rowLayout: LinearLayout? = null
     private val slots = ArrayList<PillStackView>()
     private var attached = false
+    // entiny: pills must not pop in while the dialogs screen is covered (e.g. search auto-clear when a chat opens)
+    private var screenOn = true
+    private val screenProbe = object : View(container.context) {
+        override fun onVisibilityAggregated(isVisible: Boolean) {
+            super.onVisibilityAggregated(isVisible)
+            if (screenOn == isVisible) return
+            screenOn = isVisible
+            updateVisibility()
+        }
+    }
 
     private val prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key != null && key in REFRESH_KEYS) rebuild()
     }
 
     init {
+        container.addView(screenProbe, android.widget.FrameLayout.LayoutParams(0, 0))
         container.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 attached = true
@@ -147,7 +158,7 @@ class PillStackController(private val container: FrameLayout, private val editTe
         val searchActive = editText?.hasFocus() == true || !editText?.text.isNullOrEmpty()
         for (slot in slots) {
             if (slot.getPillsCount() == 0) continue
-            slot.setVisibilityFactor(if (searchActive) 0f else 1f)
+            slot.setVisibilityFactor(if (searchActive || !screenOn) 0f else 1f)
         }
     }
 

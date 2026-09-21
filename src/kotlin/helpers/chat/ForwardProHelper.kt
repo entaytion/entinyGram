@@ -258,14 +258,20 @@ object ForwardProHelper {
             override fun onPageReorder(fromId: Int, toId: Int) {}
             override fun canPerformActions(): Boolean = true
         })
+        val skipDefaultTab = FolderHelper.shouldSkipDefaultTab(filters.size)
         for (filter in filters) {
-            val title = if (filter.isDefault) LocaleController.getString(R.string.FilterAllChats) else filter.name
-            tabsView.addTab(filter.id, filter.id, title, true, filter.isDefault, false)
+            if (filter.isDefault) {
+                if (skipDefaultTab) continue
+                tabsView.inu_addTab(filter.id, filter.id, LocaleController.getString(R.string.FilterAllChats), null, true, true, false, "\uD83D\uDCAC")
+            } else {
+                val info = FolderHelper.getTabInfo(filter)
+                tabsView.inu_addTab(filter.id, filter.id, info.first, filter.entities, true, false, false, info.second)
+            }
         }
         tabsView.finishAddingTabs(false)
 
         state.filterTabsView = tabsView
-        state.selectedFilterId = filters.firstOrNull { it.isDefault }?.id ?: filters[0].id
+        state.selectedFilterId = (if (skipDefaultTab) filters.firstOrNull { !it.isDefault } else filters.firstOrNull { it.isDefault })?.id ?: filters[0].id
         frameLayout.addView(
             tabsView,
             LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, FolderHelper.TAB_BAR_HEIGHT_DP.toFloat(), Gravity.TOP or Gravity.LEFT, 0f, FOLDER_TABS_TOP_MARGIN_DP, 0f, 0f)
@@ -346,7 +352,7 @@ object ForwardProHelper {
         frame2.addView(editButton, LayoutHelper.createFrame(40, 40f, Gravity.RIGHT or Gravity.BOTTOM, 0f, 0f, 68f, 5f))
 
         if (state.editedText != null) {
-            enterEditMode(alert, state.editedText)
+            enterEditMode(alert, state.editedText, false)
         }
     }
 
@@ -368,7 +374,7 @@ object ForwardProHelper {
         }
     }
 
-    private fun enterEditMode(alert: ShareAlert, prefillText: String?) {
+    private fun enterEditMode(alert: ShareAlert, prefillText: String?, openKeyboard: Boolean = true) {
         val state = getState(alert)
         val msgs = alert.sendingMessageObjects ?: return
         val editable = getEditableMessage(msgs) ?: return
@@ -383,7 +389,8 @@ object ForwardProHelper {
         state.editButton?.setImageResource(R.drawable.msg_close)
         state.editButton?.contentDescription = LocaleController.getString(R.string.Cancel)
         state.copyNotice?.visibility = View.VISIBLE
-        commentView.openKeyboard()
+        // entiny: the sheet opens right after the editor dialog, where the keyboard was already up
+        if (openKeyboard) commentView.openKeyboard() else commentView.closeKeyboard()
     }
 
     private fun exitEditMode(alert: ShareAlert) {

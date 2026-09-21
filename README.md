@@ -10,6 +10,7 @@
 </p>
 
 <p align="center">
+  <a href="https://t.me/entinyGram"><img src="https://img.shields.io/badge/Telegram-Channel-26A5E4?style=flat-square&logo=telegram&logoColor=white" alt="Telegram Channel"></a>
   <a href="https://developer.android.com"><img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android 8.0+"></a>
   <a href="https://stacked-git.github.io/"><img src="https://img.shields.io/badge/Patchset-StGit-4A90E2?style=flat-square" alt="StGit Patchset"></a>
   <a href="https://bun.sh"><img src="https://img.shields.io/badge/Tooling-Bun-f472b6?style=flat-square&logo=bun&logoColor=white" alt="Bun Tooling"></a>

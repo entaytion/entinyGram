@@ -115,6 +115,13 @@ object InuDatabaseHelper {
             version = 11
         }
 
+        if (version == 11) {
+            db.executeFast("DELETE FROM inu_deleted_messages WHERE (text IS NULL OR text = '') AND (media_path IS NULL OR media_path = '')")
+                .stepThis().dispose()
+            writeKv(db, "version", "12")
+            version = 12
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 

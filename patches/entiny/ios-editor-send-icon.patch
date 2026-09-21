@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -16001,7 +16001,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15513,7 +15513,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                  drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
                  int c = Theme.getColor(Theme.key_glass_defaultIcon, resourcesProvider);
                  inactiveDrawable.setColorFilter(new PorterDuffColorFilter(Color.argb(0xb4, Color.red(c), Color.green(c), Color.blue(c)), PorterDuff.Mode.SRC_IN));
@@ -22,5 +22,5 @@ index 0000000..0000000 100644
 +                    : Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
 +                drawableInverse.setColorFilter(new PorterDuffColorFilter(inverseColor, PorterDuff.Mode.SRC_IN));
              }
-             if (desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() != desu.inugram.helpers.chat.ActionButtonStyle.ACCENT && shouldUseActionStyleColors()) {
-                 backgroundPaint.setColor(desu.inugram.helpers.chat.ActionButtonStyle.resolveBackgroundColor(resourcesProvider));
+             if (isNewDesignSendButton) {
+                 backgroundPaint.setColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
