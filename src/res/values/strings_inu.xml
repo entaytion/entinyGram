@@ -1320,7 +1320,25 @@
     <string name="InuDeleteMyMessagesDone">Deleted %1$d of your messages</string>
 
     <string name="InuChatExport">Export chat</string>
-    <string name="InuChatExportInfo">Show Export chat in the profile menu. Only message text is exported for now</string>
+    <string name="InuChatExportInfo">Show Export chat in the profile menu. Exports message text to JSON or an HTML archive with media</string>
+    <string name="InuChatExportOptions">Export options</string>
+    <string name="InuChatExportGo">Export</string>
+    <string name="InuChatExportHtml">HTML with media</string>
+    <string name="InuChatExportPhotos">Photos</string>
+    <string name="InuChatExportVideos">Videos</string>
+    <string name="InuChatExportVoice">Voice messages</string>
+    <string name="InuChatExportVideoMessages">Video messages</string>
+    <string name="InuChatExportStickers">Stickers</string>
+    <string name="InuChatExportGifs">GIFs</string>
+    <string name="InuChatExportFiles">Files</string>
+    <string name="InuChatExportSizeLimit">Size limit: %1$d MB</string>
+    <string name="InuChatExportMediaProgress">Media %1$d/%2$d</string>
+    <string name="InuChatExportPacking">Saving files…</string>
+    <string name="InuChatExportExported">exported</string>
+    <string name="InuChatExportSaved">Saved to %1$s</string>
+    <string name="InuChatExportView">View</string>
+    <string name="InuChatExportShare">Share in Telegram</string>
+    <string name="InuChatExportShowFolder">Show folder</string>
     <string name="InuChatExportCollected">Collected %1$d messages</string>
     <string name="InuChatExportFailed">Export failed</string>
     <string name="InuDeleteAllProfilePhotos">Delete all photos</string>
