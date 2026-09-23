@@ -5,6 +5,7 @@ import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.ui.settings.AdditionalSettingsActivity
 import desu.inugram.ui.settings.AiSettingsActivity
 import desu.inugram.ui.settings.AnnoyancesSettingsActivity
+import desu.inugram.ui.settings.AntiCensorshipSettingsActivity
 import desu.inugram.ui.settings.AntiDeletionSettingsActivity
 import desu.inugram.ui.settings.AppearanceSettingsActivity
 import desu.inugram.ui.settings.BackupSettingsActivity
@@ -68,6 +69,7 @@ object SearchRegistry {
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
+            AntiCensorshipSettingsActivity.PAGE,
             BackupSettingsActivity.PAGE,
             FeedExcludedChannelsSettingsActivity.PAGE,
         )

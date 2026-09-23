@@ -371,6 +371,18 @@ object InuConfig {
     val PROXY_SUPPRESSED_BY_VPN = BoolItem("proxy_suppressed_by_vpn", false, exportable = false)
 
     @JvmField
+    val ANTICENSOR_WS_TUNNEL = BoolItem("anticensor_ws_tunnel", false)
+
+    @JvmField
+    val ANTICENSOR_WS_SECRET = StringItem("anticensor_ws_secret", "", exportable = false)
+
+    @JvmField
+    val ANTICENSOR_WS_PORT = IntItem("anticensor_ws_port", 0, exportable = false)
+
+    @JvmField
+    val LEAK_GUARD = BoolItem("leak_guard", false)
+
+    @JvmField
     val SHOW_ALL_RECENT_STICKERS = BoolItem("show_all_recent_stickers", true)
 
     @JvmField

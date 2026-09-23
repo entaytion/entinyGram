@@ -1449,4 +1449,13 @@
     <string name="InuActionButtonStyleAccent">Vurgu</string>
     <string name="InuActionButtonStyleNeutral">Nötr</string>
     <string name="InuActionButtonStyleWhite">Beyaz</string>
+    <string name="InuAntiCensorship">Sansürü aşma</string>
+    <string name="InuAntiCensorshipTransport">Bağlantı</string>
+    <string name="InuAntiCensorshipPrivacy">Sızıntı koruması</string>
+    <string name="InuWsTunnel">WebSocket tüneli</string>
+    <string name="InuWsTunnelInfo">Trafiği Telegram Web gibi gizle</string>
+    <string name="InuWsTunnelFooter">Bağlantıyı web sürümü gibi web.telegram.org adresine WebSocket içinde gönderir. Üçüncü taraf sunucu yok: trafik yalnızca Telegram\'a gider. Yavaşlatma ve IP engellerine karşı yardımcı olur, ancak web.telegram.org engelliyse işe yaramaz. Açıkken proxy\'nizin yerini alır.</string>
+    <string name="InuLeakGuard">Doğrudan bağlantıları engelle</string>
+    <string name="InuLeakGuardInfo">Uygulamadan proxy dışında hiçbir şey çıkmaz</string>
+    <string name="InuLeakGuardFooter">Çeviri, yapay zekâ, bağlantı önizlemeleri, yedek DNS ve diğer ek istekler yalnızca SOCKS5 proxy\'niz üzerinden gider. Proxy yoksa gerçek IP adresinizi göstermek yerine engellenir.</string>
 </resources>

@@ -1431,4 +1431,13 @@
     <string name="InuForwardProUseStock">公式Telegram</string>
     <string name="InuForwardProPlaceholder">メッセージのテキスト</string>
     <string name="InuForwardProEmptyNotice">メッセージのテキストを空にすることはできません</string>
+    <string name="InuAntiCensorship">検閲回避</string>
+    <string name="InuAntiCensorshipTransport">接続</string>
+    <string name="InuAntiCensorshipPrivacy">漏洩防止</string>
+    <string name="InuWsTunnel">WebSocketトンネル</string>
+    <string name="InuWsTunnelInfo">通信をTelegram Webに偽装</string>
+    <string name="InuWsTunnelFooter">Web版と同じように、接続をweb.telegram.orgへのWebSocketで包みます。第三者のサーバーは使わず、通信はTelegramにのみ送られます。速度制限やIPブロックには有効ですが、web.telegram.org自体がブロックされている場合は機能しません。有効な間はプロキシ設定より優先されます。</string>
+    <string name="InuLeakGuard">直接接続をブロック</string>
+    <string name="InuLeakGuardInfo">プロキシを経由しない通信を一切許可しない</string>
+    <string name="InuLeakGuardFooter">翻訳、AI、リンクプレビュー、予備DNSなどの追加リクエストはSOCKS5プロキシ経由でのみ送信されます。プロキシがない場合は、実IPを明かす代わりにブロックされます。</string>
 </resources>

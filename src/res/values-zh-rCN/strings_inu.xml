@@ -1451,4 +1451,13 @@
     <string name="InuActionButtonStyleAccent">强调色</string>
     <string name="InuActionButtonStyleNeutral">中性色</string>
     <string name="InuActionButtonStyleWhite">白色</string>
+    <string name="InuAntiCensorship">绕过审查</string>
+    <string name="InuAntiCensorshipTransport">连接</string>
+    <string name="InuAntiCensorshipPrivacy">防泄漏</string>
+    <string name="InuWsTunnel">WebSocket 隧道</string>
+    <string name="InuWsTunnelInfo">将流量伪装成 Telegram Web</string>
+    <string name="InuWsTunnelFooter">像网页版一样，将连接封装在通往 web.telegram.org 的 WebSocket 中。不使用第三方服务器：流量只发往 Telegram。可应对限速和 IP 封锁，但在 web.telegram.org 本身被封锁的地区无效。启用期间将覆盖您的代理。</string>
+    <string name="InuLeakGuard">阻止直接连接</string>
+    <string name="InuLeakGuardInfo">任何流量都不会绕过代理离开应用</string>
+    <string name="InuLeakGuardFooter">翻译、AI、链接预览、备用 DNS 等额外请求仅通过您的 SOCKS5 代理发送。没有代理时这些请求会被阻止，而不会暴露您的真实 IP。</string>
 </resources>

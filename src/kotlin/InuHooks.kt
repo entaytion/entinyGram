@@ -42,6 +42,7 @@ object InuHooks {
     fun init(context: Context) {
         CrashReporter.install()
         InuConfig.load(context)
+        desu.inugram.helpers.network.CensorshipHelper.init()
         FontHelper.init(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             FontHelper.installGlobal()

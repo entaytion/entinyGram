@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 23 Sep 2026 21:17:29 +0300
+Subject: Add censorship bypass tunnel hooks
+
+---
+ .../java/org/telegram/tgnet/ConnectionsManager.java   | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -639,6 +639,9 @@ public class ConnectionsManager extends BaseController {
+         if (preferences.getBoolean("proxy_enabled", false) && !TextUtils.isEmpty(proxyAddress)) {
+             native_setProxySettings(currentAccount, proxyAddress, proxyPort, proxyUsername, proxyPassword, proxySecret);
+         }
++        if (desu.inugram.helpers.network.CensorshipHelper.isTunnelActive()) {
++            native_setProxySettings(currentAccount, desu.inugram.helpers.network.CensorshipHelper.tunnelHost(), desu.inugram.helpers.network.CensorshipHelper.tunnelPort(), "", "", desu.inugram.helpers.network.CensorshipHelper.tunnelSecret());
++        }
+         String installer = "";
+         try {
+             Context context = ApplicationLoader.applicationContext;
+@@ -942,6 +945,14 @@ public class ConnectionsManager extends BaseController {
+     }
+ 
+     public static void setProxySettings(boolean enabled, String address, int port, String username, String password, String secret) {
++        if (desu.inugram.helpers.network.CensorshipHelper.isTunnelActive()) {
++            enabled = true;
++            address = desu.inugram.helpers.network.CensorshipHelper.tunnelHost();
++            port = desu.inugram.helpers.network.CensorshipHelper.tunnelPort();
++            username = "";
++            password = "";
++            secret = desu.inugram.helpers.network.CensorshipHelper.tunnelSecret();
++        }
+         if (address == null) {
+             address = "";
+         }

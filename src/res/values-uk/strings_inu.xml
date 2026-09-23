@@ -1472,4 +1472,13 @@
     <string name="InuActionButtonStyleAccent">Акцентна</string>
     <string name="InuActionButtonStyleNeutral">Нейтральна</string>
     <string name="InuActionButtonStyleWhite">Біла</string>
+    <string name="InuAntiCensorship">Обхід блокувань</string>
+    <string name="InuAntiCensorshipTransport">Підключення</string>
+    <string name="InuAntiCensorshipPrivacy">Захист від витоків</string>
+    <string name="InuWsTunnel">WebSocket-тунель</string>
+    <string name="InuWsTunnelInfo">Маскувати трафік під Telegram Web</string>
+    <string name="InuWsTunnelFooter">Загортає з\'єднання у WebSocket до web.telegram.org, як це робить веб-версія. Жодних сторонніх серверів: трафік іде лише до Telegram. Допомагає проти сповільнення та блокувань за IP, але не там, де заблоковано сам web.telegram.org. Поки ввімкнено, замінює ваш проксі.</string>
+    <string name="InuLeakGuard">Блокувати прямі з\'єднання</string>
+    <string name="InuLeakGuardInfo">Ніщо не виходить із застосунку повз проксі</string>
+    <string name="InuLeakGuardFooter">Переклад, ШІ, прев\'ю посилань, резервний DNS та інші додаткові запити йдуть лише через ваш SOCKS5-проксі. Без нього вони блокуються, а не розкривають вашу справжню IP-адресу.</string>
 </resources>

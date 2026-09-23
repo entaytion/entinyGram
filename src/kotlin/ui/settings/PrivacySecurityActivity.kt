@@ -50,7 +50,14 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 )
             )
         }
-        if (items.isNotEmpty()) items.add(UItem.asShadow(null))
+        items.add(
+            mkSubPageButton(
+                BUTTON_ANTI_CENSORSHIP,
+                R.drawable.inu_tabler_world,
+                LocaleController.getString(R.string.InuAntiCensorship)
+            )
+        )
+        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacyTitle)))
         items.add(
@@ -137,6 +144,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         when (item.id) {
             BUTTON_PASSCODE -> presentFragment(PasscodeSettingsActivity())
             BUTTON_PARANOIA -> presentFragment(ParanoiaActivity())
+            BUTTON_ANTI_CENSORSHIP -> presentFragment(AntiCensorshipSettingsActivity())
             TOGGLE_HIDE_MY_PHONE_NUMBER -> {
                 val new = InuConfig.HIDE_MY_PHONE_NUMBER.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -255,6 +263,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
     companion object {
         private val BUTTON_PASSCODE = InuUtils.generateId()
         private val BUTTON_PARANOIA = InuUtils.generateId()
+        private val BUTTON_ANTI_CENSORSHIP = InuUtils.generateId()
         private val TOGGLE_HIDE_MY_PHONE_NUMBER = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE = InuUtils.generateId()

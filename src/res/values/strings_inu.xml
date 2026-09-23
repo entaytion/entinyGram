@@ -1491,4 +1491,13 @@
     <string name="InuActionButtonStyleAccent">Accent</string>
     <string name="InuActionButtonStyleNeutral">Neutral</string>
     <string name="InuActionButtonStyleWhite">White</string>
+    <string name="InuAntiCensorship">Censorship bypass</string>
+    <string name="InuAntiCensorshipTransport">Connection</string>
+    <string name="InuAntiCensorshipPrivacy">Leak protection</string>
+    <string name="InuWsTunnel">WebSocket tunnel</string>
+    <string name="InuWsTunnelInfo">Disguise traffic as Telegram Web</string>
+    <string name="InuWsTunnelFooter">Wraps the connection into WebSocket to web.telegram.org, like the web version does. No third-party servers: traffic goes only to Telegram. Helps against throttling and IP blocks, but not where web.telegram.org itself is blocked. Overrides your proxy while enabled.</string>
+    <string name="InuLeakGuard">Block direct connections</string>
+    <string name="InuLeakGuardInfo">Nothing leaves the app bypassing the proxy</string>
+    <string name="InuLeakGuardFooter">Translation, AI, link previews, backup DNS and other extra requests go only through your SOCKS5 proxy. Without one they are blocked instead of revealing your real IP.</string>
 </resources>
