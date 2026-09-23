@@ -9,9 +9,7 @@
     <string name="InuConfirmSendVoice">Confirm before sending voice messages</string>
     <string name="InuConfirmSendVoiceMessage">Send this voice message?</string>
     <string name="InuConfirmSendSticker">Confirm before sending stickers</string>
-    <string name="InuConfirmSendStickerMessage">Send this sticker?</string>
     <string name="InuConfirmSendGif">Confirm before sending GIFs</string>
-    <string name="InuConfirmSendGifMessage">Send this GIF?</string>
     <string name="InuNavigationDrawer">Navigation drawer</string>
     <string name="InuNavigationDrawerInfo">Brings back the pre-12.0 hamburger side drawer. Requires restart.</string>
     <string name="InuDrawerBackGesture">Open drawer with back gesture</string>

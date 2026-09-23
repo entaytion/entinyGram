@@ -5,23 +5,99 @@ Subject: Add confirm-before-sending prompts for voice, stickers and GIFs
 
 - CONFIRM_SEND_VOICE / CONFIRM_SEND_STICKER / CONFIRM_SEND_GIF, each
   independently toggleable, default off
-- shows a plain yes/no AlertsCreator prompt right before the actual
-  send call, same place the stock forward/noforwards confirm already
-  hooks into
+- voice/video notes: yes/no prompt, also when sent straight from
+  recording (pauses like the stock paid-message flow)
+- stickers/GIFs: open the stock long-press preview with its send menu
 ---
- .../ui/Components/ChatActivityEnterView.java  | 20 +++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ .../ui/Components/ChatActivityEnterView.java  | 40 ++++++++++---------
+ .../org/telegram/ui/Components/EmojiView.java |  2 +
+ .../org/telegram/ui/ContentPreviewViewer.java |  2 +-
+ 3 files changed, 25 insertions(+), 19 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -7388,6 +7388,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3022,14 +3022,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         if (!hasRecordVideo || calledRecordRunnable) {
+                             startedDraggingX = -1;
+                             if (hasRecordVideo && isInVideoMode()) {
+-                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id)) {
++                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id) || desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
+                                     if (slideText != null) {
+                                         slideText.setEnabled(false);
+                                     }
+                                     delegate.toggleVideoRecordingPause();
+-                                    AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialog_id, 1, payStars -> {
+-                                        sendMessageInternal(true, 0, 0, payStars, false);
+-                                    });
++                                    desu.inugram.helpers.chat.ConfirmSendHelper.confirmRecorded(getContext(), resourcesProvider, currentAccount, dialog_id, payStars -> sendMessageInternal(true, 0, 0, payStars, false));
+                                     return true;
+                                 }
+                                 delegate.needStartRecordVideo(1, true, 0, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, 0);
+@@ -3038,7 +3036,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                                 if (recordingAudioVideo && isInScheduleMode()) {
+                                     AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, false, 0), () -> MediaController.getInstance().stopRecording(0, false, 0, false, 0), resourcesProvider);
+                                 }
+-                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id)) {
++                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id) || desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
+                                     if (isInVideoMode()) {
+                                         if (slideText != null) {
+                                             slideText.setEnabled(false);
+@@ -3054,9 +3052,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                                             slideText.setEnabled(false);
+                                         }
+                                     }
+-                                    AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialog_id, 1, payStars -> {
+-                                        sendMessageInternal(true, 0, 0, payStars, false);
+-                                    });
++                                    desu.inugram.helpers.chat.ConfirmSendHelper.confirmRecorded(getContext(), resourcesProvider, currentAccount, dialog_id, payStars -> sendMessageInternal(true, 0, 0, payStars, false));
+                                     return true;
+                                 }
+                                 MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce, 0);
+@@ -3144,14 +3140,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         } else if (!hasRecordVideo || calledRecordRunnable) {
+                             startedDraggingX = -1;
+                             if (hasRecordVideo && isInVideoMode()) {
+-                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id)) {
++                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id) || desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
+                                     if (slideText != null) {
+                                         slideText.setEnabled(false);
+                                     }
+                                     delegate.toggleVideoRecordingPause();
+-                                    AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialog_id, 1, payStars -> {
+-                                        sendMessageInternal(true, 0, 0, payStars, false);
+-                                    });
++                                    desu.inugram.helpers.chat.ConfirmSendHelper.confirmRecorded(getContext(), resourcesProvider, currentAccount, dialog_id, payStars -> sendMessageInternal(true, 0, 0, payStars, false));
+                                     return true;
+                                 }
+                                 CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
+@@ -3160,7 +3154,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                             } else if (!sendVoiceEnabled) {
+                                 delegate.needShowMediaBanHint();
+                             } else {
+-                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id)) {
++                                if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialog_id) || desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
+                                     if (sendButtonVisible) {
+                                         calledRecordRunnable = true;
+                                     }
+@@ -3169,9 +3163,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                                     if (slideText != null) {
+                                         slideText.setEnabled(false);
+                                     }
+-                                    AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialog_id, 1, payStars -> {
+-                                        sendMessageInternal(true, 0, 0, payStars, false);
+-                                    });
++                                    desu.inugram.helpers.chat.ConfirmSendHelper.confirmRecorded(getContext(), resourcesProvider, currentAccount, dialog_id, payStars -> sendMessageInternal(true, 0, 0, payStars, false));
+                                     return true;
+                                 }
+                                 if (recordingAudioVideo && isInScheduleMode()) {
+@@ -7388,6 +7380,12 @@ public class ChatActivityEnterView extends FrameLayout implements
              })) {
                  return;
              }
-+            // entiny: optional "are you sure" prompt before actually sending a recorded voice message
-+            if (audioToSend != null && desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
++            // entiny: optional "are you sure" prompt before sending a recorded voice/video message
++            if (allowConfirmFinal && (audioToSend != null || videoToSendMessageObject != null) && desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
 +                AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendVoiceMessage), LocaleController.getString(R.string.Send), () ->
 +                        sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, false), resourcesProvider).show();
 +                return;
@@ -29,31 +105,53 @@ index 0000000..0000000 100644
              dismissSendPreviewSent = true;
              if (videoToSendMessageObject != null) {
                  delegate.needStartRecordVideo(4, notify, scheduleDate, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, payStars);
-@@ -12414,7 +12420,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12414,7 +12412,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                              }
                          };
                          if (!showConfirmAlert(runnable)) {
 -                            runnable.run();
-+                            // entiny: optional "are you sure" prompt before actually sending the GIF
-+                            if (desu.inugram.InuConfig.CONFIRM_SEND_GIF.getValue()) {
-+                                AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendGifMessage), LocaleController.getString(R.string.Send), runnable, resourcesProvider).show();
-+                            } else {
++                            // entiny: optional confirm via the stock long-press preview menu
++                            if (!desu.inugram.InuConfig.CONFIRM_SEND_GIF.getValue() || scheduleDate != 0 || emojiView == null || !desu.inugram.helpers.chat.ConfirmSendHelper.openPreview(parentActivity, emojiView.getContentPreviewViewerDelegate(), gif, parent, resourcesProvider)) {
 +                                runnable.run();
 +                            }
                          }
                      });
                  }
-@@ -12688,7 +12699,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12688,7 +12689,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                      MediaDataController.getInstance(currentAccount).addRecentSticker(MediaDataController.TYPE_IMAGE, parent, sticker, (int) (System.currentTimeMillis() / 1000), false);
                  };
                  if (!showConfirmAlert(runnable)) {
 -                    runnable.run();
-+                    // entiny: optional "are you sure" prompt before actually sending the sticker
-+                    if (desu.inugram.InuConfig.CONFIRM_SEND_STICKER.getValue()) {
-+                        AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendStickerMessage), LocaleController.getString(R.string.Send), runnable, resourcesProvider).show();
-+                    } else {
++                    // entiny: optional confirm via the stock long-press preview menu
++                    if (!desu.inugram.InuConfig.CONFIRM_SEND_STICKER.getValue() || scheduleDate != 0 || emojiView == null || !desu.inugram.helpers.chat.ConfirmSendHelper.openPreview(parentActivity, emojiView.getContentPreviewViewerDelegate(), sticker, parent, resourcesProvider)) {
 +                        runnable.run();
 +                    }
                  }
              });
          }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+@@ -553,6 +553,8 @@ public class EmojiView extends FrameLayout implements
+         void onDrag(int offset);
+     }
+ 
++    public ContentPreviewViewer.ContentPreviewViewerDelegate getContentPreviewViewerDelegate() { return contentPreviewViewerDelegate; }
++
+     private ContentPreviewViewer.ContentPreviewViewerDelegate contentPreviewViewerDelegate = new ContentPreviewViewer.ContentPreviewViewerDelegate() {
+         @Override
+         public boolean can() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+@@ -1915,7 +1915,7 @@ public class ContentPreviewViewer {
+                 return;
+             }
+             AndroidUtilities.cancelRunOnUIThread(showSheetRunnable);
+-            AndroidUtilities.runOnUIThread(showSheetRunnable, 2000);
++            AndroidUtilities.runOnUIThread(showSheetRunnable, menuOpenDelay > 0 ? menuOpenDelay : 2000);
+         }
+ 
+         if (centerImage.getLottieAnimation() != null) {

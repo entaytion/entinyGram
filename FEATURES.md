@@ -120,7 +120,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **round recorder exposure (EV) buttons**: quick exposure presets (-2 to +2) during video note recording
 - 📡 **proxy management**: delete failed proxies in one tap, on-demand "Ping All Proxies", and save without auto-connecting
 - 📡 **tap avatar to open profile**: tapping a chat's avatar in the chat list opens their profile directly
-- 📡 **confirm before sending**: optional confirmation prompt before sending voice messages, stickers, or GIFs
+- 📡 **confirm before sending**: optional confirmation before sending voice/video messages (also when sent straight from recording), stickers, or GIFs; stickers and GIFs open the stock long-press preview with its send menu instead of a custom dialog
 - 📡 **fast cold start & locale caching**: binary cache for translations and startup optimization for inactive account slots
 - 📡 **trimmed APK size**: dropped unused firebase-appindexing/datatransport and unnecessary transitives to cut binary bloat
 - 📡 **Forward Pro (Beta)**: edit text or captions before forwarding from message menu or share alert, albums stay grouped when re-sent as copy, with quick toggles for author, captions, silent send, and schedule (long-press a toggle for its hint; unstable, experimental) - *inspired by Turbotel / NagramX*
