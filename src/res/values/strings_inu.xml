@@ -1500,4 +1500,8 @@
     <string name="InuLeakGuard">Block direct connections</string>
     <string name="InuLeakGuardInfo">Nothing leaves the app bypassing the proxy</string>
     <string name="InuLeakGuardFooter">Translation, AI, link previews, backup DNS and other extra requests go only through your SOCKS5 proxy. Without one they are blocked instead of revealing your real IP.</string>
+    <string name="InuDatacenterStatus">Datacenter status</string>
+    <string name="InuDatacenterStatusAbout">Check the status and round-trip latency of Telegram\'s **datacenters**.</string>
+    <string name="InuDatacenterYourDc">Your DC</string>
+    <string name="InuDatacenterLeakGuardBlocked">Blocked by leak protection</string>
 </resources>

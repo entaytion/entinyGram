@@ -42,6 +42,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **censorship bypass** (wip):
   - **WebSocket tunnel**: disguises the connection as Telegram Web (`kws*.web.telegram.org`), falls back to direct DC; no third-party servers - *inspired by [tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) (@Flowseal) and [NimarkoGram](https://github.com/Ettacent/NimarkoGram)*
   - **block direct connections**: translation, AI, backup DNS and other extra requests go only through your SOCKS5 proxy or are blocked
+- 📡 **datacenter status**: live ping and status check for Telegram DC1–DC5 with animated sticker, round-trip latency, current account DC badge, and leak protection gating - *inspired by [Nekogram](https://github.com/Nekogram/Nekogram) / [NagramX](https://github.com/temporaryna/NagramXTurbo)*
 - 📡 **adblock & content filtering**:
   - **hide sponsored messages**: completely disables Telegram sponsored channel ads and video ads
   - **hide proxy sponsor chat**: blocks the promoted chat/channel some MTProto proxies pin to the top of your chat list while connected

@@ -1458,4 +1458,8 @@
     <string name="InuLeakGuard">Doğrudan bağlantıları engelle</string>
     <string name="InuLeakGuardInfo">Uygulamadan proxy dışında hiçbir şey çıkmaz</string>
     <string name="InuLeakGuardFooter">Çeviri, yapay zekâ, bağlantı önizlemeleri, yedek DNS ve diğer ek istekler yalnızca SOCKS5 proxy\'niz üzerinden gider. Proxy yoksa gerçek IP adresinizi göstermek yerine engellenir.</string>
+    <string name="InuDatacenterStatus">Veri merkezi durumu</string>
+    <string name="InuDatacenterStatusAbout">Telegram **veri merkezlerinin** durumunu ve gecikme süresini kontrol edin.</string>
+    <string name="InuDatacenterYourDc">Sizin DC</string>
+    <string name="InuDatacenterLeakGuardBlocked">Sızıntı koruması tarafından engellendi</string>
 </resources>

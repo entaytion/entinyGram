@@ -1440,4 +1440,8 @@
     <string name="InuLeakGuard">直接接続をブロック</string>
     <string name="InuLeakGuardInfo">プロキシを経由しない通信を一切許可しない</string>
     <string name="InuLeakGuardFooter">翻訳、AI、リンクプレビュー、予備DNSなどの追加リクエストはSOCKS5プロキシ経由でのみ送信されます。プロキシがない場合は、実IPを明かす代わりにブロックされます。</string>
+    <string name="InuDatacenterStatus">データセンターのステータス</string>
+    <string name="InuDatacenterStatusAbout">Telegramの**データセンター**のステータスと遅延を確認します。</string>
+    <string name="InuDatacenterYourDc">お使いのDC</string>
+    <string name="InuDatacenterLeakGuardBlocked">リーク保護によりブロック</string>
 </resources>

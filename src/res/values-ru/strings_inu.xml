@@ -1485,4 +1485,8 @@
     <string name="InuLeakGuard">Блокировать прямые соединения</string>
     <string name="InuLeakGuardInfo">Ничего не уходит из приложения мимо прокси</string>
     <string name="InuLeakGuardFooter">Перевод, ИИ, превью ссылок, резервный DNS и другие дополнительные запросы идут только через ваш SOCKS5-прокси. Без него они блокируются, а не раскрывают ваш настоящий IP-адрес.</string>
+    <string name="InuDatacenterStatus">Статус дата-центров</string>
+    <string name="InuDatacenterStatusAbout">Проверка доступности и задержки к дата-центрам Telegram.</string>
+    <string name="InuDatacenterYourDc">Ваш DC</string>
+    <string name="InuDatacenterLeakGuardBlocked">Отключено защитой от утечек</string>
 </resources>

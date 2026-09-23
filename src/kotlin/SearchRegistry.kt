@@ -13,6 +13,7 @@ import desu.inugram.ui.settings.BehaviorSettingsActivity
 import desu.inugram.ui.settings.CacheManagementSettingsActivity
 import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.ChatHeaderSettingsActivity
+import desu.inugram.ui.settings.DatacenterStatusActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
@@ -70,6 +71,7 @@ object SearchRegistry {
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
             AntiCensorshipSettingsActivity.PAGE,
+            DatacenterStatusActivity.PAGE,
             BackupSettingsActivity.PAGE,
             FeedExcludedChannelsSettingsActivity.PAGE,
         )

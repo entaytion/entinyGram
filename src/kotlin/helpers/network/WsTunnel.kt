@@ -131,7 +131,7 @@ class WsTunnel(private val secret: ByteArray) {
     }
 
     private fun bridgeTcp(client: Socket, input: InputStream, session: Obfuscated2.Session, upstream: Obfuscated2.Outgoing, dc: Int) {
-        val ip = DC_IPS[dc]
+        val ip = TelegramDc.ip(dc)
         if (ip == null) {
             closeQuietly(client)
             return
@@ -213,13 +213,6 @@ class WsTunnel(private val secret: ByteArray) {
         private const val HANDSHAKE_TIMEOUT_MS = 10000
         private const val BUFFER_SIZE = 64 * 1024
         private val DC_ALIASES = mapOf(203 to 2)
-        private val DC_IPS = mapOf(
-            1 to "149.154.175.53",
-            2 to "149.154.167.51",
-            3 to "149.154.175.100",
-            4 to "149.154.167.91",
-            5 to "91.108.56.130",
-        )
 
         private fun closeQuietly(s: Socket) {
             try {

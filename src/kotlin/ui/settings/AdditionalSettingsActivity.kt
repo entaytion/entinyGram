@@ -95,6 +95,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
         items.add(mkSubPageButton(BUTTON_CACHE_MANAGEMENT, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheManagement)))
+        items.add(mkSubPageButton(BUTTON_DATACENTER_STATUS, R.drawable.inu_tabler_server, LocaleController.getString(R.string.InuDatacenterStatus)))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asButton(BUTTON_COPY_SYSINFO, R.drawable.inu_tabler_terminal_2, LocaleController.getString(R.string.InuLogsCopySystemInfo)))
@@ -168,6 +169,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
             BUTTON_CLOUD_SYNC -> presentFragment(BackupSettingsActivity())
             BUTTON_CACHE_MANAGEMENT -> presentFragment(CacheManagementSettingsActivity())
+            BUTTON_DATACENTER_STATUS -> presentFragment(DatacenterStatusActivity())
         }
     }
 
@@ -452,6 +454,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
         private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
         private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
+        private val BUTTON_DATACENTER_STATUS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -464,6 +467,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
                 SearchRegistry.Entry("additional-cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
                 SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
+                SearchRegistry.Entry("additional-datacenter-status", R.string.InuDatacenterStatus, BUTTON_DATACENTER_STATUS),
             ),
         )
     }

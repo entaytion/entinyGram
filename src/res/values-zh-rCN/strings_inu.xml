@@ -1460,4 +1460,8 @@
     <string name="InuLeakGuard">阻止直接连接</string>
     <string name="InuLeakGuardInfo">任何流量都不会绕过代理离开应用</string>
     <string name="InuLeakGuardFooter">翻译、AI、链接预览、备用 DNS 等额外请求仅通过您的 SOCKS5 代理发送。没有代理时这些请求会被阻止，而不会暴露您的真实 IP。</string>
+    <string name="InuDatacenterStatus">数据中心状态</string>
+    <string name="InuDatacenterStatusAbout">检查 Telegram **数据中心**的状态和往返延迟。</string>
+    <string name="InuDatacenterYourDc">您的DC</string>
+    <string name="InuDatacenterLeakGuardBlocked">已被防泄漏保护阻止</string>
 </resources>
