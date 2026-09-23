@@ -208,7 +208,7 @@ internal class OsmIMap(
 
             else -> normalTileSource to ATTRIBUTION_OSM
         }
-        viewWrapper.attribution.text = Html.fromHtml(attr)
+        viewWrapper.attribution.text = Html.fromHtml(attr, Html.FROM_HTML_MODE_LEGACY)
         mapView.setTileSource(source)
         mapView.invalidate()
     }

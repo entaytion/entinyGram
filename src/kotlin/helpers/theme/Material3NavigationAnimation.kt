@@ -164,6 +164,7 @@ private class EdgeExtensionDrawable(private val node: RenderNode) : Drawable(), 
         node.discardDisplayList()
     }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
     override fun setAlpha(alpha: Int) = Unit
     override fun setColorFilter(colorFilter: ColorFilter?) = Unit

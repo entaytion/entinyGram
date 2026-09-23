@@ -41,7 +41,7 @@ class DrawerAddCell(context: Context) : FrameLayout(context) {
         super.onAttachedToWindow()
         textView.setTextColor(Theme.getColor(Theme.key_chats_menuItemText))
         textView.text = LocaleController.getString(R.string.AddAccount)
-        val drawable = resources.getDrawable(R.drawable.msg_add)
+        val drawable = context.getDrawable(R.drawable.msg_add)
         drawable?.colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_chats_menuItemIcon), PorterDuff.Mode.MULTIPLY)
         textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
     }

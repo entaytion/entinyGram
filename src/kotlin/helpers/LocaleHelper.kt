@@ -131,10 +131,12 @@ object LocaleHelper {
         val parts = norm.split("-").filter { p -> p.isNotEmpty() && p != "raw" && p != "beta" && p.all { it.isLetterOrDigit() } }
         if (parts.isEmpty()) return
         if (parts.size >= 2 && parts[1].length in 2..3) {
-            out.add(Locale(parts[0], parts[1].uppercase()))
+            runCatching { Locale.Builder().setLanguage(parts[0]).setRegion(parts[1].uppercase()).build() }
+                .getOrNull()?.let { out.add(it) }
         }
         if (parts[0].length in 2..3) {
-            out.add(Locale(parts[0]))
+            runCatching { Locale.Builder().setLanguage(parts[0]).build() }
+                .getOrNull()?.let { out.add(it) }
         }
     }
 }

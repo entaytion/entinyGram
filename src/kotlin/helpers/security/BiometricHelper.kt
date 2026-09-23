@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package desu.inugram.helpers.security
 
 import android.app.Activity

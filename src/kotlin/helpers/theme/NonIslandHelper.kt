@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package desu.inugram.helpers.theme
 
 import android.graphics.Canvas

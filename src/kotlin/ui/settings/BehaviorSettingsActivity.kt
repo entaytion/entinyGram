@@ -96,6 +96,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.OPEN_BY_USER_ID.value,
             )
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_SETTINGS_SHOW_ACCOUNTS,
+                LocaleController.getString(R.string.InuSettingsShowAccounts),
+            ).setChecked(InuConfig.SETTINGS_SHOW_ACCOUNTS.value)
+        )
         items.add(mkSubPageButton(BUTTON_PROFILE_SETTINGS_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileSettingsRowsOrder)))
         items.add(mkSubPageButton(BUTTON_PROFILE_INFO_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileInfoRowsOrder)))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuProfileSettingsRowsOrderInfo)))
@@ -342,6 +348,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.PROFILE_ID_MODE.value = which
             }
 
+            TOGGLE_SETTINGS_SHOW_ACCOUNTS -> {
+                val new = InuConfig.SETTINGS_SHOW_ACCOUNTS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             TOGGLE_SHOW_PROFILE_REG_DATE -> {
                 val new = InuConfig.SHOW_PROFILE_REG_DATE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -553,6 +564,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_PROFILE_PREFER_MEDIA_TAB = InuUtils.generateId()
         private val BUTTON_PROFILE_ID_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_PROFILE_REG_DATE = InuUtils.generateId()
+        private val TOGGLE_SETTINGS_SHOW_ACCOUNTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val TOGGLE_OPEN_BY_USER_ID = InuUtils.generateId()
         private val BUTTON_PROFILE_SETTINGS_ROWS_ORDER = InuUtils.generateId()
@@ -613,6 +625,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("profile-prefer-media-tab", R.string.InuProfilePreferMediaTab, TOGGLE_PROFILE_PREFER_MEDIA_TAB),
                 SearchRegistry.Entry("profile-id-mode", R.string.InuProfileIdMode, BUTTON_PROFILE_ID_MODE),
                 SearchRegistry.Entry("show-profile-reg-date", R.string.InuShowProfileRegDate, TOGGLE_SHOW_PROFILE_REG_DATE),
+                SearchRegistry.Entry("settings-show-accounts", R.string.InuSettingsShowAccounts, TOGGLE_SETTINGS_SHOW_ACCOUNTS),
                 SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
                 SearchRegistry.Entry("open-by-user-id", R.string.InuOpenByUserId, TOGGLE_OPEN_BY_USER_ID),
                 SearchRegistry.Entry("profile-settings-rows-order", R.string.InuProfileSettingsRowsOrder, BUTTON_PROFILE_SETTINGS_ROWS_ORDER),

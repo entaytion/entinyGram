@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package desu.inugram.ui.settings
 
 import android.annotation.SuppressLint
@@ -226,6 +228,7 @@ class AvatarCornerPreviewCell(
             invalidateSelf()
         }
 
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
     }
 

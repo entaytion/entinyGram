@@ -87,7 +87,6 @@ import org.telegram.ui.Components.ReactionsContainerLayout
 import org.telegram.ui.Components.ScaleStateListAnimator
 import org.telegram.ui.Components.ShareAlert
 import org.telegram.ui.Components.URLSpanUserMention
-import org.telegram.ui.Components.UndoView
 import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import java.io.File
@@ -319,13 +318,14 @@ object ChatHelper {
     }
 
     @JvmStatic
+    @Suppress("DEPRECATION")
     fun forwardToSavedMessages(activity: ChatActivity, messages: ArrayList<MessageObject>) {
         if (messages.isEmpty()) return
         val selfId = UserConfig.getInstance(activity.currentAccount).clientUserId
         SendMessagesHelper.getInstance(activity.currentAccount)
             .sendMessage(messages, selfId, false, false, true, 0, 0L)
         activity.createUndoView()
-        activity.undoView.showWithAction(selfId, UndoView.ACTION_FWD_MESSAGES, messages.size)
+        activity.undoView.showWithAction(selfId, org.telegram.ui.Components.UndoView.ACTION_FWD_MESSAGES, messages.size)
     }
 
     private fun removeWallpaperKey(currentAccount: Int, dialogId: Long) = "remove_wallpaper:$currentAccount:$dialogId"

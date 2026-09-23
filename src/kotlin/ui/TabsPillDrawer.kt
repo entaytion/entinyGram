@@ -31,6 +31,7 @@ class TabsPillDrawer(
         }
     }
 
+    @Suppress("DEPRECATION")
     fun getDockedProgress(): Float = dockedT.get()
 
     fun drawBackgroundAndClip(canvas: Canvas, color: Int) {

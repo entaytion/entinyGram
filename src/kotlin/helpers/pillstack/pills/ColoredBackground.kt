@@ -53,6 +53,6 @@ class ColoredBackground(colorTop: Int = 0xFF1BA4ED.toInt(), colorBottom: Int = 0
         strokePaint.colorFilter = colorFilter
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 }

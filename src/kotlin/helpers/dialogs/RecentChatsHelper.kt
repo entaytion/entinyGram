@@ -101,20 +101,20 @@ object RecentChatsHelper {
         if (dialogs.isEmpty()) return
 
         val layout = object : ActionBarPopupWindow.ActionBarPopupWindowLayout(context, R.drawable.popup_fixed_alert4, fragment.getResourceProvider()) {
-            val path = Path()
+            val clipPath = Path()
             override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
                 canvas.save()
-                path.rewind()
+                clipPath.rewind()
                 AndroidUtilities.rectTmp.set(child.left.toFloat(), child.top.toFloat(), child.right.toFloat(), child.bottom.toFloat())
-                path.addRoundRect(AndroidUtilities.rectTmp, dp(12f).toFloat(), dp(12f).toFloat(), Path.Direction.CW)
-                canvas.clipPath(path)
+                clipPath.addRoundRect(AndroidUtilities.rectTmp, dp(12f).toFloat(), dp(12f).toFloat(), Path.Direction.CW)
+                canvas.clipPath(clipPath)
                 val draw = super.drawChild(canvas, child, drawingTime)
                 canvas.restore()
                 return draw
             }
         }
         val backgroundPaddings = Rect()
-        val shadowDrawable: Drawable = context.resources.getDrawable(R.drawable.popup_fixed_alert4).mutate()
+        val shadowDrawable: Drawable = context.getDrawable(R.drawable.popup_fixed_alert4)!!.mutate()
         shadowDrawable.getPadding(backgroundPaddings)
         layout.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuBackground))
 

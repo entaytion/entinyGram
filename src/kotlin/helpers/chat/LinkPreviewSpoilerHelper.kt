@@ -10,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Region
+import android.os.Build
 import android.view.MotionEvent
 import androidx.core.graphics.ColorUtils
 import desu.inugram.InuConfig
@@ -243,11 +244,21 @@ object LinkPreviewSpoilerHelper {
         canvas.clipPath(clipPath)
         clipPath.rewind()
         clipPath.addRect(r.left, r.top, r.left + dpf2(3f), r.bottom, Path.Direction.CW)
-        canvas.clipPath(clipPath, Region.Op.DIFFERENCE)
+        if (Build.VERSION.SDK_INT >= 34) {
+            canvas.clipOutPath(clipPath)
+        } else {
+            @Suppress("DEPRECATION")
+            canvas.clipPath(clipPath, Region.Op.DIFFERENCE)
+        }
         if (state.revealProgress > 0f) {
             clipPath.rewind()
             clipPath.addCircle(state.revealX, state.revealY, state.revealMaxRadius * state.revealProgress, Path.Direction.CW)
-            canvas.clipPath(clipPath, Region.Op.DIFFERENCE)
+            if (Build.VERSION.SDK_INT >= 34) {
+                canvas.clipOutPath(clipPath)
+            } else {
+                @Suppress("DEPRECATION")
+                canvas.clipPath(clipPath, Region.Op.DIFFERENCE)
+            }
         }
 
         if (blur != null) {

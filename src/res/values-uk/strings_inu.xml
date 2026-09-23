@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="InuConfirmBeforeSending">Підтверджувати перед надсиланням</string>
+    <string name="InuConfirmSendVoice">Підтверджувати надсилання голосових повідомлень</string>
+    <string name="InuConfirmSendVoiceMessage">Надіслати це голосове повідомлення?</string>
+    <string name="InuConfirmSendSticker">Підтверджувати надсилання стікерів</string>
+    <string name="InuConfirmSendGif">Підтверджувати надсилання GIF</string>
     <string name="InuOpenInDiscussion">Відкрити в обговоренні</string>
     <string name="InuBanUserConfirm">Заблокувати %1$s у цій групі?</string>
     <string name="InuSendToDiscussWithoutJoin">Писати в групи обговорення без вступу</string>
@@ -399,6 +404,7 @@
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID скопійовано в буфер обміну</string>
     <string name="InuShowProfileRegDate">Показувати дату реєстрації та DC</string>
+    <string name="InuSettingsShowAccounts">Показувати акаунти в налаштуваннях</string>
     <string name="InuProfileRegDate">Дата реєстрації</string>
     <string name="InuProfileRegDateCopied">Дату реєстрації та DC скопійовано</string>
     <string name="InuMessageInput">Введення повідомлення</string>
@@ -644,6 +650,9 @@
     <string name="InuEventLogBanConfirm">Заблокувати **%1$s**?</string>
     <string name="InuEventLogShowDiff">Показати різницю (diff)</string>
     <string name="InuShowPinnedPanel">Показувати закріплені повідомлення</string>
+    <string name="InuHidePinnedTitle">Приховати закріплені повідомлення</string>
+    <string name="InuHidePinnedUntilNew">До нового закріпленого повідомлення</string>
+    <string name="InuHidePinnedForever">Завжди в цьому чаті</string>
     <string name="InuAppIconStock">Стандартний</string>
     <string name="InuAppIconLicenseInugram">Тимчасова іконка, можете запропонувати кращу</string>
     <string name="InuAppIconLicenseTelegram">Іконка від **Telegram**. Усі права захищено.</string>
@@ -1113,7 +1122,7 @@
     <string name="InuAiProvidersVoiceModelHint">Модель для голосу</string>
     <string name="InuAiProvidersOpenRouterInfo">Доступ до сотень моделей через один API. Отримати ключ на OpenRouter:</string>
     <string name="InuChannelMessages">Канали, де ви можете писати</string>
-    <string name="InuSameAsIncoming">Як у вхідних</string>
+    <string name="InuSameAsIncoming">Як у вхідних / вихідних</string>
     <string name="InuDownloadingStory">Завантаження історії…</string>
     <string name="InuFontCustomOnly">Лише власні (імпортовані) шрифти можна встановити як шрифт додатка.</string>
     <string name="InuForwardHeaderMode">Заголовок пересилання</string>

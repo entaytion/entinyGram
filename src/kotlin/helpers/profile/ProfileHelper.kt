@@ -215,6 +215,7 @@ object ProfileHelper {
         else controller.getChatFull(-dialogId)?.wallpaper
     }
 
+    @Suppress("DEPRECATION")
     private fun hasRawDialogTheme(currentAccount: Int, dialogId: Long): Boolean {
         val controller = MessagesController.getInstance(currentAccount)
         val emoticon = if (dialogId >= 0) controller.getUserFull(dialogId)?.theme_emoticon

@@ -61,7 +61,7 @@ index 0000000..0000000 100644
  
          aiButton = new ImageView(context);
          aiButton.setImageDrawable(aiButtonIcon = new AiButtonDrawable(context));
-@@ -6270,6 +6271,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6262,6 +6263,12 @@ public class ChatActivityEnterView extends FrameLayout implements
          setRecordVideoButtonVisible(!isInVideoMode(), true);
      }
  
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
      public void inu_startRecordingLocked(boolean video) {
          createRecordCircle();
          setRecordVideoButtonVisible(video, false);
-@@ -8846,6 +8853,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8838,6 +8845,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
              }
          }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
      }
  
      private void setSlowModeButtonVisible(boolean visible) {
-@@ -8875,7 +8883,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8867,7 +8875,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                  layoutParams.rightMargin = dp(50);
              }
          } else {
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                  layoutParams.rightMargin = dp(50);
              } else {
                  layoutParams.rightMargin = dp(2);
-@@ -8893,6 +8905,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8885,6 +8897,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
              recordedAudioPanel.setLayoutParams(layoutParams2);
          }

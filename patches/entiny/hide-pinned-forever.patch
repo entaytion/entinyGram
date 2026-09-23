@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 00:05:22 +0300
+Subject: feat(entiny): hide pinned messages forever per chat
+
+Long-press on the pinned panel close button offers hiding until a new pin
+(stock behaviour) or always in this chat; the menu item shows it again.
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -28802,7 +28802,7 @@ public class ChatActivity extends BaseFragment implements
+         String callLink = callLink(pinnedMessageObject);
+         pinnedMessageButtonShown = botButton != null || !TextUtils.isEmpty(callLink);
+         SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);
+-        if ((threadMessageObject == null || isTopic) && (chatInfo == null && userInfo == null || pinned_msg_id == 0 || !pinnedMessageIds.isEmpty() && pinnedMessageIds.get(0) == preferences.getInt("pin_" + dialog_id, 0)) || isReport() || actionBar != null && (actionBar.isActionModeShowed() || actionBar.isSearchFieldVisible())) {
++        if ((threadMessageObject == null || isTopic) && (chatInfo == null && userInfo == null || pinned_msg_id == 0 || !pinnedMessageIds.isEmpty() && pinnedMessageIds.get(0) == preferences.getInt("pin_" + dialog_id, 0) || desu.inugram.helpers.chat.ChatActionsHelper.isPinnedHiddenForever(currentAccount, dialog_id)) || isReport() || actionBar != null && (actionBar.isActionModeShowed() || actionBar.isSearchFieldVisible())) {
+             changed = hidePinnedMessageView(animated);
+         } else {
+             if (pinnedMessageView == null) {

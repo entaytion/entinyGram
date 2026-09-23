@@ -997,6 +997,10 @@ object InuConfig {
     @JvmField
     val SHOW_PROFILE_REG_DATE = BoolItem("show_profile_reg_date", true)
 
+    // entiny: brings back the accounts list on the settings screen that customizable-settings-rows hid
+    @JvmField
+    val SETTINGS_SHOW_ACCOUNTS = BoolItem("settings_show_accounts", true)
+
     @JvmField
     val DISABLE_CHAT_BUBBLES = BoolItem("disable_chat_bubbles", true)
 

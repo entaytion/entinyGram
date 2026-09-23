@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="InuConfirmBeforeSending">Подтверждать перед отправкой</string>
+    <string name="InuConfirmSendVoice">Подтверждать отправку голосовых сообщений</string>
+    <string name="InuConfirmSendVoiceMessage">Отправить это голосовое сообщение?</string>
+    <string name="InuConfirmSendSticker">Подтверждать отправку стикеров</string>
+    <string name="InuConfirmSendGif">Подтверждать отправку GIF</string>
     <string name="InuOpenInDiscussion">Открыть в обсуждении</string>
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
     <string name="InuSettings">Настройки entinyGram</string>
@@ -54,7 +59,7 @@
     <string name="InuIncomingMessages">Входящие сообщения</string>
     <string name="InuOutgoingMessages">Исходящие сообщения</string>
     <string name="InuChannelMessages">Каналы, куда вы можете писать</string>
-    <string name="InuSameAsIncoming">Как у входящих</string>
+    <string name="InuSameAsIncoming">Как у входящих / исходящих</string>
     <string name="InuDoubleTapInfo">Включение действия по двойному тапу задерживает обычный тап на указанное время, так Telegram их различает — чтобы убрать задержку, отключите действие полностью.</string>
     <string name="InuQuickReaction">Быстрая реакция</string>
     <string name="InuShowReactions">Показать реакции</string>
@@ -334,6 +339,7 @@
     <string name="InuProfileId">ID</string>
     <string name="InuProfileIdCopied">ID скопирован в буфер обмена</string>
     <string name="InuShowProfileRegDate">Показывать дату регистрации и DC</string>
+    <string name="InuSettingsShowAccounts">Показывать аккаунты в настройках</string>
     <string name="InuProfileRegDate">Дата регистрации</string>
     <string name="InuProfileRegDateCopied">Дата регистрации и DC скопированы</string>
     <string name="InuMessageInput">Поле ввода</string>
@@ -505,6 +511,9 @@
     <string name="InuEventLogBanConfirm">Заблокировать **%1$s**?</string>
     <string name="InuEventLogShowDiff">Показать как diff</string>
     <string name="InuShowPinnedPanel">Показать закреплённые сообщения</string>
+    <string name="InuHidePinnedTitle">Скрыть закреплённые сообщения</string>
+    <string name="InuHidePinnedUntilNew">До нового закреплённого сообщения</string>
+    <string name="InuHidePinnedForever">Всегда в этом чате</string>
     <string name="InuAppIconStock">Стандартная</string>
     <string name="InuAppIconLicenseInugram">Временная иконка, не стесняйтесь предложить лучше</string>
     <string name="InuAppIconLicenseTelegram">Иконка от **Telegram**. Все права защищены.</string>

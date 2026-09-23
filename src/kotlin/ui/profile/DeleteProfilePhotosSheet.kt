@@ -40,10 +40,14 @@ import org.telegram.ui.Components.RecyclerListView
 
 class DeleteProfilePhotosSheet(
     context: Context,
-    private val currentAccount: Int,
+    account: Int,
 ) : BottomSheet(context, false) {
 
-    private val clientUserId = UserConfig.getInstance(currentAccount).clientUserId
+    init {
+        currentAccount = account
+    }
+
+    private val clientUserId = UserConfig.getInstance(account).clientUserId
     private val photosList = ArrayList<TLRPC.Photo>()
     private val selectedIds = HashSet<Long>()
 

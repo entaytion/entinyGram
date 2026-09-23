@@ -115,10 +115,18 @@ object DoubleTapActionHelper {
         val value = when (context) {
             DoubleTapContext.OUTGOING -> InuConfig.DOUBLE_TAP_ACTION_OUTGOING.value
             DoubleTapContext.INCOMING -> InuConfig.DOUBLE_TAP_ACTION_INCOMING.value
+            // entiny: channel posts are drawn on the left even when they're yours, so "inherit" follows the out flag
             DoubleTapContext.CHANNEL -> InuConfig.DOUBLE_TAP_ACTION_CHANNEL.value
                 .takeIf { it != INHERIT_INCOMING }
-                ?: InuConfig.DOUBLE_TAP_ACTION_INCOMING.value
+                ?: return inheritedChannelAction(message)
         }
+        return DoubleTapAction.fromValue(value, context)
+    }
+
+    private fun inheritedChannelAction(message: MessageObject): DoubleTapAction {
+        val own = message.messageOwner?.out == true
+        val context = if (own) DoubleTapContext.OUTGOING else DoubleTapContext.INCOMING
+        val value = if (own) InuConfig.DOUBLE_TAP_ACTION_OUTGOING.value else InuConfig.DOUBLE_TAP_ACTION_INCOMING.value
         return DoubleTapAction.fromValue(value, context)
     }
 

@@ -258,7 +258,12 @@ class FontStackActivity : SettingsPageActivity() {
         out[Script.LATIN] = LocaleController.getString(R.string.InuFontScriptLatin)
         for (lang in langs) {
             val script = scriptForLanguage(lang) ?: continue
-            out.getOrPut(script) { Locale(lang).getDisplayLanguage(Locale.getDefault()).replaceFirstChar { it.uppercase() } }
+            out.getOrPut(script) {
+                runCatching { Locale.Builder().setLanguage(lang).build() }
+                    .getOrDefault(Locale.ROOT)
+                    .getDisplayLanguage(Locale.getDefault())
+                    .replaceFirstChar { it.uppercase() }
+            }
         }
         return out
     }

@@ -74,7 +74,7 @@ internal class OsmIMapView(context: Context) : IMapsProvider.IMapView {
         setPadding(AndroidUtilities.dp(8f), AndroidUtilities.dp(3f), AndroidUtilities.dp(8f), AndroidUtilities.dp(3f))
         linksClickable = true
         movementMethod = LinkMovementMethod.getInstance()
-        text = Html.fromHtml(ATTRIBUTION_OSM)
+        text = Html.fromHtml(ATTRIBUTION_OSM, Html.FROM_HTML_MODE_LEGACY)
     }
 
     // map container parallaxes when bottom sheet expands; cancel that translation on attribution so it stays put

@@ -55,6 +55,7 @@ class LabelRippleDrawable(
     }
 
     @Deprecated("Deprecated in Java", ReplaceWith("android.graphics.PixelFormat.TRANSLUCENT"))
+    @Suppress("DEPRECATION")
     override fun getOpacity(): Int = ripple.opacity
 
     override fun invalidateDrawable(who: Drawable) = invalidateSelf()

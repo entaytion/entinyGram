@@ -265,11 +265,36 @@ object ChatActionsHelper {
     // entiny: reuse stock pin key so top-pin match hides panel until a new message is pinned
     private fun stockPinKey(dialogId: Long) = "pin_$dialogId"
 
+    // entiny: survives new pins, unlike the stock key which only matches the current top pin
+    private fun foreverPinKey(dialogId: Long) = "inu_pin_forever_$dialogId"
+
+    @JvmStatic
+    fun isPinnedHiddenForever(account: Int, dialogId: Long): Boolean =
+        MessagesController.getNotificationsSettings(account).getBoolean(foreverPinKey(dialogId), false)
+
     @JvmStatic
     fun onPinnedPanelLongPressed(activity: ChatActivity): Boolean {
         if (activity.pinnedMessageIds.isEmpty()) return false
+        val context = activity.parentActivity ?: return false
+        val builder = AlertDialog.Builder(context, activity.resourceProvider)
+        builder.setTitle(LocaleController.getString(R.string.InuHidePinnedTitle))
+        builder.setItems(
+            arrayOf<CharSequence>(
+                LocaleController.getString(R.string.InuHidePinnedUntilNew),
+                LocaleController.getString(R.string.InuHidePinnedForever),
+            ),
+        ) { _, which -> hidePinnedPanel(activity, forever = which == 1) }
+        activity.showDialog(builder.create())
+        return true
+    }
+
+    private fun hidePinnedPanel(activity: ChatActivity, forever: Boolean) {
+        if (activity.pinnedMessageIds.isEmpty()) return
         val prefs = MessagesController.getNotificationsSettings(activity.currentAccount)
-        prefs.edit { putInt(stockPinKey(activity.dialogId), activity.pinnedMessageIds[0]) }
+        prefs.edit {
+            putInt(stockPinKey(activity.dialogId), activity.pinnedMessageIds[0])
+            if (forever) putBoolean(foreverPinKey(activity.dialogId), true)
+        }
         activity.wasManualScroll = true
         activity.updatePinnedMessageView(true)
         BulletinFactory.createUnpinAllMessagesBulletin(
@@ -278,13 +303,15 @@ object ChatActionsHelper {
             null,
             activity.resourceProvider,
         )?.show()
-        return true
     }
 
     @JvmStatic
     fun showPinnedPanel(activity: ChatActivity) {
         val prefs = MessagesController.getNotificationsSettings(activity.currentAccount)
-        prefs.edit { remove(stockPinKey(activity.dialogId)) }
+        prefs.edit {
+            remove(stockPinKey(activity.dialogId))
+            remove(foreverPinKey(activity.dialogId))
+        }
         activity.wasManualScroll = true
         activity.updatePinnedMessageView(true)
     }
@@ -297,7 +324,8 @@ object ChatActionsHelper {
             return
         }
         val prefs = MessagesController.getNotificationsSettings(activity.currentAccount)
-        val hidden = prefs.getInt(stockPinKey(activity.dialogId), 0) == activity.pinnedMessageIds[0]
+        val hidden = prefs.getInt(stockPinKey(activity.dialogId), 0) == activity.pinnedMessageIds[0] ||
+            isPinnedHiddenForever(activity.currentAccount, activity.dialogId)
         headerItem.setSubItemShown(ACTION_SHOW_PINNED_PANEL, hidden)
     }
 

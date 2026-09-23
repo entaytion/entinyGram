@@ -192,6 +192,7 @@ class DrawerUserCell(context: Context) : FrameLayout(context), NotificationCente
         textView.setRightPadding(countWidth + dp(26f))
     }
 
+    @Suppress("DEPRECATION")
     override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
         super.onInitializeAccessibilityNodeInfo(info)
         info.addAction(AccessibilityNodeInfo.ACTION_CLICK)

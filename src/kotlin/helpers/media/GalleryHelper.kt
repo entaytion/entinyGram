@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package desu.inugram.helpers.media
 
 import android.content.ContentResolver

@@ -313,6 +313,7 @@ object ApkInstaller {
     }
 
     class UpdateReceiver : BroadcastReceiver() {
+        @Suppress("DEPRECATION")
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
             val pkg = context.packageName

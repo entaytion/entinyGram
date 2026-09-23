@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package desu.inugram.ui.drawer
 
 import android.content.Context
@@ -111,7 +113,7 @@ class DrawerActionCell(context: Context) : FrameLayout(context) {
                 imageView.setImage(
                     ImageLocation.getForDocument(botIcon.icon), "24_24",
                     ImageLocation.getForDocument(photoSize, botIcon.icon), "24_24",
-                    svgThumb ?: context.resources.getDrawable(R.drawable.msg_bot).mutate(),
+                    svgThumb ?: context.getDrawable(R.drawable.msg_bot)!!.mutate(),
                     bot
                 )
             } else {

@@ -65,6 +65,7 @@ class CachePill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
             canvas.drawArc(rectF, -90f, progress * 360, false, paint)
         }
 
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
         override fun setAlpha(alpha: Int) { paint.alpha = alpha }
         override fun setColorFilter(colorFilter: ColorFilter?) { paint.colorFilter = colorFilter }

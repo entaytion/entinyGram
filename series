@@ -426,4 +426,7 @@ entiny/burn-voice-round.patch
 entiny/poll-results-before-vote-fix.patch
 entiny/mention-separator.patch
 entiny/ios-input-bar.patch
+entiny/legacy-stripe.patch
 entiny/anticensorship.patch
+entiny/hide-pinned-forever.patch
+entiny/settings-accounts.patch

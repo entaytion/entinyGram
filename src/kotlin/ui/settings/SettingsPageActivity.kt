@@ -48,12 +48,14 @@ import org.telegram.ui.Components.UniversalRecyclerView
 import org.telegram.ui.LaunchActivity
 
 abstract class SettingsPageActivity : UniversalFragment() {
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun isSupportEdgeToEdge(): Boolean = true
 
     private var highlightItemId: Int = -1
 
     fun withHighlight(itemId: Int) = apply { highlightItemId = itemId }
 
+    @Suppress("DEPRECATION")
     override fun createView(context: Context): View {
         // entiny: resize content for IME so focused inline fields remain reachable when keyboard opens
         parentActivity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)

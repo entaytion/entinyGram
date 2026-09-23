@@ -488,7 +488,7 @@ object SavedMessagesHelper {
     fun hasPreservedSelection(
         account: Int,
         selectedMessage: MessageObject?,
-        selectedMessages: Array<SparseArray<MessageObject>>?,
+        selectedMessages: Array<SparseArray<MessageObject>?>?,
         selectedGroup: MessageObject.GroupedMessages?,
     ): Boolean {
         if (!isSaveDeletedEnabled()) return false
@@ -519,7 +519,7 @@ object SavedMessagesHelper {
         resourcesProvider: Theme.ResourcesProvider?,
         account: Int,
         selectedMessage: MessageObject?,
-        selectedMessages: Array<SparseArray<MessageObject>>?,
+        selectedMessages: Array<SparseArray<MessageObject>?>?,
         selectedGroup: MessageObject.GroupedMessages?,
         state: BooleanArray,
     ) {
@@ -737,7 +737,7 @@ object SavedMessagesHelper {
     ) {
         if (!isSaveDeletedEnabled() || messagesByDialogs == null) return
         val byId = HashMap<Int, TLRPC.Message>()
-        resolved?.forEach { m -> if (m != null) byId[m.id] = m }
+        resolved?.forEach { m -> byId[m.id] = m }
         for (i in 0 until messagesByDialogs.size()) {
             val dialogId = messagesByDialogs.keyAt(i)
             val mids = messagesByDialogs.valueAt(i) ?: continue

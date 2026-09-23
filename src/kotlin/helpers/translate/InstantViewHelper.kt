@@ -116,7 +116,7 @@ object InstantViewHelper {
         if (state.detectionDone || state.detectionInFlight) return
         detectLanguage(state) { src ->
             val toLang = TranslateHelper.currentTargetLanguage()
-            if (src == null || toLang == null) return@detectLanguage
+            if (src == null) return@detectLanguage
             if (InuConfig.FORCE_TRANSLATE.value) return@detectLanguage
             val dnt = RestrictedLanguagesSelectActivity.getRestrictedLanguages()
             if (src in dnt || src == toLang) state.unavailable = true

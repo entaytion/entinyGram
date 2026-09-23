@@ -130,6 +130,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **local folders**: once the server folder limit is reached, new folders are stored on this device only and never synced to the server
 - 📡 **folder icon picker**: grid of clean vector icons per folder, replacing the emoji in folder tabs (with icons shown in the folder tabs display mode)
 - 📡 **separator after mention**: customizable separator inserted after @mentions and name mentions in the input (comma, period, colon, or any custom text; bots opt-in) — *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
+- 📡 **export chat (experimental)**: collect the whole history in background from the chat menu and save it as JSON, or as an HTML page with downloaded media in a plain folder — photos, videos, voice and video messages, stickers, GIFs and files, with per-type checkboxes and a size limit; the result lands in Downloads/entinyGram/Chat Export with view and show-folder actions
 
 ### debloat & premium noise
 
@@ -238,7 +239,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 keep bot draft messages at the bottom
 - 🐶 long-press reply panel in "Replies" chat opens discussion group
 - show a "Deleted message" placeholder for deleted messages
-- hide pinned panel
+- hide pinned panel (📡 long-press close: until a new pin, or always in this chat)
 - hide channel, group preview (🐶) and replies (🐶) bottom bar (mute/join/etc)
 - send message to discussion group without joining
 - 🐶 member count on private invite sheets (instead of "private group/channel"; like tdesktop)
@@ -270,7 +271,6 @@ the sections below contain the broader feature set: inugram functionality, featu
   - Go to beginning
   - Go to message by ID
   - Delete my messages
-  - Export chat (experimental): collect the whole history in background and share it as a JSON file — text only for now
   - Statistics / Administrators / Permissions / Invite links (admin shortcuts)
 - 🐶 disable custom wallpaper and theme per chat
 - per-forum client-side topics layout override (tabs/list) from the profile menu

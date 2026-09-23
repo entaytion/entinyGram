@@ -19,6 +19,7 @@ import java.util.Locale
 object ExchangeRates {
 
     private const val URL_STRING = "https://api.coinbase.com/v2/exchange-rates?currency=USD"
+    private const val WALLEX_TRADES_URL = "https://api.wallex.ir/v1/trades?symbol=USDTTMN"
     private const val CACHE_TTL_MS = 5 * 60 * 1000L
 
     // entiny: guaranteed-known codes so pickers work offline before the first fetch.
@@ -113,7 +114,38 @@ object ExchangeRates {
             connection.readTimeout = 10_000
             if (connection.responseCode != 200) return null
             val body = connection.inputStream.bufferedReader().use(BufferedReader::readText)
-            parse(body)
+            parse(body)?.let(::withIranMarketRate)
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    // entiny: Coinbase serves the frozen official IRR rate; Iranians price in the free market, so take USDT/Toman from Wallex
+    private fun withIranMarketRate(state: State): State {
+        val irrPerUsd = try {
+            fetchWallexIrrPerUsd()
+        } catch (e: Exception) {
+            FileLog.e(e)
+            null
+        } ?: return state
+        val rates = HashMap<String, BigDecimal>()
+        for (code in state.codes()) state.getUsdRate(code)?.let { rates[code] = it }
+        rates["IRR"] = BigDecimal.ONE.divide(irrPerUsd, 16, RoundingMode.HALF_UP)
+        return State(rates)
+    }
+
+    private fun fetchWallexIrrPerUsd(): BigDecimal? {
+        val connection = URL(WALLEX_TRADES_URL).openConnection() as HttpURLConnection
+        return try {
+            connection.connectTimeout = 10_000
+            connection.readTimeout = 10_000
+            if (connection.responseCode != 200) return null
+            val body = connection.inputStream.bufferedReader().use(BufferedReader::readText)
+            val trades = JSONObject(body).getJSONObject("result").getJSONArray("latestTrades")
+            if (trades.length() == 0) return null
+            val toman = BigDecimal(trades.getJSONObject(0).getString("price"))
+            // 1 toman = 10 rial
+            if (toman.signum() > 0) toman.multiply(BigDecimal.TEN) else null
         } finally {
             connection.disconnect()
         }
@@ -212,7 +244,7 @@ object ExchangeRates {
     private fun currencyOfCountry(country: String?): String? {
         if (country.isNullOrEmpty() || country.length != 2) return null
         return try {
-            val code = PillCurrencies.normalize(Currency.getInstance(Locale("", country)).currencyCode)
+            val code = PillCurrencies.normalize(Currency.getInstance(Locale.Builder().setRegion(country).build()).currencyCode)
             if (isSupportedCurrency(code)) code else null
         } catch (e: Exception) {
             null

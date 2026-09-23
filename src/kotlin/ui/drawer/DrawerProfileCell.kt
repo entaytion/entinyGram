@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package desu.inugram.ui.drawer
 
 import android.animation.ArgbEvaluator

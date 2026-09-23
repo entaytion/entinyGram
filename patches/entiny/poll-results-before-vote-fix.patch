@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6838,7 +6838,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6843,7 +6843,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (!pollChanged && newResults != lastPollResults) {
                  pollChanged = true;
              }
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              if (!pollChanged && (newPollResultsPreview != pollResultsPreview)) {
                  pollChanged = true;
              }
-@@ -11435,7 +11435,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11440,7 +11440,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              total_voters = media.results.total_voters;
              timerTransitionProgress = media.poll.close_date - ConnectionsManager.getInstance(currentAccount).getCurrentTime() < 60 ? 0.0f : 1.0f;
              pollClosed = media.poll.closed;
@@ -29,7 +29,7 @@ index 0000000..0000000 100644
              pollHideResults = media.poll.hide_results_until_close;
              title = media.poll.question;
              if (pollClosed) {
-@@ -12067,7 +12067,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -12072,7 +12072,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          }
  
          final TLRPC.PollResults results = media.results;
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
          final boolean canVote = !pollVoted && !pollClosed && !pollHasVoteRestrictions;
          final boolean isAnonymousPoll = !media.poll.public_voters;
  
-@@ -12076,8 +12078,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -12081,8 +12083,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              instantViewType = INSTANT_BUTTON_TYPE_ADD_OPTION;
              instantViewText = getString(R.string.PollButtonSave);
          } else {

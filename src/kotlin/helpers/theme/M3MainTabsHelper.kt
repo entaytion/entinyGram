@@ -108,6 +108,7 @@ object M3MainTabsHelper {
             paint.colorFilter = colorFilter
         }
 
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
     }
 
@@ -136,6 +137,7 @@ object M3MainTabsHelper {
 
         override fun setColorFilter(colorFilter: ColorFilter?) {}
 
+        @Suppress("OVERRIDE_DEPRECATION")
         override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
     }
 
