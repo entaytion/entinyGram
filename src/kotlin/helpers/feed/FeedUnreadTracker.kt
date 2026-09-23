@@ -13,8 +13,7 @@ class FeedUnreadTracker private constructor(private val account: Int) {
 
     private fun effectiveMax(dialogId: Long): Int {
         if (!knownMax.containsKey(dialogId)) {
-            val dialog = MessagesController.getInstance(account).dialogs_dict?.get(dialogId)
-            knownMax[dialogId] = dialog?.read_inbox_max_id ?: 0
+            knownMax[dialogId] = serverReadMax(MessagesController.getInstance(account), dialogId)
         }
         return maxOf(knownMax[dialogId] ?: 0, pendingMax[dialogId] ?: 0)
     }
@@ -23,10 +22,8 @@ class FeedUnreadTracker private constructor(private val account: Int) {
     fun refresh(dialogIds: LongArray) {
         val controller = MessagesController.getInstance(account)
         for (dialogId in dialogIds) {
-            val dialog = controller.dialogs_dict?.get(dialogId) ?: continue
-            if (dialog.read_inbox_max_id > (knownMax[dialogId] ?: 0)) {
-                knownMax[dialogId] = dialog.read_inbox_max_id
-            }
+            val readMax = serverReadMax(controller, dialogId)
+            if (readMax > (knownMax[dialogId] ?: 0)) knownMax[dialogId] = readMax
         }
     }
 
@@ -61,19 +58,26 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         }
     }
 
-    fun markAllRead(dialogIds: Collection<Long>): Int {
+    // entiny: channels outside the loaded dialogs page aren't in dialogs_dict, so fall back to the feed's newest ids
+    fun markAllRead(dialogIds: Collection<Long>, newestLoaded: Map<Long, Int>): Int {
         val controller = MessagesController.getInstance(account)
         var marked = 0
         for (dialogId in dialogIds) {
-            val dialog = controller.dialogs_dict?.get(dialogId) ?: continue
-            if (dialog.unread_count <= 0) continue
-            knownMax[dialogId] = dialog.top_message
+            val dialog = controller.dialogs_dict?.get(dialogId)
+            val top = maxOf(dialog?.top_message ?: 0, newestLoaded[dialogId] ?: 0)
+            if (top <= 0) continue
+            // entiny: judge by what Telegram itself considers read, not by our local seen marks
+            if (top <= serverReadMax(controller, dialogId) && (dialog?.unread_count ?: 0) <= 0 && dialog?.unread_mark != true) continue
+            knownMax[dialogId] = top
             pendingMax.remove(dialogId)
-            controller.markDialogAsRead(dialogId, dialog.top_message, dialog.top_message, 0, false, 0L, dialog.unread_count, true, 0)
+            controller.markDialogAsRead(dialogId, top, top, dialog?.last_message_date ?: 0, false, 0L, 0, true, 0)
             marked++
         }
         return marked
     }
+
+    private fun serverReadMax(controller: MessagesController, dialogId: Long): Int =
+        maxOf(controller.dialogs_dict?.get(dialogId)?.read_inbox_max_id ?: 0, controller.dialogs_read_inbox_max[dialogId] ?: 0)
 
     companion object {
         private const val FLUSH_DELAY_MS = 1000L

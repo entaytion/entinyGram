@@ -7,7 +7,12 @@ import org.telegram.tgnet.ConnectionsManager
 
 class FeedBackfillCoordinator private constructor(private val account: Int) {
 
-    var onChannelBackfilled: ((dialogId: Long) -> Unit)? = null
+    // entiny: one listener per open controller; a single callback slot let folder feeds overwrite each other
+    val listeners = LinkedHashSet<(dialogId: Long) -> Unit>()
+
+    private fun notifyBackfilled(dialogId: Long) {
+        for (listener in ArrayList(listeners)) listener(dialogId)
+    }
 
     private val classGuid = ConnectionsManager.generateClassGuid()
     private val queueLock = Object()
@@ -22,7 +27,7 @@ class FeedBackfillCoordinator private constructor(private val account: Int) {
         if (guid != classGuid) return@NotificationCenterDelegate
         val dialogId = args.getOrNull(0) as? Long ?: return@NotificationCenterDelegate
         if (!inFlight.remove(dialogId)) return@NotificationCenterDelegate
-        onChannelBackfilled?.invoke(dialogId)
+        notifyBackfilled(dialogId)
         pump()
     }
 
@@ -62,7 +67,7 @@ class FeedBackfillCoordinator private constructor(private val account: Int) {
             )
             AndroidUtilities.runOnUIThread({
                 if (inFlight.remove(dialogId)) {
-                    onChannelBackfilled?.invoke(dialogId)
+                    notifyBackfilled(dialogId)
                     pump()
                 }
             }, WATCHDOG_MS)

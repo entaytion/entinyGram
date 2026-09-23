@@ -4,201 +4,255 @@ import android.util.Log
 import org.telegram.SQLite.SQLiteCursor
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import java.util.Locale
 
+// entiny: single source of truth for a feed scope; every mutation happens on the UI thread
 class FeedStore(private val account: Int, private val scope: FeedScope = FeedScope.Global) {
 
-    data class Key(val date: Int, val dialogId: Long, val messageId: Int)
+    data class Key(val dialogId: Long, val messageId: Int)
 
-    private val lock = Object()
+    private data class Cursor(val date: Int, val dialogId: Long, val messageId: Int)
+
     private val rows = ArrayList<MessageObject>()
-    private val seen = HashSet<Pair<Long, Int>>()
+    private val byKey = HashMap<Key, MessageObject>()
+    private val revisions = HashMap<Key, Int>()
     private val oldestPerChannel = HashMap<Long, Int>()
-    private var oldestCursor: Key? = null
-    private var newestCursor: Key? = null
     private var channelGenerationSeen = -1
 
-    fun snapshot(): List<MessageObject> = synchronized(lock) { ArrayList(rows) }
+    val size: Int get() = rows.size
 
-    fun oldestLoaded(): Key? = synchronized(lock) { oldestCursor }
-    fun newestLoaded(): Key? = synchronized(lock) { newestCursor }
+    // newest first
+    fun snapshot(): List<MessageObject> = ArrayList(rows)
 
-    fun oldestForChannel(dialogId: Long): Int? = synchronized(lock) { oldestPerChannel[dialogId] }
+    fun revision(msg: MessageObject): Int = revisions[keyOf(msg)] ?: 0
 
-    fun reset() {
-        synchronized(lock) {
-            rows.clear()
-            seen.clear()
-            oldestPerChannel.clear()
-            oldestCursor = null
-            newestCursor = null
+    fun oldestForChannel(dialogId: Long): Int? = oldestPerChannel[dialogId]
+
+    fun newestIdPerChannel(): Map<Long, Int> {
+        val out = HashMap<Long, Int>()
+        for (msg in rows) {
+            val dialogId = msg.getDialogId()
+            if (msg.id > (out[dialogId] ?: 0)) out[dialogId] = msg.id
+        }
+        return out
+    }
+
+    // returns true when the channel set changed and the timeline was reset
+    fun ensureChannelGeneration(): Boolean {
+        if (channelGenerationSeen == FeedChannelSet.generation) return false
+        channelGenerationSeen = FeedChannelSet.generation
+        rows.clear()
+        byKey.clear()
+        revisions.clear()
+        oldestPerChannel.clear()
+        return true
+    }
+
+    fun loadOlder(onResult: (added: Int) -> Unit) {
+        val oldest = rows.lastOrNull()
+        val before = oldest?.let { Cursor(it.messageOwner?.date ?: 0, it.getDialogId(), it.id) }
+        queryPage(before, PAGE_SIZE, onResult)
+    }
+
+    // returns true when the timeline changed
+    fun mergeLive(messages: List<MessageObject>): Boolean {
+        // entiny: live objects are shared with ChatActivity, so the feed keeps its own wide copies
+        val copies = messages
+            .filter { it.messageOwner != null && FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }
+            .map { feedCopy(it.messageOwner) }
+        return insert(copies) > 0
+    }
+
+    fun replace(dialogId: Long, updated: List<MessageObject>): Boolean {
+        var changed = false
+        for (msg in updated) {
+            val key = Key(dialogId, msg.id)
+            val old = byKey[key] ?: continue
+            val copy = feedCopy(msg.messageOwner)
+            rows[rows.indexOf(old)] = copy
+            byKey[key] = copy
+            bump(key)
+            changed = true
+        }
+        return changed
+    }
+
+    fun updateReactions(dialogId: Long, messageId: Int, reactions: TLRPC.TL_messageReactions): Boolean {
+        val key = Key(dialogId, messageId)
+        val msg = byKey[key] ?: return false
+        MessageObject.updateReactions(msg.messageOwner, reactions)
+        bump(key)
+        return true
+    }
+
+    fun updateViews(dialogId: Long, views: Map<Int, Int>, forwards: Map<Int, Int>): Boolean {
+        var changed = false
+        for (msg in rows) {
+            if (msg.getDialogId() != dialogId) continue
+            val owner = msg.messageOwner ?: continue
+            views[msg.id]?.let { if (it > owner.views) { owner.views = it; owner.flags = owner.flags or TLRPC.MESSAGE_FLAG_HAS_VIEWS; changed = true; bump(keyOf(msg)) } }
+            forwards[msg.id]?.let { if (it != owner.forwards) { owner.forwards = it; changed = true; bump(keyOf(msg)) } }
+        }
+        return changed
+    }
+
+    fun remove(dialogId: Long, messageIds: Collection<Int>): Boolean {
+        if (messageIds.isEmpty()) return false
+        val ids = messageIds.toHashSet()
+        return removeWhere { it.getDialogId() == dialogId && ids.contains(it.id) }
+    }
+
+    fun removeDialog(dialogId: Long): Boolean = removeWhere { it.getDialogId() == dialogId }
+
+    // entiny: the store outlives the screen, so drop the old tail when nobody is looking
+    fun trim() {
+        if (rows.size <= MAX_RETAINED_ROWS) return
+        val cut = ArrayList(rows.subList(MAX_RETAINED_ROWS, rows.size))
+        val cutKeys = cut.mapTo(HashSet()) { keyOf(it) }
+        removeWhere { cutKeys.contains(keyOf(it)) }
+        oldestPerChannel.clear()
+        for (msg in rows) {
+            val current = oldestPerChannel[msg.getDialogId()]
+            if (current == null || msg.id < current) oldestPerChannel[msg.getDialogId()] = msg.id
         }
     }
 
-    private fun rebuildIfChannelsChanged() {
-        if (channelGenerationSeen != FeedChannelSet.generation) {
-            reset()
-            channelGenerationSeen = FeedChannelSet.generation
+    private fun removeWhere(predicate: (MessageObject) -> Boolean): Boolean {
+        var changed = false
+        val it = rows.iterator()
+        while (it.hasNext()) {
+            val msg = it.next()
+            if (!predicate(msg)) continue
+            it.remove()
+            byKey.remove(keyOf(msg))
+            revisions.remove(keyOf(msg))
+            changed = true
         }
+        return changed
     }
 
-    fun loadInitial(onResult: (added: List<MessageObject>) -> Unit) {
-        rebuildIfChannelsChanged()
-        queryPage(before = null, limit = PAGE_SIZE, onResult = onResult)
+    private fun bump(key: Key) {
+        revisions[key] = (revisions[key] ?: 0) + 1
     }
 
-    fun loadOlder(onResult: (added: List<MessageObject>) -> Unit) {
-        val before = synchronized(lock) { oldestCursor } ?: run { loadInitial(onResult); return }
-        queryPage(before = before, limit = PAGE_SIZE, onResult = onResult)
-    }
-
-    fun loadNewer(onResult: (added: List<MessageObject>) -> Unit) {
-        val after = synchronized(lock) { newestCursor } ?: run { loadInitial(onResult); return }
-        queryPage(after = after, limit = PAGE_SIZE_NEWER, onResult = onResult)
-    }
-
-    fun removeMessages(dialogId: Long, messageIds: Collection<Int>) {
-        if (messageIds.isEmpty()) return
-        synchronized(lock) {
-            val ids = messageIds.toHashSet()
-            val it = rows.iterator()
-            while (it.hasNext()) {
-                val row = it.next()
-                if (row.getDialogId() == dialogId && ids.contains(row.id)) {
-                    seen.remove(dialogId to row.id)
-                    it.remove()
-                }
-            }
-        }
-    }
-
-    fun removeDialog(dialogId: Long) {
-        synchronized(lock) {
-            val it = rows.iterator()
-            while (it.hasNext()) {
-                val row = it.next()
-                if (row.getDialogId() == dialogId) {
-                    seen.remove(dialogId to row.id)
-                    it.remove()
-                }
-            }
-        }
-    }
-
-    fun mergeLive(messages: List<MessageObject>): List<MessageObject> {
-        val eligible = messages.filter { FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }
-        if (eligible.isEmpty()) return emptyList()
-        val sorted = eligible.sortedWith(
-            compareByDescending<MessageObject> { it.messageOwner?.date ?: 0 }
-                .thenByDescending { it.getDialogId() }
-                .thenByDescending { it.id },
-        )
-        return insertSorted(sorted)
-    }
-
-    private fun queryPage(
-        before: Key? = null,
-        after: Key? = null,
-        limit: Int,
-        onResult: (List<MessageObject>) -> Unit,
-    ) {
+    private fun queryPage(before: Cursor?, limit: Int, onResult: (Int) -> Unit) {
         val channels = FeedChannelSet.eligibleChannels(account, scope)
         if (channels.isEmpty()) {
-            AndroidUtilities.runOnUIThread { onResult(emptyList()) }
+            onResult(0)
             return
         }
         val storage = MessagesStorage.getInstance(account)
         storage.storageQueue.postRunnable {
-            val loaded = ArrayList<MessageObject>()
-            var cursor: SQLiteCursor? = null
+            val messages = ArrayList<TLRPC.Message>()
+            val users = ArrayList<TLRPC.User>()
+            val chats = ArrayList<TLRPC.Chat>()
             try {
                 val idsCsv = channels.joinToString(",")
-                val bound = when {
-                    before != null -> String.format(
-                        Locale.US,
-                        "AND (date < %d OR (date = %d AND (uid < %d OR (uid = %d AND mid < %d))))",
-                        before.date, before.date, before.dialogId, before.dialogId, before.messageId,
-                    )
-                    after != null -> String.format(
-                        Locale.US,
-                        "AND (date > %d OR (date = %d AND (uid > %d OR (uid = %d AND mid > %d))))",
-                        after.date, after.date, after.dialogId, after.dialogId, after.messageId,
-                    )
-                    else -> ""
-                }
-                val orderDir = if (after != null) "ASC" else "DESC"
-                cursor = storage.database.queryFinalized(
+                val bound = if (before == null) "" else String.format(
+                    Locale.US,
+                    "AND (date < %d OR (date = %d AND (uid < %d OR (uid = %d AND mid < %d))))",
+                    before.date, before.date, before.dialogId, before.dialogId, before.messageId,
+                )
+                readMessages(
+                    storage,
                     String.format(
                         Locale.US,
-                        "SELECT data, mid, date, uid FROM messages_v2 WHERE uid IN (%s) %s ORDER BY date %s, uid %s, mid %s LIMIT %d",
-                        idsCsv, bound, orderDir, orderDir, orderDir, limit,
+                        "SELECT data FROM messages_v2 WHERE uid IN (%s) AND mid > 0 %s ORDER BY date DESC, uid DESC, mid DESC LIMIT %d",
+                        idsCsv, bound, limit,
                     ),
+                    messages,
                 )
-                val clientUserId = UserConfig.getInstance(account).clientUserId
-                while (cursor.next()) {
-                    val data = cursor.byteBufferValue(0) ?: continue
-                    val message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)
-                    message?.readAttachPath(data, clientUserId)
-                    data.reuse()
-                    if (message == null) continue
-                    loaded.add(MessageObject(account, message, false, false))
-                }
+                completeTrailingAlbum(storage, messages)
+                val usersToLoad = ArrayList<Long>()
+                val chatsToLoad = ArrayList<Long>()
+                for (message in messages) MessagesStorage.addUsersAndChatsFromMessage(message, usersToLoad, chatsToLoad, null)
+                // entiny: forward sources aren't in memory yet, so load them or the "Forwarded from" line stays empty
+                if (usersToLoad.isNotEmpty()) storage.getUsersInternal(usersToLoad, users)
+                if (chatsToLoad.isNotEmpty()) storage.getChatsInternal(chatsToLoad.joinToString(","), chats)
             } catch (e: Exception) {
                 Log.d(TAG, "query failed", e)
-            } finally {
-                cursor?.dispose()
             }
-            if (after != null) loaded.reverse()
+            val loaded = messages.map { feedCopy(it) }
             AndroidUtilities.runOnUIThread {
-                val added = insertSorted(loaded)
-                onResult(added)
+                val controller = MessagesController.getInstance(account)
+                controller.putUsers(users, true)
+                controller.putChats(chats, true)
+                onResult(insert(loaded))
             }
         }
     }
 
-    private fun insertSorted(incoming: List<MessageObject>): List<MessageObject> {
-        val added = ArrayList<MessageObject>(incoming.size)
-        synchronized(lock) {
-            for (msg in incoming) {
-                val key = msg.getDialogId() to msg.id
-                if (!seen.add(key)) continue
-                added.add(msg)
-            }
-            if (added.isEmpty()) return@synchronized
-            for (msg in added) {
-                val dialogId = msg.getDialogId()
-                val current = oldestPerChannel[dialogId]
-                if (current == null || msg.id < current) oldestPerChannel[dialogId] = msg.id
-            }
-            rows.addAll(added)
-            rows.sortWith(
-                compareByDescending<MessageObject> { it.messageOwner?.date ?: 0 }
-                    .thenByDescending { it.getDialogId() }
-                    .thenByDescending { it.id },
-            )
-            if (rows.size > MAX_RETAINED_ROWS) {
-                for (i in MAX_RETAINED_ROWS until rows.size) {
-                    seen.remove(rows[i].getDialogId() to rows[i].id)
-                }
-                while (rows.size > MAX_RETAINED_ROWS) rows.removeAt(rows.size - 1)
-            }
-            if (rows.isNotEmpty()) {
-                val newest = rows.first()
-                val oldest = rows.last()
-                newestCursor = Key(newest.messageOwner?.date ?: 0, newest.getDialogId(), newest.id)
-                oldestCursor = Key(oldest.messageOwner?.date ?: 0, oldest.getDialogId(), oldest.id)
-            }
+    // entiny: a page limit can cut an album in half, so pull the rest of the oldest album along with it
+    private fun completeTrailingAlbum(storage: MessagesStorage, messages: ArrayList<TLRPC.Message>) {
+        val tail = messages.lastOrNull() ?: return
+        if (tail.grouped_id == 0L) return
+        val dialogId = MessageObject.getDialogId(tail)
+        val extra = ArrayList<TLRPC.Message>()
+        readMessages(
+            storage,
+            String.format(
+                Locale.US,
+                "SELECT data FROM messages_v2 WHERE uid = %d AND mid > 0 AND mid < %d ORDER BY mid DESC LIMIT %d",
+                dialogId, tail.id, ALBUM_TAIL_LOOKUP,
+            ),
+            extra,
+        )
+        for (message in extra) {
+            if (message.grouped_id != tail.grouped_id) break
+            messages.add(message)
         }
+    }
+
+    private fun readMessages(storage: MessagesStorage, sql: String, out: ArrayList<TLRPC.Message>) {
+        var cursor: SQLiteCursor? = null
+        try {
+            cursor = storage.database.queryFinalized(sql)
+            val clientUserId = UserConfig.getInstance(account).clientUserId
+            while (cursor.next()) {
+                val data = cursor.byteBufferValue(0) ?: continue
+                val message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)
+                message?.readAttachPath(data, clientUserId)
+                data.reuse()
+                if (message != null) out.add(message)
+            }
+        } finally {
+            cursor?.dispose()
+        }
+    }
+
+    private fun feedCopy(message: TLRPC.Message): MessageObject =
+        MessageObject(account, message, false, false).apply { forceWideChannelPost = true }
+
+    private fun insert(incoming: List<MessageObject>): Int {
+        var added = 0
+        for (msg in incoming) {
+            val key = keyOf(msg)
+            if (byKey.containsKey(key)) continue
+            byKey[key] = msg
+            rows.add(msg)
+            added++
+            val current = oldestPerChannel[key.dialogId]
+            if (current == null || msg.id < current) oldestPerChannel[key.dialogId] = msg.id
+        }
+        if (added == 0) return 0
+        rows.sortWith(TIMELINE_ORDER)
         return added
     }
 
     companion object {
         private const val TAG = "FeedStore"
         private const val PAGE_SIZE = 30
-        private const val PAGE_SIZE_NEWER = 50
+        private const val ALBUM_TAIL_LOOKUP = 10
         private const val MAX_RETAINED_ROWS = 500
+
+        fun keyOf(msg: MessageObject) = Key(msg.getDialogId(), msg.id)
+
+        private val TIMELINE_ORDER = compareByDescending<MessageObject> { it.messageOwner?.date ?: 0 }
+            .thenByDescending { it.getDialogId() }
+            .thenByDescending { it.id }
     }
 }

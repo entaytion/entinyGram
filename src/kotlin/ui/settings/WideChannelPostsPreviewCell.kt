@@ -25,6 +25,7 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.ChatMessageCell
+import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BackgroundGradientDrawable
 import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.MotionBackgroundDrawable
@@ -115,7 +116,11 @@ class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : Fr
         message.post = true
 
         val messageObject = PreviewMessageObject(account, message, wide)
-        messageObject.customReplyName = getString(R.string.InuWideChannelPostsPreviewReplyLabel)
+        val channelName = getString(R.string.InuWideChannelPostsPreviewReplyLabel)
+        messageObject.customReplyName = channelName
+        // entiny: preview channel id is fake, so give the wide header a real name and avatar instead of "Deleted"
+        messageObject.customName = channelName
+        messageObject.customAvatarDrawable = AvatarDrawable().apply { setInfo(1L, channelName, null) }
         messageObject.replyMessageObject = createReplyMessage(account, date)
         messageObject.viewsReloaded = true
         messageObject.resetLayout()
