@@ -93,8 +93,21 @@ object GhostHelper {
     }
 
     @JvmStatic
-    fun getWhitelistedDialogs(account: Int): List<Long> {
-        val current = InuConfig.GHOST_WHITELIST_DIALOGS.value
+    fun getWhitelistedDialogs(account: Int): List<Long> = pruneToKnownDialogs(account, InuConfig.GHOST_WHITELIST_DIALOGS)
+
+    // entiny: never pruned -- dropping a chat that is just not loaded yet would silently leak reads
+    @JvmStatic
+    fun getTargetedDialogs(): List<Long> = InuConfig.GHOST_TARGET_DIALOGS.value.mapNotNull { it.toLongOrNull() }
+
+    @JvmStatic
+    fun setDialogTargeted(dialogId: Long, targeted: Boolean) {
+        val current = InuConfig.GHOST_TARGET_DIALOGS.value.toMutableSet()
+        val changed = if (targeted) current.add(dialogId.toString()) else current.remove(dialogId.toString())
+        if (changed) InuConfig.GHOST_TARGET_DIALOGS.value = current
+    }
+
+    private fun pruneToKnownDialogs(account: Int, item: InuConfig.StringSetItem): List<Long> {
+        val current = item.value
         val controller = MessagesController.getInstance(account)
         val valid = HashSet<String>()
         val result = ArrayList<Long>()
@@ -106,33 +119,54 @@ object GhostHelper {
             }
         }
         if (valid.size != current.size) {
-            InuConfig.GHOST_WHITELIST_DIALOGS.value = valid
+            item.value = valid
         }
         return result
     }
 
     @JvmStatic
-    fun isGhostActiveForDialog(dialogId: Long): Boolean {
-        if (dialogId != 0L && isDialogWhitelisted(dialogId)) return false
-        return isGhostActive()
+    fun isDialogTargeted(dialogId: Long): Boolean =
+        dialogId != 0L && InuConfig.GHOST_TARGET_DIALOGS.value.contains(dialogId.toString())
+
+    @JvmStatic
+    fun isGhostActiveForDialog(dialogId: Long): Boolean =
+        isDialogTargeted(dialogId) || isGhostActive() && (dialogId == 0L || !isDialogWhitelisted(dialogId))
+
+    // entiny: one menu toggle -- a per-chat ghost always wins, otherwise global mode edits the whitelist
+    @JvmStatic
+    fun toggleGhostForDialog(dialogId: Long): Boolean {
+        val targets = InuConfig.GHOST_TARGET_DIALOGS.value.toMutableSet()
+        val key = dialogId.toString()
+        when {
+            targets.remove(key) -> InuConfig.GHOST_TARGET_DIALOGS.value = targets
+            isGhostActive() -> toggleDialogWhitelist(dialogId)
+            else -> InuConfig.GHOST_TARGET_DIALOGS.value = targets.apply { add(key) }
+        }
+        return isGhostActiveForDialog(dialogId)
     }
 
     @JvmStatic
     fun shouldSuppress(dialogId: Long, kind: SuppressKind): Boolean {
-        if (!InuConfig.GHOST_MODE_ENABLED.value) {
+        val global = InuConfig.GHOST_MODE_ENABLED.value
+        val targeted = isDialogTargeted(dialogId)
+        if (!global && !targeted) {
             return false
         }
         if (dialogId != 0L && temporarilyAllowedDialogs.contains(dialogId)) {
             return false
         }
-        if (dialogId != 0L && isDialogWhitelisted(dialogId)) {
+        if (global && !targeted && dialogId != 0L && isDialogWhitelisted(dialogId)) {
             return false
         }
-        val suppress = when (kind) {
-            SuppressKind.READ -> InuConfig.GHOST_HIDE_READ.value
-            SuppressKind.TYPING -> InuConfig.GHOST_HIDE_TYPING.value
+        // entiny: a per-chat ghost hides everything chat-scoped; presence and stories stay account-wide settings
+        val suppress = if (targeted && !global) when (kind) {
+            SuppressKind.READ, SuppressKind.TYPING, SuppressKind.VOICE_READ -> true
+            SuppressKind.ONLINE, SuppressKind.STORY_READ -> false
+        } else when (kind) {
+            SuppressKind.READ -> InuConfig.GHOST_HIDE_READ.value || targeted
+            SuppressKind.TYPING -> InuConfig.GHOST_HIDE_TYPING.value || targeted
             SuppressKind.ONLINE -> InuConfig.GHOST_PRESENCE_MODE.value == InuConfig.GhostPresenceModeItem.HIDDEN
-            SuppressKind.VOICE_READ -> InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value
+            SuppressKind.VOICE_READ -> InuConfig.GHOST_HIDE_VOICE_READ.value || InuConfig.GHOST_HIDE_READ.value || targeted
             SuppressKind.STORY_READ -> InuConfig.GHOST_HIDE_STORY_READ.value
         }
         if (suppress) {

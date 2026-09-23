@@ -265,21 +265,22 @@ object ProfileHelper {
                 LocaleController.getString(label),
             )
         }
-        if (GhostHelper.isGhostActive() && !isSelf) {
-            val whitelisted = GhostHelper.isDialogWhitelisted(dialogId)
-            val ghostLabel = if (whitelisted) {
-                LocaleController.getString(R.string.InuGhostModeEnableForChat)
-            } else {
+        // entiny: per-chat ghost works without the global mode, so the toggle is always offered
+        if (!isSelf && dialogId != 0L) {
+            val ghosted = GhostHelper.isGhostActiveForDialog(dialogId)
+            val ghostLabel = if (ghosted) {
                 LocaleController.getString(R.string.InuGhostModeDisableForChat)
+            } else {
+                LocaleController.getString(R.string.InuGhostModeEnableForChat)
             }
-            val ghostIcon = if (whitelisted) R.drawable.inu_ghost else R.drawable.inu_ghost_filled
+            val ghostIcon = if (ghosted) R.drawable.inu_ghost_filled else R.drawable.inu_ghost
             otherItem.addSubItem(
                 ACTION_TOGGLE_GHOST_DIALOG,
                 ghostIcon,
                 ghostLabel,
             )
 
-            if (InuConfig.GHOST_HIDE_READ.value && !whitelisted) {
+            if (ghosted && (InuConfig.GHOST_HIDE_READ.value || GhostHelper.isDialogTargeted(dialogId))) {
                 otherItem.addSubItem(
                     ACTION_MARK_AS_READ,
                     R.drawable.msg_markread,
@@ -328,11 +329,11 @@ object ProfileHelper {
             ACTION_TOGGLE_HIDE_THEME -> ChatHelper.toggleRemoveTheme(currentAccount, dialogId)
             ACTION_TOGGLE_HIDE_MESSAGES -> BlockedMessagesHelper.toggleExtraHidden(currentAccount, dialogId)
             ACTION_TOGGLE_GHOST_DIALOG -> {
-                val whitelisted = GhostHelper.toggleDialogWhitelist(dialogId)
-                val msg = if (whitelisted) {
-                    LocaleController.getString(R.string.InuGhostModeDisabledForChatDone)
-                } else {
+                val ghosted = GhostHelper.toggleGhostForDialog(dialogId)
+                val msg = if (ghosted) {
                     LocaleController.getString(R.string.InuGhostModeEnabledForChatDone)
+                } else {
+                    LocaleController.getString(R.string.InuGhostModeDisabledForChatDone)
                 }
                 BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, msg).show()
             }

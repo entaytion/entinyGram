@@ -1300,6 +1300,12 @@
     <string name="InuGhostWhitelistEmpty">No chats whitelisted yet.</string>
     <string name="InuGhostWhitelistAdd">Add chat to whitelist</string>
     <string name="InuGhostWhitelistRemoved">Removed from whitelist</string>
+    <string name="InuGhostTargets">Ghost chats</string>
+    <string name="InuGhostTargetsHint">Ghost chats stay hidden even when Ghost Mode is off: no read receipts, typing or voice listens there. Handy to ghost a few contacts without making every channel look unread elsewhere.</string>
+    <string name="InuGhostTargetsInfo">Ghost Mode is always on for these chats — tap one to remove it.</string>
+    <string name="InuGhostTargetsEmpty">No ghost chats yet. You can also add one from the chat menu.</string>
+    <string name="InuGhostTargetsAdd">Add ghost chat</string>
+    <string name="InuGhostTargetsRemoved">Removed from ghost chats</string>
     <string name="InuGhostModeEnableForChat">Enable Ghost Mode for this chat</string>
     <string name="InuGhostModeDisableForChat">Disable Ghost Mode for this chat</string>
     <string name="InuGhostModeEnabledForChatDone">Ghost Mode enabled for this chat</string>

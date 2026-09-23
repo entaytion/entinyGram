@@ -56,7 +56,8 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostAutoOfflineInfo)))
         items.add(mkSubPageButton(BUTTON_MANAGE_WHITELIST, LocaleController.getString(R.string.InuGhostWhitelist)))
-        items.add(UItem.asShadow(null))
+        items.add(mkSubPageButton(BUTTON_MANAGE_TARGETS, LocaleController.getString(R.string.InuGhostTargets)))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostTargetsHint)))
         items.add(
             UItem.asCheck(
                 TOGGLE_READ_ON_SEND,
@@ -109,6 +110,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
             BUTTON_MANAGE_WHITELIST -> presentFragment(GhostWhitelistSettingsActivity())
+            BUTTON_MANAGE_TARGETS -> presentFragment(GhostWhitelistSettingsActivity(targets = true))
             TOGGLE_READ_ON_SEND -> {
                 val new = InuConfig.GHOST_READ_ON_SEND.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -132,6 +134,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
         private val TOGGLE_AUTO_OFFLINE = InuUtils.generateId()
         private val BUTTON_MANAGE_WHITELIST = InuUtils.generateId()
+        private val BUTTON_MANAGE_TARGETS = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(

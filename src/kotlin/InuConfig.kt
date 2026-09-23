@@ -1665,6 +1665,9 @@ object InuConfig {
     @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
 
+    // entiny: chats that stay ghosted even while global ghost mode is off
+    val GHOST_TARGET_DIALOGS = StringSetItem("ghost_target_dialogs", emptySet())
+
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)
 

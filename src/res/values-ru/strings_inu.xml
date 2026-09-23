@@ -1089,6 +1089,12 @@
     <string name="InuGhostWhitelistEmpty">В белом списке пока нет чатов.</string>
     <string name="InuGhostWhitelistAdd">Добавить чат в белый список</string>
     <string name="InuGhostWhitelistRemoved">Удалено из белого списка</string>
+    <string name="InuGhostTargets">Чаты-призраки</string>
+    <string name="InuGhostTargetsHint">Чаты-призраки остаются скрытыми даже при выключенном режиме призрака: там не видно прочтений, набора текста и прослушивания голосовых. Удобно, чтобы «исчезнуть» для нескольких контактов, и каналы на других устройствах не будут выглядеть непрочитанными.</string>
+    <string name="InuGhostTargetsInfo">Режим призрака всегда включён для этих чатов — нажмите на чат, чтобы убрать его.</string>
+    <string name="InuGhostTargetsEmpty">Чатов-призраков пока нет. Их также можно добавить из меню чата.</string>
+    <string name="InuGhostTargetsAdd">Добавить чат-призрак</string>
+    <string name="InuGhostTargetsRemoved">Удалено из чатов-призраков</string>
     <string name="InuGhostEnabled">Режим призрака включен</string>
     <string name="InuGhostDisabled">Режим призрака выключен</string>
     <string name="InuGhostModeEnableForChat">Включить режим призрака для этого чата</string>

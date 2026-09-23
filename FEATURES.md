@@ -23,6 +23,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - hide story views, online status, typing, recording, and upload indicators
   - **automatically go offline**: re-send offline status shortly after sending
   - **whitelist management**: exempt specific chats from Ghost Mode
+  - **ghost chats**: turn Ghost Mode on for single contacts, groups or channels from the chat menu, even with global Ghost Mode off, so other devices do not see a pile of unread channels — *inspired by Alexgram / XF*
 - 📡 **anti-deletion & edit history**:
   - **save deleted messages** (marked with 🗑️) and media to `Downloads/entinyGram/media/`
   - **your own deletions are never preserved** — only what the other side deleted becomes a ghost

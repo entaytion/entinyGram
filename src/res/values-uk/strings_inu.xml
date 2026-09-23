@@ -1162,6 +1162,12 @@
     <string name="InuGhostWhitelistEmpty">У білому списку поки немає чатів.</string>
     <string name="InuGhostWhitelistAdd">Додати чат до білого списку</string>
     <string name="InuGhostWhitelistRemoved">Видалено з білого списку</string>
+    <string name="InuGhostTargets">Чати-примари</string>
+    <string name="InuGhostTargetsHint">Чати-примари лишаються прихованими навіть із вимкненим режимом примари: там не видно прочитання, набору тексту й прослуховування голосових. Зручно, щоб «зникнути» для кількох контактів, і канали на інших пристроях не виглядатимуть непрочитаними.</string>
+    <string name="InuGhostTargetsInfo">Режим примари завжди увімкнено для цих чатів — торкніться чату, щоб прибрати його.</string>
+    <string name="InuGhostTargetsEmpty">Чатів-примар поки немає. Їх також можна додати з меню чату.</string>
+    <string name="InuGhostTargetsAdd">Додати чат-примару</string>
+    <string name="InuGhostTargetsRemoved">Видалено з чатів-примар</string>
     <string name="InuGhostEnabled">Режим примари увімкнено</string>
     <string name="InuGhostDisabled">Режим примари вимкнено</string>
     <string name="InuGhostModeEnableForChat">Увімкнути режим примари для цього чату</string>
