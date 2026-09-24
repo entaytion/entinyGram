@@ -359,7 +359,11 @@ jobs:
           # Tags for the compare link. The release step is skipped for pre-releases,
           # so use the commit SHA as the diff endpoint (the tag never exists on GitHub).
           if [ -z "${RELEASE_TAG:-}" ]; then
-            export PREV_RELEASE_TAG=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+            # Pre-release diffs start at the previous build (pre-release or stable), not the last stable tag.
+            export PREV_RELEASE_TAG='${{ vars.LAST_BUILD_SHA }}'
+            if [ -z "$PREV_RELEASE_TAG" ]; then
+              export PREV_RELEASE_TAG=$(gh release list --exclude-pre-releases --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+            fi
             export RELEASE_TAG="$GITHUB_SHA"
           fi
           # CI channel always. Main channel only for stable release+tg.

@@ -33,6 +33,10 @@
     <string name="InuUnifiedPushDistributor">Дистриб’ютор</string>
     <string name="InuUnifiedPushNoDistributor">Не вибрано</string>
     <string name="InuUnifiedPushNoDistributorInfo">Спершу встановіть дистриб’ютор UnifiedPush, наприклад ntfy.</string>
+    <string name="InuUnifiedPushGateway">Шлюз</string>
+    <string name="InuUnifiedPushGatewayInfo">Проксі перезапису для дистриб’юторів, що вимагають WebPush POST та VAPID (наприклад, gCompat-UP, Sunup, Prism). Прямі посилання ntfy.sh обходять його автоматично.</string>
+    <string name="InuUnifiedPushGatewayDirect">Напряму (без шлюзу)</string>
+    <string name="InuUnifiedPushGatewayDefault">За замовчуванням</string>
     <string name="InuDiagTitle">Діагностика</string>
     <string name="InuDiagIdle">Профілю діагностики немає. Щоб увімкнути, відкрийте файл .entinylog, який вам надіслали в будь-якому чаті.</string>
     <string name="InuDiagConfirm">Увімкнути профіль діагностики «%1$s»?\n\n%2$s\n\nНічого нікуди не надсилається: записи лишаються на пристрої, доки ви самі не надішлете логи.</string>
@@ -1164,7 +1168,7 @@
     <string name="InuShowMutualContactInChats">Показувати значок взаємного контакту у списках учасників чатів та каналів</string>
     <string name="InuShowMutualContactInChatsInfo">Показувати значок взаємного контакту у списках учасників груп та каналів</string>
     <string name="InuCategoryAppearance">Вигляд і дизайн</string>
-    <string name="InuCategoryBackup">Система та резервні копії</string>
+    <string name="InuCategoryBackup">Додатково</string>
     <string name="InuCategoryBehavior">Поведінка та інструменти</string>
     <string name="InuCategoryChats">Чати</string>
     <string name="InuCategoryPrivacy">Конфіденційність і безпека</string>

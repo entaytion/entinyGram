@@ -42,6 +42,8 @@ import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
+import android.text.InputType
+import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.IUpdateLayout
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.UpdateLayoutWrapper
@@ -112,6 +114,23 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                     BUTTON_UNIFIED_PUSH_DISTRIBUTOR,
                     LocaleController.getString(R.string.InuUnifiedPushDistributor),
                     UnifiedPushHelper.currentDistributor()?.let(::appLabel) ?: LocaleController.getString(R.string.InuUnifiedPushNoDistributor),
+                )
+            )
+            val gw = UnifiedPushHelper.getGateway()
+            val gwSubtitle = if (gw.isNotEmpty()) {
+                if (gw == UnifiedPushHelper.DEFAULT_GATEWAY) {
+                    "${LocaleController.getString(R.string.InuUnifiedPushGatewayDefault)} ($gw)"
+                } else {
+                    gw
+                }
+            } else {
+                LocaleController.getString(R.string.InuUnifiedPushGatewayDirect)
+            }
+            items.add(
+                UItem.asButton(
+                    BUTTON_UNIFIED_PUSH_GATEWAY,
+                    LocaleController.getString(R.string.InuUnifiedPushGateway),
+                    gwSubtitle,
                 )
             )
         }
@@ -186,8 +205,64 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         val current = UnifiedPushHelper.currentDistributor()
         RadioItemOptions.show(this, anchor, all.map { appLabel(it) }, all.indexOf(current).coerceAtLeast(0)) { which ->
             val picked = all.getOrNull(which) ?: return@show
-            if (picked != current) UnifiedPushHelper.setEnabled(true, picked)
+            if (picked != current) {
+                UnifiedPushHelper.setEnabled(true, picked)
+                listView?.adapter?.update(true)
+            }
         }
+    }
+
+    private fun editGateway() {
+        val ctx = context ?: return
+        val current = UnifiedPushHelper.getGateway()
+        val container = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(24f), dp(8f), dp(24f), 0)
+        }
+        val input = EditTextBoldCursor(ctx).apply {
+            setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
+            setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
+            setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))
+            setCursorSize(dp(20f))
+            setCursorWidth(1.5f)
+            hint = "https://p2p.belloworld.it/"
+            setText(current)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+            isSingleLine = true
+            textSize = 16f
+        }
+        container.addView(input, LinearLayout.LayoutParams(-1, -2).apply {
+            bottomMargin = dp(8f)
+        })
+        val infoText = TextView(ctx).apply {
+            setTextColor(Theme.getColor(Theme.key_dialogTextGray2))
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+            text = LocaleController.getString(R.string.InuUnifiedPushGatewayInfo)
+        }
+        container.addView(infoText, LinearLayout.LayoutParams(-1, -2))
+
+        val builder = AlertDialog.Builder(ctx, resourceProvider)
+            .setTitle(LocaleController.getString(R.string.InuUnifiedPushGateway))
+            .setView(container)
+            .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->
+                val entered = input.text.toString().trim()
+                UnifiedPushHelper.setGateway(entered)
+                listView?.adapter?.update(true)
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+
+        if (current.isNotEmpty()) {
+            builder.setNeutralButton(LocaleController.getString(R.string.Reset)) { _, _ ->
+                UnifiedPushHelper.setGateway("")
+                listView?.adapter?.update(true)
+            }
+        } else {
+            builder.setNeutralButton(LocaleController.getString(R.string.InuUnifiedPushGatewayDefault)) { _, _ ->
+                UnifiedPushHelper.setGateway("https://p2p.belloworld.it/")
+                listView?.adapter?.update(true)
+            }
+        }
+        showDialog(builder.create())
     }
 
     private fun appLabel(packageName: String): CharSequence = try {
@@ -220,6 +295,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             TOGGLE_UNIFIED_PUSH -> toggleUnifiedPush()
 
             BUTTON_UNIFIED_PUSH_DISTRIBUTOR -> pickDistributor(view)
+
+            BUTTON_UNIFIED_PUSH_GATEWAY -> editGateway()
 
             TOGGLE_AUTO_UPDATE_CHECK -> {
                 val new = InuConfig.UPDATES_ENABLED.toggle()
@@ -545,6 +622,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_DIAG_SEND = InuUtils.generateId()
         private val BUTTON_DIAG_STOP = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_DISTRIBUTOR = InuUtils.generateId()
+        private val BUTTON_UNIFIED_PUSH_GATEWAY = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -559,6 +637,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
                 SearchRegistry.Entry("additional-datacenter-status", R.string.InuDatacenterStatus, BUTTON_DATACENTER_STATUS),
                 SearchRegistry.Entry("additional-unified-push", R.string.InuUnifiedPush, TOGGLE_UNIFIED_PUSH),
+                SearchRegistry.Entry("additional-unified-push-gateway", R.string.InuUnifiedPushGateway, BUTTON_UNIFIED_PUSH_GATEWAY),
             ),
         )
     }

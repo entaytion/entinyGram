@@ -1,9 +1,11 @@
 package desu.inugram.helpers.chat
 
 import android.content.res.ColorStateList
+import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.text.InputType
+import android.text.SpannableStringBuilder
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -15,6 +17,7 @@ import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
+import desu.inugram.helpers.diag.DiagLog
 import desu.inugram.helpers.dialogs.FolderHelper
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -38,6 +41,7 @@ import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AlertsCreator
+import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.FilterTabsView
 import org.telegram.ui.Components.LayoutHelper
@@ -57,7 +61,7 @@ object ForwardProHelper {
         var scheduleDate: Int = 0
         var isEditMode: Boolean = false
         var savedComment: CharSequence? = null
-        var editedText: String? = null
+        var editedText: CharSequence? = null
         var editButton: ImageView? = null
         var copyNotice: TextView? = null
         var authorIcon: ImageView? = null
@@ -72,7 +76,7 @@ object ForwardProHelper {
 
     private val states = WeakHashMap<ShareAlert, AlertState>()
     private var pendingOverride: Boolean? = null
-    private var pendingInitialEditedText: String? = null
+    private var pendingInitialEditedText: CharSequence? = null
 
     @JvmStatic
     fun requestStockShareOnce() {
@@ -87,7 +91,7 @@ object ForwardProHelper {
     }
 
     @JvmStatic
-    fun requestForwardProWithEditedText(text: String) {
+    fun requestForwardProWithEditedText(text: CharSequence) {
         pendingOverride = true
         pendingInitialEditedText = text
     }
@@ -374,7 +378,7 @@ object ForwardProHelper {
         }
     }
 
-    private fun enterEditMode(alert: ShareAlert, prefillText: String?, openKeyboard: Boolean = true) {
+    private fun enterEditMode(alert: ShareAlert, prefillText: CharSequence?, openKeyboard: Boolean = true) {
         val state = getState(alert)
         val msgs = alert.sendingMessageObjects ?: return
         val editable = getEditableMessage(msgs) ?: return
@@ -383,7 +387,7 @@ object ForwardProHelper {
         state.isEditMode = true
         state.savedComment = commentView.text
         commentView.setHint(LocaleController.getString(R.string.InuForwardProPlaceholder))
-        val textToLoad = prefillText ?: getForwardText(editable).toString()
+        val textToLoad = prefillText ?: editableText(editable, commentView.getEditText().paint.fontMetricsInt)
         commentView.setText(textToLoad)
         commentView.getEditText().setSelection(commentView.text?.length ?: 0)
         state.editButton?.setImageResource(R.drawable.msg_close)
@@ -415,17 +419,17 @@ object ForwardProHelper {
         val editable = getEditableMessage(msgs) ?: return false
 
         val commentView = alert.commentTextView
-        val currentFieldText = commentView?.text?.toString() ?: ""
+        val currentFieldText: CharSequence = commentView?.text?.let { SpannableStringBuilder(it) } ?: ""
 
         val isTextEdited = state.isEditMode && hasTextChanged(currentFieldText, editable)
-        val isPreEdited = state.editedText != null && hasTextChanged(state.editedText.orEmpty(), editable)
+        val isPreEdited = state.editedText != null && hasTextChanged(state.editedText ?: "", editable)
 
         if (!isTextEdited && !isPreEdited) {
             if (state.isEditMode) exitEditMode(alert)
             return false
         }
 
-        val textToSend = if (isTextEdited) currentFieldText else state.editedText.orEmpty()
+        val textToSend: CharSequence = if (isTextEdited) currentFieldText else state.editedText ?: ""
         if (isTextOnly(editable) && textToSend.trim().isEmpty()) {
             Toast.makeText(alert.context, LocaleController.getString(R.string.InuForwardProEmptyNotice), Toast.LENGTH_SHORT).show()
             return true
@@ -434,12 +438,16 @@ object ForwardProHelper {
         return sendEditedAsCopy(alert, editable, textToSend, withSound)
     }
 
-    private fun sendEditedAsCopy(alert: ShareAlert, editable: MessageObject, editedText: String, withSound: Boolean): Boolean {
+    private fun sendEditedAsCopy(alert: ShareAlert, editable: MessageObject, editedText: CharSequence, withSound: Boolean): Boolean {
         val messages = alert.sendingMessageObjects ?: return false
         val state = getState(alert)
         val account = alert.currentAccount
 
-        val entities = MediaDataController.getInstance(account).getEntities(arrayOf(editedText), true) ?: ArrayList()
+        // entiny: keep the spans so text links and formatting survive; getEntities also strips markdown from the text
+        val textHolder = arrayOf<CharSequence>(editedText)
+        val entities = MediaDataController.getInstance(account).getEntities(textHolder, true) ?: ArrayList()
+        val plainText = textHolder[0].toString()
+        DiagLog.log("forward", "copy with edited text len=${plainText.length} entities=${entities.groupingBy { it.javaClass.simpleName }.eachCount()} messages=${messages.size} album=${isAlbumGroup(messages)}")
         val comment = state.savedComment
         val hasComment = !comment.isNullOrEmpty()
         val commentEntities = if (hasComment) MediaDataController.getInstance(account).getEntities(arrayOf(comment), true) ?: ArrayList() else ArrayList()
@@ -465,7 +473,7 @@ object ForwardProHelper {
                 SendMessagesHelper.getInstance(account).sendMessage(params)
             }
 
-            val sent = withEditedText(editable, editedText, entities) {
+            val sent = withEditedText(editable, plainText, entities) {
                 sendSingleOrBatchAsCopy(messages, did, replyTopMsg, withSound, account, monoForumPeerId, state.scheduleDate)
             }
             if (sent) {
@@ -720,7 +728,8 @@ object ForwardProHelper {
         val context = activity.parentActivity ?: return
         val theme = activity.resourceProvider
 
-        val originalText = if (editable != null) getForwardText(editable).toString() else ""
+        val originalFontMetrics = Paint().apply { textSize = dp(16f).toFloat() }.fontMetricsInt
+        val originalText: CharSequence = if (editable != null) editableText(editable, originalFontMetrics) else ""
         val isMedia = editable != null && !isTextOnly(editable)
 
         val editText = EditTextBoldCursor(context).apply {
@@ -762,7 +771,7 @@ object ForwardProHelper {
             .setView(scrollView)
             .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
             .setPositiveButton(LocaleController.getString(R.string.Forward)) { _, _ ->
-                val newText = editText.text?.toString().orEmpty()
+                val newText: CharSequence = editText.text?.let { SpannableStringBuilder(it) } ?: ""
                 if (!isMedia && newText.trim().isEmpty()) {
                     Toast.makeText(context, LocaleController.getString(R.string.InuForwardProEmptyNotice), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
@@ -833,9 +842,16 @@ object ForwardProHelper {
         return text ?: ""
     }
 
-    private fun hasTextChanged(newText: String, editable: MessageObject): Boolean {
-        val original = getForwardText(editable).toString()
-        return original != newText
+    private fun hasTextChanged(newText: CharSequence, editable: MessageObject): Boolean {
+        return getForwardText(editable).toString() != newText.toString()
+    }
+
+    // entiny: raw text plus entities as editor spans, the same way the stock message editor loads it
+    private fun editableText(msg: MessageObject, fontMetrics: Paint.FontMetricsInt?): CharSequence {
+        val owner = msg.messageOwner ?: return getForwardText(msg)
+        val raw = owner.message
+        if (raw.isNullOrEmpty()) return getForwardText(msg)
+        return ChatActivityEnterView.applyMessageEntities(ArrayList(owner.entities ?: emptyList()), raw, fontMetrics) ?: raw
     }
 
     private fun getPathToMessage(msg: MessageObject, account: Int): String? {

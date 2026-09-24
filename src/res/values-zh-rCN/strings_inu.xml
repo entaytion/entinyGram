@@ -20,6 +20,10 @@
     <string name="InuUnifiedPushDistributor">分发器</string>
     <string name="InuUnifiedPushNoDistributor">未设置</string>
     <string name="InuUnifiedPushNoDistributorInfo">请先安装 UnifiedPush 分发器，例如 ntfy。</string>
+    <string name="InuUnifiedPushGateway">网关</string>
+    <string name="InuUnifiedPushGatewayInfo">用于需要 WebPush POST 和 VAPID 的分发器（如 gCompat-UP、Sunup、Prism）的重写代理。直连 ntfy.sh 端点会自动绕过此代理。</string>
+    <string name="InuUnifiedPushGatewayDirect">直连（无网关）</string>
+    <string name="InuUnifiedPushGatewayDefault">默认</string>
     <string name="InuDiagTitle">诊断</string>
     <string name="InuDiagIdle">没有诊断配置。要开始，请打开在任意聊天中收到的 .entinylog 文件。</string>
     <string name="InuDiagConfirm">开启诊断配置“%1$s”？\n\n%2$s\n\n不会发送到任何地方：记录会保留在本设备上，直到你自己发送日志。</string>
@@ -1015,7 +1019,7 @@
     <string name="InuAntiDeletion">防撤回</string>
     <string name="InuAppIconOldEntinygram">旧版 entinyGram</string>
     <string name="InuCategoryAppearance">外观与布局</string>
-    <string name="InuCategoryBackup">系统与备份</string>
+    <string name="InuCategoryBackup">其他设置</string>
     <string name="InuCategoryBehavior">行为与工具</string>
     <string name="InuCategoryChats">聊天</string>
     <string name="InuCategoryPrivacy">隐私与安全</string>

@@ -21,6 +21,8 @@ import org.unifiedpush.android.connector.UnifiedPush
 object UnifiedPushHelper {
 
     const val PUSH_TYPE_SIMPLE = 4
+    const val DEFAULT_GATEWAY = "https://p2p.belloworld.it/"
+    private const val FCM_SEND_PREFIX = "https://fcm.googleapis.com/fcm/send/"
     private const val INSTANCE = "default"
     private const val REGISTRATION_ANSWER_TIMEOUT_MS = 30_000L
     private const val MAX_RETRY_DELAY_MS = 15 * 60 * 1000L
@@ -89,6 +91,7 @@ object UnifiedPushHelper {
         if (enabled) {
             Utilities.globalQueue.postRunnable { register(distributor) }
         } else {
+            lastEndpoint = null
             try {
                 UnifiedPush.unregister(context, INSTANCE)
             } catch (e: Throwable) {
@@ -109,12 +112,53 @@ object UnifiedPushHelper {
         }
     }
 
+    private var lastEndpoint: String? = null
+
+    fun getGateway(): String = InuConfig.UNIFIED_PUSH_GATEWAY.value.trim()
+
+    fun setGateway(gateway: String) {
+        val trimmed = gateway.trim().let { if (it.isNotEmpty() && !it.endsWith("/")) "$it/" else it }
+        if (InuConfig.UNIFIED_PUSH_GATEWAY.value == trimmed) return
+        InuConfig.UNIFIED_PUSH_GATEWAY.value = trimmed
+        if (isEnabled()) {
+            val endpoint = lastEndpoint
+            if (endpoint != null) {
+                applyEndpoint(endpoint)
+            } else {
+                register(null)
+            }
+        }
+    }
+
     internal fun onEndpoint(url: String) {
-        DiagLog.log("push", "endpoint host=${android.net.Uri.parse(url).host} enabled=${isEnabled()}")
+        lastEndpoint = url
+        applyEndpoint(url)
+    }
+
+    private fun applyEndpoint(url: String) {
+        val host = try { android.net.Uri.parse(url).host?.lowercase() } catch (_: Throwable) { null }
+        val gateway = getGateway()
+        DiagLog.log("push", "endpoint host=$host gateway=${gateway.isNotEmpty()} enabled=${isEnabled()}")
         if (!isEnabled()) return
         cancelRetry()
         SharedConfig.pushStringGetTimeEnd = SystemClock.elapsedRealtime()
-        PushListenerController.sendRegistrationToServer(PUSH_TYPE_SIMPLE, url)
+        val token = if (gateway.isNotEmpty()) {
+            val prefix = if (gateway.endsWith("/")) gateway else "$gateway/"
+            if (url.startsWith(FCM_SEND_PREFIX)) {
+                // FCM distributor (gCompat-UP) -- route through /fcm/<token> for VAPID signing
+                val fcmToken = url.substring(FCM_SEND_PREFIX.length)
+                "${prefix}fcm/$fcmToken"
+            } else if (gateway == DEFAULT_GATEWAY && host != null && (host == "ntfy.sh" || host.endsWith(".ntfy.sh"))) {
+                // ntfy.sh accepts Telegram PUT natively; bypass p2p.belloworld.it to avoid OCI IP rate limits
+                url
+            } else {
+                // Other distributors (Sunup, Prism, Mozilla Autopush, NextPush, etc.)
+                prefix + java.net.URLEncoder.encode(url, "UTF-8")
+            }
+        } else {
+            url
+        }
+        PushListenerController.sendRegistrationToServer(PUSH_TYPE_SIMPLE, token)
     }
 
     internal fun onLost(retry: Boolean) {

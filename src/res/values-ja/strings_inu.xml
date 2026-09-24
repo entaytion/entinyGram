@@ -20,6 +20,10 @@
     <string name="InuUnifiedPushDistributor">ディストリビューター</string>
     <string name="InuUnifiedPushNoDistributor">未設定</string>
     <string name="InuUnifiedPushNoDistributorInfo">先に ntfy などの UnifiedPush ディストリビューターをインストールしてください。</string>
+    <string name="InuUnifiedPushGateway">ゲートウェイ</string>
+    <string name="InuUnifiedPushGatewayInfo">WebPush POST と VAPID を必要とするディストリビューター (gCompat-UP、Sunup、Prism など) 用の書き換えプロキシ。直接の ntfy.sh エンドポイントは自動的にバイパスされます。</string>
+    <string name="InuUnifiedPushGatewayDirect">直接 (ゲートウェイなし)</string>
+    <string name="InuUnifiedPushGatewayDefault">デフォルト</string>
     <string name="InuDiagTitle">診断</string>
     <string name="InuDiagIdle">診断プロファイルはありません。開始するには、チャットで送られた .entinylog ファイルを開いてください。</string>
     <string name="InuDiagConfirm">診断プロファイル「%1$s」をオンにしますか？\n\n%2$s\n\nどこにも送信されません。自分でログを送るまで記録はこの端末に残ります。</string>
@@ -1017,7 +1021,7 @@
     <string name="InuAntiDeletion">削除防止</string>
     <string name="InuAppIconOldEntinygram">旧 entinyGram</string>
     <string name="InuCategoryAppearance">外観とレイアウト</string>
-    <string name="InuCategoryBackup">システムとバックアップ</string>
+    <string name="InuCategoryBackup">詳細設定</string>
     <string name="InuCategoryBehavior">動作とツール</string>
     <string name="InuCategoryChats">チャット</string>
     <string name="InuCategoryPrivacy">プライバシーとセキュリティ</string>

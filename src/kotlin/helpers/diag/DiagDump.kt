@@ -142,7 +142,8 @@ object DiagDump {
     private fun push(): String {
         val up = UnifiedPushHelper.isEnabled()
         return "type=${SharedConfig.pushType} tokenSet=${SharedConfig.pushString.isNotEmpty()} status='${SharedConfig.pushStringStatus}' " +
-            "unifiedPush=$up distributor=${if (up) UnifiedPushHelper.currentDistributor() else "-"}"
+            "unifiedPush=$up distributor=${if (up) UnifiedPushHelper.currentDistributor() else "-"} " +
+            "gateway=${if (up && UnifiedPushHelper.getGateway().isNotEmpty()) UnifiedPushHelper.getGateway() else "-"}"
     }
 
     private fun config(glob: String): String {

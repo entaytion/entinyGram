@@ -1473,6 +1473,7 @@ object InuConfig {
 
     // entiny: push through a UnifiedPush distributor (ntfy etc.) instead of Firebase
     val UNIFIED_PUSH = BoolItem("unified_push", false)
+    val UNIFIED_PUSH_GATEWAY = StringItem("unified_push_gateway", "https://p2p.belloworld.it/")
 
     @JvmField
     val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)

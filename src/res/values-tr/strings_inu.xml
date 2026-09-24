@@ -28,6 +28,10 @@
     <string name="InuUnifiedPushDistributor">Dağıtıcı</string>
     <string name="InuUnifiedPushNoDistributor">Ayarlanmadı</string>
     <string name="InuUnifiedPushNoDistributorInfo">Önce ntfy gibi bir UnifiedPush dağıtıcısı yükleyin.</string>
+    <string name="InuUnifiedPushGateway">Ağ geçidi</string>
+    <string name="InuUnifiedPushGatewayInfo">WebPush POST ve VAPID gerektiren dağıtıcılar için yeniden yazma proxy\'si (örn. gCompat-UP, Sunup, Prism). Doğrudan ntfy.sh uç noktaları bunu otomatik olarak atlar.</string>
+    <string name="InuUnifiedPushGatewayDirect">Doğrudan (ağ geçidi yok)</string>
+    <string name="InuUnifiedPushGatewayDefault">Varsayılan</string>
     <string name="InuDiagTitle">Tanılama</string>
     <string name="InuDiagIdle">Tanılama profili yok. Başlatmak için herhangi bir sohbette size gönderilen .entinylog dosyasını açın.</string>
     <string name="InuDiagConfirm">“%1$s” tanılama profili açılsın mı?\n\n%2$s\n\nHiçbir yere gönderilmez: siz logları gönderene kadar kayıtlar bu cihazda kalır.</string>
@@ -1013,7 +1017,7 @@
     <string name="InuAntiDeletion">Silinmeyi önleme</string>
     <string name="InuAppIconOldEntinygram">Eski entinyGram</string>
     <string name="InuCategoryAppearance">Görünüm ve Düzen</string>
-    <string name="InuCategoryBackup">Sistem ve Yedekleme</string>
+    <string name="InuCategoryBackup">Ek ayarlar</string>
     <string name="InuCategoryBehavior">Davranış ve Araçlar</string>
     <string name="InuCategoryChats">Sohbetler</string>
     <string name="InuCategoryPrivacy">Gizlilik ve Güvenlik</string>

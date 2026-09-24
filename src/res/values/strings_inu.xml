@@ -36,6 +36,10 @@
     <string name="InuUnifiedPushDistributor">Distributor</string>
     <string name="InuUnifiedPushNoDistributor">Not set</string>
     <string name="InuUnifiedPushNoDistributorInfo">Install a UnifiedPush distributor first, for example ntfy.</string>
+    <string name="InuUnifiedPushGateway">Gateway</string>
+    <string name="InuUnifiedPushGatewayInfo">Rewrite proxy for distributors that require WebPush POST and VAPID (e.g. gCompat-UP, Sunup, Prism). Direct ntfy.sh endpoints bypass this automatically.</string>
+    <string name="InuUnifiedPushGatewayDirect">Direct (no gateway)</string>
+    <string name="InuUnifiedPushGatewayDefault">Default</string>
     <string name="InuDiagTitle">Diagnostics</string>
     <string name="InuDiagIdle">No diagnostics profile. To start one, open a .entinylog file sent to you in any chat.</string>
     <string name="InuDiagConfirm">Turn on diagnostics profile “%1$s”?\n\n%2$s\n\nNothing is sent anywhere: records stay on this device until you send logs yourself.</string>
@@ -1293,7 +1297,7 @@
     <string name="InuCategoryChats">Chats</string>
     <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
     <string name="InuCategoryPrivacy">Privacy &amp; Security</string>
-    <string name="InuCategoryBackup">System &amp; Backup</string>
+    <string name="InuCategoryBackup">Additional</string>
 
     <string name="InuGhostMode">Ghost Mode</string>
     <string name="InuGhostModeMaster">Ghost Mode</string>
