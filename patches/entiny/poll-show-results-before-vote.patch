@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -6838,7 +6838,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6844,7 +6844,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (!pollChanged && newResults != lastPollResults) {
                  pollChanged = true;
              }
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                  pollChanged = true;
              }
              if (lastPoll != newPoll && (lastPoll != null && lastPoll.closed) != newPoll.closed) {
-@@ -6851,7 +6852,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6857,7 +6858,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              animatePollAvatars = false;
              if (pollChanged && attachedToWindow) {
                  pollAnimationProgressTime = 0.0f;
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
                      pollUnvoteInProgress = true;
                  }
                  animatePollAvatars = lastPollResultsVoters == 0 || lastPollResultsVoters != 0 && newVoters == 0;
-@@ -11383,7 +11384,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -11389,7 +11390,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              total_voters = media.results.total_voters;
              timerTransitionProgress = media.poll.close_date - ConnectionsManager.getInstance(currentAccount).getCurrentTime() < 60 ? 0.0f : 1.0f;
              pollClosed = media.poll.closed;

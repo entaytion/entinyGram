@@ -40,7 +40,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreato
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
-@@ -7725,7 +7725,7 @@ public class AlertsCreator {
+@@ -7726,7 +7726,7 @@ public class AlertsCreator {
          desu.inugram.helpers.dialogs.AccountOrderHelper.sort(inu_accountNumbers);
          for (int a : inu_accountNumbers) {
              TLRPC.User u = UserConfig.getInstance(a).getCurrentUser();
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.Cells.ActiveGiftAuctionsHintCell;
  import org.telegram.ui.Cells.AnimatedStatusView;
  import org.telegram.ui.Cells.ArchiveHintInnerCell;
-@@ -3914,6 +3915,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3908,6 +3909,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              imageView.getImageReceiver().setCurrentAccount(currentAccount);
              Drawable thumb = user != null && user.photo != null && user.photo.strippedBitmap != null ? user.photo.strippedBitmap : avatarDrawable;
              imageView.setImage(ImageLocation.getForUserOrChat(currentAccount, user, ImageLocation.TYPE_SMALL), "50_50", ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_STRIPPED), "50_50", thumb, user);
@@ -103,7 +103,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/T
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -1271,7 +1271,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1274,7 +1274,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
      private void switchToAvailableAccountOrLogout() {
          int account = -1;
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
                  account = a;
                  break;
              }
-@@ -1290,6 +1290,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1293,6 +1293,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                  rightActionBarLayout.rebuildLogout();
              }
              presentFragment(new IntroActivity().setOnLogout());

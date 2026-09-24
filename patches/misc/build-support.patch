@@ -4,7 +4,7 @@ Date: Tue, 21 Apr 2026 07:47:50 +0300
 Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
 
 ---
- TMessagesProj/build.gradle                    | 108 ++++------------
+ TMessagesProj/build.gradle                    |  94 ++++----------
  TMessagesProj/proguard-rules.pro              |  13 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
@@ -16,13 +16,13 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  build.gradle                                  |  14 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |  40 +++++-
- 12 files changed, 146 insertions(+), 230 deletions(-)
+ 12 files changed, 146 insertions(+), 216 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -15,6 +15,7 @@ idea {
+@@ -22,6 +22,7 @@ idea {
          ]
      }
  }
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
  
  repositories {
      mavenCentral()
-@@ -31,6 +32,7 @@ configurations.all {
+@@ -38,6 +39,7 @@ configurations.all {
  }
  
  dependencies {
@@ -38,7 +38,7 @@ index 0000000..0000000 100644
      implementation 'androidx.core:core:1.16.0'
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
-@@ -59,7 +61,7 @@ dependencies {
+@@ -67,7 +69,7 @@ dependencies {
      implementation 'com.google.android.gms:play-services-location:21.0.1'
      implementation 'com.google.android.gms:play-services-wallet:19.1.0'
      implementation 'com.googlecode.mp4parser:isoparser:1.0.6'
@@ -47,8 +47,8 @@ index 0000000..0000000 100644
      implementation 'com.google.mlkit:language-id:17.0.6'
      implementation 'com.android.billingclient:billing:8.0.0'
      implementation 'com.google.code.gson:gson:2.11.0'
-@@ -83,6 +85,10 @@ dependencies {
-     }
+@@ -97,6 +99,10 @@ dependencies {
+     api project(":TMessagesProj_Modules:media3:media-lib-session")
      api project(':jlatexmath')
  
 +    // inu
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
  //    implementation 'com.google.mlkit:translate:17.0.3'
  
      constraints {
-@@ -94,8 +100,6 @@ dependencies {
+@@ -108,8 +114,6 @@ dependencies {
          }
      }
      implementation 'com.google.android.recaptcha:recaptcha:18.7.1'
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
  }
  
  android {
-@@ -120,24 +124,29 @@ android {
+@@ -134,24 +138,29 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -103,12 +103,11 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -150,77 +159,13 @@ android {
+@@ -162,64 +171,13 @@ android {
+             shrinkResources false
              multiDexEnabled true
-             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
              ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
--            buildConfigField "String", "APP_CENTER_HASH", "\"\""
 -            buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_PRIVATE_URL") + "\""
 +            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
 +            buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
@@ -123,12 +122,9 @@ index 0000000..0000000 100644
 -        HA_private {
 -            matchingFallbacks = ['release']
 -            jniDebuggable false
--            minifyEnabled true
 -            multiDexEnabled true
--            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
 -            ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
--            buildConfigField "String", "APP_CENTER_HASH", "\"" + getProps("APP_CENTER_HASH_PRIVATE") + "\""
 -            buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_PRIVATE_URL") + "\""
 -            buildConfigField "boolean", "DEBUG_VERSION", "true"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
@@ -139,12 +135,9 @@ index 0000000..0000000 100644
 -        HA_public {
 -            matchingFallbacks = ['release']
 -            jniDebuggable false
--            minifyEnabled true
 -            multiDexEnabled true
--            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
 -            ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
--            buildConfigField "String", "APP_CENTER_HASH", "\"" + getProps("APP_CENTER_HASH_PUBLIC") + "\""
 -            buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_PUBLIC_URL") + "\""
 -            buildConfigField "boolean", "DEBUG_VERSION", "true"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "false"
@@ -155,12 +148,9 @@ index 0000000..0000000 100644
 -        HA_hardcore {
 -            matchingFallbacks = ['release']
 -            jniDebuggable false
--            minifyEnabled true
 -            multiDexEnabled true
--            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
 -            ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
--            buildConfigField "String", "APP_CENTER_HASH", "\"" + getProps("APP_CENTER_HASH_HARDCORE") + "\""
 -            buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_HARDCORE_URL") + "\""
 -            buildConfigField "boolean", "DEBUG_VERSION", "true"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "true"
@@ -171,12 +161,9 @@ index 0000000..0000000 100644
 -        standalone {
 -            matchingFallbacks = ['release']
 -            jniDebuggable false
--            minifyEnabled true
 -            multiDexEnabled true
--            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
 -            ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
--            buildConfigField "String", "APP_CENTER_HASH", "\"\""
 -            buildConfigField "String", "BETA_URL", "\"\""
 -            buildConfigField "boolean", "DEBUG_VERSION", "false"
 -            buildConfigField "boolean", "DEBUG_PRIVATE_VERSION", "false"
@@ -185,12 +172,11 @@ index 0000000..0000000 100644
          }
  
          release {
-@@ -230,13 +175,13 @@ android {
+@@ -227,12 +185,13 @@ android {
+             shrinkResources false
              multiDexEnabled true
-             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
              ndk.debugSymbolLevel = 'FULL'
 -            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
--            buildConfigField "String", "APP_CENTER_HASH", "\"\""
 -            buildConfigField "String", "BETA_URL", "\"\""
 +            buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
 +            buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
@@ -203,7 +189,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -254,7 +199,6 @@ def getProps(String propName) {
+@@ -250,7 +209,6 @@ def getProps(String propName) {
          return "";
      }
  }
@@ -215,7 +201,7 @@ diff --git a/TMessagesProj/proguard-rules.pro b/TMessagesProj/proguard-rules.pro
 index 0000000..0000000 100644
 --- a/TMessagesProj/proguard-rules.pro
 +++ b/TMessagesProj/proguard-rules.pro
-@@ -111,6 +111,19 @@
+@@ -51,6 +51,19 @@
  -keep class ru.noties.jlatexmath.** { *; }
  -dontwarn org.scilab.forge.jlatexmath.**
  
@@ -233,8 +219,8 @@ index 0000000..0000000 100644
 +# /inu
 +
  # Use -keep to explicitly keep any other classes shrinking would remove
- -dontoptimize
- -dontobfuscate
+ #-dontoptimize
+ #-dontobfuscate
 \ No newline at end of file
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
@@ -297,7 +283,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -1036,7 +1036,7 @@ public class ConnectionsManager extends BaseController {
+@@ -1054,7 +1054,7 @@ public class ConnectionsManager extends BaseController {
          if (Build.VERSION.SDK_INT < 19) {
              return USE_IPV4_ONLY;
          }
@@ -427,13 +413,14 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -1,4 +1,5 @@
+@@ -1,5 +1,6 @@
  apply plugin: 'com.android.application'
+ apply plugin: 'org.telegram.build-app-plugin'
 +apply plugin: 'kotlin-android'
  
  repositories {
      mavenCentral()
-@@ -16,18 +17,24 @@ configurations.all {
+@@ -17,18 +18,24 @@ configurations.all {
  
  dependencies {
      implementation project(':TMessagesProj')
@@ -460,12 +447,16 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -37,20 +44,11 @@ android {
+@@ -38,8 +45,6 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
 -
 -        coreLibraryDesugaringEnabled true
+     }
+ 
+     androidResources {
+@@ -48,15 +53,8 @@ android {
      }
  
      signingConfigs {
@@ -482,7 +473,7 @@ index 0000000..0000000 100644
              storePassword RELEASE_STORE_PASSWORD
              keyAlias RELEASE_KEY_ALIAS
              keyPassword RELEASE_KEY_PASSWORD
-@@ -61,7 +59,7 @@ android {
+@@ -67,7 +65,7 @@ android {
          debug {
              debuggable true
              jniDebuggable true
@@ -491,7 +482,7 @@ index 0000000..0000000 100644
              applicationIdSuffix ".beta"
              minifyEnabled false
              shrinkResources false
-@@ -70,18 +68,6 @@ android {
+@@ -76,18 +74,6 @@ android {
              ndk.debugSymbolLevel = 'FULL'
          }
  
@@ -501,16 +492,16 @@ index 0000000..0000000 100644
 -            signingConfig signingConfigs.release
 -            applicationIdSuffix ".web"
 -            minifyEnabled true
--            shrinkResources false
+-            shrinkResources true
 -            multiDexEnabled true
--            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
+-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
 -            ndk.debugSymbolLevel = 'FULL'
 -        }
 -
          release {
              debuggable false
              jniDebuggable false
-@@ -95,96 +81,39 @@ android {
+@@ -101,96 +87,39 @@ android {
      }
  
      sourceSets.debug {
@@ -619,7 +610,7 @@ index 0000000..0000000 100644
              }
          }
      }
-@@ -197,6 +126,10 @@ android {
+@@ -203,6 +132,10 @@ android {
      lintOptions {
          checkReleaseBuilds false
      }
@@ -634,7 +625,7 @@ diff --git a/TMessagesProj_AppTests/build.gradle b/TMessagesProj_AppTests/build.
 index 0000000..0000000 100644
 --- a/TMessagesProj_AppTests/build.gradle
 +++ b/TMessagesProj_AppTests/build.gradle
-@@ -23,8 +23,8 @@ dependencies {
+@@ -24,8 +24,8 @@ dependencies {
      androidTestImplementation 'junit:junit:4.13.2'
      androidTestImplementation 'androidx.test.ext:junit:1.1.5'
      androidTestImplementation 'androidx.test:runner:1.5.2'
@@ -645,7 +636,7 @@ index 0000000..0000000 100644
      androidTestImplementation "com.appmattus.fixture:fixture:1.2.0"
  }
  
-@@ -167,4 +167,3 @@ android {
+@@ -169,4 +169,3 @@ android {
          checkReleaseBuilds false
      }
  }
@@ -663,7 +654,7 @@ index 0000000..0000000 100644
      }
  }
  repositories {
-@@ -33,4 +33,14 @@ subprojects {
+@@ -52,4 +52,14 @@ subprojects {
              }
          }
      }
@@ -691,13 +682,13 @@ index 0000000..0000000 100644
 -android.enableJetifier=true
 +android.enableJetifier=false
  android.defaults.buildfeatures.buildconfig=true
- android.nonTransitiveRClass=false
- android.nonFinalResIds=false
+ android.enableR8.fullMode=true
+ android.r8.optimizedResourceShrinking=true
 diff --git a/settings.gradle b/settings.gradle
 index 0000000..0000000 100644
 --- a/settings.gradle
 +++ b/settings.gradle
-@@ -1,8 +1,40 @@
+@@ -1,9 +1,41 @@
 +import java.nio.channels.FileChannel
 +import java.nio.channels.FileLock
 +import java.nio.file.StandardOpenOption
@@ -742,3 +733,4 @@ index 0000000..0000000 100644
 +include ':InuCore'
  include ':jlatexmath'
  project(':jlatexmath').projectDir = file('TMessagesProj/lib/jlatexmath/jlatexmath')
+ 

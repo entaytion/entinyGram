@@ -17,7 +17,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -6087,6 +6087,13 @@ public class AndroidUtilities {
+@@ -6029,6 +6029,13 @@ public class AndroidUtilities {
              return;
          }
  
@@ -111,7 +111,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -9040,6 +9040,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -9034,6 +9034,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (blurredView == null) {
              return;
          }

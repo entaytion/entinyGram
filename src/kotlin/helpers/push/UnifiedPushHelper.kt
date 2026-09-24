@@ -3,7 +3,6 @@ package desu.inugram.helpers.push
 import android.content.Context
 import android.os.SystemClock
 import desu.inugram.InuConfig
-import desu.inugram.helpers.diag.DiagLog
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
@@ -71,7 +70,6 @@ object UnifiedPushHelper {
             val saved = UnifiedPush.getSavedDistributor(context)
             val target = preferred?.takeIf { it in all } ?: saved?.takeIf { it in all } ?: all.first()
             if (target != saved) UnifiedPush.saveDistributor(context, target)
-            DiagLog.log("push", "register distributor=$target installed=$all")
             UnifiedPush.register(context, INSTANCE, "entinyGram", null)
             awaitAnswer()
         } catch (e: Throwable) {
@@ -81,7 +79,6 @@ object UnifiedPushHelper {
 
     // entiny: switching providers must drop the old server registration, or it keeps waking the wrong channel
     fun setEnabled(enabled: Boolean, distributor: String? = null) {
-        DiagLog.trace("push", "setEnabled $enabled distributor=$distributor previousType=${SharedConfig.pushType} tokenSet=${SharedConfig.pushString.isNotEmpty()}")
         if (InuConfig.UNIFIED_PUSH.value == enabled && distributor == null) return
         unregisterFromTelegram(SharedConfig.pushType, SharedConfig.pushString)
         InuConfig.UNIFIED_PUSH.value = enabled
@@ -138,7 +135,6 @@ object UnifiedPushHelper {
     private fun applyEndpoint(url: String) {
         val host = try { android.net.Uri.parse(url).host?.lowercase() } catch (_: Throwable) { null }
         val gateway = getGateway()
-        DiagLog.log("push", "endpoint host=$host gateway=${gateway.isNotEmpty()} enabled=${isEnabled()}")
         if (!isEnabled()) return
         cancelRetry()
         SharedConfig.pushStringGetTimeEnd = SystemClock.elapsedRealtime()
@@ -162,7 +158,6 @@ object UnifiedPushHelper {
     }
 
     internal fun onLost(retry: Boolean) {
-        DiagLog.log("push", "registration lost retry=$retry enabled=${isEnabled()}")
         AndroidUtilities.runOnUIThread { cancelAnswerTimeout() }
         // a late callback after switching back to FCM must not wipe the FCM token
         if (!isEnabled()) return
@@ -174,7 +169,6 @@ object UnifiedPushHelper {
 
     // wake every account; the notification itself arrives over the regular MTProto connection
     internal fun onWake() {
-        DiagLog.log("push", "wake from distributor")
         for (a in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
             if (UserConfig.getInstance(a).isClientActivated) {
                 ConnectionsManager.onInternalPushReceived(a)

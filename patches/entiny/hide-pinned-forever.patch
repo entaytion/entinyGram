@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -28802,7 +28802,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -28788,7 +28788,7 @@ public class ChatActivity extends BaseFragment implements
          String callLink = callLink(pinnedMessageObject);
          pinnedMessageButtonShown = botButton != null || !TextUtils.isEmpty(callLink);
          SharedPreferences preferences = MessagesController.getNotificationsSettings(currentAccount);

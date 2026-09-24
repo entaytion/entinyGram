@@ -81,7 +81,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TelegramMediaSes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TelegramMediaSession.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TelegramMediaSession.java
-@@ -89,6 +89,8 @@ public class TelegramMediaSession {
+@@ -90,6 +90,8 @@ public class TelegramMediaSession {
      private Paint roundPaint;
      private RectF bitmapRect;
  
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
      private TelegramMediaSession(Context appContext) {
          this.appContext = appContext;
          this.currentAccount = UserConfig.selectedAccount;
-@@ -120,12 +122,12 @@ public class TelegramMediaSession {
+@@ -121,12 +123,12 @@ public class TelegramMediaSession {
          updateRepeatMode();
          updateShuffleMode();
  
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
      }
  
      private void onAccountSwitched() {
-@@ -187,6 +189,42 @@ public class TelegramMediaSession {
+@@ -188,6 +190,42 @@ public class TelegramMediaSession {
          }
      }
  

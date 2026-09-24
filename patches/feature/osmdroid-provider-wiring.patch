@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -101,6 +101,11 @@ public class ApplicationLoader extends Application {
+@@ -102,6 +102,11 @@ public class ApplicationLoader extends Application {
          return mapsProvider;
      }
  

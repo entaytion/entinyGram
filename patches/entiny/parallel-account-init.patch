@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -250,18 +250,18 @@ public class ApplicationLoader extends Application {
+@@ -251,18 +251,18 @@ public class ApplicationLoader extends Application {
  
          SharedConfig.loadConfig();
          SharedPrefsHelper.init(applicationContext);
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -279,6 +279,21 @@ public class ApplicationLoader extends Application {
+@@ -280,6 +280,21 @@ public class ApplicationLoader extends Application {
          BillingController.getInstance().startConnection();
      }
  
@@ -82,7 +82,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -179,10 +179,16 @@ public class ConnectionsManager extends BaseController {
+@@ -186,10 +186,16 @@ public class ConnectionsManager extends BaseController {
      private static int lastClassGuid = 1;
      
      private static final ConnectionsManager[] Instance = new ConnectionsManager[UserConfig.MAX_ACCOUNT_COUNT];

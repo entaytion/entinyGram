@@ -64,8 +64,6 @@ object InuHooks {
             ProxyVpnHelper.init(context)
             UrlCleanerHelper.preload()
         }
-        // entiny: re-arm probes of a diagnostics profile imported earlier
-        AndroidUtilities.runOnUIThread { desu.inugram.helpers.diag.DiagLog.init() }
     }
 
     private val newMessagesObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->

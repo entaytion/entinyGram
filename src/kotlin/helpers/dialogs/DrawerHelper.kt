@@ -390,8 +390,8 @@ object DrawerHelper {
             .apply()
         if (proxy != null) {
             ConnectionsManager.setProxySettings(
-                true, proxy.address, proxy.port,
-                proxy.username, proxy.password, proxy.secret
+                true, proxy.settings.address, proxy.settings.port,
+                proxy.settings.user, proxy.settings.password, proxy.settings.secret
             )
         } else {
             ConnectionsManager.setProxySettings(false, "", 0, "", "", "")

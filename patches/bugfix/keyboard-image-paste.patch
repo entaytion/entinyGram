@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -5350,7 +5350,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -5373,7 +5373,8 @@ public class ChatActivityEnterView extends FrameLayout implements
                              return false;
                          }
                      }

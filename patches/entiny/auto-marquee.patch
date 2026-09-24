@@ -755,7 +755,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -4164,7 +4164,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -4156,7 +4156,7 @@ public class ChatActivity extends BaseFragment implements
          }
          avatarContainer = new ChatAvatarContainer(context, this, currentEncryptedChat != null, themeDelegate) {
              @Override
@@ -764,7 +764,7 @@ index 0000000..0000000 100644
                  if (currentUser != null && currentUser.linked_community_id != 0) {
                      showDialog(new CommunitySheet(ChatActivity.this, currentUser.linked_community_id));
                      return true;
-@@ -4175,6 +4175,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -4167,6 +4167,16 @@ public class ChatActivity extends BaseFragment implements
                  return false;
              }
  
@@ -781,7 +781,7 @@ index 0000000..0000000 100644
              @Override
              protected boolean useAnimatedSubtitle() {
                  return chatMode == MODE_SAVED;
-@@ -4349,6 +4359,39 @@ public class ChatActivity extends BaseFragment implements
+@@ -4341,6 +4351,39 @@ public class ChatActivity extends BaseFragment implements
              headerItem.inu_reorderable = true;
              otherIcon.addView(headerItem.getIconView());
              headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
@@ -821,7 +821,7 @@ index 0000000..0000000 100644
  
              if (currentUser != null && currentUser.self && chatMode != MODE_SAVED) {
                  savedChatsItem = headerItem.lazilyAddSubItem(view_as_topics, R.drawable.msg_topics, LocaleController.getString(R.string.SavedViewAsChats));
-@@ -4560,7 +4603,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -4552,7 +4595,11 @@ public class ChatActivity extends BaseFragment implements
  
          if (chatMode == 0 && (!isThreadChat() || isTopic) && !isReport()) {
              attachItem = menu.lazilyAddItem(chat_menu_attach, otherIcon, themeDelegate);
@@ -834,7 +834,7 @@ index 0000000..0000000 100644
              attachItem.setOverrideMenuClick(true);
              attachItem.setAllowCloseAnimation(false);
              attachItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
-@@ -4611,18 +4658,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -4603,18 +4650,14 @@ public class ChatActivity extends BaseFragment implements
              BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
              ChatObject.isForum(currentChat));
  
@@ -857,7 +857,7 @@ index 0000000..0000000 100644
          }
  
          chatInputViewsContainer = new ChatInputViewsContainer(context);
-@@ -30021,10 +30064,45 @@ public class ChatActivity extends BaseFragment implements
+@@ -30007,10 +30050,45 @@ public class ChatActivity extends BaseFragment implements
  
      Bulletin.Delegate bulletinDelegate;
  
@@ -907,7 +907,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetW
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/BottomSheetWithRecyclerListView.java
-@@ -407,6 +407,7 @@ public abstract class BottomSheetWithRecyclerListView extends BottomSheet {
+@@ -502,6 +502,7 @@ public abstract class BottomSheetWithRecyclerListView extends BottomSheet {
                  }
              });
  
@@ -1437,7 +1437,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3245,6 +3245,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3239,6 +3239,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
      }
  

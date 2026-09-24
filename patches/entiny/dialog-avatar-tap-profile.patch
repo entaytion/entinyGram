@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -4547,6 +4547,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -4541,6 +4541,18 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                              dialogCell.avatarImage.getImageX(), dialogCell.avatarImage.getImageY(),
                              dialogCell.avatarImage.getImageX2(), dialogCell.avatarImage.getImageY2()
                      );

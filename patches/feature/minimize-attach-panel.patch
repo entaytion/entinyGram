@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13701,8 +13701,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -13693,8 +13693,11 @@ public class ChatActivity extends BaseFragment implements
              chatAttachAlert.setMaxSelectedPhotos(-1, true);
          }
          chatAttachAlert.enableDefaultMode();
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          chatAttachAlert.parentThemeDelegate = themeDelegate;
          showDialog(chatAttachAlert);
      }
-@@ -30141,6 +30144,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -30127,6 +30130,7 @@ public class ChatActivity extends BaseFragment implements
          super.onResume();
          checkShowBlur(false);
          inu_updateMenuSlotAvatar();
@@ -39,7 +39,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -641,6 +641,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -640,6 +640,7 @@ public class ChatActivityEnterView extends FrameLayout implements
      private LinearLayout attachLayout;
      private ViewPropertyAnimator attachButtonAnimator;
      private ImageView attachButton;
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
      private AiButtonDrawable aiButtonIcon;
      private ImageView aiButton;
      private ImageView richButton;
-@@ -2814,6 +2815,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -2837,6 +2838,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                      if (getAlpha() < 0.5f) return false;
                      return super.dispatchTouchEvent(event);
                  }

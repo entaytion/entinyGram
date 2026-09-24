@@ -80,7 +80,7 @@ object ProxyVpnHelper {
             MessagesController.getGlobalMainSettings().edit {
                 putBoolean("proxy_enabled", true)
             }
-            ConnectionsManager.setProxySettings(true, proxy.address, proxy.port, proxy.username, proxy.password, proxy.secret)
+            ConnectionsManager.setProxySettings(true, proxy.settings.address, proxy.settings.port, proxy.settings.user, proxy.settings.password, proxy.settings.secret)
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged)
         } finally {
             applying = false

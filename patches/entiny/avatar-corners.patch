@@ -39,7 +39,7 @@ index 0000000..0000000 100644
          if (parentObject == null) {
              parentObject = object;
          }
-@@ -1398,10 +1402,12 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1407,10 +1411,12 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                          if (isRoundRect && useRoundRadius) {
                              try {
                                  if (canvas != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                                      }
                                  }
                              } catch (Exception e) {
-@@ -1508,7 +1514,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1517,7 +1523,9 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                          if (isRoundRect && useRoundRadius) {
                              try {
                                  if (canvas != null) {
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
                                          if (reactionLastFrame) {
                                              AndroidUtilities.rectTmp.set(roundRect);
                                              AndroidUtilities.rectTmp.inset(-(drawRegion.width() * ReactionLastFrame.LAST_FRAME_SCALE - drawRegion.width()) / 2f, -(drawRegion.height() * ReactionLastFrame.LAST_FRAME_SCALE - drawRegion.height()) / 2f);
-@@ -1517,7 +1525,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+@@ -1526,7 +1534,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
                                              canvas.drawRect(roundRect, roundPaint);
                                          }
                                      } else {

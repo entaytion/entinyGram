@@ -97,6 +97,7 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
     - Keep `FEATURES.md` feature descriptions short, crisp, and directly to the point — mirroring the concise inugram style.
     - **NEVER write essays, design tirades, or multi-paragraph changelog entries in `FEATURES.md`.** One clear sentence or a few compact sub-bullets explaining what the user gets.
 21. **WIP Features in Changelogs:** If a commit mentions `wip` (work in progress) anywhere (subject or body), every changelog / release note entry for that feature MUST say the feature is untested and unstable, and ask users to report bugs (e.g. "⚠️ work in progress: untested and may be unstable — please report any bugs").
+22. **Telegram Version Bumps in Changelogs:** When a commit updates the stock Telegram base, say who did it: our own rebase onto DrKLO (e.g. `[*] rebase to 12.10.4 (7099)` done by us before inugram) → "Updated to Telegram X.Y.Z (ported by entinyGram)"; an inugram merge that brings the new base → "Updated to Telegram X.Y.Z (via inugram)". Never credit inugram for a base update we ported ourselves.
 
 > You are allowed to violate these rules only if the user explicitly asks.
 

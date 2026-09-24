@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14000,63 +14000,67 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13994,63 +13994,67 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else {
              isCurrentThemeDark = Theme.isCurrentThemeDark();
          }
@@ -128,7 +128,7 @@ index 0000000..0000000 100644
          if (ApplicationLoader.applicationLoaderInstance != null) {
              ApplicationLoader.applicationLoaderInstance.addItemOptions(io);
          }
-@@ -14084,7 +14088,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14078,7 +14082,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }

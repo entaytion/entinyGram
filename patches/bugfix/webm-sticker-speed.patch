@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFile
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
-@@ -1312,8 +1312,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+@@ -1316,8 +1316,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
  
      @UiThread
      private void updateCurrentFrameInternal(long now, boolean updateInBackground) {

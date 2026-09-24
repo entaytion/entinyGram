@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCac
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/utils/BitmapsCache.java
-@@ -100,7 +100,7 @@ public class BitmapsCache {
+@@ -96,7 +96,7 @@ public class BitmapsCache {
              fileTmo.mkdir();
              mkdir = true;
          }
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFile
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
-@@ -1235,7 +1235,6 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+@@ -1239,7 +1239,6 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
          if (cacheGenerateDecoder == null) {
              return -1;
          }
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
          if (generatingCacheBitmap == null) {
              generatingCacheBitmap = Bitmap.createBitmap(metaData[0], metaData[1], Bitmap.Config.ARGB_8888);
          }
-@@ -1250,12 +1249,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+@@ -1254,12 +1253,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
              }
          }
          lastMetadata = metaData[3];
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
          cacheGenerateTimestamp = metaData[3];
          return 1;
      }
-@@ -1265,8 +1259,6 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+@@ -1269,8 +1263,6 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
          if (bitmap == null) {
              bitmap = Bitmap.createBitmap(renderingWidth, renderingHeight, Bitmap.Config.ARGB_8888);
          }
@@ -56,7 +56,7 @@ index 0000000..0000000 100644
          AnimatedFileNative tempDecoder = AnimatedFileNative.createDecoderFrom(path.getAbsolutePath(), metaData, currentAccount, streamFileSize, stream, false);
          if (tempDecoder == null) {
              return bitmap;
-@@ -1276,14 +1268,25 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+@@ -1280,14 +1272,25 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
          }
          tempDecoder.getVideoFrame(generatingCacheBitmap, false, startTime, endTime, true);
          tempDecoder.recycle();

@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -10019,6 +10019,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -10025,6 +10025,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      if (w == 0 || h == 0) {
                          w = h = dp(150);
                      }

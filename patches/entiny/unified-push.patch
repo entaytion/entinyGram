@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -51,6 +51,7 @@ dependencies {
+@@ -59,6 +59,7 @@ dependencies {
      compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
      compileOnly 'com.google.j2objc:j2objc-annotations:2.8'
      implementation 'com.google.firebase:firebase-messaging:22.0.0'
@@ -45,7 +45,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -111,6 +111,9 @@ public class ApplicationLoader extends Application {
+@@ -112,6 +112,9 @@ public class ApplicationLoader extends Application {
      }
  
      public static PushListenerController.IPushListenerServiceProvider getPushProvider() {

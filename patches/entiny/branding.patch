@@ -37,7 +37,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -84,7 +84,9 @@ dependencies {
+@@ -98,7 +98,9 @@ dependencies {
      api project(':jlatexmath')
  
      // inu
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
      // end inu
  
  //    implementation 'com.google.mlkit:translate:17.0.3'
-@@ -106,6 +108,12 @@ android {
+@@ -120,6 +122,12 @@ android {
  
      sourceSets.main.jniLibs.srcDirs = ['./jni/']
  
@@ -254,7 +254,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
-@@ -1554,10 +1554,10 @@ public class SharedConfig {
+@@ -1536,10 +1536,10 @@ public class SharedConfig {
      public static void checkSaveToGalleryFiles() {
          Utilities.globalQueue.postRunnable(() -> {
              try {
@@ -544,7 +544,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -25,7 +25,7 @@ android {
+@@ -26,7 +26,7 @@ android {
      compileSdkVersion 36
      buildToolsVersion '36.0.0'
  

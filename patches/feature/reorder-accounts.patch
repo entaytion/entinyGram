@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreato
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
-@@ -7718,7 +7718,12 @@ public class AlertsCreator {
+@@ -7719,7 +7719,12 @@ public class AlertsCreator {
  
          final LinearLayout linearLayout = new LinearLayout(parentActivity);
          linearLayout.setOrientation(LinearLayout.VERTICAL);

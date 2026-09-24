@@ -216,7 +216,7 @@ index 0000000..0000000 100644
  import me.vkryl.android.animator.BoolAnimator;
  import me.vkryl.android.animator.FactorAnimator;
  import me.vkryl.android.util.ClickHelper;
-@@ -2868,7 +2870,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2867,7 +2869,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              allowBots = arguments.getBoolean("allowBots", true);
              closeFragment = arguments.getBoolean("closeFragment", true);
              allowGlobalSearch = arguments.getBoolean("allowGlobalSearch", true);
@@ -225,7 +225,7 @@ index 0000000..0000000 100644
  
              byte[] requestPeerTypeBytes = arguments.getByteArray("requestPeerType");
              if (requestPeerTypeBytes != null) {
-@@ -2979,8 +2981,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2977,8 +2979,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  
          BirthdayController.getInstance(currentAccount).check();
@@ -236,7 +236,7 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -13791,6 +13793,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13785,6 +13787,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          }
  
@@ -245,7 +245,7 @@ index 0000000..0000000 100644
          io.show();
          io.setTranslationY(-dp(64));
      }
-@@ -14176,8 +14180,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14170,8 +14174,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int additionalList = dp(48);
@@ -446,7 +446,7 @@ index 0000000..0000000 100644
              }
          } else if (id == NotificationCenter.mainUserInfoChanged) {
              if (tabs != null && tabs[INDEX_PROFILE] != null) {
-@@ -1058,12 +1092,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1052,12 +1086,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void checkUi_fadeView() {
@@ -461,7 +461,7 @@ index 0000000..0000000 100644
          final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
          float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
          if (tabletLayout) {
-@@ -1076,10 +1110,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1070,10 +1104,15 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      }
  
      private void checkUi_tabsPosition() {
@@ -478,7 +478,7 @@ index 0000000..0000000 100644
  
          final float factor = animatorTabsVisible.getFloatValue();
          final float scale = lerp(0.85f, 1f, factor);
-@@ -1163,7 +1202,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1157,7 +1196,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
      private boolean accountSwitchHintShown;
  
      private void showAccountChangeHint() {
@@ -510,7 +510,7 @@ index 0000000..0000000 100644
  
          return true;
      }
-@@ -16947,8 +16948,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16946,8 +16947,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          }
  
          final int additionalList = dp(48);

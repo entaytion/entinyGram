@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -273,14 +273,19 @@ public class ApplicationLoader extends Application {
+@@ -274,14 +274,19 @@ public class ApplicationLoader extends Application {
  
          MediaController.getInstance();
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
@@ -39,7 +39,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -1208,6 +1208,12 @@ public class LocaleController {
+@@ -1214,6 +1214,12 @@ public class LocaleController {
      }
  
      private HashMap<String, String> getLocaleFileStrings(File file, boolean preserveEscapes) {
@@ -52,7 +52,7 @@ index 0000000..0000000 100644
          FileInputStream stream = null;
          reloadLastFile = false;
          FileLog.d("getLocaleFileStrings: reloadLastFile = false");
-@@ -1215,11 +1221,11 @@ public class LocaleController {
+@@ -1221,11 +1227,11 @@ public class LocaleController {
              if (!file.exists()) {
                  return new HashMap<>();
              }
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
              int eventType = parser.getEventType();
              String name = null;
              String value = null;
-@@ -1263,6 +1269,9 @@ public class LocaleController {
+@@ -1269,6 +1275,9 @@ public class LocaleController {
                  }
                  eventType = parser.next();
              }
@@ -76,14 +76,14 @@ index 0000000..0000000 100644
              return stringMap;
          } catch (Exception e) {
              try {
-@@ -2133,9 +2142,13 @@ public class LocaleController {
+@@ -2061,9 +2070,13 @@ public class LocaleController {
          is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
          systemDefaultLocale = newConfig.locale;
          if (languageOverride != null) {
 -            LocaleInfo toSet = currentLocaleInfo;
 -            currentLocaleInfo = null;
 -            applyLanguage(toSet, false, false, UserConfig.selectedAccount);
-+            if (currentLocaleInfo != null && !localeValues.isEmpty()) {
++            if (currentLocaleInfo != null && localizationExternalSize > 0) {
 +                applyLanguage(currentLocaleInfo, false, false, true, false, UserConfig.selectedAccount, null);
 +            } else {
 +                LocaleInfo toSet = currentLocaleInfo;
@@ -97,7 +97,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -669,7 +669,7 @@ public class ConnectionsManager extends BaseController {
+@@ -678,7 +678,7 @@ public class ConnectionsManager extends BaseController {
              packageId = "";
          }
  

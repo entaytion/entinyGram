@@ -43,7 +43,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/Emoji.java
-@@ -657,6 +657,7 @@ public class Emoji {
+@@ -590,6 +590,7 @@ public class Emoji {
          if (SharedConfig.useSystemEmoji || cs == null || cs.length() == 0) {
              return cs;
          }
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
          Spannable s;
          if (!createNew && cs instanceof Spannable) {
              s = (Spannable) cs;
-@@ -925,7 +926,8 @@ public class Emoji {
+@@ -858,7 +859,8 @@ public class Emoji {
                  getDrawable().setAlpha(paint.getAlpha());
              }
              boolean needRestore = false;
@@ -155,7 +155,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmoj
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiSpan.java
-@@ -1107,6 +1107,7 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
+@@ -1114,6 +1114,7 @@ public class AnimatedEmojiSpan extends ReplacementSpan {
          private int cacheType = AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES;
          public TextViewEmojis(Context context) {
              super(context);

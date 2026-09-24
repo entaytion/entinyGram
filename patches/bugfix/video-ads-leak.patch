@@ -4,38 +4,14 @@ Date: Mon, 1 Jun 2026 18:26:33 +0400
 Subject: hopefully fix video ads leak
 
 ---
- .../telegram/messenger/video/VideoAds.java    | 27 ++++++++++++++++---
- 1 file changed, 23 insertions(+), 4 deletions(-)
+ .../org/telegram/messenger/video/VideoAds.java     | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.java b/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoAds.java
-@@ -108,13 +108,20 @@ public class VideoAds {
-         }
-     }
- 
--//    private static LruCache<VideoAdsLocation, VideoAds> cached = new LruCache<>(3);
--    private static HashMap<VideoAdsLocation, VideoAds> cached = new HashMap<>();
-+    private static LruCache<VideoAdsLocation, VideoAds> cached = new LruCache<VideoAdsLocation, VideoAds>(3) {
-+        @Override
-+        protected void entryRemoved(boolean evicted, VideoAdsLocation key, VideoAds oldValue, VideoAds newValue) {
-+            if (oldValue != null && oldValue != newValue) {
-+                oldValue.destroy();
-+            }
-+        }
-+    };
- 
-     public static void dropCache() {
--        cached.clear();
-+        cached.evictAll();
-     }
- 
-+
-     public static VideoAds make(
-         int currentAccount,
-         long dialogId,
-@@ -245,7 +252,7 @@ public class VideoAds {
+@@ -264,7 +264,7 @@ public static VideoAds make(
      private float currentMenuTranslationY;
  
      private void show() {
@@ -44,7 +20,7 @@ index 0000000..0000000 100644
          final TLRPC.TL_sponsoredMessage ad = ads.get(0);
          final long showTime = System.currentTimeMillis() - currentBulletinPassedTime;
          bulletinShowTime = showTime;
-@@ -551,6 +558,7 @@ public class VideoAds {
+@@ -570,6 +570,7 @@ public static VideoAds make(
      }
  
      public void stop() {
@@ -52,7 +28,7 @@ index 0000000..0000000 100644
          if (bulletin != null) {
              currentBulletinPassedTime = System.currentTimeMillis() - bulletinShowTime;
              if (!ads.isEmpty()) {
-@@ -570,6 +578,10 @@ public class VideoAds {
+@@ -589,6 +590,10 @@ public static VideoAds make(
              currentMenu.dismiss();
              currentMenu = null;
          }
@@ -63,7 +39,7 @@ index 0000000..0000000 100644
          bulletin = null;
          if (loading) {
              ConnectionsManager.getInstance(currentAccount).cancelRequest(requestId, true);
-@@ -578,6 +590,13 @@ public class VideoAds {
+@@ -597,6 +602,13 @@ public static VideoAds make(
          }
          AndroidUtilities.cancelRunOnUIThread(showRunnable);
          setWaitingPaused(true);

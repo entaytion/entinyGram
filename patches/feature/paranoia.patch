@@ -207,7 +207,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -10193,6 +10193,7 @@ public class MessagesStorage extends BaseController {
+@@ -10194,6 +10194,7 @@ public class MessagesStorage extends BaseController {
                      if (id == -1) {
                          continue;
                      }
@@ -215,7 +215,7 @@ index 0000000..0000000 100644
                      dids.add(id);
                      if (users != null && chats != null) {
                          if (DialogObject.isUserDialog(id)) {
-@@ -10278,6 +10279,7 @@ public class MessagesStorage extends BaseController {
+@@ -10279,6 +10280,7 @@ public class MessagesStorage extends BaseController {
                      if (id == -1) {
                          continue;
                      }
@@ -223,7 +223,7 @@ index 0000000..0000000 100644
                      dids.add(id);
                      if (DialogObject.isUserDialog(id)) {
                          usersToLoad.add(id);
-@@ -10312,6 +10314,7 @@ public class MessagesStorage extends BaseController {
+@@ -10313,6 +10315,7 @@ public class MessagesStorage extends BaseController {
                      if (DialogObject.isFolderDialogId(dialogId)) {
                          continue;
                      }
@@ -231,7 +231,7 @@ index 0000000..0000000 100644
                      if (add) {
                          dids.add(dialogId);
                      }
-@@ -18287,6 +18290,7 @@ public class MessagesStorage extends BaseController {
+@@ -18288,6 +18291,7 @@ public class MessagesStorage extends BaseController {
              }
              while (cursor.next()) {
                  long id = cursor.longValue(0);
@@ -239,7 +239,7 @@ index 0000000..0000000 100644
                  DialogsSearchAdapter.DialogSearchResult dialogSearchResult = new DialogsSearchAdapter.DialogSearchResult();
                  dialogSearchResult.date = cursor.intValue(1);
                  dialogsResult.put(id, dialogSearchResult);
-@@ -18562,6 +18566,9 @@ public class MessagesStorage extends BaseController {
+@@ -18563,6 +18567,9 @@ public class MessagesStorage extends BaseController {
                  cursor = getDatabase().queryFinalized("SELECT u.data, u.status, u.name, u.uid FROM users as u INNER JOIN contacts as c ON u.uid = c.uid");
                  while (cursor.next()) {
                      long uid = cursor.longValue(3);
@@ -479,7 +479,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -6964,7 +6964,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6958,7 +6958,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterOptions = null;
          }
          final ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
@@ -488,7 +488,7 @@ index 0000000..0000000 100644
              if (force || filterTabsView.getVisibility() != View.VISIBLE) {
                  boolean animatedUpdateItems = animated;
                  if (filterTabsView.getVisibility() != View.VISIBLE) {
-@@ -8621,7 +8621,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -8615,7 +8615,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              getMessagesController().filtersEnabled &&
              getMessagesController().dialogFiltersLoaded &&
              getMessagesController().dialogFilters != null &&
@@ -594,7 +594,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
-@@ -252,6 +252,9 @@ public class StoriesController {
+@@ -255,6 +255,9 @@ public class StoriesController {
          if (dialogId == 0) {
              return false;
          }
@@ -604,7 +604,7 @@ index 0000000..0000000 100644
          if (hasUploadingStories(dialogId)) {
              return true;
          }
-@@ -266,6 +269,9 @@ public class StoriesController {
+@@ -269,6 +272,9 @@ public class StoriesController {
      }
  
      public TL_stories.PeerStories getStoriesFromFullPeer(long dialogId) {
@@ -614,7 +614,7 @@ index 0000000..0000000 100644
          if (dialogId > 0) {
              TLRPC.UserFull userFull = MessagesController.getInstance(currentAccount).getUserFull(dialogId);
              if (userFull != null && userFull.stories != null && !userFull.stories.checkedExpired) {
-@@ -470,6 +476,7 @@ public class StoriesController {
+@@ -473,6 +479,7 @@ public class StoriesController {
          for (int i = 0; i < storiesResponse.peer_stories.size(); i++) {
              TL_stories.PeerStories userStories = storiesResponse.peer_stories.get(i);
              final long dialogId = DialogObject.getPeerDialogId(userStories.peer);
@@ -622,7 +622,7 @@ index 0000000..0000000 100644
              for (int j = 0; j < userStories.stories.size(); j++) {
                  TL_stories.StoryItem story = userStories.stories.get(j);
                  if (story instanceof TL_stories.TL_storyItemDeleted ||
-@@ -681,6 +688,9 @@ public class StoriesController {
+@@ -684,6 +691,9 @@ public class StoriesController {
      }
  
      public TL_stories.PeerStories getStories(long peerId) {
@@ -632,7 +632,7 @@ index 0000000..0000000 100644
          return allStoriesMap.get(peerId);
      }
  
-@@ -1072,6 +1082,9 @@ public class StoriesController {
+@@ -1075,6 +1085,9 @@ public class StoriesController {
      }
  
      public boolean hasSelfStories() {
@@ -642,7 +642,7 @@ index 0000000..0000000 100644
          long clientUserId = UserConfig.getInstance(currentAccount).clientUserId;
          TL_stories.PeerStories storyItem = allStoriesMap.get(clientUserId);
          if (storyItem != null && !storyItem.stories.isEmpty()) {
-@@ -1084,6 +1097,9 @@ public class StoriesController {
+@@ -1087,6 +1100,9 @@ public class StoriesController {
      }
  
      public int getSelfStoriesCount() {
@@ -652,7 +652,7 @@ index 0000000..0000000 100644
          int count = 0;
          TL_stories.PeerStories storyItem = allStoriesMap.get(UserConfig.getInstance(currentAccount).clientUserId);
          if (storyItem != null) {
-@@ -1338,6 +1354,9 @@ public class StoriesController {
+@@ -1341,6 +1357,9 @@ public class StoriesController {
      }
  
      public boolean hasUnreadStories(long dialogId) {
@@ -662,7 +662,7 @@ index 0000000..0000000 100644
          TL_stories.PeerStories userStories = allStoriesMap.get(dialogId);
          if (userStories == null) {
              userStories = getStoriesFromFullPeer(dialogId);
-@@ -3348,6 +3367,10 @@ public class StoriesController {
+@@ -3351,6 +3370,10 @@ public class StoriesController {
          }
  
          public void fill(ArrayList<MessageObject> arrayList, boolean showPhotos, boolean showVideos) {
@@ -673,7 +673,7 @@ index 0000000..0000000 100644
              tempArr.clear();
              if (type == TYPE_PINNED && albumId <= 0) {
                  for (int id : pinnedIds) {
-@@ -3735,6 +3758,9 @@ public class StoriesController {
+@@ -3738,6 +3761,9 @@ public class StoriesController {
          }
  
          protected boolean canLoad() {
@@ -683,7 +683,7 @@ index 0000000..0000000 100644
              if (lastLoadTime == null) {
                  return true;
              }
-@@ -3796,6 +3822,9 @@ public class StoriesController {
+@@ -3799,6 +3825,9 @@ public class StoriesController {
              if (loading || (done || error || !canLoad()) && !force) {
                  return false;
              }
@@ -693,7 +693,7 @@ index 0000000..0000000 100644
              if (preloading) {
                  toLoad = i -> load(force, count, ids);
                  return false;
-@@ -4935,6 +4964,10 @@ public class StoriesController {
+@@ -4938,6 +4967,10 @@ public class StoriesController {
  
          public void load() {
              if (loading || loaded) return;

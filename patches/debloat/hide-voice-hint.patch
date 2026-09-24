@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
-@@ -885,6 +885,7 @@ public class SharedConfig {
+@@ -892,6 +892,7 @@ public class SharedConfig {
          dayNightThemeSwitchHintCount = 3;
          stealthModeSendMessageConfirm = 2;
          dayNightWallpaperSwitchHint = 0;
@@ -24,7 +24,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -13007,6 +13007,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12999,6 +12999,7 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void showVoiceHint(boolean hide, boolean video) {
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          if (getParentActivity() == null || fragmentView == null || hide && voiceHintTextView == null || chatMode != 0 || chatActivityEnterView == null  || chatActivityEnterView.getAudioVideoButtonContainer() == null || chatActivityEnterView.getAudioVideoButtonContainer().getVisibility() != View.VISIBLE || isInPreviewMode()) {
              return;
          }
-@@ -13031,6 +13032,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -13023,6 +13024,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          voiceHintTextView.showForView(chatActivityEnterView.getAudioVideoButtonContainer(), true);

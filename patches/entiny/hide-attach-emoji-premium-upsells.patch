@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
-@@ -3841,7 +3841,8 @@ public class EmojiView extends FrameLayout implements
+@@ -3933,7 +3933,8 @@ public class EmojiView extends FrameLayout implements
          private float lockT;
          private Boolean lockShow;
          private ValueAnimator lockAnimator;
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
              if (lockAnimator != null) {
                  lockAnimator.cancel();
                  lockAnimator = null;
-@@ -4207,7 +4208,8 @@ public class EmojiView extends FrameLayout implements
+@@ -4299,7 +4300,8 @@ public class EmojiView extends FrameLayout implements
  
          private int currentButtonState;
          private AnimatorSet stateAnimator;

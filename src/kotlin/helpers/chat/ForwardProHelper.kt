@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import desu.inugram.InuConfig
-import desu.inugram.helpers.diag.DiagLog
 import desu.inugram.helpers.dialogs.FolderHelper
 import org.telegram.messenger.AccountInstance
 import org.telegram.messenger.AndroidUtilities
@@ -447,7 +446,6 @@ object ForwardProHelper {
         val textHolder = arrayOf<CharSequence>(editedText)
         val entities = MediaDataController.getInstance(account).getEntities(textHolder, true) ?: ArrayList()
         val plainText = textHolder[0].toString()
-        DiagLog.log("forward", "copy with edited text len=${plainText.length} entities=${entities.groupingBy { it.javaClass.simpleName }.eachCount()} messages=${messages.size} album=${isAlbumGroup(messages)}")
         val comment = state.savedComment
         val hasComment = !comment.isNullOrEmpty()
         val commentEntities = if (hasComment) MediaDataController.getInstance(account).getEntities(arrayOf(comment), true) ?: ArrayList() else ArrayList()

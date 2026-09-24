@@ -4,16 +4,16 @@ Date: Wed, 23 Sep 2026 21:17:29 +0300
 Subject: Add censorship bypass tunnel hooks
 
 ---
- .../java/org/telegram/tgnet/ConnectionsManager.java   | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../telegram/tgnet/ConnectionsManager.java    | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -639,6 +639,9 @@ public class ConnectionsManager extends BaseController {
-         if (preferences.getBoolean("proxy_enabled", false) && !TextUtils.isEmpty(proxyAddress)) {
-             native_setProxySettings(currentAccount, proxyAddress, proxyPort, proxyUsername, proxyPassword, proxySecret);
+@@ -648,6 +648,9 @@ public class ConnectionsManager extends BaseController {
+                         proxySettings.getUser(), proxySettings.getPassword(), proxySettings.getSecret());
+             }
          }
 +        if (desu.inugram.helpers.network.CensorshipHelper.isTunnelActive()) {
 +            native_setProxySettings(currentAccount, desu.inugram.helpers.network.CensorshipHelper.tunnelHost(), desu.inugram.helpers.network.CensorshipHelper.tunnelPort(), "", "", desu.inugram.helpers.network.CensorshipHelper.tunnelSecret());
@@ -21,18 +21,37 @@ index 0000000..0000000 100644
          String installer = "";
          try {
              Context context = ApplicationLoader.applicationContext;
-@@ -942,6 +945,14 @@ public class ConnectionsManager extends BaseController {
+@@ -947,6 +950,14 @@ public class ConnectionsManager extends BaseController {
+         KeepAliveJob.startJob();
      }
  
-     public static void setProxySettings(boolean enabled, String address, int port, String username, String password, String secret) {
++    // entiny: raw-field overload kept for fork helpers
++    public static void setProxySettings(boolean enabled, String address, int port, String username, String password, String secret) {
++        setProxySettings(enabled, ProxySettings.builder()
++                .setType(TextUtils.isEmpty(secret) ? ProxySettings.Type.SOCKS5 : ProxySettings.Type.MTPROTO)
++                .setAddress(address).setPort(port).setUser(username).setPassword(password).setSecret(secret)
++                .build());
++    }
++
+     public static void setProxySettings(boolean enabled, ProxySettings settings) {
+         String address = "";
+         int port = 0;
+@@ -974,8 +985,17 @@ public class ConnectionsManager extends BaseController {
+             WebProxyTransport.stop();
+         }
+ 
++        boolean useProxy = enabled && settings != null && settings.isValid();
 +        if (desu.inugram.helpers.network.CensorshipHelper.isTunnelActive()) {
-+            enabled = true;
++            useProxy = true;
 +            address = desu.inugram.helpers.network.CensorshipHelper.tunnelHost();
 +            port = desu.inugram.helpers.network.CensorshipHelper.tunnelPort();
 +            username = "";
 +            password = "";
 +            secret = desu.inugram.helpers.network.CensorshipHelper.tunnelSecret();
 +        }
-         if (address == null) {
-             address = "";
-         }
+         for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
+-            if (enabled && settings != null && settings.isValid()) {
++            if (useProxy) {
+                 native_setProxySettings(a, address, port, username, password, secret);
+             } else {
+                 native_setProxySettings(a, "", 1080, "", "", "");

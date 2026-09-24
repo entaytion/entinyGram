@@ -29,7 +29,7 @@ index 0000000..0000000 100644
      private LongSparseArray<TL_bots.BotInfo> botInfo;
      private int resultStartPosition;
      private int resultLength;
-@@ -966,6 +966,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+@@ -968,6 +968,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
              AndroidUtilities.cancelRunOnUIThread(searchGlobalRunnable);
              searchGlobalRunnable = null;
          }
@@ -37,7 +37,7 @@ index 0000000..0000000 100644
          if (checkAgainRunnable != null) {
              AndroidUtilities.cancelRunOnUIThread(checkAgainRunnable);
              checkAgainRunnable = null;
-@@ -1526,6 +1527,9 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+@@ -1528,6 +1529,9 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
              } else {
                  showUsersResult(newResult, newMap, true);
              }
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
          } else if (foundType == 1) {
              ArrayList<String> newResult = new ArrayList<>();
              String hashtagString = result.toString().toLowerCase();
-@@ -1659,6 +1663,9 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+@@ -1661,6 +1665,9 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
              }
          }
          searchResultUsernamesMap = newMap;

@@ -5,17 +5,17 @@ Subject: chore(build): remove unused Android Auto/referrer integration and ignor
 
 ---
  .gitignore                                    |   3 +
- TMessagesProj/build.gradle                    |   6 +-
+ TMessagesProj/build.gradle                    |   5 +-
  TMessagesProj/src/main/AndroidManifest.xml    |  25 -
  .../telegram/messenger/RefererReceiver.java   |  23 -
  .../telegram/messenger/car/HomeScreen.java    | 430 ------------------
- .../messenger/car/MusicSongsScreen.java       | 122 -----
+ .../messenger/car/MusicSongsScreen.java       | 123 -----
  .../messenger/car/TelegramCarAppService.java  |  46 +-
  .../messenger/car/TelegramCarSession.java     |  16 -
  .../src/main/res/xml/automotive_app_desc.xml  |   5 -
  TMessagesProj_App/build.gradle                |   4 +-
- gradle.properties                             |   3 +
- 14 files changed, 16 insertions(+), 961 deletions(-)
+ gradle.properties                             |   2 +
+ 14 files changed, 15 insertions(+), 961 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj/build.gradle
 +++ b/TMessagesProj/build.gradle
-@@ -45,8 +45,6 @@ dependencies {
+@@ -53,8 +53,6 @@ dependencies {
      implementation "androidx.mediarouter:mediarouter:1.7.0"
      implementation 'com.google.zxing:core:3.5.4'
  
@@ -55,11 +55,10 @@ index 0000000..0000000 100644
      implementation 'org.nanohttpd:nanohttpd:2.3.1'
  
      compileOnly 'org.checkerframework:checker-qual:2.5.2'
-@@ -197,8 +195,8 @@ android {
+@@ -210,7 +208,8 @@ android {
              minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
              shrinkResources false
              multiDexEnabled true
--            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro'
 -            ndk.debugSymbolLevel = 'FULL'
 +            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), '../TMessagesProj/proguard-rules.pro'
 +            ndk.debugSymbolLevel = 'NONE'
@@ -579,7 +578,7 @@ deleted file mode 100644
 index 0000000..0000000
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
 +++ /dev/null
-@@ -1,122 +0,0 @@
+@@ -1,123 +0,0 @@
 -package org.telegram.messenger.car;
 -
 -import android.support.v4.media.session.MediaControllerCompat;
@@ -598,6 +597,7 @@ index 0000000..0000000
 -import androidx.lifecycle.DefaultLifecycleObserver;
 -import androidx.lifecycle.LifecycleOwner;
 -
+-import org.telegram.messenger.LocaleController;
 -import org.telegram.messenger.MediaController;
 -import org.telegram.messenger.MessageObject;
 -import org.telegram.messenger.NotificationCenter;
@@ -652,7 +652,7 @@ index 0000000..0000000
 -
 -        ArrayList<MessageObject> songs = session.getMusicMessages(dialogId);
 -        if (songs == null || songs.isEmpty()) {
--            return new MessageTemplate.Builder(getCarContext().getString(R.string.NoCarMusic))
+-            return new MessageTemplate.Builder(LocaleController.getString(R.string.NoCarMusic))
 -                    .setTitle(headerTitle)
 -                    .setHeaderAction(Action.BACK)
 -                    .build();
@@ -794,7 +794,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -94,8 +94,8 @@ android {
+@@ -100,8 +100,8 @@ android {
              minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
              shrinkResources System.getenv('INU_BUILD_TYPE') != 'beta'
              multiDexEnabled true
@@ -809,10 +809,10 @@ diff --git a/gradle.properties b/gradle.properties
 index 0000000..0000000 100644
 --- a/gradle.properties
 +++ b/gradle.properties
-@@ -30,3 +30,6 @@ android.defaults.buildfeatures.buildconfig=true
- android.nonTransitiveRClass=false
- android.nonFinalResIds=false
+@@ -30,4 +30,6 @@ android.defaults.buildfeatures.buildconfig=true
  android.enableR8.fullMode=true
+ android.r8.optimizedResourceShrinking=true
+ android.enableResourceOptimizations=true
 +
 +# Enabled parallel sync for Gradle 9.4+
-+org.gradle.tooling.parallel=true
+ org.gradle.tooling.parallel=true

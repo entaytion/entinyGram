@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -156,6 +156,9 @@ public class LocaleController {
+@@ -161,6 +161,9 @@ public class LocaleController {
  
      private volatile FastDateFormat formatterDayMonth;
      public FastDateFormat getFormatterDayMonth() {
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          if (formatterDayMonth == null) {
              synchronized (this) {
                  if (formatterDayMonth == null) {
-@@ -169,6 +172,9 @@ public class LocaleController {
+@@ -174,6 +177,9 @@ public class LocaleController {
  
      private volatile FastDateFormat formatterYear;
      public FastDateFormat getFormatterYear() {
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
          if (formatterYear == null) {
              synchronized (this) {
                  if (formatterYear == null) {
-@@ -234,6 +240,9 @@ public class LocaleController {
+@@ -239,6 +245,9 @@ public class LocaleController {
  
      private volatile FastDateFormat chatDate;
      public FastDateFormat getChatDate() {
@@ -41,7 +41,7 @@ index 0000000..0000000 100644
          if (chatDate == null) {
              synchronized (this) {
                  if (chatDate == null) {
-@@ -247,6 +256,9 @@ public class LocaleController {
+@@ -252,6 +261,9 @@ public class LocaleController {
  
      private volatile FastDateFormat chatDateShort;
      public FastDateFormat getChatDateShort() {
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
          if (chatDateShort == null) {
              synchronized (this) {
                  if (chatDateShort == null) {
-@@ -260,6 +272,9 @@ public class LocaleController {
+@@ -265,6 +277,9 @@ public class LocaleController {
  
      private volatile FastDateFormat chatFullDate;
      public FastDateFormat getChatFullDate() {
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
          if (chatFullDate == null) {
              synchronized (this) {
                  if (chatFullDate == null) {
-@@ -273,6 +288,9 @@ public class LocaleController {
+@@ -278,6 +293,9 @@ public class LocaleController {
  
      private volatile FastDateFormat formatterScheduleDay;
      public FastDateFormat getFormatterScheduleDay() {
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
          if (formatterScheduleDay == null) {
              synchronized (this) {
                  if (formatterScheduleDay == null) {
-@@ -286,6 +304,9 @@ public class LocaleController {
+@@ -291,6 +309,9 @@ public class LocaleController {
  
      private volatile FastDateFormat formatterScheduleYear;
      public FastDateFormat getFormatterScheduleYear() {
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
          if (formatterScheduleYear == null) {
              synchronized (this) {
                  if (formatterScheduleYear == null) {
-@@ -2844,6 +2865,9 @@ public class LocaleController {
+@@ -2773,6 +2794,9 @@ public class LocaleController {
      }
  
      public static String formatYearMonthDay(long date, boolean alwaysShowYear) {
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
          try {
              date *= 1000;
              Calendar rightNow = Calendar.getInstance();
-@@ -2879,6 +2903,9 @@ public class LocaleController {
+@@ -2808,6 +2832,9 @@ public class LocaleController {
      }
  
      public static String formatYearMont(long date, boolean alwaysShowYear) {

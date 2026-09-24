@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19921,6 +19921,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19907,6 +19907,7 @@ public class ChatActivity extends BaseFragment implements
                  info.entities = entry.entities;
                  info.masks = entry.stickers;
                  info.ttl = entry.ttl;
@@ -58,7 +58,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -5595,6 +5595,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -5618,6 +5618,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                      info.entities = photoEntry.entities;
                      info.masks = photoEntry.stickers;
                      info.ttl = photoEntry.ttl;
@@ -66,7 +66,7 @@ index 0000000..0000000 100644
                      info.videoEditedInfo = videoEditedInfo;
                      info.canDeleteAfter = true;
                      photos.add(info);
-@@ -12265,7 +12266,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12250,7 +12251,7 @@ public class ChatActivityEnterView extends FrameLayout implements
  
                                      SendMessagesHelper.prepareSendingMedia(AccountInstance.getInstance(currentAccount), photos, dialog_id, replyingMessageObject, getThreadMessage(), null, replyingQuote, false, false, editingMessageObject, notify, scheduleDate, scheduleRepeatPeriod, 0, false, null, parentFragment != null ? parentFragment.getMessageChatSendParams() : null, effectId, invertMedia, stars, getSendMonoForumPeerId(),  getSendMessageSuggestionParams());
                                  } else {
@@ -139,7 +139,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -2945,6 +2945,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -2947,6 +2947,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public interface PhotoViewerProvider {
@@ -147,7 +147,7 @@ index 0000000..0000000 100644
          PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing);
          ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
          void willSwitchFromPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
-@@ -7415,6 +7416,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7417,6 +7418,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return false;
              }
  
@@ -157,7 +157,7 @@ index 0000000..0000000 100644
              final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
              final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
              final boolean userIsSelf = UserObject.isUserSelf(user);
-@@ -7441,13 +7445,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7443,13 +7447,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final boolean showSchedule = !canEdit && canScheduleMessage && !hasTtl;
              final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
              final boolean multipleSelected = placeProvider != null && placeProvider.getSelectedCount() > 1;

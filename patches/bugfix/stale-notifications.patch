@@ -35,7 +35,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -14543,6 +14543,16 @@ public class MessagesStorage extends BaseController {
+@@ -14544,6 +14544,16 @@ public class MessagesStorage extends BaseController {
          });
      }
  
@@ -255,7 +255,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
-@@ -1341,6 +1341,7 @@ public class StoriesController {
+@@ -1344,6 +1344,7 @@ public class StoriesController {
              int maxStoryReadId = Math.max(dialogIdToMaxReadId.get(dialogId, 0), maxStoryId);
              dialogIdToMaxReadId.put(dialogId, maxStoryReadId);
              storiesStorage.updateMaxReadId(dialogId, maxStoryReadId);

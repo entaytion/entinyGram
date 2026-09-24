@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -366,6 +366,7 @@ import me.vkryl.core.reference.ReferenceList;
+@@ -365,6 +365,7 @@ import me.vkryl.core.reference.ReferenceList;
  import desu.inugram.InuConfig;
  import desu.inugram.helpers.chat.ChatHelper;
  import desu.inugram.helpers.chat.ChatActionsHelper;
@@ -19,7 +19,7 @@ index 0000000..0000000 100644
  
  @SuppressWarnings("unchecked")
  public class ChatActivity extends BaseFragment implements
-@@ -7446,7 +7447,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -7438,7 +7439,7 @@ public class ChatActivity extends BaseFragment implements
                  } else {
                      String username = ChatObject.getPublicUsername(chat);
                      if (username != null) {
@@ -28,7 +28,7 @@ index 0000000..0000000 100644
                      }
                  }
              } else if (object instanceof TLRPC.User) {
-@@ -7455,11 +7456,13 @@ public class ChatActivity extends BaseFragment implements
+@@ -7447,11 +7448,13 @@ public class ChatActivity extends BaseFragment implements
                      searchUserMessages(user, null);
                  } else {
                      if (UserObject.getPublicUsername(user) != null) {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                          chatActivityEnterView.replaceWithText(start, len, spannable, false);
                      }
                  }
-@@ -40171,7 +40174,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40157,7 +40160,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = ChatObject.getPublicUsername(chat);
                  if (username != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  } else {
                      return;
                  }
-@@ -40197,11 +40200,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -40183,11 +40186,12 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = UserObject.getPublicUsername(user);
                  if (username != null) {

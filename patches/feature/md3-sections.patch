@@ -417,7 +417,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -3257,12 +3277,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3261,12 +3281,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
          return sectionsItemDecoration != null;
      }
  
@@ -433,7 +433,7 @@ index 0000000..0000000 100644
      public boolean applyPaddingToSections = false;
  
      public static final int TAG_NOT_SECTION = -33024;
-@@ -3288,7 +3308,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3292,7 +3312,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      }
      public void setSections(int padding, float roundRadius, boolean topPadding) {
          setSections(
@@ -442,7 +442,7 @@ index 0000000..0000000 100644
              padding,
              roundRadius,
              this::drawBackgroundRect,
-@@ -3405,6 +3425,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3409,6 +3429,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                          if (last) outRect.bottom = padding;
                      }
                  }
@@ -452,7 +452,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -3476,6 +3499,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3480,6 +3503,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      public void drawSectionsBackgrounds(Canvas canvas) {
          if (drawSectionBackground == null) return;
  
@@ -464,7 +464,7 @@ index 0000000..0000000 100644
          if (isAnimating()) {
              if (sections == null) {
                  sections = new ArrayList<>();
-@@ -3622,6 +3650,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3626,6 +3654,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
          if (child == null || !sectionsItemDecoration.isSectionItem.run(child))
              return;
  
@@ -476,7 +476,7 @@ index 0000000..0000000 100644
          boolean prev, next;
          int position = getChildAdapterPosition(child);
          if (position == RecyclerView.NO_POSITION) {
-@@ -3682,6 +3715,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3686,6 +3719,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      public Drawable getClipBackground(View child, boolean forceRound) {
          if (child.getParent() != this || !hasSections() || !sectionsItemDecoration.isSectionItem.run(child)) return null;
  
@@ -587,7 +587,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
-@@ -2289,10 +2289,13 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+@@ -2535,10 +2535,13 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
  
          @Override
          protected void dispatchDraw(Canvas canvas) {
@@ -608,7 +608,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
-@@ -1008,27 +1008,22 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -949,27 +949,22 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                      break;
                  case VIEW_TYPE_TEXT_SETTING:
                      view = new TextSettingsCell(mContext);

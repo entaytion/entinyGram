@@ -22,7 +22,7 @@ index 0000000..0000000 100644
                                  viewPages[1].setVisibility(View.GONE);
                                  showScrollbars(true);
                                  tabsAnimationInProgress = false;
-@@ -3049,6 +3053,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3047,6 +3051,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private Drawable premiumStar;
  
      public void updateStatus(TLRPC.User user, boolean animated) {
@@ -40,7 +40,7 @@ index 0000000..0000000 100644
          if (dialogStoriesCell != null) {
              dialogStoriesCell.updateStatus(user, animated);
          }
-@@ -3723,6 +3738,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3717,6 +3732,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                          checkListLoad(viewPages[0]);
                          viewPages[0].dialogsAdapter.resume();
                          viewPages[1].dialogsAdapter.pause();
@@ -48,7 +48,7 @@ index 0000000..0000000 100644
                      }
                  }
  
-@@ -6939,6 +6955,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6933,6 +6949,33 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          switchToCurrentSelectedMode(false);
      }
  
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
      public void switchToCurrentSelectedMode(boolean animated) {
          for (int a = 0; a < viewPages.length; a++) {
              viewPages[a].listView.stopScroll();
-@@ -6965,6 +7008,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -6959,6 +7002,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              viewPages[1].isLocked = filter.locked;
          }
  

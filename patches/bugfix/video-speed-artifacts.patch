@@ -4,9 +4,9 @@ Date: Wed, 26 Aug 2026 07:22:06 +0400
 Subject: use low-latency audio stack to avoid crackling artifacts when changing video speed
 
 ---
- .../telegram/ui/Components/VideoPlayer.java   | 63 ++++++++++++++++---
+ .../telegram/ui/Components/VideoPlayer.java   | 68 +++++++++++++++----
  .../java/org/telegram/ui/PhotoViewer.java     |  1 +
- 2 files changed, 56 insertions(+), 8 deletions(-)
+ 2 files changed, 56 insertions(+), 13 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
 index 0000000..0000000 100644
@@ -43,19 +43,20 @@ index 0000000..0000000 100644
      public VideoPlayer() {
          this(true, false);
      }
-@@ -260,9 +284,10 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+@@ -252,10 +276,11 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
              if (audioVisualizerDelegate != null) {
                  factory = new AudioVisualizerRenderersFactory(ApplicationLoader.applicationContext);
              } else {
 -                factory = new DefaultRenderersFactory(ApplicationLoader.applicationContext);
 +                factory = new InuRenderersFactory(ApplicationLoader.applicationContext);
              }
-             factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+             factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+             // factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
 +            factory.setEnableAudioTrackPlaybackParams(true);
              ExoPlayer.Builder builder = new ExoPlayer.Builder(ApplicationLoader.applicationContext).setRenderersFactory(factory)
                      .setTrackSelector(trackSelector)
                      .setLoadControl(loadControl);
-@@ -1472,7 +1497,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+@@ -1460,7 +1485,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
      public void setPlaybackSpeed(float speed) {
          try {
              if (player != null) {
@@ -64,7 +65,7 @@ index 0000000..0000000 100644
              }
          } catch (Exception ignore) {}
      }
-@@ -1806,25 +1831,47 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+@@ -1788,25 +1813,42 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
          return repeatCount;
      }
  
@@ -83,20 +84,20 @@ index 0000000..0000000 100644
 +
          @Nullable
          @Override
-         protected AudioSink buildAudioSink(Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams, boolean enableOffload) {
--            return new DefaultAudioSink.Builder()
-+            DefaultAudioSink.Builder builder = new DefaultAudioSink.Builder()
-                     .setAudioCapabilities(AudioCapabilities.getCapabilities(context))
+-        protected AudioSink buildAudioSink(
+-                @NonNull Context context,
+-                boolean enableFloatOutput,
+-                boolean enableAudioTrackPlaybackParams) {
+-            return new DefaultAudioSink.Builder(context)
++        protected AudioSink buildAudioSink(Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams) {
++            DefaultAudioSink.Builder builder = new DefaultAudioSink.Builder(context)
                      .setEnableFloatOutput(enableFloatOutput)
                      .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
--                    .setAudioProcessors(new AudioProcessor[] {new TeeAudioProcessor(new VisualizerBufferSink())})
-+                    .setAudioTrackBufferSizeProvider(inu_bufferSizeProvider)
-                     .setOffloadMode(
-                             enableOffload
-                                     ? DefaultAudioSink.OFFLOAD_MODE_ENABLED_GAPLESS_REQUIRED
--                                    : DefaultAudioSink.OFFLOAD_MODE_DISABLED)
+-                    .setAudioProcessors(new AudioProcessor[]{
+-                            new TeeAudioProcessor(new VisualizerBufferSink())
+-                    })
 -                    .build();
-+                                    : DefaultAudioSink.OFFLOAD_MODE_DISABLED);
++                    .setAudioTrackBufferSizeProvider(inu_bufferSizeProvider);
 +            AudioProcessor[] audioProcessors = getAudioProcessors();
 +            if (audioProcessors != null) {
 +                builder.setAudioProcessors(audioProcessors);
@@ -122,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10753,6 +10753,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10754,6 +10754,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  }
              }
  

@@ -7,7 +7,7 @@ Subject: change app name to Inugram
  TMessagesProj/src/main/AndroidManifest.xml    | 33 +++++++++++++++++++
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
  .../messenger/ContactsController.java         | 10 +++---
- .../telegram/messenger/LocaleController.java  | 10 +++---
+ .../telegram/messenger/LocaleController.java  | 21 ++++++++++--
  .../telegram/messenger/MediaController.java   | 22 ++++++-------
  .../java/org/telegram/ui/DialogsActivity.java |  6 +++-
  .../telegram/ui/LauncherIconController.java   |  6 ++--
@@ -28,7 +28,7 @@ Subject: change app name to Inugram
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
  TMessagesProj/src/main/res/xml/auth.xml       |  2 +-
  .../src/main/res/xml/sync_contacts.xml        |  2 +-
- 24 files changed, 130 insertions(+), 72 deletions(-)
+ 24 files changed, 142 insertions(+), 71 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -142,40 +142,61 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -1431,14 +1431,15 @@ public class LocaleController {
+@@ -1444,15 +1444,30 @@ public class LocaleController {
      }
  
-     private String getStringInternal(String key, String fallback, int fallbackRes, int res) {
--        String value = BuildVars.USE_CLOUD_STRINGS ? localeValues.get(key) : null;
-+        String value = BuildVars.USE_CLOUD_STRINGS && !desu.inugram.helpers.LocaleHelper.isLocalOnlyString(key) ? localeValues.get(key) : null;
+     private String getStringInternal(String key, String fallback, int res) {
++        if (key == null && res != 0) {
++            try {
++                key = ApplicationLoader.applicationContext.getResources().getResourceEntryName(res);
++            } catch (Exception ignore) {}
++        }
++        final String local = desu.inugram.helpers.LocaleHelper.getLocalString(key, res); // inu: fork-only strings never come from cloud
++        if (local != null) {
++            return local;
++        }
+         final String value = getStringV2(key, res, fallback);
          if (value == null) {
--            if (BuildVars.USE_CLOUD_STRINGS && fallback != null) {
-+            if (BuildVars.USE_CLOUD_STRINGS && fallback != null && !desu.inugram.helpers.LocaleHelper.isLocalOnlyString(fallback)) {
-                 value = localeValues.get(fallback);
-             }
-             if (value == null) {
-                 try {
--                    value = ApplicationLoader.applicationContext.getString(res);
-+                    value = desu.inugram.helpers.LocaleHelper.getLocalString(key, res);
-+                    if (value == null) value = ApplicationLoader.applicationContext.getString(res);
-                 } catch (Exception e) {
-                     if (fallbackRes != 0) {
-                         try {
-@@ -1456,7 +1457,8 @@ public class LocaleController {
++            if (res != 0) {
++                try {
++                    return ApplicationLoader.applicationContext.getString(res); // inu: fork strings are not in stock Localization
++                } catch (Exception ignore) {}
++            }
+             return "LOC_ERR:" + key;
+         }
+         return value;
      }
  
      public static String getServerString(String key) {
--        String value = getInstance().localeValues.get(key);
+-        String value = getInstance().localizationExternal.getByResName(key);
 +        String value = desu.inugram.helpers.LocaleHelper.getLocalString(key);
-+        if (value == null) value = getInstance().localeValues.get(key);
++        if (value == null) value = getInstance().localizationExternal.getByResName(key);
          if (value == null) {
-             int resourceId = ApplicationLoader.applicationContext.getResources().getIdentifier(key, "string", ApplicationLoader.applicationContext.getPackageName());
-             if (resourceId != 0) {
+             value = getInstance().getLocalizedString(key);
+         }
+@@ -1626,7 +1641,7 @@ public class LocaleController {
+ 
+     private static String formatString(String key, String fallback, int res, Object... args) {
+         try {
+-            final String value = getInstance().getStringV2(key, res, fallback);
++            final String value = nullable(getInstance().getStringInternal(key, fallback, res)); // inu: route through fork lookup
+             if (value == null) {
+                 return "LOC_ERR: " + key;
+             }
+@@ -1652,7 +1667,7 @@ public class LocaleController {
+ 
+     private static CharSequence formatSpannable(String key, String fallback, int res, Object... args) {
+         try {
+-            final String value = getInstance().getStringV2(key, res, fallback);
++            final String value = nullable(getInstance().getStringInternal(key, fallback, res)); // inu: route through fork lookup
+             if (value == null) {
+                 return "LOC_ERR: " + key;
+             }
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -5259,7 +5259,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5263,7 +5263,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              if (Build.VERSION.SDK_INT >= 29) {
                  final ContentValues cv = new ContentValues();
                  final Uri uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -184,7 +205,7 @@ index 0000000..0000000 100644
                  cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  cv.put(MediaStore.Downloads.DISPLAY_NAME, filename);
                  cv.put(MediaStore.MediaColumns.MIME_TYPE, outputMime);
-@@ -5281,7 +5281,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5285,7 +5285,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      }
                  }
              } else {
@@ -193,7 +214,7 @@ index 0000000..0000000 100644
                  destDir.mkdirs();
                  File destFile = new File(destDir, filename);
                  if (!destFile.exists()) {
-@@ -5501,11 +5501,11 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5505,11 +5505,11 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      } else {
                          File destFile;
                          if (type == 0) {
@@ -207,7 +228,7 @@ index 0000000..0000000 100644
                              destFile.mkdirs();
                              destFile = new File(destFile, AndroidUtilities.generateFileName(1, FileLoader.getFileExtension(sourceFile)));
                          } else {
-@@ -5515,7 +5515,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5519,7 +5519,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                              } else {
                                  dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
                              }
@@ -216,7 +237,7 @@ index 0000000..0000000 100644
                              dir.mkdirs();
                              destFile = new File(dir, name);
                              if (destFile.exists()) {
-@@ -5660,7 +5660,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5664,7 +5664,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      final String filename = AndroidUtilities.generateFileName(0, "jpg");
                      final ContentValues cv = new ContentValues();
                      final Uri uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -225,7 +246,7 @@ index 0000000..0000000 100644
                      cv.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                      cv.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                      cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-@@ -5682,7 +5682,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5686,7 +5686,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                          }
                      }
                  } else {
@@ -234,7 +255,7 @@ index 0000000..0000000 100644
                      destDir.mkdirs();
                      File destFile = new File(destDir, AndroidUtilities.generateFileName(0, "jpg"));
                      if (!destFile.exists()) {
-@@ -5813,7 +5813,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5817,7 +5817,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      filename = AndroidUtilities.generateFileName(0, extension);
                  }
                  uriToInsert = MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
@@ -243,7 +264,7 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
                  contentValues.put(MediaStore.Images.Media.MIME_TYPE, mimeType);
-@@ -5821,7 +5821,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5825,7 +5825,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  if (filename == null) {
                      filename = AndroidUtilities.generateFileName(1, extension);
                  }
@@ -252,7 +273,7 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Video.Media.DISPLAY_NAME, filename);
-@@ -5829,7 +5829,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5833,7 +5833,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  if (filename == null) {
                      filename = sourceFile.getName();
                  }
@@ -261,7 +282,7 @@ index 0000000..0000000 100644
                  contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, dirDest + File.separator);
                  uriToInsert = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
                  contentValues.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-@@ -5837,7 +5837,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -5841,7 +5841,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  if (filename == null) {
                      filename = sourceFile.getName();
                  }
@@ -274,7 +295,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3517,12 +3517,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3511,12 +3511,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              } else {
                  statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                  statusDrawable.center = true;
@@ -291,7 +312,7 @@ index 0000000..0000000 100644
                  updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
              }
              if (folderId == 0) {
-@@ -14433,4 +14437,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14427,4 +14431,4 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          return true;
      }
  
@@ -396,7 +417,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java b/TM
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
-@@ -846,6 +846,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -845,6 +845,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
          getNotificationCenter().addObserver(this, NotificationCenter.themeUploadedToServer);
          getNotificationCenter().addObserver(this, NotificationCenter.themeUploadError);
          getNotificationCenter().addObserver(this, NotificationCenter.webBrowserSettingsUpdate);
@@ -404,7 +425,7 @@ index 0000000..0000000 100644
          if (currentType == THEME_TYPE_BASIC) {
              Theme.loadRemoteThemes(currentAccount, true);
              Theme.checkCurrentRemoteTheme(true);
-@@ -870,6 +871,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -869,6 +870,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
          getNotificationCenter().removeObserver(this, NotificationCenter.themeUploadedToServer);
          getNotificationCenter().removeObserver(this, NotificationCenter.themeUploadError);
          getNotificationCenter().removeObserver(this, NotificationCenter.webBrowserSettingsUpdate);
@@ -412,7 +433,7 @@ index 0000000..0000000 100644
          Theme.saveAutoNightThemeConfig();
      }
  
-@@ -890,6 +892,10 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -889,6 +891,10 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
              if (listAdapter != null && themeAccentListRow != -1) {
                  listAdapter.notifyItemChanged(themeAccentListRow, new Object());
              }
@@ -423,7 +444,7 @@ index 0000000..0000000 100644
          } else if (id == NotificationCenter.themeListUpdated) {
              updateRows(true);
          } else if (id == NotificationCenter.themeUploadedToServer) {
-@@ -2533,6 +2539,8 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -2532,6 +2538,8 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                          cell.setText(getString("ChatListSwipeGestureInfo", R.string.ChatListSwipeGestureInfo));
                      } else if (position == liteModeInfoRow) {
                          cell.setText(getString("LiteModeInfo", R.string.LiteModeInfo));
@@ -432,7 +453,7 @@ index 0000000..0000000 100644
                      } else {
                          cell.setFixedSize(12);
                          cell.setText("");
-@@ -2735,11 +2743,11 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+@@ -2734,11 +2742,11 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                      position == contactsReimportRow || position == contactsSortRow ||
                      position == bluetoothScoRow || position == searchEngineRow) {
                  return TYPE_TEXT_SETTING;

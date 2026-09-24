@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -14503,6 +14503,22 @@ public class ChatActivity extends BaseFragment implements
+@@ -14495,6 +14495,22 @@ public class ChatActivity extends BaseFragment implements
          }
      }
  
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
          cancelSearchLinks();
          linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
-@@ -28038,9 +28054,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28024,9 +28040,9 @@ public class ChatActivity extends BaseFragment implements
          if (chat && encryptedChat == null) {
              menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
          }
@@ -53,7 +53,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -2838,6 +2838,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -2861,6 +2861,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              attachButton.setContentDescription(getString(R.string.AccDescrAttachButton));
              updateFieldRight(1);
          }
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
  
          aiButton = new ImageView(context);
          aiButton.setImageDrawable(aiButtonIcon = new AiButtonDrawable(context));
-@@ -6262,6 +6263,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6285,6 +6286,12 @@ public class ChatActivityEnterView extends FrameLayout implements
          setRecordVideoButtonVisible(!isInVideoMode(), true);
      }
  
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
      public void inu_startRecordingLocked(boolean video) {
          createRecordCircle();
          setRecordVideoButtonVisible(video, false);
-@@ -8838,6 +8845,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8820,6 +8827,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
              }
          }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
      }
  
      private void setSlowModeButtonVisible(boolean visible) {
-@@ -8867,7 +8875,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8849,7 +8857,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                  layoutParams.rightMargin = dp(50);
              }
          } else {
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                  layoutParams.rightMargin = dp(50);
              } else {
                  layoutParams.rightMargin = dp(2);
-@@ -8885,6 +8897,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8867,6 +8879,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
              recordedAudioPanel.setLayoutParams(layoutParams2);
          }

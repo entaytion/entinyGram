@@ -1,0 +1,31 @@
+{
+  "entinylog": 1,
+  "name": "net & proxy debug",
+  "hours": 24,
+  "categories": ["net"],
+  "events": ["didUpdateConnectionState"],
+  "requests": [
+    "help.getConfig",
+    "help.getNearestDc",
+    {
+      "name": "account.updateStatus",
+      "fields": ["offline"]
+    }
+  ],
+  "dump": {
+    "what": [
+      "field:org.telegram.messenger.SharedConfig.currentProxy",
+      "config:*PROXY*"
+    ],
+    "on": ["activate", "start"]
+  },
+  "when": [
+    {
+      "category": "net",
+      "contains": "ConnectingToProxy",
+      "dump": ["field:org.telegram.messenger.SharedConfig.currentProxy"],
+      "limit": 5,
+      "cooldown": 10
+    }
+  ]
+}

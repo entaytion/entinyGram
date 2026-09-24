@@ -1,7 +1,6 @@
 package desu.inugram.helpers.feed
 
 import org.telegram.messenger.AndroidUtilities
-import desu.inugram.helpers.diag.DiagLog
 import org.telegram.messenger.MessagesController
 import org.telegram.tgnet.ConnectionsManager
 
@@ -54,7 +53,6 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         pendingMax.clear()
         for ((dialogId, maxReadId) in entries) {
             if (maxReadId <= (knownMax[dialogId] ?: 0)) continue
-            DiagLog.log("feed", "flush read dialog=${DiagLog.ids(listOf(dialogId))} upTo=$maxReadId")
             knownMax[dialogId] = maxReadId
             controller.markDialogAsRead(dialogId, maxReadId, 0, now, false, 0L, 1, true, 0)
         }
@@ -72,7 +70,6 @@ class FeedUnreadTracker private constructor(private val account: Int) {
             if (top <= serverReadMax(controller, dialogId) && (dialog?.unread_count ?: 0) <= 0 && dialog?.unread_mark != true) continue
             knownMax[dialogId] = top
             pendingMax.remove(dialogId)
-            DiagLog.log("feed", "markAllRead dialog=${DiagLog.ids(listOf(dialogId))} top=$top inDialogs=${dialog != null} unread=${dialog?.unread_count}")
             controller.markDialogAsRead(dialogId, top, top, dialog?.last_message_date ?: 0, false, 0L, 0, true, 0)
             marked++
         }

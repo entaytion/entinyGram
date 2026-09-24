@@ -7,25 +7,25 @@ Subject: Add proxy list management: bulk delete/ping, and save without connectin
 - "Ping All Proxies": force-recheck every saved proxy now, ignoring the usual cooldown
 - adding a new proxy has a "Connect immediately" toggle, so it can be saved without switching to it
 ---
- .../org/telegram/ui/ProxyListActivity.java    | 86 ++++++++++++++++++-
+ .../org/telegram/ui/ProxyListActivity.java    | 84 ++++++++++++++++++-
  .../telegram/ui/ProxySettingsActivity.java    | 26 +++++-
- 2 files changed, 104 insertions(+), 8 deletions(-)
+ 2 files changed, 102 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
-@@ -104,6 +104,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -101,6 +101,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+     private int rotationTimeoutRow;
      private int rotationTimeoutInfoRow;
-     private int callsDetailRow;
      private int deleteAllRow;
 +    private int deleteFailedRow;
 +    private int inu_pingAllRow;
  
      private ItemTouchHelper itemTouchHelper;
      private NumberTextView selectedCountTextView;
-@@ -496,6 +498,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
-                 ConnectionsManager.setProxySettings(useProxySettings, SharedConfig.currentProxy.address, SharedConfig.currentProxy.port, SharedConfig.currentProxy.username, SharedConfig.currentProxy.password, SharedConfig.currentProxy.secret);
+@@ -466,6 +468,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 ConnectionsManager.setProxySettings(useProxySettings, SharedConfig.currentProxy.settings);
              } else if (position == proxyAddRow) {
                  presentFragment(new ProxySettingsActivity());
 +            } else if (position == inu_pingAllRow) {
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
              } else if (position == deleteAllRow) {
                  AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
                  builder.setMessage(getString(R.string.DeleteAllProxiesConfirm));
-@@ -523,6 +527,41 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -491,6 +495,39 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                  if (button != null) {
                      button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
                  }
@@ -53,7 +53,6 @@ index 0000000..0000000 100644
 +                        }
 +                    }
 +                    if (removedCurrent) {
-+                        useProxyForCalls = false;
 +                        useProxySettings = false;
 +                    }
 +                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
@@ -62,7 +61,6 @@ index 0000000..0000000 100644
 +                    updateRows(true);
 +                    if (listAdapter != null) {
 +                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
-+                        listAdapter.notifyItemChanged(callsRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
 +                        listAdapter.clearSelected();
 +                    }
 +                });
@@ -75,10 +73,10 @@ index 0000000..0000000 100644
              }
          });
          listView.setOnItemLongClickListener((view, position) -> {
-@@ -708,17 +747,49 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
-                 listAdapter.notifyItemRangeRemoved(proxyShadowRow + 1, 2);
-             }
+@@ -657,17 +694,49 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
          }
+         proxyAddRow = rowCount++;
+         proxyShadowRow = rowCount++;
 +        if (proxyList.size() >= 2) {
 +            inu_pingAllRow = rowCount++;
 +        } else {
@@ -125,7 +123,7 @@ index 0000000..0000000 100644
      private void checkProxyList() {
          for (int a = 0, count = proxyList.size(); a < count; a++) {
              final SharedConfig.ProxyInfo proxyInfo = proxyList.get(a);
-@@ -890,10 +961,15 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -839,10 +908,15 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                      TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
                      textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                      if (position == proxyAddRow) {
@@ -143,16 +141,16 @@ index 0000000..0000000 100644
                      }
                      break;
                  }
-@@ -996,7 +1072,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -937,7 +1011,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
          @Override
          public boolean isEnabled(RecyclerView.ViewHolder holder) {
              int position = holder.getAdapterPosition();
--            return position == useProxyRow || position == rotationRow || position == callsRow || position == proxyAddRow || position == deleteAllRow || position >= proxyStartRow && position < proxyEndRow;
-+            return position == useProxyRow || position == rotationRow || position == callsRow || position == proxyAddRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow || position >= proxyStartRow && position < proxyEndRow;
+-            return position == useProxyRow || position == rotationRow || position == proxyAddRow || position == deleteAllRow || position >= proxyStartRow && position < proxyEndRow;
++            return position == useProxyRow || position == rotationRow || position == proxyAddRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow || position >= proxyStartRow && position < proxyEndRow;
          }
  
          @Override
-@@ -1047,6 +1123,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -986,6 +1060,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                  return -6;
              } else if (position == deleteAllRow) {
                  return -8;
@@ -161,20 +159,20 @@ index 0000000..0000000 100644
              } else if (position == rotationRow) {
                  return -9;
              } else if (position == rotationTimeoutRow) {
-@@ -1064,7 +1142,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -1003,7 +1079,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
          public int getItemViewType(int position) {
              if (position == useProxyShadowRow || position == proxyShadowRow) {
                  return VIEW_TYPE_SHADOW;
 -            } else if (position == proxyAddRow || position == deleteAllRow) {
 +            } else if (position == proxyAddRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow) {
                  return VIEW_TYPE_TEXT_SETTING;
-             } else if (position == useProxyRow || position == rotationRow || position == callsRow) {
+             } else if (position == useProxyRow || position == rotationRow) {
                  return VIEW_TYPE_TEXT_CHECK;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxySettingsActivity.java
-@@ -60,6 +60,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
+@@ -64,6 +64,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
  import org.telegram.ui.Cells.HeaderCell;
  import org.telegram.ui.Cells.RadioCell;
  import org.telegram.ui.Cells.ShadowSectionCell;
@@ -182,16 +180,16 @@ index 0000000..0000000 100644
  import org.telegram.ui.Cells.TextInfoPrivacyCell;
  import org.telegram.ui.Cells.TextSettingsCell;
  import org.telegram.ui.Components.CubicBezierInterpolator;
-@@ -93,6 +94,8 @@ public class ProxySettingsActivity extends BaseFragment {
+@@ -94,6 +95,8 @@ public class ProxySettingsActivity extends BaseFragment {
      private TextInfoPrivacyCell[] bottomCells = new TextInfoPrivacyCell[2];
      private TextSettingsCell shareCell;
      private TextSettingsCell pasteCell;
 +    private TextCheckCell inu_connectImmediatelyCell;
 +    private boolean inu_connectImmediately = true;
      private ActionBarMenuItem doneItem;
-     private RadioCell[] typeCell = new RadioCell[2];
-     private int currentType = -1;
-@@ -228,14 +231,18 @@ public class ProxySettingsActivity extends BaseFragment {
+     private RadioCell[] typeCell = new RadioCell[3];
+     private ProxySettings.Type currentType;
+@@ -226,14 +229,18 @@ public class ProxySettingsActivity extends BaseFragment {
                      boolean enabled;
                      if (addingNewProxy) {
                          SharedConfig.addProxy(currentProxyInfo);
@@ -211,10 +209,10 @@ index 0000000..0000000 100644
                      }
 -                    if (addingNewProxy || SharedConfig.currentProxy == currentProxyInfo) {
 +                    if ((addingNewProxy && inu_connectImmediately) || SharedConfig.currentProxy == currentProxyInfo) {
-                         editor.putString("proxy_ip", currentProxyInfo.address);
-                         editor.putString("proxy_pass", currentProxyInfo.password);
-                         editor.putString("proxy_user", currentProxyInfo.username);
-@@ -448,6 +455,17 @@ public class ProxySettingsActivity extends BaseFragment {
+                         currentProxyInfo.settings.toSharedPreferences(editor);
+                         ConnectionsManager.setProxySettings(enabled, currentProxyInfo.settings);
+                     }
+@@ -474,6 +481,17 @@ public class ProxySettingsActivity extends BaseFragment {
              linearLayout2.addView(bottomCells[i], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
          }
  

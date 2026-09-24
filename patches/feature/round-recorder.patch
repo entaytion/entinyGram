@@ -78,7 +78,7 @@ index 0000000..0000000 100644
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 @@ -69,6 +69,7 @@ import androidx.core.graphics.ColorUtils;
  
- import com.google.android.exoplayer2.ExoPlayer;
+ import androidx.media3.exoplayer.ExoPlayer;
  
 +import desu.inugram.helpers.chat.RoundRecorderHelper;
  import desu.inugram.helpers.chat.VoiceRecorderHelper;

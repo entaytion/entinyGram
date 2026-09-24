@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -3285,6 +3285,9 @@ public class MessagesStorage extends BaseController {
+@@ -3286,6 +3286,9 @@ public class MessagesStorage extends BaseController {
                  SparseArray<MessagesController.DialogFilter> filtersToDelete = new SparseArray<>();
                  for (int a = 0, N = dialogFilters.size(); a < N; a++) {
                      MessagesController.DialogFilter filter = dialogFilters.get(a);
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
                      filtersToDelete.put(filter.id, filter);
                  }
                  ArrayList<Integer> filtersOrder = new ArrayList<>();
-@@ -3629,6 +3632,9 @@ public class MessagesStorage extends BaseController {
+@@ -3630,6 +3633,9 @@ public class MessagesStorage extends BaseController {
          boolean orderChanged = false;
          for (int a = 0, N = dialogFilters.size(); a < N; a++) {
              MessagesController.DialogFilter filter = dialogFilters.get(a);

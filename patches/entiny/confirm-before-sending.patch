@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -3022,14 +3022,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3045,14 +3045,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                          if (!hasRecordVideo || calledRecordRunnable) {
                              startedDraggingX = -1;
                              if (hasRecordVideo && isInVideoMode()) {
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  delegate.needStartRecordVideo(1, true, 0, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, 0);
-@@ -3038,7 +3036,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3061,7 +3059,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                  if (recordingAudioVideo && isInScheduleMode()) {
                                      AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate, scheduleRepeatPeriod) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, false, 0), () -> MediaController.getInstance().stopRecording(0, false, 0, false, 0), resourcesProvider);
                                  }
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                                      if (isInVideoMode()) {
                                          if (slideText != null) {
                                              slideText.setEnabled(false);
-@@ -3054,9 +3052,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3077,9 +3075,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                              slideText.setEnabled(false);
                                          }
                                      }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce, 0);
-@@ -3144,14 +3140,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3167,14 +3163,12 @@ public class ChatActivityEnterView extends FrameLayout implements
                          } else if (!hasRecordVideo || calledRecordRunnable) {
                              startedDraggingX = -1;
                              if (hasRecordVideo && isInVideoMode()) {
@@ -72,7 +72,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  CameraController.getInstance().cancelOnInitRunnable(onFinishInitCameraRunnable);
-@@ -3160,7 +3154,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3183,7 +3177,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                              } else if (!sendVoiceEnabled) {
                                  delegate.needShowMediaBanHint();
                              } else {
@@ -81,7 +81,7 @@ index 0000000..0000000 100644
                                      if (sendButtonVisible) {
                                          calledRecordRunnable = true;
                                      }
-@@ -3169,9 +3163,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -3192,9 +3186,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                                      if (slideText != null) {
                                          slideText.setEnabled(false);
                                      }
@@ -92,7 +92,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  if (recordingAudioVideo && isInScheduleMode()) {
-@@ -7388,6 +7380,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -7370,6 +7362,12 @@ public class ChatActivityEnterView extends FrameLayout implements
              })) {
                  return;
              }
@@ -105,7 +105,7 @@ index 0000000..0000000 100644
              dismissSendPreviewSent = true;
              if (videoToSendMessageObject != null) {
                  delegate.needStartRecordVideo(4, notify, scheduleDate, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, payStars);
-@@ -12414,7 +12412,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12399,7 +12397,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                              }
                          };
                          if (!showConfirmAlert(runnable)) {
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
                          }
                      });
                  }
-@@ -12688,7 +12689,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12673,7 +12674,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                      MediaDataController.getInstance(currentAccount).addRecentSticker(MediaDataController.TYPE_IMAGE, parent, sticker, (int) (System.currentTimeMillis() / 1000), false);
                  };
                  if (!showConfirmAlert(runnable)) {
@@ -133,7 +133,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
-@@ -553,6 +553,8 @@ public class EmojiView extends FrameLayout implements
+@@ -550,6 +550,8 @@ public class EmojiView extends FrameLayout implements
          void onDrag(int offset);
      }
  

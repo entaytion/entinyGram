@@ -19,7 +19,7 @@ index 0000000..0000000 100644
      private boolean lastForSearch;
      private boolean lastUsernameOnly;
      private int lastPosition;
-@@ -967,6 +968,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+@@ -969,6 +970,7 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
              searchGlobalRunnable = null;
          }
          desu.inugram.helpers.search.SearchFromHelper.cancel();
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          if (checkAgainRunnable != null) {
              AndroidUtilities.cancelRunOnUIThread(checkAgainRunnable);
              checkAgainRunnable = null;
-@@ -1608,7 +1610,11 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
+@@ -1610,7 +1612,11 @@ public class MentionsAdapter extends RecyclerListView.SelectionAdapter implement
                  MediaDataController.getInstance(currentAccount).fetchNewEmojiKeywords(newLanguage);
              }
              lastSearchKeyboardLanguage = newLanguage;

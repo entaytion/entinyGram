@@ -324,7 +324,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -4614,7 +4614,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -4616,7 +4616,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          showAlertDialog(builder);
      }
  
@@ -333,7 +333,7 @@ index 0000000..0000000 100644
          if (parentActivity == null || !allowShare) {
              return;
          }
-@@ -5800,6 +5800,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5802,6 +5802,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          editItem.setContentDescription(getString(R.string.AccDescrPhotoEditor));
          sendItem = menu.addItem(gallery_menu_send, R.drawable.msg_header_share);
          sendItem.setContentDescription(getString(R.string.Forward));

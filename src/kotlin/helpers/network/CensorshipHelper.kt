@@ -68,7 +68,7 @@ object CensorshipHelper {
         val prefs = MessagesController.getGlobalMainSettings()
         val proxy = SharedConfig.currentProxy
         if (prefs.getBoolean("proxy_enabled", false) && proxy != null) {
-            ConnectionsManager.setProxySettings(true, proxy.address, proxy.port, proxy.username, proxy.password, proxy.secret)
+            ConnectionsManager.setProxySettings(true, proxy.settings.address, proxy.settings.port, proxy.settings.user, proxy.settings.password, proxy.settings.secret)
         } else {
             ConnectionsManager.setProxySettings(false, "", 1080, "", "", "")
         }
@@ -87,7 +87,7 @@ object CensorshipHelper {
     private fun userSocks(): SharedConfig.ProxyInfo? {
         if (!MessagesController.getGlobalMainSettings().getBoolean("proxy_enabled", false)) return null
         val proxy = SharedConfig.currentProxy ?: return null
-        return proxy.takeIf { it.secret.isNullOrEmpty() && !it.address.isNullOrEmpty() }
+        return proxy.takeIf { it.settings.secret.isNullOrEmpty() && !it.settings.address.isNullOrEmpty() }
     }
 
     private fun installLeakGuard() {
@@ -98,8 +98,8 @@ object CensorshipHelper {
             override fun getPasswordAuthentication(): PasswordAuthentication? {
                 if (!InuConfig.LEAK_GUARD.value || requestorType != RequestorType.SERVER) return null
                 val socks = userSocks() ?: return null
-                if (requestingHost != socks.address || socks.username.isNullOrEmpty()) return null
-                return PasswordAuthentication(socks.username, (socks.password ?: "").toCharArray())
+                if (requestingHost != socks.settings.address || socks.settings.user.isNullOrEmpty()) return null
+                return PasswordAuthentication(socks.settings.user, (socks.settings.password ?: "").toCharArray())
             }
         })
     }
@@ -112,7 +112,7 @@ object CensorshipHelper {
             val host = uri.host ?: return listOf(blackhole)
             if (host == "127.0.0.1" || host == "localhost") return listOf(Proxy.NO_PROXY)
             val socks = userSocks() ?: return listOf(blackhole)
-            return listOf(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(socks.address, socks.port)))
+            return listOf(Proxy(Proxy.Type.SOCKS, InetSocketAddress.createUnresolved(socks.settings.address, socks.settings.port)))
         }
 
         override fun connectFailed(uri: URI?, sa: SocketAddress?, ioe: IOException?) {

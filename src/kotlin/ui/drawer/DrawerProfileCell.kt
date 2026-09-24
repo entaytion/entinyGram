@@ -176,7 +176,7 @@ class DrawerProfileCell(
 
         val playDrawable = sunDrawable == null
         if (playDrawable) {
-            sunDrawable = RLottieDrawable(R.raw.sun, "" + R.raw.sun, AndroidUtilities.dp(28f), AndroidUtilities.dp(28f), true, null)
+            sunDrawable = RLottieDrawable(R.raw.sun, AndroidUtilities.dp(28f), AndroidUtilities.dp(28f), true, null)
             sunDrawable!!.setPlayInDirectionOfCustomEndFrame(true)
             if (Theme.isCurrentThemeDay()) {
                 sunDrawable!!.setCustomEndFrame(0)

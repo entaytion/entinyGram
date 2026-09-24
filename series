@@ -223,7 +223,6 @@ feature/join-request-member-count.patch
 bugfix/folder-pins-missing-dialogs.patch
 feature/select-all-dialogs.patch
 bugfix/forward-bar-stale-count.patch
-bugfix/video-audio-focus.patch
 bugfix/reorder-sync-dispatch.patch
 bugfix/optimistic-hidden-forwards.patch
 bugfix/file-load-cancel-stuck.patch
@@ -432,5 +431,3 @@ entiny/hide-pinned-forever.patch
 entiny/settings-accounts.patch
 entiny/new-contact-default-account.patch
 entiny/unified-push.patch
-entiny/contacts-debug.patch
-entiny/diag-probes.patch

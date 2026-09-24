@@ -391,7 +391,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -24039,7 +24039,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24045,7 +24045,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (currentMessageObject != null && currentMessageObject.sendPreview) {
                  alpha *= effectDrawable == null ? 0f : effectDrawable.isNotEmpty();
              }
@@ -400,7 +400,7 @@ index 0000000..0000000 100644
  
              int r;
              if (documentAttachType != DOCUMENT_ATTACH_TYPE_ROUND && documentAttachType != DOCUMENT_ATTACH_TYPE_STICKER && currentMessageObject.type != MessageObject.TYPE_EMOJIS) {
-@@ -24082,7 +24082,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24088,7 +24088,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      canvas.restore();
                      Paint dimPaint = getThemedPaint(Theme.key_paint_chatTimeBackground);
                      int oldAlpha2 = dimPaint.getAlpha();
@@ -426,7 +426,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13662,6 +13662,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13656,6 +13656,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private void showItemOptions() {
          ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
          io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));
@@ -437,7 +437,7 @@ index 0000000..0000000 100644
          io.setDimAlpha(0x08);
  
          final Activity activity = getParentActivity();
-@@ -13724,28 +13728,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13718,28 +13722,36 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              switchingTheme = true;
              SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE);

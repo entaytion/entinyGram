@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14055,6 +14055,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14049,6 +14049,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
              presentFragment(new ChatActivity(args));
          });

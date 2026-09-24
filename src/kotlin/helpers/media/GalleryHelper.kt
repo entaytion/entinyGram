@@ -8,8 +8,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
-import com.google.android.exoplayer2.extractor.jpeg.MotionPhotoDescription
-import com.google.android.exoplayer2.extractor.jpeg.XmpMotionPhotoDescriptionParser
+import androidx.media3.extractor.jpeg.MotionPhotoDescription
+import androidx.media3.extractor.jpeg.XmpMotionPhotoDescriptionParser
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader

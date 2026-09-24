@@ -28,7 +28,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -3014,6 +3014,12 @@ public class LocaleController {
+@@ -2943,6 +2943,12 @@ public class LocaleController {
      }
  
      public static String formatUserStatus(int currentAccount, TLRPC.User user, boolean[] isOnline, boolean[] madeShorter) {
@@ -59,7 +59,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -384,6 +384,9 @@ public class ConnectionsManager extends BaseController {
+@@ -391,6 +391,9 @@ public class ConnectionsManager extends BaseController {
          if (BuildVars.LOGS_ENABLED) {
              FileLog.d("send request " + object + " with token = " + requestToken);
          }
@@ -73,15 +73,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -2941,6 +2941,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -2939,6 +2939,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              currentConnectionState = getConnectionsManager().getConnectionState();
  
-             globalObserversGroup.add(NotificationCenter.emojiLoaded);
-+            globalObserversGroup.add(NotificationCenter.mainUserInfoChanged);
+             observersGroup.addGlobal(NotificationCenter.emojiLoaded);
++            observersGroup.addGlobal(NotificationCenter.mainUserInfoChanged);
              if (!onlySelect) {
-                 globalObserversGroup.add(NotificationCenter.closeSearchByActiveAction);
-                 globalObserversGroup.add(NotificationCenter.proxySettingsChanged);
-@@ -10887,6 +10888,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 observersGroup.addGlobal(NotificationCenter.closeSearchByActiveAction);
+                 observersGroup.addGlobal(NotificationCenter.proxySettingsChanged);
+@@ -10881,6 +10882,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          } else if (id == NotificationCenter.proxySettingsChanged) {
              updateProxyButton(false, false);

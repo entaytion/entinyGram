@@ -66,7 +66,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -14015,7 +14015,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14009,7 +14009,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  }
              }
          }
@@ -218,15 +218,15 @@ index 0000000..0000000 100644
          } else if (id == NotificationCenter.mainUserInfoChanged) {
              if (tabs != null && tabs[INDEX_PROFILE] != null) {
                  tabs[INDEX_PROFILE].updateUserAvatar(currentAccount);
-@@ -1062,7 +1026,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1061,7 +1025,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              .add(NotificationCenter.fileLoadFailed)
              .add(NotificationCenter.notificationsCountUpdated)
              .add(NotificationCenter.updateInterfaces)
 -            .add(NotificationCenter.callTabsVisibleToggled)
              .add(NotificationCenter.mainUserInfoChanged)
-             .add(NotificationCenter.contactsPermissionBadgeCheck);
- 
-@@ -1108,7 +1071,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             .add(NotificationCenter.contactsPermissionBadgeCheck)
+             .addGlobal(NotificationCenter.appUpdateAvailable)
+@@ -1102,7 +1065,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          }
  
          final float animatedPosition = viewPager.getPositionAnimated();
@@ -235,7 +235,7 @@ index 0000000..0000000 100644
          final float hide = 1f - AndroidUtilities.getNavigationBarThirdButtonsFactor(0, 1f, navigationBarHeight);
          float alpha = (1f - isProfile * hide) * animatorTabsVisible.getFloatValue();
          if (tabletLayout) {
-@@ -1141,13 +1104,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1135,13 +1098,6 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
      }
  

@@ -25,7 +25,7 @@ index 0000000..0000000 100644
  
      public FragmentSearchField(Context context, Theme.ResourcesProvider resourcesProvider) {
          super(context);
-@@ -304,6 +305,8 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
+@@ -308,6 +309,8 @@ public class FragmentSearchField extends FrameLayout implements FactorAnimator.T
              }
          }
  
@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -3366,6 +3366,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -3360,6 +3360,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              fragmentSearchField.updateColors();
          }
  

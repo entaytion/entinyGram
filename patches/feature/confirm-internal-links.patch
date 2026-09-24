@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -5571,6 +5571,7 @@ public class AndroidUtilities {
+@@ -5513,6 +5513,7 @@ public class AndroidUtilities {
  
      public static boolean shouldShowUrlInAlert(String url) {
          try {

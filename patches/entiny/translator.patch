@@ -346,7 +346,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -9903,18 +9903,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -9895,18 +9895,7 @@ public class ChatActivity extends BaseFragment implements
          translateButton = new TranslateButton(getContext(), this, themeDelegate) {
              @Override
              protected void onButtonClick() {
@@ -366,7 +366,7 @@ index 0000000..0000000 100644
                  updateTopPanel(true);
              }
          };
-@@ -29384,11 +29373,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29370,11 +29359,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);

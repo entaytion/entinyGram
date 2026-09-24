@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -33069,6 +33069,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33055,6 +33055,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          ReactionsEffectOverlay.removeCurrent(false);

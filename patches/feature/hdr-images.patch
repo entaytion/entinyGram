@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -884,7 +884,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -886,7 +886,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
      public BlurringShader.BlurManager blurManager;
      private BlurringShader.StoryBlurDrawer shadowBlurer;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
      public FrameLayoutDrawer containerView;
      private PhotoViewerWebView photoViewerWebView;
      public FrameLayout windowView;
-@@ -2012,8 +2012,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -2014,8 +2014,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      private BlurringShader.ThumbBlurer centerBlur = new BlurringShader.ThumbBlurer(1, this::invalidateBlur);
      private BlurringShader.ThumbBlurer rightBlur = new BlurringShader.ThumbBlurer(1, this::invalidateBlur);
      private boolean leftImageIsVideo;
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
      private boolean rightImageIsVideo;
      private boolean centerImageTransformLocked = false;
      private Matrix centerImageTransform = new Matrix();
-@@ -7791,6 +7791,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7793,6 +7793,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  if (paintingOverlay.getVisibility() == View.VISIBLE) {
                      containerView.requestLayout();
                  }
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
              }
              if (imageReceiver == centerImage && set && placeProvider != null && placeProvider.scaleToFill() && !ignoreDidSetImage && sendPhotoType != SELECT_TYPE_AVATAR && sendPhotoType != SELECT_TYPE_STICKER) {
                  if (!wasLayout) {
-@@ -16004,6 +16005,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16005,6 +16006,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          }
  
          if (!sameImage) {
@@ -47,7 +47,7 @@ index 0000000..0000000 100644
              draggingDown = false;
              translationX = 0;
              translationY = 0;
-@@ -16161,6 +16163,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -16162,6 +16164,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  videoFrameBitmap = null;
              }
          }
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
          currentImageHasFace = 0;
          currentImageFaceKey = null;
          inu_waitingForFacesOpen = false;
-@@ -18229,6 +18232,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18239,6 +18242,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              qualityPicker.cancelButton.callOnClick();
              return;
          }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
          isVisibleOrAnimating = false;
          openedFullScreenVideo = false;
          try {
-@@ -18921,6 +18925,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18923,6 +18927,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
      public void onResume() {
          redraw(0); //workaround for camera bug
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
          if (videoPlayer != null) {
              videoPlayer.seekTo(videoPlayer.getCurrentPosition() + 1);
              if (playerLooping) {
-@@ -18935,6 +18940,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -18937,6 +18942,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      public void onConfigurationChanged(Configuration newConfig) {}
  
      public void onPause() {

@@ -17,9 +17,6 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
 import desu.inugram.helpers.SystemInfo
 import desu.inugram.helpers.push.UnifiedPushHelper
-import desu.inugram.helpers.diag.DiagLog
-import desu.inugram.helpers.diag.DiagProbes
-import desu.inugram.helpers.diag.DiagUi
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -135,19 +132,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             )
         }
         items.add(UItem.asShadow(null))
-
-        // entiny: .entinylog diagnostics -- visible in every build so testers on stable can help too
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDiagTitle)))
-        val diag = DiagLog.current()
-        if (diag == null) {
-            items.add(UItem.asShadow(LocaleController.getString(R.string.InuDiagIdle)))
-        } else {
-            items.add(UItem.asButton(BUTTON_DIAG_PROFILE, R.drawable.inu_tabler_terminal_2, diag.name, DiagUi.describe(diag)))
-            items.add(UItem.asButton(BUTTON_DIAG_SNAPSHOT, LocaleController.getString(R.string.InuDiagSnapshot)))
-            items.add(UItem.asButton(BUTTON_DIAG_SEND, LocaleController.getString(R.string.InuDiagSend)))
-            items.add(UItem.asButton(BUTTON_DIAG_STOP, LocaleController.getString(R.string.InuDiagStop)).red())
-            items.add(UItem.asShadow(null))
-        }
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
@@ -280,18 +264,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
-            BUTTON_DIAG_SNAPSHOT -> {
-                DiagProbes.dumpNow()
-                BulletinFactory.of(this).createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuDiagSnapshotDone)).show()
-            }
-
-            BUTTON_DIAG_SEND -> DiagUi.share(this)
-
-            BUTTON_DIAG_STOP -> {
-                DiagLog.stop()
-                listView?.adapter?.update(true)
-            }
-
             TOGGLE_UNIFIED_PUSH -> toggleUnifiedPush()
 
             BUTTON_UNIFIED_PUSH_DISTRIBUTOR -> pickDistributor(view)
@@ -617,10 +589,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
         private val BUTTON_DATACENTER_STATUS = InuUtils.generateId()
         private val TOGGLE_UNIFIED_PUSH = InuUtils.generateId()
-        private val BUTTON_DIAG_PROFILE = InuUtils.generateId()
-        private val BUTTON_DIAG_SNAPSHOT = InuUtils.generateId()
-        private val BUTTON_DIAG_SEND = InuUtils.generateId()
-        private val BUTTON_DIAG_STOP = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_DISTRIBUTOR = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_GATEWAY = InuUtils.generateId()
 

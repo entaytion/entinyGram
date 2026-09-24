@@ -1703,7 +1703,6 @@ object ChatHelper {
         val name = message.documentName ?: return false
         val kind = when {
             name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX) -> FileKind.SETTINGS
-            desu.inugram.helpers.diag.DiagUi.isProfileFile(name) -> FileKind.DIAG
             FontImportHelper.isFontFileName(name) -> FileKind.FONT
             else -> return false
         }
@@ -1737,12 +1736,11 @@ object ChatHelper {
     ) {
         when (kind) {
             FileKind.SETTINGS -> SettingsBackupHelper.startImportFromFile(activity, file)
-            FileKind.DIAG -> desu.inugram.helpers.diag.DiagUi.startImport(activity, file)
             FileKind.FONT -> FontImportHelper.startImportFromFile(activity, message, file, name)
         }
     }
 
-    private enum class FileKind { SETTINGS, FONT, DIAG }
+    private enum class FileKind { SETTINGS, FONT }
 
     private fun pollFileDownload(
         activity: ChatActivity,
@@ -2270,7 +2268,7 @@ object ChatHelper {
 
     private fun lottieIcon(rawRes: Int): RLottieDrawable {
         val size = AndroidUtilities.dp(24f)
-        return RLottieDrawable(rawRes, rawRes.toString(), size, size).apply {
+        return RLottieDrawable(rawRes, size, size).apply {
             setCurrentFrame(0)
         }
     }

@@ -21,7 +21,7 @@ index 0000000..0000000 100644
                          TLRPC.TL_textWithEntities note = userInfo.note;
                          CharSequence text;
                          if (!UserConfig.getInstance(currentAccount).isPremium()) {
-@@ -16376,8 +16375,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16375,8 +16374,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          final ItemOptions o = ItemOptions.makeOptions(this, view);
          o.setScrimViewBackground(listView.getClipBackground(view));
          o.setLongPressSelectionEnabled(false);
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
              final CharSequence text = MessageObject.formatTextWithEntities(userInfo.note, false);
              AndroidUtilities.addToClipboard(text);
              BulletinFactory.of(ProfileActivity.this)
-@@ -16395,11 +16394,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16394,11 +16393,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  .setTitle(getString(R.string.ProfileNotesRemoveTitle))
                  .setMessage(getString(R.string.ProfileNotesRemoveText))
                  .setPositiveButton(getString(R.string.Delete), (di, w) -> {
