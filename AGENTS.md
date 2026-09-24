@@ -96,6 +96,7 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
 20. **Concise `FEATURES.md` Entries (Inugram Style):**
     - Keep `FEATURES.md` feature descriptions short, crisp, and directly to the point — mirroring the concise inugram style.
     - **NEVER write essays, design tirades, or multi-paragraph changelog entries in `FEATURES.md`.** One clear sentence or a few compact sub-bullets explaining what the user gets.
+21. **WIP Features in Changelogs:** If a commit mentions `wip` (work in progress) anywhere (subject or body), every changelog / release note entry for that feature MUST say the feature is untested and unstable, and ask users to report bugs (e.g. "⚠️ work in progress: untested and may be unstable — please report any bugs").
 
 > You are allowed to violate these rules only if the user explicitly asks.
 

@@ -1144,7 +1144,6 @@
     <string name="InuChatExportSaved">Сохранено в %1$s</string>
     <string name="InuChatExportView">Просмотр</string>
     <string name="InuChatExportShowFolder">Показать папку</string>
-    <string name="InuChatExportShare">Поделиться в Telegram</string>
     <string name="InuDeleteAllProfilePhotos">Удалить все фото</string>
     <string name="InuDeleteSelectedProfilePhotos">Удалить выбранные (%1$d)</string>
     <string name="InuDeleteAllProfilePhotosConfirm">Вы уверены, что хотите удалить все фотографии профиля? Это действие нельзя отменить.</string>

@@ -1347,7 +1347,6 @@
     <string name="InuChatExportExported">exported</string>
     <string name="InuChatExportSaved">Saved to %1$s</string>
     <string name="InuChatExportView">View</string>
-    <string name="InuChatExportShare">Share in Telegram</string>
     <string name="InuChatExportShowFolder">Show folder</string>
     <string name="InuDeleteAllProfilePhotos">Delete all photos</string>
     <string name="InuDeleteSelectedProfilePhotos">Delete selected (%1$d)</string>
