@@ -56,22 +56,23 @@ object LocaleHelper {
         }
     }
 
+    // entiny: local-only keys must resolve locally regardless of whether the value happens
+    // to match ROOT (e.g. "en" with no values-en/ falls back to the same base resource) --
+    // otherwise a null here sends AppName/Inu* through getStringV2 into the stock lang pack.
     private fun resolve(res: Int): String? {
         if (!ensureCache()) return null
-        val def = try {
-            cachedDefault!!.getString(res)
-        } catch (_: Exception) {
-            return null
-        }
         for (r in cachedCandidates) {
-            val v = try {
-                r.getString(res)
+            try {
+                return r.getString(res)
             } catch (_: Exception) {
                 continue
             }
-            if (v != def) return v
         }
-        return null
+        return try {
+            cachedDefault?.getString(res)
+        } catch (_: Exception) {
+            null
+        }
     }
 
     @Synchronized
