@@ -30,6 +30,12 @@
     <string name="InuAutoUpdateCheck">Check for updates</string>
     <string name="InuAutoUpdateCheckInfo">Periodically check the entinyGram CI channel for new releases and offer to download them.</string>
     <string name="InuUpdatesIncludeBeta">Catch beta updates</string>
+    <string name="InuPushHeader">Push notifications</string>
+    <string name="InuUnifiedPush">UnifiedPush</string>
+    <string name="InuUnifiedPushInfo">Get notifications through a UnifiedPush distributor like ntfy instead of Google services. Works without Google Play.</string>
+    <string name="InuUnifiedPushDistributor">Distributor</string>
+    <string name="InuUnifiedPushNoDistributor">Not set</string>
+    <string name="InuUnifiedPushNoDistributorInfo">Install a UnifiedPush distributor first, for example ntfy.</string>
     <string name="InuUpdatesIncludeBetaInfo">Also offer pre-release/beta test builds. If a stable release is newer than the beta you\'re on, that\'s offered instead.</string>
     <string name="InuUpdateBetaWarning">⚠️ This is a beta test build. It may be unstable or buggy — install at your own risk.</string>
     <string name="InuVersionBetaSuffix">(Beta)</string>

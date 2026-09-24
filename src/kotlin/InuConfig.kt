@@ -1471,6 +1471,9 @@ object InuConfig {
     @JvmField
     val UPDATES_INCLUDE_BETA = BoolItem("updates_include_beta", false)
 
+    // entiny: push through a UnifiedPush distributor (ntfy etc.) instead of Firebase
+    val UNIFIED_PUSH = BoolItem("unified_push", false)
+
     @JvmField
     val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
 

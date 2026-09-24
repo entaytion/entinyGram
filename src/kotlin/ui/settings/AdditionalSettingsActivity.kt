@@ -16,6 +16,7 @@ import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
 import desu.inugram.helpers.SystemInfo
+import desu.inugram.helpers.push.UnifiedPushHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -92,6 +93,27 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             items.add(UItem.asShadow(null))
         }
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuPushHeader)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_UNIFIED_PUSH,
+                R.string.InuUnifiedPush,
+                R.string.InuUnifiedPushInfo,
+                UnifiedPushHelper.isEnabled(),
+                experimental = true,
+            )
+        )
+        if (UnifiedPushHelper.isEnabled()) {
+            items.add(
+                UItem.asButton(
+                    BUTTON_UNIFIED_PUSH_DISTRIBUTOR,
+                    LocaleController.getString(R.string.InuUnifiedPushDistributor),
+                    UnifiedPushHelper.currentDistributor()?.let(::appLabel) ?: LocaleController.getString(R.string.InuUnifiedPushNoDistributor),
+                )
+            )
+        }
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDataBackup)))
         items.add(mkSubPageButton(BUTTON_CLOUD_SYNC, R.drawable.inu_tabler_cloud, LocaleController.getString(R.string.InuCloudSync)))
         items.add(mkSubPageButton(BUTTON_CACHE_MANAGEMENT, R.drawable.inu_tabler_trash_x, LocaleController.getString(R.string.InuCacheManagement)))
@@ -129,6 +151,36 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         applyListPadding()
     }
 
+    private fun toggleUnifiedPush() {
+        val enable = !UnifiedPushHelper.isEnabled()
+        if (enable && UnifiedPushHelper.distributors().isEmpty()) {
+            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuUnifiedPushNoDistributorInfo)).show()
+            return
+        }
+        UnifiedPushHelper.setEnabled(enable)
+        listView?.adapter?.update(true)
+    }
+
+    private fun pickDistributor(anchor: View) {
+        val all = UnifiedPushHelper.distributors()
+        if (all.isEmpty()) {
+            BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.InuUnifiedPushNoDistributorInfo)).show()
+            return
+        }
+        val current = UnifiedPushHelper.currentDistributor()
+        RadioItemOptions.show(this, anchor, all.map { appLabel(it) }, all.indexOf(current).coerceAtLeast(0)) { which ->
+            val picked = all.getOrNull(which) ?: return@show
+            if (picked != current) UnifiedPushHelper.setEnabled(true, picked)
+        }
+    }
+
+    private fun appLabel(packageName: String): CharSequence = try {
+        val pm = ApplicationLoader.applicationContext.packageManager
+        pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0))
+    } catch (_: Exception) {
+        packageName
+    }
+
     private fun applyListPadding() {
         val lv = listView ?: return
         val barHeight = if (SharedConfig.isAppUpdateAvailable()) dp(44f) else 0
@@ -137,6 +189,10 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
+            TOGGLE_UNIFIED_PUSH -> toggleUnifiedPush()
+
+            BUTTON_UNIFIED_PUSH_DISTRIBUTOR -> pickDistributor(view)
+
             TOGGLE_AUTO_UPDATE_CHECK -> {
                 val new = InuConfig.UPDATES_ENABLED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -455,6 +511,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
         private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
         private val BUTTON_DATACENTER_STATUS = InuUtils.generateId()
+        private val TOGGLE_UNIFIED_PUSH = InuUtils.generateId()
+        private val BUTTON_UNIFIED_PUSH_DISTRIBUTOR = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -468,6 +526,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("additional-cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),
                 SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
                 SearchRegistry.Entry("additional-datacenter-status", R.string.InuDatacenterStatus, BUTTON_DATACENTER_STATUS),
+                SearchRegistry.Entry("additional-unified-push", R.string.InuUnifiedPush, TOGGLE_UNIFIED_PUSH),
             ),
         )
     }

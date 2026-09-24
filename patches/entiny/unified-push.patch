@@ -1,0 +1,75 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 09:15:38 +0300
+Subject: feat(entiny): UnifiedPush as a push provider
+
+Register Telegram's simple push (token type 4) through a UnifiedPush
+distributor; the provider and service live in desu.inugram.helpers.push.
+---
+ TMessagesProj/build.gradle                                  | 1 +
+ TMessagesProj/src/main/AndroidManifest.xml                  | 6 ++++++
+ .../main/java/org/telegram/messenger/ApplicationLoader.java | 3 +++
+ .../java/org/telegram/messenger/PushListenerController.java | 2 ++
+ 4 files changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj/build.gradle
++++ b/TMessagesProj/build.gradle
+@@ -51,6 +51,7 @@ dependencies {
+     compileOnly 'org.checkerframework:checker-compat-qual:2.5.0'
+     compileOnly 'com.google.j2objc:j2objc-annotations:2.8'
+     implementation 'com.google.firebase:firebase-messaging:22.0.0'
++    implementation 'org.unifiedpush.android:connector:3.1.2'
+     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+     implementation 'com.google.android.gms:play-services-auth:20.4.0'
+     implementation 'com.google.android.gms:play-services-vision:20.1.3'
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -741,6 +741,12 @@
+             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+             android:value="org.telegram.messenger.chromecast.ChromecastOptionsProvider" />
+ 
++        <service android:name="desu.inugram.helpers.push.UnifiedPushService" android:exported="false">
++            <intent-filter>
++                <action android:name="org.unifiedpush.android.connector.PUSH_EVENT"/>
++            </intent-filter>
++        </service>
++
+     </application>
+ 
+ </manifest>
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -111,6 +111,9 @@ public class ApplicationLoader extends Application {
+     }
+ 
+     public static PushListenerController.IPushListenerServiceProvider getPushProvider() {
++        if (desu.inugram.helpers.push.UnifiedPushHelper.isEnabled()) { // entiny: user opted into UnifiedPush
++            return desu.inugram.helpers.push.UnifiedPushHelper.PROVIDER;
++        }
+         if (pushProvider == null) {
+             pushProvider = applicationLoaderInstance.onCreatePushProvider();
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/PushListenerController.java
+@@ -34,11 +34,13 @@ import java.util.concurrent.CountDownLatch;
+ @Keep
+ public class PushListenerController {
+     public static final int PUSH_TYPE_FIREBASE = 2,
++        PUSH_TYPE_SIMPLE = 4, // entiny: UnifiedPush
+         PUSH_TYPE_HUAWEI = 13;
+ 
+     @Retention(RetentionPolicy.SOURCE)
+     @IntDef({
+             PUSH_TYPE_FIREBASE,
++            PUSH_TYPE_SIMPLE,
+             PUSH_TYPE_HUAWEI
+     })
+     public @interface PushType {}

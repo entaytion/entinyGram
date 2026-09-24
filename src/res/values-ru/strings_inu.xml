@@ -19,6 +19,12 @@
     <string name="InuAutoUpdateCheck">Проверять обновления</string>
     <string name="InuAutoUpdateCheckInfo">Периодически проверять канал entinyGram CI на наличие новых релизов и предлагать их загрузку.</string>
     <string name="InuUpdatesIncludeBeta">Получать бета-обновления</string>
+    <string name="InuPushHeader">Push-уведомления</string>
+    <string name="InuUnifiedPush">UnifiedPush</string>
+    <string name="InuUnifiedPushInfo">Получать уведомления через дистрибьютор UnifiedPush, например ntfy, вместо сервисов Google. Работает без Google Play.</string>
+    <string name="InuUnifiedPushDistributor">Дистрибьютор</string>
+    <string name="InuUnifiedPushNoDistributor">Не выбран</string>
+    <string name="InuUnifiedPushNoDistributorInfo">Сначала установите дистрибьютор UnifiedPush, например ntfy.</string>
     <string name="InuUpdatesIncludeBetaInfo">Также предлагать тестовые сборки (бета/pre-release). Если стабильный релиз новее текущей беты, будет предложен именно он.</string>
     <string name="InuUpdateBetaWarning">⚠️ Это тестовая бета-сборка. Она может быть нестабильной или содержать баги — устанавливайте на свой риск.</string>
     <string name="InuVersionBetaSuffix">(Бета)</string>
@@ -310,7 +316,7 @@
     <string name="InuFontVariableSlant">Вариативный шрифт (%1$s)</string>
     <string name="InuFontStyleRegular">Обычный</string>
     <string name="InuFontStyleItalic">Курсив</string>
-    <string name="InuFontStyleItalicSuffix">%1$s Italic</string>
+    <string name="InuFontStyleItalicSuffix">%1 курсив</string>
     <string name="InuFontIncludeSystem">Включить системные шрифты</string>
     <string name="InuFontIncludeSystemInfo">Показывать в списке ниже шрифты, предоставленные системой</string>
     <string name="InuFontTagStock">Стандартный</string>
@@ -1172,7 +1178,7 @@
     <string name="InuDeletePermanentlyDone">Удалено навсегда</string>
     <string name="InuAiTranscribe">Распознавание речи (Voice-to-Text)</string>
     <string name="InuAiTranscribeInfo">Расшифровывать голосовые и видеосообщения через своего AI-провайдера вместо телеграмовского — с Premium или без него.</string>
-    <string name="InuAiTranscribeSection">Voice-to-Text</string>
+    <string name="InuAiTranscribeSection">Голос в текст</string>
     <string name="InuAiTranscribeProvider">Провайдер распознавания</string>
     <string name="InuAiTranscribeProviderGroq">Groq Whisper (Быстро &amp; Бесплатно)</string>
     <string name="InuAiTranscribeProviderGemini">Google Gemini Flash</string>
@@ -1427,7 +1433,7 @@
     <string name="InuCenterTitleChatsInfo">Переносит название и подпись в середину шапки чата. Аватарка остаётся прижатой слева.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Переносит аватарку из таблетки на место кнопки «⋮» — тап открывает профиль, долгое нажатие — меню чата; выключено — аватарка остаётся в таблетке.</string>
-    <string name="InuScrollToTop">Scroll to top</string>
+    <string name="InuScrollToTop">Наверх</string>
     <string name="InuRecentChats">Недавние чаты</string>
     <string name="InuClearRecentChats">Очистить недавние чаты</string>
     <string name="InuClearRecentChatsAlert">Это очистит список недавно открытых чатов. Никакие чаты или сообщения не будут удалены.</string>
@@ -1468,7 +1474,7 @@
     <string name="InuAiTranscribeOpenAiInfo">Официальная транскрипция через OpenAI Whisper. Получите ключ в панели управления OpenAI:</string>
     <string name="InuAiTranscribeProviderDesc">Выберите движок ИИ для расшифровки голосовых и видеосообщений без Telegram Premium.</string>
     <string name="InuAiTranscribeReqApiKey">Ключ API</string>
-    <string name="InuAiTranscribeReqCfCreds">Account ID + Token</string>
+    <string name="InuAiTranscribeReqCfCreds">ID аккаунта + токен</string>
     <string name="InuAiTranscribeReqCustom">URL + Ключ + Модель</string>
     <string name="InuAiTranscribeReqKeyModel">Ключ + Модель</string>
     <string name="InuAiTranscribeStatusConfigured">Настроено</string>
@@ -1521,4 +1527,18 @@
     <string name="InuDatacenterStatusAbout">Проверка доступности и задержки к дата-центрам Telegram.</string>
     <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuDatacenterLeakGuardBlocked">Отключено защитой от утечек</string>
+    <string name="InuChatHeaderPreviewName">Алекс</string>
+    <string name="InuChatHeaderSettings">Заголовок чата</string>
+    <string name="InuChatHeaderSettingsInfo">Предпросмотр выше обновляется сразу, как только вы меняете настройки ниже.</string>
+    <string name="InuConnectProxyImmediately">Подключиться сразу</string>
+    <string name="InuDialogAvatarOpensProfile">Нажатие на аватар открывает профиль</string>
+    <string name="InuDialogAvatarOpensProfileInfo">Нажатие на аватар чата в списке чатов открывает профиль вместо самого чата.</string>
+    <string name="InuGhostModeDisabled">Режим призрака выключен</string>
+    <string name="InuGhostModeEnabled">Режим призрака включён</string>
+    <string name="InuIosChatHeaderAvatarStatic">Не центрировать аватар</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">Аватар остаётся на своём месте рядом с кнопкой «Назад», а по центру только плашка с заголовком и подзаголовком.</string>
+    <string name="InuIosStyle">Стиль iOS</string>
+    <string name="InuPingAllProxies">Пинг всех прокси</string>
+    <string name="InuRoundRecorderExposureLevels">Кнопки уровня экспозиции</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Показывать кнопки EV, чтобы осветлять или затемнять кадр во время записи.</string>
 </resources>

@@ -27,6 +27,12 @@
     <string name="InuAutoUpdateCheck">Перевіряти оновлення</string>
     <string name="InuAutoUpdateCheckInfo">Періодично перевіряти канал entinyGram CI на наявність нових релізів і пропонувати їх завантаження.</string>
     <string name="InuUpdatesIncludeBeta">Отримувати бета-оновлення</string>
+    <string name="InuPushHeader">Push-сповіщення</string>
+    <string name="InuUnifiedPush">UnifiedPush</string>
+    <string name="InuUnifiedPushInfo">Отримувати сповіщення через дистриб’ютор UnifiedPush, наприклад ntfy, замість сервісів Google. Працює без Google Play.</string>
+    <string name="InuUnifiedPushDistributor">Дистриб’ютор</string>
+    <string name="InuUnifiedPushNoDistributor">Не вибрано</string>
+    <string name="InuUnifiedPushNoDistributorInfo">Спершу встановіть дистриб’ютор UnifiedPush, наприклад ntfy.</string>
     <string name="InuUpdatesIncludeBetaInfo">Також пропонувати тестові збірки (бета/pre-release). Якщо стабільний реліз новіший за поточну бету, буде запропоновано саме його.</string>
     <string name="InuUpdateBetaWarning">⚠️ Це тестова бета-збірка. Вона може бути нестабільною або містити баги — встановлюйте на власний ризик.</string>
     <string name="InuVersionBetaSuffix">(Бета)</string>
@@ -1072,13 +1078,13 @@
     <string name="InuAiReasoning">Міркування</string>
     <string name="InuAiReasoningInfo">Передає параметри reasoning_effort та thinking tokens для моделей міркування (o1, o3-mini, DeepSeek R1, Gemini Thinking)</string>
     <string name="InuAiReasoningEffort">Рівень міркування</string>
-    <string name="InuAiChatTitle">AI Chat</string>
+    <string name="InuAiChatTitle">AI-чат</string>
     <string name="InuAiChatHeaderDesc">Генерувати текст із повідомлень або перед надсиланням.</string>
     <string name="InuAiSectionGeneral">Загальні</string>
     <string name="InuAiServices">Сервіси</string>
     <string name="InuAiServicesNone">Немає</string>
     <string name="InuAiRoles">Ролі</string>
-    <string name="InuAiRolesAssistant">Assistant</string>
+    <string name="InuAiRolesAssistant">Асистент</string>
     <string name="InuAiHistory">Історія повідомлень</string>
     <string name="InuAiHistoryInfo">Історія розмов дозволяє ШІ розуміти попередні запити та враховувати їх під час створення нових відповідей.</string>
     <string name="InuAiSectionGeneration">Генерація</string>
@@ -1290,7 +1296,7 @@
     <string name="InuSaveTimedMessages">Зберігати повідомлення з таймером</string>
     <string name="InuAiTranscribe">Розпізнавання аудіо (Voice-to-Text)</string>
     <string name="InuAiTranscribeInfo">Розшифровувати голосові та відеоповідомлення через власного AI-провайдера замість телеграмівського — з Premium чи без нього.</string>
-    <string name="InuAiTranscribeSection">Voice-to-Text</string>
+    <string name="InuAiTranscribeSection">Голос у текст</string>
     <string name="InuAiTranscribeProvider">Провайдер розпізнавання</string>
     <string name="InuAiTranscribeProviderGroq">Groq Whisper (Швидко &amp; Безкоштовно)</string>
     <string name="InuAiTranscribeProviderGemini">Google Gemini Flash</string>
@@ -1323,7 +1329,7 @@
     <string name="InuAiTranscribeCredentialsHeader">Дані доступу — %1$s</string>
     <string name="InuAiTranscribeReqApiKey">API ключ</string>
     <string name="InuAiTranscribeReqKeyModel">Ключ + модель</string>
-    <string name="InuAiTranscribeReqCfCreds">Account ID + Token</string>
+    <string name="InuAiTranscribeReqCfCreds">ID акаунта + токен</string>
     <string name="InuAiTranscribeReqCustom">URL + ключ + модель</string>
     <string name="InuAiTranscribeStatusConfigured">Налаштовано</string>
     <string name="InuAiTranscribeStatusNotConfigured">Не налаштовано</string>
@@ -1517,4 +1523,14 @@
     <string name="InuDatacenterStatusAbout">Перевірка доступності та затримки до дата-центрів Telegram.</string>
     <string name="InuDatacenterYourDc">Ваш DC</string>
     <string name="InuDatacenterLeakGuardBlocked">Вимкнено захистом від витоків</string>
+    <string name="InuChatHeaderPreviewName">Олекс</string>
+    <string name="InuChatHeaderSettings">Заголовок чату</string>
+    <string name="InuChatHeaderSettingsInfo">Попередній перегляд вище оновлюється одразу, щойно ви змінюєте налаштування нижче.</string>
+    <string name="InuConnectProxyImmediately">Підключитися одразу</string>
+    <string name="InuDialogAvatarOpensProfile">Тап по аватарці відкриває профіль</string>
+    <string name="InuDialogAvatarOpensProfileInfo">Тап по аватарці чату в списку чатів відкриває профіль замість самого чату.</string>
+    <string name="InuIosStyle">Стиль iOS</string>
+    <string name="InuPingAllProxies">Пінг усіх проксі</string>
+    <string name="InuRoundRecorderExposureLevels">Кнопки рівня експозиції</string>
+    <string name="InuRoundRecorderExposureLevelsInfo">Показувати кнопки EV, щоб освітлювати чи затемнювати кадр під час запису.</string>
 </resources>
