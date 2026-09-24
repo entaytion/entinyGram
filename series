@@ -430,3 +430,4 @@ entiny/legacy-stripe.patch
 entiny/anticensorship.patch
 entiny/hide-pinned-forever.patch
 entiny/settings-accounts.patch
+entiny/new-contact-default-account.patch

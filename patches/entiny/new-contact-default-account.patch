@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 09:00:50 +0300
+Subject: fix(entiny): don't crash saving a new contact on cloud-default devices
+
+Android 16+ rejects raw contacts with a null (local) account when the default
+account is cloud. Leave the account unset so the provider picks the default,
+catch IllegalArgumentException, and write the last name to FAMILY_NAME.
+---
+ .../java/org/telegram/ui/NewContactBottomSheet.java  | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/NewContactBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/NewContactBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/NewContactBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/NewContactBottomSheet.java
+@@ -1340,10 +1340,8 @@ public class NewContactBottomSheet extends BottomSheet implements AdapterView.On
+         if (into != null) {
+             builder.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, into.type);
+             builder.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, into.name);
+-        } else {
+-            builder.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, (String) null);
+-            builder.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, (String) null);
+         }
++        // entiny: no account -> let the provider pick the default; an explicit null is "local" and cloud-default devices reject it
+ 
+         ops.add(builder.build());
+ 
+@@ -1355,7 +1353,7 @@ public class NewContactBottomSheet extends BottomSheet implements AdapterView.On
+             op = op.withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, firstName);
+         }
+         if (!TextUtils.isEmpty(lastName)) {
+-            op = op.withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, lastName);
++            op = op.withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, lastName);
+         }
+         ops.add(op.build());
+ 
+@@ -1383,8 +1381,12 @@ public class NewContactBottomSheet extends BottomSheet implements AdapterView.On
+             final ContentResolver resolver = context.getContentResolver();
+             resolver.applyBatch(ContactsContract.AUTHORITY, ops);
+             return true;
++        } catch (IllegalArgumentException e) {
++            FileLog.e(e);
++            // entiny: a picked local account can be refused too; fall back to the default account once
++            return into != null && saveContact(context, phone, firstName, lastName, notes, null);
+         } catch (RemoteException | OperationApplicationException e) {
+-            e.printStackTrace();
++            FileLog.e(e);
+             return false;
+         }
+     }
