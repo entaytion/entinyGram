@@ -533,6 +533,7 @@
     <string name="InuDisableScrimBlurInfo">Замінює розмитий фон за контекстними меню на звичайне затемнення</string>
 
     <string name="InuDisableGlassGlare">Вимкнути відблиски скла</string>
+    <string name="InuDisableProfileAvatarBlur">Вимкнути розмиття аватара профілю</string>
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
 

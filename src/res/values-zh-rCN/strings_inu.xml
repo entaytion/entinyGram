@@ -787,6 +787,7 @@
     <string name="InuPublicPhotoMark">公开照片</string>
     <string name="InuPersonalPhotoMark">个人照片</string>
     <string name="InuDisableGlassGlare">禁用玻璃眩光</string>
+    <string name="InuDisableProfileAvatarBlur">禁用个人资料头像模糊</string>
     <string name="InuLiquidGlassAngle">Liquid Glass 角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass 强度</string>
 

@@ -653,6 +653,7 @@
     <string name="InuDisableScrimBlurInfo">Replaces the blurred backdrop behind context menus and previews with a flat dim. Enabling may reduce lag.</string>
 
     <string name="InuDisableGlassGlare">Disable glass glare</string>
+    <string name="InuDisableProfileAvatarBlur">Disable profile avatar blur</string>
     <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
 

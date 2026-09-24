@@ -189,6 +189,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableGlassGlare),
             ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_DISABLE_PROFILE_AVATAR_BLUR,
+                LocaleController.getString(R.string.InuDisableProfileAvatarBlur),
+            ).setChecked(InuConfig.DISABLE_PROFILE_AVATAR_BLUR.value)
+        )
         if (liquidGlassAngleSlider == null) {
             liquidGlassAngleSlider = SliderCell(
                 this.context, min = 0f, max = 360f,
@@ -400,6 +406,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            TOGGLE_DISABLE_PROFILE_AVATAR_BLUR -> {
+                val new = InuConfig.DISABLE_PROFILE_AVATAR_BLUR.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             TOGGLE_REDUCE_MENU_MOTION -> {
                 val new = InuConfig.REDUCE_MENU_MOTION.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -581,6 +592,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
         private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
+        private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_SWITCHES = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
@@ -635,6 +647,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("disable-scrim-blur", R.string.InuDisableScrimBlur, TOGGLE_DISABLE_SCRIM_BLUR),
                 SearchRegistry.Entry("disable-glass-glare", R.string.InuDisableGlassGlare, TOGGLE_DISABLE_GLASS_GLARE),
+                SearchRegistry.Entry("disable-profile-avatar-blur", R.string.InuDisableProfileAvatarBlur, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
                 SearchRegistry.Entry("material3-switches", R.string.InuMaterial3Switches, TOGGLE_MATERIAL3_SWITCHES),
                 SearchRegistry.Entry("material3-fabs", R.string.InuMaterial3Fabs, TOGGLE_MATERIAL3_FABS),

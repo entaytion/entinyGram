@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 19:32:29 +0300
+Subject: Add a toggle to disable the profile avatar blur/frost effect
+
+---
+ .../org/telegram/ui/Components/ProfileGalleryBlurView.java     | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryBlurView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryBlurView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryBlurView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryBlurView.java
+@@ -151,6 +151,7 @@ public class ProfileGalleryBlurView extends View {
+     }
+ 
+     private void swap(int from, int to, int clear) {
++        if (desu.inugram.InuConfig.DISABLE_PROFILE_AVATAR_BLUR.getValue()) return;
+         synchronized (lock) {
+             ProfileMetaballView.BlurBitmapHolder tmp2 = nextFrame[from];
+             nextFrame[from] = nextFrame[to];
+@@ -428,7 +429,7 @@ public class ProfileGalleryBlurView extends View {
+     }
+ 
+     public void draw(Canvas canvas, ProfileActivity.AvatarImageView avatarImageView, float width, float height, boolean translate, float fraction, float alpha) {
+-        if (view == null || !view.isAttachedToWindow() || view.getVisibility() == GONE) {
++        if (view == null || !view.isAttachedToWindow() || view.getVisibility() == GONE || desu.inugram.InuConfig.DISABLE_PROFILE_AVATAR_BLUR.getValue()) {
+             return;
+         }
+ 

@@ -1095,6 +1095,9 @@ object InuConfig {
     val LIQUID_GLASS_INTENSITY = IntItem("liquid_glass_intensity", 75)
 
     @JvmField
+    val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
+
+    @JvmField
     val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
 
     @JvmField

@@ -900,6 +900,7 @@
     <string name="InuPublicPhotoMark">публичное фото</string>
     <string name="InuPersonalPhotoMark">личное фото</string>
     <string name="InuDisableGlassGlare">Отключить блик стекла</string>
+    <string name="InuDisableProfileAvatarBlur">Отключить размытие аватара профиля</string>
     <string name="InuLiquidGlassAngle">Угол Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Интенсивность Liquid Glass</string>
 

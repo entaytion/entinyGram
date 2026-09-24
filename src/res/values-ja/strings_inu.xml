@@ -788,6 +788,7 @@
     <string name="InuPublicPhotoMark">公開写真</string>
     <string name="InuPersonalPhotoMark">個人用写真</string>
     <string name="InuDisableGlassGlare">ガラスのグレアを無効化</string>
+    <string name="InuDisableProfileAvatarBlur">プロフィールアバターのブラーを無効化</string>
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>
 

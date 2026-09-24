@@ -447,6 +447,7 @@
     <string name="InuDisableScrimBlurInfo">Bağlam menülerinin ve önizlemelerin arkasındaki bulanık arka planı düz bir karartmayla değiştirir. Etkinleştirmek takılmaları azaltabilir.</string>
 
     <string name="InuDisableGlassGlare">Cam parlamasını devre dışı bırak</string>
+    <string name="InuDisableProfileAvatarBlur">Profil avatarı bulanıklığını devre dışı bırak</string>
     <string name="InuLiquidGlassAngle">Liquid Glass açısı</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass yoğunluğu</string>
 
