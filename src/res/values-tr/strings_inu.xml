@@ -498,6 +498,7 @@
 
     <string name="InuReactionsInRow">Satırdaki tepkiler</string>
     <string name="InuChatInputMaxLines">Sohbet girişi azami satır sayısı</string>
+    <string name="InuChatInputMatchFontSize">Giriş metni boyutunu mesaj yazı tipi boyutuyla eşleştir</string>
     <string name="InuReactionBarBelow">Erişilebilir tepkiler çubuğu</string>
     <string name="InuReactionBarBelowInfo">Tepkiler çubuğunu menünün altına taşır</string>
     <string name="InuChatViewsBottom">Erişilebilir görüntüleme listesi</string>

@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 19:36:35 +0300
+Subject: Add a toggle to match the chat input text size to the message font size
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -6236,7 +6236,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         updateFieldHint(false);
+         messageEditText.setSingleLine(false);
+         messageEditText.setMaxLines(desu.inugram.InuConfig.CHAT_INPUT_MAX_LINES.getValue());
+-        messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
++        messageEditText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, desu.inugram.helpers.chat.ChatHelper.getChatInputTextSize());
+         messageEditText.setGravity(Gravity.BOTTOM);
+         messageEditText.setPadding(0, dp(inu_FIELD_PADDING_TOP), 0, dp(inu_FIELD_PADDING_BOTTOM));
+         messageEditText.setBackgroundDrawable(null);

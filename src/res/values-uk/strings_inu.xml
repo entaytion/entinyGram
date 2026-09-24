@@ -584,6 +584,7 @@
 
     <string name="InuReactionsInRow">Реакцій у рядку</string>
     <string name="InuChatInputMaxLines">Макс. рядків поля введення</string>
+    <string name="InuChatInputMatchFontSize">Розмір тексту поля введення = розмір шрифту повідомлень</string>
     <string name="InuReactionBarBelow">Доступна панель реакцій</string>
     <string name="InuReactionBarBelowInfo">Перемістити панель реакцій під меню</string>
     <string name="InuChatViewsBottom">Доступний список переглядів</string>

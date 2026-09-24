@@ -441,6 +441,7 @@
 
     <string name="InuReactionsInRow">Реакций в ряд</string>
     <string name="InuChatInputMaxLines">Максимум строк в поле ввода</string>
+    <string name="InuChatInputMatchFontSize">Размер текста поля ввода = размер шрифта сообщений</string>
     <string name="InuReactionBarBelow">Доступная панель реакций</string>
     <string name="InuReactionBarBelowInfo">Переместить панель реакций под меню</string>
     <string name="InuChatViewsBottom">Доступный список просмотров</string>

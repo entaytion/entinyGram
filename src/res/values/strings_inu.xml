@@ -703,6 +703,7 @@
 
     <string name="InuReactionsInRow">Reactions in a row</string>
     <string name="InuChatInputMaxLines">Chat input max lines</string>
+    <string name="InuChatInputMatchFontSize">Match input text size to message font size</string>
     <string name="InuReactionBarBelow">Reachable reactions bar</string>
     <string name="InuReactionBarBelowInfo">Move reactions bar below the menu</string>
     <string name="InuChatViewsBottom">Reachable views list</string>

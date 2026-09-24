@@ -331,6 +331,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatInputMaxLines)))
         items.add(UItem.asCustom(chatInputMaxLinesSlider))
+        items.add(
+            UItem.asCheck(TOGGLE_CHAT_INPUT_MATCH_FONT_SIZE, LocaleController.getString(R.string.InuChatInputMatchFontSize))
+                .setChecked(InuConfig.CHAT_INPUT_MATCH_FONT_SIZE.value)
+        )
         hideBotSlashGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
             UItem.asCheck(TOGGLE_BOT_WEBVIEW_BUTTON, LocaleController.getString(R.string.InuHideBotWebView))
@@ -494,6 +498,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.toggle()
             TOGGLE_BOT_WEBVIEW_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_BOT_WEBVIEW_INPUT.toggle()
+
+            TOGGLE_CHAT_INPUT_MATCH_FONT_SIZE -> (view as? TextCheckCell)?.isChecked = InuConfig.CHAT_INPUT_MATCH_FONT_SIZE.toggle()
             TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.toggle()
@@ -549,6 +555,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS = InuUtils.generateId()
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
+        private val TOGGLE_CHAT_INPUT_MATCH_FONT_SIZE = InuUtils.generateId()
         private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER = InuUtils.generateId()
         private val BUTTON_FORMATTING_POPUP = InuUtils.generateId()
@@ -616,6 +623,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-exposure-button", R.string.InuRoundRecorderExposureButton, TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON),
                 SearchRegistry.Entry("round-recorder-exposure-levels", R.string.InuRoundRecorderExposureLevels, TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS),
                 SearchRegistry.Entry("hide-bot-webview-input", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
+                SearchRegistry.Entry("chat-input-match-font-size", R.string.InuChatInputMatchFontSize, TOGGLE_CHAT_INPUT_MATCH_FONT_SIZE),
                 SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
                 SearchRegistry.Entry("suggest-custom-emoji-after", R.string.InuSuggestCustomEmojiAfter, TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER),
                 SearchRegistry.Entry("formatting-popup", R.string.InuFormattingPopup, BUTTON_FORMATTING_POPUP),

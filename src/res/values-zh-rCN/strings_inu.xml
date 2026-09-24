@@ -391,6 +391,7 @@
 
     <string name="InuReactionsInRow">每行回应数</string>
     <string name="InuChatInputMaxLines">输入框最大行数</string>
+    <string name="InuChatInputMatchFontSize">输入框文字大小与消息字体大小一致</string>
     <string name="InuReactionBarBelow">可达回应栏</string>
     <string name="InuReactionBarBelowInfo">将回应栏移到菜单下方</string>
     <string name="InuChatViewsBottom">可达浏览列表</string>

@@ -392,6 +392,7 @@
 
     <string name="InuReactionsInRow">1 行のリアクション数</string>
     <string name="InuChatInputMaxLines">入力欄の最大行数</string>
+    <string name="InuChatInputMatchFontSize">入力欄の文字サイズをメッセージのフォントサイズに合わせる</string>
     <string name="InuReactionBarBelow">手の届くリアクションバー</string>
     <string name="InuReactionBarBelowInfo">リアクションバーをメニューの下に移動</string>
     <string name="InuChatViewsBottom">手の届くビューリスト</string>
