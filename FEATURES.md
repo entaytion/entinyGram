@@ -132,6 +132,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **separator after mention**: customizable separator inserted after @mentions and name mentions in the input (comma, period, colon, or any custom text; bots opt-in) — *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - 📡 **export chat (experimental)**: collect the whole history in background from the chat menu and save it as JSON, or as an HTML page with downloaded media in a plain folder — photos, videos, voice and video messages, stickers, GIFs and files, with per-type checkboxes and a size limit; the result lands in Downloads/entinyGram/Chat Export with view and show-folder actions
 - 📡 **UnifiedPush (experimental)**: get notifications through a UnifiedPush distributor like ntfy instead of Firebase, with a distributor picker in Additional settings; works without Google Play - *ported from [Forkgram](https://github.com/forkgram/TelegramAndroid)*
+- 📡 **diagnostic scripts**: import a `.entinylog` file from a chat to record chosen zones, server requests, updates, app events and state snapshots into the logs for a limited time, so bugs can be traced without a new build (see `diag/`)
 
 ### debloat & premium noise
 

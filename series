@@ -432,3 +432,5 @@ entiny/hide-pinned-forever.patch
 entiny/settings-accounts.patch
 entiny/new-contact-default-account.patch
 entiny/unified-push.patch
+entiny/contacts-debug.patch
+entiny/diag-probes.patch

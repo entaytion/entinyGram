@@ -3,6 +3,7 @@ package desu.inugram.helpers.feed
 import android.util.SparseIntArray
 import androidx.collection.LongSparseArray
 import org.telegram.messenger.MessageObject
+import desu.inugram.helpers.diag.DiagLog
 import org.telegram.messenger.NotificationCenter
 import org.telegram.tgnet.TLRPC
 
@@ -73,6 +74,7 @@ class FeedController private constructor(
 
     fun loadOlder(onResult: (added: Int) -> Unit) {
         store.loadOlder { added ->
+            DiagLog.log("feed", "scope=$scope loadOlder added=$added total=${store.size}")
             if (added == 0) requestBackfill()
             onResult(added)
         }
@@ -88,10 +90,12 @@ class FeedController private constructor(
     }
 
     fun onNewMessages(messages: List<MessageObject>) {
+        if (isActive) DiagLog.log("feed", "scope=$scope live new=${messages.size}")
         if (isActive && store.mergeLive(messages)) listener?.onTimelineChanged()
     }
 
     fun onMessagesDeleted(dialogId: Long, messageIds: Collection<Int>) {
+        if (isActive) DiagLog.log("feed", "scope=$scope deleted dialog=$dialogId ids=$messageIds")
         if (isActive && store.remove(dialogId, messageIds)) listener?.onTimelineChanged()
     }
 
@@ -103,8 +107,8 @@ class FeedController private constructor(
         if (store.removeDialog(dialogId)) listener?.onTimelineChanged()
     }
 
-    fun markAllRead(): Int =
-        unreadTracker.markAllRead(FeedChannelSet.eligibleChannels(account, scope).toList(), store.newestIdPerChannel())
+    fun markAllRead(): Int = unreadTracker.markAllRead(FeedChannelSet.eligibleChannels(account, scope).toList(), store.newestIdPerChannel())
+        .also { DiagLog.trace("feed", "scope=$scope markAllRead marked=$it") }
 
     private fun applyViews(args: Array<out Any?>): Boolean {
         @Suppress("UNCHECKED_CAST")

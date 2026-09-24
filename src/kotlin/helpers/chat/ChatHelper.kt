@@ -1701,20 +1701,23 @@ object ChatHelper {
     @JvmStatic
     fun maybeHandleFileClick(activity: ChatActivity, message: MessageObject): Boolean {
         val name = message.documentName ?: return false
-        val isSettings = name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX)
-        val isFont = !isSettings && FontImportHelper.isFontFileName(name)
-        if (!isSettings && !isFont) return false
+        val kind = when {
+            name.endsWith(SettingsBackupHelper.FILENAME_SUFFIX) -> FileKind.SETTINGS
+            desu.inugram.helpers.diag.DiagUi.isProfileFile(name) -> FileKind.DIAG
+            FontImportHelper.isFontFileName(name) -> FileKind.FONT
+            else -> return false
+        }
 
         val existing = existingFileForMessage(activity, message)
         if (existing != null) {
-            handleRecognizedFile(activity, message, existing, name, isSettings)
+            handleRecognizedFile(activity, message, existing, name, kind)
             return true
         }
 
         // entiny: trigger download manually so stock does not route un-cached file to system open-with chooser
         val doc = message.getDocument() ?: return false
         FileLoader.getInstance(activity.currentAccount).loadFile(doc, message, FileLoader.PRIORITY_NORMAL, 1)
-        pollFileDownload(activity, message, name, isSettings)
+        pollFileDownload(activity, message, name, kind)
         return true
     }
 
@@ -1730,20 +1733,22 @@ object ChatHelper {
         message: MessageObject,
         file: File,
         name: String,
-        isSettings: Boolean,
+        kind: FileKind,
     ) {
-        if (isSettings) {
-            SettingsBackupHelper.startImportFromFile(activity, file)
-        } else {
-            FontImportHelper.startImportFromFile(activity, message, file, name)
+        when (kind) {
+            FileKind.SETTINGS -> SettingsBackupHelper.startImportFromFile(activity, file)
+            FileKind.DIAG -> desu.inugram.helpers.diag.DiagUi.startImport(activity, file)
+            FileKind.FONT -> FontImportHelper.startImportFromFile(activity, message, file, name)
         }
     }
+
+    private enum class FileKind { SETTINGS, FONT, DIAG }
 
     private fun pollFileDownload(
         activity: ChatActivity,
         message: MessageObject,
         name: String,
-        isSettings: Boolean,
+        kind: FileKind,
         attempts: Int = 0,
     ) {
         if (attempts > 60) return
@@ -1751,9 +1756,9 @@ object ChatHelper {
             if (activity.parentActivity == null) return@runOnUIThread
             val file = existingFileForMessage(activity, message)
             if (file != null) {
-                handleRecognizedFile(activity, message, file, name, isSettings)
+                handleRecognizedFile(activity, message, file, name, kind)
             } else {
-                pollFileDownload(activity, message, name, isSettings, attempts + 1)
+                pollFileDownload(activity, message, name, kind, attempts + 1)
             }
         }, 500)
     }

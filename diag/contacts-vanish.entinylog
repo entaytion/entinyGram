@@ -1,0 +1,15 @@
+{
+  "entinylog": 1,
+  "name": "contacts vanish",
+  "hours": 24,
+  "watch": [634949235],
+  "categories": ["contacts"],
+  "events": ["contactsDidLoad", "*Contact*"],
+  "requests": ["TL_contacts_*"],
+  "updates": ["TL_updatePeerSettings", "*Contact*"],
+  "dump": {
+    "what": ["contacts", "user:634949235", "config:*SYNC*"],
+    "on": ["activate", "start"],
+    "every": 120
+  }
+}

@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 10:43:05 +0300
+Subject: feat(entiny): diag probes for server requests and updates
+
+Let .entinylog profiles log chosen TL requests/responses and pushed updates
+by class name, without shipping a new build per investigation.
+---
+ .../main/java/org/telegram/messenger/MessagesController.java | 1 +
+ .../src/main/java/org/telegram/tgnet/ConnectionsManager.java | 5 +++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -18531,6 +18531,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public boolean processUpdateArray(ArrayList<TLRPC.Update> updates, ArrayList<TLRPC.User> usersArr, ArrayList<TLRPC.Chat> chatsArr, boolean fromGetDifference, int date) {
++        desu.inugram.helpers.diag.DiagProbes.onUpdates(currentAccount, updates); // entiny: diag probes
+         if (updates.isEmpty()) {
+             if (usersArr != null || chatsArr != null) {
+                 AndroidUtilities.runOnUIThread(() -> {
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -374,14 +374,15 @@ public class ConnectionsManager extends BaseController {
+ 
+     public int sendRequestSync(final TLObject object, final RequestDelegate onComplete, final QuickAckDelegate onQuickAck, final WriteToSocketDelegate onWriteToSocket, final int flags, final int datacenterId, final int connectionType, final boolean immediate) {
+         final int requestToken = lastRequestToken.getAndIncrement();
+-        sendRequestInternal(object, onComplete, null, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken);
++        sendRequestInternal(object, desu.inugram.helpers.diag.DiagProbes.wrapRequest(object, currentAccount, onComplete), null, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken);
+         return requestToken;
+     }
+ 
+     public int sendRequest(final TLObject object, final RequestDelegate onComplete, final RequestDelegateTimestamp onCompleteTimestamp, final QuickAckDelegate onQuickAck, final WriteToSocketDelegate onWriteToSocket, final int flags, final int datacenterId, final int connectionType, final boolean immediate) {
+         final int requestToken = lastRequestToken.getAndIncrement();
++        final RequestDelegate diagComplete = desu.inugram.helpers.diag.DiagProbes.wrapRequest(object, currentAccount, onComplete); // entiny: diag probes
+         Utilities.stageQueue.postRunnable(() -> {
+-            sendRequestInternal(object, onComplete, onCompleteTimestamp, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken);
++            sendRequestInternal(object, diagComplete, onCompleteTimestamp, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken);
+         });
+         return requestToken;
+     }

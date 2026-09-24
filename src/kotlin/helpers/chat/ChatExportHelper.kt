@@ -17,6 +17,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.FileProvider
 import desu.inugram.InuConfig
+import desu.inugram.helpers.diag.DiagLog
 import desu.inugram.helpers.SharePicker
 import org.json.JSONArray
 import org.json.JSONObject
@@ -295,6 +296,7 @@ object ChatExportHelper {
             AndroidUtilities.runOnUIThread {
                 if (session.aborted || session.finished) return@runOnUIThread
                 if (error != null || response !is TLRPC.messages_Messages) {
+                    DiagLog.log("export", "getHistory failed dialog=${session.dialogId} offset=${session.offsetId} error=${error?.code} ${error?.text}")
                     FileLog.e("ChatExportHelper: getHistory failed for ${session.dialogId}: ${error?.text}")
                     if (session.collected.isEmpty()) {
                         finishWithError(session, error?.text)
@@ -316,6 +318,7 @@ object ChatExportHelper {
                 session.dialog?.setMessage(
                     LocaleController.formatString(R.string.InuChatExportCollected, session.collected.size)
                 )
+                DiagLog.log("export", "page dialog=${session.dialogId} got=${response.messages.size} total=${session.collected.size} offset=${session.offsetId}")
                 if (response.messages.isEmpty() || response.messages.size < PAGE_SIZE || minId == session.offsetId) {
                     if (session.options.html) {
                         startMediaPhase(session)
@@ -363,6 +366,7 @@ object ChatExportHelper {
                             NotificationCenter.fileLoadFailed -> {
                                 val name = args.getOrNull(0) as? String
                                 items.forEach { if (it.requested && !it.done && it.attachName == name) it.failed = true }
+                                DiagLog.log("export", "file load failed name=$name")
                             }
                         }
                         resolveExistingFiles(session)
@@ -387,6 +391,7 @@ object ChatExportHelper {
             if (session.finished || session.aborted) return@Runnable
             resolveExistingFiles(session)
             if (SystemClock.elapsedRealtime() - session.lastActivityAt > STALL_TIMEOUT_MS) {
+                DiagLog.log("export", "stall: skipping ${session.items?.count { it.requested && !it.done }} stuck files")
                 session.items?.forEach { if (it.requested && !it.done) it.failed = true }
                 session.lastActivityAt = SystemClock.elapsedRealtime()
             }
@@ -615,6 +620,7 @@ object ChatExportHelper {
                     BulletinFactory.of(session.fragment).createErrorBulletin(err).show()
                     return@runOnUIThread
                 }
+                DiagLog.log("export", "saved html folder=${folder.name} media=${items.count { it.file != null }} failed=${items.count { it.failed }} overLimit=${items.count { it.overLimit }}")
                 showSavedDialog(session, folder, html, "text/html")
             }
         }

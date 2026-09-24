@@ -93,7 +93,7 @@ object LogsHelper {
     fun currentLogFile(): File? {
         val dir = AndroidUtilities.getLogsDir() ?: return null
         return dir.listFiles { f ->
-            f.isFile && f.name.endsWith(".txt") && !f.name.endsWith("_mtproto.txt")
+            f.isFile && f.name.endsWith(".txt") && !f.name.endsWith("_mtproto.txt") && !f.name.endsWith(desu.inugram.helpers.diag.DiagLog.FILE_TAIL)
         }?.maxByOrNull { it.lastModified() }
     }
 

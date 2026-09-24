@@ -1,0 +1,12 @@
+{
+  "entinylog": 1,
+  "name": "push delivery",
+  "hours": 48,
+  "categories": ["push"],
+  "requests": ["account.registerDevice", "account.unregisterDevice"],
+  "dump": {
+    "what": ["push", "config:UNIFIED_PUSH"],
+    "on": ["activate", "start"],
+    "every": 600
+  }
+}

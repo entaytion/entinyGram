@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 10:32:26 +0300
+Subject: chore(entiny): temporary contacts diagnostics
+
+Log every place the contact list changes (load, swap, updates, deletes,
+db writes, addContact response) to chase contacts vanishing after adding.
+---
+ .../main/java/org/telegram/messenger/ContactsController.java | 5 +++++
+ .../main/java/org/telegram/messenger/MessagesStorage.java    | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
+@@ -1554,6 +1554,7 @@ public class ContactsController extends BaseController {
+ 
+     public void processLoadedContacts(final ArrayList<TLRPC.TL_contact> contactsArr, final ArrayList<TLRPC.User> usersArr, final int from) {
+         //from: 0 - from server, 1 - from db, 2 - from imported contacts
++        desu.inugram.helpers.ContactsDebug.onLoaded(currentAccount, from, contactsArr.size()); // entiny: diagnostics
+         AndroidUtilities.runOnUIThread(() -> {
+             getMessagesController().putUsers(usersArr, from == 1);
+ 
+@@ -1718,6 +1719,7 @@ public class ContactsController extends BaseController {
+                 boolean finalReloadContacts = reloadContacts;
+                 AndroidUtilities.runOnUIThread(() -> {
+                     contacts = contactsArr;
++                    desu.inugram.helpers.ContactsDebug.onReplaced(currentAccount, contactsDict, contactsDictionary); // entiny: diagnostics
+                     contactsDict = contactsDictionary;
+                     usersSectionsDict = sectionsDict;
+                     usersMutualSectionsDict = sectionsDictMutual;
+@@ -2199,6 +2201,7 @@ public class ContactsController extends BaseController {
+     }
+ 
+     public void processContactsUpdates(ArrayList<Long> ids, ConcurrentHashMap<Long, TLRPC.User> userDict) {
++        desu.inugram.helpers.ContactsDebug.onUpdates(currentAccount, ids); // entiny: diagnostics
+         final ArrayList<TLRPC.TL_contact> newContacts = new ArrayList<>();
+         final ArrayList<Long> contactsToDelete = new ArrayList<>();
+         for (Long uid : ids) {
+@@ -2394,6 +2397,7 @@ public class ContactsController extends BaseController {
+                 }
+             }
+             getMessagesController().processUpdates(res, false);
++            desu.inugram.helpers.ContactsDebug.onAddResponse(currentAccount, user.id, res.users); // entiny: diagnostics
+ 
+             for (int a = 0; a < res.users.size(); a++) {
+                 final TLRPC.User u = res.users.get(a);
+@@ -2528,6 +2532,7 @@ public class ContactsController extends BaseController {
+         if (users == null || users.isEmpty()) {
+             return;
+         }
++        desu.inugram.helpers.ContactsDebug.onDeleteRequest(currentAccount, users); // entiny: diagnostics
+         TLRPC.TL_contacts_deleteContacts req = new TLRPC.TL_contacts_deleteContacts();
+         final ArrayList<Long> uids = new ArrayList<>();
+         for (int a = 0, N = users.size(); a < N; a++) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -8323,6 +8323,7 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void putContacts(ArrayList<TLRPC.TL_contact> contacts, boolean deleteAll) {
++        desu.inugram.helpers.ContactsDebug.onDbPut(contacts.size(), deleteAll); // entiny: diagnostics
+         if (contacts.isEmpty() && !deleteAll) {
+             return;
+         }
+@@ -8359,6 +8360,7 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void deleteContacts(ArrayList<Long> uids) {
++        desu.inugram.helpers.ContactsDebug.onDbDelete(uids); // entiny: diagnostics
+         if (uids == null || uids.isEmpty()) {
+             return;
+         }
