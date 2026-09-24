@@ -922,11 +922,15 @@ object InuConfig {
             const val FIRST_NAME = 3
             const val CHATS = 4
             const val FOLDER = 5
+            const val CUSTOM = 6
         }
     }
 
     @JvmField
     val DIALOGS_TITLE_TEXT = DialogsTitleTextItem()
+
+    @JvmField
+    val DIALOGS_TITLE_TEXT_CUSTOM_TEXT = StringItem("dialogs_title_text_custom_text", "")
 
     @JvmField
     val DIALOGS_TITLE_TEXT_OVERRIDE_ARCHIVE = BoolItem("dialogs_title_text_override_archive", false)

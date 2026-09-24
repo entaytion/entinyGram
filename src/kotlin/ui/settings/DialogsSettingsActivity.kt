@@ -1,19 +1,25 @@
 package desu.inugram.ui.settings
 
+import android.text.InputType
 import android.view.View
+import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MenuOrderEntry
+import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
+import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
+import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -396,11 +402,16 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                     LocaleController.getString(R.string.FirstNameSmall),
                     LocaleController.getString(R.string.InuChats),
                     LocaleController.getString(R.string.InuTitleTextFolder),
+                    LocaleController.getString(R.string.InuTitleTextCustom),
                 ),
                 InuConfig.DIALOGS_TITLE_TEXT.value - 1,
             ) { which ->
-                InuConfig.DIALOGS_TITLE_TEXT.value = which + 1
-                softRebuild()
+                if (which + 1 == InuConfig.DialogsTitleTextItem.CUSTOM) {
+                    showCustomTitleTextDialog()
+                } else {
+                    InuConfig.DIALOGS_TITLE_TEXT.value = which + 1
+                    softRebuild()
+                }
             }
 
             TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE -> {
@@ -454,6 +465,39 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         cell.setState(
             mainTabsEntries.map { it.item },
             mainTabsEntries.filter { it.enabled }.map { it.item }.toSet(),
+        )
+    }
+
+    private fun showCustomTitleTextDialog() {
+        val ctx = context ?: return
+        val input = EditTextBoldCursor(ctx).apply {
+            setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
+            setHintTextColor(Theme.getColor(Theme.key_dialogTextHint))
+            setCursorColor(Theme.getColor(Theme.key_dialogTextBlack))
+            setCursorSize(dp(20f))
+            setCursorWidth(1.5f)
+            hint = LocaleController.getString(R.string.AppName)
+            setText(InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value)
+            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            isSingleLine = true
+            textSize = 16f
+        }
+        val container = LinearLayout(ctx).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(dp(24f), dp(8f), dp(24f), 0)
+            addView(input, LinearLayout.LayoutParams(-1, -2))
+        }
+        showDialog(
+            AlertDialog.Builder(ctx, resourceProvider)
+                .setTitle(LocaleController.getString(R.string.InuTitleTextCustom))
+                .setView(container)
+                .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->
+                    InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value = input.text.toString().trim()
+                    InuConfig.DIALOGS_TITLE_TEXT.value = InuConfig.DialogsTitleTextItem.CUSTOM
+                    softRebuild()
+                }
+                .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+                .create()
         )
     }
 
@@ -566,6 +610,10 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             InuConfig.DialogsTitleTextItem.FIRST_NAME -> LocaleController.getString(R.string.FirstNameSmall)
             InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.InuChats)
             InuConfig.DialogsTitleTextItem.FOLDER -> LocaleController.getString(R.string.InuTitleTextFolder)
+            InuConfig.DialogsTitleTextItem.CUSTOM -> InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value.ifBlank {
+                LocaleController.getString(R.string.InuTitleTextCustom)
+            }
+
             else -> LocaleController.getString(R.string.AppName)
         }
 

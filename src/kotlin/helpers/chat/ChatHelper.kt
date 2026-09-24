@@ -2308,6 +2308,10 @@ object ChatHelper {
 
             InuConfig.DialogsTitleTextItem.FIRST_NAME -> getFirstNameOrDefault(user)
             InuConfig.DialogsTitleTextItem.CHATS -> LocaleController.getString(R.string.InuChats)
+            InuConfig.DialogsTitleTextItem.CUSTOM -> InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value.ifBlank {
+                LocaleController.getString(R.string.AppName)
+            }
+
             else -> LocaleController.getString(R.string.AppName)
         }
         if (GhostHelper.isGhostActive()) {
