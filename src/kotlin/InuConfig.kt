@@ -1672,8 +1672,17 @@ object InuConfig {
     @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
 
-    // entiny: chats that stay ghosted even while global ghost mode is off
+    // entiny: legacy whitelist/target sets, folded into GHOST_CHAT_OVERRIDES; kept so old backups still import
     val GHOST_TARGET_DIALOGS = StringSetItem("ghost_target_dialogs", emptySet())
+
+    // entiny: per-chat overrides as "dialogId:read:typing" (0 default, 1 always, 2 never)
+    val GHOST_CHAT_OVERRIDES = StringSetItem("ghost_chat_overrides", emptySet())
+    val GHOST_OVERRIDES_MIGRATED = BoolItem("ghost_overrides_migrated", false, exportable = false)
+
+    // entiny: which chat types global ghost mode covers; ghost chats ignore these
+    val GHOST_SCOPE_USERS = BoolItem("ghost_scope_users", true)
+    val GHOST_SCOPE_GROUPS = BoolItem("ghost_scope_groups", true)
+    val GHOST_SCOPE_CHANNELS = BoolItem("ghost_scope_channels", true)
 
     @JvmField
     val LOCAL_PREMIUM = BoolItem("local_premium", false)

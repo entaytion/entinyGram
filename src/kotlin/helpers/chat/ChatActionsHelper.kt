@@ -13,6 +13,7 @@ import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.helpers.menu.ChatMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
+import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.AndroidUtilities
@@ -58,6 +59,7 @@ object ChatActionsHelper {
     const val ACTION_INVITE_LINKS = 520
     const val ACTION_TYPING_SPOOF = 521
     const val ACTION_REGEX_CHAT_FILTERS = 522
+    const val ACTION_GHOST_MODE = 540
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -151,6 +153,12 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InuRegexChatFilters),
             )
         }
+        if (activity.dialogId != 0L && activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
+            headerItem.lazilyAddSubItem(
+                ACTION_GHOST_MODE, R.drawable.inu_ghost,
+                LocaleController.getString(R.string.InuGhostMode),
+            )
+        }
     }
 
     @JvmStatic
@@ -197,6 +205,9 @@ object ChatActionsHelper {
             ACTION_OPEN_IN_DISCUSSION -> openInDiscussionGroup(activity)
             ACTION_TYPING_SPOOF -> showTypingSpoofSelector(activity)
             ACTION_REGEX_CHAT_FILTERS -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
+            ACTION_GHOST_MODE -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {
+                GhostHelper.applyChatTitleGhost(activity, activity.avatarContainer?.titleTextView)
+            }
 
             ACTION_SELECT_RANGE -> fillSelectionGaps(activity)
             ACTION_SEL_SAVE -> saveSelectionToSavedMessages(activity)

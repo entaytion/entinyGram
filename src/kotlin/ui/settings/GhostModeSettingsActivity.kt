@@ -29,6 +29,16 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         sectionId = SECTION_GHOST_MODE,
     ).apply { expanded = true }
 
+    // entiny: global ghost per chat type; per-chat overrides ignore these
+    private val scopeGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuGhostScope),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuGhostScopeUsers, InuConfig.GHOST_SCOPE_USERS),
+            ExpandableBoolGroup.Option(R.string.InuGhostScopeGroups, InuConfig.GHOST_SCOPE_GROUPS),
+            ExpandableBoolGroup.Option(R.string.InuGhostScopeChannels, InuConfig.GHOST_SCOPE_CHANNELS),
+        ),
+    )
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(
             UItem.asCheck(TOGGLE_MASTER, LocaleController.getString(R.string.InuGhostModeMaster))
@@ -40,6 +50,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }
+        scopeGroup.addTo(items) { listView?.adapter?.update(true) }
         val masterOn = GhostHelper.isGhostActive()
         items.add(
             UItem.asButton(
@@ -55,9 +66,8 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.GHOST_AUTO_OFFLINE.value).setEnabled(masterOn)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostAutoOfflineInfo)))
-        items.add(mkSubPageButton(BUTTON_MANAGE_WHITELIST, LocaleController.getString(R.string.InuGhostWhitelist)))
-        items.add(mkSubPageButton(BUTTON_MANAGE_TARGETS, LocaleController.getString(R.string.InuGhostTargets)))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostTargetsHint)))
+        items.add(mkSubPageButton(BUTTON_MANAGE_OVERRIDES, LocaleController.getString(R.string.InuGhostOverrides)))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostOverridesHint)))
         items.add(
             UItem.asCheck(
                 TOGGLE_READ_ON_SEND,
@@ -84,6 +94,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
             listView?.adapter?.update(true)
         }) return
+        if (scopeGroup.handleClick(item, view) { _ -> listView?.adapter?.update(true) }) return
         when (item.id) {
             TOGGLE_MASTER -> {
                 val new = GhostHelper.toggleGhostMode()
@@ -109,8 +120,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.GHOST_AUTO_OFFLINE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
-            BUTTON_MANAGE_WHITELIST -> presentFragment(GhostWhitelistSettingsActivity())
-            BUTTON_MANAGE_TARGETS -> presentFragment(GhostWhitelistSettingsActivity(targets = true))
+            BUTTON_MANAGE_OVERRIDES -> presentFragment(GhostChatOverridesSettingsActivity())
             TOGGLE_READ_ON_SEND -> {
                 val new = InuConfig.GHOST_READ_ON_SEND.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -133,8 +143,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
         private val TOGGLE_AUTO_OFFLINE = InuUtils.generateId()
-        private val BUTTON_MANAGE_WHITELIST = InuUtils.generateId()
-        private val BUTTON_MANAGE_TARGETS = InuUtils.generateId()
+        private val BUTTON_MANAGE_OVERRIDES = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -153,6 +162,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostAutoOffline, TOGGLE_AUTO_OFFLINE),
+                SearchRegistry.Entry("ghost-chat-overrides", R.string.InuGhostOverrides, BUTTON_MANAGE_OVERRIDES),
             ),
         )
     }

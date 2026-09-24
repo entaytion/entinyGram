@@ -266,22 +266,16 @@ object ProfileHelper {
                 LocaleController.getString(label),
             )
         }
-        // entiny: per-chat ghost works without the global mode, so the toggle is always offered
+        // entiny: per-chat overrides work without the global mode, so the entry is always offered
         if (!isSelf && dialogId != 0L) {
             val ghosted = GhostHelper.isGhostActiveForDialog(dialogId)
-            val ghostLabel = if (ghosted) {
-                LocaleController.getString(R.string.InuGhostModeDisableForChat)
-            } else {
-                LocaleController.getString(R.string.InuGhostModeEnableForChat)
-            }
-            val ghostIcon = if (ghosted) R.drawable.inu_ghost_filled else R.drawable.inu_ghost
             otherItem.addSubItem(
                 ACTION_TOGGLE_GHOST_DIALOG,
-                ghostIcon,
-                ghostLabel,
+                if (ghosted) R.drawable.inu_ghost_filled else R.drawable.inu_ghost,
+                LocaleController.getString(R.string.InuGhostMode),
             )
 
-            if (ghosted && (InuConfig.GHOST_HIDE_READ.value || GhostHelper.isDialogTargeted(dialogId))) {
+            if (GhostHelper.shouldSuppressRead(dialogId)) {
                 otherItem.addSubItem(
                     ACTION_MARK_AS_READ,
                     R.drawable.msg_markread,
@@ -330,13 +324,8 @@ object ProfileHelper {
             ACTION_TOGGLE_HIDE_THEME -> ChatHelper.toggleRemoveTheme(currentAccount, dialogId)
             ACTION_TOGGLE_HIDE_MESSAGES -> BlockedMessagesHelper.toggleExtraHidden(currentAccount, dialogId)
             ACTION_TOGGLE_GHOST_DIALOG -> {
-                val ghosted = GhostHelper.toggleGhostForDialog(dialogId)
-                val msg = if (ghosted) {
-                    LocaleController.getString(R.string.InuGhostModeEnabledForChatDone)
-                } else {
-                    LocaleController.getString(R.string.InuGhostModeDisabledForChatDone)
-                }
-                BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, msg).show()
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                GhostHelper.showChatOverridesDialog(fragment, currentAccount, dialogId)
             }
             ACTION_MARK_AS_READ -> {
                 GhostHelper.markDialogAsRead(currentAccount, dialogId)
