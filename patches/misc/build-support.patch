@@ -4,19 +4,19 @@ Date: Tue, 21 Apr 2026 07:47:50 +0300
 Subject: build support stuff for fork-specific code: - added kotlin - bumped min sdk to 26, removed desugaring - versioning
 
 ---
- TMessagesProj/build.gradle                    |  94 ++++----------
+ TMessagesProj/build.gradle                    |  94 ++++---------
  TMessagesProj/proguard-rules.pro              |  13 ++
  TMessagesProj/src/main/AndroidManifest.xml    |   7 +
  .../org/telegram/messenger/BuildVars.java     |  12 +-
  .../telegram/tgnet/ConnectionsManager.java    |   2 +-
  .../org/telegram/ui/PaymentFormActivity.java  |  28 ++--
  .../org/telegram/ui/SettingsActivity.java     |  24 +---
- TMessagesProj_App/build.gradle                | 121 ++++--------------
+ TMessagesProj_App/build.gradle                | 123 ++++--------------
  TMessagesProj_AppTests/build.gradle           |   5 +-
  build.gradle                                  |  14 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |  40 +++++-
- 12 files changed, 146 insertions(+), 216 deletions(-)
+ 12 files changed, 147 insertions(+), 217 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -447,7 +447,7 @@ index 0000000..0000000 100644
      lintOptions {
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
-@@ -38,8 +45,6 @@ android {
+@@ -38,25 +45,16 @@ android {
      compileOptions {
          sourceCompatibility JavaVersion.VERSION_1_8
          targetCompatibility JavaVersion.VERSION_1_8
@@ -456,7 +456,9 @@ index 0000000..0000000 100644
      }
  
      androidResources {
-@@ -48,15 +53,8 @@ android {
+         noCompress += "pack"
+-        localeFilters += ["zz"]
++        localeFilters += ["zz", "uk", "ru", "ja", "tr", "zh-rCN"] // inu: keep strings_inu translations
      }
  
      signingConfigs {
