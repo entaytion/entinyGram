@@ -653,6 +653,8 @@
     <string name="InuDisableScrimBlurInfo">Replaces the blurred backdrop behind context menus and previews with a flat dim. Enabling may reduce lag.</string>
 
     <string name="InuDisableGlassGlare">Disable glass glare</string>
+    <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
+    <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
 
     <string name="InuReduceMenuMotion">Reduce menu motion</string>
     <string name="InuReduceMenuMotionInfo">Skip context menu stagger and simplify message menu animations</string>

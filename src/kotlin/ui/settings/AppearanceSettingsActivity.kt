@@ -21,6 +21,8 @@ import org.telegram.ui.Components.UniversalAdapter
 class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
+    private var liquidGlassAngleSlider: SliderCell? = null
+    private var liquidGlassIntensitySlider: SliderCell? = null
     private var avatarCornerPreview: AvatarCornerPreviewCell? = null
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
@@ -187,6 +189,34 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuDisableGlassGlare),
             ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
         )
+        if (liquidGlassAngleSlider == null) {
+            liquidGlassAngleSlider = SliderCell(
+                this.context, min = 0f, max = 360f,
+                defaultValue = InuConfig.LIQUID_GLASS_ANGLE.default.toFloat(),
+                initialValue = InuConfig.LIQUID_GLASS_ANGLE.value.toFloat(),
+                step = 1f,
+                title = LocaleController.getString(R.string.InuLiquidGlassAngle),
+                format = { "${it.toInt()}°" },
+                onChanged = { InuConfig.LIQUID_GLASS_ANGLE.value = it.toInt() },
+            )
+        } else {
+            liquidGlassAngleSlider?.updateColors()
+        }
+        items.add(UItem.asCustom(liquidGlassAngleSlider))
+        if (liquidGlassIntensitySlider == null) {
+            liquidGlassIntensitySlider = SliderCell(
+                this.context, min = 0f, max = 150f,
+                defaultValue = InuConfig.LIQUID_GLASS_INTENSITY.default.toFloat(),
+                initialValue = InuConfig.LIQUID_GLASS_INTENSITY.value.toFloat(),
+                step = 1f,
+                title = LocaleController.getString(R.string.InuLiquidGlassIntensity),
+                format = { "${it.toInt()}%" },
+                onChanged = { InuConfig.LIQUID_GLASS_INTENSITY.value = it.toInt() },
+            )
+        } else {
+            liquidGlassIntensitySlider?.updateColors()
+        }
+        items.add(UItem.asCustom(liquidGlassIntensitySlider))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
 
         if (animationSpeedSlider == null) {

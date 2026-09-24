@@ -1089,6 +1089,12 @@ object InuConfig {
     val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", true)
 
     @JvmField
+    val LIQUID_GLASS_ANGLE = IntItem("liquid_glass_angle", 0)
+
+    @JvmField
+    val LIQUID_GLASS_INTENSITY = IntItem("liquid_glass_intensity", 75)
+
+    @JvmField
     val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
 
     @JvmField

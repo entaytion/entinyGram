@@ -787,6 +787,8 @@
     <string name="InuPublicPhotoMark">公开照片</string>
     <string name="InuPersonalPhotoMark">个人照片</string>
     <string name="InuDisableGlassGlare">禁用玻璃眩光</string>
+    <string name="InuLiquidGlassAngle">Liquid Glass 角度</string>
+    <string name="InuLiquidGlassIntensity">Liquid Glass 强度</string>
 
     <string name="InuStripTrackingParamsOnOpen">打开链接时</string>
     <string name="InuStripTrackingParamsOnPaste">粘贴时</string>

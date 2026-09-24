@@ -533,6 +533,8 @@
     <string name="InuDisableScrimBlurInfo">Замінює розмитий фон за контекстними меню на звичайне затемнення</string>
 
     <string name="InuDisableGlassGlare">Вимкнути відблиски скла</string>
+    <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
+    <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
 
     <string name="InuReduceMenuMotion">Зменшити анімації меню</string>
     <string name="InuReduceMenuMotionInfo">Спрощує анімацію виклику меню повідомлень</string>
