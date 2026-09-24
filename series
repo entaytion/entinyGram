@@ -434,3 +434,4 @@ entiny/unified-push.patch
 entiny/liquid-glass-controls.patch
 entiny/disable-profile-avatar-blur.patch
 entiny/chat-input-match-font-size.patch
+entiny/fix-lingering-music-notification.patch

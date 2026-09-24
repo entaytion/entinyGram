@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 24 Sep 2026 21:02:06 +0300
+Subject: Fix music player notification session never being released
+
+---
+ .../java/org/telegram/messenger/MusicPlayerService.java     | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicPlayerService.java
+@@ -821,7 +821,11 @@ public class MusicPlayerService extends Service implements NotificationCenter.No
+             metadataEditor.apply();
+             audioManager.unregisterRemoteControlClient(remoteControlClient);
+         }
+-        // mediaSession is owned by TelegramMediaSession (process singleton) — do NOT release here.
++        // entiny: mediaSession is this service's own session (drives the visible notification),
++        // separate from TelegramMediaSession's process-wide singleton (car/media-browser) — release both.
++        if (mediaSession != null) {
++            mediaSession.release();
++        }
+         if (sessionHolder != null) {
+             sessionHolder.inu_releaseIfIdle();
+         }
