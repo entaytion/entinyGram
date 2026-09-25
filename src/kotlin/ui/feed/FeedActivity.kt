@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -28,6 +29,7 @@ import desu.inugram.helpers.feed.FeedChannelSet
 import desu.inugram.helpers.feed.FeedController
 import desu.inugram.helpers.feed.FeedScope
 import desu.inugram.helpers.feed.FeedStore
+import desu.inugram.helpers.theme.NonIslandHelper
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
@@ -41,17 +43,23 @@ import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_update
 import org.telegram.ui.ActionBar.ActionBar
+import org.telegram.ui.ActionBar.BackDrawable
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ActionBar.ThemeDescription
 import org.telegram.ui.Cells.ChatMessageCell
 import org.telegram.ui.ChatActivity
+import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ChatAvatarContainer
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
+import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
+import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
+import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
 
 class FeedActivity @JvmOverloads constructor(
     private val scope: FeedScope = FeedScope.Global,
@@ -114,7 +122,7 @@ class FeedActivity @JvmOverloads constructor(
     private var navigationBarHeight = 0
 
     override fun createView(context: Context): View {
-        setupActionBar()
+        setupActionBar(context)
 
         val frameLayout = object : SizeNotifierFrameLayout(context) {
             override fun useRootView(): Boolean = false
@@ -164,6 +172,7 @@ class FeedActivity @JvmOverloads constructor(
             lp.gravity = Gravity.CENTER_HORIZONTAL or if (newestOnTop) Gravity.TOP else Gravity.BOTTOM
             frameLayout.addView(pill, lp)
         }
+        frameLayout.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
         applyInsets()
 
         fragmentView = frameLayout
@@ -209,6 +218,7 @@ class FeedActivity @JvmOverloads constructor(
         items = buildItems()
         adapter?.notifyDataSetChanged()
         if (channelsChanged) {
+            updateFeedSubtitle()
             reachedEnd = false
             loadOlder()
         } else {
@@ -217,6 +227,8 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     override fun onFragmentDestroy() {
+        avatarContainer?.onDestroy()
+        avatarContainer = null
         savePosition()
         controller.detach(this)
         super.onFragmentDestroy()
@@ -449,27 +461,101 @@ class FeedActivity @JvmOverloads constructor(
 
     // region chrome
 
-    private fun setupActionBar() {
-        if (!hasMainTabs) actionBar.setBackButtonImage(R.drawable.ic_ab_back)
-        actionBar.setTitle(LocaleController.getString(R.string.InuFeed))
-        FeedChannelSet.folderName(currentAccount, scope)?.let { actionBar.setSubtitle(it) }
-        actionBar.setAllowOverlayTitle(true)
-        actionBar.createMenu().addItem(MENU_OVERFLOW, R.drawable.ic_ab_other)
+    private var avatarContainer: ChatAvatarContainer? = null
+
+    private fun setupActionBar(context: Context) {
+        actionBar.setAddToContainer(false)
+        actionBar.setCastShadows(false)
+        actionBar.setBackground(null)
+        actionBar.setOccupyStatusBar(!AndroidUtilities.isTablet())
+        actionBar.inu_nonIsland = NonIslandHelper.chatElements()
+
+        val sourceColor = BlurredBackgroundSourceColor()
+        sourceColor.setColor(getThemedColor(Theme.key_windowBackgroundWhite))
+        val factory = BlurredBackgroundDrawableViewFactory(sourceColor)
+        actionBar.setupGlass(factory, BlurredBackgroundProviderImpl.topPanelChatActivity(resourceProvider))
+
+        if (!hasMainTabs) {
+            actionBar.setBackButtonDrawable(BackDrawable(false))
+        }
+
+        val avatar = object : ChatAvatarContainer(context, this@FeedActivity, false, resourceProvider) {
+            override fun onAvatarClick(): Boolean {
+                if (pickableFolders().isNotEmpty()) {
+                    showFolderPicker()
+                } else {
+                    presentFragment(FeedExcludedChannelsSettingsActivity())
+                }
+                return true
+            }
+        }
+        avatar.setGlassMode()
+        avatar.setOccupyStatusBar(!AndroidUtilities.isTablet())
+        avatar.allowDrawStories = false
+        avatar.setClipChildren(false)
+
+        val avatarDrawable = AvatarDrawable()
+        avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED)
+        ContextCompat.getDrawable(context, R.drawable.ic_feed_filled)?.let {
+            avatarDrawable.setCustomIcon(it)
+        }
+        avatar.avatarImageView.setImage(null, null, avatarDrawable, null)
+        avatar.avatarImageView.setRoundRadius(dp(21f))
+
+        avatar.setTitle(LocaleController.getString(R.string.InuFeed))
+        updateFeedSubtitle(avatar)
+
+        avatar.setOnClickListener {
+            if (pickableFolders().isNotEmpty()) {
+                showFolderPicker()
+            } else {
+                presentFragment(FeedExcludedChannelsSettingsActivity())
+            }
+        }
+
+        avatarContainer = avatar
+        actionBar.setChatAvatarContainer(avatar)
+        avatar.setActionBar(actionBar)
+
+        val leftMargin = if (!hasMainTabs) 54f else 12f
+        val rightMargin = 104f
+        actionBar.addView(avatar, 0, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT.toFloat(), Gravity.TOP or Gravity.LEFT, leftMargin, 0f, rightMargin, 0f))
+
+        val menu = actionBar.createMenu()
+        menu.addItem(MENU_MARK_READ, R.drawable.msg_markread)
+            .setContentDescription(LocaleController.getString(R.string.InuFeedMarkAllRead))
+        menu.addItem(MENU_OVERFLOW, R.drawable.ic_ab_other)
+            .setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions))
+        menu.bringToFront()
+
         actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
             override fun onItemClick(id: Int) {
                 when (id) {
                     -1 -> finishFragment()
+                    MENU_MARK_READ -> markAllRead()
                     MENU_OVERFLOW -> showOverflowMenu()
                 }
             }
         })
     }
 
+    private fun updateFeedSubtitle(avatar: ChatAvatarContainer? = avatarContainer) {
+        val target = avatar ?: return
+        val folderName = FeedChannelSet.folderName(currentAccount, scope)
+        val channelCount = FeedChannelSet.eligibleChannels(currentAccount, scope).size
+        val channelsStr = LocaleController.formatPluralString("Channels", channelCount)
+        val subtitle = if (folderName != null) "$folderName • $channelsStr" else channelsStr
+        target.setSubtitle(subtitle)
+        target.subtitleTextView?.visibility = View.VISIBLE
+    }
+
     private fun applyInsets() {
+        val statusBar = if (!AndroidUtilities.isTablet()) AndroidUtilities.statusBarHeight else 0
+        val top = statusBar + ActionBar.getCurrentActionBarHeight() + dp(8f)
         val bottom = dp(8f) + navigationBarHeight + additionNavigationBarHeight
-        listView?.setPadding(0, dp(8f), 0, bottom)
+        listView?.setPadding(0, top, 0, bottom)
         (newPostsPill?.layoutParams as? FrameLayout.LayoutParams)?.let {
-            if (newestOnTop) it.topMargin = dp(8f) else it.bottomMargin = bottom
+            if (newestOnTop) it.topMargin = top else it.bottomMargin = bottom
             newPostsPill?.requestLayout()
         }
     }
@@ -544,7 +630,6 @@ class FeedActivity @JvmOverloads constructor(
             .add(R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedManageChannels)) {
                 presentFragment(FeedExcludedChannelsSettingsActivity())
             }
-            .add(R.drawable.msg_markread, LocaleController.getString(R.string.InuFeedMarkAllRead)) { markAllRead() }
             .show()
     }
 
@@ -553,7 +638,7 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun showFolderPicker() {
         if (fragmentView == null) return
-        val anchor = actionBar.createMenu().getItem(MENU_OVERFLOW) ?: return
+        val anchor = avatarContainer ?: actionBar.createMenu().getItem(MENU_OVERFLOW) ?: return
         val currentFolder = scope as? FeedScope.Folder
         val options = ItemOptions.makeOptions(this, anchor)
         if (currentFolder != null) {
@@ -703,6 +788,7 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     companion object {
+        private val MENU_MARK_READ = InuUtils.generateId()
         private val MENU_OVERFLOW = InuUtils.generateId()
         private const val LOAD_MORE_THRESHOLD = 6
         private const val MIN_INITIAL_ROWS = 20

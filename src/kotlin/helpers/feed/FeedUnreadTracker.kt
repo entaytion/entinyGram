@@ -87,5 +87,16 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         @JvmStatic
         @Synchronized
         fun get(account: Int): FeedUnreadTracker = instances.getOrPut(account) { FeedUnreadTracker(account) }
+
+        @JvmStatic
+        fun getUnreadCount(account: Int): Int {
+            val controller = MessagesController.getInstance(account) ?: return 0
+            var count = 0
+            for (dialogId in FeedChannelSet.eligibleChannels(account)) {
+                val dialog = controller.dialogs_dict?.get(dialogId) ?: continue
+                count += dialog.unread_count
+            }
+            return count
+        }
     }
 }
