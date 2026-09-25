@@ -4,14 +4,30 @@ Date: Sun, 20 Sep 2026 23:05:51 +0300
 Subject:
 
 ---
- .../java/org/telegram/ui/FilterCreateActivity.java    | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../org/telegram/ui/FilterCreateActivity.java | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterCreateActivity.java
-@@ -372,6 +372,16 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -128,6 +128,7 @@ public class FilterCreateActivity extends BaseFragment {
+     private boolean newFilterAnimations = true;
+     private int newFilterFlags;
+     private int newFilterColor;
++    private String originalEmoticon; // entiny: snapshot for hasChanges(), FolderIconPicker mutates filter.inu_emoticon directly
+     private ArrayList<Long> newAlwaysShow;
+     private ArrayList<Long> newNeverShow;
+     private LongSparseIntArray newPinned;
+@@ -219,6 +220,7 @@ public class FilterCreateActivity extends BaseFragment {
+         AnimatedEmojiDrawable.toggleAnimations(currentAccount, newFilterAnimations);
+         newFilterFlags = filter.flags;
+         newFilterColor = filter.color;
++        originalEmoticon = filter.inu_emoticon;
+         newAlwaysShow = new ArrayList<>(filter.alwaysShow);
+         if (alwaysShow != null) {
+             newAlwaysShow.addAll(alwaysShow);
+@@ -372,6 +374,19 @@ public class FilterCreateActivity extends BaseFragment {
              items.add(ItemInner.asShadow(LocaleController.getString(R.string.FilterExcludeInfo)));
          }
  
@@ -21,14 +37,17 @@ index 0000000..0000000 100644
 +                desu.inugram.helpers.dialogs.FolderHelper.getTabIcon(filter.inu_emoticon),
 +                LocaleController.getString(R.string.InuFolderIcon),
 +                false
-+            ).whenClicked(v -> desu.inugram.helpers.dialogs.FolderIconPicker.pick(this, filter, this::updateRows)));
++            ).whenClicked(v -> desu.inugram.helpers.dialogs.FolderIconPicker.pick(this, filter, () -> {
++                updateRows();
++                checkDoneButton(true);
++            })));
 +            items.add(ItemInner.asShadow(null));
 +        }
 +
          if (getMessagesController().folderTags || !getUserConfig().isPremium()) {
              items.add(new ItemInner(VIEW_TYPE_HEADER_COLOR_PREVIEW, false));
              items.add(new ItemInner(VIEW_TYPE_COLOR, false));
-@@ -1163,6 +1173,7 @@ public class FilterCreateActivity extends BaseFragment {
+@@ -1163,6 +1178,7 @@ public class FilterCreateActivity extends BaseFragment {
              fragment.getMessagesController().onFilterUpdate(filter);
          }
          fragment.getMessagesStorage().saveDialogFilter(filter, atBegin, true);
@@ -36,3 +55,13 @@ index 0000000..0000000 100644
          if (atBegin) {
              TLRPC.TL_messages_updateDialogFiltersOrder req = new TLRPC.TL_messages_updateDialogFiltersOrder();
              ArrayList<MessagesController.DialogFilter> filters = fragment.getMessagesController().getDialogFilters();
+@@ -1325,6 +1341,9 @@ public class FilterCreateActivity extends BaseFragment {
+         if (filter.color != newFilterColor) {
+             hasUserChanged = true;
+         }
++        if (!TextUtils.equals(filter.inu_emoticon, originalEmoticon)) {
++            hasUserChanged = true;
++        }
+         if (!hasUserChanged) {
+             Collections.sort(filter.alwaysShow);
+             Collections.sort(newAlwaysShow);

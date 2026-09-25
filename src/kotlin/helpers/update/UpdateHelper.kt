@@ -44,9 +44,17 @@ object UpdateHelper {
         pInfo.versionName?.replace(Regex("-[0-9a-f]{7}$"), "") ?: ""
     }
 
+    @JvmStatic
+    val commitSha: String? by lazy {
+        Regex("-([0-9a-f]{7})$").find(pInfo.versionName ?: "")?.groupValues?.get(1)
+    }
+
     fun getVersionInfoString(): String {
-        val base = LocaleController.formatString(R.string.InuVersion, stockVersionName, BuildConfig.STOCK_VERSION_CODE)
-        return if (BuildVars.isBetaApp()) "$base ${LocaleController.getString(R.string.InuVersionBetaSuffix)}" else base
+        // entiny: STOCK_VERSION_CODE is upstream Telegram's build number, not ours -- releases are tagged by pInfo.versionCode
+        val base = LocaleController.formatString(R.string.InuVersion, stockVersionName, pInfo.versionCode)
+        val withBeta = if (BuildVars.isBetaApp()) "$base ${LocaleController.getString(R.string.InuVersionBetaSuffix)}" else base
+        val commitSuffix = commitSha?.let { " @$it" } ?: ""
+        return "$withBeta$commitSuffix [${BuildConfig.INU_BUILD_TYPE}]"
     }
 
     @JvmStatic

@@ -38,7 +38,10 @@ object FolderIconPicker {
             val emoticon = choice.first
             val iconRes = choice.second
             if (index % COLUMNS == 0) {
-                row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
+                row = LinearLayout(context).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
                 grid.addView(row)
             }
             val cell = FrameLayout(context)
@@ -48,7 +51,8 @@ object FolderIconPicker {
                 scaleType = ImageView.ScaleType.FIT_CENTER
             }
             cell.addView(image, FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER))
-            val params = LinearLayout.LayoutParams(0, cellSize, 1f)
+            // entiny: fixed square size -- weight-based width stretched cells wider than tall, turning the OVAL selection ring into an ellipse
+            val params = LinearLayout.LayoutParams(cellSize, cellSize)
             val margin = AndroidUtilities.dp(5f)
             params.setMargins(margin, margin, margin, margin)
             cell.layoutParams = params
