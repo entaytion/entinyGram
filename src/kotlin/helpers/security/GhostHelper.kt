@@ -64,7 +64,7 @@ object GhostHelper {
     fun applyChatTitleGhost(parentFragment: ChatActivity?, titleTextView: SimpleTextView?) {
         if (titleTextView == null) return
         val dialogId = parentFragment?.dialogId ?: 0L
-        if (dialogId != 0L && isGhostActiveForDialog(dialogId)) {
+        if (dialogId != 0L && isGhostActiveForDialog(dialogId) && !InuConfig.GHOST_HIDE_APP_BAR_ICON.value) {
             val ghost = ContextCompat.getDrawable(titleTextView.context, R.drawable.inu_ghost_filled)?.mutate()
             if (ghost != null) {
                 ghost.setBounds(0, 0, AndroidUtilities.dp(15f), AndroidUtilities.dp(15f))

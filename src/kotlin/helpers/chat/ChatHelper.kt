@@ -2319,7 +2319,7 @@ object ChatHelper {
 
             else -> LocaleController.getString(R.string.AppName)
         }
-        if (GhostHelper.isGhostActive()) {
+        if (GhostHelper.isGhostActive() && !InuConfig.GHOST_HIDE_APP_BAR_ICON.value) {
             val ssb = SpannableStringBuilder("  ").append(baseTitle)
             val span = ColoredImageSpan(R.drawable.inu_ghost_filled, ColoredImageSpan.ALIGN_CENTER).apply {
                 setSize(AndroidUtilities.dp(20f))

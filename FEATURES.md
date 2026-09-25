@@ -16,7 +16,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 - 📡 **ghost mode (stealth)**:
   - **quick toggle** in drawer header, drawer menu, and chats menu with quick-toggle locks 🔒 - *inspired by [AyuGram](https://github.com/AyuGram)*
-  - **status indicator** with ghost icon in dialogs list and active chat header
+  - **status indicator** with ghost icon in dialogs list and active chat header (optional, can be hidden)
   - hide read receipts for messages, voice notes, and video messages
   - **read on send**: mark incoming messages read only when replying
   - **mark as read locally**: clear unread counter badges on open while keeping unread on server

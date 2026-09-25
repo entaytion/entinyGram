@@ -856,6 +856,8 @@
     <string name="InuGhostReadOnSend">Читать при отправке</string>
     <string name="InuGhostMarkReadLocally">Отмечать прочитанным локально</string>
     <string name="InuGhostMarkReadLocallyInfo">Сбрасывать счётчик непрочитанных сообщений при открытии чата в режиме призрака, оставляя его непрочитанным на сервере.</string>
+    <string name="InuGhostHideAppBarIcon">Скрыть индикатор в заголовке</string>
+    <string name="InuGhostHideAppBarIconInfo">Не показывать иконку призрака в главном заголовке и заголовках чатов при активном режиме призрака.</string>
     <string name="InuDisableProfileMusicAutoplay">Отключить автовоспроизведение музыки в профиле</string>
     <string name="InuDisableProfileMusicAutoplayInfo">Не начинать воспроизведение автоматически при открытии закреплённого музыкального плеера в профиле</string>
     <string name="InuHideGiftAuctionsHint">Скрыть баннер аукционов подарков</string>

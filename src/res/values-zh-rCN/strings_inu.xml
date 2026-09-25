@@ -1097,6 +1097,8 @@
     <string name="InuGhostReadOnSend">发送时标记已读</string>
     <string name="InuGhostMarkReadLocally">本地标记为已读</string>
     <string name="InuGhostMarkReadLocallyInfo">在幽灵模式下打开聊天时重置未读消息计数器，同时在服务器上保持未读状态。</string>
+    <string name="InuGhostHideAppBarIcon">Hide indicator in header</string>
+    <string name="InuGhostHideAppBarIconInfo">Do not show the ghost icon in the main title or chat headers when Ghost Mode is active.</string>
     <string name="InuUnlimitedLimits">解除限制</string>
     <string name="InuUnlimitedPinnedChats">无限置顶聊天</string>
     <string name="InuUnlimitedPinnedChatsInfo">仅在本地置顶超出 Telegram 服务器限制的聊天——它们只在本设备排在最前，不会同步或计入其他地方的限制。</string>

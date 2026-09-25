@@ -6,6 +6,7 @@ import desu.inugram.SearchRegistry
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
@@ -66,6 +67,13 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.GHOST_AUTO_OFFLINE.value).setEnabled(masterOn)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostAutoOfflineInfo)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_HIDE_APP_BAR_ICON,
+                LocaleController.getString(R.string.InuGhostHideAppBarIcon),
+            ).setChecked(InuConfig.GHOST_HIDE_APP_BAR_ICON.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostHideAppBarIconInfo)))
         items.add(mkSubPageButton(BUTTON_MANAGE_OVERRIDES, LocaleController.getString(R.string.InuGhostOverrides)))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostOverridesHint)))
         items.add(
@@ -129,6 +137,12 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.GHOST_MARK_READ_LOCALLY.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
+            TOGGLE_HIDE_APP_BAR_ICON -> {
+                val new = InuConfig.GHOST_HIDE_APP_BAR_ICON.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_ALL)
+            }
         }
     }
 
@@ -143,6 +157,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_TYPING = InuUtils.generateId()
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
         private val TOGGLE_AUTO_OFFLINE = InuUtils.generateId()
+        private val TOGGLE_HIDE_APP_BAR_ICON = InuUtils.generateId()
         private val BUTTON_MANAGE_OVERRIDES = InuUtils.generateId()
 
         @JvmField
@@ -162,6 +177,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-hide-typing", R.string.InuGhostHideTyping, TOGGLE_HIDE_TYPING),
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostAutoOffline, TOGGLE_AUTO_OFFLINE),
+                SearchRegistry.Entry("ghost-hide-app-bar-icon", R.string.InuGhostHideAppBarIcon, TOGGLE_HIDE_APP_BAR_ICON),
                 SearchRegistry.Entry("ghost-chat-overrides", R.string.InuGhostOverrides, BUTTON_MANAGE_OVERRIDES),
             ),
         )

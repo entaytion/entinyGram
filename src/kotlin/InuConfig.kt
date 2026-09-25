@@ -1690,6 +1690,9 @@ object InuConfig {
     val GHOST_AUTO_OFFLINE_MIGRATED = BoolItem("ghost_auto_offline_migrated", false, exportable = false)
 
     @JvmField
+    val GHOST_HIDE_APP_BAR_ICON = BoolItem("ghost_hide_app_bar_icon", false)
+
+    @JvmField
     val GHOST_WHITELIST_DIALOGS = StringSetItem("ghost_whitelist_dialogs", emptySet())
 
     // entiny: legacy whitelist/target sets, folded into GHOST_CHAT_OVERRIDES; kept so old backups still import

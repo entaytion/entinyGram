@@ -1095,6 +1095,8 @@
     <string name="InuGhostReadOnSend">Gönderirken okundu olarak işaretle</string>
     <string name="InuGhostMarkReadLocally">Yerel olarak okundu işaretle</string>
     <string name="InuGhostMarkReadLocallyInfo">Hayalet Modunda bir sohbet açıldığında okunmamış mesaj sayacını sıfırlar, ancak sunucuda okunmamış olarak tutar.</string>
+    <string name="InuGhostHideAppBarIcon">Hide indicator in header</string>
+    <string name="InuGhostHideAppBarIconInfo">Do not show the ghost icon in the main title or chat headers when Ghost Mode is active.</string>
     <string name="InuUnlimitedLimits">Sınırsız Limitler</string>
     <string name="InuUnlimitedPinnedChats">Sınırsız Sabitlenmiş Sohbet</string>
     <string name="InuUnlimitedPinnedChatsInfo">Telegram\'ın sunucu sınırının üzerindeki sohbetleri yalnızca yerel olarak sabitler — bu cihazda önce görünürler, ancak senkronize olmaz ve sınıra dahil edilmezler.</string>
