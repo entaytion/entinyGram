@@ -57,7 +57,13 @@ class FeedController private constructor(
             for (event in OBSERVED) nc.addObserver(updatesObserver, event)
             if (scope is FeedScope.Folder) registerOpenFolder(this)
         }
-        store.ensureChannelGeneration()
+        val hadRows = store.size > 0
+        val channelsReset = store.ensureChannelGeneration()
+        // entiny: live pushes only reach an attached (isActive) controller, so posts that arrived
+        // while this screen was closed are otherwise lost forever -- catch up on reattach instead.
+        if (hadRows && !channelsReset) {
+            store.loadNewer { added -> if (added > 0) this.listener?.onTimelineChanged() }
+        }
     }
 
     fun detach(listener: Listener) {

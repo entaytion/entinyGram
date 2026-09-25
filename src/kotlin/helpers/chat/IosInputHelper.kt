@@ -82,4 +82,7 @@ object IosInputHelper {
             ActionButtonStyle.resolveIconColor(resourcesProvider)
         }
     }
+
+    @JvmStatic
+    fun getTopViewGapDp(): Int = if (!isAppearance()) 0 else (if (isCompact()) 4 else 8)
 }

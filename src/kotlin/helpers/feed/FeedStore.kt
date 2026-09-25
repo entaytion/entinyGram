@@ -55,7 +55,18 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
     fun loadOlder(onResult: (added: Int) -> Unit) {
         val oldest = rows.lastOrNull()
         val before = oldest?.let { Cursor(it.messageOwner?.date ?: 0, it.getDialogId(), it.id) }
-        queryPage(before, PAGE_SIZE, onResult)
+        queryPage(before, PAGE_SIZE, onResult, newer = false)
+    }
+
+    // entiny: catch up on posts that arrived while this store had no attached (visible) screen --
+    // live pushes only reach FeedController while isActive, so a gap while away is otherwise permanent.
+    // Bounded rather than unlimited: a bigger gap than CATCHUP_LIMIT still leaves a silent hole, but the
+    // regular loadOlder()/backfill path can still reach that history by scrolling down from here.
+    fun loadNewer(onResult: (added: Int) -> Unit) {
+        val newest = rows.firstOrNull()
+        if (newest == null) { onResult(0); return }
+        val after = Cursor(newest.messageOwner?.date ?: 0, newest.getDialogId(), newest.id)
+        queryPage(after, CATCHUP_LIMIT, onResult, newer = true)
     }
 
     // returns true when the timeline changed
@@ -139,7 +150,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         revisions[key] = (revisions[key] ?: 0) + 1
     }
 
-    private fun queryPage(before: Cursor?, limit: Int, onResult: (Int) -> Unit) {
+    private fun queryPage(cursor: Cursor?, limit: Int, onResult: (Int) -> Unit, newer: Boolean) {
         val channels = FeedChannelSet.eligibleChannels(account, scope)
         if (channels.isEmpty()) {
             onResult(0)
@@ -152,21 +163,25 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
             val chats = ArrayList<TLRPC.Chat>()
             try {
                 val idsCsv = channels.joinToString(",")
-                val bound = if (before == null) "" else String.format(
+                val cmp = if (newer) ">" else "<"
+                val order = if (newer) "ASC" else "DESC"
+                val bound = if (cursor == null) "" else String.format(
                     Locale.US,
-                    "AND (date < %d OR (date = %d AND (uid < %d OR (uid = %d AND mid < %d))))",
-                    before.date, before.date, before.dialogId, before.dialogId, before.messageId,
+                    "AND (date %s %d OR (date = %d AND (uid %s %d OR (uid = %d AND mid %s %d))))",
+                    cmp, cursor.date, cursor.date, cmp, cursor.dialogId, cursor.dialogId, cmp, cursor.messageId,
                 )
                 readMessages(
                     storage,
                     String.format(
                         Locale.US,
-                        "SELECT data FROM messages_v2 WHERE uid IN (%s) AND mid > 0 %s ORDER BY date DESC, uid DESC, mid DESC LIMIT %d",
-                        idsCsv, bound, limit,
+                        "SELECT data FROM messages_v2 WHERE uid IN (%s) AND mid > 0 %s ORDER BY date %s, uid %s, mid %s LIMIT %d",
+                        idsCsv, bound, order, order, order, limit,
                     ),
                     messages,
                 )
-                completeTrailingAlbum(storage, messages)
+                // entiny: album-tail completion only matters for the older/backward page --
+                // a newer/catch-up page getting cut mid-album is a rare, cosmetically minor edge case.
+                if (!newer) completeTrailingAlbum(storage, messages)
                 val usersToLoad = ArrayList<Long>()
                 val chatsToLoad = ArrayList<Long>()
                 for (message in messages) MessagesStorage.addUsersAndChatsFromMessage(message, usersToLoad, chatsToLoad, null)
@@ -246,6 +261,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
     companion object {
         private const val TAG = "FeedStore"
         private const val PAGE_SIZE = 30
+        private const val CATCHUP_LIMIT = 200
         private const val ALBUM_TAIL_LOOKUP = 10
         private const val MAX_RETAINED_ROWS = 500
 

@@ -82,6 +82,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - iOS-style input bar: attachment on the left, emoji inside-right, glass capsule field with round button bubbles, and optional compact mode
 - 📡 **action button style**: Accent, Neutral, or White for send, voice, and apply buttons across the app (in glass form on iOS bar, solid circle elsewhere) - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - 📡 **header centering**: center screen titles across the app and customize chat headers (compact pill, avatar position, live settings preview)
+- 📡 **compact pill & profile transition fixes**: prevent text badge clipping, avatar menu-slot dots overlay, and profile open/close animation jitter
 - 📡 **auto marquee for long titles**: auto-scroll long header titles, action bar titles, and profile names - *inspired by auto_marquee plugin (@chestertech)*
 - 📡 **show spoilers directly**: skip tap-to-reveal on text, photos, and videos
 - 📡 **customizable bottom tabs (beta)**: reorder and toggle visibility of Contacts, Settings, Calls, Profile, and Feed tabs
@@ -133,6 +134,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **separator after mention**: customizable separator inserted after @mentions and name mentions in the input (comma, period, colon, or any custom text; bots opt-in) — *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - 📡 **export chat (experimental)**: collect the whole history in background from the chat menu and save it as JSON, or as an HTML page with downloaded media in a plain folder — photos, videos, voice and video messages, stickers, GIFs and files, with per-type checkboxes and a size limit; the result lands in Downloads/entinyGram/Chat Export with view and show-folder actions
 - 📡 **UnifiedPush (experimental)**: get notifications through a UnifiedPush distributor like gCompat-UP, Sunup, Prism, or ntfy instead of Firebase, with distributor and rewrite gateway settings in Additional; works without Google Play - *ported from [Forkgram](https://github.com/forkgram/TelegramAndroid) & [Mercurygram](https://github.com/mercurygram/mercurygram)*
+- 📡 **fix stuck playback on pause**: disable AudioTrack playback params that caused audio/video to keep playing after pause on MIUI and certain DSP hardware
 
 ### debloat & premium noise
 

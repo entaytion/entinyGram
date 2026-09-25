@@ -1,0 +1,191 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 26 Sep 2026 00:23:38 +0300
+Subject: Fix compact pill clipping, avatar dots, and profile transition jitter
+
+---
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  4 +-
+ .../ui/Components/ChatAvatarContainer.java    | 12 +++--
+ .../java/org/telegram/ui/ProfileActivity.java | 51 ++++++++++++++++---
+ 3 files changed, 56 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -221,10 +221,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     private boolean inu_prevCentered;
+     private final FactorAnimator inu_animatorPillWidth = new FactorAnimator(0, this, CubicBezierInterpolator.EASE_OUT_QUINT, 320);
+ 
+-    private static final int INU_PILL_TEXT_PADDING_DP = 16;
++    private static final int INU_PILL_TEXT_PADDING_DP = 22;
+     private static final int INU_PILL_MIN_WIDTH_DP = 120;
+     // entiny: absorbs the Paint#measureText vs StaticLayout#getLineWidth gap so subtitles don't false-trigger the ellipsis fade.
+-    private static final int INU_PILL_TEXT_SLACK_DP = 3;
++    private static final int INU_PILL_TEXT_SLACK_DP = 4;
+ 
+     // entiny: symmetric avatar-room reservation only while the pill spans full width; compact pills reserve it on the avatar's side only.
+     private int inu_pillAvatarRoom() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -810,7 +810,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     // container's layout pass left the text measured for one band while another was drawn.
+     private boolean isCenteredTitle() {
+         final ActionBar actionBar = inu_actionBar();
+-        if (actionBar == null) {
++        if (actionBar == null || actionBar.inu_glassTitleRight == 0) {
+             return inu_isCenteredCandidate();
+         }
+         return inu_isRealChatHeader() && actionBar.inu_centeredPill;
+@@ -846,7 +846,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         if (titleTextView != null) {
+             width = Math.max(width, titleTextView.getExactWidthIncludeDrawables()
+                     + titleTextView.getPaddingLeft() + titleTextView.getPaddingRight()
+-                    + inu_getTitleBiasRoom());
++                    + inu_getTitleBiasRoom() * 2f);
+         }
+         if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
+             width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables()
+@@ -1012,6 +1012,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+ 
+             final int avatarLeft;
+             if (inu_isIosMenuSlotAvatar()) {
++                if (parentFragment != null) {
++                    parentFragment.inu_updateMenuSlotAvatar();
++                }
+                 // The slot sits a good 40dp past this container's own right edge (the container is
+                 // inset by the back-button and menu margins), so it is only ever drawn because
+                 // nothing clips it. Assert that here instead of relying on fadeOutToLessWidth
+@@ -1056,7 +1059,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+                 ? Math.min(titleTextView.getCenteringDrawableBias(), titleBiasSlack)
+                 : 0;
+         final int titleL = l + titleDrawableBias;
+-        final int titleR = r + titleDrawableBias;
++        final int titleR = Math.min(r + titleDrawableBias, textRightBound);
+         SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
+         if (getSubtitleTextView().getVisibility() != GONE) {
+             titleTextView.layout(titleL, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
+@@ -2026,6 +2029,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         inu_invalidateCenteredTextWidth();
+         if (actionBar != null) {
+             actionBar.checkAvatarContainerWidth(animated);
++            if (desu.inugram.helpers.InuUtils.centerChatTitle()) {
++                actionBar.updateGlassBounds(actionBar.getWidth(), actionBar.getHeight(), true);
++            }
+         }
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -8367,8 +8367,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 continue;
+             }
+ 
+-            float nameX = lerp((prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)), backwardInitialValues[12 + a * 2], backwardDiff);
+-            float onlineX = lerp((prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)), backwardInitialValues[12 + a * 2 + 1], backwardDiff);
++            float nameX = lerp(inu_getStartTitleX(), backwardInitialValues[12 + a * 2], backwardDiff);
++            float onlineX = lerp(inu_getStartSubtitleX(), backwardInitialValues[12 + a * 2 + 1], backwardDiff);
+ 
+             nameTextView[a].setTranslationX(nameX);
+             nameTextView[a].setTranslationY(nameY);
+@@ -8728,9 +8728,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 float avY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f - 21 * AndroidUtilities.density + actionBar.getTranslationY();
+ //                metaball.setVisibility(View.GONE);
+ 
+-                nameTextView[0].setTranslationX((prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)));
++                nameTextView[0].setTranslationX(inu_getStartTitleX());
+                 nameTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(1.3f));
+-                onlineTextView[0].setTranslationX((prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)));
++                onlineTextView[0].setTranslationX(inu_getStartSubtitleX());
+                 onlineTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(24));
+                 nameTextView[0].setScaleX(1.0f);
+                 nameTextView[0].setScaleY(1.0f);
+@@ -8849,7 +8849,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 final float avatarBottom = (float) Math.floor(endNameY) + (avatarContainer.getHeight() * avatarContainer.getScaleY() + dpf2(8)) * (openAnimationInProgress ? avatarAnimationProgress : diff);
+                 nameY = avatarBottom + dp(1.3f) + dp(7) * diff + titleAnimationsYDiff * (1f - avatarAnimationProgress);
+                 onlineY = avatarBottom + dp(24) + (float) Math.floor(11 * AndroidUtilities.density) * diff;
+-                final float minimizedX = openAnimationInProgress ? (prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48)) : -dpf2(42 + 4);
++                final float minimizedX = openAnimationInProgress ? inu_getStartTitleX() : -dpf2(42 + 4);
++                final float minimizedOnlineX = openAnimationInProgress ? inu_getStartSubtitleX() : -dpf2(42 + 4);
+ 
+                 if (showStatusButton != null) {
+                     showStatusButton.setAlpha((int) (0xFF * diff));
+@@ -8878,7 +8879,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                         this.onlineX = onlineX;
+                     }
+                     nameX = AndroidUtilities.lerp(minimizedX, nameX, diff); //
+-                    onlineX = AndroidUtilities.lerp(minimizedX, onlineX, diff);
++                    onlineX = AndroidUtilities.lerp(minimizedOnlineX, onlineX, diff);
+ 
+                     if (expandAnimator == null || !expandAnimator.isRunning()) {
+                         nameTextView[a].setTranslationX(nameX);
+@@ -10002,6 +10003,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+     boolean profileTransitionInProgress;
+ 
+     private float prevAvatarTranslation;
++    private float prevTitleTranslation;
++    private float prevSubtitleTranslation;
++
++    private float inu_getStartTitleX() {
++        if (prevTitleTranslation > 0) {
++            return prevTitleTranslation - dp(109);
++        }
++        return prevAvatarTranslation - dp(109) + dp(desu.inugram.helpers.theme.NonIslandHelper.chatElements() ? 54 : 48);
++    }
++
++    private float inu_getStartSubtitleX() {
++        if (prevSubtitleTranslation > 0) {
++            return prevSubtitleTranslation - dp(109);
++        }
++        return inu_getStartTitleX();
++    }
+ 
+     private BaseFragment findPreviousChatFragment() {
+         if (parentLayout == null || parentLayout.getFragmentStack().size() < 2) {
+@@ -10081,6 +10098,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+ 
+         if (isOpen) {
+             prevAvatarTranslation = 0;
++            prevTitleTranslation = 0;
++            prevSubtitleTranslation = 0;
+             for (int i = 0; i < 2; i++) {
+                 FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) onlineTextView[i + 1].getLayoutParams();
+                 layoutParams.rightMargin = (int) (-21 * AndroidUtilities.density + AndroidUtilities.dp(8));
+@@ -10202,6 +10221,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                         ? (ViewGroup) previousTransitionMainFragment.getFragmentView()
+                         : previousTransitionFragment.getContentView();
+                     prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, previousRoot);
++                    if (avatarContainer.getTitleTextView() != null) {
++                        SimpleTextView titleView = avatarContainer.getTitleTextView();
++                        int textOffset = titleView.getTextStartX() - (int) titleView.getX();
++                        prevTitleTranslation = ViewPositionWatcher.computeXCoordinateInParent(titleView, previousRoot) + Math.max(0, textOffset);
++                    }
++                    if (avatarContainer.getSubtitleTextView() instanceof SimpleTextView) {
++                        SimpleTextView subView = (SimpleTextView) avatarContainer.getSubtitleTextView();
++                        int textOffset = subView.getTextStartX() - (int) subView.getX();
++                        prevSubtitleTranslation = ViewPositionWatcher.computeXCoordinateInParent(subView, previousRoot) + Math.max(0, textOffset);
++                    }
+                 }
+                 if (avatarContainer != null && avatarContainer.getSubtitleTextView() instanceof SimpleTextView && ((SimpleTextView) avatarContainer.getSubtitleTextView()).getLeftDrawable() != null || avatarContainer.statusMadeShorter[0]) {
+                     transitionOnlineText = avatarContainer.getSubtitleTextView();
+@@ -10297,6 +10326,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 ChatAvatarContainer avatarContainer = ((ChatActivity) previousFragment).getAvatarContainer();
+                 AndroidUtilities.doOnPreDraw(avatarContainer, () -> {
+                     prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, (ViewGroup) previousFragment.fragmentView);
++                    if (avatarContainer.getTitleTextView() != null) {
++                        SimpleTextView titleView = avatarContainer.getTitleTextView();
++                        int textOffset = titleView.getTextStartX() - (int) titleView.getX();
++                        prevTitleTranslation = ViewPositionWatcher.computeXCoordinateInParent(titleView, (ViewGroup) previousFragment.fragmentView) + Math.max(0, textOffset);
++                    }
++                    if (avatarContainer.getSubtitleTextView() instanceof SimpleTextView) {
++                        SimpleTextView subView = (SimpleTextView) avatarContainer.getSubtitleTextView();
++                        int textOffset = subView.getTextStartX() - (int) subView.getX();
++                        prevSubtitleTranslation = ViewPositionWatcher.computeXCoordinateInParent(subView, (ViewGroup) previousFragment.fragmentView) + Math.max(0, textOffset);
++                    }
+                     fixAvatarImageInCenter();
+                 });
+                 View subtitleTextView = avatarContainer.getSubtitleTextView();

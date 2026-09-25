@@ -5,8 +5,8 @@ Subject: Allow hiding chat-list banners, PSA promo, and startup permission nags
 
 Signed-off-by: no
 ---
- .../main/java/org/telegram/ui/DialogsActivity.java   | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ .../main/java/org/telegram/ui/DialogsActivity.java  | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
@@ -48,7 +48,12 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setMessage(getString(R.string.PermissionXiaomiLockscreen))
-@@ -7338,7 +7342,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7334,11 +7338,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     .setNegativeButton(getString(R.string.ContactsPermissionAlertNotNow), (dialog, which) -> MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askedAboutMiuiLockscreen", true).commit())
+                     .create());
+             }
++
+         } else if (folderId == 0 && communityId == 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && !notificationManager.canUseFullScreenIntent()) {
              if (getParentActivity() == null) {
                  return;
              }
@@ -57,7 +62,7 @@ index 0000000..0000000 100644
                  showDialog(new AlertDialog.Builder(getParentActivity())
                      .setTopAnimation(R.raw.permission_request_apk, AlertsCreator.PERMISSIONS_REQUEST_TOP_ICON_SIZE, false, getThemedColor(Theme.key_dialogTopBackground))
                      .setMessage(getString(R.string.PermissionFSILockscreen))
-@@ -10653,7 +10657,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10653,7 +10658,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
              permissons.add(Manifest.permission.POST_NOTIFICATIONS);
          }

@@ -185,7 +185,10 @@ class InputBarPreviewCell(
                 it.draw(canvas)
             }
             rightBubbleDrawable?.let {
-                it.setBounds(sendIconView.left, sendIconView.top, sendIconView.right, sendIconView.bottom)
+                // entiny: match the stock circle's inset (drawn with radius -3dp below) so the send
+                // button doesn't visually grow when switching from stock to iOS appearance
+                val inset = AndroidUtilities.dp(3f)
+                it.setBounds(sendIconView.left + inset, sendIconView.top + inset, sendIconView.right - inset, sendIconView.bottom - inset)
                 it.draw(canvas)
             }
         } else {

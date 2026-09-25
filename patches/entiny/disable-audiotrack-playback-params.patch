@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 25 Sep 2026 23:46:37 +0300
+Subject: Disable AudioTrack playback params to prevent stuck audio on pause
+
+- inugram's video-speed-artifacts enabled factory.setEnableAudioTrackPlaybackParams(true)
+- on MIUI / Snapdragon HALs, this causes audio to keep playing after pause near stream end
+- disable playback params to keep audio sink pause synchronous and reliable
+---
+ .../src/main/java/org/telegram/ui/Components/VideoPlayer.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
+@@ -280,7 +280,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+             }
+             factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+             // factory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+-            factory.setEnableAudioTrackPlaybackParams(true);
++            factory.setEnableAudioTrackPlaybackParams(false); // entiny: playback-params path leaves audio playing after pause near stream end on MIUI (HAL drains deep buffer)
+             ExoPlayer.Builder builder = new ExoPlayer.Builder(ApplicationLoader.applicationContext).setRenderersFactory(factory)
+                     .setTrackSelector(trackSelector)
+                     .setLoadControl(loadControl);

@@ -4,29 +4,12 @@ Date: Wed, 5 Aug 2026 10:20:40 +0300
 Subject: feat(ui): adapt colorful icons, Monet theme transitions, dialog inputs, and popups
 
 ---
- .../telegram/ui/Adapters/ContactsAdapter.java |  4 +-
  .../java/org/telegram/ui/Cells/TextCell.java  | 58 ++++++++++++++-----
  .../ui/Components/IconBackgroundColors.java   |  3 +-
  .../telegram/ui/Components/ItemOptions.java   |  4 +-
  .../org/telegram/ui/SettingsActivity.java     |  2 +-
- 5 files changed, 51 insertions(+), 20 deletions(-)
+ 4 files changed, 49 insertions(+), 18 deletions(-)
 
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/ContactsAdapter.java
-@@ -562,9 +562,9 @@ public class ContactsAdapter extends RecyclerListView.SectionsAdapter {
-                 if (section == 0) {
-                     if (needPhonebook) {
-                         if (position == 0) {
--                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.InviteFriends), "", false, R.drawable.settings_invite, 0xFF1CA5ED, 0xFF1488E1, false);
-+                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.InviteFriends), "", false, R.drawable.settings_invite, 0xFF1CA5ED, 0xFF1488E1, false, true);
-                         } else if (position == 1) {
--                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.RecentCalls), "", false, R.drawable.settings_calls, 0xFF55CA47, 0xFF27B434, false);
-+                            textCell.setTextAndValueAndColorfulIcon(getString(R.string.RecentCalls), "", false, R.drawable.settings_calls, 0xFF55CA47, 0xFF27B434, false, true);
-                         }
-                     } else if (isAdmin) {
-                         if (isChannel) {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java

@@ -436,3 +436,5 @@ entiny/disable-profile-avatar-blur.patch
 entiny/chat-input-match-font-size.patch
 entiny/fix-lingering-music-notification.patch
 entiny/presence-color-dots.patch
+entiny/disable-audiotrack-playback-params.patch
+entiny/centered-header-fixes.patch
