@@ -19,6 +19,11 @@ on:
         required: false
         default: false
         type: boolean
+      build_arm7:
+        description: 'Also build an armeabi-v7a (32-bit) APK — rare, for old devices only. Not seen by the in-app updater.'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: build-apk-${{ github.ref }}
@@ -39,6 +44,7 @@ jobs:
     timeout-minutes: 180
     outputs:
       apk-arm64:      ${{ steps.info.outputs.apk-arm64 }}
+      apk-arm7:       ${{ steps.info.outputs.apk-arm7 }}
       ver-name:       ${{ steps.info.outputs.ver-name }}
       ver-code:       ${{ steps.info.outputs.ver-code }}
       app-ver-code:   ${{ steps.info.outputs.app-ver-code }}
@@ -156,6 +162,21 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/out"
           cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
 
+      - name: Build armeabi-v7a
+        if: ${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}
+        working-directory: worktree
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
+          ABI_FILTERS: armeabi-v7a
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
+        run: |
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
+
       - name: Show ccache stats
         if: always()
         run: ccache -s -v
@@ -167,7 +188,12 @@ jobs:
         run: |
           mkdir -p out
           apk='${{ steps.info.outputs.apk-arm64 }}'
-          apk_files_json=$(jq -cn --arg f "$apk" '[{file:$f}]')
+          build_arm7='${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}'
+          if [ "$build_arm7" = 'true' ]; then
+            apk_files_json=$(jq -cn --arg a "$apk" --arg b '${{ steps.info.outputs.apk-arm7 }}' '[{file:$a},{file:$b}]')
+          else
+            apk_files_json=$(jq -cn --arg f "$apk" '[{file:$f}]')
+          fi
 
           base="$LAST_UPLOADED_SHA"
           if [ -n "$base" ] && ! git cat-file -e "$base^{commit}" 2>/dev/null; then
@@ -253,18 +279,20 @@ jobs:
           KEY_PASSWORD:      ${{ secrets.KEY_PASSWORD }}
         run: |
           apksigner=$ANDROID_HOME/build-tools/35.0.0/apksigner
-          apk='${{ needs.build.outputs.apk-arm64 }}'
-          "$apksigner" sign \
-            --ks "$RUNNER_TEMP/release.keystore" \
-            --ks-type PKCS12 \
-            --ks-key-alias mrtv \
-            --ks-pass "pass:$KEYSTORE_PASSWORD" \
-            --key-pass "pass:$KEY_PASSWORD" \
-            --v1-signing-enabled false \
-            --in  "out/$apk" \
-            --out "out/$apk.signed"
-          "$apksigner" verify --print-certs "out/$apk.signed"
-          mv "out/$apk.signed" "out/$apk"
+          # Signs whatever APKs the build job staged (arm64 alone, or arm64 + arm7).
+          for apk in out/*.apk; do
+            "$apksigner" sign \
+              --ks "$RUNNER_TEMP/release.keystore" \
+              --ks-type PKCS12 \
+              --ks-key-alias mrtv \
+              --ks-pass "pass:$KEYSTORE_PASSWORD" \
+              --key-pass "pass:$KEY_PASSWORD" \
+              --v1-signing-enabled false \
+              --in  "$apk" \
+              --out "$apk.signed"
+            "$apksigner" verify --print-certs "$apk.signed"
+            mv "$apk.signed" "$apk"
+          done
 
       - name: Wipe keystore
         if: always()
@@ -311,7 +339,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag='${{ needs.build.outputs.tag }}'
-          apk="out/${{ needs.build.outputs.apk-arm64 }}"
 
           # AI-generated English notes for GitHub (full markdown).
           notes_en=''
@@ -335,14 +362,15 @@ jobs:
           echo "RELEASE_TAG=$tag"        >> "$GITHUB_ENV"
           echo "PREV_RELEASE_TAG=$prev_tag" >> "$GITHUB_ENV"
 
+          # out/*.apk is arm64 alone, or arm64 + arm7 when build_arm7 was on.
           gh release create "$tag" \
             --target "$GITHUB_SHA" \
             --title  "$tag" \
             --notes-file release_body.md \
-            "$apk" || \
+            out/*.apk || \
           gh release upload "$tag" \
             --clobber \
-            "$apk"
+            out/*.apk
 
       - name: Upload to Telegram (CI channel + optional main channel)
         env:

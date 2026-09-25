@@ -226,6 +226,18 @@ try {
     )
   }
 
+  // Optional arm7 (32-bit) build -- rare, only present when apk.yml's build_arm7 toggle was on.
+  // Posted as a reply so it doesn't compete with the arm64 file most people actually need.
+  const arm7File = info.apkFiles[1]?.file
+  const arm7Msg = arm7File
+    ? await tg.sendMedia(channelCI, {
+      type: 'document',
+      file: `file:${join(artifactDir, arm7File)}`,
+      fileName: arm7File,
+      caption: html`⚠️ <b>armeabi-v7a (32-біт)</b> — рідкісна збірка для старих пристроїв. Якщо не знаєш, що це — тобі не потрібен цей файл, бери APK вище.\n\n⚠️ <b>armeabi-v7a (32-bit)</b> — rare build for old devices. If unsure, you don't need this — grab the APK above instead.`,
+    }, { replyTo: apkMsg.id })
+    : null
+
   // 2) --ci-only stops here: no main-channel post. Pre-releases are always ci-only (apk.yml).
   if (ciOnly) {
     console.log('CI-only mode: APK uploaded to CI channel, skipping main channel post.')
@@ -233,10 +245,14 @@ try {
     const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).trim() : ''
 
     const linksHtml = html`<a href="${postUrl(apkMsg.id)}">Завантажити / Download</a>`
+    const arm7NoteHtml = arm7Msg
+      ? html`⚠️ 32-біт (arm7) для старих пристроїв, більшості не треба — <a href="${postUrl(arm7Msg.id)}">тут</a> / 32-bit (arm7) for old devices, most people don't need it — <a href="${postUrl(arm7Msg.id)}">here</a>`
+      : null
 
     // Discrete blocks joined by a blank line each — no stray empty paragraphs.
     const blocks = [
       html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — ${linksHtml}`,
+      arm7NoteHtml,
       extra ? html`${extra}` : null,
       ukHtml,
       enHtml ? html`🇬🇧 Eng:\n<blockquote expandable>${enHtml}</blockquote>` : null,
@@ -252,6 +268,7 @@ try {
       console.log('Main channel post is long; splitting into Ukrainian post and English reply...')
       const post1Blocks = [
         html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — ${linksHtml}`,
+        arm7NoteHtml,
         extra ? html`${extra}` : null,
         ukHtml,
         html`🏷️ #release • @entinyGram • @entinyGramChat`,

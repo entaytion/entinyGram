@@ -38,9 +38,9 @@ if (dailyCounter > 9) {
 // tag/release-list id: YYYYMMDD + dailyCounter, e.g. 202608270, 202608271, ...
 const tag = `v${appVerName}-${date}${dailyCounter}`
 
-// versionCode = YYYYMMDD (8 digits) * 100 + dailyCounter(1 digit) * 10 -- single arm64 build,
-// no lite variant, so the trailing digit is always 0 (kept as a spare digit, not a flag).
-// 10 digits total, stays under Play's 2.1B versionCode ceiling until the year 2100.
+// versionCode = YYYYMMDD (8 digits) * 100 + dailyCounter(1 digit) * 10 -- same versionCode is
+// shared by the optional arm7 APK (same release, different ABI), so the trailing digit stays
+// a spare digit, not an ABI flag. 10 digits total, stays under Play's 2.1B ceiling until 2100.
 const verCode = yyyymmdd * 100 + dailyCounter * 10
 
 const out = {
@@ -52,8 +52,10 @@ const out = {
   date,
   // the in-app updater (UpdateHelper.kt) parses the versionCode straight out of the
   // filename -- it must not re-derive the date-based formula on-device. Its APK_RE regex
-  // tolerates the optional "-beta" segment inserted here for pre-release builds.
+  // tolerates the optional "-beta" segment inserted here for pre-release builds, and only
+  // ever matches "-arm64-" -- the arm7 build is intentionally invisible to the auto-updater.
   'apk-arm64': `entinygram${isPrerelease ? '-beta' : ''}-arm64-${appVerName}-${verCode}.apk`,
+  'apk-arm7': `entinygram${isPrerelease ? '-beta' : ''}-armeabi-v7a-${appVerName}-${verCode}.apk`,
   tag,
 }
 
