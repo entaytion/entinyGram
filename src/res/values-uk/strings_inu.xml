@@ -1546,4 +1546,6 @@
     <string name="InuPingAllProxies">Пінг усіх проксі</string>
     <string name="InuRoundRecorderExposureLevels">Кнопки рівня експозиції</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Показувати кнопки EV, щоб освітлювати чи затемнювати кадр під час запису.</string>
+    <string name="InuOnlineDots">Кольорові крапки присутності</string>
+    <string name="InuOnlineDotsInfo">Показувати крапку онлайну синьою, а замість того, щоб ховати її після виходу контакту з мережі — фарбувати жовтим чи червоним: жовта — був(ла) в мережі до 20 хвилин тому, червона — до години тому.</string>
 </resources>

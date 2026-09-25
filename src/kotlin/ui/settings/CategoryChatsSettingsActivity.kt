@@ -365,6 +365,14 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ONLINE_DOTS,
+                R.string.InuOnlineDots,
+                R.string.InuOnlineDotsInfo,
+                InuConfig.PRESENCE_COLOR_DOTS.value,
+            )
+        )
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
         hideBottomBarGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
@@ -504,6 +512,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.toggle()
             TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.toggle()
+            TOGGLE_ONLINE_DOTS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.PRESENCE_COLOR_DOTS.toggle()
 
             BUTTON_FORMATTING_POPUP -> {
                 val isSwitch = if (LocaleController.isRTL)
@@ -558,6 +567,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CHAT_INPUT_MATCH_FONT_SIZE = InuUtils.generateId()
         private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER = InuUtils.generateId()
+        private val TOGGLE_ONLINE_DOTS = InuUtils.generateId()
         private val BUTTON_FORMATTING_POPUP = InuUtils.generateId()
         private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
         private val BUTTON_MAIN_PAGE = InuUtils.generateId()
@@ -626,6 +636,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-input-match-font-size", R.string.InuChatInputMatchFontSize, TOGGLE_CHAT_INPUT_MATCH_FONT_SIZE),
                 SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
                 SearchRegistry.Entry("suggest-custom-emoji-after", R.string.InuSuggestCustomEmojiAfter, TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER),
+                SearchRegistry.Entry("online-dots", R.string.InuOnlineDots, TOGGLE_ONLINE_DOTS),
                 SearchRegistry.Entry("formatting-popup", R.string.InuFormattingPopup, BUTTON_FORMATTING_POPUP),
                 SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
                 SearchRegistry.Entry("main-page", R.string.InuMainPage, BUTTON_MAIN_PAGE),

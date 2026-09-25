@@ -1,0 +1,90 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 25 Sep 2026 15:09:43 +0300
+Subject: color-coded presence dots
+
+- online = blue, offline within 20min = yellow, within 1h = red, else no dot
+- gated behind InuConfig.PRESENCE_COLOR_DOTS, default off
+---
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java    | 7 ++++++-
+ .../main/java/org/telegram/ui/Cells/HintDialogCell.java    | 7 ++++++-
+ .../main/java/org/telegram/ui/Cells/ShareDialogCell.java   | 4 +++-
+ 3 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -809,6 +809,9 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+             }
+         }
+         boolean isOnline = isOnline();
++        if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && user != null && desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) != 0) {
++            isOnline = true;
++        }
+         onlineProgress = isOnline ? 1.0f : 0.0f;
+     }
+ 
+@@ -5106,6 +5109,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+             }
+             if (user != null && !MessagesController.isSupportUser(user) && !user.bot) {
+                 boolean isOnline = isOnline();
++                int inu_presenceColor = desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
++                if (inu_presenceColor != 0) isOnline = true;
+                 wasDrawnOnline = isOnline;
+                 if (isOnline || onlineProgress != 0) {
+                     int top = (int) (storyParams.originalAvatarRect.bottom - dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 6 : 8));
+@@ -5118,7 +5123,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+ 
+                     Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
+                     canvas.drawCircle(left, top, dp(7) * onlineProgress, Theme.dialogs_onlineCirclePaint);
+-                    Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_chats_onlineCircle, resourcesProvider));
++                    Theme.dialogs_onlineCirclePaint.setColor(inu_presenceColor != 0 ? inu_presenceColor : Theme.getColor(Theme.key_chats_onlineCircle, resourcesProvider));
+                     canvas.drawCircle(left, top, dp(5) * onlineProgress, Theme.dialogs_onlineCirclePaint);
+                     if (isOnline) {
+                         if (onlineProgress < 1.0f) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/HintDialogCell.java
+@@ -243,6 +243,11 @@ public class HintDialogCell extends FrameLayout {
+         boolean result = super.drawChild(canvas, child, drawingTime);
+         if (child == imageView) {
+             boolean showOnline = !premiumBlocked && currentUser != null && !currentUser.bot && (currentUser.status != null && currentUser.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(currentUser.id));
++            int inu_presenceColor = 0;
++            if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !premiumBlocked && currentUser != null && !currentUser.bot) {
++                inu_presenceColor = desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(currentUser.status, showOnline);
++                if (inu_presenceColor != 0) showOnline = true;
++            }
+             if (!wasDraw) {
+                 showOnlineProgress = showOnline ? 1f : 0f;
+             }
+@@ -293,7 +298,7 @@ public class HintDialogCell extends FrameLayout {
+                 canvas.scale(showOnlineProgress, showOnlineProgress, left, top);
+                 Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(backgroundColorKey));
+                 canvas.drawCircle(left, top, AndroidUtilities.dp(7), Theme.dialogs_onlineCirclePaint);
+-                Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_chats_onlineCircle));
++                Theme.dialogs_onlineCirclePaint.setColor(inu_presenceColor != 0 ? inu_presenceColor : Theme.getColor(Theme.key_chats_onlineCircle));
+                 canvas.drawCircle(left, top, AndroidUtilities.dp(5), Theme.dialogs_onlineCirclePaint);
+                 canvas.restore();
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
+@@ -410,12 +410,14 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
+                 }
+ 
+                 boolean isOnline = !premiumBlocked && !user.self && !user.bot && (user.status != null && user.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime() || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(user.id));
++                int inu_presenceColor = (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !premiumBlocked && !user.self && !user.bot) ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
++                if (inu_presenceColor != 0) isOnline = true;
+                 if (isOnline || onlineProgress != 0) {
+                     int top = imageView.getBottom() - dp(6);
+                     int left = imageView.getRight() - dp(10);
+                     Theme.dialogs_onlineCirclePaint.setColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                     canvas.drawCircle(left, top, dp(7) * onlineProgress * (1.0f - lockT) * (1.0f - priceT), Theme.dialogs_onlineCirclePaint);
+-                    Theme.dialogs_onlineCirclePaint.setColor(getThemedColor(Theme.key_chats_onlineCircle));
++                    Theme.dialogs_onlineCirclePaint.setColor(inu_presenceColor != 0 ? inu_presenceColor : getThemedColor(Theme.key_chats_onlineCircle));
+                     canvas.drawCircle(left, top, dp(5) * onlineProgress * (1.0f - lockT) * (1.0f - priceT), Theme.dialogs_onlineCirclePaint);
+                     if (isOnline) {
+                         if (onlineProgress < 1.0f) {

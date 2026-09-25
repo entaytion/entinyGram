@@ -904,6 +904,9 @@ object InuConfig {
     @JvmField
     val HIDE_ARCHIVE_FROM_CHAT_LIST = BoolItem("hide_archive_from_chat_list", false)
 
+    @JvmField
+    val PRESENCE_COLOR_DOTS = BoolItem("presence_color_dots", false)
+
     class CommunityDisplayModeItem : IntItem("community_display_mode", REGULAR) {
         companion object {
             const val REGULAR = 1
