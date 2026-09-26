@@ -1552,4 +1552,6 @@
     <string name="InuOnlineDotsInfo">Показувати крапку онлайну синьою, а замість того, щоб ховати її після виходу контакту з мережі — фарбувати жовтим чи червоним: жовта — був(ла) в мережі до 20 хвилин тому, червона — до години тому.</string>
     <string name="InuGhostModeLauncherShortcut">Ярлик на іконці додатка</string>
     <string name="InuGhostModeLauncherShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка для вмикання й вимикання режиму привида.</string>
+    <string name="InuHideRecentChatsShortcuts">Сховати нещодавні чати з іконки додатка</string>
+    <string name="InuHideRecentChatsShortcutsInfo">Прибрати людей і чати, з якими ви спілкуєтесь, з меню за довгим натисканням на іконку додатка.</string>
 </resources>

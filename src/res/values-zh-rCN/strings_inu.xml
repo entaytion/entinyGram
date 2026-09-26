@@ -1537,4 +1537,6 @@
     <string name="InuSettingsShowAccounts">在设置中显示账号</string>
     <string name="InuGhostModeLauncherShortcut">应用图标快捷方式</string>
     <string name="InuGhostModeLauncherShortcutInfo">在应用图标长按菜单中添加开启或关闭幽灵模式的快捷方式。</string>
+    <string name="InuHideRecentChatsShortcuts">从应用图标隐藏最近聊天</string>
+    <string name="InuHideRecentChatsShortcutsInfo">从应用图标的长按快捷菜单中移除经常联系的人和聊天。</string>
 </resources>

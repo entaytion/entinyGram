@@ -310,6 +310,14 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_RECENT_CHATS_SHORTCUTS,
+                R.string.InuHideRecentChatsShortcuts,
+                R.string.InuHideRecentChatsShortcutsInfo,
+                InuConfig.HIDE_RECENT_CHATS_SHORTCUTS.value,
+            )
+        )
         items.add(UItem.asShadow(null))
     }
 
@@ -466,6 +474,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 parentActivity?.let { ShortcutHelper.sync(it) }
             }
 
+            TOGGLE_HIDE_RECENT_CHATS_SHORTCUTS -> {
+                val new = InuConfig.HIDE_RECENT_CHATS_SHORTCUTS.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                org.telegram.messenger.MediaDataController.getInstance(currentAccount).buildShortcuts()
+            }
+
             TOGGLE_DISABLE_ROUNDING -> {
                 val new = InuConfig.DISABLE_ROUNDING.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -594,6 +608,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_SECONDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
+        private val TOGGLE_HIDE_RECENT_CHATS_SHORTCUTS = InuUtils.generateId()
         private val TOGGLE_FAST_RESEND_LOGIN_CODE = InuUtils.generateId()
 
         private val mapProviderOptions: List<Pair<Int, Int>> = buildList {
@@ -653,6 +668,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("show-seconds", R.string.InuShowSeconds, TOGGLE_SHOW_SECONDS),
                 SearchRegistry.Entry("disable-rounding", R.string.InuDisableRounding, TOGGLE_DISABLE_ROUNDING),
                 SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),
+                SearchRegistry.Entry("hide-recent-chats-shortcuts", R.string.InuHideRecentChatsShortcuts, TOGGLE_HIDE_RECENT_CHATS_SHORTCUTS),
                 SearchRegistry.Entry("fast-resend-login-code", R.string.InuFastResendLoginCode, TOGGLE_FAST_RESEND_LOGIN_CODE),
             ),
         )

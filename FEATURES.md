@@ -341,6 +341,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - account limit raised to 8 (premium gating disabled)
 - 🐶 customizable account order
 - 🐶 launcher shortcut that asks which account to open
+- 📡 option to hide recent/frequent chats from the app icon's long-press menu
 - per-account passcodes, hidden accounts, panic code, hidden settings deeplink - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
 - 🐶 paranoia mode: pick chats/channels to hide everywhere; all secret chats hidden too; exit by typing a custom code in chat search
   - optional whitelist mode: hide everything *except* the picked chats (service notifications stay visible)

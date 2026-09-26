@@ -1554,4 +1554,6 @@
     <string name="InuOnlineDotsInfo">Show the online dot in blue, and color it yellow or red instead of hiding it once a contact goes offline — yellow within the last 20 minutes, red within the last hour.</string>
     <string name="InuGhostModeLauncherShortcut">Toggle shortcut on app icon</string>
     <string name="InuGhostModeLauncherShortcutInfo">Add a long-press shortcut on the app icon to switch Ghost Mode on or off.</string>
+    <string name="InuHideRecentChatsShortcuts">Hide recent chats from app icon</string>
+    <string name="InuHideRecentChatsShortcutsInfo">Remove people and chats you talk to from the long-press shortcut menu on the app icon.</string>
 </resources>

@@ -1560,4 +1560,6 @@
     <string name="InuOnlineDotsInfo">Показывать точку онлайна синей, а вместо того чтобы скрывать её после выхода контакта из сети — красить жёлтым или красным: жёлтая — был(а) в сети до 20 минут назад, красная — до часа назад.</string>
     <string name="InuGhostModeLauncherShortcut">Ярлык на значке приложения</string>
     <string name="InuGhostModeLauncherShortcutInfo">Добавить ярлык по долгому нажатию на значок приложения для включения и выключения режима призрака.</string>
+    <string name="InuHideRecentChatsShortcuts">Скрыть недавние чаты со значка приложения</string>
+    <string name="InuHideRecentChatsShortcutsInfo">Убрать людей и чаты, с которыми вы общаетесь, из меню быстрого доступа по долгому нажатию на значок приложения.</string>
 </resources>

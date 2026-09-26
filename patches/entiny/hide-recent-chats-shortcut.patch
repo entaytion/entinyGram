@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 26 Sep 2026 11:50:12 +0300
+Subject: Add a setting to hide recent chats from the app icon's shortcut menu
+
+---
+ .../main/java/org/telegram/messenger/MediaDataController.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
+@@ -5006,7 +5006,7 @@ public class MediaDataController extends BaseController {
+             maxShortcuts = 5;
+         }
+         ArrayList<TLRPC.TL_topPeer> hintsFinal = new ArrayList<>();
+-        if (SharedConfig.passcodeHash.length() <= 0) {
++        if (SharedConfig.passcodeHash.length() <= 0 && !desu.inugram.InuConfig.HIDE_RECENT_CHATS_SHORTCUTS.getValue()) {
+             for (int a = 0; a < hints.size(); a++) {
+                 hintsFinal.add(hints.get(a));
+                 if (hintsFinal.size() == maxShortcuts - 2) {

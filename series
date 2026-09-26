@@ -438,3 +438,4 @@ entiny/fix-lingering-music-notification.patch
 entiny/presence-color-dots.patch
 entiny/disable-audiotrack-playback-params.patch
 entiny/centered-header-fixes.patch
+entiny/hide-recent-chats-shortcut.patch

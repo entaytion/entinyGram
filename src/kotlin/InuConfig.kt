@@ -1600,6 +1600,9 @@ object InuConfig {
     val ACCOUNT_SWITCH_SHORTCUT = BoolItem("account_switch_shortcut", false)
 
     @JvmField
+    val HIDE_RECENT_CHATS_SHORTCUTS = BoolItem("hide_recent_chats_shortcuts", false)
+
+    @JvmField
     val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
 
     @JvmField

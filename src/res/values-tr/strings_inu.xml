@@ -1535,4 +1535,6 @@
     <string name="InuSettingsShowAccounts">Ayarlarda hesapları göster</string>
     <string name="InuGhostModeLauncherShortcut">Uygulama simgesinde kısayol</string>
     <string name="InuGhostModeLauncherShortcutInfo">Hayalet Modunu açıp kapatmak için uygulama simgesine uzun basma kısayolu ekleyin.</string>
+    <string name="InuHideRecentChatsShortcuts">Uygulama simgesinden son sohbetleri gizle</string>
+    <string name="InuHideRecentChatsShortcutsInfo">Uygulama simgesinin uzun basma menüsünden konuştuğunuz kişileri ve sohbetleri kaldırın.</string>
 </resources>
