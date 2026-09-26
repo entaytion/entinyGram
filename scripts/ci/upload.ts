@@ -227,15 +227,17 @@ try {
   }
 
   // Optional arm7 (32-bit) build -- rare, only present when apk.yml's build_arm7 toggle was on.
-  // Posted as a reply so it doesn't compete with the arm64 file most people actually need.
+  // Full standalone post like arm64, but the changelog block is replaced by a device notice.
   const arm7File = info.apkFiles[1]?.file
+  const arm7Notice = html`<b>This is a build for older 32-bit (armeabi-v7a) devices. It ships rarely, usually only together with a stable release — it is not a pre-release.</b>`
+  const arm7Caption = html`<b>${appLabel} v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<br/><br/>${arm7Notice}<br/><br/>${lastReleaseHtml}${compareHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
   const arm7Msg = arm7File
     ? await tg.sendMedia(channelCI, {
       type: 'document',
       file: `file:${join(artifactDir, arm7File)}`,
       fileName: arm7File,
-      caption: html`⚠️ <b>armeabi-v7a (32-біт)</b> — рідкісна збірка для старих пристроїв. Якщо не знаєш, що це — тобі не потрібен цей файл, бери APK вище.\n\n⚠️ <b>armeabi-v7a (32-bit)</b> — rare build for old devices. If unsure, you don't need this — grab the APK above instead.`,
-    }, { replyTo: apkMsg.id })
+      caption: arm7Caption,
+    })
     : null
 
   // 2) --ci-only stops here: no main-channel post. Pre-releases are always ci-only (apk.yml).
