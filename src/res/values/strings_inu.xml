@@ -1560,4 +1560,6 @@
     <string name="InuFeedNewPostsIndicator">New posts indicator</string>
     <string name="InuFeedNewPostsIndicatorButton">Button</string>
     <string name="InuFeedNewPostsIndicatorPill">Pill</string>
+    <string name="InuRestartApp">Restart app</string>
+    <string name="InuRestartAppAlert">The app will close and reopen. Unsent drafts and in-progress uploads may be lost.</string>
 </resources>

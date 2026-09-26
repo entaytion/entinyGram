@@ -1542,4 +1542,6 @@
     <string name="InuFeedNewPostsIndicator">新着投稿のインジケーター</string>
     <string name="InuFeedNewPostsIndicatorButton">ボタン</string>
     <string name="InuFeedNewPostsIndicatorPill">ピル</string>
+    <string name="InuRestartApp">アプリを再起動</string>
+    <string name="InuRestartAppAlert">アプリが一度終了して再度開きます。未送信の下書きや進行中のアップロードが失われる可能性があります。</string>
 </resources>

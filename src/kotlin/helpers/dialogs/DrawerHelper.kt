@@ -751,11 +751,29 @@ object DrawerHelper {
             }
         }
 
+        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.RESTART_APP)) {
+            io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
+                confirmRestartApp(instance)
+            }
+        }
+
         if (bottomTabsHidden && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.SETTINGS)) {
             io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
                 instance.presentFragment(SettingsActivity())
             }
         }
+    }
+
+    private fun confirmRestartApp(instance: DialogsActivity) {
+        val activity = instance.parentActivity ?: return
+        AlertDialog.Builder(activity, instance.getResourceProvider())
+            .setTitle(getString(R.string.InuRestartApp))
+            .setMessage(getString(R.string.InuRestartAppAlert))
+            .setPositiveButton(getString(R.string.InuRestartApp)) { _, _ ->
+                desu.inugram.helpers.InuUtils.restartApp(activity)
+            }
+            .setNegativeButton(getString(R.string.Cancel), null)
+            .show()
     }
 
     private fun showClearCacheOptions(instance: DialogsActivity) {

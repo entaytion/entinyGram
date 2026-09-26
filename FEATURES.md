@@ -89,6 +89,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **customizable bottom tabs (beta)**: reorder and toggle visibility of Contacts, Settings, Calls, Profile, and Feed tabs
 - 📡 **recent chats quick-switcher**: popup listing recently opened chats in the main menu with one-tap history clear - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **clear cache shortcut**: quick entry in chats menu to open storage settings or clear local archive
+- 📡 **restart app shortcut**: quick entry in the chats menu, off by default, with a confirmation prompt
 - 📡 **customizable settings screen**: reorder and hide individual rows of the main Telegram settings list
 - 📡 **no accounts list in settings**: hide the redundant accounts block from the main settings screen
 - 📡 **customizable My Profile info rows**: reorder and toggle phone, bio, username, ID, and registration date rows on your profile

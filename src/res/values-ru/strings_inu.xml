@@ -1566,4 +1566,6 @@
     <string name="InuFeedNewPostsIndicator">Индикатор новых постов</string>
     <string name="InuFeedNewPostsIndicatorButton">Кнопка</string>
     <string name="InuFeedNewPostsIndicatorPill">Плашка</string>
+    <string name="InuRestartApp">Перезапустить приложение</string>
+    <string name="InuRestartAppAlert">Приложение закроется и откроется снова. Несохранённые черновики и незавершённые загрузки могут быть потеряны.</string>
 </resources>

@@ -1541,4 +1541,6 @@
     <string name="InuFeedNewPostsIndicator">Yeni gönderi göstergesi</string>
     <string name="InuFeedNewPostsIndicatorButton">Düğme</string>
     <string name="InuFeedNewPostsIndicatorPill">Hap</string>
+    <string name="InuRestartApp">Uygulamayı yeniden başlat</string>
+    <string name="InuRestartAppAlert">Uygulama kapanıp yeniden açılacaktır. Gönderilmemiş taslaklar ve devam eden yüklemeler kaybolabilir.</string>
 </resources>

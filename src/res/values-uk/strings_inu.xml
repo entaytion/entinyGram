@@ -1558,4 +1558,6 @@
     <string name="InuFeedNewPostsIndicator">Індикатор нових постів</string>
     <string name="InuFeedNewPostsIndicatorButton">Кнопка</string>
     <string name="InuFeedNewPostsIndicatorPill">Пігулка</string>
+    <string name="InuRestartApp">Перезапустити застосунок</string>
+    <string name="InuRestartAppAlert">Застосунок закриється й відкриється знову. Незбережені чернетки та завантаження, що ще тривають, можуть загубитися.</string>
 </resources>

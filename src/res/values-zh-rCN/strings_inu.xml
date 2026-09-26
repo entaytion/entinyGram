@@ -1543,4 +1543,6 @@
     <string name="InuFeedNewPostsIndicator">新帖子指示器</string>
     <string name="InuFeedNewPostsIndicatorButton">按钮</string>
     <string name="InuFeedNewPostsIndicatorPill">胶囊</string>
+    <string name="InuRestartApp">重启应用</string>
+    <string name="InuRestartAppAlert">应用将关闭并重新打开。未发送的草稿和正在进行的上传可能会丢失。</string>
 </resources>
