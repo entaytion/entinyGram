@@ -1563,4 +1563,7 @@
     <string name="InuHideRecentChatsShortcuts">Скрыть недавние чаты со значка приложения</string>
     <string name="InuHideRecentChatsShortcutsInfo">Убрать людей и чаты, с которыми вы общаетесь, из меню быстрого доступа по долгому нажатию на значок приложения.</string>
     <string name="InuWideChannelPostsInset">Боковые отступы</string>
+    <string name="InuFeedNewPostsIndicator">Индикатор новых постов</string>
+    <string name="InuFeedNewPostsIndicatorButton">Кнопка</string>
+    <string name="InuFeedNewPostsIndicatorPill">Плашка</string>
 </resources>

@@ -1762,6 +1762,11 @@ object InuConfig {
     @JvmField
     val FEED_MARK_READ_ON_SCROLL = BoolItem("feed_mark_read_on_scroll", true)
 
+    // entiny: 0 = pill ("%d new", shows only when a post streams in while scrolled away), 1 = button
+    // (persistent scroll-to-bottom control with unread badge, same as regular chats)
+    @JvmField
+    val FEED_NEW_POSTS_INDICATOR = IntItem("feed_new_posts_indicator", 0)
+
     // entiny: Pill Stack, ported from exteraGram/exteraless -- see src/kotlin/helpers/pillstack/.
     @JvmField
     val PILL_STACK_ENABLED = BoolItem("pill_stack_enabled", false)

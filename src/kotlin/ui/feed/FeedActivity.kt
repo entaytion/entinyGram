@@ -58,8 +58,10 @@ import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
+import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProviderThemed
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
+import org.telegram.ui.Components.chat.layouts.ChatActivitySideControlsButtonsLayout
 
 class FeedActivity @JvmOverloads constructor(
     private val scope: FeedScope = FeedScope.Global,
@@ -105,6 +107,7 @@ class FeedActivity @JvmOverloads constructor(
     private var adapter: FeedAdapter? = null
     private var emptyView: View? = null
     private var newPostsPill: TextView? = null
+    private var sideControls: ChatActivitySideControlsButtonsLayout? = null
     private var loadingOlder = false
     private var reachedEnd = false
     private var firstShown = false
@@ -155,6 +158,7 @@ class FeedActivity @JvmOverloads constructor(
                 if (dy != 0 && markReadOnScroll) markVisibleRead()
                 if (isAtNewest()) hidePill()
                 if (isNearOlderEnd()) loadOlder()
+                updatePageDownButton()
             }
 
             override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
@@ -167,10 +171,29 @@ class FeedActivity @JvmOverloads constructor(
         emptyView = createEmptyView(context).also {
             frameLayout.addView(it, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
         }
-        newPostsPill = createPill(context).also { pill ->
-            val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-            lp.gravity = Gravity.CENTER_HORIZONTAL or if (newestOnTop) Gravity.TOP else Gravity.BOTTOM
-            frameLayout.addView(pill, lp)
+        // entiny: pill ("%d new", only appears when a post streams in while scrolled away) vs a persistent
+        // scroll-to-bottom button with unread badge (same control regular chats use) -- user's choice
+        if (InuConfig.FEED_NEW_POSTS_INDICATOR.value == INDICATOR_BUTTON) {
+            sideControls = ChatActivitySideControlsButtonsLayout(
+                context, resourceProvider,
+                BlurredBackgroundColorProviderThemed(resourceProvider, Theme.key_chat_messagePanelBackground),
+                BlurredBackgroundDrawableViewFactory(BlurredBackgroundSourceColor().apply { setColor(getThemedColor(Theme.key_chat_messagePanelBackground)) }),
+            ).apply {
+                setGravity(Gravity.RIGHT or Gravity.BOTTOM)
+                setOnClickListener { buttonId, _ ->
+                    if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN) {
+                        scrollToNewest()
+                        showButton(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, false, true)
+                    }
+                }
+            }
+            frameLayout.addView(sideControls, LayoutHelper.createFrame(57, 300, Gravity.RIGHT or Gravity.BOTTOM))
+        } else {
+            newPostsPill = createPill(context).also { pill ->
+                val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+                lp.gravity = Gravity.CENTER_HORIZONTAL or if (newestOnTop) Gravity.TOP else Gravity.BOTTOM
+                frameLayout.addView(pill, lp)
+            }
         }
         frameLayout.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
         applyInsets()
@@ -224,6 +247,7 @@ class FeedActivity @JvmOverloads constructor(
         } else {
             scrollToDivider()
         }
+        updatePageDownButton()
     }
 
     override fun onFragmentDestroy() {
@@ -245,6 +269,7 @@ class FeedActivity @JvmOverloads constructor(
         }
         // the list keeps its anchor, so fresh posts land out of view and the pill points to them
         if (isAtNewest()) hidePill() else showPill(countUnread())
+        updatePageDownButton()
     }
 
     override fun onBackfilled() {
@@ -276,6 +301,7 @@ class FeedActivity @JvmOverloads constructor(
         if (store.size < MIN_INITIAL_ROWS || oldestLoaded != null && dividerKey == FeedStore.keyOf(oldestLoaded)) loadOlder()
         val unread = countUnread()
         if (unread > 0 && !isAtNewest()) showPill(unread)
+        updatePageDownButton()
         emptyView?.visibility = if (store.size == 0) View.VISIBLE else View.GONE
     }
 
@@ -558,6 +584,10 @@ class FeedActivity @JvmOverloads constructor(
             if (newestOnTop) it.topMargin = top else it.bottomMargin = bottom
             newPostsPill?.requestLayout()
         }
+        (sideControls?.layoutParams as? FrameLayout.LayoutParams)?.let {
+            it.bottomMargin = bottom
+            sideControls?.requestLayout()
+        }
     }
 
     private fun createEmptyView(context: Context): View {
@@ -615,6 +645,13 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun hidePill() {
         newPostsPill?.visibility = View.GONE
+    }
+
+    private fun updatePageDownButton() {
+        val controls = sideControls ?: return
+        val show = !isAtNewest()
+        controls.showButton(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, show, true)
+        if (show) controls.setButtonCount(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, countUnread(), true)
     }
 
     private fun showOverflowMenu() {
@@ -795,6 +832,9 @@ class FeedActivity @JvmOverloads constructor(
         private const val REACTIONS_RECHECK_MS = 15_000L
         private const val VIEW_TYPE_POST = 0
         private const val VIEW_TYPE_DIVIDER = 1
+
+        const val INDICATOR_PILL = 0
+        const val INDICATOR_BUTTON = 1
 
         private fun postId(msg: MessageObject): Long = msg.getDialogId() * 1_000_000_007L + msg.id
     }

@@ -19,6 +19,13 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
         items.add(mkTwoLineCheckItem(TOGGLE_INCLUDE_ARCHIVED, R.string.InuFeedIncludeArchived, 0, InuConfig.FEED_INCLUDE_ARCHIVED.value))
         items.add(mkTwoLineCheckItem(TOGGLE_NEWEST_ON_TOP, R.string.InuFeedNewestOnTop, R.string.InuFeedNewestOnTopInfo, InuConfig.FEED_NEWEST_ON_TOP.value))
         items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_ON_SCROLL, R.string.InuFeedMarkReadOnScroll, R.string.InuFeedMarkReadOnScrollInfo, InuConfig.FEED_MARK_READ_ON_SCROLL.value))
+        items.add(
+            UItem.asButton(
+                BUTTON_NEW_POSTS_INDICATOR,
+                LocaleController.getString(R.string.InuFeedNewPostsIndicator),
+                indicatorLabel(),
+            )
+        )
         items.add(UItem.asShadow(null))
 
         val (shown, hidden) = FeedChannelSet.allChannelsSplit(currentAccount)
@@ -56,6 +63,11 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
     private var shownIds: List<Long> = emptyList()
     private var hiddenIds: List<Long> = emptyList()
 
+    private fun indicatorLabel(): String = when (InuConfig.FEED_NEW_POSTS_INDICATOR.value) {
+        desu.inugram.ui.feed.FeedActivity.INDICATOR_BUTTON -> LocaleController.getString(R.string.InuFeedNewPostsIndicatorButton)
+        else -> LocaleController.getString(R.string.InuFeedNewPostsIndicatorPill)
+    }
+
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when {
             item.id == TOGGLE_INCLUDE_ARCHIVED -> {
@@ -70,6 +82,23 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
             item.id == TOGGLE_MARK_READ_ON_SCROLL -> {
                 InuConfig.FEED_MARK_READ_ON_SCROLL.value = !InuConfig.FEED_MARK_READ_ON_SCROLL.value
                 listView?.adapter?.update(true)
+            }
+            item.id == BUTTON_NEW_POSTS_INDICATOR -> {
+                val ctx = context ?: return
+                // entiny: list order must match FeedActivity.INDICATOR_PILL/INDICATOR_BUTTON (0/1)
+                val options = listOf(
+                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuFeedNewPostsIndicatorPill)),
+                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuFeedNewPostsIndicatorButton)),
+                )
+                showDialog(
+                    RadioDialogBuilder(ctx, getResourceProvider())
+                        .setTitle(LocaleController.getString(R.string.InuFeedNewPostsIndicator))
+                        .setItems(options, InuConfig.FEED_NEW_POSTS_INDICATOR.value) { _, which ->
+                            if (InuConfig.FEED_NEW_POSTS_INDICATOR.value == which) return@setItems
+                            InuConfig.FEED_NEW_POSTS_INDICATOR.value = which
+                            listView?.adapter?.update(true)
+                        }.create()
+                )
             }
             item.id == BUTTON_HIDE_ALL -> {
                 val all = (shownIds + hiddenIds).map { it.toString() }.toSet()
@@ -109,6 +138,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_INCLUDE_ARCHIVED = InuUtils.generateId()
         private val TOGGLE_NEWEST_ON_TOP = InuUtils.generateId()
         private val TOGGLE_MARK_READ_ON_SCROLL = InuUtils.generateId()
+        private val BUTTON_NEW_POSTS_INDICATOR = InuUtils.generateId()
         private val BUTTON_HIDE_ALL = InuUtils.generateId()
         private val BUTTON_SHOW_ALL = InuUtils.generateId()
         private const val CHANNEL_BASE = 10_000
@@ -125,6 +155,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
                 SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),
                 SearchRegistry.Entry("feed-mark-read-on-scroll", R.string.InuFeedMarkReadOnScroll, TOGGLE_MARK_READ_ON_SCROLL),
+                SearchRegistry.Entry("feed-new-posts-indicator", R.string.InuFeedNewPostsIndicator, BUTTON_NEW_POSTS_INDICATOR),
             ),
         )
     }

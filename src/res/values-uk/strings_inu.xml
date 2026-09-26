@@ -1555,4 +1555,7 @@
     <string name="InuHideRecentChatsShortcuts">Сховати нещодавні чати з іконки додатка</string>
     <string name="InuHideRecentChatsShortcutsInfo">Прибрати людей і чати, з якими ви спілкуєтесь, з меню за довгим натисканням на іконку додатка.</string>
     <string name="InuWideChannelPostsInset">Бічні відступи</string>
+    <string name="InuFeedNewPostsIndicator">Індикатор нових постів</string>
+    <string name="InuFeedNewPostsIndicatorButton">Кнопка</string>
+    <string name="InuFeedNewPostsIndicatorPill">Пігулка</string>
 </resources>

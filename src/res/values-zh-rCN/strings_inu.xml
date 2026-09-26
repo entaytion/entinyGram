@@ -1540,4 +1540,7 @@
     <string name="InuHideRecentChatsShortcuts">从应用图标隐藏最近聊天</string>
     <string name="InuHideRecentChatsShortcutsInfo">从应用图标的长按快捷菜单中移除经常联系的人和聊天。</string>
     <string name="InuWideChannelPostsInset">边距调整</string>
+    <string name="InuFeedNewPostsIndicator">新帖子指示器</string>
+    <string name="InuFeedNewPostsIndicatorButton">按钮</string>
+    <string name="InuFeedNewPostsIndicatorPill">胶囊</string>
 </resources>

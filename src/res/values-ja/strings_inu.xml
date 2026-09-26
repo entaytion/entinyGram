@@ -1539,4 +1539,7 @@
     <string name="InuHideRecentChatsShortcuts">アプリアイコンから最近のチャットを非表示</string>
     <string name="InuHideRecentChatsShortcutsInfo">アプリアイコンの長押しメニューからよくやり取りする連絡先やチャットを削除します。</string>
     <string name="InuWideChannelPostsInset">余白の調整</string>
+    <string name="InuFeedNewPostsIndicator">新着投稿のインジケーター</string>
+    <string name="InuFeedNewPostsIndicatorButton">ボタン</string>
+    <string name="InuFeedNewPostsIndicatorPill">ピル</string>
 </resources>

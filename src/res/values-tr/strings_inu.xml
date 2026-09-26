@@ -1538,4 +1538,7 @@
     <string name="InuHideRecentChatsShortcuts">Uygulama simgesinden son sohbetleri gizle</string>
     <string name="InuHideRecentChatsShortcutsInfo">Uygulama simgesinin uzun basma menüsünden konuştuğunuz kişileri ve sohbetleri kaldırın.</string>
     <string name="InuWideChannelPostsInset">Kenar boşluğu</string>
+    <string name="InuFeedNewPostsIndicator">Yeni gönderi göstergesi</string>
+    <string name="InuFeedNewPostsIndicatorButton">Düğme</string>
+    <string name="InuFeedNewPostsIndicatorPill">Hap</string>
 </resources>
