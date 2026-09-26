@@ -1543,4 +1543,6 @@
     <string name="InuFeedNewPostsIndicatorPill">Hap</string>
     <string name="InuRestartApp">Uygulamayı yeniden başlat</string>
     <string name="InuRestartAppAlert">Uygulama kapanıp yeniden açılacaktır. Gönderilmemiş taslaklar ve devam eden yüklemeler kaybolabilir.</string>
+    <string name="InuOnlineDots">Renkli çevrim içi noktaları</string>
+    <string name="InuOnlineDotsInfo">Çevrim içi noktasını mavi gösterin ve bir kişi çevrim dışı olduğunda gizlemek yerine sarı veya kırmızıya boyayın — son 20 dakika içinde sarı, son bir saat içinde kırmızı.</string>
 </resources>

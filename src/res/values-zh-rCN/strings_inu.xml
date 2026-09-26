@@ -1545,4 +1545,6 @@
     <string name="InuFeedNewPostsIndicatorPill">胶囊</string>
     <string name="InuRestartApp">重启应用</string>
     <string name="InuRestartAppAlert">应用将关闭并重新打开。未发送的草稿和正在进行的上传可能会丢失。</string>
+    <string name="InuOnlineDots">彩色在线状态圆点</string>
+    <string name="InuOnlineDotsInfo">在线圆点显示为蓝色，并在联系人离线后显示为黄色或红色而不是直接隐藏：20分钟内为黄色，1小时内为红色。</string>
 </resources>

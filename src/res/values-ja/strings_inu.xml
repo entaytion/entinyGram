@@ -1544,4 +1544,6 @@
     <string name="InuFeedNewPostsIndicatorPill">ピル</string>
     <string name="InuRestartApp">アプリを再起動</string>
     <string name="InuRestartAppAlert">アプリが一度終了して再度開きます。未送信の下書きや進行中のアップロードが失われる可能性があります。</string>
+    <string name="InuOnlineDots">色分けされたオンラインドット</string>
+    <string name="InuOnlineDotsInfo">オンラインドットを青で表示し、連絡先がオフラインになったら非表示にする代わりに黄色または赤で表示します（20分以内は黄色、1時間以内は赤）。</string>
 </resources>
