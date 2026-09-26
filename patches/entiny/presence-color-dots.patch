@@ -25,7 +25,7 @@ index 0000000..0000000 100644
          onlineProgress = isOnline ? 1.0f : 0.0f;
      }
  
-@@ -5106,6 +5109,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5107,6 +5110,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
              }
              if (user != null && !MessagesController.isSupportUser(user) && !user.bot) {
                  boolean isOnline = isOnline();
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
                  wasDrawnOnline = isOnline;
                  if (isOnline || onlineProgress != 0) {
                      int top = (int) (storyParams.originalAvatarRect.bottom - dp(useForceThreeLines || SharedConfig.useThreeLinesLayout ? 6 : 8));
-@@ -5118,7 +5123,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5119,7 +5124,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
  
                      Theme.dialogs_onlineCirclePaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
                      canvas.drawCircle(left, top, dp(7) * onlineProgress, Theme.dialogs_onlineCirclePaint);

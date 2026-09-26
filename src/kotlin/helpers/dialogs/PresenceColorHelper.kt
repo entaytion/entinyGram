@@ -13,7 +13,16 @@ object PresenceColorHelper {
 
     @JvmStatic
     fun colorFor(status: TLRPC.UserStatus?, isOnlineOverride: Boolean): Int {
-        if (isOnlineOverride) return COLOR_ONLINE
+        if (isOnlineOverride || status is TLRPC.TL_userStatusOnline) return COLOR_ONLINE
+        // entiny: most contacts hide their exact last-seen time (privacy setting), so the server only ever
+        // sends the coarse buckets below instead of TL_userStatusOffline+expires -- without this branch the
+        // dot never colored for them at all, which is most contacts in practice
+        when (status) {
+            is TLRPC.TL_userStatusRecently -> return COLOR_RECENT_20M
+            is TLRPC.TL_userStatusLastWeek -> return COLOR_RECENT_1H
+            is TLRPC.TL_userStatusLastMonth -> return 0
+            else -> {}
+        }
         val lastSeen = (status as? TLRPC.TL_userStatusOffline)?.expires ?: return 0
         val elapsed = (System.currentTimeMillis() / 1000L).toInt() - lastSeen
         return when {

@@ -19,6 +19,7 @@ object WebPreviewHelper {
         Replacement("""(?:www\.)?reddit\.com/(.*)""", "vxreddit.com/$1"),
         Replacement("""bsky\.app/(.*)""", "fxbsky.app/$1"),
         Replacement("""www\.pixiv\.net/(.*)""", "www.phixiv.net/$1"),
+        Replacement("""(?:www\.|m\.|mbasic\.)?facebook\.com/(.*)""", "facebed.com/$1"),
     )
 
     fun load(): List<Replacement> {

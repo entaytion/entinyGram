@@ -59,7 +59,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -1270,6 +1270,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1275,6 +1275,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              rightDrawableIsScamOrVerified = false;
              rightDrawable2ContentDescription = null;
          }

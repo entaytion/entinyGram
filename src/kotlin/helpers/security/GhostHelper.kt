@@ -2,6 +2,8 @@ package desu.inugram.helpers.security
 
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import androidx.core.content.ContextCompat
 import desu.inugram.InuConfig
 import desu.inugram.ui.settings.RadioDialogBuilder
@@ -27,6 +29,7 @@ import org.telegram.ui.ActionBar.SimpleTextView
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ColoredImageSpan
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
@@ -51,6 +54,8 @@ object GhostHelper {
         InuConfig.GHOST_MODE_ENABLED.value = enabled
         syncPresence(UserConfig.selectedAccount)
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
+        // entiny: dialogs list rows only rebind their ghost badge on updateInterfaces, not mainUserInfoChanged
+        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_ALL)
     }
 
     @JvmStatic
@@ -75,6 +80,21 @@ object GhostHelper {
         } else {
             titleTextView.setLeftDrawable(null)
         }
+    }
+
+    // entiny: dialogs-list counterpart of applyChatTitleGhost; folded into the name text so the existing
+    // ellipsize/measure pass in DialogCell absorbs it without touching its badge-reservation math
+    @JvmStatic
+    fun applyDialogListGhost(name: CharSequence?, dialogId: Long): CharSequence? {
+        if (name == null || dialogId == 0L || InuConfig.GHOST_HIDE_APP_BAR_ICON.value || !isGhostActiveForDialog(dialogId)) return name
+        val ssb = SpannableStringBuilder("  ").append(name)
+        val span = ColoredImageSpan(R.drawable.inu_ghost_filled, ColoredImageSpan.ALIGN_CENTER).apply {
+            setSize(AndroidUtilities.dp(15f))
+            setTranslateX(AndroidUtilities.dp(-2f).toFloat())
+            setOverrideColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+        }
+        ssb.setSpan(span, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return ssb
     }
 
     const val OVERRIDE_DEFAULT = 0
@@ -276,6 +296,7 @@ object GhostHelper {
                     val latest = getChatOverride(dialogId)
                     if (read) setChatOverride(dialogId, state, latest.typing) else setChatOverride(dialogId, latest.read, state)
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_ALL)
                     onChanged?.run()
                 }
                 .create()

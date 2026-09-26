@@ -4,13 +4,15 @@ Date: Mon, 10 Aug 2026 08:11:28 +0300
 Subject: Add ghost mode (invisible mode) for read receipts, typing and online status
 
 ---
- .../java/org/telegram/messenger/ContactsController.java     | 1 +
- .../main/java/org/telegram/messenger/LocaleController.java  | 6 ++++++
- .../java/org/telegram/messenger/MessagesController.java     | 3 +++
- .../main/java/org/telegram/tgnet/ConnectionsManager.java    | 3 +++
- .../src/main/java/org/telegram/ui/DialogsActivity.java      | 3 +++
- .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++++-
- 6 files changed, 21 insertions(+), 1 deletion(-)
+ .../java/org/telegram/messenger/ContactsController.java    | 1 +
+ .../main/java/org/telegram/messenger/LocaleController.java | 6 ++++++
+ .../java/org/telegram/messenger/MessagesController.java    | 3 +++
+ .../main/java/org/telegram/tgnet/ConnectionsManager.java   | 3 +++
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java    | 1 +
+ .../org/telegram/ui/Components/ChatAvatarContainer.java    | 7 ++++++-
+ .../src/main/java/org/telegram/ui/DialogsActivity.java     | 3 +++
+ .../src/main/java/org/telegram/ui/ProfileActivity.java     | 6 +++++-
+ 8 files changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -69,6 +71,36 @@ index 0000000..0000000 100644
          try {
              NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
              object.serializeToStream(buffer);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -2262,6 +2262,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 if (nameString != null && nameString.length() == 0) {
+                     nameString = getString(R.string.HiddenName);
+                 }
++                nameString = desu.inugram.helpers.security.GhostHelper.applyDialogListGhost(nameString, currentDialogId);
+             }
+         }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -1209,7 +1209,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     private String rightDrawable2ContentDescription = null;
+ 
+     public void setTitleIcons(Drawable leftIcon, Drawable mutedIcon) {
+-        titleTextView.setLeftDrawable(leftIcon);
++        // entiny: null leftIcon would otherwise clobber the ghost mode icon applyChatTitleGhost set in setTitle()
++        if (leftIcon != null) {
++            titleTextView.setLeftDrawable(leftIcon);
++        } else {
++            desu.inugram.helpers.security.GhostHelper.applyChatTitleGhost(parentFragment, titleTextView);
++        }
+         if (!rightDrawableIsScamOrVerified && !rightDrawableIsScam) {
+             if (mutedIcon != null) {
+                 rightDrawable2ContentDescription = getString(R.string.NotificationsMuted);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java

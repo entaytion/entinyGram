@@ -67,7 +67,7 @@ index 0000000..0000000 100644
          SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
          if (getSubtitleTextView().getVisibility() != GONE) {
              titleTextView.layout(titleL, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-@@ -2026,6 +2029,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2031,6 +2034,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          inu_invalidateCenteredTextWidth();
          if (actionBar != null) {
              actionBar.checkAvatarContainerWidth(animated);
