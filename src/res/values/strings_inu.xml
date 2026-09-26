@@ -1552,4 +1552,6 @@
     <string name="InuDatacenterLeakGuardBlocked">Blocked by leak protection</string>
     <string name="InuOnlineDots">Color-coded presence dots</string>
     <string name="InuOnlineDotsInfo">Show the online dot in blue, and color it yellow or red instead of hiding it once a contact goes offline — yellow within the last 20 minutes, red within the last hour.</string>
+    <string name="InuGhostModeLauncherShortcut">Toggle shortcut on app icon</string>
+    <string name="InuGhostModeLauncherShortcutInfo">Add a long-press shortcut on the app icon to switch Ghost Mode on or off.</string>
 </resources>

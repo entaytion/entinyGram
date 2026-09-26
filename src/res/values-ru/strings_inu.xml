@@ -1558,4 +1558,6 @@
     <string name="InuRoundRecorderExposureLevelsInfo">Показывать кнопки EV, чтобы осветлять или затемнять кадр во время записи.</string>
     <string name="InuOnlineDots">Цветные точки присутствия</string>
     <string name="InuOnlineDotsInfo">Показывать точку онлайна синей, а вместо того чтобы скрывать её после выхода контакта из сети — красить жёлтым или красным: жёлтая — был(а) в сети до 20 минут назад, красная — до часа назад.</string>
+    <string name="InuGhostModeLauncherShortcut">Ярлык на значке приложения</string>
+    <string name="InuGhostModeLauncherShortcutInfo">Добавить ярлык по долгому нажатию на значок приложения для включения и выключения режима призрака.</string>
 </resources>

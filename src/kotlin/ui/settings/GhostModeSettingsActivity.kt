@@ -74,6 +74,13 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.GHOST_HIDE_APP_BAR_ICON.value)
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostHideAppBarIconInfo)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_LAUNCHER_SHORTCUT,
+                LocaleController.getString(R.string.InuGhostModeLauncherShortcut),
+            ).setChecked(InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostModeLauncherShortcutInfo)))
         items.add(mkSubPageButton(BUTTON_MANAGE_OVERRIDES, LocaleController.getString(R.string.InuGhostOverrides)))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostOverridesHint)))
         items.add(
@@ -143,6 +150,11 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_ALL)
             }
+            TOGGLE_LAUNCHER_SHORTCUT -> {
+                val new = InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                parentActivity?.let { desu.inugram.helpers.ShortcutHelper.sync(it) }
+            }
         }
     }
 
@@ -158,6 +170,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PRESENCE_MODE = InuUtils.generateId()
         private val TOGGLE_AUTO_OFFLINE = InuUtils.generateId()
         private val TOGGLE_HIDE_APP_BAR_ICON = InuUtils.generateId()
+        private val TOGGLE_LAUNCHER_SHORTCUT = InuUtils.generateId()
         private val BUTTON_MANAGE_OVERRIDES = InuUtils.generateId()
 
         @JvmField
@@ -178,6 +191,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ghost-presence-mode", R.string.InuGhostPresenceMode, BUTTON_PRESENCE_MODE),
                 SearchRegistry.Entry("ghost-auto-offline", R.string.InuGhostAutoOffline, TOGGLE_AUTO_OFFLINE),
                 SearchRegistry.Entry("ghost-hide-app-bar-icon", R.string.InuGhostHideAppBarIcon, TOGGLE_HIDE_APP_BAR_ICON),
+                SearchRegistry.Entry("ghost-launcher-shortcut", R.string.InuGhostModeLauncherShortcut, TOGGLE_LAUNCHER_SHORTCUT),
                 SearchRegistry.Entry("ghost-chat-overrides", R.string.InuGhostOverrides, BUTTON_MANAGE_OVERRIDES),
             ),
         )

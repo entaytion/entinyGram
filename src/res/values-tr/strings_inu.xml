@@ -1533,4 +1533,6 @@
     <string name="InuRoundRecorderExposureLevels">Pozlama seviyesi düğmeleri</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Kayıt sırasında görüntüyü aydınlatmak veya karartmak için EV düğmelerini göster.</string>
     <string name="InuSettingsShowAccounts">Ayarlarda hesapları göster</string>
+    <string name="InuGhostModeLauncherShortcut">Uygulama simgesinde kısayol</string>
+    <string name="InuGhostModeLauncherShortcutInfo">Hayalet Modunu açıp kapatmak için uygulama simgesine uzun basma kısayolu ekleyin.</string>
 </resources>

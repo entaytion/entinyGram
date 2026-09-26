@@ -7,6 +7,7 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import desu.inugram.InuConfig
+import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.ui.AccountPickerActivity
@@ -58,6 +59,17 @@ object ShortcutHelper {
             requiresUnlocked = true,
             shouldShow = { InuConfig.ACCOUNT_SWITCH_SHORTCUT.value && countSelectableAccounts() > 1 },
             onClick = { activity -> showAccountPicker(activity) },
+        ),
+        Entry(
+            id = "inu_toggle_ghost_mode",
+            action = "desu.inugram.action.TOGGLE_GHOST_MODE",
+            labelRes = R.string.InuGhostMode,
+            iconRes = R.drawable.inu_shortcut_ghost,
+            // entiny: rank 2 sank below the "1 + a" ranks MediaDataController.buildShortcuts() gives recent
+            // chats, so the toggle showed up after them instead of right under "New conversation" (rank 0)
+            rank = 0,
+            shouldShow = { InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value },
+            onClick = { activity -> GhostHelper.toggleGhostMode() },
         ),
     )
 

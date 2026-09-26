@@ -1535,4 +1535,6 @@
     <string name="InuRoundRecorderExposureLevels">曝光等级按钮</string>
     <string name="InuRoundRecorderExposureLevelsInfo">录制时显示 EV 按钮，用于调亮或调暗画面。</string>
     <string name="InuSettingsShowAccounts">在设置中显示账号</string>
+    <string name="InuGhostModeLauncherShortcut">应用图标快捷方式</string>
+    <string name="InuGhostModeLauncherShortcutInfo">在应用图标长按菜单中添加开启或关闭幽灵模式的快捷方式。</string>
 </resources>
