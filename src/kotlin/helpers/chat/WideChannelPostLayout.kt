@@ -1,17 +1,22 @@
 package desu.inugram.helpers.chat
 
+import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 
 object WideChannelPostLayout {
-    private const val OUTER_INSET_DP = 8
     private const val MEDIA_BACKGROUND_CONTENT_INSET_DP = 8
     private const val REGULAR_BACKGROUND_CONTENT_INSET_DP = 17
 
+    // entiny: user-adjustable via a slider in settings; how much side padding the wide-post bubble keeps
+    @JvmStatic
+    fun outerInsetDp(): Float = InuConfig.WIDE_CHANNEL_POSTS_INSET.value
+
     @JvmStatic
     fun backgroundWidth(viewportWidth: Int, leadingInset: Int, mediaBackground: Boolean): Int {
-        var width = viewportWidth - leadingInset - dp((OUTER_INSET_DP * 2).toFloat())
-        if (mediaBackground) width -= dp(OUTER_INSET_DP.toFloat())
+        val outerInset = outerInsetDp()
+        var width = viewportWidth - leadingInset - dp(outerInset * 2)
+        if (mediaBackground) width -= dp(outerInset)
         return maxOf(dp(1f), width)
     }
 
@@ -45,7 +50,7 @@ object WideChannelPostLayout {
     @JvmStatic
     fun groupedMediaContentSpanCount(groupedMediaViewportWidth: Int): Int {
         if (groupedMediaViewportWidth <= 0) return 1000
-        val contentWidth = maxOf(dp(1f), groupedMediaViewportWidth - dp((OUTER_INSET_DP * 2).toFloat()))
+        val contentWidth = maxOf(dp(1f), groupedMediaViewportWidth - dp(outerInsetDp() * 2))
         return (contentWidth * 1000f / groupedMediaViewportWidth).let {
             maxOf(1, minOf(1000, Math.round(it)))
         }

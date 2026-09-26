@@ -1556,4 +1556,5 @@
     <string name="InuGhostModeLauncherShortcutInfo">Add a long-press shortcut on the app icon to switch Ghost Mode on or off.</string>
     <string name="InuHideRecentChatsShortcuts">Hide recent chats from app icon</string>
     <string name="InuHideRecentChatsShortcutsInfo">Remove people and chats you talk to from the long-press shortcut menu on the app icon.</string>
+    <string name="InuWideChannelPostsInset">Side padding</string>
 </resources>

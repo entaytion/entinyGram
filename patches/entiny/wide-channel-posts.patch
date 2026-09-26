@@ -18,9 +18,9 @@ original fix we ported this from (commit db2016b).
 - drop the dead WIDE_FEED_POSTS/searchType==4 branch -- this fork has no
   Feed surface for it to apply to, so it was an unreachable toggle
 ---
- .../org/telegram/messenger/MessageObject.java |  96 ++++++++-
+ .../org/telegram/messenger/MessageObject.java | 106 ++++++++-
  .../telegram/ui/Cells/ChatMessageCell.java    | 201 +++++++++++++++---
- 2 files changed, 264 insertions(+), 33 deletions(-)
+ 2 files changed, 274 insertions(+), 33 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
@@ -133,7 +133,24 @@ index 0000000..0000000 100644
                      if (pos.edge) {
                          if (pos.spanSize != 1000) {
                              pos.spanSize += avatarOffset;
-@@ -9886,6 +9942,38 @@ public class MessageObject {
+@@ -8543,6 +8599,16 @@ public class MessageObject {
+         if (emojiOnlyCount >= 1 && totalAnimatedEmojiCount <= 100 && (emojiOnlyCount - totalAnimatedEmojiCount) < (SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH ? 100 : 50) && (hasValidReplyMessageObject() || isForwarded())) {
+             maxWidth = Math.min(maxWidth, (int) (generatedWithMinSize * .65f));
+         }
++        // entiny: wide channel posts stretch their bubble to the available width (ChatMessageCell's
++        // applyWideChannelPostWidth), but the text itself kept wrapping at this generic width -- looked
++        // static when the wide-post inset was adjusted since it never touched the actual text layout
++        if (isWideChannelPost()) {
++            int leadingInset = sideMenuEnabled ? dp(64) : (needDrawAvatarInternal() && !isOutOwner() && !messageOwner.isThreadMessage ? dp(52) : 0);
++            int wideWidth = desu.inugram.helpers.chat.WideChannelPostLayout.messageTextWidth(generatedWithMinSize, leadingInset);
++            if (wideWidth > 0) {
++                maxWidth = wideWidth;
++            }
++        }
+         return maxWidth;
+     }
+ 
+@@ -9886,6 +9952,38 @@ public class MessageObject {
          return messageOwner.from_id instanceof TLRPC.TL_peerChannel && messageOwner.fwd_from != null && messageOwner.fwd_from.channel_post != 0 && messageOwner.fwd_from.saved_from_peer instanceof TLRPC.TL_peerChannel && messageOwner.from_id.channel_id == messageOwner.fwd_from.saved_from_peer.channel_id;
      }
  

@@ -27,6 +27,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
 
     private var chatInputMaxLinesSlider: SliderCell? = null
     private var wideChannelPostsPreview: WideChannelPostsPreviewCell? = null
+    private var wideChannelPostsInsetSlider: SliderCell? = null
 
     private val hideBotSlashGroup = ExpandableBoolGroup(
         LocaleController.getString(R.string.InuHideBotSlash),
@@ -170,6 +171,27 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuWideChannelPosts),
             ).setChecked(InuConfig.WIDE_CHANNEL_POSTS.value)
         )
+        if (wideChannelPostsInsetSlider == null) {
+            wideChannelPostsInsetSlider = SliderCell(
+                context,
+                min = 0f,
+                max = 16f,
+                step = 1f,
+                defaultValue = InuConfig.WIDE_CHANNEL_POSTS_INSET.default,
+                initialValue = InuConfig.WIDE_CHANNEL_POSTS_INSET.value,
+                title = LocaleController.getString(R.string.InuWideChannelPostsInset),
+                format = { "${it.toInt()}dp" },
+                onChanged = {
+                    InuConfig.WIDE_CHANNEL_POSTS_INSET.value = it
+                    wideChannelPostsPreview?.refreshInset()
+                },
+            )
+        } else {
+            wideChannelPostsInsetSlider?.updateColors()
+        }
+        if (InuConfig.WIDE_CHANNEL_POSTS.value) {
+            items.add(UItem.asCustom(wideChannelPostsInsetSlider))
+        }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuWideChannelPostsFooter)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAttachmentSheet)))
@@ -427,6 +449,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.WIDE_CHANNEL_POSTS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 wideChannelPostsPreview?.setWide(new, true)
+                listView?.adapter?.update(true)
             }
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
@@ -610,6 +633,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("wide-channel-posts", R.string.InuWideChannelPosts, TOGGLE_WIDE_CHANNEL_POSTS),
+                SearchRegistry.Entry("wide-channel-posts-inset", R.string.InuWideChannelPostsInset, TOGGLE_WIDE_CHANNEL_POSTS),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),
                 SearchRegistry.Entry("disable-pull-to-next", R.string.InuDisablePullToNext, TOGGLE_DISABLE_PULL_TO_NEXT),
                 SearchRegistry.Entry("chat-always-show-down", R.string.InuChatAlwaysShowDown, TOGGLE_CHAT_ALWAYS_SHOW_DOWN),

@@ -1554,4 +1554,5 @@
     <string name="InuGhostModeLauncherShortcutInfo">Додати ярлик за довгим натисканням на іконку додатка для вмикання й вимикання режиму привида.</string>
     <string name="InuHideRecentChatsShortcuts">Сховати нещодавні чати з іконки додатка</string>
     <string name="InuHideRecentChatsShortcutsInfo">Прибрати людей і чати, з якими ви спілкуєтесь, з меню за довгим натисканням на іконку додатка.</string>
+    <string name="InuWideChannelPostsInset">Бічні відступи</string>
 </resources>

@@ -1104,6 +1104,9 @@ object InuConfig {
     val WIDE_CHANNEL_POSTS = BoolItem("wide_channel_posts", false)
 
     @JvmField
+    val WIDE_CHANNEL_POSTS_INSET = FloatItem("wide_channel_posts_inset", 8.0f)
+
+    @JvmField
     val REDUCE_MENU_MOTION = BoolItem("reduce_menu_motion", true)
 
     @JvmField

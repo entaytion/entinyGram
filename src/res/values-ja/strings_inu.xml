@@ -1538,4 +1538,5 @@
     <string name="InuGhostModeLauncherShortcutInfo">アプリアイコンを長押ししてゴーストモードを切り替えるショートカットを追加します。</string>
     <string name="InuHideRecentChatsShortcuts">アプリアイコンから最近のチャットを非表示</string>
     <string name="InuHideRecentChatsShortcutsInfo">アプリアイコンの長押しメニューからよくやり取りする連絡先やチャットを削除します。</string>
+    <string name="InuWideChannelPostsInset">余白の調整</string>
 </resources>

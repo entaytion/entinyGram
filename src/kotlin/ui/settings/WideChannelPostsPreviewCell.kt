@@ -143,6 +143,17 @@ class WideChannelPostsPreviewCell(context: Context, fragment: BaseFragment) : Fr
         return MessageObject(account, reply, true, false)
     }
 
+    fun refreshInset() {
+        // entiny: MessageObject caches its text layout keyed by screen width/density/font size only,
+        // so it never noticed the inset change on its own -- force it to re-wrap
+        regularCell.messageObject?.resetLayout()
+        wideCell.messageObject?.resetLayout()
+        regularCell.forceResetMessageObject()
+        wideCell.forceResetMessageObject()
+        requestLayout()
+        invalidate()
+    }
+
     fun setWide(wide: Boolean, animated: Boolean) {
         val target = if (wide) 1f else 0f
         animator?.cancel()

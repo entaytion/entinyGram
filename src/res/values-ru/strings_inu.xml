@@ -1562,4 +1562,5 @@
     <string name="InuGhostModeLauncherShortcutInfo">Добавить ярлык по долгому нажатию на значок приложения для включения и выключения режима призрака.</string>
     <string name="InuHideRecentChatsShortcuts">Скрыть недавние чаты со значка приложения</string>
     <string name="InuHideRecentChatsShortcutsInfo">Убрать людей и чаты, с которыми вы общаетесь, из меню быстрого доступа по долгому нажатию на значок приложения.</string>
+    <string name="InuWideChannelPostsInset">Боковые отступы</string>
 </resources>
