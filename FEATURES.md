@@ -75,6 +75,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator, live interactive dialog preview, and unified corner radius toggle - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **standalone AMOLED theme**: true-black theme selectable from regular theme list, independent of Monet - *ported from NagramX Turbo*
+- 📡 **stuck theme-switch recovery**: if a theme crossfade freezes mid-animation (common on custom ROMs), the next app resume clears the stale overlay so later theme changes stop being silently dropped
 - 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (Stock Telegram, Solar, VKUI, Phosphor Icons)
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - wide, full-width bottom navigation bar (60dp evenly-spaced tabs)

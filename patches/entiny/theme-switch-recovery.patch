@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 26 Sep 2026 12:31:33 +0300
+Subject: recover stuck theme switch overlay on resume
+
+---
+ .../src/main/java/org/telegram/ui/LaunchActivity.java         | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -298,8 +298,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+     private final PipActivityController pipActivityController = new PipActivityController(this);
+     private final IPipActivityHandler pipActivityHandler = pipActivityController.getHandler();
+ 
+-    private ImageView themeSwitchImageView;
+-    private ImageView themeSwitchSunView;
++    public ImageView themeSwitchImageView;
++    public ImageView themeSwitchSunView;
+     public ActionBarLayout actionBarLayout;
+     private ActionBarLayout layersActionBarLayout;
+     public ActionBarLayout rightActionBarLayout;
