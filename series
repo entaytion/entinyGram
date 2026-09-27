@@ -283,7 +283,6 @@ entiny/unlimited-pinned-chats.patch
 entiny/unlimited-folder-chats.patch
 entiny/force-relay-calls.patch
 entiny/suppress-screenshot-notification.patch
-entiny/allow-screenshots-stories-fix.patch
 entiny/open-by-user-id.patch
 bugfix/reply-icon-span-width.patch
 entiny/archive-biometric-lock.patch
@@ -338,8 +337,7 @@ entiny/gif-restriction-bypass.patch
 entiny/ios-chats-tab-first-folder.patch
 entiny/ios-bottom-navigation-bar.patch
 entiny/dialogs-title-text.patch
-entiny/fix-beta-app-detection.patch
-entiny/log-categories.patch
+entiny/ci-beta-detection.patch
 entiny/show-spoilers-directly.patch
 entiny/selection-no-quote.patch
 entiny/md3-sections-textcell-fix.patch
@@ -372,7 +370,6 @@ entiny/hide-attach-emoji-premium-upsells.patch
 entiny/disable-call-rating.patch
 entiny/hide-profile-similar-gifts-tabs.patch
 entiny/customizable-settings-rows.patch
-entiny/session-version-display.patch
 entiny/ghost-mode.patch
 bugfix/launch-activity-leaks.patch
 entiny/build-configuration.patch
@@ -420,12 +417,9 @@ entiny/local-folders.patch
 entiny/folder-icons.patch
 entiny/burn-keep-copy.patch
 entiny/no-forward-selection-cap.patch
-entiny/ios-editor-send-icon.patch
-entiny/burn-voice-round.patch
-entiny/poll-results-before-vote-fix.patch
-entiny/mention-separator.patch
 entiny/ios-input-bar.patch
-entiny/legacy-stripe.patch
+entiny/burn-voice-round.patch
+entiny/mention-separator.patch
 entiny/anticensorship.patch
 entiny/hide-pinned-forever.patch
 entiny/settings-accounts.patch

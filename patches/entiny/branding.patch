@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 1 Sep 2026 11:09:09 +0300
-Subject: chore(branding): consolidate entinyGram identity and launcher icons
+Subject: [*] entinyGram branding
 
 ---
  TMessagesProj/build.gradle                     | 10 +++++++++-
@@ -16,12 +16,12 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
  .../messenger/FilesMigrationService.java       |  6 +++---
  .../org/telegram/messenger/ImageLoader.java    |  8 ++++----
  .../org/telegram/messenger/SharedConfig.java   |  6 +++---
- .../org/telegram/ui/Cells/SessionCell.java     |  2 +-
+ .../org/telegram/ui/Cells/SessionCell.java     |  4 ++--
  .../ChatAttachAlertDocumentLayout.java         |  5 +++--
  .../org/telegram/ui/Components/UndoView.java   |  2 +-
  .../java/org/telegram/ui/IntroActivity.java    | 17 ++++++++++++-----
  .../telegram/ui/LauncherIconController.java    |  1 +
- .../org/telegram/ui/SessionBottomSheet.java    |  2 +-
+ .../org/telegram/ui/SessionBottomSheet.java    |  4 ++--
  .../src/main/res/values-de/strings.xml         |  4 ++--
  .../src/main/res/values-es/strings.xml         |  6 +++---
  .../src/main/res/values-it/strings.xml         |  4 ++--
@@ -31,7 +31,7 @@ Subject: chore(branding): consolidate entinyGram identity and launcher icons
  .../src/main/res/values-uk/strings.xml         |  6 +++---
  TMessagesProj/src/main/res/values/strings.xml  | 10 +++++-----
  TMessagesProj_App/build.gradle                 |  2 +-
- 27 files changed, 90 insertions(+), 53 deletions(-)
+ 27 files changed, 92 insertions(+), 55 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -272,15 +272,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
-@@ -248,7 +248,7 @@ public class SessionCell extends FrameLayout {
+@@ -248,8 +248,8 @@ public class SessionCell extends FrameLayout {
              detailExTextView.setText(spannableStringBuilder);
  
              stringBuilder = new StringBuilder();
 -            stringBuilder.append(session.app_name);
+-            stringBuilder.append(" ").append(session.app_version);
 +            stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
-             stringBuilder.append(" ").append(session.app_version);
++            stringBuilder.append(" ").append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppVersion(session.app_version));
  
              if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
+                 stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertDocumentLayout.java
@@ -365,15 +367,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
-@@ -110,7 +110,7 @@ public class SessionBottomSheet extends BottomSheet {
+@@ -110,8 +110,8 @@ public class SessionBottomSheet extends BottomSheet {
  
          ItemView applicationItemView = new ItemView(context, false);
          stringBuilder = new StringBuilder();
 -        stringBuilder.append(session.app_name);
+-        stringBuilder.append(" ").append(session.app_version);
 +        stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
-         stringBuilder.append(" ").append(session.app_version);
++        stringBuilder.append(" ").append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppVersion(session.app_version));
          if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
              stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
+         }
 diff --git a/TMessagesProj/src/main/res/values-de/strings.xml b/TMessagesProj/src/main/res/values-de/strings.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/res/values-de/strings.xml

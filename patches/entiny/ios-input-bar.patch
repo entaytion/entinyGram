@@ -1,22 +1,22 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Sun, 20 Sep 2026 00:14:19 +0300
-Subject: [+] ios input bar
+Subject: [+] iOS-style input bar
 
 ---
  .../java/org/telegram/ui/ChatActivity.java    |  26 +
- .../ui/Components/ChatActivityEnterView.java  | 669 ++++++++++++++++--
+ .../ui/Components/ChatActivityEnterView.java  | 673 ++++++++++++++++--
  ...ChatActivityEnterViewAnimatedIconView.java |  35 +-
  .../org/telegram/ui/MessageSendPreview.java   |  26 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   6 +-
  .../org/telegram/ui/iv/RichEditorToolbar.java |   6 +-
- 6 files changed, 690 insertions(+), 78 deletions(-)
+ 6 files changed, 693 insertions(+), 79 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -410,6 +410,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -409,6 +409,8 @@ public class ChatActivity extends BaseFragment implements
  
      private BlurredBackgroundColorProviderThemed blurredBackgroundColorProvider;
      private BlurredBackgroundColorProviderThemed blurredBackgroundColorProviderWhite;
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
  
      private final ReferenceList<View> glassAttachedViews = new ReferenceList<>();
      private final ReferenceList<BlurredBackgroundDrawable> glassAttachedDrawables = new ReferenceList<>();
-@@ -3619,6 +3621,18 @@ public class ChatActivity extends BaseFragment implements
+@@ -3618,6 +3620,18 @@ public class ChatActivity extends BaseFragment implements
                  return super.getBackgroundColor();
              }
          };
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -7972,6 +7986,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -7969,6 +7983,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8187,6 +8205,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -8184,6 +8202,8 @@ public class ChatActivity extends BaseFragment implements
          checkSendButtonBlockedByTyping(false);
  
          chatInputBubbleContainer.addView(chatActivityEnterView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, NonIslandHelper.chatElements() ? 0 : 7, 0, NonIslandHelper.chatElements() ? 0 : 7, NonIslandHelper.chatElements() ? -9 : 0));
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -42905,6 +42925,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -42901,6 +42921,12 @@ public class ChatActivity extends BaseFragment implements
              if (blurredBackgroundColorProviderWhite != null) {
                  blurredBackgroundColorProviderWhite.updateColors();
              }
@@ -1095,7 +1095,7 @@ index 0000000..0000000 100644
          public boolean newCounterPos;
  
          public int width() {
-@@ -15479,8 +16007,22 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15479,16 +16007,38 @@ public class ChatActivityEnterView extends FrameLayout implements
  
          private int drawableColor;
  
@@ -1119,14 +1119,16 @@ index 0000000..0000000 100644
              if (color != drawableColor) {
                  drawableColor = color;
                  drawable.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN));
-@@ -15491,8 +16033,14 @@ public class ChatActivityEnterView extends FrameLayout implements
-                     ? color
-                     : Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
-                 drawableInverse.setColorFilter(new PorterDuffColorFilter(inverseColor, PorterDuff.Mode.SRC_IN));
+                 int c = Theme.getColor(Theme.key_glass_defaultIcon, resourcesProvider);
+                 inactiveDrawable.setColorFilter(new PorterDuffColorFilter(Color.argb(0xb4, Color.red(c), Color.green(c), Color.blue(c)), PorterDuff.Mode.SRC_IN));
+-                drawableInverse.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider), PorterDuff.Mode.SRC_IN));
 -            }
 -            if (isNewDesignSendButton) {
-+                // entiny: same reason -- the selected-count badge and stars-price text were hardcoded white,
-+                // so they vanished on the WHITE action button style's white circle (e.g. ShareAlert's send button)
++                // entiny: open-state icon must follow action button style, else white icon vanishes on white circle
++                int inverseColor = desu.inugram.helpers.chat.ActionButtonStyle.getCurrentStyle() != desu.inugram.helpers.chat.ActionButtonStyle.ACCENT && shouldUseActionStyleColors()
++                    ? color
++                    : Theme.getColor(Theme.key_chat_messagePanelVoicePressed, resourcesProvider);
++                drawableInverse.setColorFilter(new PorterDuffColorFilter(inverseColor, PorterDuff.Mode.SRC_IN));
 +                count.setTextColor(color);
 +                priceText.setTextColor(color);
 +            }
@@ -1136,7 +1138,7 @@ index 0000000..0000000 100644
                  backgroundPaint.setColor(Theme.getColor(Theme.key_chat_messagePanelSend, resourcesProvider));
              } else if (shouldDrawBackground()) {
                  backgroundPaint.setColor(getFillColor());
-@@ -15717,7 +16265,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -15713,7 +16263,8 @@ public class ChatActivityEnterView extends FrameLayout implements
              (animatorTopViewVisibility.getValue() ? 1 : 0):
              animatorTopViewVisibility.getFloatValue();
  

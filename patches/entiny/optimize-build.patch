@@ -15,15 +15,12 @@ Subject: chore(build): remove unused Android Auto/referrer integration and ignor
  .../src/main/res/xml/automotive_app_desc.xml  |   5 -
  TMessagesProj_App/build.gradle                |   4 +-
  gradle.properties                             |   2 +
- 14 files changed, 15 insertions(+), 961 deletions(-)
+ 11 files changed, 15 insertions(+), 667 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
  delete mode 100644 TMessagesProj/src/main/res/xml/automotive_app_desc.xml
- delete mode 100644 TMessagesProj_AppHockeyApp/google-services.json
- delete mode 100644 TMessagesProj_AppHuawei/google-services.json
- delete mode 100644 TMessagesProj_AppStandalone/google-services.json
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -55,7 +52,7 @@ index 0000000..0000000 100644
      implementation 'org.nanohttpd:nanohttpd:2.3.1'
  
      compileOnly 'org.checkerframework:checker-qual:2.5.2'
-@@ -210,7 +208,8 @@ android {
+@@ -208,7 +206,8 @@ android {
              minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
              shrinkResources false
              multiDexEnabled true
@@ -794,7 +791,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -100,8 +100,8 @@ android {
+@@ -99,8 +99,8 @@ android {
              minifyEnabled System.getenv('INU_BUILD_TYPE') != 'beta'
              shrinkResources System.getenv('INU_BUILD_TYPE') != 'beta'
              multiDexEnabled true

@@ -1,16 +1,16 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 18 Aug 2026 01:41:50 +0300
-Subject: feat(privacy): allow screenshots when enabled
+Subject: [*] allow screenshots in chats and stories
 
-- remove secure-window protection only behind the screenshots setting
 ---
  .../main/java/org/telegram/messenger/FlagSecureReason.java  | 5 +++++
  .../java/org/telegram/ui/Components/PasscodeViewDialog.java | 6 ++++--
  .../src/main/java/org/telegram/ui/PhotoViewer.java          | 6 ++++--
  .../src/main/java/org/telegram/ui/SecretMediaViewer.java    | 6 ++++--
  .../src/main/java/org/telegram/ui/SecretVoicePlayer.java    | 6 ++++--
- 5 files changed, 21 insertions(+), 8 deletions(-)
+ .../main/java/org/telegram/ui/Stories/PeerStoriesView.java  | 3 +++
+ 6 files changed, 24 insertions(+), 8 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java b/TMessagesProj/src/main/java/org/telegram/messenger/FlagSecureReason.java
 index 0000000..0000000 100644
@@ -96,3 +96,17 @@ index 0000000..0000000 100644
          }
          params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
          params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -7138,6 +7138,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+         }
+ 
+         public boolean allowScreenshots() {
++            if (desu.inugram.InuConfig.ALLOW_SCREENSHOTS.getValue()) {
++                return true;
++            }
+             if (uploadingStory != null) {
+                 return uploadingStory.entry.allowScreenshots;
+             }
