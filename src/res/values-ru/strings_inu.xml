@@ -121,6 +121,10 @@
     <string name="InuBottomTabs">Нижние вкладки</string>
     <string name="InuBottomTabsHide">Скрыть нижние вкладки</string>
     <string name="InuBottomTabsHideInfo">Пункты перемещаются в гамбургер-меню главного экрана</string>
+    <string name="InuBottomTabsHideTopSearch">Скрыть верхний поиск</string>
+    <string name="InuBottomTabsHideTopSearchInfo">Скрывать поле поиска над списком чатов, если поиск включён в нижней панели</string>
+    <string name="InuBottomTabsSeparateSearch">Отдельная кнопка поиска</string>
+    <string name="InuBottomTabsSeparateSearchInfo">Отображать поиск круглой кнопкой рядом с нижней панелью</string>
     <string name="InuShowTabTitles">Показывать подписи вкладок</string>
     <string name="InuMainTabsCustomizeReset">Сбросить по умолчанию</string>
     <string name="InuCompactMode">Компактный режим</string>

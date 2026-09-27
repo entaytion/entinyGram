@@ -22,7 +22,7 @@ import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundPro
 import org.telegram.ui.MainTabsLayout
 
 object M3MainTabsHelper {
-    const val BAR_HEIGHT: Int = 64
+    const val BAR_HEIGHT: Int = 60
     const val COMPACT_BAR_HEIGHT: Int = 48
     const val VERTICAL_PADDING = 6f
     const val INDICATOR_WIDTH = 56f

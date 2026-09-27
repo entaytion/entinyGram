@@ -88,7 +88,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **compact pill & profile transition fixes**: prevent text badge clipping, avatar menu-slot dots overlay, and profile open/close animation jitter
 - 📡 **auto marquee for long titles**: auto-scroll long header titles, action bar titles, and profile names - *inspired by auto_marquee plugin (@chestertech)*
 - 📡 **show spoilers directly**: skip tap-to-reveal on text, photos, and videos
-- 📡 **customizable bottom tabs (beta)**: reorder and toggle visibility of Contacts, Settings, Calls, Profile, and Feed tabs
+- 📡 **customizable bottom tabs (beta)**: reorder and toggle Contacts, Settings, Calls, Profile, Feed, and Search; show Search in the pill or as a separate round button, long-press it for Saved Messages, and optionally hide the top search — *separate button layout ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **recent chats quick-switcher**: popup listing recently opened chats in the main menu with one-tap history clear - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **clear cache shortcut**: quick entry in chats menu to open storage settings or clear local archive
 - 📡 **restart app shortcut**: quick entry in the chats menu, off by default, with a confirmation prompt

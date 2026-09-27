@@ -115,6 +115,10 @@
     <string name="InuBottomTabs">底部标签</string>
     <string name="InuBottomTabsHide">隐藏底部标签</string>
     <string name="InuBottomTabsHideInfo">条目会移入主屏幕的汉堡菜单</string>
+    <string name="InuBottomTabsHideTopSearch">隐藏顶部搜索</string>
+    <string name="InuBottomTabsHideTopSearchInfo">启用底部标签中的搜索时，隐藏聊天列表上方的搜索框</string>
+    <string name="InuBottomTabsSeparateSearch">独立搜索按钮</string>
+    <string name="InuBottomTabsSeparateSearchInfo">在底部标签旁将搜索显示为圆形按钮</string>
     <string name="InuShowTabTitles">显示标签标题</string>
     <string name="InuMainTabsCustomizeReset">恢复默认</string>
     <string name="InuCompactMode">紧凑模式</string>

@@ -115,6 +115,10 @@
     <string name="InuBottomTabs">下部タブ</string>
     <string name="InuBottomTabsHide">下部タブを非表示</string>
     <string name="InuBottomTabsHideInfo">項目はメイン画面のハンバーガーメニューに移動します</string>
+    <string name="InuBottomTabsHideTopSearch">上部の検索を非表示</string>
+    <string name="InuBottomTabsHideTopSearchInfo">下部タブで検索が有効な場合、チャット一覧の上にある検索欄を非表示にします</string>
+    <string name="InuBottomTabsSeparateSearch">検索ボタンを分離</string>
+    <string name="InuBottomTabsSeparateSearchInfo">下部タブの横に検索を丸いボタンとして表示します</string>
     <string name="InuShowTabTitles">タブのタイトルを表示</string>
     <string name="InuMainTabsCustomizeReset">デフォルトにリセット</string>
     <string name="InuCompactMode">コンパクトモード</string>

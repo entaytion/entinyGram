@@ -32,6 +32,9 @@ class DialogsSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMainPage)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(mkSubPageButton(BUTTON_PILL_STACK, R.drawable.inu_tabler_stack_2, LocaleController.getString(R.string.InuPillStack)))
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFolders)))
         if (filterTabsPreview == null) {
             filterTabsPreview = FilterTabsPreviewCell(this.context)
@@ -201,6 +204,24 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             ).also { mainTabsPreview = it }
             refreshMainTabsPreview(preview)
             items.add(UItem.asCustom(preview))
+            if (mainTabsEntries.any { it.item == MainTabsMenuConfig.Item.SEARCH && it.enabled }) {
+                items.add(
+                    mkTwoLineCheckItem(
+                        TOGGLE_SEPARATE_SEARCH_TAB,
+                        R.string.InuBottomTabsSeparateSearch,
+                        R.string.InuBottomTabsSeparateSearchInfo,
+                        InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value
+                    )
+                )
+            }
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_HIDE_TOP_SEARCH,
+                    R.string.InuBottomTabsHideTopSearch,
+                    R.string.InuBottomTabsHideTopSearchInfo,
+                    InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.value
+                )
+            )
             items.add(
                 UItem.asButton(
                     BUTTON_RESET_BOTTOM_TABS,
@@ -252,8 +273,6 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        items.add(mkSubPageButton(BUTTON_PILL_STACK, LocaleController.getString(R.string.InuPillStack)))
-        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -387,10 +406,26 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 showRestartBulletin()
             }
 
+            TOGGLE_HIDE_TOP_SEARCH -> {
+                val new = InuConfig.BOTTOM_TABS_HIDE_TOP_SEARCH.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                (view as? TextCheckCell)?.isChecked = new
+                showRestartBulletin()
+            }
+
+            TOGGLE_SEPARATE_SEARCH_TAB -> {
+                val new = InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                (view as? TextCheckCell)?.isChecked = new
+                mainTabsPreview?.let { refreshMainTabsPreview(it) }
+                showRestartBulletin()
+            }
+
             BUTTON_RESET_BOTTOM_TABS -> {
                 InuConfig.BOTTOM_TABS_ORDER.resetToDefault()
                 mainTabsEntries = InuConfig.BOTTOM_TABS_ORDER.default.toMutableList()
                 mainTabsPreview?.let { refreshMainTabsPreview(it) }
+                listView.adapter.update(true)
                 showRestartBulletin()
             }
 
@@ -451,6 +486,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         mainTabsEntries[idx] = mainTabsEntries[idx].copy(enabled = !mainTabsEntries[idx].enabled)
         InuConfig.BOTTOM_TABS_ORDER.value = mainTabsEntries
         mainTabsPreview?.let { refreshMainTabsPreview(it) }
+        listView.adapter.update(true)
         showRestartBulletin()
     }
 
@@ -465,6 +501,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         cell.setState(
             mainTabsEntries.map { it.item },
             mainTabsEntries.filter { it.enabled }.map { it.item }.toSet(),
+            InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value,
         )
     }
 
@@ -591,6 +628,8 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_BOTTOM_TABS_HIDE = InuUtils.generateId()
         private val TOGGLE_COMPACT_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_TAB_TITLES = InuUtils.generateId()
+        private val TOGGLE_HIDE_TOP_SEARCH = InuUtils.generateId()
+        private val TOGGLE_SEPARATE_SEARCH_TAB = InuUtils.generateId()
         private val BUTTON_RESET_BOTTOM_TABS = InuUtils.generateId()
         private val BUTTON_FAB_MAIN_ACTION = InuUtils.generateId()
         private val BUTTON_FAB_SECONDARY_ACTION = InuUtils.generateId()
@@ -657,6 +696,8 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("bottom-tabs-hide", R.string.InuBottomTabsHide, TOGGLE_BOTTOM_TABS_HIDE),
                 SearchRegistry.Entry("compact-mode", R.string.InuCompactMode, TOGGLE_COMPACT_MODE),
                 SearchRegistry.Entry("show-tab-titles", R.string.InuShowTabTitles, TOGGLE_SHOW_TAB_TITLES),
+                SearchRegistry.Entry("hide-top-search-with-bottom-tab", R.string.InuBottomTabsHideTopSearch, TOGGLE_HIDE_TOP_SEARCH),
+                SearchRegistry.Entry("separate-search-tab", R.string.InuBottomTabsSeparateSearch, TOGGLE_SEPARATE_SEARCH_TAB),
                 SearchRegistry.Entry("customize-bottom-tabs", R.string.InuMainTabsCustomizeReset, BUTTON_RESET_BOTTOM_TABS),
                 SearchRegistry.Entry("dialogs-fab-main-action", R.string.InuDialogsFabMainAction, BUTTON_FAB_MAIN_ACTION),
                 SearchRegistry.Entry("dialogs-fab-secondary-action", R.string.InuDialogsFabSecondaryAction, BUTTON_FAB_SECONDARY_ACTION),

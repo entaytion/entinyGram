@@ -33,7 +33,7 @@ object MainTabsHelper {
     const val MAIN_TABS_MARGIN_COMPACT: Int = 4
     const val MAIN_TABS_HEIGHT_COMPACT: Int = 48
     const val MAIN_TABS_HEIGHT_IOS: Int = 60
-    const val TAB_WIDTH: Int = 80
+    const val TAB_WIDTH: Int = 76
     const val TAB_WIDTH_COMPACT: Int = 64
     const val TAB_PADDING: Int = 4
     private const val TAB_SCRIM_RADIUS = 28
@@ -87,6 +87,12 @@ object MainTabsHelper {
     fun enabledOrder(): List<MainTabsMenuConfig.Item> = cachedEnabledOrder
 
     @JvmStatic
+    fun hasSearchTab(): Boolean = MainTabsMenuConfig.Item.SEARCH in cachedEnabledOrder
+
+    @JvmStatic
+    fun isSearchTabSeparate(): Boolean = hasSearchTab() && InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value
+
+    @JvmStatic
     fun setEnabled(index: Int, enabled: Boolean) {
         val type = MainTabsMenuConfig.Item.forIndex(index) ?: return // Chats can't be disabled
         val entries = InuConfig.BOTTOM_TABS_ORDER.value
@@ -103,14 +109,15 @@ object MainTabsHelper {
     fun indexToPosition(index: Int): Int {
         if (index == 0) return 0
         val type = MainTabsMenuConfig.Item.forIndex(index) ?: return -1
-        val pos = enabledOrder().indexOf(type)
+        if (type == MainTabsMenuConfig.Item.SEARCH) return -1
+        val pos = enabledOrder().filterNot { it == MainTabsMenuConfig.Item.SEARCH }.indexOf(type)
         return if (pos < 0) -1 else pos + 1
     }
 
     @JvmStatic
     fun indexAtPosition(position: Int): Int {
         if (position == 0) return 0
-        val order = enabledOrder()
+        val order = enabledOrder().filterNot { it == MainTabsMenuConfig.Item.SEARCH }
         val i = position - 1
         return if (i in order.indices) order[i].index else -1
     }
@@ -160,7 +167,7 @@ object MainTabsHelper {
 
     @JvmStatic
     val fragmentsCount: Int
-        get() = 1 + enabledOrder().size
+        get() = 1 + enabledOrder().count { it != MainTabsMenuConfig.Item.SEARCH }
 
     @JvmStatic
     val tabWidth: Int
@@ -168,7 +175,7 @@ object MainTabsHelper {
 
     @JvmStatic
     val tabsViewWidth: Int
-        get() = tabWidth * fragmentsCount + (mainTabsMargin + TAB_PADDING) * 2
+        get() = tabWidth * (fragmentsCount + if (hasSearchTab() && !isSearchTabSeparate()) 1 else 0) + (mainTabsMargin + TAB_PADDING) * 2
 
     private const val MENU_ICON_SIZE_DP = 28
 

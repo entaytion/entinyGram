@@ -178,7 +178,8 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
         SETTINGS("settings", 2, R.string.Settings, R.drawable.msg_settings),
         CALLS("calls", 3, R.string.MainTabsCalls, R.drawable.msg_calls),
         PROFILE("profile", 4, R.string.MainTabsProfile, R.drawable.msg_openprofile),
-        FEED("feed", 5, R.string.InuFeed, R.drawable.msg_channel);
+        FEED("feed", 5, R.string.InuFeed, R.drawable.msg_channel),
+        SEARCH("search", 6, R.string.Search, R.drawable.msg_search);
 
         companion object {
             private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
@@ -192,7 +193,7 @@ class MainTabsMenuConfig(key: String) : MenuOrderConfig<MainTabsMenuConfig.Item>
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED)
+        private val OFF_BY_DEFAULT = setOf(Item.CALLS, Item.FEED, Item.SEARCH)
     }
 }
 

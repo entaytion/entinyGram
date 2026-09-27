@@ -436,4 +436,6 @@ entiny/hide-recent-chats-shortcut.patch
 entiny/theme-switch-recovery.patch
 entiny/translate-in-send-preview.patch
 entiny/translate-preview-fixes.patch
+entiny/main-tabs-separate-search.patch
+entiny/main-tabs-search-layout.patch
 entiny/clock-format.patch

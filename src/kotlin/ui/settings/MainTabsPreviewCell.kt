@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.ViewConfiguration
@@ -30,6 +31,10 @@ class MainTabsPreviewCell(
     private val onReorder: (List<MainTabsMenuConfig.Item>) -> Unit,
 ) : FrameLayout(context) {
 
+    private val group = LinearLayout(context).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
+    }
     private val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
     private val chipViews = LinkedHashMap<MainTabsMenuConfig.Item, Chip>()
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
@@ -39,21 +44,36 @@ class MainTabsPreviewCell(
     private var dragging = false
     private var dragFromIndex = -1
     private var dragStartRawX = 0f
+    private var separateSearch = false
 
     private var chipWidthDp = CHIP_WIDTH_DP
 
     init {
         setWillNotDraw(false)
-        addView(row, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
+        group.addView(row, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        addView(group, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
     }
 
-    fun setState(order: List<MainTabsMenuConfig.Item>, enabledItems: Set<MainTabsMenuConfig.Item>) {
+    fun setState(order: List<MainTabsMenuConfig.Item>, enabledItems: Set<MainTabsMenuConfig.Item>, separateSearch: Boolean) {
         this.order = order
-        this.dragOrder = order
+        this.separateSearch = separateSearch
+        this.dragOrder = visibleOrder()
+        group.removeAllViews()
+        group.addView(row, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
         row.removeAllViews()
         chipViews.clear()
         addChip(null, true)
-        for (item in order) addChip(item, item in enabledItems)
+        for (item in visibleOrder()) addChip(item, item in enabledItems)
+        if (separateSearch) {
+            val searchChip = Chip(context).apply {
+                bind(MainTabsMenuConfig.Item.SEARCH.iconRes, MainTabsMenuConfig.Item.SEARCH.labelRes, MainTabsMenuConfig.Item.SEARCH in enabledItems)
+                setStandalone()
+                isClickable = true
+                foreground = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
+                setOnClickListener { onToggle(MainTabsMenuConfig.Item.SEARCH) }
+            }
+            group.addView(searchChip, LayoutHelper.createLinear(SEARCH_BUTTON_SIZE_DP, SEARCH_BUTTON_SIZE_DP, 0f, CHIP_GAP_DP, 0, 0, 0))
+        }
         requestLayout()
     }
 
@@ -77,8 +97,8 @@ class MainTabsPreviewCell(
         when (ev.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 dragStartRawX = ev.rawX
-                dragFromIndex = order.indexOf(item)
-                dragOrder = order
+                dragFromIndex = visibleOrder().indexOf(item)
+                dragOrder = visibleOrder()
                 dragging = false
             }
 
@@ -101,7 +121,7 @@ class MainTabsPreviewCell(
                 if (dragging) {
                     chip.animate().translationX(0f).scaleX(1f).scaleY(1f).setDuration(150)
                         .withEndAction { chip.elevation = 0f }.start()
-                    if (dragOrder != order) onReorder(dragOrder)
+                    if (dragOrder != visibleOrder()) onReorder(fullOrder(dragOrder))
                 } else if (ev.actionMasked == MotionEvent.ACTION_UP) {
                     onToggle(item)
                 }
@@ -123,8 +143,20 @@ class MainTabsPreviewCell(
         for ((idx, other) in dragOrder.withIndex()) {
             if (other == item) continue
             val chip = chipViews[other] ?: continue
-            val originalIdx = order.indexOf(other)
+            val originalIdx = visibleOrder().indexOf(other)
             chip.animate().translationX(((idx - originalIdx) * slotPx).toFloat()).setDuration(120).start()
+        }
+    }
+
+    private fun visibleOrder(): List<MainTabsMenuConfig.Item> =
+        if (separateSearch) order.filterNot { it == MainTabsMenuConfig.Item.SEARCH } else order
+
+    private fun fullOrder(visible: List<MainTabsMenuConfig.Item>): List<MainTabsMenuConfig.Item> {
+        if (!separateSearch) return visible
+        val searchIndex = order.indexOf(MainTabsMenuConfig.Item.SEARCH)
+        if (searchIndex < 0) return visible
+        return visible.toMutableList().apply {
+            add(searchIndex.coerceIn(0, size), MainTabsMenuConfig.Item.SEARCH)
         }
     }
 
@@ -132,7 +164,8 @@ class MainTabsPreviewCell(
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
         val chipCount = row.childCount
         if (chipCount > 0 && availableWidth > 0) {
-            val fitWidthDp = availableWidth / AndroidUtilities.density / chipCount - CHIP_GAP_DP
+            val separateWidth = if (separateSearch) dp((SEARCH_BUTTON_SIZE_DP + CHIP_GAP_DP).toFloat()) else 0
+            val fitWidthDp = (availableWidth - separateWidth) / AndroidUtilities.density / chipCount - CHIP_GAP_DP
             val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
             if (newChipWidthDp != chipWidthDp) {
                 chipWidthDp = newChipWidthDp
@@ -158,6 +191,7 @@ class MainTabsPreviewCell(
             textSize = 11f
             gravity = Gravity.CENTER
             setSingleLine(true)
+            ellipsize = TextUtils.TruncateAt.END
         }
         private var enabled = true
 
@@ -165,7 +199,7 @@ class MainTabsPreviewCell(
             orientation = VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
             addView(icon, LayoutHelper.createLinear(28, 28))
-            addView(label, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0f, 0, 2, 0, 0))
+            addView(label, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0, 2, 0, 0))
         }
 
         fun bind(iconRes: Int, labelRes: Int, enabled: Boolean) {
@@ -179,12 +213,19 @@ class MainTabsPreviewCell(
             label.setTextColor(color)
             label.alpha = if (enabled) 1f else 0.5f
         }
+
+        fun setStandalone() {
+            label.visibility = GONE
+            setPadding(0, 0, 0, 0)
+            background = Theme.createRoundRectDrawable(dp(SEARCH_BUTTON_SIZE_DP / 2f), Theme.getColor(Theme.key_windowBackgroundWhite))
+        }
     }
 
     companion object {
-        private const val CHIP_WIDTH_DP = 64
+        private const val CHIP_WIDTH_DP = 76
         private const val CHIP_GAP_DP = 4
         private const val MIN_CHIP_WIDTH_DP = 40
+        private const val SEARCH_BUTTON_SIZE_DP = 52
         private const val HEIGHT_DP = 78
     }
 }

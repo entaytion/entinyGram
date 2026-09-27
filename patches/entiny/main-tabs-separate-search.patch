@@ -1,0 +1,272 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 21:55:05 +0300
+Subject: [*] refine separate bottom search tab
+
+---
+ .../org/telegram/ui/MainTabsActivity.java     | 151 +++++++++++++++++-
+ 1 file changed, 145 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -10,6 +10,8 @@ import android.content.Context;
+ import android.content.res.Configuration;
+ import android.graphics.Canvas;
+ import android.graphics.Paint;
++import android.graphics.PorterDuff;
++import android.graphics.PorterDuffColorFilter;
+ import android.graphics.RectF;
+ import android.graphics.drawable.ShapeDrawable;
+ import android.os.Build;
+@@ -26,6 +28,7 @@ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.accessibility.AccessibilityEvent;
+ import android.widget.FrameLayout;
++import android.widget.ImageView;
+ import android.widget.LinearLayout;
+ import android.widget.TextView;
+ 
+@@ -100,6 +103,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     private static final int INDEX_CALLS = 3;
+     private static final int INDEX_PROFILE = 4;
+     private static final int inu_INDEX_FEED = 5;
++    private static final int INDEX_SEARCH = 6;
+ 
+     private static int indexToPosition(int index) {
+         return MainTabsHelper.indexToPosition(index);
+@@ -115,7 +119,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     private UpdateLayoutWrapper updateLayoutWrapper;
+     private FrameLayout tabsViewWrapper;
+     private MainTabsLayout tabsView;
++    private LinearLayout tabsBarContainer;
+     private BlurredBackgroundDrawable tabsViewBackground;
++    private FrameLayout searchTabContainer;
++    private FrameLayout searchTabButton;
++    private BlurredBackgroundDrawable searchTabBackground;
++    private ImageView searchTabIcon;
+     private View fadeView;
+ 
+     public MainTabsActivity() {
+@@ -316,6 +325,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabletLayout = false;
+ 
+         final boolean compact = MainTabsHelper.isCompact();
++        final boolean separateSearchTab = MainTabsHelper.isSearchTabSeparate();
+         final int mainTabsMargin = MainTabsHelper.getMainTabsMargin();
+         final int tabsViewWidth = MainTabsHelper.getTabsViewWidth();
+ 
+@@ -328,13 +338,28 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         M3MainTabsHelper.applyTabsLayout(tabsView);
+         MainTabsHelper.applyIosTabsLayout(tabsView);
+ 
+-        tabs = new GlassTabView[6];
++        tabs = new GlassTabView[7];
+         tabs[INDEX_CHATS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CHATS, R.string.MainTabsChats);
+         tabs[INDEX_CONTACTS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CONTACTS, R.string.MainTabsContacts);
+         tabs[INDEX_SETTINGS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.SETTINGS, R.string.Settings);
+         tabs[INDEX_CALLS] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.CALLS, R.string.MainTabsCalls);
+         tabs[INDEX_PROFILE] = GlassTabView.createAvatar(context, resourceProvider, currentAccount, R.string.MainTabsProfile);
+         tabs[inu_INDEX_FEED] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.INU_FEED, R.string.InuFeed);
++        tabs[INDEX_SEARCH] = GlassTabView.createMainTab(context, resourceProvider, GlassTabView.TabAnimation.INU_SEARCH, R.string.Search);
++        final boolean[] searchLongPressHandled = {false};
++        tabs[INDEX_SEARCH].setOnTouchListener((v, event) -> {
++            if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
++                searchLongPressHandled[0] = false;
++            }
++            return false;
++        });
++        tabs[INDEX_SEARCH].setOnLongClickListener(v -> {
++            searchLongPressHandled[0] = true;
++            Bundle args = new Bundle();
++            args.putLong("user_id", UserConfig.getInstance(currentAccount).clientUserId);
++            presentFragment(new ChatActivity(args));
++            return true;
++        });
+         tabs[INDEX_CONTACTS].setOnLongClickListener(this::openContactsSelector);
+         tabs[INDEX_CALLS].setOnLongClickListener(this::openCallsSelector);
+         desu.inugram.helpers.LongPressDragMenuHelper.attach(tabs[INDEX_PROFILE], this::openAccountSelector);
+@@ -364,6 +389,21 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+                     return;
+                 }
+ 
++                if (tabIndex == INDEX_SEARCH) {
++                    if (searchLongPressHandled[0]) {
++                        searchLongPressHandled[0] = false;
++                        return;
++                    }
++                    if (viewPager.getCurrentPosition() != POSITION_CHATS) {
++                        selectTab(POSITION_CHATS, true);
++                        viewPager.scrollToPosition(POSITION_CHATS);
++                    }
++                    if (dialogsActivity != null && dialogsActivity.searchItem != null) {
++                        dialogsActivity.searchItem.performClick();
++                    }
++                    return;
++                }
++
+                 if (viewPager.getCurrentPosition() == position) {
+                     final BaseFragment fragment = getCurrentVisibleFragment();
+                     if (fragment instanceof MainTabsActivity.TabFragmentDelegate) {
+@@ -376,8 +416,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+                 viewPager.scrollToPosition(position);
+             });
+ 
+-            tabsView.addView(tabs[index]);
+-            tabsView.setViewVisible(view, MainTabsHelper.isEnabled(index), false);
++            if (index != INDEX_SEARCH || !separateSearchTab) {
++                tabsView.addView(tabs[index]);
++                tabsView.setViewVisible(view, MainTabsHelper.isEnabled(index), false);
++            }
+         }
+ 
+         selectTab(viewPager.getCurrentPosition(), false);
+@@ -396,6 +438,29 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         M3MainTabsHelper.applyTabsBackground(tabsViewBackground);
+         tabsView.setBackground(tabsViewBackground);
+ 
++        if (separateSearchTab) {
++            searchTabContainer = new FrameLayout(context);
++            searchTabContainer.setClipChildren(false);
++            searchTabContainer.setClipToPadding(false);
++            searchTabButton = new FrameLayout(context);
++            searchTabButton.setClipChildren(false);
++            searchTabButton.setClipToPadding(false);
++            searchTabBackground = iBlur3FactoryGlass.create(searchTabButton, BlurredBackgroundProviderImpl.mainTabs(resourceProvider));
++            searchTabBackground.setRadius(dp(26));
++            searchTabBackground.setPadding(dp(0.334f));
++            searchTabButton.setBackground(searchTabBackground);
++            searchTabIcon = new ImageView(context);
++            searchTabIcon.setImageResource(R.drawable.outline_header_search);
++            searchTabIcon.setPadding(dp(13), dp(13), dp(13), dp(13));
++            searchTabIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_glass_tabUnselected, resourceProvider), PorterDuff.Mode.SRC_IN));
++            searchTabButton.addView(searchTabIcon, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
++            searchTabButton.setClickable(true);
++            searchTabButton.setContentDescription(getString(R.string.Search));
++            searchTabButton.setOnClickListener(v -> tabs[INDEX_SEARCH].performClick());
++            searchTabButton.setOnLongClickListener(v -> tabs[INDEX_SEARCH].performLongClick());
++            searchTabContainer.addView(searchTabButton, LayoutHelper.createFrame(52, 52, Gravity.CENTER));
++        }
++
+         BlurredBackgroundDrawableViewFactory iBlur3FactoryFade = new BlurredBackgroundDrawableViewFactory(iBlur3SourceColor);
+         iBlur3FactoryFade.setSourceRootView(viewPositionWatcher, contentView);
+ 
+@@ -414,7 +479,23 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             }
+         };
+         tabsViewWrapper.setOnClickListener(v -> {});
+-        tabsViewWrapper.addView(tabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
++        tabsBarContainer = new LinearLayout(context);
++        tabsBarContainer.setOrientation(LinearLayout.HORIZONTAL);
++        tabsBarContainer.setGravity(Gravity.CENTER_VERTICAL);
++        tabsBarContainer.setClipChildren(false);
++        tabsBarContainer.setClipToPadding(false);
++        tabsBarContainer.setPadding(dp(2), 0, dp(2), 0);
++        tabsBarContainer.addView(tabsView, new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT));
++        if (searchTabContainer != null) {
++            LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
++            searchParams.setMarginStart(-dp(10));
++            searchParams.setMarginEnd(dp(4));
++            searchParams.height = LayoutHelper.MATCH_PARENT;
++            tabsBarContainer.addView(searchTabContainer, searchParams);
++        }
++        tabsBarContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
++        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
++        tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
+         tabsViewWrapper.setClipToPadding(false);
+         M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
+         contentView.addView(tabsViewWrapper, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
+@@ -964,7 +1045,23 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (!M3MainTabsHelper.applyTabsInsets(tabsViewWrapper, tabsView, systemInsets.left, systemInsets.right, navigationBarHeight)) {
+             final int iosSidePadding = MainTabsHelper.getIosSidePaddingExtra();
+             tabsViewWrapper.setPadding(systemInsets.left + iosSidePadding, 0, systemInsets.right + iosSidePadding, navigationBarHeight);
++        } else {
++            ViewGroup.LayoutParams barLp = tabsBarContainer.getLayoutParams();
++            final int barHeight = dp(MainTabsHelper.getMainTabsHeight()) + navigationBarHeight;
++            if (barLp.height != barHeight) {
++                barLp.height = barHeight;
++                tabsBarContainer.setLayoutParams(barLp);
++            }
++            if (searchTabContainer != null) {
++                searchTabContainer.setPadding(0, 0, 0, navigationBarHeight);
++                ViewGroup.LayoutParams searchLp = searchTabContainer.getLayoutParams();
++                if (searchLp.height != barHeight) {
++                    searchLp.height = barHeight;
++                    searchTabContainer.setLayoutParams(searchLp);
++                }
++            }
+         }
++        repositionSearchButton();
+ 
+         final WindowInsetsCompat consumed = isUpdateLayoutVisible ?
+             insets.inset(0, 0, 0, navigationBarHeight) : insets;
+@@ -1086,6 +1183,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (tabsView == null) return;
+         if (MainTabsHelper.isHidden()) {
+             tabsView.setVisibility(View.GONE);
++            if (tabsBarContainer != null) tabsBarContainer.setVisibility(View.GONE);
+             return;
+         }
+         final boolean isUpdateLayoutVisible = updateLayoutWrapper.isUpdateLayoutVisible();
+@@ -1097,10 +1195,45 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         final float scale = lerp(0.85f, 1f, factor);
+ 
+         tabsViewWrapper.setTranslationY(lerp(hiddenY, normalY, factor));
+-        tabsView.setClickable(factor > 1);
+-        tabsView.setEnabled(factor > 1);
++        tabsView.setClickable(factor > 0);
++        tabsView.setEnabled(factor > 0);
+         tabsView.setAlpha(factor);
+         tabsView.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
++        if (searchTabContainer != null) {
++            searchTabButton.setClickable(factor > 0);
++            searchTabButton.setEnabled(factor > 0);
++            searchTabContainer.setAlpha(factor);
++            searchTabContainer.setVisibility(factor > 0 ? View.VISIBLE : View.GONE);
++        }
++    }
++
++    private void repositionSearchButton() {
++        if (tabsView == null || tabsViewWrapper == null || tabsBarContainer == null) return;
++        final ViewGroup.LayoutParams baseTabsLp = tabsView.getLayoutParams();
++        if (!(baseTabsLp instanceof LinearLayout.LayoutParams)) return;
++        final LinearLayout.LayoutParams tabsLp = (LinearLayout.LayoutParams) baseTabsLp;
++        final int wrapperWidth = tabsViewWrapper.getWidth() - tabsViewWrapper.getPaddingLeft() - tabsViewWrapper.getPaddingRight();
++        if (wrapperWidth <= 0) return;
++        final boolean showSearch = searchTabContainer != null && searchTabContainer.getVisibility() != View.GONE;
++        final int searchWidth = showSearch ? searchTabContainer.getLayoutParams().width : 0;
++        final int searchStartMargin = showSearch ? -dp(10) : 0;
++        final int searchEndMargin = showSearch ? dp(4) : 0;
++        final int containerPadding = tabsBarContainer.getPaddingLeft() + tabsBarContainer.getPaddingRight();
++        final int outerInset = dp(Math.min(DialogsActivity.MAIN_TABS_MARGIN, 6));
++        final int availableWidth = Math.max(0, wrapperWidth - containerPadding - searchWidth - searchStartMargin - searchEndMargin - outerInset * 2);
++        final int tabsWidth = Math.min(dp(MainTabsHelper.getTabsViewWidth()), availableWidth);
++        if (tabsLp.width != tabsWidth) {
++            tabsLp.width = tabsWidth;
++            tabsView.setLayoutParams(tabsLp);
++        }
++        if (showSearch) {
++            final int backgroundPadding = dp(MainTabsHelper.getMainTabsMargin() - 0.334f);
++            final int leftVisualPadding = tabsBarContainer.getPaddingLeft() + backgroundPadding;
++            final int rightVisualPadding = tabsBarContainer.getPaddingRight() + searchEndMargin;
++            tabsBarContainer.setTranslationX((rightVisualPadding - leftVisualPadding) / 2f);
++        } else {
++            tabsBarContainer.setTranslationX(0f);
++        }
+     }
+ 
+     @Override
+@@ -1227,6 +1360,12 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (tabsViewBackground != null) {
+             tabsViewBackground.updateColors();
+         }
++        if (searchTabBackground != null) {
++            searchTabBackground.updateColors();
++        }
++        if (searchTabIcon != null) {
++            searchTabIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_glass_tabUnselected, resourceProvider), PorterDuff.Mode.SRC_IN));
++        }
+         blur3_invalidateBlur();
+         if (fadeView != null) {
+             fadeView.invalidate();

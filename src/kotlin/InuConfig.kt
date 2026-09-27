@@ -437,6 +437,8 @@ object InuConfig {
 
     @JvmField
     val BOTTOM_TABS_SHOW_TITLES = BoolItem("bottom_tabs_show_titles", true)
+    @JvmField val BOTTOM_TABS_HIDE_TOP_SEARCH = BoolItem("bottom_tabs_hide_top_search", false)
+    @JvmField val BOTTOM_TABS_SEARCH_SEPARATE = BoolItem("bottom_tabs_search_separate", false)
 
     @JvmField
     val DIALOGS_FAB_MAIN_ACTION = IntItem("dialogs_fab_main_action", 1)

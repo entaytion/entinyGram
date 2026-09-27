@@ -162,6 +162,10 @@
     <string name="InuBottomTabs">Alt sekmeler</string>
     <string name="InuBottomTabsHide">Alt sekmeleri gizle</string>
     <string name="InuBottomTabsHideInfo">Ögeler ana ekranın sol yan menüsüne taşınır</string>
+    <string name="InuBottomTabsHideTopSearch">Üst aramayı gizle</string>
+    <string name="InuBottomTabsHideTopSearchInfo">Alt sekmelerde Arama etkin olduğunda sohbet listesinin üstündeki arama alanını gizle</string>
+    <string name="InuBottomTabsSeparateSearch">Ayrı arama düğmesi</string>
+    <string name="InuBottomTabsSeparateSearchInfo">Aramayı alt sekmelerin yanında yuvarlak bir düğme olarak göster</string>
     <string name="InuShowTabTitles">Sekme başlıklarını göster</string>
     <string name="InuMainTabsCustomizeReset">Varsayılana sıfırla</string>
     <string name="InuCompactMode">Kompakt mod</string>
