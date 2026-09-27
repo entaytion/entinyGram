@@ -1,10 +1,9 @@
 package desu.inugram.helpers.feed
 
-import android.util.SparseIntArray
-import androidx.collection.LongSparseArray
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MessageObject
-import org.telegram.messenger.NotificationCenter
 import org.telegram.tgnet.TLRPC
+import org.telegram.tgnet.tl.TL_update
 
 // entiny: owns one feed scope's timeline and keeps it live while a screen is attached
 class FeedController private constructor(
@@ -13,7 +12,7 @@ class FeedController private constructor(
 ) {
 
     interface Listener {
-        fun onTimelineChanged()
+        fun onTimelineChanged(hasNewPosts: Boolean = false)
         fun onBackfilled() {}
     }
 
@@ -22,29 +21,22 @@ class FeedController private constructor(
     private val backfill = FeedBackfillCoordinator.get(account)
 
     private var listener: Listener? = null
-    private val backfillListener: (Long) -> Unit = { listener?.onBackfilled() }
+    private val backfillListener: (Long, List<TLRPC.Message>) -> Unit = { dialogId, messages ->
+        if (store.mergeSynced(dialogId, messages) > 0) {
+            scheduleTimelineChanged()
+            listener?.onBackfilled()
+        }
+    }
+    private var timelineUpdateScheduled = false
+    private var pendingNewPosts = false
+    private val timelineUpdateRunnable = Runnable {
+        timelineUpdateScheduled = false
+        val hasNewPosts = pendingNewPosts
+        pendingNewPosts = false
+        listener?.onTimelineChanged(hasNewPosts)
+    }
 
     val isActive: Boolean get() = listener != null
-
-    private val updatesObserver = NotificationCenter.NotificationCenterDelegate { id, _, args ->
-        val changed = when (id) {
-            NotificationCenter.replaceMessagesObjects -> {
-                val dialogId = args[0] as? Long ?: return@NotificationCenterDelegate
-                @Suppress("UNCHECKED_CAST")
-                val objects = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
-                store.replace(dialogId, objects)
-            }
-            NotificationCenter.didUpdateReactions -> {
-                val dialogId = args[0] as? Long ?: return@NotificationCenterDelegate
-                val messageId = args[1] as? Int ?: return@NotificationCenterDelegate
-                val reactions = args[2] as? TLRPC.TL_messageReactions ?: return@NotificationCenterDelegate
-                store.updateReactions(dialogId, messageId, reactions)
-            }
-            NotificationCenter.didUpdateMessagesViews -> applyViews(args)
-            else -> false
-        }
-        if (changed) listener?.onTimelineChanged()
-    }
 
     fun attach(listener: Listener) {
         val wasActive = isActive
@@ -53,8 +45,7 @@ class FeedController private constructor(
             FeedChannelSet.pruneStaleExclusions(account)
             unreadTracker.refresh(FeedChannelSet.eligibleChannels(account, scope))
             backfill.listeners.add(backfillListener)
-            val nc = NotificationCenter.getInstance(account)
-            for (event in OBSERVED) nc.addObserver(updatesObserver, event)
+            backfill.request(FeedChannelSet.eligibleChannels(account, scope).map { it to 0 })
             if (scope is FeedScope.Folder) registerOpenFolder(this)
         }
         val hadRows = store.size > 0
@@ -62,16 +53,17 @@ class FeedController private constructor(
         // entiny: live pushes only reach an attached (isActive) controller, so posts that arrived
         // while this screen was closed are otherwise lost forever -- catch up on reattach instead.
         if (hadRows && !channelsReset) {
-            store.loadNewer { added -> if (added > 0) this.listener?.onTimelineChanged() }
+            store.loadNewer { added -> if (added > 0) this.listener?.onTimelineChanged(true) }
         }
     }
 
     fun detach(listener: Listener) {
         if (this.listener !== listener) return
         this.listener = null
+        AndroidUtilities.cancelRunOnUIThread(timelineUpdateRunnable)
+        timelineUpdateScheduled = false
+        pendingNewPosts = false
         backfill.listeners.remove(backfillListener)
-        val nc = NotificationCenter.getInstance(account)
-        for (event in OBSERVED) nc.removeObserver(updatesObserver, event)
         if (scope is FeedScope.Folder) unregisterOpenFolder(this)
         unreadTracker.flush()
         store.trim()
@@ -87,58 +79,60 @@ class FeedController private constructor(
     private fun requestBackfill() {
         val candidates = ArrayList<Pair<Long, Int>>()
         for (dialogId in FeedChannelSet.eligibleChannels(account, scope)) {
-            val boundary = store.oldestForChannel(dialogId) ?: continue
-            candidates.add(dialogId to boundary)
+            candidates.add(dialogId to (store.oldestForChannel(dialogId) ?: 0))
         }
         backfill.request(candidates)
     }
 
     fun onNewMessages(messages: List<MessageObject>) {
-        if (isActive && store.mergeLive(messages)) listener?.onTimelineChanged()
+        if (isActive && store.mergeLive(messages)) scheduleTimelineChanged(true)
     }
 
     fun onMessagesDeleted(dialogId: Long, messageIds: Collection<Int>) {
-        if (isActive && store.remove(dialogId, messageIds)) listener?.onTimelineChanged()
+        if (isActive && store.remove(dialogId, messageIds)) scheduleTimelineChanged()
     }
 
     fun onHistoryCleared(dialogId: Long) {
-        if (isActive && store.removeDialog(dialogId)) listener?.onTimelineChanged()
+        if (isActive && store.removeDialog(dialogId)) scheduleTimelineChanged()
     }
 
     fun hideChannel(dialogId: Long) {
-        if (store.removeDialog(dialogId)) listener?.onTimelineChanged()
+        if (store.removeDialog(dialogId)) scheduleTimelineChanged()
+    }
+
+    // entiny: feed-only reaction refresh -- applying the snapshot through processUpdates would
+    // replay stale counts into ChatActivity and revert reactions the user just tapped
+    fun applyReactionSnapshot(updates: TLRPC.Updates) {
+        AndroidUtilities.runOnUIThread {
+            if (!isActive) return@runOnUIThread
+            var changed = false
+            for (baseUpdate in updates.updates) {
+                val update = baseUpdate as? TL_update.TL_updateMessageReactions ?: continue
+                if (store.updateReactions(MessageObject.getPeerId(update.peer), update.msg_id, update.reactions)) changed = true
+            }
+            if (changed) scheduleTimelineChanged()
+        }
+    }
+
+    private fun scheduleTimelineChanged(hasNewPosts: Boolean = false) {
+        pendingNewPosts = pendingNewPosts || hasNewPosts
+        if (timelineUpdateScheduled) return
+        timelineUpdateScheduled = true
+        AndroidUtilities.runOnUIThread(timelineUpdateRunnable, TIMELINE_UPDATE_DELAY_MS)
     }
 
     fun markAllRead(): Int = unreadTracker.markAllRead(FeedChannelSet.eligibleChannels(account, scope).toList(), store.newestIdPerChannel())
 
-    private fun applyViews(args: Array<out Any?>): Boolean {
-        @Suppress("UNCHECKED_CAST")
-        val views = args.getOrNull(0) as? LongSparseArray<SparseIntArray>
-        @Suppress("UNCHECKED_CAST")
-        val forwards = args.getOrNull(1) as? LongSparseArray<SparseIntArray>
-        val dialogs = HashSet<Long>()
-        views?.let { for (i in 0 until it.size()) dialogs.add(it.keyAt(i)) }
-        forwards?.let { for (i in 0 until it.size()) dialogs.add(it.keyAt(i)) }
+    fun markRowsSeen(messages: Collection<MessageObject>) {
         var changed = false
-        for (dialogId in dialogs) {
-            if (store.updateViews(dialogId, views?.get(dialogId).toMap(), forwards?.get(dialogId).toMap())) changed = true
+        for (msg in messages) {
+            if (unreadTracker.onRowSeen(msg.getDialogId(), msg.id)) changed = true
         }
-        return changed
-    }
-
-    private fun SparseIntArray?.toMap(): Map<Int, Int> {
-        if (this == null) return emptyMap()
-        val out = HashMap<Int, Int>(size())
-        for (i in 0 until size()) out[keyAt(i)] = valueAt(i)
-        return out
+        if (changed) scheduleTimelineChanged()
     }
 
     companion object {
-        private val OBSERVED = intArrayOf(
-            NotificationCenter.replaceMessagesObjects,
-            NotificationCenter.didUpdateReactions,
-            NotificationCenter.didUpdateMessagesViews,
-        )
+        private const val TIMELINE_UPDATE_DELAY_MS = 75L
 
         private val instances = HashMap<Int, FeedController>()
         private val folderInstances = HashMap<Int, HashMap<Int, FeedController>>()

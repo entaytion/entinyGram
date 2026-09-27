@@ -1,8 +1,8 @@
 package desu.inugram.helpers.feed
 
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MessagesController
-import org.telegram.tgnet.ConnectionsManager
 
 class FeedUnreadTracker private constructor(private val account: Int) {
 
@@ -13,7 +13,7 @@ class FeedUnreadTracker private constructor(private val account: Int) {
 
     private fun effectiveMax(dialogId: Long): Int {
         if (!knownMax.containsKey(dialogId)) {
-            knownMax[dialogId] = serverReadMax(MessagesController.getInstance(account), dialogId)
+            knownMax[dialogId] = maxOf(serverReadMax(MessagesController.getInstance(account), dialogId), storedMax(dialogId))
         }
         return maxOf(knownMax[dialogId] ?: 0, pendingMax[dialogId] ?: 0)
     }
@@ -29,14 +29,15 @@ class FeedUnreadTracker private constructor(private val account: Int) {
 
     fun isUnread(dialogId: Long, messageId: Int): Boolean = messageId > effectiveMax(dialogId)
 
-    // entiny: seen posts are flushed to the server in delayed batches, like exteraless -- badges sync everywhere
-    fun onRowSeen(dialogId: Long, messageId: Int) {
-        if (messageId <= effectiveMax(dialogId)) return
+    // entiny: seen posts update only the feed's local read cursor
+    fun onRowSeen(dialogId: Long, messageId: Int): Boolean {
+        if (messageId <= effectiveMax(dialogId)) return false
         if ((pendingMax[dialogId] ?: 0) < messageId) pendingMax[dialogId] = messageId
         if (!flushScheduled) {
             flushScheduled = true
             AndroidUtilities.runOnUIThread(flushRunnable, FLUSH_DELAY_MS)
         }
+        return true
     }
 
     fun flush() {
@@ -47,14 +48,12 @@ class FeedUnreadTracker private constructor(private val account: Int) {
     private fun flushNow() {
         flushScheduled = false
         if (pendingMax.isEmpty()) return
-        val controller = MessagesController.getInstance(account)
-        val now = ConnectionsManager.getInstance(account).currentTime
         val entries = ArrayList(pendingMax.entries)
         pendingMax.clear()
         for ((dialogId, maxReadId) in entries) {
             if (maxReadId <= (knownMax[dialogId] ?: 0)) continue
             knownMax[dialogId] = maxReadId
-            controller.markDialogAsRead(dialogId, maxReadId, 0, now, false, 0L, 1, true, 0)
+            storeMax(dialogId, maxReadId)
         }
     }
 
@@ -66,11 +65,10 @@ class FeedUnreadTracker private constructor(private val account: Int) {
             val dialog = controller.dialogs_dict?.get(dialogId)
             val top = maxOf(dialog?.top_message ?: 0, newestLoaded[dialogId] ?: 0)
             if (top <= 0) continue
-            // entiny: judge by what Telegram itself considers read, not by our local seen marks
-            if (top <= serverReadMax(controller, dialogId) && (dialog?.unread_count ?: 0) <= 0 && dialog?.unread_mark != true) continue
+            if (top <= effectiveMax(dialogId)) continue
             knownMax[dialogId] = top
             pendingMax.remove(dialogId)
-            controller.markDialogAsRead(dialogId, top, top, dialog?.last_message_date ?: 0, false, 0L, 0, true, 0)
+            storeMax(dialogId, top)
             marked++
         }
         return marked
@@ -78,6 +76,15 @@ class FeedUnreadTracker private constructor(private val account: Int) {
 
     private fun serverReadMax(controller: MessagesController, dialogId: Long): Int =
         maxOf(controller.dialogs_dict?.get(dialogId)?.read_inbox_max_id ?: 0, controller.dialogs_read_inbox_max[dialogId] ?: 0)
+
+    private fun storedMax(dialogId: Long): Int = preferences().getInt(dialogId.toString(), 0)
+
+    private fun storeMax(dialogId: Long, maxReadId: Int) {
+        preferences().edit().putInt(dialogId.toString(), maxReadId).apply()
+    }
+
+    private fun preferences() = ApplicationLoader.applicationContext
+        .getSharedPreferences("inu_feed_read_$account", android.content.Context.MODE_PRIVATE)
 
     companion object {
         private const val FLUSH_DELAY_MS = 1000L
@@ -88,15 +95,5 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         @Synchronized
         fun get(account: Int): FeedUnreadTracker = instances.getOrPut(account) { FeedUnreadTracker(account) }
 
-        @JvmStatic
-        fun getUnreadCount(account: Int): Int {
-            val controller = MessagesController.getInstance(account) ?: return 0
-            var count = 0
-            for (dialogId in FeedChannelSet.eligibleChannels(account)) {
-                val dialog = controller.dialogs_dict?.get(dialogId) ?: continue
-                count += dialog.unread_count
-            }
-            return count
-        }
     }
 }

@@ -1,98 +1,74 @@
 package desu.inugram.helpers.feed
 
+import android.util.Log
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MessagesController
-import org.telegram.messenger.NotificationCenter
 import org.telegram.tgnet.ConnectionsManager
+import org.telegram.tgnet.TLRPC
 
 class FeedBackfillCoordinator private constructor(private val account: Int) {
 
-    // entiny: one listener per open controller; a single callback slot let folder feeds overwrite each other
-    val listeners = LinkedHashSet<(dialogId: Long) -> Unit>()
-
-    private fun notifyBackfilled(dialogId: Long) {
-        for (listener in ArrayList(listeners)) listener(dialogId)
-    }
-
-    private val classGuid = ConnectionsManager.generateClassGuid()
-    private val queueLock = Object()
-    private val queue = LinkedHashMap<Long, Int>()
+    val listeners = LinkedHashSet<(Long, List<TLRPC.Message>) -> Unit>()
     private val inFlight = HashSet<Long>()
-    private var observing = false
-
-    // entiny: MessagesController.messagesDidLoad args: dialogId at 0, classGuid at 10
-    private val observer = NotificationCenter.NotificationCenterDelegate { id, _, args ->
-        if (id != NotificationCenter.messagesDidLoad) return@NotificationCenterDelegate
-        val guid = args.getOrNull(10) as? Int ?: return@NotificationCenterDelegate
-        if (guid != classGuid) return@NotificationCenterDelegate
-        val dialogId = args.getOrNull(0) as? Long ?: return@NotificationCenterDelegate
-        if (!inFlight.remove(dialogId)) return@NotificationCenterDelegate
-        notifyBackfilled(dialogId)
-        pump()
-    }
+    private val pending = LinkedHashMap<Long, Int>()
+    private var active = 0
 
     fun request(candidates: List<Pair<Long, Int>>) {
-        if (candidates.isEmpty()) return
-        synchronized(queueLock) {
-            for ((dialogId, boundaryId) in candidates) {
-                if (inFlight.contains(dialogId)) continue
-                queue[dialogId] = boundaryId
-            }
+        for ((dialogId, offsetId) in candidates) {
+            if (dialogId !in inFlight) pending[dialogId] = offsetId
         }
-        ensureObserving()
         pump()
-    }
-
-    private fun ensureObserving() {
-        if (observing) return
-        observing = true
-        NotificationCenter.getInstance(account).addObserver(observer, NotificationCenter.messagesDidLoad)
     }
 
     private fun pump() {
-        val batch: List<Pair<Long, Int>>
-        synchronized(queueLock) {
-            if (queue.isEmpty() || inFlight.size >= MAX_CONCURRENT) return
-            val room = MAX_CONCURRENT - inFlight.size
-            batch = queue.entries.take(room).map { it.key to it.value }
-            for ((dialogId, _) in batch) queue.remove(dialogId)
-        }
-        if (batch.isEmpty()) return
-        val controller = MessagesController.getInstance(account)
-        for ((dialogId, boundaryId) in batch) {
-            inFlight.add(dialogId)
-            controller.loadMessages(
-                dialogId, 0L, false, PAGE_SIZE, boundaryId, 0, false, 0, classGuid,
-                MessagesController.LOAD_BACKWARD, 0, 0, 0L, 0, 0, false,
-            )
-            AndroidUtilities.runOnUIThread({
-                if (inFlight.remove(dialogId)) {
-                    notifyBackfilled(dialogId)
-                    pump()
-                }
-            }, WATCHDOG_MS)
+        while (active < MAX_CONCURRENT && pending.isNotEmpty()) {
+            val entry = pending.entries.first()
+            val dialogId = entry.key
+            val offsetId = entry.value
+            pending.remove(dialogId)
+            if (!inFlight.add(dialogId)) continue
+            active++
+            fetch(dialogId, offsetId)
         }
     }
 
-    fun cancelAll() {
-        synchronized(queueLock) { queue.clear() }
-        inFlight.clear()
-        if (observing) {
-            NotificationCenter.getInstance(account).removeObserver(observer, NotificationCenter.messagesDidLoad)
-            observing = false
+    private fun fetch(dialogId: Long, offsetId: Int) {
+        val peer = MessagesController.getInstance(account).getInputPeer(dialogId)
+        if (peer == null) {
+            finish(dialogId, emptyList())
+            return
         }
+        val request = TLRPC.TL_messages_getHistory().apply {
+            this.peer = peer
+            this.offset_id = offsetId
+            limit = PAGE_SIZE
+        }
+        ConnectionsManager.getInstance(account).sendRequest(request) { response, error ->
+            val messages = if (error == null && response is TLRPC.messages_Messages) {
+                response.messages.filterNot { it is TLRPC.TL_messageEmpty }
+            } else {
+                if (error != null) Log.d(TAG, "history request failed for $dialogId: ${error.text}")
+                emptyList()
+            }
+            AndroidUtilities.runOnUIThread { finish(dialogId, messages) }
+        }
+    }
+
+    private fun finish(dialogId: Long, messages: List<TLRPC.Message>) {
+        inFlight.remove(dialogId)
+        active = (active - 1).coerceAtLeast(0)
+        if (messages.isNotEmpty()) listeners.toList().forEach { it(dialogId, messages) }
+        pump()
     }
 
     companion object {
+        private const val TAG = "FeedBackfill"
+        private const val PAGE_SIZE = 30
+        private const val MAX_CONCURRENT = 4
         private val instances = HashMap<Int, FeedBackfillCoordinator>()
 
         @JvmStatic
         @Synchronized
-        fun get(account: Int): FeedBackfillCoordinator =
-            instances.getOrPut(account) { FeedBackfillCoordinator(account) }
-
-        private const val PAGE_SIZE = 20
-        private const val MAX_CONCURRENT = 4
-        private const val WATCHDOG_MS = 10_000L
+        fun get(account: Int): FeedBackfillCoordinator = instances.getOrPut(account) { FeedBackfillCoordinator(account) }
     }
 }

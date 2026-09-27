@@ -38,7 +38,6 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
-import org.telegram.messenger.SendMessagesHelper
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_update
@@ -62,6 +61,7 @@ import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorPro
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
 import org.telegram.ui.Components.chat.layouts.ChatActivitySideControlsButtonsLayout
+import java.util.concurrent.Executors
 
 class FeedActivity @JvmOverloads constructor(
     private val scope: FeedScope = FeedScope.Global,
@@ -69,20 +69,14 @@ class FeedActivity @JvmOverloads constructor(
 ) : BaseFragment(), FeedController.Listener {
 
     private sealed class Item {
-        abstract val stableId: Long
-
         class Post(
             val message: MessageObject,
             val group: MessageObject.GroupedMessages?,
             val revision: Int,
             val groupRevision: Int,
-        ) : Item() {
-            override val stableId = postId(message)
-        }
+        ) : Item()
 
-        object Divider : Item() {
-            override val stableId = Long.MIN_VALUE
-        }
+        object Divider : Item()
     }
 
     private var newestOnTop = InuConfig.FEED_NEWEST_ON_TOP.value
@@ -95,6 +89,9 @@ class FeedActivity @JvmOverloads constructor(
     private val store: FeedStore get() = controller.store
 
     private var items: List<Item> = emptyList()
+    @Volatile private var diffGeneration = 0
+    private var pendingNewPosts = false
+    private var timelineDiffPending = false
     private val groups = HashMap<Long, MessageObject.GroupedMessages>()
     private val groupSignatures = HashMap<Long, List<Int>>()
     private val groupRevisions = HashMap<Long, Int>()
@@ -238,6 +235,8 @@ class FeedActivity @JvmOverloads constructor(
         applyInsets()
         hidePill()
         // order flips every index, so a full rebind is cheaper than a diff here
+        diffGeneration++
+        timelineDiffPending = false
         items = buildItems()
         adapter?.notifyDataSetChanged()
         if (channelsChanged) {
@@ -251,6 +250,9 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     override fun onFragmentDestroy() {
+        diffGeneration++
+        timelineDiffPending = false
+        pendingNewPosts = false
         avatarContainer?.onDestroy()
         avatarContainer = null
         savePosition()
@@ -260,16 +262,26 @@ class FeedActivity @JvmOverloads constructor(
 
     // region timeline
 
-    override fun onTimelineChanged() {
+    override fun onTimelineChanged(hasNewPosts: Boolean) {
+        updateTimeline(hasNewPosts)
+    }
+
+    private fun updateTimeline(hasNewPosts: Boolean) {
         if (fragmentView == null) return
-        submitItems()
         if (!firstShown) {
             showInitial()
             return
         }
-        // the list keeps its anchor, so fresh posts land out of view and the pill points to them
-        if (isAtNewest()) hidePill() else showPill(countUnread())
-        updatePageDownButton()
+        pendingNewPosts = pendingNewPosts || hasNewPosts
+        val wasAtNewest = isAtNewest()
+        submitItems {
+            val hasPendingNewPosts = pendingNewPosts
+            pendingNewPosts = false
+            if (hasPendingNewPosts && wasAtNewest) scrollToNewest()
+            if (isAtNewest()) hidePill() else if (hasPendingNewPosts) showPill(countUnread())
+            updatePageDownButton()
+            if (!loadingOlder && !reachedEnd && (store.size < MIN_INITIAL_ROWS || isNearOlderEnd())) loadOlder()
+        }
     }
 
     override fun onBackfilled() {
@@ -279,14 +291,13 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     private fun loadOlder() {
-        if (loadingOlder || reachedEnd) return
+        if (loadingOlder || reachedEnd || timelineDiffPending) return
         loadingOlder = true
         controller.loadOlder { added ->
             loadingOlder = false
             if (fragmentView == null) return@loadOlder
             if (added == 0) reachedEnd = true
-            onTimelineChanged()
-            if (added > 0 && store.size < MIN_INITIAL_ROWS) loadOlder()
+            updateTimeline(false)
         }
     }
 
@@ -294,7 +305,7 @@ class FeedActivity @JvmOverloads constructor(
         if (firstShown) return
         firstShown = true
         dividerKey = oldestUnread()?.let { FeedStore.keyOf(it) }
-        submitItems()
+        submitItems(asynchronously = false)
         if (!restorePosition()) scrollToDivider()
         val oldestLoaded = store.snapshot().lastOrNull()
         // context above the first unread post
@@ -305,23 +316,46 @@ class FeedActivity @JvmOverloads constructor(
         emptyView?.visibility = if (store.size == 0) View.VISIBLE else View.GONE
     }
 
-    private fun submitItems() {
+    private fun submitItems(asynchronously: Boolean = true, onApplied: (() -> Unit)? = null) {
         val newItems = buildItems()
         val old = items
-        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+        val generation = ++diffGeneration
+        val callback = object : DiffUtil.Callback() {
             override fun getOldListSize() = old.size
             override fun getNewListSize() = newItems.size
-            override fun areItemsTheSame(o: Int, n: Int) = old[o].stableId == newItems[n].stableId
+            override fun areItemsTheSame(o: Int, n: Int): Boolean {
+                val a = old[o]
+                val b = newItems[n]
+                if (a is Item.Post && b is Item.Post) return FeedStore.keyOf(a.message) == FeedStore.keyOf(b.message)
+                return a === b
+            }
             override fun areContentsTheSame(o: Int, n: Int): Boolean {
                 val a = old[o]
                 val b = newItems[n]
                 if (a !is Item.Post || b !is Item.Post) return a === b
                 return a.message === b.message && a.revision == b.revision && a.group === b.group && a.groupRevision == b.groupRevision
             }
-        }, false)
-        items = newItems
-        adapter?.let { diff.dispatchUpdatesTo(it) }
-        emptyView?.visibility = if (firstShown && newItems.isEmpty()) View.VISIBLE else View.GONE
+        }
+        val apply: (DiffUtil.DiffResult) -> Unit = { diff ->
+            if (generation == diffGeneration && fragmentView != null) {
+                timelineDiffPending = false
+                items = newItems
+                adapter?.let { diff.dispatchUpdatesTo(it) }
+                emptyView?.visibility = if (firstShown && newItems.isEmpty()) View.VISIBLE else View.GONE
+                onApplied?.invoke()
+            }
+        }
+        if (!asynchronously) {
+            timelineDiffPending = false
+            apply(DiffUtil.calculateDiff(callback, false))
+        } else {
+            timelineDiffPending = true
+            DIFF_EXECUTOR.execute {
+                if (generation != diffGeneration) return@execute
+                val diff = DiffUtil.calculateDiff(callback, false)
+                AndroidUtilities.runOnUIThread { apply(diff) }
+            }
+        }
     }
 
     private fun buildItems(): List<Item> {
@@ -353,6 +387,7 @@ class FeedActivity @JvmOverloads constructor(
         }
         groups.keys.retainAll(members.keys)
         groupSignatures.keys.retainAll(members.keys)
+        groupRevisions.keys.retainAll(members.keys)
         for ((groupId, parts) in members) {
             if (parts.size < 2) {
                 groups.remove(groupId)
@@ -387,12 +422,16 @@ class FeedActivity @JvmOverloads constructor(
     private fun oldestUnread(): MessageObject? = store.snapshot().lastOrNull { isUnread(it) }
 
     private fun markVisibleRead() {
-        forEachVisiblePost { controller.unreadTracker.onRowSeen(it.getDialogId(), it.id) }
+        val visible = ArrayList<MessageObject>()
+        forEachVisiblePost { visible.add(it) }
+        controller.markRowsSeen(visible)
     }
 
     // entiny: posts from the local db carry stale reaction counts, so refresh what's on screen (throttled)
     private fun refreshVisibleReactions() {
         val now = SystemClock.elapsedRealtime()
+        val loadedKeys = store.snapshot().mapTo(HashSet()) { FeedStore.keyOf(it) }
+        reactionsCheckedAt.keys.retainAll(loadedKeys)
         val byDialog = HashMap<Long, ArrayList<Int>>()
         forEachVisiblePost { msg ->
             val key = FeedStore.keyOf(msg)
@@ -408,8 +447,7 @@ class FeedActivity @JvmOverloads constructor(
             ConnectionsManager.getInstance(currentAccount).sendRequest(req) { response, error ->
                 val updates = response as? TLRPC.Updates ?: return@sendRequest
                 if (error != null) return@sendRequest
-                for (update in updates.updates) (update as? TL_update.TL_updateMessageReactions)?.updateUnreadState = false
-                messagesController.processUpdates(updates, false)
+                controller.applyReactionSnapshot(updates)
             }
         }
     }
@@ -417,7 +455,7 @@ class FeedActivity @JvmOverloads constructor(
     private fun markAllRead() {
         val marked = controller.markAllRead()
         dividerKey = null
-        submitItems()
+        submitItems(asynchronously = false)
         hidePill()
         val text = if (marked > 0) LocaleController.formatString(R.string.InuFeedMarkedAllRead, marked)
         else LocaleController.getString(R.string.InuFeedAlreadyRead)
@@ -728,13 +766,8 @@ class FeedActivity @JvmOverloads constructor(
     // endregion
 
     private inner class FeedAdapter(private val context: Context) : RecyclerListView.SelectionAdapter() {
-        init {
-            setHasStableIds(true)
-        }
-
         override fun isEnabled(holder: RecyclerView.ViewHolder): Boolean = holder.itemViewType == VIEW_TYPE_POST
         override fun getItemCount(): Int = items.size
-        override fun getItemId(position: Int): Long = items[position].stableId
         override fun getItemViewType(position: Int): Int = if (items[position] is Item.Post) VIEW_TYPE_POST else VIEW_TYPE_DIVIDER
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
@@ -810,17 +843,35 @@ class FeedActivity @JvmOverloads constructor(
         private fun toggleReaction(reaction: TLRPC.ReactionCount) {
             val msg = messageObject ?: return
             val visible = ReactionsLayoutInBubble.VisibleReaction.fromTL(reaction.reaction) ?: return
+            if (visible.isStar) return
+            val peer = MessagesController.getInstance(currentAccount).getInputPeer(msg.getDialogId())
+                ?: return
             try {
                 performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING)
             } catch (_: Exception) {
             }
             val added = msg.selectReaction(visible, false, false)
-            // server-confirmed counts arrive through didUpdateReactions and rebind via the store
-            SendMessagesHelper.getInstance(currentAccount).sendReaction(
-                msg, ArrayList(msg.choosenReactions), if (added) visible else null, false, false, this@FeedActivity, null,
-            )
+            val request = TLRPC.TL_messages_sendReaction().apply {
+                this.peer = peer
+                msg_id = msg.id
+                big = false
+                add_to_recent = false
+                for (selected in msg.choosenReactions) {
+                    requestReaction(selected)?.let { this.reaction.add(it) }
+                }
+                if (this.reaction.isNotEmpty()) flags = flags or 1
+            }
+            ConnectionsManager.getInstance(currentAccount).sendRequest(request) { response, error ->
+                if (error == null && response is TLRPC.Updates) controller.applyReactionSnapshot(response)
+            }
             // entiny: deferred rebind -- setMessageObject must not run inside touch dispatch
             post { if (messageObject === msg) bind(msg, currentMessagesGroup) }
+        }
+
+        private fun requestReaction(visible: ReactionsLayoutInBubble.VisibleReaction): TLRPC.Reaction? = when {
+            visible.documentId != 0L -> TLRPC.TL_reactionCustomEmoji().apply { document_id = visible.documentId }
+            !visible.emojicon.isNullOrEmpty() -> TLRPC.TL_reactionEmoji().apply { emoticon = visible.emojicon }
+            else -> null
         }
     }
 
@@ -832,10 +883,12 @@ class FeedActivity @JvmOverloads constructor(
         private const val REACTIONS_RECHECK_MS = 15_000L
         private const val VIEW_TYPE_POST = 0
         private const val VIEW_TYPE_DIVIDER = 1
+        private val DIFF_EXECUTOR = Executors.newSingleThreadExecutor { runnable ->
+            Thread(runnable, "FeedDiff").apply { isDaemon = true }
+        }
 
         const val INDICATOR_PILL = 0
         const val INDICATOR_BUTTON = 1
 
-        private fun postId(msg: MessageObject): Long = msg.getDialogId() * 1_000_000_007L + msg.id
     }
 }

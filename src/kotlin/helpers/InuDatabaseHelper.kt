@@ -122,6 +122,15 @@ object InuDatabaseHelper {
             version = 12
         }
 
+        if (version == 12) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_feed_cache(account_id INTEGER NOT NULL, scope_key TEXT NOT NULL, dialog_id INTEGER NOT NULL, msg_id INTEGER NOT NULL, date INTEGER NOT NULL, data BLOB NOT NULL, grouped_id INTEGER DEFAULT 0, PRIMARY KEY(account_id, scope_key, dialog_id, msg_id))")
+                .stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_feed_cache_scope_date ON inu_feed_cache(account_id, scope_key, date DESC)")
+                .stepThis().dispose()
+            writeKv(db, "version", "13")
+            version = 13
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 

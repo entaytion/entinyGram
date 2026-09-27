@@ -4,10 +4,9 @@ import android.util.Log
 import org.telegram.SQLite.SQLiteCursor
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.MessageObject
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.MessagesStorage
-import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
+import desu.inugram.helpers.InuUtils
 import java.util.Locale
 
 // entiny: single source of truth for a feed scope; every mutation happens on the UI thread
@@ -60,8 +59,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
 
     // entiny: catch up on posts that arrived while this store had no attached (visible) screen --
     // live pushes only reach FeedController while isActive, so a gap while away is otherwise permanent.
-    // Bounded rather than unlimited: a bigger gap than CATCHUP_LIMIT still leaves a silent hole, but the
-    // regular loadOlder()/backfill path can still reach that history by scrolling down from here.
+    // Keep the newest retained window; older posts remain reachable through normal paging.
     fun loadNewer(onResult: (added: Int) -> Unit) {
         val newest = rows.firstOrNull()
         if (newest == null) { onResult(0); return }
@@ -72,23 +70,36 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
     // returns true when the timeline changed
     fun mergeLive(messages: List<MessageObject>): Boolean {
         // entiny: live objects are shared with ChatActivity, so the feed keeps its own wide copies
+        val eligible = FeedChannelSet.eligibleChannels(account, scope).toHashSet()
         val copies = messages
-            .filter { it.messageOwner != null && FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }
-            .map { feedCopy(it.messageOwner) }
-        return insert(copies) > 0
+            .filter { it.messageOwner != null && eligible.contains(it.getDialogId()) }
+            .mapNotNull { feedCopy(it.messageOwner) }
+        return insert(copies, persist = true) > 0
+    }
+
+    fun mergeSynced(dialogId: Long, messages: List<TLRPC.Message>): Int {
+        if (!FeedChannelSet.isEligibleChannel(account, dialogId, scope)) return 0
+        val copies = messages.asSequence()
+            .filter { MessageObject.getDialogId(it) == dialogId }
+            .mapNotNull { feedCopy(it) }
+            .toList()
+        return insert(copies, persist = true)
     }
 
     fun replace(dialogId: Long, updated: List<MessageObject>): Boolean {
         var changed = false
+        val replacements = ArrayList<MessageObject>()
         for (msg in updated) {
             val key = Key(dialogId, msg.id)
             val old = byKey[key] ?: continue
-            val copy = feedCopy(msg.messageOwner)
+            val copy = feedCopy(msg.messageOwner) ?: continue
             rows[rows.indexOf(old)] = copy
             byKey[key] = copy
             bump(key)
+            replacements.add(copy)
             changed = true
         }
+        if (changed) persistRows(replacements)
         return changed
     }
 
@@ -97,17 +108,23 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         val msg = byKey[key] ?: return false
         MessageObject.updateReactions(msg.messageOwner, reactions)
         bump(key)
+        persistRows(listOf(msg))
         return true
     }
 
     fun updateViews(dialogId: Long, views: Map<Int, Int>, forwards: Map<Int, Int>): Boolean {
         var changed = false
-        for (msg in rows) {
-            if (msg.getDialogId() != dialogId) continue
+        val messageIds = HashSet<Int>(views.size + forwards.size)
+        messageIds.addAll(views.keys)
+        messageIds.addAll(forwards.keys)
+        for (messageId in messageIds) {
+            val key = Key(dialogId, messageId)
+            val msg = byKey[key] ?: continue
             val owner = msg.messageOwner ?: continue
             views[msg.id]?.let { if (it > owner.views) { owner.views = it; owner.flags = owner.flags or TLRPC.MESSAGE_FLAG_HAS_VIEWS; changed = true; bump(keyOf(msg)) } }
             forwards[msg.id]?.let { if (it != owner.forwards) { owner.forwards = it; changed = true; bump(keyOf(msg)) } }
         }
+        if (changed) persistRows(messageIds.mapNotNull { byKey[Key(dialogId, it)] })
         return changed
     }
 
@@ -134,16 +151,59 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
 
     private fun removeWhere(predicate: (MessageObject) -> Boolean): Boolean {
         var changed = false
+        val affectedDialogs = HashSet<Long>()
+        val removed = ArrayList<Key>()
         val it = rows.iterator()
         while (it.hasNext()) {
             val msg = it.next()
             if (!predicate(msg)) continue
+            val key = keyOf(msg)
             it.remove()
-            byKey.remove(keyOf(msg))
-            revisions.remove(keyOf(msg))
+            byKey.remove(key)
+            revisions.remove(key)
+            removed.add(key)
+            affectedDialogs.add(key.dialogId)
             changed = true
         }
+        if (changed) {
+            recomputeOldest(affectedDialogs)
+            deleteRows(removed)
+        }
         return changed
+    }
+
+    private fun deleteRows(keys: List<Key>) {
+        if (keys.isEmpty()) return
+        val storage = MessagesStorage.getInstance(account)
+        val scopeKey = scopeKey()
+        storage.storageQueue.postRunnable {
+            var query: org.telegram.SQLite.SQLitePreparedStatement? = null
+            try {
+                query = storage.database.executeFast("DELETE FROM inu_feed_cache WHERE account_id = ? AND scope_key = ? AND dialog_id = ? AND msg_id = ?")
+                for (key in keys) {
+                    query.bindInteger(1, account)
+                    query.bindString(2, scopeKey)
+                    query.bindLong(3, key.dialogId)
+                    query.bindInteger(4, key.messageId)
+                    query.step()
+                    query.requery()
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "cache delete failed", e)
+            } finally {
+                query?.dispose()
+            }
+        }
+    }
+
+    private fun recomputeOldest(dialogIds: Set<Long>) {
+        for (dialogId in dialogIds) oldestPerChannel.remove(dialogId)
+        for (msg in rows) {
+            val dialogId = msg.getDialogId()
+            if (!dialogIds.contains(dialogId)) continue
+            val current = oldestPerChannel[dialogId]
+            if (current == null || msg.id < current) oldestPerChannel[dialogId] = msg.id
+        }
     }
 
     private fun bump(key: Key) {
@@ -159,43 +219,33 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         val storage = MessagesStorage.getInstance(account)
         storage.storageQueue.postRunnable {
             val messages = ArrayList<TLRPC.Message>()
-            val users = ArrayList<TLRPC.User>()
-            val chats = ArrayList<TLRPC.Chat>()
             try {
                 val idsCsv = channels.joinToString(",")
+                val scopeKey = scopeKey()
                 val cmp = if (newer) ">" else "<"
-                val order = if (newer) "ASC" else "DESC"
+                val order = "DESC"
                 val bound = if (cursor == null) "" else String.format(
                     Locale.US,
-                    "AND (date %s %d OR (date = %d AND (uid %s %d OR (uid = %d AND mid %s %d))))",
+                    "AND (date %s %d OR (date = %d AND (dialog_id %s %d OR (dialog_id = %d AND msg_id %s %d))))",
                     cmp, cursor.date, cursor.date, cmp, cursor.dialogId, cursor.dialogId, cmp, cursor.messageId,
                 )
                 readMessages(
                     storage,
                     String.format(
                         Locale.US,
-                        "SELECT data FROM messages_v2 WHERE uid IN (%s) AND mid > 0 %s ORDER BY date %s, uid %s, mid %s LIMIT %d",
-                        idsCsv, bound, order, order, order, limit,
+                        "SELECT data FROM inu_feed_cache WHERE account_id = %d AND scope_key = '%s' AND dialog_id IN (%s) %s ORDER BY date %s, dialog_id %s, msg_id %s LIMIT %d",
+                        account, scopeKey, idsCsv, bound, order, order, order, limit,
                     ),
                     messages,
                 )
                 // entiny: album-tail completion only matters for the older/backward page --
                 // a newer/catch-up page getting cut mid-album is a rare, cosmetically minor edge case.
                 if (!newer) completeTrailingAlbum(storage, messages)
-                val usersToLoad = ArrayList<Long>()
-                val chatsToLoad = ArrayList<Long>()
-                for (message in messages) MessagesStorage.addUsersAndChatsFromMessage(message, usersToLoad, chatsToLoad, null)
-                // entiny: forward sources aren't in memory yet, so load them or the "Forwarded from" line stays empty
-                if (usersToLoad.isNotEmpty()) storage.getUsersInternal(usersToLoad, users)
-                if (chatsToLoad.isNotEmpty()) storage.getChatsInternal(chatsToLoad.joinToString(","), chats)
             } catch (e: Exception) {
                 Log.d(TAG, "query failed", e)
             }
-            val loaded = messages.map { feedCopy(it) }
+            val loaded = messages.mapNotNull { feedCopy(it) }
             AndroidUtilities.runOnUIThread {
-                val controller = MessagesController.getInstance(account)
-                controller.putUsers(users, true)
-                controller.putChats(chats, true)
                 onResult(insert(loaded))
             }
         }
@@ -211,8 +261,8 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
             storage,
             String.format(
                 Locale.US,
-                "SELECT data FROM messages_v2 WHERE uid = %d AND mid > 0 AND mid < %d ORDER BY mid DESC LIMIT %d",
-                dialogId, tail.id, ALBUM_TAIL_LOOKUP,
+                "SELECT data FROM inu_feed_cache WHERE account_id = %d AND scope_key = '%s' AND dialog_id = %d AND msg_id < %d ORDER BY msg_id DESC LIMIT %d",
+                account, scopeKey(), dialogId, tail.id, ALBUM_TAIL_LOOKUP,
             ),
             extra,
         )
@@ -226,11 +276,9 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         var cursor: SQLiteCursor? = null
         try {
             cursor = storage.database.queryFinalized(sql)
-            val clientUserId = UserConfig.getInstance(account).clientUserId
             while (cursor.next()) {
                 val data = cursor.byteBufferValue(0) ?: continue
                 val message = TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)
-                message?.readAttachPath(data, clientUserId)
                 data.reuse()
                 if (message != null) out.add(message)
             }
@@ -239,31 +287,76 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
-    private fun feedCopy(message: TLRPC.Message): MessageObject =
-        MessageObject(account, message, false, false).apply { forceWideChannelPost = true }
+    private fun feedCopy(message: TLRPC.Message): MessageObject? {
+        val copy = InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) ?: return null
+        copy.attachPath = message.attachPath
+        copy.send_state = message.send_state
+        copy.fwd_msg_id = message.fwd_msg_id
+        copy.random_id = message.random_id
+        copy.local_id = message.local_id
+        copy.dialog_id = message.dialog_id
+        copy.ttl = message.ttl
+        copy.destroyTime = message.destroyTime
+        copy.destroyTimeMillis = message.destroyTimeMillis
+        copy.params = message.params?.let { HashMap(it) }
+        return MessageObject(account, copy, false, false).apply { forceWideChannelPost = true }
+    }
 
-    private fun insert(incoming: List<MessageObject>): Int {
+    private fun insert(incoming: List<MessageObject>, persist: Boolean = false): Int {
         var added = 0
+        val inserted = ArrayList<MessageObject>()
         for (msg in incoming) {
             val key = keyOf(msg)
             if (byKey.containsKey(key)) continue
             byKey[key] = msg
             rows.add(msg)
+            inserted.add(msg)
             added++
             val current = oldestPerChannel[key.dialogId]
             if (current == null || msg.id < current) oldestPerChannel[key.dialogId] = msg.id
         }
         if (added == 0) return 0
         rows.sortWith(TIMELINE_ORDER)
+        if (persist) persistRows(inserted)
         return added
     }
+
+    private fun persistRows(messages: List<MessageObject>) {
+        if (messages.isEmpty()) return
+        val storage = MessagesStorage.getInstance(account)
+        val scopeKey = scopeKey()
+        storage.storageQueue.postRunnable {
+            var query: org.telegram.SQLite.SQLitePreparedStatement? = null
+            try {
+                query = storage.database.executeFast("INSERT OR REPLACE INTO inu_feed_cache(account_id, scope_key, dialog_id, msg_id, date, data, grouped_id) VALUES(?, ?, ?, ?, ?, ?, ?)")
+                for (objectMessage in messages) {
+                    val message = objectMessage.messageOwner ?: continue
+                    query.bindInteger(1, account)
+                    query.bindString(2, scopeKey)
+                    query.bindLong(3, objectMessage.getDialogId())
+                    query.bindInteger(4, objectMessage.id)
+                    query.bindInteger(5, message.date)
+                    query.bindTlObject(6, message)
+                    query.bindLong(7, message.grouped_id)
+                    query.step()
+                    query.requery()
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "cache write failed", e)
+            } finally {
+                query?.dispose()
+            }
+        }
+    }
+
+    private fun scopeKey(): String = (scope as? FeedScope.Folder)?.let { "f${it.filterId}" } ?: "g"
 
     companion object {
         private const val TAG = "FeedStore"
         private const val PAGE_SIZE = 30
-        private const val CATCHUP_LIMIT = 200
         private const val ALBUM_TAIL_LOOKUP = 10
         private const val MAX_RETAINED_ROWS = 500
+        private const val CATCHUP_LIMIT = MAX_RETAINED_ROWS
 
         fun keyOf(msg: MessageObject) = Key(msg.getDialogId(), msg.id)
 
