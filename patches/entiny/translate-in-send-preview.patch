@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 21:50:20 +0300
+Subject: [+] translate in send preview menu
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java   | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -5604,6 +5604,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 });
+             }
+         }
++        desu.inugram.helpers.chat.ChatInputMenuHelper.addPreviewTranslateItem(this, options);
+         options.setupSelectors();
+         if (sendWhenOnlineButton != null) {
+             TLRPC.User user = parentFragment == null ? null : parentFragment.getCurrentUser();

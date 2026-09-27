@@ -1285,6 +1285,8 @@
     <string name="InuTranslateOutgoingInfo">在聊天自动翻译中包含您自己发送的消息。</string>
     <string name="InuInputTranslate">发送前翻译</string>
     <string name="InuInputTranslateInfo">在文本选择菜单和输入栏操作中添加翻译选项。</string>
+    <string name="InuTranslateInSendPreview">发送预览中翻译</string>
+    <string name="InuTranslateInSendPreviewInfo">在发送预览菜单中添加翻译选项。</string>
     <string name="InuDisableLinkPreview">禁用链接预览</string>
     <string name="InuEnableLinkPreview">启用链接预览</string>
     <string name="InuReplaceText">替换文本</string>

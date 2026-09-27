@@ -434,4 +434,6 @@ entiny/disable-audiotrack-playback-params.patch
 entiny/centered-header-fixes.patch
 entiny/hide-recent-chats-shortcut.patch
 entiny/theme-switch-recovery.patch
+entiny/translate-in-send-preview.patch
+entiny/translate-preview-fixes.patch
 entiny/clock-format.patch

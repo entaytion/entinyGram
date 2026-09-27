@@ -871,6 +871,8 @@
     <string name="InuTranslateOutgoingInfo">Додавати надіслані вами повідомлення до автоматичного перекладу чату.</string>
     <string name="InuInputTranslate">Переклад перед відправкою</string>
     <string name="InuInputTranslateInfo">Додає можливість перекладу до контекстного меню виділення та дій у полі введення.</string>
+    <string name="InuTranslateInSendPreview">Переклад у передперегляді</string>
+    <string name="InuTranslateInSendPreviewInfo">Додає пункт «Перекласти» до меню передперегляду надсилання.</string>
     <string name="InuDisableLinkPreview">Вимкнути попередній перегляд</string>
     <string name="InuEnableLinkPreview">Увімкнути попередній перегляд</string>
     <string name="InuReplaceText">Замінити текст</string>

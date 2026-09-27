@@ -26,6 +26,7 @@ import org.telegram.ui.Components.TranslateAlert3
 import desu.inugram.InuConfig
 import desu.inugram.helpers.theme.NonIslandHelper
 import desu.inugram.helpers.translate.TranslateHelper
+import desu.inugram.helpers.translate.engine.EntinyTranslate
 
 object ChatInputMenuHelper {
     private const val MENU_BUTTON_TAG = "inu_chat_input_menu_button"
@@ -123,6 +124,18 @@ object ChatInputMenuHelper {
         }
     }
 
+    @JvmStatic
+    fun addPreviewTranslateItem(enterView: ChatActivityEnterView, options: ItemOptions) {
+        if (!InuConfig.TRANSLATE_IN_SEND_PREVIEW.value) return
+        if (TextUtils.isEmpty(enterView.fieldText)) return
+        val toLang = TranslateHelper.currentTargetLanguage().ifEmpty {
+            TranslateAlert2.getToLanguage().orEmpty().ifEmpty { "en" }
+        }
+        options.add(R.drawable.msg_translate, LocaleController.getString(R.string.TranslateMessage)) {
+            translateText(enterView, toLang)
+        }
+    }
+
     private fun showMenu(enterView: ChatActivityEnterView, anchor: View) {
         val fragment = enterView.parentFragment ?: return
         val activity = fragment as? ChatActivity
@@ -172,7 +185,8 @@ object ChatInputMenuHelper {
         if (TextUtils.isEmpty(textToTranslate)) return
 
         val fragment = enterView.parentFragment
-        TranslateAlert3(enterView.context, fragment?.resourceProvider)
+        val account = fragment?.currentAccount ?: org.telegram.messenger.UserConfig.selectedAccount
+        val alert = TranslateAlert3(enterView.context, fragment?.resourceProvider)
             .setToLanguage(toLang)
             .setText(textToTranslate)
             .setOnUse { translated ->
@@ -182,7 +196,14 @@ object ChatInputMenuHelper {
                     enterView.setFieldText(translated.toString())
                 }
             }
-            .show()
+        if (EntinyTranslate.isActive(account)) {
+            alert.setTranslationRequest { targetLanguage, result ->
+                if (!EntinyTranslate.handleDraft(textToTranslate.toString(), targetLanguage, account, result)) {
+                    result.run(null)
+                }
+            }
+        }
+        alert.show()
     }
 
     private fun showReplaceDialog(enterView: ChatActivityEnterView) {

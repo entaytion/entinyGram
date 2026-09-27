@@ -435,6 +435,8 @@
     <string name="InuTranslateOutgoingInfo">Include messages sent by you in automatic chat translation.</string>
     <string name="InuInputTranslate">Translate before sending</string>
     <string name="InuInputTranslateInfo">Adds translation options to the text selection menu and input field actions.</string>
+    <string name="InuTranslateInSendPreview">Translate in send preview</string>
+    <string name="InuTranslateInSendPreviewInfo">Adds a Translate option to the send preview menu.</string>
     <string name="InuDisableLinkPreview">Disable Link Preview</string>
     <string name="InuEnableLinkPreview">Enable Link Preview</string>
     <string name="InuReplaceText">Replace Text</string>

@@ -1,0 +1,125 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 21:54:26 +0300
+Subject: [*] fix send preview translation
+
+---
+ .../ui/Components/TranslateAlert3.java        | 53 +++++++++++++++++--
+ 1 file changed, 49 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+@@ -154,6 +154,8 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+     private CharSequence translated;
+ 
+     private Utilities.Callback<CharSequence> onUseListener;
++    private Utilities.Callback2<String, Utilities.Callback<CharSequence>> translationRequest;
++    private int customRequestGeneration;
+ 
+     private String from_lang;
+     private String to_lang;
+@@ -201,6 +203,10 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         this.onUseListener = onUse;
+         return this;
+     }
++    public TranslateAlert3 setTranslationRequest(Utilities.Callback2<String, Utilities.Callback<CharSequence>> request) {
++        this.translationRequest = request;
++        return this;
++    }
+     public TranslateAlert3 setNoforwards(boolean noforwards) {
+         this.noforwards = noforwards;
+         return this;
+@@ -242,7 +248,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+                 cancelRequest();
+                 tone = newTone;
+                 TranslateAlert2.setToLanguage(to_lang);
+-                requestTranslate();
++                startTranslation();
+             });
+         }
+ 
+@@ -256,13 +262,23 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         if (!TextUtils.isEmpty(to_lang)) {
+             addChecked(o, list, true, TranslateAlert2.capitalFirst(TranslateAlert2.languageName(to_lang)), null);
+         }
++        final String appLanguage = TranslateController.currentLanguage();
++        if (!TextUtils.isEmpty(appLanguage) && !TextUtils.equals(appLanguage, to_lang)
++                && suggestedLanguages.stream().noneMatch(language -> TextUtils.equals(language.code, appLanguage))) {
++            addChecked(o, list, false, TranslateAlert2.capitalFirst(TranslateAlert2.languageName(appLanguage)), () -> {
++                cancelRequest();
++                to_lang = appLanguage;
++                TranslateAlert2.setToLanguage(to_lang);
++                startTranslation();
++            });
++        }
+         for (final TranslateController.Language lng : suggestedLanguages) {
+             if (!TextUtils.equals(lng.code, to_lang)) {
+                 addChecked(o, list, false, lng.displayName, () -> {
+                     cancelRequest();
+                     to_lang = lng.code;
+                     TranslateAlert2.setToLanguage(to_lang);
+-                    requestTranslate();
++                    startTranslation();
+                 });
+             }
+         }
+@@ -272,11 +288,12 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         list.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
+ 
+         for (final TranslateController.Language lng : allLanguages) {
++            if (TextUtils.equals(lng.code, to_lang)) continue;
+             addChecked(o, list, TextUtils.equals(lng.code, to_lang), lng.displayName, () -> {
+                 cancelRequest();
+                 to_lang = lng.code;
+                 TranslateAlert2.setToLanguage(to_lang);
+-                requestTranslate();
++                startTranslation();
+             });
+         }
+ 
+@@ -350,7 +367,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         }
+ 
+         adapter.update(false);
+-        requestTranslate();
++        startTranslation();
+ 
+         if (onUseListener != null) {
+             button.setText("Use This Translation");
+@@ -361,6 +378,34 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+         }
+     }
+ 
++    private void startTranslation() {
++        if (translationRequest == null) requestTranslate();
++        else requestCustomTranslate();
++    }
++
++    private void requestCustomTranslate() {
++        final int generation = ++customRequestGeneration;
++        if (onUseListener != null) button.setLoading(true);
++        final SpannableStringBuilder loadingText = new SpannableStringBuilder(getString(R.string.Loading));
++        loadingText.setSpan(new LoadingSpan(null, dp(120), 0), 0, loadingText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
++        translated = loadingText;
++        translatedLoading = true;
++        adapter.update(true);
++        translationRequest.run(to_lang, result -> AndroidUtilities.runOnUIThread(() -> {
++            if (isDismissed() || generation != customRequestGeneration) return;
++            button.setLoading(false);
++            if (result == null || result.length() == 0) {
++                translated = null;
++                button.setText(getString(R.string.OK));
++                button.setOnClickListener(v -> dismiss());
++            } else {
++                translated = result;
++                translatedLoading = false;
++            }
++            adapter.update(true);
++        }));
++    }
++
+     private int requestId = -1;
+     private void requestTranslate() {
+         final TLRPC.TL_textWithEntities fromText = new TLRPC.TL_textWithEntities();

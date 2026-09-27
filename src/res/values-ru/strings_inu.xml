@@ -1078,6 +1078,8 @@
     <string name="InuTranslateOutgoingInfo">Добавлять отправленные вами сообщения в автоматический перевод чата.</string>
     <string name="InuInputTranslate">Перевод перед отправкой</string>
     <string name="InuInputTranslateInfo">Добавляет возможность перевода в контекстное меню выделения и действия в поле ввода.</string>
+    <string name="InuTranslateInSendPreview">Перевод в предпросмотре</string>
+    <string name="InuTranslateInSendPreviewInfo">Добавляет пункт «Перевести» в меню предпросмотра отправки.</string>
     <string name="InuDisableLinkPreview">Отключить предпросмотр</string>
     <string name="InuEnableLinkPreview">Включить предпросмотр</string>
     <string name="InuReplaceText">Заменить текст</string>

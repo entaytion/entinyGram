@@ -12,8 +12,21 @@ import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.LaunchActivity
+import java.util.concurrent.atomic.AtomicInteger
 
 object EntinyTranslate {
+    private val draftId = AtomicInteger(1)
+
+    @JvmStatic
+    fun handleDraft(text: String, toLang: String, account: Int, callback: Utilities.Callback<CharSequence>): Boolean {
+        val dialogId = Long.MIN_VALUE + account
+        val provider = resolveProvider(dialogId, account) ?: return false
+        val msgId = draftId.getAndIncrement()
+        return TranslateEngine.enqueueText(
+            dialogId, msgId, false, text, null, toLang, provider,
+            callback = Utilities.Callback4 { _, _, result, _ -> callback.run(result?.text) },
+        )
+    }
 
     @JvmStatic
     @JvmOverloads

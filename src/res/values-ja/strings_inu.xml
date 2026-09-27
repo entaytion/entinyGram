@@ -1523,6 +1523,8 @@
     <string name="InuHidePinnedUntilNew">新しいメッセージがピン留めされるまで</string>
     <string name="InuInputTranslate">送信前に翻訳</string>
     <string name="InuInputTranslateInfo">テキスト選択メニューと入力欄の操作に翻訳オプションを追加します。</string>
+    <string name="InuTranslateInSendPreview">送信プレビューで翻訳</string>
+    <string name="InuTranslateInSendPreviewInfo">送信プレビューメニューに翻訳オプションを追加します。</string>
     <string name="InuIosButtonPlacement">ボタンの配置（iOS）</string>
     <string name="InuIosButtonPlacementInfo">添付ボタンを左に、絵文字ボタンを入力欄の右側に配置します。</string>
     <string name="InuIosChatHeaderAvatarStatic">アバターを中央に寄せない</string>
