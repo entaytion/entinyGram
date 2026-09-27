@@ -45,6 +45,7 @@ async function findDeadStrings(): Promise<{ dead: string[], total: number }> {
 
   const sourceFiles: string[] = []
   await walk(join(rootDir, 'src/kotlin'), sourceFiles, ['.kt'])
+  await walk(join(rootDir, 'src/kotlin-app'), sourceFiles, ['.kt'])
   await walk(worktreeDir, sourceFiles, ['.java'])
 
   const xmlFiles: string[] = []

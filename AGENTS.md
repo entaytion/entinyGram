@@ -39,6 +39,19 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
    - No `adb install`, `adb shell`, `adb logcat`, `adb push`, or app-launching commands.
    - Ask the user to run/install and paste logs if needed.
 
+6. **Dirty Worktree / Multi-Agent Patch Isolation (Never Blanket Refresh):**
+   - Multiple agents often work concurrently on the same codebase, leaving unstaged modifications in `worktree/` (`gifvideo.cpp`, `DialogCell.java`, `MainTabsActivity.java`, etc.).
+   - **NEVER run bare `stg refresh` or `stg new -r` without path/index filtering.** A bare refresh indiscriminately pulls all modified files into the current patch, destroying other agents' work and creating a toxic kitchen-sink patch.
+   - **Index-Only Patch Creation (`stg new -r -i`):**
+     1. Check staged state: `git -C worktree diff --cached` (must be completely empty).
+     2. Stage ONLY your files/hunks:
+        - Entire file: `git -C worktree add path/to/MyFile.java`.
+        - Specific hunk from a shared file: isolate your hunk into a diff and stage via `git -C worktree apply --cached my_hunk.patch`.
+     3. Strict verification: `git -C worktree diff --cached` — verify not a single line from another agent or feature is staged.
+     4. Create patch from index: `stg -C worktree new -r -i -m "[*] <subject>" entiny__<name>`.
+     5. Verify patch content: `stg -C worktree show --stat`.
+     6. Leaves other agents' unstaged files untouched in the working directory.
+
 ---
 
 ## 1. Golden Rules (Never Violate)

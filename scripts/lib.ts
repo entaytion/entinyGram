@@ -348,6 +348,17 @@ export async function generateStablePatchFromCommit(repoDir: string, commitId: s
     .join('')
     .replace(/^Subject:.*(?:\n[ \t].*)+/m, m => m.replace(/\n[ \t]+/g, ' '))
 
+  // MIME fields stored in the commit message are duplicated by git format-patch headers.
+  const messageStart = clean.indexOf('\n\n')
+  const diffStart = clean.indexOf('\n---\n')
+  if (messageStart >= 0 && diffStart > messageStart) {
+    const message = clean.slice(messageStart + 2, diffStart)
+      .replace(/^(?:MIME-Version: 1\.0|Content-Type: text\/plain; charset=UTF-8|Content-Transfer-Encoding: 8bit)\r?\n/gm, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/^\n+|\n+$/g, '')
+    clean = `${clean.slice(0, messageStart)}\n\n${message}${message ? '\n' : ''}${clean.slice(diffStart + 1)}`
+  }
+
   // Strip diffs and diffstat lines for local/synced files that must never land in patches
   const GARBAGE_FILE_PATTERNS = [
     /google-services\.json/,

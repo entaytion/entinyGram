@@ -48,9 +48,8 @@ cd worktree
   `TMessagesProj/config/release.keystore`, which is checked into the repo, with the
   matching `RELEASE_STORE_PASSWORD` / `RELEASE_KEY_ALIAS` / `RELEASE_KEY_PASSWORD`
   already set in the root `gradle.properties`. Nothing to configure locally.
-- **Application ID:** the debug build type adds `applicationIdSuffix ".beta"`, so it
-  installs as `ua.entaytion.entinygram.beta` — a separate app alongside any real install,
-  never overwrites it.
+- **Application ID:** debug and release builds both use `ua.entaytion.entinygram`; installing
+  a debug build replaces the installed release build.
 - **Output:** `worktree/TMessagesProj_App/build/outputs/apk/debug/app.apk`.
 - **versionCode:** locally this auto-increments from `worktree/.local_build_number`
   (starts at `1000000`), completely separate from the CI date-based scheme below — you
@@ -71,9 +70,8 @@ cd worktree
 ./gradlew TMessagesProj_App:assembleRelease
 ```
 
-Same local keystore/credentials as the debug build above, but `minifyEnabled true` +
-`shrinkResources true` (R8/ProGuard) and no `.beta` suffix — this is what you'd use to
-sanity-check a release-shaped build locally, not what actually ships.
+Same local keystore/credentials as the debug build above, with
+`minifyEnabled true` + `shrinkResources true` (R8/ProGuard) for a release-shaped local build.
 
 Output: `worktree/TMessagesProj_App/build/outputs/apk/release/app.apk`.
 

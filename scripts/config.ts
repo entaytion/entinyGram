@@ -12,7 +12,7 @@ export const seriesFile = join(rootDir, 'series')
 export const upstreamCommitFile = join(rootDir, 'upstream-commit')
 export const assetsDir = join(rootDir, 'src/res/assets')
 
-export const debugAppId = 'ua.entaytion.entinygram.beta'
+export const debugAppId = 'ua.entaytion.entinygram'
 
 export interface ForkSyncFile {
   source: string

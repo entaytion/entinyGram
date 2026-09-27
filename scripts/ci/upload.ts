@@ -72,29 +72,6 @@ async function persistSession(session: string) {
   })
 }
 
-/**
- * Most recent stable #release message in the CI channel, for the footer download link.
- * Returns null when not found / search failed.
- */
-async function findLastReleaseMessageId(): Promise<number | null> {
-  try {
-    const results = await tg.searchMessages({
-      chatId: channelCI,
-      query: '#release',
-      limit: 20,
-    })
-    for (const msg of results) {
-      const text = msg.text ?? ''
-      if (/#release\b/.test(text) && !/#prerelease\b/.test(text)) {
-        return msg.id
-      }
-    }
-    return null
-  } catch (e) {
-    console.warn(`upload: could not search CI channel for last release: ${e}`)
-    return null
-  }
-}
 
 try {
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -163,28 +140,48 @@ try {
   const isPreRelease = process.env.PRE_RELEASE === 'true'
   const appLabel = isPreRelease ? 'entinyGram Beta' : 'entinyGram'
 
-  const preReleaseBanner = isPreRelease
-    ? html`<i>‼️ Pre-release build — for testing new features and bug fixes. This version is unstable and may crash or misbehave.</i><br/>`
-    : ''
-
-  // Footer links: last stable release + full GitHub diff. Omitted when unresolvable.
-  const lastReleaseId = await findLastReleaseMessageId()
-  const lastReleaseHtml = lastReleaseId !== null
-    ? html`<br/>⬇️ The last release — <a href="${postUrl(lastReleaseId)}">download</a>`
-    : ''
+  const ARM7_NOTICE = html`<b>This is a build for older 32-bit (armeabi-v7a) devices. It ships rarely, usually only together with a stable release — it is not a pre-release.</b>`
+  const PRERELEASE_WARNING = html`<i>‼️ Pre-release build — for testing new features and bug fixes. This version is unstable and may crash or misbehave.</i>`
 
   const releaseTagName = process.env.RELEASE_TAG ?? ''
   const prevReleaseTag = process.env.PREV_RELEASE_TAG ?? ''
   const compareHtml = releaseTagName && prevReleaseTag && prevReleaseTag !== releaseTagName
-    ? html`<br/>📝 <a href="https://github.com/${info.repo}/compare/${prevReleaseTag}...${releaseTagName}">Full diff on GitHub</a>`
-    : ''
+    ? html`📝 <a href="https://github.com/${info.repo}/compare/${prevReleaseTag}...${releaseTagName}">Full diff on GitHub</a>`
+    : null
 
   // Updater clips its dialog to the caption <blockquote>; tag is #release XOR #prerelease.
   const releaseTag = isPreRelease ? '#prerelease' : '#release'
   const { file } = info.apkFiles[0]
 
+  function getHeader() {
+    const label = isPreRelease ? 'entinyGram Beta' : 'entinyGram'
+    return html`<b>${label} v${info.verName}</b> (build ${info.buildDate})`
+  }
+
+  function getFooter() {
+    const lines = [
+      compareHtml,
+      html`🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`,
+    ].filter((p): p is NonNullable<typeof p> => p !== null)
+
+    return joinTextWithEntities(lines, '\n')
+  }
+
+  function buildPostCaption(content: ReturnType<typeof html>) {
+    const parts = [getHeader()]
+
+    if (isPreRelease) {
+      parts.push(PRERELEASE_WARNING)
+    }
+
+    parts.push(content)
+    parts.push(getFooter())
+
+    return joinTextWithEntities(parts, '\n\n')
+  }
+
   // Caption limit is 1024 chars; trim lines until it fits, full notes go in a reply.
-  const buildCaption = (notesEntity: ReturnType<typeof html>) => html`<b>${appLabel} v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<blockquote>${notesEntity}</blockquote>${lastReleaseHtml}${compareHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
+  const buildCaption = (notesEntity: ReturnType<typeof html>) => buildPostCaption(html`<blockquote>${notesEntity}</blockquote>`)
 
   let caption = buildCaption(ciHtml)
   let needsCiFollowup = false
@@ -229,8 +226,7 @@ try {
   // Optional arm7 (32-bit) build -- rare, only present when apk.yml's build_arm7 toggle was on.
   // Full standalone post like arm64, but the changelog block is replaced by a device notice.
   const arm7File = info.apkFiles[1]?.file
-  const arm7Notice = html`<b>This is a build for older 32-bit (armeabi-v7a) devices. It ships rarely, usually only together with a stable release — it is not a pre-release.</b>`
-  const arm7Caption = html`<b>${appLabel} v${info.verName}</b> (build ${info.buildDate})<br/><br/>${preReleaseBanner}<br/><br/>${arm7Notice}<br/><br/>${lastReleaseHtml}${compareHtml}<br/>🏷️ ${releaseTag} • @entinyGram • @entinyGramChat`
+  const arm7Caption = buildPostCaption(ARM7_NOTICE)
   const arm7Msg = arm7File
     ? await tg.sendMedia(channelCI, {
       type: 'document',
