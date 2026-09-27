@@ -434,18 +434,6 @@ class AyuMessageHistoryActivity(
         private const val MENU_MAIN = 1
         private const val MENU_TOGGLE_DIFF = 2
 
-        fun forDeletedMessages(account: Int, dialogId: Long, fromId: Long): AyuMessageHistoryActivity {
-            val controller = org.telegram.messenger.MessagesController.getInstance(account)
-            val message = TLRPC.TL_message().apply {
-                id = 0
-                dialog_id = dialogId
-                from_id = TLRPC.TL_peerUser().apply { user_id = fromId }
-                peer_id = controller.getPeer(dialogId)
-                message = ""
-            }
-            return AyuMessageHistoryActivity(MessageObject(account, message, false, true), fromId)
-        }
-
         fun forDeletedMessagesInDialog(account: Int, dialogId: Long): AyuMessageHistoryActivity {
             val controller = org.telegram.messenger.MessagesController.getInstance(account)
             val message = TLRPC.TL_message().apply {

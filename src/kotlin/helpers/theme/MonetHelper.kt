@@ -21,6 +21,7 @@ import org.telegram.messenger.BuildVars
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.NotificationCenter
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import java.io.File
 import kotlin.math.max
@@ -450,20 +451,31 @@ object MonetHelper {
         return ColorUtils.blendARGB(color, neutralTextColor, DARK_NAME_SOFTEN_RATIO)
     }
 
-    private fun getMonetSignature(): Long =
-        (getColor("a1_600").toLong() shl 32) or (getColor("n1_500").toLong() and 0xFFFFFFFFL)
+    private fun getMonetSignature(): Long {
+        val keys = ids.keys.filterNotNull() + semantic.keys
+        return keys.distinct().sorted().fold(1125899906842597L) { signature, key ->
+            (signature xor (getColor(key).toLong() and 0xFFFFFFFFL)) * 1099511628211L
+        }
+    }
+
+    private fun clearThemeColorCaches() {
+        peerColorCache.clear()
+        avatarTextColorCache.clear()
+    }
 
     fun refreshMonetThemeIfChanged() {
         val activeTheme: Theme.ThemeInfo? = Theme.getActiveTheme()
         if (activeTheme == null || !activeTheme.inu_isMonet()) {
             lastMonetSignature = null
-            peerColorCache.clear()
+            clearThemeColorCaches()
             return
         }
 
         val signature = getMonetSignature()
 
         if (lastMonetSignature == null) {
+            clearThemeColorCaches()
+            if (!reapplyActiveTheme()) return
             lastMonetSignature = signature
             return
         }
@@ -472,7 +484,7 @@ object MonetHelper {
             return
         }
 
-        peerColorCache.clear()
+        clearThemeColorCaches()
 
         // entiny: skip theme reapply when not resumed because crossfade animator never ends without frames
         if (!reapplyActiveTheme()) return
@@ -482,7 +494,7 @@ object MonetHelper {
 
     private fun reapplyActiveTheme(): Boolean {
         val activeTheme = Theme.getActiveTheme() ?: return false
-        if (!LaunchActivity.isResumed) return false
+        if (!LaunchActivity.isResumed || DialogsActivity.switchingTheme) return false
 
         val isNight: Boolean = Theme.isCurrentThemeNight()
         Theme.applyTheme(activeTheme, isNight)
@@ -541,7 +553,7 @@ object MonetHelper {
     fun setThemeMode(mode: ThemeMode) {
         val current = getThemeMode()
         if (current == mode) return
-        peerColorCache.clear()
+        clearThemeColorCaches()
 
         if (current == ThemeMode.DISABLED) {
             val themeConfig = themeConfigPrefs()
@@ -586,11 +598,19 @@ object MonetHelper {
     private fun restorePrevious() {
         val snapshot = InuConfig.MONET_PREV.value.split("|")
         val dayTheme = Theme.getTheme(snapshot.getOrNull(0).orEmpty()) ?: Theme.getTheme("Blue")
-        Theme.getTheme(snapshot.getOrNull(1).orEmpty())?.let { Theme.setCurrentNightTheme(it) }
+        val nightTheme = Theme.getTheme(snapshot.getOrNull(1).orEmpty())
+        val wasNight = Theme.isCurrentThemeNight()
+        nightTheme?.let { Theme.setCurrentNightTheme(it) }
         Theme.selectedAutoNightType = snapshot.getOrNull(2)?.toIntOrNull() ?: Theme.AUTO_NIGHT_TYPE_NONE
         restoreLastTheme("lastDayTheme", snapshot.getOrNull(3))
         restoreLastTheme("lastDarkTheme", snapshot.getOrNull(4))
-        applyDayTheme(dayTheme)
+        if (wasNight && nightTheme != null) {
+            NotificationCenter.getGlobalInstance().postNotificationName(
+                NotificationCenter.needSetDayNightTheme, nightTheme, true, null, -1
+            )
+        } else {
+            applyDayTheme(dayTheme)
+        }
         Theme.saveAutoNightThemeConfig()
         Theme.checkAutoNightThemeConditions(true)
         InuConfig.MONET_PREV.value = ""

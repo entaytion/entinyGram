@@ -66,13 +66,24 @@ class MainTabsPreviewCell(
         for (item in visibleOrder()) addChip(item, item in enabledItems)
         if (separateSearch) {
             val searchChip = Chip(context).apply {
-                bind(MainTabsMenuConfig.Item.SEARCH.iconRes, MainTabsMenuConfig.Item.SEARCH.labelRes, MainTabsMenuConfig.Item.SEARCH in enabledItems)
+                bind(R.drawable.outline_header_search, MainTabsMenuConfig.Item.SEARCH.labelRes, MainTabsMenuConfig.Item.SEARCH in enabledItems)
                 setStandalone()
                 isClickable = true
                 foreground = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
                 setOnClickListener { onToggle(MainTabsMenuConfig.Item.SEARCH) }
             }
-            group.addView(searchChip, LayoutHelper.createLinear(SEARCH_BUTTON_SIZE_DP, SEARCH_BUTTON_SIZE_DP, 0f, CHIP_GAP_DP, 0, 0, 0))
+            group.addView(
+                searchChip,
+                LayoutHelper.createLinear(
+                    SEARCH_BUTTON_SIZE_DP,
+                    SEARCH_BUTTON_SIZE_DP,
+                    0f,
+                    SEARCH_BUTTON_MARGIN_START_DP,
+                    0,
+                    SEARCH_BUTTON_MARGIN_END_DP,
+                    0,
+                ),
+            )
         }
         requestLayout()
     }
@@ -164,7 +175,9 @@ class MainTabsPreviewCell(
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
         val chipCount = row.childCount
         if (chipCount > 0 && availableWidth > 0) {
-            val separateWidth = if (separateSearch) dp((SEARCH_BUTTON_SIZE_DP + CHIP_GAP_DP).toFloat()) else 0
+            val separateWidth = if (separateSearch) dp(
+                (SEARCH_BUTTON_SIZE_DP + SEARCH_BUTTON_MARGIN_START_DP + SEARCH_BUTTON_MARGIN_END_DP).toFloat(),
+            ) else 0
             val fitWidthDp = (availableWidth - separateWidth) / AndroidUtilities.density / chipCount - CHIP_GAP_DP
             val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
             if (newChipWidthDp != chipWidthDp) {
@@ -226,6 +239,8 @@ class MainTabsPreviewCell(
         private const val CHIP_GAP_DP = 4
         private const val MIN_CHIP_WIDTH_DP = 40
         private const val SEARCH_BUTTON_SIZE_DP = 52
+        private const val SEARCH_BUTTON_MARGIN_START_DP = -10
+        private const val SEARCH_BUTTON_MARGIN_END_DP = 4
         private const val HEIGHT_DP = 78
     }
 }

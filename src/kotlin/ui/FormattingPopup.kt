@@ -141,9 +141,10 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
                 FormattingPopupConfig.Item.MONO -> addStyleItem(
                     item.iconRes,
                     item.labelRes,
-                    TextStyleSpan.FLAG_STYLE_MONO,
-                    onLongClick = { promptCodeBlock() },
+                    TextStyleSpan.FLAG_STYLE_MONO
                 )
+
+                FormattingPopupConfig.Item.CODE_BLOCK -> addAction(item.iconRes, item.labelRes) { promptCodeBlock() }
 
                 FormattingPopupConfig.Item.SPOILER -> addItem(item.iconRes, item.labelRes, { hasSpoiler() }) {
                     if (hasSpoiler()) clearStyleFlag(TextStyleSpan.FLAG_STYLE_SPOILER)
@@ -180,8 +181,8 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
         }
     }
 
-    private fun addStyleItem(iconRes: Int, tooltipRes: Int, flag: Int, onLongClick: (() -> Unit)? = null) {
-        addItem(iconRes, tooltipRes, { hasStyleFlag(flag) }, onLongClick) {
+    private fun addStyleItem(iconRes: Int, tooltipRes: Int, flag: Int) {
+        addItem(iconRes, tooltipRes, { hasStyleFlag(flag) }) {
             if (hasStyleFlag(flag)) clearStyleFlag(flag)
             else applyStyleFlag(flag)
         }
@@ -191,7 +192,6 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
         iconRes: Int,
         tooltipRes: Int,
         isActive: () -> Boolean,
-        onLongClick: (() -> Unit)? = null,
         onClick: () -> Unit,
     ) {
         val tint = Theme.getColor(Theme.key_actionBarDefaultSubmenuItem)
@@ -212,12 +212,6 @@ class FormattingPopup private constructor(private val edit: EditTextCaption) {
             onClick()
             for (it in items) it.refresh(force = true)
             sync()
-        }
-        if (onLongClick != null) {
-            view.setOnLongClickListener {
-                onLongClick()
-                true
-            }
         }
         items.add(item)
         groups.last().add(item)

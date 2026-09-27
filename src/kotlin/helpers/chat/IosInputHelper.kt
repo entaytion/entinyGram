@@ -3,9 +3,11 @@ package desu.inugram.helpers.chat
 import android.graphics.Canvas
 import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Components.ChatActivityEnterView
 import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawable
 
 object IosInputHelper {
@@ -85,4 +87,20 @@ object IosInputHelper {
 
     @JvmStatic
     fun getTopViewGapDp(): Int = if (!isAppearance()) 0 else (if (isCompact()) 4 else 8)
+
+    @JvmStatic
+    fun updateSlowModeContainer(enterView: ChatActivityEnterView, visible: Boolean, isPremiumMode: Boolean) {
+        val container = enterView.messageEditTextContainer ?: return
+        val lp = container.layoutParams as? FrameLayout.LayoutParams ?: return
+        val targetMarginPx = if (visible && (isAppearance() || isButtonPlacement())) {
+            AndroidUtilities.dp(14f) + enterView.slowModePillWidth
+        } else {
+            AndroidUtilities.dp(ChatActivityEnterView.DEFAULT_HEIGHT.toFloat())
+        }
+        if (lp.rightMargin != targetMarginPx) {
+            lp.rightMargin = targetMarginPx
+            container.layoutParams = lp
+            enterView.textFieldContainer?.invalidate()
+        }
+    }
 }

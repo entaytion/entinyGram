@@ -271,7 +271,7 @@ object FolderHelper {
     @JvmStatic
     fun getTabBarHeightDp(): Int = TAB_BAR_HEIGHT_DP
 
-    const val TAB_BAR_BOTTOM_MARGIN_DP = 14
+    const val TAB_BAR_BOTTOM_MARGIN_DP = 8
 
     @JvmStatic
     fun atBottom(): Boolean = InuConfig.FOLDERS_AT_BOTTOM.value

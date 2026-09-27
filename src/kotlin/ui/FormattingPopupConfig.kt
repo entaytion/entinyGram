@@ -18,6 +18,7 @@ class FormattingPopupConfig(key: String) : InuConfig.Item<List<FormattingPopupCo
         UNDERLINE("underline", R.string.Underline, R.drawable.inu_tabler_underline),
         STRIKE("strike", R.string.Strike, R.drawable.inu_tabler_strikethrough),
         MONO("mono", R.string.Mono, R.drawable.inu_tabler_code),
+        CODE_BLOCK("code_block", R.string.InuCodeBlock, R.drawable.inu_tabler_terminal_2),
         SPOILER("spoiler", R.string.Spoiler, R.drawable.inu_tabler_background),
         QUOTE("quote", R.string.Quote, R.drawable.inu_tabler_quote),
         LINK("link", R.string.CreateLink, R.drawable.inu_tabler_link),

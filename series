@@ -434,6 +434,11 @@ entiny/disable-audiotrack-playback-params.patch
 entiny/centered-header-fixes.patch
 entiny/hide-recent-chats-shortcut.patch
 entiny/theme-switch-recovery.patch
+entiny/badge-emoji-size.patch
+entiny/confirm-send-preview-fix.patch
+entiny/ios-input-slowmode-fix.patch
+entiny/animated-preview-speed-fix.patch
+entiny/presence-dots-ttl-overlap.patch
 entiny/translate-in-send-preview.patch
 entiny/translate-preview-fixes.patch
 entiny/main-tabs-separate-search.patch

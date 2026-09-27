@@ -169,7 +169,7 @@ class ChatHeaderPreviewCell(context: Context) : FrameLayout(context) {
             avatarCx = if (avatarSlot) dotsCxDefault else contentLeft + avatarRadius
         }
 
-        return Snapshot(avatarCx, dotsAlpha, if (desu.inugram.InuConfig.CHAT_HEADER_NO_PILL.value) 0f else 1f, pillLeft, pillRight, textCenterX)
+        return Snapshot(avatarCx, dotsAlpha, 1f, pillLeft, pillRight, textCenterX)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

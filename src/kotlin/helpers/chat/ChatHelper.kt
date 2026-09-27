@@ -1,7 +1,9 @@
 package desu.inugram.helpers.chat
 
 import android.Manifest
+import android.content.ClipData
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -23,6 +25,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
@@ -40,6 +43,7 @@ import desu.inugram.helpers.security.SelfDestructHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
@@ -92,6 +96,7 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import java.io.File
 import java.util.Calendar
+import java.util.UUID
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
@@ -129,6 +134,7 @@ object ChatHelper {
     const val OPTION_BURN_ONE_TIME = 526
     const val OPTION_SAVE_ONE_TIME = 527
     const val OPTION_FORWARD_PRO = 528
+    const val OPTION_SHARE_ONE_TIME = 529
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -510,6 +516,12 @@ object ChatHelper {
             icons.add(if (toDownloads) R.drawable.msg_download else R.drawable.msg_gallery)
         }
 
+        if (selectedObject.isSecretMedia() && SelfDestructHelper.shouldPreserveMedia(dialogId)) {
+            items.add(LocaleController.getString(R.string.ShareFile))
+            options.add(OPTION_SHARE_ONE_TIME)
+            icons.add(R.drawable.msg_share)
+        }
+
         // entiny: burn follows stock read+expire flow server-side; no delete confirm needed, isOut() guard
         if (selectedObject.isSecretMedia() &&
             !selectedObject.isOut() &&
@@ -861,6 +873,10 @@ object ChatHelper {
                 saveOneTimeMedia(activity, selectedObject)
             }
 
+            OPTION_SHARE_ONE_TIME -> {
+                shareOneTimeMedia(activity, selectedObject)
+            }
+
             OPTION_BURN_ONE_TIME -> {
                 // entiny: populate messageOwner.ttl from media.ttl_seconds so stock secret viewer does not return null
                 val media = selectedObject.messageOwner.media
@@ -947,6 +963,7 @@ object ChatHelper {
     // entiny: size reads to remaining bytes because EncryptedFileInputStream advances keystream by requested length
     private fun decryptOneTimeFile(source: File, keyFile: File, target: File): Boolean {
         return try {
+            var complete = true
             EncryptedFileInputStream(source, keyFile).use { input ->
                 target.outputStream().use { output ->
                     val buffer = ByteArray(64 * 1024)
@@ -954,17 +971,82 @@ object ChatHelper {
                     while (remaining > 0) {
                         val want = minOf(buffer.size.toLong(), remaining).toInt()
                         val read = input.read(buffer, 0, want)
-                        if (read <= 0) break
+                        if (read <= 0) {
+                            complete = false
+                            break
+                        }
                         output.write(buffer, 0, read)
                         remaining -= read
                     }
                 }
             }
-            target.length() > 0
+            val valid = complete && target.length() == source.length()
+            if (!valid) target.delete()
+            valid
         } catch (e: Throwable) {
             android.util.Log.e("ChatHelper", "one-time media decrypt failed", e)
+            target.delete()
             false
         }
+    }
+
+    private fun shareOneTimeMedia(activity: ChatActivity, message: MessageObject) {
+        val parent = activity.parentActivity ?: return
+        restrictedForwardQueue.postRunnable {
+            val temporaryFiles = ArrayList<File>()
+            val source = awaitRestrictedMedia(activity.currentAccount, listOf(message), temporaryFiles)[message]
+            val sharedFile = source?.let { stageOneTimeShare(parent.filesDir, it) }
+            temporaryFiles.forEach { it.delete() }
+            AndroidUtilities.runOnUIThread {
+                if (sharedFile == null || !sharedFile.exists()) {
+                    showOneTimeMediaError()
+                    return@runOnUIThread
+                }
+                runCatching {
+                    val mime = message.document?.mime_type
+                        ?: android.webkit.MimeTypeMap.getSingleton()
+                            .getMimeTypeFromExtension(sharedFile.extension.lowercase())
+                        ?: "application/octet-stream"
+                    val uri = FileProvider.getUriForFile(
+                        parent,
+                        ApplicationLoader.getApplicationId() + ".provider",
+                        sharedFile,
+                    )
+                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = mime
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        clipData = ClipData.newUri(parent.contentResolver, sharedFile.name, uri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    parent.startActivity(Intent.createChooser(sendIntent, LocaleController.getString(R.string.ShareFile)))
+                }.onFailure {
+                    android.util.Log.e("ChatHelper", "one-time media share failed", it)
+                    showOneTimeMediaError()
+                }
+            }
+        }
+    }
+
+    private fun showOneTimeMediaError() {
+        android.widget.Toast.makeText(
+            ApplicationLoader.applicationContext,
+            R.string.ErrorOccurred,
+            android.widget.Toast.LENGTH_SHORT,
+        ).show()
+    }
+
+    private fun stageOneTimeShare(filesDir: File, source: File): File? {
+        return runCatching {
+            val dir = File(filesDir, "cache/inu_share_once")
+            if (!dir.exists() && !dir.mkdirs()) return@runCatching null
+            val cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L
+            dir.listFiles()?.filter { it.lastModified() < cutoff }?.forEach { it.delete() }
+            val extension = source.name.removeSuffix(".enc").substringAfterLast('.', "")
+            val target = File(dir, "${UUID.randomUUID()}${if (extension.isEmpty()) "" else ".$extension"}")
+            source.copyTo(target, overwrite = true)
+            Utilities.globalQueue.postRunnable({ target.delete() }, 24 * 60 * 60 * 1000L)
+            target
+        }.getOrNull()
     }
 
     private fun canRepeatMessage(
@@ -1102,6 +1184,7 @@ object ChatHelper {
         hideCaption: Boolean,
         payStars: Long,
         localFile: File?,
+        requireLocalMedia: Boolean = false,
     ): Runnable? {
         if (target.isAnyKindOfSticker) {
             // entiny: stickers in public sets can be referenced by ID even in protected chats without re-upload
@@ -1114,7 +1197,7 @@ object ChatHelper {
         }
 
         val params = buildResendParams(
-            account, target, did, replyTo, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption, localFile,
+            account, target, did, replyTo, threadMsg, notify, scheduleDate, scheduleRepeatPeriod, hideCaption, localFile, requireLocalMedia,
         ) ?: return null
         params.replyQuote = quote
         params.monoForumPeer = mono
@@ -1134,12 +1217,14 @@ object ChatHelper {
         scheduleRepeatPeriod: Int,
         hideCaption: Boolean,
         localFile: File?,
+        requireLocalMedia: Boolean = false,
     ): SendMessagesHelper.SendMessageParams? {
         val msg = target.messageOwner ?: return null
         val media = msg.media
         val hasMedia = media != null &&
             media !is TLRPC.TL_messageMediaEmpty &&
             media !is TLRPC.TL_messageMediaWebPage
+        if (requireLocalMedia && (media?.ttl_seconds ?: 0) != 0 && localFile == null) return null
 
         val caption = if (hideCaption && hasMedia) null else msg.message
         val entities = if (hideCaption && hasMedia) null else msg.entities
@@ -1283,12 +1368,21 @@ object ChatHelper {
         val batch = ArrayList(messages)
         if (batch.isEmpty()) return
         restrictedForwardQueue.postRunnable {
-            val files = awaitRestrictedMedia(account, batch)
+            val temporaryFiles = ArrayList<File>()
+            val files = awaitRestrictedMedia(account, batch, temporaryFiles)
+            val missingViewOnce = batch.any { isCloudViewOnce(it) && needsMediaReupload(it) && files[it] == null }
             val actions = buildRestrictedForwardActions(
                 helper, account, batch, files, did, notify, scheduleDate, scheduleRepeatPeriod,
                 threadMsg, mono, suggest, hideCaption, payStars,
             )
-            if (actions.isEmpty()) return@postRunnable
+            if (missingViewOnce) {
+                AndroidUtilities.runOnUIThread { showOneTimeMediaError() }
+            }
+            if (actions.isEmpty()) {
+                temporaryFiles.forEach { it.delete() }
+                return@postRunnable
+            }
+            watchRestrictedForwardUploads(account, temporaryFiles)
             AndroidUtilities.runOnUIThread { actions.forEach { it.run() } }
         }
     }
@@ -1324,7 +1418,7 @@ object ChatHelper {
                     if (msg.isAnyKindOfSticker || msg.isVoice) null
                     else buildResendParams(
                         account, msg, did, null, threadMsg, notify, scheduleDate,
-                        scheduleRepeatPeriod, hideCaption, files[msg],
+                        scheduleRepeatPeriod, hideCaption, files[msg], isCloudViewOnce(msg),
                     )?.takeIf { it.photo != null || it.document != null }
                 }
             } else {
@@ -1350,6 +1444,7 @@ object ChatHelper {
                     buildResendAction(
                         helper, account, msg, did, null, threadMsg, null, notify, scheduleDate,
                         scheduleRepeatPeriod, mono, suggest, null, hideCaption, payStars, files[msg],
+                        isCloudViewOnce(msg),
                     )?.let { actions.add(it) }
                 }
             }
@@ -1358,7 +1453,11 @@ object ChatHelper {
         return actions
     }
 
-    private fun awaitRestrictedMedia(account: Int, messages: List<MessageObject>): Map<MessageObject, File> {
+    private fun awaitRestrictedMedia(
+        account: Int,
+        messages: List<MessageObject>,
+        temporaryFiles: MutableList<File>,
+    ): Map<MessageObject, File> {
         val loader = FileLoader.getInstance(account)
         val resolved = HashMap<MessageObject, File>()
         val pending = LinkedHashMap<String, MessageObject>()
@@ -1367,7 +1466,7 @@ object ChatHelper {
             if (!needsMediaReupload(msg)) continue
             val existing = localMediaFile(loader, msg)
             if (existing != null) {
-                resolved[msg] = existing
+                forwardableMediaFile(existing, temporaryFiles)?.let { resolved[msg] = it }
                 continue
             }
             val key = downloadKey(msg) ?: continue
@@ -1390,15 +1489,64 @@ object ChatHelper {
 
         for (msg in messages) {
             if (!needsMediaReupload(msg) || resolved.containsKey(msg)) continue
-            localMediaFile(loader, msg)?.let { resolved[msg] = it }
+            localMediaFile(loader, msg)?.let { forwardableMediaFile(it, temporaryFiles) }
+                ?.let { resolved[msg] = it }
         }
         return resolved
+    }
+
+    private fun forwardableMediaFile(source: File, temporaryFiles: MutableList<File>): File? {
+        if (!source.name.endsWith(".enc")) return source
+        val keyFile = File(FileLoader.getInternalCacheDir(), source.name + ".key")
+        if (!keyFile.exists()) return null
+        val cacheDir = File(FileLoader.getInternalCacheDir(), "inu_forward_once")
+        if (!cacheDir.exists() && !cacheDir.mkdirs()) return null
+        val extension = source.name.removeSuffix(".enc").substringAfterLast('.', "")
+        val target = File(cacheDir, "${UUID.randomUUID()}${if (extension.isEmpty()) "" else ".$extension"}")
+        if (!decryptOneTimeFile(source, keyFile, target)) {
+            target.delete()
+            return null
+        }
+        temporaryFiles.add(target)
+        return target
+    }
+
+    private fun watchRestrictedForwardUploads(account: Int, files: List<File>) {
+        if (files.isEmpty()) return
+        val pending = HashSet<String>().apply { files.forEach { add(it.absolutePath) } }
+        val center = NotificationCenter.getInstance(account)
+        lateinit var observer: NotificationCenter.NotificationCenterDelegate
+        fun finish() {
+            center.removeObserver(observer, NotificationCenter.fileUploaded)
+            center.removeObserver(observer, NotificationCenter.fileUploadFailed)
+            files.forEach { it.delete() }
+        }
+        observer = object : NotificationCenter.NotificationCenterDelegate {
+            override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+                val path = args.getOrNull(0) as? String ?: return
+                if (!pending.remove(File(path).absolutePath)) return
+                if (pending.isEmpty()) finish()
+            }
+        }
+        center.addObserver(observer, NotificationCenter.fileUploaded)
+        center.addObserver(observer, NotificationCenter.fileUploadFailed)
+        Utilities.globalQueue.postRunnable({
+            AndroidUtilities.runOnUIThread { finish() }
+        }, 24 * 60 * 60 * 1000L)
     }
 
     private fun needsMediaReupload(message: MessageObject): Boolean {
         if (message.isAnyKindOfSticker) return false
         val media = message.messageOwner?.media ?: return false
         return media.photo is TLRPC.TL_photo || media.document is TLRPC.TL_document
+    }
+
+    private fun isCloudViewOnce(message: MessageObject): Boolean {
+        val media = message.messageOwner?.media ?: return false
+        return media.ttl_seconds != 0 &&
+            SelfDestructHelper.shouldBypassOneTimeGate(message.dialogId) &&
+            !DialogObject.isEncryptedDialog(message.dialogId) &&
+            (media.photo is TLRPC.TL_photo || media.document is TLRPC.TL_document)
     }
 
     private fun localMediaFile(loader: FileLoader, message: MessageObject): File? {
@@ -1421,15 +1569,16 @@ object ChatHelper {
 
     private fun startMediaLoad(loader: FileLoader, message: MessageObject): Boolean {
         val media = message.messageOwner?.media ?: return false
+        val cacheType = if (message.shouldEncryptPhotoOrVideo()) 2 else 0
         val document = media.document as? TLRPC.TL_document
         if (document != null) {
-            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, 0)
+            loader.loadFile(document, message, FileLoader.PRIORITY_NORMAL, cacheType)
             return true
         }
         val photo = media.photo as? TLRPC.TL_photo ?: return false
         val size = fullPhotoSize(media) ?: return false
         val location = ImageLocation.getForPhoto(size, photo) ?: return false
-        loader.loadFile(location, message, null, FileLoader.PRIORITY_NORMAL, 0)
+        loader.loadFile(location, message, null, FileLoader.PRIORITY_NORMAL, cacheType)
         return true
     }
 

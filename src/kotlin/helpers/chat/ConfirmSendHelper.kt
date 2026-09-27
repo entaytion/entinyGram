@@ -22,13 +22,17 @@ object ConfirmSendHelper {
         resourcesProvider: Theme.ResourcesProvider?,
     ): Boolean {
         val viewer = ContentPreviewViewer.getInstance()
-        if (activity == null || delegate == null || viewer.isVisible) return false
+        if (viewer.inu_isSending) return false
+        if (activity == null || delegate == null) return false
+        if (viewer.isVisible && !viewer.inu_confirmMode) return false
         val inlineResult = media as? TLRPC.BotInlineResult
         val document = media as? TLRPC.Document ?: inlineResult?.document
         val isGif = inlineResult != null || document?.let { MessageObject.isGifDocument(it) } == true
         if (document == null && inlineResult == null) return false
         if (!isGif && document?.attributes?.none { it is TLRPC.TL_documentAttributeSticker && it.stickerset != null } != false) return false
         val emoji = document?.attributes?.firstNotNullOfOrNull { (it as? TLRPC.TL_documentAttributeSticker)?.alt }
+        viewer.inu_confirmMode = true
+        if (viewer.isVisible) viewer.inu_resetMenu()
         viewer.setParentActivity(activity)
         viewer.setDelegate(delegate)
         viewer.open(

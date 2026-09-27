@@ -1,0 +1,183 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 21:47:09 +0300
+Subject: [*] fix confirm send GIF preview actions and send flow
+
+---
+ .../ui/Components/ChatActivityEnterView.java  |  2 +-
+ .../org/telegram/ui/ContentPreviewViewer.java | 52 +++++++++++++++++--
+ 2 files changed, 48 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -12878,7 +12878,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                         };
+                         if (!showConfirmAlert(runnable)) {
+                             // entiny: optional confirm via the stock long-press preview menu
+-                            if (!desu.inugram.InuConfig.CONFIRM_SEND_GIF.getValue() || scheduleDate != 0 || emojiView == null || !desu.inugram.helpers.chat.ConfirmSendHelper.openPreview(parentActivity, emojiView.getContentPreviewViewerDelegate(), gif, parent, resourcesProvider)) {
++                            if (!desu.inugram.InuConfig.CONFIRM_SEND_GIF.getValue() || scheduleDate != 0 || entry != null || emojiView == null || !desu.inugram.helpers.chat.ConfirmSendHelper.openPreview(parentActivity, emojiView.getContentPreviewViewerDelegate(), gif, parent, resourcesProvider)) {
+                                 runnable.run();
+                             }
+                         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+@@ -365,6 +365,8 @@ public class ContentPreviewViewer {
+     private ReactionsContainerLayout reactionsLayout;
+     private FrameLayout reactionsLayoutContainer;
+     private boolean closeOnDismiss;
++    public boolean inu_confirmMode;
++    public boolean inu_isSending;
+     private boolean drawEffect;
+     private TLRPC.TL_messages_stickerSet stickerSetForCustomSticker;
+ 
+@@ -474,10 +476,14 @@ public class ContentPreviewViewer {
+     private final Runnable showSheetRunnable = new Runnable() {
+         @Override
+         public void run() {
+-            if (parentActivity == null || isPhotoEditor) {
++            if (parentActivity == null || isPhotoEditor || !isVisible) {
+                 return;
+             }
+-            closeOnDismiss = true;
++            if (containerView == null || !containerView.isAttachedToWindow() || containerView.getWidth() == 0) {
++                AndroidUtilities.runOnUIThread(showSheetRunnable, 16);
++                return;
++            }
++            closeOnDismiss = !inu_confirmMode;
+ 
+ 
+             if (delegate != null) {
+@@ -504,6 +510,7 @@ public class ContentPreviewViewer {
+                     popupWindow.setDismissAnimationDuration(150);
+                     popupWindow.setScaleOut(true);
+                     popupWindow.setOutsideTouchable(true);
++                    if (inu_confirmMode) popupWindow.setTouchModal(false);
+                     popupWindow.setClippingEnabled(true);
+                     popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
+                     popupWindow.setFocusable(true);
+@@ -804,7 +811,9 @@ public class ContentPreviewViewer {
+                         }
+                         if (actions.get(which) == 0 || actions.get(which) == 6) {
+                             if (delegate != null) {
++                                inu_isSending = true;
+                                 delegate.sendSticker(currentDocument, currentQuery, parentObject, actions.get(which) == 0, 0, 0);
++                                inu_isSending = false;
+                             }
+                         } else if (actions.get(which) == 1) {
+                             if (delegate != null) {
+@@ -830,7 +839,11 @@ public class ContentPreviewViewer {
+                         } else if (actions.get(which) == 8) {
+                             delegate.deleteSticker(currentDocument);
+                         }
+-                        dismissPopupWindow();
++                        if (inu_confirmMode) {
++                            closeWithMenu();
++                        } else {
++                            dismissPopupWindow();
++                        }
+                     }
+                 };
+ 
+@@ -870,6 +883,7 @@ public class ContentPreviewViewer {
+                 popupWindow.setDismissAnimationDuration(100);
+                 popupWindow.setScaleOut(true);
+                 popupWindow.setOutsideTouchable(true);
++                if (inu_confirmMode) popupWindow.setTouchModal(false);
+                 popupWindow.setClippingEnabled(true);
+                 popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
+                 popupWindow.setFocusable(true);
+@@ -1003,6 +1017,7 @@ public class ContentPreviewViewer {
+                 popupWindow.setDismissAnimationDuration(150);
+                 popupWindow.setScaleOut(true);
+                 popupWindow.setOutsideTouchable(true);
++                if (inu_confirmMode) popupWindow.setTouchModal(false);
+                 popupWindow.setClippingEnabled(true);
+                 popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
+                 popupWindow.setFocusable(true);
+@@ -1095,9 +1110,13 @@ public class ContentPreviewViewer {
+                     }
+                     int which = (int) v.getTag();
+                     if (actions.get(which) == 0) {
++                        inu_isSending = true;
+                         delegate.sendGif(currentDocument != null ? currentDocument : inlineResult, parentObject, true, 0, 0);
++                        inu_isSending = false;
+                     } else if (actions.get(which) == 4) {
++                        inu_isSending = true;
+                         delegate.sendGif(currentDocument != null ? currentDocument : inlineResult, parentObject, false, 0, 0);
++                        inu_isSending = false;
+                     } else if (actions.get(which) == 1) {
+                         MediaDataController.getInstance(currentAccount).removeRecentGif(currentDocument);
+                         delegate.gifAddedOrDeleted();
+@@ -1114,7 +1133,11 @@ public class ContentPreviewViewer {
+                     } else if (actions.get(which) == 11) {
+                         delegate.addCaptionToGif(currentDocument != null ? currentDocument : inlineResult, parentObject, true, 0, 0);
+                     }
+-                    dismissPopupWindow();
++                    if (inu_confirmMode) {
++                        closeWithMenu();
++                    } else {
++                        dismissPopupWindow();
++                    }
+                 };
+ 
+                 for (int i = 0; i < items.size(); i++) {
+@@ -1141,6 +1164,7 @@ public class ContentPreviewViewer {
+                 popupWindow.setDismissAnimationDuration(150);
+                 popupWindow.setScaleOut(true);
+                 popupWindow.setOutsideTouchable(true);
++                if (inu_confirmMode) popupWindow.setTouchModal(false);
+                 popupWindow.setClippingEnabled(true);
+                 popupWindow.setAnimationStyle(R.style.PopupContextAnimation);
+                 popupWindow.setFocusable(true);
+@@ -1175,6 +1199,9 @@ public class ContentPreviewViewer {
+                     valueAnimator.setDuration(350);
+                     valueAnimator.setInterpolator(CubicBezierInterpolator.DEFAULT);
+                     valueAnimator.start();
++                } else {
++                    currentMoveYProgress = 1.0f;
++                    containerView.invalidate();
+                 }
+             }
+             for (int i = 0; i < previewMenu.getItemsCount(); ++i) {
+@@ -1964,6 +1991,19 @@ public class ContentPreviewViewer {
+         return isVisible;
+     }
+ 
++    // entiny: re-tap in confirm-preview mode swaps to the new item without closing the viewer
++    public void inu_resetMenu() {
++        menuVisible = false;
++        if (currentPreviewCell instanceof StickerEmojiCell) {
++            ((StickerEmojiCell) currentPreviewCell).setScaled(false);
++        } else if (currentPreviewCell instanceof StickerCell) {
++            ((StickerCell) currentPreviewCell).setScaled(false);
++        } else if (currentPreviewCell instanceof ContextLinkCell) {
++            ((ContextLinkCell) currentPreviewCell).setScaled(false);
++        }
++        dismissPopupWindow();
++    }
++
+     public void closeWithMenu() {
+         if (reactionsLayout != null) {
+             CustomEmojiReactionsWindow customEmojiReactionsWindow = reactionsLayout.getReactionsWindow();
+@@ -1990,6 +2030,8 @@ public class ContentPreviewViewer {
+         currentQuery = null;
+         delegate = null;
+         isVisible = false;
++        inu_confirmMode = false;
++        inu_isSending = false;
+         AndroidUtilities.runOnUIThread(() -> resourcesProvider = null, 200);
+         if (unlockPremiumView != null) {
+             unlockPremiumView.animate().alpha(0).translationY(AndroidUtilities.dp(56)).setDuration(150).setInterpolator(CubicBezierInterpolator.DEFAULT).start();
+@@ -2140,7 +2182,7 @@ public class ContentPreviewViewer {
+             canvas.restore();
+         }
+ 
+-        if (currentContentType == CONTENT_TYPE_GIF && !isPhotoEditor && slideUpDrawable != null) {
++        if (currentContentType == CONTENT_TYPE_GIF && !isPhotoEditor && !menuVisible && currentMoveYProgress < 1.0f && slideUpDrawable != null) {
+             int w = slideUpDrawable.getIntrinsicWidth();
+             int h = slideUpDrawable.getIntrinsicHeight();
+             int y = (int) (centerImage.getDrawRegion().top - AndroidUtilities.dp(17 + 6 * (currentMoveY / (float) AndroidUtilities.dp(60))));

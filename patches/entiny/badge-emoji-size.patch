@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 17:03:13 +0300
+Subject: [*] scale entiny badge emoji
+
+---
+ .../org/telegram/ui/Components/AnimatedEmojiDrawable.java    | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedEmojiDrawable.java
+@@ -1276,6 +1276,9 @@ public class AnimatedEmojiDrawable extends Drawable {
+                     if (((AnimatedEmojiDrawable) drawables[0]).imageReceiver != null) {
+                         ((AnimatedEmojiDrawable) drawables[0]).imageReceiver.setRoundRadius(dp(4));
+                     }
++                    if (cacheType == CACHE_TYPE_EMOJI_STATUS && desu.inugram.helpers.badges.BadgeRegistry.isBadgeEmoji(((AnimatedEmojiDrawable) drawables[0]).getDocumentId())) {
++                        canvas.scale(1.18f, 1.18f, bounds.centerX(), bounds.centerY());
++                    }
+                     if (progress < 1) {
+                         float scale = overshootInterpolator.getInterpolation(progress);
+                         canvas.scale(scale, scale, bounds.centerX(), bounds.centerY());
+@@ -1555,4 +1558,4 @@ public class AnimatedEmojiDrawable extends Drawable {
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}

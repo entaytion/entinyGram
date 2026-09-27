@@ -62,6 +62,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **save any story**: direct download of any story to gallery, bypassing restrictions
   - **bypass restricted forwarding**: copy and forward messages/media from protected chats and channels
   - **forward as own message**: download and re-send forwards without the "Forwarded from" header
+  - **keep and share view-once media**: re-send it to Telegram chats or pass it to Android apps
 - 📡 **whole-chat translation without Premium**: real-time chat translation bar ungated for free accounts, with parallel message translation and permanent "Do Not Translate" list
 - 📡 **third-party translation providers**: Google, DeepL, OpenAI-compatible LLM, Yandex, Bing, Azure, or MyMemory with entity preservation and automatic fallbacks
 - 📡 **auto-translate every chat**: chat translation on by default everywhere with per-dialog exception memory - *inspired by [OwlGram](https://github.com/OwlGramDev/OwlGram)*
@@ -77,12 +78,12 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator, live interactive dialog preview, and unified corner radius toggle - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **standalone AMOLED theme**: true-black theme selectable from regular theme list, independent of Monet - *ported from NagramX Turbo*
-- 📡 **stuck theme-switch recovery**: if a theme crossfade freezes mid-animation (common on custom ROMs), the next app resume clears the stale overlay so later theme changes stop being silently dropped
+- 📡 **theme switch recovery**: clear interrupted transitions and refresh Monet palettes after system color changes
 - 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (Stock Telegram, Solar, VKUI, Phosphor Icons)
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
-  - wide, full-width bottom navigation bar (60dp evenly-spaced tabs)
+  - compact bottom navigation bar with evenly-spaced tabs
   - tapping active Chats tab returns to the first folder before scrolling to top
-  - compact chat header pill hugging title and avatar, with optional avatar placement in the menu slot or left aligned; option to hide the pill background entirely so the title floats over the wallpaper
+  - compact chat header pill hugging title and avatar, with optional avatar placement in the menu slot or left aligned
   - iOS-style input bar: attachment on the left, emoji inside-right, glass capsule field with round button bubbles, and optional compact mode
 - 📡 **action button style**: Accent, Neutral, or White for send, voice, and apply buttons across the app (in glass form on iOS bar, solid circle elsewhere) - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - 📡 **header centering**: center screen titles across the app and customize chat headers (compact pill, avatar position, live settings preview)
@@ -97,8 +98,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **no accounts list in settings**: hide the redundant accounts block from the main settings screen
 - 📡 **customizable My Profile info rows**: reorder and toggle phone, bio, username, ID, and registration date rows on your profile
 - 📡 **wide channel posts**: channel posts stretch to full available width with proportional album layout, with an adjustable side-padding slider
-- 📡 **feed**: posts from all subscribed channels merged into one chronological timeline with an unread divider — channel-style Liquid Glass pill header with channel count subtitle, unread posts badge on bottom tab, reactions, per-folder feeds, channel list management, newest-on-top option, mark as read while scrolling (synced to the server), scroll position memory, and a choice of new-posts indicator: a "%d new" pill or a scroll-to-bottom button with an unread badge (same control as in regular chats) (*inspired by [exteraless](https://github.com/exteraless/exteraless)*)
-- 📡 **color-coded online dot**: blue when online, yellow/red instead of just disappearing once a contact goes offline (within 20 min / within an hour) - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
+- 📡 **feed**: posts from all subscribed channels merged into one chronological timeline with an unread divider — channel-style Liquid Glass pill header with channel count subtitle, unread posts badge on bottom tab, reactions, per-folder feeds, channel list management, newest-on-top option, feed-local read tracking, scroll position memory, batched background timeline updates, and a choice of new-posts indicator: a "%d new" pill or a scroll-to-bottom button with an unread badge (same control as in regular chats) (*inspired by [exteraless](https://github.com/exteraless/exteraless)*)
+- 📡 **color-coded online dot**: blue online, yellow/red after going offline when last-seen is visible; hidden activity stays dot-free - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
 - 📡 **clock format**: choose system, 12-hour, or 24-hour time throughout the app
 - 📡 **branded first-run intro**: branded first slide during onboarding
 - 📡 **pill stack (beta)**: interactive pills in chats search bar (clock, weather, proxy, storage, telemetry, currency/crypto rates) with a searchable rate-pair editor over every currency the rate source offers; inactive with non-island global search - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
@@ -311,7 +312,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 customizable max input lines (and bumped default)
 - 🐶 voice recorder moved into attachments drawer
 - 🐶 camera placement in the attach panel: instant (stock), static, floating button or bottom tab. the last two free up the grid cell
-- 🐶 custom formatting popup ui (better ux for span manipulation)
+- 🐶 custom formatting popup with a separate code block button
 - 🐶 customizable text classifier (native / improved / off) - reduces false positive expansions
 - show custom emoji *after* regular ones in `:smile` emoji suggestion popup
 - "delete for both/all" default checkbox state

@@ -122,6 +122,7 @@ object SavedMessagesHelper {
         val mediaPath: String? = null,
         val entities: ArrayList<TLRPC.MessageEntity>? = null,
         val media: TLRPC.MessageMedia? = null,
+        val originalMessageId: Int = 0,
     )
 
     @JvmStatic
@@ -133,8 +134,16 @@ object SavedMessagesHelper {
     @JvmStatic
     fun shouldSaveForDialog(account: Int, dialogId: Long): Boolean {
         if (!isSaveDeletedEnabled()) return false
-        if (org.telegram.messenger.DialogObject.isEncryptedDialog(dialogId)) return false
         val controller = MessagesController.getInstance(account) ?: return true
+        if (org.telegram.messenger.DialogObject.isEncryptedDialog(dialogId)) {
+            val encrypted = controller.getEncryptedChat(org.telegram.messenger.DialogObject.getEncryptedChatId(dialogId))
+                ?: return InuConfig.SAVE_DELETED_PRIVATE.value
+            return if (controller.getUser(encrypted.user_id)?.bot == true) {
+                InuConfig.SAVE_DELETED_BOTS.value
+            } else {
+                InuConfig.SAVE_DELETED_PRIVATE.value
+            }
+        }
         if (org.telegram.messenger.DialogObject.isUserDialog(dialogId)) {
             val user = controller.getUser(dialogId)
             if (user != null && user.bot) {

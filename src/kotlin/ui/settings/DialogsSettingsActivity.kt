@@ -531,6 +531,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 .setPositiveButton(LocaleController.getString(R.string.OK)) { _, _ ->
                     InuConfig.DIALOGS_TITLE_TEXT_CUSTOM_TEXT.value = input.text.toString().trim()
                     InuConfig.DIALOGS_TITLE_TEXT.value = InuConfig.DialogsTitleTextItem.CUSTOM
+                    listView?.adapter?.update(true)
                     softRebuild()
                 }
                 .setNegativeButton(LocaleController.getString(R.string.Cancel), null)

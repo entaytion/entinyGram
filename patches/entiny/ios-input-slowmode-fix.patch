@@ -1,0 +1,137 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 21:47:44 +0300
+Subject: [*] fix slowmode pill and iOS input bar layout
+
+---
+ .../ui/Components/ChatActivityEnterView.java  | 53 +++++++++++++++----
+ 1 file changed, 42 insertions(+), 11 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -567,31 +567,58 @@ public class ChatActivityEnterView extends FrameLayout implements
+             invalidate();
+         }
+ 
++        public int getPillWidth() {
++            if (isPremiumMode) {
++                return dp(65);
++            }
++            int textWidth = textView != null ? textView.getTextWidth() : 0;
++            if (textWidth <= 0) {
++                return dp(50);
++            }
++            return Math.round(textWidth * 0.8f + dp(22));
++        }
++
+         public CharSequence getText() {
+             return textView.getText();
+         }
+ 
+         @Override
+         protected void onDraw(Canvas canvas) {
+-            if (isPremiumMode) {
++            boolean drawPill = isPremiumMode || desu.inugram.helpers.chat.IosInputHelper.isAppearance() || desu.inugram.helpers.chat.IosInputHelper.isButtonPlacement();
++            if (drawPill) {
+                 canvas.save();
+                 int heightRect = dp(26);
+                 canvas.translate(dp(5), ((getMeasuredHeight() - heightRect) / 2f));
+-                bgRect.set(-dp(5), 0f, (float) getMeasuredWidth() - getPaddingEnd(), (float) heightRect);
++                float contentRight = (float) getMeasuredWidth() - getPaddingEnd();
++                float pillWidth = getPillWidth();
++                bgRect.set(contentRight - pillWidth, 0f, contentRight, (float) heightRect);
++                gradientPaint.setShader(new LinearGradient(bgRect.left, 0, bgRect.right, 0, new int[]{0xff7593ff, 0xffa472ff}, new float[]{0f, 1f}, Shader.TileMode.CLAMP));
+                 canvas.drawRoundRect(bgRect, heightRect / 2f, heightRect / 2f, gradientPaint);
+-                canvas.translate(getMeasuredWidth() - getPaddingEnd() - dp(6) - closeDrawable.getIntrinsicWidth(), dp(5));
+-                closeDrawable.draw(canvas);
++                if (isPremiumMode) {
++                    canvas.translate(contentRight - dp(6) - closeDrawable.getIntrinsicWidth(), dp(5));
++                    closeDrawable.draw(canvas);
++                }
+                 canvas.restore();
+             }
+         }
+ 
+         @Override
+         protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+-            if (child instanceof SimpleTextView && isPremiumMode) {
++            boolean drawPill = isPremiumMode || desu.inugram.helpers.chat.IosInputHelper.isAppearance() || desu.inugram.helpers.chat.IosInputHelper.isButtonPlacement();
++            if (child instanceof SimpleTextView && drawPill) {
+                 SimpleTextView simpleTextView = (SimpleTextView) child;
+                 canvas.save();
+                 canvas.scale(0.8f, 0.8f);
+-                canvas.translate(-dp(12), dp(6));
++                if (isPremiumMode) {
++                    canvas.translate(-dp(12), dp(6));
++                } else {
++                    float contentRight = getMeasuredWidth() - getPaddingEnd();
++                    float pillWidth = getPillWidth();
++                    float pillCenter = dp(5) + (contentRight * 2f - pillWidth) / 2f;
++                    float textCenter = contentRight - simpleTextView.getTextWidth() / 2f;
++                    float dx = (pillCenter / 0.8f) - textCenter;
++                    canvas.translate(dx, dp(6));
++                }
+                 int oldColor = simpleTextView.getTextPaint().getColor();
+                 simpleTextView.getTextPaint().setColor(Color.WHITE);
+                 boolean result = super.drawChild(canvas, child, drawingTime);
+@@ -5094,6 +5121,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         emojiRightDp = isIosButtonPlacement() ? iosGapDp : 0;
+         aiButtonGravity = isIosButtonPlacement() ? (Gravity.TOP | Gravity.RIGHT) : (Gravity.TOP | Gravity.LEFT);
+         aiButtonRightMarginDp = isIosButtonPlacement() ? (DEFAULT_HEIGHT + iosGapDp) : 0;
++        desu.inugram.helpers.chat.IosInputHelper.updateSlowModeContainer(this, slowModeButton != null && slowModeButton.getVisibility() == VISIBLE, slowModeButton != null && slowModeButton.isPremiumMode);
+     }
+ 
+     private void updateFieldLeftIos() {
+@@ -6705,6 +6733,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+         return slowModeTimer > 0 ? slowModeButton.getText() : null;
+     }
+ 
++    public int getSlowModePillWidth() {
++        return slowModeButton != null ? slowModeButton.getPillWidth() : dp(65);
++    }
++
+     private void updateSlowModeText() {
+         int serverTime = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
+         AndroidUtilities.cancelRunOnUIThread(updateSlowModeRunnable);
+@@ -6735,6 +6767,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             if (delegate != null) {
+                 delegate.onUpdateSlowModeButton(slowModeButton, false, slowModeButton.getText());
+             }
++            desu.inugram.helpers.chat.IosInputHelper.updateSlowModeContainer(this, true, slowModeButton.isPremiumMode);
+             AndroidUtilities.runOnUIThread(updateSlowModeRunnable = this::updateSlowModeText, 100);
+         } else {
+             slowModeTimer = 0;
+@@ -7162,6 +7195,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+         }
+         if (slowModeButton != null) {
+             slowModeButton.setPremiumMode(ChatObject.isPossibleRemoveChatRestrictionsByBoosts(chatInfo));
++            desu.inugram.helpers.chat.IosInputHelper.updateSlowModeContainer(this, slowModeButton.getVisibility() == VISIBLE, slowModeButton.isPremiumMode);
+         }
+         if (ChatObject.isIgnoredChatRestrictionsForBoosters(chatInfo)) {
+             return;
+@@ -9228,10 +9262,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+ 
+     private void setSlowModeButtonVisible(boolean visible) {
+         slowModeButton.setVisibility(visible ? VISIBLE : GONE);
+-        int padding = visible ? dp(slowModeButton.isPremiumMode ? 26 : 16) : 0;
++        int padding = (!isIosButtonPlacement() && !isIosInputAppearance() && visible) ? dp(slowModeButton.isPremiumMode ? 26 : 16) : 0;
+         if (messageEditText != null && messageEditText.getPaddingRight() != padding) {
+             messageEditText.setPadding(0, dp(inu_FIELD_PADDING_TOP), padding, dp(inu_FIELD_PADDING_BOTTOM));
+         }
++        desu.inugram.helpers.chat.IosInputHelper.updateSlowModeContainer(this, visible, slowModeButton != null && slowModeButton.isPremiumMode);
+         if (isIosButtonPlacement() && messageEditText != null) {
+             updateFieldRight(lastAttachVisible);
+         }
+@@ -9248,10 +9283,6 @@ public class ChatActivityEnterView extends FrameLayout implements
+         int oldRightMargin = layoutParams.rightMargin;
+         if (isIosButtonPlacement()) {
+             int reserve = (editingMessageObject == null && scheduledButton != null && scheduledButton.getVisibility() == VISIBLE) ? DEFAULT_HEIGHT : 0;
+-            // entiny: 74dp slow-mode pill overhangs the DEFAULT_HEIGHT send zone into the capsule
+-            if (slowModeButton != null && slowModeButton.getVisibility() == VISIBLE) {
+-                reserve += 74 - DEFAULT_HEIGHT;
+-            }
+             int fieldRightMarginDp = fieldRightDp;
+             boolean hasInsideRightIcon = emojiButton != null && emojiButton.getVisibility() == VISIBLE && emojiButton.getAlpha() > 0;
+             if (isIosInputAppearance() && !hasInsideRightIcon) {

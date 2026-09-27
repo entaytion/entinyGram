@@ -192,15 +192,18 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             UItem.asCheck(
-                TOGGLE_DISABLE_GLASS_GLARE,
-                LocaleController.getString(R.string.InuDisableGlassGlare),
-            ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
-        )
-        items.add(
-            UItem.asCheck(
                 TOGGLE_DISABLE_PROFILE_AVATAR_BLUR,
                 LocaleController.getString(R.string.InuDisableProfileAvatarBlur),
             ).setChecked(InuConfig.DISABLE_PROFILE_AVATAR_BLUR.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLiquidGlass)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_DISABLE_GLASS_GLARE,
+                LocaleController.getString(R.string.InuDisableGlassGlare),
+            ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
         )
         if (liquidGlassAngleSlider == null) {
             liquidGlassAngleSlider = SliderCell(
@@ -230,7 +233,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             liquidGlassIntensitySlider?.updateColors()
         }
         items.add(UItem.asCustom(liquidGlassIntensitySlider))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
+        items.add(UItem.asShadow(null))
 
         if (animationSpeedSlider == null) {
             animationSpeedSlider = SliderCell(

@@ -67,6 +67,9 @@ object BadgeRegistry {
     fun hasBadge(rawId: Long): Boolean = badgeFor(rawId) != null
 
     @JvmStatic
+    fun isBadgeEmoji(documentId: Long): Boolean = ownedEmojiIds.contains(documentId)
+
+    @JvmStatic
     fun localizedTitle(badge: Badge): String = pickLocalized(badge.titles)
 
     @JvmStatic

@@ -618,12 +618,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             else -> LocaleController.getString(R.string.InuAttachCameraModeStatic)
         }
 
-        private fun roundCameraLabel(value: Int): String = when (value) {
-            2 -> LocaleController.getString(R.string.InuRoundCameraRear)
-            3 -> LocaleController.getString(R.string.InuRoundCameraAsk)
-            else -> LocaleController.getString(R.string.InuRoundCameraFront)
-        }
-
         @JvmField
         val PAGE = SearchRegistry.Page(
             slug = "chats",

@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 21:50:04 +0300
+Subject: [*] slow animated previews in chats
+
+---
+ TMessagesProj/jni/gifvideo.cpp                                | 4 +++-
+ .../java/org/telegram/ui/Components/AnimatedFileDrawable.java | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/jni/gifvideo.cpp b/TMessagesProj/jni/gifvideo.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/gifvideo.cpp
++++ b/TMessagesProj/jni/gifvideo.cpp
+@@ -636,7 +636,9 @@ extern "C" JNIEXPORT jlong JNICALL Java_org_telegram_ui_Components_AnimatedFileN
+                  */
+             }
+         }
+-        dataArr[5] = (int32_t) ceil(fps);
++        // entiny: ceil(fps) makes choreographer ticks land just before the frame-time gate each
++        // time (23.976 -> 24), so every swap waits an extra tick and playback runs at half speed
++        dataArr[5] = fps >= 1.0 ? (int32_t) fps : (int32_t) ceil(fps);
+         //(int32_t) (1000 * info->video_stream->duration * av_q2d(info->video_stream->time_base));
+         env->ReleaseIntArrayElements(data, dataArr, 0);
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+@@ -1316,7 +1316,9 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+ 
+     @UiThread
+     private void updateCurrentFrameInternal(long now, boolean updateInBackground) {
+-        final boolean canSwapBuffers = swapBuffersAllowedByChoreographer && Math.abs(now - lastFrameTime) >= invalidateAfter
++        // entiny: half-vsync tolerance; exact >= gate loses against vsync grid rounding (49.998 < 50)
++        // and pushes every swap one tick later, halving playback speed in chats
++        final boolean canSwapBuffers = swapBuffersAllowedByChoreographer && Math.abs(now - lastFrameTime) >= invalidateAfter - 8
+             || !isRunning && decodeSingleFrame;
+ 
+         if (isRunning) {

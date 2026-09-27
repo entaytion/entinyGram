@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
 import desu.inugram.helpers.menu.DialogsMenuConfig
-import desu.inugram.helpers.menu.DialogsMenuHelper
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.update.UpdateHelper
@@ -683,83 +682,53 @@ object DrawerHelper {
     @JvmStatic
     fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions) {
         val bottomTabsHidden = MainTabsHelper.isHidden
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.SCROLL_TOP)) {
-            io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
-                instance.scrollToTop(true, true)
-            }
-        }
-
-        if (bottomTabsHidden && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.MY_PROFILE)) {
-            io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
-                val args = Bundle()
-                args.putLong("user_id", UserConfig.getInstance(instance.currentAccount).getClientUserId())
-                args.putBoolean("my_profile", true)
-                instance.presentFragment(ProfileActivity(args))
-            }
-        }
-
-        if ((bottomTabsHidden || !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CONTACTS.index)) &&
-            DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.CONTACTS)
-        ) {
-            io.add(R.drawable.msg_contacts, getString(R.string.Contacts)) {
-                val args = Bundle()
-                args.putBoolean("needPhonebook", true)
-                instance.presentFragment(ContactsActivity(args))
-            }
-        }
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.ARCHIVE)) {
-            io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
-                val args = Bundle()
-                args.putInt("folderId", 1)
-                instance.presentFragment(DialogsActivity(args))
-            }
-        }
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.RECENT_CHATS)) {
-            io.add(R.drawable.msg_recent_solar, getString(R.string.InuRecentChats)) {
-                RecentChatsHelper.show(instance, instance.getActionBar())
-            }
-        }
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.CLEAR_CACHE)) {
-            io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
-                showClearCacheOptions(instance)
-            }
-        }
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.FEED)) {
-            io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
-                instance.presentFragment(desu.inugram.ui.feed.FeedActivity())
-            }
-        }
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.GHOST_MODE)) {
-            val isGhostOn = GhostHelper.isGhostActive()
-            io.add(if (isGhostOn) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
-                val isGhost = GhostHelper.toggleGhostMode()
-                val str = getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
-                instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
-                BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, str).show()
-            }
-        }
-
-        if (!ParanoiaHelper.isParanoia() && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.PARANOIA)) {
-            io.add(R.drawable.inu_tabler_spy, getString(R.string.InuParanoiaMode)) {
-                instance.presentFragment(ParanoiaActivity())
-            }
-        }
-
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.RESTART_APP)) {
-            io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
-                confirmRestartApp(instance)
-            }
-        }
-
-        if (bottomTabsHidden && DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.SETTINGS)) {
-            io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
-                instance.presentFragment(SettingsActivity())
+        for (entry in InuConfig.DIALOGS_MENU_ITEMS.value) {
+            if (!entry.enabled) continue
+            when (entry.item) {
+                DialogsMenuConfig.Item.SCROLL_TOP -> io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
+                    instance.scrollToTop(true, true)
+                }
+                DialogsMenuConfig.Item.MY_PROFILE -> if (bottomTabsHidden) io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
+                    instance.presentFragment(ProfileActivity(Bundle().apply {
+                        putLong("user_id", UserConfig.getInstance(instance.currentAccount).getClientUserId())
+                        putBoolean("my_profile", true)
+                    }))
+                }
+                DialogsMenuConfig.Item.CONTACTS -> if (bottomTabsHidden || !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CONTACTS.index)) {
+                    io.add(R.drawable.msg_contacts, getString(R.string.Contacts)) {
+                        instance.presentFragment(ContactsActivity(Bundle().apply { putBoolean("needPhonebook", true) }))
+                    }
+                }
+                DialogsMenuConfig.Item.ARCHIVE -> io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
+                    instance.presentFragment(DialogsActivity(Bundle().apply { putInt("folderId", 1) }))
+                }
+                DialogsMenuConfig.Item.RECENT_CHATS -> io.add(R.drawable.msg_recent_solar, getString(R.string.InuRecentChats)) {
+                    RecentChatsHelper.show(instance, instance.getActionBar())
+                }
+                DialogsMenuConfig.Item.CLEAR_CACHE -> io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
+                    showClearCacheOptions(instance)
+                }
+                DialogsMenuConfig.Item.FEED -> io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
+                    instance.presentFragment(desu.inugram.ui.feed.FeedActivity())
+                }
+                DialogsMenuConfig.Item.GHOST_MODE -> {
+                    val isGhostOn = GhostHelper.isGhostActive()
+                    io.add(if (isGhostOn) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
+                        val isGhost = GhostHelper.toggleGhostMode()
+                        instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
+                        BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)).show()
+                    }
+                }
+                DialogsMenuConfig.Item.PARANOIA -> if (!ParanoiaHelper.isParanoia()) io.add(R.drawable.inu_tabler_spy, getString(R.string.InuParanoiaMode)) {
+                    instance.presentFragment(ParanoiaActivity())
+                }
+                DialogsMenuConfig.Item.RESTART_APP -> io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
+                    confirmRestartApp(instance)
+                }
+                DialogsMenuConfig.Item.SETTINGS -> if (bottomTabsHidden) io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
+                    instance.presentFragment(SettingsActivity())
+                }
+                else -> Unit
             }
         }
     }
