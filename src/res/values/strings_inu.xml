@@ -1500,6 +1500,8 @@
     <string name="InuTypingSpoofPickChat">Pick a chat</string>
     <string name="InuTypingSpoofQuickListInfo">Opens the same typing-spoof picker available from a chat\'s header menu, without needing to open the chat first.</string>
     <string name="InuDeletedMessageSearch">Search archive</string>
+    <string name="InuDeletedArchive">Deleted messages</string>
+    <string name="InuDeletedArchiveEmpty">No saved deleted messages yet.</string>
     <string name="InuDeletedMessageSearchHint">Search saved deleted and edited messages</string>
     <string name="InuDeletedMessageSearchEmpty">No matches found.</string>
     <string name="InuDeletedMessagesTransparent">Semi-transparent deleted messages</string>

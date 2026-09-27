@@ -893,6 +893,8 @@
     <string name="InuDeletedMessageSearch">Arşivde ara</string>
     <string name="InuDeletedMessageSearchHint">Kaydedilen silinen ve düzenlenen mesajlarda ara</string>
     <string name="InuDeletedMessageSearchEmpty">Eşleşme bulunamadı.</string>
+    <string name="InuDeletedArchive">Silinen mesajlar</string>
+    <string name="InuDeletedArchiveEmpty">Henüz kaydedilmiş silinmiş mesaj yok.</string>
     <string name="InuClearDeletedCacheDone">Silinen mesaj önbelleği temizlendi</string>
     <string name="InuClearDeletedCacheEmpty">Silinen mesaj önbelleği boş</string>
     <string name="InuDataBackup">Yedekleme ve Senkronizasyon</string>

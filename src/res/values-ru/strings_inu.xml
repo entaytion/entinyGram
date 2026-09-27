@@ -1041,6 +1041,8 @@
     <string name="InuDeletedMessageSearch">Поиск по архиву</string>
     <string name="InuDeletedMessageSearchHint">Поиск по сохранённым удалённым и изменённым сообщениям</string>
     <string name="InuDeletedMessageSearchEmpty">Совпадений не найдено.</string>
+    <string name="InuDeletedArchive">Архив удалённых</string>
+    <string name="InuDeletedArchiveEmpty">Пока нет сохранённых удалённых сообщений.</string>
     <string name="InuClearDeletedCacheDone">Кэш удаленных сообщений очищен</string>
     <string name="InuClearDeletedCacheEmpty">Кэш удаленных сообщений пуст</string>
     <string name="InuSuppressScreenshotNotification">Скрывать уведомления о скриншотах</string>

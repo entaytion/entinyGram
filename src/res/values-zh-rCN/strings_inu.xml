@@ -895,6 +895,8 @@
     <string name="InuDeletedMessageSearch">搜索存档</string>
     <string name="InuDeletedMessageSearchHint">搜索已保存的已删除和已编辑消息</string>
     <string name="InuDeletedMessageSearchEmpty">未找到匹配项。</string>
+    <string name="InuDeletedArchive">已删除存档</string>
+    <string name="InuDeletedArchiveEmpty">尚无已保存的删除消息。</string>
     <string name="InuClearDeletedCacheDone">已删除消息缓存已清除</string>
     <string name="InuClearDeletedCacheEmpty">已删除消息缓存为空</string>
     <string name="InuDataBackup">备份与同步</string>

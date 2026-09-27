@@ -389,7 +389,90 @@ object InuDatabaseHelper {
         return map
     }
 
-    data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean)
+    data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean, val mediaPath: String? = null)
+
+    data class DeletedAuthor(val fromId: Long, val count: Int, val lastDate: Int)
+    data class DeletedMessage(val msgId: Int, val text: String, val date: Int, val mediaPath: String? = null)
+
+    fun deletedMessagesInDialog(db: SQLiteDatabase, dialogId: Long, limit: Int = 300): List<DeletedMessage> {
+        val list = ArrayList<DeletedMessage>()
+        val cursor = db.queryFinalized(
+            "SELECT msg_id, text, date, media_path FROM inu_deleted_messages WHERE dialog_id = ? ORDER BY date DESC LIMIT ?",
+            dialogId, limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(DeletedMessage(cursor.intValue(0), cursor.stringValue(1) ?: "", cursor.intValue(2), cursor.stringValue(3)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun deletedAuthors(db: SQLiteDatabase, limit: Int = 300): List<DeletedAuthor> {
+        val list = ArrayList<DeletedAuthor>()
+        val cursor = db.queryFinalized(
+            "SELECT from_id, COUNT(*), MAX(date) FROM inu_deleted_messages WHERE from_id > 0 GROUP BY from_id ORDER BY MAX(date) DESC LIMIT ?",
+            limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(DeletedAuthor(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun deletedAuthorsInDialog(db: SQLiteDatabase, dialogId: Long, limit: Int = 300): List<DeletedAuthor> {
+        val list = ArrayList<DeletedAuthor>()
+        val cursor = db.queryFinalized(
+            "SELECT from_id, COUNT(*), MAX(date) FROM inu_deleted_messages WHERE dialog_id = ? AND from_id > 0 GROUP BY from_id ORDER BY MAX(date) DESC LIMIT ?",
+            dialogId, limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(DeletedAuthor(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun deletedByAuthor(db: SQLiteDatabase, fromId: Long, limit: Int = 300): List<MessageSearchResult> {
+        val list = ArrayList<MessageSearchResult>()
+        val cursor = db.queryFinalized(
+            "SELECT dialog_id, msg_id, text, date FROM inu_deleted_messages WHERE from_id = ? ORDER BY date DESC LIMIT ?",
+            fromId, limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2) ?: "", cursor.intValue(3), isEdit = false))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun deletedByAuthorInDialog(db: SQLiteDatabase, fromId: Long, dialogId: Long, limit: Int = 300): List<MessageSearchResult> {
+        val list = ArrayList<MessageSearchResult>()
+        val cursor = db.queryFinalized(
+            "SELECT dialog_id, msg_id, text, date, media_path FROM inu_deleted_messages WHERE from_id = ? AND dialog_id = ? ORDER BY date DESC LIMIT ?",
+            fromId, dialogId, limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2) ?: "", cursor.intValue(3), isEdit = false, mediaPath = cursor.stringValue(4)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
 
     fun searchDeletedMessages(db: SQLiteDatabase, query: String, limit: Int = 100): List<MessageSearchResult> {
         val list = ArrayList<MessageSearchResult>()

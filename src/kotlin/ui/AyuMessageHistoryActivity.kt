@@ -18,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.chat.SavedMessagesHelper
 import desu.inugram.helpers.chat.SavedMessagesHelper.EditEntry
+import desu.inugram.helpers.InuDatabaseHelper
 import java.io.File
 import java.util.ArrayList
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MessagesStorage
 import org.telegram.messenger.R
+import org.telegram.messenger.UserObject
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBar
 import org.telegram.ui.ActionBar.BaseFragment
@@ -37,14 +40,23 @@ import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
 
 class AyuMessageHistoryActivity(
-    private val targetMessageObject: MessageObject
+    private val targetMessageObject: MessageObject,
+    private val deletedArchiveAuthor: Long? = null,
+    private val deletedArchiveDialog: Boolean = false,
 ) : BaseFragment() {
+
+    private val isDeletedArchive: Boolean
+        get() = deletedArchiveAuthor != null || deletedArchiveDialog
 
     private val historyEntries = ArrayList<EditEntry>()
     private val messageObjects = ArrayList<MessageObject?>()
     private var listView: RecyclerListView? = null
     private var emptyView: View? = null
     private var loaded = false
+
+    init {
+        setCurrentAccount(targetMessageObject.currentAccount)
+    }
 
     // entiny: checkLayout and generateLayout return early if peer_id is null so synthesized messages need a fallback peer
     private val peer: TLRPC.Peer?
@@ -53,6 +65,28 @@ class AyuMessageHistoryActivity(
 
     private fun loadHistory() {
         val dialogId = targetMessageObject.getDialogId()
+        if (isDeletedArchive) {
+            val storage = MessagesStorage.getInstance(currentAccount) ?: return
+            storage.storageQueue.postRunnable {
+                val db = storage.database ?: return@postRunnable
+                val deleted = deletedArchiveAuthor?.let { InuDatabaseHelper.deletedByAuthorInDialog(db, it, dialogId) }
+                    ?: InuDatabaseHelper.deletedMessagesInDialog(db, dialogId).map {
+                        InuDatabaseHelper.MessageSearchResult(dialogId, it.msgId, it.text, it.date, false, it.mediaPath)
+                    }
+                AndroidUtilities.runOnUIThread {
+                    historyEntries.clear()
+                    deleted.asReversed().forEach { entry ->
+                        historyEntries.add(EditEntry(entry.date.toLong(), entry.text, entry.mediaPath, originalMessageId = entry.msgId))
+                    }
+                    loaded = true
+                    rebuildMessageObjects()
+                    listView?.adapter?.notifyDataSetChanged()
+                    updateEmptyView()
+                    if (historyEntries.isNotEmpty()) listView?.scrollToPosition(historyEntries.size - 1)
+                }
+            }
+            return
+        }
         val msgId = targetMessageObject.id
         SavedMessagesHelper.getEditHistoryAsync(currentAccount, dialogId, msgId) { list ->
             historyEntries.clear()
@@ -102,16 +136,16 @@ class AyuMessageHistoryActivity(
     }
 
     private fun isStoredRevision(position: Int): Boolean =
-        position >= 0 && position < historyEntries.size && position != currentVersionIndex
+        !isDeletedArchive && position >= 0 && position < historyEntries.size && position != currentVersionIndex
 
     private var currentVersionIndex = -1
     private var diffItem: org.telegram.ui.ActionBar.ActionBarMenuSubItem? = null
 
     override fun createView(context: Context): View {
         val dialogId = targetMessageObject.getDialogId()
-        val peerObject = messagesController.getUserOrChat(dialogId)
+        val peerObject = if (deletedArchiveAuthor != null) messagesController.getUser(deletedArchiveAuthor) else messagesController.getUserOrChat(dialogId)
         val name = when (peerObject) {
-            is TLRPC.User -> peerObject.first_name ?: ""
+            is TLRPC.User -> UserObject.getUserName(peerObject)
             is TLRPC.Chat -> peerObject.title ?: ""
             else -> LocaleController.getString(R.string.InuEditHistory)
         }
@@ -119,7 +153,7 @@ class AyuMessageHistoryActivity(
         actionBar.setBackButtonImage(R.drawable.ic_ab_back)
         actionBar.setAllowOverlayTitle(true)
         actionBar.setTitle(name)
-        actionBar.setSubtitle("#${targetMessageObject.id}")
+        actionBar.setSubtitle(if (isDeletedArchive) LocaleController.getString(R.string.InuDeletedArchive) else "#${targetMessageObject.id}")
         actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
             override fun onItemClick(id: Int) {
                 when (id) {
@@ -133,10 +167,12 @@ class AyuMessageHistoryActivity(
                 }
             }
         })
-        diffItem = actionBar.createMenu()
-            .addItem(MENU_MAIN, R.drawable.ic_ab_other)
-            .addSubItem(MENU_TOGGLE_DIFF, R.drawable.msg_customize, LocaleController.getString(R.string.InuEditHistoryDiff), true)
-        diffItem?.setChecked(InuConfig.SHOW_EDIT_HISTORY_DIFF.value)
+        if (!isDeletedArchive) {
+            diffItem = actionBar.createMenu()
+                .addItem(MENU_MAIN, R.drawable.ic_ab_other)
+                .addSubItem(MENU_TOGGLE_DIFF, R.drawable.msg_customize, LocaleController.getString(R.string.InuEditHistoryDiff), true)
+            diffItem?.setChecked(InuConfig.SHOW_EDIT_HISTORY_DIFF.value)
+        }
 
         val frameLayout = object : SizeNotifierFrameLayout(context) {
             override fun isActionBarVisible(): Boolean = false
@@ -170,7 +206,7 @@ class AyuMessageHistoryActivity(
                 super.onDraw(canvas)
             }
         }
-        empty.text = LocaleController.getString(R.string.InuNoEditHistory)
+        empty.text = LocaleController.getString(if (isDeletedArchive) R.string.InuDeletedArchiveEmpty else R.string.InuNoEditHistory)
         empty.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
         empty.typeface = AndroidUtilities.bold()
         empty.setTextColor(Theme.getColor(Theme.key_chat_serviceText))
@@ -262,7 +298,7 @@ class AyuMessageHistoryActivity(
         }
 
         private fun createMessageObjectForEntry(entry: EditEntry, prevEntry: EditEntry?, isLive: Boolean): MessageObject {
-            val diff: CharSequence? = if (InuConfig.SHOW_EDIT_HISTORY_DIFF.value && prevEntry != null) {
+            val diff: CharSequence? = if (!isDeletedArchive && InuConfig.SHOW_EDIT_HISTORY_DIFF.value && prevEntry != null) {
                 computeDiff(prevEntry.text, entry.text)
             } else {
                 null
@@ -270,7 +306,7 @@ class AyuMessageHistoryActivity(
 
             val owner = targetMessageObject.messageOwner
             val msg = TLRPC.TL_message().apply {
-                id = targetMessageObject.id
+                id = if (isDeletedArchive && entry.originalMessageId != 0) entry.originalMessageId else targetMessageObject.id
                 dialog_id = targetMessageObject.getDialogId()
                 date = entry.timestamp.toInt()
                 message = entry.text
@@ -397,6 +433,29 @@ class AyuMessageHistoryActivity(
     companion object {
         private const val MENU_MAIN = 1
         private const val MENU_TOGGLE_DIFF = 2
+
+        fun forDeletedMessages(account: Int, dialogId: Long, fromId: Long): AyuMessageHistoryActivity {
+            val controller = org.telegram.messenger.MessagesController.getInstance(account)
+            val message = TLRPC.TL_message().apply {
+                id = 0
+                dialog_id = dialogId
+                from_id = TLRPC.TL_peerUser().apply { user_id = fromId }
+                peer_id = controller.getPeer(dialogId)
+                message = ""
+            }
+            return AyuMessageHistoryActivity(MessageObject(account, message, false, true), fromId)
+        }
+
+        fun forDeletedMessagesInDialog(account: Int, dialogId: Long): AyuMessageHistoryActivity {
+            val controller = org.telegram.messenger.MessagesController.getInstance(account)
+            val message = TLRPC.TL_message().apply {
+                id = 0
+                dialog_id = dialogId
+                peer_id = controller.getPeer(dialogId)
+                message = ""
+            }
+            return AyuMessageHistoryActivity(MessageObject(account, message, false, true), deletedArchiveDialog = true)
+        }
 
         private fun computeDiff(oldText: String, newText: String): CharSequence {
             if (oldText == newText) return newText

@@ -900,6 +900,8 @@
     <string name="InuDeletedMessageSearch">アーカイブを検索</string>
     <string name="InuDeletedMessageSearchHint">保存された削除済み・編集済みメッセージを検索</string>
     <string name="InuDeletedMessageSearchEmpty">一致するものが見つかりません。</string>
+    <string name="InuDeletedArchive">削除済みアーカイブ</string>
+    <string name="InuDeletedArchiveEmpty">保存された削除メッセージはまだありません。</string>
     <string name="InuClearDeletedCacheDone">削除済みメッセージのキャッシュを消去しました</string>
     <string name="InuClearDeletedCacheEmpty">削除済みメッセージのキャッシュは空です</string>
     <string name="InuDataBackup">バックアップと同期</string>

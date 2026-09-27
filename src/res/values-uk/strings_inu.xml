@@ -901,6 +901,8 @@
     <string name="InuDeletedMessageSearch">Пошук по архіву</string>
     <string name="InuDeletedMessageSearchHint">Пошук по збережених видалених і змінених повідомленнях</string>
     <string name="InuDeletedMessageSearchEmpty">Збігів не знайдено.</string>
+    <string name="InuDeletedArchive">Архів видалених</string>
+    <string name="InuDeletedArchiveEmpty">Ще немає збережених видалених повідомлень.</string>
     <string name="InuClearDeletedCacheDone">Кеш збережених повідомлень очищено</string>
     <string name="InuClearDeletedCacheEmpty">Кеш збережених повідомлень порожній</string>
     <string name="InuSaveDeletedMessages">Зберігати видалені повідомлення</string>

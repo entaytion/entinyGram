@@ -33,6 +33,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - **save edit history** (marked with ✏️) with full formatting, media preservation, and text diff mode
   - **deleted-message styling**: custom transparency, mark, and accent color with live preview
   - **local archive search**: full-text search across saved deleted messages and edit history
+  - **deleted archive**: open a chat's deleted messages directly, or browse all chats by author
   - **storage manager**: cache TTL and automatic expiration
 - 📡 **self-destructing & expiring media**:
   - **save view-once media**: view-once photos, videos, video notes and voice notes still burn, but a copy is kept in the saved cache; with "show normally" on they can also be force-forwarded (re-uploaded as regular media)

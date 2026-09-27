@@ -16,6 +16,7 @@ import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.translate.TranslateHelper
 import desu.inugram.ui.showInputDialog
+import desu.inugram.ui.AyuMessageHistoryActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ChatObject
@@ -60,6 +61,7 @@ object ChatActionsHelper {
     const val ACTION_TYPING_SPOOF = 521
     const val ACTION_REGEX_CHAT_FILTERS = 522
     const val ACTION_GHOST_MODE = 540
+    const val ACTION_DELETED_MESSAGES = 541
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -153,6 +155,10 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.InuRegexChatFilters),
             )
         }
+        headerItem.lazilyAddSubItem(
+            ACTION_DELETED_MESSAGES, R.drawable.msg_delete,
+            LocaleController.getString(R.string.InuDeletedArchive),
+        )
         if (activity.dialogId != 0L && activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
             headerItem.lazilyAddSubItem(
                 ACTION_GHOST_MODE, R.drawable.inu_ghost,
@@ -172,6 +178,7 @@ object ChatActionsHelper {
 
             ACTION_GO_TO_BEGINNING -> ChatHelper.jumpToBeginning(activity)
             ACTION_GO_TO_MESSAGE -> showGoToMessageDialog(activity)
+            ACTION_DELETED_MESSAGES -> activity.presentFragment(AyuMessageHistoryActivity.forDeletedMessagesInDialog(activity.currentAccount, activity.dialogId))
             ACTION_DELETE_OWN_MESSAGES -> DeleteOwnMessagesHelper.start(activity)
             ACTION_STATISTICS -> {
                 val chat = activity.currentChat
