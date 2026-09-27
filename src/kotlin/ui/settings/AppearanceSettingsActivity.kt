@@ -96,6 +96,13 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 calendarSystemLabel(InuConfig.CALENDAR_SYSTEM.value),
             )
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_CLOCK_FORMAT,
+                LocaleController.getString(R.string.InuClockFormat),
+                clockFormatLabel(InuConfig.CLOCK_FORMAT.value),
+            )
+        )
         items.add(UItem.asShadow(null))
 
         if (avatarCornerPreview == null) {
@@ -515,6 +522,21 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 listView.adapter.update(true)
             }
 
+            BUTTON_CLOCK_FORMAT -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuClockFormatSystem),
+                    LocaleController.getString(R.string.InuClockFormat12Hour),
+                    LocaleController.getString(R.string.InuClockFormat24Hour),
+                ),
+                InuConfig.CLOCK_FORMAT.value,
+            ) { which ->
+                InuConfig.CLOCK_FORMAT.value = which
+                InuHooks.syncClockFormat()
+                listView.adapter.update(true)
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
+
             TOGGLE_IOS_BOTTOM_BAR -> {
                 val new = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.toggle()
                 if (new && InuConfig.M3_BOTTOM_TABS.value) {
@@ -607,6 +629,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
         private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
+        private val BUTTON_CLOCK_FORMAT = InuUtils.generateId()
         private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER = InuUtils.generateId()
         private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
@@ -638,6 +661,12 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             else -> LocaleController.getString(R.string.InuCalendarSystemGregorian)
         }
 
+        private fun clockFormatLabel(value: Int): String = when (value) {
+            InuConfig.ClockFormatItem.TWELVE_HOUR -> LocaleController.getString(R.string.InuClockFormat12Hour)
+            InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> LocaleController.getString(R.string.InuClockFormat24Hour)
+            else -> LocaleController.getString(R.string.InuClockFormatSystem)
+        }
+
         @JvmField
         val PAGE = SearchRegistry.Page(
             slug = "appearance",
@@ -663,6 +692,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
                 SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
+                SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),
                 SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
                 SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),

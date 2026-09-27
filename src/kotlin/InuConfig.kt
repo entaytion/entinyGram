@@ -270,6 +270,17 @@ object InuConfig {
     @JvmField
     val CALENDAR_SYSTEM = CalendarSystemItem()
 
+    class ClockFormatItem : IntItem("clock_format", SYSTEM) {
+        companion object {
+            const val SYSTEM = 0
+            const val TWELVE_HOUR = 1
+            const val TWENTY_FOUR_HOUR = 2
+        }
+    }
+
+    @JvmField
+    val CLOCK_FORMAT = ClockFormatItem()
+
     @JvmField
     val SHOW_SPOILERS_DIRECTLY = BoolItem("show_spoilers_directly", false)
 

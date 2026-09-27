@@ -1480,6 +1480,10 @@
     <string name="InuCalendarSystemGregorian">グレゴリオ暦</string>
     <string name="InuCalendarSystemHijri">ヒジュラ太陰暦</string>
     <string name="InuCalendarSystemPersian">ヒジュラ太陽暦（ジャラーリー暦）</string>
+    <string name="InuClockFormat">時刻の表示形式</string>
+    <string name="InuClockFormatSystem">システム設定に従う</string>
+    <string name="InuClockFormat12Hour">12時間制</string>
+    <string name="InuClockFormat24Hour">24時間制</string>
     <string name="InuChatExportExported">エクスポート日時</string>
     <string name="InuChatExportFiles">ファイル</string>
     <string name="InuChatExportGifs">GIF</string>

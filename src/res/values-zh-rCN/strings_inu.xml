@@ -1495,6 +1495,10 @@
     <string name="InuCalendarSystemGregorian">公历</string>
     <string name="InuCalendarSystemHijri">伊斯兰阴历</string>
     <string name="InuCalendarSystemPersian">伊斯兰太阳历（贾拉里历）</string>
+    <string name="InuClockFormat">时间格式</string>
+    <string name="InuClockFormatSystem">使用系统设置</string>
+    <string name="InuClockFormat12Hour">12 小时制</string>
+    <string name="InuClockFormat24Hour">24 小时制</string>
     <string name="InuChatExportExported">导出于</string>
     <string name="InuChatExportFiles">文件</string>
     <string name="InuChatExportGifs">GIF</string>

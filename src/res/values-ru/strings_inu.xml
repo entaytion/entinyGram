@@ -144,6 +144,10 @@
     <string name="InuCalendarSystemGregorian">Григорианский</string>
     <string name="InuCalendarSystemHijri">Хиджра Камари (лунная)</string>
     <string name="InuCalendarSystemPersian">Хиджра Шамси (Джалали)</string>
+    <string name="InuClockFormat">Формат времени</string>
+    <string name="InuClockFormatSystem">Как в системе</string>
+    <string name="InuClockFormat12Hour">12-часовой</string>
+    <string name="InuClockFormat24Hour">24-часовой</string>
     <string name="InuHideAiFeatures">Скрыть ИИ функции</string>
     <string name="InuHideAiEditor">Кнопка ИИ-редактора</string>
     <string name="InuHideMessageSummary">Кнопка пересказа сообщения</string>

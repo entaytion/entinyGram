@@ -1493,6 +1493,10 @@
     <string name="InuCalendarSystemGregorian">Miladi</string>
     <string name="InuCalendarSystemHijri">Hicri Kameri (ay takvimi)</string>
     <string name="InuCalendarSystemPersian">Hicri Şemsi (Celali)</string>
+    <string name="InuClockFormat">Saat biçimi</string>
+    <string name="InuClockFormatSystem">Sistem ayarını kullan</string>
+    <string name="InuClockFormat12Hour">12 saatlik</string>
+    <string name="InuClockFormat24Hour">24 saatlik</string>
     <string name="InuChatExportExported">dışa aktarıldı</string>
     <string name="InuChatExportFiles">Dosyalar</string>
     <string name="InuChatExportGifs">GIF\'ler</string>

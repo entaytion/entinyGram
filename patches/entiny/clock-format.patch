@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 27 Sep 2026 22:39:03 +0300
+Subject: [*] clock format
+
+---
+ .../main/java/org/telegram/messenger/LocaleController.java  | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
+@@ -748,7 +748,8 @@ public class LocaleController {
+         }
+ 
+         systemDefaultLocale = Locale.getDefault();
+-        is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
++        is24HourFormat = desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWELVE_HOUR ? false
++                : desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR || DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
+         LocaleInfo currentInfo = null;
+         boolean override = false;
+ 
+@@ -2088,7 +2089,8 @@ public class LocaleController {
+         if (changingConfiguration) {
+             return;
+         }
+-        is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
++        is24HourFormat = desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWELVE_HOUR ? false
++                : desu.inugram.InuConfig.CLOCK_FORMAT.getValue() == desu.inugram.InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR || DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
+         systemDefaultLocale = newConfig.locale;
+         if (languageOverride != null) {
+             if (currentLocaleInfo != null && localizationExternalSize > 0) {

@@ -67,6 +67,16 @@ object InuHooks {
         }
     }
 
+    @JvmStatic
+    fun syncClockFormat() {
+        org.telegram.messenger.LocaleController.is24HourFormat = when (InuConfig.CLOCK_FORMAT.value) {
+            InuConfig.ClockFormatItem.TWELVE_HOUR -> false
+            InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> true
+            else -> android.text.format.DateFormat.is24HourFormat(org.telegram.messenger.ApplicationLoader.applicationContext)
+        }
+        org.telegram.messenger.LocaleController.getInstance().recreateFormatters()
+    }
+
     private val newMessagesObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
         if (id != NotificationCenter.didReceiveNewMessages) return@NotificationCenterDelegate
         @Suppress("UNCHECKED_CAST")

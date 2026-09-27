@@ -188,6 +188,10 @@
     <string name="InuCalendarSystemGregorian">Григоріанський</string>
     <string name="InuCalendarSystemHijri">Хіджра Камарі (місячна)</string>
     <string name="InuCalendarSystemPersian">Хіджра Шамсі (Джалалі)</string>
+    <string name="InuClockFormat">Формат часу</string>
+    <string name="InuClockFormatSystem">Як у системі</string>
+    <string name="InuClockFormat12Hour">12-годинний</string>
+    <string name="InuClockFormat24Hour">24-годинний</string>
     <string name="InuShowSpoilersDirectly">Показувати спойлери одразу</string>
     <string name="InuShowSpoilersDirectlyInfo">Пропускає крок «торкніться, щоб розкрити» — текстові спойлери одразу показують вміст, скрізь.</string>
     <string name="InuTextSpoilerMode">Стиль текстового спойлера</string>
