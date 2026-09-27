@@ -82,7 +82,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - wide, full-width bottom navigation bar (60dp evenly-spaced tabs)
   - tapping active Chats tab returns to the first folder before scrolling to top
-  - compact chat header pill hugging title and avatar, with optional avatar placement in the menu slot or left aligned
+  - compact chat header pill hugging title and avatar, with optional avatar placement in the menu slot or left aligned; option to hide the pill background entirely so the title floats over the wallpaper
   - iOS-style input bar: attachment on the left, emoji inside-right, glass capsule field with round button bubbles, and optional compact mode
 - 📡 **action button style**: Accent, Neutral, or White for send, voice, and apply buttons across the app (in glass form on iOS bar, solid circle elsewhere) - *ported from [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo) (@temporaryna)*
 - 📡 **header centering**: center screen titles across the app and customize chat headers (compact pill, avatar position, live settings preview)

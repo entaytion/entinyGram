@@ -1334,6 +1334,8 @@
     <string name="InuIosBottomBarInfo">使底部标签栏呈现 iOS 那种更宽、均匀分布的胶囊样式。会禁用 Material 3 底部标签。</string>
     <string name="InuIosChatHeader">紧凑胶囊</string>
     <string name="InuIosChatHeaderInfo">收窄聊天顶栏胶囊，使其贴合标题、副标题和头像，并悬浮在顶栏中央，如同 iOS 版 Telegram，而不是占满整个宽度。</string>
+    <string name="InuChatHeaderNoPill">隐藏胶囊背景</string>
+    <string name="InuChatHeaderNoPillInfo">标题和副标题直接浮于壁纸上方，无需背后的毛玻璃胶囊。搜索和消息选择模式下背景保持显示。</string>
     <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>

@@ -1323,6 +1323,8 @@
     <string name="InuIosBottomBarInfo">ボトムタブバーをiOSのような幅広で均等配置のカプセル型に変更します。Material 3のボトムタブは無効になります。</string>
     <string name="InuIosChatHeader">コンパクトなピル</string>
     <string name="InuIosChatHeaderInfo">iOS版Telegramのように、チャットヘッダーのピルをタイトル・サブタイトル・アバターに合わせて縮め、全幅ではなくヘッダーの中央に浮かせます。</string>
+    <string name="InuChatHeaderNoPill">ピルの背景を非表示</string>
+    <string name="InuChatHeaderNoPillInfo">タイトルとサブタイトルが、ピルの背景なしで直接壁紙の上に浮かびます。検索・メッセージ選択中は背景が表示されます。</string>
     <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>

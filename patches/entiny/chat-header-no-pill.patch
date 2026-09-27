@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 00:39:21 +0300
+Subject: [+] hide chat header pill background
+
+---
+ .../main/java/org/telegram/ui/ActionBar/ActionBar.java   | 9 ++++++++-
+ .../org/telegram/ui/Components/ChatAvatarContainer.java  | 2 +-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2555,6 +2555,13 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                 || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
+     }
+ 
++    private boolean inu_hideChatPill() {
++        return desu.inugram.InuConfig.CHAT_HEADER_NO_PILL.getValue()
++                && chatAvatarContainer != null
++                && chatAvatarContainer.inu_isRealChatHeader()
++                && !isSearchFieldVisible && !actionModeVisible;
++    }
++
+     @Override
+     protected void dispatchDraw(Canvas canvas) {
+         if (inu_needsUpdateGlassBounds()) {
+@@ -2572,7 +2579,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         final int t = inu_glassTop;
+         final int b = inu_glassBottom;
+ 
+-        if (glassDrawable != null && !glassOnlyBack) {
++        if (glassDrawable != null && !glassOnlyBack && !inu_hideChatPill()) {
+             if (inu_nonIsland) {
+                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
+             } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -961,7 +961,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.
+-    private boolean inu_isRealChatHeader() {
++    public boolean inu_isRealChatHeader() {
+         return parentFragment != null
+                 && !parentFragment.isReplyChatComment()
+                 && parentFragment.getDialogId() != 0

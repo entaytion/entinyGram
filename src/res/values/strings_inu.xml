@@ -1110,6 +1110,8 @@
     <string name="InuCenterTitleRightAvatar">Show avatar on the right</string>
     <string name="InuIosChatHeader">Compact pill</string>
     <string name="InuIosChatHeaderInfo">Shrinks the chat header pill so it hugs the title, subtitle and avatar and floats in the middle of the header, like Telegram for iOS, instead of spanning the whole width.</string>
+    <string name="InuChatHeaderNoPill">Hide pill background</string>
+    <string name="InuChatHeaderNoPillInfo">The title and subtitle float directly over the wallpaper without the frosted pill behind them. Stays visible in search and message-selection mode.</string>
     <string name="InuIosChatHeaderAvatarSlot">Move avatar to the menu button</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Moves the avatar out of the pill to replace the \"⋮\" button — tap for the profile, long-press for the chat menu; off keeps it inside the pill.</string>
     <string name="InuIosChatHeaderAvatarStatic">Do not center the avatar</string>

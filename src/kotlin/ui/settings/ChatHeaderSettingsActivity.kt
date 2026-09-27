@@ -83,6 +83,17 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
 
         items.add(
             mkIconCheckItem(
+                TOGGLE_CHAT_HEADER_NO_PILL,
+                R.drawable.inu_tabler_photo_x,
+                R.string.InuChatHeaderNoPill,
+                R.string.InuChatHeaderNoPillInfo,
+                InuConfig.CHAT_HEADER_NO_PILL.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
+        items.add(
+            mkIconCheckItem(
                 TOGGLE_CHAT_TITLE_MARQUEE,
                 R.drawable.inu_tabler_marquee_2,
                 R.string.InuChatTitleMarquee,
@@ -121,6 +132,11 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 refreshAll()
             }
 
+            TOGGLE_CHAT_HEADER_NO_PILL -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_HEADER_NO_PILL.toggle()
+                refreshAll()
+            }
+
             TOGGLE_CHAT_TITLE_MARQUEE -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
                 refreshAll()
@@ -139,6 +155,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
+        private val TOGGLE_CHAT_HEADER_NO_PILL = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
 
         @JvmField
@@ -154,6 +171,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("ios-chat-header-avatar-slot", R.string.InuIosChatHeaderAvatarSlot, TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT),
                 SearchRegistry.Entry("ios-chat-header-avatar-static", R.string.InuIosChatHeaderAvatarStatic, TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC),
+                SearchRegistry.Entry("chat-header-no-pill", R.string.InuChatHeaderNoPill, TOGGLE_CHAT_HEADER_NO_PILL),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
             ),
         )

@@ -1492,6 +1492,8 @@
     <string name="InuIosBottomBarInfo">Робить нижню панель вкладок ширшою, з рівномірно розтягнутими вкладками, як в iOS. Вимикає нижні вкладки Material 3.</string>
     <string name="InuIosChatHeader">Компактна пілюля</string>
     <string name="InuIosChatHeaderInfo">Стискає пілюлю шапки чату так, щоб вона обгортала назву, підпис і аватарку та плавала посередині шапки, як у Telegram для iOS, замість того щоб займати всю ширину.</string>
+    <string name="InuChatHeaderNoPill">Сховати фон пілюлі</string>
+    <string name="InuChatHeaderNoPillInfo">Назва та підзаголовок плавають прямо поверх шпалер без матового фону пілюлі. У пошуку та режимі вибору повідомлень фон залишається.</string>
     <string name="InuParanoiaHideMyStories">Приховати мої історії</string>
     <string name="InuStopBot">Зупинити бота</string>
     <string name="InuStopBotAction">Зупинити</string>

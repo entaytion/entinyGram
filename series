@@ -439,3 +439,4 @@ entiny/translate-preview-fixes.patch
 entiny/main-tabs-separate-search.patch
 entiny/main-tabs-search-layout.patch
 entiny/clock-format.patch
+entiny/chat-header-no-pill.patch

@@ -1344,6 +1344,9 @@ object InuConfig {
     val IOS_CHAT_HEADER_AVATAR_STATIC = BoolItem("ios_chat_header_avatar_static", false)
 
     @JvmField
+    val CHAT_HEADER_NO_PILL = BoolItem("chat_header_no_pill", false)
+
+    @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
     @JvmField

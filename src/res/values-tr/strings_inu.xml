@@ -1332,6 +1332,8 @@
     <string name="InuIosBottomBarInfo">Alt sekme çubuğunu iOS\'un daha geniş, eşit aralıklı kapsül stiline uygun hale getirir. Material 3 alt sekmelerini devre dışı bırakır.</string>
     <string name="InuIosChatHeader">Kompakt hap</string>
     <string name="InuIosChatHeaderInfo">Sohbet başlığı hapını başlığı, alt başlığı ve profil resmini saracak şekilde küçültür ve tüm genişliği kaplamak yerine başlığın ortasında yüzdürür, tıpkı Telegram iOS gibi.</string>
+    <string name="InuChatHeaderNoPill">Hap arka planını gizle</string>
+    <string name="InuChatHeaderNoPillInfo">Başlık ve alt başlık, buzlu cam hapı olmadan doğrudan duvar kağıdının üzerinde yüzer. Arama ve mesaj seçme modunda arka plan görünür kalır.</string>
     <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
     <string name="InuStopBot">Botu durdur</string>
     <string name="InuStopBotAction">Durdur</string>

@@ -1446,6 +1446,8 @@
     <string name="InuIosBottomBarInfo">Делает нижнюю панель вкладок шире и с равномерно растянутыми вкладками, как в iOS. Отключает нижние вкладки Material 3.</string>
     <string name="InuIosChatHeader">Компактная таблетка</string>
     <string name="InuIosChatHeaderInfo">Сжимает таблетку шапки чата так, чтобы она обхватывала название, подпись и аватарку и плавала посередине шапки, как в Telegram для iOS, вместо того чтобы занимать всю ширину.</string>
+    <string name="InuChatHeaderNoPill">Скрыть фон таблетки</string>
+    <string name="InuChatHeaderNoPillInfo">Название и подзаголовок плавают прямо поверх обоев без матового фона таблетки. В поиске и режиме выбора сообщений фон остаётся.</string>
     <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
     <string name="InuStopBot">Остановить бота</string>
     <string name="InuStopBotAction">Остановить</string>
