@@ -798,6 +798,10 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>
+    <string name="InuNicheSettings">ニッチな設定</string>
+    <string name="InuNicheSettingsInfo">一部のユーザーから要望があった、すべての人に必要とは限らない機能です。動作しない場合は削除します。</string>
+    <string name="InuNicheUnlockedToast">bro、entiny tvは有効にしないで pls💀💀</string>
+    <string name="InuNicheAlreadyUnlockedToast">bro、もう有効にしたじゃん 💀</string>
 
     <string name="InuStripTrackingParamsOnOpen">リンクを開くとき</string>
     <string name="InuStripTrackingParamsOnPaste">貼り付け時</string>

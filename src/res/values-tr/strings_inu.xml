@@ -454,6 +454,10 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass açısı</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass yoğunluğu</string>
+    <string name="InuNicheSettings">Niş ayarlar</string>
+    <string name="InuNicheSettingsInfo">Herkesin ihtiyaç duymadığı ancak istenen özellikler burada bulunur. Çalışmıyorlarsa kaldırılacaklar.</string>
+    <string name="InuNicheUnlockedToast">kanka entiny tv\'yi açma lütfen💀💀</string>
+    <string name="InuNicheAlreadyUnlockedToast">kanka, bunu zaten açtın 💀</string>
 
     <string name="InuReduceMenuMotion">Menü hareketlerini azalt</string>
     <string name="InuReduceMenuMotionInfo">Bağlam menüsü kademeli açılışını atlar ve mesaj menüsü animasyonlarını sadeleştirir</string>

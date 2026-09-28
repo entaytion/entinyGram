@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 21:07:37 +0300
+Subject: [*] refresh liquid glass settings
+
+---
+ .../BlurredBackgroundDrawableRenderNode.java         | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
+@@ -18,8 +18,12 @@ import org.telegram.ui.ActionBar.Theme;
+ import org.telegram.ui.Components.blur3.LiquidGlassEffect;
+ import org.telegram.ui.Components.blur3.source.BlurredBackgroundSource;
+ 
++import me.vkryl.core.reference.ReferenceList;
++
+ @RequiresApi(api = Build.VERSION_CODES.Q)
+ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawable {
++    private static final ReferenceList<BlurredBackgroundDrawableRenderNode> inu_liquidGlassDrawables = new ReferenceList<>();
++
+     private final BlurredBackgroundSource source;
+     private final Outline outline = new Outline();
+     private final Rect outlineRect = new Rect();
+@@ -57,6 +61,14 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
+     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+     public void setLiquidGlassEffectAllowed() {
+         liquidGlassEffect = new LiquidGlassEffect(renderNodeFill);
++        inu_liquidGlassDrawables.add(this);
++    }
++
++    public static void inu_invalidateLiquidGlassDrawables() {
++        for (BlurredBackgroundDrawableRenderNode drawable : inu_liquidGlassDrawables) {
++            drawable.renderNodeInvalidated = true;
++            drawable.invalidateSelf();
++        }
+     }
+ 
+ 

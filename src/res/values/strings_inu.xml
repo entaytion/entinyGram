@@ -666,6 +666,10 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
+    <string name="InuNicheSettings">Niche settings</string>
+    <string name="InuNicheSettingsInfo">Requested features that may not be useful to everyone. If they do not work, they will be removed.</string>
+    <string name="InuNicheUnlockedToast">bro dont enable entiny tv pls💀💀</string>
+    <string name="InuNicheAlreadyUnlockedToast">bro, you already enabled it 💀</string>
 
     <string name="InuReduceMenuMotion">Reduce menu motion</string>
     <string name="InuReduceMenuMotionInfo">Skip context menu stagger and simplify message menu animations</string>

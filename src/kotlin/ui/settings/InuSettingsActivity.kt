@@ -3,15 +3,13 @@ package desu.inugram.ui.settings
 import android.content.Context
 import android.view.View
 import android.widget.EditText
+import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.update.UpdateHelper
-import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.R
-import org.telegram.messenger.UserConfig
 import org.telegram.messenger.browser.Browser
+import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.UItem
@@ -24,6 +22,8 @@ class InuSettingsActivity : SettingsPageActivity() {
 
     private var searchAdapter: ProfileActivity.SearchAdapter? = null
     private var isSearchOpen = false
+    private var headerTapCount = 0
+    private var lastHeaderTapAt = 0L
 
     override fun createView(context: Context): View {
         return super.createView(context).also {
@@ -66,7 +66,29 @@ class InuSettingsActivity : SettingsPageActivity() {
     private fun createHeaderView(): View {
         val context = context ?: return View(org.telegram.messenger.ApplicationLoader.applicationContext)
         return InuSettingsHeader(context).apply {
-            onHeaderClick = { checkForUpdates() }
+            onHeaderClick = { onHeaderTap() }
+        }
+    }
+
+    private fun onHeaderTap() {
+        val now = android.os.SystemClock.uptimeMillis()
+        if (now - lastHeaderTapAt > HEADER_TAP_WINDOW_MS) headerTapCount = 0
+        lastHeaderTapAt = now
+        headerTapCount++
+        if (headerTapCount == HEADER_TAP_COUNT) {
+            headerTapCount = 0
+            val alreadyUnlocked = InuConfig.NICHE_SETTINGS_UNLOCKED.value
+            if (!alreadyUnlocked) {
+                InuConfig.NICHE_SETTINGS_UNLOCKED.value = true
+                listView.adapter.update(true)
+            }
+            BulletinFactory.of(this).createSimpleBulletin(
+                R.raw.chats_infotip,
+                LocaleController.getString(
+                    if (alreadyUnlocked) R.string.InuNicheAlreadyUnlockedToast
+                    else R.string.InuNicheUnlockedToast
+                )
+            ).show()
         }
     }
 
@@ -90,6 +112,9 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
         items.add(mkSubPageButton(BUTTON_TOS, R.drawable.inu_tabler_lock_open, LocaleController.getString(R.string.InuTOS)))
         items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuCategoryBackup)))
+        if (InuConfig.NICHE_SETTINGS_UNLOCKED.value) {
+            items.add(mkSubPageButton(CAT_NICHE, R.drawable.inu_tabler_skull, LocaleController.getString(R.string.InuNicheSettings)))
+        }
         items.add(UItem.asShadow(null))
 
         items.add(
@@ -131,35 +156,9 @@ class InuSettingsActivity : SettingsPageActivity() {
             CAT_ANNOYANCES -> presentFragment(AnnoyancesSettingsActivity())
             BUTTON_TOS -> presentFragment(TosSettingsActivity())
             CAT_SYSTEM -> presentFragment(AdditionalSettingsActivity())
+            CAT_NICHE -> presentFragment(NicheSettingsActivity())
             BUTTON_CHANNEL_LINK -> Browser.openUrl(ctx, "https://t.me/entinyGram")
             BUTTON_GITHUB -> Browser.openUrl(ctx, "https://github.com/Entaytion/EntinyGram")
-        }
-    }
-
-    private fun checkForUpdates() {
-        BulletinFactory.of(this).createSimpleBulletin(
-            R.raw.chats_infotip,
-            LocaleController.getString(R.string.Checking)
-        ).show()
-        UpdateHelper.check { result ->
-            AndroidUtilities.runOnUIThread {
-                val msg: CharSequence = when (result) {
-                    UpdateHelper.CheckResult.UpToDate ->
-                        LocaleController.getString(R.string.InuUpdateUpToDate)
-
-                    is UpdateHelper.CheckResult.Updated -> {
-                        val ctx = context ?: return@runOnUIThread
-                        ApplicationLoader.applicationLoaderInstance?.showUpdateAppPopup(
-                            ctx, result.update, UserConfig.selectedAccount,
-                        )
-                        return@runOnUIThread
-                    }
-
-                    is UpdateHelper.CheckResult.Error ->
-                        LocaleController.formatString(R.string.InuUpdateError, result.message)
-                }
-                BulletinFactory.of(this).createSimpleBulletin(R.raw.chats_infotip, msg).show()
-            }
         }
     }
 
@@ -174,6 +173,9 @@ class InuSettingsActivity : SettingsPageActivity() {
         private val CAT_ANNOYANCES = InuUtils.generateId()
         private val BUTTON_TOS = InuUtils.generateId()
         private val CAT_SYSTEM = InuUtils.generateId()
+        private val CAT_NICHE = InuUtils.generateId()
+        private const val HEADER_TAP_COUNT = 5
+        private const val HEADER_TAP_WINDOW_MS = 2000L
         private val BUTTON_CHANNEL_LINK = InuUtils.generateId()
         private val BUTTON_GITHUB = InuUtils.generateId()
 

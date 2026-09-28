@@ -79,6 +79,8 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **avatar corners**: custom slider (0–28dp) with dynamic badge indicator, live interactive dialog preview, and unified corner radius toggle - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **standalone AMOLED theme**: true-black theme selectable from regular theme list, independent of Monet - *ported from NagramX Turbo*
 - 📡 **theme switch recovery**: clear interrupted transitions and refresh Monet palettes after system color changes
+- 📡 **liquid glass controls**: adjust refraction angle and intensity live — *ported from [Nagram](https://github.com/NextAlone/Nagram)*
+- 📡 **niche settings**: hidden optional features, revealed by tapping the entinyGram settings header five times
 - 📡 **icon packs & live preview**: dedicated Icon Packs settings screen with real-time UI preview (Stock Telegram, Solar, VKUI, Phosphor Icons)
 - 📡 **iOS-style design** - *ported from [exteraless](https://github.com/exteraless/exteraless), [Cherrygram](https://github.com/arsLan4k1390/Cherrygram), and [Nagram X Turbo](https://github.com/temporaryna/NagramXTurbo)*:
   - compact bottom navigation bar with evenly-spaced tabs

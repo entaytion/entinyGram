@@ -177,6 +177,7 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'lock-open',
       'brand-github',
       'sparkles',
+      'skull',
       'brain',
       'cpu',
       'server',

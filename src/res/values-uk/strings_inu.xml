@@ -544,6 +544,10 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
+    <string name="InuNicheSettings">Нішеві налаштування</string>
+    <string name="InuNicheSettingsInfo">Тут зібрані функції, які потрібні не всім, але про які попросили. Якщо вони не працюватимуть, ми їх видалимо.</string>
+    <string name="InuNicheUnlockedToast">бро, не вмикай entiny tv пліз💀💀</string>
+    <string name="InuNicheAlreadyUnlockedToast">бро, ти це вже вмикав 💀</string>
 
     <string name="InuReduceMenuMotion">Зменшити анімації меню</string>
     <string name="InuReduceMenuMotionInfo">Спрощує анімацію виклику меню повідомлень</string>

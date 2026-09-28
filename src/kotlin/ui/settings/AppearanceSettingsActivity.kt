@@ -21,8 +21,6 @@ import org.telegram.ui.Components.UniversalAdapter
 class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
-    private var liquidGlassAngleSlider: SliderCell? = null
-    private var liquidGlassIntensitySlider: SliderCell? = null
     private var avatarCornerPreview: AvatarCornerPreviewCell? = null
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
@@ -198,43 +196,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuNonIslandHint)))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLiquidGlass)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DISABLE_GLASS_GLARE,
-                LocaleController.getString(R.string.InuDisableGlassGlare),
-            ).setChecked(InuConfig.DISABLE_GLASS_GLARE.value)
-        )
-        if (liquidGlassAngleSlider == null) {
-            liquidGlassAngleSlider = SliderCell(
-                this.context, min = 0f, max = 360f,
-                defaultValue = InuConfig.LIQUID_GLASS_ANGLE.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_ANGLE.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassAngle),
-                format = { "${it.toInt()}°" },
-                onChanged = { InuConfig.LIQUID_GLASS_ANGLE.value = it.toInt() },
-            )
-        } else {
-            liquidGlassAngleSlider?.updateColors()
-        }
-        items.add(UItem.asCustom(liquidGlassAngleSlider))
-        if (liquidGlassIntensitySlider == null) {
-            liquidGlassIntensitySlider = SliderCell(
-                this.context, min = 0f, max = 150f,
-                defaultValue = InuConfig.LIQUID_GLASS_INTENSITY.default.toFloat(),
-                initialValue = InuConfig.LIQUID_GLASS_INTENSITY.value.toFloat(),
-                step = 1f,
-                title = LocaleController.getString(R.string.InuLiquidGlassIntensity),
-                format = { "${it.toInt()}%" },
-                onChanged = { InuConfig.LIQUID_GLASS_INTENSITY.value = it.toInt() },
-            )
-        } else {
-            liquidGlassIntensitySlider?.updateColors()
-        }
-        items.add(UItem.asCustom(liquidGlassIntensitySlider))
-        items.add(UItem.asShadow(null))
-
         if (animationSpeedSlider == null) {
             animationSpeedSlider = SliderCell(
                 this.context, min = 0.5f, max = 3f,
@@ -409,11 +370,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_SCRIM_BLUR -> {
                 val new = InuConfig.DISABLE_SCRIM_BLUR.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_GLASS_GLARE -> {
-                val new = InuConfig.DISABLE_GLASS_GLARE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
             }
 
             TOGGLE_DISABLE_PROFILE_AVATAR_BLUR -> {
@@ -616,7 +572,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_NON_ISLAND_CHAT_ELEMENTS = InuUtils.generateId()
         private val BUTTON_FONTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_SCRIM_BLUR = InuUtils.generateId()
-        private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_SWITCHES = InuUtils.generateId()
@@ -678,7 +633,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             factory = ::AppearanceSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("disable-scrim-blur", R.string.InuDisableScrimBlur, TOGGLE_DISABLE_SCRIM_BLUR),
-                SearchRegistry.Entry("disable-glass-glare", R.string.InuDisableGlassGlare, TOGGLE_DISABLE_GLASS_GLARE),
                 SearchRegistry.Entry("disable-profile-avatar-blur", R.string.InuDisableProfileAvatarBlur, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
                 SearchRegistry.Entry("material3-switches", R.string.InuMaterial3Switches, TOGGLE_MATERIAL3_SWITCHES),

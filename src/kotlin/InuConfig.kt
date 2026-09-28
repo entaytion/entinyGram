@@ -1111,6 +1111,9 @@ object InuConfig {
     val LIQUID_GLASS_INTENSITY = IntItem("liquid_glass_intensity", 75)
 
     @JvmField
+    val NICHE_SETTINGS_UNLOCKED = BoolItem("niche_settings_unlocked", false)
+
+    @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
 
     @JvmField

@@ -797,6 +797,10 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass 角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass 强度</string>
+    <string name="InuNicheSettings">小众设置</string>
+    <string name="InuNicheSettingsInfo">这里收录了并非所有人都需要、但有人提出需求的功能。如果无法正常使用，我们会将其移除。</string>
+    <string name="InuNicheUnlockedToast">bro，别开 entiny tv 求你了💀💀</string>
+    <string name="InuNicheAlreadyUnlockedToast">bro，你已经开过了💀</string>
 
     <string name="InuStripTrackingParamsOnOpen">打开链接时</string>
     <string name="InuStripTrackingParamsOnPaste">粘贴时</string>

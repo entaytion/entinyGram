@@ -916,6 +916,10 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Угол Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Интенсивность Liquid Glass</string>
+    <string name="InuNicheSettings">Нишевые настройки</string>
+    <string name="InuNicheSettingsInfo">Здесь собраны функции, которые нужны не всем, но о которых попросили. Если они не работают, мы их удалим.</string>
+    <string name="InuNicheUnlockedToast">бро, не включай entiny tv плз💀💀</string>
+    <string name="InuNicheAlreadyUnlockedToast">бро, ты уже включил это 💀</string>
 
     <string name="InuStripTrackingParamsOnOpen">При открытии ссылок</string>
     <string name="InuStripTrackingParamsOnPaste">При вставке</string>
