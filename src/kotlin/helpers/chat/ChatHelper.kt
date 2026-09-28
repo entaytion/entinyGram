@@ -61,7 +61,6 @@ import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.SendMessageChatArguments
 import org.telegram.messenger.R
 import org.telegram.messenger.SendMessagesHelper
-import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.TranslateController
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.UserObject
@@ -2448,8 +2447,7 @@ object ChatHelper {
     }
 
     @JvmStatic
-    fun getChatInputTextSize(): Float =
-        if (InuConfig.CHAT_INPUT_MATCH_FONT_SIZE.value) SharedConfig.fontSize.toFloat() else 18f
+    fun getChatInputTextSize(): Float = InuConfig.CHAT_INPUT_TEXT_SIZE.value.toFloat()
 
     @JvmStatic
     fun getDialogsTitle(account: Int): CharSequence {

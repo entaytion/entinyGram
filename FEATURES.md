@@ -310,6 +310,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 ### message input / formatting
 
 - 🐶 customizable max input lines (and bumped default)
+- 📡 chat input text size slider (12-24, default 18)
 - 🐶 voice recorder moved into attachments drawer
 - 🐶 camera placement in the attach panel: instant (stock), static, floating button or bottom tab. the last two free up the grid cell
 - 🐶 custom formatting popup with a separate code block button

@@ -1150,7 +1150,7 @@ object InuConfig {
     val CHAT_INPUT_MAX_LINES = IntItem("chat_input_max_lines", 8)
 
     @JvmField
-    val CHAT_INPUT_MATCH_FONT_SIZE = BoolItem("chat_input_match_font_size", false)
+    val CHAT_INPUT_TEXT_SIZE = IntItem("chat_input_text_size", 18)
 
     @JvmField
     val IOS_INPUT_BUTTON_PLACEMENT = BoolItem("ios_button_placement", false)
