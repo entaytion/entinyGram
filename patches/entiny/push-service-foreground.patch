@@ -1,0 +1,167 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 17:50:55 +0300
+Subject: [*] keep the push service alive in the background
+
+---
+ TMessagesProj/src/main/AndroidManifest.xml    |  8 ++-
+ .../telegram/messenger/ApplicationLoader.java | 13 +++-
+ .../messenger/NotificationsService.java       | 64 +++++++++++++++++++
+ 3 files changed, 81 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -30,6 +30,7 @@
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
++    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+@@ -537,8 +538,11 @@
+             android:name=".NotificationsService"
+             android:enabled="true"
+             android:exported="true"
+-            android:foregroundServiceType="dataSync"
+-        />
++            android:foregroundServiceType="specialUse">
++            <property
++                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
++                android:value="Keeps the connection alive so notifications arrive in the background" />
++        </service>
+         <service
+             android:name=".NotificationRepeat"
+             android:exported="false"
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -403,12 +403,21 @@ public class ApplicationLoader extends Application {
+         }
+         if (enabled) {
+             try {
+-                applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
++                if (Build.VERSION.SDK_INT >= 26 && desu.inugram.InuConfig.UNIFIED_PUSH.getValue()) {
++                    NotificationsService.inu_onForegroundStartRequested();
++                    applicationContext.startForegroundService(new Intent(applicationContext, NotificationsService.class));
++                } else {
++                    applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
++                }
+             } catch (Throwable ignore) {
+ 
+             }
+         } else {
+-            applicationContext.stopService(new Intent(applicationContext, NotificationsService.class));
++            if (NotificationsService.inu_isForegroundStartPending()) {
++                NotificationsService.inu_requestStopWhenForeground();
++            } else {
++                applicationContext.stopService(new Intent(applicationContext, NotificationsService.class));
++            }
+         }
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java
+@@ -8,21 +8,50 @@
+ 
+ package org.telegram.messenger;
+ 
++import android.app.Notification;
++import android.app.NotificationChannel;
++import android.app.NotificationManager;
+ import android.app.Service;
++import android.content.Context;
+ import android.content.Intent;
+ import android.content.SharedPreferences;
++import android.os.Build;
+ import android.os.IBinder;
+ 
++import androidx.core.app.NotificationCompat;
++
+ public class NotificationsService extends Service {
+ 
++    private static final int inu_notificationId = 9999;
++    private static final String inu_channelId = "push_service_channel";
++
++    private static volatile boolean inu_foregroundStartPending;
++    private static volatile boolean inu_stopWhenForeground;
++    private Notification inu_notification;
++
++    public static void inu_onForegroundStartRequested() {
++        inu_stopWhenForeground = false;
++        inu_foregroundStartPending = true;
++    }
++
++    public static boolean inu_isForegroundStartPending() {
++        return inu_foregroundStartPending;
++    }
++
++    public static void inu_requestStopWhenForeground() {
++        inu_stopWhenForeground = true;
++    }
++
+     @Override
+     public void onCreate() {
+         super.onCreate();
++        inu_moveToForeground();
+         ApplicationLoader.postInitApplication();
+     }
+ 
+     @Override
+     public int onStartCommand(Intent intent, int flags, int startId) {
++        inu_moveToForeground();
+         return START_STICKY;
+     }
+ 
+@@ -33,6 +62,8 @@ public class NotificationsService extends Service {
+ 
+     public void onDestroy() {
+         super.onDestroy();
++        inu_foregroundStartPending = false;
++        inu_stopWhenForeground = false;
+         SharedPreferences preferences = MessagesController.getGlobalNotificationsSettings();
+         if (preferences.getBoolean("pushService", true)) {
+             Intent intent = new Intent("org.telegram.start");
+@@ -40,4 +71,37 @@ public class NotificationsService extends Service {
+             sendBroadcast(intent);
+         }
+     }
++
++    private void inu_moveToForeground() {
++        if (!desu.inugram.InuConfig.UNIFIED_PUSH.getValue()) {
++            inu_foregroundStartPending = false;
++            return;
++        }
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
++            try {
++                startForeground(inu_notificationId, inu_getNotification());
++            } catch (Throwable ignore) {
++
++            }
++        }
++        inu_foregroundStartPending = false;
++        if (inu_stopWhenForeground) {
++            stopSelf();
++        }
++    }
++
++    private Notification inu_getNotification() {
++        if (inu_notification == null) {
++            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
++            notificationManager.createNotificationChannel(new NotificationChannel(inu_channelId, LocaleController.getString(R.string.NotificationsService), NotificationManager.IMPORTANCE_LOW));
++            inu_notification = new NotificationCompat.Builder(this, inu_channelId)
++                    .setShowWhen(false)
++                    .setOngoing(true)
++                    .setSmallIcon(R.drawable.notification)
++                    .setContentTitle(LocaleController.getString(R.string.NotificationsService))
++                    .setContentText(LocaleController.getString(R.string.NotificationsServiceInfo))
++                    .build();
++        }
++        return inu_notification;
++    }
+ }

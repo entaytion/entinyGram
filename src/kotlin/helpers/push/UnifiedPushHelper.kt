@@ -50,7 +50,7 @@ object UnifiedPushHelper {
 
     @JvmField
     val PROVIDER: PushListenerController.IPushListenerServiceProvider = object : PushListenerController.IPushListenerServiceProvider {
-        override fun hasServices(): Boolean = distributors().isNotEmpty()
+        override fun hasServices(): Boolean = distributors().isNotEmpty() && currentDistributor() != null
 
         override fun getLogTitle(): String = "UnifiedPush"
 
@@ -165,6 +165,7 @@ object UnifiedPushHelper {
         SharedConfig.pushStringGetTimeEnd = SystemClock.elapsedRealtime()
         PushListenerController.sendRegistrationToServer(PUSH_TYPE_SIMPLE, null)
         if (retry) scheduleRetry()
+        AndroidUtilities.runOnUIThread { ApplicationLoader.startPushService() }
     }
 
     // wake every account; the notification itself arrives over the regular MTProto connection
