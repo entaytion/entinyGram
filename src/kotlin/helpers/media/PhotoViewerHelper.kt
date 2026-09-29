@@ -200,11 +200,6 @@ object PhotoViewerHelper {
         applyFooter(menuItem, dc, null)
     }
 
-    @JvmStatic
-    fun resetFooter(menuItem: ActionBarMenuItem) {
-        applyFooter(menuItem, null)
-    }
-
     private fun applyFooter(menuItem: ActionBarMenuItem, dc: Int, platform: String?) =
         applyFooter(menuItem, if (platform != null) "DC $dc • $platform" else "DC $dc")
 

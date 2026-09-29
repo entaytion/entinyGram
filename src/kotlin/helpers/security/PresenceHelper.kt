@@ -107,16 +107,6 @@ object PresenceHelper {
     }
 
     @JvmStatic
-    fun getLogsStats(account: Int, callback: (count: Int, size: Long) -> Unit) {
-        val storage = MessagesStorage.getInstance(account) ?: return
-        storage.storageQueue.postRunnable {
-            val db = storage.database ?: return@postRunnable
-            val stat = InuDatabaseHelper.getPresenceLogsStats(db)
-            AndroidUtilities.runOnUIThread { callback(stat.count, stat.estimatedSize) }
-        }
-    }
-
-    @JvmStatic
     fun getLogsStatsByUser(account: Int, callback: (List<InuDatabaseHelper.DialogCacheStat>) -> Unit) {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {

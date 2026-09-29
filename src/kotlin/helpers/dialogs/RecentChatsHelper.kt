@@ -1,6 +1,5 @@
 package desu.inugram.helpers.dialogs
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Rect

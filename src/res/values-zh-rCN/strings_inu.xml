@@ -531,8 +531,6 @@
     <string name="InuSearchOpenUserId">打开 ID %1$s</string>
     <string name="InuSearchOpenLink">打开 %1$s</string>
     <string name="InuOpenAsUserId">作为用户 ID 打开</string>
-    <string name="InuOpenById">按 ID 打开</string>
-    <string name="InuOpenByIdPrompt">输入 Telegram 用户或聊天 ID</string>
     <string name="InuOpenByUserId">在搜索和消息中按 ID 打开</string>
     <string name="InuOpenByUserIdInfo">在搜索中输入数字或点击消息中的数字时显示直接个人资料快捷方式。</string>
     <string name="InuReorderAccounts">重排账号</string>

@@ -896,8 +896,6 @@
     <string name="InuSearchOpenUserId">Open ID %1$s</string>
     <string name="InuSearchOpenLink">Open %1$s</string>
     <string name="InuOpenAsUserId">Open as User ID</string>
-    <string name="InuOpenById">Open by ID</string>
-    <string name="InuOpenByIdPrompt">Enter Telegram User or Chat ID</string>
     <string name="InuOpenByUserId">Open by ID in search and messages</string>
     <string name="InuOpenByUserIdInfo">Show a direct profile shortcut when typing numeric IDs in search or tapping numbers in chats.</string>
     <string name="InuReorderAccounts">Reorder accounts</string>

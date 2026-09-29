@@ -13,7 +13,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import desu.inugram.InuConfig
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp

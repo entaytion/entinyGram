@@ -404,38 +404,8 @@ object InuDatabaseHelper {
         }
     }
 
-    fun loadDeletedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
-        val idsMap = HashMap<Long, HashSet<Int>>()
-        forEachDeletedMessageInfo(db) { dialogId, msgId, _ ->
-            idsMap.getOrPut(dialogId) { HashSet() }.add(msgId)
-        }
-        return idsMap
-    }
-
-    fun savePreservedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int) {
-        val query = db.executeFast("INSERT OR REPLACE INTO inu_preserved_messages(dialog_id, msg_id) VALUES(?, ?)")
-        query.bindLong(1, dialogId)
-        query.bindInteger(2, msgId)
-        query.step()
-        query.dispose()
-    }
-
-    fun loadPreservedMessageIds(db: SQLiteDatabase): Map<Long, HashSet<Int>> {
-        val map = HashMap<Long, HashSet<Int>>()
-        val cursor = db.queryFinalized("SELECT dialog_id, msg_id FROM inu_preserved_messages")
-        try {
-            while (cursor.next()) {
-                map.getOrPut(cursor.longValue(0)) { HashSet() }.add(cursor.intValue(1))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return map
-    }
-
     data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean, val mediaPath: String? = null)
 
-    data class DeletedAuthor(val fromId: Long, val count: Int, val lastDate: Int)
     data class DeletedMessage(val msgId: Int, val text: String, val date: Int, val mediaPath: String? = null)
 
     fun deletedMessagesInDialog(db: SQLiteDatabase, dialogId: Long, limit: Int = 300): List<DeletedMessage> {
@@ -447,54 +417,6 @@ object InuDatabaseHelper {
         try {
             while (cursor.next()) {
                 list.add(DeletedMessage(cursor.intValue(0), cursor.stringValue(1) ?: "", cursor.intValue(2), cursor.stringValue(3)))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return list
-    }
-
-    fun deletedAuthors(db: SQLiteDatabase, limit: Int = 300): List<DeletedAuthor> {
-        val list = ArrayList<DeletedAuthor>()
-        val cursor = db.queryFinalized(
-            "SELECT from_id, COUNT(*), MAX(date) FROM inu_deleted_messages WHERE from_id > 0 GROUP BY from_id ORDER BY MAX(date) DESC LIMIT ?",
-            limit,
-        )
-        try {
-            while (cursor.next()) {
-                list.add(DeletedAuthor(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return list
-    }
-
-    fun deletedAuthorsInDialog(db: SQLiteDatabase, dialogId: Long, limit: Int = 300): List<DeletedAuthor> {
-        val list = ArrayList<DeletedAuthor>()
-        val cursor = db.queryFinalized(
-            "SELECT from_id, COUNT(*), MAX(date) FROM inu_deleted_messages WHERE dialog_id = ? AND from_id > 0 GROUP BY from_id ORDER BY MAX(date) DESC LIMIT ?",
-            dialogId, limit,
-        )
-        try {
-            while (cursor.next()) {
-                list.add(DeletedAuthor(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return list
-    }
-
-    fun deletedByAuthor(db: SQLiteDatabase, fromId: Long, limit: Int = 300): List<MessageSearchResult> {
-        val list = ArrayList<MessageSearchResult>()
-        val cursor = db.queryFinalized(
-            "SELECT dialog_id, msg_id, text, date FROM inu_deleted_messages WHERE from_id = ? ORDER BY date DESC LIMIT ?",
-            fromId, limit,
-        )
-        try {
-            while (cursor.next()) {
-                list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2) ?: "", cursor.intValue(3), isEdit = false))
             }
         } finally {
             cursor.dispose()
@@ -543,21 +465,6 @@ object InuDatabaseHelper {
         try {
             while (cursor.next()) {
                 list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2), cursor.intValue(3), isEdit = true))
-            }
-        } finally {
-            cursor.dispose()
-        }
-        return list
-    }
-
-    fun getDeletedMediaPaths(db: SQLiteDatabase, dialogIds: Collection<Long>? = null): List<String> {
-        val list = ArrayList<String>()
-        val where = if (dialogIds == null) "WHERE media_path IS NOT NULL" else "WHERE media_path IS NOT NULL AND dialog_id IN (${dialogIds.joinToString(",")})"
-        val cursor = db.queryFinalized("SELECT media_path FROM inu_deleted_messages $where")
-        try {
-            while (cursor.next()) {
-                val path = cursor.stringValue(0)
-                if (!path.isNullOrBlank()) list.add(path)
             }
         } finally {
             cursor.dispose()

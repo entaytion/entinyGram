@@ -2,9 +2,6 @@ package desu.inugram.helpers.chat
 
 import android.app.Activity
 import android.os.Environment
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
 import android.util.SparseArray
 import android.view.Gravity
 import android.widget.FrameLayout
@@ -13,8 +10,6 @@ import androidx.core.content.res.ResourcesCompat
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
 import java.io.File
-import org.json.JSONArray
-import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
@@ -890,11 +885,6 @@ object SavedMessagesHelper {
     @JvmStatic
     fun recordEditHistory(account: Int, dialogId: Long, msgId: Int, oldText: String, date: Int) {
         recordEditHistory(account, dialogId, msgId, oldText, date, null)
-    }
-
-    @JvmStatic
-    fun rememberMessageText(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int) {
-        rememberMessage(account, dialogId, msgId, text, hasMedia, date, null, null)
     }
 
     @JvmStatic

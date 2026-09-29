@@ -648,8 +648,6 @@
     <string name="InuSearchOpenUserId">ID %1$s profilini aç</string>
     <string name="InuSearchOpenLink">%1$s bağlantısını aç</string>
     <string name="InuOpenAsUserId">Kullanıcı Kimliği olarak aç</string>
-    <string name="InuOpenById">Kimlik ile aç</string>
-    <string name="InuOpenByIdPrompt">Telegram Kullanıcı veya Sohbet Kimliğini girin</string>
     <string name="InuOpenByUserId">Aramada ve mesajlarda Kimlik ile aç</string>
     <string name="InuOpenByUserIdInfo">Aramada sayı girerken veya mesajlardaki sayılara dokunurken doğrudan profil kısayolu gösterin.</string>
     <string name="InuReorderAccounts">Hesapları yeniden sırala</string>

@@ -670,19 +670,10 @@ object InuConfig {
     val AI_TRANSCRIBE_PROVIDER = IntItem("ai_transcribe_provider", TRANSCRIBE_PROVIDER_GROQ)
 
     @JvmField
-    val AI_TRANSCRIBE_GROQ_KEY = StringItem("ai_transcribe_groq_key", "", exportable = false)
-
-    @JvmField
     val AI_TRANSCRIBE_GROQ_MODEL = StringItem("ai_transcribe_groq_model", "whisper-large-v3-turbo", exportable = false)
 
     @JvmField
-    val AI_TRANSCRIBE_GEMINI_KEY = StringItem("ai_transcribe_gemini_key", "", exportable = false)
-
-    @JvmField
     val AI_TRANSCRIBE_GEMINI_MODEL = StringItem("ai_transcribe_gemini_model", "gemini-3.5-flash", exportable = false)
-
-    @JvmField
-    val AI_TRANSCRIBE_OPENAI_KEY = StringItem("ai_transcribe_openai_key", "", exportable = false)
 
     @JvmField
     val AI_TRANSCRIBE_OPENAI_MODEL = StringItem("ai_transcribe_openai_model", "whisper-1", exportable = false)

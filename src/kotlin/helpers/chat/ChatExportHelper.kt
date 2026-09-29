@@ -12,12 +12,10 @@ import android.os.SystemClock
 import android.provider.DocumentsContract
 import android.util.Base64
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.FileProvider
 import desu.inugram.InuConfig
-import desu.inugram.helpers.SharePicker
 import org.json.JSONArray
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
@@ -40,7 +38,6 @@ import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Cells.CheckBoxCell
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.SeekBar
-import org.telegram.ui.LaunchActivity
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -106,7 +103,6 @@ object ChatExportHelper {
         var finished = false
         var options = Options()
         var items: ArrayList<Item>? = null
-        var nextToRequest = 0
         var observer: NotificationCenter.NotificationCenterDelegate? = null
         var timeoutRunnable: Runnable? = null
         var lastActivityAt = 0L

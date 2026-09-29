@@ -78,13 +78,6 @@ object TranscribeHelper {
         else -> false
     }
 
-    @JvmStatic
-    fun canShowTranscribeButton(account: Int, messageObject: MessageObject?): Boolean {
-        if (messageObject == null) return false
-        if (InuConfig.AI_TRANSCRIBE_ENABLED.value) return true
-        return false
-    }
-
     private fun reqKey(messageObject: MessageObject): String {
         return "${messageObject.currentAccount}_${messageObject.dialogId}_${messageObject.id}"
     }

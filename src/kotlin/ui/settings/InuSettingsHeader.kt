@@ -121,14 +121,6 @@ class InuSettingsHeader(context: Context) : LinearLayout(context) {
         updateColors()
     }
 
-    fun setTitleText(text: CharSequence) {
-        title.text = text
-    }
-
-    fun setSubtitleText(text: CharSequence) {
-        subtitle.text = text
-    }
-
     fun updateColors() {
         val dark = Theme.isCurrentThemeDark()
         val (container, onContainer) = iconColors(dark)

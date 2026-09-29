@@ -1,7 +1,6 @@
 package desu.inugram.helpers.ai
 
 import android.content.Context
-import desu.inugram.InuConfig
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.R

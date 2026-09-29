@@ -84,12 +84,6 @@ object ForwardProHelper {
     }
 
     @JvmStatic
-    fun requestForwardProOnce() {
-        pendingOverride = true
-        pendingInitialEditedText = null
-    }
-
-    @JvmStatic
     fun requestForwardProWithEditedText(text: CharSequence) {
         pendingOverride = true
         pendingInitialEditedText = text

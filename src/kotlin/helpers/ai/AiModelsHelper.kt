@@ -42,39 +42,6 @@ object AiModelsHelper {
     }
 
     @JvmStatic
-    fun fetchCloudflareModels(accountId: String, apiToken: String, callback: (Result<List<String>>) -> Unit) {
-        Utilities.globalQueue.postRunnable {
-            val result = runCatching {
-                val url = "https://api.cloudflare.com/client/v4/accounts/$accountId/ai/models/search?task=Automatic+Speech+Recognition&per_page=100"
-                val conn = (URL(url).openConnection() as HttpURLConnection).apply {
-                    requestMethod = "GET"
-                    connectTimeout = 15_000
-                    readTimeout = 15_000
-                    setRequestProperty("Authorization", "Bearer $apiToken")
-                }
-                val code = conn.responseCode
-                val resp = (if (code in 200..299) conn.inputStream else conn.errorStream)
-                    ?.bufferedReader()?.use { it.readText() } ?: ""
-                conn.disconnect()
-                if (code !in 200..299) {
-                    throw IOException("Cloudflare API error ($code): ${resp.take(300)}")
-                }
-                val body = JSONObject(resp)
-                if (!body.optBoolean("success", false)) {
-                    val errors = body.optJSONArray("errors")
-                    val msg = if (errors != null && errors.length() > 0) errors.getJSONObject(0).optString("message", "Cloudflare error") else "Cloudflare error"
-                    throw IOException(msg)
-                }
-                val models = body.optJSONArray("result") ?: return@runCatching emptyList()
-                (0 until models.length()).mapNotNull { i -> models.getJSONObject(i).optString("name", "").ifBlank { null } }
-                    .filter { it.contains("whisper", ignoreCase = true) }
-                    .sorted()
-            }
-            AndroidUtilities.runOnUIThread { callback(result) }
-        }
-    }
-
-    @JvmStatic
     @JvmOverloads
     fun fetchOpenAiCompatModels(baseUrl: String, apiKey: String, filterSubstring: String? = null, callback: (Result<List<String>>) -> Unit) {
         Utilities.globalQueue.postRunnable {

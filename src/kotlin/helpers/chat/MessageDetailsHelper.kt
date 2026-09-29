@@ -5,7 +5,6 @@ import android.content.Intent
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -17,7 +16,6 @@ import android.widget.ScrollView
 import androidx.core.content.FileProvider
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
-import org.telegram.messenger.ChatObject
 import org.telegram.messenger.ContactsController
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.FileLog
@@ -30,7 +28,6 @@ import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
-import org.telegram.tgnet.Vector
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.ActionBar.ActionBarPopupWindow
 import org.telegram.ui.ActionBar.Theme
