@@ -1150,8 +1150,16 @@
     <string name="InuCacheCalculating">正在计算…</string>
     <string name="InuCacheSummarySubtitle">所有缓存共 %1$d 条记录</string>
     <string name="InuCacheEntriesShort">%1$d 条记录</string>
-    <string name="InuCacheMessagesCategory">消息缓存</string>
     <string name="InuCachePresenceCategory">在线状态记录</string>
+    <string name="InuCacheDeletedCategory">已删除的消息</string>
+    <string name="InuCacheEditsCategory">编辑历史</string>
+    <string name="InuCacheReactionsCategory">已移除的回应</string>
+    <string name="InuCacheMediaCategory">已保存的媒体文件</string>
+    <string name="InuCacheRecentCategory">最近的聊天</string>
+    <string name="InuCacheTempCategory">临时分享文件</string>
+    <string name="InuCacheFeedCategory">动态缓存</string>
+    <string name="InuCachePillsCategory">药丸栈数据</string>
+    <string name="InuCacheLogsCategory">日志和崩溃报告</string>
     <string name="InuPresenceLogsTtl">自动清理在线状态记录</string>
     <string name="InuPresenceLogsTtlInfo">自动删除早于所选时段的在线状态记录。</string>
     <string name="InuTypingSpoofActive">当前活跃</string>

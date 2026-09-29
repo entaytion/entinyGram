@@ -255,6 +255,55 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
+    fun getFeedCacheStat(db: SQLiteDatabase, account: Int): DialogCacheStat {
+        val cursor = db.queryFinalized("SELECT COUNT(*), SUM(LENGTH(data)) FROM inu_feed_cache WHERE account_id = ?", account)
+        try {
+            if (cursor.next()) return DialogCacheStat(0L, cursor.intValue(0), cursor.longValue(1))
+        } finally {
+            cursor.dispose()
+        }
+        return DialogCacheStat(0L, 0, 0L)
+    }
+
+    fun getTableStat(db: SQLiteDatabase, table: String, textColumn: String?, rowBytes: Long): DialogCacheStat {
+        val sum = if (textColumn != null) "SUM(LENGTH($textColumn))" else "0"
+        val cursor = db.queryFinalized("SELECT COUNT(*), $sum FROM $table")
+        try {
+            if (cursor.next()) {
+                val count = cursor.intValue(0)
+                return DialogCacheStat(0L, count, count * rowBytes + cursor.longValue(1))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return DialogCacheStat(0L, 0, 0L)
+    }
+
+    fun clearEditHistory(db: SQLiteDatabase) {
+        val paths = ArrayList<String>()
+        val cursor = db.queryFinalized("SELECT media_path FROM inu_edit_history WHERE media_path IS NOT NULL")
+        try {
+            while (cursor.next()) cursor.stringValue(0)?.takeIf { it.isNotBlank() }?.let(paths::add)
+        } finally {
+            cursor.dispose()
+        }
+        db.executeFast("DELETE FROM inu_edit_history").stepThis().dispose()
+        deleteUnreferencedMediaFiles(db, paths)
+    }
+
+    fun clearDeletedReactions(db: SQLiteDatabase) {
+        db.executeFast("DELETE FROM inu_deleted_reactions").stepThis().dispose()
+    }
+
+    fun detachSavedMedia(db: SQLiteDatabase) {
+        db.executeFast("UPDATE inu_deleted_messages SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
+        db.executeFast("UPDATE inu_edit_history SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
+    }
+
+    fun clearFeedCache(db: SQLiteDatabase, account: Int) {
+        db.executeFast("DELETE FROM inu_feed_cache WHERE account_id = $account").stepThis().dispose()
+    }
+
     fun saveLocalPin(db: SQLiteDatabase, scope: Int, dialogId: Long, order: Int) {
         val query = db.executeFast("REPLACE INTO inu_local_pins(scope, dialog_id, pin_order) VALUES(?, ?, ?)")
         query.bindInteger(1, scope)
@@ -689,18 +738,22 @@ object InuDatabaseHelper {
         }
     }
 
-    fun clearDeletedMessages(db: SQLiteDatabase, dialogIds: Collection<Long>? = null) {
+    fun clearDeletedMessages(db: SQLiteDatabase, dialogIds: Collection<Long>? = null, includeHistory: Boolean = true) {
         val mediaPaths = try { getMediaPathsForTables(db, dialogIds) } catch (_: Throwable) { emptyList() }
 
         if (dialogIds == null) {
             db.executeFast("DELETE FROM inu_deleted_messages").stepThis().dispose()
-            db.executeFast("DELETE FROM inu_edit_history").stepThis().dispose()
-            db.executeFast("DELETE FROM inu_deleted_reactions").stepThis().dispose()
+            if (includeHistory) {
+                db.executeFast("DELETE FROM inu_edit_history").stepThis().dispose()
+                db.executeFast("DELETE FROM inu_deleted_reactions").stepThis().dispose()
+            }
         } else if (dialogIds.isNotEmpty()) {
             val idsStr = dialogIds.joinToString(",")
             db.executeFast("DELETE FROM inu_deleted_messages WHERE dialog_id IN ($idsStr)").stepThis().dispose()
-            db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id IN ($idsStr)").stepThis().dispose()
-            db.executeFast("DELETE FROM inu_deleted_reactions WHERE dialog_id IN ($idsStr)").stepThis().dispose()
+            if (includeHistory) {
+                db.executeFast("DELETE FROM inu_edit_history WHERE dialog_id IN ($idsStr)").stepThis().dispose()
+                db.executeFast("DELETE FROM inu_deleted_reactions WHERE dialog_id IN ($idsStr)").stepThis().dispose()
+            }
         }
         deleteUnreferencedMediaFiles(db, mediaPaths)
     }

@@ -321,13 +321,28 @@ object SavedMessagesHelper {
     }
 
     @JvmStatic
-    fun clearCache(account: Int, dialogIds: Collection<Long>? = null, onDone: Runnable? = null) {
+    fun clearEditHistory(account: Int, onDone: Runnable? = null) {
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            storage.database?.let { InuDatabaseHelper.clearEditHistory(it) }
+            org.telegram.messenger.AndroidUtilities.runOnUIThread {
+                synchronized(cacheLock) {
+                    editHistoryCache.remove(account.toLong())
+                    editHistoryIds.remove(account.toLong())
+                }
+                onDone?.run()
+            }
+        }
+    }
+
+    @JvmStatic
+    fun clearCache(account: Int, dialogIds: Collection<Long>? = null, deletedOnly: Boolean = false, onDone: Runnable? = null) {
         val storage = MessagesStorage.getInstance(account) ?: return
         storage.storageQueue.postRunnable {
             val db = storage.database
             val pairs = if (db != null) InuDatabaseHelper.getDeletedMessageIds(db, dialogIds) else emptyMap()
             if (db != null) {
-                InuDatabaseHelper.clearDeletedMessages(db, dialogIds)
+                InuDatabaseHelper.clearDeletedMessages(db, dialogIds, !deletedOnly)
                 for ((dialogId, mids) in pairs) {
                     InuDatabaseHelper.deleteSavedMessages(db, dialogId, mids)
                     val channelId = getChannelId(account, dialogId)

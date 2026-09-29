@@ -1148,8 +1148,16 @@
     <string name="InuCacheCalculating">Hesaplanıyor…</string>
     <string name="InuCacheSummarySubtitle">Tüm önbelleklerde %1$d kayıt</string>
     <string name="InuCacheEntriesShort">%1$d kayıt</string>
-    <string name="InuCacheMessagesCategory">Mesaj önbelleği</string>
     <string name="InuCachePresenceCategory">Çevrim içi günlükleri</string>
+    <string name="InuCacheDeletedCategory">Silinen mesajlar</string>
+    <string name="InuCacheEditsCategory">Düzenleme geçmişi</string>
+    <string name="InuCacheReactionsCategory">Kaldırılan tepkiler</string>
+    <string name="InuCacheMediaCategory">Kaydedilen medya dosyaları</string>
+    <string name="InuCacheRecentCategory">Son sohbetler</string>
+    <string name="InuCacheTempCategory">Geçici paylaşım dosyaları</string>
+    <string name="InuCacheFeedCategory">Akış önbelleği</string>
+    <string name="InuCachePillsCategory">Pill stack verileri</string>
+    <string name="InuCacheLogsCategory">Günlükler ve çökme raporları</string>
     <string name="InuPresenceLogsTtl">Çevrim içi günlüklerini otomatik temizle</string>
     <string name="InuPresenceLogsTtlInfo">Seçilen süreden eski çevrim içi günlüklerini otomatik olarak silin.</string>
     <string name="InuTypingSpoofActive">Şu anda etkin</string>

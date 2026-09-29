@@ -1380,8 +1380,16 @@
     <string name="InuCacheCalculating">Підрахунок…</string>
     <string name="InuCacheSummarySubtitle">%1$d записів у всіх кешах</string>
     <string name="InuCacheEntriesShort">%1$d записів</string>
-    <string name="InuCacheMessagesCategory">Кеш повідомлень</string>
     <string name="InuCachePresenceCategory">Журнали активності</string>
+    <string name="InuCacheDeletedCategory">Видалені повідомлення</string>
+    <string name="InuCacheEditsCategory">Історія редагувань</string>
+    <string name="InuCacheReactionsCategory">Прибрані реакції</string>
+    <string name="InuCacheMediaCategory">Збережені медіафайли</string>
+    <string name="InuCacheRecentCategory">Нещодавні чати</string>
+    <string name="InuCacheTempCategory">Тимчасові файли пересилання</string>
+    <string name="InuCacheFeedCategory">Кеш стрічки</string>
+    <string name="InuCachePillsCategory">Дані pill stack</string>
+    <string name="InuCacheLogsCategory">Логи та звіти про збої</string>
     <string name="InuPresenceLogsTtl">Авто-очищення журналів активності</string>
     <string name="InuPresenceLogsTtlInfo">Автоматично видаляти журнали активності, старіші за вказаний період.</string>
     <string name="InuTypingSpoofActive">Активно зараз</string>

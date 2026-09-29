@@ -1149,8 +1149,16 @@
     <string name="InuCacheCalculating">計算中…</string>
     <string name="InuCacheSummarySubtitle">全キャッシュで%1$d件の記録</string>
     <string name="InuCacheEntriesShort">%1$d件の記録</string>
-    <string name="InuCacheMessagesCategory">メッセージキャッシュ</string>
     <string name="InuCachePresenceCategory">オンライン状態の記録</string>
+    <string name="InuCacheDeletedCategory">削除されたメッセージ</string>
+    <string name="InuCacheEditsCategory">編集履歴</string>
+    <string name="InuCacheReactionsCategory">削除されたリアクション</string>
+    <string name="InuCacheMediaCategory">保存したメディアファイル</string>
+    <string name="InuCacheRecentCategory">最近のチャット</string>
+    <string name="InuCacheTempCategory">共有用の一時ファイル</string>
+    <string name="InuCacheFeedCategory">フィードのキャッシュ</string>
+    <string name="InuCachePillsCategory">ピルスタックのデータ</string>
+    <string name="InuCacheLogsCategory">ログとクラッシュレポート</string>
     <string name="InuPresenceLogsTtl">オンライン状態記録の自動消去</string>
     <string name="InuPresenceLogsTtlInfo">選択した期間より古いオンライン状態の記録を自動消去します。</string>
     <string name="InuTypingSpoofActive">現在有効</string>
