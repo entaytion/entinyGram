@@ -652,6 +652,7 @@
     <string name="InuReorderAccountsInfo">Ayarlar listesinde ve hesap seçicide hesapları yeniden sıralamak için sürükleyin.</string>
     <string name="InuCreateAsSupergroup">Süper grup olarak oluştur</string>
     <string name="InuFeed">Akış</string>
+    <string name="InuFeedToggleInfo">Akışı menülere ve alt sekmelere ekler. Varsayılan olarak kapalıdır; alt sekme için uygulamanın yeniden başlatılması gerekir</string>
     <string name="InuFeedEmpty">Hepsi okundu</string>
     <string name="InuFeedManageChannels">Kanalları yönet</string>
     <string name="InuFeedMarkAllRead">Tümünü okundu işaretle</string>

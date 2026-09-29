@@ -45,6 +45,7 @@ class FeedController private constructor(
         this.listener = listener
         if (!wasActive) {
             FeedChannelSet.pruneStaleExclusions(account)
+            store.pruneCache()
             unreadTracker.refresh(FeedChannelSet.eligibleChannels(account, scope))
             store.channelsWithNewerPosts { requestBackfill(it) }
             if (scope is FeedScope.Folder) registerOpenFolder(this)
@@ -68,7 +69,8 @@ class FeedController private constructor(
         AndroidUtilities.cancelRunOnUIThread(backfillPumpRunnable)
         if (scope is FeedScope.Folder) unregisterOpenFolder(this)
         unreadTracker.flush()
-        store.trim()
+        store.trim(DETACH_KEEP_ROWS)
+        if (scope is FeedScope.Folder) releaseFolder(this)
     }
 
     fun loadOlder(onResult: (added: Int) -> Unit) {
@@ -84,6 +86,7 @@ class FeedController private constructor(
 
     // entiny: history requests are queued and capped so a big channel list can't flood the connection
     private fun requestBackfill(candidates: List<Pair<Long, Int>>) {
+        if (!isActive) return
         for ((dialogId, offsetId) in candidates) {
             if (dialogId !in backfillInFlight) backfillPending[dialogId] = offsetId
         }
@@ -163,7 +166,7 @@ class FeedController private constructor(
     // endregion
 
     fun onNewMessages(messages: List<MessageObject>) {
-        if (isActive && store.mergeLive(messages)) scheduleTimelineChanged(true)
+        if (isActive) store.mergeLive(messages, { isActive }) { scheduleTimelineChanged(true) }
     }
 
     fun onMessagesDeleted(dialogId: Long, messageIds: Collection<Int>) {
@@ -216,6 +219,7 @@ class FeedController private constructor(
         private const val BACKFILL_PAGE_SIZE = 30
         private const val MAX_CONCURRENT_BACKFILL = 4
         private const val MAX_FLOOD_RETRY_SECONDS = 30
+        private const val DETACH_KEEP_ROWS = 150
 
         private val instances = HashMap<Int, FeedController>()
         private val folderInstances = HashMap<Int, HashMap<Int, FeedController>>()
@@ -239,6 +243,18 @@ class FeedController private constructor(
             instances[account]?.let { if (it.isActive) result.add(it) }
             openFolderControllers[account]?.let { result.addAll(it) }
             return result
+        }
+
+        @Synchronized
+        fun releaseInactive() {
+            instances.values.removeAll { !it.isActive }
+            for (folders in folderInstances.values) folders.values.removeAll { !it.isActive }
+        }
+
+        // entiny: a closed folder feed is rebuilt from the disk cache, so its rows should not stay pinned in memory
+        @Synchronized
+        private fun releaseFolder(controller: FeedController) {
+            folderInstances[controller.account]?.values?.remove(controller)
         }
 
         @Synchronized

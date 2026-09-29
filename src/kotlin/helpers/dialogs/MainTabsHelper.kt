@@ -24,6 +24,7 @@ import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
 import org.telegram.ui.MainTabsActivity
 import desu.inugram.helpers.icons.ScaledIconDrawable
+import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.helpers.theme.M3MainTabsHelper
@@ -80,7 +81,7 @@ object MainTabsHelper {
 
     // entiny: snapshot order for process lifetime so mid-session toggle preview does not desync ViewPager and crash
     private val cachedEnabledOrder: List<MainTabsMenuConfig.Item> by lazy {
-        InuConfig.BOTTOM_TABS_ORDER.value.filter { it.enabled }.map { it.item }
+        InuConfig.BOTTOM_TABS_ORDER.value.filter { it.enabled && (it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled()) }.map { it.item }
     }
 
     @JvmStatic

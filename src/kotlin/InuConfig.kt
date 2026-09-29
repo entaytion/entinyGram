@@ -30,6 +30,20 @@ object InuConfig {
         migrateGhostModeEnabledDefault()
         migrateGhostAutoOffline()
         migrateSelfDestructCategories()
+        migrateFeedEnabled(context)
+    }
+
+    // entiny: the feed became opt-in; anyone who ever touched it keeps it on
+    private fun migrateFeedEnabled(context: Context) {
+        if (prefs.contains(FEED_ENABLED.key)) return
+        val touched = listOf(
+            FEED_EXCLUDED_CHANNELS.key, FEED_INCLUDE_ARCHIVED.key, FEED_NEWEST_ON_TOP.key,
+            FEED_MARK_READ_ON_SCROLL.key, FEED_NEW_POSTS_INDICATOR.key,
+        ).any { prefs.contains(it) } ||
+            DIALOGS_MENU_ITEMS.value.any { it.item == DialogsMenuConfig.Item.FEED && it.enabled } ||
+            BOTTOM_TABS_ORDER.value.any { it.item == MainTabsMenuConfig.Item.FEED && it.enabled } ||
+            java.io.File(context.applicationInfo.dataDir, "shared_prefs/inu_feed.xml").exists()
+        FEED_ENABLED.value = touched
     }
 
     private fun migrateGhostAutoOffline() {
@@ -1769,6 +1783,9 @@ object InuConfig {
 
     @JvmField
     val SELECTION_BOTTOM_NO_QUOTE = BoolItem("selection_bottom_no_quote", false)
+
+    @JvmField
+    val FEED_ENABLED = BoolItem("feed_enabled", false)
 
     @JvmField
     val FEED_EXCLUDED_CHANNELS = StringSetItem("feed_excluded_channels", emptySet())

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
 import desu.inugram.helpers.menu.DialogsMenuConfig
+import desu.inugram.helpers.menu.DialogsMenuHelper
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.update.UpdateHelper
@@ -683,7 +684,7 @@ object DrawerHelper {
     fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions) {
         val bottomTabsHidden = MainTabsHelper.isHidden
         for (entry in InuConfig.DIALOGS_MENU_ITEMS.value) {
-            if (!entry.enabled) continue
+            if (!entry.enabled || !DialogsMenuHelper.isEnabled(entry.item)) continue
             when (entry.item) {
                 DialogsMenuConfig.Item.SCROLL_TOP -> io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
                     instance.scrollToTop(true, true)

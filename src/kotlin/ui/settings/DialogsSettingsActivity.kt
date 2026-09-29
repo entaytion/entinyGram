@@ -7,6 +7,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MenuOrderEntry
 import org.telegram.messenger.AndroidUtilities.dp
@@ -33,6 +34,10 @@ class DialogsSettingsActivity : SettingsPageActivity() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(mkSubPageButton(BUTTON_PILL_STACK, R.drawable.inu_tabler_stack_2, LocaleController.getString(R.string.InuPillStack)))
+        items.add(mkTwoLineCheckItem(TOGGLE_FEED_ENABLED, R.string.InuFeed, R.string.InuFeedToggleInfo, FeedHelper.isEnabled()))
+        if (FeedHelper.isEnabled()) {
+            items.add(mkSubPageButton(BUTTON_FEED_SETTINGS, R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedManageChannels)))
+        }
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFolders)))
@@ -477,6 +482,16 @@ class DialogsSettingsActivity : SettingsPageActivity() {
             }
 
             BUTTON_PILL_STACK -> presentFragment(PillStackSettingsActivity())
+            BUTTON_FEED_SETTINGS -> presentFragment(FeedExcludedChannelsSettingsActivity())
+
+            TOGGLE_FEED_ENABLED -> {
+                val new = !FeedHelper.isEnabled()
+                FeedHelper.setEnabled(new)
+                (view as? NotificationsCheckCell)?.isChecked = new
+                mainTabsPreview?.let { refreshMainTabsPreview(it) }
+                softRebuild()
+                showRestartBulletin()
+            }
         }
     }
 
@@ -492,15 +507,17 @@ class DialogsSettingsActivity : SettingsPageActivity() {
 
     private fun reorderMainTabs(newOrder: List<MainTabsMenuConfig.Item>) {
         val byItem = mainTabsEntries.associateBy { it.item }
-        mainTabsEntries = newOrder.mapNotNull { byItem[it] }.toMutableList()
+        val hidden = mainTabsEntries.filter { it.item == MainTabsMenuConfig.Item.FEED && !FeedHelper.isEnabled() }
+        mainTabsEntries = (newOrder.mapNotNull { byItem[it] } + hidden).toMutableList()
         InuConfig.BOTTOM_TABS_ORDER.value = mainTabsEntries
         showRestartBulletin()
     }
 
     private fun refreshMainTabsPreview(cell: MainTabsPreviewCell) {
+        val shown = mainTabsEntries.filter { it.item != MainTabsMenuConfig.Item.FEED || FeedHelper.isEnabled() }
         cell.setState(
-            mainTabsEntries.map { it.item },
-            mainTabsEntries.filter { it.enabled }.map { it.item }.toSet(),
+            shown.map { it.item },
+            shown.filter { it.enabled }.map { it.item }.toSet(),
             InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value,
         )
     }
@@ -644,6 +661,8 @@ class DialogsSettingsActivity : SettingsPageActivity() {
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
         private val TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE = InuUtils.generateId()
         private val BUTTON_PILL_STACK = InuUtils.generateId()
+        private val TOGGLE_FEED_ENABLED = InuUtils.generateId()
+        private val BUTTON_FEED_SETTINGS = InuUtils.generateId()
 
         private fun titleTextLabel(value: Int): String = when (value) {
             InuConfig.DialogsTitleTextItem.USERNAME -> LocaleController.getString(R.string.Username)
@@ -706,6 +725,7 @@ class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("dialogs-fab-offset-for-bottom-bar", R.string.InuDialogsFabOffsetForBottomBar, TOGGLE_FAB_OFFSET_FOR_BOTTOM_BAR),
                 SearchRegistry.Entry("dialogs-fab-left-side", R.string.InuDialogsFabLeftSide, TOGGLE_FAB_LEFT_SIDE),
                 SearchRegistry.Entry("pill-stack-open", R.string.InuPillStack, BUTTON_PILL_STACK),
+                SearchRegistry.Entry("feed-toggle", R.string.InuFeed, TOGGLE_FEED_ENABLED),
             ),
         )
     }

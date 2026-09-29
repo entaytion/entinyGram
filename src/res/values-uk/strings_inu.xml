@@ -764,6 +764,7 @@
     <string name="InuReorderAccountsInfo">Перетягуйте, щоб змінити порядок акаунтів у списку налаштувань і в перемикачі акаунтів.</string>
     <string name="InuCreateAsSupergroup">Створити як супергрупу</string>
     <string name="InuFeed">Стрічка</string>
+    <string name="InuFeedToggleInfo">Додає стрічку до меню та нижніх вкладок. Вимкнено за замовчуванням; для нижньої вкладки потрібен перезапуск</string>
     <string name="InuFeedEmpty">Усе прочитано</string>
     <string name="InuFeedManageChannels">Керування каналами</string>
     <string name="InuFeedMarkAllRead">Позначити все прочитаним</string>

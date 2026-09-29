@@ -535,6 +535,7 @@
     <string name="InuReorderAccountsInfo">拖动以重新排序设置列表和账号切换器中的账号。</string>
     <string name="InuCreateAsSupergroup">创建为超级群</string>
     <string name="InuFeed">动态</string>
+    <string name="InuFeedToggleInfo">将动态添加到菜单和底部标签页。默认关闭；底部标签页需要重启应用</string>
     <string name="InuFeedEmpty">全部已读</string>
     <string name="InuFeedManageChannels">管理频道</string>
     <string name="InuFeedMarkAllRead">全部标为已读</string>

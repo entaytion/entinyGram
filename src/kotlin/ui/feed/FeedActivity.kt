@@ -27,6 +27,7 @@ import desu.inugram.helpers.dialogs.FolderHelper
 import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.feed.FeedChannelSet
 import desu.inugram.helpers.feed.FeedController
+import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.feed.FeedScope
 import desu.inugram.helpers.feed.FeedStore
 import desu.inugram.helpers.theme.NonIslandHelper
@@ -135,6 +136,8 @@ class FeedActivity @JvmOverloads constructor(
     private val additionNavigationBarHeight: Int
         get() = if (hasMainTabs && !MainTabsHelper.isHidden) dp(MainTabsHelper.mainTabsHeightWithMargins.toFloat()) else 0
     private var navigationBarHeight = 0
+
+    override fun onFragmentCreate(): Boolean = FeedHelper.isEnabled() && super.onFragmentCreate()
 
     override fun createView(context: Context): View {
         setupActionBar(context)
@@ -329,6 +332,11 @@ class FeedActivity @JvmOverloads constructor(
         avatarContainer = null
         fadeView = null
         savePosition()
+        groups.clear()
+        groupSignatures.clear()
+        groupRevisions.clear()
+        reactionsCheckedAt.clear()
+        reactionTapSeq.clear()
         controller.detach(this)
         super.onFragmentDestroy()
     }
@@ -439,15 +447,17 @@ class FeedActivity @JvmOverloads constructor(
         val ordered = if (newestOnTop) snapshot else snapshot.asReversed()
         val out = ArrayList<Item>(ordered.size + 1)
         val emitted = HashSet<Long>()
+        val divider = dividerKey
+        fun isDivider(m: MessageObject) = divider != null && m.id == divider.messageId && m.getDialogId() == divider.dialogId
         for (msg in ordered) {
             val group = validGroup(msg)
             if (group != null) {
                 if (!emitted.add(group.groupId)) continue
-                if (group.messages.any { FeedStore.keyOf(it) == dividerKey }) out.add(Item.Divider)
+                if (divider != null && group.messages.any(::isDivider)) out.add(Item.Divider)
                 val groupRevision = groupRevisions[group.groupId] ?: 0
                 for (part in group.messages) out.add(Item.Post(part, group, store.revision(part), groupRevision))
             } else {
-                if (FeedStore.keyOf(msg) == dividerKey) out.add(Item.Divider)
+                if (divider != null && isDivider(msg)) out.add(Item.Divider)
                 out.add(Item.Post(msg, null, store.revision(msg), 0))
             }
         }
@@ -515,6 +525,7 @@ class FeedActivity @JvmOverloads constructor(
     private fun refreshVisibleReactions() {
         val now = SystemClock.elapsedRealtime()
         reactionsCheckedAt.keys.removeAll { !store.contains(it) }
+        reactionTapSeq.keys.retainAll(reactionsCheckedAt.keys)
         val byDialog = HashMap<Long, ArrayList<Int>>()
         forEachVisiblePost { msg ->
             val key = FeedStore.keyOf(msg)

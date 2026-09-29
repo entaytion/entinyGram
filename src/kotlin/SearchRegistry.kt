@@ -15,6 +15,7 @@ import desu.inugram.ui.settings.CategoryChatsSettingsActivity
 import desu.inugram.ui.settings.ChatHeaderSettingsActivity
 import desu.inugram.ui.settings.DatacenterStatusActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
+import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
 import desu.inugram.ui.settings.IconPacksSettingsActivity
@@ -118,6 +119,7 @@ object SearchRegistry {
         if (ParanoiaHelper.shouldHideSettings()) return stock
         val extra = ArrayList<ProfileActivity.SearchAdapter.SearchResult>()
         for (page in pages) {
+            if (page === FeedExcludedChannelsSettingsActivity.PAGE && !FeedHelper.isEnabled()) continue
             val pageTitle = LocaleController.getString(page.titleRes)
             val parent = "${LocaleController.getString(R.string.InuSettings)} → $pageTitle"
             extra.add(

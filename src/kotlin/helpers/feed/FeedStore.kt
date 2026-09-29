@@ -80,16 +80,22 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
     }
 
     // returns true when the timeline changed
-    fun mergeLive(messages: List<MessageObject>): Boolean {
-        // entiny: live objects are shared with ChatActivity, so the feed keeps its own wide copies
+    fun mergeLive(messages: List<MessageObject>, shouldInsert: () -> Boolean, onResult: () -> Unit) {
+        // entiny: live objects are shared with ChatActivity, so clone on the UI thread and build the wide row (text layout) off it
         val verdicts = HashMap<Long, Boolean>()
         val copies = messages
             .filter {
                 it.messageOwner != null && it.getDialogId() < 0 &&
                     verdicts.getOrPut(it.getDialogId()) { FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }
             }
-            .mapNotNull { feedCopy(it.messageOwner) }
-        return insert(copies, persist = true) > 0
+            .mapNotNull { cloneForFeed(it.messageOwner) }
+        if (copies.isEmpty()) return
+        Utilities.globalQueue.postRunnable {
+            val built = copies.map { buildRow(it) }
+            AndroidUtilities.runOnUIThread {
+                if (shouldInsert() && insert(built, persist = true) > 0) onResult()
+            }
+        }
     }
 
     // entiny: copies and text layouts are built off the UI thread, only the insert happens on it
@@ -103,6 +109,10 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
             AndroidUtilities.runOnUIThread {
                 // entiny: memory must stay a gapless prefix of the cache, so posts older than the tail only go to the cache
                 val tail = rows.lastOrNull()
+                if (!FeedChannelSet.isEligibleChannel(account, dialogId, scope)) {
+                    onResult(0)
+                    return@runOnUIThread
+                }
                 val (inMemory, older) = if (tail == null) copies to emptyList() else copies.partition { TIMELINE_ORDER.compare(it, tail) <= 0 }
                 persistRows(older)
                 onResult(insert(inMemory, persist = true) + older.size)
@@ -141,6 +151,29 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
+    // entiny: the on-disk cache would otherwise grow with every post ever seen
+    fun pruneCache() {
+        val storage = MessagesStorage.getInstance(account)
+        val scopeKey = scopeKey()
+        storage.storageQueue.postRunnable {
+            var cursor: SQLiteCursor? = null
+            try {
+                cursor = storage.database.queryFinalized(
+                    "SELECT date FROM inu_feed_cache WHERE account_id = ? AND scope_key = ? ORDER BY date DESC LIMIT 1 OFFSET ?",
+                    account, scopeKey, MAX_CACHED_ROWS,
+                )
+                val cutoff = if (cursor.next()) cursor.intValue(0) else return@postRunnable
+                cursor.dispose()
+                cursor = null
+                storage.database.executeFast("DELETE FROM inu_feed_cache WHERE account_id = $account AND scope_key = '$scopeKey' AND date < $cutoff").stepThis().dispose()
+            } catch (e: Exception) {
+                Log.d(TAG, "cache prune failed", e)
+            } finally {
+                cursor?.dispose()
+            }
+        }
+    }
+
     fun updateReactions(dialogId: Long, messageId: Int, reactions: TLRPC.TL_messageReactions): Boolean {
         val key = Key(dialogId, messageId)
         val msg = byKey[key] ?: return false
@@ -165,11 +198,11 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
     fun removeDialog(dialogId: Long): Boolean = removeWhere { it.getDialogId() == dialogId }
 
     // entiny: the store outlives the screen, so drop the old tail when nobody is looking
-    fun trim() {
-        if (rows.size <= MAX_RETAINED_ROWS) return
-        val cut = ArrayList(rows.subList(MAX_RETAINED_ROWS, rows.size))
+    fun trim(keep: Int = MAX_RETAINED_ROWS) {
+        if (rows.size <= keep) return
+        val cut = ArrayList(rows.subList(keep, rows.size))
         val cutKeys = cut.mapTo(HashSet()) { keyOf(it) }
-        removeWhere { cutKeys.contains(keyOf(it)) }
+        removeWhere(persist = false) { cutKeys.contains(keyOf(it)) }
         oldestPerChannel.clear()
         for (msg in rows) {
             val current = oldestPerChannel[msg.getDialogId()]
@@ -177,7 +210,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
     }
 
-    private fun removeWhere(predicate: (MessageObject) -> Boolean): Boolean {
+    private fun removeWhere(persist: Boolean = true, predicate: (MessageObject) -> Boolean): Boolean {
         var changed = false
         val affectedDialogs = HashSet<Long>()
         val removed = ArrayList<Key>()
@@ -195,7 +228,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         }
         if (changed) {
             recomputeOldest(affectedDialogs)
-            deleteRows(removed)
+            if (persist) deleteRows(removed)
         }
         return changed
     }
@@ -274,7 +307,8 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
             }
             val loaded = messages.mapNotNull { feedCopy(it, clone = false) }
             AndroidUtilities.runOnUIThread {
-                onResult(insert(loaded))
+                // entiny: the channel set may have changed while the page was loading
+                onResult(insert(loaded.filter { FeedChannelSet.isEligibleChannel(account, it.getDialogId(), scope) }))
             }
         }
     }
@@ -317,7 +351,12 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
 
     // entiny: rows read from the cache are already private, only shared stock messages need cloning
     private fun feedCopy(message: TLRPC.Message, clone: Boolean = true): MessageObject? {
-        val copy = if (clone) InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) ?: return null else message
+        val copy = if (clone) cloneForFeed(message) ?: return null else message
+        return buildRow(copy)
+    }
+
+    private fun cloneForFeed(message: TLRPC.Message): TLRPC.Message? {
+        val copy = InuUtils.cloneTLObject(message, TLRPC.Message::TLdeserialize) ?: return null
         copy.attachPath = message.attachPath
         copy.send_state = message.send_state
         copy.fwd_msg_id = message.fwd_msg_id
@@ -328,6 +367,10 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         copy.destroyTime = message.destroyTime
         copy.destroyTimeMillis = message.destroyTimeMillis
         copy.params = message.params?.let { HashMap(it) }
+        return copy
+    }
+
+    private fun buildRow(copy: TLRPC.Message): MessageObject {
         return MessageObject(account, copy, false, false).apply {
             forceWideChannelPost = true
             if (Theme.chat_msgTextPaint != null) {
@@ -394,6 +437,7 @@ class FeedStore(private val account: Int, private val scope: FeedScope = FeedSco
         private const val PAGE_SIZE = 30
         private const val ALBUM_TAIL_LOOKUP = 10
         private const val MAX_RETAINED_ROWS = 500
+        private const val MAX_CACHED_ROWS = 3000
         private const val CATCHUP_PAGE = 100
 
         fun keyOf(msg: MessageObject) = Key(msg.getDialogId(), msg.id)

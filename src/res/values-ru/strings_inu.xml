@@ -601,6 +601,7 @@
     <string name="InuReorderAccountsInfo">Перетаскивайте аккаунты, чтобы изменить их порядок в списке настроек и переключателе аккаунтов.</string>
     <string name="InuCreateAsSupergroup">Создать как супергруппу</string>
     <string name="InuFeed">Лента</string>
+    <string name="InuFeedToggleInfo">Добавляет ленту в меню и нижние вкладки. По умолчанию выключено; для нижней вкладки нужен перезапуск</string>
     <string name="InuFeedEmpty">Все прочитано</string>
     <string name="InuFeedManageChannels">Управление каналами</string>
     <string name="InuFeedMarkAllRead">Отметить всё прочитанным</string>

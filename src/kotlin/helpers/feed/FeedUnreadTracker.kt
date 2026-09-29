@@ -48,11 +48,13 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         if (pendingMax.isEmpty()) return
         val entries = ArrayList(pendingMax.entries)
         pendingMax.clear()
+        val editor = preferences().edit()
         for ((dialogId, maxReadId) in entries) {
             if (maxReadId <= (knownMax[dialogId] ?: 0)) continue
             knownMax[dialogId] = maxReadId
-            storeMax(dialogId, maxReadId)
+            editor.putInt(dialogId.toString(), maxReadId)
         }
+        editor.apply()
     }
 
     fun markAllRead(dialogIds: Collection<Long>, newestLoaded: Map<Long, Int>): Int {

@@ -900,6 +900,7 @@
     <string name="InuReorderAccountsInfo">Drag to reorder accounts in the settings list and the account picker.</string>
     <string name="InuCreateAsSupergroup">Create as supergroup</string>
     <string name="InuFeed">Feed</string>
+    <string name="InuFeedToggleInfo">Adds the feed to menus and bottom tabs. Off by default; the bottom tab needs an app restart</string>
     <string name="InuFeedEmpty">You\'re all caught up</string>
     <string name="InuFeedManageChannels">Manage channels</string>
     <string name="InuFeedMarkAllRead">Mark all read</string>

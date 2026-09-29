@@ -536,6 +536,7 @@
     <string name="InuReorderAccountsInfo">ドラッグで設定リストとアカウント切り替えの並び順を変更できます。</string>
     <string name="InuCreateAsSupergroup">スーパーグループとして作成</string>
     <string name="InuFeed">フィード</string>
+    <string name="InuFeedToggleInfo">フィードをメニューと下部タブに追加します。デフォルトはオフで、下部タブはアプリの再起動後に反映されます</string>
     <string name="InuFeedEmpty">すべて既読です</string>
     <string name="InuFeedManageChannels">チャンネルを管理</string>
     <string name="InuFeedMarkAllRead">すべて既読にする</string>
