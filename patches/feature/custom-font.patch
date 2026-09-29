@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -2391,7 +2391,13 @@ public class AndroidUtilities {
+@@ -2390,7 +2390,13 @@ public class AndroidUtilities {
      }
  
      public static Typeface getTypeface(String assetPath) {

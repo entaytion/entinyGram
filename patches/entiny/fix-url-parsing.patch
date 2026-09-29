@@ -18,7 +18,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -1327,6 +1327,7 @@ public class AndroidUtilities {
+@@ -1326,6 +1326,7 @@ public class AndroidUtilities {
              for (int i = 0; i < newSpans.length; ++i) {
                  text.setSpan(newSpans[i], newText.getSpanStart(newSpans[i]), newText.getSpanEnd(newSpans[i]), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
              }
@@ -26,7 +26,7 @@ index 0000000..0000000 100644
          }
          return success;
      }
-@@ -1364,7 +1365,7 @@ public class AndroidUtilities {
+@@ -1363,7 +1364,7 @@ public class AndroidUtilities {
  
      @Deprecated // use addLinksSafe
      public static boolean addLinks(Spannable text, int mask, boolean internalOnly, boolean removeOldReplacements) {
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              return false;
          }
          URLSpan[] old = text.getSpans(0, text.length(), URLSpan.class);
-@@ -1387,6 +1388,12 @@ public class AndroidUtilities {
+@@ -1386,6 +1387,12 @@ public class AndroidUtilities {
          }
          for (int a = 0, N = links.size(); a < N; a++) {
              LinkSpec link = links.get(a);

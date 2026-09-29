@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -620,6 +620,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -619,6 +619,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          @Override
          public boolean isLivePhoto() {
              if (isVideo || parsedXmp) return isLivePhoto;

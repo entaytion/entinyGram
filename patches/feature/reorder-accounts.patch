@@ -52,7 +52,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -304,6 +304,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -303,6 +303,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                      finishFragment();
                  } else if (id == 2) {
                      presentSettingFragment(new LogoutActivity());
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
                  }
              }
          });
-@@ -339,6 +341,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -338,6 +340,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          otherItem = menu.addItem(1, R.drawable.ic_ab_other);
          otherItem.setContentDescription(getString(R.string.AccDescrMoreOptions));
@@ -71,7 +71,7 @@ index 0000000..0000000 100644
          otherItem.addSubItem(2, R.drawable.msg_leave, getString(R.string.LogOut));
  
          search = new ProfileActivity.SearchAdapter(this, context) {
-@@ -501,6 +506,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -500,6 +505,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          return fragmentView = contentView;
      }
  
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
      @Override
      public void onFragmentDestroy() {
          super.onFragmentDestroy();
-@@ -632,16 +643,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -631,16 +642,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  accountNumbers.add(a);
              }
          }

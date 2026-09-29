@@ -207,7 +207,7 @@ index 0000000..0000000 100644
  import org.telegram.messenger.EmuDetector;
  import org.telegram.messenger.FileLoadOperation;
  import org.telegram.messenger.FileLoader;
-@@ -1507,45 +1501,14 @@ public class ConnectionsManager extends BaseController {
+@@ -1505,45 +1499,14 @@ public class ConnectionsManager extends BaseController {
      @Keep
      public static void onIntegrityCheckClassic(final int currentAccount, final int requestToken, final String project, final String nonce) {
          AndroidUtilities.runOnUIThread(() -> {

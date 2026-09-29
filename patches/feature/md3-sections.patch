@@ -36,19 +36,19 @@ index 0000000..0000000 100644
  import org.telegram.ui.Components.AnimatedArrowDrawable;
  import org.telegram.ui.Components.AudioPlayerAlert;
  import org.telegram.ui.Components.AvatarDrawable;
-@@ -529,7 +530,11 @@ public class ThemeDescription {
-                             }
-                         }
-                     } else if ((changeFlags & FLAG_CELLBACKGROUNDCOLOR) != 0) {
--                        child.setBackgroundColor(color);
-+                        if (child instanceof HeaderCell && viewToInvalidate instanceof RecyclerListView && ((RecyclerListView) viewToInvalidate).hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
-+                            // skip
-+                        } else {
-+                            child.setBackgroundColor(color);
-+                        }
-                     } else if ((changeFlags & FLAG_TEXTCOLOR) != 0) {
-                         if (child instanceof TextView) {
-                             ((TextView) child).setTextColor(color);
+@@ -552,7 +553,11 @@ public class ThemeDescription {
+                 }
+             }
+         } else if ((changeFlags & FLAG_CELLBACKGROUNDCOLOR) != 0) {
+-            child.setBackgroundColor(color);
++            if (child instanceof HeaderCell && viewToInvalidate instanceof RecyclerListView && ((RecyclerListView) viewToInvalidate).hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
++                // skip
++            } else {
++                child.setBackgroundColor(color);
++            }
+         } else if ((changeFlags & FLAG_TEXTCOLOR) != 0) {
+             if (child instanceof TextView) {
+                 ((TextView) child).setTextColor(color);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java
@@ -640,7 +640,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1195,6 +1195,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1204,6 +1204,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              titleView.setTranslationX(icon == 0 ? dp(2) : 0);
              subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
  
@@ -649,7 +649,7 @@ index 0000000..0000000 100644
              iconBackground.setColor(iconColorTop, iconColorBottom);
              iconView.setImageResource(icon);
              titleView.setText(title);
-@@ -1210,6 +1212,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1219,6 +1221,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          @Override
          protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -663,7 +663,7 @@ index 0000000..0000000 100644
              super.onMeasure(
                  MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
                  MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? 60 : 50), MeasureSpec.EXACTLY)
-@@ -1238,8 +1247,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1247,8 +1256,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  this.border = drawBorder;
              }
  

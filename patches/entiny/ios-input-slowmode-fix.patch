@@ -76,7 +76,7 @@ index 0000000..0000000 100644
                  int oldColor = simpleTextView.getTextPaint().getColor();
                  simpleTextView.getTextPaint().setColor(Color.WHITE);
                  boolean result = super.drawChild(canvas, child, drawingTime);
-@@ -5094,6 +5121,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -5105,6 +5132,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          emojiRightDp = isIosButtonPlacement() ? iosGapDp : 0;
          aiButtonGravity = isIosButtonPlacement() ? (Gravity.TOP | Gravity.RIGHT) : (Gravity.TOP | Gravity.LEFT);
          aiButtonRightMarginDp = isIosButtonPlacement() ? (DEFAULT_HEIGHT + iosGapDp) : 0;
@@ -84,7 +84,7 @@ index 0000000..0000000 100644
      }
  
      private void updateFieldLeftIos() {
-@@ -6705,6 +6733,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6716,6 +6744,10 @@ public class ChatActivityEnterView extends FrameLayout implements
          return slowModeTimer > 0 ? slowModeButton.getText() : null;
      }
  
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
      private void updateSlowModeText() {
          int serverTime = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
          AndroidUtilities.cancelRunOnUIThread(updateSlowModeRunnable);
-@@ -6735,6 +6767,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6746,6 +6778,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              if (delegate != null) {
                  delegate.onUpdateSlowModeButton(slowModeButton, false, slowModeButton.getText());
              }
@@ -103,7 +103,7 @@ index 0000000..0000000 100644
              AndroidUtilities.runOnUIThread(updateSlowModeRunnable = this::updateSlowModeText, 100);
          } else {
              slowModeTimer = 0;
-@@ -7162,6 +7195,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -7214,6 +7247,7 @@ public class ChatActivityEnterView extends FrameLayout implements
          }
          if (slowModeButton != null) {
              slowModeButton.setPremiumMode(ChatObject.isPossibleRemoveChatRestrictionsByBoosts(chatInfo));
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
          }
          if (ChatObject.isIgnoredChatRestrictionsForBoosters(chatInfo)) {
              return;
-@@ -9228,10 +9262,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9280,10 +9314,11 @@ public class ChatActivityEnterView extends FrameLayout implements
  
      private void setSlowModeButtonVisible(boolean visible) {
          slowModeButton.setVisibility(visible ? VISIBLE : GONE);
@@ -124,7 +124,7 @@ index 0000000..0000000 100644
          if (isIosButtonPlacement() && messageEditText != null) {
              updateFieldRight(lastAttachVisible);
          }
-@@ -9248,10 +9283,6 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9300,10 +9335,6 @@ public class ChatActivityEnterView extends FrameLayout implements
          int oldRightMargin = layoutParams.rightMargin;
          if (isIosButtonPlacement()) {
              int reserve = (editingMessageObject == null && scheduledButton != null && scheduledButton.getVisibility() == VISIBLE) ? DEFAULT_HEIGHT : 0;

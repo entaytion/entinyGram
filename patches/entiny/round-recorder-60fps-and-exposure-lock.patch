@@ -125,7 +125,7 @@ index 0000000..0000000 100644
  import desu.inugram.helpers.chat.ZoomLevelButtonsView;
  import org.telegram.messenger.AndroidUtilities;
  import org.telegram.messenger.ApplicationLoader;
-@@ -337,6 +338,11 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -337,6 +338,11 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              RoundRecorderHelper.applyZoomT(inu_zoomSlider, camera2SessionCurrent, cameraSession, t);
              if (inu_zoomButtons != null) inu_zoomButtons.setActiveLevel(level);
          });
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
  
          switchCameraButton = new FlashViews.ImageViewInvertable(context);
          switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
-@@ -405,12 +411,20 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -405,12 +411,20 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          });
          updateFlash();
  
@@ -158,7 +158,7 @@ index 0000000..0000000 100644
          }
  
          muteImageView = new ImageView(context);
-@@ -682,6 +696,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -682,6 +696,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              recording = false;
              RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
              RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, false);
@@ -166,7 +166,7 @@ index 0000000..0000000 100644
              updateFlash();
              if (cameraThread != null) {
                  NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, cancelled ? 4 : 2);
-@@ -1033,6 +1048,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1039,6 +1054,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              flashing = false;
              RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
              RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, false);
@@ -174,7 +174,7 @@ index 0000000..0000000 100644
              updateFlash();
              int reason;
              if (cancelled) {
-@@ -1094,6 +1110,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1100,6 +1116,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          flashing = false;
          RoundRecorderHelper.setSliderVisible(inu_zoomSlider, false);
          RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, false);
@@ -182,7 +182,7 @@ index 0000000..0000000 100644
          updateFlash();
          NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, byGesture ? 0 : 6);
          if (cameraThread != null) {
-@@ -1186,6 +1203,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1192,6 +1209,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          cameraThread.reinitForNewCamera();
          RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
          RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
      }
  
      // Old Camera1 API
-@@ -1999,6 +2018,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -2005,6 +2024,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      AndroidUtilities.runOnUIThread(() -> {
                          RoundRecorderHelper.syncSlider(inu_zoomSlider, camera2SessionCurrent, cameraSession);
                          RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
                      });
                      break;
                  }
-@@ -2257,7 +2278,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -2263,7 +2284,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      buffer.lastWroteBuffer = 0;
                      buffer.results = AudioBufferInfo.MAX_SAMPLES;
                      for (int a = 0; a < AudioBufferInfo.MAX_SAMPLES; a++) {
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
                              audioPresentationTimeUs = System.nanoTime() / 1000;
                          }
  
-@@ -2283,25 +2304,30 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -2289,25 +2310,30 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                              break;
                          }
                          long timestamp;
@@ -247,7 +247,7 @@ index 0000000..0000000 100644
                      }
                      if (buffer.results >= 0 || buffer.last) {
                          if (!running && buffer.results < AudioBufferInfo.MAX_SAMPLES) {
-@@ -2613,7 +2639,12 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -2619,7 +2645,12 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  }
                  lastTimestamp = timestampNanos;
              } else {
@@ -261,7 +261,7 @@ index 0000000..0000000 100644
                  lastTimestamp = timestampNanos;
              }
              firstVideoFrameSincePause = false;
-@@ -2916,7 +2947,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -2922,7 +2953,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                          videoEditedInfo.encryptedFile = encryptedFile;
                          videoEditedInfo.key = key;
                          videoEditedInfo.iv = iv;
@@ -270,7 +270,7 @@ index 0000000..0000000 100644
                          videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
                          videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
                          videoEditedInfo.originalPath = videoFile.getAbsolutePath();
-@@ -3068,7 +3099,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3074,7 +3105,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                          videoEditedInfo.encryptedFile = encryptedFile;
                          videoEditedInfo.key = key;
                          videoEditedInfo.iv = iv;
@@ -279,7 +279,7 @@ index 0000000..0000000 100644
                          videoEditedInfo.resultWidth = videoEditedInfo.originalWidth = 360;
                          videoEditedInfo.resultHeight = videoEditedInfo.originalHeight = 360;
                          videoEditedInfo.originalPath = videoFile.getAbsolutePath();
-@@ -3233,8 +3264,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3239,8 +3270,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, videoWidth, videoHeight);
  
                  format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
@@ -290,7 +290,7 @@ index 0000000..0000000 100644
                  format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
  
                  videoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-@@ -3280,6 +3311,9 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3286,6 +3317,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      RoundRecorderHelper.setSliderVisible(inu_zoomSlider, true);
                      RoundRecorderHelper.syncZoomButtons(inu_zoomButtons, camera2SessionCurrent, cameraSession);
                      RoundRecorderHelper.setButtonsVisible(inu_zoomButtons, true);
@@ -300,7 +300,7 @@ index 0000000..0000000 100644
                      updateFlash();
                      invalidate();
                      NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStarted, recordingGuid, false);
-@@ -3841,6 +3875,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3848,6 +3882,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
      ValueAnimator finishZoomTransition;
      private ZoomControlView inu_zoomSlider;
      private ZoomLevelButtonsView inu_zoomButtons;

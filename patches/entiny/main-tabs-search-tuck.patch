@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Tue, 29 Sep 2026 14:09:18 +0300
-Subject: [*] tuck the separate search button closer to the tabs
+Subject: [*] tuck the separate search button 4dp away
 
 ---
  .../src/main/java/org/telegram/ui/MainTabsActivity.java      | 5 +++--
@@ -16,7 +16,7 @@ index 0000000..0000000 100644
          if (searchTabContainer != null) {
              LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
 -            searchParams.setMarginStart(0);
-+            searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 2)));
++            searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 4)));
              searchParams.setMarginEnd(dp(4));
              searchParams.height = LayoutHelper.MATCH_PARENT;
              tabsBarContainer.addView(searchTabContainer, searchParams);
@@ -25,7 +25,7 @@ index 0000000..0000000 100644
          final boolean showSearch = searchTabContainer != null && searchTabContainer.getVisibility() != View.GONE;
          final int searchWidth = showSearch ? searchTabContainer.getLayoutParams().width : 0;
 -        final int searchStartMargin = 0;
-+        final int searchStartMargin = showSearch ? -dp(Math.max(0, MainTabsHelper.getMainTabsMargin() - 2)) : 0;
++        final int searchStartMargin = showSearch ? -dp(Math.max(0, MainTabsHelper.getMainTabsMargin() - 4)) : 0;
          final int searchEndMargin = showSearch ? dp(4) : 0;
          final int containerPadding = tabsBarContainer.getPaddingLeft() + tabsBarContainer.getPaddingRight();
          final int outerInset = dp(Math.min(DialogsActivity.MAIN_TABS_MARGIN, 6));

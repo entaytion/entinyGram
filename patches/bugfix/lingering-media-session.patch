@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserServ
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserService.java
-@@ -26,9 +26,12 @@ public class MusicBrowserService extends MediaBrowserService {
+@@ -27,9 +27,12 @@ public class MusicBrowserService extends MediaBrowserService {
  
      private static final String MEDIA_ID_ROOT = "__ROOT__";
  
@@ -27,7 +27,7 @@ index 0000000..0000000 100644
          ApplicationLoader.postInitApplication();
          TelegramMediaSession holder = TelegramMediaSession.getInstance(this);
          setSessionToken(holder.getFrameworkSessionToken());
-@@ -36,6 +39,7 @@ public class MusicBrowserService extends MediaBrowserService {
+@@ -37,6 +40,7 @@ public class MusicBrowserService extends MediaBrowserService {
  
      @Override
      public void onDestroy() {
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
          super.onDestroy();
      }
  
-@@ -45,6 +49,9 @@ public class MusicBrowserService extends MediaBrowserService {
+@@ -46,6 +50,9 @@ public class MusicBrowserService extends MediaBrowserService {
          if (clientPackageName == null) {
              return null;
          }
@@ -81,7 +81,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TelegramMediaSes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TelegramMediaSession.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TelegramMediaSession.java
-@@ -90,6 +90,8 @@ public class TelegramMediaSession {
+@@ -91,6 +91,8 @@ public class TelegramMediaSession {
      private Paint roundPaint;
      private RectF bitmapRect;
  
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
      private TelegramMediaSession(Context appContext) {
          this.appContext = appContext;
          this.currentAccount = UserConfig.selectedAccount;
-@@ -121,12 +123,12 @@ public class TelegramMediaSession {
+@@ -122,12 +124,12 @@ public class TelegramMediaSession {
          updateRepeatMode();
          updateShuffleMode();
  
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
      }
  
      private void onAccountSwitched() {
-@@ -188,6 +190,42 @@ public class TelegramMediaSession {
+@@ -190,6 +192,42 @@ public class TelegramMediaSession {
          }
      }
  

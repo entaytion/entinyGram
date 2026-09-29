@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -9310,7 +9310,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9362,7 +9362,8 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
              View inu_menuBtn = desu.inugram.helpers.chat.ChatInputMenuHelper.getMenuButton(this);
              if (inu_menuBtn != null) {
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
              }
              return;
          }
-@@ -9350,7 +9351,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -9402,7 +9403,9 @@ public class ChatActivityEnterView extends FrameLayout implements
          View inu_menuBtn = desu.inugram.helpers.chat.ChatInputMenuHelper.getMenuButton(this);
          if (inu_menuBtn != null) {
              boolean hasScheduled = scheduledButton != null && scheduledButton.getTag() != null;

@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -6327,7 +6327,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6326,7 +6326,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              @Override
              public void invalidate() {
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  super.invalidate();
-@@ -6878,7 +6878,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6877,7 +6877,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              @Override
              public void invalidate() {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  super.invalidate();
-@@ -6988,7 +6988,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -6987,7 +6987,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
  
              @Override
              public void invalidate() {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                      return;
                  }
                  super.invalidate();
-@@ -20341,7 +20341,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -20340,7 +20340,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          if (!fancyShadows) {
              return;
          }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
          if (maxAlpha <= 0) {
              return;
          }
-@@ -21997,7 +21997,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -21996,7 +21996,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
              && SharedConfig.useNewBlur
              && SharedConfig.getDevicePerformanceClass() >= SharedConfig.PERFORMANCE_CLASS_HIGH
@@ -73,7 +73,7 @@ index 0000000..0000000 100644
      }
  
  
-@@ -22072,6 +22073,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22071,6 +22072,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
      }
  
      public void drawCaptionBlur(Canvas canvas, BlurringShader.StoryBlurDrawer drawer, int bgColor, int overlayColor, boolean clip, boolean allowTransparent, boolean allowCrossfade, boolean glass) {
@@ -83,7 +83,7 @@ index 0000000..0000000 100644
          if (BLUR_RENDERNODE()) {
              final RenderNode renderNode = getRenderNodeColorMatrix(drawer.colorMatrix, glass);
              final int mBgColor = AndroidUtilities.applyColorMatrix(bgColor, drawer.colorMatrix);
-@@ -22090,7 +22094,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22089,7 +22093,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              }
              return;
          }
@@ -92,7 +92,7 @@ index 0000000..0000000 100644
  
          drawer.paint.setShader(null);
          if (bgColor != 0) {
-@@ -22099,7 +22103,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22098,7 +22102,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              canvas.drawPaint(drawer.paint);
          }
  
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
              blurAlpha.set(0, true);
              if (overlayColor != 0) {
                  drawer.paint.setColor(overlayColor);
-@@ -22654,6 +22658,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -22653,6 +22657,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          if (stickerMakerView != null && stickerMakerView.isThanosInProgress) {
              return;
          }

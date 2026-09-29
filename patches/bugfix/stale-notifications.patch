@@ -255,7 +255,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
-@@ -1344,6 +1344,7 @@ public class StoriesController {
+@@ -1339,6 +1339,7 @@ public class StoriesController {
              int maxStoryReadId = Math.max(dialogIdToMaxReadId.get(dialogId, 0), maxStoryId);
              dialogIdToMaxReadId.put(dialogId, maxStoryReadId);
              storiesStorage.updateMaxReadId(dialogId, maxStoryReadId);

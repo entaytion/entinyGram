@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
-@@ -4651,140 +4651,8 @@ public class AndroidUtilities {
+@@ -4650,140 +4650,8 @@ public class AndroidUtilities {
      }
  
      public static void showProxyAlert(Activity activity, final ProxySettings settings) {

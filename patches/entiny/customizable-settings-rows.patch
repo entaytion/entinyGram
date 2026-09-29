@@ -58,7 +58,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -689,6 +689,11 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -688,6 +688,11 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
          // (ported from inugram PR #34, made unconditional)
  
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
          if (!desu.inugram.helpers.security.ParanoiaHelper.shouldHideSettings()) {
              items.add(SettingCell.Factory.of(99, IconBackgroundColors.ENTINY.top, IconBackgroundColors.ENTINY.bottom, R.drawable.icon_settings_inu, getString(R.string.InuSettings), getString(R.string.InuSettingsInfo)));
              items.add(UItem.asShadow(null));
-@@ -756,6 +761,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -761,6 +766,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(SettingCell.Factory.of(22, 0xFFF45255, 0xFFDF3955, 0, getString(R.string.DebugClearLogs)));
          }
  
