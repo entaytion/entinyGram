@@ -1,0 +1,155 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 14:29:05 +0300
+Subject: [+] proxy link alert
+
+---
+ .../telegram/messenger/AndroidUtilities.java  | 134 +-----------------
+ 1 file changed, 1 insertion(+), 133 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+@@ -4651,140 +4651,8 @@ public class AndroidUtilities {
+     }
+ 
+     public static void showProxyAlert(Activity activity, final ProxySettings settings) {
+-        if (settings == null || !settings.isValid()) {
+-            return;
+-        }
+-
+-        final String address = settings.getAddress();
+-        final int port = settings.getPort();
+-        final String user = settings.getUser();
+-        final String password = settings.getPassword();
+-        final String secret = settings.getSecret();
+-
+-        final BottomSheet.Builder builder = new BottomSheet.Builder(activity);
+-        builder.setApplyTopPadding(false);
+-        builder.setApplyBottomPadding(false);
+-        final Runnable dismiss = builder.getDismissRunnable();
+-
+-        final LinearLayout linearLayout = new LinearLayout(activity);
+-        linearLayout.setOrientation(LinearLayout.VERTICAL);
+-        builder.setCustomView(linearLayout);
+-
+-        final TextView headerView = TextHelper.makeTextView(activity, 20, Theme.key_dialogTextBlack, true);
+-        headerView.setText(getString(R.string.UseProxyTitle));
+-        linearLayout.addView(headerView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.FILL_HORIZONTAL, 22, 18, 22, 0));
+-
+-        final TableView tableView = new TableView(activity, null);
+-        linearLayout.addView(tableView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.FILL_HORIZONTAL, 14, 18, 14, 0));
+-
+-        if (!TextUtils.isEmpty(address)) {
+-            tableView.addRow(getString(R.string.UseProxyAddress), address);
+-        }
+-        if (port != 0) {
+-            tableView.addRow(getString(R.string.UseProxyPort), Integer.toString(port));
+-        }
+-        if (!TextUtils.isEmpty(secret)) {
+-            tableView.addRow(getString(R.string.UseProxySecret), secret);
+-        }
+-        if (!TextUtils.isEmpty(user)) {
+-            tableView.addRow(getString(R.string.UseProxyUsername), user);
+-        }
+-        if (!TextUtils.isEmpty(password)) {
+-            tableView.addRow(getString(R.string.UseProxyPassword), password);
+-        }
+-        final ButtonSpan.TextViewButtons[] statusTextView = new ButtonSpan.TextViewButtons[1];
+-        tableView.addRow(getString(R.string.ProxyStatus), "", statusTextView);
+-        ((View) statusTextView[0].getParent()).setPadding(0, 0, 0, 0);
+-        statusTextView[0].setDisablePaddingsOffsetY(true);
+-        statusTextView[0].setPadding(dp(12.66f), dp(9.33f), dp(12.66f), dp(9.33f));
+-        final boolean[] checking = new boolean[1];
+-        statusTextView[0].setText(replaceSingleLink(getString(R.string.ProxyBottomSheetCheckStatus), Theme.getColor(Theme.key_chat_messageLinkIn), () -> {
+-            if (checking[0]) return;
+-
+-            final Runnable check = () -> {
+-                if (checking[0]) return;
+-
+-                checking[0] = true;
+-                statusTextView[0].setText(getString(R.string.ProxyBottomSheetChecking) + "...");
+-                statusTextView[0].clear();
+-                try {
+-                    ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(settings, time -> AndroidUtilities.runOnUIThread(() -> {
+-                        checking[0] = false;
+-                        if (time == -1) {
+-                            statusTextView[0].setText(getString(R.string.Unavailable));
+-                            statusTextView[0].setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+-                        } else {
+-                            statusTextView[0].setText(LocaleController.formatString(R.string.Ping2, time));
+-                            statusTextView[0].setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGreenText));
+-                        }
+-                    }));
+-                } catch (NumberFormatException ignored) {
+-                    checking[0] = false;
+-                    statusTextView[0].setText(getString(R.string.Unavailable));
+-                    statusTextView[0].setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+-                }
+-            };
+-
+-            final SharedPreferences pref = MessagesController.getGlobalMainSettings();
+-            if (pref.getBoolean("proxycheckstatusip", false)) {
+-                check.run();
+-            } else {
+-                new AlertDialog.Builder(activity)
+-                    .setTitle(getString(R.string.ProxyBottomSheetCheckWarning))
+-                    .setMessage(getString(R.string.ProxyBottomSheetCheckWarningText))
+-                    .setPositiveButton(getString(R.string.Proceed), (di, w) -> {
+-                        pref.edit().putBoolean("proxycheckstatusip", true).apply();
+-                        check.run();
+-                    })
+-                    .setNegativeButton(getString(R.string.Cancel), null)
+-                    .show();
+-            }
+-        }));
+-        if (!TextUtils.isEmpty(secret)) {
+-            final TableView.TableRowFullContent tableRow = tableView.addFullRow(getString(R.string.UseProxyTelegramInfo2));
+-            tableRow.setFilled(true);
+-            final SpoilersTextView textView = (SpoilersTextView) tableRow.getChildAt(0);
+-            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
+-            textView.setGravity(Gravity.CENTER);
+-        }
+-
+-        final ButtonWithCounterView buttonView = new ButtonWithCounterView(activity, null).setRound();
+-        buttonView.setText(getString(R.string.ConnectingConnectProxy));
+-        buttonView.setOnClickListener(v -> {
+-            SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
+-            editor.putBoolean("proxy_enabled", true);
+-            settings.toSharedPreferences(editor);
+-            editor.commit();
+-
+-            final SharedConfig.ProxyInfo info = new SharedConfig.ProxyInfo(settings);
+-            SharedConfig.currentProxy = SharedConfig.addProxy(info);
+-
+-            ConnectionsManager.setProxySettings(true, settings);
+-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+-            if (activity instanceof LaunchActivity) {
+-                INavigationLayout layout = ((LaunchActivity) activity).getActionBarLayout();
+-                BaseFragment fragment = layout.getLastFragment();
+-                boolean bulletinSent = false;
+-                if (fragment instanceof ChatActivity) {
+-                    UndoView undoView = ((ChatActivity) fragment).getUndoView();
+-                    if (undoView != null) {
+-                        undoView.showWithAction(0, UndoView.ACTION_PROXY_ADDED, null);
+-                        bulletinSent = true;
+-                    }
+-                }
+-                if (!bulletinSent) {
+-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_SUCCESS, getString(R.string.ProxyAddedSuccess));
+-                }
+-            } else {
+-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_SUCCESS, getString(R.string.ProxyAddedSuccess));
+-            }
+-            dismiss.run();
+-        });
+-        linearLayout.addView(buttonView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.TOP | Gravity.FILL_HORIZONTAL, 14, 18, 14, 14));
+-
+-        builder.show();
++        if (desu.inugram.helpers.proxy.ProxyLinkAlertHelper.show(activity, settings)) return;
+     }
+-
+     @SuppressLint("PrivateApi")
+     public static String getSystemProperty(String key) {
+         try {
