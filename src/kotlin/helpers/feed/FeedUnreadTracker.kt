@@ -2,7 +2,6 @@ package desu.inugram.helpers.feed
 
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.AndroidUtilities
-import org.telegram.messenger.MessagesController
 
 class FeedUnreadTracker private constructor(private val account: Int) {
 
@@ -13,16 +12,15 @@ class FeedUnreadTracker private constructor(private val account: Int) {
 
     private fun effectiveMax(dialogId: Long): Int {
         if (!knownMax.containsKey(dialogId)) {
-            knownMax[dialogId] = maxOf(serverReadMax(MessagesController.getInstance(account), dialogId), storedMax(dialogId))
+            knownMax[dialogId] = maxOf(FeedChannelSet.readMax(account, dialogId), storedMax(dialogId))
         }
         return maxOf(knownMax[dialogId] ?: 0, pendingMax[dialogId] ?: 0)
     }
 
     // entiny: re-sync from stock dialogs so reads done outside the feed shrink the unread zone
     fun refresh(dialogIds: LongArray) {
-        val controller = MessagesController.getInstance(account)
         for (dialogId in dialogIds) {
-            val readMax = serverReadMax(controller, dialogId)
+            val readMax = FeedChannelSet.readMax(account, dialogId)
             if (readMax > (knownMax[dialogId] ?: 0)) knownMax[dialogId] = readMax
         }
     }
@@ -57,13 +55,10 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         }
     }
 
-    // entiny: channels outside the loaded dialogs page aren't in dialogs_dict, so fall back to the feed's newest ids
     fun markAllRead(dialogIds: Collection<Long>, newestLoaded: Map<Long, Int>): Int {
-        val controller = MessagesController.getInstance(account)
         var marked = 0
         for (dialogId in dialogIds) {
-            val dialog = controller.dialogs_dict?.get(dialogId)
-            val top = maxOf(dialog?.top_message ?: 0, newestLoaded[dialogId] ?: 0)
+            val top = maxOf(FeedChannelSet.topMessage(account, dialogId), newestLoaded[dialogId] ?: 0)
             if (top <= 0) continue
             if (top <= effectiveMax(dialogId)) continue
             knownMax[dialogId] = top
@@ -74,8 +69,6 @@ class FeedUnreadTracker private constructor(private val account: Int) {
         return marked
     }
 
-    private fun serverReadMax(controller: MessagesController, dialogId: Long): Int =
-        maxOf(controller.dialogs_dict?.get(dialogId)?.read_inbox_max_id ?: 0, controller.dialogs_read_inbox_max[dialogId] ?: 0)
 
     private fun storedMax(dialogId: Long): Int = preferences().getInt(dialogId.toString(), 0)
 

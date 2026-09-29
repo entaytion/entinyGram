@@ -52,7 +52,9 @@ import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ChatAvatarContainer
 import org.telegram.ui.Components.ItemOptions
+import android.graphics.drawable.Drawable
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.MotionBackgroundDrawable
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble
 import org.telegram.ui.Components.RecyclerListView
 import org.telegram.ui.Components.SizeNotifierFrameLayout
@@ -60,6 +62,10 @@ import org.telegram.ui.Components.blur3.BlurredBackgroundDrawableViewFactory
 import org.telegram.ui.Components.blur3.drawable.color.BlurredBackgroundColorProviderThemed
 import org.telegram.ui.Components.blur3.drawable.color.impl.BlurredBackgroundProviderImpl
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceColor
+import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceBitmap
+import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceWrapped
+import org.telegram.ui.Components.chat.WallpaperBitmapProvider
+import org.telegram.ui.Components.chat.layouts.ChatActivityFadeView
 import org.telegram.ui.Components.chat.layouts.ChatActivitySideControlsButtonsLayout
 import java.util.concurrent.Executors
 
@@ -74,7 +80,9 @@ class FeedActivity @JvmOverloads constructor(
             val group: MessageObject.GroupedMessages?,
             val revision: Int,
             val groupRevision: Int,
-        ) : Item()
+        ) : Item() {
+            val key = FeedStore.keyOf(message)
+        }
 
         object Divider : Item()
     }
@@ -103,13 +111,20 @@ class FeedActivity @JvmOverloads constructor(
     private var layoutManager: LinearLayoutManager? = null
     private var adapter: FeedAdapter? = null
     private var emptyView: View? = null
+    private var indicatorMode = -1
     private var newPostsPill: TextView? = null
     private var sideControls: ChatActivitySideControlsButtonsLayout? = null
+    private var fadeView: ChatActivityFadeView? = null
+    private val wallpaperBitmapProvider = WallpaperBitmapProvider()
+    private val navbarContentSourceWallpaper = BlurredBackgroundSourceWrapped()
+    private val navbarContentDrawableFactory = BlurredBackgroundDrawableViewFactory(navbarContentSourceWallpaper)
     private var loadingOlder = false
     private var reachedEnd = false
     private var firstShown = false
 
     private val reactionsCheckedAt = HashMap<FeedStore.Key, Long>()
+    private val reactionTapSeq = HashMap<FeedStore.Key, Int>()
+    private val reactionPollRequests = ArrayList<Int>()
 
     private val prefs by lazy {
         ApplicationLoader.applicationContext.getSharedPreferences("inu_feed", Context.MODE_PRIVATE)
@@ -126,6 +141,28 @@ class FeedActivity @JvmOverloads constructor(
 
         val frameLayout = object : SizeNotifierFrameLayout(context) {
             override fun useRootView(): Boolean = false
+
+            override fun onUpdateBackgroundDrawable(drawable: Drawable?) {
+                super.onUpdateBackgroundDrawable(drawable)
+                if (drawable is MotionBackgroundDrawable) {
+                    drawable.setFastRenderAllowed()
+                }
+                val source = wallpaperBitmapProvider.updateSourceFromBackgroundViewDrawable(drawable)
+                navbarContentSourceWallpaper.source = source
+                (source as? BlurredBackgroundSourceBitmap)?.setParentSize(width, height, 0)
+                fadeView?.invalidate()
+                avatarContainer?.updateColors()
+            }
+
+            override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+                super.onSizeChanged(w, h, oldw, oldh)
+                (navbarContentSourceWallpaper.source as? BlurredBackgroundSourceBitmap)?.setParentSize(w, h, 0)
+            }
+
+            override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+                super.onLayout(changed, l, t, r, b)
+                updateTopFade()
+            }
         }
         frameLayout.setOccupyStatusBar(false)
         frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray))
@@ -145,6 +182,9 @@ class FeedActivity @JvmOverloads constructor(
         }
         recycler.setItemAnimator(null)
         recycler.setLayoutAnimation(null)
+        // entiny: post cells are expensive to bind, so keep a few more around for scrolling back and forth
+        recycler.setItemViewCacheSize(ITEM_VIEW_CACHE_SIZE)
+        recycler.recycledViewPool.setMaxRecycledViews(VIEW_TYPE_POST, POST_POOL_SIZE)
         recycler.layoutManager = lm
         recycler.addItemDecoration(FeedAlbumLayout.Decoration())
         recycler.setVerticalScrollBarEnabled(true)
@@ -165,33 +205,18 @@ class FeedActivity @JvmOverloads constructor(
         listView = recycler
         frameLayout.addView(recycler, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
 
+        val fade = ChatActivityFadeView(context).apply {
+            setup(navbarContentDrawableFactory)
+            setFadeHeightTop(dp(48f))
+        }
+        fadeView = fade
+        frameLayout.addView(fade, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT.toFloat()))
+
         emptyView = createEmptyView(context).also {
             frameLayout.addView(it, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER))
         }
-        // entiny: pill ("%d new", only appears when a post streams in while scrolled away) vs a persistent
-        // scroll-to-bottom button with unread badge (same control regular chats use) -- user's choice
-        if (InuConfig.FEED_NEW_POSTS_INDICATOR.value == INDICATOR_BUTTON) {
-            sideControls = ChatActivitySideControlsButtonsLayout(
-                context, resourceProvider,
-                BlurredBackgroundColorProviderThemed(resourceProvider, Theme.key_chat_messagePanelBackground),
-                BlurredBackgroundDrawableViewFactory(BlurredBackgroundSourceColor().apply { setColor(getThemedColor(Theme.key_chat_messagePanelBackground)) }),
-            ).apply {
-                setGravity(Gravity.RIGHT or Gravity.BOTTOM)
-                setOnClickListener { buttonId, _ ->
-                    if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN) {
-                        scrollToNewest()
-                        showButton(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, false, true)
-                    }
-                }
-            }
-            frameLayout.addView(sideControls, LayoutHelper.createFrame(57, 300, Gravity.RIGHT or Gravity.BOTTOM))
-        } else {
-            newPostsPill = createPill(context).also { pill ->
-                val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
-                lp.gravity = Gravity.CENTER_HORIZONTAL or if (newestOnTop) Gravity.TOP else Gravity.BOTTOM
-                frameLayout.addView(pill, lp)
-            }
-        }
+        indicatorMode = -1
+        installIndicator(frameLayout)
         frameLayout.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat()))
         applyInsets()
 
@@ -210,6 +235,43 @@ class FeedActivity @JvmOverloads constructor(
         return frameLayout
     }
 
+    // entiny: pill ("%d new", only appears when a post streams in while scrolled away) vs a persistent
+    // scroll-to-bottom button with unread badge (same control regular chats use) -- user's choice
+    private fun installIndicator(frame: FrameLayout) {
+        val mode = InuConfig.FEED_NEW_POSTS_INDICATOR.value
+        if (mode == indicatorMode) return
+        indicatorMode = mode
+        newPostsPill?.let { frame.removeView(it) }
+        sideControls?.let { frame.removeView(it) }
+        newPostsPill = null
+        sideControls = null
+        val context = frame.context
+        val index = frame.indexOfChild(actionBar).takeIf { it >= 0 } ?: frame.childCount
+        if (mode == INDICATOR_BUTTON) {
+            val controls = ChatActivitySideControlsButtonsLayout(
+                context, resourceProvider,
+                BlurredBackgroundColorProviderThemed(resourceProvider, Theme.key_chat_messagePanelBackground),
+                BlurredBackgroundDrawableViewFactory(BlurredBackgroundSourceColor().apply { setColor(getThemedColor(Theme.key_chat_messagePanelBackground)) }),
+            ).apply {
+                setGravity(Gravity.RIGHT or Gravity.BOTTOM)
+                setOnClickListener { buttonId, _ ->
+                    if (buttonId == ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN) {
+                        scrollToNewest()
+                        showButton(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, false, true)
+                    }
+                }
+            }
+            sideControls = controls
+            frame.addView(controls, index, LayoutHelper.createFrame(57, 300, Gravity.RIGHT or Gravity.BOTTOM))
+        } else {
+            val pill = createPill(context)
+            newPostsPill = pill
+            val lp = FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT)
+            lp.gravity = Gravity.CENTER_HORIZONTAL or if (newestOnTop) Gravity.TOP else Gravity.BOTTOM
+            frame.addView(pill, index, lp)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         applySettingsChanges()
@@ -222,7 +284,16 @@ class FeedActivity @JvmOverloads constructor(
 
     // entiny: feed settings are edited on another screen, so pick them up when we come back
     private fun applySettingsChanges() {
-        if (fragmentView == null || !firstShown) return
+        val frame = fragmentView as? FrameLayout ?: return
+        if (InuConfig.FEED_NEW_POSTS_INDICATOR.value != indicatorMode) {
+            installIndicator(frame)
+            applyInsets()
+            if (firstShown) {
+                if (!isAtNewest()) showPill(countUnread())
+                updatePageDownButton()
+            }
+        }
+        if (!firstShown) return
         val orderChanged = newestOnTop != InuConfig.FEED_NEWEST_ON_TOP.value
         newestOnTop = InuConfig.FEED_NEWEST_ON_TOP.value
         val channelsChanged = store.ensureChannelGeneration()
@@ -253,8 +324,10 @@ class FeedActivity @JvmOverloads constructor(
         diffGeneration++
         timelineDiffPending = false
         pendingNewPosts = false
+        cancelReactionPolls()
         avatarContainer?.onDestroy()
         avatarContainer = null
+        fadeView = null
         savePosition()
         controller.detach(this)
         super.onFragmentDestroy()
@@ -273,12 +346,11 @@ class FeedActivity @JvmOverloads constructor(
             return
         }
         pendingNewPosts = pendingNewPosts || hasNewPosts
-        val wasAtNewest = isAtNewest()
-        submitItems {
+        submitItems { wasAtNewest ->
             val hasPendingNewPosts = pendingNewPosts
             pendingNewPosts = false
             if (hasPendingNewPosts && wasAtNewest) scrollToNewest()
-            if (isAtNewest()) hidePill() else if (hasPendingNewPosts) showPill(countUnread())
+            if (isAtNewest()) hidePill() else if (hasPendingNewPosts) showPill(countUnread()) else refreshPill()
             updatePageDownButton()
             if (!loadingOlder && !reachedEnd && (store.size < MIN_INITIAL_ROWS || isNearOlderEnd())) loadOlder()
         }
@@ -316,7 +388,8 @@ class FeedActivity @JvmOverloads constructor(
         emptyView?.visibility = if (store.size == 0) View.VISIBLE else View.GONE
     }
 
-    private fun submitItems(asynchronously: Boolean = true, onApplied: (() -> Unit)? = null) {
+    private fun submitItems(asynchronously: Boolean = true, onApplied: ((wasAtNewest: Boolean) -> Unit)? = null) {
+        unreadCount = -1
         val newItems = buildItems()
         val old = items
         val generation = ++diffGeneration
@@ -326,7 +399,7 @@ class FeedActivity @JvmOverloads constructor(
             override fun areItemsTheSame(o: Int, n: Int): Boolean {
                 val a = old[o]
                 val b = newItems[n]
-                if (a is Item.Post && b is Item.Post) return FeedStore.keyOf(a.message) == FeedStore.keyOf(b.message)
+                if (a is Item.Post && b is Item.Post) return a.key == b.key
                 return a === b
             }
             override fun areContentsTheSame(o: Int, n: Int): Boolean {
@@ -339,10 +412,12 @@ class FeedActivity @JvmOverloads constructor(
         val apply: (DiffUtil.DiffResult) -> Unit = { diff ->
             if (generation == diffGeneration && fragmentView != null) {
                 timelineDiffPending = false
+                // entiny: sampled right before the swap -- the user may have scrolled while the diff ran
+                val wasAtNewest = isAtNewest()
                 items = newItems
                 adapter?.let { diff.dispatchUpdatesTo(it) }
                 emptyView?.visibility = if (firstShown && newItems.isEmpty()) View.VISIBLE else View.GONE
-                onApplied?.invoke()
+                onApplied?.invoke(wasAtNewest)
             }
         }
         if (!asynchronously) {
@@ -417,21 +492,29 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun isUnread(msg: MessageObject) = controller.unreadTracker.isUnread(msg.getDialogId(), msg.id)
 
-    private fun countUnread(): Int = store.snapshot().count { isUnread(it) }
+    // entiny: cached because the button badge asks on every scroll; reset whenever rows or read state change
+    private var unreadCount = -1
+
+    private fun countUnread(): Int {
+        if (unreadCount < 0) unreadCount = store.snapshot().count { isUnread(it) }
+        return unreadCount
+    }
 
     private fun oldestUnread(): MessageObject? = store.snapshot().lastOrNull { isUnread(it) }
 
     private fun markVisibleRead() {
         val visible = ArrayList<MessageObject>()
         forEachVisiblePost { visible.add(it) }
-        controller.markRowsSeen(visible)
+        if (controller.markRowsSeen(visible)) {
+            unreadCount = -1
+            refreshPill()
+        }
     }
 
     // entiny: posts from the local db carry stale reaction counts, so refresh what's on screen (throttled)
     private fun refreshVisibleReactions() {
         val now = SystemClock.elapsedRealtime()
-        val loadedKeys = store.snapshot().mapTo(HashSet()) { FeedStore.keyOf(it) }
-        reactionsCheckedAt.keys.retainAll(loadedKeys)
+        reactionsCheckedAt.keys.removeAll { !store.contains(it) }
         val byDialog = HashMap<Long, ArrayList<Int>>()
         forEachVisiblePost { msg ->
             val key = FeedStore.keyOf(msg)
@@ -444,16 +527,24 @@ class FeedActivity @JvmOverloads constructor(
             val req = TLRPC.TL_messages_getMessagesReactions()
             req.peer = messagesController.getInputPeer(dialogId)
             req.id.addAll(ids)
-            ConnectionsManager.getInstance(currentAccount).sendRequest(req) { response, error ->
+            reactionPollRequests.add(ConnectionsManager.getInstance(currentAccount).sendRequest(req) { response, error ->
                 val updates = response as? TLRPC.Updates ?: return@sendRequest
                 if (error != null) return@sendRequest
                 controller.applyReactionSnapshot(updates)
-            }
+            })
         }
+    }
+
+    // entiny: a poll answered after a tap would overwrite the fresh local choice (same race inugram fixes in chats)
+    private fun cancelReactionPolls() {
+        val connections = ConnectionsManager.getInstance(currentAccount)
+        for (id in reactionPollRequests) connections.cancelRequest(id, true)
+        reactionPollRequests.clear()
     }
 
     private fun markAllRead() {
         val marked = controller.markAllRead()
+        unreadCount = -1
         dividerKey = null
         submitItems(asynchronously = false)
         hidePill()
@@ -534,10 +625,7 @@ class FeedActivity @JvmOverloads constructor(
         actionBar.setOccupyStatusBar(!AndroidUtilities.isTablet())
         actionBar.inu_nonIsland = NonIslandHelper.chatElements()
 
-        val sourceColor = BlurredBackgroundSourceColor()
-        sourceColor.setColor(getThemedColor(Theme.key_windowBackgroundWhite))
-        val factory = BlurredBackgroundDrawableViewFactory(sourceColor)
-        actionBar.setupGlass(factory, BlurredBackgroundProviderImpl.topPanelChatActivity(resourceProvider))
+        actionBar.setupGlass(navbarContentDrawableFactory, BlurredBackgroundProviderImpl.topPanelChatActivity(resourceProvider))
 
         if (!hasMainTabs) {
             actionBar.setBackButtonDrawable(BackDrawable(false))
@@ -546,7 +634,7 @@ class FeedActivity @JvmOverloads constructor(
         val avatar = object : ChatAvatarContainer(context, this@FeedActivity, false, resourceProvider) {
             override fun onAvatarClick(): Boolean {
                 if (pickableFolders().isNotEmpty()) {
-                    showFolderPicker()
+                    showFolderPicker(this)
                 } else {
                     presentFragment(FeedExcludedChannelsSettingsActivity())
                 }
@@ -571,7 +659,7 @@ class FeedActivity @JvmOverloads constructor(
 
         avatar.setOnClickListener {
             if (pickableFolders().isNotEmpty()) {
-                showFolderPicker()
+                showFolderPicker(avatar)
             } else {
                 presentFragment(FeedExcludedChannelsSettingsActivity())
             }
@@ -626,6 +714,26 @@ class FeedActivity @JvmOverloads constructor(
             it.bottomMargin = bottom
             sideControls?.requestLayout()
         }
+        updateTopFade()
+    }
+
+    private fun updateTopFade() {
+        if (NonIslandHelper.chatElements()) {
+            fadeView?.setFadeZoneTop(0)
+            return
+        }
+        val statusBar = if (!AndroidUtilities.isTablet()) AndroidUtilities.statusBarHeight else 0
+        val top = statusBar + ActionBar.getCurrentActionBarHeight() + dp(2f)
+        fadeView?.setFadeZoneTop(top)
+    }
+
+    override fun isLightStatusBar(): Boolean {
+        val source = navbarContentSourceWallpaper.source
+        if (source != null) {
+            val statusBarColor = wallpaperBitmapProvider.getStatusBarColor(source)
+            return AndroidUtilities.computePerceivedBrightness(statusBarColor) > 0.721f
+        }
+        return super.isLightStatusBar()
     }
 
     private fun createEmptyView(context: Context): View {
@@ -681,6 +789,11 @@ class FeedActivity @JvmOverloads constructor(
         pill.animate().alpha(1f).setDuration(150).start()
     }
 
+    // entiny: a visible pill follows the unread count as posts get read or arrive
+    private fun refreshPill() {
+        if (newPostsPill?.visibility == View.VISIBLE) showPill(countUnread())
+    }
+
     private fun hidePill() {
         newPostsPill?.visibility = View.GONE
     }
@@ -698,7 +811,7 @@ class FeedActivity @JvmOverloads constructor(
         if (pickableFolders().isNotEmpty()) {
             options.add(R.drawable.msg_folders, LocaleController.getString(R.string.InuFeedFolders)) {
                 // entiny: delay showing folder picker until popup dismiss animation finishes
-                AndroidUtilities.runOnUIThread({ showFolderPicker() }, 100)
+                AndroidUtilities.runOnUIThread({ showFolderPicker(anchor) }, 100)
             }
         }
         options
@@ -711,11 +824,14 @@ class FeedActivity @JvmOverloads constructor(
     private fun pickableFolders(): List<MessagesController.DialogFilter> =
         MessagesController.getInstance(currentAccount).dialogFilters?.filter { !it.isDefault }.orEmpty()
 
-    private fun showFolderPicker() {
+    private fun showFolderPicker(anchorView: View? = null) {
         if (fragmentView == null) return
-        val anchor = avatarContainer ?: actionBar.createMenu().getItem(MENU_OVERFLOW) ?: return
+        val anchor = anchorView ?: avatarContainer ?: actionBar.createMenu().getItem(MENU_OVERFLOW) ?: return
         val currentFolder = scope as? FeedScope.Folder
         val options = ItemOptions.makeOptions(this, anchor)
+        if (anchor is ChatAvatarContainer || anchor === avatarContainer) {
+            options.setGravity(Gravity.LEFT)
+        }
         if (currentFolder != null) {
             options.add(R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedAllChannels)) {
                 presentFragment(FeedActivity(), !hasMainTabs)
@@ -738,7 +854,7 @@ class FeedActivity @JvmOverloads constructor(
     }
 
     private fun openPost(msg: MessageObject) {
-        controller.unreadTracker.onRowSeen(msg.getDialogId(), msg.id)
+        if (controller.unreadTracker.onRowSeen(msg.getDialogId(), msg.id)) unreadCount = -1
         presentFragment(ChatActivity(Bundle().apply {
             putLong("chat_id", -msg.getDialogId())
             putInt("message_id", msg.id)
@@ -841,7 +957,13 @@ class FeedActivity @JvmOverloads constructor(
         }
 
         private fun toggleReaction(reaction: TLRPC.ReactionCount) {
-            val msg = messageObject ?: return
+            // entiny: album reactions live on the primary message, not on the tapped cell's own message
+            val msg = primaryMessageObject ?: return
+            val key = FeedStore.keyOf(msg)
+            cancelReactionPolls()
+            reactionsCheckedAt[key] = SystemClock.elapsedRealtime()
+            val seq = (reactionTapSeq[key] ?: 0) + 1
+            reactionTapSeq[key] = seq
             val visible = ReactionsLayoutInBubble.VisibleReaction.fromTL(reaction.reaction) ?: return
             if (visible.isStar) return
             val peer = MessagesController.getInstance(currentAccount).getInputPeer(msg.getDialogId())
@@ -862,10 +984,11 @@ class FeedActivity @JvmOverloads constructor(
                 if (this.reaction.isNotEmpty()) flags = flags or 1
             }
             ConnectionsManager.getInstance(currentAccount).sendRequest(request) { response, error ->
-                if (error == null && response is TLRPC.Updates) controller.applyReactionSnapshot(response)
+                // entiny: only the latest tap's response may overwrite the local choice
+                if (error == null && response is TLRPC.Updates && reactionTapSeq[key] == seq) controller.applyReactionSnapshot(response)
             }
             // entiny: deferred rebind -- setMessageObject must not run inside touch dispatch
-            post { if (messageObject === msg) bind(msg, currentMessagesGroup) }
+            post { messageObject?.let { bind(it, currentMessagesGroup) } }
         }
 
         private fun requestReaction(visible: ReactionsLayoutInBubble.VisibleReaction): TLRPC.Reaction? = when {
@@ -881,6 +1004,8 @@ class FeedActivity @JvmOverloads constructor(
         private const val LOAD_MORE_THRESHOLD = 6
         private const val MIN_INITIAL_ROWS = 20
         private const val REACTIONS_RECHECK_MS = 15_000L
+        private const val ITEM_VIEW_CACHE_SIZE = 4
+        private const val POST_POOL_SIZE = 10
         private const val VIEW_TYPE_POST = 0
         private const val VIEW_TYPE_DIVIDER = 1
         private val DIFF_EXECUTOR = Executors.newSingleThreadExecutor { runnable ->
