@@ -1131,11 +1131,11 @@
     <string name="InuIosChatHeader">Compact pill</string>
     <string name="InuIosChatHeaderInfo">iOS-style compact chat header pill floating in the middle.</string>
     <string name="InuChatHeaderNoPill">Hide pill background</string>
-    <string name="InuChatHeaderNoPillInfo">The title and subtitle float directly over the wallpaper without the frosted pill behind them. Stays visible in search and message-selection mode.</string>
+    <string name="InuChatHeaderNoPillInfo">Show the title and subtitle over the wallpaper without the pill.</string>
     <string name="InuIosChatHeaderAvatarSlot">Move avatar to the menu button</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Moves the avatar out of the pill to replace the \"⋮\" button — tap for the profile, long-press for the chat menu; off keeps it inside the pill.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu.</string>
     <string name="InuIosChatHeaderAvatarStatic">Do not center the avatar</string>
-    <string name="InuIosChatHeaderAvatarStaticInfo">The avatar stays where it normally sits, next to the back button, and only the pill with the title and subtitle is centered.</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">Keep the avatar next to the back button; only the title pill is centered.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuSaveDeletedMessages">Save deleted messages</string>

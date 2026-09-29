@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 14:20:53 +0300
+Subject: [*] feed header no pill
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/ActionBar.java     | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2558,7 +2558,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+     private boolean inu_hideChatPill() {
+         return desu.inugram.InuConfig.CHAT_HEADER_NO_PILL.getValue()
+                 && chatAvatarContainer != null
+-                && chatAvatarContainer.inu_isRealChatHeader()
++                && (chatAvatarContainer.inu_isRealChatHeader()
++                || desu.inugram.helpers.InuUtils.isFeedHeader(parentFragment))
+                 && !isSearchFieldVisible && !actionModeVisible;
+     }
+ 

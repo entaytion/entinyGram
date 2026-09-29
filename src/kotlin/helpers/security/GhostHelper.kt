@@ -188,6 +188,14 @@ object GhostHelper {
         return !(o.read == OVERRIDE_NEVER && o.typing == OVERRIDE_NEVER)
     }
 
+    // entiny: the per-chat menu entry is for users and groups, not broadcast channels
+    @JvmStatic
+    fun isChannelDialog(dialogId: Long): Boolean {
+        if (dialogId >= 0 || DialogObject.isEncryptedDialog(dialogId)) return false
+        val chat = findChat(-dialogId) ?: return false
+        return ChatObject.isChannelAndNotMegaGroup(chat)
+    }
+
     // entiny: global ghost can skip whole chat types, e.g. channels where hidden reads only pile up unread elsewhere
     @JvmStatic
     fun isInGlobalScope(dialogId: Long): Boolean {
@@ -411,8 +419,8 @@ object GhostHelper {
     fun markDialogAsRead(account: Int, dialogId: Long, maxId: Int = 0) {
         val controller = MessagesController.getInstance(account) ?: return
         val effectiveMaxId = if (maxId > 0) maxId else {
-            val dialog = controller.dialogs_dict.get(dialogId)
-            dialog?.top_message ?: 0
+            // entiny: right after a send the top message is our own local one (negative id); 0 makes the server read everything
+            (controller.dialogs_dict.get(dialogId)?.top_message ?: 0).coerceAtLeast(0)
         }
 
         val chat = if (DialogObject.isChatDialog(dialogId)) controller.getChat(-dialogId) else null

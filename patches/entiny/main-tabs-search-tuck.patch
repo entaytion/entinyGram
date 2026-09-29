@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 29 Sep 2026 14:09:18 +0300
+Subject: [*] tuck the separate search button closer to the tabs
+
+---
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java      | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -488,7 +488,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsBarContainer.addView(tabsView, new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT));
+         if (searchTabContainer != null) {
+             LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
+-            searchParams.setMarginStart(0);
++            searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 2)));
+             searchParams.setMarginEnd(dp(4));
+             searchParams.height = LayoutHelper.MATCH_PARENT;
+             tabsBarContainer.addView(searchTabContainer, searchParams);
+@@ -1216,7 +1216,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         if (wrapperWidth <= 0) return;
+         final boolean showSearch = searchTabContainer != null && searchTabContainer.getVisibility() != View.GONE;
+         final int searchWidth = showSearch ? searchTabContainer.getLayoutParams().width : 0;
+-        final int searchStartMargin = 0;
++        final int searchStartMargin = showSearch ? -dp(Math.max(0, MainTabsHelper.getMainTabsMargin() - 2)) : 0;
+         final int searchEndMargin = showSearch ? dp(4) : 0;
+         final int containerPadding = tabsBarContainer.getPaddingLeft() + tabsBarContainer.getPaddingRight();
+         final int outerInset = dp(Math.min(DialogsActivity.MAIN_TABS_MARGIN, 6));
+@@ -1243,6 +1243,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         ThemeDescription.ThemeDescriptionDelegate cellDelegate = this::blur3_updateColors;
+         themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_windowBackgroundWhite));
+         themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_dialogBackground));
++        themeDescriptions.add(new ThemeDescription(null, 0, null, null, null, cellDelegate, Theme.key_glass_tabUnselected));
+ 
+         return themeDescriptions;
+     }

@@ -34,6 +34,18 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 
 object TranslateHelper {
+
+    private const val FAILURE_BULLETIN_COOLDOWN_MS = 30_000L
+    private var lastFailureBulletinAt = 0L
+
+    // entiny: a chat translates message by message, so one bad connection used to stack the same error bulletin per message
+    @JvmStatic
+    fun allowFailureBulletin(): Boolean {
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (lastFailureBulletinAt != 0L && now - lastFailureBulletinAt < FAILURE_BULLETIN_COOLDOWN_MS) return false
+        lastFailureBulletinAt = now
+        return true
+    }
     private const val ORIGINAL_SEPARATOR = "\n\n--------\n\n"
     private const val LEGACY_TARGET_LANGUAGE_PREF = "translate_to_language"
 

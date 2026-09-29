@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.widget.FrameLayout
+import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.LocaleController
@@ -200,7 +201,7 @@ class ChatHeaderPreviewCell(context: Context) : FrameLayout(context) {
 
         drawBackArrow(canvas, backCx, cy)
 
-        if (current.pillAlpha > 0f) {
+        if (current.pillAlpha > 0f && !InuConfig.CHAT_HEADER_NO_PILL.value) {
             val pillHalfHeight = dp(PILL_HEIGHT_DP / 2).toFloat()
             pillPaint.alpha = (PILL_FILL_ALPHA * current.pillAlpha * 255).toInt()
             pillRect.set(current.pillLeft, cy - pillHalfHeight, current.pillRight, cy + pillHalfHeight)

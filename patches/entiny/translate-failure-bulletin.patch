@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 29 Sep 2026 14:41:39 +0300
+Subject: [*] one translation failure bulletin at a time
+
+---
+ .../main/java/org/telegram/messenger/TranslateController.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+@@ -1172,7 +1172,7 @@ public class TranslateController extends BaseController {
+                                 _callback.run(isTranscription, id, resultWithEntities, toLanguage);
+                             } else {
+                                 toggleTranslatingDialog(dialogId, false);
+-                                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
++                                if (desu.inugram.helpers.translate.TranslateHelper.allowFailureBulletin()) NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
+                             }
+                         });
+                     }
+@@ -1248,7 +1248,7 @@ public class TranslateController extends BaseController {
+                                     _callback.run(isTranscription, id, resultWithEntities, toLanguage);
+                                 } else {
+                                     _callback.run(isTranscription, id, null, toLanguage);
+-                                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
++                                    if (desu.inugram.helpers.translate.TranslateHelper.allowFailureBulletin()) NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_ERROR, getString(rateLimit ? R.string.TranslationFailedAlert1 : R.string.TranslationFailedAlert2));
+                                 }
+                             });
+                         }

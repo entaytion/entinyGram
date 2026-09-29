@@ -267,7 +267,7 @@ object ProfileHelper {
             )
         }
         // entiny: per-chat overrides work without the global mode, so the entry is always offered
-        if (!isSelf && dialogId != 0L) {
+        if (!isSelf && dialogId != 0L && !GhostHelper.isChannelDialog(dialogId)) {
             val ghosted = GhostHelper.isGhostActiveForDialog(dialogId)
             otherItem.addSubItem(
                 ACTION_TOGGLE_GHOST_DIALOG,

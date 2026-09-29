@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 14:15:29 +0300
+Subject: [*] tighten ios input button spacing
+
+---
+ .../org/telegram/ui/Components/ChatActivityEnterView.java  | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -9310,7 +9310,8 @@ public class ChatActivityEnterView extends FrameLayout implements
+             }
+             View inu_menuBtn = desu.inugram.helpers.chat.ChatInputMenuHelper.getMenuButton(this);
+             if (inu_menuBtn != null) {
+-                inu_menuBtn.setTranslationX(hasInsideRightIcon ? -dp(DEFAULT_HEIGHT + iosGapDp) : 0);
++                desu.inugram.helpers.chat.IosInputHelper.setInputMenuButtonIconInset(inu_menuBtn, hasInsideRightIcon);
++                inu_menuBtn.setTranslationX(dp(desu.inugram.helpers.chat.IosInputHelper.getInputMenuButtonOffsetDp(hasInsideRightIcon, DEFAULT_HEIGHT, iosGapDp)));
+             }
+             return;
+         }
+@@ -9350,7 +9351,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+         View inu_menuBtn = desu.inugram.helpers.chat.ChatInputMenuHelper.getMenuButton(this);
+         if (inu_menuBtn != null) {
+             boolean hasScheduled = scheduledButton != null && scheduledButton.getTag() != null;
+-            inu_menuBtn.setTranslationX(hasScheduled ? -dp(48) : 0);
++            boolean hasRightAttachIcon = isIosInputAppearance() && attachButton != null && attachButton.getVisibility() == VISIBLE && attachButton.getAlpha() > 0;
++            desu.inugram.helpers.chat.IosInputHelper.setInputMenuButtonIconInset(inu_menuBtn, hasRightAttachIcon);
++            inu_menuBtn.setTranslationX(hasScheduled ? -dp(48) : dp(desu.inugram.helpers.chat.IosInputHelper.getInputMenuButtonOffsetDp(hasRightAttachIcon, DEFAULT_HEIGHT, iosGapDp)));
+         }
+     }
+ 

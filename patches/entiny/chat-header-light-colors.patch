@@ -1,0 +1,107 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 29 Sep 2026 14:09:12 +0300
+Subject: [*] readable chat header colors on light wallpapers
+
+---
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  2 +-
+ .../java/org/telegram/ui/ChatActivity.java    | 31 ++++++++++++-------
+ .../ui/Components/ChatAvatarContainer.java    | 16 +++++++++-
+ 3 files changed, 35 insertions(+), 14 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2555,7 +2555,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                 || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
+     }
+ 
+-    private boolean inu_hideChatPill() {
++    public boolean inu_hideChatPill() {
+         return desu.inugram.InuConfig.CHAT_HEADER_NO_PILL.getValue()
+                 && chatAvatarContainer != null
+                 && (chatAvatarContainer.inu_isRealChatHeader()
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -17537,6 +17537,9 @@ public class ChatActivity extends BaseFragment implements
+             }
+             invalidateAllGlassAttachedViews();
+             checkSystemBarColors();
++            if (avatarContainer != null) {
++                avatarContainer.updateColors();
++            }
+         }
+ 
+         int inputFieldHeight = 0;
+@@ -43877,22 +43880,26 @@ public class ChatActivity extends BaseFragment implements
+                     return animatingColors.valueAt(index);
+                 }
+             }
++            int color;
+             if (chatTheme == null) {
+-                return Theme.getColor(key);
+-            }
+-            int index = currentColors.indexOfKey(key);
+-            if (index >= 0) {
+-                return currentColors.valueAt(index);
+-            }
+-
+-            int fallbackKey = Theme.getFallbackKey(key);
+-            if (fallbackKey >= 0) {
+-                index = currentColors.indexOfKey(fallbackKey);
++                color = Theme.getColor(key);
++            } else {
++                int index = currentColors.indexOfKey(key);
+                 if (index >= 0) {
+-                    return currentColors.valueAt(index);
++                    color = currentColors.valueAt(index);
++                } else {
++                    int fallbackKey = Theme.getFallbackKey(key);
++                    if (fallbackKey >= 0 && (index = currentColors.indexOfKey(fallbackKey)) >= 0) {
++                        color = currentColors.valueAt(index);
++                    } else {
++                        color = Theme.getColor(key);
++                    }
+                 }
+             }
+-            return Theme.getColor(key);
++            if (desu.inugram.helpers.theme.ChatHeaderThemeHelper.shouldUseLightHeaderColors(shouldHaveLightStatusBarIcons, actionBar)) {
++                color = desu.inugram.helpers.theme.ChatHeaderThemeHelper.getLightHeaderColor(key, color);
++            }
++            return color;
+         }
+ 
+         @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -1999,10 +1999,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     }
+ 
+     private int getThemedColor(int key) {
+-        return Theme.getColor(key, resourcesProvider);
++        int color = Theme.getColor(key, resourcesProvider);
++        if (actionBar != null && desu.inugram.helpers.theme.ChatHeaderThemeHelper.shouldUseLightHeaderColors(
++                parentFragment != null && !parentFragment.isLightStatusBar(), actionBar)) {
++            color = desu.inugram.helpers.theme.ChatHeaderThemeHelper.getLightHeaderColor(key, color);
++        }
++        return color;
+     }
+ 
+     public void updateColors() {
++        if (titleTextView != null) {
++            titleTextView.setTextColor(getThemedColor(Theme.key_actionBarDefaultTitle));
++        }
++        if (subtitleTextView != null) {
++            subtitleTextView.setTextColor(getThemedColor(lastSubtitleColorKey >= 0 ? lastSubtitleColorKey : Theme.key_actionBarDefaultSubtitle));
++        }
++        if (animatedSubtitleTextView != null) {
++            animatedSubtitleTextView.setTextColor(getThemedColor(lastSubtitleColorKey >= 0 ? lastSubtitleColorKey : Theme.key_actionBarDefaultSubtitle));
++        }
+         if (currentTypingDrawable != null) {
+             currentTypingDrawable.setColor(getThemedColor(Theme.key_chat_status));
+         }

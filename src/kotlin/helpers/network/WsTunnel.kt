@@ -146,10 +146,21 @@ class WsTunnel(private val secret: ByteArray) {
             closeQuietly(client)
             return
         }
-        val remoteOut = remote.getOutputStream()
-        remoteOut.write(upstream.header)
-        remoteOut.flush()
-        pool.execute { pump(remote.getInputStream(), client.getOutputStream(), upstream.decrypt, session.encrypt, client, remote) }
+        val remoteOut: OutputStream
+        val remoteIn: InputStream
+        val clientOut: OutputStream
+        try {
+            remoteOut = remote.getOutputStream()
+            remoteIn = remote.getInputStream()
+            clientOut = client.getOutputStream()
+            remoteOut.write(upstream.header)
+            remoteOut.flush()
+        } catch (t: Throwable) {
+            closeQuietly(remote)
+            closeQuietly(client)
+            return
+        }
+        pool.execute { pump(remoteIn, clientOut, upstream.decrypt, session.encrypt, client, remote) }
         pump(input, remoteOut, session.decrypt, upstream.encrypt, client, remote)
     }
 

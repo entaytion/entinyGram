@@ -55,6 +55,18 @@ object IosInputHelper {
     fun getEmojiRightDp(): Int = if (isButtonPlacement()) getGapDp() else 0
 
     @JvmStatic
+    fun setInputMenuButtonIconInset(view: View, hasRightIcon: Boolean) {
+        val rightInset = if (hasRightIcon) AndroidUtilities.dp(RIGHT_CLUSTER_GAP_DP.toFloat()) else 0
+        if (view.paddingRight != rightInset) {
+            view.setPadding(view.paddingLeft, view.paddingTop, rightInset, view.paddingBottom)
+        }
+    }
+
+    @JvmStatic
+    fun getInputMenuButtonOffsetDp(hasRightIcon: Boolean, defaultHeightDp: Int, gapDp: Int): Int =
+        if (hasRightIcon) -(defaultHeightDp + gapDp) else 0
+
+    @JvmStatic
     fun getAiButtonGravity(): Int = if (isButtonPlacement()) Gravity.TOP or Gravity.RIGHT else Gravity.TOP or Gravity.LEFT
 
     @JvmStatic

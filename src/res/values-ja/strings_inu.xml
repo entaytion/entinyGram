@@ -1301,7 +1301,7 @@
     <string name="InuIosChatHeader">コンパクトなピル</string>
     <string name="InuIosChatHeaderInfo">iOS風のコンパクトなチャットヘッダーピルを中央に浮かせます。</string>
     <string name="InuChatHeaderNoPill">ピルの背景を非表示</string>
-    <string name="InuChatHeaderNoPillInfo">タイトルとサブタイトルが、ピルの背景なしで直接壁紙の上に浮かびます。検索・メッセージ選択中は背景が表示されます。</string>
+    <string name="InuChatHeaderNoPillInfo">ピルなしで、タイトルとサブタイトルを壁紙の上に表示します。</string>
     <string name="InuParanoiaHideMyStories">自分のストーリーを非表示</string>
     <string name="InuRegexFilterStatusEnabled">有効</string>
     <string name="InuStopBot">ボットを停止</string>
@@ -1324,7 +1324,7 @@
     <string name="InuMinimize">最小化</string>
     <string name="InuCenterTitleChatsInfo">チャットのタイトルとサブタイトルを中央に、アバターは左のまま表示します。単独で動作します。</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">アバターをピルから出して「⋮」ボタンの位置に移動します — タップでプロフィール、長押しでチャットメニュー、オフならピルの中に残ります。</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">アバターをメニュー位置に配置：タップでプロフィール、長押しでチャットメニュー。</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">最近のチャット</string>
     <string name="InuClearRecentChats">最近のチャットをクリア</string>
@@ -1498,7 +1498,7 @@
     <string name="InuIosButtonPlacement">ボタンの配置（iOS）</string>
     <string name="InuIosButtonPlacementInfo">添付ボタンを左に、絵文字ボタンを入力欄の右側に配置します。</string>
     <string name="InuIosChatHeaderAvatarStatic">アバターを中央に寄せない</string>
-    <string name="InuIosChatHeaderAvatarStaticInfo">アバターは戻るボタンの隣の通常の位置に残り、タイトルとサブタイトルのピルだけが中央に配置されます。</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">アバターは戻るボタンの横に残し、タイトルのピルだけを中央に配置します。</string>
     <string name="InuIosInputAppearance">外観（iOS）</string>
     <string name="InuIosInputAppearanceInfo">ガラス風のカプセル型入力欄と丸いアクションボタン。</string>
     <string name="InuIosStyle">iOS スタイル</string>

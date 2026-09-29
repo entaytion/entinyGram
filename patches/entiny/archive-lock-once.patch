@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 29 Sep 2026 14:18:52 +0300
+Subject: [*] ask for the archive lock once per opening
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -7250,7 +7250,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public void onResume() {
+         super.onResume();
+-        if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(folderId)) {
++        if (desu.inugram.helpers.security.ArchiveLockHelper.shouldGate(this, folderId)) {
+             if (fragmentView != null) {
+                 fragmentView.setAlpha(0f);
+             }

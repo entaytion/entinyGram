@@ -1454,7 +1454,7 @@
     <string name="InuIosChatHeader">Компактна пілюля</string>
     <string name="InuIosChatHeaderInfo">Компактна пілюля шапки чату в стилі iOS, що плаває посередині.</string>
     <string name="InuChatHeaderNoPill">Сховати фон пілюлі</string>
-    <string name="InuChatHeaderNoPillInfo">Назва та підзаголовок плавають прямо поверх шпалер без матового фону пілюлі. У пошуку та режимі вибору повідомлень фон залишається.</string>
+    <string name="InuChatHeaderNoPillInfo">Показувати заголовок і підзаголовок поверх шпалер, без пілюлі.</string>
     <string name="InuParanoiaHideMyStories">Приховати мої історії</string>
     <string name="InuStopBot">Зупинити бота</string>
     <string name="InuStopBotAction">Зупинити</string>
@@ -1468,9 +1468,9 @@
     <string name="InuMinimize">Згорнути</string>
     <string name="InuCenterTitleChatsInfo">Центрує назву та підпис чату; аватарка лишається ліворуч. Працює окремо.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туди, де меню</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Переносить аватарку з пілюлі на місце кнопки «⋮» — тап відкриває профіль, довге натискання — меню чату; вимкнено — аватарка лишається в пілюлі.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Аватар замість кнопки меню: натискання відкриває профіль, довге натискання — меню чату.</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрувати аватарку</string>
-    <string name="InuIosChatHeaderAvatarStaticInfo">Аватарка лишається там, де й зазвичай, поруч із кнопкою «назад», а центрується лише пілюля з назвою та підписом.</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">Аватар залишається біля кнопки «Назад», по центру лише пілюля із заголовком.</string>
     <string name="InuAiInsertQuoteInfo">Вставляє результат у поле повідомлення як цитату замість заміни вашої чернетки.</string>
     <string name="InuAiOnlyAnswerInfo">Приховує хід міркувань для моделей, які його транслюють, показуючи лише кінцеву відповідь.</string>
     <string name="InuAutoSaveOneTime">Автозбереження одноразового медіа</string>

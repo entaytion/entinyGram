@@ -1424,7 +1424,7 @@
     <string name="InuIosChatHeader">Компактная таблетка</string>
     <string name="InuIosChatHeaderInfo">Компактная таблетка шапки чата, плавающая посередине, как в iOS.</string>
     <string name="InuChatHeaderNoPill">Скрыть фон таблетки</string>
-    <string name="InuChatHeaderNoPillInfo">Название и подзаголовок плавают прямо поверх обоев без матового фона таблетки. В поиске и режиме выбора сообщений фон остаётся.</string>
+    <string name="InuChatHeaderNoPillInfo">Показывать заголовок и подзаголовок поверх обоев, без пилюли.</string>
     <string name="InuParanoiaHideMyStories">Скрыть мои истории</string>
     <string name="InuStopBot">Остановить бота</string>
     <string name="InuStopBotAction">Остановить</string>
@@ -1438,7 +1438,7 @@
     <string name="InuMinimize">Свернуть</string>
     <string name="InuCenterTitleChatsInfo">Центрирует название и подпись чата; аватар остаётся слева. Работает самостоятельно.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Переносит аватарку из таблетки на место кнопки «⋮» — тап открывает профиль, долгое нажатие — меню чата; выключено — аватарка остаётся в таблетке.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Аватар вместо кнопки меню: нажатие открывает профиль, долгое нажатие — меню чата.</string>
     <string name="InuScrollToTop">Наверх</string>
     <string name="InuRecentChats">Недавние чаты</string>
     <string name="InuClearRecentChats">Очистить недавние чаты</string>
@@ -1527,7 +1527,7 @@
     <string name="InuGhostModeDisabled">Режим призрака выключен</string>
     <string name="InuGhostModeEnabled">Режим призрака включён</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрировать аватар</string>
-    <string name="InuIosChatHeaderAvatarStaticInfo">Аватар остаётся на своём месте рядом с кнопкой «Назад», а по центру только плашка с заголовком и подзаголовком.</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">Аватар остаётся рядом с кнопкой «Назад», по центру только пилюля с заголовком.</string>
     <string name="InuIosStyle">Стиль iOS</string>
     <string name="InuPingAllProxies">Пинг всех прокси</string>
     <string name="InuRoundRecorderExposureLevels">Кнопки уровня экспозиции</string>

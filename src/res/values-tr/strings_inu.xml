@@ -1310,7 +1310,7 @@
     <string name="InuIosChatHeader">Kompakt hap</string>
     <string name="InuIosChatHeaderInfo">Ortada yüzen, iOS tarzı kompakt sohbet başlığı hapı.</string>
     <string name="InuChatHeaderNoPill">Hap arka planını gizle</string>
-    <string name="InuChatHeaderNoPillInfo">Başlık ve alt başlık, buzlu cam hapı olmadan doğrudan duvar kağıdının üzerinde yüzer. Arama ve mesaj seçme modunda arka plan görünür kalır.</string>
+    <string name="InuChatHeaderNoPillInfo">Başlık ve alt başlığı hap olmadan duvar kâğıdının üzerinde göster.</string>
     <string name="InuParanoiaHideMyStories">Hikayelerimi gizle</string>
     <string name="InuStopBot">Botu durdur</string>
     <string name="InuStopBotAction">Durdur</string>
@@ -1332,7 +1332,7 @@
     <string name="InuMinimize">Küçült</string>
     <string name="InuCenterTitleChatsInfo">Sohbet başlığını ve alt başlığı ortalar; profil resmi solda kalır. Tek başına çalışır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">Profil resmini haptan çıkarıp \"⋮\" düğmesinin yerine koyar — dokunmak profili, uzun basmak sohbet menüsünü açar; kapalıyken hapın içinde kalır.</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">Avatarı menü yerine koy: dokununca profil, uzun basınca sohbet menüsü.</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">Son sohbetler</string>
     <string name="InuClearRecentChats">Son sohbetleri temizle</string>
@@ -1503,7 +1503,7 @@
     <string name="InuHidePinnedTitle">Sabitlenmiş mesajları gizle</string>
     <string name="InuHidePinnedUntilNew">Yeni bir mesaj sabitlenene kadar</string>
     <string name="InuIosChatHeaderAvatarStatic">Avatarı ortalama</string>
-    <string name="InuIosChatHeaderAvatarStaticInfo">Avatar geri düğmesinin yanındaki normal yerinde kalır; yalnızca başlık ve alt başlık kapsülü ortalanır.</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">Avatar geri düğmesinin yanında kalır, yalnızca başlık hapı ortalanır.</string>
     <string name="InuIosStyle">iOS stili</string>
     <string name="InuPingAllProxies">Tüm proxy\'lere ping at</string>
     <string name="InuRoundRecorderExposureLevels">Pozlama seviyesi düğmeleri</string>

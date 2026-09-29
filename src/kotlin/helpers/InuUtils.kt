@@ -11,6 +11,8 @@ import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
 import org.telegram.tgnet.NativeByteBuffer
 import org.telegram.tgnet.TLObject
+import org.telegram.ui.ActionBar.BaseFragment
+import desu.inugram.ui.feed.FeedActivity
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -99,4 +101,7 @@ public object InuUtils {
         }
         return centerScreenTitles()
     }
+
+    @JvmStatic
+    fun isFeedHeader(fragment: BaseFragment?): Boolean = fragment is FeedActivity
 }

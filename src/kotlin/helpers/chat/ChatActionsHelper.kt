@@ -159,7 +159,7 @@ object ChatActionsHelper {
             ACTION_DELETED_MESSAGES, R.drawable.msg_delete,
             LocaleController.getString(R.string.InuDeletedArchive),
         )
-        if (activity.dialogId != 0L && activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
+        if (activity.dialogId != 0L && activity.dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId && !GhostHelper.isChannelDialog(activity.dialogId)) {
             headerItem.lazilyAddSubItem(
                 ACTION_GHOST_MODE, R.drawable.inu_ghost,
                 LocaleController.getString(R.string.InuGhostMode),

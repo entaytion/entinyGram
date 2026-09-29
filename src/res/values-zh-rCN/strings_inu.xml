@@ -1312,7 +1312,7 @@
     <string name="InuIosChatHeader">紧凑胶囊</string>
     <string name="InuIosChatHeaderInfo">iOS 风格的紧凑聊天标题胶囊，悬浮居中。</string>
     <string name="InuChatHeaderNoPill">隐藏胶囊背景</string>
-    <string name="InuChatHeaderNoPillInfo">标题和副标题直接浮于壁纸上方，无需背后的毛玻璃胶囊。搜索和消息选择模式下背景保持显示。</string>
+    <string name="InuChatHeaderNoPillInfo">标题和副标题直接显示在壁纸上，不带胶囊。</string>
     <string name="InuParanoiaHideMyStories">隐藏我的故事</string>
     <string name="InuStopBot">停止机器人</string>
     <string name="InuStopBotAction">停止</string>
@@ -1334,7 +1334,7 @@
     <string name="InuMinimize">最小化</string>
     <string name="InuCenterTitleChatsInfo">居中聊天标题和副标题；头像保持在左侧。可单独启用。</string>
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
-    <string name="InuIosChatHeaderAvatarSlotInfo">将头像移出胶囊，取代\"⋮\"按钮的位置——点击打开个人资料，长按打开聊天菜单；关闭则保留在胶囊内。</string>
+    <string name="InuIosChatHeaderAvatarSlotInfo">头像放在菜单位置：点按打开资料，长按打开聊天菜单。</string>
     <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">最近聊天</string>
     <string name="InuClearRecentChats">清除最近聊天</string>
@@ -1505,7 +1505,7 @@
     <string name="InuHidePinnedTitle">隐藏置顶消息</string>
     <string name="InuHidePinnedUntilNew">直到有新消息被置顶</string>
     <string name="InuIosChatHeaderAvatarStatic">不居中头像</string>
-    <string name="InuIosChatHeaderAvatarStaticInfo">头像保持在返回按钮旁的原位置，只有标题和副标题的胶囊居中。</string>
+    <string name="InuIosChatHeaderAvatarStaticInfo">头像保持在返回按钮旁，仅标题胶囊居中。</string>
     <string name="InuIosStyle">iOS 风格</string>
     <string name="InuPingAllProxies">Ping 所有代理</string>
     <string name="InuRoundRecorderExposureLevels">曝光等级按钮</string>

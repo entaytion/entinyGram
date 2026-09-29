@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 14:44:43 +0300
+Subject: [*] fix chat header avatar slot
+
+---
+ .../main/java/org/telegram/ui/ActionBar/ActionBar.java | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2066,7 +2066,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+                     contains |= glassDrawableMenu != null && glassDrawableMenu.getBounds().contains(x, y);
+                 }
+ 
+-                if (!contains) {
++                if (!contains && !chatAvatarContainer.inu_isIosMenuSlotAvatar()) {
+                     return false;
+                 }
+             }
+@@ -2580,7 +2580,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+         final int t = inu_glassTop;
+         final int b = inu_glassBottom;
+ 
+-        if (glassDrawable != null && !glassOnlyBack && !inu_hideChatPill()) {
++        final boolean hideChatPill = inu_hideChatPill();
++        if (hideChatPill && inu_nonIsland) {
++            canvas.drawColor(getThemedColor(Theme.key_actionBarDefault));
++        }
++        if (glassDrawable != null && !glassOnlyBack && !hideChatPill) {
+             if (inu_nonIsland) {
+                 glassDrawable.setBounds(0, 0, getWidth(), getHeight());
+             } else {
+@@ -2803,4 +2807,4 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             invalidate();
+         }
+     }
+-}
+\ No newline at end of file
++}
