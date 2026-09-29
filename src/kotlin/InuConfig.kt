@@ -1794,6 +1794,15 @@ object InuConfig {
     val PILL_STACK_ENABLED = BoolItem("pill_stack_enabled", false)
 
     @JvmField
+    @JvmField
+    val PILL_STACK_INFINITE_SCROLL = BoolItem("pill_stack_infinite_scroll", false)
+
+    @JvmField
+    val PILL_STACK_ACTIVE_PILLS = StringItem("pill_stack_active_pills", "")
+
+    @JvmField
+    val PILL_STACK_HIDDEN_PILLS = StringItem("pill_stack_hidden_pills", "")
+
     val PILL_STACK_VISIBLE_COUNT = IntItem("pill_stack_visible_count", 1)
 
     @JvmField
@@ -1815,6 +1824,23 @@ object InuConfig {
     val PILL_STACK_GOLD_CACHE_TIME = LongItem("pill_stack_gold_cache_time", 0L, exportable = false)
 
     // entiny: which pill id each visible slot last settled on, so a rebuild (e.g. reattaching the search bar) doesn't snap back to slot 0.
+
+    // entiny: niche -- render the pills in the action bar next to the menu instead of inside the chats search bar
+    @JvmField
+    val PILL_STACK_IN_HEADER = BoolItem("pill_stack_in_header", false)
+
+    // entiny: weather pill location -- the device position by default, or a point picked on the map (no location permission)
+    @JvmField
+    val WEATHER_USE_CURRENT_LOCATION = BoolItem("weather_use_current_location", true)
+
+    @JvmField
+    val WEATHER_FAHRENHEIT = BoolItem("weather_fahrenheit", false)
+
+    @JvmField
+    val WEATHER_LOCATION = StringItem("weather_location", "")
+
+    @JvmField
+    val WEATHER_LOCATION_ADDRESS = StringItem("weather_location_address", "")
     @JvmField
     val PILL_STACK_LAST_ACTIVE = StringItem("pill_stack_last_active", "", exportable = false)
 }

@@ -1,22 +1,25 @@
 package desu.inugram.ui.settings
 
+import android.content.Context
 import android.view.View
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.pillstack.ExchangeRates
 import desu.inugram.helpers.pillstack.GoldPrice
 import desu.inugram.helpers.pillstack.PillCurrencies
+import desu.inugram.helpers.pillstack.PillStackLayout
 import desu.inugram.helpers.pillstack.RateInstances
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.ui.ActionBar.ActionBar
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-// entiny: dedicated editor for one rate pill (base -> target), applied live on every pick.
+// entiny: editor for one rate pill (base -> target); an existing pill applies live, a new one is created by the check button.
 class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActivity() {
 
-    private var editId = instanceId
+    private val editId = instanceId
     private var base: String
     private var target: String
     private var previewValue: String? = null
@@ -29,6 +32,22 @@ class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActiv
 
     override fun getTitle(): CharSequence =
         "${RateInstances.getBaseLabel(base)} → ${PillCurrencies.getTargetCurrencyLabel(target)}"
+
+    override fun createView(context: Context): View {
+        val view = super.createView(context)
+        if (editId == -1) actionBar.createMenu().addItem(MENU_DONE, R.drawable.ic_ab_done)
+        actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+            override fun onItemClick(id: Int) {
+                if (id == MENU_DONE) save()
+                if (id == -1 || id == MENU_DONE) finishFragment()
+            }
+        })
+        return view
+    }
+
+    private fun save() {
+        RateInstances.create(base, target)?.let { PillStackLayout.setPillActive(it.id, true) }
+    }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(
@@ -87,11 +106,7 @@ class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActiv
     }
 
     private fun apply() {
-        if (editId == -1) {
-            RateInstances.create(base, target)?.let { editId = it.id }
-        } else {
-            RateInstances.setPair(editId, base, target)
-        }
+        if (editId != -1) RateInstances.setPair(editId, base, target)
         actionBar.setTitle(getTitle())
         listView?.adapter?.update(true)
         refreshPreview()
@@ -130,6 +145,7 @@ class RatePairEditActivity(private val instanceId: Int = -1) : SettingsPageActiv
     }
 
     companion object {
+        private const val MENU_DONE = 1
         private val BUTTON_BASE = InuUtils.generateId()
         private val BUTTON_TARGET = InuUtils.generateId()
         private val BUTTON_DELETE = InuUtils.generateId()

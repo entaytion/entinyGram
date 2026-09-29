@@ -8,35 +8,31 @@ import android.view.Gravity
 import android.widget.ImageView
 import android.widget.LinearLayout
 import desu.inugram.helpers.pillstack.PillType
-import desu.inugram.helpers.security.GhostHelper
-import desu.inugram.ui.settings.GhostModeSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
+import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AnimatedTextView
-import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ScaleStateListAnimator
-import org.telegram.ui.LaunchActivity
+import java.util.Calendar
+import java.util.Date
 
-// entiny: tap toggles Ghost Mode, long-press opens its settings screen. Wired to our own GhostHelper, not a re-implementation.
+// entiny: shows when the current account was last seen online, i.e. what others see while Ghost Mode hides you
 @SuppressLint("ViewConstructor")
-class GhostPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
-    BasePill(context, resourcesProvider), NotificationCenter.NotificationCenterDelegate {
+class LastSeenPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) : BasePill(context, resourcesProvider) {
 
     private val layout = LinearLayout(context)
     private val iconView = ImageView(context)
     private val textView = AnimatedTextView(context, true, true, true)
-    private var lastAccount = 0
 
     init {
         layout.orientation = LinearLayout.HORIZONTAL
         layout.gravity = Gravity.CENTER
         layout.minimumWidth = AndroidUtilities.dp(48f)
-        layout.setPadding(AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(10f), 0)
+        layout.setPadding(AndroidUtilities.dp(8f), 0, AndroidUtilities.dp(8f), 0)
         addView(
             layout, LayoutHelper.createFrame(
                 LayoutHelper.WRAP_CONTENT, 28,
@@ -45,8 +41,8 @@ class GhostPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
         )
 
         iconView.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        iconView.setImageResource(R.drawable.inu_ghost)
-        layout.addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0f, 0f, 2f, 0f))
+        iconView.setImageResource(R.drawable.phosphor_eye)
+        layout.addView(iconView, LayoutHelper.createLinear(16, 16, Gravity.CENTER_VERTICAL, 0f, 0f, 4f, 0f))
 
         textView.setTextSize(AndroidUtilities.dp(13f).toFloat())
         textView.setIncludeFontPadding(false)
@@ -60,55 +56,37 @@ class GhostPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
         onUpdateData(false)
     }
 
-    override fun getPillId(): Int = PillType.GHOST.id
+    override fun getPillId(): Int = PillType.LAST_SEEN.id
 
-    override fun getRefreshInterval(): Long = 0
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        onUpdateData(true)
-        lastAccount = UserConfig.selectedAccount
-        NotificationCenter.getInstance(lastAccount).addObserver(this, NotificationCenter.mainUserInfoChanged)
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        NotificationCenter.getInstance(lastAccount).removeObserver(this, NotificationCenter.mainUserInfoChanged)
-    }
-
-    override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
-        if (id == NotificationCenter.mainUserInfoChanged) onUpdateData(true)
-    }
+    override fun getRefreshInterval(): Long = 30_000L
 
     override fun onUpdateData(force: Boolean) {
-        val text = LocaleController.getString(R.string.InuGhostMode)
-        if (force || textView.text?.toString() != text) {
-            if (force) animateSizeChange()
-            textView.setText(text, force)
+        textView.setText(statusText(), force)
+        markDataUpdated()
+    }
+
+    private fun statusText(): String {
+        return when (val status = UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser()?.status) {
+            is TLRPC.TL_userStatusOnline -> LocaleController.getString(R.string.Online)
+            is TLRPC.TL_userStatusOffline -> formatSeen(status.expires.toLong() * 1000L)
+            is TLRPC.TL_userStatusRecently -> LocaleController.getString(R.string.Lately)
+            else -> "—"
         }
-        updateColors()
+    }
+
+    private fun formatSeen(millis: Long): String {
+        val seen = Calendar.getInstance().apply { time = Date(millis) }
+        val now = Calendar.getInstance()
+        val sameDay = seen.get(Calendar.YEAR) == now.get(Calendar.YEAR) && seen.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)
+        val formatter = if (sameDay) LocaleController.getInstance().getFormatterDay() else LocaleController.getInstance().getFormatterDayMonth()
+        return formatter.format(Date(millis))
     }
 
     override fun onPillClicked() {
-        val wasActive = GhostHelper.isGhostActive()
-        GhostHelper.toggleGhostMode()
         onUpdateData(true)
-        NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(NotificationCenter.mainUserInfoChanged)
-
-        val fragment = LaunchActivity.getSafeLastFragment()
-        if (fragment != null) {
-            BulletinFactory.of(fragment)
-                .createSuccessBulletin(
-                    LocaleController.getString(if (wasActive) R.string.InuGhostModeDisabled else R.string.InuGhostModeEnabled)
-                )
-                .show()
-        }
     }
 
     override fun onPillLongClicked(): Boolean = showPillMenu {
-        add(R.drawable.inu_ghost, LocaleController.getString(R.string.InuGhostMode)) {
-            LaunchActivity.getSafeLastFragment()?.presentFragment(GhostModeSettingsActivity())
-        }
         add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
     }
 
@@ -124,9 +102,7 @@ class GhostPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
     }
 
     override fun updateColors() {
-        val active = GhostHelper.isGhostActive()
-        val color = if (active) getThemedColor(Theme.key_windowBackgroundWhiteGreenText)
-        else getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.75f)
+        val color = getThemedColor(Theme.key_windowBackgroundWhiteBlackText, 0.75f)
         layout.background = Theme.createSimpleSelectorRoundRectDrawable(
             AndroidUtilities.dp(14f),
             if (Theme.isCurrentThemeDark()) getThemedColor(Theme.key_windowBackgroundWhite) else Theme.multAlpha(color, 0.09f),

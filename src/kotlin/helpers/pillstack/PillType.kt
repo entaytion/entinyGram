@@ -20,4 +20,5 @@ enum class PillType(
     DC_PING(9, "dc_ping", R.string.InuPillStackDcPing, R.drawable.pillstack_ping),
     BATTERY(10, "battery", R.string.InuPillStackBattery, R.drawable.phosphor_battery_charging),
     STORAGE(11, "storage", R.string.InuPillStackStorage, R.drawable.phosphor_hard_drive),
+    LAST_SEEN(12, "last_seen", R.string.InuPillStackLastSeen, R.drawable.phosphor_eye),
 }

@@ -9,6 +9,7 @@ import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
+import desu.inugram.InuConfig
 import desu.inugram.helpers.pillstack.pills.BasePill
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.Components.CubicBezierInterpolator
@@ -199,14 +200,20 @@ class PillStackView(context: Context) : FrameLayout(context) {
         return super.onTouchEvent(event)
     }
 
+    // entiny: -1 when there is nothing further; with infinite scrolling the ends wrap around
+    private fun targetIndex(up: Boolean): Int {
+        val next = currentIndex + (if (up) 1 else -1)
+        if (next in pills.indices) return next
+        return if (InuConfig.PILL_STACK_INFINITE_SCROLL.value && pills.size > 1) (next + pills.size) % pills.size else -1
+    }
+
     private fun handleSwipeProgress(dy: Float) {
         if (pills.size <= 1) return
         val h = height
         if (h <= 0) return
         isSwipingUp = dy < 0
         val progress = Math.abs(dy) / h
-        val next = if (isSwipingUp) currentIndex + 1 else currentIndex - 1
-        currentSwipeProgress = if (next >= 0 && next < pills.size) Math.min(progress, 1f) else progress
+        currentSwipeProgress = if (targetIndex(isSwipingUp) >= 0) Math.min(progress, 1f) else progress
         applyProgress(currentSwipeProgress, isSwipingUp)
     }
 
@@ -216,9 +223,7 @@ class PillStackView(context: Context) : FrameLayout(context) {
             cancelSwipe(isSwipingUp)
             return
         }
-        val next = if (isSwipingUp) currentIndex + 1 else currentIndex - 1
-        val canSwitch = next >= 0 && next < pills.size
-        if (Math.abs(dy) > h * 0.25f && canSwitch) {
+        if (Math.abs(dy) > h * 0.25f && targetIndex(isSwipingUp) >= 0) {
             animateToNextPill(isSwipingUp)
         } else {
             cancelSwipe(isSwipingUp)
@@ -227,13 +232,13 @@ class PillStackView(context: Context) : FrameLayout(context) {
 
     private fun applyProgress(progress: Float, up: Boolean) {
         val current = pills[currentIndex]
-        val next = if (up) currentIndex + 1 else currentIndex - 1
+        val next = targetIndex(up)
         for (i in pills.indices) {
             if (i != currentIndex && i != next && pills[i].visibility != GONE) {
                 pills[i].visibility = GONE
             }
         }
-        if (next >= pills.size || next < 0) {
+        if (next < 0) {
             val overscroll = height * (1.0 - 1.0 / (progress * 0.18 + 1.0)).toFloat()
             current.translationY = if (up) -overscroll else overscroll
             current.alpha = 1f
@@ -277,8 +282,7 @@ class PillStackView(context: Context) : FrameLayout(context) {
                 previous.scaleY = 1f
                 previous.onPillUnselected()
 
-                currentIndex = if (up) currentIndex + 1 else currentIndex - 1
-                currentIndex = currentIndex.coerceIn(0, pills.size - 1)
+                currentIndex = targetIndex(up).takeIf { it >= 0 } ?: currentIndex
 
                 for (i in pills.indices) {
                     if (i != currentIndex) pills[i].visibility = GONE

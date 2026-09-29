@@ -1,13 +1,13 @@
 package desu.inugram.helpers.pillstack
 
 import android.content.Context
-import desu.inugram.InuConfig
 import desu.inugram.helpers.pillstack.pills.BasePill
 import desu.inugram.helpers.pillstack.pills.BatteryPill
 import desu.inugram.helpers.pillstack.pills.CachePill
 import desu.inugram.helpers.pillstack.pills.ClockPill
 import desu.inugram.helpers.pillstack.pills.DcPingPill
 import desu.inugram.helpers.pillstack.pills.GhostPill
+import desu.inugram.helpers.pillstack.pills.LastSeenPill
 import desu.inugram.helpers.pillstack.pills.NetSpeedPill
 import desu.inugram.helpers.pillstack.pills.ProxyPill
 import desu.inugram.helpers.pillstack.pills.RamPill
@@ -38,6 +38,7 @@ object PillRegistry {
         register(PillInfo(PillType.DC_PING.id, PillType.DC_PING.iconRes) { c, r -> DcPingPill(c, r) })
         register(PillInfo(PillType.BATTERY.id, PillType.BATTERY.iconRes) { c, r -> BatteryPill(c, r) })
         register(PillInfo(PillType.STORAGE.id, PillType.STORAGE.iconRes) { c, r -> StoragePill(c, r) })
+        register(PillInfo(PillType.LAST_SEEN.id, PillType.LAST_SEEN.iconRes) { c, r -> LastSeenPill(c, r) })
     }
 
     fun register(info: PillInfo) {
@@ -61,9 +62,5 @@ object PillRegistry {
 
     fun getIconRes(id: Int): Int? = registry[id]?.iconRes
 
-    fun activePillIds(): List<Int> {
-        val fixed = InuConfig.PILL_STACK_LAYOUT.value.filter { it.enabled }.map { it.item.id }
-        val rates = RateInstances.getAll().map { it.id }
-        return fixed + rates
-    }
+    fun activePillIds(): List<Int> = PillStackLayout.getActivePills()
 }

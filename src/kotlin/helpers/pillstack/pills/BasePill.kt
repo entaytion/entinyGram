@@ -14,10 +14,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import desu.inugram.ui.settings.PillStackSettingsActivity
 import org.telegram.messenger.LocaleController
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.CubicBezierInterpolator
+import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LoadingDrawable
+import org.telegram.ui.LaunchActivity
 
 abstract class BasePill(context: Context, val resourcesProvider: Theme.ResourcesProvider?) :
     FrameLayout(context) {
@@ -63,6 +66,21 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
     open fun onPillSelected() {}
 
     open fun onPillUnselected() {}
+
+    // entiny: shared long-press menu -- anchored on the pill, without a scrim so the search bar stays visible
+    protected fun showPillMenu(configure: ItemOptions.() -> Unit): Boolean {
+        val fragment = LaunchActivity.getSafeLastFragment() ?: return false
+        val options = ItemOptions.makeOptions(fragment, this)
+        options.configure()
+        options.setDrawScrim(false).setDimAlpha(0).show()
+        return true
+    }
+
+    protected fun openPillSettings(): Boolean {
+        val fragment = LaunchActivity.getSafeLastFragment() ?: return false
+        fragment.presentFragment(PillStackSettingsActivity())
+        return true
+    }
 
     fun getThemedColor(key: Int): Int = Theme.getColor(key, resourcesProvider)
 

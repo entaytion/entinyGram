@@ -23,20 +23,20 @@ object PillCurrencies {
         return codes.toTypedArray()
     }
 
+    fun getTargetCurrencyName(code: String?): String? {
+        if (code.isNullOrEmpty() || AUTO.equals(code, ignoreCase = true)) return null
+        val normalized = normalize(code)
+        val name = runCatching { Currency.getInstance(normalized).getDisplayName(Locale.getDefault()) }.getOrNull()
+        return if (name.isNullOrEmpty() || name.equals(normalized, ignoreCase = true)) null else name
+    }
+
     fun getTargetCurrencyLabel(code: String?): CharSequence {
         if (code.isNullOrEmpty() || AUTO.equals(code, ignoreCase = true)) {
             return LocaleController.getString(R.string.InuPillStackCurrencyAuto)
         }
         val normalized = normalize(code)
-        val name = runCatching { Currency.getInstance(normalized).getDisplayName(Locale.getDefault()) }.getOrNull()
-        return if (name.isNullOrEmpty()) normalized else "$name — $normalized"
-    }
-
-    fun getTargetCurrencySubtext(code: String?): CharSequence {
-        if (code.isNullOrEmpty() || AUTO.equals(code, ignoreCase = true)) {
-            return LocaleController.getString(R.string.InuPillStackCurrencyAuto)
-        }
-        return normalize(code)
+        val name = getTargetCurrencyName(normalized)
+        return if (name == null) normalized else "$name — $normalized"
     }
 
     fun formatFiatPrice(value: BigDecimal?, code: String?): String? {

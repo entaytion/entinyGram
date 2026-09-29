@@ -121,7 +121,10 @@ class ProxyPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
         fragment?.presentFragment(ProxyListActivity())
     }
 
-    override fun onPillLongClicked(): Boolean = false
+    override fun onPillLongClicked(): Boolean = showPillMenu {
+        add(R.drawable.msg_retry, LocaleController.getString(R.string.Refresh)) { onUpdateData(true) }
+        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
+    }
 
     override fun drawableHotspotChanged(x: Float, y: Float) {
         if (loading) return

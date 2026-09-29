@@ -93,7 +93,10 @@ class RatePill(context: Context, resourcesProvider: Theme.ResourcesProvider?, pr
         onUpdateData(true)
     }
 
-    override fun onPillLongClicked(): Boolean = false
+    override fun onPillLongClicked(): Boolean = showPillMenu {
+        add(R.drawable.msg_retry, LocaleController.getString(R.string.Refresh)) { onUpdateData(true) }
+        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
+    }
 
     private fun fetchRate(target: String, force: Boolean, callback: Utilities.Callback<BigDecimal?>) {
         val base = baseCurrency()

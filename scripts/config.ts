@@ -166,6 +166,7 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'clear-formatting',
       'filter',
       'cloud',
+      'sun',
       'file-diff',
       'text-wrap',
       'text-wrap-disabled',

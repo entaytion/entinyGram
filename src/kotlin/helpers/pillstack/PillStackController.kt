@@ -5,24 +5,35 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import desu.inugram.InuConfig
 import desu.inugram.helpers.theme.NonIslandHelper
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Components.FragmentSearchField
 import org.telegram.ui.Components.LayoutHelper
 
-// entiny: glues a row of PillStackView "slots" directly onto the search field, exteraGram/exteraless-style -- 6dp margins, own FrameLayout child, not routed through the shared additionalIconsLayout (that's sized for one small icon and clips a wide pill's tail).
-class PillStackController(private val container: FrameLayout, private val editText: EditText?) {
+// entiny: glues a row of PillStackView "slots" onto the search field, exteraGram/exteraless-style -- 6dp margins, own child, not routed through the shared additionalIconsLayout (that's sized for one small icon and clips a wide pill's tail). With PILL_STACK_IN_HEADER the same row lives in the action bar menu, left of the icons.
+class PillStackController(
+    private val searchField: ViewGroup,
+    private val headerHost: ViewGroup?,
+    private val editText: EditText?,
+) {
 
+    private var host: ViewGroup = resolveHost()
     private var rowLayout: LinearLayout? = null
     private val slots = ArrayList<PillStackView>()
     private var attached = false
     // entiny: pills must not pop in while the dialogs screen is covered (e.g. search auto-clear when a chat opens)
     private var screenOn = true
-    private val screenProbe = object : View(container.context) {
+    // entiny: the search screen keeps the search field visible, so focus/text alone is not enough to keep the pills out of it
+    private var searchOpen = false
+
+    private val screenProbe = object : View(searchField.context) {
         override fun onVisibilityAggregated(isVisible: Boolean) {
             super.onVisibilityAggregated(isVisible)
             if (screenOn == isVisible) return
@@ -36,8 +47,8 @@ class PillStackController(private val container: FrameLayout, private val editTe
     }
 
     init {
-        container.addView(screenProbe, android.widget.FrameLayout.LayoutParams(0, 0))
-        container.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+        host.addView(screenProbe, FrameLayout.LayoutParams(0, 0))
+        host.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
             override fun onViewAttachedToWindow(v: View) {
                 attached = true
                 InuConfig.prefs.registerOnSharedPreferenceChangeListener(prefsListener)
@@ -62,7 +73,7 @@ class PillStackController(private val container: FrameLayout, private val editTe
             if (newFocus === editText || oldFocus === editText) updateVisibility()
         }
 
-        if (container.isAttachedToWindow) {
+        if (host.isAttachedToWindow) {
             attached = true
             InuConfig.prefs.registerOnSharedPreferenceChangeListener(prefsListener)
             rebuild()
@@ -71,8 +82,15 @@ class PillStackController(private val container: FrameLayout, private val editTe
 
     fun isAttached(): Boolean = attached
 
+    fun onSearchStateChanged(open: Boolean) {
+        if (searchOpen == open) return
+        searchOpen = open
+        updateVisibility()
+    }
+
     fun rebuild() {
-        if (!InuConfig.PILL_STACK_ENABLED.value || NonIslandHelper.globalSearch()) {
+        moveToHost()
+        if (!InuConfig.PILL_STACK_ENABLED.value || (host is FragmentSearchField && NonIslandHelper.globalSearch())) {
             removeRow()
             return
         }
@@ -88,17 +106,11 @@ class PillStackController(private val container: FrameLayout, private val editTe
 
         var row = rowLayout
         if (row == null) {
-            row = LinearLayout(container.context)
+            row = LinearLayout(host.context)
             row.orientation = LinearLayout.HORIZONTAL
             // entiny: row itself is MATCH_PARENT height (like exteraless's single stackView); center the WRAP_CONTENT slots within it.
             row.gravity = Gravity.CENTER_VERTICAL
-            container.addView(
-                row, LayoutHelper.createFrame(
-                    LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT.toFloat(),
-                    (if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL,
-                    6f, 0f, 6f, 0f
-                )
-            )
+            host.addView(row, rowParams())
             rowLayout = row
         }
 
@@ -108,7 +120,7 @@ class PillStackController(private val container: FrameLayout, private val editTe
             row.removeView(extra)
         }
         while (slots.size < slotCount) {
-            val slot = PillStackView(container.context)
+            val slot = PillStackView(host.context)
             slots.add(slot)
             row.addView(
                 slot,
@@ -117,14 +129,14 @@ class PillStackController(private val container: FrameLayout, private val editTe
         }
 
         val lastActive = readLastActive()
-        val resourcesProvider = container as? Theme.ResourcesProvider
+        val resourcesProvider = host as? Theme.ResourcesProvider
         var anyPills = false
         for (i in 0 until slotCount) {
             val slot = slots[i]
             slot.onCurrentPillChanged = null
             slot.clearPills()
             for (id in buckets[i]) {
-                val pill = PillRegistry.createPill(id, container.context, resourcesProvider) ?: continue
+                val pill = PillRegistry.createPill(id, host.context, resourcesProvider) ?: continue
                 slot.addPill(pill)
                 anyPills = true
             }
@@ -139,6 +151,35 @@ class PillStackController(private val container: FrameLayout, private val editTe
         updateVisibility()
     }
 
+    private fun resolveHost(): ViewGroup =
+        if (headerHost != null && InuConfig.PILL_STACK_IN_HEADER.value) headerHost else searchField
+
+    // entiny: the host is a setting, so rebuilding after a toggle has to carry the row and its probe over to the other container
+    private fun moveToHost() {
+        val target = resolveHost()
+        if (target === host) return
+        removeRow()
+        host.removeView(screenProbe)
+        host = target
+        host.addView(screenProbe, FrameLayout.LayoutParams(0, 0))
+    }
+
+    private fun rowParams(): ViewGroup.MarginLayoutParams {
+        if (host is LinearLayout) {
+            return LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT
+            ).apply {
+                leftMargin = AndroidUtilities.dp(6f)
+                rightMargin = AndroidUtilities.dp(6f)
+            }
+        }
+        return LayoutHelper.createFrame(
+            LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT.toFloat(),
+            (if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL,
+            6f, 0f, 6f, 0f
+        )
+    }
+
     private fun readLastActive(): List<Int> =
         InuConfig.PILL_STACK_LAST_ACTIVE.value.split(",").mapNotNull { it.toIntOrNull() }
 
@@ -150,12 +191,12 @@ class PillStackController(private val container: FrameLayout, private val editTe
         val row = rowLayout ?: return
         for (slot in slots) slot.clearPills()
         slots.clear()
-        container.removeView(row)
+        host.removeView(row)
         rowLayout = null
     }
 
     private fun updateVisibility() {
-        val searchActive = editText?.hasFocus() == true || !editText?.text.isNullOrEmpty()
+        val searchActive = searchOpen || editText?.hasFocus() == true || !editText?.text.isNullOrEmpty()
         for (slot in slots) {
             if (slot.getPillsCount() == 0) continue
             slot.setVisibilityFactor(if (searchActive || !screenOn) 0f else 1f)
@@ -171,7 +212,12 @@ class PillStackController(private val container: FrameLayout, private val editTe
             InuConfig.PILL_STACK_ENABLED.key,
             InuConfig.PILL_STACK_VISIBLE_COUNT.key,
             InuConfig.PILL_STACK_LAYOUT.key,
+            InuConfig.PILL_STACK_ACTIVE_PILLS.key,
+            InuConfig.PILL_STACK_HIDDEN_PILLS.key,
             InuConfig.PILL_STACK_RATE_INSTANCES.key,
+            InuConfig.PILL_STACK_IN_HEADER.key,
+            InuConfig.WEATHER_USE_CURRENT_LOCATION.key,
+            InuConfig.WEATHER_LOCATION.key,
             InuConfig.NON_ISLAND_GLOBAL_SEARCH.key,
         )
     }

@@ -61,11 +61,22 @@ class NicheSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asCustom(intensitySlider))
         items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuPillStack)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_PILL_STACK_IN_HEADER,
+                LocaleController.getString(R.string.InuPillStackInHeader),
+            ).setChecked(InuConfig.PILL_STACK_IN_HEADER.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuPillStackInHeaderInfo)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (item.id == TOGGLE_DISABLE_GLASS_GLARE) {
             (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_GLASS_GLARE.toggle()
+        } else if (item.id == TOGGLE_PILL_STACK_IN_HEADER) {
+            (view as? TextCheckCell)?.isChecked = InuConfig.PILL_STACK_IN_HEADER.toggle()
         }
     }
 
@@ -77,5 +88,6 @@ class NicheSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private val TOGGLE_DISABLE_GLASS_GLARE = InuUtils.generateId()
+        private val TOGGLE_PILL_STACK_IN_HEADER = InuUtils.generateId()
     }
 }

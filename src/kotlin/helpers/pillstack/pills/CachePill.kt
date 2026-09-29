@@ -21,6 +21,7 @@ import org.telegram.ui.CacheControlActivity
 import org.telegram.ui.Components.AnimatedTextView
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.ScaleStateListAnimator
+import org.telegram.ui.LaunchActivity
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
@@ -120,10 +121,19 @@ class CachePill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
     override fun getRefreshInterval(): Long = 3 * 60 * 1000L
 
     override fun onPillClicked() {
-        onUpdateData(true)
+        openStorageUsage()
     }
 
-    override fun onPillLongClicked(): Boolean = false
+    private fun openStorageUsage() {
+        LaunchActivity.getSafeLastFragment()?.presentFragment(CacheControlActivity())
+    }
+
+    override fun onPillLongClicked(): Boolean = showPillMenu {
+        add(R.drawable.msg_filled_storageusage, LocaleController.getString(R.string.StorageUsage)) { openStorageUsage() }
+        addGap()
+        add(R.drawable.msg_retry, LocaleController.getString(R.string.Refresh)) { onUpdateData(true) }
+        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
+    }
 
     override fun onUpdateData(force: Boolean) {
         val never = lastKnownCacheSize.get() == -1L

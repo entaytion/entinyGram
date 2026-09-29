@@ -67,7 +67,9 @@ class ClockPill(context: Context, resourcesProvider: Theme.ResourcesProvider?) :
         onUpdateData(true)
     }
 
-    override fun onPillLongClicked(): Boolean = false
+    override fun onPillLongClicked(): Boolean = showPillMenu {
+        add(R.drawable.msg_settings, LocaleController.getString(R.string.Settings)) { openPillSettings() }
+    }
 
     override fun drawableHotspotChanged(x: Float, y: Float) {
         if (loading) return
