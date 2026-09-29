@@ -141,7 +141,7 @@
     <string name="InuDisableSwipeToUnarchive">Arşivden çıkarmak için kaydırmayı devre dışı bırak</string>
     <string name="InuDisableSwipeToHideGeneralTopic">Genel konusunu gizlemek için kaydırmayı devre dışı bırak</string>
     <string name="InuIosChatsTabFirstFolder">Sohbetler sekmesi ilk klasöre döner</string>
-    <string name="InuIosChatsTabFirstFolderInfo">Telegram iOS\'taki gibi: zaten seçili olan Sohbetler sekmesine dokunmak, yukarı kaydırmadan önce ilk klasöre geri döner</string>
+    <string name="InuIosChatsTabFirstFolderInfo">Seçili Sohbetler sekmesine dokunmak, yukarı kaydırmadan önce ilk klasöre döner.</string>
     <string name="InuResetStorage">Depolamayı sıfırla</string>
     <string name="InuResetStorageConfirm">Bu işlem, bekleyen kimlik doğrulamasını sıfırlamak için yerel doğrulama anahtarlarını ve önbellekleri silecektir. Emin misiniz?</string>
     <string name="InuHideBottomBar">Alt çubuğu gizle</string>
@@ -185,7 +185,7 @@
     <string name="InuPredictiveBackStock">Varsayılan</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
     <string name="InuShowSpoilersDirectly">Spoiler\'ları doğrudan göster</string>
-    <string name="InuShowSpoilersDirectlyInfo">Dokunup açma adımını atlar — metin spoiler\'ları içeriğini her yerde hemen gösterir.</string>
+    <string name="InuShowSpoilersDirectlyInfo">Spoiler metin ve medyayı dokunmadan hemen göster.</string>
     <string name="InuTextSpoilerMode">Metin sürpriz (spoiler) stili</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Basit</string>
@@ -597,8 +597,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Güncelleme kanalı</string>
     <string name="InuUpdates">Güncellemeler</string>
-    <string name="InuUpdateUpToDate">En son sürümü kullanıyorsunuz</string>
-    <string name="InuUpdateError">Güncelleme denetimi başarısız: %1$s</string>
     <string name="InuUpdateBetaWarning">Bu bir beta güncellemesidir ve kararsız olabilir.</string>
     <string name="InuUpdateInstalling">Güncelleme yükleniyor</string>
     <string name="InuUpdateInstallingHint">Uygulama yüklendikten sonra yeniden başlatılacak</string>
@@ -873,12 +871,12 @@
     <string name="InuCacheTtlWeek">1 haftadan eski</string>
     <string name="InuCategories">Kategoriler</string>
     <string name="InuCenterTitleChats">Sohbetlerde/kanallarda da ortala</string>
-    <string name="InuExportArchive">Arşivi dışa aktar</string>
-    <string name="InuExportArchiveEmpty">Dışa aktarılacak bir şey yok</string>
     <string name="InuClearCache">Önbelleği temizle</string>
     <string name="InuClearDeletedCache">Silinen mesaj önbelleğini temizle</string>
     <string name="InuClearDeletedCacheAlert">Bu, kaydedilen silinmiş mesajların ve medyalarının yerel arşivini kalıcı olarak siler. Bu işlem geri alınamaz.</string>
     <string name="InuDeletedMessageSearch">Arşivde ara</string>
+    <string name="InuExportArchive">Arşivi dışa aktar</string>
+    <string name="InuExportArchiveEmpty">Dışa aktarılacak bir şey yok</string>
     <string name="InuDeletedMessageSearchHint">Kaydedilen silinen ve düzenlenen mesajlarda ara</string>
     <string name="InuDeletedMessageSearchEmpty">Eşleşme bulunamadı.</string>
     <string name="InuDeletedArchive">Silinen mesajlar</string>
@@ -919,12 +917,12 @@
     <string name="InuRegexFilterExport">Filtreleri dışa aktar</string>
     <string name="InuRegexFilterExportDone">Filtreler panoya kopyalandı</string>
     <string name="InuRegexFilterImport">Filtreleri içe aktar</string>
-    <string name="InuAutoSaveStories">Görüntülenen hikayeleri otomatik kaydet</string>
-    <string name="InuAutoSaveStoriesInfo">Açtığınız her hikayeyi galeriye bir kez kaydeder. Kendi hikayeleriniz atlanır.</string>
     <string name="InuRegexFilterImportHint">Dışa aktarılan filtre JSON\'ını yapıştırın</string>
     <string name="InuRegexFilterImportDone">%d filtre içe aktarıldı</string>
     <string name="InuSaveAnyStory">Tüm hikayeleri kaydet</string>
     <string name="InuSaveAnyStoryInfo">Premium gereksinimi veya yazar kısıtlaması olmadan herhangi bir hikayeyi galeriye indirmenizi sağlar.</string>
+    <string name="InuAutoSaveStories">Görüntülenen hikayeleri otomatik kaydet</string>
+    <string name="InuAutoSaveStoriesInfo">Açtığınız her hikayeyi galeriye bir kez kaydeder. Kendi hikayeleriniz atlanır.</string>
     <string name="InuSaveDeletedMessages">Silinen mesajları kaydet</string>
     <string name="InuSaveDeletedMessagesInfo">Silinen mesajları sohbetlerde 🗑️ işaretiyle tutar</string>
     <string name="InuSaveEditedMessages">Düzenleme geçmişini kaydet</string>
@@ -1028,7 +1026,7 @@
     <string name="InuForceTranslate">Zorunlu çeviri</string>
     <string name="InuAutoTranslateAll">Tüm sohbetleri otomatik çevir</string>
     <string name="InuAutoTranslateAllInfo">Sohbet çevirisini varsayılan olarak her yerde açar; sohbete özel kapatmalar hatırlanır.</string>
-    <string name="InuForceTranslateInfo">Telegram mesajın zaten dilinizde olduğunu veya «Çevirme» listesinde olduğunu düşünse bile çeviri çubuğunu gösterir ve mesajları çevirir.</string>
+    <string name="InuForceTranslateInfo">Telegram metnin dilinizde olduğunu düşünse veya \"Çevirme\" listesinde olsa bile çevir.</string>
     <string name="InuGhostDisabled">Hayalet Modu devre dışı</string>
     <string name="InuGhostEnabled">Hayalet Modu etkin</string>
     <string name="InuGhostFeatures">Gizli Etkinlik</string>
@@ -1044,7 +1042,7 @@
     <string name="InuGhostScopeGroups">Gruplar</string>
     <string name="InuGhostScopeChannels">Kanallar</string>
     <string name="InuGhostOverrides">Sohbete özel ayarlar</string>
-    <string name="InuGhostOverridesHint">Okundu bilgisini ve yazıyor durumunu sohbet başına ayarlayın: Hayalet Modu kapalıyken bile her zaman gizleyin veya açıkken bile asla gizlemeyin. Sohbet menüsünden de erişilebilir.</string>
+    <string name="InuGhostOverridesHint">Okundu bilgisini ve yazıyor göstergesini sohbet başına değiştir. Sohbet menüsünde de var.</string>
     <string name="InuGhostOverridesInfo">Ayarlarını düzenlemek veya kaldırmak için bir sohbete dokunun.</string>
     <string name="InuGhostOverridesEmpty">Henüz sohbete özel ayar yok. Sohbet menüsünden de ekleyebilirsiniz.</string>
     <string name="InuGhostOverridesAdd">Sohbet ekle</string>
@@ -1060,7 +1058,7 @@
     <string name="InuGhostOverrideTypingInfo">Varsayılan, genel Hayalet Modu ayarlarını izler.</string>
     <string name="InuGhostHideVoiceRead">Sesli ve görüntülü mesajları dinlendi olarak işaretleme</string>
     <string name="InuGhostMode">Hayalet Modu</string>
-    <string name="InuGhostModeInfo">Etkinliğinizi gizleyin: Gelen mesajlar okundu olarak işaretlenmez; çevrim içi durumunuz, yazıyor göstergesi ve hikaye görüntülemeleriniz gizli kalır.</string>
+    <string name="InuGhostModeInfo">Okundu bilgisini, çevrimiçi durumu, yazıyor göstergesini ve hikaye görüntülemelerini gizle.</string>
     <string name="InuGhostModeMaster">Hayalet Modu</string>
     <string name="InuGhostReadOnSend">Gönderirken okundu olarak işaretle</string>
     <string name="InuGhostMarkReadLocally">Yerel olarak okundu işaretle</string>
@@ -1069,14 +1067,14 @@
     <string name="InuGhostHideAppBarIconInfo">Do not show the ghost icon in the main title or chat headers when Ghost Mode is active.</string>
     <string name="InuUnlimitedLimits">Sınırsız Limitler</string>
     <string name="InuUnlimitedPinnedChats">Sınırsız Sabitlenmiş Sohbet</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Telegram\'ın sunucu sınırının üzerindeki sohbetleri yalnızca yerel olarak sabitler — bu cihazda önce görünürler, ancak senkronize olmaz ve sınıra dahil edilmezler.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Telegram\'ın izin verdiğinden fazla sohbet sabitle. Fazla sabitlemeler bu cihazda kalır.</string>
     <string name="InuUnlimitedPinnedChatsCount">Ekstra sabitlenmiş sohbet</string>
     <string name="InuUnlimitedFavoriteStickers">Sınırsız Favori Çıkartma ve GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Favori çıkartma ve GIF\'lerdeki yerel sınırı kaldırır; sunucu hepsini zaten tutar.</string>
     <string name="InuUnlimitedFolderChats">Klasör başına sınırsız sohbet</string>
-    <string name="InuUnlimitedFolderChatsInfo">Bir klasörün Telegram\'ın sınırından daha fazla sohbet içermesine izin verir — fazlalıklar yalnızca bu cihazda kalır ve yeniden yüklemede kaybolur.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Bir klasöre Telegram\'ın izin verdiğinden fazla sohbet ekle. Fazlalar bu cihazda kalır.</string>
     <string name="InuLocalFolders">Yerel klasörler</string>
-    <string name="InuLocalFoldersInfo">Telegram\'ın sınırının ötesinde sohbet klasörleri oluşturun — ek klasörler yalnızca bu cihazda saklanır ve sunucuya asla senkronize edilmez.</string>
+    <string name="InuLocalFoldersInfo">Telegram sınırının ötesinde klasör oluştur. Fazla klasörler bu cihazda kalır.</string>
     <string name="InuPillStack">Pill Stack</string>
     <string name="InuPillStackInfo">Sohbet arama çubuğunda küçük etkileşimli piller\nGenel arama adacık düzeninde değilken etkin değil</string>
     <string name="InuPillStackVisibleCount">Aynı anda görünen</string>
@@ -1277,7 +1275,7 @@
     <string name="InuTranslateProvider">Çeviri sağlayıcısı</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderFailed">Çeviri başarısız oldu: %1$s. Bir süre sonra tekrar deneyin.</string>
-    <string name="InuTranslateGoogleBlocked">Google bu ağdan gelen çeviri isteklerini reddediyor (HTTP 429). Bağlantınızı değiştirin ya da çeviri ayarlarından başka bir sağlayıcı seçin.</string>
+    <string name="InuTranslateGoogleBlocked">Google bu ağdan çeviriyi engelliyor (HTTP 429). Bağlantıyı değiştirin veya başka bir sağlayıcı seçin.</string>
     <string name="InuTranslateProviderGoogle">Google Çeviri</string>
     <string name="InuTranslateProviderInfo">Sohbetler Telegram\'ın sunucu API\'si yerine üçüncü taraf bir servisle çevrilir. Biçimlendirme korunur.</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI uyumlu)</string>
@@ -1295,7 +1293,7 @@
 
     <string name="InuFastResendLoginCode">Giriş kodu geri sayımını atla</string>
     <string name="InuFastResendLoginCodeInfo">Giriş kodu ekranındaki geri sayıma dokunarak süresinin dolmasını beklemeden yeni bir kod isteyin</string>
-    <string name="InuFastResendLoginCodeConfirm">Kod gelmedi mi? Kalan bekleme süresini atlayıp hemen yeni bir kod isteyebilirsiniz. Telegram bu kadar erken göndermeyi yine de reddedebilir.</string>
+    <string name="InuFastResendLoginCodeConfirm">Beklemeyi atlayıp şimdi yeni kod istensin mi? Telegram yine de reddedebilir.</string>
     <string name="InuFastResendLoginCodeNow">Şimdi yeniden gönder</string>
     <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
     <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
@@ -1303,7 +1301,7 @@
     <string name="InuHideProxySponsorChatInfo">Bağlıyken bazı MTProto vekil sunucularının sohbet listenizin en üstüne sabitlediği tanıtım sohbetini/kanalını engeller</string>
     <string name="InuHideRichEditorButton">Zengin metin düzenleyici düğmesini gizle</string>
     <string name="InuKeepDownloadsInBackground">Kaydırma veya çıkışta indirmeleri sonlandırma</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Mesaj ekrandan çıktığında veya sohbetten ayrıldığınızda indirmeleri iptal edip yeniden başlatmak yerine çalışır durumda tutar.</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Kaydırdığınızda veya sohbetten çıktığınızda indirmeler devam eder.</string>
     <string name="InuMaterial3BottomTabs">Alt sekmeler</string>
     <string name="InuIosBottomBar">iOS tarzı alt çubuk</string>
     <string name="InuIosBottomBarInfo">iOS tarzı daha geniş, eşit aralıklı alt sekmeler. Material 3 sekmelerini devre dışı bırakır.</string>
@@ -1363,15 +1361,15 @@
     <string name="InuAiTranscribeFetchModels">Kullanılabilir modelleri getir</string>
     <string name="InuAiTranscribeFetchModelsEmpty">Model bulunamadı</string>
     <string name="InuAiTranscribeFetchModelsFailed">Modeller alınamadı: %1$s</string>
-    <string name="InuAutoSaveOneTime">Tek seferlik medyayı otomatik kaydet</string>
     <string name="InuBurnOneTime">Yok et</string>
     <string name="InuGhostAutoOffline">Otomatik olarak çevrimdışı ol</string>
     <string name="InuGhostAutoOfflineInfo">Mesaj veya tepki gönderdikten kısa süre sonra çevrim dışı durumunu yeniden gönderir.</string>
     <string name="InuViewOnceShowNormal">Tek seferlik açılmanın ardına gizlemek yerine normal bir fotoğraf olarak göster</string>
+    <string name="InuAutoSaveOneTime">Tek seferlik medyayı otomatik kaydet</string>
     <string name="InuDisableContactsPermissionNag">Kişiler izni isteğini gizle</string>
     <string name="InuDisableContactsPermissionNagInfo">Başlangıçtaki kişiler erişimi istemi durdurulur; izin manuel verilirse senkronizasyon çalışmaya devam eder.</string>
     <string name="InuDisableLockscreenPermissionNag">Kilit ekranı izin uyarılarını gizle</string>
-    <string name="InuDisableLockscreenPermissionNagInfo">Kilit ekranında gösterime (MIUI) veya tam ekran bildirimlerine (Android 14+) izin verilmesini isteyen başlangıç uyarılarını gizler</string>
+    <string name="InuDisableLockscreenPermissionNagInfo">Açılışta kilit ekranı ve tam ekran bildirim izni isteklerini gösterme.</string>
     <string name="InuDisableCallRating">Arama derecelendirmesini devre dışı bırak</string>
     <string name="InuDisableCallRatingInfo">Sesli veya görüntülü arama bittikten sonra \"bu aramayı değerlendir\" istemini atlar</string>
     <string name="InuHideCaptionLimitUpsell">Altyazı sınırı tanıtımını gizle</string>
@@ -1385,7 +1383,7 @@
     <string name="InuHideProfileMenuArchivedStories">Profil menüsündeki \"Arşivlenmiş Hikayeler\" seçeneğini gizle</string>
     <string name="InuHidePremiumBadge">Premium rozetini gizle</string>
     <string name="InuHideCollectibleStatus">Koleksiyonluk emoji durumunu gizle</string>
-    <string name="InuHideCollectibleStatusInfo">Koleksiyonluk (NFT hediye) emoji durumunu düz bir emoji durumu olarak gösterir — parıltı, degrade veya koleksiyon ipucu yok</string>
+    <string name="InuHideCollectibleStatusInfo">Koleksiyon emoji durumlarını düz emoji olarak göster.</string>
     <string name="InuHideStarsRating">Yıldız derecelendirmesini gizle</string>
     <string name="InuHideVerificationBadge">Kuruluş doğrulama rozetini gizle</string>
     <string name="InuHideProfileColorfulBackground">Renkli profil arka planını gizle</string>
@@ -1408,7 +1406,7 @@
     <string name="InuTranslateAutoDetectLang">Mesaj menüsü için dili algıla</string>
     <string name="InuTranslateAutoDetectLangInfo">Telegram\'ın çözümleyemediği mesajlarda dili cihazda algılar. Menüyü biraz yavaşlatabilir.</string>
     <string name="InuInstantTranslateBanner">Anında çeviri başlığı</string>
-    <string name="InuInstantTranslateBannerInfo">\"X diline çevrilsin mi?\" çubuğunu birkaç mesaj yerine tek bir yabancı dil mesajından sonra gösterir (orijinalde 6, otomatik çeviride 2 gerekir).</string>
+    <string name="InuInstantTranslateBannerInfo">Tek bir yabancı dilde mesajdan sonra çeviri çubuğunu göster.</string>
     <string name="InuIgnoreTranslationsDisabled">\"Çeviriler devre dışı\" seçeneğini yoksay</string>
     <string name="InuIgnoreTranslationsDisabledInfo">Kanal veya kullanıcı çeviriyi kapatsa bile çeviri çubuğu gösterilir.</string>
     <string name="InuLocalCustomEmoji">Yerel Özel Emoji</string>
@@ -1453,10 +1451,10 @@
     <string name="InuAntiCensorshipPrivacy">Sızıntı koruması</string>
     <string name="InuWsTunnel">WebSocket tüneli</string>
     <string name="InuWsTunnelInfo">Trafiği Telegram Web gibi gizle</string>
-    <string name="InuWsTunnelFooter">Bağlantıyı web sürümü gibi web.telegram.org adresine WebSocket içinde gönderir. Üçüncü taraf sunucu yok: trafik yalnızca Telegram\'a gider. Yavaşlatma ve IP engellerine karşı yardımcı olur, ancak web.telegram.org engelliyse işe yaramaz. Açıkken proxy\'nizin yerini alır.</string>
+    <string name="InuWsTunnelFooter">WebSocket ile Telegram Web uç noktalarına bağlanır. Üçüncü taraf sunucu yok. Yavaşlatma ve IP engellerine karşı işe yarar, web.telegram.org\'un engellendiği yerlerde yaramaz. Açıkken proxy\'nizin yerine geçer.</string>
     <string name="InuLeakGuard">Doğrudan bağlantıları engelle</string>
     <string name="InuLeakGuardInfo">Uygulamadan proxy dışında hiçbir şey çıkmaz</string>
-    <string name="InuLeakGuardFooter">Çeviri, yapay zekâ, bağlantı önizlemeleri, yedek DNS ve diğer ek istekler yalnızca SOCKS5 proxy\'niz üzerinden gider. Proxy yoksa gerçek IP adresinizi göstermek yerine engellenir.</string>
+    <string name="InuLeakGuardFooter">Çeviri, yapay zekâ, bağlantı önizlemeleri ve diğer ek istekler yalnızca SOCKS5 proxy\'nizden geçer; proxy yoksa engellenir.</string>
     <string name="InuDatacenterStatus">Veri merkezi durumu</string>
     <string name="InuDatacenterStatusAbout">Telegram **veri merkezlerinin** durumunu ve gecikme süresini kontrol edin.</string>
     <string name="InuDatacenterYourDc">Sizin DC</string>

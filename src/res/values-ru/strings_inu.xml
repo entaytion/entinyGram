@@ -101,7 +101,7 @@
     <string name="InuDisableSwipeToUnarchive">Отключить свайп для разархивирования</string>
     <string name="InuDisableSwipeToHideGeneralTopic">Отключить свайп для скрытия темы General</string>
     <string name="InuIosChatsTabFirstFolder">Вкладка «Чаты» возвращает в первую папку</string>
-    <string name="InuIosChatsTabFirstFolderInfo">Как в Telegram для iOS: тап по уже выбранной вкладке «Чаты» сначала возвращает в первую папку, а уже потом прокручивает список наверх</string>
+    <string name="InuIosChatsTabFirstFolderInfo">Нажатие на выбранную вкладку «Чаты» сначала возвращает к первой папке, затем прокручивает вверх.</string>
     <string name="InuResetStorage">Сбросить хранилище</string>
     <string name="InuResetStorageConfirm">Это удалит локальные ключи авторизации и кэши, чтобы сбросить ожидающую авторизацию. Вы уверены?</string>
     <string name="InuHideBottomBar">Скрывать нижнюю панель</string>
@@ -261,7 +261,7 @@
     <string name="InuForceTranslate">Принудительный перевод</string>
     <string name="InuAutoTranslateAll">Автоперевод во всех чатах</string>
     <string name="InuAutoTranslateAllInfo">Включает перевод чата по умолчанию везде; выключение в конкретном чате запоминается.</string>
-    <string name="InuForceTranslateInfo">Показывать кнопку перевода и переводить сообщения, даже если Telegram считает, что они уже на вашем языке или в списке «Не переводить».</string>
+    <string name="InuForceTranslateInfo">Переводить, даже если Telegram считает текст вашим языком или он в списке «Не переводить».</string>
     <string name="InuTranslationTarget">Язык перевода</string>
     <string name="InuTranslationTargetFollowApp">Как в приложении</string>
     <string name="InuTranslateProviderSection">Провайдеры перевода</string>
@@ -289,7 +289,7 @@
     <string name="InuTranslateLlmTemperatureInfo">Меньшие значения дают дословный и предсказуемый перевод, большие — более свободный и идиоматичный.</string>
     <string name="InuTranslateProviderNotConfigured">Провайдер перевода не настроен. Использую перевод через Telegram.</string>
     <string name="InuTranslateProviderFailed">Не удалось перевести: %1$s. Повторите попытку через минуту.</string>
-    <string name="InuTranslateGoogleBlocked">Google отклоняет запросы перевода из этой сети (HTTP 429). Смените подключение или выберите другого провайдера в настройках перевода.</string>
+    <string name="InuTranslateGoogleBlocked">Google блокирует перевод из этой сети (HTTP 429). Смените подключение или выберите другой сервис.</string>
     <string name="InuPoweredByProvider">Переводы работают на %1$s.</string>
     <string name="InuHideReactionEntry">Скрыть анимацию появления реакции</string>
     <string name="InuHideReactionEntryInfo">…когда реакция добавляется к сообщению</string>
@@ -542,8 +542,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Канал обновлений</string>
     <string name="InuUpdates">Обновления</string>
-    <string name="InuUpdateUpToDate">У вас установлена последняя версия</string>
-    <string name="InuUpdateError">Не удалось проверить обновления: %1$s</string>
     <string name="InuUpdateBetaWarning">Это бета-обновление, оно может работать нестабильно.</string>
     <string name="InuUpdateInstalling">Установка обновления</string>
     <string name="InuUpdateInstallingHint">Приложение перезапустится после установки</string>
@@ -751,7 +749,7 @@
     <string name="InuRoundRecorderExposureButtonInfo">Показывать кнопку для быстрой фиксации или разблокировки экспозиции при записи.</string>
     <string name="InuHideBottomBarNonJoinedGroups">В группах без участия</string>
     <string name="InuShowSpoilersDirectly">Показывать спойлеры сразу</string>
-    <string name="InuShowSpoilersDirectlyInfo">Пропускает шаг «нажмите, чтобы раскрыть» — текстовые спойлеры сразу показывают содержимое, везде.</string>
+    <string name="InuShowSpoilersDirectlyInfo">Показывать текст и медиа под спойлером сразу, без нажатия.</string>
     <string name="InuTextSpoilerMode">Стиль текстового спойлера</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Простой</string>
@@ -877,7 +875,7 @@
     <string name="InuDisableContactsPermissionNag">Не запрашивать доступ к контактам</string>
     <string name="InuDisableContactsPermissionNagInfo">Убирает запрос доступа к контактам при запуске; синхронизация работает при ручном предоставлении доступа.</string>
     <string name="InuDisableLockscreenPermissionNag">Скрыть запросы разрешений экрана блокировки</string>
-    <string name="InuDisableLockscreenPermissionNagInfo">Отключает предупреждения при запуске с предложением разрешить отображение поверх экрана блокировки (MIUI) или полноэкранные уведомления (Android 14+)</string>
+    <string name="InuDisableLockscreenPermissionNagInfo">Не показывать при запуске запросы разрешений для экрана блокировки и полноэкранных уведомлений.</string>
     <string name="InuDisableCallRating">Отключить оценку качества звонка</string>
     <string name="InuDisableCallRatingInfo">Не показывать запрос «Оцените качество звонка» после завершения голосового или видеозвонка</string>
     <string name="InuHideCaptionLimitUpsell">Скрыть рекламу Premium при превышении лимита подписи</string>
@@ -891,7 +889,7 @@
     <string name="InuHideProfileMenuArchivedStories">Скрыть «Архив историй» в меню профиля</string>
     <string name="InuHidePremiumBadge">Скрыть значок Premium</string>
     <string name="InuHideCollectibleStatus">Скрыть статус коллекционного эмодзи</string>
-    <string name="InuHideCollectibleStatusInfo">Показывать статус коллекционного эмодзи (NFT) как обычный эмодзи — без блёсток, градиента и подсказки о коллекционности</string>
+    <string name="InuHideCollectibleStatusInfo">Показывать коллекционные эмодзи-статусы как обычные эмодзи.</string>
     <string name="InuHideStarsRating">Скрыть рейтинг звёзд</string>
     <string name="InuHideVerificationBadge">Скрыть значок верификации организации</string>
     <string name="InuHideProfileColorfulBackground">Скрыть цветной фон профиля</string>
@@ -995,12 +993,12 @@
     <string name="InuSaveViewOnceMedia">Сохранять одноразовые медиа</string>
     <string name="InuSaveTimedMessages">Сохранять сообщения с таймером</string>
     <string name="InuAllowForwardRestricted">Разрешить пересылку из защищенных чатов</string>
-    <string name="InuAutoSaveStories">Автосохранение просмотренных историй</string>
-    <string name="InuAutoSaveStoriesInfo">Сохраняет в галерею каждую открытую историю один раз. Собственные истории пропускаются.</string>
     <string name="InuAllowForwardRestrictedInfo">Обход защиты контента для пересылки, копирования и сохранения медиа из чатов с запретом пересылки.</string>
     <string name="InuDownloadingStory">Загрузка истории…</string>
     <string name="InuSaveAnyStory">Сохранять любые истории</string>
     <string name="InuSaveAnyStoryInfo">Позволяет скачивать любые истории в галерею без Premium и ограничений автора.</string>
+    <string name="InuAutoSaveStories">Автосохранение просмотренных историй</string>
+    <string name="InuAutoSaveStoriesInfo">Сохраняет в галерею каждую открытую историю один раз. Собственные истории пропускаются.</string>
     <string name="InuCenteringSection">Центрирование</string>
     <string name="InuCenterTitleChats">Также центрировать в чатах/каналах</string>
     <string name="InuCenterTitleRightAvatar">Показывать аватарку справа</string>
@@ -1023,12 +1021,12 @@
     <string name="InuCacheTtlDay">Старше 1 дня</string>
     <string name="InuCacheTtlWeek">Старше 1 недели</string>
     <string name="InuCacheTtlMonth">Старше 1 месяца</string>
-    <string name="InuExportArchive">Экспортировать архив</string>
-    <string name="InuExportArchiveEmpty">Нечего экспортировать</string>
     <string name="InuClearCache">Очистить кэш</string>
     <string name="InuClearDeletedCache">Очистить кэш удаленных сообщений</string>
     <string name="InuClearDeletedCacheAlert">Это навсегда удалит локальный архив сохранённых удалённых сообщений и их медиа. Отменить нельзя.</string>
     <string name="InuDeletedMessageSearch">Поиск по архиву</string>
+    <string name="InuExportArchive">Экспортировать архив</string>
+    <string name="InuExportArchiveEmpty">Нечего экспортировать</string>
     <string name="InuDeletedMessageSearchHint">Поиск по сохранённым удалённым и изменённым сообщениям</string>
     <string name="InuDeletedMessageSearchEmpty">Совпадений не найдено.</string>
     <string name="InuDeletedArchive">Архив удалённых</string>
@@ -1097,7 +1095,7 @@
 
     <string name="InuGhostMode">Режим призрака</string>
     <string name="InuGhostModeMaster">Режим призрака</string>
-    <string name="InuGhostModeInfo">Скрыть активность: входящие сообщения не помечаются как прочитанные, статус онлайн, индикатор набора текста и просмотры историй остаются скрытыми.</string>
+    <string name="InuGhostModeInfo">Скрывать отметки о прочтении, онлайн-статус, набор текста и просмотры историй.</string>
     <string name="InuGhostFeatures">Скрытая активность</string>
     <string name="InuGhostHideRead">Не отправлять отчеты о прочтении</string>
     <string name="InuContentProtectionBypass">Защита контента</string>
@@ -1114,7 +1112,7 @@
     <string name="InuGhostScopeGroups">Группы</string>
     <string name="InuGhostScopeChannels">Каналы</string>
     <string name="InuGhostOverrides">Настройки для чатов</string>
-    <string name="InuGhostOverridesHint">Управляйте прочтением и набором текста отдельно для каждого чата: всегда скрывать даже с выключенным режимом призрака или никогда не скрывать даже с включённым. Также доступно из меню чата.</string>
+    <string name="InuGhostOverridesHint">Переопределяйте отметки о прочтении и набор текста для отдельных чатов. Также доступно в меню чата.</string>
     <string name="InuGhostOverridesInfo">Нажмите на чат, чтобы изменить или удалить его настройки.</string>
     <string name="InuGhostOverridesEmpty">Пока нет настроек для чатов. Добавить чат можно также из меню чата.</string>
     <string name="InuGhostOverridesAdd">Добавить чат</string>
@@ -1212,14 +1210,14 @@
     <string name="InuLocalPremiumInfo">Открывает клиентские Premium-возможности; серверные (загрузка, лимиты облака) по-прежнему требуют официальной подписки.</string>
     <string name="InuUnlimitedLimits">Снятие ограничений</string>
     <string name="InuUnlimitedPinnedChats">Безлимитные закреплённые чаты</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Закрепляет дополнительные чаты локально сверх серверного лимита Telegram — они первые только на этом устройстве и не синхронизируются и не учитываются в лимите нигде ещё.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Закрепляйте больше чатов, чем позволяет Telegram. Лишние закрепы остаются на этом устройстве.</string>
     <string name="InuUnlimitedPinnedChatsCount">Дополнительные закреплённые чаты</string>
     <string name="InuUnlimitedFavoriteStickers">Безлимитные избранные стикеры и GIF</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Убирает локальное ограничение избранных стикеров и GIF — на сервере они сохраняются полностью.</string>
     <string name="InuUnlimitedFolderChats">Безлимитные чаты в папке</string>
-    <string name="InuUnlimitedFolderChatsInfo">Позволяет добавить в папку больше чатов, чем разрешает лимит Telegram, — лишние остаются только на этом устройстве и не переживут переустановку.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Добавляйте в папку больше чатов, чем позволяет Telegram. Лишние остаются на этом устройстве.</string>
     <string name="InuLocalFolders">Локальные папки</string>
-    <string name="InuLocalFoldersInfo">Создавайте папки чатов сверх лимита Telegram — дополнительные папки хранятся только на этом устройстве и никогда не синхронизируются с сервером.</string>
+    <string name="InuLocalFoldersInfo">Создавайте папки сверх лимита Telegram. Лишние папки остаются на этом устройстве.</string>
     <string name="InuPillStack">Pill Stack</string>
     <string name="InuPillStackInfo">Небольшие интерактивные пилюли в строке поиска чатов\nНеактивны при неостровном глобальном поиске</string>
     <string name="InuPillStackVisibleCount">Видно одновременно</string>
@@ -1409,7 +1407,7 @@
 
     <string name="InuFastResendLoginCode">Пропустить отсчёт кода входа</string>
     <string name="InuFastResendLoginCodeInfo">Нажмите на таймер на экране ввода кода, чтобы запросить новый код, не дожидаясь конца отсчёта</string>
-    <string name="InuFastResendLoginCodeConfirm">Код не пришёл? Можно пропустить оставшееся ожидание и сразу запросить новый. Telegram всё равно может отказаться отправить его так рано.</string>
+    <string name="InuFastResendLoginCodeConfirm">Пропустить ожидание и запросить новый код сейчас? Telegram всё равно может отказать.</string>
     <string name="InuFastResendLoginCodeNow">Отправить сейчас</string>
     <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
@@ -1417,7 +1415,7 @@
     <string name="InuHideProxySponsorChatInfo">Блокирует рекламный чат или канал, который некоторые MTProto-прокси закрепляют вверху списка чатов</string>
     <string name="InuHideRichEditorButton">Скрыть кнопку форматирования текста</string>
     <string name="InuKeepDownloadsInBackground">Не прерывать загрузки при скролле и выходе</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Продолжает текущие загрузки, когда сообщение уходит с экрана или вы выходите из чата, не отменяя и не перезапуская их заново.</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Загрузки продолжаются, когда вы прокручиваете сообщение или выходите из чата.</string>
     <string name="InuMaterial3BottomTabs">Нижние вкладки</string>
     <string name="InuIosBottomBar">Нижняя панель в стиле iOS</string>
     <string name="InuIosBottomBarInfo">Более широкие нижние вкладки с равномерным распределением, как в iOS. Отключает вкладки Material 3.</string>
@@ -1477,11 +1475,11 @@
     <string name="InuIgnoreTranslationsDisabled">Игнорировать «Перевод отключён»</string>
     <string name="InuIgnoreTranslationsDisabledInfo">Показывает баннер перевода, даже если канал или пользователь отключили перевод.</string>
     <string name="InuInstantTranslateBanner">Мгновенный баннер перевода</string>
-    <string name="InuAutoSaveOneTime">Автосохранение одноразовых медиа</string>
-    <string name="InuInstantTranslateBannerInfo">Показывает баннер «Перевести на X?» уже после одного иностранного сообщения, а не нескольких (стандартно нужно 6, или 2 с автопереводом).</string>
+    <string name="InuInstantTranslateBannerInfo">Показывать панель перевода после одного сообщения на иностранном языке.</string>
     <string name="InuLocalCustomEmoji">Локальные авторские эмодзи</string>
     <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, чтобы другие клиенты тоже могли их показывать. Используйте вместе с локальным Telegram Premium.</string>
     <string name="InuViewOnceShowNormal">Показывать как обычное фото вместо разового просмотра</string>
+    <string name="InuAutoSaveOneTime">Автосохранение одноразовых медиа</string>
     <string name="InuSmallGifs">Маленькие GIF</string>
     <string name="InuDeleteFailedProxies">Удалить недоступные прокси</string>
     <string name="InuDeleteFailedProxiesConfirm">Вы уверены, что хотите удалить все недоступные прокси?</string>
@@ -1510,10 +1508,10 @@
     <string name="InuAntiCensorshipPrivacy">Защита от утечек</string>
     <string name="InuWsTunnel">WebSocket-туннель</string>
     <string name="InuWsTunnelInfo">Маскировать трафик под Telegram Web</string>
-    <string name="InuWsTunnelFooter">Оборачивает соединение в WebSocket к web.telegram.org, как это делает веб-версия. Никаких сторонних серверов: трафик идёт только в Telegram. Помогает против замедления и блокировок по IP, но не там, где заблокирован сам web.telegram.org. Пока включено, заменяет ваш прокси.</string>
+    <string name="InuWsTunnelFooter">Подключается к Telegram Web по WebSocket, без сторонних серверов. Помогает при замедлении и блокировках по IP, но не там, где заблокирован web.telegram.org. Заменяет прокси, пока включено.</string>
     <string name="InuLeakGuard">Блокировать прямые соединения</string>
     <string name="InuLeakGuardInfo">Ничего не уходит из приложения мимо прокси</string>
-    <string name="InuLeakGuardFooter">Перевод, ИИ, превью ссылок, резервный DNS и другие дополнительные запросы идут только через ваш SOCKS5-прокси. Без него они блокируются, а не раскрывают ваш настоящий IP-адрес.</string>
+    <string name="InuLeakGuardFooter">Перевод, ИИ, превью ссылок и прочие дополнительные запросы идут только через ваш SOCKS5-прокси, а без него блокируются.</string>
     <string name="InuDatacenterStatus">Статус дата-центров</string>
     <string name="InuDatacenterStatusAbout">Проверка доступности и задержки к дата-центрам Telegram.</string>
     <string name="InuDatacenterYourDc">Ваш DC</string>

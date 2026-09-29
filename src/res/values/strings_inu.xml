@@ -152,7 +152,7 @@
     <string name="InuDisableContactsPermissionNag">Hide contacts permission request</string>
     <string name="InuDisableContactsPermissionNagInfo">Stops the startup prompt for contacts access; sync still works if granted manually.</string>
     <string name="InuDisableLockscreenPermissionNag">Hide lockscreen permission alerts</string>
-    <string name="InuDisableLockscreenPermissionNagInfo">Suppresses the startup alerts asking to allow display over the lockscreen (MIUI) or full-screen notifications (Android 14+)</string>
+    <string name="InuDisableLockscreenPermissionNagInfo">Skip the startup prompts for lockscreen and full-screen notification permissions.</string>
     <string name="InuDisableCallRating">Disable call rating</string>
     <string name="InuDisableCallRatingInfo">Skips the \"rate this call\" prompt after a voice or video call ends</string>
     <string name="InuHideCaptionLimitUpsell">Hide caption limit upsell</string>
@@ -166,7 +166,7 @@
     <string name="InuHideProfileMenuArchivedStories">Hide \"Archived Stories\" in profile menu</string>
     <string name="InuHidePremiumBadge">Hide Premium badge</string>
     <string name="InuHideCollectibleStatus">Hide collectible status</string>
-    <string name="InuHideCollectibleStatusInfo">Show a collectible (NFT gift) emoji status as a plain emoji status instead — no sparkles, gradient, or collectible hint</string>
+    <string name="InuHideCollectibleStatusInfo">Show collectible emoji statuses as plain emoji.</string>
     <string name="InuHideStarsRating">Hide Stars rating</string>
     <string name="InuHideVerificationBadge">Hide organization verification badge</string>
     <string name="InuHideProfileColorfulBackground">Hide colorful profile background</string>
@@ -189,7 +189,7 @@
     <string name="InuDisableSwipeToUnarchive">Disable swipe to unarchive</string>
     <string name="InuDisableSwipeToHideGeneralTopic">Disable swipe to hide General topic</string>
     <string name="InuIosChatsTabFirstFolder">Chats tab returns to first folder</string>
-    <string name="InuIosChatsTabFirstFolderInfo">Like Telegram for iOS: tapping the already-selected Chats tab switches back to the first folder before scrolling to the top</string>
+    <string name="InuIosChatsTabFirstFolderInfo">Tapping the selected Chats tab returns to the first folder before scrolling up.</string>
     <string name="InuResetStorage">Reset storage</string>
     <string name="InuResetStorageConfirm">This will wipe local auth keys and caches to reset the pending authentication. Are you sure?</string>
     <string name="InuHideBottomBar">Hide bottom bar</string>
@@ -280,7 +280,7 @@
     <string name="InuClockFormat12Hour">12-hour</string>
     <string name="InuClockFormat24Hour">24-hour</string>
     <string name="InuShowSpoilersDirectly">Show spoilers directly</string>
-    <string name="InuShowSpoilersDirectlyInfo">Skip the tap-to-reveal step — text and media (photos, videos, round videos) spoilers show their content right away, everywhere.</string>
+    <string name="InuShowSpoilersDirectlyInfo">Show spoiler text and media right away, without tapping.</string>
     <string name="InuTextSpoilerMode">Text spoiler style</string>
     <string name="InuTextSpoilerModeDefault">Telegram</string>
     <string name="InuTextSpoilerModeSimple">Simple</string>
@@ -429,7 +429,7 @@
     <string name="InuTranslateAutoDetectLang">Detect language for the message menu</string>
     <string name="InuTranslateAutoDetectLangInfo">On-device language detection for messages Telegram hasn\'t identified. May slow the menu slightly.</string>
     <string name="InuInstantTranslateBanner">Instant translate banner</string>
-    <string name="InuInstantTranslateBannerInfo">Shows the \"Translate to X?\" bar after just one foreign-language message instead of waiting for several (stock needs 6, or 2 with autotranslate).</string>
+    <string name="InuInstantTranslateBannerInfo">Show the translate bar after a single foreign-language message.</string>
     <string name="InuIgnoreTranslationsDisabled">Ignore \"Translations disabled\"</string>
     <string name="InuIgnoreTranslationsDisabledInfo">Show the translate banner even if the channel or user disabled translations.</string>
     <string name="InuTranslateInstantView">Translate page</string>
@@ -446,7 +446,7 @@
     <string name="InuForceTranslate">Force translation</string>
     <string name="InuAutoTranslateAll">Auto-translate every chat</string>
     <string name="InuAutoTranslateAllInfo">Turn chat translation on everywhere by default; per-chat off is remembered.</string>
-    <string name="InuForceTranslateInfo">Show the translate bar and translate messages even when Telegram thinks they are already in your language or in the \"Do not translate\" list.</string>
+    <string name="InuForceTranslateInfo">Translate even when Telegram thinks the text is in your language or on the \"Do not translate\" list.</string>
     <string name="InuTranslateOutgoing">Translate my messages</string>
     <string name="InuTranslateOutgoingInfo">Include messages sent by you in automatic chat translation.</string>
     <string name="InuInputTranslate">Translate before sending</string>
@@ -486,7 +486,7 @@
     <string name="InuTranslateLlmTemperatureInfo">Lower values keep translations literal and repeatable; higher values allow looser, more idiomatic wording.</string>
     <string name="InuTranslateProviderNotConfigured">Translation provider is not configured. Falling back to Telegram translation.</string>
     <string name="InuTranslateProviderFailed">Translation failed: %1$s. Try again in a moment.</string>
-    <string name="InuTranslateGoogleBlocked">Google is refusing translation requests from this network (HTTP 429). Change connection, or pick another provider in Translation settings.</string>
+    <string name="InuTranslateGoogleBlocked">Google is blocking translation from this network (HTTP 429). Change connection or pick another provider.</string>
     <string name="InuPoweredByProvider">Translations are powered by %1$s.</string>
     <string name="InuHideReactionEntry">Hide reaction appear animation</string>
     <string name="InuHideReactionEntryInfo">…when a reaction is added to a message</string>
@@ -778,7 +778,7 @@
 
     <string name="InuFastResendLoginCode">Skip login code countdown</string>
     <string name="InuFastResendLoginCodeInfo">Tap the countdown on the login code screen to request a new code without waiting for it to run out</string>
-    <string name="InuFastResendLoginCodeConfirm">Haven\'t received the code? You can skip the remaining wait and ask for a new one right away. Telegram may still refuse to send it that soon.</string>
+    <string name="InuFastResendLoginCodeConfirm">Skip the wait and request a new code now? Telegram may still refuse.</string>
     <string name="InuFastResendLoginCodeNow">Resend now</string>
 
     <string name="InuTextClassifierMode">Text classifier mode</string>
@@ -841,8 +841,6 @@
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Updates channel</string>
     <string name="InuUpdates">Updates</string>
-    <string name="InuUpdateUpToDate">You are on the latest version</string>
-    <string name="InuUpdateError">Update check failed: %1$s</string>
     <string name="InuUpdateBetaWarning">This is a beta update and may be unstable.</string>
     <string name="InuUpdateInstalling">Installing update</string>
     <string name="InuUpdateInstallingHint">App will relaunch after installation</string>
@@ -939,7 +937,7 @@
     <string name="InuFasterUploads">Faster uploads</string>
     <string name="InuFasterTransfersInfo">Larger chunks and more parallel requests. May help — or hurt — throughput.</string>
     <string name="InuKeepDownloadsInBackground">Don\'t kill downloads on scroll/exit</string>
-    <string name="InuKeepDownloadsInBackgroundInfo">Keeps in-progress downloads running when the message is scrolled off screen or you leave the chat, instead of cancelling and restarting them later.</string>
+    <string name="InuKeepDownloadsInBackgroundInfo">Downloads keep running when you scroll away or leave the chat.</string>
     <string name="InuBlockSleepWhileDownloading">Block sleep while downloading</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Holds a partial wake lock while a download is active so Android doesn\'t pause it in the background.</string>
     <string name="InuSendMp4DocumentAsVideo">Send MP4 documents as videos</string>
@@ -1106,19 +1104,19 @@
     <string name="InuTOS">Restricted features</string>
     <string name="InuSelfDestructMedia">Self-destructing media</string>
     <string name="InuAntiDeletion">Anti-deletion</string>
-    <string name="InuAutoSaveOneTime">Auto-save view-once media</string>
     <string name="InuSaveSelfDestructMedia">Keep secret media</string>
     <string name="InuSaveSelfDestructText">Keep self-destructing text</string>
     <string name="InuSaveViewOnceMedia">Keep view-once media</string>
     <string name="InuViewOnceShowNormal">Show as a regular photo instead of gating it behind the one-time reveal</string>
+    <string name="InuAutoSaveOneTime">Auto-save view-once media</string>
     <string name="InuSaveTimedMessages">Keep timed messages</string>
     <string name="InuAllowForwardRestricted">Allow forwarding from protected chats</string>
-    <string name="InuAutoSaveStories">Auto-save viewed stories</string>
-    <string name="InuAutoSaveStoriesInfo">Saves every story you open to the gallery, once. Your own stories are skipped.</string>
     <string name="InuAllowForwardRestrictedInfo">Bypass content protection to forward, copy and save media from chats with forwarding disabled.</string>
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>
     <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>
+    <string name="InuAutoSaveStories">Auto-save viewed stories</string>
+    <string name="InuAutoSaveStoriesInfo">Saves every story you open to the gallery, once. Your own stories are skipped.</string>
     <string name="InuCenteringSection">Centering</string>
     <string name="InuCenterTitleMain">Center screen titles</string>
     <string name="InuCenterTitleMainInfo">Centers action bar titles outside chats. Chats have their own toggle below.</string>
@@ -1287,7 +1285,7 @@
 
     <string name="InuGhostMode">Ghost Mode</string>
     <string name="InuGhostModeMaster">Ghost Mode</string>
-    <string name="InuGhostModeInfo">Hide your activity: incoming messages are not marked as read, and your online status, typing indicator and story views stay hidden.</string>
+    <string name="InuGhostModeInfo">Hide read receipts, online status, typing and story views.</string>
     <string name="InuGhostFeatures">Hidden Activity</string>
     <string name="InuGhostHideRead">Do not send read receipts</string>
     <string name="InuGhostReadOnSend">Read on send</string>
@@ -1314,7 +1312,7 @@
     <string name="InuGhostScopeGroups">Groups</string>
     <string name="InuGhostScopeChannels">Channels</string>
     <string name="InuGhostOverrides">Per-chat overrides</string>
-    <string name="InuGhostOverridesHint">Set read receipts and typing per chat: always hide them there even with Ghost Mode off, or never hide them even with it on. Also available from the chat menu.</string>
+    <string name="InuGhostOverridesHint">Override read receipts and typing per chat. Also in the chat menu.</string>
     <string name="InuGhostOverridesInfo">Tap a chat to edit or remove its overrides.</string>
     <string name="InuGhostOverridesEmpty">No per-chat overrides yet. You can also add one from the chat menu.</string>
     <string name="InuGhostOverridesAdd">Add chat</string>
@@ -1407,14 +1405,14 @@
     <string name="InuLocalCustomEmojiInfo">Sends Premium emoji as hidden links so other clients can still show them. Pair with Local Telegram Premium.</string>
     <string name="InuUnlimitedLimits">Unlimited Limits</string>
     <string name="InuUnlimitedPinnedChats">Unlimited Pinned Chats</string>
-    <string name="InuUnlimitedPinnedChatsInfo">Pins extra chats locally past Telegram\'s server limit — they stay first on this device only, never syncing or counting toward the limit elsewhere.</string>
+    <string name="InuUnlimitedPinnedChatsInfo">Pin more chats than Telegram allows. Extra pins stay on this device.</string>
     <string name="InuUnlimitedPinnedChatsCount">Extra pinned chats</string>
     <string name="InuUnlimitedFavoriteStickers">Unlimited Favorite Stickers &amp; GIFs</string>
     <string name="InuUnlimitedFavoriteStickersInfo">Removes the local cap on favorite stickers and GIFs; the server keeps them all anyway.</string>
     <string name="InuUnlimitedFolderChats">Unlimited chats per folder</string>
-    <string name="InuUnlimitedFolderChatsInfo">Lets a folder hold more chats than Telegram\'s limit — the extras stay local to this device only and won\'t survive a reinstall.</string>
+    <string name="InuUnlimitedFolderChatsInfo">Add more chats to a folder than Telegram allows. Extras stay on this device.</string>
     <string name="InuLocalFolders">Local folders</string>
-    <string name="InuLocalFoldersInfo">Create chat folders beyond Telegram\'s limit — the extra folders live only on this device and are never synced to the server.</string>
+    <string name="InuLocalFoldersInfo">Create folders beyond Telegram\'s limit. Extra folders stay on this device.</string>
     <string name="InuFolderIcon">Folder icon</string>
     <string name="InuFolderIconDefault">Default</string>
     <string name="InuStalkerPack">Stalker Pack</string>
@@ -1458,12 +1456,12 @@
     <string name="InuCachePresenceCategory">Presence logs</string>
     <string name="InuPresenceLogsTtl">Auto-clear presence logs</string>
     <string name="InuPresenceLogsTtlInfo">Automatically delete presence logs older than the selected period.</string>
-    <string name="InuExportArchive">Export archive</string>
-    <string name="InuExportArchiveEmpty">Nothing to export</string>
     <string name="InuTypingSpoofActive">Active now</string>
     <string name="InuTypingSpoofPickChat">Pick a chat</string>
     <string name="InuTypingSpoofQuickListInfo">Opens the same typing-spoof picker available from a chat\'s header menu, without needing to open the chat first.</string>
     <string name="InuDeletedMessageSearch">Search archive</string>
+    <string name="InuExportArchive">Export archive</string>
+    <string name="InuExportArchiveEmpty">Nothing to export</string>
     <string name="InuDeletedArchive">Deleted messages</string>
     <string name="InuDeletedArchiveEmpty">No saved deleted messages yet.</string>
     <string name="InuDeletedMessageSearchHint">Search saved deleted and edited messages</string>
@@ -1518,10 +1516,10 @@
     <string name="InuAntiCensorshipPrivacy">Leak protection</string>
     <string name="InuWsTunnel">WebSocket tunnel</string>
     <string name="InuWsTunnelInfo">Disguise traffic as Telegram Web</string>
-    <string name="InuWsTunnelFooter">Wraps the connection into WebSocket to web.telegram.org, like the web version does. No third-party servers: traffic goes only to Telegram. Helps against throttling and IP blocks, but not where web.telegram.org itself is blocked. Overrides your proxy while enabled.</string>
+    <string name="InuWsTunnelFooter">Connects through Telegram Web endpoints over WebSocket. No third-party servers. Helps against throttling and IP blocks, not where web.telegram.org is blocked. Overrides your proxy while on.</string>
     <string name="InuLeakGuard">Block direct connections</string>
     <string name="InuLeakGuardInfo">Nothing leaves the app bypassing the proxy</string>
-    <string name="InuLeakGuardFooter">Translation, AI, link previews, backup DNS and other extra requests go only through your SOCKS5 proxy. Without one they are blocked instead of revealing your real IP.</string>
+    <string name="InuLeakGuardFooter">Translation, AI, link previews and other extra requests go only through your SOCKS5 proxy, or are blocked without one.</string>
     <string name="InuDatacenterStatus">Datacenter status</string>
     <string name="InuDatacenterStatusAbout">Check the status and round-trip latency of Telegram\'s **datacenters**.</string>
     <string name="InuDatacenterYourDc">Your DC</string>

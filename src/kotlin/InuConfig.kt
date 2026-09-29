@@ -1347,25 +1347,25 @@ object InuConfig {
     val SAVE_SELF_DESTRUCT_MEDIA = BoolItem("save_self_destruct_media", false)
 
     @JvmField
-    val AUTO_SAVE_ONE_TIME = BoolItem("auto_save_one_time", false)
-
-    @JvmField
     val SAVE_SELF_DESTRUCT_TEXT = BoolItem("save_self_destruct_text", false)
 
     @JvmField
     val SAVE_VIEW_ONCE_MEDIA = BoolItem("save_view_once_media", false)
 
     @JvmField
-    val AUTO_SAVE_STORIES = BoolItem("auto_save_stories", false)
+    val VIEW_ONCE_SHOW_NORMAL = BoolItem("view_once_show_normal", false)
 
     @JvmField
-    val VIEW_ONCE_SHOW_NORMAL = BoolItem("view_once_show_normal", false)
+    val AUTO_SAVE_ONE_TIME = BoolItem("auto_save_one_time", false)
 
     @JvmField
     val SAVE_TIMED_MESSAGES = BoolItem("save_timed_messages", false)
 
     @JvmField
     val SAVE_ANY_STORY = BoolItem("save_any_story", false)
+
+    @JvmField
+    val AUTO_SAVE_STORIES = BoolItem("auto_save_stories", false)
 
     @JvmField
     val SAVE_DELETED_MESSAGES = BoolItem("save_deleted_messages", false)
@@ -1510,6 +1510,7 @@ object InuConfig {
     val UPDATES_INCLUDE_BETA = BoolItem("updates_include_beta", false)
 
     // entiny: push through a UnifiedPush distributor (ntfy etc.) instead of Firebase
+    @JvmField
     val UNIFIED_PUSH = BoolItem("unified_push", false)
     val UNIFIED_PUSH_GATEWAY = StringItem("unified_push_gateway", "https://p2p.belloworld.it/")
 
@@ -1791,6 +1792,8 @@ object InuConfig {
     val PILL_STACK_ENABLED = BoolItem("pill_stack_enabled", false)
 
     @JvmField
+    val PILL_STACK_VISIBLE_COUNT = IntItem("pill_stack_visible_count", 1)
+
     @JvmField
     val PILL_STACK_INFINITE_SCROLL = BoolItem("pill_stack_infinite_scroll", false)
 
@@ -1799,8 +1802,6 @@ object InuConfig {
 
     @JvmField
     val PILL_STACK_HIDDEN_PILLS = StringItem("pill_stack_hidden_pills", "")
-
-    val PILL_STACK_VISIBLE_COUNT = IntItem("pill_stack_visible_count", 1)
 
     @JvmField
     val PILL_STACK_LAYOUT = PillStackMenuConfig("pill_stack_layout")
@@ -1821,6 +1822,8 @@ object InuConfig {
     val PILL_STACK_GOLD_CACHE_TIME = LongItem("pill_stack_gold_cache_time", 0L, exportable = false)
 
     // entiny: which pill id each visible slot last settled on, so a rebuild (e.g. reattaching the search bar) doesn't snap back to slot 0.
+    @JvmField
+    val PILL_STACK_LAST_ACTIVE = StringItem("pill_stack_last_active", "", exportable = false)
 
     // entiny: niche -- render the pills in the action bar next to the menu instead of inside the chats search bar
     @JvmField
@@ -1838,6 +1841,4 @@ object InuConfig {
 
     @JvmField
     val WEATHER_LOCATION_ADDRESS = StringItem("weather_location_address", "")
-    @JvmField
-    val PILL_STACK_LAST_ACTIVE = StringItem("pill_stack_last_active", "", exportable = false)
 }
