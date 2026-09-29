@@ -134,6 +134,7 @@ object ChatHelper {
     const val OPTION_SAVE_ONE_TIME = 527
     const val OPTION_FORWARD_PRO = 528
     const val OPTION_SHARE_ONE_TIME = 529
+    const val OPTION_FORWARD_ONE_TIME = 530
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -515,6 +516,17 @@ object ChatHelper {
             icons.add(if (toDownloads) R.drawable.msg_download else R.drawable.msg_gallery)
         }
 
+        if (allowSendActions && !options.contains(ChatActivity.OPTION_FORWARD) && !selectedObject.isOut() &&
+            (selectedObject.messageOwner?.media?.ttl_seconds ?: 0) != 0 &&
+            !DialogObject.isEncryptedDialog(dialogId) &&
+            InuConfig.ALLOW_FORWARD_RESTRICTED.value &&
+            SelfDestructHelper.shouldPreserveMedia(dialogId)
+        ) {
+            items.add(LocaleController.getString(R.string.Forward))
+            options.add(OPTION_FORWARD_ONE_TIME)
+            icons.add(R.drawable.msg_forward)
+        }
+
         if (selectedObject.isSecretMedia() && SelfDestructHelper.shouldPreserveMedia(dialogId)) {
             items.add(LocaleController.getString(R.string.ShareFile))
             options.add(OPTION_SHARE_ONE_TIME)
@@ -872,6 +884,10 @@ object ChatHelper {
                 saveOneTimeMedia(activity, selectedObject)
             }
 
+            OPTION_FORWARD_ONE_TIME -> {
+                activity.processSelectedOption(ChatActivity.OPTION_FORWARD)
+            }
+
             OPTION_SHARE_ONE_TIME -> {
                 shareOneTimeMedia(activity, selectedObject)
             }
@@ -904,7 +920,14 @@ object ChatHelper {
     }
 
     // entiny: decrypt encrypted one-time media to scratch file before saving to gallery
-    private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject) {
+    // entiny: runs when the viewer closes, just before the local media is emptied, so the file is copied out first
+    @JvmStatic
+    fun autoSaveOneTime(activity: ChatActivity, message: MessageObject) {
+        if (!InuConfig.AUTO_SAVE_ONE_TIME.value) return
+        saveOneTimeMedia(activity, message, copyFirst = true)
+    }
+
+    private fun saveOneTimeMedia(activity: ChatActivity, message: MessageObject, copyFirst: Boolean = false) {
         val parent = activity.parentActivity ?: return
         if (!StickerDownloadHelper.ensureStoragePermission(parent)) return
 
@@ -945,6 +968,18 @@ object ChatHelper {
                 "inu_save_${message.dialogId}_${message.id}_$plainName",
             )
             if (!decryptOneTimeFile(source, keyFile, out)) {
+                out.delete()
+                return
+            }
+            out
+        } else if (copyFirst) {
+            val out = File(
+                FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE) ?: return,
+                "inu_save_${message.dialogId}_${message.id}_$plainName",
+            )
+            try {
+                source.copyTo(out, overwrite = true)
+            } catch (e: Throwable) {
                 out.delete()
                 return
             }
@@ -1334,7 +1369,7 @@ object ChatHelper {
             if (msg.id <= 0) continue
             // entiny: cloud view-once media joins the force-forward re-upload path when the one-time gate is bypassed
             val onceView = (msg.messageOwner?.media?.ttl_seconds ?: 0) != 0 &&
-                desu.inugram.helpers.security.SelfDestructHelper.shouldBypassOneTimeGate(msg.dialogId) &&
+                desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(msg.dialogId) &&
                 !DialogObject.isEncryptedDialog(msg.dialogId)
             if (!onceView) {
                 if (msg.needDrawBluredPreview()) continue

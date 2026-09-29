@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 29 Sep 2026 13:55:45 +0300
+Subject: [+] auto-save view-once media
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java        | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -15849,7 +15849,12 @@ public class ChatActivity extends BaseFragment implements
+             msgs.add(messageObject);
+             updateMessages(msgs, true);
+         }
+-        return () -> getMessagesController().doDeleteShowOnceTask(taskId, dialog_id, messageObject.getId());
++        return () -> {
++            if (desu.inugram.InuConfig.AUTO_SAVE_ONE_TIME.getValue() && desu.inugram.helpers.security.SelfDestructHelper.shouldPreserveMedia(dialog_id)) {
++                desu.inugram.helpers.chat.ChatHelper.autoSaveOneTime(this, messageObject);
++            }
++            getMessagesController().doDeleteShowOnceTask(taskId, dialog_id, messageObject.getId());
++        };
+     }
+ 
+     public void inu_openSecretMediaViewer(MessageObject messageObject) {

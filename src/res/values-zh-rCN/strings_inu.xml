@@ -877,6 +877,8 @@
     <string name="InuCacheTtlWeek">1 周前</string>
     <string name="InuCategories">分类</string>
     <string name="InuCenterTitleChats">同时在聊天/频道中居中</string>
+    <string name="InuExportArchive">导出存档</string>
+    <string name="InuExportArchiveEmpty">没有可导出的内容</string>
     <string name="InuClearCache">清除缓存</string>
     <string name="InuClearDeletedCache">清除已删除消息缓存</string>
     <string name="InuClearDeletedCacheAlert">这将永久删除已保存的已删除消息及其媒体的本地存档。此操作无法撤销。</string>
@@ -921,6 +923,8 @@
     <string name="InuRegexFilterExport">导出过滤器</string>
     <string name="InuRegexFilterExportDone">过滤器已复制到剪贴板</string>
     <string name="InuRegexFilterImport">导入过滤器</string>
+    <string name="InuAutoSaveStories">自动保存已查看的故事</string>
+    <string name="InuAutoSaveStoriesInfo">将您打开的每个故事保存到相册一次，自己的故事除外。</string>
     <string name="InuRegexFilterImportHint">粘贴导出的过滤器 JSON</string>
     <string name="InuRegexFilterImportDone">已导入 %d 个过滤器</string>
     <string name="InuSaveAnyStory">保存任何故事</string>
@@ -975,8 +979,8 @@
     <string name="InuAiTranscribeInfo">使用你自己的 AI 服务商而非 Telegram 的服务转写语音与视频消息，有没有 Premium 都可以。</string>
     <string name="InuAiTranscribeModel">模型</string>
     <string name="InuAiTranscribeNoKey">尚未为语音配置 AI 服务商。请在 设置 &gt; AI &gt; 服务商 中添加。</string>
-    <string name="InuAllowScreenshots">允许截图</string>
-    <string name="InuAllowScreenshotsInfo">允许在私密聊天、阅后即焚媒体和受保护频道中进行截图和录屏。</string>
+    <string name="InuDisableFlagSecure">禁用 FLAG_SECURE</string>
+    <string name="InuDisableFlagSecureInfo">解除截图限制：允许在私密聊天、阅后即焚媒体和受保护频道中截图和录屏。</string>
     <string name="InuAntiDeletion">防撤回</string>
     <string name="InuAppIconOldEntinygram">旧版 entinyGram</string>
     <string name="InuCategoryAppearance">外观与布局</string>
@@ -1363,6 +1367,7 @@
     <string name="InuAiTranscribeFetchModels">获取可用模型</string>
     <string name="InuAiTranscribeFetchModelsEmpty">未找到模型</string>
     <string name="InuAiTranscribeFetchModelsFailed">无法获取模型：%1$s</string>
+    <string name="InuAutoSaveOneTime">自动保存一次性媒体</string>
     <string name="InuBurnOneTime">销毁</string>
     <string name="InuGhostAutoOffline">自动切换为离线</string>
     <string name="InuGhostAutoOfflineInfo">在你发送消息或反应后不久，重新发送离线状态。</string>

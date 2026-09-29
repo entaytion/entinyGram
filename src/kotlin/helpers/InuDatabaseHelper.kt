@@ -357,6 +357,41 @@ object InuDatabaseHelper {
         }
     }
 
+    fun writeArchiveJson(db: SQLiteDatabase, out: java.io.Writer): Int {
+        var count = 0
+        fun q(s: String?): String = if (s == null) "null" else org.json.JSONObject.quote(s)
+        out.write("{\n\"deleted\": [")
+        var cursor = db.queryFinalized("SELECT dialog_id, msg_id, from_id, date, text, media_path FROM inu_deleted_messages ORDER BY date ASC")
+        try {
+            var first = true
+            while (cursor.next()) {
+                if (!first) out.write(",")
+                first = false
+                count++
+                val media = if (cursor.isNull(5)) null else cursor.stringValue(5)
+                out.write("\n{\"dialog_id\":${cursor.longValue(0)},\"msg_id\":${cursor.intValue(1)},\"from_id\":${cursor.longValue(2)},\"date\":${cursor.intValue(3)},\"text\":${q(cursor.stringValue(4))},\"media_path\":${q(media)}}")
+            }
+        } finally {
+            cursor.dispose()
+        }
+        out.write("\n],\n\"edits\": [")
+        cursor = db.queryFinalized("SELECT dialog_id, msg_id, date, text, media_path FROM inu_edit_history ORDER BY date ASC")
+        try {
+            var first = true
+            while (cursor.next()) {
+                if (!first) out.write(",")
+                first = false
+                count++
+                val media = if (cursor.isNull(4)) null else cursor.stringValue(4)
+                out.write("\n{\"dialog_id\":${cursor.longValue(0)},\"msg_id\":${cursor.intValue(1)},\"date\":${cursor.intValue(2)},\"text\":${q(cursor.stringValue(3))},\"media_path\":${q(media)}}")
+            }
+        } finally {
+            cursor.dispose()
+        }
+        out.write("\n]\n}\n")
+        return count
+    }
+
     // entiny: pre-stream edit history keys so chat bubbles avoid SQLite queries on UI thread
     fun forEachEditHistoryKey(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int) -> Unit) {
         val cursor = db.queryFinalized("SELECT DISTINCT dialog_id, msg_id FROM inu_edit_history")

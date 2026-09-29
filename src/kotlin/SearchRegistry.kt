@@ -37,7 +37,8 @@ import org.telegram.ui.LaunchActivity
 import org.telegram.ui.ProfileActivity
 
 object SearchRegistry {
-    data class Entry(val slug: String, val titleRes: Int, val itemId: Int = -1)
+    // entiny: aliases are retired slugs that still resolve to this target, so old tg://entinySettings links keep working
+    data class Entry(val slug: String, val titleRes: Int, val itemId: Int = -1, val aliases: List<String> = emptyList())
 
     data class Page(
         val slug: String,
@@ -45,6 +46,7 @@ object SearchRegistry {
         val iconRes: Int,
         val factory: () -> SettingsPageActivity,
         val entries: List<Entry> = emptyList(),
+        val aliases: List<String> = emptyList(),
     )
 
     private val pages: List<Page> by lazy {
@@ -88,7 +90,11 @@ object SearchRegistry {
                     require(put(slug, target) == null) { "SearchRegistry: duplicate slug '$slug'" }
                 }
                 add(page.slug, Target(page, null))
-                for (entry in page.entries) add(entry.slug, Target(page, entry))
+                for (alias in page.aliases) add(alias, Target(page, null))
+                for (entry in page.entries) {
+                    add(entry.slug, Target(page, entry))
+                    for (alias in entry.aliases) add(alias, Target(page, entry))
+                }
             }
         }
     }

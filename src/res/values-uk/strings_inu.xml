@@ -903,6 +903,8 @@
     <string name="InuReplaceTextWith">Замінити на</string>
     <string name="InuReplaceTextApply">Замінити</string>
     <string name="InuSelfDestructMedia">Самознищуване медіа</string>
+    <string name="InuAutoSaveStories">Автозбереження переглянутих історій</string>
+    <string name="InuAutoSaveStoriesInfo">Зберігає в галерею кожну історію, яку ви відкриваєте, один раз. Власні історії пропускаються.</string>
     <string name="InuAllowForwardRestricted">Дозволити пересилання з захищених чатів</string>
     <string name="InuAllowForwardRestrictedInfo">Обхід захисту контенту для пересилання, копіювання та збереження медіа з чатів із забороною пересилання.</string>
     <string name="InuSaveAnyStory">Зберігати будь-які історії</string>
@@ -914,6 +916,8 @@
     <string name="InuCenterTitleMainInfo">Центрує заголовки панелі дій поза чатами. У чатів власний перемикач нижче.</string>
     <string name="InuChatTitleMarquee">Біжучий рядок для довгих назв</string>
     <string name="InuChatTitleMarqueeInfo">Назви та підписи в шапці чату, заголовки екранів і імʼя в профілі прокручуються біжучим рядком, якщо не вміщуються</string>
+    <string name="InuExportArchive">Експортувати архів</string>
+    <string name="InuExportArchiveEmpty">Немає що експортувати</string>
     <string name="InuClearCache">Очистити кеш</string>
     <string name="InuClearDeletedCache">Очистити кеш збережених повідомлень</string>
     <string name="InuClearDeletedCacheAlert">Це назавжди видалить локальний архів збережених видалених повідомлень та їхніх медіа. Скасувати неможливо.</string>
@@ -944,8 +948,8 @@
     <string name="InuCacheTtlMonth">Старші за 1 місяць</string>
     <string name="InuEditHistory">Історія редагувань</string>
     <string name="InuDeletedAt">Видалено: %1$s</string>
-    <string name="InuAllowScreenshots">Дозволити скріншоти</string>
-    <string name="InuAllowScreenshotsInfo">Дозволяє робити знімки екрана та запис відео в секретних чатах, одноразових медіа та захищених каналах.</string>
+    <string name="InuDisableFlagSecure">Вимкнути FLAG_SECURE</string>
+    <string name="InuDisableFlagSecureInfo">Знімає заборону на скріншоти: дозволяє знімки екрана та запис відео в секретних чатах, одноразових медіа та захищених каналах.</string>
     <string name="InuSaveDeletedCategories">Зберігати видалені в</string>
     <string name="InuSaveDeletedPrivate">Особистих чатах</string>
     <string name="InuSaveDeletedGroups">Групах</string>
@@ -1471,6 +1475,7 @@
     <string name="InuIosChatHeaderAvatarStaticInfo">Аватарка лишається там, де й зазвичай, поруч із кнопкою «назад», а центрується лише пілюля з назвою та підписом.</string>
     <string name="InuAiInsertQuoteInfo">Вставляє результат у поле повідомлення як цитату замість заміни вашої чернетки.</string>
     <string name="InuAiOnlyAnswerInfo">Приховує хід міркувань для моделей, які його транслюють, показуючи лише кінцеву відповідь.</string>
+    <string name="InuAutoSaveOneTime">Автозбереження одноразового медіа</string>
     <string name="InuBurnOneTime">Знищити</string>
     <string name="InuGhostAutoOffline">Автоматично переходити в офлайн</string>
     <string name="InuGhostAutoOfflineInfo">Повторно надсилає статус «не в мережі» невдовзі після ваших повідомлень чи реакцій.</string>

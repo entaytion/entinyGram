@@ -446,3 +446,6 @@ entiny/main-tabs-search-layout.patch
 entiny/clock-format.patch
 entiny/chat-header-no-pill.patch
 entiny/liquid-glass-live-update.patch
+entiny/saved-deleted-capture.patch
+entiny/auto-save-one-time.patch
+entiny/auto-save-stories.patch

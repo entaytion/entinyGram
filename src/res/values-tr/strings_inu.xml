@@ -875,6 +875,8 @@
     <string name="InuCacheTtlWeek">1 haftadan eski</string>
     <string name="InuCategories">Kategoriler</string>
     <string name="InuCenterTitleChats">Sohbetlerde/kanallarda da ortala</string>
+    <string name="InuExportArchive">Arşivi dışa aktar</string>
+    <string name="InuExportArchiveEmpty">Dışa aktarılacak bir şey yok</string>
     <string name="InuClearCache">Önbelleği temizle</string>
     <string name="InuClearDeletedCache">Silinen mesaj önbelleğini temizle</string>
     <string name="InuClearDeletedCacheAlert">Bu, kaydedilen silinmiş mesajların ve medyalarının yerel arşivini kalıcı olarak siler. Bu işlem geri alınamaz.</string>
@@ -919,6 +921,8 @@
     <string name="InuRegexFilterExport">Filtreleri dışa aktar</string>
     <string name="InuRegexFilterExportDone">Filtreler panoya kopyalandı</string>
     <string name="InuRegexFilterImport">Filtreleri içe aktar</string>
+    <string name="InuAutoSaveStories">Görüntülenen hikayeleri otomatik kaydet</string>
+    <string name="InuAutoSaveStoriesInfo">Açtığınız her hikayeyi galeriye bir kez kaydeder. Kendi hikayeleriniz atlanır.</string>
     <string name="InuRegexFilterImportHint">Dışa aktarılan filtre JSON\'ını yapıştırın</string>
     <string name="InuRegexFilterImportDone">%d filtre içe aktarıldı</string>
     <string name="InuSaveAnyStory">Tüm hikayeleri kaydet</string>
@@ -973,8 +977,8 @@
     <string name="InuAiTranscribeInfo">Sesli ve video mesajları Telegram\'ınki yerine kendi AI sağlayıcınızla deşifre edin; Premium olsun ya da olmasın.</string>
     <string name="InuAiTranscribeModel">Model</string>
     <string name="InuAiTranscribeNoKey">Ses için henüz bir AI sağlayıcısı ayarlanmadı. Ayarlar &gt; AI &gt; Sağlayıcılar bölümünden ekleyin.</string>
-    <string name="InuAllowScreenshots">Ekran görüntülerine izin ver</string>
-    <string name="InuAllowScreenshotsInfo">Gizli sohbetlerde, süreli medyalarda ve korumalı kanallarda ekran görüntüsü ve video kaydı almaya izin verir.</string>
+    <string name="InuDisableFlagSecure">FLAG_SECURE\'ı devre dışı bırak</string>
+    <string name="InuDisableFlagSecureInfo">Ekran görüntüsü engelini kaldırır: gizli sohbetlerde, süreli medyalarda ve korumalı kanallarda ekran görüntüsü ve video kaydına izin verir.</string>
     <string name="InuAntiDeletion">Silinmeyi önleme</string>
     <string name="InuAppIconOldEntinygram">Eski entinyGram</string>
     <string name="InuCategoryAppearance">Görünüm ve Düzen</string>
@@ -1361,6 +1365,7 @@
     <string name="InuAiTranscribeFetchModels">Kullanılabilir modelleri getir</string>
     <string name="InuAiTranscribeFetchModelsEmpty">Model bulunamadı</string>
     <string name="InuAiTranscribeFetchModelsFailed">Modeller alınamadı: %1$s</string>
+    <string name="InuAutoSaveOneTime">Tek seferlik medyayı otomatik kaydet</string>
     <string name="InuBurnOneTime">Yok et</string>
     <string name="InuGhostAutoOffline">Otomatik olarak çevrimdışı ol</string>
     <string name="InuGhostAutoOfflineInfo">Mesaj veya tepki gönderdikten kısa süre sonra çevrim dışı durumunu yeniden gönderir.</string>

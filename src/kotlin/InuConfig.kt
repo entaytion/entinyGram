@@ -1356,10 +1356,16 @@ object InuConfig {
     val SAVE_SELF_DESTRUCT_MEDIA = BoolItem("save_self_destruct_media", false)
 
     @JvmField
+    val AUTO_SAVE_ONE_TIME = BoolItem("auto_save_one_time", false)
+
+    @JvmField
     val SAVE_SELF_DESTRUCT_TEXT = BoolItem("save_self_destruct_text", false)
 
     @JvmField
     val SAVE_VIEW_ONCE_MEDIA = BoolItem("save_view_once_media", false)
+
+    @JvmField
+    val AUTO_SAVE_STORIES = BoolItem("auto_save_stories", false)
 
     @JvmField
     val VIEW_ONCE_SHOW_NORMAL = BoolItem("view_once_show_normal", false)

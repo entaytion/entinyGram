@@ -1108,12 +1108,15 @@
     <string name="InuTOS">Restricted features</string>
     <string name="InuSelfDestructMedia">Self-destructing media</string>
     <string name="InuAntiDeletion">Anti-deletion</string>
+    <string name="InuAutoSaveOneTime">Auto-save view-once media</string>
     <string name="InuSaveSelfDestructMedia">Keep secret media</string>
     <string name="InuSaveSelfDestructText">Keep self-destructing text</string>
     <string name="InuSaveViewOnceMedia">Keep view-once media</string>
     <string name="InuViewOnceShowNormal">Show as a regular photo instead of gating it behind the one-time reveal</string>
     <string name="InuSaveTimedMessages">Keep timed messages</string>
     <string name="InuAllowForwardRestricted">Allow forwarding from protected chats</string>
+    <string name="InuAutoSaveStories">Auto-save viewed stories</string>
+    <string name="InuAutoSaveStoriesInfo">Saves every story you open to the gallery, once. Your own stories are skipped.</string>
     <string name="InuAllowForwardRestrictedInfo">Bypass content protection to forward, copy and save media from chats with forwarding disabled.</string>
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>
@@ -1156,8 +1159,8 @@
     <string name="InuClearDeletedCacheEmpty">Deleted messages cache is empty</string>
     <string name="InuEditHistory">Edit history</string>
     <string name="InuDeletedAt">Deleted %1$s</string>
-    <string name="InuAllowScreenshots">Allow screenshots</string>
-    <string name="InuAllowScreenshotsInfo">Allows taking screenshots and screen recording in secret chats, view-once media, and protected channels.</string>
+    <string name="InuDisableFlagSecure">Disable FLAG_SECURE</string>
+    <string name="InuDisableFlagSecureInfo">Turns off the screenshot block: allows screenshots and screen recording in secret chats, view-once media, and protected channels.</string>
     <string name="InuSaveDeletedCategories">Save deleted in</string>
     <string name="InuSaveDeletedPrivate">Private chats</string>
     <string name="InuSaveDeletedGroups">Groups</string>
@@ -1457,6 +1460,8 @@
     <string name="InuCachePresenceCategory">Presence logs</string>
     <string name="InuPresenceLogsTtl">Auto-clear presence logs</string>
     <string name="InuPresenceLogsTtlInfo">Automatically delete presence logs older than the selected period.</string>
+    <string name="InuExportArchive">Export archive</string>
+    <string name="InuExportArchiveEmpty">Nothing to export</string>
     <string name="InuTypingSpoofActive">Active now</string>
     <string name="InuTypingSpoofPickChat">Pick a chat</string>
     <string name="InuTypingSpoofQuickListInfo">Opens the same typing-spoof picker available from a chat\'s header menu, without needing to open the chat first.</string>

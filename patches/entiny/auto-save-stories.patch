@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 29 Sep 2026 13:55:50 +0300
+Subject: [+] auto-save viewed stories
+
+---
+ .../src/main/java/org/telegram/ui/Stories/PeerStoriesView.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -790,6 +790,9 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+             private void drawLines(Canvas canvas) {
+                 if (imageReceiver.hasNotThumb() || (currentStory.isVideo && playerSharedScope.firstFrameRendered || currentStory.isLive && playerSharedScope.firstFrameRendered)) {
+                     currentStory.checkSendView();
++                    if (isActive && currentStory.storyItem != null && desu.inugram.InuConfig.AUTO_SAVE_STORIES.getValue()) {
++                        desu.inugram.helpers.media.StoryAutoSaveHelper.onStoryShown(getContext(), currentAccount, dialogId, currentStory.storyItem.id, currentStory.getPath(), currentStory.isVideo());
++                    }
+                 }
+ 
+                 float timeProgress = 0;

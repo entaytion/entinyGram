@@ -136,6 +136,7 @@ object SavedMessagesHelper {
         if (!isSaveDeletedEnabled()) return false
         val controller = MessagesController.getInstance(account) ?: return true
         if (org.telegram.messenger.DialogObject.isEncryptedDialog(dialogId)) {
+            if (InuConfig.SAVE_SELF_DESTRUCT_TEXT.value) return true
             val encrypted = controller.getEncryptedChat(org.telegram.messenger.DialogObject.getEncryptedChatId(dialogId))
                 ?: return InuConfig.SAVE_DELETED_PRIVATE.value
             return if (controller.getUser(encrypted.user_id)?.bot == true) {
@@ -657,12 +658,13 @@ object SavedMessagesHelper {
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
         // entiny: reject dialog id 0 to prevent marking matching IDs in unrelated chats as deleted
         if (dialogId == 0L) return
-        if (!forceSave && !shouldSaveForDialog(account, dialogId)) return
+        // entiny: a message already archived (timer path) keeps getting its real text from the storage delete even when the chat type is off
+        val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
+        if (!forceSave && !alreadyRecorded && !shouldSaveForDialog(account, dialogId)) return
         if (!forceSave && !InuConfig.SAVE_DELETED_OWN.value && (fromId == UserConfig.getInstance(account).clientUserId || message?.out == true)) return
         if (!forceSave && isPermanentDeleteRequested(dialogId, msgId)) return
         if (!forceSave && isPermanentDeleteRequestedForMid(msgId)) return
         // entiny: prevent empty text from subsequent delete reports overwriting preserved text
-        val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
         if (alreadyRecorded && text.isNullOrEmpty() && message?.media == null) return
         // entiny: deletions for messages never loaded locally carry no data; recording them
         // created phantom ghosts that littered chats with deleted-media placeholders

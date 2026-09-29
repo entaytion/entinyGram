@@ -997,6 +997,8 @@
     <string name="InuSaveViewOnceMedia">Сохранять одноразовые медиа</string>
     <string name="InuSaveTimedMessages">Сохранять сообщения с таймером</string>
     <string name="InuAllowForwardRestricted">Разрешить пересылку из защищенных чатов</string>
+    <string name="InuAutoSaveStories">Автосохранение просмотренных историй</string>
+    <string name="InuAutoSaveStoriesInfo">Сохраняет в галерею каждую открытую историю один раз. Собственные истории пропускаются.</string>
     <string name="InuAllowForwardRestrictedInfo">Обход защиты контента для пересылки, копирования и сохранения медиа из чатов с запретом пересылки.</string>
     <string name="InuDownloadingStory">Загрузка истории…</string>
     <string name="InuSaveAnyStory">Сохранять любые истории</string>
@@ -1023,6 +1025,8 @@
     <string name="InuCacheTtlDay">Старше 1 дня</string>
     <string name="InuCacheTtlWeek">Старше 1 недели</string>
     <string name="InuCacheTtlMonth">Старше 1 месяца</string>
+    <string name="InuExportArchive">Экспортировать архив</string>
+    <string name="InuExportArchiveEmpty">Нечего экспортировать</string>
     <string name="InuClearCache">Очистить кэш</string>
     <string name="InuClearDeletedCache">Очистить кэш удаленных сообщений</string>
     <string name="InuClearDeletedCacheAlert">Это навсегда удалит локальный архив сохранённых удалённых сообщений и их медиа. Отменить нельзя.</string>
@@ -1175,8 +1179,8 @@
     <string name="InuProfilePhotosSelected">Выбрано: %1$d</string>
 
     <string name="InuDeletedAt">Удалено %1$s</string>
-    <string name="InuAllowScreenshots">Разрешить скриншоты</string>
-    <string name="InuAllowScreenshotsInfo">Разрешает делать скриншоты и запись экрана в секретных чатах, исчезающих медиа и защищенных каналах.</string>
+    <string name="InuDisableFlagSecure">Отключить FLAG_SECURE</string>
+    <string name="InuDisableFlagSecureInfo">Снимает запрет на скриншоты: разрешает скриншоты и запись экрана в секретных чатах, исчезающих медиа и защищённых каналах.</string>
     <string name="InuSaveDeletedCategories">Сохранять удаленные в</string>
     <string name="InuSaveDeletedPrivate">Личных чатах</string>
     <string name="InuSaveDeletedGroups">Группах</string>
@@ -1475,6 +1479,7 @@
     <string name="InuIgnoreTranslationsDisabled">Игнорировать «Перевод отключён»</string>
     <string name="InuIgnoreTranslationsDisabledInfo">Показывает баннер перевода, даже если канал или пользователь отключили перевод.</string>
     <string name="InuInstantTranslateBanner">Мгновенный баннер перевода</string>
+    <string name="InuAutoSaveOneTime">Автосохранение одноразовых медиа</string>
     <string name="InuInstantTranslateBannerInfo">Показывает баннер «Перевести на X?» уже после одного иностранного сообщения, а не нескольких (стандартно нужно 6, или 2 с автопереводом).</string>
     <string name="InuLocalCustomEmoji">Локальные авторские эмодзи</string>
     <string name="InuLocalCustomEmojiInfo">Отправляет Premium-эмодзи как скрытые ссылки, чтобы другие клиенты тоже могли их показывать. Используйте вместе с локальным Telegram Premium.</string>

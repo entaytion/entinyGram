@@ -4,6 +4,7 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.security.ArchiveExportHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
@@ -43,6 +44,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructMedia, InuConfig.SAVE_SELF_DESTRUCT_MEDIA, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
             ExpandableBoolGroup.Option(R.string.InuSaveSelfDestructText, InuConfig.SAVE_SELF_DESTRUCT_TEXT, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
             ExpandableBoolGroup.Option(R.string.InuViewOnceShowNormal, InuConfig.VIEW_ONCE_SHOW_NORMAL, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
+            ExpandableBoolGroup.Option(R.string.InuAutoSaveOneTime, InuConfig.AUTO_SAVE_ONE_TIME, TOGGLE_AUTO_SAVE_ONE_TIME),
         ),
         sectionId = SECTION_SELF_DESTRUCT_SAVE,
     ).apply { expanded = true }
@@ -119,6 +121,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
 
         if (InuConfig.SAVE_DELETED_MESSAGES.value || InuConfig.SAVE_EDITED_MESSAGES.value) {
             items.add(mkSubPageButton(BUTTON_SEARCH, R.drawable.inu_tabler_file_search, LocaleController.getString(R.string.InuDeletedMessageSearch)))
+            items.add(UItem.asButton(BUTTON_EXPORT, R.drawable.msg_shareout, LocaleController.getString(R.string.InuExportArchive)))
         }
     }
 
@@ -152,6 +155,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
             }
             BUTTON_DELETED_MARK_STYLE -> showDeletedMarkStyleSelector()
             BUTTON_SEARCH -> presentFragment(DeletedMessageSearchActivity())
+            BUTTON_EXPORT -> ArchiveExportHelper.export(this)
         }
     }
 
@@ -203,11 +207,13 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SHOW_EDIT_HISTORY_DIFF = InuUtils.generateId()
         private val SECTION_DELETED_CATEGORIES = InuUtils.generateId()
         private val BUTTON_SEARCH = InuUtils.generateId()
+        private val BUTTON_EXPORT = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_MEDIA = InuUtils.generateId()
         private val TOGGLE_SAVE_SELF_DESTRUCT_TEXT = InuUtils.generateId()
         private val TOGGLE_SAVE_VIEW_ONCE_MEDIA = InuUtils.generateId()
         private val TOGGLE_SAVE_TIMED_MESSAGES = InuUtils.generateId()
         private val TOGGLE_VIEW_ONCE_SHOW_NORMAL = InuUtils.generateId()
+        private val TOGGLE_AUTO_SAVE_ONE_TIME = InuUtils.generateId()
         private val SECTION_SELF_DESTRUCT_SAVE = InuUtils.generateId()
 
         @JvmField
@@ -235,6 +241,7 @@ class AntiDeletionSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("save-self-destruct-media", R.string.InuSaveSelfDestructMedia, TOGGLE_SAVE_SELF_DESTRUCT_MEDIA),
                 SearchRegistry.Entry("save-self-destruct-text", R.string.InuSaveSelfDestructText, TOGGLE_SAVE_SELF_DESTRUCT_TEXT),
                 SearchRegistry.Entry("view-once-show-normal", R.string.InuViewOnceShowNormal, TOGGLE_VIEW_ONCE_SHOW_NORMAL),
+                SearchRegistry.Entry("auto-save-one-time", R.string.InuAutoSaveOneTime, TOGGLE_AUTO_SAVE_ONE_TIME),
             ),
         )
     }

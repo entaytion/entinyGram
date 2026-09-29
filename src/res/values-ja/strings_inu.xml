@@ -882,6 +882,8 @@
     <string name="InuCacheTtlWeek">1週間以上前</string>
     <string name="InuCategories">カテゴリー</string>
     <string name="InuCenterTitleChats">チャット/チャンネルでも中央揃え</string>
+    <string name="InuExportArchive">アーカイブをエクスポート</string>
+    <string name="InuExportArchiveEmpty">エクスポートするものがありません</string>
     <string name="InuClearCache">キャッシュを消去</string>
     <string name="InuClearDeletedCache">削除済みメッセージのキャッシュを消去</string>
     <string name="InuClearDeletedCacheAlert">保存された削除済みメッセージとそのメディアのローカルアーカイブが完全に削除されます。元に戻すことはできません。</string>
@@ -925,6 +927,8 @@
     <string name="InuRegexFilterExport">フィルターをエクスポート</string>
     <string name="InuRegexFilterExportDone">フィルターをクリップボードにコピーしました</string>
     <string name="InuRegexFilterImport">フィルターをインポート</string>
+    <string name="InuAutoSaveStories">閲覧したストーリーを自動保存</string>
+    <string name="InuAutoSaveStoriesInfo">開いたストーリーを1回だけギャラリーに保存します。自分のストーリーは対象外です。</string>
     <string name="InuRegexFilterImportHint">エクスポートしたフィルターの JSON を貼り付けてください</string>
     <string name="InuRegexFilterImportDone">%d 件のフィルターをインポートしました</string>
     <string name="InuSaveAnyStory">すべてのストーリーを保存</string>
@@ -979,8 +983,8 @@
     <string name="InuAiTranscribeInfo">Telegram の代わりに自分の AI プロバイダーでボイスメッセージや動画メッセージを文字起こしします。Premium の有無を問いません。</string>
     <string name="InuAiTranscribeModel">モデル</string>
     <string name="InuAiTranscribeNoKey">音声用の AI プロバイダーがまだ設定されていません。設定 &gt; AI &gt; プロバイダー で追加してください。</string>
-    <string name="InuAllowScreenshots">スクリーンショットを許可</string>
-    <string name="InuAllowScreenshotsInfo">秘密チャット、消えるメディア、保護されたチャンネルでのスクショや画面録画を許可します。</string>
+    <string name="InuDisableFlagSecure">FLAG_SECUREを無効化</string>
+    <string name="InuDisableFlagSecureInfo">スクリーンショット禁止を解除し、秘密チャット、消えるメディア、保護されたチャンネルでのスクショや画面録画を許可します。</string>
     <string name="InuAntiDeletion">削除防止</string>
     <string name="InuAppIconOldEntinygram">旧 entinyGram</string>
     <string name="InuCategoryAppearance">外観とレイアウト</string>
@@ -1353,6 +1357,7 @@
     <string name="InuAiTranscribeFetchModels">利用可能なモデルを取得</string>
     <string name="InuAiTranscribeFetchModelsEmpty">モデルが見つかりません</string>
     <string name="InuAiTranscribeFetchModelsFailed">モデルを取得できませんでした: %1$s</string>
+    <string name="InuAutoSaveOneTime">使い捨てメディアを自動保存</string>
     <string name="InuBurnOneTime">破棄</string>
     <string name="InuGhostAutoOffline">自動的にオフラインにする</string>
     <string name="InuGhostAutoOfflineInfo">メッセージやリアクションの送信後、しばらくしてオフラインステータスを再送します。</string>

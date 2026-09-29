@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 28 Sep 2026 13:42:00 +0300
+Subject: [*] capture deleted messages before storage cleanup
+
+---
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -14694,7 +14694,7 @@ public class MessagesStorage extends BaseController {
+                 ArrayList<String> namesToDelete = new ArrayList<>();
+                 ArrayList<Pair<Long, Integer>> idsToDelete = new ArrayList<>();
+                 ArrayList<TopicsController.TopicUpdate> topicUpdatesInUi = null;
+-                ArrayList<TLRPC.Message> deletedMessages = currentUser == dialogId || dialogId == 0 ? new ArrayList<>() : null;
++                ArrayList<TLRPC.Message> deletedMessages = currentUser == dialogId || dialogId == 0 || desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue() ? new ArrayList<>() : null;
+ 
+                 if (dialogId != 0) {
+                     cursor = database.queryFinalized(String.format(Locale.US, "SELECT uid, data, read_state, out, mention, mid FROM messages_v2 WHERE mid IN(%s) AND uid = %d", ids, dialogId));
+@@ -14729,7 +14729,7 @@ public class MessagesStorage extends BaseController {
+                                 }
+                             }
+                         }
+-                        if (!DialogObject.isEncryptedDialog(did) && !deleteFiles && did != currentUser) {
++                        if (!DialogObject.isEncryptedDialog(did) && !deleteFiles && did != currentUser && !desu.inugram.InuConfig.SAVE_DELETED_MESSAGES.getValue()) {
+                             continue;
+                         }
+                         NativeByteBuffer data = cursor.byteBufferValue(1);

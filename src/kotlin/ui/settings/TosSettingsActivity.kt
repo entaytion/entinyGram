@@ -55,6 +55,14 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
+                TOGGLE_AUTO_SAVE_STORIES,
+                R.string.InuAutoSaveStories,
+                R.string.InuAutoSaveStoriesInfo,
+                InuConfig.AUTO_SAVE_STORIES.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_ALLOW_FORWARD_RESTRICTED,
                 R.string.InuAllowForwardRestricted,
                 R.string.InuAllowForwardRestrictedInfo,
@@ -63,9 +71,9 @@ class TosSettingsActivity : SettingsPageActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
-                TOGGLE_ALLOW_SCREENSHOTS,
-                R.string.InuAllowScreenshots,
-                R.string.InuAllowScreenshotsInfo,
+                TOGGLE_DISABLE_FLAG_SECURE,
+                R.string.InuDisableFlagSecure,
+                R.string.InuDisableFlagSecureInfo,
                 InuConfig.ALLOW_SCREENSHOTS.value,
             )
         )
@@ -160,11 +168,15 @@ class TosSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.SAVE_ANY_STORY.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_AUTO_SAVE_STORIES -> {
+                val new = InuConfig.AUTO_SAVE_STORIES.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             TOGGLE_ALLOW_FORWARD_RESTRICTED -> {
                 val new = InuConfig.ALLOW_FORWARD_RESTRICTED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
-            TOGGLE_ALLOW_SCREENSHOTS -> {
+            TOGGLE_DISABLE_FLAG_SECURE -> {
                 val new = InuConfig.ALLOW_SCREENSHOTS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
@@ -202,8 +214,9 @@ class TosSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_LOCAL_PREMIUM = InuUtils.generateId()
         private val TOGGLE_LOCAL_CUSTOM_EMOJI = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
+        private val TOGGLE_AUTO_SAVE_STORIES = InuUtils.generateId()
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
-        private val TOGGLE_ALLOW_SCREENSHOTS = InuUtils.generateId()
+        private val TOGGLE_DISABLE_FLAG_SECURE = InuUtils.generateId()
         private val TOGGLE_SUPPRESS_SCREENSHOT_NOTIFICATION = InuUtils.generateId()
 
         private val TOGGLE_UNLIMITED_PINNED_CHATS = InuUtils.generateId()
@@ -220,8 +233,9 @@ class TosSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("local-premium", R.string.InuLocalPremium, TOGGLE_LOCAL_PREMIUM),
                 SearchRegistry.Entry("local-custom-emoji", R.string.InuLocalCustomEmoji, TOGGLE_LOCAL_CUSTOM_EMOJI),
                 SearchRegistry.Entry("save-any-story", R.string.InuSaveAnyStory, TOGGLE_SAVE_ANY_STORY),
+                SearchRegistry.Entry("auto-save-stories", R.string.InuAutoSaveStories, TOGGLE_AUTO_SAVE_STORIES),
                 SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),
-                SearchRegistry.Entry("allow-screenshots", R.string.InuAllowScreenshots, TOGGLE_ALLOW_SCREENSHOTS),
+                SearchRegistry.Entry("disable-flag-secure", R.string.InuDisableFlagSecure, TOGGLE_DISABLE_FLAG_SECURE, aliases = listOf("allow-screenshots")),
                 SearchRegistry.Entry("suppress-screenshot-notification", R.string.InuSuppressScreenshotNotification, TOGGLE_SUPPRESS_SCREENSHOT_NOTIFICATION),
                 SearchRegistry.Entry("unlimited-pinned-chats", R.string.InuUnlimitedPinnedChats, TOGGLE_UNLIMITED_PINNED_CHATS),
                 SearchRegistry.Entry("unlimited-favorite-stickers", R.string.InuUnlimitedFavoriteStickers, TOGGLE_UNLIMITED_FAVORITE_STICKERS),
