@@ -110,7 +110,7 @@ class PillStackController(
             row.orientation = LinearLayout.HORIZONTAL
             // entiny: row itself is MATCH_PARENT height (like exteraless's single stackView); center the WRAP_CONTENT slots within it.
             row.gravity = Gravity.CENTER_VERTICAL
-            host.addView(row, rowParams())
+            host.addView(row, if (host is LinearLayout) 0 else -1, rowParams())
             rowLayout = row
         }
 

@@ -302,6 +302,8 @@
     <string name="InuCallConfirmationText">**%1$s** aransın mı?</string>
     <string name="InuHdBluetoothCallAudio">Bluetooth\'ta HD arama sesi</string>
     <string name="InuHdBluetoothCallAudioInfo">Arama sesini daha iyi Bluetooth kalitesi için medya olarak oynatır; telefonun mikrofonunu kullanır.</string>
+    <string name="InuCallRotation">Arama ekranını döndür</string>
+    <string name="InuCallRotationInfo">Arama ekranının dikey modda sabit kalmak yerine cihazın dönüşünü takip etmesini sağlar. Düzen dikey mod için tasarlandı, yatay modda sıkışık görünebilir</string>
     <string name="InuConfirmInternalLinks">Dahili bağlantıları açmayı onayla</string>
     <string name="InuConfirmInternalLinksInfo">tg:// ve t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">Tarayıcıyı küçültmek için aşağı kaydırmayı devre dışı bırak</string>

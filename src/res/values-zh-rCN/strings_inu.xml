@@ -229,6 +229,8 @@
     <string name="InuCallConfirmationText">呼叫 **%1$s**？</string>
     <string name="InuHdBluetoothCallAudio">蓝牙通话高清音质</string>
     <string name="InuHdBluetoothCallAudioInfo">将通话音频作为媒体播放以提升蓝牙音质，使用手机麦克风。</string>
+    <string name="InuCallRotation">旋转通话屏幕</string>
+    <string name="InuCallRotationInfo">让通话屏幕跟随设备旋转，而不是固定为竖屏。布局针对竖屏设计，横屏下可能显得拥挤</string>
     <string name="InuDisableChatBubbles">禁用 Android 通知气泡</string>
     <string name="InuInPlaceTranslation">就地翻译</string>
     <string name="InuTranslateWebPreviews">翻译网页预览</string>

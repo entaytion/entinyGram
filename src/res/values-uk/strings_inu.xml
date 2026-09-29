@@ -1297,6 +1297,8 @@
     <string name="InuHideGroupStickerPack">Сховати підказку про емодзі-пак групи</string>
     <string name="InuHdBluetoothCallAudio">HD аудіо дзвінків по Bluetooth</string>
     <string name="InuHdBluetoothCallAudioInfo">Відтворює звук дзвінка як медіа задля кращої Bluetooth-якості, використовуючи мікрофон телефона.</string>
+    <string name="InuCallRotation">Поворот екрана дзвінка</string>
+    <string name="InuCallRotationInfo">Дозволяє екрану дзвінка повертатися разом із пристроєм замість фіксації в портреті. Розкладка розрахована на портрет і в ландшафті може виглядати тісно</string>
     <string name="InuAntiDeletion">Збереження видаленого</string>
     <string name="InuSaveSelfDestructMedia">Зберігати самознищувані медіа</string>
     <string name="InuSaveSelfDestructText">Зберігати самознищуваний текст</string>

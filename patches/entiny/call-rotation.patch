@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 00:56:23 +0300
+Subject: [+] rotate the call screen
+
+---
+ .../java/org/telegram/ui/Components/voip/VoIPWindowView.java    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPWindowView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPWindowView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPWindowView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPWindowView.java
+@@ -182,7 +182,7 @@ public class VoIPWindowView extends FrameLayout {
+         windowLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+         windowLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
+         windowLayoutParams.type = WindowManager.LayoutParams.LAST_APPLICATION_WINDOW;
+-        windowLayoutParams.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
++        windowLayoutParams.screenOrientation = desu.inugram.helpers.CallRotationHelper.orientation();
+ 
+         AndroidUtilities.applyEdgeToEdgeLayoutParams(windowLayoutParams);
+         windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN |

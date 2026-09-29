@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 00:55:59 +0300
+Subject: [*] reserve room for the input menu button
+
+---
+ .../java/org/telegram/ui/Components/ChatActivityEnterView.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -9377,6 +9377,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+             } else {
+                 layoutParams.rightMargin = dp(50);
+             }
++            if (desu.inugram.helpers.chat.ChatInputMenuHelper.isMenuButtonVisible(this)) {
++                layoutParams.rightMargin += dp(48);
++            }
+         } else {
+             if (scheduledButton != null && scheduledButton.getTag() != null && desu.inugram.helpers.chat.ChatInputMenuHelper.isMenuButtonVisible(this)) {
+                 layoutParams.rightMargin = dp(98);

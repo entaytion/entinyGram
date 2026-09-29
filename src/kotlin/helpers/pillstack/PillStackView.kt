@@ -99,7 +99,7 @@ class PillStackView(context: Context) : FrameLayout(context) {
     private var visibilityFactor = -1f
 
     fun setVisibilityFactor(factor: Float) {
-        if (visibilityFactor == factor) return
+        if (visibilityFactor == factor && (factor <= 0.01f) == (visibility == GONE)) return
         visibilityFactor = factor
         if (factor <= 0.01f) {
             visibility = GONE

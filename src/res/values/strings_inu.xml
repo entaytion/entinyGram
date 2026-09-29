@@ -406,6 +406,8 @@
     <string name="InuCallConfirmationText">Call **%1$s**?</string>
     <string name="InuHdBluetoothCallAudio">HD call audio on Bluetooth</string>
     <string name="InuHdBluetoothCallAudioInfo">Plays call audio as media for better Bluetooth quality, using the phone\'s microphone.</string>
+    <string name="InuCallRotation">Rotate the call screen</string>
+    <string name="InuCallRotationInfo">Lets the call screen follow the device rotation instead of staying in portrait. The layout is designed for portrait and may look cramped in landscape</string>
     <string name="InuConfirmInternalLinks">Confirm opening internal links</string>
     <string name="InuConfirmInternalLinksInfo">tg:// and t.me/</string>
     <string name="InuDisableBrowserSwipeCollapse">Disable swipe-down to minimize browser</string>

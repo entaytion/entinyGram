@@ -15,6 +15,9 @@ import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.Stories.recorder.DualCameraView
+import org.telegram.messenger.BuildConfig
+import org.telegram.utils.camera.roundvideo.RoundVideoSession
+import org.telegram.utils.settings.SharedSettings
 
 class CategoryChatsSettingsActivity : SettingsPageActivity() {
 
@@ -243,6 +246,24 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 }
             )
         )
+        val newRecorder = SharedSettings.roundVideoCamera2Enabled.get()
+        items.add(
+            UItem.asCheck(
+                TOGGLE_ROUND_NEW_RECORDER,
+                LocaleController.getString(R.string.RoundVideoUseNewRecorder),
+            ).setChecked(newRecorder)
+        )
+        if (newRecorder) {
+            items.add(UItem.asButton(BUTTON_ROUND_OUTPUT_RESOLUTION, LocaleController.getString(R.string.RoundVideoOutputResolution), SharedSettings.roundVideoOutputResolution.get().size.toString() + "p"))
+            items.add(UItem.asButton(BUTTON_ROUND_CAMERA_RESOLUTION, LocaleController.getString(R.string.RoundVideoCameraResolution), roundCameraResolutionLabel(SharedSettings.roundVideoCameraResolution.get())))
+            items.add(UItem.asButton(BUTTON_ROUND_FRAME_RATE, LocaleController.getString(R.string.RoundVideoFrameRate), SharedSettings.roundVideoFrameRate.get().value.toString() + " FPS"))
+            items.add(UItem.asButton(BUTTON_ROUND_BITRATE, LocaleController.getString(R.string.RoundVideoBitrate), formatRoundBitrate(SharedSettings.roundVideoVideoBitrate.get())))
+            items.add(
+                UItem.asCheck(TOGGLE_ROUND_COMPOSITION, LocaleController.getString(R.string.RoundVideoCompositionEnabled))
+                    .setChecked(SharedSettings.roundVideoComposition.get())
+            )
+        }
+        if (!newRecorder) {
         items.add(
             UItem.asCheck(
                 TOGGLE_ROUND_RECORDER_ZOOM_SLIDER,
@@ -313,6 +334,7 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.value
             )
         )
+        }
         val cameraApiText = LocaleController.formatString(
             R.string.InuRoundRecorderCameraApi,
             if (SharedConfig.isUsingCamera2(currentAccount)) "Camera2" else "Camera1",
@@ -523,6 +545,43 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.ROUND_DEFAULT_CAMERA.value = which + 1
             }
 
+            TOGGLE_ROUND_NEW_RECORDER -> {
+                SharedSettings.roundVideoCamera2Enabled.toggle()
+                listView.adapter.update(true)
+            }
+            TOGGLE_ROUND_COMPOSITION -> (view as? TextCheckCell)?.isChecked = SharedSettings.roundVideoComposition.toggle()
+            BUTTON_ROUND_OUTPUT_RESOLUTION -> RadioItemOptions.show(
+                this, view, listOf("480p", "360p"),
+                if (SharedSettings.roundVideoOutputResolution.get() == RoundVideoSession.OutputResolution.P480) 0 else 1,
+            ) { which ->
+                SharedSettings.roundVideoOutputResolution.set(if (which == 0) RoundVideoSession.OutputResolution.P480 else RoundVideoSession.OutputResolution.P360)
+                listView.adapter.update(true)
+            }
+            BUTTON_ROUND_CAMERA_RESOLUTION -> RadioItemOptions.show(
+                this, view,
+                RoundVideoSession.CameraResolution.values().map { roundCameraResolutionLabel(it) },
+                SharedSettings.roundVideoCameraResolution.get().ordinal,
+            ) { which ->
+                SharedSettings.roundVideoCameraResolution.set(RoundVideoSession.CameraResolution.values()[which])
+                listView.adapter.update(true)
+            }
+            BUTTON_ROUND_FRAME_RATE -> RadioItemOptions.show(
+                this, view, listOf("30 FPS", "60 FPS"),
+                if (SharedSettings.roundVideoFrameRate.get() == RoundVideoSession.FrameRate.FPS_30) 0 else 1,
+            ) { which ->
+                SharedSettings.roundVideoFrameRate.set(if (which == 0) RoundVideoSession.FrameRate.FPS_30 else RoundVideoSession.FrameRate.FPS_60)
+                listView.adapter.update(true)
+            }
+            BUTTON_ROUND_BITRATE -> {
+                val bitrates = roundBitrates()
+                RadioItemOptions.show(
+                    this, view, bitrates.map { formatRoundBitrate(it) },
+                    bitrates.indexOf(SharedSettings.roundVideoVideoBitrate.get()).coerceAtLeast(0),
+                ) { which ->
+                    SharedSettings.roundVideoVideoBitrate.set(bitrates[which])
+                    listView.adapter.update(true)
+                }
+            }
             TOGGLE_ROUND_RECORDER_ZOOM_SLIDER -> (view as? TextCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_ZOOM_SLIDER.toggle()
             TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_ZOOM_BUTTONS.toggle()
@@ -587,7 +646,30 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SORT_ALBUMS_BY_SIZE = InuUtils.generateId()
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
+        private val TOGGLE_ROUND_NEW_RECORDER = InuUtils.generateId()
+        private val TOGGLE_ROUND_COMPOSITION = InuUtils.generateId()
+        private val BUTTON_ROUND_OUTPUT_RESOLUTION = InuUtils.generateId()
+        private val BUTTON_ROUND_CAMERA_RESOLUTION = InuUtils.generateId()
+        private val BUTTON_ROUND_FRAME_RATE = InuUtils.generateId()
+        private val BUTTON_ROUND_BITRATE = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_ZOOM_SLIDER = InuUtils.generateId()
+
+        private fun roundBitrates(): List<Int> =
+            listOf(750_000, 1_000_000, 1_200_000, 2_000_000).let { if (BuildConfig.DEBUG_PRIVATE_VERSION) it else it.dropLast(1) }
+
+        private fun formatRoundBitrate(bitrate: Int): String = when {
+            bitrate % 1_000_000 == 0 -> "${bitrate / 1_000_000} Mbps"
+            bitrate > 1_000_000 -> String.format(java.util.Locale.US, "%.1f Mbps", bitrate / 1_000_000f)
+            else -> "${bitrate / 1_000} kbps"
+        }
+
+        private fun roundCameraResolutionLabel(resolution: RoundVideoSession.CameraResolution): String = LocaleController.getString(
+            when (resolution) {
+                RoundVideoSession.CameraResolution.HIGH -> R.string.RoundVideoCameraResolutionHigh
+                RoundVideoSession.CameraResolution.MEDIUM -> R.string.RoundVideoCameraResolutionMedium
+                else -> R.string.RoundVideoCameraResolutionLow
+            }
+        )
         private val TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_KEEP_ZOOM = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM = InuUtils.generateId()
@@ -656,6 +738,12 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-exponential-zoom", R.string.InuRoundRecorderExponentialZoom, TOGGLE_ROUND_RECORDER_EXPONENTIAL_ZOOM),
                 SearchRegistry.Entry("round-recorder-dual-camera", R.string.InuRoundRecorderDualCamera, TOGGLE_ROUND_RECORDER_DUAL_CAMERA),
                 SearchRegistry.Entry("round-recorder-60fps", R.string.InuRoundRecorder60Fps, TOGGLE_ROUND_RECORDER_60FPS),
+                SearchRegistry.Entry("round-new-recorder", R.string.RoundVideoUseNewRecorder, TOGGLE_ROUND_NEW_RECORDER),
+                SearchRegistry.Entry("round-output-resolution", R.string.RoundVideoOutputResolution, BUTTON_ROUND_OUTPUT_RESOLUTION),
+                SearchRegistry.Entry("round-camera-resolution", R.string.RoundVideoCameraResolution, BUTTON_ROUND_CAMERA_RESOLUTION),
+                SearchRegistry.Entry("round-frame-rate", R.string.RoundVideoFrameRate, BUTTON_ROUND_FRAME_RATE),
+                SearchRegistry.Entry("round-bitrate", R.string.RoundVideoBitrate, BUTTON_ROUND_BITRATE),
+                SearchRegistry.Entry("round-composition", R.string.RoundVideoCompositionEnabled, TOGGLE_ROUND_COMPOSITION),
                 SearchRegistry.Entry("round-recorder-lock-exposure", R.string.InuRoundRecorderLockExposure, TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE),
                 SearchRegistry.Entry("round-recorder-exposure-button", R.string.InuRoundRecorderExposureButton, TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON),
                 SearchRegistry.Entry("round-recorder-exposure-levels", R.string.InuRoundRecorderExposureLevels, TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS),

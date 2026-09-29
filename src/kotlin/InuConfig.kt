@@ -979,6 +979,9 @@ object InuConfig {
     val HD_BLUETOOTH_CALL_AUDIO = BoolItem("hd_bluetooth_call_audio", true)
 
     @JvmField
+    val CALL_ROTATION = BoolItem("call_rotation", false)
+
+    @JvmField
     val FORCE_RELAY_CALLS = BoolItem("force_relay_calls", false)
 
     @JvmField

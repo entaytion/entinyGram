@@ -243,6 +243,8 @@
     <string name="InuCallConfirmationText">Позвонить **%1$s**?</string>
     <string name="InuHdBluetoothCallAudio">HD-звук звонков по Bluetooth</string>
     <string name="InuHdBluetoothCallAudioInfo">Воспроизводит звук звонка как медиа для лучшего качества Bluetooth, используя микрофон телефона.</string>
+    <string name="InuCallRotation">Поворот экрана звонка</string>
+    <string name="InuCallRotationInfo">Позволяет экрану звонка поворачиваться вместе с устройством вместо фиксации в портрете. Раскладка рассчитана на портрет и в ландшафте может выглядеть тесно</string>
     <string name="InuDisableChatBubbles">Отключить пузыри уведомлений Android</string>
     <string name="InuInPlaceTranslation">Перевод на месте</string>
     <string name="InuTranslateWebPreviews">Переводить превью ссылок</string>

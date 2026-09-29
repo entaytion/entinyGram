@@ -461,3 +461,6 @@ entiny/pill-stack-in-header.patch
 entiny/main-tabs-search-tuck.patch
 entiny/archive-lock-once.patch
 entiny/translate-failure-bulletin.patch
+entiny/input-menu-reserve.patch
+entiny/call-rotation.patch
+entiny/ios-rich-button-gap.patch

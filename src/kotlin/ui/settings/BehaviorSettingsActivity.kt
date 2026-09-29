@@ -138,6 +138,14 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.HD_BLUETOOTH_CALL_AUDIO.value,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CALL_ROTATION,
+                R.string.InuCallRotation,
+                R.string.InuCallRotationInfo,
+                InuConfig.CALL_ROTATION.value,
+            )
+        )
         deleteForBothGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
             UItem.asCheck(
@@ -413,6 +421,11 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_CALL_ROTATION -> {
+                val new = InuConfig.CALL_ROTATION.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_CONFIRM_INTERNAL_LINKS -> {
                 val new = InuConfig.CONFIRM_INTERNAL_LINKS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -591,6 +604,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val BUTTON_TEXT_CLASSIFIER_MODE = InuUtils.generateId()
         private val TOGGLE_CALL_CONFIRMATION = InuUtils.generateId()
         private val TOGGLE_HD_BLUETOOTH_CALL_AUDIO = InuUtils.generateId()
+        private val TOGGLE_CALL_ROTATION = InuUtils.generateId()
         private val TOGGLE_CONFIRM_INTERNAL_LINKS = InuUtils.generateId()
         private val TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE = InuUtils.generateId()
         private val TOGGLE_GIF_SEEKBAR = InuUtils.generateId()
@@ -650,6 +664,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),
                 SearchRegistry.Entry("call-confirmation", R.string.InuCallConfirmation, TOGGLE_CALL_CONFIRMATION),
                 SearchRegistry.Entry("hd-bluetooth-call-audio", R.string.InuHdBluetoothCallAudio, TOGGLE_HD_BLUETOOTH_CALL_AUDIO),
+                SearchRegistry.Entry("call-rotation", R.string.InuCallRotation, TOGGLE_CALL_ROTATION),
                 SearchRegistry.Entry("confirm-internal-links", R.string.InuConfirmInternalLinks, TOGGLE_CONFIRM_INTERNAL_LINKS),
                 SearchRegistry.Entry("disable-browser-swipe-collapse", R.string.InuDisableBrowserSwipeCollapse, TOGGLE_DISABLE_BROWSER_SWIPE_COLLAPSE),
                 SearchRegistry.Entry("gif-seekbar", R.string.InuGifSeekbar, TOGGLE_GIF_SEEKBAR),

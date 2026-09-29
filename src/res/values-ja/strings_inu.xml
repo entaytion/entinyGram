@@ -229,6 +229,8 @@
     <string name="InuCallConfirmationText">**%1$s** に発信しますか？</string>
     <string name="InuHdBluetoothCallAudio">Bluetooth で高音質通話音声</string>
     <string name="InuHdBluetoothCallAudioInfo">通話音声をメディアとして再生し、Bluetoothでの音質を向上させます。マイクは端末のものを使用します。</string>
+    <string name="InuCallRotation">通話画面の回転</string>
+    <string name="InuCallRotationInfo">通話画面を縦向きに固定せず、端末の回転に追従させます。レイアウトは縦向き用のため、横向きでは窮屈に見える場合があります</string>
     <string name="InuDisableChatBubbles">Android の通知バブルを無効化</string>
     <string name="InuInPlaceTranslation">その場で翻訳</string>
     <string name="InuTranslateWebPreviews">ウェブプレビューを翻訳</string>
