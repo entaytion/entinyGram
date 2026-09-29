@@ -457,6 +457,7 @@ entiny/liquid-glass-live-update.patch
 entiny/auto-save-one-time.patch
 entiny/auto-save-stories.patch
 entiny/chat-header-light-colors.patch
+entiny/pill-stack-in-header.patch
 entiny/main-tabs-search-tuck.patch
 entiny/archive-lock-once.patch
 entiny/translate-failure-bulletin.patch
