@@ -48,6 +48,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 ### restricted features
 
+- 📡 **device spoof**: choose the device name, system and app version shown in Settings → Devices, hide time zone and install source, and check what Telegram sees
 - 📡 **disable FLAG_SECURE**: allow screenshots and screen recording in protected windows, secret chats, expiring media and protected stories
 - 📡 **hide screenshot notifications** in secret chats
 - 📡 copy text and select messages in protected chats

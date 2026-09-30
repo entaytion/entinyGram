@@ -1536,6 +1536,26 @@ object InuConfig {
     @JvmField
     val FOREGROUND_PUSH_SERVICE = BoolItem("foreground_push_service", false)
     @JvmField
+    val DEVICE_SPOOF = BoolItem("device_spoof", false)
+
+    @JvmField
+    val DEVICE_SPOOF_PRESET = StringItem("device_spoof_preset", "oneplus_13r")
+
+    @JvmField
+    val DEVICE_SPOOF_MODEL = StringItem("device_spoof_model", "")
+
+    @JvmField
+    val DEVICE_SPOOF_SYSTEM = StringItem("device_spoof_system", "")
+
+    @JvmField
+    val DEVICE_SPOOF_APP = StringItem("device_spoof_app", "")
+
+    @JvmField
+    val DEVICE_SPOOF_HIDE_TZ = BoolItem("device_spoof_hide_tz", false)
+
+    @JvmField
+    val DEVICE_SPOOF_HIDE_INSTALLER = BoolItem("device_spoof_hide_installer", false)
+    @JvmField
     val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
 
     @JvmField

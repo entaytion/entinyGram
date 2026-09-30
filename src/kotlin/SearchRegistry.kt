@@ -54,6 +54,7 @@ object SearchRegistry {
     private val pages: List<Page> by lazy {
         listOf(
             AdditionalSettingsActivity.PAGE,
+            desu.inugram.ui.spoof.DeviceSpoofSettingsActivity.PAGE,
             CacheManagementSettingsActivity.PAGE,
             InuSettingsActivity.PAGE,
             AppearanceSettingsActivity.PAGE,

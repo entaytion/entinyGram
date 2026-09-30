@@ -467,3 +467,4 @@ entiny/ios-rich-button-gap.patch
 entiny/recent-chats-sidebar.patch
 entiny/recent-chats-strip.patch
 entiny/background-service-toggle.patch
+entiny/device-spoof.patch

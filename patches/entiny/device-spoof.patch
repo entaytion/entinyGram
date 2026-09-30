@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 16:27:38 +0300
+Subject: [+] device spoof
+
+---
+ .../src/main/java/org/telegram/tgnet/ConnectionsManager.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -634,6 +634,10 @@ public class ConnectionsManager extends BaseController {
+     }
+ 
+     public void init(int version, int layer, int apiId, String deviceModel, String systemVersion, String appVersion, String langCode, String systemLangCode, String configPath, String logPath, String regId, String cFingerprint, int timezoneOffset, long userId, boolean userPremium, boolean enablePushConnection) {
++        deviceModel = desu.inugram.helpers.spoof.DeviceIdentityProvider.deviceModel(deviceModel);
++        systemVersion = desu.inugram.helpers.spoof.DeviceIdentityProvider.systemVersion(systemVersion);
++        appVersion = desu.inugram.helpers.spoof.DeviceIdentityProvider.appVersion(appVersion);
++        timezoneOffset = desu.inugram.helpers.spoof.DeviceIdentityProvider.timezoneOffset(timezoneOffset);
+         final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+         final ProxySettings proxySettings = ProxySettings.fromSharedPreferences(preferences);
+         if (preferences.getBoolean("proxy_enabled", false) && proxySettings.isValid()) {
+@@ -679,6 +683,7 @@ public class ConnectionsManager extends BaseController {
+             packageId = "";
+         }
+ 
++        installer = desu.inugram.helpers.spoof.DeviceIdentityProvider.installer(installer);
+         native_init(currentAccount, version, layer, apiId, deviceModel, systemVersion, appVersion, langCode, systemLangCode, configPath, logPath, regId, cFingerprint, installer, packageId, timezoneOffset, userId, userPremium, enablePushConnection, ApplicationLoader.isNetworkOnline(), ApplicationLoader.getCurrentNetworkType(), SharedConfig.getDevicePerformanceClass());
+         checkConnection();
+     }
