@@ -5,6 +5,7 @@ import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ai.AiComposeHelper
+import desu.inugram.helpers.ai.AiProviderStore
 import desu.inugram.helpers.ai.AiRolesHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
@@ -145,14 +146,18 @@ class AiSettingsActivity : SettingsPageActivity() {
     }
 
     private fun activeProvidersSummary(): String {
-        val chatName = AiComposeHelper.providerDisplayName(InuConfig.AI_CHAT_ACTIVE_PROVIDER.value)
-        val voiceName = AiComposeHelper.providerDisplayName(InuConfig.AI_TRANSCRIBE_PROVIDER.value)
-        return if (chatName == voiceName) chatName else "$chatName • $voiceName"
+        val chat = AiProviderStore.chatProvider()?.name
+        val voice = AiProviderStore.voiceProvider()?.name
+        return when {
+            chat == null && voice == null -> LocaleController.getString(R.string.InuAiProviderNotSet)
+            chat == voice -> chat.orEmpty()
+            else -> listOfNotNull(chat, voice).joinToString(" • ")
+        }
     }
 
     private fun hasComposeCredentials(): Boolean {
         val endpoint = AiComposeHelper.activeEndpoint()
-        return endpoint?.url?.isNotBlank() == true && endpoint.apiKey.isNotBlank()
+        return endpoint?.url?.isNotBlank() == true
     }
 
     private fun aiRoleSummary(): String =

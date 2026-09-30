@@ -35,74 +35,26 @@ import java.net.URL
 
 object AiComposeHelper {
 
-    // entiny: one chat slot per known provider; [AiEndpoint] is a resolved-at-read-time DTO for whichever is active
-
+    // entiny: accepts host, /v1 or a full /chat/completions URL
     @JvmStatic
-    fun chatProviderBaseUrl(id: Int): String = when (id) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> "https://generativelanguage.googleapis.com/v1beta/openai/"
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> "https://api.openai.com/v1/"
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> "https://api.groq.com/openai/v1/"
-        InuConfig.AI_PROVIDER_OPENROUTER -> "https://openrouter.ai/api/v1/"
-        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_URL.value
-        else -> ""
+    fun normalizeBase(raw: String): String {
+        var url = raw.trim().trimEnd('/').removeSuffix("/chat/completions").trimEnd('/')
+        if (url.isEmpty()) return ""
+        if (!url.contains("://")) url = "https://$url"
+        // entiny: a bare host is never the API root on OpenAI-compatible routers
+        if (runCatching { URL(url).path.isEmpty() }.getOrDefault(false)) url += "/v1"
+        return url
     }
 
     @JvmStatic
-    fun chatProviderKey(id: Int): String = when (id) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value
-        InuConfig.AI_PROVIDER_OPENROUTER -> InuConfig.AI_CHAT_OPENROUTER_KEY.value
-        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_KEY.value
-        else -> ""
-    }
-
-    @JvmStatic
-    fun setProviderKey(id: Int, value: String) {
-        when (id) {
-            InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value = value
-            InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value = value
-            InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value = value
-            InuConfig.AI_PROVIDER_OPENROUTER -> InuConfig.AI_CHAT_OPENROUTER_KEY.value = value
-            InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_KEY.value = value
-        }
-    }
-
-    @JvmStatic
-    fun chatProviderModel(id: Int): String = when (id) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_CHAT_GEMINI_MODEL.value
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_CHAT_OPENAI_MODEL.value
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_CHAT_GROQ_MODEL.value
-        InuConfig.AI_PROVIDER_OPENROUTER -> InuConfig.AI_CHAT_OPENROUTER_MODEL.value
-        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> InuConfig.AI_CHAT_CUSTOM_MODEL.value
-        else -> ""
-    }
-
-    @JvmStatic
-    fun providerDisplayName(id: Int): String = when (id) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> "Gemini"
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> "OpenAI"
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> "Groq"
-        InuConfig.TRANSCRIBE_PROVIDER_CF -> "Cloudflare"
-        InuConfig.AI_PROVIDER_OPENROUTER -> "OpenRouter"
-        else -> LocaleController.getString(R.string.InuAiProviderCustom)
-    }
-
-    @JvmStatic
-    fun sameModelForBothScopes(id: Int): InuConfig.BoolItem? = when (id) {
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_SAME_MODEL_GEMINI
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_SAME_MODEL_OPENAI
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_SAME_MODEL_GROQ
-        else -> null
-    }
+    fun completionsUrl(base: String): String = normalizeBase(base).let { if (it.isEmpty()) "" else "$it/chat/completions" }
 
     @JvmStatic
     fun activeEndpoint(): AiEndpoint? {
-        val id = InuConfig.AI_CHAT_ACTIVE_PROVIDER.value
-        val key = chatProviderKey(id).trim()
-        val url = chatProviderBaseUrl(id).trim()
-        if (key.isBlank() || url.isBlank()) return null
-        return AiEndpoint(id = id.toString(), name = providerDisplayName(id), url = url, apiKey = key, model = chatProviderModel(id))
+        val p = AiProviderStore.chatProvider() ?: return null
+        val url = completionsUrl(AiProviderStore.baseUrl(p))
+        if (url.isBlank() || (AiProviderStore.needsKey(p.kind) && p.key.isBlank())) return null
+        return AiEndpoint(id = p.id, name = p.name, url = url, apiKey = p.key, model = p.chatModel)
     }
 
     @JvmStatic
@@ -142,6 +94,13 @@ object AiComposeHelper {
             name.isNotEmpty() -> "You are $name. $systemPrompt"
             else -> systemPrompt
         }
+    }
+
+    // entiny: some routers return content as a list of {type,text} parts
+    private fun messageText(content: Any?): String = when (content) {
+        is String -> content
+        is JSONArray -> (0 until content.length()).joinToString("") { content.optJSONObject(it)?.optString("text", "").orEmpty() }
+        else -> ""
     }
 
     fun request(
@@ -197,12 +156,13 @@ object AiComposeHelper {
                 } finally {
                     conn.disconnect()
                 }
-                val msgObj = JSONObject(resp)
-                    .getJSONArray("choices")
-                    .getJSONObject(0)
-                    .getJSONObject("message")
-                
-                val content = msgObj.optString("content", "").trim()
+                val msgObj = try {
+                    JSONObject(resp).getJSONArray("choices").getJSONObject(0).getJSONObject("message")
+                } catch (_: Exception) {
+                    throw IOException("Unexpected response: ${resp.take(200)}")
+                }
+
+                val content = messageText(msgObj.opt("content")).trim()
                 val reasoning = msgObj.optString("reasoning_content", "").ifBlank { msgObj.optString("reasoning", "") }.trim()
 
                 result = if (InuConfig.AI_ONLY_ANSWER.value) {

@@ -3,6 +3,7 @@ package desu.inugram.helpers.chat
 import android.text.TextUtils
 import android.util.Base64
 import desu.inugram.InuConfig
+import desu.inugram.helpers.ai.AiProviderStore
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
@@ -67,15 +68,13 @@ object TranscribeHelper {
     @JvmStatic
     fun shouldUseCustomTranscribe(account: Int): Boolean = InuConfig.AI_TRANSCRIBE_ENABLED.value
 
-    private fun isProviderConfigured(): Boolean = when (InuConfig.AI_TRANSCRIBE_PROVIDER.value) {
-        InuConfig.TRANSCRIBE_PROVIDER_CF ->
-            InuConfig.AI_TRANSCRIBE_CF_ACCOUNT_ID.value.isNotBlank() && InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value.isNotBlank()
-        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM ->
-            InuConfig.AI_TRANSCRIBE_CUSTOM_URL.value.isNotBlank()
-        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> InuConfig.AI_PROVIDER_GEMINI_KEY.value.isNotBlank()
-        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> InuConfig.AI_PROVIDER_OPENAI_KEY.value.isNotBlank()
-        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> InuConfig.AI_PROVIDER_GROQ_KEY.value.isNotBlank()
-        else -> false
+    private fun isProviderConfigured(): Boolean {
+        val p = AiProviderStore.voiceProvider() ?: return false
+        return when (p.kind) {
+            InuConfig.TRANSCRIBE_PROVIDER_CF -> p.accountId.isNotBlank() && p.key.isNotBlank()
+            InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> p.url.isNotBlank()
+            else -> p.key.isNotBlank()
+        }
     }
 
     private fun reqKey(messageObject: MessageObject): String {
@@ -151,17 +150,17 @@ object TranscribeHelper {
                 val mime = if (isRound) "video/mp4" else "audio/ogg"
                 val fileName = if (isRound) "video.mp4" else "voice.ogg"
 
-                val provider = InuConfig.AI_TRANSCRIBE_PROVIDER.value
+                val provider = AiProviderStore.voiceProvider() ?: throw IOException("No voice provider selected")
                 val customPrompt = InuConfig.AI_TRANSCRIBE_PROMPT.value.trim()
 
                 val transcribedText = withRetry {
-                    when (provider) {
-                        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> transcribeGroq(file, fileName, mime, customPrompt)
-                        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> transcribeGemini(file, mime, customPrompt)
-                        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> transcribeOpenAI(file, fileName, mime, customPrompt)
-                        InuConfig.TRANSCRIBE_PROVIDER_CF -> transcribeCloudflare(file, customPrompt)
-                        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> transcribeCustom(file, fileName, mime, customPrompt)
-                        else -> throw IllegalStateException("Unknown provider: $provider")
+                    when (provider.kind) {
+                        InuConfig.TRANSCRIBE_PROVIDER_GROQ -> transcribeGroq(provider, file, fileName, mime, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> transcribeGemini(provider, file, mime, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_OPENAI -> transcribeOpenAI(provider, file, fileName, mime, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_CF -> transcribeCloudflare(provider, file, customPrompt)
+                        InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> transcribeCustom(provider, file, fileName, mime, customPrompt)
+                        else -> throw IllegalStateException("Unknown provider: ${provider.kind}")
                     }
                 }
 
@@ -248,11 +247,11 @@ object TranscribeHelper {
         ).show()
     }
 
-    private fun transcribeGroq(file: File, fileName: String, mime: String, prompt: String): String {
-        val apiKey = InuConfig.AI_PROVIDER_GROQ_KEY.value.trim()
+    private fun transcribeGroq(p: AiProviderStore.Provider, file: File, fileName: String, mime: String, prompt: String): String {
+        val apiKey = p.key.trim()
         val url = "https://api.groq.com/openai/v1/audio/transcriptions"
         val parts = mutableMapOf(
-            "model" to InuConfig.AI_TRANSCRIBE_GROQ_MODEL.value.trim().ifBlank { "whisper-large-v3-turbo" },
+            "model" to p.voiceModel.trim().ifBlank { "whisper-large-v3-turbo" },
             "response_format" to "json",
             "temperature" to "0"
         )
@@ -268,11 +267,11 @@ object TranscribeHelper {
         return json.optString("text", "").trim()
     }
 
-    private fun transcribeOpenAI(file: File, fileName: String, mime: String, prompt: String): String {
-        val apiKey = InuConfig.AI_PROVIDER_OPENAI_KEY.value.trim()
+    private fun transcribeOpenAI(p: AiProviderStore.Provider, file: File, fileName: String, mime: String, prompt: String): String {
+        val apiKey = p.key.trim()
         val url = "https://api.openai.com/v1/audio/transcriptions"
         val parts = mutableMapOf(
-            "model" to InuConfig.AI_TRANSCRIBE_OPENAI_MODEL.value.trim().ifBlank { "whisper-1" },
+            "model" to p.voiceModel.trim().ifBlank { "whisper-1" },
             "response_format" to "json",
             "temperature" to "0"
         )
@@ -288,14 +287,12 @@ object TranscribeHelper {
         return json.optString("text", "").trim()
     }
 
-    private fun transcribeCustom(file: File, fileName: String, mime: String, prompt: String): String {
-        var rawUrl = InuConfig.AI_TRANSCRIBE_CUSTOM_URL.value.trim()
-        if (rawUrl.isEmpty()) throw IOException("Custom endpoint URL is empty")
-        if (!rawUrl.endsWith("/audio/transcriptions")) {
-            rawUrl = rawUrl.trimEnd('/') + "/audio/transcriptions"
-        }
-        val apiKey = InuConfig.AI_TRANSCRIBE_CUSTOM_KEY.value.trim()
-        val model = InuConfig.AI_TRANSCRIBE_CUSTOM_MODEL.value.trim().ifBlank { "whisper-1" }
+    private fun transcribeCustom(p: AiProviderStore.Provider, file: File, fileName: String, mime: String, prompt: String): String {
+        val base = AiProviderStore.baseUrl(p)
+        if (base.isEmpty()) throw IOException("Custom endpoint URL is empty")
+        val rawUrl = "$base/audio/transcriptions"
+        val apiKey = p.key.trim()
+        val model = p.voiceModel.trim().ifBlank { "whisper-1" }
         val parts = mutableMapOf(
             "model" to model,
             "response_format" to "json",
@@ -315,12 +312,12 @@ object TranscribeHelper {
         return json.optString("text", "").trim()
     }
 
-    private fun transcribeGemini(file: File, mime: String, prompt: String): String {
+    private fun transcribeGemini(p: AiProviderStore.Provider, file: File, mime: String, prompt: String): String {
         if (file.length() > MAX_INLINE_AUDIO_BYTES) {
             throw IOException(LocaleController.formatString(R.string.InuAiTranscribeErrorTooLargeInline, "Gemini"))
         }
-        val apiKey = InuConfig.AI_PROVIDER_GEMINI_KEY.value.trim()
-        val model = InuConfig.AI_TRANSCRIBE_GEMINI_MODEL.value.trim().ifBlank { "gemini-3.5-flash" }
+        val apiKey = p.key.trim()
+        val model = p.voiceModel.trim().ifBlank { "gemini-3.5-flash" }
         val url = "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey"
 
         val instruction = buildString {
@@ -447,13 +444,13 @@ object TranscribeHelper {
     // entiny: only standard whisper models accept raw binary; others require Base64 JSON payload
     private val CF_BINARY_MODELS = setOf("@cf/openai/whisper", "@cf/openai/whisper-tiny-en")
 
-    private fun transcribeCloudflare(file: File, prompt: String): String {
-        val accountId = InuConfig.AI_TRANSCRIBE_CF_ACCOUNT_ID.value.trim()
-        val apiToken = InuConfig.AI_TRANSCRIBE_CF_API_TOKEN.value.trim()
+    private fun transcribeCloudflare(p: AiProviderStore.Provider, file: File, prompt: String): String {
+        val accountId = p.accountId.trim()
+        val apiToken = p.key.trim()
         if (accountId.isEmpty() || apiToken.isEmpty()) {
             throw IOException("Cloudflare Account ID or API Token missing")
         }
-        val model = InuConfig.AI_TRANSCRIBE_CF_MODEL.value.trim().ifBlank { "@cf/openai/whisper" }
+        val model = p.voiceModel.trim().ifBlank { "@cf/openai/whisper" }
         val binary = CF_BINARY_MODELS.contains(model.lowercase())
         if (!binary && file.length() > MAX_INLINE_AUDIO_BYTES) {
             throw IOException(LocaleController.formatString(R.string.InuAiTranscribeErrorTooLargeInline, "Cloudflare"))

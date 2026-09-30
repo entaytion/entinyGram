@@ -1,21 +1,14 @@
 package desu.inugram.ui.settings
 
-import android.app.Dialog
 import android.view.View
-import android.widget.TextView
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.ai.AiRole
 import desu.inugram.helpers.ai.AiRolesHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import org.telegram.ui.ActionBar.AlertDialog
-import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
 class AiRolesSettingsActivity : SettingsPageActivity() {
-
-    private var expandedId: String? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAiRoles)
 
@@ -26,84 +19,39 @@ class AiRolesSettingsActivity : SettingsPageActivity() {
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         val ctx = context ?: return
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiRoles)))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiRolesScreenDesc)))
+        items.add(
+            UItem.asTopView(
+                LocaleController.getString(R.string.InuAiRoles),
+                LocaleController.getString(R.string.InuAiRolesSubtitle),
+                "RestrictedEmoji",
+                "📝",
+            )
+        )
+        items.add(UItem.asButton(BUTTON_ADD, R.drawable.msg_add, LocaleController.getString(R.string.InuAiRoleAdd)))
+        items.add(UItem.asShadow(null))
 
-        val roles = AiRolesHelper.roles()
         val activeId = AiRolesHelper.activeRole()?.id
-        roles.forEachIndexed { index, role ->
+        for ((index, role) in AiRolesHelper.roles().withIndex()) {
+            val tags = if (role.id == activeId) listOf(LocaleController.getString(R.string.InuAiRoleTagActive)) else emptyList()
+            val preview = role.prompt.replace('\n', ' ').trim().take(80)
             items.add(
-                UItem.asRadio(ROLE_BASE + index, role.text.ifBlank { LocaleController.getString(R.string.InuAiRoleNew) }).also {
-                    it.checked = role.id == activeId
-                }
+                UItem.asCustom(
+                    InuUtils.generateId(),
+                    AiProviderCardCell(ctx, -1, role.text.ifBlank { LocaleController.getString(R.string.InuAiRoleNew) }, preview, tags, PALETTE[index % PALETTE.size]) {
+                        presentFragment(AiRoleEditActivity(role.id))
+                    }
+                )
             )
-            if (expandedId != role.id) return@forEachIndexed
-            items.add(
-                UItem.asCustom(InuUtils.generateId(), AiServiceFieldCell(ctx, LocaleController.getString(R.string.InuAiRoleNameHint), role.text, showCounter = true) {
-                    AiRolesHelper.upsertRole(role.copy(text = it))
-                    listView.adapter.update(true)
-                })
-            )
-            items.add(
-                UItem.asCustom(InuUtils.generateId(), AiServiceFieldCell(ctx, LocaleController.getString(R.string.InuAiRolePromptHint), role.prompt, android.text.InputType.TYPE_CLASS_TEXT) {
-                    AiRolesHelper.upsertRole(role.copy(prompt = it))
-                })
-            )
-            items.add(UItem.asButton(BUTTON_DELETE, LocaleController.getString(R.string.Delete)).red())
-            items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiRolePromptDesc)))
         }
-        items.add(UItem.asButton(BUTTON_ADD, R.drawable.msg_add, LocaleController.getString(R.string.InuAiRoleNew)))
         items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (item.id == BUTTON_ADD) {
-            val role = AiRole(id = AiRolesHelper.newRoleId(), text = "")
-            AiRolesHelper.upsertRole(role)
-            expandedId = role.id
-            listView.adapter.update(true)
-            return
-        }
-        if (item.id == BUTTON_DELETE) {
-            val role = expandedId?.let { id -> AiRolesHelper.roles().firstOrNull { it.id == id } } ?: return
-            confirmDelete(role)
-            return
-        }
-        val role = roleFor(item.id) ?: return
-        if (AiRolesHelper.activeRole()?.id != role.id) {
-            AiRolesHelper.setActiveRole(role.id)
-            listView.adapter.update(true)
-        } else {
-            expandedId = if (expandedId == role.id) null else role.id
-            listView.adapter.update(true)
-        }
-    }
-
-    private fun roleFor(itemId: Int): AiRole? {
-        val index = itemId - ROLE_BASE
-        return AiRolesHelper.roles().getOrNull(index)
-    }
-
-    private fun confirmDelete(role: AiRole) {
-        val ctx = context ?: return
-        val dialog = AlertDialog.Builder(ctx, resourceProvider)
-            .setTitle(role.text.ifBlank { LocaleController.getString(R.string.InuAiRoleNew) })
-            .setMessage(LocaleController.getString(R.string.InuAiRoleDeleteConfirm))
-            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-            .setPositiveButton(LocaleController.getString(R.string.Delete)) { _, _ ->
-                AiRolesHelper.deleteRole(role.id)
-                if (expandedId == role.id) expandedId = null
-                listView.adapter.update(true)
-            }
-            .create()
-        showDialog(dialog)
-        (dialog.getButton(Dialog.BUTTON_POSITIVE) as? TextView)
-            ?.setTextColor(getThemedColor(Theme.key_text_RedBold))
+        if (item.id == BUTTON_ADD) presentFragment(AiRoleEditActivity(null))
     }
 
     companion object {
         private val BUTTON_ADD = InuUtils.generateId()
-        private val BUTTON_DELETE = InuUtils.generateId()
-        private const val ROLE_BASE = 25000
+        private val PALETTE = intArrayOf(0xFF4285F4.toInt(), 0xFF10A37F.toInt(), 0xFFF55036.toInt(), 0xFF6467F2.toInt(), 0xFFF6821F.toInt(), 0xFF8E8E93.toInt())
     }
 }

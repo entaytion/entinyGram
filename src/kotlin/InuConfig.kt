@@ -601,6 +601,15 @@ object InuConfig {
     val AI_PROVIDER_GROQ_KEY = StringItem("ai_provider_groq_key", "", exportable = false)
 
     @JvmField
+    @JvmField
+    val AI_PROVIDERS = StringItem("ai_providers", "", exportable = false)
+
+    @JvmField
+    val AI_CHAT_PROVIDER_ID = StringItem("ai_chat_provider_id", "", exportable = false)
+
+    @JvmField
+    val AI_VOICE_PROVIDER_ID = StringItem("ai_voice_provider_id", "", exportable = false)
+
     val AI_PROVIDER_GEMINI_KEY = StringItem("ai_provider_gemini_key", "", exportable = false)
 
     @JvmField
@@ -661,6 +670,9 @@ object InuConfig {
     val AI_HISTORY_ENABLED = BoolItem("ai_history_enabled", true)
 
     @JvmField
+    @JvmField
+    val AI_ROLES_SEEDED = BoolItem("ai_roles_seeded", false, exportable = false)
+
     val AI_STREAM_ENABLED = BoolItem("ai_stream_enabled", true)
 
     @JvmField

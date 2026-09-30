@@ -23,11 +23,13 @@ fun showInputDialog(
     initialText: CharSequence? = null,
     selectAll: Boolean = false,
     inputType: Int = InputType.TYPE_CLASS_TEXT,
+    multiline: Boolean = false,
     onSubmit: (String) -> Boolean,
 ): AlertDialog? {
     val ctx = fragment.parentActivity ?: return null
     return showInputDialog(
         ctx, fragment.resourceProvider, title, hint, initialText, selectAll, inputType,
+        multiline = multiline,
         showDialog = { fragment.showDialog(it) },
         onSubmit = onSubmit,
     )
@@ -42,6 +44,7 @@ fun showInputDialog(
     selectAll: Boolean = false,
     inputType: Int = InputType.TYPE_CLASS_TEXT,
     adaptive: Boolean = false,
+    multiline: Boolean = false,
     showDialog: (AlertDialog) -> Unit = { it.show() },
     onSubmit: (String) -> Boolean,
 ): AlertDialog {
@@ -55,12 +58,19 @@ fun showInputDialog(
         )
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
         setTextColor(Theme.getColor(Theme.key_dialogTextBlack, theme))
-        maxLines = 1
-        setLines(1)
-        this.inputType = typedInputType
+        if (multiline) {
+            setSingleLine(false)
+            minLines = 4
+            maxLines = 8
+            this.inputType = typedInputType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        } else {
+            maxLines = 1
+            setLines(1)
+            this.inputType = typedInputType
+            setSingleLine(true)
+            imeOptions = EditorInfo.IME_ACTION_DONE
+        }
         gravity = Gravity.LEFT or Gravity.TOP
-        setSingleLine(true)
-        imeOptions = EditorInfo.IME_ACTION_DONE
         setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, theme))
         setCursorSize(AndroidUtilities.dp(20f))
         setCursorWidth(1.5f)
@@ -75,7 +85,7 @@ fun showInputDialog(
         orientation = LinearLayout.VERTICAL
         addView(
             editText,
-            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 36, Gravity.TOP or Gravity.LEFT, 24, 6, 24, 0),
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, if (multiline) LayoutHelper.WRAP_CONTENT else 36, Gravity.TOP or Gravity.LEFT, 24, 6, 24, 0),
         )
     }
     val submit = submit@{

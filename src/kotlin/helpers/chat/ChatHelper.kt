@@ -409,7 +409,7 @@ object ChatHelper {
             icons.add(R.drawable.msg_translate)
         }
 
-        if (InuConfig.AI_SUMMARY_ENABLED.value && AiComposeHelper.activeEndpoint()?.apiKey?.isNotBlank() == true && TranslateController.isSummarizable(selectedObject)) {
+        if (InuConfig.AI_SUMMARY_ENABLED.value && AiComposeHelper.activeEndpoint() != null && AiSummaryHelper.canSummarize(selectedObject)) {
             items.add(LocaleController.getString(R.string.InuAiSummary))
             options.add(OPTION_AI_SUMMARIZE)
             icons.add(R.drawable.magic_stick_solar)

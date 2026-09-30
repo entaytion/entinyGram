@@ -1,12 +1,43 @@
 package desu.inugram.helpers.ai
 
 import desu.inugram.InuConfig
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
 import java.util.UUID
 
 object AiRolesHelper {
 
     @JvmStatic
-    fun roles(): List<AiRole> = InuConfig.AI_ROLES.value
+    fun roles(): List<AiRole> {
+        seedDefaults()
+        return InuConfig.AI_ROLES.value
+    }
+
+    // entiny: one-time starter set; never re-added after the user deletes or edits roles
+    private fun seedDefaults() {
+        if (InuConfig.AI_ROLES_SEEDED.value) return
+        InuConfig.AI_ROLES_SEEDED.value = true
+        if (InuConfig.AI_ROLES.value.isNotEmpty()) return
+        val defaults = listOf(
+            AiRole(
+                newRoleId(),
+                LocaleController.getString(R.string.InuAiRolesAssistant),
+                "You are a helpful, precise assistant. Follow the instruction exactly, reply in the same language as the user's text, and add no preamble or commentary.",
+            ),
+            AiRole(
+                newRoleId(),
+                LocaleController.getString(R.string.InuAiRoleDefaultEditor),
+                "You are a meticulous copy editor. Keep the author's meaning, voice and formatting; fix mistakes and improve clarity and flow without adding new facts or changing the tone.",
+            ),
+            AiRole(
+                newRoleId(),
+                LocaleController.getString(R.string.InuAiRoleDefaultConcise),
+                "You write short, direct text. Cut filler and repetition, keep every essential fact, use plain words and short sentences, and reply in the same language as the input.",
+            ),
+        )
+        InuConfig.AI_ROLES.value = defaults
+        InuConfig.AI_ACTIVE_ROLE.value = defaults.first().id
+    }
 
     @JvmStatic
     fun activeRole(): AiRole? {

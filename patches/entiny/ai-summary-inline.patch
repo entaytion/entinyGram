@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 17:57:13 +0300
+Subject: [*] ai summary inline
+
+---
+ .../main/java/org/telegram/messenger/TranslateController.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
+@@ -147,7 +147,7 @@ public class TranslateController extends BaseController {
+         return (
+             messageObject != null &&
+             messageObject.messageOwner != null &&
+-            messageObject.messageOwner.summary_from_language != null &&
++            (messageObject.messageOwner.summary_from_language != null || messageObject.messageOwner.summaryText != null) &&
+             !messageObject.isOutOwner() &&
+             !messageObject.isRestrictedMessage &&
+             !messageObject.isSponsored() &&

@@ -1,5 +1,6 @@
 package desu.inugram.helpers.ai
 
+import desu.inugram.InuConfig
 import org.json.JSONObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
@@ -75,4 +76,44 @@ object AiModelsHelper {
             }
         }
     }
+
+    @JvmStatic
+    fun fetchProviderModels(p: AiProviderStore.Provider, voice: Boolean, callback: (Result<List<String>>) -> Unit) {
+        when (p.kind) {
+            InuConfig.TRANSCRIBE_PROVIDER_GEMINI -> fetchGeminiModels(p.key, callback)
+            InuConfig.TRANSCRIBE_PROVIDER_CF -> callback(Result.success(emptyList()))
+            else -> {
+                val whisperOnly = voice && (p.kind == InuConfig.TRANSCRIBE_PROVIDER_OPENAI || p.kind == InuConfig.TRANSCRIBE_PROVIDER_GROQ)
+                fetchOpenAiCompatModels(AiProviderStore.baseUrl(p), p.key, if (whisperOnly) "whisper" else null, callback)
+            }
+        }
+    }
+
+    // entiny: probes common API roots and returns the first one whose /models answers like an OpenAI-compatible server
+    @JvmStatic
+    fun detectEndpoint(rawUrl: String, apiKey: String, callback: (Result<String>) -> Unit) {
+        Utilities.globalQueue.postRunnable {
+            val result = runCatching {
+                var root = rawUrl.trim().trimEnd('/').removeSuffix("/chat/completions").removeSuffix("/models").trimEnd('/')
+                if (root.isEmpty()) throw IOException("empty url")
+                if (!root.contains("://")) root = "https://$root"
+                val found = linkedSetOf(root, "$root/v1", "$root/openai/v1", "$root/api/v1").firstOrNull { probeModels(it, apiKey) }
+                found ?: throw IOException("no endpoint answered")
+            }
+            AndroidUtilities.runOnUIThread { callback(result) }
+        }
+    }
+
+    private fun probeModels(base: String, apiKey: String): Boolean = runCatching {
+        val conn = (URL("$base/models").openConnection() as HttpURLConnection).apply {
+            requestMethod = "GET"
+            connectTimeout = 8_000
+            readTimeout = 8_000
+            if (apiKey.isNotBlank()) setRequestProperty("Authorization", "Bearer $apiKey")
+        }
+        val code = conn.responseCode
+        val resp = if (code in 200..299) conn.inputStream.bufferedReader().use { it.readText() } else ""
+        conn.disconnect()
+        code in 200..299 && JSONObject(resp).let { it.optJSONArray("data") != null || it.optJSONArray("models") != null }
+    }.getOrDefault(false)
 }
