@@ -75,29 +75,40 @@ class DonateBottomSheet(private val fragment: BaseFragment) : BottomSheet(fragme
     )
 
     private fun row(entry: Entry) = LinearLayout(context).apply {
+        val rtl = LocaleController.isRTL
+        val side = if (rtl) Gravity.RIGHT else Gravity.LEFT
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(24f), 0, dp(24f), 0)
         background = Theme.getSelectorDrawable(false)
-        addView(ImageView(context).apply {
+        val icon = ImageView(context).apply {
             setImageResource(entry.icon)
             setColorFilter(Theme.getColor(Theme.key_featuredStickers_addButton))
-        }, LayoutHelper.createLinear(24, 24, 0f, 0f, 16f, 0f))
-        addView(LinearLayout(context).apply {
+        }
+        val texts = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             addView(TextView(context).apply {
+                gravity = side
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
                 setTextColor(Theme.getColor(Theme.key_dialogTextBlack))
                 text = entry.title
-            })
+            }, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
             addView(TextView(context).apply {
+                gravity = side
                 setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
                 setTextColor(Theme.getColor(Theme.key_dialogTextGray3))
                 maxLines = 1
                 ellipsize = android.text.TextUtils.TruncateAt.MIDDLE
                 text = entry.value
-            })
-        }, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+            }, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT))
+        }
+        if (rtl) {
+            addView(texts, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+            addView(icon, LayoutHelper.createLinear(24, 24, 16f, 0f, 0f, 0f))
+        } else {
+            addView(icon, LayoutHelper.createLinear(24, 24, 0f, 0f, 16f, 0f))
+            addView(texts, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 1f))
+        }
         setOnClickListener {
             if (entry.url != null) {
                 dismiss()

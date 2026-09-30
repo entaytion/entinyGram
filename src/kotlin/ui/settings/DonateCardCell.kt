@@ -23,6 +23,8 @@ class DonateCardCell(
 ) : FrameLayout(context) {
 
     init {
+        val rtl = LocaleController.isRTL
+        val side = if (rtl) Gravity.RIGHT else Gravity.LEFT
         setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray))
         val textColor = Theme.getColor(Theme.key_featuredStickers_buttonText)
         val accent = Theme.getColor(Theme.key_featuredStickers_addButton)
@@ -35,12 +37,14 @@ class DonateCardCell(
             setPadding(dp(18f), dp(16f), dp(18f), dp(16f))
         }
         content.addView(TextView(context).apply {
+            gravity = side
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
             setTextColor(textColor)
             typeface = AndroidUtilities.bold()
             text = LocaleController.getString(R.string.InuDonateTitle)
-        }, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, 28f, 0f))
+        }, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, if (rtl) 28f else 0f, 0f, if (rtl) 0f else 28f, 0f))
         content.addView(TextView(context).apply {
+            gravity = side
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
             setTextColor(textColor)
             alpha = 0.9f
@@ -64,7 +68,7 @@ class DonateCardCell(
             alpha = 0.7f
             contentDescription = LocaleController.getString(R.string.InuDonateHide)
             setOnClickListener { onHide() }
-        }, LayoutHelper.createFrame(40f, 40f, Gravity.TOP or Gravity.END))
+        }, LayoutHelper.createFrame(40f, 40f, Gravity.TOP or side))
 
         addView(card, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat(), Gravity.FILL_HORIZONTAL, 12f, 12f, 12f, 4f))
     }
