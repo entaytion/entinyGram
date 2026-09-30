@@ -14,7 +14,9 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
+import desu.inugram.ui.RecentChatsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.Emoji
@@ -39,9 +41,21 @@ import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicReference
 
 object RecentChatsHelper {
-    private const val MAX_RECENT_DIALOGS = 25
-
     private val cache = SparseArray<LinkedList<Long>>()
+    private val listeners = ArrayList<Runnable>()
+
+    private fun limit(): Int = InuConfig.RECENT_CHATS_LIMIT.value.let { if (it <= 0) Int.MAX_VALUE else it }
+
+    fun addListener(r: Runnable) { synchronized(listeners) { listeners.add(r) } }
+
+    fun removeListener(r: Runnable) { synchronized(listeners) { listeners.remove(r) } }
+
+    fun notifyChanged() {
+        val copy = synchronized(listeners) { ArrayList(listeners) }
+        AndroidUtilities.runOnUIThread { copy.forEach { it.run() } }
+    }
+
+    fun entries(account: Int): List<Long> = synchronized(cache) { ArrayList(listFor(account)) }
 
     @JvmStatic
     fun load(account: Int) {
@@ -52,6 +66,7 @@ object RecentChatsHelper {
             synchronized(cache) {
                 cache.put(account, loaded)
             }
+            notifyChanged()
         }
     }
 
@@ -68,14 +83,16 @@ object RecentChatsHelper {
             val list = listFor(account)
             list.remove(dialogId)
             list.addFirst(dialogId)
-            while (list.size > MAX_RECENT_DIALOGS) list.removeLast()
+            val max = limit()
+            while (list.size > max) list.removeLast()
         }
+        notifyChanged()
         val storage = MessagesStorage.getInstance(account) ?: return
         val openedAt = System.currentTimeMillis()
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             InuDatabaseHelper.saveRecentDialog(db, dialogId, openedAt)
-            InuDatabaseHelper.trimRecentDialogs(db, MAX_RECENT_DIALOGS)
+            InuDatabaseHelper.trimRecentDialogs(db, limit())
         }
     }
 
@@ -89,10 +106,53 @@ object RecentChatsHelper {
             val db = storage.database ?: return@postRunnable
             InuDatabaseHelper.clearRecentDialogs(db)
         }
+        notifyChanged()
+    }
+
+    fun removeRecentDialog(account: Int, dialogId: Long) {
+        synchronized(cache) {
+            listFor(account).remove(dialogId)
+        }
+        val storage = MessagesStorage.getInstance(account) ?: return
+        storage.storageQueue.postRunnable {
+            val db = storage.database ?: return@postRunnable
+            InuDatabaseHelper.deleteRecentDialog(db, dialogId)
+        }
+        notifyChanged()
+    }
+
+    fun openChat(fragment: BaseFragment, dialogId: Long) {
+        val bundle = Bundle()
+        if (dialogId < 0) {
+            bundle.putLong("chat_id", -dialogId)
+            if (MessagesController.getInstance(fragment.currentAccount).isForum(dialogId)) {
+                fragment.presentFragment(TopicsFragment(bundle))
+            } else {
+                fragment.presentFragment(ChatActivity(bundle))
+            }
+        } else {
+            bundle.putLong("user_id", dialogId)
+            fragment.presentFragment(ChatActivity(bundle))
+        }
+    }
+
+    fun openProfile(fragment: BaseFragment, dialogId: Long) {
+        val bundle = Bundle()
+        if (dialogId < 0) bundle.putLong("chat_id", -dialogId) else bundle.putLong("user_id", dialogId)
+        fragment.presentFragment(ProfileActivity(bundle))
     }
 
     @JvmStatic
     fun show(fragment: BaseFragment, anchor: View) {
+        when (InuConfig.RECENT_CHATS_STYLE.value) {
+            InuConfig.RecentChatsStyleItem.POPUP -> showPopup(fragment, anchor)
+            InuConfig.RecentChatsStyleItem.SIDEBAR -> if (!RecentChatsSidebar.toggleSidebar(fragment)) showPopup(fragment, anchor)
+            InuConfig.RecentChatsStyleItem.STRIP -> if (!RecentChatsSidebar.toggleStrip(fragment)) showPopup(fragment, anchor)
+            else -> fragment.presentFragment(RecentChatsActivity())
+        }
+    }
+
+    private fun showPopup(fragment: BaseFragment, anchor: View) {
         val currentAccount = fragment.currentAccount
         val context = fragment.parentActivity ?: return
         val fragmentView = fragment.fragmentView ?: return
@@ -127,6 +187,10 @@ object RecentChatsHelper {
         titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
         titleTextView.text = getString(R.string.InuRecentChats)
         titleTextView.typeface = AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM)
+        titleTextView.setOnClickListener {
+            scrimPopupWindowRef.getAndSet(null)?.dismiss()
+            fragment.presentFragment(RecentChatsActivity())
+        }
         headerView.addView(titleTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 24, Gravity.LEFT))
 
         val clearImageView = ImageView(context)
@@ -209,24 +273,11 @@ object RecentChatsHelper {
             cell.background = Theme.getSelectorDrawable(Theme.getColor(Theme.key_listSelector), false)
             cell.setOnClickListener {
                 scrimPopupWindowRef.getAndSet(null)?.dismiss()
-                val bundle = Bundle()
-                if (dialogId < 0) {
-                    bundle.putLong("chat_id", -dialogId)
-                    if (controller.isForum(dialogId)) {
-                        fragment.presentFragment(TopicsFragment(bundle))
-                    } else {
-                        fragment.presentFragment(ChatActivity(bundle))
-                    }
-                } else {
-                    bundle.putLong("user_id", dialogId)
-                    fragment.presentFragment(ChatActivity(bundle))
-                }
+                openChat(fragment, dialogId)
             }
             cell.setOnLongClickListener {
                 scrimPopupWindowRef.getAndSet(null)?.dismiss()
-                val bundle = Bundle()
-                if (dialogId < 0) bundle.putLong("chat_id", -dialogId) else bundle.putLong("user_id", dialogId)
-                fragment.presentFragment(ProfileActivity(bundle))
+                openProfile(fragment, dialogId)
                 true
             }
             layout.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))

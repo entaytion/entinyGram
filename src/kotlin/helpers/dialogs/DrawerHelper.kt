@@ -643,6 +643,13 @@ object DrawerHelper {
                 close()
             }
 
+            DrawerLayoutAdapter.ITEM_RECENT_CHATS -> {
+                val top = nav.lastFragment
+                val target = if (top is MainTabsActivity) top.currentVisibleFragment else top
+                close()
+                if (target != null) RecentChatsHelper.show(target, target.actionBar)
+            }
+
             else -> close()
         }
     }

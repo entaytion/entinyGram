@@ -838,6 +838,16 @@
     <string name="InuRecentChats">Recent chats</string>
     <string name="InuClearRecentChats">Clear recent chats</string>
     <string name="InuClearRecentChatsAlert">This will clear the list of recently opened chats. This doesn\'t delete any chats or messages.</string>
+    <string name="InuRecentChatsStyle">Style</string>
+    <string name="InuRecentChatsStylePopup">Popup</string>
+    <string name="InuRecentChatsStyleSidebar">Side panel</string>
+    <string name="InuRecentChatsStylePage">Full page</string>
+    <string name="InuRecentChatsStyleStrip">Under folders</string>
+    <string name="InuRecentChatsStyleInfo">Popup lists recent chats. Side panel and the strip under folders appear when you tap Recent chats in the menu and close on the next tap. Full page shows the whole history.</string>
+    <string name="InuRecentChatsLimit">History limit</string>
+    <string name="InuRecentChatsLimitUnlimited">Unlimited</string>
+    <string name="InuRecentChatsUsers">Users</string>
+    <string name="InuRecentChatsEmpty">Nothing here yet</string>
 
     <string name="InuAdditional">Additional</string>
     <string name="InuAboutGitHub">GitHub</string>

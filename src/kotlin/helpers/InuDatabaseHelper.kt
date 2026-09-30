@@ -352,6 +352,13 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
+    fun deleteRecentDialog(db: SQLiteDatabase, dialogId: Long) {
+        val query = db.executeFast("DELETE FROM inu_recent_dialogs WHERE dialog_id = ?")
+        query.bindLong(1, dialogId)
+        query.step()
+        query.dispose()
+    }
+
     fun clearRecentDialogs(db: SQLiteDatabase) {
         db.executeFast("DELETE FROM inu_recent_dialogs").stepThis().dispose()
     }

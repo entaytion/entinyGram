@@ -464,3 +464,5 @@ entiny/translate-failure-bulletin.patch
 entiny/input-menu-reserve.patch
 entiny/call-rotation.patch
 entiny/ios-rich-button-gap.patch
+entiny/recent-chats-sidebar.patch
+entiny/recent-chats-strip.patch

@@ -267,6 +267,9 @@ class DrawerLayoutAdapter(
         items.add(Item(6, LocaleController.getString(R.string.Contacts), R.drawable.msg_contacts))
         items.add(Item(10, LocaleController.getString(R.string.Calls), R.drawable.msg_calls))
         items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
+        if (InuConfig.DRAWER_RECENT_CHATS.value) {
+            items.add(Item(ITEM_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats), R.drawable.msg_recent))
+        }
         if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.FEED)) {
             items.add(Item(ITEM_FEED, LocaleController.getString(R.string.InuFeed), R.drawable.msg_channel))
         }
@@ -284,6 +287,7 @@ class DrawerLayoutAdapter(
         const val ITEM_GHOST = 19
         const val ITEM_SCROLL_TOP = 20
         const val ITEM_FEED = 21
+        const val ITEM_RECENT_CHATS = 22
     }
 
     class Item private constructor(

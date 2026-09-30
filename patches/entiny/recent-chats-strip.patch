@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 11:04:30 +0300
+Subject: [+] recent chats strip under folders
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -2108,12 +2108,16 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 additionalPadding += h;
+             }
+ 
++            final int inu_strip = desu.inugram.helpers.dialogs.RecentChatsSidebar.stripTopPush(DialogsActivity.this);
++            t += inu_strip;
++            additionalPadding += inu_strip;
++
+             if (!NonIslandHelper.foldersBar() && !FolderHelper.atBottom()) {
+                 t -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+                 additionalPadding -= dp(5 * Math.max(filterTabsVisibility, topPanelsVisibility));
+             }
+ 
+-            final int b = calculateListViewPaddingBottom();
++            final int b = calculateListViewPaddingBottom() + desu.inugram.helpers.dialogs.RecentChatsSidebar.stripBottomPush(DialogsActivity.this);
+             if (t != topPadding || b != getPaddingBottom()) {
+                 setTopGlowOffset(t);
+                 setPadding(0, t, 0, b);

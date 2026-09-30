@@ -1338,6 +1338,16 @@
     <string name="InuRecentChats">最近のチャット</string>
     <string name="InuClearRecentChats">最近のチャットをクリア</string>
     <string name="InuClearRecentChatsAlert">最近開いたチャットのリストがクリアされます。チャットやメッセージが削除されることはありません。</string>
+    <string name="InuRecentChatsStyle">スタイル</string>
+    <string name="InuRecentChatsStylePopup">ポップアップ</string>
+    <string name="InuRecentChatsStyleSidebar">サイドパネル</string>
+    <string name="InuRecentChatsStylePage">全画面</string>
+    <string name="InuRecentChatsStyleStrip">フォルダの下</string>
+    <string name="InuRecentChatsStyleInfo">ポップアップは一覧を表示します。サイドパネルとフォルダ下のバーは、メニューの「最近のチャット」をタップすると表示され、もう一度タップすると閉じます。全画面は履歴全体を表示します。</string>
+    <string name="InuRecentChatsLimit">履歴の上限</string>
+    <string name="InuRecentChatsLimitUnlimited">無制限</string>
+    <string name="InuRecentChatsUsers">ユーザー</string>
+    <string name="InuRecentChatsEmpty">まだ何もありません</string>
     <string name="InuAiProvidersTitle">AIプロバイダー</string>
     <string name="InuAiProvidersUniversalDesc">名前前のアイコンで対応範囲がわかります（∞はチャット+音声、キーボードはチャットのみ、マイクは音声のみ）— タップして設定し、各スコープでアクティブなものを選んでください。</string>
     <string name="InuAiProvidersActiveForChat">チャットで有効</string>

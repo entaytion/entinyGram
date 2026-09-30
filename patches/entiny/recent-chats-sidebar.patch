@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 10:10:18 +0300
+Subject: [*] recent chats sidebar
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java    | 1 +
+ TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -9127,6 +9127,7 @@ public class ChatActivity extends BaseFragment implements
+         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
+         Timer.finish(t);
+ 
++        desu.inugram.helpers.dialogs.RecentChatsSidebar.attach(this, getDialogId());
+         return fragmentView;
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -5785,6 +5785,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         checkUi_searchFieldStyle();
+ 
+         ViewCompat.setOnApplyWindowInsetsListener(fragmentView, this::onApplyWindowInsets);
++        if (!onlySelect && folderId == 0) desu.inugram.helpers.dialogs.RecentChatsSidebar.attach(this, 0);
+         return fragmentView;
+     }
+ 

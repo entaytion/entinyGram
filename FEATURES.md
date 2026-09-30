@@ -87,7 +87,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **auto marquee** for long titles - *inspired by auto_marquee plugin (@chestertech)*
 - 📡 **show spoilers directly**
 - 📡 **customizable bottom tabs**, with an optional separate Search button - *button layout ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
-- 📡 **recent chats quick-switcher** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
+- 📡 **recent chats**: popup, side panel or full page with tabs, search and history limit - *inspired by [exteraless](https://github.com/exteraless/exteraless), [Aprel Gram](https://t.me/aprelmods) and [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **clear cache** and **restart app** shortcuts in the chats menu
 - 📡 **customizable settings screen**: reorder and hide rows
 - 📡 **hide accounts list** in settings

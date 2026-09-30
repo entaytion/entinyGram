@@ -1348,6 +1348,16 @@
     <string name="InuRecentChats">最近聊天</string>
     <string name="InuClearRecentChats">清除最近聊天</string>
     <string name="InuClearRecentChatsAlert">这将清除最近打开的聊天列表。不会删除任何聊天或消息。</string>
+    <string name="InuRecentChatsStyle">样式</string>
+    <string name="InuRecentChatsStylePopup">弹出窗口</string>
+    <string name="InuRecentChatsStyleSidebar">侧边栏</string>
+    <string name="InuRecentChatsStylePage">全屏页面</string>
+    <string name="InuRecentChatsStyleStrip">文件夹下方</string>
+    <string name="InuRecentChatsStyleInfo">弹出窗口显示列表。点击菜单中的“最近聊天”会显示侧边栏和文件夹下方的栏，再次点击则关闭。全屏页面显示完整历史。</string>
+    <string name="InuRecentChatsLimit">历史上限</string>
+    <string name="InuRecentChatsLimitUnlimited">无限制</string>
+    <string name="InuRecentChatsUsers">用户</string>
+    <string name="InuRecentChatsEmpty">暂无内容</string>
     <string name="InuAiProvidersTitle">AI 提供商</string>
     <string name="InuAiProvidersUniversalDesc">名称前的图标显示支持范围（∞ 聊天+语音，键盘仅聊天，麦克风仅语音）——点击配置，再为每个范围选择启用项。</string>
     <string name="InuAiProvidersActiveForChat">用于聊天</string>

@@ -157,6 +157,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     InuConfig.SHOW_DRAWER_ACCOUNTS.value,
                 )
             )
+            items.add(UItem.asCheck(TOGGLE_DRAWER_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats)).setChecked(InuConfig.DRAWER_RECENT_CHATS.value))
         }
         items.add(
             UItem.asCheck(
@@ -407,6 +408,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
 
+            TOGGLE_DRAWER_RECENT_CHATS -> {
+                val new = InuConfig.DRAWER_RECENT_CHATS.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
             TOGGLE_NON_ISLAND_FOLDERS_BAR -> {
                 val new = InuConfig.NON_ISLAND_FOLDERS_BAR.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -566,6 +572,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DRAWER_BACK_GESTURE = InuUtils.generateId()
         private val TOGGLE_DRAWER_M3_SECTIONS = InuUtils.generateId()
         private val TOGGLE_SHOW_DRAWER_ACCOUNTS = InuUtils.generateId()
+        private val TOGGLE_DRAWER_RECENT_CHATS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_FOLDERS_BAR = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_GLOBAL_SEARCH = InuUtils.generateId()
@@ -654,6 +661,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
                 SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),
                 SearchRegistry.Entry("show-drawer-accounts", R.string.InuShowDrawerAccounts, TOGGLE_SHOW_DRAWER_ACCOUNTS),
+                SearchRegistry.Entry("drawer-recent-chats", R.string.InuRecentChats, TOGGLE_DRAWER_RECENT_CHATS),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),

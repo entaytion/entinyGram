@@ -1452,6 +1452,16 @@
     <string name="InuRecentChats">Недавние чаты</string>
     <string name="InuClearRecentChats">Очистить недавние чаты</string>
     <string name="InuClearRecentChatsAlert">Это очистит список недавно открытых чатов. Никакие чаты или сообщения не будут удалены.</string>
+    <string name="InuRecentChatsStyle">Стиль</string>
+    <string name="InuRecentChatsStylePopup">Всплывающее окно</string>
+    <string name="InuRecentChatsStyleSidebar">Боковая панель</string>
+    <string name="InuRecentChatsStylePage">Полная страница</string>
+    <string name="InuRecentChatsStyleStrip">Под папками</string>
+    <string name="InuRecentChatsStyleInfo">Всплывающее окно показывает список. Боковая панель и полоска под папками появляются по нажатию на «Недавние чаты» в меню и закрываются следующим нажатием. Полная страница показывает всю историю.</string>
+    <string name="InuRecentChatsLimit">Лимит истории</string>
+    <string name="InuRecentChatsLimitUnlimited">Без лимита</string>
+    <string name="InuRecentChatsUsers">Пользователи</string>
+    <string name="InuRecentChatsEmpty">Пока пусто</string>
     <string name="InuAiInsertQuoteInfo">Вставляет результат в поле сообщения как цитату вместо замены черновика.</string>
     <string name="InuAiOnlyAnswerInfo">Скрывает ход рассуждений для моделей, которые его передают, показывая только окончательный ответ.</string>
     <string name="InuAiProviderCustomNameHint">Название (необязательно)</string>

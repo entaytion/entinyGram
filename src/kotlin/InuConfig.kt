@@ -441,6 +441,8 @@ object InuConfig {
     val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)
 
     @JvmField
+    val DRAWER_RECENT_CHATS = BoolItem("drawer_recent_chats", false)
+    @JvmField
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
     @JvmField
@@ -1642,6 +1644,20 @@ object InuConfig {
     @JvmField
     val HIDE_RECENT_CHATS_SHORTCUTS = BoolItem("hide_recent_chats_shortcuts", false)
 
+    class RecentChatsStyleItem : IntItem("recent_chats_style", POPUP) {
+        companion object {
+            const val POPUP = 0
+            const val SIDEBAR = 1
+            const val PAGE = 2
+            const val STRIP = 3
+        }
+    }
+
+    @JvmField
+    val RECENT_CHATS_STYLE = RecentChatsStyleItem()
+
+    @JvmField
+    val RECENT_CHATS_LIMIT = IntItem("recent_chats_limit", 25)
     @JvmField
     val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
 

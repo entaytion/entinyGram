@@ -701,6 +701,16 @@
     <string name="InuRecentChats">Нещодавні чати</string>
     <string name="InuClearRecentChats">Очистити недавні чати</string>
     <string name="InuClearRecentChatsAlert">Це очистить список нещодавно відкритих чатів. Жодні чати чи повідомлення не будуть видалені.</string>
+    <string name="InuRecentChatsStyle">Стиль</string>
+    <string name="InuRecentChatsStylePopup">Спливне вікно</string>
+    <string name="InuRecentChatsStyleSidebar">Бічна панель</string>
+    <string name="InuRecentChatsStylePage">Повна сторінка</string>
+    <string name="InuRecentChatsStyleStrip">Під папками</string>
+    <string name="InuRecentChatsStyleInfo">Спливне вікно показує список. Бічна панель і смужка під папками з’являються після натискання на «Нещодавні чати» в меню й закриваються наступним натисканням. Повна сторінка показує всю історію.</string>
+    <string name="InuRecentChatsLimit">Ліміт історії</string>
+    <string name="InuRecentChatsLimitUnlimited">Без ліміту</string>
+    <string name="InuRecentChatsUsers">Користувачі</string>
+    <string name="InuRecentChatsEmpty">Поки що порожньо</string>
 
     <string name="InuAboutGitHub">GitHub</string>
     <string name="InuAboutChannel">Канал оновлень</string>

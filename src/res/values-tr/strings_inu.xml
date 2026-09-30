@@ -1346,6 +1346,16 @@
     <string name="InuRecentChats">Son sohbetler</string>
     <string name="InuClearRecentChats">Son sohbetleri temizle</string>
     <string name="InuClearRecentChatsAlert">Bu, son açılan sohbetlerin listesini temizler. Herhangi bir sohbet veya mesaj silinmez.</string>
+    <string name="InuRecentChatsStyle">Stil</string>
+    <string name="InuRecentChatsStylePopup">Açılır pencere</string>
+    <string name="InuRecentChatsStyleSidebar">Yan panel</string>
+    <string name="InuRecentChatsStylePage">Tam sayfa</string>
+    <string name="InuRecentChatsStyleStrip">Klasörlerin altında</string>
+    <string name="InuRecentChatsStyleInfo">Açılır pencere listeyi gösterir. Yan panel ve klasör altı şerit, menüde Son sohbetler seçeneğine dokununca görünür ve bir sonraki dokunuşta kapanır. Tam sayfa tüm geçmişi gösterir.</string>
+    <string name="InuRecentChatsLimit">Geçmiş sınırı</string>
+    <string name="InuRecentChatsLimitUnlimited">Sınırsız</string>
+    <string name="InuRecentChatsUsers">Kullanıcılar</string>
+    <string name="InuRecentChatsEmpty">Henüz boş</string>
     <string name="InuAiProvidersTitle">YZ Sağlayıcıları</string>
     <string name="InuAiProvidersUniversalDesc">Adın önündeki simge desteği gösterir (∞ sohbet+ses, klavye yalnızca sohbet, mikrofon yalnızca ses) — dokunup yapılandırın, ardından her kapsam için birini etkinleştirin.</string>
     <string name="InuAiProvidersActiveForChat">Sohbet için etkin</string>
