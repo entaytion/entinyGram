@@ -436,7 +436,6 @@ entiny/hide-recent-chats-shortcut.patch
 entiny/theme-switch-recovery.patch
 entiny/badge-emoji-size.patch
 entiny/confirm-send-preview-fix.patch
-entiny/ios-input-slowmode-fix.patch
 entiny/animated-preview-speed-fix.patch
 entiny/presence-dots-ttl-overlap.patch
 entiny/translate-in-send-preview.patch
@@ -447,7 +446,6 @@ entiny/clock-format.patch
 entiny/chat-header-no-pill.patch
 entiny/saved-deleted-capture.patch
 entiny/share-caption-clear.patch
-entiny/ios-input-button-spacing.patch
 entiny/feed-header-no-pill.patch
 entiny/proxy-link-alert.patch
 entiny/main-tabs-search-gap.patch
@@ -463,7 +461,6 @@ entiny/archive-lock-once.patch
 entiny/translate-failure-bulletin.patch
 entiny/input-menu-reserve.patch
 entiny/call-rotation.patch
-entiny/ios-rich-button-gap.patch
 entiny/recent-chats-sidebar.patch
 entiny/recent-chats-strip.patch
 entiny/background-service-toggle.patch
