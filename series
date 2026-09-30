@@ -462,7 +462,10 @@ entiny/translate-failure-bulletin.patch
 entiny/input-menu-reserve.patch
 entiny/call-rotation.patch
 entiny/recent-chats-sidebar.patch
+entiny/m3-tabs-full-width.patch
+entiny/service-notification-icon.patch
 entiny/recent-chats-strip.patch
+entiny/voice-preview-no-confirm.patch
 entiny/background-service-toggle.patch
 entiny/device-spoof.patch
 entiny/ai-summary-inline.patch

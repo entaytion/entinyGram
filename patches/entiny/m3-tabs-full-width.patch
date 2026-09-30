@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 10:46:38 +0300
+Subject: [*] m3 bottom tabs full width
+
+---
+ .../src/main/java/org/telegram/ui/MainTabsActivity.java  | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -485,7 +485,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         tabsBarContainer.setClipChildren(false);
+         tabsBarContainer.setClipToPadding(false);
+         tabsBarContainer.setPadding(dp(2), 0, dp(2), 0);
+-        tabsBarContainer.addView(tabsView, new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT));
++        M3MainTabsHelper.applyTabsBar(tabsBarContainer);
++        tabsBarContainer.addView(tabsView, M3MainTabsHelper.tabsLayoutParams(new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT)));
+         if (searchTabContainer != null) {
+             LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
+             searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 4)));
+@@ -494,7 +495,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             tabsBarContainer.addView(searchTabContainer, searchParams);
+         }
+         tabsBarContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
+-        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
++        tabsViewWrapper.addView(tabsBarContainer, LayoutHelper.createFrame(M3MainTabsHelper.isEnabled() ? LayoutHelper.MATCH_PARENT : LayoutHelper.WRAP_CONTENT, MainTabsHelper.getMainTabsHeightWithMargins(), Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL));
+         tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
+         tabsViewWrapper.setClipToPadding(false);
+         M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
+@@ -1209,6 +1210,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+ 
+     private void repositionSearchButton() {
+         if (tabsView == null || tabsViewWrapper == null || tabsBarContainer == null) return;
++        if (M3MainTabsHelper.isEnabled()) {
++            tabsBarContainer.setTranslationX(0f);
++            return;
++        }
+         final ViewGroup.LayoutParams baseTabsLp = tabsView.getLayoutParams();
+         if (!(baseTabsLp instanceof LinearLayout.LayoutParams)) return;
+         final LinearLayout.LayoutParams tabsLp = (LinearLayout.LayoutParams) baseTabsLp;

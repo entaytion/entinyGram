@@ -165,18 +165,23 @@ class PillStackController(
     }
 
     private fun rowParams(): ViewGroup.MarginLayoutParams {
+        // entiny: tighter gap on the menu side, so the pill sits closer to the three dots
+        val menuSide = 2f
+        val otherSide = 6f
+        val left = if (LocaleController.isRTL) menuSide else otherSide
+        val right = if (LocaleController.isRTL) otherSide else menuSide
         if (host is LinearLayout) {
             return LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT
             ).apply {
-                leftMargin = AndroidUtilities.dp(6f)
-                rightMargin = AndroidUtilities.dp(6f)
+                leftMargin = AndroidUtilities.dp(left)
+                rightMargin = AndroidUtilities.dp(right)
             }
         }
         return LayoutHelper.createFrame(
             LayoutHelper.WRAP_CONTENT, LayoutHelper.MATCH_PARENT.toFloat(),
             (if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT) or Gravity.CENTER_VERTICAL,
-            6f, 0f, 6f, 0f
+            left, 0f, right, 0f
         )
     }
 

@@ -11,6 +11,7 @@ import android.graphics.drawable.RippleDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import desu.inugram.helpers.dialogs.MainTabsHelper
 import me.vkryl.android.AnimatorUtils
 import org.telegram.messenger.AndroidUtilities.dp
@@ -86,6 +87,16 @@ object M3MainTabsHelper {
         tabsView.setMaxWidth(0)
         tabsView.setPadding(0, 0, 0, 0)
     }
+
+    @JvmStatic
+    fun applyTabsBar(bar: LinearLayout) {
+        if (!isEnabled) return
+        bar.setPadding(0, 0, 0, 0)
+    }
+
+    @JvmStatic
+    fun tabsLayoutParams(default: LinearLayout.LayoutParams): LinearLayout.LayoutParams =
+        if (isEnabled) LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f) else default
 
     private class IndicatorMaskDrawable : Drawable() {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)

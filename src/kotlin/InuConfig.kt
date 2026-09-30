@@ -442,6 +442,7 @@ object InuConfig {
 
     @JvmField
     val DRAWER_RECENT_CHATS = BoolItem("drawer_recent_chats", false)
+
     @JvmField
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
 
@@ -598,10 +599,6 @@ object InuConfig {
     val AI_CHAT_ACTIVE_PROVIDER = IntItem("ai_chat_active_provider", TRANSCRIBE_PROVIDER_GEMINI)
 
     @JvmField
-    val AI_PROVIDER_GROQ_KEY = StringItem("ai_provider_groq_key", "", exportable = false)
-
-    @JvmField
-    @JvmField
     val AI_PROVIDERS = StringItem("ai_providers", "", exportable = false)
 
     @JvmField
@@ -610,6 +607,10 @@ object InuConfig {
     @JvmField
     val AI_VOICE_PROVIDER_ID = StringItem("ai_voice_provider_id", "", exportable = false)
 
+    @JvmField
+    val AI_PROVIDER_GROQ_KEY = StringItem("ai_provider_groq_key", "", exportable = false)
+
+    @JvmField
     val AI_PROVIDER_GEMINI_KEY = StringItem("ai_provider_gemini_key", "", exportable = false)
 
     @JvmField
@@ -667,12 +668,12 @@ object InuConfig {
     val AI_ACTIVE_ROLE = StringItem("ai_active_role", "", exportable = false)
 
     @JvmField
+    val AI_ROLES_SEEDED = BoolItem("ai_roles_seeded", false, exportable = false)
+
+    @JvmField
     val AI_HISTORY_ENABLED = BoolItem("ai_history_enabled", true)
 
     @JvmField
-    @JvmField
-    val AI_ROLES_SEEDED = BoolItem("ai_roles_seeded", false, exportable = false)
-
     val AI_STREAM_ENABLED = BoolItem("ai_stream_enabled", true)
 
     @JvmField
@@ -1547,6 +1548,7 @@ object InuConfig {
 
     @JvmField
     val FOREGROUND_PUSH_SERVICE = BoolItem("foreground_push_service", false)
+
     @JvmField
     val DEVICE_SPOOF = BoolItem("device_spoof", false)
 
@@ -1567,6 +1569,7 @@ object InuConfig {
 
     @JvmField
     val DEVICE_SPOOF_HIDE_INSTALLER = BoolItem("device_spoof_hide_installer", false)
+
     @JvmField
     val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
 
@@ -1692,6 +1695,7 @@ object InuConfig {
 
     @JvmField
     val RECENT_CHATS_LIMIT = IntItem("recent_chats_limit", 25)
+
     @JvmField
     val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
 

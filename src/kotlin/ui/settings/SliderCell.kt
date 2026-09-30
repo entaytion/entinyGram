@@ -78,6 +78,11 @@ class SliderCell(
             Theme.RIPPLE_MASK_CIRCLE_20DP,
         )
         scaleType = ImageView.ScaleType.CENTER_INSIDE
+        // entiny: the list only looks at direct children for clicks, so without this it cancels the tap as a row click
+        setOnTouchListener { v, event ->
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) v.parent?.requestDisallowInterceptTouchEvent(true)
+            false
+        }
         setOnClickListener {
             if (value != defaultValue) {
                 setValue(defaultValue, syncSlider = true)

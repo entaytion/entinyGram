@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 11:08:11 +0300
+Subject: [*] no voice confirm in recording preview
+
+---
+ .../org/telegram/ui/Components/ChatActivityEnterView.java   | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -7823,12 +7823,6 @@ public class ChatActivityEnterView extends FrameLayout implements
+             })) {
+                 return;
+             }
+-            // entiny: optional "are you sure" prompt before sending a recorded voice/video message
+-            if (allowConfirmFinal && (audioToSend != null || videoToSendMessageObject != null) && desu.inugram.InuConfig.CONFIRM_SEND_VOICE.getValue()) {
+-                AlertsCreator.createSimpleAlert(getContext(), null, LocaleController.getString(R.string.InuConfirmSendVoiceMessage), LocaleController.getString(R.string.Send), () ->
+-                        sendMessageInternal(notify, scheduleDate, scheduleRepeatPeriod, payStars, false), resourcesProvider).show();
+-                return;
+-            }
+             dismissSendPreviewSent = true;
+             if (videoToSendMessageObject != null) {
+                 delegate.needStartRecordVideo(4, notify, scheduleDate, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId, payStars);
