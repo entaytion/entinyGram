@@ -16,7 +16,8 @@ const ENDPOINT = 'https://entaytion.is-a.dev/api/entinygram/badges'
 const target = join(rootDir, 'src/res/raw/inu_badges_bundled.json')
 
 step(`Fetching ${ENDPOINT}`)
-const res = await fetch(ENDPOINT)
+// The CDN serves the manifest for up to an hour; a cache-buster keeps the bundle from capturing a stale copy.
+const res = await fetch(`${ENDPOINT}?t=${Date.now()}`)
 if (!res.ok) {
   throw new Error(`Fetch failed: ${res.status} ${res.statusText}`)
 }

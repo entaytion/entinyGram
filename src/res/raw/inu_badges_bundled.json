@@ -1,5 +1,5 @@
 {
-  "version": 1789059048,
+  "version": 1790754148,
   "badges": [
     {
       "slug": "entiny-channel",
@@ -63,6 +63,48 @@
       },
       "icon": "inu_entiny_first",
       "emojiId": "5264955358807369439"
+    },
+    {
+      "slug": "entiny-plugins",
+      "title": {
+        "en": "entinyGram plugins channel",
+        "uk": "Канал з плагінами entinyGram",
+        "ru": "Канал с плагинами entinyGram",
+        "tr": "entinyGram eklenti kanalı",
+        "ja": "entinyGramプラグインチャンネル",
+        "zh": "entinyGram 插件频道"
+      },
+      "description": {
+        "en": "Channel with plugins for entinyGram",
+        "uk": "Канал із плагінами для entinyGram",
+        "ru": "Канал с плагинами для entinyGram",
+        "tr": "entinyGram için eklentilerin paylaşıldığı kanal",
+        "ja": "entinyGram用プラグインを配布するチャンネル",
+        "zh": "发布 entinyGram 插件的频道"
+      },
+      "icon": "inu_badge_entiny",
+      "emojiId": "5325747421131612375"
+    },
+    {
+      "slug": "entiny-settings",
+      "title": {
+        "en": "entinyGram settings channel",
+        "uk": "Канал з налаштуваннями entinyGram",
+        "ru": "Канал с настройками entinyGram",
+        "tr": "entinyGram ayarlar kanalı",
+        "ja": "entinyGram設定チャンネル",
+        "zh": "entinyGram 设置频道"
+      },
+      "description": {
+        "en": "Channel with entinyGram settings and configs",
+        "uk": "Канал із налаштуваннями та конфігами entinyGram",
+        "ru": "Канал с настройками и конфигами entinyGram",
+        "tr": "entinyGram ayarları ve yapılandırmalarının paylaşıldığı kanal",
+        "ja": "entinyGramの設定と構成を共有するチャンネル",
+        "zh": "分享 entinyGram 设置和配置的频道"
+      },
+      "icon": "inu_badge_entiny",
+      "emojiId": "5323484093625707895"
     },
     {
       "slug": "entiny-tester",
@@ -130,6 +172,21 @@
   ],
   "holders": [
     {
+      "id": "1835650",
+      "kind": "user",
+      "badge": "entiny-tester"
+    },
+    {
+      "id": "309315250",
+      "kind": "user",
+      "badge": "entiny-tester"
+    },
+    {
+      "id": "483891324",
+      "kind": "user",
+      "badge": "entiny-tester"
+    },
+    {
       "id": "650849996",
       "kind": "user",
       "badge": "entiny-dev"
@@ -138,6 +195,21 @@
       "id": "715704672",
       "kind": "user",
       "badge": "entiny-tester"
+    },
+    {
+      "id": "1297720534",
+      "kind": "chat",
+      "badge": "entiny-settings"
+    },
+    {
+      "id": "1297720534",
+      "kind": "user",
+      "badge": "entiny-channel"
+    },
+    {
+      "id": "1605082805",
+      "kind": "chat",
+      "badge": "entiny-plugins"
     },
     {
       "id": "1787945512",
@@ -157,7 +229,7 @@
     {
       "id": "3915376475",
       "kind": "chat",
-      "badge": "entiny-channel"
+      "badge": "entiny-settings"
     },
     {
       "id": "3968318575",
@@ -178,6 +250,11 @@
       "id": "4346771715",
       "kind": "chat",
       "badge": "entiny-channel"
+    },
+    {
+      "id": "7235581595",
+      "kind": "user",
+      "badge": "entiny-tester"
     },
     {
       "id": "7448925421",
