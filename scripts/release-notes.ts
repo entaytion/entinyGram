@@ -12,9 +12,9 @@ import { join, resolve } from 'node:path'
  *   }
  *
  * Config:
- *   GEMINI_API_KEY  - required for AI mode.
- *   GEMINI_MODEL    - optional, defaults to `gemini-3.1-flash-lite`.
+ *   GEMINI_API_KEY  - tried first; available models are fetched live, newest flash first.
  *   GEMINI_BASE_URL - optional; OpenAI-compatible chat/completions endpoint.
+ * Each model gets one attempt, the whole AI stage is capped at ~3 minutes, then the rule-based fallback.
  *   artifactDir     - argv[2], defaults to `out`.
  *
  * If no key is present — or the API call fails — a rule-based fallback is used.
@@ -33,20 +33,41 @@ interface RegistryEntry { slug: string; label: string }
 const artifactDir = resolve(process.argv[2] ?? 'out')
 const infoPath = join(artifactDir, 'build-info.json')
 
-const baseUrl = (process.env.GEMINI_BASE_URL ?? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions').replace(/\/+$/, '')
+const geminiUrl = (process.env.GEMINI_BASE_URL ?? 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions').replace(/\/+$/, '')
 
-// Strongest first. This is an extraction task with hard constraints, and the -lite tier is the
-// weakest at following them - it was the one inventing "accordion editor"-style detail and
-// reshuffling features into the wrong section. It stays only as a fallback if the better model is
-// unavailable on the key.
-const MODELS = Array.from(new Set([
-  process.env.GEMINI_MODEL,
-  'gemini-3.8-flash',
-  'gemini-3.7-flash',
-  'gemini-3.6-flash',
-  'gemini-3.5-flash',
-  'gemini-3.1-flash-lite',
-].filter((m): m is string => Boolean(m))))
+interface Candidate { url: string, key: string, model: string }
+
+/** Text Gemini models the key can see, newest first; flash before lite (weakest at following constraints), pro last. */
+async function geminiModels(key: string): Promise<string[]> {
+  const res = await fetch(geminiUrl.replace(/\/chat\/completions$/, '/models'), {
+    headers: { Authorization: `Bearer ${key}` },
+    signal: AbortSignal.timeout(15000),
+  })
+  if (!res.ok) throw new Error(`gemini models -> ${res.status}`)
+  const data = await res.json() as { data: { id: string }[] }
+  const tier = { flash: 0, 'flash-lite': 1, pro: 2 } as Record<string, number>
+  return data.data
+    .map(m => m.id.replace(/^models\//, ''))
+    .map(id => ({ id, m: id.match(/^gemini-(\d+(?:\.\d+)?)-(flash-lite|flash|pro)$/) }))
+    .filter((x): x is { id: string, m: RegExpMatchArray } => x.m !== null)
+    .sort((a, b) => Number(b.m[1]) - Number(a.m[1]) || tier[a.m[2]] - tier[b.m[2]])
+    .map(x => x.id)
+}
+
+async function buildCandidates(): Promise<Candidate[]> {
+  const out: Candidate[] = []
+  const gKey = process.env.GEMINI_API_KEY
+  if (gKey) {
+    try {
+      const models = await geminiModels(gKey)
+      console.log(`release-notes: gemini models: ${models.join(', ')}`)
+      for (const model of models.slice(0, 6)) out.push({ url: geminiUrl, key: gKey, model })
+    } catch (e) {
+      console.warn(`release-notes: gemini model list failed: ${e}`)
+    }
+  }
+  return out
+}
 
 /**
  * Repository bookkeeping: true statements about this repo that mean nothing to someone using the
@@ -87,7 +108,10 @@ function cleanCommits(commits: Commit[]): Commit[] {
 
 function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry[]): string {
   const list = commits.map(c => {
-    const indented = c.message.split('\n').map(l => `  ${l}`).join('\n')
+    // A "[*] ..." subject is already the finished bullet; the body only invites the model to embellish it.
+    const msgLines = c.message.split('\n')
+    const shown = /^\[[+*\-=]\]\s/.test(msgLines[0]) ? msgLines.slice(0, 1) : msgLines
+    const indented = shown.map(l => `  ${l}`).join('\n')
     const authorTag = c.author ? ` (Author: ${c.author})` : ''
     return `Commit ${c.sha.slice(0, 7)}${authorTag}:\n${indented}`
   }).join('\n\n')
@@ -123,6 +147,11 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
     'entinyGram)**"; an inugram sync that brings the new base -> "[*] **Updated to Telegram X.Y.Z (via',
     'inugram)**". The "(ported by entinyGram)" / "(via inugram)" tag stays in English in both tg_en and',
     'tg_uk. Never credit inugram for a base update we ported ourselves.',
+    '',
+    'A commit subject that starts with "[+] ", "[*] ", "[-] " or "[=] " already states its category:',
+    'keep exactly that marker for its bullet, never move it to another one.',
+    'Stay close to the subjects. Do not expand a subject into details from the commit body unless the',
+    'subject alone is meaningless; a short subject stays a short bullet.',
     '',
     'Sections in "en"/"uk" (full GitHub release notes): "### New Features", "### Bug Fixes", "### Improvements & Polish".',
     'Anything the user could not do before goes under New Features, not Improvements.',
@@ -227,8 +256,10 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
   return lines.join('\n')
 }
 
-async function callGemini(key: string, model: string, prompt: string): Promise<string> {
-  const res = await fetch(baseUrl, {
+async function callChat(c: Candidate, prompt: string): Promise<string> {
+  const { url, key, model } = c
+  const res = await fetch(url, {
+    signal: AbortSignal.timeout(45000),
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -241,6 +272,7 @@ async function callGemini(key: string, model: string, prompt: string): Promise<s
         { role: 'user', content: prompt },
       ],
       temperature: 0,
+      max_tokens: 6000,
     }),
   })
   if (!res.ok) {
@@ -280,7 +312,8 @@ function dropMetaBullets(text: string): string {
 
 function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string } {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
-  const parsed = JSON.parse(cleaned)
+  // Some models wrap the JSON in prose or reasoning; take the outermost object.
+  const parsed = JSON.parse(cleaned.slice(cleaned.indexOf('{'), cleaned.lastIndexOf('}') + 1))
   const tgUk = dropMetaBullets(String(parsed.tg_uk ?? '').trim())
   const tgEn = dropMetaBullets(String(parsed.tg_en ?? '').trim())
   const tgCombined = tgUk && tgEn ? `🇺🇦 UK:\n${tgUk}\n\n🇺🇸 EN:\n${tgEn}` : String(parsed.tg ?? '').trim()
@@ -293,19 +326,20 @@ function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en
   }
 }
 
-async function aiNotes(key: string, info: BuildInfo, commits: Commit[], registry: RegistryEntry[]) {
+async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit[], registry: RegistryEntry[]) {
   const prompt = buildPrompt(info, commits, registry)
-  let lastErr: unknown
-  for (const model of MODELS) {
+  let lastErr: unknown = new Error('no AI providers configured')
+  const deadline = Date.now() + 180_000
+  for (const c of candidates) {
+    if (Date.now() > deadline) break
     try {
-      console.log(`==> release-notes: calling ${model}`)
-      const raw = await callGemini(key, model, prompt)
-      const notes = parseNotes(raw)
+      console.log(`==> release-notes: calling ${c.model}`)
+      const notes = parseNotes(await callChat(c, prompt))
       if (!notes.en && !notes.uk && !notes.tg_uk) throw new Error('empty ai notes')
       return notes
     } catch (e) {
       lastErr = e
-      console.warn(`release-notes: ${model} failed: ${e}`)
+      console.warn(`release-notes: ${c.model} failed: ${e}`)
     }
   }
   throw lastErr
@@ -337,58 +371,17 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
     tg: '🇺🇦 UK:\n[=] Змін немає\n\n🇺🇸 EN:\n[=] No changes',
   }
 
-  const sections: Record<string, string[]> = { sync: [], feature: [], fix: [], other: [] }
-  for (const c of commits) {
+  // Commits already carry "[+] / [*] / [-] / [=] text" - keep them verbatim instead of guessing.
+  const lines = commits.map(c => {
     const subject = c.message.split('\n')[0].trim()
-    sections[categorize(subject)].push(subjectText(subject))
-  }
+    const m = subject.match(/^\[([+*\-=])\]\s*(.*)$/)
+    const marker = m ? m[1] : categorize(subject) === 'feature' ? '+' : '*'
+    const text = m ? m[2] : subjectText(subject)
+    const rebase = text.match(/^rebase to (\S+)/i)
+    return rebase ? `[*] **Rebase to ${rebase[1]} (ported by entinyGram)**` : `[${marker}] ${text}`
+  }).join('\n')
 
-  const en: string[] = []
-  const uk: string[] = []
-  if (sections.sync.length) en.push(`[=] Synced with upstream inugram`)
-  if (sections.feature.length) en.push(...sections.feature.map(l => `[+] ${l}`))
-  if (sections.fix.length) en.push(`[*] Bug fixes and UI optimizations`)
-  if (sections.other.length) en.push(...sections.other.map(l => `[=] ${l}`))
-
-  if (sections.sync.length) uk.push(`[=] Синхронізація з upstream inugram`)
-  if (sections.feature.length) uk.push(...sections.feature.map(l => `[+] ${l}`))
-  if (sections.fix.length) uk.push(`[*] Виправлено баги та оптимізовано інтерфейс`)
-  if (sections.other.length) uk.push(...sections.other.map(l => `[=] ${l}`))
-
-  const tgEnLines: string[] = []
-  const tgUkLines: string[] = []
-  if (sections.sync.length) {
-    tgEnLines.push(`[=] Synced with upstream inugram`)
-    tgUkLines.push(`[=] Синхронізація з upstream inugram`)
-  }
-  if (sections.feature.length <= 3) {
-    tgEnLines.push(...sections.feature.map(l => `[+] ${l}`))
-    tgUkLines.push(...sections.feature.map(l => `[+] ${l}`))
-  } else {
-    tgEnLines.push(`[+] ${sections.feature[0]}`)
-    tgEnLines.push(`[+] Added: ${sections.feature.slice(1, 5).join(', ')}`)
-    tgUkLines.push(`[+] ${sections.feature[0]}`)
-    tgUkLines.push(`[+] Додано: ${sections.feature.slice(1, 5).join(', ')}`)
-  }
-  if (sections.fix.length) {
-    tgEnLines.push(`[*] Fixed: ${sections.fix.slice(0, 5).join(', ')}`)
-    tgUkLines.push(`[*] Виправлено: ${sections.fix.slice(0, 5).join(', ')}`)
-  }
-  if (sections.other.length) {
-    tgEnLines.push(`[*] ${sections.other.slice(0, 2).join(', ')}`)
-    tgUkLines.push(`[*] ${sections.other.slice(0, 2).join(', ')}`)
-  }
-
-  const tgUk = tgUkLines.join('\n')
-  const tgEn = tgEnLines.join('\n')
-
-  return {
-    en: en.join('\n'),
-    uk: uk.join('\n'),
-    tg_uk: tgUk,
-    tg_en: tgEn,
-    tg: `🇺🇦 UK:\n${tgUk}\n\n🇺🇸 EN:\n${tgEn}`,
-  }
+  return { en: lines, uk: lines, tg_uk: lines, tg_en: lines, tg: `🇺🇦 UK:\n${lines}\n\n🇺🇸 EN:\n${lines}` }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
@@ -406,16 +399,16 @@ try {
 }
 
 let notes: { en: string, uk: string, tg: string }
-const key = process.env.GEMINI_API_KEY
-if (key && commits.length > 0) {
+const candidates = commits.length > 0 ? await buildCandidates() : []
+if (candidates.length > 0) {
   try {
-    notes = await aiNotes(key, info, commits, registry)
+    notes = await aiNotes(candidates, info, commits, registry)
   } catch (e) {
     console.warn(`release-notes: AI failed (${e}); using rule-based fallback`)
     notes = ruleFallback(commits)
   }
 } else {
-  if (!key) console.warn('release-notes: GEMINI_API_KEY not set; using rule-based fallback')
+  if (commits.length > 0) console.warn('release-notes: GEMINI_API_KEY not set; using rule-based fallback')
   notes = ruleFallback(commits)
 }
 
