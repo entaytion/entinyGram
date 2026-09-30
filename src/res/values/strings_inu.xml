@@ -33,6 +33,12 @@
     <string name="InuPushHeader">Push notifications</string>
     <string name="InuUnifiedPush">UnifiedPush</string>
     <string name="InuUnifiedPushInfo">Get notifications through a UnifiedPush distributor like ntfy instead of Google services. Works without Google Play.</string>
+    <string name="InuBackgroundService">Background service</string>
+    <string name="InuBackgroundServiceInfo">Keeps the app connected in the background so notifications arrive on time, even without Google services.</string>
+    <string name="InuBackgroundServiceAlert">This keeps a permanent notification and an always-on connection. It increases battery and data usage. Some phones (Xiaomi, Huawei, Oppo and others) may still stop it unless you disable battery optimization for the app.</string>
+    <string name="InuBackgroundServiceEnable">Enable</string>
+    <string name="InuBackgroundServiceHideNotification">Hide service notification</string>
+    <string name="InuBackgroundServiceHideNotificationInfo">Opens the system settings for this notification. Turning it off hides it while the service keeps running.</string>
     <string name="InuUnifiedPushDistributor">Distributor</string>
     <string name="InuUnifiedPushNoDistributor">Not set</string>
     <string name="InuUnifiedPushNoDistributorInfo">Install a UnifiedPush distributor first, for example ntfy.</string>

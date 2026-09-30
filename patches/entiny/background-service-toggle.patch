@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 11:12:10 +0300
+Subject: [+] background service toggle
+
+---
+ .../main/java/org/telegram/messenger/ApplicationLoader.java    | 3 ++-
+ .../main/java/org/telegram/messenger/NotificationsService.java | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -401,9 +401,10 @@ public class ApplicationLoader extends Application {
+         } else {
+             enabled = MessagesController.getMainSettings(UserConfig.selectedAccount).getBoolean("keepAliveService", false);
+         }
++        enabled |= desu.inugram.InuConfig.FOREGROUND_PUSH_SERVICE.getValue();
+         if (enabled) {
+             try {
+-                if (Build.VERSION.SDK_INT >= 26 && desu.inugram.InuConfig.UNIFIED_PUSH.getValue()) {
++                if (Build.VERSION.SDK_INT >= 26 && desu.inugram.helpers.NotificationsHelper.keepAliveForeground()) {
+                     NotificationsService.inu_onForegroundStartRequested();
+                     applicationContext.startForegroundService(new Intent(applicationContext, NotificationsService.class));
+                 } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsService.java
+@@ -73,7 +73,7 @@ public class NotificationsService extends Service {
+     }
+ 
+     private void inu_moveToForeground() {
+-        if (!desu.inugram.InuConfig.UNIFIED_PUSH.getValue()) {
++        if (!desu.inugram.helpers.NotificationsHelper.keepAliveForeground()) {
+             inu_foregroundStartPending = false;
+             return;
+         }

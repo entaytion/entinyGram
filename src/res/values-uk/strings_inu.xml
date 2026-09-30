@@ -30,6 +30,12 @@
     <string name="InuPushHeader">Push-сповіщення</string>
     <string name="InuUnifiedPush">UnifiedPush</string>
     <string name="InuUnifiedPushInfo">Отримувати сповіщення через дистриб’ютор UnifiedPush, наприклад ntfy, замість сервісів Google. Працює без Google Play.</string>
+    <string name="InuBackgroundService">Фонова служба</string>
+    <string name="InuBackgroundServiceInfo">Тримає застосунок на зв’язку у фоні, щоб сповіщення приходили вчасно, навіть без сервісів Google.</string>
+    <string name="InuBackgroundServiceAlert">Це постійне сповіщення та завжди активне з’єднання. Воно збільшує витрату заряду та трафіку. Деякі телефони (Xiaomi, Huawei, Oppo та інші) все одно можуть її зупиняти, якщо не вимкнути оптимізацію батареї для застосунку.</string>
+    <string name="InuBackgroundServiceEnable">Увімкнути</string>
+    <string name="InuBackgroundServiceHideNotification">Сховати сповіщення служби</string>
+    <string name="InuBackgroundServiceHideNotificationInfo">Відкриває системні налаштування цього сповіщення. Якщо його вимкнути, воно зникне, а служба продовжить працювати.</string>
     <string name="InuUnifiedPushDistributor">Дистриб’ютор</string>
     <string name="InuUnifiedPushNoDistributor">Не вибрано</string>
     <string name="InuUnifiedPushNoDistributorInfo">Спершу встановіть дистриб’ютор UnifiedPush, наприклад ntfy.</string>

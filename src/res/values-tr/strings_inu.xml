@@ -25,6 +25,12 @@
     <string name="InuPushHeader">Anlık bildirimler</string>
     <string name="InuUnifiedPush">UnifiedPush</string>
     <string name="InuUnifiedPushInfo">Bildirimleri Google hizmetleri yerine ntfy gibi bir UnifiedPush dağıtıcısı üzerinden alın. Google Play olmadan çalışır.</string>
+    <string name="InuBackgroundService">Arka plan hizmeti</string>
+    <string name="InuBackgroundServiceInfo">Google hizmetleri olmadan bile bildirimlerin zamanında gelmesi için uygulamayı arka planda bağlı tutar.</string>
+    <string name="InuBackgroundServiceAlert">Bu, kalıcı bir bildirim ve sürekli açık bir bağlantı demektir. Pil ve veri kullanımını artırır. Bazı telefonlar (Xiaomi, Huawei, Oppo vb.), uygulama için pil optimizasyonunu kapatmazsanız yine de durdurabilir.</string>
+    <string name="InuBackgroundServiceEnable">Etkinleştir</string>
+    <string name="InuBackgroundServiceHideNotification">Hizmet bildirimini gizle</string>
+    <string name="InuBackgroundServiceHideNotificationInfo">Bu bildirimin sistem ayarlarını açar. Kapatırsanız bildirim gizlenir, hizmet çalışmaya devam eder.</string>
     <string name="InuUnifiedPushDistributor">Dağıtıcı</string>
     <string name="InuUnifiedPushNoDistributor">Ayarlanmadı</string>
     <string name="InuUnifiedPushNoDistributorInfo">Önce ntfy gibi bir UnifiedPush dağıtıcısı yükleyin.</string>

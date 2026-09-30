@@ -17,6 +17,12 @@
     <string name="InuPushHeader">プッシュ通知</string>
     <string name="InuUnifiedPush">UnifiedPush</string>
     <string name="InuUnifiedPushInfo">Google サービスの代わりに、ntfy などの UnifiedPush ディストリビューター経由で通知を受け取ります。Google Play なしで動作します。</string>
+    <string name="InuBackgroundService">バックグラウンドサービス</string>
+    <string name="InuBackgroundServiceInfo">Googleサービスがなくても通知が時間どおり届くよう、アプリをバックグラウンドで接続したままにします。</string>
+    <string name="InuBackgroundServiceAlert">常時通知と常時接続を維持します。バッテリーとデータの使用量が増えます。一部の端末（Xiaomi、Huawei、Oppoなど）では、アプリのバッテリー最適化をオフにしないと停止されることがあります。</string>
+    <string name="InuBackgroundServiceEnable">有効にする</string>
+    <string name="InuBackgroundServiceHideNotification">サービス通知を非表示</string>
+    <string name="InuBackgroundServiceHideNotificationInfo">この通知のシステム設定を開きます。オフにすると通知は非表示になりますが、サービスは動作し続けます。</string>
     <string name="InuUnifiedPushDistributor">ディストリビューター</string>
     <string name="InuUnifiedPushNoDistributor">未設定</string>
     <string name="InuUnifiedPushNoDistributorInfo">先に ntfy などの UnifiedPush ディストリビューターをインストールしてください。</string>

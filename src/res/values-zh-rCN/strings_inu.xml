@@ -17,6 +17,12 @@
     <string name="InuPushHeader">推送通知</string>
     <string name="InuUnifiedPush">UnifiedPush</string>
     <string name="InuUnifiedPushInfo">通过 ntfy 等 UnifiedPush 分发器接收通知，而不是 Google 服务。无需 Google Play 即可使用。</string>
+    <string name="InuBackgroundService">后台服务</string>
+    <string name="InuBackgroundServiceInfo">让应用在后台保持连接，即使没有 Google 服务，通知也能及时到达。</string>
+    <string name="InuBackgroundServiceAlert">这会保留一个常驻通知和始终在线的连接，会增加耗电和流量。部分手机（小米、华为、OPPO 等）如果不为应用关闭电池优化，仍可能停止该服务。</string>
+    <string name="InuBackgroundServiceEnable">启用</string>
+    <string name="InuBackgroundServiceHideNotification">隐藏服务通知</string>
+    <string name="InuBackgroundServiceHideNotificationInfo">打开此通知的系统设置。关闭后通知会隐藏，但服务仍会继续运行。</string>
     <string name="InuUnifiedPushDistributor">分发器</string>
     <string name="InuUnifiedPushNoDistributor">未设置</string>
     <string name="InuUnifiedPushNoDistributorInfo">请先安装 UnifiedPush 分发器，例如 ntfy。</string>

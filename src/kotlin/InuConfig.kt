@@ -1534,6 +1534,8 @@ object InuConfig {
     val UNIFIED_PUSH_GATEWAY = StringItem("unified_push_gateway", "https://p2p.belloworld.it/")
 
     @JvmField
+    val FOREGROUND_PUSH_SERVICE = BoolItem("foreground_push_service", false)
+    @JvmField
     val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
 
     @JvmField

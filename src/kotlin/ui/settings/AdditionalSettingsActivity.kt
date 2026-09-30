@@ -105,6 +105,17 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 experimental = true,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_BACKGROUND_SERVICE,
+                R.string.InuBackgroundService,
+                R.string.InuBackgroundServiceInfo,
+                InuConfig.FOREGROUND_PUSH_SERVICE.value,
+            )
+        )
+        if (InuConfig.FOREGROUND_PUSH_SERVICE.value && android.os.Build.VERSION.SDK_INT >= 26) {
+            items.add(UItem.asButton(BUTTON_BACKGROUND_SERVICE_CHANNEL, LocaleController.getString(R.string.InuBackgroundServiceHideNotification), LocaleController.getString(R.string.InuBackgroundServiceHideNotificationInfo)))
+        }
         if (UnifiedPushHelper.isEnabled()) {
             items.add(
                 UItem.asButton(
@@ -168,6 +179,40 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         bottomInset = bottom
         updateWrapper?.setPadding(0, 0, 0, bottom)
         applyListPadding()
+    }
+
+    private fun toggleBackgroundService(view: View) {
+        if (InuConfig.FOREGROUND_PUSH_SERVICE.value) {
+            InuConfig.FOREGROUND_PUSH_SERVICE.value = false
+            (view as? NotificationsCheckCell)?.isChecked = false
+            restartPushService()
+            return
+        }
+        val ctx = parentActivity ?: return
+        AlertDialog.Builder(ctx, resourceProvider)
+            .setTitle(LocaleController.getString(R.string.InuBackgroundService))
+            .setMessage(LocaleController.getString(R.string.InuBackgroundServiceAlert))
+            .setPositiveButton(LocaleController.getString(R.string.InuBackgroundServiceEnable)) { _, _ ->
+                InuConfig.FOREGROUND_PUSH_SERVICE.value = true
+                (view as? NotificationsCheckCell)?.isChecked = true
+                restartPushService()
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .show()
+    }
+
+    private fun openServiceChannelSettings() {
+        val ctx = parentActivity ?: return
+        val intent = android.content.Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+            .putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+            .putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, "push_service_channel")
+        runCatching { ctx.startActivity(intent) }
+    }
+
+    private fun restartPushService() {
+        val app = ApplicationLoader.applicationContext
+        app.stopService(android.content.Intent(app, org.telegram.messenger.NotificationsService::class.java))
+        ApplicationLoader.startPushService()
     }
 
     private fun toggleUnifiedPush() {
@@ -265,6 +310,10 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
             TOGGLE_UNIFIED_PUSH -> toggleUnifiedPush()
+
+            TOGGLE_BACKGROUND_SERVICE -> toggleBackgroundService(view)
+
+            BUTTON_BACKGROUND_SERVICE_CHANNEL -> openServiceChannelSettings()
 
             BUTTON_UNIFIED_PUSH_DISTRIBUTOR -> pickDistributor(view)
 
@@ -589,6 +638,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
         private val BUTTON_DATACENTER_STATUS = InuUtils.generateId()
         private val TOGGLE_UNIFIED_PUSH = InuUtils.generateId()
+        private val TOGGLE_BACKGROUND_SERVICE = InuUtils.generateId()
+        private val BUTTON_BACKGROUND_SERVICE_CHANNEL = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_DISTRIBUTOR = InuUtils.generateId()
         private val BUTTON_UNIFIED_PUSH_GATEWAY = InuUtils.generateId()
 
@@ -605,6 +656,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 SearchRegistry.Entry("additional-cache-management", R.string.InuCacheManagement, BUTTON_CACHE_MANAGEMENT),
                 SearchRegistry.Entry("additional-datacenter-status", R.string.InuDatacenterStatus, BUTTON_DATACENTER_STATUS),
                 SearchRegistry.Entry("additional-unified-push", R.string.InuUnifiedPush, TOGGLE_UNIFIED_PUSH),
+                SearchRegistry.Entry("additional-background-service", R.string.InuBackgroundService, TOGGLE_BACKGROUND_SERVICE),
                 SearchRegistry.Entry("additional-unified-push-gateway", R.string.InuUnifiedPushGateway, BUTTON_UNIFIED_PUSH_GATEWAY),
             ),
         )
