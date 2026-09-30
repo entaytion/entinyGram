@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8660,7 +8660,8 @@ public class MessageObject {
+@@ -8663,7 +8663,8 @@ public class MessageObject {
          if (messageOwner.send_state != MESSAGE_SEND_STATE_SENT) {
              hasEntities = false;
          } else {
@@ -333,7 +333,7 @@ index 0000000..0000000 100644
          if (parentActivity == null || !allowShare) {
              return;
          }
-@@ -5801,6 +5801,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5806,6 +5806,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          editItem.setContentDescription(getString(R.string.AccDescrPhotoEditor));
          sendItem = menu.addItem(gallery_menu_send, R.drawable.msg_header_share);
          sendItem.setContentDescription(getString(R.string.Forward));

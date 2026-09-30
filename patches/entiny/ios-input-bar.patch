@@ -44,7 +44,7 @@ index 0000000..0000000 100644
  
          if (textSelectionHelper == null) {
              Timer.Task t1 = Timer.start(t, "new ChatActivityTextSelectionHelper");
-@@ -7969,6 +7983,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -7970,6 +7984,10 @@ public class ChatActivity extends BaseFragment implements
              public void setVisibility(int visibility) {
                  super.setVisibility(visibility);
                  bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
@@ -55,7 +55,7 @@ index 0000000..0000000 100644
              }
  
              @Override
-@@ -8184,6 +8202,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -8185,6 +8203,8 @@ public class ChatActivity extends BaseFragment implements
          checkSendButtonBlockedByTyping(false);
  
          chatInputBubbleContainer.addView(chatActivityEnterView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, NonIslandHelper.chatElements() ? 0 : 7, 0, NonIslandHelper.chatElements() ? 0 : 7, NonIslandHelper.chatElements() ? -9 : 0));
@@ -64,7 +64,7 @@ index 0000000..0000000 100644
  
          int chatListIndex = contentView.indexOfChild(chatListView);
          chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
-@@ -42926,6 +42946,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -42933,6 +42953,12 @@ public class ChatActivity extends BaseFragment implements
              if (blurredBackgroundColorProviderWhite != null) {
                  blurredBackgroundColorProviderWhite.updateColors();
              }
@@ -275,7 +275,7 @@ index 0000000..0000000 100644
          aiButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
          aiButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16)));
 -        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.TOP | Gravity.LEFT, 0, 1, 0, 0));
-+        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, 1, aiButtonRightMarginDp, 0));
++        textFieldContainer.addView(aiButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, aiButtonGravity, 0, isIosInputAppearance() && !isIosButtonPlacement() ? 1 - iosGapDp : 1, aiButtonRightMarginDp, 0));
          aiButton.setContentDescription(getString(R.string.AIEditor));
          ScaleStateListAnimator.apply(aiButton);
          aiButton.setOnClickListener(v -> {
@@ -284,7 +284,7 @@ index 0000000..0000000 100644
          richButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_glass_defaultIcon), PorterDuff.Mode.MULTIPLY));
          richButton.setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector), Theme.RIPPLE_MASK_CIRCLE_20DP, dp(16)));
 -        textFieldContainer.addView(richButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.TOP | Gravity.RIGHT, 0, 1, 0, 0));
-+        textFieldContainer.addView(richButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.TOP | Gravity.RIGHT, 0, isIosButtonPlacement() ? 1 - iosGapDp : 1, 0, 0));
++        textFieldContainer.addView(richButton, LayoutHelper.createFrame(DEFAULT_HEIGHT, DEFAULT_HEIGHT, Gravity.TOP | Gravity.RIGHT, 0, isIosInputAppearance() ? 1 - iosGapDp : 1, 0, 0));
          richButton.setContentDescription(getString(R.string.ArticleEditor));
          ScaleStateListAnimator.apply(richButton);
          richButton.setOnClickListener(v -> openRichEditor());

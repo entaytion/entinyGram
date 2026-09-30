@@ -1615,4 +1615,17 @@
     <string name="InuFeedNewPostsIndicatorPill">Пігулка</string>
     <string name="InuRestartApp">Перезапустити застосунок</string>
     <string name="InuRestartAppAlert">Застосунок закриється й відкриється знову. Незбережені чернетки та завантаження, що ще тривають, можуть загубитися.</string>
+    <string name="InuDonateTitle">Хочете стабільних оновлень?</string>
+    <string name="InuDonateText">entinyGram безкоштовний і з відкритим кодом, без реклами. Оновлення на кожну нову версію Telegram потребують мого часу. Якщо спільнота цього хоче, можна підтримати.</string>
+    <string name="InuDonateButton">Підтримати</string>
+    <string name="InuDonateHide">Сховати</string>
+    <string name="InuDonateHidden">Картку підтримки сховано</string>
+    <string name="InuDonateRow">Підтримати проєкт</string>
+    <string name="InuDonateSheetTitle">Підтримати entinyGram</string>
+    <string name="InuDonateSheetInfo">Натисни, щоб скопіювати або відкрити. Суто за бажанням.</string>
+    <string name="InuDonateThanks">Дякую, що ти тут ❤️</string>
+    <string name="InuDonateMonobankJar">Банка Monobank</string>
+    <string name="InuDonateMonobankCard">Картка Monobank</string>
+    <string name="InuDonateWebsite">Усі способи на сайті</string>
+    <string name="InuDonateCopied">Скопійовано</string>
 </resources>

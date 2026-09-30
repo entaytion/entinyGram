@@ -1600,4 +1600,17 @@
     <string name="InuRestartAppAlert">Uygulama kapanıp yeniden açılacaktır. Gönderilmemiş taslaklar ve devam eden yüklemeler kaybolabilir.</string>
     <string name="InuOnlineDots">Renkli çevrim içi noktaları</string>
     <string name="InuOnlineDotsInfo">Çevrim içi noktası mavi; çevrim dışı kaldıktan sonra 20 dk içinde sarı, bir saat içinde kırmızı.</string>
+    <string name="InuDonateTitle">Kararlı güncellemeler ister misin?</string>
+    <string name="InuDonateText">entinyGram ücretsiz ve açık kaynaklı, reklam yok. Her yeni Telegram sürümüne yetişmek benim zamanımı alıyor. Topluluk bunu istiyorsa destek olabilirsin.</string>
+    <string name="InuDonateButton">Destek ol</string>
+    <string name="InuDonateHide">Gizle</string>
+    <string name="InuDonateHidden">Destek kartı gizlendi</string>
+    <string name="InuDonateRow">Projeye destek ol</string>
+    <string name="InuDonateSheetTitle">entinyGram\'a destek ol</string>
+    <string name="InuDonateSheetInfo">Kopyalamak veya açmak için dokun. Tamamen isteğe bağlı.</string>
+    <string name="InuDonateThanks">Burada olduğun için teşekkürler ❤️</string>
+    <string name="InuDonateMonobankJar">Monobank kumbarası</string>
+    <string name="InuDonateMonobankCard">Monobank kartı</string>
+    <string name="InuDonateWebsite">Tüm yöntemler web sitesinde</string>
+    <string name="InuDonateCopied">Kopyalandı</string>
 </resources>

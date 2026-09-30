@@ -37,7 +37,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -11644,7 +11644,7 @@ public class MessageObject {
+@@ -11647,7 +11647,7 @@ public class MessageObject {
      public boolean canForwardMessage() {
          if (isQuickReply()) return false;
          if (type == TYPE_GIFT_STARS || type == TYPE_GIFT_THEME_UPDATE || type == TYPE_SUGGEST_BIRTHDAY || type == TYPE_GIFT_OFFER || type == TYPE_SHARING_OFFER || type == TYPE_COMMUNITY_CHANGED) return false;
@@ -112,7 +112,7 @@ index 0000000..0000000 100644
                  chatActivity != null && chatActivity.isPeerNoForwards() ||
                  selectedView != null && selectedView.getMessageObject() != null && selectedView.getMessageObject().messageOwner != null && selectedView.getMessageObject().messageOwner.noforwards
              );
-@@ -10397,7 +10397,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -10398,7 +10398,7 @@ public class ChatActivity extends BaseFragment implements
          }
          ChatActionsHelper.addActionModeItems(this, actionMode, edit);
          actionMode.setItemVisibility(edit, canEditMessagesCount == 1 && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() == 1 ? View.VISIBLE : View.GONE);
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -19418,7 +19418,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19419,7 +19419,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();

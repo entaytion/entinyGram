@@ -52,7 +52,7 @@ index 0000000..0000000 100644
                  delegate.didPressReplyMessage(this, currentMessageObject.getReplyMsgId(), replyBounceX, replyBounceY, true);
              }
              return true;
-@@ -19216,7 +19216,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19222,7 +19222,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              }
          }
  
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
              if (currentPosition == null || currentPosition.minY == 0) {
                  if (isSideMenued && !drawBackground || !messageObject.isAnyKindOfSticker() && messageObject.type != MessageObject.TYPE_ROUND_VIDEO || messageObject.type == MessageObject.TYPE_EMOJIS) {
                      namesOffset += dp(20) + (Theme.chat_replyTextPaint.getTextSize() + Theme.chat_replyNamePaint.getTextSize());
-@@ -19243,7 +19243,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19249,7 +19249,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  CharSequence stringFinalText = null;
  
                  CharSequence name = null;
@@ -70,7 +70,7 @@ index 0000000..0000000 100644
                  isReplyQuote = hasReplyQuote && messageObject.messageOwner.reply_to.quote;
                  final boolean showQuote = isReplyQuote && messageObject.messageOwner.reply_to.quote;
                  if (isReplyQuote && showQuote && replyQuoteDrawable == null) {
-@@ -19266,7 +19266,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19272,7 +19272,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          stringFinalText = StoriesUtilities.createReplyStoryString();
                          maxWidth -= dp(16) + (textPaint.getTextSize() + Theme.chat_replyNamePaint.getTextSize());
                      }
@@ -79,7 +79,7 @@ index 0000000..0000000 100644
                      lastReplyMessage = messageObject.replyMessageObject == null ? null : messageObject.replyMessageObject.messageOwner;
                      int cacheType = 1;
                      int size = 0;
-@@ -19423,7 +19423,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19429,7 +19429,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          }
                      }
  
@@ -90,7 +90,7 @@ index 0000000..0000000 100644
                      if (name == null) {
                          name = getString("Loading", R.string.Loading);
                      }
-@@ -19532,6 +19534,15 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19538,6 +19540,15 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              MediaDataController.addTextStyleRuns(messageObject.replyMessageObject, (Spannable) stringFinalText);
                              stringFinalText = TextUtils.ellipsize(stringFinalText, textPaint, maxWidth, TextUtils.TruncateAt.END);
                          }
@@ -106,7 +106,7 @@ index 0000000..0000000 100644
                      }
                  } else {
                      replyImageReceiver.setImageBitmap((Drawable) null);
-@@ -27979,7 +27990,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -27985,7 +27996,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              delegate.didPressSideButton(ChatMessageCell.this);
                          }
                      } else if (virtualViewId == REPLY) {
@@ -119,7 +119,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -41253,6 +41253,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -41260,6 +41260,7 @@ public class ChatActivity extends BaseFragment implements
                      }
                      final Integer finalTaskId = task_id;
                      final byte[] finalPollOptionId = option_id;
@@ -127,7 +127,7 @@ index 0000000..0000000 100644
                      Runnable scroll = () -> {
                          scrollToMessageId(id, messageObject.getId(), true, messageObject.getDialogId() == mergeDialogId ? 1 : 0, true, 0, finalTaskId, finalPollOptionId, () -> {
                              progressDialogAtMessageId = messageObject.getId();
-@@ -41266,6 +41267,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -41273,6 +41274,9 @@ public class ChatActivity extends BaseFragment implements
                      } else {
                          scroll.run();
                      }

@@ -238,6 +238,13 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'pin',
       'arrow-bar-to-right',
       'marquee-2',
+      'heart',
+      'pig-money',
+      'credit-card',
+      'currency-ethereum',
+      'currency-bitcoin',
+      'currency-solana',
+      'diamond',
     ],
   },
 ]

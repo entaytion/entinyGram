@@ -1140,6 +1140,9 @@ object InuConfig {
     val NICHE_SETTINGS_UNLOCKED = BoolItem("niche_settings_unlocked", false)
 
     @JvmField
+    val HIDE_DONATE_CARD = BoolItem("hide_donate_card", false, exportable = false)
+
+    @JvmField
     val DISABLE_PROFILE_AVATAR_BLUR = BoolItem("disable_profile_avatar_blur", false)
 
     @JvmField

@@ -1601,4 +1601,17 @@
     <string name="InuRestartAppAlert">アプリが一度終了して再度開きます。未送信の下書きや進行中のアップロードが失われる可能性があります。</string>
     <string name="InuOnlineDots">色分けされたオンラインドット</string>
     <string name="InuOnlineDotsInfo">オンラインは青いドット、オフライン後は20分以内が黄色、1時間以内が赤。</string>
+    <string name="InuDonateTitle">安定したアップデートを希望しますか？</string>
+    <string name="InuDonateText">entinyGram は無料でオープンソース、広告もありません。新しい Telegram のバージョンごとに追従するには私の時間が必要です。コミュニティが望むなら、支援してもらえると嬉しいです。</string>
+    <string name="InuDonateButton">支援する</string>
+    <string name="InuDonateHide">非表示</string>
+    <string name="InuDonateHidden">支援カードを非表示にしました</string>
+    <string name="InuDonateRow">プロジェクトを支援</string>
+    <string name="InuDonateSheetTitle">entinyGram を支援</string>
+    <string name="InuDonateSheetInfo">タップしてコピーまたは開きます。完全に任意です。</string>
+    <string name="InuDonateThanks">来てくれてありがとう ❤️</string>
+    <string name="InuDonateMonobankJar">Monobank ジャー</string>
+    <string name="InuDonateMonobankCard">Monobank カード</string>
+    <string name="InuDonateWebsite">すべての方法はウェブサイトで</string>
+    <string name="InuDonateCopied">コピーしました</string>
 </resources>

@@ -64,6 +64,21 @@ internal object FeedAlbumLayout {
         }
     }
 
+    // entiny: album cells skip their own name, stock ChatActivity draws it from the list
+    fun drawGroupNames(list: RecyclerView, canvas: Canvas) {
+        for (i in 0 until list.childCount) {
+            val cell = list.getChildAt(i) as? ChatMessageCell ?: continue
+            val position = cell.currentPosition ?: continue
+            if (position.minX.toInt() != 0 || position.minY.toInt() != 0 || !cell.hasNameLayout()) continue
+            canvas.save()
+            canvas.translate(cell.left + cell.getNonAnimationTranslationX(false), cell.y + cell.paddingTop)
+            cell.setInvalidatesParent(true)
+            cell.drawNamesLayout(canvas, if (cell.shouldDrawAlphaLayer()) cell.alpha else 1f)
+            cell.setInvalidatesParent(false)
+            canvas.restore()
+        }
+    }
+
     private val drawingGroups = ArrayList<MessageObject.GroupedMessages>()
 
     // grouped cells skip their own bubble, so the list draws one background per album

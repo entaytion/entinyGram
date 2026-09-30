@@ -147,7 +147,7 @@ index 0000000..0000000 100644
                              path.moveTo(rect.left + dp(6), rect.top);
                              path.lineTo(rect.left + dp(6), rect.bottom - dp(6) - dp(2 + 3));
                              AndroidUtilities.rectTmp.set(
-@@ -23324,7 +23329,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -23330,7 +23335,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  buttonX -= dp(10);
              }
              commentButtonRect.set(
@@ -156,7 +156,7 @@ index 0000000..0000000 100644
                      (int) buttonY,
                      endX - dp(14),
                      layoutHeight - dp(h) + 1
-@@ -26052,7 +26057,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -26058,7 +26063,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
                  instantButtonRect.set(textX, instantY, textX + instantWidth, instantY + dp(44));
                  if (selectorDrawable[0] != null && selectorDrawableMaskType[0] == 2) {

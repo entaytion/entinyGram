@@ -40,7 +40,7 @@ index 0000000..0000000 100644
  
      private boolean isUnalivePhoto() {
          if (sendPhotoType == SELECT_TYPE_STICKER) return true;
-@@ -7454,11 +7455,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7459,11 +7460,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final boolean showSendAsFile = !canEdit && !isCurrentVideo && !captionEdit.hasTimer();
              final boolean showSchedule = !canEdit && canScheduleMessage && !hasTtl;
              final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  .addIf(canReplace, R.drawable.msg_send, getString(R.string.SendAsNewPhoto), () -> sendPressed(true, 0, 0))
                  .addIf(canReplace, R.drawable.msg_replace, getString(R.string.ReplacePhoto), this::replacePressed)
                  .addIf(showSchedule, R.drawable.msg_calendar2, getString(userIsSelf ? R.string.SetReminder : R.string.ScheduleMessage), this::showScheduleDatePickerDialog)
-@@ -8016,6 +8019,53 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -8021,6 +8024,53 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          sendPressed(false, 0, 0, true, false, false);
      }
  
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
      private void sendPressed(boolean notify, int scheduleDate, int scheduleRepeatPeriod, boolean replace, boolean forceDocument, boolean confirmed) {
          if (isCaptionOpen()) {
              return;
-@@ -9892,36 +9942,46 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9897,36 +9947,46 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              videoEditedInfo.resultHeight = resultHeight;
              videoEditedInfo.bitrate = muteVideo || sendPhotoType == SELECT_TYPE_AVATAR ? -1 : bitrate;
          }
@@ -183,7 +183,7 @@ index 0000000..0000000 100644
              }
          }
          if (sendPhotoType == SELECT_TYPE_AVATAR) {
-@@ -9929,6 +9989,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -9934,6 +9994,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              videoEditedInfo.originalBitrate = originalBitrate;
          }
          videoEditedInfo.muted = muteVideo || sendPhotoType == SELECT_TYPE_AVATAR;
@@ -191,7 +191,7 @@ index 0000000..0000000 100644
          return videoEditedInfo;
      }
  
-@@ -11454,7 +11515,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11459,7 +11520,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          int[] orientation = null;
          boolean hasChanged = false;
          MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
@@ -200,7 +200,7 @@ index 0000000..0000000 100644
              if (isCurrentVideo) {
                  if (!TextUtils.isEmpty(entry.filterPath)) {
                      bitmap = ImageLoader.loadBitmap(entry.filterPath, null, thumbSize, thumbSize, true);
-@@ -11553,7 +11614,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11558,7 +11619,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              entry.imagePath = null;
          }
  
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
              editState.cropState = entry.cropState;
              editState.croppedPaintPath = entry.croppedPaintPath;
              editState.croppedMediaEntities = entry.croppedMediaEntities;
-@@ -11818,7 +11879,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -11823,7 +11884,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          ignoreDidSetImage = true;
          boolean setImage;
          if (isCurrentVideo) {
@@ -218,7 +218,7 @@ index 0000000..0000000 100644
          } else {
              setImage = currentEditMode == EDIT_MODE_FILTER;
          }
-@@ -14153,6 +14214,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -14158,6 +14219,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          topCaptionEdit.setTimerVisible(false, false);
          rotateItem.setVisibility(View.GONE);
          mirrorItem.setVisibility(View.GONE);
@@ -226,7 +226,7 @@ index 0000000..0000000 100644
  
          pickerView.getLayoutParams().height = LayoutHelper.WRAP_CONTENT;
          docInfoTextView.setVisibility(View.GONE);
-@@ -15081,6 +15143,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15086,6 +15148,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                              rotateItem.setTag(null);
                              mirrorItem.setVisibility(View.GONE);
                              mirrorItem.setTag(null);
@@ -234,7 +234,7 @@ index 0000000..0000000 100644
                              AndroidUtilities.updateViewVisibilityAnimated(muteButton, false, 1f, animated);
                              AndroidUtilities.updateViewVisibilityAnimated(livePhotoButton, false, 1f, animated);
                              AndroidUtilities.updateViewVisibilityAnimated(editCoverButton, false, 1f, animated);
-@@ -15115,6 +15178,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15120,6 +15183,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                                  rotateItem.setTag(1);
                                  mirrorItem.setVisibility(View.VISIBLE);
                                  mirrorItem.setTag(1);
@@ -242,7 +242,7 @@ index 0000000..0000000 100644
                                  AndroidUtilities.updateViewVisibilityAnimated(muteButton, false, 1f, animated);
                                  AndroidUtilities.updateViewVisibilityAnimated(livePhotoButton, false, 1f, animated);
                                  AndroidUtilities.updateViewVisibilityAnimated(editCoverButton, false, 1f, animated);
-@@ -15134,6 +15198,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -15139,6 +15203,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  } else {
                      showVideoTimeline(false, animated);
                      videoAvatarTooltip.setVisibility(View.GONE);

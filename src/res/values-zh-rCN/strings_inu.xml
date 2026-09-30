@@ -1602,4 +1602,17 @@
     <string name="InuRestartAppAlert">应用将关闭并重新打开。未发送的草稿和正在进行的上传可能会丢失。</string>
     <string name="InuOnlineDots">彩色在线状态圆点</string>
     <string name="InuOnlineDotsInfo">在线圆点为蓝色；离线后 20 分钟内为黄色，1 小时内为红色。</string>
+    <string name="InuDonateTitle">想要稳定的更新吗？</string>
+    <string name="InuDonateText">entinyGram 免费开源，没有广告。跟进每个新的 Telegram 版本需要我投入时间。如果社区需要，欢迎支持。</string>
+    <string name="InuDonateButton">支持</string>
+    <string name="InuDonateHide">隐藏</string>
+    <string name="InuDonateHidden">已隐藏支持卡片</string>
+    <string name="InuDonateRow">支持项目</string>
+    <string name="InuDonateSheetTitle">支持 entinyGram</string>
+    <string name="InuDonateSheetInfo">点击复制或打开。完全自愿。</string>
+    <string name="InuDonateThanks">感谢你在这里 ❤️</string>
+    <string name="InuDonateMonobankJar">Monobank 存钱罐</string>
+    <string name="InuDonateMonobankCard">Monobank 银行卡</string>
+    <string name="InuDonateWebsite">更多方式见网站</string>
+    <string name="InuDonateCopied">已复制</string>
 </resources>

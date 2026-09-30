@@ -1617,4 +1617,17 @@
     <string name="InuFeedNewPostsIndicatorPill">Pill</string>
     <string name="InuRestartApp">Restart app</string>
     <string name="InuRestartAppAlert">The app will close and reopen. Unsent drafts and in-progress uploads may be lost.</string>
+    <string name="InuDonateTitle">Want stable updates?</string>
+    <string name="InuDonateText">entinyGram is free and open source, with no ads. Keeping it up to date with every new Telegram version takes my time. If the community wants that, you can support it.</string>
+    <string name="InuDonateButton">Support</string>
+    <string name="InuDonateHide">Hide</string>
+    <string name="InuDonateHidden">Support card hidden</string>
+    <string name="InuDonateRow">Support the project</string>
+    <string name="InuDonateSheetTitle">Support entinyGram</string>
+    <string name="InuDonateSheetInfo">Tap to copy or open. Completely optional.</string>
+    <string name="InuDonateThanks">Thank you for being here ❤️</string>
+    <string name="InuDonateMonobankJar">Monobank jar</string>
+    <string name="InuDonateMonobankCard">Monobank card</string>
+    <string name="InuDonateWebsite">All methods on the website</string>
+    <string name="InuDonateCopied">Copied</string>
 </resources>

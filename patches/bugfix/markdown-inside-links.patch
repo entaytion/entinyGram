@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaDataController.java
-@@ -7604,7 +7604,7 @@ public class MediaDataController extends BaseController {
+@@ -7766,7 +7766,7 @@ public class MediaDataController extends BaseController {
                  // check if it is inside a code block: do not convert __ ** || to styles inside code
                  for (int i = 0; i < entities.size(); ++i) {
                      final TLRPC.MessageEntity entity = entities.get(i);

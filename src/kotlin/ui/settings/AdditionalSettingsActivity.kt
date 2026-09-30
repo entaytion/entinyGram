@@ -17,6 +17,7 @@ import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
 import desu.inugram.helpers.SystemInfo
 import desu.inugram.helpers.push.UnifiedPushHelper
+import desu.inugram.ui.DonateBottomSheet
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -52,7 +53,33 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     private var updateWrapper: UpdateLayoutWrapper? = null
     private var bottomInset: Int = 0
 
+    private var donateCard: View? = null
+
+    private fun getOrCreateDonateCard(): View = donateCard ?: DonateCardCell(
+        context!!,
+        onSupport = { showDialog(DonateBottomSheet(this)) },
+        onHide = {
+            InuConfig.HIDE_DONATE_CARD.value = true
+            listView?.adapter?.update(true)
+            BulletinFactory.of(this).createSimpleBulletin(
+                R.raw.chats_infotip,
+                LocaleController.getString(R.string.InuDonateHidden),
+                LocaleController.getString(R.string.Undo),
+            ) {
+                InuConfig.HIDE_DONATE_CARD.value = false
+                listView?.adapter?.update(true)
+            }.show()
+        },
+    ).also { donateCard = it }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        if (InuConfig.HIDE_DONATE_CARD.value) {
+            items.add(mkSubPageButton(BUTTON_DONATE, R.drawable.inu_tabler_heart, LocaleController.getString(R.string.InuDonateRow)))
+        } else {
+            items.add(UItem.asCustom(getOrCreateDonateCard()))
+        }
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuUpdates)))
         items.add(
             mkTwoLineCheckItem(
@@ -349,6 +376,8 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 ).show()
             }
 
+            BUTTON_DONATE -> showDialog(DonateBottomSheet(this))
+
             BUTTON_CLOUD_SYNC -> presentFragment(BackupSettingsActivity())
             BUTTON_CACHE_MANAGEMENT -> presentFragment(CacheManagementSettingsActivity())
             BUTTON_DATACENTER_STATUS -> presentFragment(DatacenterStatusActivity())
@@ -633,6 +662,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val TOGGLE_EXTRA_DEBUG_LOGS = InuUtils.generateId()
+        private val BUTTON_DONATE = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
         private val BUTTON_CLOUD_SYNC = InuUtils.generateId()
         private val BUTTON_CACHE_MANAGEMENT = InuUtils.generateId()
@@ -650,6 +680,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             iconRes = R.drawable.inu_tabler_device_floppy,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("additional-donate", R.string.InuDonateRow, BUTTON_DONATE),
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),
                 SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
                 SearchRegistry.Entry("additional-cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),

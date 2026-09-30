@@ -46,7 +46,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -19930,6 +19930,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -19931,6 +19931,7 @@ public class ChatActivity extends BaseFragment implements
                  info.entities = entry.entities;
                  info.masks = entry.stickers;
                  info.ttl = entry.ttl;
@@ -147,7 +147,7 @@ index 0000000..0000000 100644
          PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing);
          ImageReceiver.BitmapHolder getThumbForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
          void willSwitchFromPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index);
-@@ -7416,6 +7417,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7421,6 +7422,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  return false;
              }
  
@@ -157,7 +157,7 @@ index 0000000..0000000 100644
              final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
              final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
              final boolean userIsSelf = UserObject.isUserSelf(user);
-@@ -7442,13 +7446,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -7447,13 +7451,22 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
              final boolean showSchedule = !canEdit && canScheduleMessage && !hasTtl;
              final boolean showWithoutSound = !(canEdit && canReplace) && !userIsSelf;
              final boolean multipleSelected = placeProvider != null && placeProvider.getSelectedCount() > 1;

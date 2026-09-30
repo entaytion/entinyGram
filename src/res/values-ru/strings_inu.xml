@@ -1623,4 +1623,17 @@
     <string name="InuFeedNewPostsIndicatorPill">Плашка</string>
     <string name="InuRestartApp">Перезапустить приложение</string>
     <string name="InuRestartAppAlert">Приложение закроется и откроется снова. Несохранённые черновики и незавершённые загрузки могут быть потеряны.</string>
+    <string name="InuDonateTitle">Хотите стабильных обновлений?</string>
+    <string name="InuDonateText">entinyGram бесплатный и с открытым кодом, без рекламы. Обновления на каждую новую версию Telegram требуют моего времени. Если сообществу это нужно, можно поддержать.</string>
+    <string name="InuDonateButton">Поддержать</string>
+    <string name="InuDonateHide">Скрыть</string>
+    <string name="InuDonateHidden">Карточка поддержки скрыта</string>
+    <string name="InuDonateRow">Поддержать проект</string>
+    <string name="InuDonateSheetTitle">Поддержать entinyGram</string>
+    <string name="InuDonateSheetInfo">Нажми, чтобы скопировать или открыть. Только по желанию.</string>
+    <string name="InuDonateThanks">Спасибо, что ты здесь ❤️</string>
+    <string name="InuDonateMonobankJar">Банка Monobank</string>
+    <string name="InuDonateMonobankCard">Карта Monobank</string>
+    <string name="InuDonateWebsite">Все способы на сайте</string>
+    <string name="InuDonateCopied">Скопировано</string>
 </resources>

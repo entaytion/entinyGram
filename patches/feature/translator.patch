@@ -287,16 +287,16 @@ index 0000000..0000000 100644
          final boolean shouldSummarize = currentMessageObject != null && currentMessageObject.messageOwner.summarizedOpen;
          final boolean isFinal = shouldTranslate == (currentMessageObject != null && currentMessageObject.translated) && shouldSummarize == (currentMessageObject != null && currentMessageObject.summarized);
          if (origin == !isFinal) {
-@@ -18513,7 +18539,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
-         } else if (edited) {
-             timeString = AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
-                 LocaleController.formatPmEditedDate(currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date) :
--                (getString(R.string.EditedMessage) + " " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
-+                ((desu.inugram.InuConfig.COMPACT_EDITED.getValue() ? "" : getString(R.string.EditedMessage) + " ") + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
+@@ -18518,7 +18544,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 }
+                 timeString = LocaleController.formatPmEditedDate(editDate);
+             } else {
+-                timeString = (getString(R.string.EditedMessage) + " " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
++                timeString = ((desu.inugram.InuConfig.COMPACT_EDITED.getValue() ? "" : getString(R.string.EditedMessage) + " ") + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
+             }
          } else if (currentMessageObject.isSaved && currentMessageObject.messageOwner.fwd_from != null && (currentMessageObject.messageOwner.fwd_from.date != 0 || currentMessageObject.messageOwner.fwd_from.saved_date != 0)) {
              int date = currentMessageObject.messageOwner.fwd_from.saved_date;
-             if (date == 0) {
-@@ -18566,7 +18592,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18572,7 +18598,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentTimeString = TextUtils.concat(formatString(R.string.MessageScheduledRepeatSeconds, period), ", ", currentTimeString);
              }
          }
@@ -306,7 +306,7 @@ index 0000000..0000000 100644
          if (currentMessageObject.scheduled && currentMessageObject.messageOwner.date == 0x7FFFFFFE || currentMessageObject.notime) {
              timeWidth -= dp(8);
          }
-@@ -18664,6 +18691,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18670,6 +18697,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else {
              signWidth = 0;
          }
@@ -330,7 +330,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24926,6 +24926,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -24929,6 +24929,14 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void saveGeneralScroll() {
@@ -345,7 +345,7 @@ index 0000000..0000000 100644
          int scrollByCellHeight = 0;
          ChatMessageCell scrollByCell = null;
          for (int i = 0; i < chatListView.getChildCount(); ++i) {
-@@ -24980,16 +24988,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -24983,16 +24991,19 @@ public class ChatActivity extends BaseFragment implements
                  boolean update = false;
                  if (cellMessageObject.getId() == messageObject.getId()) {
                      cellMessageObject.messageOwner.translatedText = messageObject.messageOwner.translatedText;
@@ -371,7 +371,7 @@ index 0000000..0000000 100644
                      }
                  }
                  MessageObject.GroupedMessages group = groupedMessagesMap.get(messageObject.getGroupId());
-@@ -25018,6 +25029,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -25021,6 +25032,7 @@ public class ChatActivity extends BaseFragment implements
                          saveGeneralScroll();
                      }
                      cellMessageObject.forceUpdate = true;
@@ -379,7 +379,7 @@ index 0000000..0000000 100644
                      cell.setMessageObject(cellMessageObject, cell.getCurrentMessagesGroup(), cell.isPinnedBottom(), cell.isPinnedTop(), cell.isFirstInChat(), cell.isLastInChatList());
                      if (group != null) {
                          if (chatListItemAnimator != null) {
-@@ -26919,6 +26931,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26926,6 +26938,8 @@ public class ChatActivity extends BaseFragment implements
                  a--;
              }
  
@@ -388,7 +388,7 @@ index 0000000..0000000 100644
              addToPolls(messageObject, old);
              if (old.richCheckboxEcho && messageObject.type == MessageObject.TYPE_ARTICLE && old.richLayout != null && messageObject.messageOwner != null) {
                  messageObject.richLayout = old.richLayout;
-@@ -32133,169 +32147,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -32140,169 +32154,7 @@ public class ChatActivity extends BaseFragment implements
                      });
                      cell.setOnLongClickListener(v1 -> ChatHelper.onMenuOptionLongClick(this, popupLayout, cell, options, i, selectedObject, selectedObjectGroup));
                      if (option == OPTION_TRANSLATE) {
@@ -559,7 +559,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.video_processing_pending) {
-@@ -46134,7 +45986,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46141,7 +45993,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }
@@ -568,7 +568,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
-@@ -46482,7 +46334,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46489,7 +46341,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }

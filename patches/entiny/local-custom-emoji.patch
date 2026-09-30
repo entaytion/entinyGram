@@ -33,7 +33,7 @@ index 0000000..0000000 100644
                  for (int j = 0; j < emojiSpans.length; ++j) {
                      Emoji.EmojiSpan span = emojiSpans[j];
                      if (span != null) {
-@@ -8402,6 +8403,7 @@ public class MessageObject {
+@@ -8405,6 +8406,7 @@ public class MessageObject {
                  }
                  spannable.setSpan(new URLSpanNoUnderline("tel:" + tel, run), run.start, run.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
              } else if (run.urlEntity instanceof TLRPC.TL_messageEntityTextUrl) {

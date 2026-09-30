@@ -99,6 +99,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **clock format**: system, 12-hour or 24-hour
 - 📡 **branded first-run intro**
 - 📡 **pill stack**: interactive pills in chats search bar - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
+- 📡 **support card**: optional way to support the developer, can be hidden
 
 ### profile & identity tools
 

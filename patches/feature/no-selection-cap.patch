@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                          RecyclerView.ViewHolder holder = chatListView.findViewHolderForAdapterPosition(position);
                          if (holder != null && holder.itemView instanceof ChatMessageCell) {
                              processRowSelect(holder.itemView, false, x, y);
-@@ -19313,14 +19309,6 @@ public class ChatActivity extends BaseFragment implements
+@@ -19314,14 +19310,6 @@ public class ChatActivity extends BaseFragment implements
                      }
                  }
              } else {
