@@ -441,6 +441,9 @@ object InuConfig {
     val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)
 
     @JvmField
+    val DRAWER_SCROLL_TOP = BoolItem("drawer_scroll_top", false)
+
+    @JvmField
     val DRAWER_RECENT_CHATS = BoolItem("drawer_recent_chats", false)
 
     @JvmField

@@ -258,7 +258,9 @@ class DrawerLayoutAdapter(
             }
         }
         items.add(null)
-        items.add(Item(ITEM_SCROLL_TOP, LocaleController.getString(R.string.InuScrollToTop), R.drawable.msg_go_up))
+        if (InuConfig.DRAWER_SCROLL_TOP.value) {
+            items.add(Item(ITEM_SCROLL_TOP, LocaleController.getString(R.string.InuScrollToTop), R.drawable.msg_go_up))
+        }
         if (DialogsFabHelper.hasNewMessage()) {
             items.add(Item(17, LocaleController.getString(R.string.NewMessageTitle), R.drawable.menu_topic_add))
         } else {

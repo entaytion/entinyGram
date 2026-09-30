@@ -272,6 +272,7 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
 
     companion object {
         private val OFF_BY_DEFAULT = setOf(
+            Item.SCROLL_TOP,
             Item.GHOST_MODE,
             Item.PARANOIA,
             Item.FEED,
