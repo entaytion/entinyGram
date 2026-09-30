@@ -64,6 +64,13 @@ class PillStackSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuPillStackInfiniteScrolling)
             ).setChecked(InuConfig.PILL_STACK_INFINITE_SCROLL.value)
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_PROXY_COUNTRY,
+                LocaleController.getString(R.string.InuPillStackProxyCountry)
+            ).setChecked(InuConfig.PILL_STACK_PROXY_COUNTRY.value)
+        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuPillStackProxyCountryInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuPillStackVisibleCount)))
         items.add(
@@ -183,6 +190,11 @@ class PillStackSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
+            item.id == TOGGLE_PROXY_COUNTRY -> {
+                val new = InuConfig.PILL_STACK_PROXY_COUNTRY.toggle()
+                (view as? TextCheckCell)?.isChecked = new
+            }
+
             item.id in ACTIVE_ITEM_BASE until HIDDEN_ITEM_BASE -> {
                 val pillId = item.id - ACTIVE_ITEM_BASE
                 PillStackLayout.setPillActive(pillId, false)
@@ -288,6 +300,7 @@ class PillStackSettingsActivity : SettingsPageActivity() {
     companion object {
         private val TOGGLE_MASTER = InuUtils.generateId()
         private val TOGGLE_INFINITE_SCROLL = InuUtils.generateId()
+        private val TOGGLE_PROXY_COUNTRY = InuUtils.generateId()
         private val ID_ACTIVE_EMPTY = InuUtils.generateId()
         private val ID_HIDDEN_EMPTY = InuUtils.generateId()
         private val BUTTON_WEATHER_LOCATION = InuUtils.generateId()
@@ -307,6 +320,7 @@ class PillStackSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("pill-stack-master", R.string.InuPillStack, TOGGLE_MASTER),
                 SearchRegistry.Entry("pill-stack-infinite-scroll", R.string.InuPillStackInfiniteScrolling, TOGGLE_INFINITE_SCROLL),
+                SearchRegistry.Entry("pill-stack-proxy-country", R.string.InuPillStackProxyCountry, TOGGLE_PROXY_COUNTRY),
             ),
         )
     }

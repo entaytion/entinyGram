@@ -1131,6 +1131,8 @@
     <string name="InuPillStackReset">重置药丸为默认</string>
     <string name="InuPillStackResetDone">胶囊布局已重置</string>
     <string name="InuPillStackInfiniteScrolling">无限滚动</string>
+    <string name="InuPillStackProxyCountry">显示代理所在国家</string>
+    <string name="InuPillStackProxyCountryInfo">启用代理时，在延迟胶囊中加入代理所在国家的旗帜。代理地址会通过免费的 GeoIP 服务查询一次。</string>
     <string name="InuPillStackActivePills">已启用的胶囊</string>
     <string name="InuPillStackHiddenPills">隐藏的胶囊</string>
     <string name="InuPillStackListEmpty">空</string>

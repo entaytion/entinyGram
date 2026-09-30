@@ -1129,6 +1129,8 @@
     <string name="InuPillStackReset">Pilleri varsayılana sıfırla</string>
     <string name="InuPillStackResetDone">Hap düzeni sıfırlandı</string>
     <string name="InuPillStackInfiniteScrolling">Sonsuz kaydırma</string>
+    <string name="InuPillStackProxyCountry">Proxy ülkesini göster</string>
+    <string name="InuPillStackProxyCountryInfo">Proxy açıkken ülke bayrağını ping hapına ekler. Proxy adresi ücretsiz bir GeoIP hizmetiyle bir kez sorgulanır.</string>
     <string name="InuPillStackActivePills">Aktif haplar</string>
     <string name="InuPillStackHiddenPills">Gizli haplar</string>
     <string name="InuPillStackListEmpty">Boş</string>

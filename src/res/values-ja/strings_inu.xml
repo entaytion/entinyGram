@@ -1130,6 +1130,8 @@
     <string name="InuPillStackReset">ピルをデフォルトにリセット</string>
     <string name="InuPillStackResetDone">ピルの配置がリセットされました</string>
     <string name="InuPillStackInfiniteScrolling">無限スクロール</string>
+    <string name="InuPillStackProxyCountry">プロキシの国を表示</string>
+    <string name="InuPillStackProxyCountryInfo">プロキシが有効な間、ピンのピルにプロキシの国旗を追加します。プロキシのアドレスは無料のGeoIPサービスで一度だけ照会されます。</string>
     <string name="InuPillStackActivePills">アクティブなピル</string>
     <string name="InuPillStackHiddenPills">非表示のピル</string>
     <string name="InuPillStackListEmpty">空</string>

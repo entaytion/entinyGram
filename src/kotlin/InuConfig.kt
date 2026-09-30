@@ -1903,6 +1903,9 @@ object InuConfig {
     @JvmField
     val PILL_STACK_IN_HEADER = BoolItem("pill_stack_in_header", false)
 
+    @JvmField
+    val PILL_STACK_PROXY_COUNTRY = BoolItem("pill_stack_proxy_country", true)
+
     // entiny: weather pill location -- the device position by default, or a point picked on the map (no location permission)
     @JvmField
     val WEATHER_USE_CURRENT_LOCATION = BoolItem("weather_use_current_location", true)

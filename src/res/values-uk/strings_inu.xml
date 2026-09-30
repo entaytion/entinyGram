@@ -211,6 +211,8 @@
     <string name="InuPillStackReset">Скинути піллюлі до типових</string>
     <string name="InuPillStackResetDone">Розкладку пігулок скинуто</string>
     <string name="InuPillStackInfiniteScrolling">Безкінечне гортання</string>
+    <string name="InuPillStackProxyCountry">Показувати країну проксі</string>
+    <string name="InuPillStackProxyCountryInfo">Додає прапор країни проксі до пілюлі пінгу, поки проксі увімкнено. Адреса проксі один раз перевіряється через безкоштовний GeoIP-сервіс.</string>
     <string name="InuPillStackActivePills">Активні пігулки</string>
     <string name="InuPillStackHiddenPills">Приховані пігулки</string>
     <string name="InuPillStackListEmpty">Порожньо</string>

@@ -282,6 +282,8 @@
     <string name="InuPillStackReset">Reset pills to default</string>
     <string name="InuPillStackResetDone">Pill layout has been reset</string>
     <string name="InuPillStackInfiniteScrolling">Infinite scrolling</string>
+    <string name="InuPillStackProxyCountry">Show proxy country</string>
+    <string name="InuPillStackProxyCountryInfo">Adds the proxy country flag to the ping pill while a proxy is on. The proxy address is looked up once through a free GeoIP service.</string>
     <string name="InuPillStackActivePills">Active Pills</string>
     <string name="InuPillStackHiddenPills">Hidden Pills</string>
     <string name="InuPillStackListEmpty">Empty</string>

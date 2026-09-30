@@ -1272,6 +1272,8 @@
     <string name="InuPillStackReset">Сбросить пилюли к стандартным</string>
     <string name="InuPillStackResetDone">Раскладка виджетов сброшена</string>
     <string name="InuPillStackInfiniteScrolling">Бесконечная прокрутка</string>
+    <string name="InuPillStackProxyCountry">Показывать страну прокси</string>
+    <string name="InuPillStackProxyCountryInfo">Добавляет флаг страны прокси в пилюлю пинга, пока прокси включён. Адрес прокси один раз проверяется через бесплатный GeoIP-сервис.</string>
     <string name="InuPillStackActivePills">Активные виджеты</string>
     <string name="InuPillStackHiddenPills">Скрытые виджеты</string>
     <string name="InuPillStackListEmpty">Пусто</string>
