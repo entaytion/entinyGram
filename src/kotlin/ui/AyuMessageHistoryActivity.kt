@@ -22,6 +22,8 @@ import desu.inugram.helpers.InuDatabaseHelper
 import java.io.File
 import java.util.ArrayList
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ChatObject
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
@@ -48,6 +50,15 @@ class AyuMessageHistoryActivity(
     private val isDeletedArchive: Boolean
         get() = deletedArchiveAuthor != null || deletedArchiveDialog
 
+    private val showSenders: Boolean
+        get() {
+            if (!isDeletedArchive || deletedArchiveAuthor != null) return false
+            val dialogId = targetMessageObject.getDialogId()
+            if (!DialogObject.isChatDialog(dialogId)) return false
+            val chat = messagesController.getChat(-dialogId)
+            return chat != null && !ChatObject.isChannelAndNotMegaGroup(chat)
+        }
+
     private val historyEntries = ArrayList<EditEntry>()
     private val messageObjects = ArrayList<MessageObject?>()
     private var listView: RecyclerListView? = null
@@ -69,15 +80,16 @@ class AyuMessageHistoryActivity(
             val storage = MessagesStorage.getInstance(currentAccount) ?: return
             storage.storageQueue.postRunnable {
                 val db = storage.database ?: return@postRunnable
-                val deleted = deletedArchiveAuthor?.let { InuDatabaseHelper.deletedByAuthorInDialog(db, it, dialogId) }
-                    ?: InuDatabaseHelper.deletedMessagesInDialog(db, dialogId).map {
-                        InuDatabaseHelper.MessageSearchResult(dialogId, it.msgId, it.text, it.date, false, it.mediaPath)
+                val deleted = deletedArchiveAuthor?.let { author ->
+                    InuDatabaseHelper.deletedByAuthorInDialog(db, author, dialogId).map {
+                        EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = author)
                     }
+                } ?: InuDatabaseHelper.deletedMessagesInDialog(db, dialogId).map {
+                    EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = it.fromId)
+                }
                 AndroidUtilities.runOnUIThread {
                     historyEntries.clear()
-                    deleted.asReversed().forEach { entry ->
-                        historyEntries.add(EditEntry(entry.date.toLong(), entry.text, entry.mediaPath, originalMessageId = entry.msgId))
-                    }
+                    historyEntries.addAll(deleted.asReversed())
                     loaded = true
                     rebuildMessageObjects()
                     listView?.adapter?.notifyDataSetChanged()
@@ -310,7 +322,7 @@ class AyuMessageHistoryActivity(
                 dialog_id = targetMessageObject.getDialogId()
                 date = entry.timestamp.toInt()
                 message = entry.text
-                from_id = owner?.from_id
+                from_id = if (isDeletedArchive && entry.fromId != 0L) messagesController.getPeer(entry.fromId) else owner?.from_id
                 peer_id = this@AyuMessageHistoryActivity.peer
                 out = owner?.out == true
                 post = owner?.post == true
@@ -401,6 +413,7 @@ class AyuMessageHistoryActivity(
         fun setEditEntry(editEntry: EditEntry, msgObj: MessageObject, position: Int) {
             this.entry = editEntry
             this.entryPosition = position
+            isChat = showSenders
             setMessageObject(msgObj, null, false, false, false)
         }
 

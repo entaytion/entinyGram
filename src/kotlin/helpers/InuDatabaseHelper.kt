@@ -462,17 +462,17 @@ object InuDatabaseHelper {
 
     data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean, val mediaPath: String? = null)
 
-    data class DeletedMessage(val msgId: Int, val text: String, val date: Int, val mediaPath: String? = null)
+    data class DeletedMessage(val msgId: Int, val text: String, val date: Int, val mediaPath: String? = null, val fromId: Long = 0L)
 
     fun deletedMessagesInDialog(db: SQLiteDatabase, dialogId: Long, limit: Int = 300): List<DeletedMessage> {
         val list = ArrayList<DeletedMessage>()
         val cursor = db.queryFinalized(
-            "SELECT msg_id, text, date, media_path FROM inu_deleted_messages WHERE dialog_id = ? ORDER BY date DESC LIMIT ?",
+            "SELECT msg_id, text, date, media_path, from_id FROM inu_deleted_messages WHERE dialog_id = ? ORDER BY date DESC LIMIT ?",
             dialogId, limit,
         )
         try {
             while (cursor.next()) {
-                list.add(DeletedMessage(cursor.intValue(0), cursor.stringValue(1) ?: "", cursor.intValue(2), cursor.stringValue(3)))
+                list.add(DeletedMessage(cursor.intValue(0), cursor.stringValue(1) ?: "", cursor.intValue(2), cursor.stringValue(3), cursor.longValue(4)))
             }
         } finally {
             cursor.dispose()

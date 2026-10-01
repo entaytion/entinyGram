@@ -27,7 +27,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - per-category controls for private chats, groups, channels and bots
   - save edit history (✏️) with formatting, media and text diff
   - custom styling for deleted messages
-  - full-text search and a browsable archive of everything saved
+  - full-text search and a browsable archive of everything saved, with sender names in groups
   - cache TTL and automatic expiration
   - export the archive to a JSON file
 - 📡 **self-destructing & expiring media**:

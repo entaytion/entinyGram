@@ -118,6 +118,7 @@ object SavedMessagesHelper {
         val entities: ArrayList<TLRPC.MessageEntity>? = null,
         val media: TLRPC.MessageMedia? = null,
         val originalMessageId: Int = 0,
+        val fromId: Long = 0L,
     )
 
     @JvmStatic
