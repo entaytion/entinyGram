@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="InuOpenInDiscussion">Open in discussion</string>
+    <string name="InuLinkedGroup">Linked group</string>
+    <string name="InuLinkedChannel">Linked channel</string>
+    <string name="InuLinkedChat">Linked group / channel</string>
+    <string name="InuLinkedChatUnavailable">Linked chat is not available yet</string>
+    <string name="InuHideTitle">Hide title</string>
+    <string name="InuClearDeletedHere">Clear deleted messages</string>
+    <string name="InuClearDeletedHereAlert">Delete the locally saved deleted messages of this chat and their media? This cannot be undone.</string>
+    <string name="InuSetReminder">Set reminder</string>
     <string name="InuBanUserConfirm">Ban %1$s from this group?</string>
     <string name="InuSendToDiscussWithoutJoin">Write to discuss groups without joining</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Skip the client-only membership check for discussion groups</string>

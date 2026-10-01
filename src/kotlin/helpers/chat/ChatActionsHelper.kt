@@ -61,6 +61,9 @@ object ChatActionsHelper {
     const val ACTION_TYPING_SPOOF = 521
     const val ACTION_REGEX_CHAT_FILTERS = 522
     const val ACTION_GHOST_MODE = 540
+    const val ACTION_LINKED_CHAT = 523
+    const val ACTION_HIDE_TITLE = 524
+    const val ACTION_CLEAR_DELETED = 525
     const val ACTION_DELETED_MESSAGES = 541
 
     const val ACTION_SELECT_RANGE = 1500
@@ -114,6 +117,22 @@ object ChatActionsHelper {
         headerItem.lazilyAddSubItem(
             ACTION_GO_TO_MESSAGE, R.drawable.msg_message,
             LocaleController.getString(R.string.InuGoToMessage),
+        )
+        val linkedSource = activity.currentChat
+        if (linkedSource != null && linkedSource.has_link && activity.chatMode == 0 && !activity.isThreadChat && activity.currentEncryptedChat == null) {
+            val toGroup = ChatObject.isChannelAndNotMegaGroup(linkedSource)
+            headerItem.lazilyAddSubItem(
+                ACTION_LINKED_CHAT, if (toGroup) R.drawable.msg_groups else R.drawable.msg_channel,
+                LocaleController.getString(if (toGroup) R.string.InuLinkedGroup else R.string.InuLinkedChannel),
+            )
+        }
+        headerItem.lazilyAddSubItem(
+            ACTION_HIDE_TITLE, R.drawable.inu_tabler_eye_off,
+            LocaleController.getString(R.string.InuHideTitle),
+        )
+        headerItem.lazilyAddSubItem(
+            ACTION_CLEAR_DELETED, R.drawable.inu_tabler_trash_x,
+            LocaleController.getString(R.string.InuClearDeletedHere),
         )
         if (DeleteOwnMessagesHelper.isApplicable(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
@@ -210,6 +229,9 @@ object ChatActionsHelper {
 
             ACTION_PINNED_UNPIN_ALL -> activity.bottomOverlayChatText?.callOnClick()
             ACTION_OPEN_IN_DISCUSSION -> openInDiscussionGroup(activity)
+            ACTION_LINKED_CHAT -> openLinkedChat(activity)
+            ACTION_HIDE_TITLE -> toggleHideTitle(activity)
+            ACTION_CLEAR_DELETED -> confirmClearDeleted(activity)
             ACTION_TYPING_SPOOF -> showTypingSpoofSelector(activity)
             ACTION_REGEX_CHAT_FILTERS -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
             ACTION_GHOST_MODE -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {
@@ -236,6 +258,37 @@ object ChatActionsHelper {
             putInt("message_id", activity.threadId.toInt())
         }
         activity.presentFragment(ChatActivity(args))
+    }
+
+    private fun toggleHideTitle(activity: ChatActivity) {
+        val container = activity.avatarContainer ?: return
+        container.alpha = if (container.alpha > 0.5f) 0f else 1f
+    }
+
+    private fun confirmClearDeleted(activity: ChatActivity) {
+        val context = activity.parentActivity ?: return
+        AlertDialog.Builder(context, activity.resourceProvider)
+            .setTitle(LocaleController.getString(R.string.InuClearDeletedHere))
+            .setMessage(LocaleController.getString(R.string.InuClearDeletedHereAlert))
+            .setPositiveButton(LocaleController.getString(R.string.ClearButton).uppercase()) { _, _ ->
+                SavedMessagesHelper.clearCache(activity.currentAccount, listOf(activity.dialogId), true) {
+                    BulletinFactory.of(activity)
+                        .createSimpleBulletin(R.raw.ic_delete, LocaleController.getString(R.string.InuClearDeletedCacheDone))
+                        .show()
+                }
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .makeRed(AlertDialog.BUTTON_POSITIVE)
+            .show()
+    }
+
+    private fun openLinkedChat(activity: ChatActivity) {
+        val linkedId = activity.currentChatInfo?.linked_chat_id ?: 0L
+        if (linkedId == 0L) {
+            BulletinFactory.of(activity).createErrorBulletin(LocaleController.getString(R.string.InuLinkedChatUnavailable)).show()
+            return
+        }
+        activity.presentFragment(ChatActivity(Bundle().apply { putLong("chat_id", linkedId) }))
     }
 
     private fun canViewAdminLog(chat: TLRPC.Chat?): Boolean {

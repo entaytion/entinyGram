@@ -138,6 +138,9 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         RECENT_ACTIONS("recent_actions", listOf(ChatActionsHelper.ACTION_RECENT_ACTIONS), R.string.EventLog, R.drawable.msg_log),
         GO_TO_BEGINNING("go_to_beginning", listOf(ChatActionsHelper.ACTION_GO_TO_BEGINNING), R.string.InuJumpToBeginning, R.drawable.msg_go_up),
         GO_TO_MESSAGE("go_to_message", listOf(ChatActionsHelper.ACTION_GO_TO_MESSAGE), R.string.InuGoToMessage, R.drawable.msg_message),
+        LINKED_CHAT("linked_chat", listOf(ChatActionsHelper.ACTION_LINKED_CHAT), R.string.InuLinkedChat, R.drawable.msg_groups),
+        HIDE_TITLE("hide_title", listOf(ChatActionsHelper.ACTION_HIDE_TITLE), R.string.InuHideTitle, R.drawable.inu_tabler_eye_off),
+        CLEAR_DELETED("clear_deleted", listOf(ChatActionsHelper.ACTION_CLEAR_DELETED), R.string.InuClearDeletedHere, R.drawable.inu_tabler_trash_x),
         STATISTICS("statistics", listOf(ChatActionsHelper.ACTION_STATISTICS), R.string.Statistics, R.drawable.msg_stats),
         ADMINISTRATORS("administrators", listOf(ChatActionsHelper.ACTION_ADMINISTRATORS), R.string.ChannelAdministrators, R.drawable.msg_admins),
         PERMISSIONS("permissions", listOf(ChatActionsHelper.ACTION_PERMISSIONS), R.string.ChannelPermissions, R.drawable.msg_permissions),
@@ -163,6 +166,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         private val OFF_BY_DEFAULT = setOf(
             Item.RECENT_ACTIONS, Item.GO_TO_BEGINNING, Item.GO_TO_MESSAGE, Item.DELETE_OWN_MESSAGES,
             Item.STATISTICS, Item.ADMINISTRATORS, Item.PERMISSIONS, Item.INVITE_LINKS,
+            Item.LINKED_CHAT, Item.HIDE_TITLE, Item.CLEAR_DELETED,
         )
     }
 }
@@ -361,6 +365,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         MARK_AS_READ("mark_as_read", listOf(ChatHelper.OPTION_MARK_AS_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
         EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.inu_tabler_file_diff),
         ADD_FILTER("add_filter", listOf(ChatHelper.OPTION_ADD_FILTER), R.string.InuRegexFilterAddFromMessage, R.drawable.inu_tabler_filter),
+        SET_REMINDER("set_reminder", listOf(ChatHelper.OPTION_SET_REMINDER), R.string.InuSetReminder, R.drawable.msg_notifications),
 
         SLOT_REPLY("slot_reply", emptyList(), R.string.Reply, R.drawable.menu_reply, true),
         SLOT_COPY("slot_copy", emptyList(), R.string.Copy, R.drawable.msg_copy, true),
@@ -384,7 +389,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
     override fun itemByKey(key: String): Item? = Item.forKey(key)
 
     companion object {
-        private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT, Item.ADD_FILTER)
+        private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT, Item.ADD_FILTER, Item.SET_REMINDER)
     }
 }
 

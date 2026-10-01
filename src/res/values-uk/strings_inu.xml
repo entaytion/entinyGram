@@ -5,6 +5,14 @@
     <string name="InuConfirmSendSticker">Стікери</string>
     <string name="InuConfirmSendGif">GIF</string>
     <string name="InuOpenInDiscussion">Відкрити в обговоренні</string>
+    <string name="InuLinkedGroup">Прив’язана група</string>
+    <string name="InuLinkedChannel">Прив’язаний канал</string>
+    <string name="InuLinkedChat">Прив’язана група / канал</string>
+    <string name="InuLinkedChatUnavailable">Прив’язаний чат поки недоступний</string>
+    <string name="InuHideTitle">Приховати заголовок</string>
+    <string name="InuClearDeletedHere">Очистити видалені</string>
+    <string name="InuClearDeletedHereAlert">Видалити локально збережені видалені повідомлення цього чату та їхні медіа? Це не можна скасувати.</string>
+    <string name="InuSetReminder">Створити нагадування</string>
     <string name="InuBanUserConfirm">Заблокувати %1$s у цій групі?</string>
     <string name="InuSendToDiscussWithoutJoin">Писати в групи обговорення без вступу</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Пропускати клієнтську перевірку членства для груп обговорення</string>

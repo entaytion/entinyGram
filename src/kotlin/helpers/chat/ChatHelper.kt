@@ -134,6 +134,7 @@ object ChatHelper {
     const val OPTION_FORWARD_PRO = 528
     const val OPTION_SHARE_ONE_TIME = 529
     const val OPTION_FORWARD_ONE_TIME = 530
+    const val OPTION_SET_REMINDER = 531
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -325,6 +326,19 @@ object ChatHelper {
 
     @JvmStatic
     @Suppress("DEPRECATION")
+    private fun setReminder(activity: ChatActivity, messages: ArrayList<MessageObject>) {
+        val context = activity.parentActivity ?: return
+        val selfId = UserConfig.getInstance(activity.currentAccount).clientUserId
+        val builder = org.telegram.ui.Components.AlertsCreator.createScheduleDatePickerDialog(context, selfId) { notify, scheduleDate, _ ->
+            if (!notify) return@createScheduleDatePickerDialog
+            SendMessagesHelper.getInstance(activity.currentAccount).sendMessage(messages, selfId, false, false, true, scheduleDate, 0L)
+            activity.createUndoView()
+            activity.undoView.showWithAction(selfId, org.telegram.ui.Components.UndoView.ACTION_FWD_MESSAGES, messages.size)
+        }
+        activity.showDialog(builder.create())
+    }
+
+    @JvmStatic
     fun forwardToSavedMessages(activity: ChatActivity, messages: ArrayList<MessageObject>) {
         if (messages.isEmpty()) return
         val selfId = UserConfig.getInstance(activity.currentAccount).clientUserId
@@ -424,6 +438,12 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuSaveToSavedMessages))
             options.add(OPTION_SAVE)
             icons.add(R.drawable.msg_saved)
+        }
+
+        if (allowSendActions && !noforwards && isMenuItemEnabled(MessageMenuConfig.Item.SET_REMINDER)) {
+            items.add(LocaleController.getString(R.string.InuSetReminder))
+            options.add(OPTION_SET_REMINDER)
+            icons.add(R.drawable.msg_notifications)
         }
 
         if (options.contains(ChatActivity.OPTION_FORWARD)) {
@@ -739,6 +759,12 @@ object ChatHelper {
                     messages.add(selectedObject)
                 }
                 forwardToSavedMessages(activity, messages)
+            }
+
+            OPTION_SET_REMINDER -> {
+                val messages = ArrayList<MessageObject>()
+                if (selectedObjectGroup != null) messages.addAll(selectedObjectGroup.messages) else messages.add(selectedObject)
+                setReminder(activity, messages)
             }
 
             OPTION_FORWARD_PRO -> {
@@ -1765,7 +1791,12 @@ object ChatHelper {
         if (!ChatObject.isNotInChat(chat)) return true
         if (!InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.value) return false
         if (chat.join_to_send) return false
-        return chat.megagroup && chat.has_link
+        val linked = chat.megagroup && chat.has_link
+        // entiny: record the flags when the join bar is about to show for a megagroup so repro reports are actionable
+        if (!linked && chat.megagroup) {
+            org.telegram.messenger.FileLog.d("InuJoin megagroup=${chat.id} has_link=${chat.has_link} join_to_send=${chat.join_to_send} min=${chat.min} left=${chat.left}")
+        }
+        return linked
     }
 
     @JvmStatic
