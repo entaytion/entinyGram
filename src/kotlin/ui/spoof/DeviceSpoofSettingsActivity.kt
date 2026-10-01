@@ -47,10 +47,8 @@ class DeviceSpoofSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(getString(R.string.InuDeviceSpoofExtras)))
         items.add(mkTwoLineCheckItem(TOGGLE_HIDE_TZ, R.string.InuDeviceSpoofHideTz, R.string.InuDeviceSpoofHideTzInfo, InuConfig.DEVICE_SPOOF_HIDE_TZ.value))
         items.add(mkTwoLineCheckItem(TOGGLE_HIDE_INSTALLER, R.string.InuDeviceSpoofHideInstaller, R.string.InuDeviceSpoofHideInstallerInfo, InuConfig.DEVICE_SPOOF_HIDE_INSTALLER.value))
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(getString(R.string.InuDeviceSpoofPreview)))
-        items.add(UItem.asShadow(previewText()))
+        // entiny: a lone header over a shadow renders as a stray card, so the preview is one captioned shadow instead
+        items.add(UItem.asShadow(getString(R.string.InuDeviceSpoofPreview) + ":\n" + previewText()))
 
         items.add(UItem.asButton(BUTTON_APPLY, R.drawable.msg_retry, getString(R.string.InuDeviceSpoofApply)))
         items.add(UItem.asButton(BUTTON_VERIFY, R.drawable.msg_info, getString(R.string.InuDeviceSpoofVerify)))

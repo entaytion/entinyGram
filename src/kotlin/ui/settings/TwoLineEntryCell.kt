@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.ui.ActionBar.Theme
@@ -23,6 +24,8 @@ class TwoLineEntryCell(context: Context) : LinearLayout(context) {
 
     init {
         orientation = HORIZONTAL
+        // entiny: factory views get wrap_content from RecyclerView otherwise, which shrinks rows with short descriptions
+        layoutParams = RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT)
         gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(22f), dp(10f), dp(18f), dp(10f))
         icon.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon))

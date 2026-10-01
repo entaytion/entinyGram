@@ -71,6 +71,8 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
                 showRestartBulletin()
             }
+            // entiny: the master switch flips the sections style too, so rebuild this page like the single toggle does
+            if (changed.any { it.id == TOGGLE_M3_SECTIONS_STYLE }) inu_rebuildSelf()
             invalidateVisibleRows()
             softRebuild()
             listView.adapter.update(true)
