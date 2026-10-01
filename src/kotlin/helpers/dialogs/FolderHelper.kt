@@ -232,8 +232,42 @@ object FolderHelper {
     }
 
     @JvmStatic
+    fun saveSelectedFolder(account: Int, filterId: Int) {
+        if (!InuConfig.REMEMBER_SELECTED_FOLDER.value) return
+        InuConfig.prefs.edit { putInt("last_folder_$account", filterId) }
+    }
+
+    @JvmStatic
+    fun getSavedFolder(account: Int): Int? {
+        if (!InuConfig.REMEMBER_SELECTED_FOLDER.value) return null
+        val key = "last_folder_$account"
+        return if (InuConfig.prefs.contains(key)) InuConfig.prefs.getInt(key, 0) else null
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun resolveInitialFolder(
+        filters: List<MessagesController.DialogFilter>,
+        selectedType: Int,
+        account: Int,
+        stableId: Int = -1
+    ): Int {
+        var result = selectedType
+        if (stableId < 0 && InuConfig.REMEMBER_SELECTED_FOLDER.value) {
+            val savedId = getSavedFolder(account)
+            if (savedId != null) {
+                val index = filters.indexOfFirst { it.id == savedId }
+                if (index >= 0) {
+                    result = index
+                }
+            }
+        }
+        return snapOffDefault(filters, result)
+    }
+
+    @JvmStatic
     fun refreshSelectedTab(filterTabsView: FilterTabsView, selectedType: Int, filtersSize: Int) {
-        if (!InuConfig.HIDE_ALL_CHATS_TAB.value) return
+        if (!InuConfig.HIDE_ALL_CHATS_TAB.value && !InuConfig.REMEMBER_SELECTED_FOLDER.value) return
         if (selectedType < 0 || selectedType >= filtersSize) return
         filterTabsView.selectTabWithId(selectedType, 1f)
     }

@@ -343,10 +343,7 @@ entiny/selection-no-quote.patch
 entiny/md3-sections-textcell-fix.patch
 entiny/popup-swipeback-live-blur.patch
 feature/sort-albums-by-size.patch
-misc/debug-stale-reactions.patch
-misc/debug-notifications.patch
 bugfix/share-alert-search-dead-zone.patch
-misc/debug-media-upload.patch
 bugfix/sections-scroll-view-alpha.patch
 bugfix/channel-reactions-toggle.patch
 bugfix/group-call-record-timer.patch
@@ -391,7 +388,6 @@ entiny/settings-search-uppercase.patch
 entiny/contact-emoji-picker.patch
 entiny/badge-tap-bulletin.patch
 entiny/chat-menu-live-reorder.patch
-entiny/fast-resend-login-code.patch
 entiny/parallel-account-init.patch
 bugfix/positional-format-args.patch
 entiny/remote-badges.patch
@@ -470,3 +466,7 @@ entiny/background-service-toggle.patch
 entiny/device-spoof.patch
 entiny/ai-summary-inline.patch
 entiny/media-size.patch
+entiny/m3-tabs-alignment.patch
+entiny/hide-reactions-overlay.patch
+entiny/remember-selected-folder.patch
+entiny/animated-file-drawable-recycle-crash.patch

@@ -7,7 +7,6 @@
     <string name="InuIosStyle">سبک iOS</string>
     <string name="InuConfirmBeforeSending">تأیید پیش از ارسال</string>
     <string name="InuConfirmSendVoice">تأیید پیش از ارسال پیام صوتی</string>
-    <string name="InuConfirmSendVoiceMessage">این پیام صوتی ارسال شود؟</string>
     <string name="InuConfirmSendSticker">تأیید پیش از ارسال استیکر</string>
     <string name="InuConfirmSendGif">تأیید پیش از ارسال گیف</string>
     <string name="InuNavigationDrawer">منوی کناری</string>
@@ -417,6 +416,8 @@
     <string name="InuFoldersUnreadCounterExcludeMutedNonDms">بدون بی‌صداشده‌های غیرخصوصی</string>
     <string name="InuHideAllChatsTab">پنهان کردن زبانه «همه گفتگوها»</string>
     <string name="InuHideAllChatsTabInfo">برای نمایش همه گفتگوها، عنوان را در فهرست گفتگوها نگه دارید.</string>
+    <string name="InuRememberSelectedFolder">به‌خاطر سپردن پوشه انتخاب‌شده</string>
+    <string name="InuRememberSelectedFolderInfo">باز کردن مجدد آخرین پوشه فعال هنگام بازگشت به فهرست گفتگوها.</string>
     <string name="InuFoldersAtBottom">انتقال پوشه‌ها به پایین</string>
     <string name="InuHideArchive">حذف «گفتگوهای بایگانی‌شده» از فهرست گفتگوها</string>
     <string name="InuCommunityDisplayMode">انجمن‌ها</string>
@@ -600,7 +601,6 @@
     <string name="InuIconReplacementSolar">Solar از @Design480</string>
     <string name="InuIconReplacementVkui">VKUI از VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (آزمایشی)</string>
-    <string name="InuIconReplacementRestartInfo">برای اعمال بسته نمادها برنامه را راه‌اندازی مجدد کنید.</string>
 
     <string name="InuMapsHeader">نقشه‌ها</string>
     <string name="InuMapProvider">ارائه‌دهنده نمایش نقشه</string>
@@ -809,10 +809,6 @@
     <string name="InuAccountSwitchShortcut">میان‌بر تعویض حساب</string>
     <string name="InuAccountSwitchShortcutInfo">میان‌بری با نگه داشتن نماد برنامه اضافه می‌کند که می‌پرسد کدام حساب باز شود</string>
 
-    <string name="InuFastResendLoginCode">رد کردن شمارش معکوس کد ورود</string>
-    <string name="InuFastResendLoginCodeInfo">روی شمارش معکوس در صفحه کد ورود ضربه بزنید تا بدون انتظار برای تمام شدنش کد جدید بگیرید</string>
-    <string name="InuFastResendLoginCodeConfirm">انتظار رد شود و همین الان کد جدید خواسته شود؟ ممکن است تلگرام همچنان نپذیرد.</string>
-    <string name="InuFastResendLoginCodeNow">ارسال مجدد همین حالا</string>
 
     <string name="InuTextClassifierMode">حالت طبقه‌بند متن</string>
     <string name="InuTextClassifierModeInfo">طبقه‌بند متن یک مؤلفه سیستمی است که هنگام دوضربه روی متن، انتخاب را خودکار گسترش می‌دهد</string>
@@ -865,7 +861,6 @@
     <string name="InuAppIconLicenseInugram">نماد موقت؛ برای ساخت نمادی بهتر آزادانه مشارکت کنید</string>
     <string name="InuAppIconLicenseTelegram">نماد از **Telegram**. همه حقوق محفوظ است.</string>
     <string name="InuJumpToBeginning">پرش به ابتدا</string>
-    <string name="InuScrollToTop">اسکرول به بالا</string>
     <string name="InuRecentChats">گفتگوهای اخیر</string>
     <string name="InuClearRecentChats">پاک کردن گفتگوهای اخیر</string>
     <string name="InuClearRecentChatsAlert">فهرست گفتگوهایی که به‌تازگی باز کرده‌اید پاک می‌شود. هیچ گفتگو یا پیامی حذف نمی‌شود.</string>
@@ -1093,13 +1088,10 @@
 
     <string name="InuLogs">اشکال‌زدایی</string>
     <string name="InuLogsEnabled">حالت اشکال‌زدایی</string>
-    <string name="InuExtraDebugLogs">[entiny] گزارش‌های اشکال‌زدایی اضافه</string>
     <string name="InuLogsSize">حجم گزارش‌ها: %1$s</string>
     <string name="InuLogsShare">اشتراک‌گذاری گزارش‌ها</string>
     <string name="InuLogsShareZip">همه گزارش‌ها (.zip)</string>
     <string name="InuLogsShareCurrent">گزارش فعلی (.txt)</string>
-    <string name="InuLogsShareByCategory">بر اساس دسته (.zip)</string>
-    <string name="InuLogsNoCategories">هنوز گزارش دسته‌بندی‌شده‌ای نیست</string>
     <string name="InuLogsClear">پاک کردن گزارش‌ها</string>
     <string name="InuLogsCleared">گزارش‌های قدیمی پاک شد</string>
     <string name="InuLogsShareError">بسته‌بندی گزارش‌ها ناموفق بود</string>
@@ -1317,7 +1309,7 @@
     <string name="InuShowMutualContactIconInfo">در فهرست مخاطبان نماد نشانگر مخاطب دوطرفه نشان داده شود</string>
     <string name="InuShowMutualContactInChats">نمایش نماد مخاطب دوطرفه در فهرست اعضای گروه و کانال</string>
     <string name="InuShowMutualContactInChatsInfo">نماد مخاطب دوطرفه در فهرست اعضای گروه‌ها و کانال‌ها نمایش داده شود</string>
-    <string name="InuCategoryAppearance">ظاهر و چیدمان</string>
+    <string name="InuCategoryAppearance">طراحی</string>
     <string name="InuCategoryChats">گفتگوها</string>
     <string name="InuCategoryBehavior">رفتار و ابزارها</string>
     <string name="InuCategoryPrivacy">حریم خصوصی و امنیت</string>

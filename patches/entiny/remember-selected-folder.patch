@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 1 Oct 2026 13:51:04 +0300
+Subject: [+] remember selected folder
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java    | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -6994,6 +6994,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+         ArrayList<MessagesController.DialogFilter> filters = getMessagesController().getDialogFilters();
+         if (viewPages[0].selectedType >= 0 && viewPages[0].selectedType < filters.size()) {
++            if (folderId == 0 && communityId == 0) {
++                FolderHelper.saveSelectedFolder(currentAccount, filters.get(viewPages[0].selectedType).id);
++            }
+             inu_updateFolderTitle(filters.get(viewPages[0].selectedType));
+         }
+     }
+@@ -7049,6 +7052,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             // folder's name stuck on a page the user never moved to. The settle-time hooks
+             // (tabsAnimation onAnimationEnd, onPageScrolled progress==1) apply the name once the
+             // transition has actually committed, so there is nothing to undo.
++            if (folderId == 0 && communityId == 0) {
++                FolderHelper.saveSelectedFolder(currentAccount, filter.id);
++            }
+             inu_updateFolderTitle(filter);
+         }
+ 
+@@ -7132,7 +7138,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     if (viewPages[a].selectedType >= filters.size()) {
+                         viewPages[a].selectedType = filters.size() - 1;
+                     }
+-                    int snapped = FolderHelper.snapOffDefault(filters, viewPages[a].selectedType);
++                    int snapped = FolderHelper.resolveInitialFolder(filters, viewPages[a].selectedType, currentAccount, stableId);
+                     if (snapped != viewPages[a].selectedType) {
+                         viewPages[a].selectedType = snapped;
+                         if (a == 0) updateCurrentTab = true;

@@ -4,7 +4,6 @@ import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.badges.BadgeRegistry
 import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
@@ -19,7 +18,7 @@ import org.telegram.messenger.BuildConfig
 import org.telegram.utils.camera.roundvideo.RoundVideoSession
 import org.telegram.utils.settings.SharedSettings
 
-class CategoryChatsSettingsActivity : SettingsPageActivity() {
+class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuChats)
 
@@ -29,64 +28,11 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     }
 
     private var chatInputMaxLinesSlider: SliderCell? = null
-    private var chatInputTextSizeSlider: SliderCell? = null
-    private var wideChannelPostsPreview: WideChannelPostsPreviewCell? = null
-    private var wideChannelPostsInsetSlider: SliderCell? = null
-
-    private val hideBotSlashGroup = ExpandableBoolGroup(
-        LocaleController.getString(R.string.InuHideBotSlash),
-        listOf(
-            ExpandableBoolGroup.Option(R.string.InuHideBotSlashGroups, InuConfig.HIDE_BOT_SLASH_GROUPS),
-            ExpandableBoolGroup.Option(R.string.InuHideBotSlashBots, InuConfig.HIDE_BOT_SLASH_BOTS),
-        ),
-        sectionId = SECTION_HIDE_BOT_SLASH,
-    )
-
-    private val hideBottomBarGroup = ExpandableBoolGroup(
-        LocaleController.getString(R.string.InuHideBottomBar),
-        listOf(
-            ExpandableBoolGroup.Option(R.string.InuHideBottomBarJoined, InuConfig.HIDE_BOTTOM_BAR_JOINED),
-            ExpandableBoolGroup.Option(R.string.InuHideBottomBarNonJoined, InuConfig.HIDE_BOTTOM_BAR_NON_JOINED),
-            ExpandableBoolGroup.Option(R.string.InuHideBottomBarNonJoinedGroups, InuConfig.HIDE_BOTTOM_BAR_NON_JOINED_GROUPS),
-            ExpandableBoolGroup.Option(R.string.InuHideBottomBarReplies, InuConfig.HIDE_BOTTOM_BAR_REPLIES),
-            ExpandableBoolGroup.Option(R.string.InuHideBottomBarPinned, InuConfig.HIDE_BOTTOM_BAR_PINNED),
-        ),
-        sectionId = SECTION_HIDE_BOTTOM_BAR,
-    )
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(
-            mkSubPageButton(
-                BUTTON_MAIN_PAGE,
-                R.drawable.msg_folders,
-                LocaleController.getString(R.string.InuMainPage),
-            )
-        )
-        items.add(
-            mkSubPageButton(
-                BUTTON_CHAT_MENU_ORDER,
-                R.drawable.inu_tabler_menu_2,
-                LocaleController.getString(R.string.InuChatMenuOrder),
-            )
-        )
-        items.add(
-            mkSubPageButton(
-                BUTTON_DIALOGS_MENU_ORDER,
-                R.drawable.inu_tabler_list,
-                LocaleController.getString(R.string.InuDialogsMenuOrder),
-            )
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuDialogsMenuOrderInfo)))
+        super.fillItems(items, adapter)
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuGeneral)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_DEV_BADGES,
-                R.string.InuHideDevBadges,
-                R.string.InuHideDevBadgesInfo,
-                InuConfig.HIDE_DEV_BADGES.value,
-            )
-        )
         items.add(
             UItem.asCheck(
                 TOGGLE_HIDE_KEYBOARD_ON_SCROLL,
@@ -162,41 +108,31 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.value,
             )
         )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuWideChannelPosts)))
-        if (wideChannelPostsPreview == null) {
-            wideChannelPostsPreview = WideChannelPostsPreviewCell(context, this)
-        }
-        items.add(UItem.asCustom(wideChannelPostsPreview))
         items.add(
-            UItem.asCheck(
-                TOGGLE_WIDE_CHANNEL_POSTS,
-                LocaleController.getString(R.string.InuWideChannelPosts),
-            ).setChecked(InuConfig.WIDE_CHANNEL_POSTS.value)
-        )
-        if (wideChannelPostsInsetSlider == null) {
-            wideChannelPostsInsetSlider = SliderCell(
-                context,
-                min = 0f,
-                max = 16f,
-                step = 1f,
-                defaultValue = InuConfig.WIDE_CHANNEL_POSTS_INSET.default,
-                initialValue = InuConfig.WIDE_CHANNEL_POSTS_INSET.value,
-                title = LocaleController.getString(R.string.InuWideChannelPostsInset),
-                format = { "${it.toInt()}dp" },
-                onChanged = {
-                    InuConfig.WIDE_CHANNEL_POSTS_INSET.value = it
-                    wideChannelPostsPreview?.refreshInset()
-                },
+            mkTwoLineCheckItem(
+                TOGGLE_ONLINE_DOTS,
+                R.string.InuOnlineDots,
+                R.string.InuOnlineDotsInfo,
+                InuConfig.PRESENCE_COLOR_DOTS.value,
             )
-        } else {
-            wideChannelPostsInsetSlider?.updateColors()
-        }
-        if (InuConfig.WIDE_CHANNEL_POSTS.value) {
-            items.add(UItem.asCustom(wideChannelPostsInsetSlider))
-        }
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuWideChannelPostsFooter)))
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SEARCH_FROM_GLOBAL,
+                R.string.InuSearchFromGlobal,
+                R.string.InuSearchFromGlobalInfo,
+                InuConfig.SEARCH_FROM_GLOBAL.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN,
+                R.string.InuSendToDiscussWithoutJoin,
+                R.string.InuSendToDiscussWithoutJoinInfo,
+                InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAttachmentSheet)))
         items.add(
@@ -213,12 +149,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 R.string.InuSortAlbumsBySizeInfo,
                 InuConfig.SORT_ALBUMS_BY_SIZE.value,
             )
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION,
-                LocaleController.getString(R.string.InuSimpleAttachPopupAnimation),
-            ).setChecked(InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.value)
         )
         items.add(UItem.asShadow(null))
 
@@ -376,36 +306,9 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatInputMaxLines)))
         items.add(UItem.asCustom(chatInputMaxLinesSlider))
-        if (chatInputTextSizeSlider == null) chatInputTextSizeSlider = SliderCell(
-            context,
-            min = 12f,
-            max = 24f,
-            defaultValue = InuConfig.CHAT_INPUT_TEXT_SIZE.default.toFloat(),
-            initialValue = InuConfig.CHAT_INPUT_TEXT_SIZE.value.toFloat(),
-            step = 1f,
-            format = { it.toInt().toString() },
-            onChanged = {
-                InuConfig.CHAT_INPUT_TEXT_SIZE.value = it.toInt()
-            },
-        )
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatInputTextSize)))
-        items.add(UItem.asCustom(chatInputTextSizeSlider))
-        hideBotSlashGroup.addTo(items) { listView.adapter.update(true) }
-        items.add(
-            UItem.asCheck(TOGGLE_BOT_WEBVIEW_BUTTON, LocaleController.getString(R.string.InuHideBotWebView))
-                .setChecked(InuConfig.HIDE_BOT_WEBVIEW_INPUT.value)
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_SEND_AS_PICKER,
-                R.string.InuHideSendAsPicker,
-                R.string.InuHideSendAsPickerInfo,
-                InuConfig.HIDE_SEND_AS_PICKER.value
-            )
-        )
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatList)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickers)))
         items.add(
             UItem.asCheck(
                 TOGGLE_SHOW_ALL_RECENT_STICKERS,
@@ -418,38 +321,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 R.string.InuSuggestCustomEmojiAfter,
                 R.string.InuSuggestCustomEmojiAfterInfo,
                 InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_ONLINE_DOTS,
-                R.string.InuOnlineDots,
-                R.string.InuOnlineDotsInfo,
-                InuConfig.PRESENCE_COLOR_DOTS.value,
-            )
-        )
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
-        hideBottomBarGroup.addTo(items) { listView.adapter.update(true) }
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SEARCH_FROM_GLOBAL,
-                R.string.InuSearchFromGlobal,
-                R.string.InuSearchFromGlobalInfo,
-                InuConfig.SEARCH_FROM_GLOBAL.value,
-            )
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_HIDE_CALL_ACTION_BUTTON,
-                LocaleController.getString(R.string.InuHideCallActionButton),
-            ).setChecked(InuConfig.HIDE_CALL_ACTION_BUTTON.value)
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN,
-                R.string.InuSendToDiscussWithoutJoin,
-                R.string.InuSendToDiscussWithoutJoinInfo,
-                InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.value,
             )
         )
         items.add(UItem.asShadow(null))
@@ -469,21 +340,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (hideBotSlashGroup.handleClick(item, view) { listView.adapter.update(true) }) return
-        if (hideBottomBarGroup.handleClick(item, view) { listView.adapter.update(true) }) return
-
+        super.onClick(item, view, position, x, y)
         when (item.id) {
-            TOGGLE_HIDE_DEV_BADGES -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
-                // entiny: update badge on cached TLRPC user/chat objects so toggle takes effect without app restart
-                BadgeRegistry.refreshCached()
-            }
-            TOGGLE_WIDE_CHANNEL_POSTS -> {
-                val new = InuConfig.WIDE_CHANNEL_POSTS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                wideChannelPostsPreview?.setWide(new, true)
-                listView?.adapter?.update(true)
-            }
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
             TOGGLE_CHAT_ALWAYS_SHOW_DOWN -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_ALWAYS_SHOW_DOWN.toggle()
@@ -532,7 +390,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_CHAT_VOICE_IN_ATTACH -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_VOICE_IN_ATTACH.toggle()
             TOGGLE_SORT_ALBUMS_BY_SIZE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SORT_ALBUMS_BY_SIZE.toggle()
-            TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION -> (view as? TextCheckCell)?.isChecked = InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.toggle()
             BUTTON_ROUND_DEFAULT_CAMERA -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -598,9 +455,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_BUTTON.toggle()
             TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.ROUND_RECORDER_EXPOSURE_LEVELS.toggle()
-            TOGGLE_BOT_WEBVIEW_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_BOT_WEBVIEW_INPUT.toggle()
-
-            TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN ->
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEND_TO_DISCUSS_WITHOUT_JOIN.toggle()
             TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SUGGEST_CUSTOM_EMOJI_AFTER.toggle()
@@ -622,16 +476,10 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             TOGGLE_SEARCH_FROM_GLOBAL -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SEARCH_FROM_GLOBAL.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_ICON -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_ICON.toggle()
             TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SHOW_MUTUAL_CONTACT_IN_CHATS.toggle()
-            TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
-            BUTTON_MAIN_PAGE -> presentFragment(DialogsSettingsActivity())
-            BUTTON_CHAT_MENU_ORDER -> presentFragment(ChatMenuOrderActivity())
-            BUTTON_DIALOGS_MENU_ORDER -> presentFragment(DialogsMenuOrderActivity())
         }
     }
 
     companion object {
-        private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
-        private val TOGGLE_WIDE_CHANNEL_POSTS = InuUtils.generateId()
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
         private val TOGGLE_DISABLE_PULL_TO_NEXT = InuUtils.generateId()
         private val TOGGLE_CHAT_ALWAYS_SHOW_DOWN = InuUtils.generateId()
@@ -644,7 +492,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val BUTTON_ATTACH_CAMERA_MODE = InuUtils.generateId()
         private val TOGGLE_CHAT_VOICE_IN_ATTACH = InuUtils.generateId()
         private val TOGGLE_SORT_ALBUMS_BY_SIZE = InuUtils.generateId()
-        private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_NEW_RECORDER = InuUtils.generateId()
         private val TOGGLE_ROUND_COMPOSITION = InuUtils.generateId()
@@ -678,20 +525,12 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON = InuUtils.generateId()
         private val TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS = InuUtils.generateId()
-        private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
-        private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER = InuUtils.generateId()
         private val TOGGLE_ONLINE_DOTS = InuUtils.generateId()
         private val BUTTON_FORMATTING_POPUP = InuUtils.generateId()
-        private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
-        private val BUTTON_MAIN_PAGE = InuUtils.generateId()
-        private val BUTTON_CHAT_MENU_ORDER = InuUtils.generateId()
-        private val BUTTON_DIALOGS_MENU_ORDER = InuUtils.generateId()
-        private val SECTION_HIDE_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_SEARCH_FROM_GLOBAL = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_ICON = InuUtils.generateId()
         private val TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS = InuUtils.generateId()
-        private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
         private val TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN = InuUtils.generateId()
 
         private fun mentionSeparatorLabel(value: String): String = when (value) {
@@ -715,10 +554,8 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
             titleRes = R.string.InuCategoryChats,
             iconRes = R.drawable.msg_discussion,
             factory = ::CategoryChatsSettingsActivity,
-            entries = listOf(
-                SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
-                SearchRegistry.Entry("wide-channel-posts", R.string.InuWideChannelPosts, TOGGLE_WIDE_CHANNEL_POSTS),
-                SearchRegistry.Entry("wide-channel-posts-inset", R.string.InuWideChannelPostsInset, TOGGLE_WIDE_CHANNEL_POSTS),
+            aliases = listOf("dialogs"),
+            entries = DialogsSettingsActivity.PAGE.entries + listOf(
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),
                 SearchRegistry.Entry("disable-pull-to-next", R.string.InuDisablePullToNext, TOGGLE_DISABLE_PULL_TO_NEXT),
                 SearchRegistry.Entry("chat-always-show-down", R.string.InuChatAlwaysShowDown, TOGGLE_CHAT_ALWAYS_SHOW_DOWN),
@@ -730,7 +567,6 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("attach-camera-mode", R.string.InuAttachCameraMode, BUTTON_ATTACH_CAMERA_MODE),
                 SearchRegistry.Entry("chat-voice-in-attach", R.string.InuChatVoiceInAttach, TOGGLE_CHAT_VOICE_IN_ATTACH),
                 SearchRegistry.Entry("sort-albums-by-size", R.string.InuSortAlbumsBySize, TOGGLE_SORT_ALBUMS_BY_SIZE),
-                SearchRegistry.Entry("simple-attach-popup-animation", R.string.InuSimpleAttachPopupAnimation, TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION),
                 SearchRegistry.Entry("round-default-camera", R.string.InuRoundDefaultCamera, BUTTON_ROUND_DEFAULT_CAMERA),
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),
                 SearchRegistry.Entry("round-recorder-zoom-buttons", R.string.InuRoundRecorderZoomButtons, TOGGLE_ROUND_RECORDER_ZOOM_BUTTONS),
@@ -747,20 +583,12 @@ class CategoryChatsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("round-recorder-lock-exposure", R.string.InuRoundRecorderLockExposure, TOGGLE_ROUND_RECORDER_LOCK_EXPOSURE),
                 SearchRegistry.Entry("round-recorder-exposure-button", R.string.InuRoundRecorderExposureButton, TOGGLE_ROUND_RECORDER_EXPOSURE_BUTTON),
                 SearchRegistry.Entry("round-recorder-exposure-levels", R.string.InuRoundRecorderExposureLevels, TOGGLE_ROUND_RECORDER_EXPOSURE_LEVELS),
-                SearchRegistry.Entry("hide-bot-webview-input", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
-                SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
                 SearchRegistry.Entry("suggest-custom-emoji-after", R.string.InuSuggestCustomEmojiAfter, TOGGLE_SUGGEST_CUSTOM_EMOJI_AFTER),
                 SearchRegistry.Entry("online-dots", R.string.InuOnlineDots, TOGGLE_ONLINE_DOTS),
                 SearchRegistry.Entry("formatting-popup", R.string.InuFormattingPopup, BUTTON_FORMATTING_POPUP),
-                SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
-                SearchRegistry.Entry("main-page", R.string.InuMainPage, BUTTON_MAIN_PAGE),
-                SearchRegistry.Entry("chat-menu-order", R.string.InuChatMenuOrder, BUTTON_CHAT_MENU_ORDER),
-                SearchRegistry.Entry("dialogs-menu-order", R.string.InuDialogsMenuOrder, BUTTON_DIALOGS_MENU_ORDER),
-                SearchRegistry.Entry("hide-bottom-bar", R.string.InuHideBottomBar, SECTION_HIDE_BOTTOM_BAR),
                 SearchRegistry.Entry("search-from-global", R.string.InuSearchFromGlobal, TOGGLE_SEARCH_FROM_GLOBAL),
                 SearchRegistry.Entry("show-mutual-contact-icon", R.string.InuShowMutualContactIcon, TOGGLE_SHOW_MUTUAL_CONTACT_ICON),
                 SearchRegistry.Entry("show-mutual-contact-in-chats", R.string.InuShowMutualContactInChats, TOGGLE_SHOW_MUTUAL_CONTACT_IN_CHATS),
-                SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
                 SearchRegistry.Entry("send-to-discuss-without-join", R.string.InuSendToDiscussWithoutJoin, TOGGLE_SEND_TO_DISCUSS_WITHOUT_JOIN),
             ),
         )

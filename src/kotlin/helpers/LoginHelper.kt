@@ -120,17 +120,6 @@ object LoginHelper {
         opts.show()
     }
 
-    @JvmStatic
-    fun confirmFastResend(loginActivity: LoginActivity, onConfirm: Runnable) {
-        val activity = loginActivity.parentActivity ?: return
-        AlertDialog.Builder(activity)
-            .setTitle(getString(R.string.InuFastResendLoginCode))
-            .setMessage(getString(R.string.InuFastResendLoginCodeConfirm))
-            .setPositiveButton(getString(R.string.InuFastResendLoginCodeNow)) { _, _ -> onConfirm.run() }
-            .setNegativeButton(getString(R.string.Cancel), null)
-            .show()
-    }
-
     private fun fetchAndShowPasswordPage(loginActivity: LoginActivity, currentAccount: Int) {
         val req = TL_account.getPassword()
         ConnectionsManager.getInstance(currentAccount).sendRequest(req, { res, err ->

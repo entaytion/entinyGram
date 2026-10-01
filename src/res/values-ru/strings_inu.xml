@@ -2,7 +2,6 @@
 <resources>
     <string name="InuConfirmBeforeSending">Подтверждать перед отправкой</string>
     <string name="InuConfirmSendVoice">Голосовые сообщения</string>
-    <string name="InuConfirmSendVoiceMessage">Отправить это голосовое сообщение?</string>
     <string name="InuConfirmSendSticker">Стикеры</string>
     <string name="InuConfirmSendGif">GIF</string>
     <string name="InuOpenInDiscussion">Открыть в обсуждении</string>
@@ -66,7 +65,8 @@
     <string name="InuPerformanceClassLow">Низкий</string>
     <string name="InuPerformanceClassAverage">Средний</string>
     <string name="InuPerformanceClassHigh">Высокий</string>
-    <string name="InuAnnoyances">Раздражители</string>
+    <string name="InuAnnoyances">Скрыть лишнее</string>
+    <string name="InuAnnoyancesChats">Чаты</string>
     <string name="InuAnnoyancesStories">Истории</string>
     <string name="InuAnnoyancesProfile">Профиль</string>
     <string name="InuAnnoyancesGifts">Подарки и Premium</string>
@@ -212,6 +212,8 @@
     <string name="InuHideHashtagSuggestions">Скрыть подсказки хэштегов</string>
     <string name="InuHideAllChatsTab">Скрыть вкладку «Все чаты»</string>
     <string name="InuHideAllChatsTabInfo">Долгое нажатие на заголовок в списке чатов покажет «Все чаты».</string>
+    <string name="InuRememberSelectedFolder">Запоминать выбранную папку</string>
+    <string name="InuRememberSelectedFolderInfo">Открывать последнюю активную папку при возврате к списку чатов.</string>
     <string name="InuFoldersAtBottom">Перенести папки вниз</string>
     <string name="InuHideArchive">Убрать «Архив» из списка чатов</string>
     <string name="InuHideCallActionButton">Скрыть кнопку звонка в заголовке</string>
@@ -398,7 +400,6 @@
     <string name="InuIconReplacementSolar">Solar от @Design480</string>
     <string name="InuIconReplacementVkui">VKUI от VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
-    <string name="InuIconReplacementRestartInfo">Перезапустите приложение для применения набора иконок.</string>
 
     <string name="InuMapsHeader">Карты</string>
     <string name="InuMapProvider">Источник карт</string>
@@ -860,13 +861,13 @@
 
     <string name="InuLogs">Отладка</string>
     <string name="InuLogsEnabled">Режим отладки</string>
-    <string name="InuExtraDebugLogs">[entinyGram] Дополнительные логи отладки</string>
+    <string name="InuLogsPrivacyTitle">Включить режим отладки?</string>
+    <string name="InuLogsPrivacyText">Приложение будет записывать технические логи на устройство. В них могут быть идентификаторы аккаунта и чатов, поэтому отправляйте их только тем, кому доверяете. Логи занимают до 25 МБ и очищаются в любой момент.</string>
+    <string name="InuLogsEnableAction">Включить</string>
     <string name="InuLogsSize">Размер логов: %1$s</string>
     <string name="InuLogsShare">Поделиться логами</string>
     <string name="InuLogsShareZip">Все логи (.zip)</string>
     <string name="InuLogsShareCurrent">Текущий лог (.txt)</string>
-    <string name="InuLogsShareByCategory">По категориям (.zip)</string>
-    <string name="InuLogsNoCategories">Логов по категориям пока нет</string>
     <string name="InuLogsClear">Очистить логи</string>
     <string name="InuLogsCleared">Старые логи очищены</string>
     <string name="InuLogsShareError">Не удалось упаковать логи</string>
@@ -1116,7 +1117,7 @@
     <string name="InuShowMutualContactIconInfo">Показывать значок взаимного контакта в списке контактов</string>
     <string name="InuShowMutualContactInChats">Показывать значок взаимного контакта в списках участников чатов и каналов</string>
     <string name="InuShowMutualContactInChatsInfo">Показывать значок взаимного контакта в списках участников групп и каналов</string>
-    <string name="InuCategoryAppearance">Внешний вид и дизайн</string>
+    <string name="InuCategoryAppearance">Дизайн</string>
     <string name="InuCategoryBackup">Дополнительно</string>
     <string name="InuCategoryBehavior">Поведение и инструменты</string>
     <string name="InuCategoryChats">Чаты</string>
@@ -1447,10 +1448,6 @@
     <string name="InuAccountSwitchShortcut">Ярлык переключения аккаунтов</string>
     <string name="InuAccountSwitchShortcutInfo">Добавить ярлык по долгому нажатию на иконку приложения с выбором аккаунта для входа</string>
 
-    <string name="InuFastResendLoginCode">Пропустить отсчёт кода входа</string>
-    <string name="InuFastResendLoginCodeInfo">Нажмите на таймер на экране ввода кода, чтобы запросить новый код, не дожидаясь конца отсчёта</string>
-    <string name="InuFastResendLoginCodeConfirm">Пропустить ожидание и запросить новый код сейчас? Telegram всё равно может отказать.</string>
-    <string name="InuFastResendLoginCodeNow">Отправить сейчас</string>
     <string name="InuBlockSleepWhileDownloading">Запретить спящий режим при загрузке</string>
     <string name="InuBlockSleepWhileDownloadingInfo">Удерживает wake lock во время активной загрузки, чтобы Android не приостанавливал её в фоне.</string>
     <string name="InuHideProxySponsorChat">Скрыть спонсорский чат прокси</string>
@@ -1479,7 +1476,6 @@
     <string name="InuCenterTitleChatsInfo">Центрирует название и подпись чата; аватар остаётся слева. Работает самостоятельно.</string>
     <string name="InuIosChatHeaderAvatarSlot">Перенести аватарку туда, где меню</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватар вместо кнопки меню: нажатие открывает профиль, долгое нажатие — меню чата.</string>
-    <string name="InuScrollToTop">Наверх</string>
     <string name="InuRecentChats">Недавние чаты</string>
     <string name="InuClearRecentChats">Очистить недавние чаты</string>
     <string name="InuClearRecentChatsAlert">Это очистит список недавно открытых чатов. Никакие чаты или сообщения не будут удалены.</string>
@@ -1608,6 +1604,41 @@
     <string name="InuIosChatHeaderAvatarStatic">Не центрировать аватар</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Аватар остаётся рядом с кнопкой «Назад», по центру только пилюля с заголовком.</string>
     <string name="InuIosStyle">Стиль iOS</string>
+    <string name="InuIosSettings">Настройки iOS</string>
+    <string name="InuIosSettingsInfo">Центрирование заголовков, нижняя панель, поле ввода, заголовок чата и liquid glass.</string>
+    <string name="InuMessageDesign">Вид сообщений</string>
+    <string name="InuMessageDesignInfo">Пузыри, стикеры, реакции, посты каналов и размер текста в поле ввода.</string>
+    <string name="InuBubbles">Пузыри</string>
+    <string name="InuSideMenu">Боковое меню</string>
+    <string name="InuSideMenuInfo">Выдвижное меню, его секции, аккаунты и пункты.</string>
+    <string name="InuInterfaceElements">Элементы интерфейса</string>
+    <string name="InuMenus">Меню</string>
+    <string name="InuChatBackgroundSection">Фон чата</string>
+    <string name="InuMediaSection">Медиа</string>
+    <string name="InuAccountsSection">Аккаунты</string>
+    <string name="InuCallsSection">Звонки</string>
+    <string name="InuDeviceSection">Устройство</string>
+    <string name="InuDownloadsAndNetwork">Загрузки и сеть</string>
+    <string name="InuConfirmationsSection">Подтверждения</string>
+    <string name="InuBlockedMessagesSection">Заблокированные</string>
+    <string name="InuRootInterface">Интерфейс</string>
+    <string name="InuRootPrivacy">Функции и приватность</string>
+    <string name="InuRootSystem">Система</string>
+    <string name="InuMenusInfo">Боковое меню, меню ⋮, меню чата, сообщений и строки профиля.</string>
+    <string name="InuMenuSideDesc">Пункты, порядок и разделители боковой панели.</string>
+    <string name="InuMenuDialogsDesc">Пункты меню ⋮ на экране чатов. Показывается, когда боковое меню выключено.</string>
+    <string name="InuMenuChatDesc">Пункты меню внутри чата.</string>
+    <string name="InuMenuMessageDesc">Порядок и видимость действий с сообщением.</string>
+    <string name="InuMenuProfileSettingsDesc">Строки на экране настроек.</string>
+    <string name="InuMenuProfileInfoDesc">Телефон, о себе, юзернейм и другие строки в профилях.</string>
+    <string name="InuDrawerMenuOrder">Пункты меню</string>
+    <string name="InuDrawerMenuItems">Пункты</string>
+    <string name="InuDrawerMenuOrderInfo">Нажмите, чтобы скрыть или показать пункт, удерживайте для изменения порядка. Разделители делят меню на группы.</string>
+    <string name="InuDrawerMenuHidden">Скрытые пункты</string>
+    <string name="InuDrawerMenuAddDivider">Добавить разделитель</string>
+    <string name="InuDrawerMenuReset">Сбросить меню</string>
+    <string name="InuDrawerBots">Мини-приложения</string>
+    <string name="InuMenuDivider">Разделитель</string>
     <string name="InuPingAllProxies">Пинг всех прокси</string>
     <string name="InuRoundRecorderExposureLevels">Кнопки уровня экспозиции</string>
     <string name="InuRoundRecorderExposureLevelsInfo">Показывать кнопки EV, чтобы осветлять или затемнять кадр во время записи.</string>

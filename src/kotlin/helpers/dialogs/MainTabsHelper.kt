@@ -91,7 +91,7 @@ object MainTabsHelper {
     fun hasSearchTab(): Boolean = MainTabsMenuConfig.Item.SEARCH in cachedEnabledOrder
 
     @JvmStatic
-    fun isSearchTabSeparate(): Boolean = hasSearchTab() && InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value
+    fun isSearchTabSeparate(): Boolean = hasSearchTab() && InuConfig.BOTTOM_TABS_SEARCH_SEPARATE.value && !isMaterial
 
     @JvmStatic
     fun setEnabled(index: Int, enabled: Boolean) {

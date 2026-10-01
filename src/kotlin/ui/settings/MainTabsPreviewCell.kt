@@ -76,11 +76,7 @@ class MainTabsPreviewCell(
                 LayoutHelper.createLinear(
                     SEARCH_BUTTON_SIZE_DP,
                     SEARCH_BUTTON_SIZE_DP,
-                    0f,
-                    SEARCH_BUTTON_MARGIN_START_DP,
-                    0,
-                    SEARCH_BUTTON_MARGIN_END_DP,
-                    0,
+                    0f, SEARCH_ZONE_WIDTH_DP, 0, 0, 0, 0,
                 ),
             )
         }
@@ -174,9 +170,7 @@ class MainTabsPreviewCell(
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
         val chipCount = row.childCount
         if (chipCount > 0 && availableWidth > 0) {
-            val separateWidth = if (separateSearch) dp(
-                (SEARCH_BUTTON_SIZE_DP + SEARCH_BUTTON_MARGIN_START_DP + SEARCH_BUTTON_MARGIN_END_DP).toFloat(),
-            ) else 0
+            val separateWidth = if (separateSearch) dp(SEARCH_ZONE_WIDTH_DP.toFloat()) else 0
             val fitWidthDp = (availableWidth - separateWidth) / AndroidUtilities.density / chipCount - CHIP_GAP_DP
             val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
             if (newChipWidthDp != chipWidthDp) {
@@ -228,8 +222,12 @@ class MainTabsPreviewCell(
 
         fun setStandalone() {
             label.visibility = GONE
+            gravity = Gravity.CENTER
             setPadding(0, 0, 0, 0)
-            background = Theme.createRoundRectDrawable(dp(SEARCH_BUTTON_SIZE_DP / 2f), Theme.getColor(Theme.key_windowBackgroundWhite))
+            // entiny: accent FAB colors so Monet keeps the circle tinted instead of matching the bar
+            background = Theme.createRoundRectDrawable(dp(SEARCH_BUTTON_SIZE_DP / 2f), Theme.getColor(Theme.key_chats_actionBackground))
+            icon.colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY)
+            icon.alpha = if (enabled) 1f else 0.5f
         }
     }
 
@@ -238,8 +236,7 @@ class MainTabsPreviewCell(
         private const val CHIP_GAP_DP = 4
         private const val MIN_CHIP_WIDTH_DP = 40
         private const val SEARCH_BUTTON_SIZE_DP = 52
-        private const val SEARCH_BUTTON_MARGIN_START_DP = -10
-        private const val SEARCH_BUTTON_MARGIN_END_DP = 4
+        private const val SEARCH_ZONE_WIDTH_DP = 64
         private const val HEIGHT_DP = 78
     }
 }

@@ -20,6 +20,11 @@ import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
 import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
+import desu.inugram.ui.settings.IosStyleSettingsActivity
+import desu.inugram.ui.settings.MessageDesignSettingsActivity
+import desu.inugram.ui.settings.DrawerSettingsActivity
+import desu.inugram.ui.settings.DrawerMenuOrderActivity
+import desu.inugram.ui.settings.MenusSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PillStackSettingsActivity
 import desu.inugram.ui.settings.RecentChatsSettingsActivity
@@ -59,13 +64,17 @@ object SearchRegistry {
             InuSettingsActivity.PAGE,
             AppearanceSettingsActivity.PAGE,
             ChatHeaderSettingsActivity.PAGE,
+            IosStyleSettingsActivity.PAGE,
+            MessageDesignSettingsActivity.PAGE,
+            DrawerSettingsActivity.PAGE,
+            DrawerMenuOrderActivity.PAGE,
+            MenusSettingsActivity.PAGE,
             IconPacksSettingsActivity.PAGE,
             FontsSettingsActivity.PAGE,
             FontStackActivity.PAGE,
             CategoryChatsSettingsActivity.PAGE,
             MessagesSettingsActivity.PAGE,
             AiSettingsActivity.PAGE,
-            DialogsSettingsActivity.PAGE,
             AnnoyancesSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,

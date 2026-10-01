@@ -311,6 +311,8 @@
     <string name="InuFoldersUnreadCounterExcludeMutedNonDms">Özel sohbet dışındaki sessize alınanları hariç tut</string>
     <string name="InuHideAllChatsTab">\"Tüm Sohbetler\" sekmesini gizle</string>
     <string name="InuHideAllChatsTabInfo">Sohbet listesindeki başlığa uzun basmak \"Tüm Sohbetler\"i gösterir.</string>
+    <string name="InuRememberSelectedFolder">Seçilen klasörü hatırla</string>
+    <string name="InuRememberSelectedFolderInfo">Sohbet listesine dönerken son etkin klasörü yeniden aç.</string>
     <string name="InuFoldersAtBottom">Klasörleri alta taşı</string>
     <string name="InuHideArchive">\"Arşivlenmiş Sohbetler\"i sohbet listesinden kaldır</string>
     <string name="InuCommunityDisplayMode">Topluluklar</string>
@@ -435,7 +437,6 @@
     <string name="InuIconReplacementSolar">@Design480 tarafından Solar</string>
     <string name="InuIconReplacementVkui">VK tarafından VKUI</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
-    <string name="InuIconReplacementRestartInfo">Simge paketini uygulamak için uygulamayı yeniden başlatın.</string>
 
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
@@ -821,13 +822,10 @@
 
     <string name="InuLogs">Hata Ayıklama</string>
     <string name="InuLogsEnabled">Hata ayıklama modu</string>
-    <string name="InuExtraDebugLogs">[entinyGram] Ek hata ayıklama günlükleri</string>
     <string name="InuLogsSize">Günlük boyutu: %1$s</string>
     <string name="InuLogsShare">Günlükleri paylaş</string>
     <string name="InuLogsShareZip">Tüm günlükler (.zip)</string>
     <string name="InuLogsShareCurrent">Mevcut günlük (.txt)</string>
-    <string name="InuLogsShareByCategory">Kategoriye göre (.zip)</string>
-    <string name="InuLogsNoCategories">Henüz kategorilere ayrılmış günlük yok</string>
     <string name="InuLogsClear">Günlükleri temizle</string>
     <string name="InuLogsCleared">Eski günlükler temizlendi</string>
     <string name="InuLogsShareError">Günlükler paketlenemedi</string>
@@ -1009,7 +1007,7 @@
     <string name="InuDisableFlagSecureInfo">Ekran görüntüsü engelini kaldırır: gizli sohbetlerde, süreli medyalarda ve korumalı kanallarda ekran görüntüsü ve video kaydına izin verir.</string>
     <string name="InuAntiDeletion">Silinmeyi önleme</string>
     <string name="InuAppIconOldEntinygram">Eski entinyGram</string>
-    <string name="InuCategoryAppearance">Görünüm ve Düzen</string>
+    <string name="InuCategoryAppearance">Tasarım</string>
     <string name="InuCategoryBackup">Ek ayarlar</string>
     <string name="InuCategoryBehavior">Davranış ve Araçlar</string>
     <string name="InuCategoryChats">Sohbetler</string>
@@ -1333,10 +1331,6 @@
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
     <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
 
-    <string name="InuFastResendLoginCode">Giriş kodu geri sayımını atla</string>
-    <string name="InuFastResendLoginCodeInfo">Giriş kodu ekranındaki geri sayıma dokunarak süresinin dolmasını beklemeden yeni bir kod isteyin</string>
-    <string name="InuFastResendLoginCodeConfirm">Beklemeyi atlayıp şimdi yeni kod istensin mi? Telegram yine de reddedebilir.</string>
-    <string name="InuFastResendLoginCodeNow">Şimdi yeniden gönder</string>
     <string name="InuBlockSleepWhileDownloading">İndirirken uyku modunu engelle</string>
     <string name="InuBlockSleepWhileDownloadingInfo">İndirme etkin olduğunda Android\'in arka planda duraklatmasını önlemek için kısmi bir wake lock tutar.</string>
     <string name="InuHideProxySponsorChat">Vekil sunucu sponsor sohbetini gizle</string>
@@ -1373,7 +1367,6 @@
     <string name="InuCenterTitleChatsInfo">Sohbet başlığını ve alt başlığı ortalar; profil resmi solda kalır. Tek başına çalışır.</string>
     <string name="InuIosChatHeaderAvatarSlot">Profil resmini menü düğmesine taşı</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">Avatarı menü yerine koy: dokununca profil, uzun basınca sohbet menüsü.</string>
-    <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">Son sohbetler</string>
     <string name="InuClearRecentChats">Son sohbetleri temizle</string>
     <string name="InuClearRecentChatsAlert">Bu, son açılan sohbetlerin listesini temizler. Herhangi bir sohbet veya mesaj silinmez.</string>
@@ -1572,7 +1565,6 @@
     <string name="InuConfirmSendGif">GIF</string>
     <string name="InuConfirmSendSticker">Çıkartmalar</string>
     <string name="InuConfirmSendVoice">Sesli mesajlar</string>
-    <string name="InuConfirmSendVoiceMessage">Bu sesli mesaj gönderilsin mi?</string>
     <string name="InuConnectProxyImmediately">Hemen bağlan</string>
     <string name="InuDialogAvatarOpensProfile">Profili açmak için avatara dokun</string>
     <string name="InuDialogAvatarOpensProfileInfo">Sohbet listesinde bir sohbetin avatarına dokunmak sohbet yerine doğrudan profili açar.</string>

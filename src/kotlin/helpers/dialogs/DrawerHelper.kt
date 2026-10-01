@@ -569,13 +569,6 @@ object DrawerHelper {
         }
 
         when (adapter.getId(position)) {
-            ITEM_SCROLL_TOP -> {
-                val top = nav.lastFragment
-                val dialogs = if (top is MainTabsActivity) top.currentVisibleFragment else top
-                (dialogs as? DialogsActivity)?.scrollToTop(true, true)
-                close()
-            }
-
             ITEM_MY_PROFILE -> {
                 openMyProfile(drawerLayoutContainer)
             }
@@ -672,7 +665,6 @@ object DrawerHelper {
     private const val ITEM_PROXY = DrawerLayoutAdapter.ITEM_PROXY
     private const val ITEM_ARCHIVE = DrawerLayoutAdapter.ITEM_ARCHIVE
     private const val ITEM_GHOST = DrawerLayoutAdapter.ITEM_GHOST
-    private const val ITEM_SCROLL_TOP = DrawerLayoutAdapter.ITEM_SCROLL_TOP
     private const val ITEM_FEED = DrawerLayoutAdapter.ITEM_FEED
 
     @JvmStatic
@@ -693,9 +685,6 @@ object DrawerHelper {
         for (entry in InuConfig.DIALOGS_MENU_ITEMS.value) {
             if (!entry.enabled || !DialogsMenuHelper.isEnabled(entry.item)) continue
             when (entry.item) {
-                DialogsMenuConfig.Item.SCROLL_TOP -> io.add(R.drawable.msg_go_up, getString(R.string.InuScrollToTop)) {
-                    instance.scrollToTop(true, true)
-                }
                 DialogsMenuConfig.Item.MY_PROFILE -> if (bottomTabsHidden) io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
                     instance.presentFragment(ProfileActivity(Bundle().apply {
                         putLong("user_id", UserConfig.getInstance(instance.currentAccount).getClientUserId())

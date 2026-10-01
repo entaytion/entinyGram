@@ -125,7 +125,7 @@ object Material3NavigationAnimation {
 
     private fun captureEdgeExtension(below: ViewGroup): Drawable? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
-        return EdgeExtensionDrawable.capture(below)
+        return runCatching { EdgeExtensionDrawable.capture(below) }.getOrNull()
     }
 
     @JvmStatic

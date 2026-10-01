@@ -74,6 +74,12 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 InuConfig.DISABLE_DRAFT_UPLOAD.value
             )
         )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_DISABLE_SENSITIVE,
+                LocaleController.getString(R.string.InuDisableSensitive),
+            ).setChecked(InuConfig.DISABLE_SENSITIVE.value)
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuStripTrackingParams)))
@@ -159,6 +165,8 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 val new = InuConfig.STRIP_TRACKING_PARAMS_ON_PASTE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
             }
+
+            TOGGLE_DISABLE_SENSITIVE -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_SENSITIVE.toggle()
 
             TOGGLE_DISABLE_DRAFT_UPLOAD -> {
                 val new = InuConfig.DISABLE_DRAFT_UPLOAD.toggle()
@@ -265,6 +273,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         private val BUTTON_PARANOIA = InuUtils.generateId()
         private val BUTTON_ANTI_CENSORSHIP = InuUtils.generateId()
         private val TOGGLE_HIDE_MY_PHONE_NUMBER = InuUtils.generateId()
+        private val TOGGLE_DISABLE_SENSITIVE = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN = InuUtils.generateId()
         private val TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE = InuUtils.generateId()
         private val BUTTON_STRIP_TRACKING_PARAMS_SOURCE = InuUtils.generateId()
@@ -282,6 +291,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
             factory = ::PrivacySecurityActivity,
             entries = listOf(
                 SearchRegistry.Entry("hide-my-phone-number", R.string.InuHideMyPhoneNumber, TOGGLE_HIDE_MY_PHONE_NUMBER),
+                SearchRegistry.Entry("disable-sensitive", R.string.InuDisableSensitive, TOGGLE_DISABLE_SENSITIVE),
                 SearchRegistry.Entry("strip-tracking-params", R.string.InuStripTrackingParamsOnOpen, TOGGLE_STRIP_TRACKING_PARAMS_ON_OPEN),
                 SearchRegistry.Entry("strip-tracking-params-paste", R.string.InuStripTrackingParamsOnPaste, TOGGLE_STRIP_TRACKING_PARAMS_ON_PASTE),
                 SearchRegistry.Entry("disable-draft-upload", R.string.InuDisableDraftUpload, TOGGLE_DISABLE_DRAFT_UPLOAD),

@@ -7,6 +7,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.ColorUtils
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.ui.ActionBar.Theme
 import kotlin.math.roundToInt
@@ -39,6 +40,7 @@ object M3SwitchHelper {
         strokeWidth = AndroidUtilities.dpf2(ICON_STROKE)
     }
     private val rectF = RectF()
+    private val strokeRectF = RectF()
 
     private val whiteFilter = PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN)
 
@@ -72,24 +74,28 @@ object M3SwitchHelper {
 
         rectF.set(left, top, left + trackW, top + h)
         val radius = RADIUS * scale
-        if (isChecked) {
-            fillPaint.color = onColor
+        val p = progress.coerceIn(0f, 1f)
+
+        if (p > 0f) {
+            fillPaint.color = ColorUtils.setAlphaComponent(onColor, (Color.alpha(onColor) * p).roundToInt())
             canvas.drawRoundRect(rectF, radius, radius, fillPaint)
-        } else {
+        }
+        if (p < 1f) {
             val sw = AndroidUtilities.dpf2(2f)
-            strokePaint.color = offColor
+            strokePaint.color = ColorUtils.setAlphaComponent(offColor, (Color.alpha(offColor) * (1f - p)).roundToInt())
             strokePaint.strokeWidth = sw
-            rectF.inset(sw / 2f, sw / 2f)
-            canvas.drawRoundRect(rectF, radius - sw / 2f, radius - sw / 2f, strokePaint)
+            val inset = sw / 2f
+            strokeRectF.set(rectF.left + inset, rectF.top + inset, rectF.right - inset, rectF.bottom - inset)
+            canvas.drawRoundRect(strokeRectF, radius - inset, radius - inset, strokePaint)
         }
 
         val cx = left + scale * (THUMB_CX_OFF + (THUMB_CX_ON - THUMB_CX_OFF) * progress)
         val cy = top + h / 2f
         val rest = scale * (THUMB_R_OFF + (THUMB_R_ON - THUMB_R_OFF) * progress)
-        thumbPaint.color = if (isChecked) thumbOnColor else offColor
+        thumbPaint.color = ColorUtils.blendARGB(offColor, thumbOnColor, p)
         canvas.drawCircle(cx, cy, rest, thumbPaint)
 
-        val iconColor = if (isChecked) onColor else Color.WHITE
+        val iconColor = ColorUtils.blendARGB(Color.WHITE, onColor, p)
         if (iconDrawable != null) {
             if (iconDrawable.colorFilter !== whiteFilter) iconDrawable.colorFilter = whiteFilter
             if (iconVisibility > 0f) {
@@ -107,18 +113,18 @@ object M3SwitchHelper {
                 if (needScale) canvas.restore()
             }
         } else if (drawIconType == 1) {
-            drawCheckmark(canvas, cx.roundToInt(), cy.roundToInt(), isChecked, progress, iconColor)
+            drawCheckmark(canvas, cx.roundToInt(), cy.roundToInt(), p, iconColor)
         } else if (drawIconType == 2) {
             drawDot(canvas, cx.roundToInt(), cy.roundToInt(), iconProgress, iconColor)
         }
     }
 
-    private fun drawCheckmark(canvas: Canvas, cx0: Int, cy0: Int, checked: Boolean, sizeProgress: Float, color: Int) {
-        val shape = if (checked) 1f else 0f
+    private fun drawCheckmark(canvas: Canvas, cx0: Int, cy0: Int, progress: Float, color: Int) {
+        val shape = progress
         iconPaint.color = color
         iconPaint.alpha = 255
         iconPaint.strokeWidth = AndroidUtilities.dpf2(CROSS_STROKE + (ICON_STROKE - CROSS_STROKE) * shape)
-        val s = CHECK_SCALE * (THUMB_R_OFF + (THUMB_R_ON - THUMB_R_OFF) * sizeProgress) / THUMB_R_ON
+        val s = CHECK_SCALE * (THUMB_R_OFF + (THUMB_R_ON - THUMB_R_OFF) * progress) / THUMB_R_ON
         val nudge = AndroidUtilities.dpf2(CHECK_NUDGE_RIGHT) * shape
         fun fx(x: Int) = cx0 + (x - cx0) * s + nudge
         fun fy(y: Int) = cy0 + (y - cy0) * s

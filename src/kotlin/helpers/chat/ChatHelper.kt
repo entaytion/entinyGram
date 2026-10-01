@@ -35,7 +35,6 @@ import desu.inugram.helpers.ai.AiSummaryHelper
 import desu.inugram.helpers.WebAppHelper
 import desu.inugram.helpers.cloud.SettingsBackupHelper
 import desu.inugram.helpers.font.FontImportHelper
-import desu.inugram.helpers.media.MediaSendDebugHelper
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
@@ -1863,7 +1862,6 @@ object ChatHelper {
             for (msg in messages) {
                 for (file in cachedFilesForMessage(account, msg)) {
                     runCatching {
-                        MediaSendDebugHelper.onLocalFileDeleted(file, "clearMessageCaches")
                         if (file.exists() && !file.delete()) file.deleteOnExit()
                     }
                 }

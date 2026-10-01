@@ -657,6 +657,33 @@ object SavedMessagesHelper {
         }
     }
 
+    private fun archiveText(text: String?, message: TLRPC.Message?): String {
+        if (!text.isNullOrBlank()) return text
+        val media = message?.media ?: return ""
+        val res = when (media) {
+            is TLRPC.TL_messageMediaPoll -> return "D83DDCCA " + (media.poll?.question?.text ?: LocaleController.getString(R.string.Poll))
+            is TLRPC.TL_messageMediaPhoto -> R.string.AttachPhoto
+            is TLRPC.TL_messageMediaGeo, is TLRPC.TL_messageMediaVenue -> R.string.AttachLocation
+            is TLRPC.TL_messageMediaGeoLive -> R.string.AttachLiveLocation
+            is TLRPC.TL_messageMediaContact -> R.string.AttachContact
+            is TLRPC.TL_messageMediaDocument -> {
+                val doc = media.document
+                when {
+                    doc == null -> R.string.AttachDocument
+                    org.telegram.messenger.MessageObject.isStickerDocument(doc) -> R.string.AttachSticker
+                    org.telegram.messenger.MessageObject.isRoundVideoDocument(doc) -> R.string.AttachRound
+                    org.telegram.messenger.MessageObject.isVoiceDocument(doc) -> R.string.AttachAudio
+                    org.telegram.messenger.MessageObject.isGifDocument(doc) -> R.string.AttachGif
+                    org.telegram.messenger.MessageObject.isVideoDocument(doc) -> R.string.AttachVideo
+                    org.telegram.messenger.MessageObject.isMusicDocument(doc) -> R.string.AttachMusic
+                    else -> R.string.AttachDocument
+                }
+            }
+            else -> return ""
+        }
+        return LocaleController.getString(res)
+    }
+
     // entiny: a deletion is only worth archiving when we actually hold something to preserve
     private fun hasPreservableData(text: String?, message: TLRPC.Message?): Boolean {
         if (!text.isNullOrBlank()) return true
@@ -728,7 +755,7 @@ object SavedMessagesHelper {
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             runMediaCopy(mediaCopy)
-            InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, text ?: "", deletionTime.toInt(), mediaPath)
+            InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, archiveText(text, message), deletionTime.toInt(), mediaPath)
         }
     }
 

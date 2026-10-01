@@ -12,7 +12,6 @@ import desu.inugram.helpers.cloud.CloudSettingsHelper
 import desu.inugram.helpers.dialogs.DrawerHelper
 import desu.inugram.helpers.font.FontHelper
 import desu.inugram.helpers.maps.MapsHelper
-import desu.inugram.helpers.media.MediaSendDebugHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.helpers.theme.NonIslandHelper
@@ -213,10 +212,10 @@ object InuHooks {
         val bg = Theme.getColor(Theme.key_windowBackgroundWhite)
         launchActivity.window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(bg))
         CrashReporter.maybeShowReportSheet(launchActivity)
+        desu.inugram.helpers.LogsHelper.trimIfNeeded()
         ProxyVpnHelper.reconcile()
         DrawerHelper.refreshUpdateState()
         desu.inugram.helpers.security.GhostHelper.syncPresence(org.telegram.messenger.UserConfig.selectedAccount)
-        MediaSendDebugHelper.startWatchingCache()
     }
 
     @JvmStatic

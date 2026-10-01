@@ -5,9 +5,43 @@
     <string name="InuSendToDiscussWithoutJoin">Write to discuss groups without joining</string>
     <string name="InuSendToDiscussWithoutJoinInfo">Skip the client-only membership check for discussion groups</string>
     <string name="InuIosStyle">iOS style</string>
+    <string name="InuIosSettings">iOS settings</string>
+    <string name="InuIosSettingsInfo">Title centering, bottom bar, input field, chat header and liquid glass.</string>
+    <string name="InuMessageDesign">Message appearance</string>
+    <string name="InuMessageDesignInfo">Bubbles, stickers, reactions, channel posts and input text size.</string>
+    <string name="InuBubbles">Bubbles</string>
+    <string name="InuSideMenu">Side menu</string>
+    <string name="InuSideMenuInfo">Hamburger drawer, its sections, accounts and menu items.</string>
+    <string name="InuInterfaceElements">Interface elements</string>
+    <string name="InuMenus">Menus</string>
+    <string name="InuChatBackgroundSection">Chat background</string>
+    <string name="InuMediaSection">Media</string>
+    <string name="InuAccountsSection">Accounts</string>
+    <string name="InuCallsSection">Calls</string>
+    <string name="InuDeviceSection">Device</string>
+    <string name="InuDownloadsAndNetwork">Downloads and network</string>
+    <string name="InuConfirmationsSection">Confirmations</string>
+    <string name="InuBlockedMessagesSection">Blocked users</string>
+    <string name="InuRootInterface">Interface</string>
+    <string name="InuRootPrivacy">Features and privacy</string>
+    <string name="InuRootSystem">System</string>
+    <string name="InuMenusInfo">Side menu, options menu, chat, message and profile rows.</string>
+    <string name="InuMenuSideDesc">Items, order and dividers of the side panel.</string>
+    <string name="InuMenuDialogsDesc">Items of the ⋮ menu on the chats screen. Shown when the side menu is off.</string>
+    <string name="InuMenuChatDesc">Items of the menu inside a chat.</string>
+    <string name="InuMenuMessageDesc">Order and visibility of message actions.</string>
+    <string name="InuMenuProfileSettingsDesc">Rows on the Settings screen.</string>
+    <string name="InuMenuProfileInfoDesc">Phone, bio, username and other rows in profiles.</string>
+    <string name="InuDrawerMenuOrder">Menu items</string>
+    <string name="InuDrawerMenuItems">Items</string>
+    <string name="InuDrawerMenuOrderInfo">Tap to hide or show items, hold to reorder. Dividers split the menu into groups.</string>
+    <string name="InuDrawerMenuHidden">Hidden items</string>
+    <string name="InuDrawerMenuAddDivider">Add divider</string>
+    <string name="InuDrawerMenuReset">Reset menu</string>
+    <string name="InuDrawerBots">Mini apps</string>
+    <string name="InuMenuDivider">Divider</string>
     <string name="InuConfirmBeforeSending">Confirm before sending</string>
     <string name="InuConfirmSendVoice">Confirm before sending voice messages</string>
-    <string name="InuConfirmSendVoiceMessage">Send this voice message?</string>
     <string name="InuConfirmSendSticker">Confirm before sending stickers</string>
     <string name="InuConfirmSendGif">Confirm before sending GIFs</string>
     <string name="InuNavigationDrawer">Navigation drawer</string>
@@ -77,7 +111,8 @@
     <string name="InuPerformanceClassLow">Low</string>
     <string name="InuPerformanceClassAverage">Average</string>
     <string name="InuPerformanceClassHigh">High</string>
-    <string name="InuAnnoyances">Annoyances</string>
+    <string name="InuAnnoyances">Hide clutter</string>
+    <string name="InuAnnoyancesChats">Chats</string>
     <string name="InuAnnoyancesStories">Stories</string>
     <string name="InuAnnoyancesProfile">Profile</string>
     <string name="InuAnnoyancesGifts">Gifts &amp; Premium</string>
@@ -417,6 +452,8 @@
     <string name="InuFoldersUnreadCounterExcludeMutedNonDms">Exclude muted non-DMs</string>
     <string name="InuHideAllChatsTab">Hide \"All Chats\" Tab</string>
     <string name="InuHideAllChatsTabInfo">Long press the title in the chat list to show All Chats.</string>
+    <string name="InuRememberSelectedFolder">Remember Selected Folder</string>
+    <string name="InuRememberSelectedFolderInfo">Reopen the last active folder when returning to the chat list.</string>
     <string name="InuFoldersAtBottom">Move Folders to Bottom</string>
     <string name="InuHideArchive">Remove \"Archived Chats\" from Chat List</string>
     <string name="InuCommunityDisplayMode">Communities</string>
@@ -600,7 +637,6 @@
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
-    <string name="InuIconReplacementRestartInfo">Restart the app to apply the icon pack.</string>
 
     <string name="InuMapsHeader">Maps</string>
     <string name="InuMapProvider">Map view provider</string>
@@ -809,10 +845,6 @@
     <string name="InuAccountSwitchShortcut">Account switcher shortcut</string>
     <string name="InuAccountSwitchShortcutInfo">Add a long-press shortcut on the app icon that asks which account to open</string>
 
-    <string name="InuFastResendLoginCode">Skip login code countdown</string>
-    <string name="InuFastResendLoginCodeInfo">Tap the countdown on the login code screen to request a new code without waiting for it to run out</string>
-    <string name="InuFastResendLoginCodeConfirm">Skip the wait and request a new code now? Telegram may still refuse.</string>
-    <string name="InuFastResendLoginCodeNow">Resend now</string>
 
     <string name="InuTextClassifierMode">Text classifier mode</string>
     <string name="InuTextClassifierModeInfo">Text classifier is a system component that auto-expands selection when double-tapping text</string>
@@ -865,7 +897,6 @@
     <string name="InuAppIconLicenseInugram">Placeholder icon, feel free to contribute a better one</string>
     <string name="InuAppIconLicenseTelegram">Icon by **Telegram**. All rights reserved.</string>
     <string name="InuJumpToBeginning">Jump to the beginning</string>
-    <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">Recent chats</string>
     <string name="InuClearRecentChats">Clear recent chats</string>
     <string name="InuClearRecentChatsAlert">This will clear the list of recently opened chats. This doesn\'t delete any chats or messages.</string>
@@ -1100,13 +1131,13 @@
 
     <string name="InuLogs">Debug</string>
     <string name="InuLogsEnabled">Debug mode</string>
-    <string name="InuExtraDebugLogs">[entiny] Extra debug logs</string>
+    <string name="InuLogsPrivacyTitle">Enable debug mode?</string>
+    <string name="InuLogsPrivacyText">The app will write technical logs to the device. They may contain account and chat identifiers, so share them only with people you trust. Logs are kept up to 25 MB and can be cleared at any time.</string>
+    <string name="InuLogsEnableAction">Enable</string>
     <string name="InuLogsSize">Logs size: %1$s</string>
     <string name="InuLogsShare">Share logs</string>
     <string name="InuLogsShareZip">All logs (.zip)</string>
     <string name="InuLogsShareCurrent">Current log (.txt)</string>
-    <string name="InuLogsShareByCategory">By category (.zip)</string>
-    <string name="InuLogsNoCategories">No categorized logs yet</string>
     <string name="InuLogsClear">Clear logs</string>
     <string name="InuLogsCleared">Old logs cleared</string>
     <string name="InuLogsShareError">Failed to package logs</string>
@@ -1330,7 +1361,7 @@
     <string name="InuShowMutualContactIconInfo">Show a mutual contact indicator icon in contacts list</string>
     <string name="InuShowMutualContactInChats">Show Mutual Contact Icon in Group &amp; Channel Member Lists</string>
     <string name="InuShowMutualContactInChatsInfo">Display mutual contact icon in group and channel member lists</string>
-    <string name="InuCategoryAppearance">Appearance &amp; Layout</string>
+    <string name="InuCategoryAppearance">Design</string>
     <string name="InuCategoryChats">Chats</string>
     <string name="InuCategoryBehavior">Behavior &amp; Tools</string>
     <string name="InuCategoryPrivacy">Privacy &amp; Security</string>

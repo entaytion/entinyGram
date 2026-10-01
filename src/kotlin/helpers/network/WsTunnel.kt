@@ -53,7 +53,13 @@ class WsTunnel(private val secret: ByteArray) {
             } catch (_: Throwable) {
                 break
             }
-            pool.execute { handle(client) }
+            pool.execute {
+                try {
+                    handle(client)
+                } catch (_: Throwable) {
+                    closeQuietly(client)
+                }
+            }
         }
     }
 

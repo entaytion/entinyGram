@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 1 Oct 2026 13:50:40 +0300
+Subject: [*] hide fullscreen reaction animation overlay
+
+---
+ .../ui/Components/Reactions/ReactionsEffectOverlay.java         | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
+@@ -774,7 +774,7 @@ public class ReactionsEffectOverlay {
+             return;
+         }
+         boolean animationEnabled = MessagesController.getGlobalMainSettings().getBoolean("view_animations", true);
+-        if (!animationEnabled) {
++        if (!animationEnabled || desu.inugram.InuConfig.HIDE_REACTIONS_ENTRY.getValue()) {
+             return;
+         }
+         if (animationType == ONLY_MOVE_ANIMATION || animationType == LONG_ANIMATION) {

@@ -253,7 +253,6 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
         RECENT_CHATS("recent_chats", R.string.InuRecentChats, R.drawable.msg_recent_solar),
         CLEAR_CACHE("clear_cache", R.string.InuClearCache, R.drawable.inu_tabler_trash_x),
         FEED("feed", R.string.InuFeed, R.drawable.msg_channel),
-        SCROLL_TOP("scroll_top", R.string.InuScrollToTop, R.drawable.msg_go_up),
         MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
         CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
         ARCHIVE("archive", R.string.ArchivedChats, R.drawable.msg_archive),
@@ -272,7 +271,6 @@ class DialogsMenuConfig(key: String) : MenuOrderConfig<DialogsMenuConfig.Item>(k
 
     companion object {
         private val OFF_BY_DEFAULT = setOf(
-            Item.SCROLL_TOP,
             Item.GHOST_MODE,
             Item.PARANOIA,
             Item.FEED,
@@ -387,5 +385,68 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
 
     companion object {
         private val OFF_BY_DEFAULT = setOf(Item.REPLY_IN, Item.DETAILS, Item.FORWARD_NO_QUOTE, Item.SUMMARIZE, Item.REMOVE_FROM_CACHE, Item.REPEAT, Item.ADD_FILTER)
+    }
+}
+
+class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key, Item.entries, OFF_BY_DEFAULT) {
+    enum class Item(
+        override val key: String,
+        override val labelRes: Int,
+        override val iconRes: Int,
+    ) : MenuOrderItem {
+        MY_PROFILE("my_profile", R.string.MyProfile, R.drawable.left_status_profile),
+        BOTS("bots", R.string.InuDrawerBots, R.drawable.msg_bot),
+        DIVIDER_1("divider_1", R.string.InuMenuDivider, R.drawable.msg_list),
+        COMPOSE("compose", R.string.NewMessageTitle, R.drawable.menu_topic_add),
+        CONTACTS("contacts", R.string.Contacts, R.drawable.msg_contacts),
+        CALLS("calls", R.string.Calls, R.drawable.msg_calls),
+        SAVED_MESSAGES("saved_messages", R.string.SavedMessages, R.drawable.msg_saved),
+        RECENT_CHATS("recent_chats", R.string.InuRecentChats, R.drawable.msg_recent),
+        FEED("feed", R.string.InuFeed, R.drawable.msg_channel),
+        ARCHIVE("archive", R.string.ArchivedChats, R.drawable.msg_archive),
+        PROXY("proxy", R.string.ProxySettings, R.drawable.outline_shield_check),
+        GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
+        SETTINGS("settings", R.string.Settings, R.drawable.msg_settings),
+        DIVIDER_2("divider_2", R.string.InuMenuDivider, R.drawable.msg_list),
+        DIVIDER_3("divider_3", R.string.InuMenuDivider, R.drawable.msg_list),
+        DIVIDER_4("divider_4", R.string.InuMenuDivider, R.drawable.msg_list),
+        DIVIDER_5("divider_5", R.string.InuMenuDivider, R.drawable.msg_list),
+        DIVIDER_6("divider_6", R.string.InuMenuDivider, R.drawable.msg_list),
+        DIVIDER_7("divider_7", R.string.InuMenuDivider, R.drawable.msg_list),
+        DIVIDER_8("divider_8", R.string.InuMenuDivider, R.drawable.msg_list);
+
+        val isDivider: Boolean get() = key.startsWith("divider_")
+
+        companion object {
+            private val byKey: Map<String, Item> by lazy { entries.associateBy { it.key } }
+            fun forKey(k: String): Item? = byKey[k]
+        }
+    }
+
+    override fun itemByKey(key: String): Item? = Item.forKey(key)
+
+    // entiny: first read carries over the former standalone "scroll to top" / "recent chats" drawer toggles
+    override fun read(prefs: SharedPreferences): List<MenuOrderEntry<Item>> {
+        val entries = super.read(prefs)
+        if (prefs.contains(key)) return entries
+        return entries.map {
+            when (it.item) {
+                Item.RECENT_CHATS -> it.copy(enabled = prefs.getBoolean("drawer_recent_chats", false))
+                else -> it
+            }
+        }
+    }
+
+    companion object {
+        private val OFF_BY_DEFAULT = setOf(
+            Item.RECENT_CHATS,
+            Item.DIVIDER_2,
+            Item.DIVIDER_3,
+            Item.DIVIDER_4,
+            Item.DIVIDER_5,
+            Item.DIVIDER_6,
+            Item.DIVIDER_7,
+            Item.DIVIDER_8,
+        )
     }
 }

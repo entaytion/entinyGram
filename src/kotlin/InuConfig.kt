@@ -8,6 +8,7 @@ import desu.inugram.helpers.chat.PinnedReactionsHelper
 import desu.inugram.helpers.font.FontConfig
 import desu.inugram.helpers.menu.ChatMenuConfig
 import desu.inugram.helpers.menu.DialogsMenuConfig
+import desu.inugram.helpers.menu.DrawerMenuConfig
 import desu.inugram.helpers.menu.MainTabsMenuConfig
 import desu.inugram.helpers.menu.MessageMenuConfig
 import desu.inugram.helpers.menu.ProfileInfoMenuConfig
@@ -441,10 +442,7 @@ object InuConfig {
     val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)
 
     @JvmField
-    val DRAWER_SCROLL_TOP = BoolItem("drawer_scroll_top", false)
-
-    @JvmField
-    val DRAWER_RECENT_CHATS = BoolItem("drawer_recent_chats", false)
+    val DRAWER_MENU_ITEMS = DrawerMenuConfig("drawer_menu_items")
 
     @JvmField
     val BOTTOM_TABS_HIDE = BoolItem("bottom_tabs_hide", false)
@@ -930,6 +928,9 @@ object InuConfig {
 
     @JvmField
     val HIDE_ALL_CHATS_TAB = BoolItem("hide_all_chats_tab", false)
+
+    @JvmField
+    val REMEMBER_SELECTED_FOLDER = BoolItem("remember_selected_folder", false)
 
     @JvmField
     val TAB_INDICATOR_STROKE = BoolItem("tab_indicator_stroke", false)
@@ -1580,9 +1581,6 @@ object InuConfig {
     val DEVICE_SPOOF_HIDE_INSTALLER = BoolItem("device_spoof_hide_installer", false)
 
     @JvmField
-    val EXTRA_DEBUG_LOGS = BoolItem("extra_debug_logs", false, exportable = false)
-
-    @JvmField
     val VOICE_HINT_SHOWN = BoolItem("voice_hint_shown", false, exportable = false)
 
     @JvmField
@@ -1704,9 +1702,6 @@ object InuConfig {
 
     @JvmField
     val RECENT_CHATS_LIMIT = IntItem("recent_chats_limit", 25)
-
-    @JvmField
-    val FAST_RESEND_LOGIN_CODE = BoolItem("fast_resend_login_code", false)
 
     @JvmField
     val CHAT_EXPORT = BoolItem("chat_export", false)

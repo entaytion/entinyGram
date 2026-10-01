@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 1 Oct 2026 13:12:43 +0300
+Subject: [*] m3 bottom tabs icon alignment
+
+---
+ .../ui/Components/glass/GlassTabView.java     | 36 ++++++++++++++-----
+ 1 file changed, 28 insertions(+), 8 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -682,9 +682,18 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+         }
+         avatarDrawable.setInfo(currentAccount, user);
+         backupImageView.setForUserOrChat(user, avatarDrawable);
+-        backupImageView.setSize(-1, -1);
+-        backupImageView.setRoundRadius(dp(11.33f));
+-        backupImageView.setLayoutParams(LayoutHelper.createFrame(22, 22, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 5, 0, 0));
++        if (inu_materialTabs) {
++            final int iconSize = (int) M3MainTabsHelper.ICON_SIZE;
++            final float iconTop = M3MainTabsHelper.getIconTopMargin();
++            final boolean compact = textView.getVisibility() == GONE;
++            backupImageView.setRoundRadius(dp(iconSize / 2f));
++            backupImageView.setLayoutParams(compact ?
++                LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER) :
++                LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
++        } else {
++            backupImageView.setRoundRadius(dp(11.33f));
++            backupImageView.setLayoutParams(LayoutHelper.createFrame(22, 22, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 5, 0, 0));
++        }
+         backupImageView.setColorFilter(null);
+         needUpdateBackupViewColor = false;
+         invalidate();
+@@ -697,12 +706,17 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+     public void inu_setMaterialTabs() {
+         inu_materialTabs = true;
+         final int iconSize = (int) M3MainTabsHelper.ICON_SIZE;
++        final boolean compact = textView.getVisibility() == GONE;
+         final float iconTop = M3MainTabsHelper.getIconTopMargin();
+         if (backupImageView != null) {
+             backupImageView.setRoundRadius(dp(iconSize / 2f));
+-            backupImageView.setLayoutParams(LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
++            backupImageView.setLayoutParams(compact ?
++                LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER) :
++                LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
+         } else {
+-            imageView.setLayoutParams(LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
++            imageView.setLayoutParams(compact ?
++                LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER) :
++                LayoutHelper.createFrame(iconSize, iconSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, iconTop, 0, 0));
+         }
+         textView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, M3MainTabsHelper.LABEL_HEIGHT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, M3MainTabsHelper.LABEL_TOP_MARGIN, 0, 0));
+         M3MainTabsHelper.applyTabRipple(this, colorSelected);
+@@ -721,11 +735,17 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             setContentDescription(null);
+         }
+ 
++        if (inu_materialTabs) {
++            inu_setMaterialTabs();
++            requestLayout();
++            invalidate();
++            return;
++        }
++
+         if (backupImageView != null) {
+-            final int avatarSize = inu_materialTabs ? (int) M3MainTabsHelper.ICON_SIZE : 22;
+             backupImageView.setLayoutParams(compact ?
+-                LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.CENTER) :
+-                LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 5, 0, 0));
++                LayoutHelper.createFrame(22, 22, Gravity.CENTER) :
++                LayoutHelper.createFrame(22, 22, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 5, 0, 0));
+         } else {
+             imageView.setLayoutParams(compact ?
+                 LayoutHelper.createFrame(24, 24, Gravity.CENTER) :

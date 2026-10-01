@@ -198,6 +198,8 @@
     <string name="InuHideHashtagSuggestions">ハッシュタグ候補を非表示</string>
     <string name="InuHideAllChatsTab">「すべてのチャット」タブを非表示</string>
     <string name="InuHideAllChatsTabInfo">チャットリストのタイトルを長押しすると「すべてのチャット」が表示されます。</string>
+    <string name="InuRememberSelectedFolder">選択したフォルダーを記憶</string>
+    <string name="InuRememberSelectedFolderInfo">チャット一覧に戻ったときに最後に開いていたフォルダーを開きます。</string>
     <string name="InuFoldersAtBottom">フォルダーを下部に移動</string>
     <string name="InuHideArchive">チャットリストから「アーカイブ」を削除</string>
     <string name="InuHideCallActionButton">タイトルの通話ボタンを非表示</string>
@@ -346,7 +348,6 @@
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
-    <string name="InuIconReplacementRestartInfo">アイコンパックの適用にはアプリの再起動が必要です。</string>
 
     <string name="InuMapsHeader">地図</string>
     <string name="InuMapProvider">地図ビューのプロバイダー</string>
@@ -776,13 +777,10 @@
 
     <string name="InuLogs">デバッグ</string>
     <string name="InuLogsEnabled">デバッグモード</string>
-    <string name="InuExtraDebugLogs">[entinyGram] 追加のデバッグログ</string>
     <string name="InuLogsSize">ログサイズ: %1$s</string>
     <string name="InuLogsShare">ログを共有</string>
     <string name="InuLogsShareZip">全ログ (.zip)</string>
     <string name="InuLogsShareCurrent">現在のログ (.txt)</string>
-    <string name="InuLogsShareByCategory">カテゴリー別 (.zip)</string>
-    <string name="InuLogsNoCategories">まだ分類されたログはありません</string>
     <string name="InuLogsClear">ログを削除</string>
     <string name="InuLogsCleared">古いログを削除しました</string>
     <string name="InuLogsShareError">ログのパッケージ化に失敗しました</string>
@@ -1015,7 +1013,7 @@
     <string name="InuDisableFlagSecureInfo">スクリーンショット禁止を解除し、秘密チャット、消えるメディア、保護されたチャンネルでのスクショや画面録画を許可します。</string>
     <string name="InuAntiDeletion">削除防止</string>
     <string name="InuAppIconOldEntinygram">旧 entinyGram</string>
-    <string name="InuCategoryAppearance">外観とレイアウト</string>
+    <string name="InuCategoryAppearance">デザイン</string>
     <string name="InuCategoryBackup">詳細設定</string>
     <string name="InuCategoryBehavior">動作とツール</string>
     <string name="InuCategoryChats">チャット</string>
@@ -1324,10 +1322,6 @@
     <string name="InuAccountSwitchShortcut">アカウント切り替えショートカット</string>
     <string name="InuAccountSwitchShortcutInfo">アプリアイコン長押し時に開くアカウントを選択するショートカットを追加します</string>
 
-    <string name="InuFastResendLoginCode">ログインコードのカウントダウンをスキップ</string>
-    <string name="InuFastResendLoginCodeInfo">ログインコード画面のカウントダウンをタップすると、残り時間を待たずに新しいコードを要求できます</string>
-    <string name="InuFastResendLoginCodeConfirm">待たずに今すぐ新しいコードをリクエストしますか？Telegramに拒否される場合があります。</string>
-    <string name="InuFastResendLoginCodeNow">今すぐ再送</string>
     <string name="InuBlockSleepWhileDownloading">ダウンロード中のスリープを防止</string>
     <string name="InuBlockSleepWhileDownloadingInfo">ダウンロード中に部分的なウェイクロックを保持し、Androidがバックグラウンドで停止しないようにします。</string>
     <string name="InuHideProxySponsorChat">プロキシのスポンサーチャットを非表示</string>
@@ -1365,7 +1359,6 @@
     <string name="InuCenterTitleChatsInfo">チャットのタイトルとサブタイトルを中央に、アバターは左のまま表示します。単独で動作します。</string>
     <string name="InuIosChatHeaderAvatarSlot">アバターをメニューボタンの位置へ</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">アバターをメニュー位置に配置：タップでプロフィール、長押しでチャットメニュー。</string>
-    <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">最近のチャット</string>
     <string name="InuClearRecentChats">最近のチャットをクリア</string>
     <string name="InuClearRecentChatsAlert">最近開いたチャットのリストがクリアされます。チャットやメッセージが削除されることはありません。</string>
@@ -1559,7 +1552,6 @@
     <string name="InuConfirmSendGif">GIF</string>
     <string name="InuConfirmSendSticker">ステッカー</string>
     <string name="InuConfirmSendVoice">ボイスメッセージ</string>
-    <string name="InuConfirmSendVoiceMessage">このボイスメッセージを送信しますか？</string>
     <string name="InuConnectProxyImmediately">すぐに接続</string>
     <string name="InuDialogAvatarOpensProfile">アバターをタップでプロフィールを開く</string>
     <string name="InuDialogAvatarOpensProfileInfo">チャット一覧でアバターをタップすると、チャットではなくプロフィールを直接開きます。</string>

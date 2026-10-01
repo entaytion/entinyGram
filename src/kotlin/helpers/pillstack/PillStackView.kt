@@ -38,7 +38,7 @@ class PillStackView(context: Context) : FrameLayout(context) {
     }
 
     init {
-        clipChildren = false
+        clipChildren = true
     }
 
     var onCurrentPillChanged: (() -> Unit)? = null

@@ -3,6 +3,7 @@ package desu.inugram.ui.settings
 import android.os.Build
 import android.view.View
 import desu.inugram.InuConfig
+import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ProxyVpnHelper
@@ -11,6 +12,7 @@ import desu.inugram.helpers.chat.WebPreviewHelper
 import desu.inugram.helpers.maps.MapsHelper
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
@@ -96,34 +98,28 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.OPEN_BY_USER_ID.value,
             )
         )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAccountsSection)))
         items.add(
             UItem.asCheck(
                 TOGGLE_SETTINGS_SHOW_ACCOUNTS,
                 LocaleController.getString(R.string.InuSettingsShowAccounts),
             ).setChecked(InuConfig.SETTINGS_SHOW_ACCOUNTS.value)
         )
-        items.add(mkSubPageButton(BUTTON_PROFILE_SETTINGS_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileSettingsRowsOrder)))
-        items.add(mkSubPageButton(BUTTON_PROFILE_INFO_ROWS_ORDER, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuProfileInfoRowsOrder)))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuProfileSettingsRowsOrderInfo)))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuFormatting)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SHOW_SECONDS,
-                LocaleController.getString(R.string.InuShowSeconds)
-            ).setChecked(InuConfig.SHOW_SECONDS.value)
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_DISABLE_ROUNDING,
-                R.string.InuDisableRounding,
-                R.string.InuDisableRoundingInfo,
-                InuConfig.DISABLE_ROUNDING.value
+        if (UserConfig.getActivatedAccountsCount() > 1) {
+            items.add(
+                mkTwoLineCheckItem(
+                    TOGGLE_ACCOUNT_SWITCH_SHORTCUT,
+                    R.string.InuAccountSwitchShortcut,
+                    R.string.InuAccountSwitchShortcutInfo,
+                    InuConfig.ACCOUNT_SWITCH_SHORTCUT.value,
+                )
             )
-        )
+        }
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatActions)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCallsSection)))
         items.add(
             UItem.asCheck(
                 TOGGLE_CALL_CONFIRMATION,
@@ -146,13 +142,53 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.CALL_ROTATION.value,
             )
         )
-        deleteForBothGroup.addTo(items) { listView.adapter.update(true) }
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuFormatting)))
+        items.add(
+            UItem.asButton(
+                BUTTON_CALENDAR_SYSTEM,
+                LocaleController.getString(R.string.InuCalendarSystem),
+                calendarSystemLabel(InuConfig.CALENDAR_SYSTEM.value),
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_CLOCK_FORMAT,
+                LocaleController.getString(R.string.InuClockFormat),
+                clockFormatLabel(InuConfig.CLOCK_FORMAT.value),
+            )
+        )
         items.add(
             UItem.asCheck(
-                TOGGLE_DISABLE_CHAT_BUBBLES,
-                LocaleController.getString(R.string.InuDisableChatBubbles),
-            ).setChecked(InuConfig.DISABLE_CHAT_BUBBLES.value)
+                TOGGLE_SHOW_SECONDS,
+                LocaleController.getString(R.string.InuShowSeconds)
+            ).setChecked(InuConfig.SHOW_SECONDS.value)
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_DISABLE_ROUNDING,
+                R.string.InuDisableRounding,
+                R.string.InuDisableRoundingInfo,
+                InuConfig.DISABLE_ROUNDING.value
+            )
+        )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatActions)))
+        deleteForBothGroup.addTo(items) { listView.adapter.update(true) }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CHAT_EXPORT,
+                R.string.InuChatExport,
+                R.string.InuChatExportInfo,
+                InuConfig.CHAT_EXPORT.value,
+                experimental = true,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMediaSection)))
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_GIF_SEEKBAR,
@@ -169,22 +205,10 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 InuConfig.SEND_MP4_DOCUMENT_AS_VIDEO.value,
             )
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CHAT_EXPORT,
-                R.string.InuChatExport,
-                R.string.InuChatExportInfo,
-                InuConfig.CHAT_EXPORT.value,
-                experimental = true,
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_DOWNLOAD_DIRECTORY,
-                LocaleController.getString(R.string.InuDownloadDirectory),
-                InuConfig.DOWNLOAD_DIRECTORY.value,
-            )
-        )
+        items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_MOTION_PHOTOS, R.string.InuDisableMotionPhotos, R.string.InuDisableMotionPhotosInfo, InuConfig.DISABLE_MOTION_PHOTOS.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_INTRO_STICKER, R.string.InuDisableIntroSticker, R.string.InuDisableIntroStickerInfo, InuConfig.DISABLE_INTRO_STICKER.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_VOLUME_PLAY_VIDEO, R.string.InuDisableVolumePlayVideo, R.string.InuDisableVolumePlayVideoInfo, InuConfig.DISABLE_VOLUME_PLAY_VIDEO.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo, InuConfig.DISABLE_QUICK_SHARE.value))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLinksAndBrowser)))
@@ -215,7 +239,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(
-            UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuNetwork)))
+            UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuDownloadsAndNetwork)))
         )
         items.add(
             UItem.asCheck(
@@ -253,6 +277,13 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuFasterUploads),
             ).setChecked(InuConfig.FASTER_UPLOADS.value)
         )
+        items.add(
+            UItem.asButton(
+                BUTTON_DOWNLOAD_DIRECTORY,
+                LocaleController.getString(R.string.InuDownloadDirectory),
+                InuConfig.DOWNLOAD_DIRECTORY.value,
+            )
+        )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuFasterTransfersInfo)))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuMapsHeader)))
@@ -283,15 +314,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_FAST_RESEND_LOGIN_CODE,
-                R.string.InuFastResendLoginCode,
-                R.string.InuFastResendLoginCodeInfo,
-                InuConfig.FAST_RESEND_LOGIN_CODE.value,
-            )
-        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDeviceSection)))
         items.add(
             UItem.asButton(
                 BUTTON_PERFORMANCE_CLASS,
@@ -305,16 +328,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                     BUTTON_TEXT_CLASSIFIER_MODE,
                     LocaleController.getString(R.string.InuTextClassifierMode),
                     textClassifierModeLabel(InuConfig.TEXT_CLASSIFIER_MODE.value),
-                )
-            )
-        }
-        if (UserConfig.getActivatedAccountsCount() > 1) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_ACCOUNT_SWITCH_SHORTCUT,
-                    R.string.InuAccountSwitchShortcut,
-                    R.string.InuAccountSwitchShortcutInfo,
-                    InuConfig.ACCOUNT_SWITCH_SHORTCUT.value,
                 )
             )
         }
@@ -374,15 +387,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_OPEN_BY_USER_ID -> {
                 val new = InuConfig.OPEN_BY_USER_ID.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            BUTTON_PROFILE_SETTINGS_ROWS_ORDER -> presentFragment(ProfileSettingsMenuOrderActivity())
-
-            BUTTON_PROFILE_INFO_ROWS_ORDER -> presentFragment(ProfileInfoMenuOrderActivity())
-
-            TOGGLE_DISABLE_CHAT_BUBBLES -> {
-                val new = InuConfig.DISABLE_CHAT_BUBBLES.toggle()
-                (view as? TextCheckCell)?.isChecked = new
             }
 
             BUTTON_DOWNLOAD_DIRECTORY -> RadioItemOptions.show(
@@ -463,14 +467,44 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_FASTER_DOWNLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_DOWNLOADS.toggle()
             TOGGLE_FASTER_UPLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_UPLOADS.toggle()
 
+            BUTTON_CALENDAR_SYSTEM -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuCalendarSystemGregorian),
+                    LocaleController.getString(R.string.InuCalendarSystemHijri),
+                    LocaleController.getString(R.string.InuCalendarSystemPersian),
+                ),
+                InuConfig.CALENDAR_SYSTEM.value,
+            ) { which ->
+                if (InuConfig.CALENDAR_SYSTEM.value == which) return@show
+                InuConfig.CALENDAR_SYSTEM.value = which
+                invalidateVisibleRows()
+                listView.adapter.update(true)
+            }
+
+            BUTTON_CLOCK_FORMAT -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuClockFormatSystem),
+                    LocaleController.getString(R.string.InuClockFormat12Hour),
+                    LocaleController.getString(R.string.InuClockFormat24Hour),
+                ),
+                InuConfig.CLOCK_FORMAT.value,
+            ) { which ->
+                InuConfig.CLOCK_FORMAT.value = which
+                InuHooks.syncClockFormat()
+                listView.adapter.update(true)
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
+            }
+
+            TOGGLE_DISABLE_MOTION_PHOTOS -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_MOTION_PHOTOS.toggle()
+            TOGGLE_DISABLE_INTRO_STICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_INTRO_STICKER.toggle()
+            TOGGLE_DISABLE_VOLUME_PLAY_VIDEO -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_VOLUME_PLAY_VIDEO.toggle()
+            TOGGLE_DISABLE_QUICK_SHARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_QUICK_SHARE.toggle()
+
             TOGGLE_SHOW_SECONDS -> {
                 val new = InuConfig.SHOW_SECONDS.toggle()
                 (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_FAST_RESEND_LOGIN_CODE -> {
-                val new = InuConfig.FAST_RESEND_LOGIN_CODE.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_ACCOUNT_SWITCH_SHORTCUT -> {
@@ -580,9 +614,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_SETTINGS_SHOW_ACCOUNTS = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_TITLE_PHONE = InuUtils.generateId()
         private val TOGGLE_OPEN_BY_USER_ID = InuUtils.generateId()
-        private val BUTTON_PROFILE_SETTINGS_ROWS_ORDER = InuUtils.generateId()
-        private val BUTTON_PROFILE_INFO_ROWS_ORDER = InuUtils.generateId()
-        private val TOGGLE_DISABLE_CHAT_BUBBLES = InuUtils.generateId()
         private val BUTTON_PERFORMANCE_CLASS = InuUtils.generateId()
         private val BUTTON_DOWNLOAD_DIRECTORY = InuUtils.generateId()
 
@@ -606,13 +637,30 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val BUTTON_MAP_PROVIDER = InuUtils.generateId()
         private val BUTTON_MAP_PREVIEW_PROVIDER = InuUtils.generateId()
         private val TOGGLE_SHOW_SECONDS = InuUtils.generateId()
+        private val TOGGLE_DISABLE_MOTION_PHOTOS = InuUtils.generateId()
+        private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
+        private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
+        private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
+        private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
+        private val BUTTON_CLOCK_FORMAT = InuUtils.generateId()
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
-        private val TOGGLE_FAST_RESEND_LOGIN_CODE = InuUtils.generateId()
 
         private val mapProviderOptions: List<Pair<Int, Int>> = buildList {
             add(InuConfig.MapProviderItem.GOOGLE to R.string.InuMapProviderGoogle)
             if (MapsHelper.hasOsmdroid) add(InuConfig.MapProviderItem.OSM_LITE to R.string.InuMapProviderOsmLite)
+        }
+
+        private fun calendarSystemLabel(value: Int): String = when (value) {
+            InuConfig.CalendarSystemItem.HIJRI -> LocaleController.getString(R.string.InuCalendarSystemHijri)
+            InuConfig.CalendarSystemItem.PERSIAN -> LocaleController.getString(R.string.InuCalendarSystemPersian)
+            else -> LocaleController.getString(R.string.InuCalendarSystemGregorian)
+        }
+
+        private fun clockFormatLabel(value: Int): String = when (value) {
+            InuConfig.ClockFormatItem.TWELVE_HOUR -> LocaleController.getString(R.string.InuClockFormat12Hour)
+            InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> LocaleController.getString(R.string.InuClockFormat24Hour)
+            else -> LocaleController.getString(R.string.InuClockFormatSystem)
         }
 
         private fun performanceClassLabel(value: Int): String = when (value) {
@@ -642,9 +690,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("settings-show-accounts", R.string.InuSettingsShowAccounts, TOGGLE_SETTINGS_SHOW_ACCOUNTS),
                 SearchRegistry.Entry("disable-chat-title-phone", R.string.InuDisableChatTitlePhone, TOGGLE_DISABLE_CHAT_TITLE_PHONE),
                 SearchRegistry.Entry("open-by-user-id", R.string.InuOpenByUserId, TOGGLE_OPEN_BY_USER_ID),
-                SearchRegistry.Entry("profile-settings-rows-order", R.string.InuProfileSettingsRowsOrder, BUTTON_PROFILE_SETTINGS_ROWS_ORDER),
-                SearchRegistry.Entry("profile-info-rows-order", R.string.InuProfileInfoRowsOrder, BUTTON_PROFILE_INFO_ROWS_ORDER),
-                SearchRegistry.Entry("disable-chat-bubbles", R.string.InuDisableChatBubbles, TOGGLE_DISABLE_CHAT_BUBBLES),
                 SearchRegistry.Entry("performance-class", R.string.InuPerformanceClass, BUTTON_PERFORMANCE_CLASS),
                 SearchRegistry.Entry("text-classifier-mode", R.string.InuTextClassifierMode, BUTTON_TEXT_CLASSIFIER_MODE),
                 SearchRegistry.Entry("call-confirmation", R.string.InuCallConfirmation, TOGGLE_CALL_CONFIRMATION),
@@ -667,8 +712,13 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("map-preview-provider", R.string.InuMapPreviewProvider, BUTTON_MAP_PREVIEW_PROVIDER),
                 SearchRegistry.Entry("show-seconds", R.string.InuShowSeconds, TOGGLE_SHOW_SECONDS),
                 SearchRegistry.Entry("disable-rounding", R.string.InuDisableRounding, TOGGLE_DISABLE_ROUNDING),
+                SearchRegistry.Entry("disable-motion-photos", R.string.InuDisableMotionPhotos, TOGGLE_DISABLE_MOTION_PHOTOS),
+                SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
+                SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
+                SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
+                SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
+                SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),
                 SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),
-                SearchRegistry.Entry("fast-resend-login-code", R.string.InuFastResendLoginCode, TOGGLE_FAST_RESEND_LOGIN_CODE),
             ),
         )
     }

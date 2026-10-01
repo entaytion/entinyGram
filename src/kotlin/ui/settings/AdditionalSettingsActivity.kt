@@ -21,7 +21,6 @@ import desu.inugram.ui.DonateBottomSheet
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
-import org.telegram.messenger.BuildVars
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
@@ -31,7 +30,6 @@ import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.UserConfig
 import org.telegram.messenger.Utilities
 import org.telegram.ui.ActionBar.AlertDialog
-import org.telegram.ui.Cells.CheckBoxCell
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
@@ -101,26 +99,18 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
-        if (BuildVars.isBetaApp()) {
-            items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
-            items.add(
-                UItem.asCheck(
-                    TOGGLE_LOGS_ENABLED,
-                    LocaleController.getString(R.string.InuLogsEnabled),
-                ).setChecked(LogsHelper.isEnabled())
-            )
-            if (LogsHelper.isEnabled()) {
-                items.add(
-                    UItem.asCheck(
-                        TOGGLE_EXTRA_DEBUG_LOGS,
-                        LocaleController.getString(R.string.InuExtraDebugLogs),
-                    ).setChecked(InuConfig.EXTRA_DEBUG_LOGS.value)
-                )
-                items.add(UItem.asCustom(getOrCreateLogsRow()))
-                items.add(UItem.asCustom(getOrCreateHeapRow()))
-            }
-            items.add(UItem.asShadow(null))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_LOGS_ENABLED,
+                LocaleController.getString(R.string.InuLogsEnabled),
+            ).setChecked(LogsHelper.isEnabled())
+        )
+        if (LogsHelper.isEnabled()) {
+            items.add(UItem.asCustom(getOrCreateLogsRow()))
+            items.add(UItem.asCustom(getOrCreateHeapRow()))
         }
+        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuPushHeader)))
         items.add(
@@ -358,15 +348,16 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             }
 
             TOGGLE_LOGS_ENABLED -> {
-                val new = !LogsHelper.isEnabled()
-                LogsHelper.setEnabled(new)
-                (view as? TextCheckCell)?.isChecked = new
-                if (new) refreshLogsSize()
-                listView?.adapter?.update(true)
-            }
-
-            TOGGLE_EXTRA_DEBUG_LOGS -> {
-                (view as? TextCheckCell)?.isChecked = InuConfig.EXTRA_DEBUG_LOGS.toggle()
+                if (LogsHelper.isEnabled()) {
+                    setLogsEnabled(false, view)
+                } else {
+                    AlertDialog.Builder(parentActivity ?: return)
+                        .setTitle(LocaleController.getString(R.string.InuLogsPrivacyTitle))
+                        .setMessage(LocaleController.getString(R.string.InuLogsPrivacyText))
+                        .setPositiveButton(LocaleController.getString(R.string.InuLogsEnableAction)) { _, _ -> setLogsEnabled(true, view) }
+                        .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+                        .show()
+                }
             }
 
             BUTTON_COPY_SYSINFO -> {
@@ -508,42 +499,14 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             val activity = parentActivity as? LaunchActivity ?: return@add
             LogsHelper.shareCurrent(activity, ::onShareDone)
         }
-        opts.add(R.drawable.msg_list, LocaleController.getString(R.string.InuLogsShareByCategory)) {
-            showCategoryPicker()
-        }
         opts.setGravity(Gravity.END).show()
     }
 
-    private fun showCategoryPicker() {
-        val activity = parentActivity as? LaunchActivity ?: return
-        val categories = LogsHelper.availableCategories()
-        if (categories.isEmpty()) {
-            BulletinFactory.of(this).createErrorBulletin(
-                LocaleController.getString(R.string.InuLogsNoCategories)
-            ).show()
-            return
-        }
-        val checked = BooleanArray(categories.size) { true }
-        val list = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
-        categories.forEachIndexed { i, category ->
-            list.addView(CheckBoxCell(activity, 1).apply {
-                setText(category, "", true, i != categories.lastIndex)
-                setOnClickListener {
-                    checked[i] = !checked[i]
-                    setChecked(checked[i], true)
-                }
-            })
-        }
-        AlertDialog.Builder(activity)
-            .setTitle(LocaleController.getString(R.string.InuLogsShareByCategory))
-            .setView(list)
-            .setPositiveButton(LocaleController.getString(R.string.InuLogsShare)) { _, _ ->
-                val selected = categories.filterIndexed { i, _ -> checked[i] }.toSet()
-                if (selected.isEmpty()) return@setPositiveButton
-                LogsHelper.shareCategories(activity, selected, ::onShareDone)
-            }
-            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
-            .show()
+    private fun setLogsEnabled(enabled: Boolean, view: View) {
+        LogsHelper.setEnabled(enabled)
+        (view as? TextCheckCell)?.isChecked = enabled
+        if (enabled) refreshLogsSize()
+        listView?.adapter?.update(true)
     }
 
     private fun onShareDone(ok: Boolean) {
@@ -661,7 +624,6 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val TOGGLE_AUTO_UPDATE_CHECK = InuUtils.generateId()
         private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
-        private val TOGGLE_EXTRA_DEBUG_LOGS = InuUtils.generateId()
         private val BUTTON_DONATE = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
         private val BUTTON_CLOUD_SYNC = InuUtils.generateId()

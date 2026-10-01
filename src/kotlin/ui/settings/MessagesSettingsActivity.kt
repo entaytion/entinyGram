@@ -23,10 +23,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuMessages)
 
-    private var stickerSizePreview: StickerSizePreviewMessagesCell? = null
-    private var miscPreview: MiscPreviewMessagesCell? = null
-    private var stickerSizeSlider: SliderCell? = null
-    private var reactionsInRowSlider: SliderCell? = null
     private var doubleTapDelaySlider: SliderCell? = null
 
     private val confirmSendGroup by lazy {
@@ -42,60 +38,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        if (stickerSizePreview == null) stickerSizePreview = StickerSizePreviewMessagesCell(this.context, this)
-        if (stickerSizeSlider == null) {
-            stickerSizeSlider = SliderCell(
-                context,
-                min = 4f,
-                max = 20f,
-                defaultValue = InuConfig.STICKER_SIZE.default,
-                initialValue = InuConfig.STICKER_SIZE.value,
-                title = LocaleController.getString(R.string.InuStickerSize),
-                format = { "%.1f".format(it) },
-                onChanged = {
-                    InuConfig.STICKER_SIZE.value = it
-                    stickerSizePreview?.invalidate()
-                },
-            )
-        } else {
-            stickerSizeSlider?.updateColors()
-        }
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuStickers)))
-        items.add(UItem.asCustom(stickerSizePreview))
-        items.add(UItem.asCustom(stickerSizeSlider))
-        items.add(
-            UItem.asButton(
-                BUTTON_STICKER_TIME_MODE,
-                LocaleController.getString(R.string.InuStickerTimeMode),
-                when (InuConfig.STICKER_TIME_MODE.value) {
-                    InuConfig.StickerTimeModeItem.HIDE_TIME -> LocaleController.getString(R.string.InuStickerTimeModeHideTime)
-                    InuConfig.StickerTimeModeItem.HIDE_FULL -> LocaleController.getString(R.string.InuStickerTimeModeHideCompletely)
-                    InuConfig.StickerTimeModeItem.HIDE_INCOMING -> LocaleController.getString(R.string.InuStickerTimeModeHideIncoming)
-                    else -> LocaleController.getString(R.string.InuStickerTimeModeShow)
-                }
-            )
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_NO_STICKER_EXTRA_PADDING,
-                LocaleController.getString(R.string.InuNoStickerExtraPadding),
-            ).setChecked(InuConfig.NO_STICKER_EXTRA_PADDING.value)
-        )
-        items.add(UItem.asShadow(null))
-
-        if (reactionsInRowSlider == null) reactionsInRowSlider = SliderCell(
-            context,
-            min = 6f,
-            max = 30f,
-            defaultValue = InuConfig.REACTIONS_IN_ROW.default.toFloat(),
-            initialValue = InuConfig.REACTIONS_IN_ROW.value.toFloat(),
-            step = 1f,
-            title = LocaleController.getString(R.string.InuReactionsInRow),
-            format = { it.toInt().toString() },
-            onChanged = {
-                InuConfig.REACTIONS_IN_ROW.value = it.toInt()
-            },
-        )
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuReactions)))
         items.add(
             mkSubPageButton(
@@ -104,33 +46,16 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuPinnedReactions),
             )
         )
-        items.add(UItem.asCustom(reactionsInRowSlider))
         items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_REACTION_BAR_BELOW,
-                R.string.InuReactionBarBelow,
-                R.string.InuReactionBarBelowInfo,
-                InuConfig.REACTION_BAR_BELOW.value,
-                experimental = true
-            )
+            UItem.asCheck(
+                TOGGLE_INSTANT_MARK_REACTIONS_READ,
+                LocaleController.getString(R.string.InuInstantMarkReactionsRead),
+            ).setChecked(InuConfig.INSTANT_MARK_REACTIONS_READ.value)
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CHAT_VIEWS_BOTTOM,
-                R.string.InuChatViewsBottom,
-                R.string.InuChatViewsBottomInfo,
-                InuConfig.CHAT_VIEWS_BOTTOM.value,
-                experimental = true
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_REACTION_ENTRY,
-                R.string.InuHideReactionEntry,
-                R.string.InuHideReactionEntryInfo,
-                InuConfig.HIDE_REACTIONS_ENTRY.value
-            )
-        )
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuConfirmationsSection)))
+        confirmSendGroup.addTo(items) { listView?.adapter?.update(true) }
         items.add(
             mkTwoLineCheckItem(
                 TOGGLE_CONFIRM_REACTION_NON_MEMBER,
@@ -184,87 +109,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
-        if (miscPreview == null) miscPreview = MiscPreviewMessagesCell(this.context, this)
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMiscellaneous)))
-        items.add(UItem.asCustom(miscPreview))
-        items.add(
-            mkSubPageButton(
-                BUTTON_MESSAGE_MENU_ORDER,
-                R.drawable.inu_tabler_list,
-                LocaleController.getString(R.string.InuMessageMenuOrder),
-            )
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_CHAT_REMEMBER_ALL_REPLIES,
-                LocaleController.getString(R.string.InuChatRememberAllReplies),
-            ).setChecked(InuConfig.CHAT_REMEMBER_ALL_REPLIES.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_INSTANT_MARK_REACTIONS_READ,
-                LocaleController.getString(R.string.InuInstantMarkReactionsRead),
-            ).setChecked(InuConfig.INSTANT_MARK_REACTIONS_READ.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SHOW_FORWARD_TIME,
-                LocaleController.getString(R.string.InuShowForwardTime),
-            ).setChecked(InuConfig.SHOW_FORWARD_TIME.value)
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_FORWARD_HEADER_MODE,
-                LocaleController.getString(R.string.InuForwardHeaderMode),
-                forwardHeaderModeLabel(InuConfig.FORWARD_HEADER_MODE.value),
-            )
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SHOW_FORWARDS_COUNT,
-                LocaleController.getString(R.string.InuShowForwardsCount),
-            ).setChecked(InuConfig.SHOW_FORWARDS_COUNT.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SHOW_MEDIA_SIZE,
-                LocaleController.getString(R.string.InuShowMediaSize),
-            ).setChecked(InuConfig.SHOW_MEDIA_SIZE.value)
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_FORWARD_PRO,
-                R.string.InuForwardPro,
-                R.string.InuForwardProInfo,
-                InuConfig.FORWARD_PRO.value,
-                experimental = true,
-            )
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_COMPACT_EDITED,
-                LocaleController.getString(R.string.InuCompactEdited),
-            ).setChecked(InuConfig.COMPACT_EDITED.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_BUBBLE_TAILS,
-                LocaleController.getString(R.string.InuBubbleTails),
-            ).setChecked(InuConfig.BUBBLE_TAILS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SMALL_GIFS,
-                LocaleController.getString(R.string.InuSmallGifs),
-            ).setChecked(InuConfig.SMALL_GIFS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE,
-                LocaleController.getString(R.string.InuShowPollResultsBeforeVote),
-            ).setChecked(InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuShowPollResultsBeforeVoteInfo)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuBlockedMessagesSection)))
         items.add(
             UItem.asButton(
                 BUTTON_BLOCKED_MESSAGES_MODE,
@@ -285,7 +130,26 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
-        confirmSendGroup.addTo(items) { listView?.adapter?.update(true) }
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCategoryBehavior)))
+        items.add(
+            UItem.asCheck(
+                TOGGLE_CHAT_REMEMBER_ALL_REPLIES,
+                LocaleController.getString(R.string.InuChatRememberAllReplies),
+            ).setChecked(InuConfig.CHAT_REMEMBER_ALL_REPLIES.value)
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FORWARD_PRO,
+                R.string.InuForwardPro,
+                R.string.InuForwardProInfo,
+                InuConfig.FORWARD_PRO.value,
+                experimental = true,
+            )
+        )
+        items.add(mkTwoLineCheckItem(TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE, R.string.InuShowPollResultsBeforeVote, R.string.InuShowPollResultsBeforeVoteInfo, InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.value))
+        items.add(UItem.asShadow(null))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuDoubleTapActions)))
@@ -332,41 +196,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (confirmSendGroup.handleClick(item, view) { listView?.adapter?.update(true) }) return
         when (item.id) {
-            BUTTON_STICKER_TIME_MODE -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuStickerTimeModeShow),
-                    LocaleController.getString(R.string.InuStickerTimeModeHideTime),
-                    LocaleController.getString(R.string.InuStickerTimeModeHideIncoming),
-                    LocaleController.getString(R.string.InuStickerTimeModeHideCompletely),
-                ),
-                InuConfig.STICKER_TIME_MODE.value - 1,
-            ) { which ->
-                InuConfig.STICKER_TIME_MODE.value = which + 1
-                stickerSizePreview?.invalidate()
-            }
-
-            TOGGLE_NO_STICKER_EXTRA_PADDING -> {
-                val new = InuConfig.NO_STICKER_EXTRA_PADDING.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                stickerSizePreview?.invalidate()
-            }
-
-            TOGGLE_REACTION_BAR_BELOW -> {
-                val new = InuConfig.REACTION_BAR_BELOW.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_CHAT_VIEWS_BOTTOM -> {
-                val new = InuConfig.CHAT_VIEWS_BOTTOM.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_HIDE_REACTION_ENTRY -> {
-                val new = InuConfig.HIDE_REACTIONS_ENTRY.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
             TOGGLE_CONFIRM_REACTION_NON_MEMBER -> {
                 val new = InuConfig.CONFIRM_REACTION_NON_MEMBER.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -374,31 +203,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_CHAT_REMEMBER_ALL_REPLIES -> {
                 val new = InuConfig.CHAT_REMEMBER_ALL_REPLIES.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
             }
 
             TOGGLE_INSTANT_MARK_REACTIONS_READ -> {
                 val new = InuConfig.INSTANT_MARK_REACTIONS_READ.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_SHOW_FORWARD_TIME -> {
-                val new = InuConfig.SHOW_FORWARD_TIME.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
-            }
-
-            BUTTON_FORWARD_HEADER_MODE -> showForwardHeaderModeSelector()
-
-            TOGGLE_SHOW_FORWARDS_COUNT -> {
-                val new = InuConfig.SHOW_FORWARDS_COUNT.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
-            }
-
-            TOGGLE_SHOW_MEDIA_SIZE -> {
-                val new = InuConfig.SHOW_MEDIA_SIZE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
             }
 
             TOGGLE_FORWARD_PRO -> {
@@ -406,27 +216,9 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
-            TOGGLE_COMPACT_EDITED -> {
-                val new = InuConfig.COMPACT_EDITED.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
-            }
-
-            TOGGLE_BUBBLE_TAILS -> {
-                val new = InuConfig.BUBBLE_TAILS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                miscPreview?.invalidate()
-            }
-
-            TOGGLE_SMALL_GIFS -> {
-                val new = InuConfig.SMALL_GIFS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-            }
-
             TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE -> {
                 val new = InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
             }
 
             TOGGLE_SHOW_SPOILERS_DIRECTLY -> {
@@ -488,34 +280,10 @@ class MessagesSettingsActivity : SettingsPageActivity() {
 
             BUTTON_BLOCKED_MESSAGES_EXTRA -> openBlockedExtraPicker()
             BUTTON_PINNED_REACTIONS -> presentFragment(PinnedReactionsActivity())
-            BUTTON_MESSAGE_MENU_ORDER -> presentFragment(MessageMenuOrderActivity())
             BUTTON_DOUBLE_TAP_INCOMING -> showDoubleTapSelector(view, DoubleTapContext.INCOMING)
             BUTTON_DOUBLE_TAP_OUTGOING -> showDoubleTapSelector(view, DoubleTapContext.OUTGOING)
             BUTTON_DOUBLE_TAP_CHANNEL -> showDoubleTapSelector(view, DoubleTapContext.CHANNEL)
         }
-    }
-
-    private fun showForwardHeaderModeSelector() {
-        val context = context ?: return
-        val items = listOf(
-            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuForwardHeaderModeRegular)),
-            RadioDialogBuilder.Item(
-                LocaleController.getString(R.string.InuForwardHeaderModeIcon),
-                if (InuConfig.SHOW_FORWARD_TIME.value) null
-                else LocaleController.getString(R.string.InuForwardHeaderModeIconNoTimeInfo),
-            ),
-            RadioDialogBuilder.Item(LocaleController.getString(R.string.InuForwardHeaderModeCompact)),
-        )
-        showDialog(
-            RadioDialogBuilder(context, getResourceProvider())
-                .setTitle(LocaleController.getString(R.string.InuForwardHeaderMode))
-                .setItems(items, InuConfig.FORWARD_HEADER_MODE.value) { _, which ->
-                    if (InuConfig.FORWARD_HEADER_MODE.value == which) return@setItems
-                    InuConfig.FORWARD_HEADER_MODE.value = which
-                    miscPreview?.invalidate()
-                    listView.adapter.update(false)
-                }.create()
-        )
     }
 
     private fun openBlockedExtraPicker() {
@@ -573,24 +341,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
     }
 
     companion object {
-        private val BUTTON_STICKER_TIME_MODE = InuUtils.generateId()
-        private val TOGGLE_NO_STICKER_EXTRA_PADDING = InuUtils.generateId()
         private val BUTTON_PINNED_REACTIONS = InuUtils.generateId()
-        private val BUTTON_MESSAGE_MENU_ORDER = InuUtils.generateId()
         private val TOGGLE_INSTANT_MARK_REACTIONS_READ = InuUtils.generateId()
-        private val TOGGLE_REACTION_BAR_BELOW = InuUtils.generateId()
-        private val TOGGLE_CHAT_VIEWS_BOTTOM = InuUtils.generateId()
-        private val TOGGLE_HIDE_REACTION_ENTRY = InuUtils.generateId()
         private val TOGGLE_CONFIRM_REACTION_NON_MEMBER = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
-        private val TOGGLE_SHOW_FORWARD_TIME = InuUtils.generateId()
-        private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
-        private val TOGGLE_SHOW_FORWARDS_COUNT = InuUtils.generateId()
-        private val TOGGLE_SHOW_MEDIA_SIZE = InuUtils.generateId()
         private val TOGGLE_FORWARD_PRO = InuUtils.generateId()
-        private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
-        private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
-        private val TOGGLE_SMALL_GIFS = InuUtils.generateId()
         private val TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_STICKER = InuUtils.generateId()
@@ -619,12 +374,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             else -> LocaleController.getString(R.string.InuMediaSpoilerModeTelegram)
         }
 
-        private fun forwardHeaderModeLabel(value: Int): String = when (value) {
-            InuConfig.ForwardHeaderModeItem.COMPACT -> LocaleController.getString(R.string.InuForwardHeaderModeCompact)
-            InuConfig.ForwardHeaderModeItem.ICON -> LocaleController.getString(R.string.InuForwardHeaderModeIcon)
-            else -> LocaleController.getString(R.string.InuForwardHeaderModeRegular)
-        }
-
         private fun blockedMessagesModeLabel(value: Int): String = when (value) {
             InuConfig.BlockedMessagesModeItem.SPOILER -> LocaleController.getString(R.string.InuBlockedMessagesModeSpoiler)
             InuConfig.BlockedMessagesModeItem.HIDE -> LocaleController.getString(R.string.InuBlockedMessagesModeHide)
@@ -638,24 +387,11 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_discussion,
             factory = ::MessagesSettingsActivity,
             entries = listOf(
-                SearchRegistry.Entry("sticker-time-mode", R.string.InuStickerTimeMode, BUTTON_STICKER_TIME_MODE),
-                SearchRegistry.Entry("no-sticker-extra-padding", R.string.InuNoStickerExtraPadding, TOGGLE_NO_STICKER_EXTRA_PADDING),
                 SearchRegistry.Entry("pinned-reactions", R.string.InuPinnedReactions, BUTTON_PINNED_REACTIONS),
-                SearchRegistry.Entry("reaction-bar-below", R.string.InuReactionBarBelow, TOGGLE_REACTION_BAR_BELOW),
-                SearchRegistry.Entry("chat-views-bottom", R.string.InuChatViewsBottom, TOGGLE_CHAT_VIEWS_BOTTOM),
-                SearchRegistry.Entry("hide-reaction-entry", R.string.InuHideReactionEntry, TOGGLE_HIDE_REACTION_ENTRY),
                 SearchRegistry.Entry("confirm-reaction-non-member", R.string.InuConfirmReactionNonMember, TOGGLE_CONFIRM_REACTION_NON_MEMBER),
-                SearchRegistry.Entry("message-menu-order", R.string.InuMessageMenuOrder, BUTTON_MESSAGE_MENU_ORDER),
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
                 SearchRegistry.Entry("instant-mark-reactions-read", R.string.InuInstantMarkReactionsRead, TOGGLE_INSTANT_MARK_REACTIONS_READ),
-                SearchRegistry.Entry("show-forward-time", R.string.InuShowForwardTime, TOGGLE_SHOW_FORWARD_TIME),
-                SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
-                SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
-                SearchRegistry.Entry("show-media-size", R.string.InuShowMediaSize, TOGGLE_SHOW_MEDIA_SIZE),
                 SearchRegistry.Entry("forward-pro", R.string.InuForwardPro, TOGGLE_FORWARD_PRO),
-                SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
-                SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
-                SearchRegistry.Entry("small-gifs", R.string.InuSmallGifs, TOGGLE_SMALL_GIFS),
                 SearchRegistry.Entry("show-poll-results-before-vote", R.string.InuShowPollResultsBeforeVote, TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE),
                 SearchRegistry.Entry("confirm-send-voice", R.string.InuConfirmSendVoice, TOGGLE_CONFIRM_SEND_VOICE),
                 SearchRegistry.Entry("confirm-send-sticker", R.string.InuConfirmSendSticker, TOGGLE_CONFIRM_SEND_STICKER),

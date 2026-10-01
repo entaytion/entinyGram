@@ -68,7 +68,7 @@ class DonateCardCell(
             alpha = 0.7f
             contentDescription = LocaleController.getString(R.string.InuDonateHide)
             setOnClickListener { onHide() }
-        }, LayoutHelper.createFrame(40f, 40f, Gravity.TOP or side))
+        }, LayoutHelper.createFrame(32f, 32f, Gravity.TOP or (if (rtl) Gravity.LEFT else Gravity.RIGHT), 6f, 6f, 6f, 0f))
 
         addView(card, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT.toFloat(), Gravity.FILL_HORIZONTAL, 12f, 12f, 12f, 4f))
     }

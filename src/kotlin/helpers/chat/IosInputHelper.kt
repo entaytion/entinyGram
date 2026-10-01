@@ -11,6 +11,10 @@ import java.util.WeakHashMap
 
 object IosInputHelper {
     private const val RIGHT_CLUSTER_GAP_DP = 4
+    private const val BUBBLE_INSET_DP = 4
+
+    @JvmStatic
+    fun bubbleInsetPx(): Int = AndroidUtilities.dp(BUBBLE_INSET_DP.toFloat())
 
     private val slowModePill = WeakHashMap<ChatActivityEnterView, Int>()
 
@@ -56,7 +60,8 @@ object IosInputHelper {
                 canvas.scale(view.scaleX, view.scaleY, (l + r) / 2f, (t + b) / 2f)
             }
         }
-        bubble.setBounds(l, t, r, b)
+        val inset = bubbleInsetPx()
+        bubble.setBounds(l + inset, t + inset, r - inset, b - inset)
         bubble.alpha = (255 * view.alpha).toInt()
         bubble.draw(canvas)
         if (moved) canvas.restore()

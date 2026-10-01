@@ -58,27 +58,9 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 presenceModeLabel(),
             ).setEnabled(masterOn)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_AUTO_OFFLINE,
-                LocaleController.getString(R.string.InuGhostAutoOffline),
-            ).setChecked(InuConfig.GHOST_AUTO_OFFLINE.value).setEnabled(masterOn)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostAutoOfflineInfo)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_HIDE_APP_BAR_ICON,
-                LocaleController.getString(R.string.InuGhostHideAppBarIcon),
-            ).setChecked(InuConfig.GHOST_HIDE_APP_BAR_ICON.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostHideAppBarIconInfo)))
-        items.add(
-            UItem.asCheck(
-                TOGGLE_LAUNCHER_SHORTCUT,
-                LocaleController.getString(R.string.InuGhostModeLauncherShortcut),
-            ).setChecked(InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostModeLauncherShortcutInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_AUTO_OFFLINE, R.string.InuGhostAutoOffline, R.string.InuGhostAutoOfflineInfo, InuConfig.GHOST_AUTO_OFFLINE.value).setEnabled(masterOn))
+        items.add(mkTwoLineCheckItem(TOGGLE_HIDE_APP_BAR_ICON, R.string.InuGhostHideAppBarIcon, R.string.InuGhostHideAppBarIconInfo, InuConfig.GHOST_HIDE_APP_BAR_ICON.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_LAUNCHER_SHORTCUT, R.string.InuGhostModeLauncherShortcut, R.string.InuGhostModeLauncherShortcutInfo, InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.value))
         items.add(mkSubPageButton(BUTTON_MANAGE_OVERRIDES, LocaleController.getString(R.string.InuGhostOverrides)))
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostOverridesHint)))
         items.add(
@@ -87,13 +69,8 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuGhostReadOnSend),
             ).setChecked(InuConfig.GHOST_READ_ON_SEND.value)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_MARK_READ_LOCALLY,
-                LocaleController.getString(R.string.InuGhostMarkReadLocally),
-            ).setChecked(InuConfig.GHOST_MARK_READ_LOCALLY.value)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuGhostMarkReadLocallyInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_LOCALLY, R.string.InuGhostMarkReadLocally, R.string.InuGhostMarkReadLocallyInfo, InuConfig.GHOST_MARK_READ_LOCALLY.value))
+        items.add(UItem.asShadow(null))
     }
 
     private fun presenceModeLabel(): String = when (InuConfig.GHOST_PRESENCE_MODE.value) {
@@ -111,7 +88,7 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
         when (item.id) {
             TOGGLE_MASTER -> {
                 val new = GhostHelper.toggleGhostMode()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
                 listView?.adapter?.update(true)
             }
             BUTTON_PRESENCE_MODE -> if (GhostHelper.isGhostActive()) RadioItemOptions.show(
@@ -131,26 +108,26 @@ class GhostModeSettingsActivity : SettingsPageActivity() {
             TOGGLE_AUTO_OFFLINE -> {
                 if (!GhostHelper.isGhostActive()) return
                 val new = InuConfig.GHOST_AUTO_OFFLINE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
             }
             BUTTON_MANAGE_OVERRIDES -> presentFragment(GhostChatOverridesSettingsActivity())
             TOGGLE_READ_ON_SEND -> {
                 val new = InuConfig.GHOST_READ_ON_SEND.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
             }
             TOGGLE_MARK_READ_LOCALLY -> {
                 val new = InuConfig.GHOST_MARK_READ_LOCALLY.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
             }
             TOGGLE_HIDE_APP_BAR_ICON -> {
                 val new = InuConfig.GHOST_HIDE_APP_BAR_ICON.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.mainUserInfoChanged)
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateInterfaces, MessagesController.UPDATE_MASK_ALL)
             }
             TOGGLE_LAUNCHER_SHORTCUT -> {
                 val new = InuConfig.GHOST_MODE_LAUNCHER_SHORTCUT.toggle()
-                (view as? TextCheckCell)?.isChecked = new
+                setCellChecked(view, new)
                 parentActivity?.let { desu.inugram.helpers.ShortcutHelper.sync(it) }
             }
         }

@@ -1,18 +1,24 @@
 package desu.inugram.ui.settings
 
 import android.os.Build
+import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import desu.inugram.InuConfig
 import desu.inugram.InuHooks
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.chat.ActionButtonStyle
 import desu.inugram.helpers.theme.MonetHelper
 import desu.inugram.ui.settings.fonts.FontsSettingsActivity
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
+import org.telegram.messenger.AndroidUtilities
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.UItem
@@ -22,7 +28,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
     private var animationSpeedSlider: SliderCell? = null
     private var avatarCornerPreview: AvatarCornerPreviewCell? = null
-    private var inputBarPreviewCell: InputBarPreviewCell? = null
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuCategoryAppearance)
 
@@ -42,22 +47,23 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        listView?.adapter?.update(false)
+    }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        val ctx = context ?: return
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTypographyAndIcons)))
         items.add(mkSubPageButton(BUTTON_FONTS, LocaleController.getString(R.string.InuFonts)))
-        items.add(mkSubPageButton(BUTTON_ICON_REPLACEMENT, LocaleController.getString(R.string.InuIconReplacement)))
+        items.add(mkTwoLineEntry(BUTTON_ICON_REPLACEMENT, R.drawable.phosphor_palette, LocaleController.getString(R.string.InuIconReplacement), IconPacksSettingsActivity.currentPackLabel()))
+        items.add(mkTwoLineEntry(BUTTON_IOS_STYLE, R.drawable.msg_newphone, LocaleController.getString(R.string.InuIosSettings), LocaleController.getString(R.string.InuIosSettingsInfo)))
+        items.add(UItem.asShadow(null))
 
-        items.add(
-            UItem.asButton(
-                BUTTON_NOTIFICATION_ICON,
-                LocaleController.getString(R.string.InuNotificationIcon),
-                when (InuConfig.NOTIFICATION_ICON.value) {
-                    InuConfig.NotificationIconItem.INUGRAM -> LocaleController.getString(R.string.InuNotificationIconInugram)
-                    InuConfig.NotificationIconItem.OLD_ENTINYGRAM -> LocaleController.getString(R.string.InuNotificationIconOldEntinygram)
-                    else -> LocaleController.getString(R.string.InuNotificationIconTelegram)
-                }
-            )
-        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuInterfaceElements)))
+        items.add(mkTwoLineEntry(BUTTON_MESSAGE_DESIGN, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessageDesign), LocaleController.getString(R.string.InuMessageDesignInfo)))
+        items.add(mkTwoLineEntry(BUTTON_SIDE_MENU, R.drawable.inu_tabler_menu_2, LocaleController.getString(R.string.InuSideMenu), LocaleController.getString(R.string.InuSideMenuInfo)))
+        items.add(mkTwoLineEntry(BUTTON_MENUS, R.drawable.inu_tabler_list, LocaleController.getString(R.string.InuMenus), LocaleController.getString(R.string.InuMenusInfo)))
         items.add(UItem.asShadow(null))
 
         m3Group.addTo(items) { changed ->
@@ -78,29 +84,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 )
             )
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            items.add(
-                UItem.asButton(
-                    BUTTON_PREDICTIVE_BACK_MODE,
-                    LocaleController.getString(R.string.InuPredictiveBack),
-                    predictiveBackModeLabel(InuConfig.PREDICTIVE_BACK_MODE.value),
-                )
-            )
-        }
-        items.add(
-            UItem.asButton(
-                BUTTON_CALENDAR_SYSTEM,
-                LocaleController.getString(R.string.InuCalendarSystem),
-                calendarSystemLabel(InuConfig.CALENDAR_SYSTEM.value),
-            )
-        )
-        items.add(
-            UItem.asButton(
-                BUTTON_CLOCK_FORMAT,
-                LocaleController.getString(R.string.InuClockFormat),
-                clockFormatLabel(InuConfig.CLOCK_FORMAT.value),
-            )
-        )
         items.add(UItem.asShadow(null))
 
         if (avatarCornerPreview == null) {
@@ -122,44 +105,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         items.add(
             UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuNonIslandUI)))
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_NAVIGATION_DRAWER,
-                R.string.InuNavigationDrawer,
-                R.string.InuNavigationDrawerInfo,
-                InuConfig.NAVIGATION_DRAWER.value,
-            )
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && InuConfig.NAVIGATION_DRAWER.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_DRAWER_BACK_GESTURE,
-                    R.string.InuDrawerBackGesture,
-                    R.string.InuDrawerBackGestureInfo,
-                    InuConfig.DRAWER_BACK_GESTURE.value,
-                )
-            )
-        }
-        if (InuConfig.NAVIGATION_DRAWER.value) {
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_DRAWER_M3_SECTIONS,
-                    R.string.InuDrawerM3Sections,
-                    R.string.InuDrawerM3SectionsInfo,
-                    InuConfig.DRAWER_M3_SECTIONS.value,
-                )
-            )
-            items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_SHOW_DRAWER_ACCOUNTS,
-                    R.string.InuShowDrawerAccounts,
-                    R.string.InuShowDrawerAccountsInfo,
-                    InuConfig.SHOW_DRAWER_ACCOUNTS.value,
-                )
-            )
-            items.add(UItem.asCheck(TOGGLE_DRAWER_SCROLL_TOP, LocaleController.getString(R.string.InuScrollToTop)).setChecked(InuConfig.DRAWER_SCROLL_TOP.value))
-            items.add(UItem.asCheck(TOGGLE_DRAWER_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats)).setChecked(InuConfig.DRAWER_RECENT_CHATS.value))
-        }
         items.add(
             UItem.asCheck(
                 TOGGLE_NON_ISLAND_FOLDERS_BAR,
@@ -235,88 +180,28 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 InuConfig.REDUCE_MENU_MOTION.value
             )
         )
-        items.add(UItem.asCustom(animationSpeedSlider))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAnimationSpeedInfo)))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuIosStyle)))
         items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_BOTTOM_BAR,
-                R.string.InuIosBottomBar,
-                R.string.InuIosBottomBarInfo,
-                InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value,
-            )
+            UItem.asCheck(
+                TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION,
+                LocaleController.getString(R.string.InuSimpleAttachPopupAnimation),
+            ).setChecked(InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.value)
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER,
-                R.string.InuIosChatsTabFirstFolder,
-                R.string.InuIosChatsTabFirstFolderInfo,
-                InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.value,
-            )
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuMessageInput)))
-        if (inputBarPreviewCell == null) inputBarPreviewCell = InputBarPreviewCell(context, getResourceProvider())
-        items.add(UItem.asCustom(inputBarPreviewCell))
-        items.add(
-            UItem.asButton(
-                BUTTON_ACTION_BUTTON_STYLE,
-                LocaleController.getString(R.string.InuActionButtonStyle),
-                when (InuConfig.ACTION_BUTTON_STYLE.value) {
-                    ActionButtonStyle.NEUTRAL -> LocaleController.getString(R.string.InuActionButtonStyleNeutral)
-                    ActionButtonStyle.WHITE -> LocaleController.getString(R.string.InuActionButtonStyleWhite)
-                    else -> LocaleController.getString(R.string.InuActionButtonStyleAccent)
-                }
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_BUTTON_PLACEMENT,
-                R.string.InuIosButtonPlacement,
-                R.string.InuIosButtonPlacementInfo,
-                InuConfig.IOS_INPUT_BUTTON_PLACEMENT.value,
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_IOS_INPUT_APPEARANCE,
-                R.string.InuIosInputAppearance,
-                R.string.InuIosInputAppearanceInfo,
-                InuConfig.IOS_INPUT_APPEARANCE.value,
-            )
-        )
-        if (InuConfig.IOS_INPUT_APPEARANCE.value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             items.add(
-                mkTwoLineCheckItem(
-                    TOGGLE_COMPACT_INPUT_SIZE,
-                    R.string.InuCompactInputSize,
-                    R.string.InuCompactInputSizeInfo,
-                    InuConfig.COMPACT_INPUT_SIZE.value,
+                UItem.asButton(
+                    BUTTON_PREDICTIVE_BACK_MODE,
+                    LocaleController.getString(R.string.InuPredictiveBack),
+                    predictiveBackModeLabel(InuConfig.PREDICTIVE_BACK_MODE.value),
                 )
             )
         }
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuActionButtonStyleInfo)))
+        items.add(UItem.asCustom(animationSpeedSlider))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAnimationSpeedInfo)))
 
-        items.add(
-            mkSubPageButton(
-                BUTTON_CHAT_HEADER,
-                R.drawable.inu_tabler_app_window,
-                LocaleController.getString(R.string.InuChatHeaderSettings),
-            )
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_CENTER_TITLE_MAIN,
-                R.string.InuCenterTitleMain,
-                R.string.InuCenterTitleMainInfo,
-                InuConfig.CENTER_TITLE_MAIN.value,
-            )
-        )
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuChatBackgroundSection)))
+        items.add(UItem.asCheck(TOGGLE_DISABLE_CHAT_BACKGROUNDS, LocaleController.getString(R.string.InuDisableChatBackgrounds)).setChecked(InuConfig.DISABLE_CHAT_BACKGROUNDS.value))
+        items.add(UItem.asCheck(TOGGLE_DISABLE_CHAT_THEMES, LocaleController.getString(R.string.InuDisableChatThemes)).setChecked(InuConfig.DISABLE_CHAT_THEMES.value))
+        items.add(UItem.asCheck(TOGGLE_DISABLE_BG_PARALLAX, LocaleController.getString(R.string.InuDisableBgParallax)).setChecked(InuConfig.DISABLE_BG_PARALLAX.value))
         items.add(UItem.asShadow(null))
     }
 
@@ -355,18 +240,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
 
             BUTTON_ICON_REPLACEMENT -> presentFragment(IconPacksSettingsActivity())
 
-            BUTTON_NOTIFICATION_ICON -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuNotificationIconTelegram),
-                    LocaleController.getString(R.string.InuNotificationIconInugram),
-                    LocaleController.getString(R.string.InuNotificationIconOldEntinygram),
-                ),
-                InuConfig.NOTIFICATION_ICON.value,
-            ) { which ->
-                InuConfig.NOTIFICATION_ICON.value = which
-            }
-
             BUTTON_FONTS -> presentFragment(FontsSettingsActivity())
 
             TOGGLE_DISABLE_SCRIM_BLUR -> {
@@ -382,43 +255,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_REDUCE_MENU_MOTION -> {
                 val new = InuConfig.REDUCE_MENU_MOTION.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_NAVIGATION_DRAWER -> {
-                val new = InuConfig.NAVIGATION_DRAWER.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                listView.adapter.update(true)
-                showRestartBulletin()
-            }
-
-            TOGGLE_DRAWER_BACK_GESTURE -> {
-                val new = InuConfig.DRAWER_BACK_GESTURE.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                showRestartBulletin()
-            }
-
-            TOGGLE_DRAWER_M3_SECTIONS -> {
-                val new = InuConfig.DRAWER_M3_SECTIONS.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-            }
-
-            TOGGLE_SHOW_DRAWER_ACCOUNTS -> {
-                val new = InuConfig.SHOW_DRAWER_ACCOUNTS.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-            }
-
-            TOGGLE_DRAWER_SCROLL_TOP -> {
-                val new = InuConfig.DRAWER_SCROLL_TOP.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-            }
-
-            TOGGLE_DRAWER_RECENT_CHATS -> {
-                val new = InuConfig.DRAWER_RECENT_CHATS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
             }
 
             TOGGLE_NON_ISLAND_FOLDERS_BAR -> {
@@ -466,6 +302,11 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 )
             }
 
+            TOGGLE_DISABLE_CHAT_BACKGROUNDS -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_CHAT_BACKGROUNDS.toggle()
+            TOGGLE_DISABLE_CHAT_THEMES -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_CHAT_THEMES.toggle()
+            TOGGLE_DISABLE_BG_PARALLAX -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_BG_PARALLAX.toggle()
+            TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION -> (view as? TextCheckCell)?.isChecked = InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.toggle()
+
             BUTTON_PREDICTIVE_BACK_MODE -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -480,108 +321,17 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 showRestartBulletin()
             }
 
-            BUTTON_CALENDAR_SYSTEM -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuCalendarSystemGregorian),
-                    LocaleController.getString(R.string.InuCalendarSystemHijri),
-                    LocaleController.getString(R.string.InuCalendarSystemPersian),
-                ),
-                InuConfig.CALENDAR_SYSTEM.value,
-            ) { which ->
-                if (InuConfig.CALENDAR_SYSTEM.value == which) return@show
-                InuConfig.CALENDAR_SYSTEM.value = which
-                invalidateVisibleRows()
-                listView.adapter.update(true)
-            }
+            BUTTON_IOS_STYLE -> presentFragment(IosStyleSettingsActivity())
+            BUTTON_MESSAGE_DESIGN -> presentFragment(MessageDesignSettingsActivity())
+            BUTTON_SIDE_MENU -> presentFragment(DrawerSettingsActivity())
+            BUTTON_MENUS -> presentFragment(MenusSettingsActivity())
 
-            BUTTON_CLOCK_FORMAT -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuClockFormatSystem),
-                    LocaleController.getString(R.string.InuClockFormat12Hour),
-                    LocaleController.getString(R.string.InuClockFormat24Hour),
-                ),
-                InuConfig.CLOCK_FORMAT.value,
-            ) { which ->
-                InuConfig.CLOCK_FORMAT.value = which
-                InuHooks.syncClockFormat()
-                listView.adapter.update(true)
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.reloadInterface)
-            }
-
-            TOGGLE_IOS_BOTTOM_BAR -> {
-                val new = InuConfig.IOS_BOTTOM_NAVIGATION_BAR.toggle()
-                if (new && InuConfig.M3_BOTTOM_TABS.value) {
-                    InuConfig.M3_BOTTOM_TABS.value = false
-                }
-                (view as? NotificationsCheckCell)?.isChecked = new
-                softRebuild()
-                listView.adapter.update(true)
-                showRestartBulletin()
-            }
-
-            TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER -> {
-                val new = InuConfig.IOS_CHATS_TAB_RETURNS_TO_FIRST_FOLDER.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_IOS_BUTTON_PLACEMENT -> {
-                val new = InuConfig.IOS_INPUT_BUTTON_PLACEMENT.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                inputBarPreviewCell?.updateInputBarState()
-            }
-
-            TOGGLE_IOS_INPUT_APPEARANCE -> {
-                InuConfig.IOS_INPUT_APPEARANCE.toggle()
-                inputBarPreviewCell?.updateInputBarState()
-                listView.adapter.update(true)
-            }
-
-            TOGGLE_COMPACT_INPUT_SIZE -> {
-                val new = InuConfig.COMPACT_INPUT_SIZE.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-                inputBarPreviewCell?.updateInputBarState()
-            }
-
-            BUTTON_ACTION_BUTTON_STYLE -> {
-                val ctx = context ?: return
-                val styleItems = listOf(
-                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuActionButtonStyleAccent)),
-                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuActionButtonStyleNeutral)),
-                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuActionButtonStyleWhite)),
-                )
-                showDialog(
-                    RadioDialogBuilder(ctx, getResourceProvider())
-                        .setTitle(LocaleController.getString(R.string.InuActionButtonStyle))
-                        .setItems(styleItems, InuConfig.ACTION_BUTTON_STYLE.value) { _, which ->
-                            if (InuConfig.ACTION_BUTTON_STYLE.value == which) return@setItems
-                            InuConfig.ACTION_BUTTON_STYLE.value = which
-                            inputBarPreviewCell?.updateInputBarState()
-                            listView.adapter.update(true)
-                        }.create()
-                )
-            }
-
-            // entiny: omit restart bulletin because ActionBar.onMeasure re-reads center title live on every pass
-            TOGGLE_CENTER_TITLE_MAIN -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_MAIN.toggle()
-                listView.adapter.update(true)
-            }
-
-            BUTTON_CHAT_HEADER -> presentFragment(ChatHeaderSettingsActivity())
         }
     }
 
     companion object {
         private val SECTION_MATERIAL3 = InuUtils.generateId()
         private val TOGGLE_HIDE_FADE_VIEW = InuUtils.generateId()
-        private val TOGGLE_NAVIGATION_DRAWER = InuUtils.generateId()
-        private val TOGGLE_DRAWER_BACK_GESTURE = InuUtils.generateId()
-        private val TOGGLE_DRAWER_M3_SECTIONS = InuUtils.generateId()
-        private val TOGGLE_SHOW_DRAWER_ACCOUNTS = InuUtils.generateId()
-        private val TOGGLE_DRAWER_SCROLL_TOP = InuUtils.generateId()
-        private val TOGGLE_DRAWER_RECENT_CHATS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_FOLDERS_BAR = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS = InuUtils.generateId()
         private val TOGGLE_NON_ISLAND_GLOBAL_SEARCH = InuUtils.generateId()
@@ -599,19 +349,16 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_M3_NAVIGATION_ANIMATION = InuUtils.generateId()
         private val TOGGLE_UNIFIED_CORNER_RADIUS = InuUtils.generateId()
         private val BUTTON_ICON_REPLACEMENT = InuUtils.generateId()
-        private val BUTTON_NOTIFICATION_ICON = InuUtils.generateId()
         private val BUTTON_PREDICTIVE_BACK_MODE = InuUtils.generateId()
         private val BUTTON_MONET_THEME = InuUtils.generateId()
-        private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
-        private val BUTTON_CLOCK_FORMAT = InuUtils.generateId()
-        private val TOGGLE_IOS_BOTTOM_BAR = InuUtils.generateId()
-        private val TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER = InuUtils.generateId()
-        private val TOGGLE_IOS_BUTTON_PLACEMENT = InuUtils.generateId()
-        private val TOGGLE_IOS_INPUT_APPEARANCE = InuUtils.generateId()
-        private val TOGGLE_COMPACT_INPUT_SIZE = InuUtils.generateId()
-        private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
-        private val BUTTON_CHAT_HEADER = InuUtils.generateId()
-        private val BUTTON_ACTION_BUTTON_STYLE = InuUtils.generateId()
+        private val BUTTON_IOS_STYLE = InuUtils.generateId()
+        private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
+        private val TOGGLE_DISABLE_CHAT_BACKGROUNDS = InuUtils.generateId()
+        private val TOGGLE_DISABLE_CHAT_THEMES = InuUtils.generateId()
+        private val TOGGLE_DISABLE_BG_PARALLAX = InuUtils.generateId()
+        private val BUTTON_MESSAGE_DESIGN = InuUtils.generateId()
+        private val BUTTON_SIDE_MENU = InuUtils.generateId()
+        private val BUTTON_MENUS = InuUtils.generateId()
 
         @RequiresApi(Build.VERSION_CODES.S)
         private fun monetThemeModeLabel(mode: MonetHelper.ThemeMode): String = when (mode) {
@@ -627,18 +374,6 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             InuConfig.PredictiveBackModeItem.OFF -> LocaleController.getString(R.string.InuPredictiveBackOff)
             InuConfig.PredictiveBackModeItem.STOCK -> LocaleController.getString(R.string.InuPredictiveBackStock)
             else -> LocaleController.getString(R.string.InuPredictiveBackMaterial3)
-        }
-
-        private fun calendarSystemLabel(value: Int): String = when (value) {
-            InuConfig.CalendarSystemItem.HIJRI -> LocaleController.getString(R.string.InuCalendarSystemHijri)
-            InuConfig.CalendarSystemItem.PERSIAN -> LocaleController.getString(R.string.InuCalendarSystemPersian)
-            else -> LocaleController.getString(R.string.InuCalendarSystemGregorian)
-        }
-
-        private fun clockFormatLabel(value: Int): String = when (value) {
-            InuConfig.ClockFormatItem.TWELVE_HOUR -> LocaleController.getString(R.string.InuClockFormat12Hour)
-            InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> LocaleController.getString(R.string.InuClockFormat24Hour)
-            else -> LocaleController.getString(R.string.InuClockFormatSystem)
         }
 
         @JvmField
@@ -661,31 +396,18 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("unified-corner-radius", R.string.InuUnifiedCornerRadius, TOGGLE_UNIFIED_CORNER_RADIUS),
                 SearchRegistry.Entry("monet-theme", R.string.InuMonetTheme, BUTTON_MONET_THEME),
                 SearchRegistry.Entry("icon-replacement", R.string.InuIconReplacement, BUTTON_ICON_REPLACEMENT),
-                SearchRegistry.Entry("notification-icon", R.string.InuNotificationIcon, BUTTON_NOTIFICATION_ICON),
                 SearchRegistry.Entry("font", R.string.InuFonts, BUTTON_FONTS),
                 SearchRegistry.Entry("predictive-back-mode", R.string.InuPredictiveBack, BUTTON_PREDICTIVE_BACK_MODE),
-                SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
-                SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),
-                SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
-                SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
-                SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),
-                SearchRegistry.Entry("show-drawer-accounts", R.string.InuShowDrawerAccounts, TOGGLE_SHOW_DRAWER_ACCOUNTS),
-                SearchRegistry.Entry("drawer-scroll-top", R.string.InuScrollToTop, TOGGLE_DRAWER_SCROLL_TOP),
-                SearchRegistry.Entry("drawer-recent-chats", R.string.InuRecentChats, TOGGLE_DRAWER_RECENT_CHATS),
                 SearchRegistry.Entry("non-island-folders-bar", R.string.InuNonIslandFoldersBar, TOGGLE_NON_ISLAND_FOLDERS_BAR),
                 SearchRegistry.Entry("non-island-shared-media-tabs", R.string.InuNonIslandSharedMediaTabs, TOGGLE_NON_ISLAND_SHARED_MEDIA_TABS),
                 SearchRegistry.Entry("non-island-global-search", R.string.InuNonIslandGlobalSearch, TOGGLE_NON_ISLAND_GLOBAL_SEARCH),
                 SearchRegistry.Entry("non-island-chat-elements", R.string.InuNonIslandChatElements, TOGGLE_NON_ISLAND_CHAT_ELEMENTS),
                 // entiny: preserve legacy slug so existing tg://settings/inu deeplinks and search recents still resolve
                 SearchRegistry.Entry("hide-fade-view", R.string.InuHideFadeView, TOGGLE_HIDE_FADE_VIEW),
-                SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
-                SearchRegistry.Entry("ios-chats-tab-first-folder", R.string.InuIosChatsTabFirstFolder, TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER),
-                SearchRegistry.Entry("ios-button-placement", R.string.InuIosButtonPlacement, TOGGLE_IOS_BUTTON_PLACEMENT),
-                SearchRegistry.Entry("ios-input-appearance", R.string.InuIosInputAppearance, TOGGLE_IOS_INPUT_APPEARANCE),
-                SearchRegistry.Entry("compact-input-size", R.string.InuCompactInputSize, TOGGLE_COMPACT_INPUT_SIZE),
-                SearchRegistry.Entry("chat-header-settings", R.string.InuChatHeaderSettings, BUTTON_CHAT_HEADER),
-                SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
-                SearchRegistry.Entry("action-button-style", R.string.InuActionButtonStyle, BUTTON_ACTION_BUTTON_STYLE),
+                SearchRegistry.Entry("simple-attach-popup-animation", R.string.InuSimpleAttachPopupAnimation, TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION),
+                SearchRegistry.Entry("disable-chat-backgrounds", R.string.InuDisableChatBackgrounds, TOGGLE_DISABLE_CHAT_BACKGROUNDS),
+                SearchRegistry.Entry("disable-chat-themes", R.string.InuDisableChatThemes, TOGGLE_DISABLE_CHAT_THEMES),
+                SearchRegistry.Entry("disable-bg-parallax", R.string.InuDisableBgParallax, TOGGLE_DISABLE_BG_PARALLAX),
             ),
         )
     }

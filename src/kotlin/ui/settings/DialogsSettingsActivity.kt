@@ -24,7 +24,7 @@ import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class DialogsSettingsActivity : SettingsPageActivity() {
+open class DialogsSettingsActivity : SettingsPageActivity() {
 
     private var filterTabsPreview: FilterTabsPreviewCell? = null
     private var mainTabsPreview: MainTabsPreviewCell? = null

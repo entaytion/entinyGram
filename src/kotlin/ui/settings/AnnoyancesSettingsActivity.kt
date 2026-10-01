@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.badges.BadgeRegistry
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
@@ -48,9 +49,61 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         sectionId = SECTION_HIDE_SUGGESTIONS,
     )
 
+    private val hideBotSlashGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuHideBotSlash),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuHideBotSlashGroups, InuConfig.HIDE_BOT_SLASH_GROUPS),
+            ExpandableBoolGroup.Option(R.string.InuHideBotSlashBots, InuConfig.HIDE_BOT_SLASH_BOTS),
+        ),
+        sectionId = SECTION_HIDE_BOT_SLASH,
+    )
+
+    private val hideBottomBarGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuHideBottomBar),
+        listOf(
+            ExpandableBoolGroup.Option(R.string.InuHideBottomBarJoined, InuConfig.HIDE_BOTTOM_BAR_JOINED),
+            ExpandableBoolGroup.Option(R.string.InuHideBottomBarNonJoined, InuConfig.HIDE_BOTTOM_BAR_NON_JOINED),
+            ExpandableBoolGroup.Option(R.string.InuHideBottomBarNonJoinedGroups, InuConfig.HIDE_BOTTOM_BAR_NON_JOINED_GROUPS),
+            ExpandableBoolGroup.Option(R.string.InuHideBottomBarReplies, InuConfig.HIDE_BOTTOM_BAR_REPLIES),
+            ExpandableBoolGroup.Option(R.string.InuHideBottomBarPinned, InuConfig.HIDE_BOTTOM_BAR_PINNED),
+        ),
+        sectionId = SECTION_HIDE_BOTTOM_BAR,
+    )
+
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuAnnoyances)
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesChats)))
+        hideBottomBarGroup.addTo(items) { listView.adapter.update(true) }
+        hideBotSlashGroup.addTo(items) { listView.adapter.update(true) }
+        items.add(
+            UItem.asCheck(TOGGLE_BOT_WEBVIEW_BUTTON, LocaleController.getString(R.string.InuHideBotWebView))
+                .setChecked(InuConfig.HIDE_BOT_WEBVIEW_INPUT.value)
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_SEND_AS_PICKER,
+                R.string.InuHideSendAsPicker,
+                R.string.InuHideSendAsPickerInfo,
+                InuConfig.HIDE_SEND_AS_PICKER.value
+            )
+        )
+        items.add(
+            UItem.asCheck(
+                TOGGLE_HIDE_CALL_ACTION_BUTTON,
+                LocaleController.getString(R.string.InuHideCallActionButton),
+            ).setChecked(InuConfig.HIDE_CALL_ACTION_BUTTON.value)
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_REACTION_ENTRY,
+                R.string.InuHideReactionEntry,
+                R.string.InuHideReactionEntryInfo,
+                InuConfig.HIDE_REACTIONS_ENTRY.value
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesStories)))
         items.add(
             mkTwoLineCheckItem(
@@ -106,6 +159,14 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 TOGGLE_HIDE_VERIFICATION_BADGE,
                 LocaleController.getString(R.string.InuHideVerificationBadge),
             ).setChecked(InuConfig.HIDE_VERIFICATION_BADGE.value)
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_DEV_BADGES,
+                R.string.InuHideDevBadges,
+                R.string.InuHideDevBadgesInfo,
+                InuConfig.HIDE_DEV_BADGES.value,
+            )
         )
         items.add(
             UItem.asCheck(
@@ -245,30 +306,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuHideRichEditorButton),
             ).setChecked(InuConfig.HIDE_RICH_EDITOR_BUTTON.value)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DISABLE_SENSITIVE,
-                LocaleController.getString(R.string.InuDisableSensitive),
-            ).setChecked(InuConfig.DISABLE_SENSITIVE.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DISABLE_CHAT_BACKGROUNDS,
-                LocaleController.getString(R.string.InuDisableChatBackgrounds),
-            ).setChecked(InuConfig.DISABLE_CHAT_BACKGROUNDS.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DISABLE_CHAT_THEMES,
-                LocaleController.getString(R.string.InuDisableChatThemes),
-            ).setChecked(InuConfig.DISABLE_CHAT_THEMES.value)
-        )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DISABLE_BG_PARALLAX,
-                LocaleController.getString(R.string.InuDisableBgParallax),
-            ).setChecked(InuConfig.DISABLE_BG_PARALLAX.value)
-        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesChannels)))
@@ -297,41 +334,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 TOGGLE_HIDE_PSA_PROMO_CHAT,
                 LocaleController.getString(R.string.InuHidePsaPromoChat),
             ).setChecked(InuConfig.HIDE_PSA_PROMO_CHAT.value)
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesMedia)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_DISABLE_MOTION_PHOTOS,
-                R.string.InuDisableMotionPhotos,
-                R.string.InuDisableMotionPhotosInfo,
-                InuConfig.DISABLE_MOTION_PHOTOS.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_DISABLE_INTRO_STICKER,
-                R.string.InuDisableIntroSticker,
-                R.string.InuDisableIntroStickerInfo,
-                InuConfig.DISABLE_INTRO_STICKER.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_DISABLE_VOLUME_PLAY_VIDEO,
-                R.string.InuDisableVolumePlayVideo,
-                R.string.InuDisableVolumePlayVideoInfo,
-                InuConfig.DISABLE_VOLUME_PLAY_VIDEO.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_DISABLE_QUICK_SHARE,
-                R.string.InuDisableQuickShare,
-                R.string.InuDisableQuickShareInfo,
-                InuConfig.DISABLE_QUICK_SHARE.value
-            )
         )
         items.add(UItem.asShadow(null))
 
@@ -383,6 +385,8 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (aiFeaturesGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         if (hideSuggestionsGroup.handleClick(item, view) { listView.adapter.update(true) }) return
+        if (hideBottomBarGroup.handleClick(item, view) { listView.adapter.update(true) }) return
+        if (hideBotSlashGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
             TOGGLE_HIDE_STORIES -> {
                 val new = InuConfig.HIDE_STORIES.toggle()
@@ -400,26 +404,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 (view as? TextCheckCell)?.isChecked = new
             }
 
-            TOGGLE_DISABLE_SENSITIVE -> {
-                val new = InuConfig.DISABLE_SENSITIVE.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_CHAT_BACKGROUNDS -> {
-                val new = InuConfig.DISABLE_CHAT_BACKGROUNDS.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_CHAT_THEMES -> {
-                val new = InuConfig.DISABLE_CHAT_THEMES.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_BG_PARALLAX -> {
-                val new = InuConfig.DISABLE_BG_PARALLAX.toggle()
-                (view as? TextCheckCell)?.isChecked = new
-            }
-
 
             TOGGLE_HIDE_PAID_REACTION_UPSELL -> {
                 val new = InuConfig.HIDE_PAID_REACTION_UPSELL.toggle()
@@ -434,26 +418,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_RICH_EDITOR_BUTTON -> {
                 val new = InuConfig.HIDE_RICH_EDITOR_BUTTON.toggle()
                 (view as? TextCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_MOTION_PHOTOS -> {
-                val new = InuConfig.DISABLE_MOTION_PHOTOS.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_INTRO_STICKER -> {
-                val new = InuConfig.DISABLE_INTRO_STICKER.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_VOLUME_PLAY_VIDEO -> {
-                val new = InuConfig.DISABLE_VOLUME_PLAY_VIDEO.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_DISABLE_QUICK_SHARE -> {
-                val new = InuConfig.DISABLE_QUICK_SHARE.toggle()
-                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_HIDE_CHANNEL_SHARE_BUTTON -> {
@@ -565,6 +529,16 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_STARS_RATING -> {
                 val new = InuConfig.HIDE_STARS_RATING.toggle()
                 (view as? TextCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_BOT_WEBVIEW_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_BOT_WEBVIEW_INPUT.toggle()
+            TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
+            TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
+            TOGGLE_HIDE_REACTION_ENTRY -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_ENTRY.toggle()
+            TOGGLE_HIDE_DEV_BADGES -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
+                // entiny: update badge on cached TLRPC user/chat objects so toggle takes effect without app restart
+                BadgeRegistry.refreshCached()
             }
 
             TOGGLE_HIDE_VERIFICATION_BADGE -> {
@@ -686,17 +660,9 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_STORIES = InuUtils.generateId()
         private val TOGGLE_HIDE_TRENDING_STICKERS = InuUtils.generateId()
         private val TOGGLE_HIDE_REPOST_TO_STORY = InuUtils.generateId()
-        private val TOGGLE_DISABLE_SENSITIVE = InuUtils.generateId()
-        private val TOGGLE_DISABLE_CHAT_BACKGROUNDS = InuUtils.generateId()
-        private val TOGGLE_DISABLE_CHAT_THEMES = InuUtils.generateId()
-        private val TOGGLE_DISABLE_BG_PARALLAX = InuUtils.generateId()
         private val TOGGLE_HIDE_PAID_REACTION_UPSELL = InuUtils.generateId()
         private val TOGGLE_HIDE_HASHTAG_SUGGESTIONS = InuUtils.generateId()
         private val TOGGLE_HIDE_RICH_EDITOR_BUTTON = InuUtils.generateId()
-        private val TOGGLE_DISABLE_MOTION_PHOTOS = InuUtils.generateId()
-        private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
-        private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
-        private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
         private val TOGGLE_HIDE_CHANNEL_SHARE_BUTTON = InuUtils.generateId()
         private val TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY = InuUtils.generateId()
         private val BUTTON_CLEAR_HINTS = InuUtils.generateId()
@@ -729,6 +695,13 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_GIVEAWAYS = InuUtils.generateId()
         private val TOGGLE_HIDE_GROUP_STICKER_PACK = InuUtils.generateId()
         private val SECTION_HIDE_AI_FEATURES = InuUtils.generateId()
+        private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
+        private val SECTION_HIDE_BOTTOM_BAR = InuUtils.generateId()
+        private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
+        private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
+        private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
+        private val TOGGLE_HIDE_REACTION_ENTRY = InuUtils.generateId()
+        private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val SECTION_HIDE_SUGGESTIONS = InuUtils.generateId()
 
         @JvmField
@@ -738,20 +711,19 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_shield_cancel,
             factory = ::AnnoyancesSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("hide-bottom-bar", R.string.InuHideBottomBar, SECTION_HIDE_BOTTOM_BAR),
+                SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
+                SearchRegistry.Entry("hide-bot-webview-input", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
+                SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
+                SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
+                SearchRegistry.Entry("hide-reaction-entry", R.string.InuHideReactionEntry, TOGGLE_HIDE_REACTION_ENTRY),
+                SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("hide-stories", R.string.InuHideStories, TOGGLE_HIDE_STORIES),
                 SearchRegistry.Entry("hide-repost-to-story", R.string.InuHideRepostToStory, TOGGLE_HIDE_REPOST_TO_STORY),
                 SearchRegistry.Entry("hide-trending-stickers", R.string.InuHideTrendingStickers, TOGGLE_HIDE_TRENDING_STICKERS),
-                SearchRegistry.Entry("disable-sensitive", R.string.InuDisableSensitive, TOGGLE_DISABLE_SENSITIVE),
-                SearchRegistry.Entry("disable-chat-backgrounds", R.string.InuDisableChatBackgrounds, TOGGLE_DISABLE_CHAT_BACKGROUNDS),
-                SearchRegistry.Entry("disable-chat-themes", R.string.InuDisableChatThemes, TOGGLE_DISABLE_CHAT_THEMES),
-                SearchRegistry.Entry("disable-bg-parallax", R.string.InuDisableBgParallax, TOGGLE_DISABLE_BG_PARALLAX),
                 SearchRegistry.Entry("hide-paid-reaction-upsell", R.string.InuHidePaidReactionUpsell, TOGGLE_HIDE_PAID_REACTION_UPSELL),
                 SearchRegistry.Entry("hide-hashtag-suggestions", R.string.InuHideHashtagSuggestions, TOGGLE_HIDE_HASHTAG_SUGGESTIONS),
                 SearchRegistry.Entry("hide-rich-editor-button", R.string.InuHideRichEditorButton, TOGGLE_HIDE_RICH_EDITOR_BUTTON),
-                SearchRegistry.Entry("disable-motion-photos", R.string.InuDisableMotionPhotos, TOGGLE_DISABLE_MOTION_PHOTOS),
-                SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
-                SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
-                SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
                 SearchRegistry.Entry("hide-channel-share-button", R.string.InuHideChannelShareButton, TOGGLE_HIDE_CHANNEL_SHARE_BUTTON),
                 SearchRegistry.Entry("disable-profile-music-autoplay", R.string.InuDisableProfileMusicAutoplay, TOGGLE_DISABLE_PROFILE_MUSIC_AUTOPLAY),
                 SearchRegistry.Entry("clear-hints", R.string.InuClearHints, BUTTON_CLEAR_HINTS),

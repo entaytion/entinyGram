@@ -121,10 +121,13 @@ class PillStackController(
         }
         while (slots.size < slotCount) {
             val slot = PillStackView(host.context)
+            val isFirst = slots.isEmpty()
             slots.add(slot)
+            val left = if (isFirst || LocaleController.isRTL) 0f else 6f
+            val right = if (isFirst || !LocaleController.isRTL) 0f else 6f
             row.addView(
                 slot,
-                LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0f, 0f, if (slots.size > 1) 2f else 0f, 0f)
+                LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, left, 0f, right, 0f)
             )
         }
 
@@ -167,7 +170,7 @@ class PillStackController(
     private fun rowParams(): ViewGroup.MarginLayoutParams {
         // entiny: tighter gap on the menu side, so the pill sits closer to the three dots
         val menuSide = 2f
-        val otherSide = 6f
+        val otherSide = 10f
         val left = if (LocaleController.isRTL) menuSide else otherSide
         val right = if (LocaleController.isRTL) otherSide else menuSide
         if (host is LinearLayout) {

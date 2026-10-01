@@ -9,8 +9,8 @@ import desu.inugram.helpers.dialogs.AccountOrderHelper
 import desu.inugram.helpers.dialogs.DialogsFabHelper
 import desu.inugram.helpers.dialogs.DrawerM3SectionsHelper
 import desu.inugram.helpers.dialogs.PullActionHelper
-import desu.inugram.helpers.menu.DialogsMenuConfig
-import desu.inugram.helpers.menu.DialogsMenuHelper
+import desu.inugram.helpers.feed.FeedHelper
+import desu.inugram.helpers.menu.DrawerMenuConfig
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.security.PasscodeHelper
 import org.telegram.messenger.AndroidUtilities
@@ -248,46 +248,58 @@ class DrawerLayoutAdapter(
         items.clear()
         if (!UserConfig.getInstance(UserConfig.selectedAccount).isClientActivated()) return
 
-        items.add(Item(16, LocaleController.getString(R.string.MyProfile), R.drawable.left_status_profile))
-        val menuBots = MediaDataController.getInstance(UserConfig.selectedAccount).getAttachMenuBots()
-        if (menuBots?.bots != null) {
-            for (bot in menuBots.bots) {
-                if (bot.show_in_side_menu) {
-                    items.add(Item(bot))
+        for (entry in InuConfig.DRAWER_MENU_ITEMS.value) {
+            if (!entry.enabled) continue
+            when (entry.item) {
+                DrawerMenuConfig.Item.MY_PROFILE ->
+                    items.add(Item(16, LocaleController.getString(R.string.MyProfile), R.drawable.left_status_profile))
+                DrawerMenuConfig.Item.BOTS -> {
+                    val menuBots = MediaDataController.getInstance(UserConfig.selectedAccount).getAttachMenuBots()
+                    menuBots?.bots?.forEach { bot -> if (bot.show_in_side_menu) items.add(Item(bot)) }
                 }
+                DrawerMenuConfig.Item.DIVIDER_1,
+                DrawerMenuConfig.Item.DIVIDER_2,
+                DrawerMenuConfig.Item.DIVIDER_3,
+                DrawerMenuConfig.Item.DIVIDER_4,
+                DrawerMenuConfig.Item.DIVIDER_5,
+                DrawerMenuConfig.Item.DIVIDER_6,
+                DrawerMenuConfig.Item.DIVIDER_7,
+                DrawerMenuConfig.Item.DIVIDER_8 -> if (items.isNotEmpty() && items[items.size - 1] != null) items.add(null)
+                DrawerMenuConfig.Item.COMPOSE ->
+                    if (DialogsFabHelper.hasNewMessage()) {
+                        items.add(Item(17, LocaleController.getString(R.string.NewMessageTitle), R.drawable.menu_topic_add))
+                    } else {
+                        items.add(Item(2, LocaleController.getString(R.string.NewGroup), R.drawable.msg_groups))
+                    }
+                DrawerMenuConfig.Item.CONTACTS ->
+                    items.add(Item(6, LocaleController.getString(R.string.Contacts), R.drawable.msg_contacts))
+                DrawerMenuConfig.Item.CALLS ->
+                    items.add(Item(10, LocaleController.getString(R.string.Calls), R.drawable.msg_calls))
+                DrawerMenuConfig.Item.SAVED_MESSAGES ->
+                    items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
+                DrawerMenuConfig.Item.RECENT_CHATS ->
+                    items.add(Item(ITEM_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats), R.drawable.msg_recent))
+                DrawerMenuConfig.Item.FEED ->
+                    if (FeedHelper.isEnabled()) items.add(Item(ITEM_FEED, LocaleController.getString(R.string.InuFeed), R.drawable.msg_channel))
+                DrawerMenuConfig.Item.ARCHIVE ->
+                    if (PullActionHelper.shouldShowArchiveEntry(UserConfig.selectedAccount)) {
+                        items.add(Item(ITEM_ARCHIVE, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive))
+                    }
+                DrawerMenuConfig.Item.PROXY ->
+                    items.add(Item(ITEM_PROXY, LocaleController.getString(R.string.ProxySettings), R.drawable.outline_shield_check))
+                DrawerMenuConfig.Item.GHOST_MODE ->
+                    items.add(Item(ITEM_GHOST, LocaleController.getString(R.string.InuGhostMode), R.drawable.inu_ghost))
+                DrawerMenuConfig.Item.SETTINGS ->
+                    items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings))
             }
         }
-        items.add(null)
-        if (InuConfig.DRAWER_SCROLL_TOP.value) {
-            items.add(Item(ITEM_SCROLL_TOP, LocaleController.getString(R.string.InuScrollToTop), R.drawable.msg_go_up))
-        }
-        if (DialogsFabHelper.hasNewMessage()) {
-            items.add(Item(17, LocaleController.getString(R.string.NewMessageTitle), R.drawable.menu_topic_add))
-        } else {
-            items.add(Item(2, LocaleController.getString(R.string.NewGroup), R.drawable.msg_groups))
-        }
-        items.add(Item(6, LocaleController.getString(R.string.Contacts), R.drawable.msg_contacts))
-        items.add(Item(10, LocaleController.getString(R.string.Calls), R.drawable.msg_calls))
-        items.add(Item(11, LocaleController.getString(R.string.SavedMessages), R.drawable.msg_saved))
-        if (InuConfig.DRAWER_RECENT_CHATS.value) {
-            items.add(Item(ITEM_RECENT_CHATS, LocaleController.getString(R.string.InuRecentChats), R.drawable.msg_recent))
-        }
-        if (DialogsMenuHelper.isEnabled(DialogsMenuConfig.Item.FEED)) {
-            items.add(Item(ITEM_FEED, LocaleController.getString(R.string.InuFeed), R.drawable.msg_channel))
-        }
-        if (PullActionHelper.shouldShowArchiveEntry(UserConfig.selectedAccount)) {
-            items.add(Item(ITEM_ARCHIVE, LocaleController.getString(R.string.ArchivedChats), R.drawable.msg_archive))
-        }
-        items.add(Item(ITEM_PROXY, LocaleController.getString(R.string.ProxySettings), R.drawable.outline_shield_check))
-        items.add(Item(ITEM_GHOST, LocaleController.getString(R.string.InuGhostMode), R.drawable.inu_ghost))
-        items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings))
+        while (items.isNotEmpty() && items[items.size - 1] == null) items.removeAt(items.size - 1)
     }
 
     companion object {
         const val ITEM_PROXY = 9
         const val ITEM_ARCHIVE = 18
         const val ITEM_GHOST = 19
-        const val ITEM_SCROLL_TOP = 20
         const val ITEM_FEED = 21
         const val ITEM_RECENT_CHATS = 22
     }

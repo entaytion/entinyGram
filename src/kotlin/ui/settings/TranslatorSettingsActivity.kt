@@ -10,6 +10,7 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
+import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.TranslateAlert2
 import org.telegram.ui.Components.UItem
@@ -40,8 +41,8 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.ShowTranslateChatButton),
             ).setChecked(translateController.isChatTranslateEnabled)
         )
-        items.add(check(TOGGLE_AUTO_TRANSLATE_ALL, R.string.InuAutoTranslateAll, InuConfig.AUTO_TRANSLATE_ALL))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAutoTranslateAllInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_AUTO_TRANSLATE_ALL, R.string.InuAutoTranslateAll, R.string.InuAutoTranslateAllInfo, InuConfig.AUTO_TRANSLATE_ALL.value))
+        items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLanguages)))
         items.add(
@@ -81,21 +82,15 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
-        items.add(check(TOGGLE_AUTO_DETECT_LANG, R.string.InuTranslateAutoDetectLang, InuConfig.TRANSLATE_AUTO_DETECT_LANG))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateAutoDetectLangInfo)))
-        items.add(check(TOGGLE_TRANSLATE_OUTGOING, R.string.InuTranslateOutgoing, InuConfig.TRANSLATE_OUTGOING))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateOutgoingInfo)))
-        items.add(check(TOGGLE_INPUT_TRANSLATE, R.string.InuInputTranslate, InuConfig.INPUT_TRANSLATE))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuInputTranslateInfo)))
-        items.add(check(TOGGLE_TRANSLATE_IN_SEND_PREVIEW, R.string.InuTranslateInSendPreview, InuConfig.TRANSLATE_IN_SEND_PREVIEW))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateInSendPreviewInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_AUTO_DETECT_LANG, R.string.InuTranslateAutoDetectLang, R.string.InuTranslateAutoDetectLangInfo, InuConfig.TRANSLATE_AUTO_DETECT_LANG.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_TRANSLATE_OUTGOING, R.string.InuTranslateOutgoing, R.string.InuTranslateOutgoingInfo, InuConfig.TRANSLATE_OUTGOING.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_INPUT_TRANSLATE, R.string.InuInputTranslate, R.string.InuInputTranslateInfo, InuConfig.INPUT_TRANSLATE.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_TRANSLATE_IN_SEND_PREVIEW, R.string.InuTranslateInSendPreview, R.string.InuTranslateInSendPreviewInfo, InuConfig.TRANSLATE_IN_SEND_PREVIEW.value))
 
-        items.add(check(TOGGLE_FORCE_TRANSLATE, R.string.InuForceTranslate, InuConfig.FORCE_TRANSLATE))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuForceTranslateInfo)))
-        items.add(check(TOGGLE_INSTANT_TRANSLATE_BANNER, R.string.InuInstantTranslateBanner, InuConfig.INSTANT_TRANSLATE_BANNER))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuInstantTranslateBannerInfo)))
-        items.add(check(TOGGLE_IGNORE_TRANSLATIONS_DISABLED, R.string.InuIgnoreTranslationsDisabled, InuConfig.IGNORE_TRANSLATIONS_DISABLED))
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuIgnoreTranslationsDisabledInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_FORCE_TRANSLATE, R.string.InuForceTranslate, R.string.InuForceTranslateInfo, InuConfig.FORCE_TRANSLATE.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_INSTANT_TRANSLATE_BANNER, R.string.InuInstantTranslateBanner, R.string.InuInstantTranslateBannerInfo, InuConfig.INSTANT_TRANSLATE_BANNER.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_IGNORE_TRANSLATIONS_DISABLED, R.string.InuIgnoreTranslationsDisabled, R.string.InuIgnoreTranslationsDisabledInfo, InuConfig.IGNORE_TRANSLATIONS_DISABLED.value))
+        items.add(UItem.asShadow(null))
     }
 
     private fun check(id: Int, textRes: Int, item: InuConfig.BoolItem): UItem =
@@ -104,7 +99,9 @@ class TranslatorSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         // entiny: rebuild list on click because UItem.itemEquals ignores checked state
         BOOL_TOGGLES[item.id]?.let { config ->
-            (view as? TextCheckCell)?.isChecked = config.toggle()
+            val new = config.toggle()
+            (view as? TextCheckCell)?.isChecked = new
+            (view as? NotificationsCheckCell)?.isChecked = new
             if (item.id == TOGGLE_KEEP_ORIGINAL) {
                 // entiny: updateInterfaces forces drawn message bubbles to reload merged translated bodies
                 NotificationCenter.getInstance(currentAccount)

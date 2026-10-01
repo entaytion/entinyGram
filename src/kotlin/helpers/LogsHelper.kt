@@ -16,18 +16,53 @@ import java.util.zip.ZipOutputStream
 object LogsHelper {
     private const val SYSTEM_PREFS = "systemConfig"
     private const val LOGS_ENABLED_KEY = "logsEnabled"
+    private const val MAX_LOGS_BYTES = 25L * 1024 * 1024
 
-    // entiny: gate debug logs on beta app variant so testers can capture logs without a debug build
-    fun isEnabled(): Boolean = BuildVars.isBetaApp() && BuildVars.LOGS_ENABLED
+    // entiny: BuildVars reads this pref at startup and installs FileLog.fatal as the uncaught handler only when logs were on then
+    private val handlerFromStartup = BuildVars.LOGS_ENABLED
+    private var handlerInstalled = false
+
+    fun isEnabled(): Boolean = BuildVars.LOGS_ENABLED
 
     fun setEnabled(enabled: Boolean) {
-        if (!BuildVars.isBetaApp()) return
         if (BuildVars.LOGS_ENABLED == enabled) return
         BuildVars.LOGS_ENABLED = enabled
         ApplicationLoader.applicationContext.getSharedPreferences(SYSTEM_PREFS, Context.MODE_PRIVATE).edit {
             putBoolean(LOGS_ENABLED_KEY, enabled)
         }
-        if (!enabled) FileLog.cleanupLogs()
+        if (enabled) {
+            installFatalHandler()
+            trimIfNeeded()
+        } else {
+            FileLog.cleanupLogs()
+        }
+    }
+
+    private fun installFatalHandler() {
+        if (handlerFromStartup || handlerInstalled) return
+        handlerInstalled = true
+        val past = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
+            FileLog.fatal(exception, false)
+            past?.uncaughtException(thread, exception)
+        }
+    }
+
+    // entiny: keep the logs folder bounded now that every release build can write logs
+    fun trimIfNeeded() {
+        if (!BuildVars.LOGS_ENABLED) return
+        Utilities.globalQueue.postRunnable {
+            val files = (AndroidUtilities.getLogsDir()?.listFiles() ?: return@postRunnable)
+                .filter { it.isFile }
+                .sortedBy { it.lastModified() }
+                .toMutableList()
+            var total = files.sumOf { it.length() }
+            while (total > MAX_LOGS_BYTES && files.size > 1) {
+                val oldest = files.removeAt(0)
+                total -= oldest.length()
+                oldest.delete()
+            }
+        }
     }
 
     fun computeSize(): Long {
@@ -47,12 +82,6 @@ object LogsHelper {
 
     fun shareZip(activity: LaunchActivity, onDone: (ok: Boolean) -> Unit) {
         stageThenShare(activity, onDone, mime = "application/zip") { stageZip() }
-    }
-
-    fun availableCategories(): List<String> = LogCategoryHelper.availableCategories()
-
-    fun shareCategories(activity: LaunchActivity, categories: Set<String>, onDone: (ok: Boolean) -> Unit) {
-        stageThenShare(activity, onDone, mime = "application/zip") { stageCategoriesZip(categories) }
     }
 
     private fun stageThenShare(
@@ -115,21 +144,4 @@ object LogsHelper {
         return dst
     }
 
-    private fun stageCategoriesZip(categories: Set<String>): File? {
-        val files = LogCategoryHelper.filesForCategories(categories)
-        if (files.isEmpty()) return null
-        val cacheDir = AndroidUtilities.getCacheDir().apply { mkdirs() }
-        val dst = File(cacheDir, "entinygram-logs-categories.zip").apply { if (exists()) delete() }
-        ZipOutputStream(FileOutputStream(dst).buffered()).use { out ->
-            out.putNextEntry(ZipEntry("system_info.txt"))
-            out.write(SystemInfo.build().toByteArray(Charsets.UTF_8))
-            out.closeEntry()
-            files.forEach { f ->
-                out.putNextEntry(ZipEntry(f.name))
-                f.inputStream().buffered().use { it.copyTo(out) }
-                out.closeEntry()
-            }
-        }
-        return dst
-    }
 }

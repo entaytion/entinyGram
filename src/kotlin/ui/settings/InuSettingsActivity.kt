@@ -101,16 +101,22 @@ class InuSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asCustomShadow(createHeaderView()))
         items.add(UItem.asShadow(null))
 
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuCategories)))
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootInterface)))
         items.add(mkSubPageButton(CAT_APPEARANCE, R.drawable.msg_palette, LocaleController.getString(R.string.InuCategoryAppearance)))
         items.add(mkSubPageButton(CAT_CHATS, R.drawable.msg_viewchats, LocaleController.getString(R.string.InuCategoryChats)))
         items.add(mkSubPageButton(CAT_MESSAGES, R.drawable.msg_discussion, LocaleController.getString(R.string.InuMessages)))
+        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootPrivacy)))
         items.add(mkSubPageButton(CAT_AI, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiCompose)))
         items.add(mkSubPageButton(CAT_TRANSLATOR, R.drawable.msg_translate, LocaleController.getString(R.string.InuTranslator)))
         items.add(mkSubPageButton(CAT_BEHAVIOR, R.drawable.inu_tabler_adjustments_horizontal, LocaleController.getString(R.string.InuCategoryBehavior)))
         items.add(mkSubPageButton(CAT_PRIVACY, R.drawable.inu_tabler_shield_check, LocaleController.getString(R.string.InuCategoryPrivacy)))
-        items.add(mkSubPageButton(CAT_ANNOYANCES, R.drawable.inu_tabler_shield_cancel, LocaleController.getString(R.string.InuAnnoyances)))
         items.add(mkSubPageButton(BUTTON_TOS, R.drawable.inu_tabler_lock_open, LocaleController.getString(R.string.InuTOS)))
+        items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuRootSystem)))
         items.add(mkSubPageButton(CAT_SYSTEM, R.drawable.inu_tabler_device_floppy, LocaleController.getString(R.string.InuCategoryBackup)))
         if (InuConfig.NICHE_SETTINGS_UNLOCKED.value) {
             items.add(mkSubPageButton(CAT_NICHE, R.drawable.inu_tabler_skull, LocaleController.getString(R.string.InuNicheSettings)))

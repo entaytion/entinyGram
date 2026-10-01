@@ -7,7 +7,6 @@
     <string name="InuIosStyle">نمط iOS</string>
     <string name="InuConfirmBeforeSending">التأكيد قبل الإرسال</string>
     <string name="InuConfirmSendVoice">التأكيد قبل إرسال الرسائل الصوتية</string>
-    <string name="InuConfirmSendVoiceMessage">إرسال هذه الرسالة الصوتية؟</string>
     <string name="InuConfirmSendSticker">التأكيد قبل إرسال الملصقات</string>
     <string name="InuConfirmSendGif">التأكيد قبل إرسال الصور المتحركة</string>
     <string name="InuNavigationDrawer">القائمة الجانبية</string>
@@ -417,6 +416,8 @@
     <string name="InuFoldersUnreadCounterExcludeMutedNonDms">استثناء المكتومة غير الخاصة</string>
     <string name="InuHideAllChatsTab">إخفاء تبويب \"كل المحادثات\"</string>
     <string name="InuHideAllChatsTabInfo">اضغط مطولاً على العنوان في قائمة المحادثات لإظهار كل المحادثات.</string>
+    <string name="InuRememberSelectedFolder">تذكر المجلد المحدد</string>
+    <string name="InuRememberSelectedFolderInfo">إعادة فتح آخر مجلد نشط عند العودة إلى قائمة المحادثات.</string>
     <string name="InuFoldersAtBottom">نقل المجلدات إلى الأسفل</string>
     <string name="InuHideArchive">إزالة \"المحادثات المؤرشفة\" من قائمة المحادثات</string>
     <string name="InuCommunityDisplayMode">المجتمعات</string>
@@ -600,7 +601,6 @@
     <string name="InuIconReplacementSolar">Solar من @Design480</string>
     <string name="InuIconReplacementVkui">VKUI من VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (تجريبي)</string>
-    <string name="InuIconReplacementRestartInfo">أعد تشغيل التطبيق لتطبيق حزمة الأيقونات.</string>
 
     <string name="InuMapsHeader">الخرائط</string>
     <string name="InuMapProvider">مزود عرض الخريطة</string>
@@ -809,10 +809,6 @@
     <string name="InuAccountSwitchShortcut">اختصار تبديل الحساب</string>
     <string name="InuAccountSwitchShortcutInfo">إضافة اختصار بالضغط المطوّل على أيقونة التطبيق يسأل أي حساب يُفتح</string>
 
-    <string name="InuFastResendLoginCode">تخطي العدّ التنازلي لرمز الدخول</string>
-    <string name="InuFastResendLoginCodeInfo">انقر على العدّ التنازلي في شاشة رمز الدخول لطلب رمز جديد دون انتظار انتهائه</string>
-    <string name="InuFastResendLoginCodeConfirm">تخطي الانتظار وطلب رمز جديد الآن؟ قد يرفض Telegram ذلك.</string>
-    <string name="InuFastResendLoginCodeNow">إعادة الإرسال الآن</string>
 
     <string name="InuTextClassifierMode">وضع مصنّف النص</string>
     <string name="InuTextClassifierModeInfo">مصنّف النص مكوّن نظامي يوسّع التحديد تلقائياً عند النقر المزدوج على النص</string>
@@ -865,7 +861,6 @@
     <string name="InuAppIconLicenseInugram">أيقونة مؤقتة، نرحب بمساهمتك بأيقونة أفضل</string>
     <string name="InuAppIconLicenseTelegram">الأيقونة من **Telegram**. جميع الحقوق محفوظة.</string>
     <string name="InuJumpToBeginning">الانتقال إلى البداية</string>
-    <string name="InuScrollToTop">التمرير إلى الأعلى</string>
     <string name="InuRecentChats">المحادثات الأخيرة</string>
     <string name="InuClearRecentChats">مسح المحادثات الأخيرة</string>
     <string name="InuClearRecentChatsAlert">سيمسح هذا قائمة المحادثات المفتوحة مؤخراً. لن يحذف أي محادثات أو رسائل.</string>
@@ -1103,13 +1098,10 @@
 
     <string name="InuLogs">التصحيح</string>
     <string name="InuLogsEnabled">وضع التصحيح</string>
-    <string name="InuExtraDebugLogs">[entiny] سجلات تصحيح إضافية</string>
     <string name="InuLogsSize">حجم السجلات: %1$s</string>
     <string name="InuLogsShare">مشاركة السجلات</string>
     <string name="InuLogsShareZip">كل السجلات (.zip)</string>
     <string name="InuLogsShareCurrent">السجل الحالي (.txt)</string>
-    <string name="InuLogsShareByCategory">حسب الفئة (.zip)</string>
-    <string name="InuLogsNoCategories">لا توجد سجلات مصنفة بعد</string>
     <string name="InuLogsClear">مسح السجلات</string>
     <string name="InuLogsCleared">تم مسح السجلات القديمة</string>
     <string name="InuLogsShareError">فشلت حزم السجلات</string>
@@ -1337,7 +1329,7 @@
     <string name="InuShowMutualContactIconInfo">إظهار أيقونة مؤشر جهة الاتصال المتبادلة في قائمة جهات الاتصال</string>
     <string name="InuShowMutualContactInChats">إظهار أيقونة جهة الاتصال المتبادلة في قوائم أعضاء المجموعات &amp; القنوات</string>
     <string name="InuShowMutualContactInChatsInfo">عرض أيقونة جهة الاتصال المتبادلة في قوائم أعضاء المجموعات والقنوات</string>
-    <string name="InuCategoryAppearance">المظهر &amp; التخطيط</string>
+    <string name="InuCategoryAppearance">تصميم</string>
     <string name="InuCategoryChats">المحادثات</string>
     <string name="InuCategoryBehavior">السلوك &amp; الأدوات</string>
     <string name="InuCategoryPrivacy">الخصوصية &amp; الأمان</string>

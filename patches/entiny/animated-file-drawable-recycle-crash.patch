@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 1 Oct 2026 20:48:44 +0300
+Subject: [*] fix crash when recycling AnimatedFileDrawable off-thread
+
+---
+ .../ui/Components/AnimatedFileDrawable.java      | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+@@ -26,6 +26,7 @@ import android.graphics.Shader;
+ import android.graphics.Xfermode;
+ import android.graphics.drawable.Animatable;
+ import android.graphics.drawable.BitmapDrawable;
++import android.os.Looper;
+ import android.util.Log;
+ import android.view.View;
+ 
+@@ -214,8 +215,19 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+ 
+     @UiThread
+     public void invalidateInternal() {
+-        for (ImageReceiver imageReceiver : parents) {
+-            imageReceiver.invalidate();
++        if (parents.isEmpty()) {
++            return;
++        }
++        if (Looper.myLooper() != Looper.getMainLooper()) {
++            AndroidUtilities.runOnUIThread(this::invalidateInternal);
++            return;
++        }
++        try {
++            for (ImageReceiver imageReceiver : parents) {
++                imageReceiver.invalidate();
++            }
++        } catch (Throwable t) {
++            // ignore
+         }
+     }
+ 

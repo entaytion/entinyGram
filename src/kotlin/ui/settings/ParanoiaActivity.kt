@@ -62,13 +62,7 @@ class ParanoiaActivity : SettingsPageActivity() {
         )
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuParanoiaSelectInfo)))
 
-        items.add(
-            UItem.asCheck(
-                TOGGLE_LAUNCHER_SHORTCUT,
-                LocaleController.getString(R.string.InuParanoiaLauncherShortcut)
-            ).setChecked(ParanoiaHelper.launcherShortcut)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuParanoiaLauncherShortcutInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_LAUNCHER_SHORTCUT, R.string.InuParanoiaLauncherShortcut, R.string.InuParanoiaLauncherShortcutInfo, ParanoiaHelper.launcherShortcut))
 
         items.add(
             UItem.asCheck(
@@ -100,13 +94,8 @@ class ParanoiaActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuHideInugramSettings)
             ).setChecked(ParanoiaHelper.hideSettings)
         )
-        items.add(
-            UItem.asCheck(
-                TOGGLE_DISGUISE,
-                LocaleController.getString(R.string.InuParanoiaDisguise)
-            ).setChecked(ParanoiaHelper.disguiseIcon)
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuParanoiaDisguiseInfo)))
+        items.add(mkTwoLineCheckItem(TOGGLE_DISGUISE, R.string.InuParanoiaDisguise, R.string.InuParanoiaDisguiseInfo, ParanoiaHelper.disguiseIcon))
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -145,7 +134,7 @@ class ParanoiaActivity : SettingsPageActivity() {
     private inline fun toggleCheck(view: View, current: Boolean, set: (Boolean) -> Unit) {
         val new = !current
         set(new)
-        (view as? TextCheckCell)?.isChecked = new
+        setCellChecked(view, new)
     }
 
     private fun buildEnableButton(ctx: Context): View =

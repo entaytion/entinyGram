@@ -49,18 +49,11 @@ class PasscodeAccountSettingsActivity(private val account: Int) : SettingsPageAc
         items.add(UItem.asShadow(null))
 
         if (hasCode) {
-            items.add(
-                UItem.asCheck(HIDE, LocaleController.getString(R.string.InuPasscodeHideAccount))
-                    .setChecked(PasscodeHelper.isAccountHiddenByPasscode(account))
-            )
-            items.add(UItem.asShadow(LocaleController.getString(R.string.InuPasscodeHideAccountInfo)))
+            items.add(mkTwoLineCheckItem(HIDE, R.string.InuPasscodeHideAccount, R.string.InuPasscodeHideAccountInfo, PasscodeHelper.isAccountHiddenByPasscode(account)))
         }
 
-        items.add(
-            UItem.asCheck(ALLOW_PANIC, LocaleController.getString(R.string.InuPasscodeAllowPanic))
-                .setChecked(PasscodeHelper.isAccountAllowPanic(account))
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuPasscodeAllowPanicInfo)))
+        items.add(mkTwoLineCheckItem(ALLOW_PANIC, R.string.InuPasscodeAllowPanic, R.string.InuPasscodeAllowPanicInfo, PasscodeHelper.isAccountAllowPanic(account)))
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -74,13 +67,13 @@ class PasscodeAccountSettingsActivity(private val account: Int) : SettingsPageAc
             HIDE -> {
                 val hide = !PasscodeHelper.isAccountHiddenByPasscode(account)
                 PasscodeHelper.setAccountHidden(account, hide)
-                (view as? TextCheckCell)?.isChecked = hide
+                setCellChecked(view, hide)
                 postNotificationForAllAccounts(NotificationCenter.mainUserInfoChanged)
             }
             ALLOW_PANIC -> {
                 val allow = !PasscodeHelper.isAccountAllowPanic(account)
                 PasscodeHelper.setAccountAllowPanic(account, allow)
-                (view as? TextCheckCell)?.isChecked = allow
+                setCellChecked(view, allow)
             }
         }
     }

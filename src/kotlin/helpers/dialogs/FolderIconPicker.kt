@@ -24,13 +24,13 @@ object FolderIconPicker {
         val context = fragment.parentActivity ?: return
         val choices = FolderHelper.getIconChoices()
         val selectedEmoticon = filter.inu_emoticon?.replace("\uFE0F", "")
-        val cellSize = AndroidUtilities.dp(58f)
-        val iconSize = AndroidUtilities.dp(52f)
+        val cellSize = AndroidUtilities.dp(48f)
+        val iconSize = AndroidUtilities.dp(28f)
 
         lateinit var dialog: AlertDialog
         val grid = LinearLayout(context)
         grid.orientation = LinearLayout.VERTICAL
-        val padding = AndroidUtilities.dp(14f)
+        val padding = AndroidUtilities.dp(12f)
         grid.setPadding(padding, padding / 2, padding, 0)
 
         var row: LinearLayout? = null
@@ -53,7 +53,7 @@ object FolderIconPicker {
             cell.addView(image, FrameLayout.LayoutParams(iconSize, iconSize, Gravity.CENTER))
             // entiny: fixed square size -- weight-based width stretched cells wider than tall, turning the OVAL selection ring into an ellipse
             val params = LinearLayout.LayoutParams(cellSize, cellSize)
-            val margin = AndroidUtilities.dp(5f)
+            val margin = AndroidUtilities.dp(2f)
             params.setMargins(margin, margin, margin, margin)
             cell.layoutParams = params
             if (emoticon == selectedEmoticon) {

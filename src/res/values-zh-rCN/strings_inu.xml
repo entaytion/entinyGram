@@ -198,6 +198,8 @@
     <string name="InuHideHashtagSuggestions">隐藏话题标签建议</string>
     <string name="InuHideAllChatsTab">隐藏「所有聊天」标签</string>
     <string name="InuHideAllChatsTabInfo">长按聊天列表中的标题即可显示「所有聊天」。</string>
+    <string name="InuRememberSelectedFolder">记住选中的分组</string>
+    <string name="InuRememberSelectedFolderInfo">返回聊天列表时重新打开上次处于活动状态的分组。</string>
     <string name="InuFoldersAtBottom">将文件夹移到底部</string>
     <string name="InuHideArchive">从聊天列表中移除「已归档聊天」</string>
     <string name="InuHideCallActionButton">隐藏标题中的通话按钮</string>
@@ -345,7 +347,6 @@
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
     <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
-    <string name="InuIconReplacementRestartInfo">重启应用以应用图标包。</string>
 
     <string name="InuMapsHeader">地图</string>
     <string name="InuMapProvider">地图视图提供方</string>
@@ -775,13 +776,10 @@
 
     <string name="InuLogs">调试</string>
     <string name="InuLogsEnabled">调试模式</string>
-    <string name="InuExtraDebugLogs">[entinyGram] 额外调试日志</string>
     <string name="InuLogsSize">日志大小: %1$s</string>
     <string name="InuLogsShare">分享日志</string>
     <string name="InuLogsShareZip">全部日志 (.zip)</string>
     <string name="InuLogsShareCurrent">当前日志 (.txt)</string>
-    <string name="InuLogsShareByCategory">按分类 (.zip)</string>
-    <string name="InuLogsNoCategories">暂无分类日志</string>
     <string name="InuLogsClear">清除日志</string>
     <string name="InuLogsCleared">旧日志已清除</string>
     <string name="InuLogsShareError">打包日志失败</string>
@@ -1011,7 +1009,7 @@
     <string name="InuDisableFlagSecureInfo">解除截图限制：允许在私密聊天、阅后即焚媒体和受保护频道中截图和录屏。</string>
     <string name="InuAntiDeletion">防撤回</string>
     <string name="InuAppIconOldEntinygram">旧版 entinyGram</string>
-    <string name="InuCategoryAppearance">外观与布局</string>
+    <string name="InuCategoryAppearance">设计</string>
     <string name="InuCategoryBackup">其他设置</string>
     <string name="InuCategoryBehavior">行为与工具</string>
     <string name="InuCategoryChats">聊天</string>
@@ -1335,10 +1333,6 @@
     <string name="InuAccountSwitchShortcut">账号切换快捷方式</string>
     <string name="InuAccountSwitchShortcutInfo">在应用图标长按菜单中添加快捷方式，点击可选择要打开的账号</string>
 
-    <string name="InuFastResendLoginCode">跳过登录验证码倒计时</string>
-    <string name="InuFastResendLoginCodeInfo">在登录验证码界面点按倒计时，无需等待其结束即可请求新的验证码</string>
-    <string name="InuFastResendLoginCodeConfirm">跳过等待并立即请求新验证码？Telegram 仍可能拒绝。</string>
-    <string name="InuFastResendLoginCodeNow">立即重发</string>
     <string name="InuBlockSleepWhileDownloading">下载时阻止休眠</string>
     <string name="InuBlockSleepWhileDownloadingInfo">在下载进行时保持部分唤醒锁（wake lock），防止 Android 在后台暂停下载。</string>
     <string name="InuHideProxySponsorChat">隐藏代理赞助商聊天</string>
@@ -1375,7 +1369,6 @@
     <string name="InuCenterTitleChatsInfo">居中聊天标题和副标题；头像保持在左侧。可单独启用。</string>
     <string name="InuIosChatHeaderAvatarSlot">将头像移到菜单按钮处</string>
     <string name="InuIosChatHeaderAvatarSlotInfo">头像放在菜单位置：点按打开资料，长按打开聊天菜单。</string>
-    <string name="InuScrollToTop">Scroll to top</string>
     <string name="InuRecentChats">最近聊天</string>
     <string name="InuClearRecentChats">清除最近聊天</string>
     <string name="InuClearRecentChatsAlert">这将清除最近打开的聊天列表。不会删除任何聊天或消息。</string>
@@ -1574,7 +1567,6 @@
     <string name="InuConfirmSendGif">GIF</string>
     <string name="InuConfirmSendSticker">贴纸</string>
     <string name="InuConfirmSendVoice">语音消息</string>
-    <string name="InuConfirmSendVoiceMessage">发送这条语音消息？</string>
     <string name="InuConnectProxyImmediately">立即连接</string>
     <string name="InuDialogAvatarOpensProfile">点击头像打开资料</string>
     <string name="InuDialogAvatarOpensProfileInfo">在聊天列表中点击聊天头像会直接打开对方资料，而不是进入聊天。</string>

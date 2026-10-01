@@ -53,11 +53,6 @@ object ConfirmSendHelper {
     ) {
         if (AlertsCreator.needsPaidMessageAlert(currentAccount, dialogId)) {
             AlertsCreator.ensurePaidMessageConfirmation(currentAccount, dialogId, 1, onConfirm)
-            return
         }
-        AlertsCreator.createSimpleAlert(
-            context, null, LocaleController.getString(R.string.InuConfirmSendVoiceMessage),
-            LocaleController.getString(R.string.Send), { onConfirm.run(0L) }, resourcesProvider
-        ).show()
     }
 }

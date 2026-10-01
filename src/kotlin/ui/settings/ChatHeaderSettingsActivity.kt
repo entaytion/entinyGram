@@ -103,6 +103,18 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
             )
         )
         items.add(UItem.asShadow(null))
+
+        items.add(UItem.asHeader(addExperimentalSpan(LocaleController.getString(R.string.InuCenteringSection))))
+        items.add(
+            mkIconCheckItem(
+                TOGGLE_CENTER_TITLE_MAIN,
+                R.drawable.inu_tabler_layout_align_center,
+                R.string.InuCenterTitleMain,
+                R.string.InuCenterTitleMainInfo,
+                InuConfig.CENTER_TITLE_MAIN.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
@@ -137,6 +149,12 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 refreshAll()
             }
 
+            // entiny: omit restart bulletin because ActionBar.onMeasure re-reads center title live on every pass
+            TOGGLE_CENTER_TITLE_MAIN -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.CENTER_TITLE_MAIN.toggle()
+                listView.adapter.update(true)
+            }
+
             TOGGLE_CHAT_TITLE_MARQUEE -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TITLE_MARQUEE.toggle()
                 refreshAll()
@@ -157,6 +175,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
         private val TOGGLE_CHAT_HEADER_NO_PILL = InuUtils.generateId()
         private val TOGGLE_CHAT_TITLE_MARQUEE = InuUtils.generateId()
+        private val TOGGLE_CENTER_TITLE_MAIN = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -173,6 +192,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("ios-chat-header-avatar-static", R.string.InuIosChatHeaderAvatarStatic, TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC),
                 SearchRegistry.Entry("chat-header-no-pill", R.string.InuChatHeaderNoPill, TOGGLE_CHAT_HEADER_NO_PILL),
                 SearchRegistry.Entry("chat-title-marquee", R.string.InuChatTitleMarquee, TOGGLE_CHAT_TITLE_MARQUEE),
+                SearchRegistry.Entry("center-title-main", R.string.InuCenterTitleMain, TOGGLE_CENTER_TITLE_MAIN),
             ),
         )
     }
