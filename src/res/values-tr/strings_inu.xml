@@ -1613,4 +1613,5 @@
     <string name="InuDonateMonobankCard">Monobank kartı</string>
     <string name="InuDonateWebsite">Tüm yöntemler web sitesinde</string>
     <string name="InuDonateCopied">Kopyalandı</string>
+    <string name="InuShowMediaSize">Medya boyutunu göster</string>
 </resources>

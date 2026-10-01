@@ -469,3 +469,4 @@ entiny/voice-preview-no-confirm.patch
 entiny/background-service-toggle.patch
 entiny/device-spoof.patch
 entiny/ai-summary-inline.patch
+entiny/media-size.patch

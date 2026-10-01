@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 30 Sep 2026 23:41:54 +0300
+Subject: [+] media size badge
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java    | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -25198,6 +25198,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             }
+         }
+ 
++        if (InuConfig.SHOW_MEDIA_SIZE.getValue()) desu.inugram.helpers.chat.MediaSizeHelper.draw(this, canvas, photoImage);
++
+         if (hasGamePreview) {
+ 
+         } else if (currentMessageObject.isLivePhoto()) {

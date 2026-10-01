@@ -1614,4 +1614,5 @@
     <string name="InuDonateMonobankCard">Monobank カード</string>
     <string name="InuDonateWebsite">すべての方法はウェブサイトで</string>
     <string name="InuDonateCopied">コピーしました</string>
+    <string name="InuShowMediaSize">メディアのサイズを表示</string>
 </resources>

@@ -1240,6 +1240,9 @@ object InuConfig {
     val SHOW_FORWARDS_COUNT = BoolItem("show_forwards_count", false)
 
     @JvmField
+    val SHOW_MEDIA_SIZE = BoolItem("show_media_size", false)
+
+    @JvmField
     val FORWARD_PRO = BoolItem("forward_pro", false)
 
     @JvmField

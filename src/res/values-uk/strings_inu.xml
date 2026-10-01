@@ -1628,4 +1628,5 @@
     <string name="InuDonateMonobankCard">Картка Monobank</string>
     <string name="InuDonateWebsite">Усі способи на сайті</string>
     <string name="InuDonateCopied">Скопійовано</string>
+    <string name="InuShowMediaSize">Показувати розмір медіа</string>
 </resources>

@@ -141,6 +141,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **fix stuck playback on pause** (MIUI and certain DSPs)
 - 📡 **rotate the call screen** instead of locking it to portrait
 - 📡 **cache management**: per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
+- 📡 **media size badge**: optional file size label on photos
 
 ### debloat & premium noise
 

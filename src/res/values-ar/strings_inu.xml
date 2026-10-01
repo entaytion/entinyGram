@@ -1636,4 +1636,5 @@
     <string name="InuDonateMonobankCard">بطاقة Monobank</string>
     <string name="InuDonateWebsite">جميع الطرق على الموقع</string>
     <string name="InuDonateCopied">تم النسخ</string>
+    <string name="InuShowMediaSize">إظهار حجم الوسائط</string>
 </resources>

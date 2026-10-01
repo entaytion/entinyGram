@@ -1630,4 +1630,5 @@
     <string name="InuDonateMonobankCard">Monobank card</string>
     <string name="InuDonateWebsite">All methods on the website</string>
     <string name="InuDonateCopied">Copied</string>
+    <string name="InuShowMediaSize">Show media size</string>
 </resources>

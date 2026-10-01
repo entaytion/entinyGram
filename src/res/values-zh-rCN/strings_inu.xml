@@ -1615,4 +1615,5 @@
     <string name="InuDonateMonobankCard">Monobank 银行卡</string>
     <string name="InuDonateWebsite">更多方式见网站</string>
     <string name="InuDonateCopied">已复制</string>
+    <string name="InuShowMediaSize">显示媒体大小</string>
 </resources>

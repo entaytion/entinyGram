@@ -1636,4 +1636,5 @@
     <string name="InuDonateMonobankCard">Карта Monobank</string>
     <string name="InuDonateWebsite">Все способы на сайте</string>
     <string name="InuDonateCopied">Скопировано</string>
+    <string name="InuShowMediaSize">Показывать размер медиа</string>
 </resources>
