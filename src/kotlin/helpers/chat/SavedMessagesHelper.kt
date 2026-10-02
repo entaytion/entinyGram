@@ -9,6 +9,7 @@ import androidx.collection.LongSparseArray
 import androidx.core.content.res.ResourcesCompat
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuDatabaseHelper
+import desu.inugram.helpers.InuUtils
 import java.io.File
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
@@ -119,6 +120,7 @@ object SavedMessagesHelper {
         val media: TLRPC.MessageMedia? = null,
         val originalMessageId: Int = 0,
         val fromId: Long = 0L,
+        val message: TLRPC.Message? = null,
     )
 
     @JvmStatic
@@ -691,6 +693,33 @@ object SavedMessagesHelper {
         return media !is TLRPC.TL_messageMediaEmpty
     }
 
+    // entiny: full copy keeps entities, media, reply and sender for the archive screen
+    private fun snapshotMessage(account: Int, dialogId: Long, msgId: Int, fromId: Long, message: TLRPC.Message?): TLRPC.Message? {
+        val copy = message?.let { InuUtils.cloneTLObject(it, TLRPC.Message::TLdeserialize) }?.also {
+            it.attachPath = message.attachPath
+            it.dialog_id = dialogId
+        }
+        if (copy != null) return copy
+        val shadow = synchronized(cacheLock) { shadowMessageCache.get(account.toLong())?.get(dialogId to msgId) } ?: return null
+        return TLRPC.TL_message().apply {
+            id = msgId
+            this.dialog_id = dialogId
+            date = shadow.date
+            this.message = shadow.text
+            if (fromId != 0L) from_id = MessagesController.getInstance(account).getPeer(fromId)
+            peer_id = MessagesController.getInstance(account).getPeer(dialogId)
+            out = fromId != 0L && fromId == UserConfig.getInstance(account).clientUserId
+            if (!shadow.entities.isNullOrEmpty()) {
+                entities = ArrayList(shadow.entities)
+                flags = flags or TLRPC.MESSAGE_FLAG_HAS_ENTITIES
+            }
+            if (shadow.media != null) {
+                media = InuDatabaseHelper.cloneMedia(shadow.media)
+                if (media != null) flags = flags or TLRPC.MESSAGE_FLAG_HAS_MEDIA
+            }
+        }
+    }
+
     @JvmStatic
     @JvmOverloads
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
@@ -709,7 +738,8 @@ object SavedMessagesHelper {
         if (!forceSave && !alreadyRecorded && !hasPreservableData(text, message)) return
         ensureAccountLoaded(account)
         val deletionTime = if (date > 0) date.toLong() else System.currentTimeMillis() / 1000L
-        val mediaCopy = planMediaCopy(account, message)
+        val snapshot = snapshotMessage(account, dialogId, msgId, fromId, message)
+        val mediaCopy = planMediaCopy(account, message ?: snapshot)
         val mediaPath = mediaCopy?.target?.absolutePath
         synchronized(cacheLock) {
             var dialogs = deletedMessageIds.get(account.toLong())
@@ -755,7 +785,7 @@ object SavedMessagesHelper {
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             runMediaCopy(mediaCopy)
-            InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, archiveText(text, message), deletionTime.toInt(), mediaPath)
+            InuDatabaseHelper.saveDeletedMessage(db, dialogId, msgId, fromId, archiveText(text, message ?: snapshot), deletionTime.toInt(), mediaPath, snapshot)
         }
     }
 
@@ -932,7 +962,7 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun rememberMessage(account: Int, dialogId: Long, msgId: Int, text: String?, hasMedia: Boolean, date: Int, entities: ArrayList<TLRPC.MessageEntity>?, media: TLRPC.MessageMedia?) {
-        if (!isSaveEditedEnabled()) return
+        if (!isSaveEditedEnabled() && !isSaveDeletedEnabled()) return
         synchronized(cacheLock) {
             val map = shadowMessageCache.get(account.toLong())
                 ?: BoundedLinkedHashMap<Pair<Long, Int>, ShadowEntry>(SHADOW_CACHE_MAX_PER_ACCOUNT)

@@ -131,6 +131,14 @@ object InuDatabaseHelper {
             version = 13
         }
 
+        if (version == 13) {
+            try {
+                db.executeFast("ALTER TABLE inu_deleted_messages ADD COLUMN message BLOB").stepThis().dispose()
+            } catch (e: Throwable) { }
+            writeKv(db, "version", "14")
+            version = 14
+        }
+
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
 
@@ -376,16 +384,41 @@ object InuDatabaseHelper {
         return list
     }
 
-    fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, mediaPath: String? = null) {
-        val query = db.executeFast("INSERT OR REPLACE INTO inu_deleted_messages(dialog_id, msg_id, from_id, text, date, media_path) VALUES(?, ?, ?, ?, ?, ?)");
-        query.bindLong(1, dialogId)
-        query.bindInteger(2, msgId)
-        query.bindLong(3, fromId)
-        query.bindString(4, text)
-        query.bindInteger(5, if (date > 0) date else (System.currentTimeMillis() / 1000L).toInt())
-        if (mediaPath != null) query.bindString(6, mediaPath) else query.bindNull(6)
-        query.step()
-        query.dispose()
+    fun saveDeletedMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int, fromId: Long, text: String, date: Int, mediaPath: String? = null, message: TLRPC.Message? = null) {
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_deleted_messages(dialog_id, msg_id, from_id, text, date, media_path, message) VALUES(?, ?, ?, ?, ?, ?, COALESCE(?, (SELECT message FROM inu_deleted_messages WHERE dialog_id = ? AND msg_id = ?)))")
+        try {
+            query.bindLong(1, dialogId)
+            query.bindInteger(2, msgId)
+            query.bindLong(3, fromId)
+            query.bindString(4, text)
+            query.bindInteger(5, if (date > 0) date else (System.currentTimeMillis() / 1000L).toInt())
+            if (mediaPath != null) query.bindString(6, mediaPath) else query.bindNull(6)
+            if (message != null) query.bindTlObject(7, message) else query.bindNull(7)
+            query.bindLong(8, dialogId)
+            query.bindInteger(9, msgId)
+            query.step()
+        } finally {
+            query.dispose()
+        }
+    }
+
+    private fun readMessageBlob(cursor: org.telegram.SQLite.SQLiteCursor, column: Int): TLRPC.Message? =
+        readTl(cursor, column) { data -> TLRPC.Message.TLdeserialize(data, data.readInt32(false), false) }
+
+    // entiny: rows archived before the message blob existed still have their original in messages_v2
+    private fun loadLiveMessage(db: SQLiteDatabase, dialogId: Long, msgId: Int): TLRPC.Message? {
+        val cursor = db.queryFinalized("SELECT data FROM messages_v2 WHERE uid = ? AND mid = ?", dialogId, msgId)
+        return try {
+            if (cursor.next()) {
+                readTl(cursor, 0) { data ->
+                    TLRPC.Message.TLdeserialize(data, data.readInt32(false), false)?.also { it.readAttachPath(data, 0) }
+                }
+            } else null
+        } catch (e: Throwable) {
+            null
+        } finally {
+            cursor.dispose()
+        }
     }
 
     fun forEachDeletedMessageInfo(db: SQLiteDatabase, consumer: (dialogId: Long, messageId: Int, date: Long) -> Unit) {
@@ -460,19 +493,21 @@ object InuDatabaseHelper {
         }
     }
 
-    data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean, val mediaPath: String? = null)
+    data class MessageSearchResult(val dialogId: Long, val msgId: Int, val text: String, val date: Int, val isEdit: Boolean, val mediaPath: String? = null, val message: TLRPC.Message? = null)
 
-    data class DeletedMessage(val msgId: Int, val text: String, val date: Int, val mediaPath: String? = null, val fromId: Long = 0L)
+    data class DeletedMessage(val msgId: Int, val text: String, val date: Int, val mediaPath: String? = null, val fromId: Long = 0L, val message: TLRPC.Message? = null)
 
     fun deletedMessagesInDialog(db: SQLiteDatabase, dialogId: Long, limit: Int = 300): List<DeletedMessage> {
         val list = ArrayList<DeletedMessage>()
         val cursor = db.queryFinalized(
-            "SELECT msg_id, text, date, media_path, from_id FROM inu_deleted_messages WHERE dialog_id = ? ORDER BY date DESC LIMIT ?",
+            "SELECT msg_id, text, date, media_path, from_id, message FROM inu_deleted_messages WHERE dialog_id = ? ORDER BY date DESC LIMIT ?",
             dialogId, limit,
         )
         try {
             while (cursor.next()) {
-                list.add(DeletedMessage(cursor.intValue(0), cursor.stringValue(1) ?: "", cursor.intValue(2), cursor.stringValue(3), cursor.longValue(4)))
+                val msgId = cursor.intValue(0)
+                val message = readMessageBlob(cursor, 5) ?: loadLiveMessage(db, dialogId, msgId)
+                list.add(DeletedMessage(msgId, cursor.stringValue(1) ?: "", cursor.intValue(2), cursor.stringValue(3), cursor.longValue(4), message))
             }
         } finally {
             cursor.dispose()
@@ -483,12 +518,14 @@ object InuDatabaseHelper {
     fun deletedByAuthorInDialog(db: SQLiteDatabase, fromId: Long, dialogId: Long, limit: Int = 300): List<MessageSearchResult> {
         val list = ArrayList<MessageSearchResult>()
         val cursor = db.queryFinalized(
-            "SELECT dialog_id, msg_id, text, date, media_path FROM inu_deleted_messages WHERE from_id = ? AND dialog_id = ? ORDER BY date DESC LIMIT ?",
+            "SELECT dialog_id, msg_id, text, date, media_path, message FROM inu_deleted_messages WHERE from_id = ? AND dialog_id = ? ORDER BY date DESC LIMIT ?",
             fromId, dialogId, limit,
         )
         try {
             while (cursor.next()) {
-                list.add(MessageSearchResult(cursor.longValue(0), cursor.intValue(1), cursor.stringValue(2) ?: "", cursor.intValue(3), isEdit = false, mediaPath = cursor.stringValue(4)))
+                val msgId = cursor.intValue(1)
+                val message = readMessageBlob(cursor, 5) ?: loadLiveMessage(db, dialogId, msgId)
+                list.add(MessageSearchResult(cursor.longValue(0), msgId, cursor.stringValue(2) ?: "", cursor.intValue(3), isEdit = false, mediaPath = cursor.stringValue(4), message = message))
             }
         } finally {
             cursor.dispose()

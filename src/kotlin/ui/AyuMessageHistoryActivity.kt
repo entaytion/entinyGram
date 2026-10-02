@@ -19,6 +19,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.chat.SavedMessagesHelper
 import desu.inugram.helpers.chat.SavedMessagesHelper.EditEntry
 import desu.inugram.helpers.InuDatabaseHelper
+import desu.inugram.helpers.InuUtils
 import java.io.File
 import java.util.ArrayList
 import org.telegram.messenger.AndroidUtilities
@@ -82,10 +83,10 @@ class AyuMessageHistoryActivity(
                 val db = storage.database ?: return@postRunnable
                 val deleted = deletedArchiveAuthor?.let { author ->
                     InuDatabaseHelper.deletedByAuthorInDialog(db, author, dialogId).map {
-                        EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = author)
+                        EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = author, message = it.message)
                     }
                 } ?: InuDatabaseHelper.deletedMessagesInDialog(db, dialogId).map {
-                    EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = it.fromId)
+                    EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = it.fromId, message = it.message)
                 }
                 AndroidUtilities.runOnUIThread {
                     historyEntries.clear()
@@ -317,19 +318,29 @@ class AyuMessageHistoryActivity(
             }
 
             val owner = targetMessageObject.messageOwner
-            val msg = TLRPC.TL_message().apply {
+            val archived = if (isDeletedArchive) entry.message?.let { InuUtils.cloneTLObject(it, TLRPC.Message::TLdeserialize) } else null
+            val msg = archived?.apply {
+                id = if (entry.originalMessageId != 0) entry.originalMessageId else id
+                dialog_id = targetMessageObject.getDialogId()
+                if (peer_id == null) peer_id = this@AyuMessageHistoryActivity.peer
+                if (from_id == null && entry.fromId != 0L) from_id = messagesController.getPeer(entry.fromId)
+                edit_hide = true
+                reply_markup = null
+                media?.ttl_seconds = 0
+                if (entry.mediaPath == null) attachPath = null
+            } ?: TLRPC.TL_message().apply {
                 id = if (isDeletedArchive && entry.originalMessageId != 0) entry.originalMessageId else targetMessageObject.id
                 dialog_id = targetMessageObject.getDialogId()
                 date = entry.timestamp.toInt()
                 message = entry.text
                 from_id = if (isDeletedArchive && entry.fromId != 0L) messagesController.getPeer(entry.fromId) else owner?.from_id
                 peer_id = this@AyuMessageHistoryActivity.peer
-                out = owner?.out == true
+                out = if (isDeletedArchive && entry.fromId != 0L) entry.fromId == userConfig.clientUserId else owner?.out == true
                 post = owner?.post == true
                 edit_hide = true
             }
 
-            val entities = if (diff == null) entry.entities else null
+            val entities = if (diff == null && archived == null) entry.entities else null
             if (!entities.isNullOrEmpty()) {
                 msg.entities = ArrayList(entities)
                 msg.flags = msg.flags or TLRPC.MESSAGE_FLAG_HAS_ENTITIES
@@ -337,8 +348,10 @@ class AyuMessageHistoryActivity(
 
             // entiny: only stored revisions carry media so text revisions stay TYPE_TEXT and build their text layout
             val savedFile = entry.mediaPath?.takeIf { it.isNotBlank() }?.let { File(it) }?.takeIf { it.exists() }
-            val storedMedia = entry.media
-            if (storedMedia != null && storedMedia !is TLRPC.TL_messageMediaEmpty) {
+            val storedMedia = if (archived != null) null else entry.media
+            if (archived != null) {
+                if (savedFile != null && archived.media != null) msg.attachPath = savedFile.absolutePath
+            } else if (storedMedia != null && storedMedia !is TLRPC.TL_messageMediaEmpty) {
                 msg.media = storedMedia
                 if (!isLive) {
                     // entiny: clear ttl on archived copies so one-time media does not render as an expired placeholder
@@ -354,7 +367,7 @@ class AyuMessageHistoryActivity(
                 msg.attachPath = savedFile.absolutePath
             }
 
-            if (targetMessageObject.replyMessageObject != null) {
+            if (archived == null && targetMessageObject.replyMessageObject != null) {
                 msg.replyMessage = targetMessageObject.replyMessageObject.messageOwner
                 msg.reply_to = owner?.reply_to
             }
