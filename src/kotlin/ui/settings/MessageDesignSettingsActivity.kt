@@ -125,7 +125,7 @@ class MessageDesignSettingsActivity : SettingsPageActivity() {
         if (reactionsInRowSlider == null) reactionsInRowSlider = SliderCell(
             context,
             min = 6f,
-            max = 30f,
+            max = InuConfig.REACTIONS_IN_ROW.maxFit().toFloat(),
             defaultValue = InuConfig.REACTIONS_IN_ROW.default.toFloat(),
             initialValue = InuConfig.REACTIONS_IN_ROW.value.toFloat(),
             step = 1f,

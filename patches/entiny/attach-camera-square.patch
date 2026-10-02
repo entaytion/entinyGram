@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 2 Oct 2026 00:16:50 +0300
+Subject: [+] square camera tile in attach gallery
+
+---
+ .../ui/Components/ChatAttachAlertPhotoLayout.java  | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayout.java
+@@ -2495,7 +2495,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         cameraPanel.setTag(null);
+         animateCameraValues[0] = 0;
+         animateCameraValues[1] = itemSize;
+-        animateCameraValues[2] = itemSize * 2 + dp(GAP);
++        animateCameraValues[2] = desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+         additionCloseCameraY = 0;
+         cameraExpanded = true;
+         if (cameraView != null) {
+@@ -2859,7 +2859,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+         }
+         if (inu_cameraOutsideGrid) animated = false;
+         animateCameraValues[1] = itemSize;
+-        animateCameraValues[2] = itemSize * 2 + dp(GAP);
++        animateCameraValues[2] = desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+         if (zoomControlHideRunnable != null) {
+             AndroidUtilities.cancelRunOnUIThread(zoomControlHideRunnable);
+             zoomControlHideRunnable = null;
+@@ -3149,7 +3149,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+                 // cameraView.setTranslationY(cameraViewLocation[1] + currentPanTranslationY);
+             }
+             int finalWidth = itemSize;
+-            int finalHeight = itemSize * 2 + dp(GAP);
++            int finalHeight = desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+ 
+             LayoutParams layoutParams;
+             if (!cameraOpened) {
+@@ -4650,7 +4650,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             }
+             photosEndRow = count;
+ 
+-            if (hasCamera && count > itemsPerRow && !noCameraPermissions) {
++            if (hasCamera && count > itemsPerRow && !noCameraPermissions && !desu.inugram.helpers.chat.AttachCameraHelper.isSquareTile()) {
+                 hasCameraSpaceRow = true;
+                 count++;
+             }
+@@ -4810,7 +4810,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             if (viewHolder != null) {
+                 top = viewHolder.itemView.getTop();
+             } else {
+-                viewHolder = parent.findViewHolderForAdapterPosition(itemsPerRow);
++                viewHolder = desu.inugram.helpers.chat.AttachCameraHelper.isSquareTile() ? null : parent.findViewHolderForAdapterPosition(itemsPerRow);
+                 if (viewHolder != null) {
+                     top = viewHolder.itemView.getTop() - dp(GAP) - itemSize;
+                 } else {
+@@ -4823,7 +4823,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+ 
+             final int left = viewHolder.itemView.getLeft();
+             final int right = left + itemSize;
+-            final int bottom = top + itemSize * 2 + dp(GAP);
++            final int bottom = top + desu.inugram.helpers.chat.AttachCameraHelper.cameraTileHeight(itemSize, dp(GAP));
+ 
+             if (builder != null) {
+                 builder.add(left);
+@@ -4894,7 +4894,7 @@ public class ChatAttachAlertPhotoLayout extends ChatAttachAlert.AttachAlertLayou
+             if (bitmap != null) {
+                 placeholderDrawable = new BitmapDrawable(getContext().getResources(), bitmap);
+             } else {
+-                placeholderDrawable = getContext().getResources().getDrawable(R.drawable.icplaceholder).mutate();
++                placeholderDrawable = desu.inugram.helpers.chat.AttachCameraHelper.isSquareTile() ? new android.graphics.drawable.ColorDrawable(0xFF000000) : getContext().getResources().getDrawable(R.drawable.icplaceholder).mutate();
+             }
+ 
+             if (gridView != null) {

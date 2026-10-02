@@ -4,14 +4,14 @@ Date: Mon, 28 Sep 2026 21:07:37 +0300
 Subject: [*] refresh liquid glass settings
 
 ---
- .../BlurredBackgroundDrawableRenderNode.java         | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../BlurredBackgroundDrawableRenderNode.java  | 45 +++++++++++++++----
+ 1 file changed, 36 insertions(+), 9 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawableRenderNode.java
-@@ -18,8 +18,12 @@ import org.telegram.ui.ActionBar.Theme;
+@@ -18,14 +18,20 @@ import org.telegram.ui.ActionBar.Theme;
  import org.telegram.ui.Components.blur3.LiquidGlassEffect;
  import org.telegram.ui.Components.blur3.source.BlurredBackgroundSource;
  
@@ -24,7 +24,15 @@ index 0000000..0000000 100644
      private final BlurredBackgroundSource source;
      private final Outline outline = new Outline();
      private final Rect outlineRect = new Rect();
-@@ -57,6 +61,14 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
+ 
+     private final RenderNode renderNode;
+     private final RenderNode renderNodeFill;
++    private final RenderNode renderNodeStroke = new RenderNode("BlurredStroke");
++    private boolean strokeInvalidated = true;
+ 
+     private final Paint paintShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+     private final Paint paintStrokeTop = new Paint(Paint.ANTI_ALIAS_FLAG);
+@@ -57,6 +63,15 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
      @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
      public void setLiquidGlassEffectAllowed() {
          liquidGlassEffect = new LiquidGlassEffect(renderNodeFill);
@@ -34,8 +42,68 @@ index 0000000..0000000 100644
 +    public static void inu_invalidateLiquidGlassDrawables() {
 +        for (BlurredBackgroundDrawableRenderNode drawable : inu_liquidGlassDrawables) {
 +            drawable.renderNodeInvalidated = true;
++            drawable.strokeInvalidated = true;
 +            drawable.invalidateSelf();
 +        }
      }
  
  
+@@ -82,6 +97,8 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
+         if (!boundProps.boundsWithPadding.isEmpty()) {
+             renderNodeFill.setPosition(0, 0, boundProps.boundsWithPadding.width(), boundProps.boundsWithPadding.height());
+             renderNode.setPosition(0, 0, boundProps.boundsWithPadding.width(), boundProps.boundsWithPadding.height());
++            renderNodeStroke.setPosition(0, 0, boundProps.boundsWithPadding.width(), boundProps.boundsWithPadding.height());
++            strokeInvalidated = true;
+             renderNode.setOutline(outline);
+ 
+             renderNodeInvalidated = true;
+@@ -125,7 +142,7 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
+                 thickness,
+                 boundProps.liquidIntensity,
+                 boundProps.liquidIndex,
+-                backgroundColor
++                Theme.multAlpha(backgroundColor, desu.inugram.InuConfig.LIQUID_GLASS_TINT.getValue() / 100f)
+             );
+         }
+         source.draw(c, sL, sT, sR, sB);
+@@ -142,15 +159,24 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
+                 c.drawColor(backgroundColor);
+             }
+         }
+-        if (strokeColorTop != 0) {
+-            drawStroke(c, 0, 0, boundProps.boundsWithPadding.width(),
+-                    boundProps.boundsWithPadding.height(), boundProps.radii,
+-                    boundProps.strokeWidthTop, true, paintStrokeTop);
++        if (strokeInvalidated) {
++            // entiny: strokes only depend on bounds and colors, so skip re-recording them on every scroll frame
++            final Canvas sc = renderNodeStroke.beginRecording();
++            if (strokeColorTop != 0) {
++                drawStroke(sc, 0, 0, boundProps.boundsWithPadding.width(),
++                        boundProps.boundsWithPadding.height(), boundProps.radii,
++                        boundProps.strokeWidthTop, true, paintStrokeTop);
++            }
++            if (strokeColorBottom != 0) {
++                drawStroke(sc, 0, 0, boundProps.boundsWithPadding.width(),
++                        boundProps.boundsWithPadding.height(), boundProps.radii,
++                        boundProps.strokeWidthBottom, false, paintStrokeBottom);
++            }
++            renderNodeStroke.endRecording();
++            strokeInvalidated = false;
+         }
+-        if (strokeColorBottom != 0) {
+-            drawStroke(c, 0, 0, boundProps.boundsWithPadding.width(),
+-                    boundProps.boundsWithPadding.height(), boundProps.radii,
+-                    boundProps.strokeWidthBottom, false, paintStrokeBottom);
++        if (strokeColorTop != 0 || strokeColorBottom != 0) {
++            c.drawRenderNode(renderNodeStroke);
+         }
+         renderNode.endRecording();
+     }
+@@ -164,6 +190,7 @@ public class BlurredBackgroundDrawableRenderNode extends BlurredBackgroundDrawab
+         paintStrokeBottom.setColor(strokeColorBottom);
+ 
+         renderNodeInvalidated = true;
++        strokeInvalidated = true;
+     }
+ 
+     @Override

@@ -712,6 +712,7 @@
     <string name="InuLiquidGlass">الزجاج السائل</string>
     <string name="InuLiquidGlassAngle">زاوية الزجاج السائل</string>
     <string name="InuLiquidGlassIntensity">شدة الزجاج السائل</string>
+    <string name="InuLiquidGlassTint">تظليل الزجاج السائل</string>
     <string name="InuNicheSettings">إعدادات متخصصة</string>
     <string name="InuNicheSettingsInfo">ميزات مطلوبة قد لا تفيد الجميع. إذا لم تعمل فستُزال.</string>
     <string name="InuNicheUnlockedToast">يا صديقي لا تفعّل entiny tv أرجوك💀💀</string>
@@ -985,6 +986,8 @@
     <string name="InuBlockSleepWhileDownloadingInfo">يحتفظ بقفل تنبيه جزئي أثناء نشاط التنزيل حتى لا يوقفه Android في الخلفية.</string>
     <string name="InuSendMp4DocumentAsVideo">إرسال مستندات MP4 كفيديوهات</string>
     <string name="InuSendMp4DocumentAsVideoInfo">ملفات MP4 المرفقة عبر الملفات تُرسل كفيديوهات قابلة للتشغيل دون تحويل</string>
+    <string name="InuAttachCameraSquare">مربع الكاميرا</string>
+    <string name="InuAttachCameraSquareInfo">تشغل الكاميرا في المعرض خانة واحدة بدلاً من خانتين</string>
     <string name="InuSortAlbumsBySize">ترتيب الألبومات حسب الحجم</string>
     <string name="InuSortAlbumsBySizeInfo">تُرتَّب الألبومات في قائمة المرفقات حسب عدد الصور بدلاً من الأحدث</string>
     <string name="InuDownloadDirectory">مجلد التنزيل</string>

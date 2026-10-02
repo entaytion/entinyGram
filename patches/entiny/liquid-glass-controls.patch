@@ -4,15 +4,34 @@ Date: Thu, 24 Sep 2026 19:31:51 +0300
 Subject: Add angle and intensity controls for the Liquid Glass refraction effect
 
 ---
- .../ui/Components/blur3/LiquidGlassEffect.java         | 10 ++++++++--
- .../src/main/res/raw/liquid_glass_shader.agsl          |  6 +++++-
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ .../ui/Components/blur3/LiquidGlassEffect.java   | 16 ++++++++++++----
+ .../src/main/res/raw/liquid_glass_shader.agsl    |  6 +++++-
+ 2 files changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/LiquidGlassEffect.java
-@@ -33,6 +33,7 @@ public class LiquidGlassEffect {
+@@ -13,14 +13,16 @@ import org.telegram.messenger.R;
+ @RequiresApi(api = 33)
+ public class LiquidGlassEffect {
+ 
++    private static String shaderCode;
++
+     private final RenderNode node;
+     private final RuntimeShader shader;
+     private RenderEffect effect;
+ 
+     public LiquidGlassEffect(RenderNode node) {
+         this.node = node;
+-        final String code = AndroidUtilities.readRes(R.raw.liquid_glass_shader);
+-        shader = new RuntimeShader(code);
++        if (shaderCode == null) shaderCode = AndroidUtilities.readRes(R.raw.liquid_glass_shader);
++        shader = new RuntimeShader(shaderCode);
+         node.setRenderEffect(effect = RenderEffect.createRuntimeShaderEffect(shader, "img"));
+     }
+ 
+@@ -33,6 +35,7 @@ public class LiquidGlassEffect {
      private float radiusLeftBottom;
      private float thickness;
      private float intensity;
@@ -20,7 +39,7 @@ index 0000000..0000000 100644
      private float index;
      private int foregroundColor;
  
-@@ -64,6 +65,9 @@ public class LiquidGlassEffect {
+@@ -64,6 +67,9 @@ public class LiquidGlassEffect {
              radiusRightBottom = height * (1.0f - a);
          }
  
@@ -30,7 +49,7 @@ index 0000000..0000000 100644
          if (
              Math.abs(this.resolutionX - resolutionX) > 0.1f ||
              Math.abs(this.resolutionY - resolutionY) > 0.1f ||
-@@ -76,7 +80,8 @@ public class LiquidGlassEffect {
+@@ -76,7 +82,8 @@ public class LiquidGlassEffect {
              Math.abs(this.radiusRightBottom - radiusRightBottom) > 0.1f ||
              Math.abs(this.radiusLeftBottom - radiusLeftBottom) > 0.1f ||
              Math.abs(this.thickness - thickness) > 0.1f ||
@@ -40,7 +59,7 @@ index 0000000..0000000 100644
              Math.abs(this.index - index) > 0.1f ||
              this.foregroundColor != foregroundColor
          ) {
-@@ -92,7 +97,8 @@ public class LiquidGlassEffect {
+@@ -92,7 +99,8 @@ public class LiquidGlassEffect {
              shader.setFloatUniform("size", this.sizeX = sizeX, this.sizeY = sizeY);
              shader.setFloatUniform("radius", this.radiusRightBottom = radiusRightBottom, this.radiusRightTop = radiusRightTop, this.radiusLeftBottom = radiusLeftBottom, this.radiusLeftTop = radiusLeftTop);
              shader.setFloatUniform("thickness", this.thickness = thickness);

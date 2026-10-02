@@ -597,6 +597,7 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>
+    <string name="InuLiquidGlassTint">Тонування рідкого скла</string>
     <string name="InuNicheSettings">Нішеві налаштування</string>
     <string name="InuNicheSettingsInfo">Тут зібрані функції, які потрібні не всім, але про які попросили. Якщо вони не працюватимуть, ми їх видалимо.</string>
     <string name="InuNicheUnlockedToast">бро, не вмикай entiny tv пліз💀💀</string>
@@ -1543,6 +1544,8 @@
     <string name="InuStopBotAction">Зупинити</string>
     <string name="InuStopBotAlert">Ви впевнені, що хочете зупинити **%1$s**? Він більше не зможе надсилати вам повідомлення.</string>
     <string name="InuStopBotDone">Бота зупинено</string>
+    <string name="InuAttachCameraSquare">Квадратна плитка камери</string>
+    <string name="InuAttachCameraSquareInfo">Камера в галереї займає одну клітинку замість двох</string>
     <string name="InuSortAlbumsBySize">Сортувати альбоми за розміром</string>
     <string name="InuSortAlbumsBySizeInfo">Альбоми в меню вкладень впорядковуються за кількістю фото, а не за датою</string>
     <string name="InuDownloadDirectory">Папка завантажень</string>

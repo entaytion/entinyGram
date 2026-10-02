@@ -352,6 +352,10 @@ Standalone hook patches expose surfaces that multiple features consume. Intentio
 - Strings: `src/res/values/strings_inu.xml`. Keys prefixed `Inu` (`InuHideStories`). Info/subtitles end in `Info` (`InuHideStoriesInfo`).
 - Assets: `src/res/drawable/`, `src/res/drawable-xxhdpi/`, `src/res/assets/`.
 - New asset dir → register in `scripts/config.ts` → `forkSyncFiles`.
+- **New locale (`values-<iso>/strings_inu.xml`) needs all three, or the app silently shows English:**
+  1. `forkSyncFiles` entry in `scripts/config.ts`.
+  2. Locale added to `localeFilters` in `TMessagesProj_App/build.gradle` (lives in `entiny__build-configuration`).
+  3. Symlink actually created in `worktree/` — run `bun run setup` (or `linkForkSource`) and check `worktree/TMessagesProj/src/main/res/values-<iso>/strings_inu.xml` exists.
 
 ---
 

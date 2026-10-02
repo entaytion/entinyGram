@@ -470,3 +470,4 @@ entiny/m3-tabs-alignment.patch
 entiny/hide-reactions-overlay.patch
 entiny/remember-selected-folder.patch
 entiny/animated-file-drawable-recycle-crash.patch
+entiny/attach-camera-square.patch

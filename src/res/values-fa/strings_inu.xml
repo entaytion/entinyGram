@@ -712,6 +712,7 @@
     <string name="InuLiquidGlass">شیشه مایع</string>
     <string name="InuLiquidGlassAngle">زاویه شیشه مایع</string>
     <string name="InuLiquidGlassIntensity">شدت شیشه مایع</string>
+    <string name="InuLiquidGlassTint">رنگ‌مایه شیشه مایع</string>
     <string name="InuNicheSettings">تنظیمات ویژه</string>
     <string name="InuNicheSettingsInfo">قابلیت‌های درخواستی که شاید برای همه مفید نباشند. اگر کار نکنند حذف می‌شوند.</string>
     <string name="InuNicheUnlockedToast">رفیق، entiny tv رو فعال نکن خواهشاً💀💀</string>
@@ -975,6 +976,8 @@
     <string name="InuBlockSleepWhileDownloadingInfo">تا وقتی دانلودی فعال است قفل بیداری جزئی نگه می‌دارد تا Android آن را در پس‌زمینه متوقف نکند.</string>
     <string name="InuSendMp4DocumentAsVideo">ارسال اسناد MP4 به‌صورت ویدیو</string>
     <string name="InuSendMp4DocumentAsVideoInfo">فایل‌های MP4 که از بخش فایل‌ها پیوست می‌شوند بدون تبدیل به‌صورت ویدیوی قابل‌پخش ارسال می‌شوند</string>
+    <string name="InuAttachCameraSquare">کاشی مربعی دوربین</string>
+    <string name="InuAttachCameraSquareInfo">دوربین در گالری یک خانه می‌گیرد، نه دو خانه</string>
     <string name="InuSortAlbumsBySize">مرتب‌سازی آلبوم‌ها بر اساس اندازه</string>
     <string name="InuSortAlbumsBySizeInfo">آلبوم‌ها در منوی پیوست به‌جای تازگی، بر اساس تعداد عکس مرتب می‌شوند</string>
     <string name="InuDownloadDirectory">پوشه دانلود</string>

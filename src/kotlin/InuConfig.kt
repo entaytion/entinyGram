@@ -175,6 +175,21 @@ object InuConfig {
         }
     }
 
+    class ReactionsInRowItem : IntItem("reactions_in_row", 8) {
+        // entiny: more columns than the screen holds shrinks emoji in the picker into dots
+        fun maxFit(): Int {
+            val dm = android.content.res.Resources.getSystem().displayMetrics
+            val minDp = minOf(dm.widthPixels, dm.heightPixels) / dm.density
+            return ((minDp - 12f) / 36f).toInt().coerceAtLeast(6)
+        }
+
+        override var value: Int
+            get() = super.value.coerceIn(6, maxFit())
+            set(v) {
+                super.value = v
+            }
+    }
+
     class FloatItem(key: String, default: Float, exportable: Boolean = true) : Item<Float>(key, default, exportable) {
         override val prefType = PrefType.FLOAT
         override fun read(prefs: SharedPreferences): Float = prefs.getFloat(key, default)
@@ -386,6 +401,9 @@ object InuConfig {
 
     @JvmField
     val SORT_ALBUMS_BY_SIZE = BoolItem("sort_albums_by_size", true)
+
+    @JvmField
+    val ATTACH_CAMERA_SQUARE = BoolItem("attach_camera_square", false)
 
     @JvmField
     val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram")
@@ -1129,13 +1147,16 @@ object InuConfig {
     val DISABLE_SCRIM_BLUR = BoolItem("disable_scrim_blur", false)
 
     @JvmField
-    val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", true)
+    val DISABLE_GLASS_GLARE = BoolItem("disable_glass_glare", false)
 
     @JvmField
     val LIQUID_GLASS_ANGLE = IntItem("liquid_glass_angle", 0)
 
     @JvmField
     val LIQUID_GLASS_INTENSITY = IntItem("liquid_glass_intensity", 75)
+
+    @JvmField
+    val LIQUID_GLASS_TINT = IntItem("liquid_glass_tint", 100)
 
     @JvmField
     val NICHE_SETTINGS_UNLOCKED = BoolItem("niche_settings_unlocked", false)
@@ -1177,7 +1198,7 @@ object InuConfig {
     val HIDE_MY_PHONE_NUMBER = BoolItem("hide_my_phone_number", true)
 
     @JvmField
-    val REACTIONS_IN_ROW = IntItem("reactions_in_row", 8)
+    val REACTIONS_IN_ROW = ReactionsInRowItem()
 
     @JvmField
     val CHAT_INPUT_MAX_LINES = IntItem("chat_input_max_lines", 8)

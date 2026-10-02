@@ -17,6 +17,7 @@ import org.telegram.ui.Components.blur3.drawable.BlurredBackgroundDrawableRender
 class IosStyleSettingsActivity : SettingsPageActivity() {
     private var angleSlider: SliderCell? = null
     private var intensitySlider: SliderCell? = null
+    private var tintSlider: SliderCell? = null
 
     private var inputBarPreviewCell: InputBarPreviewCell? = null
 
@@ -134,6 +135,23 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             intensitySlider?.updateColors()
         }
         items.add(UItem.asCustom(intensitySlider))
+        if (tintSlider == null) {
+            tintSlider = SliderCell(
+                context, min = 0f, max = 100f,
+                defaultValue = InuConfig.LIQUID_GLASS_TINT.default.toFloat(),
+                initialValue = InuConfig.LIQUID_GLASS_TINT.value.toFloat(),
+                step = 1f,
+                title = LocaleController.getString(R.string.InuLiquidGlassTint),
+                format = { "${it.toInt()}%" },
+                onChanged = {
+                    InuConfig.LIQUID_GLASS_TINT.value = it.toInt()
+                    refreshLiquidGlassEffects()
+                },
+            )
+        } else {
+            tintSlider?.updateColors()
+        }
+        items.add(UItem.asCustom(tintSlider))
         items.add(UItem.asShadow(null))    }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {

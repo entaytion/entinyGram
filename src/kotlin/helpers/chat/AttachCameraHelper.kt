@@ -25,6 +25,13 @@ object AttachCameraHelper {
     @JvmStatic
     fun isInstant(): Boolean = InuConfig.ATTACH_CAMERA_MODE.value == INSTANT
 
+    @JvmStatic
+    fun isSquareTile(): Boolean = InuConfig.ATTACH_CAMERA_SQUARE.value
+
+    @JvmStatic
+    fun cameraTileHeight(itemSize: Int, gap: Int): Int =
+        if (isSquareTile()) itemSize else itemSize * 2 + gap
+
     fun isFab(): Boolean = InuConfig.ATTACH_CAMERA_MODE.value == FAB
 
     fun isTab(): Boolean = InuConfig.ATTACH_CAMERA_MODE.value == TAB

@@ -144,6 +144,14 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         )
         items.add(
             mkTwoLineCheckItem(
+                TOGGLE_ATTACH_CAMERA_SQUARE,
+                R.string.InuAttachCameraSquare,
+                R.string.InuAttachCameraSquareInfo,
+                InuConfig.ATTACH_CAMERA_SQUARE.value,
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
                 TOGGLE_SORT_ALBUMS_BY_SIZE,
                 R.string.InuSortAlbumsBySize,
                 R.string.InuSortAlbumsBySizeInfo,
@@ -389,6 +397,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             }
 
             TOGGLE_CHAT_VOICE_IN_ATTACH -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_VOICE_IN_ATTACH.toggle()
+            TOGGLE_ATTACH_CAMERA_SQUARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_SQUARE.toggle()
             TOGGLE_SORT_ALBUMS_BY_SIZE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SORT_ALBUMS_BY_SIZE.toggle()
             BUTTON_ROUND_DEFAULT_CAMERA -> RadioItemOptions.show(
                 this, view,
@@ -491,6 +500,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         private val TOGGLE_SHOW_ALL_RECENT_STICKERS = InuUtils.generateId()
         private val BUTTON_ATTACH_CAMERA_MODE = InuUtils.generateId()
         private val TOGGLE_CHAT_VOICE_IN_ATTACH = InuUtils.generateId()
+        private val TOGGLE_ATTACH_CAMERA_SQUARE = InuUtils.generateId()
         private val TOGGLE_SORT_ALBUMS_BY_SIZE = InuUtils.generateId()
         private val BUTTON_ROUND_DEFAULT_CAMERA = InuUtils.generateId()
         private val TOGGLE_ROUND_NEW_RECORDER = InuUtils.generateId()
@@ -566,6 +576,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 SearchRegistry.Entry("show-all-recent-stickers", R.string.InuShowAllRecentStickers, TOGGLE_SHOW_ALL_RECENT_STICKERS),
                 SearchRegistry.Entry("attach-camera-mode", R.string.InuAttachCameraMode, BUTTON_ATTACH_CAMERA_MODE),
                 SearchRegistry.Entry("chat-voice-in-attach", R.string.InuChatVoiceInAttach, TOGGLE_CHAT_VOICE_IN_ATTACH),
+                SearchRegistry.Entry("attach-camera-square", R.string.InuAttachCameraSquare, TOGGLE_ATTACH_CAMERA_SQUARE),
                 SearchRegistry.Entry("sort-albums-by-size", R.string.InuSortAlbumsBySize, TOGGLE_SORT_ALBUMS_BY_SIZE),
                 SearchRegistry.Entry("round-default-camera", R.string.InuRoundDefaultCamera, BUTTON_ROUND_DEFAULT_CAMERA),
                 SearchRegistry.Entry("round-recorder-zoom-slider", R.string.InuRoundRecorderZoomSlider, TOGGLE_ROUND_RECORDER_ZOOM_SLIDER),

@@ -8,9 +8,9 @@ Subject: [*] configure app build and Stripe
  TMessagesProj/proguard-rules.pro              | 17 ++++---
  .../java/org/telegram/ui/LaunchActivity.java  | 21 ---------
  .../org/telegram/ui/PaymentFormActivity.java  | 28 ++++++------
- TMessagesProj_App/build.gradle                | 38 +++++++++++++---
+ TMessagesProj_App/build.gradle                | 40 +++++++++++++----
  build.gradle                                  | 45 +++++++++++++++++--
- 6 files changed, 130 insertions(+), 60 deletions(-)
+ 6 files changed, 131 insertions(+), 61 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -331,6 +331,15 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
+@@ -49,7 +65,7 @@ android {
+ 
+     androidResources {
+         noCompress += "pack"
+-        localeFilters += ["zz", "uk", "ru", "ja", "tr", "zh-rCN"] // inu: keep strings_inu translations
++        localeFilters += ["zz", "uk", "ru", "ja", "tr", "zh-rCN", "ar", "fa"] // inu: keep strings_inu translations
+     }
+ 
+     signingConfigs {
 @@ -69,7 +85,7 @@ android {
              minifyEnabled false
              shrinkResources false

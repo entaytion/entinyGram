@@ -823,6 +823,7 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass 角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass 强度</string>
+    <string name="InuLiquidGlassTint">液态玻璃色调</string>
     <string name="InuNicheSettings">小众设置</string>
     <string name="InuNicheSettingsInfo">这里收录了并非所有人都需要、但有人提出需求的功能。如果无法正常使用，我们会将其移除。</string>
     <string name="InuNicheUnlockedToast">bro，别开 entiny tv 求你了💀💀</string>
@@ -1360,6 +1361,8 @@
     <string name="InuKeepLocalCopy">保留本地副本</string>
     <string name="InuDeletePermanently">永久删除</string>
     <string name="InuDeletePermanentlyDone">已永久删除</string>
+    <string name="InuAttachCameraSquare">方形相机磁贴</string>
+    <string name="InuAttachCameraSquareInfo">图库中的相机占一格而不是两格</string>
     <string name="InuSortAlbumsBySize">按大小排序相册</string>
     <string name="InuSortAlbumsBySizeInfo">附件菜单中的相册将按照片数量而非最近时间排序</string>
     <string name="InuDownloadDirectory">下载目录</string>

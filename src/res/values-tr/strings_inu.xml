@@ -486,6 +486,7 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass açısı</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass yoğunluğu</string>
+    <string name="InuLiquidGlassTint">Liquid Glass renk tonu</string>
     <string name="InuNicheSettings">Niş ayarlar</string>
     <string name="InuNicheSettingsInfo">Herkesin ihtiyaç duymadığı ancak istenen özellikler burada bulunur. Çalışmıyorlarsa kaldırılacaklar.</string>
     <string name="InuNicheUnlockedToast">kanka entiny tv\'yi açma lütfen💀💀</string>
@@ -1358,6 +1359,8 @@
     <string name="InuKeepLocalCopy">Yerel kopyayı sakla</string>
     <string name="InuDeletePermanently">Kalıcı olarak sil</string>
     <string name="InuDeletePermanentlyDone">Kalıcı olarak silindi</string>
+    <string name="InuAttachCameraSquare">Kare kamera karosu</string>
+    <string name="InuAttachCameraSquareInfo">Galerideki kamera iki yerine tek hücre kaplar</string>
     <string name="InuSortAlbumsBySize">Albümleri boyuta göre sırala</string>
     <string name="InuSortAlbumsBySizeInfo">Ek menüsündeki albümler yeniliğe göre değil fotoğraf sayısına göre sıralanır</string>
     <string name="InuDownloadDirectory">İndirme klasörü</string>

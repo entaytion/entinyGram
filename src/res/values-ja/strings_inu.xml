@@ -824,6 +824,7 @@
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>
+    <string name="InuLiquidGlassTint">リキッドグラスの色味</string>
     <string name="InuNicheSettings">ニッチな設定</string>
     <string name="InuNicheSettingsInfo">一部のユーザーから要望があった、すべての人に必要とは限らない機能です。動作しない場合は削除します。</string>
     <string name="InuNicheUnlockedToast">bro、entiny tvは有効にしないで pls💀💀</string>
@@ -1350,6 +1351,8 @@
     <string name="InuKeepLocalCopy">ローカルコピーを保存</string>
     <string name="InuDeletePermanently">完全に削除</string>
     <string name="InuDeletePermanentlyDone">完全に削除しました</string>
+    <string name="InuAttachCameraSquare">正方形のカメラタイル</string>
+    <string name="InuAttachCameraSquareInfo">ギャラリーのカメラが2マスではなく1マスになります</string>
     <string name="InuSortAlbumsBySize">アルバムをサイズ順に並べ替え</string>
     <string name="InuSortAlbumsBySizeInfo">添付メニューのアルバムを新着順ではなく写真の枚数順に並べ替えます</string>
     <string name="InuDownloadDirectory">ダウンロードフォルダ</string>
