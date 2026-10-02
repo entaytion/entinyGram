@@ -79,6 +79,42 @@ internal object FeedAlbumLayout {
         }
     }
 
+    // entiny: grouped cells leave caption, time and reactions to the list, as stock ChatActivity does
+    fun drawGroupForeground(list: RecyclerView, canvas: Canvas) {
+        for (i in 0 until list.childCount) {
+            val cell = list.getChildAt(i) as? ChatMessageCell ?: continue
+            val position = cell.currentPosition ?: continue
+            val alpha = if (cell.shouldDrawAlphaLayer()) cell.alpha else 1f
+            val left = cell.left + cell.getNonAnimationTranslationX(false)
+            val top = cell.y + cell.paddingTop
+            val flags = position.flags
+            if (position.last) {
+                canvas.save()
+                canvas.translate(left, top)
+                cell.drawTime(canvas, alpha, true)
+                canvas.restore()
+            }
+            val leftEdge = flags and MessageObject.POSITION_FLAG_LEFT != 0
+            if (flags and cell.captionFlag() != 0 && cell.transitionParams.wasDraw) {
+                canvas.save()
+                canvas.translate(left, top)
+                cell.setInvalidatesParent(true)
+                cell.drawCaptionLayout(canvas, !leftEdge, alpha)
+                cell.setInvalidatesParent(false)
+                canvas.restore()
+            }
+            if (flags and MessageObject.POSITION_FLAG_BOTTOM != 0 && leftEdge && cell.transitionParams.wasDraw) {
+                canvas.save()
+                canvas.translate(left, top)
+                cell.setInvalidatesParent(true)
+                cell.drawReactionsLayout(canvas, alpha, null)
+                cell.drawCommentLayout(canvas, alpha)
+                cell.setInvalidatesParent(false)
+                canvas.restore()
+            }
+        }
+    }
+
     private val drawingGroups = ArrayList<MessageObject.GroupedMessages>()
 
     // grouped cells skip their own bubble, so the list draws one background per album

@@ -182,6 +182,7 @@ class FeedActivity @JvmOverloads constructor(
                 FeedAlbumLayout.drawGroupBackgrounds(this, canvas)
                 super.dispatchDraw(canvas)
                 FeedAlbumLayout.drawGroupNames(this, canvas)
+                FeedAlbumLayout.drawGroupForeground(this, canvas)
             }
         }
         recycler.setItemAnimator(null)
