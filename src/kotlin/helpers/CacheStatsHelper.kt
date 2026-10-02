@@ -14,7 +14,7 @@ import org.telegram.messenger.MessagesStorage
 import java.io.File
 
 object CacheStatsHelper {
-    enum class Kind { DELETED, EDITS, REACTIONS, MEDIA, PRESENCE, FEED, RECENT, PILLS, TEMP, LOGS }
+    enum class Kind { DELETED, EDITS, REACTIONS, MEDIA, PRESENCE, RECENT, PILLS, TEMP, LOGS }
 
     data class Stat(val kind: Kind, val count: Int, val size: Long)
 
@@ -27,7 +27,6 @@ object CacheStatsHelper {
             val reactions = InuDatabaseHelper.getTableStat(db, "inu_deleted_reactions", null, 40L)
             val recent = InuDatabaseHelper.getTableStat(db, "inu_recent_dialogs", null, 16L)
             val presence = InuDatabaseHelper.getPresenceLogsStats(db)
-            val feed = InuDatabaseHelper.getFeedCacheStat(db, account)
             val media = SavedMessagesHelper.getSavedMediaDir().let(::filesIn)
             val temp = tempDirs().flatMap(::filesIn)
             val logs = logFiles()
@@ -38,7 +37,6 @@ object CacheStatsHelper {
                 Stat(Kind.REACTIONS, reactions.count, reactions.estimatedSize),
                 Stat(Kind.MEDIA, media.size, media.sumOf { it.length() }),
                 Stat(Kind.PRESENCE, presence.count, presence.estimatedSize),
-                Stat(Kind.FEED, feed.count, feed.estimatedSize),
                 Stat(Kind.RECENT, recent.count, recent.estimatedSize),
                 Stat(Kind.PILLS, pills.size, pills.sumOf { it.length.toLong() }),
                 Stat(Kind.TEMP, temp.size, temp.sumOf { it.length() }),
@@ -58,7 +56,6 @@ object CacheStatsHelper {
                 SavedMessagesHelper.getSavedMediaDir().listFiles()?.filter { f -> f.isFile && f.name != ".nomedia" }?.forEach { f -> f.delete() }
             }
             Kind.PRESENCE -> PresenceHelper.clearLogs(account, null, onDone)
-            Kind.FEED -> onStorage(account, onDone) { InuDatabaseHelper.clearFeedCache(it, account) }
             Kind.RECENT -> {
                 RecentChatsHelper.clearRecentDialogs(account)
                 onDone.run()

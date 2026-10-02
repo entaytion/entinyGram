@@ -1,0 +1,1544 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 2 Oct 2026 16:54:14 +0300
+Subject: Embed the feed into ChatActivity search mode
+
+---
+ .../telegram/messenger/MessagesStorage.java   |  30 +-
+ .../messenger/NotificationCenter.java         |   1 +
+ .../telegram/tgnet/ConnectionsManager.java    |   1 +
+ .../ui/Adapters/MessagesSearchAdapter.java    |   3 +
+ .../telegram/ui/Cells/ChatMessageCell.java    |   2 +-
+ .../java/org/telegram/ui/ChatActivity.java    | 861 +++++++++++++++++-
+ .../ui/Components/ChatAvatarContainer.java    |  15 +
+ .../org/telegram/ui/MainTabsActivity.java     |  41 +-
+ 8 files changed, 904 insertions(+), 50 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -4936,7 +4936,17 @@ public class MessagesStorage extends BaseController {
+         });
+     }
+ 
++    private int resolveFeedMessageId(long dialogId, int messageId) {
++        desu.inugram.helpers.feed.FeedController feedController = desu.inugram.helpers.feed.FeedController.peekInstance(currentAccount);
++        return feedController == null ? messageId : feedController.resolveRealMessageId(dialogId, messageId);
++    }
++
+     public void toggleTodo(long dialogId, int messageId, int taskId, boolean enable, long send_as) {
++        final int feedMid = resolveFeedMessageId(dialogId, messageId);
++        if (feedMid != messageId) {
++            toggleTodo(dialogId, feedMid, taskId, enable, send_as);
++            return;
++        }
+         final long myself = getUserConfig().getClientUserId();
+         final int date = getConnectionsManager().getCurrentTime();
+         storageQueue.postRunnable(() -> {
+@@ -5516,6 +5526,11 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void updateMessageVoiceTranscriptionOpen(long dialogId, int msgId, TLRPC.Message saveFromMessage) {
++        final int feedMid = resolveFeedMessageId(dialogId, msgId);
++        if (feedMid != msgId) {
++            updateMessageVoiceTranscriptionOpen(dialogId, feedMid, saveFromMessage);
++            return;
++        }
+         storageQueue.postRunnable(() -> {
+             SQLitePreparedStatement state = null;
+             try {
+@@ -5564,6 +5579,11 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void updateMessageVoiceTranscription(long dialogId, int messageId, String text, long transcriptionId, boolean isFinal) {
++        final int feedMid = resolveFeedMessageId(dialogId, messageId);
++        if (feedMid != messageId) {
++            updateMessageVoiceTranscription(dialogId, feedMid, text, transcriptionId, isFinal);
++            return;
++        }
+         storageQueue.postRunnable(() -> {
+             SQLitePreparedStatement state = null;
+             try {
+@@ -5604,6 +5624,11 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void updateMessageVoiceTranscription(long dialogId, int messageId, String text, TLRPC.Message saveFromMessage) {
++        final int feedMid = resolveFeedMessageId(dialogId, messageId);
++        if (feedMid != messageId) {
++            updateMessageVoiceTranscription(dialogId, feedMid, text, saveFromMessage);
++            return;
++        }
+         storageQueue.postRunnable(() -> {
+             SQLitePreparedStatement state = null;
+             try {
+@@ -5653,11 +5678,12 @@ public class MessagesStorage extends BaseController {
+     }
+ 
+     public void updateMessageCustomParams(long dialogId, TLRPC.Message saveFromMessage) {
++        final int mid = resolveFeedMessageId(dialogId, saveFromMessage.id);
+         storageQueue.postRunnable(() -> {
+             SQLitePreparedStatement state = null;
+             try {
+                 database.beginTransaction();
+-                TLRPC.Message message = getMessageWithCustomParamsOnlyInternal(saveFromMessage.id, dialogId);
++                TLRPC.Message message = getMessageWithCustomParamsOnlyInternal(mid, dialogId);
+                 MessageCustomParamsHelper.copyParams(saveFromMessage, message);
+ 
+                 for (int i = 0; i < 2; i++) {
+@@ -5673,7 +5699,7 @@ public class MessagesStorage extends BaseController {
+                     } else {
+                         state.bindNull(1);
+                     }
+-                    state.bindInteger(2, saveFromMessage.id);
++                    state.bindInteger(2, mid);
+                     state.bindLong(3, dialogId);
+                     state.step();
+                     state.dispose();
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationCenter.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationCenter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationCenter.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationCenter.java
+@@ -383,6 +383,7 @@ public class NotificationCenter {
+     public static final int webBrowserSettingsUpdate = totalEvents++;
+     public static final int communityPendingRequestsUpdate = totalEvents++;
+     public static final int communitySwitchedCollapsed = totalEvents++;
++    public static final int feedNeedReload = totalEvents++;
+ 
+     public static boolean alreadyLogged;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -398,6 +398,7 @@ public class ConnectionsManager extends BaseController {
+         if (desu.inugram.helpers.security.GhostHelper.processSendRequest(object, currentAccount, onComplete, onCompleteTimestamp)) {
+             return;
+         }
++        desu.inugram.helpers.feed.FeedRequestNormalizer.normalize(currentAccount, object);
+         try {
+             NativeByteBuffer buffer = new NativeByteBuffer(object.getObjectSize());
+             object.serializeToStream(buffer);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MessagesSearchAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MessagesSearchAdapter.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MessagesSearchAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/MessagesSearchAdapter.java
+@@ -149,6 +149,9 @@ public class MessagesSearchAdapter extends RecyclerListView.SelectionAdapter imp
+ 
+     @Override
+     public void notifyDataSetChanged() {
++        if (searchType == desu.inugram.helpers.feed.FeedMessageUtils.SEARCH_TYPE_FEED) {
++            return;
++        }
+         final int oldItemsCount = getItemCount();
+ 
+         containsStories = false;//storiesList != null && storiesList.getCount() > 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -7287,7 +7287,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             } else {
+                 linked = messageObject.isLinkedToChat(linkedChatId);
+             }
+-            if ((hasDiscussion && linked || isRepliesChat && !messageObject.isOutOwner()) && (currentPosition == null || (currentPosition.flags & MessageObject.POSITION_FLAG_BOTTOM) != 0) && messageObject.searchType == 0 && !messageObject.isEphemeral()) {
++            if ((hasDiscussion && linked || isRepliesChat && !messageObject.isOutOwner()) && (currentPosition == null || (currentPosition.flags & MessageObject.POSITION_FLAG_BOTTOM) != 0) && (messageObject.searchType == 0 || messageObject.searchType == desu.inugram.helpers.feed.FeedMessageUtils.SEARCH_TYPE_FEED) && !messageObject.isEphemeral()) {
+                 int commentCount = getRepliesCount();
+                 if (!messageObject.shouldDrawWithoutBackground() && !messageObject.isAnimatedEmoji()) {
+                     drawCommentButton = true;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -692,6 +692,15 @@ public class ChatActivity extends BaseFragment implements
+     public static final int SEARCH_CHANNEL_POSTS = 3;
+     private int searchType;
+ 
++    private desu.inugram.helpers.feed.FeedChatIntegration feedIntegration;
++    private boolean hasMainTabs;
++    private Runnable glassSourceInvalidationCallback;
++    private final Runnable loadNextNewerFeedPage = () -> {
++        if (!isFinished) {
++            loadNewerFeed(true);
++        }
++    };
++
+     public TL_account.TL_businessChatLink businessLink = null;
+ 
+     public String quickReplyShortcut;
+@@ -1846,7 +1855,7 @@ public class ChatActivity extends BaseFragment implements
+             }
+             wasManualScroll = true;
+             if (view instanceof ChatActionCell && ((ChatActionCell) view).getMessageObject().isDateObject) {
+-                if (isInsideContainer) {
++                if (isInsideContainer || isFeedSearch()) {
+                     return;
+                 }
+                 Bundle bundle = new Bundle();
+@@ -2862,10 +2871,13 @@ public class ChatActivity extends BaseFragment implements
+             forceEmptyHistory();
+         } else if (chatMode == MODE_SEARCH) {
+             searchType = arguments.getInt("searchType", 0);
+-            searchingHashtag = arguments.getString("searchHashtag", null);
+-            searchingQuery = searchingHashtag;
+-            if (searchType == 0 || searchingHashtag == null) {
+-                return false;
++            hasMainTabs = arguments.getBoolean("hasMainTabs", false);
++            if (searchType != desu.inugram.helpers.feed.FeedMessageUtils.SEARCH_TYPE_FEED) {
++                searchingHashtag = arguments.getString("searchHashtag", null);
++                searchingQuery = searchingHashtag;
++                if (searchType == 0 || searchingHashtag == null) {
++                    return false;
++                }
+             }
+         } else {
+             return false;
+@@ -3200,7 +3212,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     protected void updateSearchingHashtag(String hashtag) {
+-        if (chatMode != MODE_SEARCH) {
++        if (chatMode != MODE_SEARCH || isFeedSearch()) {
+             return;
+         }
+         if (!TextUtils.equals(searchingHashtag, hashtag)) {
+@@ -3273,7 +3285,7 @@ public class ChatActivity extends BaseFragment implements
+         final Runnable load = () -> {
+             waitingForLoad.add(lastLoadIndex);
+             if (chatMode == MODE_SEARCH) {
+-                HashtagSearchController.getInstance(currentAccount).searchHashtag(searchingHashtag, classGuid, searchType, lastLoadIndex++);
++                loadMoreSearchResults();
+             } else if (startLoadFromDate != 0) {
+                 getMessagesController().loadMessages(dialog_id, mergeDialogId, false, 30, 0, startLoadFromDate, true, 0, classGuid, 4, 0, chatMode, threadMessageId, replyMaxReadId, lastLoadIndex++, isTopic);
+             } else if (startLoadFromMessageId != 0 && (!isThreadChat() || startLoadFromMessageId == highlightMessageId || isTopic)) {
+@@ -3377,6 +3389,10 @@ public class ChatActivity extends BaseFragment implements
+             commentsMessagesObserver = null;
+         }
+         ReactionsEffectOverlay.dismissByFragment(this);
++        AndroidUtilities.cancelRunOnUIThread(loadNextNewerFeedPage);
++        if (feedIntegration != null) {
++            feedIntegration.destroy();
++        }
+         if (messageMetricsView != null) {
+             messageMetricsView.finish();
+         }
+@@ -3554,7 +3570,7 @@ public class ChatActivity extends BaseFragment implements
+                 if (messageObject == null) {
+                     return;
+                 }
+-                ReplyQuote quote = ReplyQuote.from(messageObject, start, end);
++                ReplyQuote quote = ReplyQuote.from(desu.inugram.helpers.feed.FeedMessageUtils.getForwardingMessageObject(chatActivity.getCurrentAccount(), chatActivity.isFeedSearch(), messageObject), start, end);
+                 if (quote.getText() == null) {
+                     return;
+                 }
+@@ -3648,7 +3664,7 @@ public class ChatActivity extends BaseFragment implements
+             actionBar.setTitleColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
+             actionBar.setSubtitleColor(getThemedColor(Theme.key_actionBarActionModeDefaultIcon));
+         }
+-        if (isInsideContainer) {
++        if (isInsideContainer && !isFeedSearch()) {
+             actionBar.setVisibility(View.GONE);
+         }
+         actionBarBackgroundPaint.setColor(getThemedColor(Theme.key_actionBarDefault));
+@@ -6999,7 +7015,9 @@ public class ChatActivity extends BaseFragment implements
+                     showFloatingTopicView(true);
+                 }
+                 checkScrollForLoad(true);
+-                if (firstVisibleItem != RecyclerView.NO_POSITION) {
++                if (isFeedSearch()) {
++                    feedIntegration().onScrolled(dy);
++                } else if (firstVisibleItem != RecyclerView.NO_POSITION) {
+                     int totalItemCount = chatAdapter.getItemCount();
+                     if (firstVisibleItem == 0 && forwardEndReached[0]) {
+                         if (dy >= 0) {
+@@ -7215,7 +7233,7 @@ public class ChatActivity extends BaseFragment implements
+         floatingDateView.setInvalidateColors(true);
+         contentView.addView(floatingDateView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 4, 0, 0));
+         floatingDateView.setOnActionClickListener(view -> {
+-            if (floatingDateView.getAlpha() == 0 || actionBar.isActionModeShowed() || isReport()) {
++            if (floatingDateView.getAlpha() == 0 || actionBar.isActionModeShowed() || isReport() || isFeedSearch()) {
+                 return;
+             }
+             Calendar calendar = Calendar.getInstance();
+@@ -7769,7 +7787,7 @@ public class ChatActivity extends BaseFragment implements
+                         if (!loading && !endReached[0]) {
+                             loading = true;
+                             waitingForLoad.add(lastLoadIndex);
+-                            HashtagSearchController.getInstance(currentAccount).searchHashtag(searchingHashtag, classGuid, searchType, lastLoadIndex++);
++                            loadMoreSearchResults();
+                         }
+                     } else {
+                         getMediaDataController().loadMoreSearchMessages(true);
+@@ -7988,7 +8006,7 @@ public class ChatActivity extends BaseFragment implements
+                 super.setVisibility(visibility);
+                 bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, visibility == VISIBLE, getMeasuredWidth() > 0 && !restoringFirstViewPageVisibility);
+                 if (chatInputViewsContainer != null) {
+-                    chatInputViewsContainer.drawInputBackground = !isIosInputAppearance() || visibility != View.VISIBLE;
++                    chatInputViewsContainer.drawInputBackground = !isFeedSearch() && (!isIosInputAppearance() || visibility != View.VISIBLE);
+                     chatInputViewsContainer.invalidate();
+                 }
+             }
+@@ -8194,7 +8212,7 @@ public class ChatActivity extends BaseFragment implements
+             chatActivityEnterView.setFieldText(textToSet);
+             textToSet = null;
+         }
+-        if (inPreviewMode || isInsideContainer) {
++        if (inPreviewMode || isInsideContainer || isFeedSearch()) {
+             chatActivityEnterView.setVisibility(View.INVISIBLE);
+         }
+         if (!ChatObject.isChannel(currentChat) || currentChat.megagroup) {
+@@ -8208,7 +8226,7 @@ public class ChatActivity extends BaseFragment implements
+         final boolean flatInput = NonIslandHelper.chatElements() && !chatActivityEnterView.isIosInputAppearance();
+         chatInputBubbleContainer.addView(chatActivityEnterView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, flatInput ? 0 : 7, 0, flatInput ? 0 : 7, flatInput ? -9 : 0));
+         chatActivityEnterView.setInputBarGlassFactory(glassBackgroundDrawableFactory, blurredBackgroundColorProvider, blurredBackgroundColorProviderWhiteSend, blurredBackgroundColorProviderAccentSend);
+-        chatInputViewsContainer.drawInputBackground = !chatActivityEnterView.isIosInputAppearance() || chatActivityEnterView.getVisibility() != View.VISIBLE;
++        chatInputViewsContainer.drawInputBackground = !isFeedSearch() && (!chatActivityEnterView.isIosInputAppearance() || chatActivityEnterView.getVisibility() != View.VISIBLE);
+ 
+         int chatListIndex = contentView.indexOfChild(chatListView);
+         chatListIndex = chatListIndex < 0 ? contentView.getChildCount() : (chatListIndex + 1);
+@@ -9104,7 +9122,7 @@ public class ChatActivity extends BaseFragment implements
+             .setRadius(dp(NonIslandHelper.chatElements() ? 0 : 18))
+             .setPadding(dp(NonIslandHelper.chatElements() ? 0 : 7)));
+ 
+-        if (chatMode == MODE_SEARCH) {
++        if (chatMode == MODE_SEARCH && !isFeedSearch()) {
+             animatorSearchResultAsListVisibility.setValue(true, false);
+             searchExpandList.setText(LocaleController.getString(R.string.SearchAsChat), false);
+             updateSearchListEmptyView();
+@@ -10798,13 +10816,20 @@ public class ChatActivity extends BaseFragment implements
+             scrollToMessageId(createUnreadMessageAfterId, 0, false, returnToLoadIndex, true, 0, null, inCaseLoading);
+         } else if (returnToMessageId > 0) {
+             scrollToMessageId(returnToMessageId, 0, true, returnToLoadIndex, true, 0, null, inCaseLoading);
+-        } else {
++        } else if (!isFeedSearch()) {
+             scrollToLastMessage(true, !forceScrollToMessageBottom, inCaseLoading);
+             forceScrollToMessageBottom = false;
+             if (!pinnedMessageIds.isEmpty()) {
+                 forceScrollToFirst = true;
+                 forceNextPinnedMessageId = pinnedMessageIds.get(0);
+             }
++        } else if (feedIntegration().scrollToUnreadDividerIfAbove()) {
++            forceScrollToMessageBottom = false;
++        } else {
++            feedIntegration().settleUnreadDivider();
++            scrollToLastMessage(true, false, inCaseLoading);
++            feedIntegration().onScrollAnimationFinished();
++            forceScrollToMessageBottom = false;
+         }
+     }
+ 
+@@ -12592,6 +12617,21 @@ public class ChatActivity extends BaseFragment implements
+         }
+     }
+ 
++    private TLRPC.MessageReplies feedPostReplies(MessageObject message, MessageObject.GroupedMessages group) {
++        if (message != null && message.messageOwner.replies != null) {
++            return message.messageOwner.replies;
++        }
++        if (group != null) {
++            for (int a = 0; a < group.messages.size(); a++) {
++                TLRPC.MessageReplies replies = group.messages.get(a).messageOwner.replies;
++                if (replies != null) {
++                    return replies;
++                }
++            }
++        }
++        return null;
++    }
++
+     public MessageObject.GroupedMessages getValidGroupedMessage(MessageObject message) {
+         MessageObject.GroupedMessages groupedMessages = null;
+         if (message.getGroupId() != 0) {
+@@ -13993,7 +14033,7 @@ public class ChatActivity extends BaseFragment implements
+                 if (!endReached[0]) {
+                     loading = true;
+                     waitingForLoad.add(lastLoadIndex);
+-                    HashtagSearchController.getInstance(currentAccount).searchHashtag(searchingHashtag, classGuid, searchType, lastLoadIndex++);
++                    loadMoreSearchResults();
+                 }
+             }
+ 
+@@ -16109,7 +16149,7 @@ public class ChatActivity extends BaseFragment implements
+                             if (checkTextureViewPosition || PipRoundVideoView.getInstance() != null) {
+                                 MediaController.getInstance().setCurrentVideoVisible(false);
+                             } else if (needScroll) {
+-                                scrollToMessageId(messageObject.getId(), 0, false, 0, true, 0);
++                                scrollToMessageId(desu.inugram.helpers.feed.FeedMessageUtils.getPlaybackScrollMessageId(isFeedSearch(), dialog_id, messageObject), 0, false, 0, true, 0);
+                             }
+                         }
+                     }
+@@ -16329,6 +16369,13 @@ public class ChatActivity extends BaseFragment implements
+                     top - (int) chatListViewPaddingTop
+                 );
+ 
++                if (isFeedSearch() && desu.inugram.helpers.feed.FeedMessageUtils.isPostRow(messageObject)) {
++                    feedIntegration().onPostCellVisible(
++                            messageObject,
++                            top >= clipTopFinal && bottom <= clipBottomFinal,
++                            view.getMeasuredHeight() > clipBottomFinal - clipTopFinal);
++                }
++
+                 if (messageObject.isSponsored()) {
+                     final float rTop = ViewPositionWatcher.computeYCoordinateInParent(messageCell, contentView);
+                     final boolean isVisible = messageObject.viewsReloaded || rTop < contentView.getMeasuredHeight() - dp(9 + 32) - windowInsetsStateHolder.getAnimatedMaxBottomInset() - getTopicTabsSideSize(TopicsTabsView.Position.BOTTOM) - inputIslandHeightCurrent;
+@@ -16897,6 +16944,9 @@ public class ChatActivity extends BaseFragment implements
+         if (progressView2 != null) {
+             progressView2.invalidate();
+         }
++        if (isFeedSearch()) {
++            feedIntegration().onVisiblePartInvalidated();
++        }
+     }
+ 
+     private float getServiceTop(View view) {
+@@ -17334,7 +17384,7 @@ public class ChatActivity extends BaseFragment implements
+         }
+         boolean show = canShowPagedownButton && !hasTextSelection() && !chatActivityEnterView.isRecordingAudioVideo() && !isInsideContainer && (!searching || getMediaDataController().searchResultMessages.isEmpty());
+         if (show) {
+-            if (animated && (openAnimationStartTime == 0 || SystemClock.elapsedRealtime() < openAnimationStartTime + 150)) {
++            if (animated && (openAnimationStartTime == 0 && !isFeedSearch() || openAnimationStartTime != 0 && SystemClock.elapsedRealtime() < openAnimationStartTime + 150)) {
+                 animated = false;
+             }
+             pagedownButtonShowedByScroll = false;
+@@ -19210,7 +19260,8 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     private void checkActionBarMenu(boolean animated) {
+-        if (currentEncryptedChat != null && !(currentEncryptedChat instanceof TLRPC.TL_encryptedChat) ||
++        if (isFeedSearch() ||
++                currentEncryptedChat != null && !(currentEncryptedChat instanceof TLRPC.TL_encryptedChat) ||
+                 currentChat != null && (chatMode != 0 || threadMessageId != 0 || chatInfo == null || chatInfo.ttl_period == 0) ||
+                 currentUser != null && (UserObject.isDeleted(currentUser) || currentEncryptedChat == null && (userInfo == null || userInfo.ttl_period == 0))) {
+             if (timeItem2 != null) {
+@@ -19789,7 +19840,8 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     public void updateTitle(boolean animated) {
+-        if (avatarContainer == null) {
++        updateFeedTabBackButton();
++        if (avatarContainer == null || isFeedSearch()) {
+             return;
+         }
+         if (chatMode == MODE_SUGGESTIONS && currentChat != null) {
+@@ -22145,6 +22197,18 @@ public class ChatActivity extends BaseFragment implements
+         if (chatMode == MODE_SEARCH) {
+             updateSearchUpDownButtonVisibility(true);
+         }
++        if (isFeedSearch()) {
++            boolean preserveScroll = feedIntegration().consumePreserveScrollLoad(queryLoadIndex);
++            if (preserveScroll) {
++                feedIntegration().beforePreservedNewerMessagesInserted();
++            }
++            reconcileFeedList();
++            if (preserveScroll) {
++                feedIntegration().afterPreservedNewerMessagesInserted();
++            }
++            feedIntegration().onMessagesLoaded();
++            feedIntegration().loadReplyMessages(messArr, chatMode, classGuid);
++        }
+         if (startReplyTo != 0) {
+             MessageObject msg = messagesDict[0].get(startReplyTo);
+             if (msg != null) {
+@@ -22352,6 +22416,13 @@ public class ChatActivity extends BaseFragment implements
+             long did = (Long) args[0];
+             ArrayList<MessageObject> arr = (ArrayList<MessageObject>) args[1];
+             if (isInsideContainer) return;
++            if (isFeedSearch()) {
++                if (!(Boolean) args[2] && desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).isIncludedChannelPost(did)) {
++                    AndroidUtilities.cancelRunOnUIThread(loadNextNewerFeedPage);
++                    AndroidUtilities.runOnUIThread(loadNextNewerFeedPage);
++                }
++                return;
++            }
+             if (did == dialog_id) {
+                 boolean scheduled = (Boolean) args[2];
+                 int mode = (Integer) args[3];
+@@ -22563,6 +22634,16 @@ public class ChatActivity extends BaseFragment implements
+             }
+         } else if (id == NotificationCenter.historyCleared) {
+             long did = (Long) args[0];
++            if (isFeedSearch()) {
++                if (!DialogObject.isChatDialog(did)) {
++                    return;
++                }
++                int clearedMaxId = (Integer) args[1];
++                ArrayList<Integer> localRowIds = desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).deleteHistory(did, clearedMaxId);
++                desu.inugram.helpers.feed.FeedChatIntegration.mergeDeletedIds(localRowIds, feedIntegration().collectLocalRowIds(did, null, clearedMaxId));
++                processFeedDeletedMessages(localRowIds, 0, false, false);
++                return;
++            }
+             if (did != dialog_id) {
+                 return;
+             }
+@@ -22654,6 +22735,19 @@ public class ChatActivity extends BaseFragment implements
+             }
+             ArrayList<Integer> markAsDeletedMessages = (ArrayList<Integer>) args[0];
+             long channelId = (Long) args[1];
++            if (isFeedSearch()) {
++                if (channelId == 0) {
++                    return;
++                }
++                long feedDialogId = channelId > 0 ? -channelId : channelId;
++                ArrayList<Integer> localRowIds = desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).deleteMessages(feedDialogId, markAsDeletedMessages);
++                desu.inugram.helpers.feed.FeedChatIntegration.mergeDeletedIds(localRowIds, feedIntegration().collectLocalRowIds(feedDialogId, markAsDeletedMessages, 0));
++                if (localRowIds.isEmpty()) {
++                    return;
++                }
++                markAsDeletedMessages = localRowIds;
++                channelId = 0;
++            }
+             boolean update = args.length > 2 && (boolean) args[2];
+             boolean sent = args.length > 3 && (boolean) args[3];
+             int scheduledMessageId = args.length > 5 ? (int) args[5] : 0;
+@@ -22681,7 +22775,11 @@ public class ChatActivity extends BaseFragment implements
+                 scheduleNowDialog.dismiss();
+                 scheduleNowDialog = null;
+             }
+-            processDeletedMessages(markAsDeletedMessages, channelId, sent, !movedToScheduled);
++            if (isFeedSearch()) {
++                processFeedDeletedMessages(markAsDeletedMessages, channelId, sent, !movedToScheduled);
++            } else {
++                processDeletedMessages(markAsDeletedMessages, channelId, sent, !movedToScheduled);
++            }
+             if (movedToScheduled && chatMode != ChatActivity.MODE_SCHEDULED) {
+                 getMessagesController().forceNoReload(dialog_id, ChatActivity.MODE_SCHEDULED);
+                 openScheduledMessages(scheduledMessageId, true);
+@@ -23516,7 +23614,7 @@ public class ChatActivity extends BaseFragment implements
+             long did = (Long) args[0];
+             doOnIdle(() -> {
+                 int msgId = (Integer) args[1];
+-                if (filteredMessagesDict != null) {
++                if (!isFeedSearch() && filteredMessagesDict != null) {
+                     MessageObject messageObject = filteredMessagesDict.get(msgId);
+                     if (messageObject != null) {
+                         MessageObject.updateReactions(messageObject.messageOwner, (TLRPC.TL_messageReactions) args[2]);
+@@ -23524,12 +23622,10 @@ public class ChatActivity extends BaseFragment implements
+                         messageObject.reactionsChanged = true;
+                     }
+                 }
+-                MessageObject messageObject = messagesDict[did == dialog_id ? 0 : 1].get(msgId);
++                MessageObject messageObject = getMessageObjectForUpdate(did, msgId);
+                 if (messageObject != null) {
+                     MessageObject.updateReactions(messageObject.messageOwner, (TLRPC.TL_messageReactions) args[2]);
+-                    messageObject.forceUpdate = true;
+-                    messageObject.reactionsChanged = true;
+-                    updateMessageAnimated(messageObject, true);
++                    updateChangedMessageObject(messageObject, true);
+                 }
+             });
+         } else if (id == NotificationCenter.savedReactionTagsUpdate) {
+@@ -24109,6 +24205,11 @@ public class ChatActivity extends BaseFragment implements
+             LongSparseArray<SparseIntArray> channelForwards = (LongSparseArray<SparseIntArray>) args[1];
+             LongSparseArray<SparseArray<TLRPC.MessageReplies>> channelReplies = (LongSparseArray<SparseArray<TLRPC.MessageReplies>>) args[2];
+             boolean addingReplies = (Boolean) args[3];
++            if (isFeedSearch()) {
++                updateFeedRows(desu.inugram.helpers.feed.FeedController.getInstance(currentAccount)
++                        .updateViews(channelViews, channelForwards, channelReplies, addingReplies), false);
++                return;
++            }
+             boolean updated = false;
+             LongSparseArray<MessageObject.GroupedMessages> newGroups = null;
+             ArrayList<Integer> updatedRows = null;
+@@ -24842,6 +24943,9 @@ public class ChatActivity extends BaseFragment implements
+ 
+             int count = (Integer) args[1];
+             endReached[0] = (Boolean) args[2];
++            if (isFeedSearch()) {
++                return;
++            }
+             int mask = (Integer) args[3];
+             hashtagSearchSelectedIndex = (Integer) args[4];
+             int jumpToMessageId = (Integer) args[5];
+@@ -27101,6 +27205,9 @@ public class ChatActivity extends BaseFragment implements
+             desu.inugram.helpers.translate.TranslateHelper.carryTranslation(old, messageObject);
+ 
+             addToPolls(messageObject, old);
++            if (isFeedSearch()) {
++                desu.inugram.helpers.feed.FeedMessageUtils.copyTranslationState(old, messageObject);
++            }
+             if (MediaController.getInstance().isPlayingMessage(messageObject)) {
+                 MessageObject player = MediaController.getInstance().getPlayingMessageObject();
+                 messageObject.audioProgress = player.audioProgress;
+@@ -28349,6 +28456,16 @@ public class ChatActivity extends BaseFragment implements
+             bottomChannelButtonsLayout.setVisibility(View.INVISIBLE);
+             chatActivityEnterView.setFieldFocused(false);
+             chatActivityEnterView.setVisibility(View.INVISIBLE);
++        } else if (isFeedSearch()) {
++            bottomViewsVisibilityController.setViewVisible(MESSAGE_SEARCH_CONTAINER, false, false);
++            bottomViewsVisibilityController.setViewVisible(MESSAGE_INPUT_CONTAINER, false, false);
++            bottomViewsVisibilityController.setViewVisible(BOTTOM_OVERLAY_TEXT_CONTAINER, false, false);
++            bottomViewsVisibilityController.setViewVisible(BOTTOM_OVERLAY_CHAT_CONTAINER, false, false);
++            bottomViewsVisibilityController.setViewVisible(MESSAGE_ACTION_CONTAINER, false, false);
++            bottomChannelButtonsLayout.setVisibility(View.GONE);
++            chatActivityEnterView.setFieldFocused(false);
++            chatActivityEnterView.setVisibility(View.GONE);
++            invalidateChatListViewTopPadding();
+         } else if (bottomOverlayLinks || forceVisible) {
+             bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
+             chatActivityEnterView.setVisibility(View.INVISIBLE);
+@@ -30350,6 +30467,9 @@ public class ChatActivity extends BaseFragment implements
+ 
+         paused = false;
+         pausedOnLastMessage = false;
++        if (isFeedSearch() && feedIntegration != null) {
++            feedIntegration.onHostResumed();
++        }
+         checkScrollForLoad(false);
+         if (wasPaused) {
+             wasPaused = false;
+@@ -34372,6 +34492,10 @@ public class ChatActivity extends BaseFragment implements
+                 break;
+             }
+             case OPTION_COPY_LINK: {
++                if (isFeedSearch()) {
++                    desu.inugram.helpers.feed.FeedMessageUtils.copyFeedPostLink(ChatActivity.this, selectedObject);
++                    break;
++                }
+                 TLRPC.TL_channels_exportMessageLink req = new TLRPC.TL_channels_exportMessageLink();
+                 if (selectedObject == replyingMessageObject && isComments) {
+                     req.id = replyOriginalMessageId;
+@@ -34800,9 +34924,11 @@ public class ChatActivity extends BaseFragment implements
+         ArrayList<MessageObject> fmessages = new ArrayList<>();
+         if (forwardingMessage != null) {
+             if (forwardingMessageGroup != null) {
+-                fmessages.addAll(forwardingMessageGroup.messages);
++                for (int i = 0; i < forwardingMessageGroup.messages.size(); i++) {
++                    addForwardingMessageObject(fmessages, forwardingMessageGroup.messages.get(i));
++                }
+             } else {
+-                fmessages.add(forwardingMessage);
++                addForwardingMessageObject(fmessages, forwardingMessage);
+             }
+         } else {
+             for (int a = 1; a >= 0; a--) {
+@@ -34815,7 +34941,7 @@ public class ChatActivity extends BaseFragment implements
+                     Integer id = ids.get(b);
+                     MessageObject messageObject = selectedMessagesIds[a].get(id);
+                     if (messageObject != null) {
+-                        fmessages.add(messageObject);
++                        addForwardingMessageObject(fmessages, messageObject);
+                     }
+                 }
+             }
+@@ -35291,7 +35417,12 @@ public class ChatActivity extends BaseFragment implements
+ 
+                 if (messageObject != null && (!messageObject.deleted || cell.linkedChatId != linkedChatId) && !suppressUpdateMessageObject) {
+                     cell.setIsUpdating(true);
+-                    cell.linkedChatId = chatInfo != null ? chatInfo.linked_chat_id : 0;
++                    if (isFeedSearch()) {
++                        TLRPC.MessageReplies replies = feedPostReplies(messageObject, getValidGroupedMessage(messageObject));
++                        cell.linkedChatId = replies != null ? replies.channel_id : 0;
++                    } else {
++                        cell.linkedChatId = chatInfo != null ? chatInfo.linked_chat_id : 0;
++                    }
+                     cell.setMessageObject(messageObject, cell.getCurrentMessagesGroup(), cell.isPinnedBottom(), cell.isPinnedTop(), cell.isFirstInChat(), cell.isLastInChatList());
+                     cell.setIsUpdating(false);
+                 }
+@@ -35537,7 +35668,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     public void openHashtagSearch(String hashtag, boolean forcePublic) {
+-        if (hashtag.isEmpty() || (!hashtag.startsWith("#") && !hashtag.startsWith("$"))) {
++        if (isFeedSearch() || hashtag.isEmpty() || (!hashtag.startsWith("#") && !hashtag.startsWith("$"))) {
+             return;
+         }
+ 
+@@ -35762,6 +35893,15 @@ public class ChatActivity extends BaseFragment implements
+ 
+     private void updateSearchListEmptyView() {
+         createSearchHashtagViewsIfNeeded();
++        if (isFeedSearch()) {
++            desu.inugram.helpers.feed.FeedController feedController = desu.inugram.helpers.feed.FeedController.getInstance(currentAccount);
++            hashtagSearchEmptyView.title.setText(LocaleController.getString(
++                    !feedController.hasChannels() || feedController.hasIncludedChannels()
++                            ? R.string.InuFeedEmpty : R.string.InuFeedAllExcluded));
++            hashtagSearchEmptyView.subtitle.setVisibility(View.GONE);
++            messagesSearchListView.setEmptyView(hashtagSearchEmptyView);
++            return;
++        }
+         if (searchingHashtag != null) {
+             hashtagSearchEmptyView.subtitle.setText(LocaleController.formatString(R.string.HashtagSearchEmptyViewFilteredSubtitle, searchingHashtag));
+             messagesSearchListView.setEmptyView(hashtagSearchEmptyView);
+@@ -35816,7 +35956,579 @@ public class ChatActivity extends BaseFragment implements
+         return currentEncryptedChat == null && (bottomChannelButtonsLayout == null || bottomChannelButtonsLayout.getVisibility() != View.VISIBLE) && (!isThreadChat() || isTopic);
+     }
+ 
++    public boolean isFeedSearch() {
++        return chatMode == MODE_SEARCH && searchType == desu.inugram.helpers.feed.FeedMessageUtils.SEARCH_TYPE_FEED;
++    }
++
++    private desu.inugram.helpers.feed.FeedChatIntegration feedIntegration() {
++        if (feedIntegration == null) {
++            feedIntegration = new desu.inugram.helpers.feed.FeedChatIntegration(currentAccount, new desu.inugram.helpers.feed.FeedChatIntegration.Host() {
++                @Override
++                public boolean canScrollToNewer() {
++                    return chatListView != null && chatListView.canScrollVertically(1);
++                }
++
++                @Override
++                public desu.inugram.helpers.feed.FeedChatIntegration.ScrollAnchor captureScrollAnchor() {
++                    if (chatListView == null || chatAdapter == null) {
++                        return null;
++                    }
++                    for (int i = 0; i < chatListView.getChildCount(); i++) {
++                        View child = chatListView.getChildAt(i);
++                        MessageObject message = child instanceof ChatMessageCell
++                                ? ((ChatMessageCell) child).getMessageObject()
++                                : child instanceof ChatActionCell ? ((ChatActionCell) child).getMessageObject() : null;
++                        if (desu.inugram.helpers.feed.FeedMessageUtils.isPostRow(message)) {
++                            return new desu.inugram.helpers.feed.FeedChatIntegration.ScrollAnchor(message, getScrollingOffsetForView(child));
++                        }
++                    }
++                    return null;
++                }
++
++                @Override
++                public void deleteRows(ArrayList<Integer> ids) {
++                    processFeedDeletedMessages(ids, 0, false, false);
++                }
++
++                @Override
++                public int getDistanceToNewerPx() {
++                    if (chatListView == null) {
++                        return Integer.MAX_VALUE;
++                    }
++                    if (!chatListView.canScrollVertically(1)) {
++                        return 0;
++                    }
++                    return chatListView.computeVerticalScrollRange()
++                            - chatListView.computeVerticalScrollExtent()
++                            - chatListView.computeVerticalScrollOffset();
++                }
++
++                @Override
++                public BaseFragment getFragment() {
++                    return ChatActivity.this;
++                }
++
++                @Override
++                public int getLastVisibleMessageIndex() {
++                    if (chatLayoutManager == null || chatAdapter == null) {
++                        return Integer.MIN_VALUE;
++                    }
++                    int lastVisible = chatLayoutManager.findLastVisibleItemPosition();
++                    if (lastVisible == RecyclerListView.NO_POSITION) {
++                        return Integer.MIN_VALUE;
++                    }
++                    return lastVisible - chatAdapter.messagesStartRow;
++                }
++
++                @Override
++                public ArrayList<MessageObject> getMessages() {
++                    return messages;
++                }
++
++                @Override
++                public int getNewestVisibleMessageIndex() {
++                    if (chatLayoutManager == null || chatAdapter == null) {
++                        return Integer.MIN_VALUE;
++                    }
++                    int first = chatLayoutManager.findFirstVisibleItemPosition();
++                    int last = chatLayoutManager.findLastVisibleItemPosition();
++                    if (first == RecyclerListView.NO_POSITION || last == RecyclerListView.NO_POSITION) {
++                        return Integer.MIN_VALUE;
++                    }
++                    return Math.min(first, last) - chatAdapter.messagesStartRow;
++                }
++
++                @Override
++                public void invalidateVisiblePart() {
++                    invalidateMessagesVisiblePart();
++                }
++
++                @Override
++                public boolean isFirstLoadComplete() {
++                    return firstMessagesLoaded;
++                }
++
++                @Override
++                public boolean isListReady() {
++                    return isFeedSearch() && chatAdapter != null;
++                }
++
++                @Override
++                public boolean isListScrollIdle() {
++                    return chatListView != null && chatListView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE;
++                }
++
++                @Override
++                public boolean isPagedownButtonVisible() {
++                    return sideControlsButtonsLayout != null
++                            && sideControlsButtonsLayout.isButtonVisible(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN);
++                }
++
++                @Override
++                public boolean isScrollAnimationRunning() {
++                    return chatListView != null && chatListView.isFastScrollAnimationRunning();
++                }
++
++                @Override
++                public void materializeRow(MessageObject message) {
++                    if (messagesDict[0].indexOfKey(message.getId()) >= 0) {
++                        return;
++                    }
++                    if (message.stableId == 0) {
++                        message.stableId = lastStableId++;
++                    }
++                    messagesDict[0].put(message.getId(), message);
++                    ArrayList<MessageObject> dayArray = messagesByDays.get(message.dateKey);
++                    if (dayArray == null) {
++                        dayArray = new ArrayList<>();
++                        messagesByDays.put(message.dateKey, dayArray);
++                        messagesByDaysSorted.put(message.dateKeyInt, dayArray);
++                    }
++                    dayArray.add(message);
++                    if (message.hasValidGroupId()) {
++                        MessageObject.GroupedMessages groupedMessages = groupedMessagesMap.get(message.getGroupId());
++                        if (groupedMessages == null) {
++                            groupedMessages = new MessageObject.GroupedMessages();
++                            groupedMessages.groupId = message.getGroupId();
++                            groupedMessagesMap.put(groupedMessages.groupId, groupedMessages);
++                        }
++                        if (!groupedMessages.messages.contains(message)) {
++                            groupedMessages.messages.add(0, message);
++                            groupedMessages.calculate();
++                        }
++                    }
++                    getMessagesController().getTranslateController().checkTranslation(message, false);
++                }
++
++                @Override
++                public int nextStableId() {
++                    return lastStableId++;
++                }
++
++                @Override
++                public void notifyAllMessagesChanged() {
++                    if (chatAdapter != null) {
++                        chatAdapter.notifyDataSetChanged();
++                    }
++                }
++
++                @Override
++                public void notifyMessageInserted(int index) {
++                    if (chatAdapter != null) {
++                        chatAdapter.notifyItemInserted(chatAdapter.messagesStartRow + index);
++                    }
++                }
++
++                @Override
++                public void notifyMessageRemoved(int index) {
++                    if (chatAdapter != null) {
++                        chatAdapter.notifyItemRemoved(chatAdapter.messagesStartRow + index);
++                    }
++                }
++
++                @Override
++                public void onFeedListChanged() {
++                    if (chatAdapter != null) {
++                        chatAdapter.updateRowsSafe();
++                    }
++                    if (messagesSearchAdapter != null) {
++                        messagesSearchAdapter.notifyDataSetChanged();
++                    }
++                    updateSearchListEmptyView();
++                }
++
++                @Override
++                public void reloadFeed() {
++                    ChatActivity.this.reloadFeed();
++                }
++
++                @Override
++                public void requestOlderFeedPage() {
++                    desu.inugram.helpers.feed.FeedController feedController = desu.inugram.helpers.feed.FeedController.getInstance(currentAccount);
++                    if (loading || feedController.getStore().isEndReached()) {
++                        return;
++                    }
++                    int loadIndex = lastLoadIndex;
++                    loading = true;
++                    waitingForLoad.add(loadIndex);
++                    if (feedController.loadMore(classGuid, loadIndex)) {
++                        lastLoadIndex++;
++                    } else {
++                        waitingForLoad.remove(Integer.valueOf(loadIndex));
++                        loading = false;
++                    }
++                }
++
++                @Override
++                public void restoreScrollAnchor(desu.inugram.helpers.feed.FeedChatIntegration.ScrollAnchor anchor) {
++                    if (anchor == null || chatLayoutManager == null || chatAdapter == null) {
++                        return;
++                    }
++                    int index = messages.indexOf(anchor.row);
++                    if (index < 0) {
++                        return;
++                    }
++                    chatLayoutManager.scrollToPositionWithOffset(chatAdapter.messagesStartRow + index, anchor.offsetTop);
++                }
++
++                @Override
++                public void scrollToMessage(int index, int offset) {
++                    if (chatLayoutManager == null || chatAdapter == null) {
++                        return;
++                    }
++                    chatLayoutManager.scrollToPositionWithOffset(chatAdapter.messagesStartRow + index, offset, false);
++                }
++
++                @Override
++                public void scrollToMessageAnimated(int index, int offset) {
++                    if (chatLayoutManager == null || chatAdapter == null || chatListView == null || chatScrollHelper == null
++                            || chatListView.isFastScrollAnimationRunning() || index < 0 || index >= messages.size()) {
++                        return;
++                    }
++                    chatAdapter.updateRowsSafe();
++                    chatScrollHelper.setScrollDirection(RecyclerAnimationScrollHelper.SCROLL_DIRECTION_DOWN);
++                    chatScrollHelperCallback.scrollTo = messages.get(index);
++                    chatScrollHelperCallback.lastBottom = false;
++                    chatScrollHelperCallback.lastItemOffset = offset;
++                    chatScrollHelperCallback.lastPadding = (int) chatListViewPaddingTop;
++                    chatScrollHelperCallback.position = chatAdapter.messagesStartRow + index;
++                    chatScrollHelperCallback.offset = offset;
++                    chatScrollHelperCallback.bottom = false;
++                    chatScrollHelper.scrollToPosition(chatScrollHelperCallback.position, offset, false, true);
++                }
++
++                @Override
++                public void setPagedownButtonVisible(boolean visible) {
++                    if (visible != canShowPagedownButton) {
++                        canShowPagedownButton = visible;
++                        updatePagedownButtonVisibility(true);
++                    }
++                }
++
++                @Override
++                public void setPagedownCount(int count) {
++                    if (sideControlsButtonsLayout != null) {
++                        sideControlsButtonsLayout.setButtonCount(ChatActivitySideControlsButtonsLayout.BUTTON_PAGE_DOWN, count, true);
++                    }
++                }
++
++                @Override
++                public void showEmptyFeedProgress() {
++                    if (hashtagSearchEmptyView != null) {
++                        hashtagSearchEmptyView.showProgress(true);
++                    }
++                }
++
++                @Override
++                public void showEmptyFeedState() {
++                    showMessagesSearchListView(true);
++                }
++
++                @Override
++                public int stableIdForDateHeader(int dateKey) {
++                    return getStableIdForDateObject(dateKey);
++                }
++            }, !hasMainTabs);
++        }
++        return feedIntegration;
++    }
++
++    private void cleanupInvisibleFeedDeletedMessages(ArrayList<Integer> ids) {
++        for (int i = 0; i < ids.size(); i++) {
++            int id = ids.get(i);
++            MessageObject message = messagesDict[0].get(id);
++            if (message == null || messages.indexOf(message) >= 0) {
++                continue;
++            }
++            messagesDict[0].remove(id);
++            repliesMessagesDict.remove(id);
++            updateReplyMessageOwners(id, null);
++            ArrayList<MessageObject> dayArray = messagesByDays.get(message.dateKey);
++            if (dayArray != null) {
++                dayArray.remove(message);
++                if (dayArray.isEmpty()) {
++                    messagesByDays.remove(message.dateKey);
++                    messagesByDaysSorted.remove(message.dateKeyInt);
++                }
++            }
++            if (message.hasValidGroupId()) {
++                MessageObject.GroupedMessages groupedMessages = groupedMessagesMap.get(message.getGroupId());
++                if (groupedMessages != null) {
++                    groupedMessages.messages.remove(message);
++                    if (groupedMessages.messages.isEmpty()) {
++                        groupedMessagesMap.remove(groupedMessages.groupId);
++                    } else {
++                        groupedMessages.calculate();
++                    }
++                }
++            }
++        }
++    }
++
++    private void processFeedDeletedMessages(ArrayList<Integer> ids, long channelId, boolean sent, boolean thanos) {
++        if (ids.isEmpty()) {
++            return;
++        }
++        processDeletedMessages(ids, channelId, sent, thanos);
++        cleanupInvisibleFeedDeletedMessages(ids);
++        feedIntegration().onMessagesDeleted();
++        if (messagesSearchAdapter != null) {
++            messagesSearchAdapter.notifyDataSetChanged();
++        }
++    }
++
++    private void updateFeedRow(MessageObject message, boolean updateReactions) {
++        if (message == null) {
++            return;
++        }
++        message.forceUpdate = true;
++        if (updateReactions) {
++            message.reactionsChanged = true;
++        }
++        if (chatAdapter != null) {
++            chatAdapter.updateRowWithMessageObject(message, false, false);
++        }
++    }
++
++    private void updateFeedRows(ArrayList<MessageObject> rows, boolean updateReactions) {
++        if (rows == null || rows.isEmpty()) {
++            return;
++        }
++        for (int i = 0; i < rows.size(); i++) {
++            updateFeedRow(rows.get(i), updateReactions);
++        }
++        if (messagesSearchAdapter != null) {
++            messagesSearchAdapter.notifyDataSetChanged();
++        }
++    }
++
++    private void updateFeedTabBackButton() {
++        if (!hasMainTabs || !isFeedSearch() || actionBar == null || actionBar.backButtonImageView == null) {
++            return;
++        }
++        actionBar.backButtonImageView.setVisibility(actionBar.isActionModeShowed() ? View.VISIBLE : View.GONE);
++    }
++
++    private void loadMoreSearchResults() {
++        if (!isFeedSearch()) {
++            HashtagSearchController.getInstance(currentAccount).searchHashtag(searchingHashtag, classGuid, searchType, lastLoadIndex++);
++            return;
++        }
++        desu.inugram.helpers.feed.FeedController feedController = desu.inugram.helpers.feed.FeedController.getInstance(currentAccount);
++        if (!messages.isEmpty()) {
++            if (feedController.loadMore(classGuid, lastLoadIndex)) {
++                lastLoadIndex++;
++            } else {
++                waitingForLoad.remove(Integer.valueOf(lastLoadIndex));
++                loading = false;
++            }
++            return;
++        }
++        if (feedController.loadInitial(classGuid, lastLoadIndex++)) {
++            AndroidUtilities.cancelRunOnUIThread(loadNextNewerFeedPage);
++            AndroidUtilities.runOnUIThread(loadNextNewerFeedPage);
++        }
++    }
++
++    public void applyFeedConfigChange() {
++        if (!isFeedSearch()) {
++            return;
++        }
++        desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).applyConfigChange(reload -> {
++            if (isFinished || !isFeedSearch()) {
++                return;
++            }
++            if (reload) {
++                reloadFeed();
++            } else {
++                reconcileFeedList();
++                loadNextNewerFeedPage.run();
++            }
++        });
++    }
++
++    public int getBulletinBottomOffset() {
++        return bulletinDelegate != null ? bulletinDelegate.getBottomOffset(0) : 0;
++    }
++
++    public int getBulletinTopOffset() {
++        return bulletinDelegate != null
++                ? bulletinDelegate.getTopOffset(0)
++                : AndroidUtilities.statusBarHeight + ActionBar.getCurrentActionBarHeight();
++    }
++
++    public BlurredBackgroundSourceRenderNode getGlassSource() {
++        return LiteMode.isEnabled(LiteMode.FLAG_LIQUID_GLASS) && glassBackgroundSourceRenderNode != null ? glassBackgroundSourceRenderNode : glassBackgroundSourceFrostedRenderNode;
++    }
++
++    public void setGlassSourceInvalidationCallback(Runnable callback) {
++        glassSourceInvalidationCallback = callback;
++    }
++
++    public void hideFeedChannelWithUndo(long dialogId, CharSequence title) {
++        feedIntegration().hideChannelWithUndo(dialogId, title);
++    }
++
++    public void loadNewerFeed(boolean preserveScroll) {
++        if (!isFeedSearch()) {
++            return;
++        }
++        desu.inugram.helpers.feed.FeedController feedController = desu.inugram.helpers.feed.FeedController.getInstance(currentAccount);
++        if (feedController.getMessages().isEmpty()) {
++            if (waitingForLoad.isEmpty()) {
++                reloadFeed();
++            }
++            return;
++        }
++        int loadIndex = lastLoadIndex;
++        waitingForLoad.add(loadIndex);
++        if (!feedController.loadNewer(classGuid, loadIndex)) {
++            waitingForLoad.remove(Integer.valueOf(loadIndex));
++            return;
++        }
++        if (preserveScroll) {
++            feedIntegration().onPreserveScrollLoadStarted(loadIndex);
++        }
++        lastLoadIndex++;
++    }
++
++    public void markFeedAsRead() {
++        if (isFeedSearch()) {
++            feedIntegration().markAllRead();
++        }
++    }
++
++    public void onFeedChannelsChanged(boolean truncated) {
++        if (!isFeedSearch()) {
++            return;
++        }
++        if (truncated) {
++            reloadFeed();
++        } else {
++            reconcileFeedList();
++        }
++    }
++
++    public void reattachCurrentFeedVideoTexture() {
++        if (!isFeedSearch() || fragmentView == null || fragmentView.getParent() == null || chatListView == null) {
++            return;
++        }
++        MessageObject playingMessage = MediaController.getInstance().getPlayingMessageObject();
++        if (playingMessage == null || (!playingMessage.isRoundVideo() && !playingMessage.isVideo()) || playingMessage.eventId != 0) {
++            return;
++        }
++        if (desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).getMessage(playingMessage.getDialogId(), playingMessage.getRealId()) == null) {
++            return;
++        }
++        TextureView textureView = createTextureView(false);
++        if (textureView != null) {
++            MediaController.getInstance().setTextureView(textureView, aspectRatioFrameLayout, videoPlayerContainer, true);
++            updateTextureViewPosition(true, false);
++        }
++    }
++
++    public void reconcileFeedList() {
++        if (!isFeedSearch() || chatAdapter == null) {
++            return;
++        }
++        feedIntegration().reconcileWithStore();
++    }
++
++    public void refreshFeedUnreadDivider() {
++        if (!isFeedSearch()) {
++            return;
++        }
++        desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).refreshReadState(() -> {
++            if (isFeedSearch()) {
++                feedIntegration().onReadStateRefreshed();
++            }
++        });
++    }
++
++    public void reloadFeed() {
++        if (!isFeedSearch()) {
++            return;
++        }
++        if (feedIntegration != null) {
++            feedIntegration.resetUiState();
++        }
++        if (messagesSearchAdapter == null) {
++            desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).clear();
++            firstMessagesLoaded = false;
++            return;
++        }
++        showMessagesSearchListView(false);
++        clearChatData(true);
++        startMessageAppearTransitionMs = 0;
++        firstMessagesLoaded = false;
++        desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).clear();
++        messagesSearchAdapter.notifyDataSetChanged();
++        messagesSearchListView.requestLayout();
++        if (messagesSearchListView.getLayoutManager() != null) {
++            messagesSearchListView.getLayoutManager().scrollToPosition(0);
++        }
++        updateSearchListEmptyView();
++        hashtagSearchEmptyView.showProgress(true);
++        firstLoadMessages();
++    }
++
++    public void saveFeedScrollPosition() {
++        if (!isFeedSearch() || hasMainTabs || feedIntegration == null) {
++            return;
++        }
++        feedIntegration.saveDrawerScrollPosition();
++    }
++
++    public void setFeedChannelsChangedCallback(Runnable callback) {
++        if (callback == null && feedIntegration == null) {
++            return;
++        }
++        feedIntegration().setChannelsChangedCallback(callback);
++    }
++
++    public void setFeedViewportActive(boolean active) {
++        feedIntegration().setViewportActive(active);
++    }
++
++    private void addForwardingMessageObject(ArrayList<MessageObject> target, MessageObject message) {
++        MessageObject forwarding = desu.inugram.helpers.feed.FeedMessageUtils.getForwardingMessageObject(currentAccount, isFeedSearch(), message);
++        if (forwarding != null) {
++            target.add(forwarding);
++        }
++    }
++
++    private TLRPC.InputPeer getInputPeerForMessageRequest(MessageObject message) {
++        return desu.inugram.helpers.feed.FeedMessageUtils.getInputPeerForMessageRequest(getMessagesController(), dialog_id, isFeedSearch(), message);
++    }
++
++    private MessageObject getMessageObjectForUpdate(long dialogId, int messageId) {
++        if (isFeedSearch()) {
++            return desu.inugram.helpers.feed.FeedController.getInstance(currentAccount).getMessage(dialogId, messageId);
++        }
++        return messagesDict[dialogId == dialog_id ? 0 : 1].get(messageId);
++    }
++
++    private void updateChangedMessageObject(MessageObject message, boolean updateReactions) {
++        if (!isFeedSearch()) {
++            if (message != null) {
++                message.forceUpdate = true;
++                if (updateReactions) {
++                    message.reactionsChanged = true;
++                }
++                updateMessageAnimated(message, updateReactions);
++            }
++            return;
++        }
++        updateFeedRow(message, updateReactions);
++        if (message != null && messagesSearchAdapter != null) {
++            messagesSearchAdapter.notifyDataSetChanged();
++        }
++    }
++
+     public boolean canSendMessage() {
++        if (isFeedSearch()) {
++            return false;
++        }
+         return currentEncryptedChat == null && (bottomChannelButtonsLayout == null || bottomChannelButtonsLayout.getVisibility() != View.VISIBLE);
+     }
+ 
+@@ -36184,7 +36896,8 @@ public class ChatActivity extends BaseFragment implements
+                 }
+                 final boolean[] chatOpened = new boolean[] { false };
+                 Runnable openCommentsChat = () -> {
+-                    if (chatOpened[0] || thisCommentLoadingMessageId != commentLoadingMessageId || !isFullyVisible || isFinishing()) {
++                    final boolean visible = isFullyVisible || isFeedSearch() && fragmentView != null && fragmentView.isAttachedToWindow();
++                    if (chatOpened[0] || thisCommentLoadingMessageId != commentLoadingMessageId || !visible || isFinishing()) {
+                         return;
+                     }
+                     chatOpened[0] = true;
+@@ -36239,7 +36952,7 @@ public class ChatActivity extends BaseFragment implements
+                 commentLoadingMessageId = 0;
+                 hideCommentLoading = false;
+                 chatListView.invalidateViews();
+-                if (fallbackMessage != null) {
++                if (fallbackMessage != null && !isFeedSearch()) {
+                     openOriginalReplyChat(fallbackMessage);
+                 } else {
+                     if (getParentActivity() != null) {
+@@ -36963,7 +37676,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     public void logSponsoredClicked(MessageObject messageObject, boolean media, boolean fullscreen) {
+-        if (messageObject == null || !messageObject.isSponsored()) {
++        if (messageObject == null || !messageObject.isSponsored() || isFeedSearch()) {
+             return;
+         }
+         TLRPC.TL_messages_clickSponsoredMessage req = new TLRPC.TL_messages_clickSponsoredMessage();
+@@ -37159,7 +37872,19 @@ public class ChatActivity extends BaseFragment implements
+             }
+             MediaController.getInstance().cleanupPlayer(true, true, false, playingObject.equals(message));
+         }
+-        if (chatMode == MODE_SCHEDULED && (message.isVideo() || message.type == MessageObject.TYPE_PHOTO)) {
++        MessageObject.GroupedMessages feedGroup = isFeedSearch() ? getValidGroupedMessage(message) : null;
++        if (feedGroup != null && (message.isVideo() || message.type == MessageObject.TYPE_PHOTO)) {
++            PhotoViewer.getInstance().setParentChatActivity(ChatActivity.this);
++            ArrayList<MessageObject> album = new ArrayList<>();
++            for (int a = 0, N = feedGroup.messages.size(); a < N; a++) {
++                MessageObject m = feedGroup.messages.get(a);
++                if (m.isVideo() || m.type == MessageObject.TYPE_PHOTO) {
++                    album.add(m);
++                }
++            }
++            int index = album.indexOf(message);
++            PhotoViewer.getInstance().openPhoto(album, index < 0 ? 0 : index, 0, 0, 0, photoViewerProvider);
++        } else if (chatMode == MODE_SCHEDULED && (message.isVideo() || message.type == MessageObject.TYPE_PHOTO)) {
+             PhotoViewer.getInstance().setParentChatActivity(ChatActivity.this);
+             ArrayList<MessageObject> arrayList = new ArrayList<>();
+             for (int a = 0, N = messages.size(); a < N; a++) {
+@@ -37191,6 +37916,9 @@ public class ChatActivity extends BaseFragment implements
+             return;
+         }
+         object.viewsReloaded = true;
++        if (isFeedSearch()) {
++            return;
++        }
+         TLRPC.TL_messages_viewSponsoredMessage req = new TLRPC.TL_messages_viewSponsoredMessage();
+         req.random_id = object.sponsoredId;
+         getConnectionsManager().sendRequest(req, null);
+@@ -37923,9 +38651,14 @@ public class ChatActivity extends BaseFragment implements
+                     messageCell.isMonoForum = ChatObject.isMonoForum(currentChat);
+                     messageCell.isForumGeneral = ChatObject.isForum(currentChat) && isTopic && getTopicId() == 1;
+                     messageCell.isThreadChat = (threadMessageId != 0 || messageCell.isForum && isTopic) && !messageCell.isMonoForum;
+-                    messageCell.hasDiscussion = chatMode != MODE_SCHEDULED && chatMode != MODE_WELCOME_MESSAGES && ChatObject.isChannel(currentChat) && currentChat.has_link && !currentChat.megagroup;
++                    final TLRPC.MessageReplies feedReplies = isFeedSearch() ? feedPostReplies(message, groupedMessages) : null;
++                    messageCell.hasDiscussion = isFeedSearch()
++                            ? feedReplies != null && feedReplies.channel_id != 0
++                            : chatMode != MODE_SCHEDULED && chatMode != MODE_WELCOME_MESSAGES && ChatObject.isChannel(currentChat) && currentChat.has_link && !currentChat.megagroup;
+                     messageCell.isPinned = chatMode == 0 && (pinnedMessageObjects.containsKey(message.getId()) || groupedMessages != null && !groupedMessages.messages.isEmpty() && pinnedMessageObjects.containsKey(groupedMessages.messages.get(0).getId()));
+-                    messageCell.linkedChatId = chatMode != MODE_SCHEDULED && chatMode != MODE_WELCOME_MESSAGES && chatInfo != null ? chatInfo.linked_chat_id : 0;
++                    messageCell.linkedChatId = isFeedSearch()
++                            ? (feedReplies != null ? feedReplies.channel_id : 0)
++                            : (chatMode != MODE_SCHEDULED && chatMode != MODE_WELCOME_MESSAGES && chatInfo != null ? chatInfo.linked_chat_id : 0);
+                     if (chatMode == MODE_SEARCH && searchType == SEARCH_MY_MESSAGES) {
+                         messageCell.isRepliesChat = UserObject.isReplyUser(message.getDialogId());
+                     } else {
+@@ -38805,12 +39538,13 @@ public class ChatActivity extends BaseFragment implements
+                 chatListView.setItemAnimator(chatListItemAnimator);
+             }
+             updateRowsInternal();
+-            if (positionStart == 1 && itemCount > 0) {
++            if ((positionStart == 1 || isFeedSearch() && positionStart == messagesStartRow) && itemCount > 0) {
+                 int lastPosition = positionStart + itemCount;
+                 if (lastPosition >= messagesStartRow && lastPosition < messagesEndRow) {
+                     MessageObject m1 = messages.get(lastPosition - messagesStartRow);
+                     MessageObject m2 = messages.get(lastPosition - messagesStartRow - 1);
+-                    if (currentChat != null && m1.getFromChatId() == m2.getFromChatId() || currentUser != null && m1.isOutOwner() == m2.isOutOwner()) {
++                    if (isFeedSearch() && MessageObject.getPeerId(m1.messageOwner.peer_id) == MessageObject.getPeerId(m2.messageOwner.peer_id)
++                            || currentChat != null && m1.getFromChatId() == m2.getFromChatId() || currentUser != null && m1.isOutOwner() == m2.isOutOwner()) {
+                         notifyItemChanged(positionStart);
+                     }
+                 }
+@@ -39861,6 +40595,10 @@ public class ChatActivity extends BaseFragment implements
+                 processRowSelect(cell, true, touchX, touchY);
+                 return;
+             }
++            if (isFeedSearch() && !asForward && cell.getMessageObject() != null) {
++                openMessageInOriginalDialog(cell.getMessageObject());
++                return;
++            }
+             if (!asForward && chat != null && chat.signature_profiles) {
+                 MessageObject msg = cell.getMessageObject();
+                 if (msg != null && msg.getDialogId() != UserObject.REPLY_BOT) {
+@@ -40249,6 +40987,16 @@ public class ChatActivity extends BaseFragment implements
+ 
+         @Override
+         public boolean didLongPressChannelAvatar(ChatMessageCell cell, TLRPC.Chat chat, int postId, float touchX, float touchY) {
++            if (isFeedSearch() && chat != null) {
++                desu.inugram.helpers.feed.FeedChannelAvatarMenu.show(
++                        ChatActivity.this,
++                        cell,
++                        chat,
++                        () -> openChat(cell, chat, 0, false),
++                        () -> feedIntegration().notifyChannelsChanged(),
++                        ids -> processFeedDeletedMessages(ids, 0, false, true));
++                return true;
++            }
+             if (isAvatarPreviewerEnabled()) {
+                 final boolean enableMention = !TextUtils.isEmpty(ChatObject.getPublicUsername(chat)) && currentChat != null && (bottomChannelButtonsLayout == null || bottomChannelButtonsLayout.getVisibility() != View.VISIBLE) && (bottomOverlay == null || bottomOverlay.getVisibility() != View.VISIBLE);
+                 final boolean enableSearchMessages = currentChat != null && (threadMessageId == 0 || isTopic) && (!ChatObject.isChannel(currentChat) || currentChat.megagroup);
+@@ -42349,14 +43097,19 @@ public class ChatActivity extends BaseFragment implements
+             }
+             int maxReadId;
+             long linkedChatId;
+-            if (message.messageOwner.replies != null) {
+-                maxReadId = message.messageOwner.replies.read_max_id;
+-                linkedChatId = message.messageOwner.replies.channel_id;
++            TLRPC.MessageReplies replies = feedPostReplies(message, group);
++            if (replies != null) {
++                maxReadId = replies.read_max_id;
++                linkedChatId = replies.channel_id;
+             } else {
+                 maxReadId = -1;
+                 linkedChatId = 0;
+             }
+-            openDiscussionMessageChat(currentChat.id, message, message.getId(), linkedChatId, maxReadId, 0, null);
++            if (isFeedSearch()) {
++                openDiscussionMessageChat(-message.getDialogId(), desu.inugram.helpers.feed.FeedMessageUtils.getForwardingMessageObject(currentAccount, true, message), message.getRealId(), linkedChatId, maxReadId, 0, message);
++            } else {
++                openDiscussionMessageChat(currentChat.id, message, message.getId(), linkedChatId, maxReadId, 0, null);
++            }
+         }
+ 
+         @Override
+@@ -42905,6 +43658,9 @@ public class ChatActivity extends BaseFragment implements
+            // chatListView.getOnScrollListener().onScrolled(chatListView, 0, chatScrollHelper.getScrollDirection() == RecyclerAnimationScrollHelper.SCROLL_DIRECTION_DOWN ? 1 : -1);
+ 
+             updateVisibleRows();
++            if (isFeedSearch()) {
++                feedIntegration().onScrollAnimationFinished();
++            }
+ 
+             AndroidUtilities.runOnUIThread(() -> getNotificationCenter().onAnimationFinish(scrollCallbackAnimationIndex));
+         }
+@@ -46800,6 +47556,9 @@ public class ChatActivity extends BaseFragment implements
+             options.add(OPTION_WELCOME_REVERT);
+             icons.add(R.drawable.outline_revert_24);
+         }
++        if (isFeedSearch()) {
++            desu.inugram.helpers.feed.FeedMessageUtils.filterAllowedOptions(items, options, icons);
++        }
+     }
+ 
+     private boolean showWelcomeMessageRevertOption(MessageObject messageObject) {
+@@ -46867,7 +47626,7 @@ public class ChatActivity extends BaseFragment implements
+             pollAddVisibility = animatorPollAddAnswerVisibility.getFloatValue();
+         }
+ 
+-        if (!isInsideContainer && !isInPreviewMode() && !ChatHelper.shouldForceHideBottomBar(this)) {
++        if (!isInsideContainer && !isInPreviewMode() && !isFeedSearch() && !ChatHelper.shouldForceHideBottomBar(this)) {
+             return lerp(Math.max(lerp(defaultIslandHeight, enterViewIslandHeight, enterViewFactor) * visibility, dp(ChatActivityEnterView.DEFAULT_HEIGHT)), -dp(7), pollAddVisibility);
+         } else {
+             return lerp(defaultIslandHeight, enterViewIslandHeight, enterViewFactor) * visibility;
+@@ -47276,6 +48035,9 @@ public class ChatActivity extends BaseFragment implements
+     private void goToNextOrPrevSearchMessage(boolean searchUp) {
+         inu_replyStack.clear();
+         if (chatMode == MODE_SEARCH) {
++            if (isFeedSearch()) {
++                return;
++            }
+             HashtagSearchController.getInstance(currentAccount).jumpToMessage(classGuid, hashtagSearchSelectedIndex + (searchUp ? 1 : -1), searchType);
+         } else {
+             getMediaDataController().searchMessagesInChat(null, dialog_id, mergeDialogId, classGuid, searchUp ? (reversed ? 2 : 1) : (reversed ? 1 : 2), threadMessageId, searchingUserMessages, searchingChatMessages, searchingReaction);
+@@ -47669,6 +48431,9 @@ public class ChatActivity extends BaseFragment implements
+                 actionBar.invalidate();
+             }
+             invalidateAllGlassAttachedViews();
++            if (glassSourceInvalidationCallback != null) {
++                glassSourceInvalidationCallback.run();
++            }
+         }
+ 
+         //}
+@@ -47718,6 +48483,10 @@ public class ChatActivity extends BaseFragment implements
+                 count += glassBackgroundSourceRenderNode.getVisiblePositions(positions, count, dp(8));
+             }
+ 
++            if (hasMainTabs && isFeedSearch()) {
++                count += feedIntegration().addTabsGlassPosition(positions, count, contentView.getMeasuredWidth(), contentView.getMeasuredHeight());
++            }
++
+             return count;
+         } else {
+             return 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -665,6 +665,18 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+         occupyStatusBar = value;
+     }
+ 
++    private boolean feedMode;
++
++    public void setFeedAvatar() {
++        feedMode = true;
++        avatarDrawable.setInfo(UserConfig.getInstance(currentAccount).getClientUserId());
++        avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
++        avatarDrawable.setCustomIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_feed_filled));
++        if (avatarImageView != null) {
++            avatarImageView.setImage((org.telegram.messenger.ImageLocation) null, (String) null, avatarDrawable, (Object) null);
++        }
++    }
++
+     public void setTitleColors(int title, int subtitle) {
+         titleTextView.setTextColor(title);
+         subtitleTextView.setTextColor(subtitle);
+@@ -1402,6 +1414,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+     private boolean showingSavedMessagesHint;
+ 
+     public void updateSubtitle(boolean animated) {
++        if (feedMode) {
++            return;
++        }
+         if (parentFragment == null) {
+             return;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -914,7 +914,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+             dialogsActivity.setMainTabsActivityController(new MainTabsActivityControllerImpl());
+             return dialogsActivity;
+         } else if (index == inu_INDEX_FEED) {
+-            return new desu.inugram.ui.feed.FeedActivity(desu.inugram.helpers.feed.FeedScope.Global.INSTANCE, true);
++            return prepareTabFragment(new desu.inugram.ui.feed.FeedActivity(desu.inugram.helpers.feed.FeedScope.Global.INSTANCE, true));
+         } else if (index == INDEX_PROFILE) {
+             Bundle args = new Bundle();
+             args.putLong("user_id", UserConfig.getInstance(currentAccount).getClientUserId());
+@@ -975,6 +975,30 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         default BlurredBackgroundSourceRenderNode getGlassSource() {
+             return null;
+         }
++
++        default void onParentBecomeFullyVisible() {
++
++        }
++
++        default void setParentTabsGlassInvalidationCallback(Runnable callback) {
++
++        }
++    }
++
++    private <T extends BaseFragment> T prepareTabFragment(T fragment) {
++        if (fragment instanceof TabFragmentDelegate) {
++            ((TabFragmentDelegate) fragment).setParentTabsGlassInvalidationCallback(this::invalidateTabsGlass);
++        }
++        return fragment;
++    }
++
++    @Override
++    public void onBecomeFullyVisible() {
++        super.onBecomeFullyVisible();
++        final BaseFragment fragment = getCurrentVisibleFragment();
++        if (fragment instanceof TabFragmentDelegate) {
++            ((TabFragmentDelegate) fragment).onParentBecomeFullyVisible();
++        }
+     }
+ 
+     @Override
+@@ -1342,6 +1366,21 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     private final @Nullable BlurredBackgroundSourceRenderNode iBlur3SourceTabGlass;
+ 
+     private final RectF fragmentPosition = new RectF();
++
++    private void invalidateTabsGlass() {
++        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || iBlur3SourceTabGlass == null) {
++            return;
++        }
++        iBlur3SourceTabGlass.invalidateDisplayListForDrawables();
++        blur3_invalidateBlur();
++        if (tabsView != null) {
++            tabsView.invalidate();
++        }
++        if (tabsViewWrapper != null) {
++            tabsViewWrapper.invalidate();
++        }
++    }
++
+     private void blur3_invalidateBlur() {
+         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || iBlur3SourceTabGlass == null || fragmentView == null) {
+             return;

@@ -38,8 +38,7 @@ object InuConfig {
     private fun migrateFeedEnabled(context: Context) {
         if (prefs.contains(FEED_ENABLED.key)) return
         val touched = listOf(
-            FEED_EXCLUDED_CHANNELS.key, FEED_INCLUDE_ARCHIVED.key, FEED_NEWEST_ON_TOP.key,
-            FEED_MARK_READ_ON_SCROLL.key, FEED_NEW_POSTS_INDICATOR.key,
+            FEED_EXCLUDED_CHANNELS.key, FEED_INCLUDE_ARCHIVED.key, FEED_MARK_READ_ON_SCROLL.key,
         ).any { prefs.contains(it) } ||
             DIALOGS_MENU_ITEMS.value.any { it.item == DialogsMenuConfig.Item.FEED && it.enabled } ||
             BOTTOM_TABS_ORDER.value.any { it.item == MainTabsMenuConfig.Item.FEED && it.enabled } ||
@@ -1876,15 +1875,7 @@ object InuConfig {
     val FEED_INCLUDE_ARCHIVED = BoolItem("feed_include_archived", false)
 
     @JvmField
-    val FEED_NEWEST_ON_TOP = BoolItem("feed_newest_on_top", false)
-
-    @JvmField
     val FEED_MARK_READ_ON_SCROLL = BoolItem("feed_mark_read_on_scroll", true)
-
-    // entiny: 0 = pill ("%d new", shows only when a post streams in while scrolled away), 1 = button
-    // (persistent scroll-to-bottom control with unread badge, same as regular chats)
-    @JvmField
-    val FEED_NEW_POSTS_INDICATOR = IntItem("feed_new_posts_indicator", 0)
 
     // entiny: Pill Stack, ported from exteraGram/exteraless -- see src/kotlin/helpers/pillstack/.
     @JvmField

@@ -94,7 +94,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **hide accounts list** in settings
 - 📡 **customizable My Profile info rows**
 - 📡 **wide channel posts** with adjustable side padding
-- 📡 **feed**: all subscribed channels in one timeline, with per-folder feeds and channel management, off by default - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
+- 📡 **feed**: all subscribed channels in one native chat-style timeline with channel management, off by default - *ported from [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **color-coded online dot** - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
 - 📡 **clock format**: system, 12-hour or 24-hour
 - 📡 **branded first-run intro**
@@ -275,7 +275,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - "Repeat" in message menu - re-send the same message to the same chat
 - "Save to Downloads" for stickers & custom emoji (both in chat and in egs/sheets)
 - customizable message context menu - reorder and hide items + long-tap forward/reply items + quick actions row (*ported from [NagramX](https://github.com/risin42/NagramX)*)
-- wide channel posts - channel posts (and, separately, channel posts/forwards shown in the feed) stretch to the full available width instead of a narrow auto-sized bubble, with a live before/after preview in settings (*ported from [exteraless](https://github.com/exteraless/exteraless)*)
+- wide channel posts - channel posts stretch to the full available width instead of a narrow auto-sized bubble, with a live before/after preview in settings (*ported from [exteraless](https://github.com/exteraless/exteraless)*)
 - customizable chat menu + extra actions:
   - Recent actions
   - Go to beginning

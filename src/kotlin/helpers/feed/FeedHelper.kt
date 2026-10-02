@@ -9,6 +9,5 @@ object FeedHelper {
     @JvmStatic
     fun setEnabled(enabled: Boolean) {
         InuConfig.FEED_ENABLED.value = enabled
-        if (!enabled) FeedController.releaseInactive()
     }
 }

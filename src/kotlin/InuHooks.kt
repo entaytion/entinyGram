@@ -80,32 +80,6 @@ object InuHooks {
         @Suppress("UNCHECKED_CAST")
         val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
         for (msg in messages) onNewMessage(msg, acc)
-        for (controller in desu.inugram.helpers.feed.FeedController.allActiveFor(acc)) {
-            controller.onNewMessages(messages)
-        }
-    }
-
-    private val feedPruneObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
-        val controllers = desu.inugram.helpers.feed.FeedController.allActiveFor(acc)
-        if (controllers.isEmpty()) return@NotificationCenterDelegate
-        when (id) {
-            NotificationCenter.messagesDeleted -> {
-                @Suppress("UNCHECKED_CAST")
-                val ids = args[0] as? ArrayList<Int> ?: return@NotificationCenterDelegate
-                val channelId = args.getOrNull(1) as? Long ?: 0L
-                if (channelId != 0L) {
-                    for (controller in controllers) {
-                        // entiny: try both signed and negated channelId because stock notification sites disagree on sign convention
-                        controller.onMessagesDeleted(channelId, ids)
-                        controller.onMessagesDeleted(-channelId, ids)
-                    }
-                }
-            }
-            NotificationCenter.historyCleared -> {
-                val dialogId = args.getOrNull(0) as? Long ?: return@NotificationCenterDelegate
-                for (controller in controllers) controller.onHistoryCleared(dialogId)
-            }
-        }
     }
 
     // entiny: re-assert presence on reconnect because stock resets connection-level online state
@@ -135,10 +109,6 @@ object InuHooks {
             nc.addObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
             nc.removeObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
             nc.addObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
-            nc.removeObserver(feedPruneObserver, NotificationCenter.messagesDeleted)
-            nc.addObserver(feedPruneObserver, NotificationCenter.messagesDeleted)
-            nc.removeObserver(feedPruneObserver, NotificationCenter.historyCleared)
-            nc.addObserver(feedPruneObserver, NotificationCenter.historyCleared)
         }
     }
 

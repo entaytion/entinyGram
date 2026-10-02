@@ -110,7 +110,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             Kind.REACTIONS -> R.string.InuCacheReactionsCategory
             Kind.MEDIA -> R.string.InuCacheMediaCategory
             Kind.PRESENCE -> R.string.InuCachePresenceCategory
-            Kind.FEED -> R.string.InuCacheFeedCategory
             Kind.RECENT -> R.string.InuCacheRecentCategory
             Kind.PILLS -> R.string.InuCachePillsCategory
             Kind.TEMP -> R.string.InuCacheTempCategory
@@ -124,7 +123,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         Kind.REACTIONS -> R.drawable.msg_reactions
         Kind.MEDIA -> R.drawable.msg_photos
         Kind.PRESENCE -> R.drawable.msg_recent
-        Kind.FEED -> R.drawable.msg_channel
         Kind.RECENT -> R.drawable.msg_clear_recent
         Kind.PILLS -> R.drawable.msg2_trending
         Kind.TEMP -> R.drawable.msg_shareout
@@ -137,7 +135,6 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         Kind.REACTIONS -> 0xFFEB5FA0.toInt()
         Kind.MEDIA -> 0xFF9B6BDF.toInt()
         Kind.PRESENCE -> 0xFF3390EC.toInt()
-        Kind.FEED -> 0xFF31B545.toInt()
         Kind.RECENT -> 0xFF26B6C7.toInt()
         Kind.PILLS -> 0xFFB5A23A.toInt()
         Kind.TEMP -> 0xFF8E8E93.toInt()

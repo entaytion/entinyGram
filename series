@@ -471,3 +471,4 @@ entiny/hide-reactions-overlay.patch
 entiny/remember-selected-folder.patch
 entiny/animated-file-drawable-recycle-crash.patch
 entiny/attach-camera-square.patch
+entiny/feed-chatactivity.patch

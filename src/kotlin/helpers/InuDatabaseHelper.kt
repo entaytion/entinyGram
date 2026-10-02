@@ -123,10 +123,6 @@ object InuDatabaseHelper {
         }
 
         if (version == 12) {
-            db.executeFast("CREATE TABLE IF NOT EXISTS inu_feed_cache(account_id INTEGER NOT NULL, scope_key TEXT NOT NULL, dialog_id INTEGER NOT NULL, msg_id INTEGER NOT NULL, date INTEGER NOT NULL, data BLOB NOT NULL, grouped_id INTEGER DEFAULT 0, PRIMARY KEY(account_id, scope_key, dialog_id, msg_id))")
-                .stepThis().dispose()
-            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_feed_cache_scope_date ON inu_feed_cache(account_id, scope_key, date DESC)")
-                .stepThis().dispose()
             writeKv(db, "version", "13")
             version = 13
         }
@@ -138,6 +134,9 @@ object InuDatabaseHelper {
             writeKv(db, "version", "14")
             version = 14
         }
+
+        // entiny: the feed no longer keeps its own cache
+        db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
     }
@@ -263,16 +262,6 @@ object InuDatabaseHelper {
         query.dispose()
     }
 
-    fun getFeedCacheStat(db: SQLiteDatabase, account: Int): DialogCacheStat {
-        val cursor = db.queryFinalized("SELECT COUNT(*), SUM(LENGTH(data)) FROM inu_feed_cache WHERE account_id = ?", account)
-        try {
-            if (cursor.next()) return DialogCacheStat(0L, cursor.intValue(0), cursor.longValue(1))
-        } finally {
-            cursor.dispose()
-        }
-        return DialogCacheStat(0L, 0, 0L)
-    }
-
     fun getTableStat(db: SQLiteDatabase, table: String, textColumn: String?, rowBytes: Long): DialogCacheStat {
         val sum = if (textColumn != null) "SUM(LENGTH($textColumn))" else "0"
         val cursor = db.queryFinalized("SELECT COUNT(*), $sum FROM $table")
@@ -306,10 +295,6 @@ object InuDatabaseHelper {
     fun detachSavedMedia(db: SQLiteDatabase) {
         db.executeFast("UPDATE inu_deleted_messages SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
         db.executeFast("UPDATE inu_edit_history SET media_path = NULL WHERE media_path IS NOT NULL").stepThis().dispose()
-    }
-
-    fun clearFeedCache(db: SQLiteDatabase, account: Int) {
-        db.executeFast("DELETE FROM inu_feed_cache WHERE account_id = $account").stepThis().dispose()
     }
 
     fun saveLocalPin(db: SQLiteDatabase, scope: Int, dialogId: Long, order: Int) {

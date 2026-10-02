@@ -1,94 +1,208 @@
 package desu.inugram.helpers.feed
 
-import org.telegram.messenger.ApplicationLoader
+import androidx.collection.LongSparseArray
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.DialogObject
+import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MessagesController
+import org.telegram.tgnet.ConnectionsManager
+import org.telegram.tgnet.TLRPC
 
-class FeedUnreadTracker private constructor(private val account: Int) {
+internal class FeedUnreadTracker(
+    private val currentAccount: Int,
+    private val timeline: ArrayList<MessageObject>,
+) {
+    private val readInboxMaxByDialog = LongSparseArray<Int>()
+    private val pendingMaxReadId = LongSparseArray<Int>()
 
-    private val knownMax = HashMap<Long, Int>()
-    private val pendingMax = HashMap<Long, Int>()
+    private val flushRunnable = Runnable { flush() }
+
     private var flushScheduled = false
-    private val flushRunnable = Runnable { flushNow() }
 
-    private fun effectiveMax(dialogId: Long): Int {
-        if (!knownMax.containsKey(dialogId)) {
-            knownMax[dialogId] = maxOf(FeedChannelSet.readMax(account, dialogId), storedMax(dialogId))
-        }
-        return maxOf(knownMax[dialogId] ?: 0, pendingMax[dialogId] ?: 0)
-    }
-
-    // entiny: re-sync from stock dialogs so reads done outside the feed shrink the unread zone
-    fun refresh(dialogIds: LongArray) {
-        for (dialogId in dialogIds) {
-            val readMax = FeedChannelSet.readMax(account, dialogId)
-            if (readMax > (knownMax[dialogId] ?: 0)) knownMax[dialogId] = readMax
+    fun applyReadInboxMax(dialogId: Long, maxReadId: Int) {
+        if (maxReadId > readInboxMaxByDialog.get(dialogId, NO_READ_ID)) {
+            readInboxMaxByDialog.put(dialogId, maxReadId)
         }
     }
 
-    fun isUnread(dialogId: Long, messageId: Int): Boolean = messageId > effectiveMax(dialogId)
+    fun clear() {
+        if (flushScheduled) {
+            AndroidUtilities.cancelRunOnUIThread(flushRunnable)
+            flushScheduled = false
+        }
+        flush()
+        readInboxMaxByDialog.clear()
+    }
 
-    // entiny: seen posts update only the feed's local read cursor
-    fun onRowSeen(dialogId: Long, messageId: Int): Boolean {
-        if (messageId <= effectiveMax(dialogId)) return false
-        if ((pendingMax[dialogId] ?: 0) < messageId) pendingMax[dialogId] = messageId
+    fun countUnreadBelow(messages: ArrayList<MessageObject?>?, count: Int): Int {
+        if (messages == null || readInboxMaxByDialog.isEmpty()) {
+            return 0
+        }
+        val limit = minOf(count, messages.size)
+        var unread = 0
+        for (i in 0 until limit) {
+            val message = messages[i]
+            if (FeedMessageUtils.isPostRow(message) && isUnread(message)) {
+                unread++
+            }
+        }
+        return unread
+    }
+
+    fun findFirstUnreadIndex(messages: ArrayList<MessageObject?>?): Int {
+        if (messages != null && !readInboxMaxByDialog.isEmpty()) {
+            for (i in messages.size - 1 downTo 0) {
+                if (isUnread(messages[i])) {
+                    return i
+                }
+            }
+        }
+        return -1
+    }
+
+    fun getUnreadCount(): Int {
+        val unreadDialogs = collectUnreadFeedDialogs()
+        var total = 0
+        for (i in unreadDialogs.indices) {
+            total += unreadDialogs[i].unread_count
+        }
+        return total
+    }
+
+    fun isUnread(message: MessageObject?): Boolean =
+        message != null &&
+            !message.isSponsored &&
+            message.realId > getEffectiveReadInboxMax(message.dialogId)
+
+    fun markAllRead() {
+        val messagesController = MessagesController.getInstance(currentAccount)
+        val touchedDialogs = HashSet<Long>()
+
+        val unreadDialogs = collectUnreadFeedDialogs()
+        for (i in unreadDialogs.indices) {
+            val dialog = unreadDialogs[i]
+            messagesController.markMentionsAsRead(dialog.id, 0L)
+            messagesController.markDialogAsRead(
+                dialog.id, dialog.top_message, dialog.top_message,
+                dialog.last_message_date, false, 0L, 0, true, 0
+            )
+            readInboxMaxByDialog.put(dialog.id, dialog.top_message)
+            touchedDialogs.add(dialog.id)
+        }
+
+        val feedConfig = FeedConfig.getInstance(currentAccount)
+        val includeArchived = feedConfig.includeArchived
+        for (i in timeline.indices) {
+            val message = timeline[i]
+            val dialogId = message.dialogId
+            if (feedConfig.isExcluded(dialogId)) {
+                continue
+            }
+            if (!includeArchived) {
+                val dialog = messagesController.dialogs_dict.get(dialogId)
+                if (dialog != null && dialog.folder_id == ARCHIVE_FOLDER_ID) {
+                    continue
+                }
+            }
+            touchedDialogs.add(dialogId)
+            val realId = message.realId
+            if (realId > readInboxMaxByDialog.get(dialogId, NO_READ_ID)) {
+                readInboxMaxByDialog.put(dialogId, realId)
+            }
+        }
+
+        for (dialogId in touchedDialogs) {
+            pendingMaxReadId.remove(dialogId)
+        }
+        if (pendingMaxReadId.isEmpty() && flushScheduled) {
+            AndroidUtilities.cancelRunOnUIThread(flushRunnable)
+            flushScheduled = false
+        }
+    }
+
+    fun onPostSeen(dialogId: Long, messageId: Int) {
+        if (dialogId == 0L || messageId <= 0 || messageId <= getEffectiveReadInboxMax(dialogId)) {
+            return
+        }
+        val pending = pendingMaxReadId.get(dialogId)
+        if (pending != null && pending >= messageId) {
+            return
+        }
+        pendingMaxReadId.put(dialogId, messageId)
         if (!flushScheduled) {
             flushScheduled = true
             AndroidUtilities.runOnUIThread(flushRunnable, FLUSH_DELAY_MS)
         }
-        return true
     }
 
-    fun flush() {
-        AndroidUtilities.cancelRunOnUIThread(flushRunnable)
-        flushNow()
+    private fun collectUnreadFeedDialogs(): ArrayList<TLRPC.Dialog> {
+        val messagesController = MessagesController.getInstance(currentAccount)
+        val feedConfig = FeedConfig.getInstance(currentAccount)
+        val includeArchived = feedConfig.includeArchived
+
+        val dialogs = messagesController.dialogs_dict
+        val result = ArrayList<TLRPC.Dialog>()
+        for (i in 0 until dialogs.size()) {
+            val dialog = dialogs.valueAt(i)
+            if (dialog == null || dialog.unread_count <= 0) {
+                continue
+            }
+            val dialogId = dialog.id
+            if (!DialogObject.isChatDialog(dialogId) || feedConfig.isExcluded(dialogId)) {
+                continue
+            }
+            if (!includeArchived && dialog.folder_id == ARCHIVE_FOLDER_ID) {
+                continue
+            }
+            if (FeedController.isEligibleChannel(messagesController.getChat(-dialogId))) {
+                result.add(dialog)
+            }
+        }
+        return result
     }
 
-    private fun flushNow() {
+    private fun countTimelineRows(dialogId: Long, fromIdExclusive: Int, toIdInclusive: Int): Int {
+        var count = 0
+        for (i in timeline.indices) {
+            val message = timeline[i]
+            if (message.dialogId != dialogId) {
+                continue
+            }
+            val realId = message.realId
+            if (realId > fromIdExclusive && realId <= toIdInclusive) {
+                count++
+            }
+        }
+        return count
+    }
+
+    private fun flush() {
         flushScheduled = false
-        if (pendingMax.isEmpty()) return
-        val entries = ArrayList(pendingMax.entries)
-        pendingMax.clear()
-        val editor = preferences().edit()
-        for ((dialogId, maxReadId) in entries) {
-            if (maxReadId <= (knownMax[dialogId] ?: 0)) continue
-            knownMax[dialogId] = maxReadId
-            editor.putInt(dialogId.toString(), maxReadId)
+        if (pendingMaxReadId.isEmpty()) {
+            return
         }
-        editor.apply()
-    }
-
-    fun markAllRead(dialogIds: Collection<Long>, newestLoaded: Map<Long, Int>): Int {
-        var marked = 0
-        for (dialogId in dialogIds) {
-            val top = maxOf(FeedChannelSet.topMessage(account, dialogId), newestLoaded[dialogId] ?: 0)
-            if (top <= 0) continue
-            if (top <= effectiveMax(dialogId)) continue
-            knownMax[dialogId] = top
-            pendingMax.remove(dialogId)
-            storeMax(dialogId, top)
-            marked++
+        val messagesController = MessagesController.getInstance(currentAccount)
+        val currentTime = ConnectionsManager.getInstance(currentAccount).getCurrentTime()
+        for (i in 0 until pendingMaxReadId.size()) {
+            val dialogId = pendingMaxReadId.keyAt(i)
+            val maxReadId = pendingMaxReadId.valueAt(i)
+            val knownMaxReadId = readInboxMaxByDialog.get(dialogId, NO_READ_ID)
+            if (maxReadId <= knownMaxReadId) {
+                continue
+            }
+            readInboxMaxByDialog.put(dialogId, maxReadId)
+            val countDiff = maxOf(countTimelineRows(dialogId, knownMaxReadId, maxReadId), 1)
+            messagesController.markDialogAsRead(dialogId, maxReadId, 0, currentTime, false, 0L, countDiff, true, 0)
         }
-        return marked
+        pendingMaxReadId.clear()
     }
 
-
-    private fun storedMax(dialogId: Long): Int = preferences().getInt(dialogId.toString(), 0)
-
-    private fun storeMax(dialogId: Long, maxReadId: Int) {
-        preferences().edit().putInt(dialogId.toString(), maxReadId).apply()
-    }
-
-    private fun preferences() = ApplicationLoader.applicationContext
-        .getSharedPreferences("inu_feed_read_$account", android.content.Context.MODE_PRIVATE)
+    private fun getEffectiveReadInboxMax(dialogId: Long): Int =
+        maxOf(readInboxMaxByDialog.get(dialogId, NO_READ_ID), pendingMaxReadId.get(dialogId, NO_READ_ID))
 
     companion object {
         private const val FLUSH_DELAY_MS = 1000L
-
-        private val instances = HashMap<Int, FeedUnreadTracker>()
-
-        @JvmStatic
-        @Synchronized
-        fun get(account: Int): FeedUnreadTracker = instances.getOrPut(account) { FeedUnreadTracker(account) }
-
+        private const val ARCHIVE_FOLDER_ID = 1
+        private const val NO_READ_ID = 0
     }
 }

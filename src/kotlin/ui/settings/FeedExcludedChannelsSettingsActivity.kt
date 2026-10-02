@@ -1,148 +1,177 @@
 package desu.inugram.ui.settings
 
+import android.content.Context
 import android.view.View
+import android.widget.EditText
+import desu.inugram.helpers.feed.FeedConfig
+import desu.inugram.helpers.feed.FeedController
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.feed.FeedChannelSet
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
+import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ActionBar.ActionBar
+import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
+import java.util.Locale
 
-class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
+// entiny: channel list layout ported from exteraless (https://github.com/exteraless/exteraless)
+class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
+
+    private val channels = ArrayList<TLRPC.Chat>()
+    private var otherItem: ActionBarMenuItem? = null
+    private var query: String? = null
+    private var searching = false
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuFeedManageChannels)
 
+    override fun createView(context: Context): View {
+        val view = super.createView(context)
+        actionBar.setAllowOverlayTitle(false)
+        actionBar.setActionBarMenuOnItemClick(object : ActionBar.ActionBarMenuOnItemClick() {
+            override fun onItemClick(id: Int) {
+                when (id) {
+                    -1 -> finishFragment()
+                    MENU_SELECT_ALL -> setAllExcluded(false)
+                    MENU_DESELECT_ALL -> setAllExcluded(true)
+                }
+            }
+        })
+        val menu = actionBar.createMenu()
+        menu.addItem(MENU_SEARCH, R.drawable.outline_header_search)
+            .setIsSearchField(true)
+            .setActionBarMenuItemSearchListener(object : ActionBarMenuItem.ActionBarMenuItemSearchListener() {
+                override fun onSearchExpand() {
+                    searching = true
+                    otherItem?.visibility = View.GONE
+                }
+
+                override fun onSearchCollapse() {
+                    searching = false
+                    query = null
+                    otherItem?.visibility = View.VISIBLE
+                    listView?.adapter?.update(true)
+                }
+
+                override fun onTextChanged(editText: EditText) {
+                    query = editText.text.toString().trim().lowercase(Locale.ROOT)
+                    listView?.adapter?.update(true)
+                }
+            })
+            .setSearchFieldHint(LocaleController.getString(R.string.Search))
+        otherItem = menu.addItem(MENU_OTHER, R.drawable.ic_ab_other).also {
+            it.addSubItem(MENU_SELECT_ALL, R.drawable.msg_select, LocaleController.getString(R.string.SelectAll))
+            it.addSubItem(MENU_DESELECT_ALL, R.drawable.msg_cancel, LocaleController.getString(R.string.DeselectAll))
+        }
+        reloadChannels()
+        return view
+    }
+
+    override fun onFragmentCreate(): Boolean {
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.feedNeedReload)
+        return super.onFragmentCreate()
+    }
+
+    override fun onFragmentDestroy() {
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.feedNeedReload)
+        super.onFragmentDestroy()
+    }
+
+    override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+        if (id == NotificationCenter.feedNeedReload) reloadChannels()
+
+    }
+
+    override fun onBackPressed(invoked: Boolean): Boolean {
+        if (!searching) return super.onBackPressed(invoked)
+        if (invoked) actionBar.closeSearchField()
+        return false
+    }
+
+    private fun reloadChannels() {
+        FeedController.getInstance(currentAccount).loadChannels { loaded, _ ->
+            channels.clear()
+            channels.addAll(loaded)
+            channels.sortBy { it.title?.lowercase(Locale.ROOT) ?: "" }
+            listView?.adapter?.update(true)
+        }
+    }
+
+    private fun setAllExcluded(excluded: Boolean) {
+        val config = FeedConfig.getInstance(currentAccount)
+        if (excluded) config.excludeAll(channels.map { -it.id }) else InuConfig.FEED_EXCLUDED_CHANNELS.value = emptySet()
+        FeedChannelSet.invalidate()
+        listView?.adapter?.update(true)
+    }
+
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(mkTwoLineCheckItem(TOGGLE_INCLUDE_ARCHIVED, R.string.InuFeedIncludeArchived, 0, InuConfig.FEED_INCLUDE_ARCHIVED.value))
-        items.add(mkTwoLineCheckItem(TOGGLE_NEWEST_ON_TOP, R.string.InuFeedNewestOnTop, R.string.InuFeedNewestOnTopInfo, InuConfig.FEED_NEWEST_ON_TOP.value))
-        items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_ON_SCROLL, R.string.InuFeedMarkReadOnScroll, R.string.InuFeedMarkReadOnScrollInfo, InuConfig.FEED_MARK_READ_ON_SCROLL.value))
-        items.add(
-            UItem.asButton(
-                BUTTON_NEW_POSTS_INDICATOR,
-                LocaleController.getString(R.string.InuFeedNewPostsIndicator),
-                indicatorLabel(),
-            )
-        )
-        items.add(UItem.asShadow(null))
-
-        val (shown, hidden) = FeedChannelSet.allChannelsSplit(currentAccount)
-        if (shown.isEmpty() && hidden.isEmpty()) {
-            items.add(UItem.asShadow(LocaleController.getString(R.string.InuFeedNoChannels)))
-            return
+        val config = FeedConfig.getInstance(currentAccount)
+        val q = query
+        val noQuery = q.isNullOrEmpty()
+        if (noQuery) {
+            items.add(mkTwoLineCheckItem(TOGGLE_INCLUDE_ARCHIVED, R.string.InuFeedIncludeArchived, 0, InuConfig.FEED_INCLUDE_ARCHIVED.value))
+            items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_ON_SCROLL, R.string.InuFeedMarkReadOnScroll, R.string.InuFeedMarkReadOnScrollInfo, InuConfig.FEED_MARK_READ_ON_SCROLL.value))
+            items.add(UItem.asShadow(null))
         }
 
-        if (shown.isNotEmpty()) {
-            items.add(UItem.asButton(BUTTON_HIDE_ALL, R.drawable.msg_cancel, LocaleController.getString(R.string.InuFeedHideAll)))
+        val shown = ArrayList<UItem>()
+        val hidden = ArrayList<UItem>()
+        for ((index, chat) in channels.withIndex()) {
+            if (!noQuery && chat.title?.lowercase(Locale.ROOT)?.contains(q!!) != true) continue
+            val excluded = config.isExcluded(-chat.id)
+            val item = UItem.asUserCheckbox(CHANNEL_BASE + index, chat).setChecked(!excluded)
+            (if (excluded) hidden else shown).add(item)
         }
-        if (hidden.isNotEmpty()) {
-            items.add(UItem.asButton(BUTTON_SHOW_ALL, R.drawable.msg_select, LocaleController.getString(R.string.InuFeedShowAll)))
-        }
-        items.add(UItem.asShadow(null))
 
         if (shown.isNotEmpty()) {
             items.add(UItem.asHeader(LocaleController.getString(R.string.InuFeedShownChannels)))
-            for ((index, dialogId) in shown.withIndex()) {
-                items.add(UItem.asCheck(CHANNEL_BASE + index, channelName(dialogId)).also { it.checked = true })
-            }
+            items.addAll(shown)
         }
         if (hidden.isNotEmpty()) {
-            items.add(UItem.asShadow(null))
+            if (shown.isNotEmpty()) items.add(UItem.asShadow(null))
             items.add(UItem.asHeader(LocaleController.getString(R.string.InuFeedHiddenChannels)))
-            for ((index, dialogId) in hidden.withIndex()) {
-                items.add(UItem.asCheck(HIDDEN_BASE + index, channelName(dialogId)).also { it.checked = false })
-            }
+            items.addAll(hidden)
         }
-        // entiny: stash dialog ids alongside lists so onClick avoids re-deriving shifted list indices
-        shownIds = shown
-        hiddenIds = hidden
-    }
-
-    private var shownIds: List<Long> = emptyList()
-    private var hiddenIds: List<Long> = emptyList()
-
-    private fun indicatorLabel(): String = when (InuConfig.FEED_NEW_POSTS_INDICATOR.value) {
-        desu.inugram.ui.feed.FeedActivity.INDICATOR_BUTTON -> LocaleController.getString(R.string.InuFeedNewPostsIndicatorButton)
-        else -> LocaleController.getString(R.string.InuFeedNewPostsIndicatorPill)
+        if (noQuery && shown.isEmpty() && hidden.isEmpty()) {
+            items.add(UItem.asShadow(LocaleController.getString(R.string.InuFeedNoChannels)))
+        }
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        val chat = item.`object` as? TLRPC.Chat
         when {
             item.id == TOGGLE_INCLUDE_ARCHIVED -> {
                 InuConfig.FEED_INCLUDE_ARCHIVED.value = !InuConfig.FEED_INCLUDE_ARCHIVED.value
                 FeedChannelSet.invalidate()
-                listView?.adapter?.update(true)
-            }
-            item.id == TOGGLE_NEWEST_ON_TOP -> {
-                InuConfig.FEED_NEWEST_ON_TOP.value = !InuConfig.FEED_NEWEST_ON_TOP.value
-                listView?.adapter?.update(true)
+                reloadChannels()
             }
             item.id == TOGGLE_MARK_READ_ON_SCROLL -> {
                 InuConfig.FEED_MARK_READ_ON_SCROLL.value = !InuConfig.FEED_MARK_READ_ON_SCROLL.value
                 listView?.adapter?.update(true)
             }
-            item.id == BUTTON_NEW_POSTS_INDICATOR -> {
-                val ctx = context ?: return
-                // entiny: list order must match FeedActivity.INDICATOR_PILL/INDICATOR_BUTTON (0/1)
-                val options = listOf(
-                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuFeedNewPostsIndicatorPill)),
-                    RadioDialogBuilder.Item(LocaleController.getString(R.string.InuFeedNewPostsIndicatorButton)),
-                )
-                showDialog(
-                    RadioDialogBuilder(ctx, getResourceProvider())
-                        .setTitle(LocaleController.getString(R.string.InuFeedNewPostsIndicator))
-                        .setItems(options, InuConfig.FEED_NEW_POSTS_INDICATOR.value) { _, which ->
-                            if (InuConfig.FEED_NEW_POSTS_INDICATOR.value == which) return@setItems
-                            InuConfig.FEED_NEW_POSTS_INDICATOR.value = which
-                            listView?.adapter?.update(true)
-                        }.create()
-                )
-            }
-            item.id == BUTTON_HIDE_ALL -> {
-                val all = (shownIds + hiddenIds).map { it.toString() }.toSet()
-                InuConfig.FEED_EXCLUDED_CHANNELS.value = all
-                FeedChannelSet.invalidate()
+            chat != null -> {
+                val checked = !item.checked
+                FeedConfig.getInstance(currentAccount).setExcluded(-chat.id, !checked)
+                item.setChecked(checked)
+                (listView?.findViewByItemId(item.id) as? org.telegram.ui.Cells.CheckBoxCell)?.setChecked(checked, true)
                 listView?.adapter?.update(true)
-            }
-            item.id == BUTTON_SHOW_ALL -> {
-                InuConfig.FEED_EXCLUDED_CHANNELS.value = emptySet()
-                FeedChannelSet.invalidate()
-                listView?.adapter?.update(true)
-            }
-            item.id in CHANNEL_BASE until CHANNEL_BASE + shownIds.size -> {
-                toggleExcluded(shownIds[item.id - CHANNEL_BASE])
-            }
-            item.id in HIDDEN_BASE until HIDDEN_BASE + hiddenIds.size -> {
-                toggleExcluded(hiddenIds[item.id - HIDDEN_BASE])
             }
         }
     }
 
-    private fun toggleExcluded(dialogId: Long) {
-        val current = InuConfig.FEED_EXCLUDED_CHANNELS.value.toMutableSet()
-        val key = dialogId.toString()
-        if (!current.remove(key)) current.add(key)
-        InuConfig.FEED_EXCLUDED_CHANNELS.value = current
-        FeedChannelSet.invalidate()
-        listView?.adapter?.update(true)
-    }
-
-    private fun channelName(dialogId: Long): String {
-        val chat = MessagesController.getInstance(currentAccount).getChat(-dialogId)
-        return chat?.title ?: "ID $dialogId"
-    }
-
     companion object {
+        private const val CHANNEL_BASE = 100_000
+        private const val MENU_SEARCH = 0
+        private const val MENU_SELECT_ALL = 1
+        private const val MENU_DESELECT_ALL = 2
+        private const val MENU_OTHER = 3
+
         private val TOGGLE_INCLUDE_ARCHIVED = InuUtils.generateId()
-        private val TOGGLE_NEWEST_ON_TOP = InuUtils.generateId()
         private val TOGGLE_MARK_READ_ON_SCROLL = InuUtils.generateId()
-        private val BUTTON_NEW_POSTS_INDICATOR = InuUtils.generateId()
-        private val BUTTON_HIDE_ALL = InuUtils.generateId()
-        private val BUTTON_SHOW_ALL = InuUtils.generateId()
-        private const val CHANNEL_BASE = 10_000
-        private const val HIDDEN_BASE = 20_000
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -153,9 +182,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("feed", R.string.InuFeed),
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
-                SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),
                 SearchRegistry.Entry("feed-mark-read-on-scroll", R.string.InuFeedMarkReadOnScroll, TOGGLE_MARK_READ_ON_SCROLL),
-                SearchRegistry.Entry("feed-new-posts-indicator", R.string.InuFeedNewPostsIndicator, BUTTON_NEW_POSTS_INDICATOR),
             ),
         )
     }
