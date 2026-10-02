@@ -24,6 +24,9 @@ object RegexFilterHelper {
         val reversed: Boolean,
     )
 
+    private const val MATCH_CACHE_PER_DIALOG = 20_000
+    private const val OLD_DEFAULT_PATTERN = "(?i)(реклама|промокод|казино|знижка|ставк|підпишись|referral|crypto|binance|buy now)"
+
     private data class MatchCacheEntry(val textHash: Int, val matched: Boolean)
 
     private class BoundedCache(private val maxSize: Int) : LinkedHashMap<Int, MatchCacheEntry>(16, 0.75f, true) {
@@ -48,20 +51,23 @@ object RegexFilterHelper {
         if (!isEnabled() || messageObject?.messageOwner == null) return false
         val msgText = messageObject.messageText
         val caption = messageObject.caption
-        val linkUrls = extractLinkUrls(messageObject.messageOwner)
         val hasText = !msgText.isNullOrEmpty()
         val hasCaption = !caption.isNullOrEmpty()
-        val hasLinks = !linkUrls.isNullOrEmpty()
-        if (!hasText && !hasCaption && !hasLinks) return false
 
-        // entiny: hash components without string allocation and only build text on cache miss
-        val textHash = 31 * (31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)) +
-            (if (hasLinks) linkUrls.hashCode() else 0)
+        // entiny: cheap hash check before entity scan — cache miss pays the extractLinkUrls cost
+        val quickHash = 31 * (if (hasText) msgText.hashCode() else 0) + (if (hasCaption) caption.hashCode() else 0)
         val dialogId = messageObject.dialogId
         synchronized(lock) {
             matchCache[dialogId]?.get(messageObject.id)?.let {
-                if (it.textHash == textHash) return it.matched
+                if (it.textHash == quickHash) return it.matched
             }
+        }
+
+        val linkUrls = extractLinkUrls(messageObject.messageOwner)
+        val hasLinks = !linkUrls.isNullOrEmpty()
+        if (!hasText && !hasCaption && !hasLinks) {
+            synchronized(lock) { matchCache.getOrPut(dialogId) { BoundedCache(MATCH_CACHE_PER_DIALOG) }[messageObject.id] = MatchCacheEntry(quickHash, false) }
+            return false
         }
         val text = buildString {
             if (hasText) append(msgText).append('\n')
@@ -70,7 +76,7 @@ object RegexFilterHelper {
         }
         val result = matches(text, dialogId)
         synchronized(lock) {
-            matchCache.getOrPut(dialogId) { BoundedCache(500) }[messageObject.id] = MatchCacheEntry(textHash, result)
+            matchCache.getOrPut(dialogId) { BoundedCache(MATCH_CACHE_PER_DIALOG) }[messageObject.id] = MatchCacheEntry(quickHash, result)
         }
         return result
     }
@@ -267,7 +273,10 @@ object RegexFilterHelper {
         synchronized(lock) {
             if (globalFilters != null && chatFilters != null && exclusions != null) return
             migrateLegacyIfNeeded()
-            val all = parseFilters(InuConfig.REGEX_FILTERS_JSON.value)
+            val parsed = parseFilters(InuConfig.REGEX_FILTERS_JSON.value)
+            // entiny: drop the aggressive default filter older builds created for everyone
+            val all = parsed.filter { it.pattern != OLD_DEFAULT_PATTERN }
+            if (all.size != parsed.size) InuConfig.REGEX_FILTERS_JSON.value = JSONArray().apply { all.forEach { put(entryToJson(it)) } }.toString()
             globalFilters = all.filter { it.dialogId == null }
             chatFilters = all.filter { it.dialogId != null }.groupBy { it.dialogId!! }
             exclusions = parseExclusions(InuConfig.REGEX_FILTER_EXCLUSIONS_JSON.value)
@@ -341,6 +350,7 @@ object RegexFilterHelper {
             chatFilters = entries.filter { it.dialogId != null }.groupBy { it.dialogId!! }
             compiledPatterns.clear()
             matchCache.clear()
+            BlockedMessagesHelper.invalidateVisible()
         }
         notifyChanged()
     }
@@ -359,11 +369,13 @@ object RegexFilterHelper {
         synchronized(lock) {
             exclusions = map
             matchCache.clear()
+            BlockedMessagesHelper.invalidateVisible()
         }
         notifyChanged()
     }
 
-    private fun notifyChanged() {
+    fun notifyChanged() {
+        BlockedMessagesHelper.refreshOpenChats()
         NotificationCenter.getInstance(UserConfig.selectedAccount).postNotificationName(
             NotificationCenter.updateInterfaces,
             MessagesController.UPDATE_MASK_ALL,

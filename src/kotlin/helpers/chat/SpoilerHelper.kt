@@ -50,6 +50,8 @@ object SpoilerHelper {
         textAlign = Paint.Align.CENTER
         letterSpacing = 0.12f
     }
+    private val cachedFm = Paint.FontMetrics()
+    private var cachedLabel: String? = null
 
     @JvmStatic
     fun drawSolidIfOverridden(canvas: Canvas, effect: SpoilerEffect, parent: View?, lastColor: Int, mAlpha: Int): Boolean {
@@ -155,10 +157,12 @@ object SpoilerHelper {
             return
         }
 
-        val label = LocaleController.getString(R.string.InuMediaSpoilerLabel).uppercase()
+        val cur = LocaleController.getString(R.string.InuMediaSpoilerLabel).uppercase()
+        if (cachedLabel != cur) cachedLabel = cur
+        val label = cachedLabel!!
         val padH = dp(16f).toFloat()
         val padV = dp(7f).toFloat()
-        val fm = labelPaint.fontMetrics
+        val fm = cachedFm.also { labelPaint.getFontMetrics(it) }
         val textW = labelPaint.measureText(label)
         val textH = fm.descent - fm.ascent
         val pillW = textW + padH * 2
@@ -180,9 +184,12 @@ object SpoilerHelper {
     }
 
     private fun isOutgoingBubble(view: View?): Boolean {
-        return generateSequence(view) { it.parent as? View }
-            .filterIsInstance<ChatMessageCell>()
-            .firstOrNull()?.messageObject?.isOutOwner == true
+        var v = view
+        while (v != null) {
+            if (v is ChatMessageCell) return v.messageObject?.isOutOwner == true
+            v = v.parent as? View
+        }
+        return false
     }
 
     private fun drawFillet(canvas: Canvas, cx: Float, cy: Float, dx: Int, dy: Int, r: Float) {

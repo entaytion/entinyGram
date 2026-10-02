@@ -925,6 +925,8 @@
     <string name="InuRegexFilterMode">过滤器模式</string>
     <string name="InuRegexFilterModeHide">完全隐藏</string>
     <string name="InuRegexFilterModeSpoiler">用遮罩覆盖</string>
+    <string name="InuRegexFilterHideReplies">隐藏对已过滤消息的回复</string>
+    <string name="InuRegexFilterHideRepliesInfo">同时隐藏回复了已隐藏消息的消息，避免聊天滚动卡住</string>
     <string name="InuRegexFiltersList">过滤器</string>
     <string name="InuRegexFilterAdd">添加过滤器</string>
     <string name="InuRegexFilterStatusEnabled">已启用</string>

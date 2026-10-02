@@ -27,6 +27,7 @@ object UpdateHelper {
     const val USERNAME = "entinyGramCI"
     private const val CHECK_INTERVAL_MS = 4L * 60 * 60 * 1000
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
+    private const val RESOLVE_BACKOFF_MS = 30L * 60 * 1000
 
     private val APK_RE = Regex("^entinygram(?:-beta)?-arm64-(.+)-(\\d+)\\.apk$")
 
@@ -70,6 +71,8 @@ object UpdateHelper {
     private var inflight = false
     @Volatile
     private var inflightSince = 0L
+    @Volatile
+    private var lastResolveFailureMs = 0L
     private val queuedCallbacks = ArrayList<(CheckResult) -> Unit>()
 
     @Volatile var pendingBetaUpdate: BetaUpdate? = null
@@ -245,6 +248,11 @@ object UpdateHelper {
         }
         if (BuildConfig.INU_BUILD_TYPE == "debug") { callback?.invoke(CheckResult.UpToDate); return }
         val now = System.currentTimeMillis()
+        // entiny: back off after a failed resolve so offline/censored networks don't retry per message
+        if (now - lastResolveFailureMs < RESOLVE_BACKOFF_MS) {
+            callback?.invoke(CheckResult.Error("resolve backoff"))
+            return
+        }
         if (inflight && now - inflightSince < INFLIGHT_TIMEOUT_MS) {
             if (callback != null) {
                 synchronized(queuedCallbacks) { queuedCallbacks.add(callback) }
@@ -255,9 +263,11 @@ object UpdateHelper {
         inflightSince = now
         MessagesController.getInstance(account).userNameResolver.resolve(USERNAME) { peerId ->
             if (peerId == null || peerId == 0L || peerId == Long.MAX_VALUE) {
+                lastResolveFailureMs = System.currentTimeMillis()
                 finish(callback, CheckResult.Error("resolve failed"))
                 return@resolve
             }
+            lastResolveFailureMs = 0L
             resolvedChannelId = -peerId
             performSearch(account, peerId, callback)
         }

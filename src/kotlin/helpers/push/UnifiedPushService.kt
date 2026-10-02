@@ -7,7 +7,6 @@ import org.unifiedpush.android.connector.FailedReason
 import org.unifiedpush.android.connector.PushService
 import org.unifiedpush.android.connector.data.PushEndpoint
 import org.unifiedpush.android.connector.data.PushMessage
-import java.util.concurrent.CountDownLatch
 
 // entiny: receiver the distributor talks to; registered in the manifest by the unified-push patch
 class UnifiedPushService : PushService() {
@@ -20,20 +19,9 @@ class UnifiedPushService : PushService() {
     }
 
     override fun onMessage(message: PushMessage, instance: String) {
-        val latch = CountDownLatch(1)
-        AndroidUtilities.runOnUIThread {
-            ApplicationLoader.postInitApplication()
-            Utilities.stageQueue.postRunnable {
-                UnifiedPushHelper.onWake()
-                latch.countDown()
-            }
-        }
-        Utilities.globalQueue.postRunnable {
-            try {
-                latch.await()
-            } catch (ignore: Throwable) {
-            }
-        }
+        // entiny: onWake only touches ConnectionsManager, so no need to block globalQueue waiting on the UI thread
+        AndroidUtilities.runOnUIThread { ApplicationLoader.postInitApplication() }
+        Utilities.stageQueue.postRunnable { UnifiedPushHelper.onWake() }
     }
 
     override fun onRegistrationFailed(reason: FailedReason, instance: String) {

@@ -49,18 +49,26 @@ object LogsHelper {
     }
 
     // entiny: keep the logs folder bounded now that every release build can write logs
+    private val trimQueued = java.util.concurrent.atomic.AtomicBoolean(false)
+
     fun trimIfNeeded() {
         if (!BuildVars.LOGS_ENABLED) return
+        if (!trimQueued.compareAndSet(false, true)) return
         Utilities.globalQueue.postRunnable {
-            val files = (AndroidUtilities.getLogsDir()?.listFiles() ?: return@postRunnable)
-                .filter { it.isFile }
-                .sortedBy { it.lastModified() }
-                .toMutableList()
-            var total = files.sumOf { it.length() }
-            while (total > MAX_LOGS_BYTES && files.size > 1) {
-                val oldest = files.removeAt(0)
-                total -= oldest.length()
-                oldest.delete()
+            try {
+                val files = (AndroidUtilities.getLogsDir()?.listFiles() ?: return@postRunnable)
+                    .filter { it.isFile }
+                    .map { it to it.lastModified() }
+                    .sortedBy { it.second }
+                    .toMutableList()
+                var total = files.sumOf { it.first.length() }
+                while (total > MAX_LOGS_BYTES && files.size > 1) {
+                    val oldest = files.removeAt(0).first
+                    total -= oldest.length()
+                    oldest.delete()
+                }
+            } finally {
+                trimQueued.set(false)
             }
         }
     }

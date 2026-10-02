@@ -87,13 +87,14 @@ object TranslateHelper {
 
     @JvmStatic
     fun isWebPageTranslating(msg: MessageObject?): Boolean {
-        if (msg == null) return false
+        if (msg == null || webPagesLoading.isEmpty()) return false
         return webPagesLoading[msg.dialogId]?.contains(msg.id) == true
     }
 
     @JvmStatic
     @JvmOverloads
     fun isManualTranslated(msg: MessageObject?, group: MessageObject.GroupedMessages? = null): Boolean {
+        if (manual.isEmpty()) return false
         if (msg != null && manual[msg.dialogId]?.contains(msg.id) == true) return true
         val cap = group?.captionMessage ?: return false
         return manual[cap.dialogId]?.contains(cap.id) == true

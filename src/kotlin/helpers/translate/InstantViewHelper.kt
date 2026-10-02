@@ -53,17 +53,18 @@ object InstantViewHelper {
         var detectionInFlight = false
     }
 
-    private val states = WeakHashMap<ArticleViewer, MutableMap<Long, State>>()
+    private val states = java.util.Collections.synchronizedMap(WeakHashMap<ArticleViewer, MutableMap<Long, State>>())
 
     private fun stateFor(viewer: ArticleViewer, page: TLRPC.WebPage): State {
-        val map = states.getOrPut(viewer) { mutableMapOf() }
-        return map.getOrPut(page.id) { State(page) }
+        val map = synchronized(states) { states.getOrPut(viewer) { mutableMapOf<Long, State>() } }
+        return synchronized(map) { map.getOrPut(page.id) { State(page) } }
     }
 
     private fun activeStateFor(viewer: ArticleViewer?): State? {
         if (viewer == null) return null
         val page = viewer.currentPageLayout?.adapter?.currentPage ?: return null
-        return states[viewer]?.get(page.id)
+        val map = synchronized(states) { states[viewer] } ?: return null
+        return synchronized(map) { map[page.id] }
     }
 
     @JvmStatic

@@ -1079,6 +1079,8 @@
     <string name="InuRegexFilterMode">Режим фильтра</string>
     <string name="InuRegexFilterModeHide">Скрывать полностью</string>
     <string name="InuRegexFilterModeSpoiler">Закрывать спойлером</string>
+    <string name="InuRegexFilterHideReplies">Скрывать ответы на скрытые</string>
+    <string name="InuRegexFilterHideRepliesInfo">Также скрывает сообщения, которые отвечают на скрытое сообщение, чтобы чат не упирался в отсутствующий ответ</string>
     <string name="InuRegexFiltersList">Фильтры</string>
     <string name="InuRegexFilterAdd">Добавить фильтр</string>
     <string name="InuRegexFilterStatusEnabled">Включён</string>

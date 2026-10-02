@@ -1,6 +1,7 @@
 package desu.inugram.helpers.chat
 
 import androidx.core.content.edit
+import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
@@ -28,6 +29,7 @@ object BlockedMessagesHelper {
             extraHiddenCache[account] = HashSet(ids)
         }
         InuConfig.prefs.edit { putStringSet(getExtraHiddenKey(account), ids.map(Long::toString).toHashSet()) }
+        invalidateVisible()
         NotificationCenter.getInstance(account).postNotificationName(NotificationCenter.blockedUsersDidLoad)
     }
 
@@ -129,16 +131,92 @@ object BlockedMessagesHelper {
         return checkBlockedEntities(messageObject, messageObject?.messageOwner?.entities)
     }
 
+    private class VisibleState {
+        var stale = true
+        var source: List<MessageObject>? = null
+        var size = -1
+        var epoch = -1
+        var config = -1
+    }
+
+    private val visibleStates = java.util.WeakHashMap<ChatActivity.ChatActivityAdapter, VisibleState>()
+
+    @Volatile
+    private var epoch = 0
+
+    @JvmStatic
+    fun invalidateVisible() {
+        epoch++
+    }
+
+    // entiny: filters changed while a chat is open underneath, so force the adapters to relayout
+    fun refreshOpenChats() {
+        epoch++
+        org.telegram.messenger.AndroidUtilities.runOnUIThread {
+            for (adapter in ArrayList(visibleStates.keys)) adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun configStamp(): Int =
+        (if (isHideMode()) 1 else 0) or
+            (if (RegexFilterHelper.isEnabled() && RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE) 2 else 0) or
+            (if (InuConfig.HIDE_GIFT_CARDS_IN_CHAT.value) 4 else 0) or
+            (if (InuConfig.HIDE_GIVEAWAYS.value) 8 else 0) or
+            (if (InuConfig.HIDE_CHANNEL_RECOMMENDATIONS.value) 16 else 0) or
+            (if (InuConfig.REGEX_FILTER_HIDE_REPLIES.value) 32 else 0)
+
+    private fun stateFor(adapter: ChatActivity.ChatActivityAdapter): VisibleState =
+        visibleStates.getOrPut(adapter) {
+            val state = VisibleState()
+            adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onChanged() { state.stale = true }
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int) { state.stale = true }
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) { state.stale = true }
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) { state.stale = true }
+                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) { state.stale = true }
+                override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) { state.stale = true }
+            })
+            state
+        }
+
     @JvmStatic
     fun refreshVisible(adapter: ChatActivity.ChatActivityAdapter): ArrayList<MessageObject> {
         val source = adapter.inu_getSourceMessages()
+        val state = stateFor(adapter)
         if (!hasHideFilter()) return source
         val buffer = adapter.inu_visibleMessages
+        // entiny: getMessages() runs per adapter query, so rebuild only after the data actually changed
+        val config = configStamp()
+        if (!state.stale && state.source === source && state.size == source.size && state.epoch == epoch && state.config == config) return buffer
         buffer.clear()
         val activeDays = HashSet<Int>()
+        val hidden = BooleanArray(source.size)
+        var hiddenGroups: HashSet<Long>? = null
+        val hideReplies = InuConfig.REGEX_FILTER_HIDE_REPLIES.value && RegexFilterHelper.isEnabled() &&
+            RegexFilterHelper.getMode() == InuConfig.RegexFilterModeItem.HIDE
+        val hiddenIds = if (hideReplies) HashSet<Int>() else null
+        // entiny: oldest first so a reply to a hidden reply is hidden too
+        for (i in source.size - 1 downTo 0) {
+            val msg = source[i] ?: continue
+            var hide = shouldHide(msg)
+            if (hiddenIds != null) {
+                if (hide) {
+                    if (RegexFilterHelper.isMessageFiltered(msg)) hiddenIds.add(msg.id)
+                } else {
+                    val replyId = msg.messageOwner?.reply_to?.reply_to_msg_id ?: 0
+                    if (replyId != 0 && hiddenIds.contains(replyId)) {
+                        hide = true
+                        hiddenIds.add(msg.id)
+                    }
+                }
+            }
+            hidden[i] = hide
+            // entiny: one hidden album member hides the whole album, otherwise the rest render as loose photos
+            if (hide && msg.groupId != 0L) (hiddenGroups ?: HashSet<Long>().also { hiddenGroups = it }).add(msg.groupId)
+        }
         for (i in 0 until source.size) {
             val msg = source[i]
-            if (msg != null && !shouldHide(msg)) {
+            if (msg != null && !hidden[i] && (hiddenGroups == null || msg.groupId == 0L || !hiddenGroups!!.contains(msg.groupId))) {
                 buffer.add(msg)
                 if (!msg.isDateObject && msg.contentType != 2) activeDays.add(msg.dateKeyInt)
             }
@@ -155,6 +233,11 @@ object BlockedMessagesHelper {
                 hasMessageAfter = true
             }
         }
+        state.source = source
+        state.size = source.size
+        state.epoch = epoch
+        state.config = config
+        state.stale = false
         return buffer
     }
 

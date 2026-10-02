@@ -13,9 +13,23 @@ import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class RegexFilterSettingsActivity : SettingsPageActivity() {
+class RegexFilterSettingsActivity : SettingsPageActivity(), NotificationCenter.NotificationCenterDelegate {
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuRegexFilter)
+
+    override fun onFragmentCreate(): Boolean {
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.updateInterfaces)
+        return super.onFragmentCreate()
+    }
+
+    override fun onFragmentDestroy() {
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.updateInterfaces)
+        super.onFragmentDestroy()
+    }
+
+    override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
+        if (id == NotificationCenter.updateInterfaces) listView?.adapter?.update(true)
+    }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asHeader("AdBlock"))
@@ -51,6 +65,14 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
                 BUTTON_REGEX_FILTER_MODE,
                 LocaleController.getString(R.string.InuRegexFilterMode),
                 modeLabel(InuConfig.REGEX_FILTER_MODE.value)
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_REGEX_FILTER_HIDE_REPLIES,
+                R.string.InuRegexFilterHideReplies,
+                R.string.InuRegexFilterHideRepliesInfo,
+                InuConfig.REGEX_FILTER_HIDE_REPLIES.value,
             )
         )
         items.add(UItem.asShadow(null))
@@ -93,6 +115,12 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
 
             item.id == TOGGLE_REGEX_FILTER_ENABLED -> {
                 val new = InuConfig.REGEX_FILTER_ENABLED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                refreshDialogs()
+            }
+
+            item.id == TOGGLE_REGEX_FILTER_HIDE_REPLIES -> {
+                val new = InuConfig.REGEX_FILTER_HIDE_REPLIES.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
                 refreshDialogs()
             }
@@ -170,10 +198,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
     }
 
     private fun refreshDialogs() {
-        NotificationCenter.getInstance(currentAccount).postNotificationName(
-            NotificationCenter.updateInterfaces,
-            MessagesController.UPDATE_MASK_ALL,
-        )
+        RegexFilterHelper.notifyChanged()
     }
 
     companion object {
@@ -181,6 +206,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_PROXY_SPONSOR_CHAT = InuUtils.generateId()
         private val TOGGLE_REGEX_FILTER_ENABLED = InuUtils.generateId()
         private val BUTTON_REGEX_FILTER_MODE = InuUtils.generateId()
+        private val TOGGLE_REGEX_FILTER_HIDE_REPLIES = InuUtils.generateId()
         private val BUTTON_ADD_FILTER = InuUtils.generateId()
         private val BUTTON_EXPORT_FILTERS = InuUtils.generateId()
         private val BUTTON_IMPORT_FILTERS = InuUtils.generateId()
@@ -197,6 +223,7 @@ class RegexFilterSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-proxy-sponsor-chat", R.string.InuHideProxySponsorChat, TOGGLE_HIDE_PROXY_SPONSOR_CHAT),
                 SearchRegistry.Entry("regex-filter-enabled", R.string.InuRegexFilterEnabled, TOGGLE_REGEX_FILTER_ENABLED),
                 SearchRegistry.Entry("regex-filter-mode", R.string.InuRegexFilterMode, BUTTON_REGEX_FILTER_MODE),
+                SearchRegistry.Entry("regex-filter-hide-replies", R.string.InuRegexFilterHideReplies, TOGGLE_REGEX_FILTER_HIDE_REPLIES),
                 SearchRegistry.Entry("regex-filter-add", R.string.InuRegexFilterAdd, BUTTON_ADD_FILTER),
                 SearchRegistry.Entry("regex-filter-export", R.string.InuRegexFilterExport, BUTTON_EXPORT_FILTERS),
                 SearchRegistry.Entry("regex-filter-import", R.string.InuRegexFilterImport, BUTTON_IMPORT_FILTERS),

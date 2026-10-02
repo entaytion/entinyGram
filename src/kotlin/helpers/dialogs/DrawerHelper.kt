@@ -280,6 +280,9 @@ object DrawerHelper {
                     }
 
                     NotificationCenter.fileLoadProgressChanged -> {
+                        val doc = SharedConfig.pendingAppUpdate?.document ?: return@NotificationCenterDelegate
+                        val name = args.getOrNull(0) as? String ?: return@NotificationCenterDelegate
+                        if (name != FileLoader.getAttachFileName(doc)) return@NotificationCenterDelegate
                         current.updateFileProgress(args)
                         refreshMenuButton(true)
                     }

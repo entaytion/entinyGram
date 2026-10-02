@@ -1257,6 +1257,8 @@
     <string name="InuRegexFilterMode">Filter mode</string>
     <string name="InuRegexFilterModeHide">Hide completely</string>
     <string name="InuRegexFilterModeSpoiler">Cover with spoiler</string>
+    <string name="InuRegexFilterHideReplies">Hide replies to filtered messages</string>
+    <string name="InuRegexFilterHideRepliesInfo">Also hides messages that reply to a hidden message, so the chat does not stall on a missing reply</string>
     <string name="InuRegexFilterHint">Filtering runs locally in real-time without slowing down scrolling.</string>
     <string name="InuRegexFiltersList">Filters</string>
     <string name="InuRegexFilterAdd">Add filter</string>

@@ -17,6 +17,7 @@ class RegexFilterEditActivity(
     prefillPattern: String? = null,
 ) : SettingsPageActivity() {
 
+    private val isNew = filterId == null
     private val existing = filterId?.let { RegexFilterHelper.getFilter(it) }
     private var pattern: String = prefillPattern ?: existing?.pattern.orEmpty()
     private var enabled: Boolean = existing?.enabled ?: true
@@ -56,7 +57,9 @@ class RegexFilterEditActivity(
             )
         )
         items.add(UItem.asShadow(null))
-        if (filterId != null) {
+        if (isNew) {
+            items.add(UItem.asButton(BUTTON_SAVE, LocaleController.getString(R.string.Save)))
+        } else {
             items.add(UItem.asButton(BUTTON_DELETE, LocaleController.getString(R.string.Delete)))
         }
     }
@@ -94,6 +97,8 @@ class RegexFilterEditActivity(
                 (view as? NotificationsCheckCell)?.isChecked = reversed
             }
 
+            BUTTON_SAVE -> saveNew()
+
             BUTTON_DELETE -> {
                 filterId?.let { RegexFilterHelper.removeFilter(it) }
                 finishFragment()
@@ -102,13 +107,16 @@ class RegexFilterEditActivity(
     }
 
     private fun persist() {
+        val id = filterId ?: return
         if (pattern.isBlank()) return
-        val id = filterId
-        if (id == null) {
-            filterId = RegexFilterHelper.addFilter(pattern, scopeDialogId, caseInsensitive, reversed).id
-        } else {
-            RegexFilterHelper.updateFilter(id, pattern, enabled, caseInsensitive, reversed)
-        }
+        RegexFilterHelper.updateFilter(id, pattern, enabled, caseInsensitive, reversed)
+    }
+
+    private fun saveNew() {
+        if (pattern.isBlank()) return
+        val id = RegexFilterHelper.addFilter(pattern, scopeDialogId, caseInsensitive, reversed).id
+        if (!enabled) RegexFilterHelper.updateFilter(id, pattern, false, caseInsensitive, reversed)
+        finishFragment()
     }
 
     companion object {
@@ -117,5 +125,6 @@ class RegexFilterEditActivity(
         private val TOGGLE_CASE_INSENSITIVE = InuUtils.generateId()
         private val TOGGLE_REVERSED = InuUtils.generateId()
         private val BUTTON_DELETE = InuUtils.generateId()
+        private val BUTTON_SAVE = InuUtils.generateId()
     }
 }

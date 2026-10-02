@@ -923,6 +923,8 @@
     <string name="InuRegexFilterMode">Filtre modu</string>
     <string name="InuRegexFilterModeHide">Tamamen gizle</string>
     <string name="InuRegexFilterModeSpoiler">Spoiler ile kapat</string>
+    <string name="InuRegexFilterHideReplies">Filtrelenen mesajlara yanıtları gizle</string>
+    <string name="InuRegexFilterHideRepliesInfo">Gizlenen bir mesaja verilen yanıtları da gizler, böylece sohbet kaydırması takılmaz</string>
     <string name="InuRegexFiltersList">Filtreler</string>
     <string name="InuRegexFilterAdd">Filtre ekle</string>
     <string name="InuRegexFilterStatusEnabled">Etkin</string>

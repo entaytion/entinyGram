@@ -1197,6 +1197,8 @@
     <string name="InuRegexFilterMode">حالت فیلتر</string>
     <string name="InuRegexFilterModeHide">پنهان کامل</string>
     <string name="InuRegexFilterModeSpoiler">پوشاندن با اسپویلر</string>
+    <string name="InuRegexFilterHideReplies">پنهان کردن پاسخ به پیام‌های فیلترشده</string>
+    <string name="InuRegexFilterHideRepliesInfo">پیام‌هایی را هم که به یک پیام پنهان پاسخ داده‌اند پنهان می‌کند تا پیمایش گفتگو متوقف نشود</string>
     <string name="InuRegexFilterHint">فیلتر کردن به‌صورت محلی و بی‌درنگ اجرا می‌شود و اسکرول را کند نمی‌کند.</string>
     <string name="InuRegexFiltersList">فیلترها</string>
     <string name="InuRegexFilterAdd">افزودن فیلتر</string>

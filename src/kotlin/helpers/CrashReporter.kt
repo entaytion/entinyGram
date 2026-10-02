@@ -48,19 +48,28 @@ object CrashReporter {
         dismissRestartNotification()
     }
 
-    fun getLogFile(): File {
-        val dir = File(ApplicationLoader.getFilesDirFixed(), "logs")
-        dir.mkdirs()
-        return File(dir, LOG_FILE)
+    private val logsDir: File by lazy {
+        File(ApplicationLoader.getFilesDirFixed(), "logs").apply { mkdirs() }
     }
 
-    fun getHeapDumpFile(): File {
-        val dir = File(ApplicationLoader.getFilesDirFixed(), "logs")
-        dir.mkdirs()
-        return File(dir, HEAP_DUMP_FILE)
+    fun getLogFile(): File = File(logsDir, LOG_FILE)
+
+    fun getHeapDumpFile(): File = File(logsDir, HEAP_DUMP_FILE)
+
+    // entiny: isCrashed runs on every onResume, so cache the stat result instead of hitting the fs each time
+    @Volatile private var crashState: Int = -1
+
+    fun isCrashed(): Boolean {
+        val cached = crashState
+        if (cached >= 0) return cached == 1
+        val crashed = getLogFile().let { it.exists() && it.length() > 0 }
+        crashState = if (crashed) 1 else 0
+        return crashed
     }
 
-    fun isCrashed(): Boolean = getLogFile().let { it.exists() && it.length() > 0 }
+    fun invalidateCrashState() {
+        crashState = -1
+    }
 
     fun hasHeapDump(): Boolean = BuildVars.LOGS_ENABLED && getHeapDumpFile().let { it.exists() && it.length() > 0 }
 

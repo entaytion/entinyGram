@@ -30,6 +30,7 @@ object LocaleHelper {
     fun getLocalString(key: String?, res: Int): String? {
         if (!isLocalOnlyString(key)) return null
         disguiseName(key)?.let { return it }
+        if (res == 0) return getLocalString(key)
         return resolve(res)
     }
 

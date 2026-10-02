@@ -1,5 +1,7 @@
 node_modules/
 worktree/
+.kilo/worktrees/
+.crush/worktrees/
 .DS_Store
 .idea/
 .vscode/
@@ -20,4 +22,4 @@ CLAUDE.local.md
 desktop.ini
 # not sure if this is needed, but it seems to be
 entinyBot/
-entinyProto/
+entinyTodo/

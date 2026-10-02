@@ -125,6 +125,10 @@ object LinkPreviewSpoilerHelper {
     @JvmStatic
     fun onDetached(cell: ChatMessageCell) {
         val state = states[cell] ?: return
+        state.blurBitmap?.recycle()
+        state.blurBitmap = null
+        state.blurCanvas = null
+        state.blurSrc = null
         val e = state.effect2 ?: return
         state.effect2Index = e.getAttachIndex(cell)
         e.detach(cell)

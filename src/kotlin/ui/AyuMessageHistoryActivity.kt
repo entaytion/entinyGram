@@ -25,6 +25,7 @@ import java.util.ArrayList
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
+import org.telegram.messenger.FileLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesStorage
@@ -350,7 +351,10 @@ class AyuMessageHistoryActivity(
             val savedFile = entry.mediaPath?.takeIf { it.isNotBlank() }?.let { File(it) }?.takeIf { it.exists() }
             val storedMedia = if (archived != null) null else entry.media
             if (archived != null) {
-                if (savedFile != null && archived.media != null) msg.attachPath = savedFile.absolutePath
+                if (savedFile != null && archived.media != null) {
+                    msg.attachPath = savedFile.absolutePath
+                    FileLoader.getInstance(currentAccount).getPathToMessage(msg)
+                }
             } else if (storedMedia != null && storedMedia !is TLRPC.TL_messageMediaEmpty) {
                 msg.media = storedMedia
                 if (!isLive) {
@@ -361,7 +365,7 @@ class AyuMessageHistoryActivity(
                 if (savedFile != null) {
                     msg.attachPath = savedFile.absolutePath
                 }
-            } else if (savedFile != null) {
+            } else if (savedFile != null && savedFile.extension.lowercase() in IMAGE_EXTENSIONS) {
                 msg.media = TLRPC.TL_messageMediaPhoto().apply { photo = TLRPC.TL_photo() }
                 msg.flags = msg.flags or TLRPC.MESSAGE_FLAG_HAS_MEDIA
                 msg.attachPath = savedFile.absolutePath
@@ -457,6 +461,7 @@ class AyuMessageHistoryActivity(
     }
 
     companion object {
+        private val IMAGE_EXTENSIONS = setOf("jpg", "jpeg", "png", "webp")
         private const val MENU_MAIN = 1
         private const val MENU_TOGGLE_DIFF = 2
 

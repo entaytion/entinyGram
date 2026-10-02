@@ -1086,6 +1086,8 @@
     <string name="InuRegexFilterMode">Режим фільтрації</string>
     <string name="InuRegexFilterModeHide">Приховувати повністю</string>
     <string name="InuRegexFilterModeSpoiler">Ховати під спойлер</string>
+    <string name="InuRegexFilterHideReplies">Ховати відповіді на приховані</string>
+    <string name="InuRegexFilterHideRepliesInfo">Також ховає повідомлення, що відповідають на приховане повідомлення, щоб чат не впирався у відсутню відповідь</string>
     <string name="InuRegexFiltersList">Фільтри</string>
     <string name="InuRegexFilterAdd">Додати фільтр</string>
     <string name="InuRegexFilterStatusEnabled">Увімкнено</string>

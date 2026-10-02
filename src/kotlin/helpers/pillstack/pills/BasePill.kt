@@ -164,7 +164,7 @@ abstract class BasePill(context: Context, val resourcesProvider: Theme.Resources
     override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         val drawable = loadingDrawable ?: return
-        if (drawable.alpha > 0 || !drawable.isDisappearing) {
+        if (drawable.alpha > 0 || drawable.isDisappearing) {
             val target = loadingTargetView ?: this
             rectF.set(target.left.toFloat(), target.top.toFloat(), target.right.toFloat(), target.bottom.toFloat())
             drawable.setBounds(rectF)

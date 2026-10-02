@@ -45,6 +45,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - hide sponsored messages
   - hide the proxy sponsor chat
   - hide or spoiler-cover messages matching regex rules
+  - optionally hide replies to filtered messages
 
 ### restricted features
 

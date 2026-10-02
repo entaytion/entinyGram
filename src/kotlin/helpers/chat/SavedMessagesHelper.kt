@@ -74,6 +74,7 @@ object SavedMessagesHelper {
     // entiny: keep in-memory media paths for synchronous fallback in FileLoader without SQLite queries
     private val deletedMessageMediaPaths = LongSparseArray<LongSparseArray<LongSparseArray<String>>>()
     private val loadedAccounts = HashSet<Int>()
+    private val loadingAccounts = HashSet<Int>()
     private val cacheLock = Any()
 
     private val editHistoryCache = LongSparseArray<LongSparseArray<LongSparseArray<ArrayList<EditEntry>>>>()
@@ -162,15 +163,24 @@ object SavedMessagesHelper {
     @JvmStatic
     fun ensureAccountLoaded(account: Int) {
         synchronized(cacheLock) {
-            if (loadedAccounts.contains(account)) return
+            if (loadedAccounts.contains(account) || loadingAccounts.contains(account)) return
+            loadingAccounts.add(account)
         }
-        val storage = MessagesStorage.getInstance(account) ?: return
+        val storage = MessagesStorage.getInstance(account)
+        if (storage == null) {
+            synchronized(cacheLock) { loadingAccounts.remove(account) }
+            return
+        }
         val db = storage.database
         if (db != null) {
             loadFromDb(account, db)
         } else {
             storage.storageQueue.postRunnable {
-                val asyncDb = storage.database ?: return@postRunnable
+                val asyncDb = storage.database
+                if (asyncDb == null) {
+                    synchronized(cacheLock) { loadingAccounts.remove(account) }
+                    return@postRunnable
+                }
                 loadFromDb(account, asyncDb)
             }
         }
@@ -663,7 +673,7 @@ object SavedMessagesHelper {
         if (!text.isNullOrBlank()) return text
         val media = message?.media ?: return ""
         val res = when (media) {
-            is TLRPC.TL_messageMediaPoll -> return "D83DDCCA " + (media.poll?.question?.text ?: LocaleController.getString(R.string.Poll))
+            is TLRPC.TL_messageMediaPoll -> return "📊 " + (media.poll?.question?.text ?: LocaleController.getString(R.string.Poll))
             is TLRPC.TL_messageMediaPhoto -> R.string.AttachPhoto
             is TLRPC.TL_messageMediaGeo, is TLRPC.TL_messageMediaVenue -> R.string.AttachLocation
             is TLRPC.TL_messageMediaGeoLive -> R.string.AttachLiveLocation
@@ -856,6 +866,21 @@ object SavedMessagesHelper {
     fun getDeletedDate(dialogId: Long, msgId: Int): Long {
         return getDeletedDate(UserConfig.selectedAccount, dialogId, msgId)
     }
+
+    // entiny: image loaders resolve documents by the stock cache path, so put the archived copy back there
+    @JvmStatic
+    fun restoreToStockPath(archived: File, stock: File): File {
+        if (stock.path.isEmpty() || archived.length() > RESTORE_MAX_BYTES) return archived
+        return try {
+            stock.parentFile?.mkdirs()
+            archived.copyTo(stock, overwrite = true)
+            stock
+        } catch (e: Throwable) {
+            archived
+        }
+    }
+
+    private const val RESTORE_MAX_BYTES = 8L * 1024 * 1024
 
     @JvmStatic
     fun getArchivedMediaPath(account: Int, dialogId: Long, msgId: Int): File? {

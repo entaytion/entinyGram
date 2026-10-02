@@ -29,6 +29,7 @@ object DownloadKeepAliveHelper {
     @JvmStatic
     fun startPolling() {
         if (pollingStarted) return
+        if (!InuConfig.BLOCK_SLEEP_WHILE_DOWNLOADING.value) return
         pollingStarted = true
         handler.post(pollRunnable)
     }

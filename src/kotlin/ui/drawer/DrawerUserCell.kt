@@ -40,6 +40,9 @@ class DrawerUserCell(context: Context) : FrameLayout(context), NotificationCente
     var accountNumber: Int = 0
         private set
     private val rect = RectF()
+    private var lastCounter = Int.MIN_VALUE
+    private var lastCounterText = ""
+    private var lastCounterWidth = 0
 
     init {
         avatarDrawable = AvatarDrawable()
@@ -177,9 +180,15 @@ class DrawerUserCell(context: Context) : FrameLayout(context), NotificationCente
             return
         }
 
-        val text = String.format("%d", counter)
+        // entiny: onDraw runs per frame while the drawer animates, so cache the formatted counter and its width
+        if (counter != lastCounter) {
+            lastCounter = counter
+            lastCounterText = counter.toString()
+            lastCounterWidth = Math.ceil(Theme.dialogs_countTextPaint.measureText(lastCounterText).toDouble()).toInt()
+        }
+        val text = lastCounterText
         val countTop = dp(12.5f)
-        val textWidth = Math.ceil(Theme.dialogs_countTextPaint.measureText(text).toDouble()).toInt()
+        val textWidth = lastCounterWidth
         val countWidth = maxOf(dp(10f), textWidth)
         val countLeft = measuredWidth - countWidth - dp(25f)
 

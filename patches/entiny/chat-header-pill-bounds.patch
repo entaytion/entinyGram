@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 2 Oct 2026 19:35:08 +0300
+Subject: [*] chat header hidden pill no longer paints over the chat
+
+---
+ .../src/main/java/org/telegram/ui/ActionBar/ActionBar.java     | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2582,7 +2582,8 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+         final boolean hideChatPill = inu_hideChatPill();
+         if (hideChatPill && inu_nonIsland) {
+-            canvas.drawColor(getThemedColor(Theme.key_actionBarDefault));
++            blurScrimPaint.setColor(getThemedColor(Theme.key_actionBarDefault));
++            canvas.drawRect(0, 0, getWidth(), getHeight(), blurScrimPaint);
+         }
+         if (glassDrawable != null && !glassOnlyBack && !hideChatPill) {
+             if (inu_nonIsland) {

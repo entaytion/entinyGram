@@ -135,6 +135,13 @@ object InuDatabaseHelper {
             version = 14
         }
 
+        if (version == 14) {
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_presence_logs_ts ON inu_presence_logs(timestamp)")
+                .stepThis().dispose()
+            writeKv(db, "version", "15")
+            version = 15
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 

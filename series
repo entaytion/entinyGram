@@ -472,3 +472,5 @@ entiny/remember-selected-folder.patch
 entiny/animated-file-drawable-recycle-crash.patch
 entiny/attach-camera-square.patch
 entiny/feed-chatactivity.patch
+entiny/restore-archived-media.patch
+entiny/chat-header-pill-bounds.patch

@@ -126,8 +126,11 @@ class SliderCell(
     }
 
     private fun setValue(newValue: Float, syncSlider: Boolean) {
+        // entiny: drag sends continuous events; only emit when the snapped value actually changed
+        val changed = newValue != value
         value = newValue
         if (syncSlider) seekBarView.setProgress((newValue - min) / (max - min))
+        if (!changed) return
         refresh()
         onChanged(newValue)
     }

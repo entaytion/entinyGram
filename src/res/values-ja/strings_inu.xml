@@ -930,6 +930,8 @@
     <string name="InuRegexFilterMode">フィルターモード</string>
     <string name="InuRegexFilterModeHide">完全に非表示</string>
     <string name="InuRegexFilterModeSpoiler">スポイラーで覆う</string>
+    <string name="InuRegexFilterHideReplies">フィルター済みメッセージへの返信を隠す</string>
+    <string name="InuRegexFilterHideRepliesInfo">非表示メッセージへの返信も隠し、チャットのスクロールが止まらないようにします</string>
     <string name="InuRegexFiltersList">フィルター</string>
     <string name="InuRegexFilterAdd">フィルターを追加</string>
     <string name="InuRegexFilterDisabled">無効</string>

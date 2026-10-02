@@ -235,11 +235,13 @@ object GhostHelper {
             SuppressKind.STORY_READ -> InuConfig.GHOST_HIDE_STORY_READ.value
         }
         if (suppress) {
-            val dump = "suppress dialogId=$dialogId kind=$kind override=${o.read}/${o.typing} read=${InuConfig.GHOST_HIDE_READ.value} " +
-                "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
-                "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}"
-            android.util.Log.d("GhostMode", dump)
-            org.telegram.messenger.FileLog.d("GhostMode: $dump")
+            if (org.telegram.messenger.BuildVars.LOGS_ENABLED) {
+                val dump = "suppress dialogId=$dialogId kind=$kind override=${o.read}/${o.typing} read=${InuConfig.GHOST_HIDE_READ.value} " +
+                    "voiceRead=${InuConfig.GHOST_HIDE_VOICE_READ.value} storyRead=${InuConfig.GHOST_HIDE_STORY_READ.value} " +
+                    "typing=${InuConfig.GHOST_HIDE_TYPING.value} presence=${InuConfig.GHOST_PRESENCE_MODE.value}"
+                android.util.Log.d("GhostMode", dump)
+                org.telegram.messenger.FileLog.d("GhostMode: $dump")
+            }
         }
         return suppress
     }
@@ -459,8 +461,8 @@ object GhostHelper {
     // entiny: do not touch MessagesController.ignoreSetOnline because ChatActivity uses it to gate local read marking
     @JvmStatic
     fun syncPresence(account: Int) {
-        val hide = InuConfig.GHOST_MODE_ENABLED.value &&
-            InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
+        if (!InuConfig.GHOST_MODE_ENABLED.value) return
+        val hide = InuConfig.GHOST_PRESENCE_MODE.value != InuConfig.GhostPresenceModeItem.NORMAL
         sendStatus(account, offline = hide)
     }
 

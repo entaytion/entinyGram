@@ -129,8 +129,9 @@ object BadgeRegistry {
     @JvmStatic
     fun init(account: Int) {
         if (loaded) return
-        loaded = true
         val storage = MessagesStorage.getInstance(account) ?: return
+        // entiny: flip only after storage exists, else a null during startup would kill badge loading for the whole process
+        loaded = true
         storage.storageQueue.postRunnable {
             val db = storage.database ?: return@postRunnable
             val cached = runCatching { InuDatabaseHelper.readKv(db, KV_MANIFEST) }.getOrNull()

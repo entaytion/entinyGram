@@ -1217,6 +1217,8 @@
     <string name="InuRegexFilterMode">وضع المرشّح</string>
     <string name="InuRegexFilterModeHide">إخفاء كلياً</string>
     <string name="InuRegexFilterModeSpoiler">تغطية بتمويه</string>
+    <string name="InuRegexFilterHideReplies">إخفاء الردود على الرسائل المفلترة</string>
+    <string name="InuRegexFilterHideRepliesInfo">يخفي أيضًا الرسائل التي ترد على رسالة مخفية حتى لا يتعطل التمرير في المحادثة</string>
     <string name="InuRegexFilterHint">يعمل التصفية محلياً في الوقت الفعلي دون إبطاء التمرير.</string>
     <string name="InuRegexFiltersList">المرشّحات</string>
     <string name="InuRegexFilterAdd">إضافة مرشّح</string>

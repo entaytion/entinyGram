@@ -125,7 +125,7 @@ object InuConfig {
             get() = currentValue
             set(v) {
                 currentValue = v
-                save()
+                saveAsync()
             }
 
         init {
@@ -139,6 +139,10 @@ object InuConfig {
         // entiny: save() uses commit=true for atomic write; unsafeSet stages writes without commit
         fun save() {
             prefs.edit(commit = true) { write() }
+        }
+
+        fun saveAsync() {
+            prefs.edit(commit = false) { write() }
         }
 
         // entiny: unsafeSet stages value+editor for batched writes without commit
@@ -1496,10 +1500,7 @@ object InuConfig {
     val REGEX_FILTER_ENABLED = BoolItem("regex_filter_enabled", false)
 
     @JvmField
-    val REGEX_FILTER_PATTERNS = StringItem(
-        "regex_filter_patterns",
-        "(?i)(реклама|промокод|казино|знижка|ставк|підпишись|referral|crypto|binance|buy now)"
-    )
+    val REGEX_FILTER_PATTERNS = StringItem("regex_filter_patterns", "")
 
     @JvmField
     val REGEX_FILTERS_JSON = StringItem("regex_filters_json", "[]")
@@ -1509,6 +1510,9 @@ object InuConfig {
 
     @JvmField
     val REGEX_FILTERS_MIGRATED = BoolItem("regex_filters_migrated", false, exportable = false)
+
+    @JvmField
+    val REGEX_FILTER_HIDE_REPLIES = BoolItem("regex_filter_hide_replies", false)
 
     class RegexFilterModeItem : IntItem("regex_filter_mode", HIDE) {
         companion object {

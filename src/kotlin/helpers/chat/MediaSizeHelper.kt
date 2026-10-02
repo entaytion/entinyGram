@@ -23,19 +23,32 @@ object MediaSizeHelper {
     private val rect = RectF()
     private val uploadSizes = WeakHashMap<MessageObject, Long>()
 
+    private class Label(val text: String, val width: Float, val size: Long)
+
+    private val labels = WeakHashMap<MessageObject, Label>()
+
     @JvmStatic
     fun draw(cell: ChatMessageCell, canvas: Canvas, image: ImageReceiver) {
         val msg = cell.messageObject ?: return
         if (msg.type != MessageObject.TYPE_PHOTO || !image.visible || msg.needDrawBluredPreview()) return
         if (image.imageWidth < dp(96f)) return
-        val size = sizeOf(msg)
-        if (size <= 0) return
-        val text = AndroidUtilities.formatFileSize(size)
+        val label = labelOf(msg) ?: return
         val x = image.imageX + dp(8f)
         val y = image.imageY + dp(8f)
-        rect.set(x, y, x + textPaint.measureText(text) + dp(12f), y + dp(20f))
+        rect.set(x, y, x + label.width + dp(12f), y + dp(20f))
         canvas.drawRoundRect(rect, dp(10f).toFloat(), dp(10f).toFloat(), bgPaint)
-        canvas.drawText(text, x + dp(6f), y + dp(14.5f), textPaint)
+        canvas.drawText(label.text, x + dp(6f), y + dp(14.5f), textPaint)
+    }
+
+    // entiny: formatFileSize is String.format, so cache per message rather than per frame
+    private fun labelOf(msg: MessageObject): Label? {
+        labels[msg]?.let { if (it.size == sizeOf(msg)) return it }
+        val size = sizeOf(msg)
+        if (size <= 0) return null
+        val text = AndroidUtilities.formatFileSize(size)
+        val label = Label(text, textPaint.measureText(text), size)
+        labels[msg] = label
+        return label
     }
 
     private fun sizeOf(msg: MessageObject): Long {
