@@ -1,0 +1,116 @@
+name: Release APK (fork CI, repo keystore)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: fork-ndk-27.2-release
+          max-size: 5G
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: >-
+            platforms;android-35
+            build-tools;35.0.0
+            cmake;3.10.2.4988404
+            ndk;27.2.12479018
+
+      - name: Write stub google-services.json (no push services in release)
+        run: |
+          cat > /tmp/gs.json <<'JSON'
+          {
+            "project_info": {
+              "project_number": "123456789000",
+              "project_id": "entinygram-ci-stub",
+              "storage_bucket": "entinygram-ci-stub.appspot.com"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:123456789000:android:0000000000000000",
+                  "android_client_info": { "package_name": "ua.entaytion.entinygram" }
+                },
+                "oauth_client": [],
+                "api_key": [ { "current_key": "AIzaSyA-stub-stub-stub-stub-stub-stub0" } ],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+              },
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:123456789000:android:1000000000000001",
+                  "android_client_info": { "package_name": "ua.entaytion.entinygram.beta" }
+                },
+                "oauth_client": [],
+                "api_key": [ { "current_key": "AIzaSyA-stub-stub-stub-stub-stub-stub0" } ],
+                "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          JSON
+
+      - name: Set up worktree
+        run: bun run setup -- --no-stgit
+
+      - name: Stub google-services.json
+        run: |
+          cp /tmp/gs.json worktree/TMessagesProj/google-services.json
+          cp /tmp/gs.json worktree/TMessagesProj_App/google-services.json
+
+      - name: Tune Gradle
+        run: |
+          mkdir -p "$HOME/.gradle"
+          echo 'org.gradle.caching=true'                                               >> ~/.gradle/gradle.properties
+          echo 'org.gradle.parallel=true'                                              >> ~/.gradle/gradle.properties
+          echo 'org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8 -XX:+UseParallelGC' >> ~/.gradle/gradle.properties
+
+      - name: Build release APK (arm64-v8a)
+        working-directory: worktree
+        env:
+          ABI_FILTERS: arm64-v8a
+          CCACHE_COMPILERCHECK: content
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
+        run: ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+
+      - name: Locate APK
+        id: apk
+        run: |
+          APK=$(find worktree/TMessagesProj_App/build/outputs/apk/release -name "*.apk" | head -1)
+          echo "path=$APK" >> "$GITHUB_OUTPUT"
+          ls -la "$APK"
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: entinygram-tunnel-helboy-release
+          path: ${{ steps.apk.outputs.path }}
+          if-no-files-found: error
+          retention-days: 30

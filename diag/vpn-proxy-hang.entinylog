@@ -1,0 +1,16 @@
+{
+  "entinylog": 1,
+  "name": "VPN proxy connection hang",
+  "hours": 24,
+  "stacks": true,
+  "categories": ["net"],
+  "when": [
+    {
+      "category": "net",
+      "contains": "ConnectingToProxy",
+      "dump": ["field:org.telegram.messenger.SharedConfig.currentProxy"],
+      "limit": 5,
+      "cooldown": 10
+    }
+  ]
+}

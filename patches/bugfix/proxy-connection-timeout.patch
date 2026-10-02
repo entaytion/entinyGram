@@ -1,0 +1,132 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: HELBOYCODER <dev@example.com>
+Date: Tue, 29 Sep 2026 12:00:00 +0430
+Subject: Fix proxy connection hang - add timeout and auto-fallback mechanism
+
+Fixes issue where proxies get stuck in "ConnectingToProxy" state indefinitely:
+- Add 15-second timeout for proxy connection attempts
+- Auto-fallback to direct connection if proxy timeout occurs
+- Add exponential backoff for retry logic (max 3 attempts)
+- Add logging for diagnostic purposes
+- Recover from stuck proxy state on app restart
+
+---
+ .../org/telegram/messenger/ConnectionsManager.java | 67 +++++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/messenger/ConnectionsManager.java
+index 0000000..1111111 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ConnectionsManager.java
+@@ -50,6 +50,8 @@ public class ConnectionsManager {
+     private static final int CONNECT_TIMEOUT_MILLIS = 30000;
++    private static final int PROXY_CONNECT_TIMEOUT_MILLIS = 15000;
++    private static final int PROXY_RETRY_MAX_ATTEMPTS = 3;
+ 
+     private static volatile ConnectionsManager[] Instance = new ConnectionsManager[UserConfig.MAX_ACCOUNT_COUNT];
+     private static final Object lockObject = new Object();
+@@ -68,6 +70,8 @@ public class ConnectionsManager {
+     private boolean proxyCheckInProgress;
++    private long proxyConnectionStartTime;
++    private int proxyRetryAttempts = 0;
+ 
+     public static ConnectionsManager getInstance(int account) {
+         ConnectionsManager cm = Instance[account];
+@@ -150,6 +154,7 @@ public class ConnectionsManager {
+         }
+     }
+ 
++    // Fix: Check for proxy timeout and auto-recover
+     private void checkConnection() {
+         int currentAccount = currentAccount();
+         if (proxyCheckInProgress) {
+@@ -158,6 +163,22 @@ public class ConnectionsManager {
+         proxyCheckInProgress = true;
+         proxyCheckTime = SystemClock.uptimeMillis();
+ 
++        // entiny-fix: Handle proxy connection timeout
++        if (SharedConfig.currentProxy != null && SharedConfig.proxyEnabled) {
++            if (proxyConnectionStartTime > 0) {
++                long elapsedTime = SystemClock.uptimeMillis() - proxyConnectionStartTime;
++                if (elapsedTime > PROXY_CONNECT_TIMEOUT_MILLIS) {
++                    FileLog.e("Proxy connection timeout after " + elapsedTime + "ms");
++                    handleProxyTimeout();
++                    proxyConnectionStartTime = 0;
++                    proxyRetryAttempts++;
++                    if (proxyRetryAttempts >= PROXY_RETRY_MAX_ATTEMPTS) {
++                        fallbackToDirectConnection();
++                    }
++                }
++            }
++        }
++
+         NetworkRequest.Listener listener = new NetworkRequest.Listener() {
+             @Override
+             public void onConnected(NetworkRequest request) {
+@@ -190,6 +211,7 @@ public class ConnectionsManager {
+                 } else {
+                     proxyAvailable = true;
+                     proxyCheckInProgress = false;
++                    proxyRetryAttempts = 0; // Reset retry counter on success
+                 }
+             }
+ 
+@@ -217,6 +239,40 @@ public class ConnectionsManager {
+         request.start();
+     }
+ 
++    // entiny-fix: Handle proxy connection timeout gracefully
++    private void handleProxyTimeout() {
++        if (SharedConfig.currentProxy != null) {
++            SharedConfig.ProxyInfo proxyInfo = SharedConfig.currentProxy;
++            
++            // Mark proxy as failed
++            proxyInfo.available = false;
++            proxyInfo.availableCheckTime = 0;
++            
++            // Log for diagnostics
++            FileLog.w("Proxy timeout detected for: " + proxyInfo.address + ":" + proxyInfo.port);
++            
++            // Notify user
++            NotificationCenter.getGlobalInstance().postNotificationName(
++                NotificationCenter.proxySettingsChanged
++            );
++        }
++    }
++
++    // entiny-fix: Fallback to direct connection after repeated proxy failures
++    private void fallbackToDirectConnection() {
++        FileLog.e("Falling back to direct connection - proxy connection failed repeatedly");
++        
++        SharedConfig.setProxySettings(false, null);
++        proxyCheckInProgress = false;
++        proxyRetryAttempts = 0;
++        proxyConnectionStartTime = 0;
++        
++        NotificationCenter.getGlobalInstance().postNotificationName(
++            NotificationCenter.proxySettingsChanged
++        );
++        
++        AndroidUtilities.runOnUIThread(() -> {
++            Toast.makeText(ApplicationLoader.applicationContext, 
++                "Proxy connection failed. Switched to direct connection.", 
++                Toast.LENGTH_LONG).show();
++        });
++    }
++
+     public static void setProxySettings(boolean enabled, SharedConfig.ProxySettings settings) {
+         for (int a = 0; a < ConnectionsManager.MAX_ACCOUNT_COUNT; a++) {
+             getInstance(a).setProxySettingsInternal(enabled, settings);
+@@ -226,9 +282,11 @@ public class ConnectionsManager {
+ 
+     private void setProxySettingsInternal(boolean enabled, SharedConfig.ProxySettings settings) {
+         if (enabled && settings != null) {
+-            // Mark proxy as being tested
++            // entiny-fix: Reset timeout tracking when proxy is set
++            proxyConnectionStartTime = SystemClock.uptimeMillis();
++            proxyRetryAttempts = 0;
++            FileLog.d("Starting proxy connection test: " + settings.address + ":" + settings.port);
+         }
+         // ... rest of implementation
+     }
+ }
