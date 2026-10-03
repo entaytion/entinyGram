@@ -3,6 +3,7 @@ package desu.inugram.ui.settings
 import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
+import desu.inugram.helpers.profile.LocalNameHelper
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LocalPremiumHelper
 import org.telegram.messenger.LocaleController
@@ -41,6 +42,13 @@ class TosSettingsActivity : SettingsPageActivity() {
                 R.string.InuLocalCustomEmoji,
                 R.string.InuLocalCustomEmojiInfo,
                 InuConfig.LOCAL_CUSTOM_EMOJI.value,
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_LOCAL_NAMES,
+                LocaleController.getString(R.string.InuLocalNames),
+                if (InuConfig.LOCAL_NAMES.value) LocalNameHelper.count(currentAccount).toString() else LocaleController.getString(R.string.PasswordOff),
             )
         )
         items.add(UItem.asShadow(null))
@@ -149,6 +157,7 @@ class TosSettingsActivity : SettingsPageActivity() {
             CAT_STALKER_PACK -> presentFragment(StalkerPackSettingsActivity())
             CAT_REGEX_FILTER -> presentFragment(RegexFilterSettingsActivity())
             CAT_DEVICE_SPOOF -> presentFragment(desu.inugram.ui.spoof.DeviceSpoofSettingsActivity())
+            BUTTON_LOCAL_NAMES -> presentFragment(LocalNamesSettingsActivity())
 
             TOGGLE_LOCAL_PREMIUM -> {
                 val new = InuConfig.LOCAL_PREMIUM.toggle()
@@ -216,6 +225,7 @@ class TosSettingsActivity : SettingsPageActivity() {
 
         private val TOGGLE_LOCAL_PREMIUM = InuUtils.generateId()
         private val TOGGLE_LOCAL_CUSTOM_EMOJI = InuUtils.generateId()
+        private val BUTTON_LOCAL_NAMES = InuUtils.generateId()
         private val TOGGLE_SAVE_ANY_STORY = InuUtils.generateId()
         private val TOGGLE_AUTO_SAVE_STORIES = InuUtils.generateId()
         private val TOGGLE_ALLOW_FORWARD_RESTRICTED = InuUtils.generateId()
@@ -235,6 +245,7 @@ class TosSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("local-premium", R.string.InuLocalPremium, TOGGLE_LOCAL_PREMIUM),
                 SearchRegistry.Entry("local-custom-emoji", R.string.InuLocalCustomEmoji, TOGGLE_LOCAL_CUSTOM_EMOJI),
+                SearchRegistry.Entry("local-names", R.string.InuLocalNames, BUTTON_LOCAL_NAMES),
                 SearchRegistry.Entry("save-any-story", R.string.InuSaveAnyStory, TOGGLE_SAVE_ANY_STORY),
                 SearchRegistry.Entry("auto-save-stories", R.string.InuAutoSaveStories, TOGGLE_AUTO_SAVE_STORIES),
                 SearchRegistry.Entry("allow-forward-restricted", R.string.InuAllowForwardRestricted, TOGGLE_ALLOW_FORWARD_RESTRICTED),

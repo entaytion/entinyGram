@@ -1,0 +1,148 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 3 Oct 2026 14:09:06 +0300
+Subject: [+] Local names, photos and bios
+
+---
+ .../org/telegram/messenger/ImageLocation.java |  6 ++++++
+ .../messenger/MessagesController.java         |  7 +++++++
+ .../ui/Components/ProfileGalleryView.java     | 21 +++++++++++++++----
+ 3 files changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLocation.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLocation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageLocation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageLocation.java
+@@ -165,6 +165,9 @@ public class ImageLocation {
+     }
+ 
+     public static ImageLocation getForUser(int currentAccount, TLRPC.User user, int type) {
++        if (user != null && desu.inugram.helpers.profile.LocalNameHelper.hasAvatar(currentAccount, user.id)) {
++            return desu.inugram.helpers.profile.LocalNameHelper.avatarLocation(currentAccount, user.id, type);
++        }
+         if (user == null || user.photo == null) {
+             return null;
+         }
+@@ -247,6 +250,9 @@ public class ImageLocation {
+         return getForChat(UserConfig.selectedAccount, chat, type);
+     }
+     public static ImageLocation getForChat(int currentAccount, TLRPC.Chat chat, int type) {
++        if (chat != null && desu.inugram.helpers.profile.LocalNameHelper.hasAvatar(currentAccount, -chat.id)) {
++            return desu.inugram.helpers.profile.LocalNameHelper.avatarLocation(currentAccount, -chat.id, type);
++        }
+         if (chat == null || chat.photo == null) {
+             return null;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -6887,6 +6887,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         }
+         desu.inugram.helpers.LocalPremiumHelper.applyToSelfUser(user, currentAccount);
+         desu.inugram.helpers.badges.BadgeRegistry.applyTo(user);
++        desu.inugram.helpers.profile.LocalNameHelper.applyTo(user, currentAccount);
+         fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
+         TLRPC.User oldUser = users.get(user.id);
+         if (oldUser == user && !force) {
+@@ -7023,6 +7024,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             return;
+         }
+         desu.inugram.helpers.badges.BadgeRegistry.applyTo(chat);
++        desu.inugram.helpers.profile.LocalNameHelper.applyTo(chat, currentAccount);
+         TLRPC.Chat oldChat = chats.get(chat.id);
+         if (oldChat == chat) {
+             return;
+@@ -7754,6 +7756,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     if (old != null) {
+                         res.full_chat.inviterId = old.inviterId;
+                     }
++                    desu.inugram.helpers.profile.LocalNameHelper.applyTo(res.full_chat, currentAccount);
+                     fullChats.put(chatId, res.full_chat);
+                     getTranslateController().updateDialogFull(-chatId);
+ 
+@@ -7868,6 +7871,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                             getNotificationCenter().postNotificationName(NotificationCenter.blockedUsersDidLoad);
+                         }
+                     }
++                    desu.inugram.helpers.profile.LocalNameHelper.applyTo(userFull, currentAccount);
+                     fullUsers.put(user.id, userFull);
+                     getTranslateController().updateDialogFull(user.id);
+                     StarsController.getInstance(currentAccount).invalidateProfileGifts(userFull);
+@@ -10536,6 +10540,7 @@ public class MessagesController extends BaseController implements NotificationCe
+     }
+ 
+     public void putChatFull(TLRPC.ChatFull chatFull) {
++        desu.inugram.helpers.profile.LocalNameHelper.applyTo(chatFull, currentAccount);
+         fullChats.put(chatFull.id, chatFull);
+         getTranslateController().updateDialogFull(-chatFull.id);
+     }
+@@ -10549,6 +10554,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 }
+             }
+             if (info != null) {
++                desu.inugram.helpers.profile.LocalNameHelper.applyTo(info, currentAccount);
+                 if (fullChats.get(chatId) == null) {
+                     fullChats.put(chatId, info);
+                     getTranslateController().updateDialogFull(-chatId);
+@@ -10596,6 +10602,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 }
+             }
+             if (info != null) {
++                desu.inugram.helpers.profile.LocalNameHelper.applyTo(info, currentAccount);
+                 if (fullUsers.get(user.id) == null) {
+                     fullUsers.put(user.id, info);
+                     getTranslateController().updateDialogFull(user.id);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileGalleryView.java
+@@ -586,7 +586,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+         if (imageLocation == null || thumbLocation == null || settingMainPhoto != 0) {
+             return false;
+         }
+-        if (prevImageLocation == null || prevImageLocation.location.local_id != imageLocation.location.local_id) {
++        if (prevImageLocation == null || (prevImageLocation.location != null && imageLocation.location != null ? prevImageLocation.location.local_id != imageLocation.location.local_id : !java.util.Objects.equals(prevImageLocation.path, imageLocation.path))) {
+             if (!imagesLocations.isEmpty()) {
+                 prevImageLocation = imageLocation;
+                 if (reload && dialogPhotos != null) {
+@@ -744,7 +744,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+             ArrayList<ImageLocation> arrayList = b == 0 ? thumbsLocations : imagesLocations;
+             for (int a = 0, N = arrayList.size(); a < N; a++) {
+                 ImageLocation loc = arrayList.get(a);
+-                if (loc == null || loc.location == null) {
++                if (loc == null || loc.location == null || thumbLocation.location == null || imageLocation.location == null) {
+                     continue;
+                 }
+                 if (loc.dc_id == thumbLocation.dc_id && loc.location.local_id == thumbLocation.location.local_id && loc.location.volume_id == thumbLocation.location.volume_id ||
+@@ -970,7 +970,20 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+                         imagesUploadProgress.add(null);
+                     }
+                 }
+-                for (int a = 0; a < arrayList.size(); a++) {
++                final boolean inu_localAvatar = desu.inugram.helpers.profile.LocalNameHelper.hasAvatar(currentAccount, dialogId);
++                if (inu_localAvatar && !DialogObject.isChatDialog(dialogId)) {
++                    currentImageLocation = ImageLocation.getForUserOrChat(currentAccount, user, ImageLocation.TYPE_BIG);
++                    imagesLocations.add(currentImageLocation);
++                    thumbsLocations.add(ImageLocation.getForUserOrChat(currentAccount, user, ImageLocation.TYPE_SMALL));
++                    vectorAvatars.add(null);
++                    thumbsFileNames.add(null);
++                    photos.add(null);
++                    videoLocations.add(null);
++                    videoFileNames.add(null);
++                    imagesLocationsSizes.add(-1);
++                    imagesUploadProgress.add(null);
++                }
++                for (int a = 0; a < arrayList.size() && !inu_localAvatar; a++) {
+                     TLRPC.Photo photo = arrayList.get(a);
+                     if (photo == null || photo instanceof TLRPC.TL_photoEmpty || photo.sizes == null) {
+                         photos.add(null);
+@@ -996,7 +1009,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
+                         boolean cont = false;
+                         for (int b = 0, N = photo.sizes.size(); b < N; b++) {
+                             TLRPC.PhotoSize size = photo.sizes.get(b);
+-                            if (size.location != null && size.location.local_id == currentImageLocation.location.local_id && size.location.volume_id == currentImageLocation.location.volume_id) {
++                            if (size.location != null && currentImageLocation.location != null && size.location.local_id == currentImageLocation.location.local_id && size.location.volume_id == currentImageLocation.location.volume_id) {
+                                 photos.set(0, photo);
+                                 if (!photo.video_sizes.isEmpty()) {
+                                     videoLocations.set(0, ImageLocation.getForPhoto(FileLoader.getClosestVideoSizeWithSize(photo.video_sizes, 1000), photo));

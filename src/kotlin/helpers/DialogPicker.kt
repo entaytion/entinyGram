@@ -14,7 +14,9 @@ object DialogPicker {
         }
         val picker = DialogsActivity(args)
         picker.setDelegate { _, dids, _, _, _, _, _, _ ->
-            dids.firstOrNull()?.let { onPicked(it.dialogId) }
+            val picked = dids.firstOrNull()
+            picker.finishFragment()
+            picked?.let { onPicked(it.dialogId) }
             true
         }
         fragment.presentFragment(picker)

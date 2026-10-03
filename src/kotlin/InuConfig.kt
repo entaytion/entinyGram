@@ -1434,6 +1434,9 @@ object InuConfig {
     val SAVE_SELECTED_FILES = BoolItem("save_selected_files", false)
 
     @JvmField
+    val LOCAL_NAMES = BoolItem("local_names", false)
+
+    @JvmField
     val AUTO_SAVE_STORIES = BoolItem("auto_save_stories", false)
 
     @JvmField
