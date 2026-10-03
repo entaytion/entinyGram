@@ -383,8 +383,6 @@
     <string name="InuStickerSizeDialogMessage">من آنتن دوست دارم</string>
     <string name="InuBubbleTails">دنباله حباب‌ها</string>
     <string name="InuSendAsRoundVideo">ارسال به‌صورت ویدیوی گرد</string>
-    <string name="InuShowPollResultsBeforeVote">نمایش نتایج نظرسنجی پیش از رأی دادن</string>
-    <string name="InuShowPollResultsBeforeVoteInfo">درصد آرا همیشه نمایش داده شود، حتی برای نظرسنجی‌های ناشناسی که هنوز در آن‌ها رأی نداده‌اید</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">هاپ! entinyGram یا inuGram؟ 🐶</string>
     <string name="InuMiscPreviewEditedMessage">هر دو عالی‌اند، پایه سگی 🐶⚡</string>

@@ -184,8 +184,6 @@
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">气泡尾巴</string>
     <string name="InuSendAsRoundVideo">以圆形视频发送</string>
-    <string name="InuShowPollResultsBeforeVote">投票前显示投票结果</string>
-    <string name="InuShowPollResultsBeforeVoteInfo">始终显示投票百分比，即使是尚未参与的匿名投票</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">汪! entinyGram 还是 inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">两个都很棒 🐶⚡</string>

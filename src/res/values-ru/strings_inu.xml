@@ -206,8 +206,6 @@
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">Хвостики у сообщений</string>
     <string name="InuSendAsRoundVideo">Отправить как кружок</string>
-    <string name="InuShowPollResultsBeforeVote">Показывать результаты опроса до голосования</string>
-    <string name="InuShowPollResultsBeforeVoteInfo">Всегда показывать проценты голосов, даже для анонимных опросов, в которых вы ещё не голосовали</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">гав! entinyGram или inuGram? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">оба лучшие, собачья база 🐶⚡</string>

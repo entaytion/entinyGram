@@ -331,7 +331,6 @@ debloat/hide-rich-editor-button.patch
 bugfix/playback-progress-on-message-replace.patch
 bugfix/action-bar-overlay-animation.patch
 feature/hdr-images.patch
-entiny/poll-show-results-before-vote.patch
 entiny/send-round-video.patch
 entiny/gif-restriction-bypass.patch
 entiny/ios-chats-tab-first-folder.patch

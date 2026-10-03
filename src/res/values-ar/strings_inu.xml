@@ -383,8 +383,6 @@
     <string name="InuStickerSizeDialogMessage">أحب الهوائيات</string>
     <string name="InuBubbleTails">ذيول الفقاعات</string>
     <string name="InuSendAsRoundVideo">إرسال كفيديو دائري</string>
-    <string name="InuShowPollResultsBeforeVote">إظهار نتائج الاستطلاع قبل التصويت</string>
-    <string name="InuShowPollResultsBeforeVoteInfo">إظهار نسب التصويت دائماً، حتى في الاستطلاعات المجهولة التي لم تصوّت فيها بعد</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">هاو! entinyGram أم inuGram؟ 🐶</string>
     <string name="InuMiscPreviewEditedMessage">كلاهما الأفضل، قاعدة الكلب 🐶⚡</string>

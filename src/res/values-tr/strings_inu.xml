@@ -283,8 +283,6 @@
     <string name="InuStickerSizeDialogMessage">i like antennas</string>
     <string name="InuBubbleTails">Baloncuk kuyrukları</string>
     <string name="InuSendAsRoundVideo">Yuvarlak video olarak gönder</string>
-    <string name="InuShowPollResultsBeforeVote">Oylamadan önce anket sonuçlarını göster</string>
-    <string name="InuShowPollResultsBeforeVoteInfo">Henüz oy vermediğiniz anonim anketler için bile oy yüzdelerini her zaman göster</string>
     <string name="InuMiscPreviewForwardedFrom">inu</string>
     <string name="InuMiscPreviewForwardedMessage">hav! entinyGram mı yoksa inuGram mı? 🐶</string>
     <string name="InuMiscPreviewEditedMessage">ikisi de en iyisi 🐶⚡</string>

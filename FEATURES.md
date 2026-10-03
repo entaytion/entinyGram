@@ -121,7 +121,6 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **ai compose & tools**: rewrite, translate and format drafts
 - 📡 **typing status spoof**: fake "typing…", "recording…" or "uploading…" in any chat
 - 📡 **background downloads** - *ported from [MaxExteraPlugins](https://github.com/MaxExteraPlugins)*
-- 📡 **poll results before you vote**
 - 📡 **small GIFs** in chat bubbles - *ported from [Nagram](https://github.com/NextAlone/Nagram)*
 - 📡 **send as round video** from the gallery
 - 📡 **round recorder**: zoom buttons, exposure lock and EV buttons - *exposure lock inspired by [Cherrygram](https://github.com/arsLan4k1390/Cherrygram)*

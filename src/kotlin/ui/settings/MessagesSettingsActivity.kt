@@ -148,7 +148,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 experimental = true,
             )
         )
-        items.add(mkTwoLineCheckItem(TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE, R.string.InuShowPollResultsBeforeVote, R.string.InuShowPollResultsBeforeVoteInfo, InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.value))
         items.add(UItem.asShadow(null))
         items.add(UItem.asShadow(null))
 
@@ -214,11 +213,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             TOGGLE_FORWARD_PRO -> {
                 val new = InuConfig.FORWARD_PRO.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
-            }
-
-            TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE -> {
-                val new = InuConfig.SHOW_POLL_RESULTS_BEFORE_VOTE.toggle()
-                setCellChecked(view, new)
             }
 
             TOGGLE_SHOW_SPOILERS_DIRECTLY -> {
@@ -346,7 +340,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_CONFIRM_REACTION_NON_MEMBER = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
         private val TOGGLE_FORWARD_PRO = InuUtils.generateId()
-        private val TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_STICKER = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_GIF = InuUtils.generateId()
@@ -392,7 +385,6 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
                 SearchRegistry.Entry("instant-mark-reactions-read", R.string.InuInstantMarkReactionsRead, TOGGLE_INSTANT_MARK_REACTIONS_READ),
                 SearchRegistry.Entry("forward-pro", R.string.InuForwardPro, TOGGLE_FORWARD_PRO),
-                SearchRegistry.Entry("show-poll-results-before-vote", R.string.InuShowPollResultsBeforeVote, TOGGLE_SHOW_POLL_RESULTS_BEFORE_VOTE),
                 SearchRegistry.Entry("confirm-send-voice", R.string.InuConfirmSendVoice, TOGGLE_CONFIRM_SEND_VOICE),
                 SearchRegistry.Entry("confirm-send-sticker", R.string.InuConfirmSendSticker, TOGGLE_CONFIRM_SEND_STICKER),
                 SearchRegistry.Entry("confirm-send-gif", R.string.InuConfirmSendGif, TOGGLE_CONFIRM_SEND_GIF),
