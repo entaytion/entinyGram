@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 3 Oct 2026 20:10:06 +0300
+Subject: [*] remember round recorder exposure
+
+---
+ .../java/org/telegram/messenger/camera/Camera2Session.java     | 3 +++
+ .../java/org/telegram/ui/Components/InstantCameraView.java     | 1 +
+ 2 files changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/Camera2Session.java
+@@ -510,6 +510,9 @@ public class Camera2Session {
+ 
+     // entiny: raw device compensation steps, converted to/from human EV via getExposureCompensationStep()
+     private int exposureCompensation = 0;
++    public boolean isFrontCamera() {
++        return isFront;
++    }
+     public float getExposureCompensationStep() {
+         Rational step = cameraCharacteristics != null ? cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP) : null;
+         return step != null && step.floatValue() > 0f ? step.floatValue() : 1f;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+@@ -341,6 +341,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
+         inu_exposureButtons = RoundRecorderHelper.attachExposureButtons(this, ev -> {
+             if (camera2SessionCurrent == null) return;
+             camera2SessionCurrent.setExposureCompensationEv(ev);
++            RoundRecorderHelper.rememberExposure(camera2SessionCurrent, ev);
+             if (inu_exposureButtons != null) inu_exposureButtons.setActiveLevel(ev);
+         });
+ 

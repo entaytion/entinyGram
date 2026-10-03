@@ -32,6 +32,8 @@ class PillStackController(
     private var screenOn = true
     // entiny: the search screen keeps the search field visible, so focus/text alone is not enough to keep the pills out of it
     private var searchOpen = false
+    // entiny: the forum topics panel slides over the dialogs screen, which stays visible, so the screen probe alone cannot hide the pills
+    private var sideFragmentOpen = false
 
     private val screenProbe = object : View(searchField.context) {
         override fun onVisibilityAggregated(isVisible: Boolean) {
@@ -85,6 +87,12 @@ class PillStackController(
     fun onSearchStateChanged(open: Boolean) {
         if (searchOpen == open) return
         searchOpen = open
+        updateVisibility()
+    }
+
+    fun onSideFragmentChanged(open: Boolean) {
+        if (sideFragmentOpen == open) return
+        sideFragmentOpen = open
         updateVisibility()
     }
 
@@ -207,7 +215,7 @@ class PillStackController(
         val searchActive = searchOpen || editText?.hasFocus() == true || !editText?.text.isNullOrEmpty()
         for (slot in slots) {
             if (slot.getPillsCount() == 0) continue
-            slot.setVisibilityFactor(if (searchActive || !screenOn) 0f else 1f)
+            slot.setVisibilityFactor(if (searchActive || sideFragmentOpen || !screenOn) 0f else 1f)
         }
     }
 

@@ -50,7 +50,7 @@ object ChatInputMenuHelper {
         }
 
         val size = ChatActivityEnterView.DEFAULT_HEIGHT
-        container.addView(button, LayoutHelper.createFrame(size, size, Gravity.BOTTOM or if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT))
+        container.addView(button, LayoutHelper.createFrame(size, size, Gravity.BOTTOM or if (LocaleController.isRTL && !enterView.isIosButtonPlacement) Gravity.LEFT else Gravity.RIGHT))
     }
 
     @JvmStatic

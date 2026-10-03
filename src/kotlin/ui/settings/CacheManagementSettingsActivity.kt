@@ -7,6 +7,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.util.TypedValue
 import desu.inugram.InuConfig
+import desu.inugram.ui.AyuMessageHistoryActivity
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.CacheStatsHelper
 import desu.inugram.helpers.CacheStatsHelper.Kind
@@ -179,9 +180,10 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
     private class SheetRow(val title: String, val detail: String, val size: Long)
 
     // entiny: one multi-select bottom sheet for every cache clear flow; withAll adds a select-all row
-    private fun showSelectSheet(title: String, rows: List<SheetRow>, withAll: Boolean, onConfirm: (List<Int>) -> Unit) {
+    private fun showSelectSheet(title: String, rows: List<SheetRow>, withAll: Boolean, onOpen: ((Int) -> Unit)? = null, onConfirm: (List<Int>) -> Unit) {
         val context = context ?: return
         val selected = BooleanArray(rows.size) { true }
+        var sheetRef: BottomSheet? = null
         val list = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
         val button = TextView(context).apply {
             setPadding(AndroidUtilities.dp(16f), AndroidUtilities.dp(12f), AndroidUtilities.dp(16f), AndroidUtilities.dp(12f))
@@ -206,6 +208,14 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
             allCell?.setText(LocaleController.getString(if (all) R.string.DeselectAll else R.string.SelectAll), "", true, true)
             allCell?.setChecked(all, false)
         }
+        if (onOpen != null) {
+            list.addView(TextView(context).apply {
+                text = LocaleController.getString(R.string.InuClearDeletedCacheHint)
+                setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText))
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 13f)
+                setPadding(AndroidUtilities.dp(4f), 0, AndroidUtilities.dp(4f), AndroidUtilities.dp(8f))
+            })
+        }
         if (withAll) {
             allCell = CheckBoxCell(context, 1, resourceProvider).apply {
                 setOnClickListener {
@@ -225,6 +235,13 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                 setText("${row.title} (${AndroidUtilities.formatFileSize(row.size)})", row.detail, true, true)
                 setChecked(true, false)
                 tag = i
+                if (onOpen != null) {
+                    setOnLongClickListener {
+                        sheetRef?.dismiss()
+                        onOpen(i)
+                        true
+                    }
+                }
                 setOnClickListener {
                     selected[i] = !selected[i]
                     setChecked(selected[i], true)
@@ -243,6 +260,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
         }
         refresh()
         val sheet = BottomSheet.Builder(context).setTitle(title).setCustomView(container).create()
+        sheetRef = sheet
         button.setOnClickListener {
             val picked = rows.indices.filter { selected[it] }
             if (picked.isNotEmpty()) {
@@ -315,7 +333,7 @@ class CacheManagementSettingsActivity : SettingsPageActivity() {
                     }
                     SheetRow(name, LocaleController.formatPluralString("messages", stat.count), stat.estimatedSize)
                 }
-                showSelectSheet(LocaleController.getString(R.string.InuClearDeletedCache), rows, withAll = true) { picked ->
+                showSelectSheet(LocaleController.getString(R.string.InuClearDeletedCache), rows, withAll = true, onOpen = { index -> presentFragment(AyuMessageHistoryActivity.forDeletedMessagesInDialog(account, dialogStats[index].dialogId)) }) { picked ->
                     val ids = picked.map { dialogStats[it].dialogId }
                     SavedMessagesHelper.clearCache(account, if (ids.size == dialogStats.size) null else ids) {
                         refreshStats()

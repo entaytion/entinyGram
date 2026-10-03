@@ -1,17 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Thu, 17 Sep 2026 00:05:12 +0300
-Subject: Add Pill Stack: interactive pills in the chats search bar
+Subject: [+] pill stack
 
-Ported from exteraGram/exteraless. Clock, weather, cache size, proxy
-status, Ghost Mode toggle, RAM/CPU/net-speed/DC-ping telemetry,
-battery, free storage, and live currency/crypto rates (BTC, ETH, gold,
-TON, any fiat pair). Configurable which pills show, how many at once,
-and the rate pairs, from Settings -> Pill Stack.
 ---
- .../java/org/telegram/ui/Components/FragmentSearchField.java  | 3 +++
- .../src/main/java/org/telegram/ui/DialogsActivity.java        | 4 ++++
- 2 files changed, 7 insertions(+)
+ .../org/telegram/ui/Components/FragmentSearchField.java    | 3 +++
+ .../src/main/java/org/telegram/ui/DialogsActivity.java     | 7 +++++++
+ 2 files changed, 10 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentSearchField.java
 index 0000000..0000000 100644
@@ -43,9 +38,33 @@ index 0000000..0000000 100644
          }
  
 +        if (initialDialogsType == DIALOGS_TYPE_DEFAULT) {
-+            fragmentSearchField.inu_pillStackController = desu.inugram.helpers.pillstack.PillStackHelper.attach(fragmentSearchField, fragmentSearchField.editText);
++            fragmentSearchField.inu_pillStackController = desu.inugram.helpers.pillstack.PillStackHelper.attach(this, fragmentSearchField, fragmentSearchField.editText);
 +        }
 +
          fragmentSearchField.setCloseButtonOnClickListener(() -> {
              if (searchViewPager != null && searchViewPager.actionModeShowing()) {
                  searchViewPager.hideActionMode();
+@@ -3380,6 +3384,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             @Override
+             public void onSearchExpand() {
+                 searching = true;
++                if (fragmentSearchField != null && fragmentSearchField.inu_pillStackController != null) fragmentSearchField.inu_pillStackController.onSearchStateChanged(true);
+                 if (switchItem != null) {
+                     switchItem.setVisibility(View.GONE);
+                 }
+@@ -3443,6 +3448,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+ 
+                 searching = false;
++                if (fragmentSearchField != null && fragmentSearchField.inu_pillStackController != null) fragmentSearchField.inu_pillStackController.onSearchStateChanged(false);
+                 searchWas = false;
+                 if (viewPages[0] != null) {
+                     viewPages[0].listView.setEmptyView(folderId == 0 ? viewPages[0].progressView : null);
+@@ -5566,6 +5572,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+             @Override
+             public void openAnimationStarted(boolean open) {
++                if (fragmentSearchField != null && fragmentSearchField.inu_pillStackController != null) fragmentSearchField.inu_pillStackController.onSideFragmentChanged(open);
+                 rightFragmentTransitionInProgress = true;
+                 rightFragmentTransitionIsOpen = open;
+                 contentView.requestLayout();

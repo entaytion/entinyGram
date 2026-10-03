@@ -122,7 +122,7 @@ internal class FeedTimelineLoader(private val currentAccount: Int) {
                 }
                 channelSet.hasChannels = true
                 channelSet.channels.add(chat!!)
-                if (!feedConfig.isExcluded(row[0])) {
+                if (!feedConfig.isHidden(currentAccount, row[0])) {
                     channelSet.includedRows.add(row)
                 }
             }

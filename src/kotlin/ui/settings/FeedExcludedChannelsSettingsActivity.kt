@@ -113,7 +113,8 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
         val q = query
         val noQuery = q.isNullOrEmpty()
         if (noQuery) {
-            items.add(mkTwoLineCheckItem(TOGGLE_INCLUDE_ARCHIVED, R.string.InuFeedIncludeArchived, 0, InuConfig.FEED_INCLUDE_ARCHIVED.value))
+            items.add(UItem.asCheck(TOGGLE_INCLUDE_ARCHIVED, LocaleController.getString(R.string.InuFeedIncludeArchived)).setChecked(InuConfig.FEED_INCLUDE_ARCHIVED.value))
+            items.add(mkTwoLineCheckItem(TOGGLE_NEWEST_ON_TOP, R.string.InuFeedNewestOnTop, R.string.InuFeedNewestOnTopInfo, InuConfig.FEED_NEWEST_ON_TOP.value))
             items.add(mkTwoLineCheckItem(TOGGLE_MARK_READ_ON_SCROLL, R.string.InuFeedMarkReadOnScroll, R.string.InuFeedMarkReadOnScrollInfo, InuConfig.FEED_MARK_READ_ON_SCROLL.value))
             items.add(UItem.asShadow(null))
         }
@@ -149,6 +150,11 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
                 FeedChannelSet.invalidate()
                 reloadChannels()
             }
+            item.id == TOGGLE_NEWEST_ON_TOP -> {
+                InuConfig.FEED_NEWEST_ON_TOP.value = !InuConfig.FEED_NEWEST_ON_TOP.value
+                softRebuild()
+                listView?.adapter?.update(true)
+            }
             item.id == TOGGLE_MARK_READ_ON_SCROLL -> {
                 InuConfig.FEED_MARK_READ_ON_SCROLL.value = !InuConfig.FEED_MARK_READ_ON_SCROLL.value
                 listView?.adapter?.update(true)
@@ -171,6 +177,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
         private const val MENU_OTHER = 3
 
         private val TOGGLE_INCLUDE_ARCHIVED = InuUtils.generateId()
+        private val TOGGLE_NEWEST_ON_TOP = InuUtils.generateId()
         private val TOGGLE_MARK_READ_ON_SCROLL = InuUtils.generateId()
 
         @JvmField
@@ -182,6 +189,7 @@ class FeedExcludedChannelsSettingsActivity : SettingsPageActivity(), Notificatio
             entries = listOf(
                 SearchRegistry.Entry("feed", R.string.InuFeed),
                 SearchRegistry.Entry("feed-include-archived", R.string.InuFeedIncludeArchived, TOGGLE_INCLUDE_ARCHIVED),
+                SearchRegistry.Entry("feed-newest-on-top", R.string.InuFeedNewestOnTop, TOGGLE_NEWEST_ON_TOP),
                 SearchRegistry.Entry("feed-mark-read-on-scroll", R.string.InuFeedMarkReadOnScroll, TOGGLE_MARK_READ_ON_SCROLL),
             ),
         )

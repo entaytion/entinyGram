@@ -572,6 +572,9 @@
     <string name="InuFeedMarkAllRead">すべて既読にする</string>
     <string name="InuFeedMarkReadOnScroll">スクロール中に既読にする</string>
     <string name="InuFeedMarkReadOnScrollInfo">スクロールで通り過ぎた投稿はサーバーに既読として記録され、バッジがあちこちで更新されます。</string>
+    <string name="InuFeedNewestOnTop">最新投稿を上に</string>
+    <string name="InuFeedNewestOnTopInfo">オン：新しい投稿を上に表示（Twitter風）。オフ：下に表示（Telegram風）。</string>
+    <string name="InuFeedAllChannels">すべてのチャンネル</string>
     <string name="InuFeedAllExcluded">すべてのチャンネルがフィードから非表示になっています。</string>
     <string name="InuFeedChannelHidden">**%1$s** をフィードから非表示にしました</string>
     <string name="InuFeedMarkAllReadConfirm">フィード内のチャンネルの投稿をすべて既読にしますか？元のチャンネルでも既読になります。</string>
@@ -803,9 +806,6 @@
 
     <string name="InuDisableQuickShare">クイック共有を無効化</string>
     <string name="InuDisableQuickShareInfo">共有ボタン（チャンネルメッセージの横）を長押ししたときに頻繁な連絡先を表示しない；確認なしで送信されます</string>
-    <string name="InuDisableProfileMusicAutoplay">プロフィール音楽の自動再生を無効化</string>
-    <string name="InuDisableProfileMusicAutoplayInfo">プロフィールでピン留めされた音楽プレーヤーを開いたときに自動的に再生を開始しません</string>
-    <string name="InuDisableBrowserSwipeCollapse">下スワイプでのブラウザ最小化を無効化</string>
     <string name="InuSaveSelectedFiles">選択したファイルを保存</string>
     <string name="InuSaveSelectedFilesInfo">プロフィールのメディアと検索でファイルを選択したときにダウンロードボタンを追加します。未ダウンロードのファイルは自動的に取得されます</string>
     <string name="InuLocalName">ローカル名</string>
@@ -834,6 +834,9 @@
     <string name="InuLocalNameEmojiChoose">絵文字を選ぶ</string>
     <string name="InuLocalNameEmojiHide">ステータスを隠す</string>
     <string name="InuLocalNamePremium">プレミアムバッジ</string>
+    <string name="InuDisableProfileMusicAutoplay">プロフィール音楽の自動再生を無効化</string>
+    <string name="InuDisableProfileMusicAutoplayInfo">プロフィールでピン留めされた音楽プレーヤーを開いたときに自動的に再生を開始しません</string>
+    <string name="InuDisableBrowserSwipeCollapse">下スワイプでのブラウザ最小化を無効化</string>
     <string name="InuGifSeekbar">GIF のシークバー</string>
     <string name="InuGifSeekbarInfo">注：「新しい」GIF（つまり無音 MP4）にのみ対応</string>
     <string name="InuPublicPhotoMark">公開写真</string>
@@ -940,6 +943,7 @@
     <string name="InuDeletedArchiveEmpty">保存された削除メッセージはまだありません。</string>
     <string name="InuClearDeletedCacheDone">削除済みメッセージのキャッシュを消去しました</string>
     <string name="InuClearDeletedCacheEmpty">削除済みメッセージのキャッシュは空です</string>
+    <string name="InuClearDeletedCacheHint">チャットを長押しすると、保存されたメッセージとメディアを個別に確認・削除できます</string>
     <string name="InuDataBackup">バックアップと同期</string>
     <string name="InuDownloadingStory">ストーリーをダウンロード中…</string>
     <string name="InuEditHistory">編集履歴</string>
@@ -1287,6 +1291,7 @@
     <string name="InuNo">いいえ</string>
     <string name="InuNoProfilePhotos">プロフィール写真が見つかりません</string>
     <string name="InuNotificationIconOldEntinygram">旧 entinyGram</string>
+    <string name="InuNotificationIconInfo">Xiaomi（MIUI/HyperOS）では、システムがこのアイコンをアプリのアイコンに置き換える場合があり、選択が反映されないことがあります</string>
     <string name="InuPoweredByProvider">翻訳提供: %1$s</string>
     <string name="InuProfilePhotosDeleted">すべてのプロフィール写真を削除しました</string>
     <string name="InuProfilePhotosDeletedCount">%1$d 枚のプロフィール写真を削除しました</string>

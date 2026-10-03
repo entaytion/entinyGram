@@ -717,6 +717,9 @@
     <string name="InuFeedMarkAllRead">Tümünü okundu işaretle</string>
     <string name="InuFeedMarkReadOnScroll">Kaydırırken okundu olarak işaretle</string>
     <string name="InuFeedMarkReadOnScrollInfo">Kaydırılan gönderiler sunucuda okundu işaretlenir, rozetler her yerde güncellenir.</string>
+    <string name="InuFeedNewestOnTop">Yeni gönderiler üstte</string>
+    <string name="InuFeedNewestOnTopInfo">Açık: en yeni gönderiler üstte (Twitter tarzı). Kapalı: altta (Telegram tarzı).</string>
+    <string name="InuFeedAllChannels">Tüm kanallar</string>
     <string name="InuFeedAllExcluded">Tüm kanallar akıştan gizlendi.</string>
     <string name="InuFeedChannelHidden">**%1$s** akıştan gizlendi</string>
     <string name="InuFeedMarkAllReadConfirm">Akış kanallarındaki tüm gönderiler okundu olarak işaretlensin mi? Orijinal kanallarda da okundu olarak işaretlenir.</string>
@@ -933,6 +936,7 @@
     <string name="InuDeletedArchiveEmpty">Henüz kaydedilmiş silinmiş mesaj yok.</string>
     <string name="InuClearDeletedCacheDone">Silinen mesaj önbelleği temizlendi</string>
     <string name="InuClearDeletedCacheEmpty">Silinen mesaj önbelleği boş</string>
+    <string name="InuClearDeletedCacheHint">Kayıtlı mesajları ve medyayı tek tek görüp silmek için bir sohbete uzun basın</string>
     <string name="InuDataBackup">Yedekleme ve Senkronizasyon</string>
     <string name="InuDownloadingStory">Hikaye indiriliyor…</string>
     <string name="InuEditHistory">Düzenleme geçmişi</string>
@@ -1286,6 +1290,7 @@
     <string name="InuNo">Hayır</string>
     <string name="InuNoProfilePhotos">Profil fotoğrafı bulunamadı</string>
     <string name="InuNotificationIconOldEntinygram">Eski entinyGram</string>
+    <string name="InuNotificationIconInfo">Xiaomi cihazlarda (MIUI/HyperOS) sistem bu simgeyi uygulama simgesiyle değiştirebilir; bu nedenle seçim orada görünmeyebilir</string>
     <string name="InuPoweredByProvider">Çeviriler %1$s tarafından desteklenmektedir.</string>
     <string name="InuProfilePhotosDeleted">Tüm profil fotoğrafları silindi</string>
     <string name="InuProfilePhotosDeletedCount">%1$d profil fotoğrafı silindi</string>

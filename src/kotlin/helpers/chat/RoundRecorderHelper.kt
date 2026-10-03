@@ -331,9 +331,19 @@ object RoundRecorderHelper {
         }
     }
 
+    private fun exposureItem(session: Camera2Session) =
+        if (session.isFrontCamera) InuConfig.ROUND_RECORDER_EXPOSURE_FRONT else InuConfig.ROUND_RECORDER_EXPOSURE_BACK
+
+    @JvmStatic
+    fun rememberExposure(session: Camera2Session?, ev: Float) {
+        if (session == null) return
+        exposureItem(session).value = ev
+    }
+
     @JvmStatic
     fun syncExposureButtons(buttons: ExposureLevelButtonsView?, session: Camera2Session?) {
         if (buttons == null) return
+        session?.setExposureCompensationEv(exposureItem(session).value)
         if (session == null) {
             buttons.setLevels(emptyList())
             return

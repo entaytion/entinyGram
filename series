@@ -378,9 +378,7 @@ entiny/round-recorder-zoom-buttons.patch
 entiny/hide-channel-share-button.patch
 entiny/non-island-shared-media-scroll.patch
 entiny/redundant-lang-code-native-calls.patch
-entiny/optimize-build.patch
 entiny/wide-channel-posts.patch
-entiny/translate-restrictions.patch
 entiny/local-custom-emoji.patch
 entiny/simple-text-view-left-slot.patch
 entiny/settings-search-uppercase.patch
@@ -390,8 +388,7 @@ entiny/chat-menu-live-reorder.patch
 entiny/parallel-account-init.patch
 bugfix/positional-format-args.patch
 entiny/remote-badges.patch
-entiny/translate-target-language-override.patch
-entiny/preserve-media-cache-fallback.patch
+entiny/restore-archived-media.patch
 entiny/feed-menu-entry.patch
 entiny/dialogs-menu-customization.patch
 entiny/small-gifs.patch
@@ -404,7 +401,6 @@ entiny/recent-chats.patch
 entiny/pill-stack.patch
 entiny/proxy-management.patch
 entiny/dialog-avatar-tap-profile.patch
-entiny/translate-bugfixes.patch
 entiny/confirm-before-sending.patch
 entiny/hijri-calendar.patch
 entiny/input-translate.patch
@@ -430,9 +426,7 @@ entiny/centered-header-fixes.patch
 entiny/hide-recent-chats-shortcut.patch
 entiny/theme-switch-recovery.patch
 entiny/badge-emoji-size.patch
-entiny/confirm-send-preview-fix.patch
 entiny/animated-preview-speed-fix.patch
-entiny/presence-dots-ttl-overlap.patch
 entiny/translate-in-send-preview.patch
 entiny/translate-preview-fixes.patch
 entiny/main-tabs-separate-search.patch
@@ -450,7 +444,6 @@ entiny/liquid-glass-live-update.patch
 entiny/auto-save-one-time.patch
 entiny/auto-save-stories.patch
 entiny/chat-header-light-colors.patch
-entiny/pill-stack-in-header.patch
 entiny/main-tabs-search-tuck.patch
 entiny/archive-lock-once.patch
 entiny/translate-failure-bulletin.patch
@@ -458,10 +451,7 @@ entiny/input-menu-reserve.patch
 entiny/call-rotation.patch
 entiny/recent-chats-sidebar.patch
 entiny/m3-tabs-full-width.patch
-entiny/service-notification-icon.patch
 entiny/recent-chats-strip.patch
-entiny/voice-preview-no-confirm.patch
-entiny/background-service-toggle.patch
 entiny/device-spoof.patch
 entiny/ai-summary-inline.patch
 entiny/media-size.patch
@@ -471,7 +461,12 @@ entiny/remember-selected-folder.patch
 entiny/animated-file-drawable-recycle-crash.patch
 entiny/attach-camera-square.patch
 entiny/feed-chatactivity.patch
-entiny/restore-archived-media.patch
 entiny/chat-header-pill-bounds.patch
+entiny/collapsed-quote-link-highlight.patch
+entiny/ios-input-top-icons-gap.patch
 entiny/save-selected-files.patch
 entiny/local-names.patch
+entiny/round-recorder-remember-exposure.patch
+entiny/folder-tags-local-premium.patch
+entiny/rtl-checkbox-text.patch
+entiny/logs-respect-toggle.patch

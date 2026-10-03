@@ -1,6 +1,9 @@
 package desu.inugram.helpers.feed
 
 import desu.inugram.InuConfig
+import android.os.SystemClock
+import org.telegram.messenger.AccountInstance
+import org.telegram.messenger.MessagesController
 
 class FeedConfig private constructor() {
 
@@ -24,6 +27,36 @@ class FeedConfig private constructor() {
 
     fun isExcluded(dialogId: Long): Boolean =
         InuConfig.FEED_EXCLUDED_CHANNELS.value.contains(dialogId.toString())
+
+    @Volatile
+    var folderFilterId: Int = 0
+        private set
+
+    private val folderMembership = HashMap<Long, Boolean>()
+    private var folderMembershipAt = 0L
+
+    fun setFolder(filterId: Int) {
+        synchronized(folderMembership) { folderMembership.clear() }
+        folderFilterId = filterId
+        FeedChannelSet.invalidate()
+    }
+
+    fun isHidden(account: Int, dialogId: Long): Boolean = isExcluded(dialogId) || !inFolder(account, dialogId)
+
+    private fun inFolder(account: Int, dialogId: Long): Boolean {
+        val filterId = folderFilterId
+        if (filterId == 0) return true
+        val filter = MessagesController.getInstance(account).dialogFilters?.firstOrNull { it.id == filterId } ?: return true
+        if (filter.isDefault) return true
+        synchronized(folderMembership) {
+            val now = SystemClock.elapsedRealtime()
+            if (now - folderMembershipAt > MEMBERSHIP_TTL_MS) {
+                folderMembership.clear()
+                folderMembershipAt = now
+            }
+            return folderMembership.getOrPut(dialogId) { filter.includesDialog(AccountInstance.getInstance(account), dialogId) }
+        }
+    }
 
     fun setExcluded(dialogId: Long, excluded: Boolean) {
         val updated = HashSet(InuConfig.FEED_EXCLUDED_CHANNELS.value)
@@ -61,6 +94,7 @@ class FeedConfig private constructor() {
     }
 
     companion object {
+        private const val MEMBERSHIP_TTL_MS = 5_000L
         private val instance = FeedConfig()
 
         @JvmStatic

@@ -481,6 +481,7 @@
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">entinyGram قدیمی</string>
+    <string name="InuNotificationIconInfo">در Xiaomi (MIUI/HyperOS) ممکن است سیستم این آیکون را با آیکون برنامه جایگزین کند، پس انتخاب شما آنجا دیده نشود</string>
     <string name="InuAppIconOldEntinygram">entinyGram قدیمی</string>
     <string name="InuDisableChatBubbles">غیرفعال کردن حباب‌های اعلان Android</string>
     <string name="InuInPlaceTranslation">ترجمه درجا</string>
@@ -970,6 +971,9 @@
     <string name="InuFeedHiddenChannels">پنهان‌شده از فید</string>
     <string name="InuFeedMarkReadOnScroll">علامت‌گذاری خوانده‌شده هنگام اسکرول</string>
     <string name="InuFeedMarkReadOnScrollInfo">رد شدن از پست‌ها با اسکرول، آن‌ها را روی سرور خوانده‌شده علامت می‌زند و نشان‌ها را همه‌جا به‌روز می‌کند.</string>
+    <string name="InuFeedNewestOnTop">جدیدترین پست‌ها بالا</string>
+    <string name="InuFeedNewestOnTopInfo">روشن: جدیدترین پست‌ها بالا (سبک توییتر). خاموش: پایین (سبک تلگرام).</string>
+    <string name="InuFeedAllChannels">همه کانال‌ها</string>
     <string name="InuFeedAllExcluded">همه کانال‌ها از فید پنهان شده‌اند.</string>
     <string name="InuFeedChannelHidden">**%1$s** از فید پنهان شد</string>
     <string name="InuFeedMarkAllReadConfirm">همه پست‌های کانال‌های فید خوانده‌شده علامت زده شوند؟ در کانال‌های اصلی هم خوانده‌شده علامت می‌خورند.</string>
@@ -1198,6 +1202,7 @@
     <string name="InuClearDeletedCacheAlert">این کار آرشیو محلی پیام‌های حذف‌شده ذخیره‌شده و رسانه‌هایشان را برای همیشه حذف می‌کند. قابل بازگشت نیست.</string>
     <string name="InuClearDeletedCacheDone">حافظه نهان پیام‌های حذف‌شده پاک شد</string>
     <string name="InuClearDeletedCacheEmpty">حافظه نهان پیام‌های حذف‌شده خالی است</string>
+    <string name="InuClearDeletedCacheHint">روی یک گفتگو نگه دارید تا پیام‌ها و رسانه‌های ذخیره‌شده را ببینید و تکی حذف کنید</string>
     <string name="InuEditHistory">تاریخچه ویرایش</string>
     <string name="InuDeletedAt">%1$s حذف شد</string>
     <string name="InuDisableFlagSecure">غیرفعال کردن FLAG_SECURE</string>

@@ -5,7 +5,6 @@ import androidx.core.content.edit
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
-import desu.inugram.helpers.badges.BadgeRegistry
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.MessagesController
@@ -159,14 +158,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 TOGGLE_HIDE_VERIFICATION_BADGE,
                 LocaleController.getString(R.string.InuHideVerificationBadge),
             ).setChecked(InuConfig.HIDE_VERIFICATION_BADGE.value)
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_HIDE_DEV_BADGES,
-                R.string.InuHideDevBadges,
-                R.string.InuHideDevBadgesInfo,
-                InuConfig.HIDE_DEV_BADGES.value,
-            )
         )
         items.add(
             UItem.asCheck(
@@ -535,12 +526,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
             TOGGLE_HIDE_REACTION_ENTRY -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_ENTRY.toggle()
-            TOGGLE_HIDE_DEV_BADGES -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
-                // entiny: update badge on cached TLRPC user/chat objects so toggle takes effect without app restart
-                BadgeRegistry.refreshCached()
-            }
-
             TOGGLE_HIDE_VERIFICATION_BADGE -> {
                 val new = InuConfig.HIDE_VERIFICATION_BADGE.toggle()
                 (view as? TextCheckCell)?.isChecked = new
@@ -701,7 +686,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
         private val TOGGLE_HIDE_REACTION_ENTRY = InuUtils.generateId()
-        private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val SECTION_HIDE_SUGGESTIONS = InuUtils.generateId()
 
         @JvmField
@@ -717,7 +701,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),
                 SearchRegistry.Entry("hide-call-action-button", R.string.InuHideCallActionButton, TOGGLE_HIDE_CALL_ACTION_BUTTON),
                 SearchRegistry.Entry("hide-reaction-entry", R.string.InuHideReactionEntry, TOGGLE_HIDE_REACTION_ENTRY),
-                SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("hide-stories", R.string.InuHideStories, TOGGLE_HIDE_STORIES),
                 SearchRegistry.Entry("hide-repost-to-story", R.string.InuHideRepostToStory, TOGGLE_HIDE_REPOST_TO_STORY),
                 SearchRegistry.Entry("hide-trending-stickers", R.string.InuHideTrendingStickers, TOGGLE_HIDE_TRENDING_STICKERS),

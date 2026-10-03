@@ -642,7 +642,7 @@ class FeedController private constructor(
     fun hasNoSyntheticIds(): Boolean = store.hasNoSyntheticIds()
 
     fun isIncludedChannelPost(dialogId: Long): Boolean {
-        if (!DialogObject.isChatDialog(dialogId) || FeedConfig.getInstance(currentAccount).isExcluded(dialogId)) {
+        if (!DialogObject.isChatDialog(dialogId) || FeedConfig.getInstance(currentAccount).isHidden(currentAccount, dialogId)) {
             return false
         }
         return isEligibleChannel(MessagesController.getInstance(currentAccount).getChat(-dialogId))

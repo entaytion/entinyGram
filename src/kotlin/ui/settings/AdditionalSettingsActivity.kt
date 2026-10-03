@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
+import desu.inugram.helpers.badges.BadgeRegistry
 import desu.inugram.helpers.CrashReporter
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.LogsHelper
@@ -76,6 +77,15 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         } else {
             items.add(UItem.asCustom(getOrCreateDonateCard()))
         }
+        items.add(UItem.asShadow(null))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_DEV_BADGES,
+                R.string.InuHideDevBadges,
+                R.string.InuHideDevBadgesInfo,
+                InuConfig.HIDE_DEV_BADGES.value,
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuUpdates)))
@@ -345,6 +355,12 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             TOGGLE_UPDATES_INCLUDE_BETA -> {
                 val new = InuConfig.UPDATES_INCLUDE_BETA.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_HIDE_DEV_BADGES -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
+                // entiny: update badge on cached TLRPC user/chat objects so toggle takes effect without app restart
+                BadgeRegistry.refreshCached()
             }
 
             TOGGLE_LOGS_ENABLED -> {
@@ -623,6 +639,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
     companion object {
         private val TOGGLE_AUTO_UPDATE_CHECK = InuUtils.generateId()
         private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
+        private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val BUTTON_DONATE = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
@@ -643,6 +660,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("additional-donate", R.string.InuDonateRow, BUTTON_DONATE),
+                SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),
                 SearchRegistry.Entry("updates-include-beta", R.string.InuUpdatesIncludeBeta, TOGGLE_UPDATES_INCLUDE_BETA),
                 SearchRegistry.Entry("additional-cloud-sync", R.string.InuCloudSync, BUTTON_CLOUD_SYNC),

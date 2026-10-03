@@ -571,6 +571,9 @@
     <string name="InuFeedMarkAllRead">全部标为已读</string>
     <string name="InuFeedMarkReadOnScroll">滚动时标记为已读</string>
     <string name="InuFeedMarkReadOnScrollInfo">滚动浏览过的帖子会在服务器标记为已读，各处未读角标同步更新。</string>
+    <string name="InuFeedNewestOnTop">最新帖子在顶部</string>
+    <string name="InuFeedNewestOnTopInfo">开启：最新帖子在顶部（Twitter 风格）；关闭：在底部（Telegram 风格）。</string>
+    <string name="InuFeedAllChannels">全部频道</string>
     <string name="InuFeedAllExcluded">所有频道都已从动态中隐藏。</string>
     <string name="InuFeedChannelHidden">已将 **%1$s** 从动态中隐藏</string>
     <string name="InuFeedMarkAllReadConfirm">将动态频道中的所有帖子标记为已读？原频道中也会标记为已读。</string>
@@ -802,9 +805,6 @@
 
     <string name="InuDisableQuickShare">禁用快速分享</string>
     <string name="InuDisableQuickShareInfo">长按分享按钮（频道消息旁边）时不显示常用联系人；会直接发送，无需确认</string>
-    <string name="InuDisableProfileMusicAutoplay">禁用个人资料音乐自动播放</string>
-    <string name="InuDisableProfileMusicAutoplayInfo">打开个人资料中置顶的音乐播放器时不自动开始播放</string>
-    <string name="InuDisableBrowserSwipeCollapse">禁用下滑最小化浏览器</string>
     <string name="InuSaveSelectedFiles">保存所选文件</string>
     <string name="InuSaveSelectedFilesInfo">在个人资料媒体和搜索中选择文件时添加下载按钮；未下载的文件会自动获取</string>
     <string name="InuLocalName">本地名称</string>
@@ -833,6 +833,9 @@
     <string name="InuLocalNameEmojiChoose">选择表情</string>
     <string name="InuLocalNameEmojiHide">隐藏状态</string>
     <string name="InuLocalNamePremium">会员标志</string>
+    <string name="InuDisableProfileMusicAutoplay">禁用个人资料音乐自动播放</string>
+    <string name="InuDisableProfileMusicAutoplayInfo">打开个人资料中置顶的音乐播放器时不自动开始播放</string>
+    <string name="InuDisableBrowserSwipeCollapse">禁用下滑最小化浏览器</string>
     <string name="InuGifSeekbar">GIF 进度条</string>
     <string name="InuGifSeekbarInfo">注意：仅对「新」GIF（即静音 MP4）生效</string>
     <string name="InuPublicPhotoMark">公开照片</string>
@@ -935,6 +938,7 @@
     <string name="InuDeletedArchiveEmpty">尚无已保存的删除消息。</string>
     <string name="InuClearDeletedCacheDone">已删除消息缓存已清除</string>
     <string name="InuClearDeletedCacheEmpty">已删除消息缓存为空</string>
+    <string name="InuClearDeletedCacheHint">长按聊天可逐条查看已保存的消息和媒体并单独删除</string>
     <string name="InuDataBackup">备份与同步</string>
     <string name="InuDownloadingStory">正在下载故事…</string>
     <string name="InuEditHistory">编辑历史</string>
@@ -1288,6 +1292,7 @@
     <string name="InuNo">否</string>
     <string name="InuNoProfilePhotos">未找到个人头像</string>
     <string name="InuNotificationIconOldEntinygram">旧版 entinyGram</string>
+    <string name="InuNotificationIconInfo">在小米（MIUI/HyperOS）上，系统可能会把此图标替换为应用图标，因此所选图标可能不会显示</string>
     <string name="InuPoweredByProvider">翻译由 %1$s 提供支持。</string>
     <string name="InuProfilePhotosDeleted">已删除所有个人头像</string>
     <string name="InuProfilePhotosDeletedCount">已删除 %1$d 张头像</string>

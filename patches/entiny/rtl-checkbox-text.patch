@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 3 Oct 2026 21:33:19 +0300
+Subject: [*] fix clipped checkbox text in rtl
+
+---
+ .../src/main/java/org/telegram/ui/Cells/CheckBoxCell.java     | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/CheckBoxCell.java
+@@ -111,7 +111,7 @@ public class CheckBoxCell extends FrameLayout {
+                 }
+             };
+             NotificationCenter.listenEmojiLoading(animatedTextView);
+-            animatedTextView.setEllipsizeByGradient(true);
++            animatedTextView.setEllipsizeByGradient(!LocaleController.isRTL);
+             animatedTextView.setRightPadding(dp(8));
+             animatedTextView.getDrawable().setHacks(true, true, false);
+             animatedTextView.setTag(getThemedColor(type == TYPE_CHECK_BOX_DEFAULT || type == TYPE_CHECK_BOX_URL ? Theme.key_dialogTextBlack : Theme.key_windowBackgroundWhiteBlackText));
+@@ -124,7 +124,7 @@ public class CheckBoxCell extends FrameLayout {
+                 addView(animatedTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.CENTER_VERTICAL, 29, 0, 0, 0));
+                 animatedTextView.setPadding(0, 0, 0, dp(3));
+             } else {
+-                animatedTextView.setRightPadding(dp(padding));
++                animatedTextView.setRightPadding(LocaleController.isRTL ? 0 : dp(padding));
+                 animatedTextView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
+                 if (type == TYPE_CHECK_BOX_ENTER_PHONE) {
+                     addView(animatedTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL, (LocaleController.isRTL ? 8 : 29), 0, (LocaleController.isRTL ? 29 : 8), 0));

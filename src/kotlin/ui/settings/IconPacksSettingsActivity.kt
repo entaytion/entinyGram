@@ -85,6 +85,7 @@ class IconPacksSettingsActivity : SettingsPageActivity() {
                 notificationIconLabel(),
             )
         )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuNotificationIconInfo)))
     }
 
     private fun createPackPreview(context: android.content.Context, packId: Int, icons: List<Int>): ImageView =

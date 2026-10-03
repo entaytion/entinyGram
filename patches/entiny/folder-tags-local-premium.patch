@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 3 Oct 2026 20:49:45 +0300
+Subject: [*] keep folder tags on with local premium
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java    | 2 +-
+ .../src/main/java/org/telegram/ui/FiltersSetupActivity.java     | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -2489,7 +2489,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 });
+             } else if (response instanceof TLRPC.TL_messages_dialogFilters) {
+                 TLRPC.TL_messages_dialogFilters res = (TLRPC.TL_messages_dialogFilters) response;
+-                if (folderTags != res.tags_enabled) {
++                if (folderTags != res.tags_enabled && !desu.inugram.helpers.dialogs.FolderTagsHelper.isLocalOnly(currentAccount)) {
+                     setFolderTags(res.tags_enabled);
+                     AndroidUtilities.runOnUIThread(() -> {
+                         getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+@@ -699,6 +699,7 @@ public class FiltersSetupActivity extends BaseFragment implements NotificationCe
+                 req.enabled = !getMessagesController().folderTags;
+                 getMessagesController().setFolderTags(req.enabled);
+                 getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
++                    desu.inugram.helpers.dialogs.FolderTagsHelper.onToggleResult(currentAccount, err != null);
+                     if (req.enabled && !loadedColors) {
+                         loadingFiltersForColors = true;
+                         getMessagesController().loadRemoteFilters(true);

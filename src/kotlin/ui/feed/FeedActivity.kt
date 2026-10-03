@@ -10,13 +10,16 @@ import android.widget.FrameLayout
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import desu.inugram.InuConfig
 import desu.inugram.helpers.feed.FeedConfig
 import desu.inugram.helpers.feed.FeedController
+import desu.inugram.helpers.dialogs.FolderHelper
 import desu.inugram.helpers.dialogs.MainTabsHelper
 import desu.inugram.helpers.feed.FeedScope
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.ActionBar
@@ -26,6 +29,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.ChatActivityContainer
 import org.telegram.ui.Components.Bulletin
+import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.blur3.source.BlurredBackgroundSourceRenderNode
@@ -116,6 +120,7 @@ class FeedActivity @JvmOverloads constructor(
                 if (activityCreated) return
                 activityCreated = true
                 embeddedChatCreated = true
+                chatActivity.reversed = InuConfig.FEED_NEWEST_ON_TOP.value
                 super.initChatActivity()
                 applyFloatingWindowLayout()
                 setupChatActionBar()
@@ -205,6 +210,7 @@ class FeedActivity @JvmOverloads constructor(
         val avatarContainer = chat?.avatarContainer ?: return
         avatarContainer.setTitle(LocaleController.getString(R.string.InuFeed))
         avatarContainer.setFeedAvatar()
+        avatarContainer.setOnClickListener { showFolderPicker(avatarContainer) }
         updateFeedSubtitle()
     }
 
@@ -216,8 +222,50 @@ class FeedActivity @JvmOverloads constructor(
 
     private fun setFeedSubtitle(channelCount: Int) {
         val avatarContainer = chat?.avatarContainer ?: return
-        avatarContainer.setSubtitle(LocaleController.formatPluralString("Channels", channelCount))
+        val channels = LocaleController.formatPluralString("Channels", channelCount)
+        val folderName = currentFolderName()
+        avatarContainer.setSubtitle(if (folderName != null) "$folderName • $channels" else channels)
         avatarContainer.subtitleTextView?.visibility = View.VISIBLE
+    }
+
+    private fun currentFolderName(): String? {
+        val filterId = FeedConfig.getInstance(currentAccount).folderFilterId
+        if (filterId == 0) return null
+        val filter = MessagesController.getInstance(currentAccount).dialogFilters?.firstOrNull { it.id == filterId } ?: return null
+        if (filter.isDefault) return null
+        return FolderHelper.getTabInfo(filter).first.takeIf { it.isNotEmpty() }
+    }
+
+    private fun pickableFolders(): List<MessagesController.DialogFilter> =
+        MessagesController.getInstance(currentAccount).dialogFilters?.filter { !it.isDefault }.orEmpty()
+
+    private fun showFolderPicker(anchor: View) {
+        val folders = pickableFolders()
+        if (folders.isEmpty()) {
+            presentFragment(FeedExcludedChannelsSettingsActivity())
+            return
+        }
+        val current = FeedConfig.getInstance(currentAccount).folderFilterId
+        val options = ItemOptions.makeOptions(this, anchor)
+        options.setGravity(Gravity.LEFT)
+        if (current != 0) {
+            options.add(R.drawable.msg_channel, LocaleController.getString(R.string.InuFeedAllChannels)) { selectFolder(0) }
+        }
+        for (filter in folders) {
+            if (filter.id == current) continue
+            val info = FolderHelper.getTabInfo(filter)
+            val name = info.first.takeIf { it.isNotEmpty() } ?: continue
+            options.add(FolderHelper.getTabIcon(info.second), name) { selectFolder(filter.id) }
+        }
+        options.show()
+    }
+
+    private fun selectFolder(filterId: Int) {
+        val config = FeedConfig.getInstance(currentAccount)
+        config.setFolder(filterId)
+        lastConfigGeneration = config.generation
+        chat?.applyFeedConfigChange()
+        updateFeedSubtitle()
     }
 
     private fun showMarkAllReadDialog() {

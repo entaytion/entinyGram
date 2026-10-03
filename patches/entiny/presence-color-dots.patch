@@ -1,10 +1,8 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Fri, 25 Sep 2026 15:09:43 +0300
-Subject: color-coded presence dots
+Subject: [+] presence color dots
 
-- online = blue, offline within 20min = yellow, within 1h = red, else no dot
-- gated behind InuConfig.PRESENCE_COLOR_DOTS, default off
 ---
  .../src/main/java/org/telegram/ui/Cells/DialogCell.java    | 7 ++++++-
  .../main/java/org/telegram/ui/Cells/HintDialogCell.java    | 7 ++++++-
@@ -19,7 +17,7 @@ index 0000000..0000000 100644
              }
          }
          boolean isOnline = isOnline();
-+        if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && user != null && desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) != 0) {
++        if (desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && ttlPeriod <= 0 && user != null && desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) != 0) {
 +            isOnline = true;
 +        }
          onlineProgress = isOnline ? 1.0f : 0.0f;
@@ -29,7 +27,7 @@ index 0000000..0000000 100644
              }
              if (user != null && !MessagesController.isSupportUser(user) && !user.bot) {
                  boolean isOnline = isOnline();
-+                int inu_presenceColor = desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
++                int inu_presenceColor = desu.inugram.InuConfig.PRESENCE_COLOR_DOTS.getValue() && !showTtl ? desu.inugram.helpers.dialogs.PresenceColorHelper.colorFor(user.status, isOnline) : 0;
 +                if (inu_presenceColor != 0) isOnline = true;
                  wasDrawnOnline = isOnline;
                  if (isOnline || onlineProgress != 0) {

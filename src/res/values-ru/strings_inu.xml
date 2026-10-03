@@ -645,6 +645,9 @@
     <string name="InuFeedMarkAllRead">Отметить всё прочитанным</string>
     <string name="InuFeedMarkReadOnScroll">Отмечать прочитанным при прокрутке</string>
     <string name="InuFeedMarkReadOnScrollInfo">Пролистнутые при прокрутке записи отмечаются прочитанными на сервере — счётчики обновляются везде.</string>
+    <string name="InuFeedNewestOnTop">Новые посты сверху</string>
+    <string name="InuFeedNewestOnTopInfo">Вкл.: новые посты сверху (стиль Twitter). Выкл.: снизу (стиль Telegram).</string>
+    <string name="InuFeedAllChannels">Все каналы</string>
     <string name="InuFeedAllExcluded">Все каналы скрыты из ленты.</string>
     <string name="InuFeedChannelHidden">**%1$s** скрыт из ленты</string>
     <string name="InuFeedMarkAllReadConfirm">Отметить все посты в каналах ленты прочитанными? Они также будут отмечены прочитанными в исходных каналах.</string>
@@ -890,9 +893,6 @@
 
     <string name="InuDisableQuickShare">Отключить быструю отправку</string>
     <string name="InuDisableQuickShareInfo">Не показывать частые контакты при долгом нажатии кнопки «Поделиться» (рядом с сообщениями каналов); отправка без подтверждения</string>
-    <string name="InuGhostReadOnSend">Читать при отправке</string>
-    <string name="InuGhostMarkReadLocally">Отмечать прочитанным локально</string>
-    <string name="InuGhostMarkReadLocallyInfo">Сбрасывать счётчик непрочитанных сообщений при открытии чата в режиме призрака, оставляя его непрочитанным на сервере.</string>
     <string name="InuSaveSelectedFiles">Сохранение выделенных файлов</string>
     <string name="InuSaveSelectedFilesInfo">Добавляет кнопку загрузки при выделении файлов в медиа профиля и поиске; незагруженные файлы докачиваются автоматически</string>
     <string name="InuLocalName">Локальное имя</string>
@@ -921,6 +921,9 @@
     <string name="InuLocalNameEmojiChoose">Выбрать эмодзи</string>
     <string name="InuLocalNameEmojiHide">Скрыть статус</string>
     <string name="InuLocalNamePremium">Значок Premium</string>
+    <string name="InuGhostReadOnSend">Читать при отправке</string>
+    <string name="InuGhostMarkReadLocally">Отмечать прочитанным локально</string>
+    <string name="InuGhostMarkReadLocallyInfo">Сбрасывать счётчик непрочитанных сообщений при открытии чата в режиме призрака, оставляя его непрочитанным на сервере.</string>
     <string name="InuGhostHideAppBarIcon">Скрыть индикатор в заголовке</string>
     <string name="InuGhostHideAppBarIconInfo">Не показывать иконку призрака в главном заголовке и заголовках чатов при активном режиме призрака.</string>
     <string name="InuDisableProfileMusicAutoplay">Отключить автовоспроизведение музыки в профиле</string>
@@ -1094,6 +1097,7 @@
     <string name="InuDeletedArchiveEmpty">Пока нет сохранённых удалённых сообщений.</string>
     <string name="InuClearDeletedCacheDone">Кэш удаленных сообщений очищен</string>
     <string name="InuClearDeletedCacheEmpty">Кэш удаленных сообщений пуст</string>
+    <string name="InuClearDeletedCacheHint">Удерживайте чат, чтобы просмотреть сохранённые сообщения и медиа и удалять их по одному</string>
     <string name="InuSuppressScreenshotNotification">Скрывать уведомления о скриншотах</string>
     <string name="InuSuppressScreenshotNotificationInfo">Не уведомлять собеседника, когда вы делаете скриншот секретного чата.</string>
     <string name="InuHideSponsoredMessages">Скрыть спонсируемые сообщения (AdBlock)</string>
@@ -1409,6 +1413,7 @@
     <!-- General & Icons -->
     <string name="InuAppIconOldEntinygram">Старый entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Старый entinyGram</string>
+    <string name="InuNotificationIconInfo">На Xiaomi (MIUI/HyperOS) система может подменять эту иконку иконкой приложения, поэтому выбор там может быть незаметен</string>
     <string name="InuShowDrawerAccounts">Аккаунты в боковом меню</string>
     <string name="InuShowDrawerAccountsInfo">Показывать переключатель аккаунтов под профилем в боковой панели.</string>
     <string name="InuYes">Да</string>

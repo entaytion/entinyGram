@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 2 Oct 2026 21:07:26 +0300
+Subject: [*] collapsed quote link highlight stays inside the quote
+
+---
+ .../org/telegram/ui/Cells/ChatMessageCell.java   | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -17140,9 +17140,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 final float blockRtl = (block.isRtl() ? rtlOffset - (block.quote ? dp(10) : 0) : 0);
+                 canvas.translate(textX - blockRtl, textY + block.textYOffset(textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);
+                 if (a == linkBlockNum && !explanation || a == linkExplanationBlockNum && explanation) {
++                    final boolean inu_clipLinks = block.quote && block.quoteCollapse && block.height > block.collapsedHeight;
++                    if (inu_clipLinks) {
++                        canvas.save();
++                        canvas.clipRect(-dp(16), -block.padTop, getMeasuredWidth(), block.height(transitionParams));
++                    }
+                     if (!drawOnlyText && links.draw(canvas)) {
+                         invalidate();
+                     }
++                    if (inu_clipLinks) {
++                        canvas.restore();
++                    }
+                     drawProgressLoadingLink(canvas, a);
+                 }
+                 float collapsed = 1f;
+@@ -23941,9 +23949,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             float blockRtl = block.isRtl() ? captionLayout.textXOffset - (block.quote ? dp(10) : 0) : 0;
+             canvas.save();
+             canvas.translate(captionX - blockRtl, captionY + block.textYOffset(captionLayout.textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);
++            final boolean inu_clipLinks = block.quote && block.quoteCollapse && block.height > block.collapsedHeight;
++            if (inu_clipLinks) {
++                canvas.save();
++                canvas.clipRect(-dp(16), -block.padTop, getMeasuredWidth(), block.height(transitionParams));
++            }
+             if (links.draw(canvas)) {
+                 invalidate();
+             }
++            if (inu_clipLinks) {
++                canvas.restore();
++            }
+             drawProgressLoadingLink(canvas, linkBlockNum);
+             canvas.restore();
+         }

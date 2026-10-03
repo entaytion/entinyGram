@@ -1,31 +1,35 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Fri, 2 Oct 2026 18:36:15 +0300
-Subject: [*] restore archived media into the stock cache
+Date: Sat, 12 Sep 2026 18:03:38 +0300
+Subject: [*] preserve and restore archived media
 
 ---
- .../src/main/java/org/telegram/messenger/FileLoader.java      | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/messenger/FileLoader.java  | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
-@@ -1301,7 +1301,7 @@ public class FileLoader extends BaseController {
+@@ -1299,6 +1299,10 @@ public class FileLoader extends BaseController {
+                     File encCacheRes = new File(cacheRes.getPath() + ".enc");
+                     if (encCacheRes.exists()) return encCacheRes;
                  }
-                 if (!res.exists()) {
-                     File archivedRes = desu.inugram.helpers.chat.SavedMessagesHelper.getArchivedMediaPath(currentAccount, MessageObject.getDialogId(message), message.id);
--                    if (archivedRes != null) return archivedRes;
++                if (!res.exists()) {
++                    File archivedRes = desu.inugram.helpers.chat.SavedMessagesHelper.getArchivedMediaPath(currentAccount, MessageObject.getDialogId(message), message.id);
 +                    if (archivedRes != null) return desu.inugram.helpers.chat.SavedMessagesHelper.restoreToStockPath(archivedRes, res);
-                 }
++                }
                  return res;
              } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaPhoto) {
-@@ -1321,7 +1321,7 @@ public class FileLoader extends BaseController {
+                 ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).photo.sizes;
+@@ -1315,6 +1319,10 @@ public class FileLoader extends BaseController {
+                             File encCacheRes = new File(cacheRes.getPath() + ".enc");
+                             if (encCacheRes.exists()) return encCacheRes;
                          }
-                         if (!res.exists()) {
-                             File archivedRes = desu.inugram.helpers.chat.SavedMessagesHelper.getArchivedMediaPath(currentAccount, MessageObject.getDialogId(message), message.id);
--                            if (archivedRes != null) return archivedRes;
++                        if (!res.exists()) {
++                            File archivedRes = desu.inugram.helpers.chat.SavedMessagesHelper.getArchivedMediaPath(currentAccount, MessageObject.getDialogId(message), message.id);
 +                            if (archivedRes != null) return desu.inugram.helpers.chat.SavedMessagesHelper.restoreToStockPath(archivedRes, res);
-                         }
++                        }
                          return res;
                      }
+                 }

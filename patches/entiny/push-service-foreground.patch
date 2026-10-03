@@ -1,13 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
 Date: Mon, 28 Sep 2026 17:50:55 +0300
-Subject: [*] keep the push service alive in the background
+Subject: [+] background push service
 
 ---
  TMessagesProj/src/main/AndroidManifest.xml    |  8 ++-
- .../telegram/messenger/ApplicationLoader.java | 13 +++-
+ .../telegram/messenger/ApplicationLoader.java | 14 +++-
  .../messenger/NotificationsService.java       | 64 +++++++++++++++++++
- 3 files changed, 81 insertions(+), 4 deletions(-)
+ 3 files changed, 82 insertions(+), 4 deletions(-)
 
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
@@ -39,12 +39,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -403,12 +403,21 @@ public class ApplicationLoader extends Application {
+@@ -401,14 +401,24 @@ public class ApplicationLoader extends Application {
+         } else {
+             enabled = MessagesController.getMainSettings(UserConfig.selectedAccount).getBoolean("keepAliveService", false);
          }
++        enabled |= desu.inugram.InuConfig.FOREGROUND_PUSH_SERVICE.getValue();
          if (enabled) {
              try {
 -                applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
-+                if (Build.VERSION.SDK_INT >= 26 && desu.inugram.InuConfig.UNIFIED_PUSH.getValue()) {
++                if (Build.VERSION.SDK_INT >= 26 && desu.inugram.helpers.NotificationsHelper.keepAliveForeground()) {
 +                    NotificationsService.inu_onForegroundStartRequested();
 +                    applicationContext.startForegroundService(new Intent(applicationContext, NotificationsService.class));
 +                } else {
@@ -133,7 +136,7 @@ index 0000000..0000000 100644
      }
 +
 +    private void inu_moveToForeground() {
-+        if (!desu.inugram.InuConfig.UNIFIED_PUSH.getValue()) {
++        if (!desu.inugram.helpers.NotificationsHelper.keepAliveForeground()) {
 +            inu_foregroundStartPending = false;
 +            return;
 +        }
@@ -157,7 +160,7 @@ index 0000000..0000000 100644
 +            inu_notification = new NotificationCompat.Builder(this, inu_channelId)
 +                    .setShowWhen(false)
 +                    .setOngoing(true)
-+                    .setSmallIcon(R.drawable.notification)
++                    .setSmallIcon(desu.inugram.helpers.NotificationsHelper.smallIconRes())
 +                    .setContentTitle(LocaleController.getString(R.string.NotificationsService))
 +                    .setContentText(LocaleController.getString(R.string.NotificationsServiceInfo))
 +                    .build();

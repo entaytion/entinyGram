@@ -256,8 +256,20 @@ class AyuMessageHistoryActivity(
             .addIf(isStoredRevision(position), R.drawable.msg_delete, LocaleController.getString(R.string.Delete), true) {
                 deleteRevision(position)
             }
+            .addIf(isDeletedArchive && entry.originalMessageId != 0, R.drawable.msg_delete, LocaleController.getString(R.string.Delete), true) {
+                deleteArchived(position)
+            }
             .setGravity(if (cell.messageObject?.isOutOwner == true) Gravity.RIGHT else Gravity.LEFT)
             .show()
+    }
+
+    private fun deleteArchived(position: Int) {
+        if (position < 0 || position >= historyEntries.size) return
+        val entry = historyEntries.removeAt(position)
+        if (position < messageObjects.size) messageObjects.removeAt(position)
+        listView?.adapter?.notifyDataSetChanged()
+        updateEmptyView()
+        SavedMessagesHelper.deletePermanently(currentAccount, targetMessageObject.getDialogId(), listOf(entry.originalMessageId))
     }
 
     private fun deleteRevision(position: Int) {

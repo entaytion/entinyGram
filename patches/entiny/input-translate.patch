@@ -74,7 +74,7 @@ index 0000000..0000000 100644
      public void inu_startRecordingLocked(boolean video) {
          createRecordCircle();
          setRecordVideoButtonVisible(video, false);
-@@ -8872,6 +8879,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8866,6 +8873,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
              }
          }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
      }
  
      private void setSlowModeButtonVisible(boolean visible) {
-@@ -8901,7 +8909,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8895,7 +8903,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                  layoutParams.rightMargin = dp(50);
              }
          } else {
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                  layoutParams.rightMargin = dp(50);
              } else {
                  layoutParams.rightMargin = dp(2);
-@@ -8919,6 +8931,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8913,6 +8925,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
              recordedAudioPanel.setLayoutParams(layoutParams2);
          }

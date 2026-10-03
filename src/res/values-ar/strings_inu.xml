@@ -481,6 +481,7 @@
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">entinyGram القديمة</string>
+    <string name="InuNotificationIconInfo">على أجهزة Xiaomi (MIUI/HyperOS) قد يستبدل النظام هذه الأيقونة بأيقونة التطبيق، لذا قد لا يظهر الاختيار هناك</string>
     <string name="InuAppIconOldEntinygram">entinyGram القديمة</string>
     <string name="InuDisableChatBubbles">تعطيل فقاعات إشعارات Android</string>
     <string name="InuInPlaceTranslation">الترجمة في المكان</string>
@@ -980,6 +981,9 @@
     <string name="InuFeedHiddenChannels">مخفية من الخلاصة</string>
     <string name="InuFeedMarkReadOnScroll">تحديد كمقروء أثناء التمرير</string>
     <string name="InuFeedMarkReadOnScrollInfo">تمرير المنشورات يحددها كمقروءة على الخادم، فتتحدث الشارات في كل مكان.</string>
+    <string name="InuFeedNewestOnTop">الأحدث في الأعلى</string>
+    <string name="InuFeedNewestOnTopInfo">مفعّل: أحدث المنشورات في الأعلى (على نمط تويتر). معطّل: في الأسفل (على نمط Telegram).</string>
+    <string name="InuFeedAllChannels">جميع القنوات</string>
     <string name="InuFeedAllExcluded">جميع القنوات مخفية من الخلاصة.</string>
     <string name="InuFeedChannelHidden">تم إخفاء **%1$s** من الخلاصة</string>
     <string name="InuFeedMarkAllReadConfirm">تحديد جميع المنشورات في قنوات الخلاصة كمقروءة؟ سيتم أيضًا تحديدها كمقروءة في القنوات الأصلية.</string>
@@ -1218,6 +1222,7 @@
     <string name="InuClearDeletedCacheAlert">سيحذف هذا نهائياً أرشيفك المحلي للرسائل المحذوفة المحفوظة ووسائطها. لا يمكن التراجع عن هذا.</string>
     <string name="InuClearDeletedCacheDone">تم مسح ذاكرة الرسائل المحذوفة</string>
     <string name="InuClearDeletedCacheEmpty">ذاكرة الرسائل المحذوفة فارغة</string>
+    <string name="InuClearDeletedCacheHint">اضغط مطولًا على محادثة لعرض رسائلها ووسائطها المحفوظة وحذفها واحدة تلو الأخرى</string>
     <string name="InuEditHistory">سجل التعديلات</string>
     <string name="InuDeletedAt">حُذفت %1$s</string>
     <string name="InuDisableFlagSecure">تعطيل FLAG_SECURE</string>

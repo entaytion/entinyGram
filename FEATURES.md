@@ -96,7 +96,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **hide accounts list** in settings
 - 📡 **customizable My Profile info rows**
 - 📡 **wide channel posts** with adjustable side padding
-- 📡 **feed**: all subscribed channels in one native chat-style timeline with channel management, off by default - *ported from [exteraless](https://github.com/exteraless/exteraless)*
+- 📡 **feed**: all subscribed channels in one native chat-style timeline with channel management, folder filter and an option to show the newest posts on top, off by default - *ported from [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **color-coded online dot** - *inspired by [NagramX](https://github.com/NextAlone/NagramX)*
 - 📡 **clock format**: system, 12-hour or 24-hour
 - 📡 **branded first-run intro**

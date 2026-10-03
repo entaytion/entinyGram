@@ -95,7 +95,7 @@ internal class FeedUnreadTracker(
         for (i in timeline.indices) {
             val message = timeline[i]
             val dialogId = message.dialogId
-            if (feedConfig.isExcluded(dialogId)) {
+            if (feedConfig.isHidden(currentAccount, dialogId)) {
                 continue
             }
             if (!includeArchived) {
@@ -148,7 +148,7 @@ internal class FeedUnreadTracker(
                 continue
             }
             val dialogId = dialog.id
-            if (!DialogObject.isChatDialog(dialogId) || feedConfig.isExcluded(dialogId)) {
+            if (!DialogObject.isChatDialog(dialogId) || feedConfig.isHidden(currentAccount, dialogId)) {
                 continue
             }
             if (!includeArchived && dialog.folder_id == ARCHIVE_FOLDER_ID) {

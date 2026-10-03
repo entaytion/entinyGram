@@ -846,6 +846,9 @@
     <string name="InuFeedMarkAllRead">Позначити все прочитаним</string>
     <string name="InuFeedMarkReadOnScroll">Позначати прочитаним під час прокрутки</string>
     <string name="InuFeedMarkReadOnScrollInfo">Прокрутка повз пости позначає їх прочитаними на сервері та оновлює лічильники всюди.</string>
+    <string name="InuFeedNewestOnTop">Нові пости зверху</string>
+    <string name="InuFeedNewestOnTopInfo">Увімкнено: нові пости зверху (стиль Twitter). Вимкнено: знизу (стиль Telegram).</string>
+    <string name="InuFeedAllChannels">Усі канали</string>
     <string name="InuFeedAllExcluded">Усі канали приховано зі стрічки.</string>
     <string name="InuFeedChannelHidden">**%1$s** приховано зі стрічки</string>
     <string name="InuFeedMarkAllReadConfirm">Позначити всі пости в каналах стрічки прочитаними? Їх також буде позначено прочитаними в оригінальних каналах.</string>
@@ -994,6 +997,7 @@
     <string name="InuDeletedArchiveEmpty">Ще немає збережених видалених повідомлень.</string>
     <string name="InuClearDeletedCacheDone">Кеш збережених повідомлень очищено</string>
     <string name="InuClearDeletedCacheEmpty">Кеш збережених повідомлень порожній</string>
+    <string name="InuClearDeletedCacheHint">Утримуйте чат, щоб переглянути збережені повідомлення та медіа й видаляти їх по одному</string>
     <string name="InuSaveDeletedMessages">Зберігати видалені повідомлення</string>
     <string name="InuSaveDeletedMessagesInfo">Зберігає видалені співрозмовниками повідомлення у чаті з позначкою 🗑️</string>
     <string name="InuSaveEditedMessages">Зберігати історію редагувань</string>
@@ -1515,6 +1519,7 @@
     <string name="InuDevBadgeInfo">Цей акаунт визнаний командою entinyGram.</string>
     <string name="InuAppIconOldEntinygram">Старий entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Старий entinyGram</string>
+    <string name="InuNotificationIconInfo">На Xiaomi (MIUI/HyperOS) система може підміняти цю іконку іконкою застосунку, тому вибір там може бути непомітним</string>
     <string name="InuPoweredByProvider">Переклад виконано через %1$s.</string>
     <string name="InuShowDrawerAccounts">Показувати акаунти в меню</string>
     <string name="InuShowDrawerAccountsInfo">Показувати перемикач акаунтів під профілем.</string>

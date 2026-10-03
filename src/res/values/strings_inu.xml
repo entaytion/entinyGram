@@ -525,6 +525,7 @@
     <string name="InuNotificationIconTelegram">Telegram</string>
     <string name="InuNotificationIconInugram">entinyGram</string>
     <string name="InuNotificationIconOldEntinygram">Old entinyGram</string>
+    <string name="InuNotificationIconInfo">On Xiaomi (MIUI/HyperOS) the system may replace this icon with the app icon, so the choice might not be visible there</string>
     <string name="InuAppIconOldEntinygram">Old entinyGram</string>
     <string name="InuDisableChatBubbles">Disable Android notification bubbles</string>
     <string name="InuInPlaceTranslation">In-place translation</string>
@@ -1020,6 +1021,9 @@
     <string name="InuFeedHiddenChannels">Hidden from Feed</string>
     <string name="InuFeedMarkReadOnScroll">Mark as read while scrolling</string>
     <string name="InuFeedMarkReadOnScrollInfo">Scrolling past posts marks them read on the server, updating badges everywhere.</string>
+    <string name="InuFeedNewestOnTop">Newest posts on top</string>
+    <string name="InuFeedNewestOnTopInfo">On: newest posts at the top (Twitter style). Off: at the bottom (Telegram style).</string>
+    <string name="InuFeedAllChannels">All channels</string>
     <string name="InuFeedAllExcluded">All channels are hidden from the feed.</string>
     <string name="InuFeedChannelHidden">**%1$s** hidden from feed</string>
     <string name="InuFeedMarkAllReadConfirm">Mark all posts in your feed channels as read? This also marks them as read in the original channels.</string>
@@ -1258,6 +1262,7 @@
     <string name="InuClearDeletedCacheAlert">This will permanently delete your local archive of saved deleted messages and their media. This cannot be undone.</string>
     <string name="InuClearDeletedCacheDone">Deleted messages cache cleared</string>
     <string name="InuClearDeletedCacheEmpty">Deleted messages cache is empty</string>
+    <string name="InuClearDeletedCacheHint">Long-press a chat to view its saved messages and media and delete them one by one</string>
     <string name="InuEditHistory">Edit history</string>
     <string name="InuDeletedAt">Deleted %1$s</string>
     <string name="InuDisableFlagSecure">Disable FLAG_SECURE</string>

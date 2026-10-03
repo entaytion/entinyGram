@@ -370,7 +370,7 @@ object InuConfig {
     @JvmField
     val BLOCKED_MESSAGES_MODE = BlockedMessagesModeItem()
 
-    class AttachCameraModeItem : IntItem("attach_camera_mode", STATIC) {
+    class AttachCameraModeItem : IntItem("attach_camera_mode", INSTANT) {
         override fun read(prefs: SharedPreferences): Int {
             if (prefs.contains(key)) return prefs.getInt(key, default)
             if (!prefs.contains("disable_instant_camera")) return default
@@ -406,7 +406,7 @@ object InuConfig {
     val SORT_ALBUMS_BY_SIZE = BoolItem("sort_albums_by_size", true)
 
     @JvmField
-    val ATTACH_CAMERA_SQUARE = BoolItem("attach_camera_square", false)
+    val ATTACH_CAMERA_SQUARE = BoolItem("attach_camera_square", true)
 
     @JvmField
     val DOWNLOAD_DIRECTORY = StringItem("download_directory", "entinyGram")
@@ -1120,6 +1120,12 @@ object InuConfig {
 
     @JvmField
     val ROUND_RECORDER_EXPOSURE_LEVELS = BoolItem("round_recorder_exposure_levels", true)
+
+    @JvmField
+    val ROUND_RECORDER_EXPOSURE_FRONT = FloatItem("round_recorder_exposure_front", 0f)
+
+    @JvmField
+    val ROUND_RECORDER_EXPOSURE_BACK = FloatItem("round_recorder_exposure_back", 0f)
 
     class NonIslandSplitFromTabBarsItem(key: String) : BoolItem(key, false) {
         override fun read(prefs: SharedPreferences): Boolean {
@@ -1880,6 +1886,9 @@ object InuConfig {
 
     @JvmField
     val FEED_INCLUDE_ARCHIVED = BoolItem("feed_include_archived", false)
+
+    @JvmField
+    val FEED_NEWEST_ON_TOP = BoolItem("feed_newest_on_top", false)
 
     @JvmField
     val FEED_MARK_READ_ON_SCROLL = BoolItem("feed_mark_read_on_scroll", true)
