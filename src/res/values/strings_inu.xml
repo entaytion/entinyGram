@@ -210,6 +210,8 @@
     <string name="InuDisableSensitive">Disable sensitive filter</string>
     <string name="InuDisableQuickShare">Disable quick share</string>
     <string name="InuDisableQuickShareInfo">Don\'t show frequent contacts on long-tapping the share button (next to channel messages); it sends without confirmation</string>
+    <string name="InuSaveSelectedFiles">Save selected files</string>
+    <string name="InuSaveSelectedFilesInfo">Adds a download button when selecting files in profile media and search; undownloaded files are fetched automatically</string>
     <string name="InuHideChannelShareButton">Hide channel share button</string>
     <string name="InuHideChannelShareButtonInfo">Hide the share icon next to channel posts; forwarding from the menu still works.</string>
     <string name="InuDisableProfileMusicAutoplay">Disable profile music auto-play</string>

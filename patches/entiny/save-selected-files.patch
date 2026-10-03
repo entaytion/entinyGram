@@ -1,0 +1,92 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sat, 3 Oct 2026 13:15:27 +0300
+Subject: [+] Save selected files from profile media and search
+
+---
+ .../java/org/telegram/messenger/MediaController.java     | 2 +-
+ .../java/org/telegram/ui/Components/SearchViewPager.java | 9 +++++++++
+ .../org/telegram/ui/Components/SharedMediaLayout.java    | 9 +++++++++
+ .../src/main/java/org/telegram/ui/DialogsActivity.java   | 2 +-
+ 4 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -5885,7 +5885,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                 "<?xpacket end=\"w\"?>";
+     }
+ 
+-    private static Uri saveFileInternal(int type, File sourceFile, String filename) {
++    public static Uri saveFileInternal(int type, File sourceFile, String filename) {
+         try {
+             int selectedType = type;
+             ContentValues contentValues = new ContentValues();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SearchViewPager.java
+@@ -127,6 +127,7 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+     public final static int forwardItemId = 201;
+     public final static int deleteItemId = 202;
+     public final static int speedItemId = 203;
++    public final static int inuSaveItemId = 204;
+ 
+     private ActionBarMenuItem speedItem;
+     private ActionBarMenuItem gotoItem;
+@@ -876,6 +877,9 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+             speedItem.getIconView().setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon), PorterDuff.Mode.SRC_IN));
+             gotoItem = actionMode.addItemWithWidth(gotoItemId, R.drawable.msg_message, AndroidUtilities.dp(54), getString(R.string.AccDescrGoToMessage));
+             forwardItem = actionMode.addItemWithWidth(forwardItemId, R.drawable.msg_forward, AndroidUtilities.dp(54), getString(R.string.Forward));
++            if (desu.inugram.InuConfig.SAVE_SELECTED_FILES.getValue()) {
++                actionMode.addItemWithWidth(inuSaveItemId, R.drawable.msg_download, AndroidUtilities.dp(54), getString(R.string.SaveToDownloads));
++            }
+             deleteItem = actionMode.addItemWithWidth(deleteItemId, R.drawable.msg_delete, AndroidUtilities.dp(54), getString(R.string.Delete));
+         }
+         if (selectedMessagesCountTextView != null) {
+@@ -934,6 +938,11 @@ public class SearchViewPager extends ViewPagerFixed implements FilteredSearchVie
+     }
+ 
+     public void onActionBarItemClick(int id) {
++        if (id == inuSaveItemId) {
++            desu.inugram.helpers.chat.SaveSelectedFilesHelper.save(parent, selectedFiles.values());
++            hideActionMode();
++            return;
++        }
+         if (id == deleteItemId) {
+             if (parent == null || parent.getParentActivity() == null) {
+                 return;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharedMediaLayout.java
+@@ -2277,6 +2277,15 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
+                 actionModeLayout.addView(forwardItem, new LinearLayout.LayoutParams(dp(54), ViewGroup.LayoutParams.MATCH_PARENT));
+                 actionModeViews.add(forwardItem);
+                 forwardItem.setOnClickListener(v -> onActionBarItemClick(v, forward));
++
++                if (desu.inugram.InuConfig.SAVE_SELECTED_FILES.getValue()) {
++                    ActionBarMenuItem saveItem = desu.inugram.helpers.chat.SaveSelectedFilesHelper.createItem(context, getThemedColor(Theme.key_actionBarActionModeDefaultSelector), getThemedColor(Theme.key_actionBarActionModeDefaultIcon), () -> {
++                        desu.inugram.helpers.chat.SaveSelectedFilesHelper.save(profileActivity, selectedFiles);
++                        closeActionMode(false);
++                    });
++                    actionModeLayout.addView(saveItem, new LinearLayout.LayoutParams(dp(54), ViewGroup.LayoutParams.MATCH_PARENT));
++                    actionModeViews.add(saveItem);
++                }
+             }
+ 
+             pinItem = new ActionBarMenuItem(context, null, getThemedColor(Theme.key_actionBarActionModeDefaultSelector), getThemedColor(Theme.key_actionBarActionModeDefaultIcon), false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3959,7 +3959,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+             @Override
+             public void onItemClick(int id) {
+-                if ((id == SearchViewPager.forwardItemId || id == SearchViewPager.gotoItemId || id == SearchViewPager.deleteItemId || id == SearchViewPager.speedItemId) && searchViewPager != null) {
++                if ((id == SearchViewPager.forwardItemId || id == SearchViewPager.gotoItemId || id == SearchViewPager.deleteItemId || id == SearchViewPager.speedItemId || id == SearchViewPager.inuSaveItemId) && searchViewPager != null) {
+                     searchViewPager.onActionBarItemClick(id);
+                     return;
+                 }

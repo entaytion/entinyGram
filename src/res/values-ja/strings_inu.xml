@@ -808,6 +808,8 @@
     <string name="InuDisableProfileMusicAutoplay">プロフィール音楽の自動再生を無効化</string>
     <string name="InuDisableProfileMusicAutoplayInfo">プロフィールでピン留めされた音楽プレーヤーを開いたときに自動的に再生を開始しません</string>
     <string name="InuDisableBrowserSwipeCollapse">下スワイプでのブラウザ最小化を無効化</string>
+    <string name="InuSaveSelectedFiles">選択したファイルを保存</string>
+    <string name="InuSaveSelectedFilesInfo">プロフィールのメディアと検索でファイルを選択したときにダウンロードボタンを追加します。未ダウンロードのファイルは自動的に取得されます</string>
     <string name="InuGifSeekbar">GIF のシークバー</string>
     <string name="InuGifSeekbarInfo">注：「新しい」GIF（つまり無音 MP4）にのみ対応</string>
     <string name="InuPublicPhotoMark">公開写真</string>

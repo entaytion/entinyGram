@@ -146,6 +146,8 @@
     <string name="InuDisableSensitive">Вимкнути фільтр делікатного контенту</string>
     <string name="InuDisableQuickShare">Вимкнути швидке поширення</string>
     <string name="InuDisableQuickShareInfo">Не показувати часті контакти при довгому натисканні кнопки поширення</string>
+    <string name="InuSaveSelectedFiles">Збереження виділених файлів</string>
+    <string name="InuSaveSelectedFilesInfo">Додає кнопку завантаження при виділенні файлів у медіа профілю та пошуку; незавантажені файли докачуються автоматично</string>
     <string name="InuHideChannelShareButton">Приховати кнопку поширення в каналах</string>
     <string name="InuHideChannelShareButtonInfo">Приховує іконку поширення біля постів каналів; пересилання через меню досі працює.</string>
     <string name="InuDisableChatBackgrounds">Вимкнути кастомні фони чатів</string>

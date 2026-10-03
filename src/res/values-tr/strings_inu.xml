@@ -156,6 +156,8 @@
     <string name="InuDisableSensitive">Hassas içerik filtresini devre dışı bırak</string>
     <string name="InuDisableQuickShare">Hızlı paylaşımı devre dışı bırak</string>
     <string name="InuDisableQuickShareInfo">Paylaş düğmesine (kanal mesajlarının yanında) uzun basıldığında sık görüşülen kişileri göstermez; onay almadan gönderir</string>
+    <string name="InuSaveSelectedFiles">Seçilen dosyaları kaydet</string>
+    <string name="InuSaveSelectedFilesInfo">Profil medyasında ve aramada dosyalar seçildiğinde indirme düğmesi ekler; indirilmemiş dosyalar otomatik alınır</string>
     <string name="InuHideChannelShareButton">Kanal paylaşım düğmesini gizle</string>
     <string name="InuHideChannelShareButtonInfo">Kanal gönderilerinin yanındaki paylaşma simgesini gizler; menüden iletme çalışmaya devam eder.</string>
     <string name="InuDisableProfileMusicAutoplay">Profil müziğinin otomatik oynatılmasını devre dışı bırak</string>

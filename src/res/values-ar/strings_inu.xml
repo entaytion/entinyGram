@@ -166,6 +166,8 @@
     <string name="InuDisableSensitive">تعطيل مرشّح المحتوى الحساس</string>
     <string name="InuDisableQuickShare">تعطيل المشاركة السريعة</string>
     <string name="InuDisableQuickShareInfo">عدم إظهار جهات الاتصال المتكررة عند الضغط المطوّل على زر المشاركة (بجانب رسائل القناة)؛ فهو يرسل دون تأكيد</string>
+    <string name="InuSaveSelectedFiles">حفظ الملفات المحددة</string>
+    <string name="InuSaveSelectedFilesInfo">يضيف زر تنزيل عند تحديد الملفات في وسائط الملف الشخصي والبحث؛ تُنزَّل الملفات غير المحمّلة تلقائيًا</string>
     <string name="InuHideChannelShareButton">إخفاء زر مشاركة القناة</string>
     <string name="InuHideChannelShareButtonInfo">إخفاء أيقونة المشاركة بجانب منشورات القناة؛ ويبقى إعادة التوجيه من القائمة متاحاً.</string>
     <string name="InuDisableProfileMusicAutoplay">تعطيل التشغيل التلقائي لموسيقى الملف الشخصي</string>

@@ -807,6 +807,8 @@
     <string name="InuDisableProfileMusicAutoplay">禁用个人资料音乐自动播放</string>
     <string name="InuDisableProfileMusicAutoplayInfo">打开个人资料中置顶的音乐播放器时不自动开始播放</string>
     <string name="InuDisableBrowserSwipeCollapse">禁用下滑最小化浏览器</string>
+    <string name="InuSaveSelectedFiles">保存所选文件</string>
+    <string name="InuSaveSelectedFilesInfo">在个人资料媒体和搜索中选择文件时添加下载按钮；未下载的文件会自动获取</string>
     <string name="InuGifSeekbar">GIF 进度条</string>
     <string name="InuGifSeekbarInfo">注意：仅对「新」GIF（即静音 MP4）生效</string>
     <string name="InuPublicPhotoMark">公开照片</string>

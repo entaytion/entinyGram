@@ -209,6 +209,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_INTRO_STICKER, R.string.InuDisableIntroSticker, R.string.InuDisableIntroStickerInfo, InuConfig.DISABLE_INTRO_STICKER.value))
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_VOLUME_PLAY_VIDEO, R.string.InuDisableVolumePlayVideo, R.string.InuDisableVolumePlayVideoInfo, InuConfig.DISABLE_VOLUME_PLAY_VIDEO.value))
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo, InuConfig.DISABLE_QUICK_SHARE.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo, InuConfig.SAVE_SELECTED_FILES.value))
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLinksAndBrowser)))
@@ -501,6 +502,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_INTRO_STICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_INTRO_STICKER.toggle()
             TOGGLE_DISABLE_VOLUME_PLAY_VIDEO -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_VOLUME_PLAY_VIDEO.toggle()
             TOGGLE_DISABLE_QUICK_SHARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_QUICK_SHARE.toggle()
+            TOGGLE_SAVE_SELECTED_FILES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SAVE_SELECTED_FILES.toggle()
 
             TOGGLE_SHOW_SECONDS -> {
                 val new = InuConfig.SHOW_SECONDS.toggle()
@@ -641,6 +643,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
         private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
         private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
+        private val TOGGLE_SAVE_SELECTED_FILES = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
         private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
         private val BUTTON_CLOCK_FORMAT = InuUtils.generateId()
@@ -716,6 +719,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
+                SearchRegistry.Entry("save-selected-files", R.string.InuSaveSelectedFiles, TOGGLE_SAVE_SELECTED_FILES),
                 SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
                 SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),
                 SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),

@@ -166,6 +166,8 @@
     <string name="InuDisableSensitive">غیرفعال کردن فیلتر محتوای حساس</string>
     <string name="InuDisableQuickShare">غیرفعال کردن اشتراک‌گذاری سریع</string>
     <string name="InuDisableQuickShareInfo">با نگه داشتن دکمه اشتراک‌گذاری (کنار پیام‌های کانال)، مخاطبان پرتکرار نمایش داده نشوند؛ چون بدون تأیید ارسال می‌کند</string>
+    <string name="InuSaveSelectedFiles">ذخیره فایل‌های انتخاب‌شده</string>
+    <string name="InuSaveSelectedFilesInfo">هنگام انتخاب فایل‌ها در رسانه‌های پروفایل و جستجو دکمه دانلود اضافه می‌کند؛ فایل‌های دانلودنشده خودکار دریافت می‌شوند</string>
     <string name="InuHideChannelShareButton">پنهان کردن دکمه اشتراک‌گذاری کانال</string>
     <string name="InuHideChannelShareButtonInfo">نماد اشتراک‌گذاری کنار پست‌های کانال را پنهان کن؛ بازارسال از منو همچنان کار می‌کند.</string>
     <string name="InuDisableProfileMusicAutoplay">غیرفعال کردن پخش خودکار موسیقی نمایه</string>
