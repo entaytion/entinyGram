@@ -169,6 +169,11 @@
     <string name="InuLocalNameAbout">Опис</string>
     <string name="InuLocalNameChangePhoto">Змінити фото</string>
     <string name="InuLocalNameRemovePhoto">Прибрати фото</string>
+    <string name="InuLocalNameVerified">Позначка верифікації</string>
+    <string name="InuLocalNameEmoji">Емодзі-статус</string>
+    <string name="InuLocalNameEmojiChoose">Обрати емодзі</string>
+    <string name="InuLocalNameEmojiHide">Приховати статус</string>
+    <string name="InuLocalNamePremium">Значок Premium</string>
     <string name="InuHideChannelShareButton">Приховати кнопку поширення в каналах</string>
     <string name="InuHideChannelShareButtonInfo">Приховує іконку поширення біля постів каналів; пересилання через меню досі працює.</string>
     <string name="InuDisableChatBackgrounds">Вимкнути кастомні фони чатів</string>

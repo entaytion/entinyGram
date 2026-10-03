@@ -918,6 +918,11 @@
     <string name="InuLocalNameAbout">Описание</string>
     <string name="InuLocalNameChangePhoto">Изменить фото</string>
     <string name="InuLocalNameRemovePhoto">Убрать фото</string>
+    <string name="InuLocalNameVerified">Галочка верификации</string>
+    <string name="InuLocalNameEmoji">Эмодзи-статус</string>
+    <string name="InuLocalNameEmojiChoose">Выбрать эмодзи</string>
+    <string name="InuLocalNameEmojiHide">Скрыть статус</string>
+    <string name="InuLocalNamePremium">Значок Premium</string>
     <string name="InuGhostHideAppBarIcon">Скрыть индикатор в заголовке</string>
     <string name="InuGhostHideAppBarIconInfo">Не показывать иконку призрака в главном заголовке и заголовках чатов при активном режиме призрака.</string>
     <string name="InuDisableProfileMusicAutoplay">Отключить автовоспроизведение музыки в профиле</string>

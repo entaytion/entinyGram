@@ -233,6 +233,11 @@
     <string name="InuLocalNameAbout">About</string>
     <string name="InuLocalNameChangePhoto">Change photo</string>
     <string name="InuLocalNameRemovePhoto">Remove photo</string>
+    <string name="InuLocalNameVerified">Verified badge</string>
+    <string name="InuLocalNameEmoji">Emoji status</string>
+    <string name="InuLocalNameEmojiChoose">Choose emoji</string>
+    <string name="InuLocalNameEmojiHide">Hide status</string>
+    <string name="InuLocalNamePremium">Premium badge</string>
     <string name="InuHideChannelShareButton">Hide channel share button</string>
     <string name="InuHideChannelShareButtonInfo">Hide the share icon next to channel posts; forwarding from the menu still works.</string>
     <string name="InuDisableProfileMusicAutoplay">Disable profile music auto-play</string>

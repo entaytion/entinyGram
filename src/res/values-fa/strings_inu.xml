@@ -189,6 +189,11 @@
     <string name="InuLocalNameAbout">توضیحات</string>
     <string name="InuLocalNameChangePhoto">تغییر عکس</string>
     <string name="InuLocalNameRemovePhoto">حذف عکس</string>
+    <string name="InuLocalNameVerified">نشان تأیید</string>
+    <string name="InuLocalNameEmoji">وضعیت ایموجی</string>
+    <string name="InuLocalNameEmojiChoose">انتخاب ایموجی</string>
+    <string name="InuLocalNameEmojiHide">پنهان کردن وضعیت</string>
+    <string name="InuLocalNamePremium">نشان پرمیوم</string>
     <string name="InuHideChannelShareButton">پنهان کردن دکمه اشتراک‌گذاری کانال</string>
     <string name="InuHideChannelShareButtonInfo">نماد اشتراک‌گذاری کنار پست‌های کانال را پنهان کن؛ بازارسال از منو همچنان کار می‌کند.</string>
     <string name="InuDisableProfileMusicAutoplay">غیرفعال کردن پخش خودکار موسیقی نمایه</string>

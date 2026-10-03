@@ -831,6 +831,11 @@
     <string name="InuLocalNameAbout">自己紹介</string>
     <string name="InuLocalNameChangePhoto">写真を変更</string>
     <string name="InuLocalNameRemovePhoto">写真を削除</string>
+    <string name="InuLocalNameVerified">認証バッジ</string>
+    <string name="InuLocalNameEmoji">絵文字ステータス</string>
+    <string name="InuLocalNameEmojiChoose">絵文字を選ぶ</string>
+    <string name="InuLocalNameEmojiHide">ステータスを隠す</string>
+    <string name="InuLocalNamePremium">プレミアムバッジ</string>
     <string name="InuGifSeekbar">GIF のシークバー</string>
     <string name="InuGifSeekbarInfo">注：「新しい」GIF（つまり無音 MP4）にのみ対応</string>
     <string name="InuPublicPhotoMark">公開写真</string>

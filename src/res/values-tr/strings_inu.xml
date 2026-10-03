@@ -179,6 +179,11 @@
     <string name="InuLocalNameAbout">Hakkında</string>
     <string name="InuLocalNameChangePhoto">Fotoğrafı değiştir</string>
     <string name="InuLocalNameRemovePhoto">Fotoğrafı kaldır</string>
+    <string name="InuLocalNameVerified">Doğrulama rozeti</string>
+    <string name="InuLocalNameEmoji">Emoji durumu</string>
+    <string name="InuLocalNameEmojiChoose">Emoji seç</string>
+    <string name="InuLocalNameEmojiHide">Durumu gizle</string>
+    <string name="InuLocalNamePremium">Premium rozeti</string>
     <string name="InuHideChannelShareButton">Kanal paylaşım düğmesini gizle</string>
     <string name="InuHideChannelShareButtonInfo">Kanal gönderilerinin yanındaki paylaşma simgesini gizler; menüden iletme çalışmaya devam eder.</string>
     <string name="InuDisableProfileMusicAutoplay">Profil müziğinin otomatik oynatılmasını devre dışı bırak</string>

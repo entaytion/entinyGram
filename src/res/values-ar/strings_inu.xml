@@ -189,6 +189,11 @@
     <string name="InuLocalNameAbout">النبذة</string>
     <string name="InuLocalNameChangePhoto">تغيير الصورة</string>
     <string name="InuLocalNameRemovePhoto">إزالة الصورة</string>
+    <string name="InuLocalNameVerified">علامة التوثيق</string>
+    <string name="InuLocalNameEmoji">حالة الإيموجي</string>
+    <string name="InuLocalNameEmojiChoose">اختيار إيموجي</string>
+    <string name="InuLocalNameEmojiHide">إخفاء الحالة</string>
+    <string name="InuLocalNamePremium">شارة بريميوم</string>
     <string name="InuHideChannelShareButton">إخفاء زر مشاركة القناة</string>
     <string name="InuHideChannelShareButtonInfo">إخفاء أيقونة المشاركة بجانب منشورات القناة؛ ويبقى إعادة التوجيه من القائمة متاحاً.</string>
     <string name="InuDisableProfileMusicAutoplay">تعطيل التشغيل التلقائي لموسيقى الملف الشخصي</string>

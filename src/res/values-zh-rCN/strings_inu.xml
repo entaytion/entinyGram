@@ -830,6 +830,11 @@
     <string name="InuLocalNameAbout">简介</string>
     <string name="InuLocalNameChangePhoto">更换照片</string>
     <string name="InuLocalNameRemovePhoto">移除照片</string>
+    <string name="InuLocalNameVerified">认证标志</string>
+    <string name="InuLocalNameEmoji">表情状态</string>
+    <string name="InuLocalNameEmojiChoose">选择表情</string>
+    <string name="InuLocalNameEmojiHide">隐藏状态</string>
+    <string name="InuLocalNamePremium">会员标志</string>
     <string name="InuGifSeekbar">GIF 进度条</string>
     <string name="InuGifSeekbarInfo">注意：仅对「新」GIF（即静音 MP4）生效</string>
     <string name="InuPublicPhotoMark">公开照片</string>

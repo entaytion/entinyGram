@@ -6,12 +6,14 @@ import android.text.InputType
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import desu.inugram.InuConfig
 import org.json.JSONObject
+import org.telegram.messenger.DialogObject
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLoader
@@ -30,10 +32,14 @@ import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BackupImageView
+import org.telegram.tgnet.tl.TL_stars
+import org.telegram.ui.Cells.CheckBoxCell
+import org.telegram.ui.Components.AnimatedEmojiDrawable
 import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.ImageUpdater
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.SelectAnimatedEmojiDialog
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -45,9 +51,12 @@ object LocalNameHelper {
     private const val F_TITLE = "title"
     private const val F_USERNAME = "username"
     private const val F_ABOUT = "about"
+    private const val F_VERIFIED = "verified"
+    private const val F_PREMIUM = "premium"
+    private const val F_EMOJI = "emoji_status"
 
-    private val USER_FIELDS = listOf(F_FIRST, F_LAST, F_USERNAME, F_ABOUT)
-    private val CHAT_FIELDS = listOf(F_TITLE, F_USERNAME, F_ABOUT)
+    private val USER_FIELDS = listOf(F_FIRST, F_LAST, F_USERNAME, F_ABOUT, F_VERIFIED, F_PREMIUM, F_EMOJI)
+    private val CHAT_FIELDS = listOf(F_TITLE, F_USERNAME, F_ABOUT, F_VERIFIED, F_EMOJI)
 
     class Entry(
         val over: MutableMap<String, String> = HashMap(),
@@ -102,6 +111,9 @@ object LocalNameHelper {
     private fun getField(user: TLRPC.User, f: String): String? = when (f) {
         F_FIRST -> user.first_name
         F_LAST -> user.last_name
+        F_VERIFIED -> if (user.verified) "1" else "0"
+        F_PREMIUM -> if (user.premium) "1" else "0"
+        F_EMOJI -> (UserObject.getEmojiStatusDocumentId(user) ?: 0L).toString()
         else -> user.username
     }
 
@@ -110,15 +122,31 @@ object LocalNameHelper {
             F_FIRST -> user.first_name = v
             F_LAST -> user.last_name = v
             F_USERNAME -> user.username = v
+            F_VERIFIED -> user.verified = v == "1"
+            F_PREMIUM -> user.premium = v == "1"
+            F_EMOJI -> user.emoji_status = statusFor(v)
         }
     }
 
-    private fun getField(chat: TLRPC.Chat, f: String): String? = if (f == F_TITLE) chat.title else chat.username
+    private fun statusFor(v: String?): TLRPC.EmojiStatus? {
+        val id = v?.toLongOrNull() ?: 0L
+        if (id > 0L) return TLRPC.TL_emojiStatus().also { it.document_id = id }
+        return if (v == null) null else TLRPC.TL_emojiStatusEmpty()
+    }
+
+    private fun getField(chat: TLRPC.Chat, f: String): String? = when (f) {
+        F_TITLE -> chat.title
+        F_VERIFIED -> if (chat.verified) "1" else "0"
+        F_EMOJI -> DialogObject.getEmojiStatusDocumentId(chat.emoji_status).toString()
+        else -> chat.username
+    }
 
     private fun setField(chat: TLRPC.Chat, f: String, v: String?) {
         when (f) {
             F_TITLE -> chat.title = v
             F_USERNAME -> chat.username = v
+            F_VERIFIED -> chat.verified = v == "1"
+            F_EMOJI -> chat.emoji_status = statusFor(v)
         }
     }
 
@@ -292,7 +320,10 @@ object LocalNameHelper {
         val clean = values.filterKeys { it in fields }
             .mapValues { it.value.trim().let { v -> if (it.key == F_USERNAME) v.removePrefix("@") else v } }
             .filter { it.value.isNotEmpty() || (it.key == F_ABOUT && clearsAbout) }
-            .filter { it.key == F_ABOUT || it.value != originalField(account, dialogId, existing, it.key) }
+            .filter { it.value != (if (it.key == F_ABOUT) originalAbout(account, dialogId, existing) else originalField(account, dialogId, existing, it.key)) || (it.key == F_ABOUT && clearsAbout) }
+            .toMutableMap()
+        val emoji = clean[F_EMOJI]
+        if (dialogId > 0 && emoji != null && emoji != "0" && originalField(account, dialogId, existing, F_PREMIUM) == "0") clean[F_PREMIUM] = "1"
         if (clean.isEmpty() && existing?.avatar == null) {
             remove(account, dialogId)
             return
@@ -305,6 +336,12 @@ object LocalNameHelper {
         applyToCached(account, dialogId)
         persist(account)
         refreshUi(account, dialogId)
+    }
+
+    fun saveMerged(account: Int, dialogId: Long, extra: Map<String, String>) {
+        val base = HashMap<String, String>(map(account)[dialogId]?.over ?: emptyMap())
+        base.putAll(extra)
+        save(account, dialogId, base)
     }
 
     fun remove(account: Int, dialogId: Long) {
@@ -397,6 +434,23 @@ object LocalNameHelper {
         return imported
     }
 
+    private fun pickEmoji(fragment: BaseFragment, account: Int, dialogId: Long, onPicked: () -> Unit) {
+        val context = fragment.parentActivity ?: return
+        val anchor = fragment.fragmentView ?: return
+        var popup: SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow? = null
+        val layout = object : SelectAnimatedEmojiDialog(fragment, context, true, anchor.width / 2, SelectAnimatedEmojiDialog.TYPE_EMOJI_STATUS, null) {
+            override fun onEmojiSelected(emojiView: View?, documentId: Long?, document: TLRPC.Document?, gift: TL_stars.TL_starGiftUnique?, until: Int?) {
+                saveMerged(account, dialogId, mapOf(F_EMOJI to (documentId ?: 0L).toString()))
+                popup?.dismiss()
+                onPicked()
+            }
+        }
+        layout.setSaveState(2)
+        popup = SelectAnimatedEmojiDialog.SelectAnimatedEmojiDialogWindow(layout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT)
+        popup.showAsDropDown(anchor, 0, -(anchor.height - AndroidUtilities.dp(96f)), Gravity.TOP or Gravity.LEFT)
+        popup.dimBehind()
+    }
+
     private fun pickAvatar(fragment: BaseFragment, account: Int, dialogId: Long, onPicked: () -> Unit) {
         val updater = ImageUpdater(false, ImageUpdater.FOR_TYPE_USER, false)
         pendingUpdater = updater
@@ -444,7 +498,16 @@ object LocalNameHelper {
             }
         )
 
-        fun collect() = inputs.mapValues { it.value.text?.toString().orEmpty() }
+        var verifiedBox: CheckBoxCell? = null
+        var premiumBox: CheckBoxCell? = null
+        var emojiValue = current(F_EMOJI).ifEmpty { "0" }
+        fun collect(): Map<String, String> {
+            val result = HashMap<String, String>(inputs.mapValues { it.value.text?.toString().orEmpty() })
+            result[F_VERIFIED] = if (verifiedBox?.isChecked == true) "1" else "0"
+            if (dialogId > 0) result[F_PREMIUM] = if (premiumBox?.isChecked == true) "1" else "0"
+            result[F_EMOJI] = emojiValue
+            return result
+        }
 
         val container = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
 
@@ -484,6 +547,7 @@ object LocalNameHelper {
             )
         }
         for (f in fields) {
+            if (f == F_VERIFIED || f == F_PREMIUM || f == F_EMOJI) continue
             val multiline = f == F_ABOUT
             val edit = EditTextBoldCursor(context).apply {
                 background = null
@@ -520,6 +584,39 @@ object LocalNameHelper {
             inputs[f] = edit
         }
 
+        verifiedBox = CheckBoxCell(context, 1, theme).apply {
+            setText(LocaleController.getString(R.string.InuLocalNameVerified), "", current(F_VERIFIED) == "1", false)
+            setOnClickListener { setChecked(!isChecked, true) }
+        }
+        container.addView(verifiedBox, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 50, Gravity.TOP or Gravity.LEFT, 8, 4, 8, 0))
+
+        if (dialogId > 0) {
+            premiumBox = CheckBoxCell(context, 1, theme).apply {
+                setText(LocaleController.getString(R.string.InuLocalNamePremium), "", current(F_PREMIUM) == "1", false)
+                setOnClickListener { setChecked(!isChecked, true) }
+            }
+            container.addView(premiumBox, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 50, Gravity.TOP or Gravity.LEFT, 8, 0, 8, 0))
+        }
+
+        val emojiRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        val emojiView = BackupImageView(context)
+        emojiValue.toLongOrNull()?.takeIf { it > 0L }?.let { emojiView.setAnimatedEmojiDrawable(AnimatedEmojiDrawable(AnimatedEmojiDrawable.CACHE_TYPE_KEYBOARD, account, it)) }
+        emojiRow.addView(emojiView, LayoutHelper.createLinear(32, 32, Gravity.CENTER_VERTICAL, 24, 8, 12, 8))
+        val emojiActions = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        emojiRow.addView(emojiActions, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        container.addView(
+            TextView(context).apply {
+                text = LocaleController.getString(R.string.InuLocalNameEmoji)
+                setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+                setTextColor(Theme.getColor(Theme.key_dialogTextGray2, theme))
+            },
+            LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP or Gravity.LEFT, 24, 8, 24, 0),
+        )
+        container.addView(emojiRow)
+
         val scroll = ScrollView(context).apply { addView(container) }
         val builder = AlertDialog.Builder(context, theme)
             .setTitle(LocaleController.getString(R.string.InuLocalName))
@@ -548,6 +645,18 @@ object LocalNameHelper {
             dialog.dismiss()
             pickAvatar(fragment, account, dialogId) { reopen() }
         })
+        emojiActions.addView(actionText(R.string.InuLocalNameEmojiChoose) {
+            save(account, dialogId, collect())
+            dialog.dismiss()
+            pickEmoji(fragment, account, dialogId) { reopen() }
+        })
+        if (emojiValue != "0") {
+            emojiActions.addView(actionText(R.string.InuLocalNameEmojiHide) {
+                saveMerged(account, dialogId, collect() + (F_EMOJI to "0"))
+                dialog.dismiss()
+                reopen()
+            })
+        }
         if (entry?.avatar != null) {
             actions.addView(actionText(R.string.InuLocalNameRemovePhoto) {
                 save(account, dialogId, collect())
