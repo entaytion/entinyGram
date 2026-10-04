@@ -18,7 +18,6 @@ class AiRolesSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val ctx = context ?: return
         items.add(
             UItem.asTopView(
                 LocaleController.getString(R.string.InuAiRoles),
@@ -33,13 +32,12 @@ class AiRolesSettingsActivity : SettingsPageActivity() {
         val activeId = AiRolesHelper.activeRole()?.id
         for ((index, role) in AiRolesHelper.roles().withIndex()) {
             val tags = if (role.id == activeId) listOf(LocaleController.getString(R.string.InuAiRoleTagActive)) else emptyList()
-            val preview = role.prompt.replace('\n', ' ').trim().take(80)
             items.add(
-                UItem.asCustom(
-                    InuUtils.generateId(),
-                    AiProviderCardCell(ctx, -1, role.text.ifBlank { LocaleController.getString(R.string.InuAiRoleNew) }, preview, tags, PALETTE[index % PALETTE.size]) {
-                        presentFragment(AiRoleEditActivity(role.id))
-                    }
+                UItem.asButton(
+                    ROLE_BASE + index,
+                    R.drawable.inu_tabler_sparkles,
+                    role.text.ifBlank { LocaleController.getString(R.string.InuAiRoleNew) },
+                    tags.joinToString(" • "),
                 )
             )
         }
@@ -47,11 +45,15 @@ class AiRolesSettingsActivity : SettingsPageActivity() {
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        if (item.id == BUTTON_ADD) presentFragment(AiRoleEditActivity(null))
+        if (item.id == BUTTON_ADD) {
+            presentFragment(AiRoleEditActivity(null))
+        } else if (item.id >= ROLE_BASE) {
+            AiRolesHelper.roles().getOrNull(item.id - ROLE_BASE)?.let { presentFragment(AiRoleEditActivity(it.id)) }
+        }
     }
 
     companion object {
         private val BUTTON_ADD = InuUtils.generateId()
-        private val PALETTE = intArrayOf(0xFF4285F4.toInt(), 0xFF10A37F.toInt(), 0xFFF55036.toInt(), 0xFF6467F2.toInt(), 0xFFF6821F.toInt(), 0xFF8E8E93.toInt())
+        private const val ROLE_BASE = 27000
     }
 }

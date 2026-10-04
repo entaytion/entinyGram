@@ -9,7 +9,6 @@ import desu.inugram.helpers.ai.AiProviderStore
 import desu.inugram.helpers.ai.AiRolesHelper
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
-import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
@@ -23,129 +22,63 @@ class AiSettingsActivity : SettingsPageActivity() {
     }
 
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        val ctx = context ?: return
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneral)))
         items.add(
             UItem.asButton(
                 BUTTON_PROVIDERS,
                 R.drawable.inu_tabler_cpu,
                 LocaleController.getString(R.string.InuAiProvidersTitle),
-                activeProvidersSummary()
+                providersSummary(),
             )
         )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_TRANSCRIBE_ENABLED,
-                R.string.InuAiTranscribe,
-                R.string.InuAiTranscribeInfo,
-                InuConfig.AI_TRANSCRIBE_ENABLED.value
-            )
-        )
-        val composeConfigured = hasComposeCredentials()
-        items.add(
-            mkTwoLineCheckItem(
-                BUTTON_AI_EDITOR,
-                R.string.InuHideAiEditor,
-                if (composeConfigured) R.string.InuAiEditorButtonInfo
-                else R.string.InuAiEditorButtonSetupInfo,
-                composeConfigured && !InuConfig.HIDE_AI_EDITOR.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_AI_SUMMARY,
-                R.string.InuAiSummary,
-                R.string.InuAiSummaryInfo,
-                InuConfig.AI_SUMMARY_ENABLED.value
-            )
-        )
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiProvidersSubtitle)))
+
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiFeatures)))
+        items.add(mkTwoLineEntry(ENTRY_VOICE, R.drawable.inu_tabler_microphone, LocaleController.getString(R.string.InuAiTranscribe), voiceSummary()))
+        items.add(mkTwoLineEntry(ENTRY_EDITOR, R.drawable.inu_tabler_sparkles, LocaleController.getString(R.string.InuAiEditorTitle), editorSummary()))
+        items.add(mkTwoLineEntry(ENTRY_SUMMARY, R.drawable.msg_text_outlined, LocaleController.getString(R.string.InuAiSummary), summarySummary()))
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiRoles)))
-        items.add(
-            UItem.asButton(BUTTON_AI_ROLE, LocaleController.getString(R.string.InuAiRoles), aiRoleSummary())
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionGeneration)))
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_AI_STREAM,
-                R.string.InuAiStream,
-                R.string.InuAiStreamInfo,
-                InuConfig.AI_STREAM_ENABLED.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_AI_ONLY_ANSWER,
-                R.string.InuAiOnlyAnswer,
-                R.string.InuAiOnlyAnswerInfo,
-                InuConfig.AI_ONLY_ANSWER.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_AI_INSERT_QUOTE,
-                R.string.InuAiInsertQuote,
-                R.string.InuAiInsertQuoteInfo,
-                InuConfig.AI_INSERT_QUOTE.value
-            )
-        )
-        items.add(
-            mkTwoLineCheckItem(
-                TOGGLE_AI_HISTORY,
-                R.string.InuAiHistory,
-                R.string.InuAiHistoryInfo,
-                InuConfig.AI_HISTORY_ENABLED.value
-            )
-        )
-        items.add(UItem.asShadow(null))
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiSectionTemperature)))
-        items.add(
-            UItem.asCustom(
-                AiTemperatureCell(ctx, InuConfig.AI_TEMPERATURE.value) {
-                    InuConfig.AI_TEMPERATURE.value = it
-                }
-            )
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiTemperatureInfo)))
+        items.add(UItem.asButton(BUTTON_ROLE, LocaleController.getString(R.string.InuAiRoles), roleSummary()))
+        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiRolesSubtitle)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         when (item.id) {
             BUTTON_PROVIDERS -> presentFragment(AiProvidersSettingsActivity())
-            BUTTON_AI_EDITOR -> {
-                if (!hasComposeCredentials()) {
-                    presentFragment(AiProvidersSettingsActivity())
-                } else {
-                    InuConfig.HIDE_AI_EDITOR.value = !InuConfig.HIDE_AI_EDITOR.value
-                    listView.adapter.update(true)
-                }
-            }
-            TOGGLE_AI_SUMMARY -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_SUMMARY_ENABLED.toggle()
-            }
-            TOGGLE_TRANSCRIBE_ENABLED -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_TRANSCRIBE_ENABLED.toggle()
-            }
-            BUTTON_AI_ROLE -> presentFragment(AiRolesSettingsActivity())
-            TOGGLE_AI_STREAM -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_STREAM_ENABLED.toggle()
-            }
-            TOGGLE_AI_ONLY_ANSWER -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_ONLY_ANSWER.toggle()
-            }
-            TOGGLE_AI_INSERT_QUOTE -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_INSERT_QUOTE.toggle()
-            }
-            TOGGLE_AI_HISTORY -> {
-                (view as? NotificationsCheckCell)?.isChecked = InuConfig.AI_HISTORY_ENABLED.toggle()
-            }
+            ENTRY_VOICE -> presentFragment(AiVoiceSettingsActivity())
+            ENTRY_EDITOR -> presentFragment(AiEditorSettingsActivity())
+            ENTRY_SUMMARY -> presentFragment(AiSummarySettingsActivity())
+            BUTTON_ROLE -> presentFragment(AiRolesSettingsActivity())
         }
     }
 
-    private fun activeProvidersSummary(): String {
+    private fun off() = LocaleController.getString(R.string.PasswordOff)
+
+    private fun status(enabled: Boolean, provider: AiProviderStore.Provider?, model: String): String {
+        if (!enabled) return off()
+        if (provider == null) return LocaleController.getString(R.string.InuAiProviderNotSet)
+        return listOf(provider.name, model).filter { it.isNotBlank() }.joinToString(" • ")
+    }
+
+    private fun voiceSummary(): String {
+        val p = AiFeatureSupport.effectiveProvider(InuConfig.AI_VOICE_PROVIDER_ID.value, true)
+        return status(InuConfig.AI_TRANSCRIBE_ENABLED.value, p, p?.voiceModel.orEmpty())
+    }
+
+    private fun editorSummary(): String {
+        val e = AiComposeHelper.endpointFor(AiComposeHelper.Feature.EDITOR)
+        val provider = AiComposeHelper.providerFor(AiComposeHelper.Feature.EDITOR)
+        return status(!InuConfig.HIDE_AI_EDITOR.value, provider.takeIf { e != null }, e?.model.orEmpty())
+    }
+
+    private fun summarySummary(): String {
+        val e = AiComposeHelper.endpointFor(AiComposeHelper.Feature.SUMMARY)
+        val provider = AiComposeHelper.providerFor(AiComposeHelper.Feature.SUMMARY)
+        return status(InuConfig.AI_SUMMARY_ENABLED.value, provider.takeIf { e != null }, e?.model.orEmpty())
+    }
+
+    private fun providersSummary(): String {
         val chat = AiProviderStore.chatProvider()?.name
         val voice = AiProviderStore.voiceProvider()?.name
         return when {
@@ -155,24 +88,15 @@ class AiSettingsActivity : SettingsPageActivity() {
         }
     }
 
-    private fun hasComposeCredentials(): Boolean {
-        val endpoint = AiComposeHelper.activeEndpoint()
-        return endpoint?.url?.isNotBlank() == true
-    }
-
-    private fun aiRoleSummary(): String =
+    private fun roleSummary(): String =
         AiRolesHelper.activeRoleText().trim().ifEmpty { LocaleController.getString(R.string.InuAiRolesAssistant) }
 
     companion object {
         private val BUTTON_PROVIDERS = InuUtils.generateId()
-        private val TOGGLE_TRANSCRIBE_ENABLED = InuUtils.generateId()
-        private val BUTTON_AI_EDITOR = InuUtils.generateId()
-        private val TOGGLE_AI_SUMMARY = InuUtils.generateId()
-        private val BUTTON_AI_ROLE = InuUtils.generateId()
-        private val TOGGLE_AI_STREAM = InuUtils.generateId()
-        private val TOGGLE_AI_ONLY_ANSWER = InuUtils.generateId()
-        private val TOGGLE_AI_INSERT_QUOTE = InuUtils.generateId()
-        private val TOGGLE_AI_HISTORY = InuUtils.generateId()
+        private val ENTRY_VOICE = InuUtils.generateId()
+        private val ENTRY_EDITOR = InuUtils.generateId()
+        private val ENTRY_SUMMARY = InuUtils.generateId()
+        private val BUTTON_ROLE = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(
@@ -182,14 +106,9 @@ class AiSettingsActivity : SettingsPageActivity() {
             factory = ::AiSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("ai-providers", R.string.InuAiProvidersTitle, BUTTON_PROVIDERS),
-                SearchRegistry.Entry("ai-transcribe-enabled", R.string.InuAiTranscribe, TOGGLE_TRANSCRIBE_ENABLED),
-                SearchRegistry.Entry("ai-editor-button", R.string.InuHideAiEditor, BUTTON_AI_EDITOR),
-                SearchRegistry.Entry("ai-summary", R.string.InuAiSummary, TOGGLE_AI_SUMMARY),
-                SearchRegistry.Entry("ai-role", R.string.InuAiRoles, BUTTON_AI_ROLE),
-                SearchRegistry.Entry("ai-stream", R.string.InuAiStream, TOGGLE_AI_STREAM),
-                SearchRegistry.Entry("ai-only-answer", R.string.InuAiOnlyAnswer, TOGGLE_AI_ONLY_ANSWER),
-                SearchRegistry.Entry("ai-insert-quote", R.string.InuAiInsertQuote, TOGGLE_AI_INSERT_QUOTE),
-                SearchRegistry.Entry("ai-history", R.string.InuAiHistory, TOGGLE_AI_HISTORY),
+                SearchRegistry.Entry("ai-feature-voice", R.string.InuAiTranscribe, ENTRY_VOICE),
+                SearchRegistry.Entry("ai-feature-editor", R.string.InuAiEditorTitle, ENTRY_EDITOR),
+                SearchRegistry.Entry("ai-feature-summary", R.string.InuAiSummary, ENTRY_SUMMARY),
             ),
         )
     }

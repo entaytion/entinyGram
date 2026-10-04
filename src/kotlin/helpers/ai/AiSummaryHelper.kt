@@ -29,7 +29,7 @@ object AiSummaryHelper {
 
     @JvmStatic
     fun summarize(context: Context, message: MessageObject) {
-        val endpoint = AiComposeHelper.activeEndpoint()
+        val endpoint = AiComposeHelper.endpointFor(AiComposeHelper.Feature.SUMMARY)
         if (endpoint == null || endpoint.url.isBlank()) {
             AlertDialog.Builder(context)
                 .setTitle(LocaleController.getString(R.string.InuAiSummary))
@@ -49,7 +49,7 @@ object AiSummaryHelper {
         val key = message.dialogId.hashCode() * 31 + message.id
         if (!loading.add(key)) return
         BulletinFactory.global().createSimpleBulletin(R.raw.info, LocaleController.getString(R.string.InuAiSummarizing)).show()
-        AiComposeHelper.request(endpoint, PROMPT, text) { result, error ->
+        AiComposeHelper.request(endpoint, PROMPT, text, answerOnly = true, temperature = AiComposeHelper.temperatureFor(AiComposeHelper.Feature.SUMMARY)) { result, error ->
             loading.remove(key)
             if (result.isNullOrBlank()) {
                 BulletinFactory.global()

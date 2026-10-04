@@ -49,12 +49,30 @@ object AiComposeHelper {
     @JvmStatic
     fun completionsUrl(base: String): String = normalizeBase(base).let { if (it.isEmpty()) "" else "$it/chat/completions" }
 
+    enum class Feature { EDITOR, SUMMARY }
+
+    fun providerFor(feature: Feature): AiProviderStore.Provider? = when (feature) {
+        Feature.EDITOR -> AiProviderStore.featureProvider(InuConfig.AI_EDITOR_PROVIDER_ID.value, InuConfig.AI_EDITOR_MODEL.value)
+        Feature.SUMMARY -> AiProviderStore.featureProvider(InuConfig.AI_SUMMARY_PROVIDER_ID.value, InuConfig.AI_SUMMARY_MODEL.value)
+    }
+
     @JvmStatic
-    fun activeEndpoint(): AiEndpoint? {
-        val p = AiProviderStore.chatProvider() ?: return null
+    fun endpointFor(feature: Feature): AiEndpoint? {
+        val p = providerFor(feature) ?: return null
         val url = completionsUrl(AiProviderStore.baseUrl(p))
         if (url.isBlank() || (AiProviderStore.needsKey(p.kind) && p.key.isBlank())) return null
         return AiEndpoint(id = p.id, name = p.name, url = url, apiKey = p.key, model = p.chatModel)
+    }
+
+    @JvmStatic
+    fun activeEndpoint(): AiEndpoint? = endpointFor(Feature.EDITOR)
+
+    @JvmStatic
+    fun useOwnEditor(): Boolean = endpointFor(Feature.EDITOR) != null
+
+    fun temperatureFor(feature: Feature): Float = when (feature) {
+        Feature.EDITOR -> InuConfig.AI_TEMPERATURE.value
+        Feature.SUMMARY -> InuConfig.AI_SUMMARY_TEMPERATURE.value.takeIf { it >= 0f } ?: InuConfig.AI_TEMPERATURE.value
     }
 
     @JvmStatic
@@ -107,6 +125,8 @@ object AiComposeHelper {
         endpoint: AiEndpoint,
         systemPrompt: String,
         userText: String,
+        answerOnly: Boolean = InuConfig.AI_ONLY_ANSWER.value,
+        temperature: Float = InuConfig.AI_TEMPERATURE.value,
         onResult: (result: String?, error: String?) -> Unit,
     ) {
         Utilities.globalQueue.postRunnable {
@@ -122,9 +142,8 @@ object AiComposeHelper {
                             .put(JSONObject().put("role", "user").put("content", userText))
                     )
 
-                val temp = InuConfig.AI_TEMPERATURE.value
-                if (temp != 1.0f) {
-                    json.put("temperature", temp.toDouble())
+                if (temperature != 1.0f) {
+                    json.put("temperature", temperature.toDouble())
                 }
 
                 if (InuConfig.AI_REASONING_ENABLED.value) {
@@ -165,7 +184,7 @@ object AiComposeHelper {
                 val content = messageText(msgObj.opt("content")).trim()
                 val reasoning = msgObj.optString("reasoning_content", "").ifBlank { msgObj.optString("reasoning", "") }.trim()
 
-                result = if (InuConfig.AI_ONLY_ANSWER.value) {
+                result = if (answerOnly) {
                     content.ifBlank { reasoning }
                 } else if (reasoning.isNotBlank() && content.isNotBlank()) {
                     "💭 $reasoning\n\n$content"
@@ -191,6 +210,8 @@ object AiComposeHelper {
         Utilities.globalQueue.postRunnable {
             var error: String? = null
             val accumulated = StringBuilder()
+            val reasoning = StringBuilder()
+            val answerOnly = InuConfig.AI_ONLY_ANSWER.value
             try {
                 val json = JSONObject()
                     .put("model", endpoint.model.ifBlank { "gpt-4o-mini" })
@@ -201,8 +222,7 @@ object AiComposeHelper {
                             .put(JSONObject().put("role", "system").put("content", withRole(systemPrompt)))
                             .put(JSONObject().put("role", "user").put("content", userText))
                     )
-                val temp = InuConfig.AI_TEMPERATURE.value
-                if (temp != 1.0f) json.put("temperature", temp.toDouble())
+                if (InuConfig.AI_TEMPERATURE.value != 1.0f) json.put("temperature", InuConfig.AI_TEMPERATURE.value.toDouble())
 
                 val body = json.toString()
                 val conn = (URL(endpoint.url).openConnection() as HttpURLConnection).apply {
@@ -227,15 +247,21 @@ object AiComposeHelper {
                         if (!line.startsWith("data:")) return@forEachLine
                         val data = line.removePrefix("data:").trim()
                         if (data.isEmpty() || data == "[DONE]") return@forEachLine
-                        val delta = try {
-                            JSONObject(data).getJSONArray("choices").getJSONObject(0)
-                                .optJSONObject("delta")?.optString("content", "") ?: ""
+                        val deltaObj = try {
+                            JSONObject(data).getJSONArray("choices").getJSONObject(0).optJSONObject("delta")
                         } catch (_: Exception) {
-                            ""
-                        }
-                        if (delta.isNotEmpty()) {
+                            null
+                        } ?: return@forEachLine
+                        val delta = deltaObj.optString("content", "")
+                        val thought = deltaObj.optString("reasoning_content", "").ifEmpty { deltaObj.optString("reasoning", "") }
+                        if (delta.isNotEmpty() || thought.isNotEmpty()) {
                             accumulated.append(delta)
-                            val snapshot = accumulated.toString()
+                            reasoning.append(thought)
+                            val snapshot = if (!answerOnly && reasoning.isNotBlank()) {
+                                "💭 ${reasoning.trim()}\n\n$accumulated".trimEnd()
+                            } else {
+                                accumulated.toString()
+                            }
                             AndroidUtilities.runOnUIThread { onChunk(snapshot) }
                         }
                     }
@@ -806,8 +832,7 @@ private class AiComposeSheet(
     private fun runPrompt(prompt: String) {
         if (running) return
         val endpoint = AiComposeHelper.activeEndpoint() ?: return
-        // entiny: chain off previous result when history is on so consecutive actions refine output
-        val inputText = if (InuConfig.AI_HISTORY_ENABLED.value) (lastResult ?: userText) else userText
+        val inputText = userText
         if (inputText.isEmpty()) return
         clearResult()
         setRunning(true)

@@ -106,10 +106,19 @@ object AiProviderStore {
     fun voiceProvider(): Provider? {
         val id = InuConfig.AI_VOICE_PROVIDER_ID.value
         if (id == NONE) return null
-        return get(id)?.takeIf { canVoice(it.kind) } ?: all().firstOrNull { canVoice(it.kind) && isReady(it) }
+        val p = get(id)?.takeIf { canVoice(it.kind) } ?: all().firstOrNull { canVoice(it.kind) && isReady(it) } ?: return null
+        val model = InuConfig.AI_VOICE_MODEL.value.trim()
+        return if (model.isEmpty()) p else p.copy(voiceModel = model)
     }
 
-    private fun isReady(p: Provider): Boolean = when (p.kind) {
+    // entiny: a feature may pin its own provider and model; blank falls back to the default chat provider
+    fun featureProvider(providerId: String, model: String): Provider? {
+        val p = get(providerId)?.takeIf { canChat(it.kind) && isReady(it) } ?: chatProvider() ?: return null
+        val m = model.trim()
+        return if (m.isEmpty()) p else p.copy(chatModel = m)
+    }
+
+    fun isReady(p: Provider): Boolean = when (p.kind) {
         InuConfig.TRANSCRIBE_PROVIDER_CUSTOM -> p.url.isNotBlank()
         InuConfig.TRANSCRIBE_PROVIDER_CF -> p.accountId.isNotBlank() && p.key.isNotBlank()
         else -> p.key.isNotBlank()

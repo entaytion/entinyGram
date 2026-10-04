@@ -58,6 +58,7 @@ fun showInputDialog(
         )
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
         setTextColor(Theme.getColor(Theme.key_dialogTextBlack, theme))
+        setHintTextColor(Theme.getColor(Theme.key_dialogTextHint, theme))
         if (multiline) {
             setSingleLine(false)
             minLines = 4
@@ -74,7 +75,7 @@ fun showInputDialog(
         setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, theme))
         setCursorSize(AndroidUtilities.dp(20f))
         setCursorWidth(1.5f)
-        setPadding(0, AndroidUtilities.dp(4f), 0, 0)
+        setPadding(0, AndroidUtilities.dp(4f), 0, if (multiline) AndroidUtilities.dp(10f) else 0)
         if (hint != null) this.hint = hint
         if (initialText != null) {
             setText(initialText)

@@ -3,7 +3,10 @@ package desu.inugram
 import android.content.Intent
 import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.ui.settings.AdditionalSettingsActivity
+import desu.inugram.ui.settings.AiEditorSettingsActivity
 import desu.inugram.ui.settings.AiSettingsActivity
+import desu.inugram.ui.settings.AiSummarySettingsActivity
+import desu.inugram.ui.settings.AiVoiceSettingsActivity
 import desu.inugram.ui.settings.AnnoyancesSettingsActivity
 import desu.inugram.ui.settings.AntiCensorshipSettingsActivity
 import desu.inugram.ui.settings.AntiDeletionSettingsActivity
@@ -75,6 +78,9 @@ object SearchRegistry {
             CategoryChatsSettingsActivity.PAGE,
             MessagesSettingsActivity.PAGE,
             AiSettingsActivity.PAGE,
+            AiVoiceSettingsActivity.PAGE,
+            AiEditorSettingsActivity.PAGE,
+            AiSummarySettingsActivity.PAGE,
             AnnoyancesSettingsActivity.PAGE,
             BehaviorSettingsActivity.PAGE,
             TosSettingsActivity.PAGE,

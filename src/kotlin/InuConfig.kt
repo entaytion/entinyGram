@@ -615,9 +615,6 @@ object InuConfig {
     val HIDE_AI_EDITOR = BoolItem("hide_ai_editor", false)
 
     @JvmField
-    val AI_COMPOSE_ENABLED = BoolItem("ai_compose_enabled", false)
-
-    @JvmField
     val AI_CHAT_ACTIVE_PROVIDER = IntItem("ai_chat_active_provider", TRANSCRIBE_PROVIDER_GEMINI)
 
     @JvmField
@@ -628,6 +625,24 @@ object InuConfig {
 
     @JvmField
     val AI_VOICE_PROVIDER_ID = StringItem("ai_voice_provider_id", "", exportable = false)
+
+    @JvmField
+    val AI_VOICE_MODEL = StringItem("ai_voice_model", "", exportable = false)
+
+    @JvmField
+    val AI_EDITOR_PROVIDER_ID = StringItem("ai_editor_provider_id", "", exportable = false)
+
+    @JvmField
+    val AI_EDITOR_MODEL = StringItem("ai_editor_model", "", exportable = false)
+
+    @JvmField
+    val AI_SUMMARY_PROVIDER_ID = StringItem("ai_summary_provider_id", "", exportable = false)
+
+    @JvmField
+    val AI_SUMMARY_MODEL = StringItem("ai_summary_model", "", exportable = false)
+
+    @JvmField
+    val AI_SUMMARY_TEMPERATURE = FloatItem("ai_summary_temperature", -1f)
 
     @JvmField
     val AI_PROVIDER_GROQ_KEY = StringItem("ai_provider_groq_key", "", exportable = false)
@@ -646,15 +661,6 @@ object InuConfig {
 
     @JvmField
     val AI_CHAT_OPENAI_MODEL = StringItem("ai_chat_openai_model", "gpt-4o-mini", exportable = false)
-
-    @JvmField
-    val AI_SAME_MODEL_GROQ = BoolItem("ai_same_model_groq", true)
-
-    @JvmField
-    val AI_SAME_MODEL_GEMINI = BoolItem("ai_same_model_gemini", true)
-
-    @JvmField
-    val AI_SAME_MODEL_OPENAI = BoolItem("ai_same_model_openai", true)
 
     @JvmField
     val AI_CHAT_OPENROUTER_KEY = StringItem("ai_chat_openrouter_key", "", exportable = false)
@@ -691,9 +697,6 @@ object InuConfig {
 
     @JvmField
     val AI_ROLES_SEEDED = BoolItem("ai_roles_seeded", false, exportable = false)
-
-    @JvmField
-    val AI_HISTORY_ENABLED = BoolItem("ai_history_enabled", true)
 
     @JvmField
     val AI_STREAM_ENABLED = BoolItem("ai_stream_enabled", true)

@@ -1,10 +1,8 @@
 package desu.inugram.ui.settings
 
 import android.view.View
-import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ai.AiProviderStore
-import desu.inugram.ui.showInputDialog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Components.UItem
@@ -36,55 +34,29 @@ class AiProvidersSettingsActivity : SettingsPageActivity() {
         if (providers.isEmpty()) {
             items.add(UItem.asCenterShadow(LocaleController.getString(R.string.InuAiProvidersEmpty)))
         } else {
-            val ctx = context ?: return
             val chatId = AiProviderStore.chatProvider()?.id
             val voiceId = AiProviderStore.voiceProvider()?.id
-            for (p in providers) {
+            for ((index, p) in providers.withIndex()) {
                 val tags = ArrayList<String>()
                 if (p.id == chatId) tags.add(LocaleController.getString(R.string.InuAiProviderTagChat))
                 if (p.id == voiceId) tags.add(LocaleController.getString(R.string.InuAiProviderTagVoice))
-                val model = p.chatModel.ifBlank { p.voiceModel }
-                items.add(
-                    UItem.asCustom(
-                        InuUtils.generateId(),
-                        AiProviderCardCell(ctx, p.kind, p.name, model, tags) {
-                            presentFragment(AiProviderEditActivity.forExisting(p.id))
-                        }
-                    )
-                )
+                val value = if (tags.isNotEmpty()) tags.joinToString(" • ") else p.chatModel.ifBlank { p.voiceModel }
+                items.add(UItem.asButton(ENTRY_BASE + index, AiFeatureSupport.iconFor(p.kind), p.name, value))
             }
             items.add(UItem.asShadow(null))
         }
-
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuAiTranscribe)))
-        items.add(
-            UItem.asButton(
-                BUTTON_LANGUAGE,
-                LocaleController.getString(R.string.InuAiTranscribeLanguage),
-                InuConfig.AI_TRANSCRIBE_LANGUAGE.value.ifBlank { LocaleController.getString(R.string.InuAiProviderNotSet) },
-            )
-        )
-        items.add(UItem.asShadow(LocaleController.getString(R.string.InuAiTranscribeLanguageInfo)))
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        when (item.id) {
-            BUTTON_ADD -> presentFragment(AiProviderPickerActivity())
-            BUTTON_LANGUAGE -> showInputDialog(
-                this,
-                LocaleController.getString(R.string.InuAiTranscribeLanguage),
-                initialText = InuConfig.AI_TRANSCRIBE_LANGUAGE.value,
-                selectAll = true,
-            ) { text ->
-                InuConfig.AI_TRANSCRIBE_LANGUAGE.value = text.trim()
-                listView?.adapter?.update(true)
-                true
-            }
+        if (item.id >= ENTRY_BASE) {
+            AiProviderStore.all().getOrNull(item.id - ENTRY_BASE)?.let { presentFragment(AiProviderEditActivity.forExisting(it.id)) }
+            return
         }
+        if (item.id == BUTTON_ADD) presentFragment(AiProviderPickerActivity())
     }
 
     companion object {
         private val BUTTON_ADD = InuUtils.generateId()
-        private val BUTTON_LANGUAGE = InuUtils.generateId()
+        private const val ENTRY_BASE = 26000
     }
 }

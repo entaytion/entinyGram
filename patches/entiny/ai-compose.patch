@@ -4,8 +4,8 @@ Date: Sat, 1 Aug 2026 17:52:54 +0300
 Subject: Add client-side AI compose with custom endpoints
 
 ---
- .../ui/Components/ChatActivityEnterView.java  | 23 +++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ .../ui/Components/ChatActivityEnterView.java  | 21 ++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 index 0000000..0000000 100644
@@ -15,7 +15,7 @@ index 0000000..0000000 100644
          aiButton.setOnClickListener(v -> {
              MessagesController.getGlobalMainSettings().edit().putInt("aihintshown", 3).apply();
              final long dialogId = parentFragment != null ? parentFragment.getDialogId() : dialog_id;
-+            if (desu.inugram.InuConfig.AI_COMPOSE_ENABLED.getValue() && !richDraftActive) {
++            if (desu.inugram.helpers.ai.AiComposeHelper.useOwnEditor() && !richDraftActive) {
 +                if (messageEditText == null) return;
 +                desu.inugram.helpers.ai.AiComposeHelper.showEditor(getContext(), messageEditText.getText(), text -> {
 +                    if (desu.inugram.InuConfig.AI_INSERT_QUOTE.getValue()) {
@@ -34,17 +34,12 @@ index 0000000..0000000 100644
              if (richDraftActive) {
                  if (richDraftMessage == null) return;
                  new AIEditorAlert(getContext(), resourcesProvider)
-@@ -6145,11 +6161,13 @@ public class ChatActivityEnterView extends FrameLayout implements
- 
-     private boolean shownAiButton;
-     private void showAiButton(boolean show_) {
--        final boolean show = (show_ || richDraftActive) && parentFragment != null && !parentFragment.isSecretChat() && !desu.inugram.InuConfig.HIDE_AI_EDITOR.getValue();
-+        final boolean show = (show_ || richDraftActive) && parentFragment != null && !parentFragment.isSecretChat() && (desu.inugram.InuConfig.AI_COMPOSE_ENABLED.getValue() || !desu.inugram.InuConfig.HIDE_AI_EDITOR.getValue());
+@@ -6149,7 +6165,9 @@ public class ChatActivityEnterView extends FrameLayout implements
  
          if (shownAiButton == show) return;
          if (show) {
 -            MessagesController.getInstance(currentAccount).getTonesController().load();
-+            if (!desu.inugram.InuConfig.AI_COMPOSE_ENABLED.getValue()) {
++            if (!desu.inugram.helpers.ai.AiComposeHelper.useOwnEditor()) {
 +                MessagesController.getInstance(currentAccount).getTonesController().load();
 +            }
          }
@@ -54,7 +49,7 @@ index 0000000..0000000 100644
              }
  
              if (
-+                !desu.inugram.InuConfig.AI_COMPOSE_ENABLED.getValue() &&
++                !desu.inugram.helpers.ai.AiComposeHelper.useOwnEditor() &&
                  MessagesController.getGlobalMainSettings().getInt("aihintshown", 0) < 3
              ) {
                  final HintView2 thisHint = aiHint = new HintView2(getContext(), HintView2.DIRECTION_BOTTOM);

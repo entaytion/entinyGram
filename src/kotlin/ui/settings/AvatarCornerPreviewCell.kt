@@ -264,7 +264,8 @@ class AvatarCornerPreviewCell(
         private val max: Int,
         header: String,
         private val leftText: String,
-        private val rightText: String
+        private val rightText: String,
+        private val formatValue: ((Int) -> CharSequence)? = null,
     ) : FrameLayout(context) {
 
         private val headerTextView: TextView
@@ -438,6 +439,7 @@ class AvatarCornerPreviewCell(
         }
 
         private fun getTextForHeader(): CharSequence {
+            formatValue?.let { return it(roundedValue) }
             val text: CharSequence = when (roundedValue) {
                 min -> leftText
                 max -> rightText

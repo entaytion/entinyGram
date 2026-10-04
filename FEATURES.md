@@ -118,6 +118,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **message details & JSON view**
 - 📡 **url parsing improvements**
 - 📡 **AI providers as cards**: add any number of providers (Gemini, OpenAI, Groq, OpenRouter, Cloudflare or a custom OpenAI-compatible endpoint), auto-detect the endpoint, pick models from a searchable list and choose which one serves chat and voice
+- 📡 **AI by task**: voice-to-text, AI editor and message summaries each get their own provider, model and temperature; AI editor opens on your own provider
 - 📡 **ai compose & tools**: rewrite, translate and format drafts
 - 📡 **typing status spoof**: fake "typing…", "recording…" or "uploading…" in any chat
 - 📡 **background downloads** - *ported from [MaxExteraPlugins](https://github.com/MaxExteraPlugins)*
