@@ -19,7 +19,7 @@ import java.net.URL
 
 object BadgeRegistry {
 
-    private val LOCALES = listOf("en", "uk", "ru", "tr", "ja", "zh")
+    private val LOCALES = listOf("en", "uk", "ru", "tr", "ja", "zh", "ar", "fa")
 
     data class Badge(
         val slug: String,
