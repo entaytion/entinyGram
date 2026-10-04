@@ -11,7 +11,7 @@ import java.util.WeakHashMap
 
 object IosInputHelper {
     private const val RIGHT_CLUSTER_GAP_DP = 4
-    private const val BUBBLE_INSET_DP = 4
+    private const val BUBBLE_INSET_DP = 1
 
     @JvmStatic
     fun bubbleInsetPx(): Int = AndroidUtilities.dp(BUBBLE_INSET_DP.toFloat())
