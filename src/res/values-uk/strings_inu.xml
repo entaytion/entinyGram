@@ -623,6 +623,15 @@
 
     <string name="InuDisableGlassGlare">Вимкнути відблиски скла</string>
     <string name="InuDisableProfileAvatarBlur">Вимкнути розмиття аватара профілю</string>
+    <string name="InuClownAvatarsSection">Аватарки заблокованих</string>
+    <string name="InuClownAvatarBlocked">Клоун замість аватарки заблокованих</string>
+    <string name="InuClownAvatarBlockedInfo">Показувати клоуна замість фото в користувачів, яких ви заблокували.</string>
+    <string name="InuClownAvatarBlockedMe">Клоун у тих, хто заблокував мене</string>
+    <string name="InuClownAvatarBlockedMeInfo">Визначається за відсутністю фото й часу останнього візиту, тож може помилятися.</string>
+    <string name="InuClownAvatarEmoji">Емодзі</string>
+    <string name="InuClownAvatarEmojiClown">Клоун</string>
+    <string name="InuClownAvatarEmojiPoop">Какашка</string>
+    <string name="InuClownAvatarEmojiSkull">Череп</string>
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Кут Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Інтенсивність Liquid Glass</string>

@@ -976,6 +976,15 @@
     <string name="InuPersonalPhotoMark">личное фото</string>
     <string name="InuDisableGlassGlare">Отключить блик стекла</string>
     <string name="InuDisableProfileAvatarBlur">Отключить размытие аватара профиля</string>
+    <string name="InuClownAvatarsSection">Аватарки заблокированных</string>
+    <string name="InuClownAvatarBlocked">Клоун вместо аватарки заблокированных</string>
+    <string name="InuClownAvatarBlockedInfo">Показывать клоуна вместо фото у пользователей, которых вы заблокировали.</string>
+    <string name="InuClownAvatarBlockedMe">Клоун у тех, кто заблокировал меня</string>
+    <string name="InuClownAvatarBlockedMeInfo">Определяется по отсутствию фото и времени захода, поэтому может ошибаться.</string>
+    <string name="InuClownAvatarEmoji">Эмодзи</string>
+    <string name="InuClownAvatarEmojiClown">Клоун</string>
+    <string name="InuClownAvatarEmojiPoop">Какашка</string>
+    <string name="InuClownAvatarEmojiSkull">Череп</string>
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Угол Liquid Glass</string>
     <string name="InuLiquidGlassIntensity">Интенсивность Liquid Glass</string>

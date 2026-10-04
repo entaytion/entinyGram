@@ -132,6 +132,31 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         }
         items.add(UItem.asShadow(null))
 
+        items.add(UItem.asHeader(LocaleController.getString(R.string.InuClownAvatarsSection)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CLOWN_AVATAR_BLOCKED,
+                R.string.InuClownAvatarBlocked,
+                R.string.InuClownAvatarBlockedInfo,
+                InuConfig.CLOWN_AVATAR_BLOCKED.value
+            )
+        )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_CLOWN_AVATAR_BLOCKED_ME,
+                R.string.InuClownAvatarBlockedMe,
+                R.string.InuClownAvatarBlockedMeInfo,
+                InuConfig.CLOWN_AVATAR_BLOCKED_ME.value
+            )
+        )
+        items.add(
+            UItem.asButton(
+                BUTTON_CLOWN_AVATAR_EMOJI,
+                LocaleController.getString(R.string.InuClownAvatarEmoji),
+                clownAvatarEmojiLabel(InuConfig.CLOWN_AVATAR_EMOJI.value),
+            )
+        )
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuCategoryBehavior)))
         items.add(
             UItem.asCheck(
@@ -200,6 +225,16 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
+            TOGGLE_CLOWN_AVATAR_BLOCKED -> {
+                val new = InuConfig.CLOWN_AVATAR_BLOCKED.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_CLOWN_AVATAR_BLOCKED_ME -> {
+                val new = InuConfig.CLOWN_AVATAR_BLOCKED_ME.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
             TOGGLE_CHAT_REMEMBER_ALL_REPLIES -> {
                 val new = InuConfig.CHAT_REMEMBER_ALL_REPLIES.toggle()
                 setCellChecked(view, new)
@@ -230,6 +265,20 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             TOGGLE_LINK_PREVIEW_SPOILER -> {
                 val new = InuConfig.LINK_PREVIEW_SPOILER.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            BUTTON_CLOWN_AVATAR_EMOJI -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuClownAvatarEmojiClown),
+                    LocaleController.getString(R.string.InuClownAvatarEmojiPoop),
+                    LocaleController.getString(R.string.InuClownAvatarEmojiSkull),
+                ),
+                InuConfig.CLOWN_AVATAR_EMOJI.value,
+            ) { which ->
+                if (InuConfig.CLOWN_AVATAR_EMOJI.value == which) return@show
+                InuConfig.CLOWN_AVATAR_EMOJI.value = which
+                listView.adapter.update(true)
             }
 
             BUTTON_MEDIA_SPOILER_MODE -> RadioItemOptions.show(
@@ -338,6 +387,8 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_PINNED_REACTIONS = InuUtils.generateId()
         private val TOGGLE_INSTANT_MARK_REACTIONS_READ = InuUtils.generateId()
         private val TOGGLE_CONFIRM_REACTION_NON_MEMBER = InuUtils.generateId()
+        private val TOGGLE_CLOWN_AVATAR_BLOCKED = InuUtils.generateId()
+        private val TOGGLE_CLOWN_AVATAR_BLOCKED_ME = InuUtils.generateId()
         private val TOGGLE_CHAT_REMEMBER_ALL_REPLIES = InuUtils.generateId()
         private val TOGGLE_FORWARD_PRO = InuUtils.generateId()
         private val TOGGLE_CONFIRM_SEND_VOICE = InuUtils.generateId()
@@ -351,6 +402,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_TEXT_SPOILER_MODE = InuUtils.generateId()
         private val TOGGLE_SPOILER_EXTEND_TO_LINE_END = InuUtils.generateId()
         private val TOGGLE_LINK_PREVIEW_SPOILER = InuUtils.generateId()
+        private val BUTTON_CLOWN_AVATAR_EMOJI = InuUtils.generateId()
         private val BUTTON_MEDIA_SPOILER_MODE = InuUtils.generateId()
         private val BUTTON_BLOCKED_MESSAGES_MODE = InuUtils.generateId()
         private val BUTTON_BLOCKED_MESSAGES_EXTRA = InuUtils.generateId()
@@ -359,6 +411,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             InuConfig.TextSpoilerModeItem.SIMPLE -> LocaleController.getString(R.string.InuTextSpoilerModeSimple)
             InuConfig.TextSpoilerModeItem.EPSTEIN -> LocaleController.getString(R.string.InuTextSpoilerModeEpstein)
             else -> LocaleController.getString(R.string.InuTextSpoilerModeDefault)
+        }
+
+        private fun clownAvatarEmojiLabel(value: Int): String = when (value) {
+            1 -> LocaleController.getString(R.string.InuClownAvatarEmojiPoop)
+            2 -> LocaleController.getString(R.string.InuClownAvatarEmojiSkull)
+            else -> LocaleController.getString(R.string.InuClownAvatarEmojiClown)
         }
 
         private fun mediaSpoilerModeLabel(value: Int): String = when (value) {
@@ -382,6 +440,8 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 SearchRegistry.Entry("pinned-reactions", R.string.InuPinnedReactions, BUTTON_PINNED_REACTIONS),
                 SearchRegistry.Entry("confirm-reaction-non-member", R.string.InuConfirmReactionNonMember, TOGGLE_CONFIRM_REACTION_NON_MEMBER),
+                SearchRegistry.Entry("clown-avatar-blocked", R.string.InuClownAvatarBlocked, TOGGLE_CLOWN_AVATAR_BLOCKED),
+                SearchRegistry.Entry("clown-avatar-blocked-me", R.string.InuClownAvatarBlockedMe, TOGGLE_CLOWN_AVATAR_BLOCKED_ME),
                 SearchRegistry.Entry("chat-remember-all-replies", R.string.InuChatRememberAllReplies, TOGGLE_CHAT_REMEMBER_ALL_REPLIES),
                 SearchRegistry.Entry("instant-mark-reactions-read", R.string.InuInstantMarkReactionsRead, TOGGLE_INSTANT_MARK_REACTIONS_READ),
                 SearchRegistry.Entry("forward-pro", R.string.InuForwardPro, TOGGLE_FORWARD_PRO),
@@ -395,6 +455,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("text-spoiler-mode", R.string.InuTextSpoilerMode, BUTTON_TEXT_SPOILER_MODE),
                 SearchRegistry.Entry("spoiler-extend-to-line-end", R.string.InuSpoilerExtendToLineEnd, TOGGLE_SPOILER_EXTEND_TO_LINE_END),
                 SearchRegistry.Entry("link-preview-spoiler", R.string.InuLinkPreviewSpoiler, TOGGLE_LINK_PREVIEW_SPOILER),
+                SearchRegistry.Entry("clown-avatar-emoji", R.string.InuClownAvatarEmoji, BUTTON_CLOWN_AVATAR_EMOJI),
                 SearchRegistry.Entry("media-spoiler-mode", R.string.InuMediaSpoilerMode, BUTTON_MEDIA_SPOILER_MODE),
                 SearchRegistry.Entry("blocked-messages-mode", R.string.InuBlockedMessagesMode, BUTTON_BLOCKED_MESSAGES_MODE),
                 SearchRegistry.Entry("blocked-messages-extra", R.string.InuBlockedMessagesExtra, BUTTON_BLOCKED_MESSAGES_EXTRA),

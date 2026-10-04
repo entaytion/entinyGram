@@ -510,6 +510,15 @@
 
     <string name="InuDisableGlassGlare">Cam parlamasını devre dışı bırak</string>
     <string name="InuDisableProfileAvatarBlur">Profil avatarı bulanıklığını devre dışı bırak</string>
+    <string name="InuClownAvatarsSection">Engellenen avatarlar</string>
+    <string name="InuClownAvatarBlocked">Engellenen kullanıcılar için palyaço avatar</string>
+    <string name="InuClownAvatarBlockedInfo">Engellediğiniz kullanıcılarda fotoğraf yerine palyaço göster.</string>
+    <string name="InuClownAvatarBlockedMe">Beni engelleyenler için palyaço avatar</string>
+    <string name="InuClownAvatarBlockedMeInfo">Fotoğraf ve son görülme eksikliğinden tahmin edilir, bu yüzden yanılabilir.</string>
+    <string name="InuClownAvatarEmoji">Emoji</string>
+    <string name="InuClownAvatarEmojiClown">Palyaço</string>
+    <string name="InuClownAvatarEmojiPoop">Kaka</string>
+    <string name="InuClownAvatarEmojiSkull">Kuru kafa</string>
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass açısı</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass yoğunluğu</string>

@@ -1,0 +1,94 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 4 Oct 2026 20:42:04 +0300
+Subject: [+] clown avatar for blocked users
+
+---
+ .../java/org/telegram/messenger/ImageReceiver.java    |  5 +++++
+ .../org/telegram/ui/Components/AvatarDrawable.java    | 11 +++++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java b/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ImageReceiver.java
+@@ -440,6 +440,11 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
+         boolean isPremium = false;
+         if (object instanceof TLRPC.User) {
+             TLRPC.User user = (TLRPC.User) object;
++            if (avatarDrawable instanceof AvatarDrawable && !UserObject.isDeleted(user) && desu.inugram.helpers.profile.ClownAvatarHelper.isClown(currentAccount, user.id)) {
++                ((AvatarDrawable) avatarDrawable).inu_setDrawClown(true);
++                setImage(null, null, avatarDrawable, null, parentObject, 0);
++                return;
++            }
+             isPremium = user.premium;
+             if (user.photo != null) {
+                 strippedBitmap = user.photo.strippedBitmap;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AvatarDrawable.java
+@@ -56,6 +56,7 @@ public class AvatarDrawable extends Drawable {
+     private float textLeft;
+     private boolean isProfile;
+     private boolean drawDeleted;
++    private boolean inu_drawClown;
+     private int avatarType;
+     private float archivedAvatarProgress;
+     private float scaleSize = 1f;
+@@ -146,6 +147,7 @@ public class AvatarDrawable extends Drawable {
+         if (user != null) {
+             setInfo(user.id, user.first_name, user.last_name, null);
+             drawDeleted = UserObject.isDeleted(user);
++            inu_drawClown |= desu.inugram.helpers.profile.ClownAvatarHelper.isLikelyBlockedMe(user);
+         }
+     }
+ 
+@@ -221,6 +223,7 @@ public class AvatarDrawable extends Drawable {
+         if (user != null) {
+             setInfo(user.id, user.first_name, user.last_name, null, user != null && user.color != null ? UserObject.getColorId(user) : null, UserObject.getPeerColorForAvatar(currentAccount, user));
+             drawDeleted = UserObject.isDeleted(user);
++            inu_drawClown |= desu.inugram.helpers.profile.ClownAvatarHelper.isLikelyBlockedMe(user);
+         }
+     }
+ 
+@@ -403,6 +406,7 @@ public class AvatarDrawable extends Drawable {
+         color2 = getThemedColor(Theme.keys_avatar_background2[getColorIndex(id)]);
+         avatarType = AVATAR_TYPE_NORMAL;
+         drawDeleted = false;
++        inu_drawClown = false;
+         getAvatarSymbols("", "", "", stringBuilder);
+     }
+ 
+@@ -451,6 +455,7 @@ public class AvatarDrawable extends Drawable {
+ 
+         avatarType = AVATAR_TYPE_NORMAL;
+         drawDeleted = false;
++        inu_drawClown = desu.inugram.helpers.profile.ClownAvatarHelper.isClown(UserConfig.selectedAccount, id);
+ 
+         if (firstName == null || firstName.length() == 0) {
+             firstName = lastName;
+@@ -499,10 +504,15 @@ public class AvatarDrawable extends Drawable {
+         }
+     }
+ 
++    public void inu_setDrawClown(boolean value) {
++        inu_drawClown = value;
++    }
++
+     public void setText(String text) {
+         invalidateTextLayout = true;
+         avatarType = AVATAR_TYPE_NORMAL;
+         drawDeleted = false;
++        inu_drawClown = false;
+         getAvatarSymbols(text, null, null, stringBuilder);
+     }
+ 
+@@ -703,6 +713,7 @@ public class AvatarDrawable extends Drawable {
+                     drawable.draw(canvas);
+                 }
+             }
++        } else if (inu_drawClown && !drawDeleted && desu.inugram.helpers.profile.ClownAvatarHelper.draw(canvas, size, alpha, isProfile, scaleSize)) {
+         } else if (drawDeleted && Theme.avatarDrawables[1] != null) {
+             int w = Theme.avatarDrawables[1].getIntrinsicWidth();
+             int h = Theme.avatarDrawables[1].getIntrinsicHeight();

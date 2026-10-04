@@ -843,6 +843,15 @@
     <string name="InuPersonalPhotoMark">个人照片</string>
     <string name="InuDisableGlassGlare">禁用玻璃眩光</string>
     <string name="InuDisableProfileAvatarBlur">禁用个人资料头像模糊</string>
+    <string name="InuClownAvatarsSection">已屏蔽用户头像</string>
+    <string name="InuClownAvatarBlocked">为已屏蔽用户显示小丑头像</string>
+    <string name="InuClownAvatarBlockedInfo">为你屏蔽的用户显示小丑，而不是照片。</string>
+    <string name="InuClownAvatarBlockedMe">为屏蔽我的用户显示小丑头像</string>
+    <string name="InuClownAvatarBlockedMeInfo">根据缺少照片和最后在线时间推测，可能不准确。</string>
+    <string name="InuClownAvatarEmoji">表情符号</string>
+    <string name="InuClownAvatarEmojiClown">小丑</string>
+    <string name="InuClownAvatarEmojiPoop">便便</string>
+    <string name="InuClownAvatarEmojiSkull">骷髅</string>
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glass 角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glass 强度</string>

@@ -739,6 +739,15 @@
 
     <string name="InuDisableGlassGlare">غیرفعال کردن درخشش شیشه</string>
     <string name="InuDisableProfileAvatarBlur">غیرفعال کردن تاری آواتار نمایه</string>
+    <string name="InuClownAvatarsSection">آواتار مسدودشده‌ها</string>
+    <string name="InuClownAvatarBlocked">آواتار دلقک برای کاربران مسدودشده</string>
+    <string name="InuClownAvatarBlockedInfo">به‌جای عکس، برای کاربرانی که مسدود کرده‌اید دلقک نشان بده.</string>
+    <string name="InuClownAvatarBlockedMe">آواتار دلقک برای کسانی که من را مسدود کرده‌اند</string>
+    <string name="InuClownAvatarBlockedMeInfo">از نبود عکس و آخرین بازدید حدس زده می‌شود، پس ممکن است اشتباه باشد.</string>
+    <string name="InuClownAvatarEmoji">ایموجی</string>
+    <string name="InuClownAvatarEmojiClown">دلقک</string>
+    <string name="InuClownAvatarEmojiPoop">کاکا</string>
+    <string name="InuClownAvatarEmojiSkull">جمجمه</string>
     <string name="InuLiquidGlass">شیشه مایع</string>
     <string name="InuLiquidGlassAngle">زاویه شیشه مایع</string>
     <string name="InuLiquidGlassIntensity">شدت شیشه مایع</string>

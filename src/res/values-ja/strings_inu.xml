@@ -844,6 +844,15 @@
     <string name="InuPersonalPhotoMark">個人用写真</string>
     <string name="InuDisableGlassGlare">ガラスのグレアを無効化</string>
     <string name="InuDisableProfileAvatarBlur">プロフィールアバターのブラーを無効化</string>
+    <string name="InuClownAvatarsSection">ブロックしたアバター</string>
+    <string name="InuClownAvatarBlocked">ブロックしたユーザーにピエロのアバター</string>
+    <string name="InuClownAvatarBlockedInfo">ブロックしたユーザーの写真の代わりにピエロを表示します。</string>
+    <string name="InuClownAvatarBlockedMe">自分をブロックしたユーザーにピエロのアバター</string>
+    <string name="InuClownAvatarBlockedMeInfo">写真と最終ログインがないことから推測するため、誤ることがあります。</string>
+    <string name="InuClownAvatarEmoji">絵文字</string>
+    <string name="InuClownAvatarEmojiClown">ピエロ</string>
+    <string name="InuClownAvatarEmojiPoop">うんち</string>
+    <string name="InuClownAvatarEmojiSkull">ドクロ</string>
     <string name="InuLiquidGlass">Liquid Glass</string>
     <string name="InuLiquidGlassAngle">Liquid Glassの角度</string>
     <string name="InuLiquidGlassIntensity">Liquid Glassの強度</string>

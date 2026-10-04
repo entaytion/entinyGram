@@ -1422,6 +1422,15 @@ object InuConfig {
     val CHAT_HEADER_NO_PILL = BoolItem("chat_header_no_pill", false)
 
     @JvmField
+    val CLOWN_AVATAR_BLOCKED = BoolItem("clown_avatar_blocked", false)
+
+    @JvmField
+    val CLOWN_AVATAR_BLOCKED_ME = BoolItem("clown_avatar_blocked_me", false)
+
+    @JvmField
+    val CLOWN_AVATAR_EMOJI = IntItem("clown_avatar_emoji", 0)
+
+    @JvmField
     val CHAT_TITLE_MARQUEE = BoolItem("chat_title_marquee", false)
 
     @JvmField

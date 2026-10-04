@@ -739,6 +739,15 @@
 
     <string name="InuDisableGlassGlare">تعطيل لمعان الزجاج</string>
     <string name="InuDisableProfileAvatarBlur">تعطيل تمويه صورة الملف الشخصي</string>
+    <string name="InuClownAvatarsSection">صور المحظورين</string>
+    <string name="InuClownAvatarBlocked">صورة مهرج للمستخدمين المحظورين</string>
+    <string name="InuClownAvatarBlockedInfo">عرض مهرج بدل الصورة للمستخدمين الذين حظرتهم.</string>
+    <string name="InuClownAvatarBlockedMe">صورة مهرج لمن حظرني</string>
+    <string name="InuClownAvatarBlockedMeInfo">يُخمَّن من غياب الصورة وآخر ظهور، لذا قد يكون خاطئًا.</string>
+    <string name="InuClownAvatarEmoji">الرمز التعبيري</string>
+    <string name="InuClownAvatarEmojiClown">مهرج</string>
+    <string name="InuClownAvatarEmojiPoop">براز</string>
+    <string name="InuClownAvatarEmojiSkull">جمجمة</string>
     <string name="InuLiquidGlass">الزجاج السائل</string>
     <string name="InuLiquidGlassAngle">زاوية الزجاج السائل</string>
     <string name="InuLiquidGlassIntensity">شدة الزجاج السائل</string>
