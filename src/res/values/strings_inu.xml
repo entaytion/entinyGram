@@ -294,7 +294,6 @@
     <string name="InuResetStorageConfirm">This will wipe local auth keys and caches to reset the pending authentication. Are you sure?</string>
     <string name="InuHideBottomBar">Hide bottom bar</string>
     <string name="InuHideBottomBarJoined">Joined channels</string>
-    <string name="InuHideBottomBarNonJoined">Non-joined channels</string>
     <string name="InuHideBottomBarNonJoinedGroups">Non-joined groups</string>
     <string name="InuHideBottomBarReplies">Replies</string>
     <string name="InuHideBottomBarPinned">Pinned messages</string>
@@ -302,6 +301,8 @@
     <string name="InuHideBotSlashGroups">In group chats</string>
     <string name="InuHideBotSlashBots">In chats with bots</string>
     <string name="InuHideBotWebView">Hide bot Web App</string>
+    <string name="InuHideJoinBar">Hide Join bar in channels</string>
+    <string name="InuHideJoinBarInfo">You can still join from the channel profile</string>
     <string name="InuHideSendAsPicker">Hide \"Send as\" picker</string>
     <string name="InuHideSendAsPickerInfo">Long-press the emoji button to temporarily reveal it</string>
     <string name="InuHideRepostToStory">Hide \"Repost to Story\"</string>

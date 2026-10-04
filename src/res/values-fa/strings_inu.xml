@@ -250,7 +250,6 @@
     <string name="InuResetStorageConfirm">این کار کلیدهای احراز هویت محلی و حافظه نهان را پاک می‌کند تا احراز هویتِ در انتظار بازنشانی شود. مطمئن هستید؟</string>
     <string name="InuHideBottomBar">پنهان کردن نوار پایین</string>
     <string name="InuHideBottomBarJoined">کانال‌های عضوشده</string>
-    <string name="InuHideBottomBarNonJoined">کانال‌های عضو‌نشده</string>
     <string name="InuHideBottomBarNonJoinedGroups">گروه‌های عضو‌نشده</string>
     <string name="InuHideBottomBarReplies">پاسخ‌ها</string>
     <string name="InuHideBottomBarPinned">پیام‌های سنجاق‌شده</string>
@@ -258,6 +257,8 @@
     <string name="InuHideBotSlashGroups">در گفتگوهای گروهی</string>
     <string name="InuHideBotSlashBots">در گفتگو با ربات‌ها</string>
     <string name="InuHideBotWebView">پنهان کردن وب‌اپ ربات</string>
+    <string name="InuHideJoinBar">پنهان کردن نوار عضویت در کانال‌ها</string>
+    <string name="InuHideJoinBarInfo">همچنان می‌توانید از پروفایل کانال عضو شوید</string>
     <string name="InuHideSendAsPicker">پنهان کردن انتخابگر «ارسال به‌عنوان»</string>
     <string name="InuHideSendAsPickerInfo">برای نمایش موقت، دکمه ایموجی را نگه دارید</string>
     <string name="InuHideRepostToStory">پنهان کردن «بازنشر در استوری»</string>

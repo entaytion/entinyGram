@@ -143,13 +143,14 @@
     <string name="InuResetStorageConfirm">Это удалит локальные ключи авторизации и кэши, чтобы сбросить ожидающую авторизацию. Вы уверены?</string>
     <string name="InuHideBottomBar">Скрывать нижнюю панель</string>
     <string name="InuHideBottomBarJoined">В каналах с подпиской</string>
-    <string name="InuHideBottomBarNonJoined">В каналах без подписки</string>
     <string name="InuHideBottomBarReplies">В ответах</string>
     <string name="InuHideBottomBarPinned">В закреплённых сообщениях</string>
     <string name="InuHideBotSlash">Скрыть кнопку меню команд бота</string>
     <string name="InuHideBotSlashGroups">В групповых чатах</string>
     <string name="InuHideBotSlashBots">В чатах с ботами</string>
     <string name="InuHideBotWebView">Скрыть веб-приложения ботов</string>
+    <string name="InuHideJoinBar">Скрывать «Подписаться» в каналах</string>
+    <string name="InuHideJoinBarInfo">Подписаться можно в профиле канала</string>
     <string name="InuHideSendAsPicker">Скрыть выбор отправителя</string>
     <string name="InuHideSendAsPickerInfo">Долгое нажатие на кнопку эмодзи временно показывает его</string>
     <string name="InuHideRepostToStory">Скрыть «Опубликовать в истории»</string>

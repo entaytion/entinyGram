@@ -250,7 +250,6 @@
     <string name="InuResetStorageConfirm">سيؤدي هذا إلى مسح مفاتيح المصادقة المحلية وذاكرة التخزين المؤقت لإعادة تعيين المصادقة المعلقة. هل أنت متأكد؟</string>
     <string name="InuHideBottomBar">إخفاء الشريط السفلي</string>
     <string name="InuHideBottomBarJoined">القنوات المنضم إليها</string>
-    <string name="InuHideBottomBarNonJoined">القنوات غير المنضم إليها</string>
     <string name="InuHideBottomBarNonJoinedGroups">المجموعات غير المنضم إليها</string>
     <string name="InuHideBottomBarReplies">الردود</string>
     <string name="InuHideBottomBarPinned">الرسائل المثبتة</string>
@@ -258,6 +257,8 @@
     <string name="InuHideBotSlashGroups">في محادثات المجموعات</string>
     <string name="InuHideBotSlashBots">في محادثات البوتات</string>
     <string name="InuHideBotWebView">إخفاء تطبيق الويب للبوت</string>
+    <string name="InuHideJoinBar">إخفاء شريط الانضمام في القنوات</string>
+    <string name="InuHideJoinBarInfo">يمكنك الانضمام من ملف القناة</string>
     <string name="InuHideSendAsPicker">إخفاء منتقي \"الإرسال كـ\"</string>
     <string name="InuHideSendAsPickerInfo">اضغط مطولاً على زر الإيموجي لإظهاره مؤقتاً</string>
     <string name="InuHideRepostToStory">إخفاء \"إعادة النشر في قصة\"</string>

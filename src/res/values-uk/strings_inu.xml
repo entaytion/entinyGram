@@ -191,7 +191,6 @@
     <string name="InuResetStorageConfirm">Це очистить локальні ключі та кеш. Ви впевнені?</string>
     <string name="InuHideBottomBar">Приховати нижню панель</string>
     <string name="InuHideBottomBarJoined">Канали, де ви є</string>
-    <string name="InuHideBottomBarNonJoined">Непідписані канали</string>
     <string name="InuHideBottomBarNonJoinedGroups">Непідписані групи</string>
     <string name="InuHideBottomBarReplies">Відповіді</string>
     <string name="InuHideBottomBarPinned">Закріплені повідомлення</string>
@@ -199,6 +198,8 @@
     <string name="InuHideBotSlashGroups">У групових чатах</string>
     <string name="InuHideBotSlashBots">У чатах з ботами</string>
     <string name="InuHideBotWebView">Приховати Web App ботів</string>
+    <string name="InuHideJoinBar">Ховати «Приєднатися» в каналах</string>
+    <string name="InuHideJoinBarInfo">Підписатися можна в профілі каналу</string>
     <string name="InuHideSendAsPicker">Приховати вибір «Надіслати від імені»</string>
     <string name="InuHideSendAsPickerInfo">Довге натискання на кнопку емодзі тимчасово відкриє вибір</string>
     <string name="InuHideRepostToStory">Приховати «Репост в Історію»</string>

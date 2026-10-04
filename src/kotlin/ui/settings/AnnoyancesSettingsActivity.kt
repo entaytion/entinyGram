@@ -61,7 +61,6 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         LocaleController.getString(R.string.InuHideBottomBar),
         listOf(
             ExpandableBoolGroup.Option(R.string.InuHideBottomBarJoined, InuConfig.HIDE_BOTTOM_BAR_JOINED),
-            ExpandableBoolGroup.Option(R.string.InuHideBottomBarNonJoined, InuConfig.HIDE_BOTTOM_BAR_NON_JOINED),
             ExpandableBoolGroup.Option(R.string.InuHideBottomBarNonJoinedGroups, InuConfig.HIDE_BOTTOM_BAR_NON_JOINED_GROUPS),
             ExpandableBoolGroup.Option(R.string.InuHideBottomBarReplies, InuConfig.HIDE_BOTTOM_BAR_REPLIES),
             ExpandableBoolGroup.Option(R.string.InuHideBottomBarPinned, InuConfig.HIDE_BOTTOM_BAR_PINNED),
@@ -74,6 +73,14 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
     override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuAnnoyancesChats)))
         hideBottomBarGroup.addTo(items) { listView.adapter.update(true) }
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_HIDE_JOIN_BAR,
+                R.string.InuHideJoinBar,
+                R.string.InuHideJoinBarInfo,
+                InuConfig.HIDE_BOTTOM_BAR_NON_JOINED.value
+            )
+        )
         hideBotSlashGroup.addTo(items) { listView.adapter.update(true) }
         items.add(
             UItem.asCheck(TOGGLE_BOT_WEBVIEW_BUTTON, LocaleController.getString(R.string.InuHideBotWebView))
@@ -523,6 +530,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             }
 
             TOGGLE_BOT_WEBVIEW_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_BOT_WEBVIEW_INPUT.toggle()
+            TOGGLE_HIDE_JOIN_BAR -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_BOTTOM_BAR_NON_JOINED.toggle()
             TOGGLE_HIDE_SEND_AS_PICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_SEND_AS_PICKER.toggle()
             TOGGLE_HIDE_CALL_ACTION_BUTTON -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_CALL_ACTION_BUTTON.toggle()
             TOGGLE_HIDE_REACTION_ENTRY -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_REACTIONS_ENTRY.toggle()
@@ -683,6 +691,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
         private val SECTION_HIDE_BOT_SLASH = InuUtils.generateId()
         private val SECTION_HIDE_BOTTOM_BAR = InuUtils.generateId()
         private val TOGGLE_BOT_WEBVIEW_BUTTON = InuUtils.generateId()
+        private val TOGGLE_HIDE_JOIN_BAR = InuUtils.generateId()
         private val TOGGLE_HIDE_SEND_AS_PICKER = InuUtils.generateId()
         private val TOGGLE_HIDE_CALL_ACTION_BUTTON = InuUtils.generateId()
         private val TOGGLE_HIDE_REACTION_ENTRY = InuUtils.generateId()
@@ -696,6 +705,7 @@ class AnnoyancesSettingsActivity : SettingsPageActivity() {
             factory = ::AnnoyancesSettingsActivity,
             entries = listOf(
                 SearchRegistry.Entry("hide-bottom-bar", R.string.InuHideBottomBar, SECTION_HIDE_BOTTOM_BAR),
+                SearchRegistry.Entry("hide-join-bar", R.string.InuHideJoinBar, TOGGLE_HIDE_JOIN_BAR),
                 SearchRegistry.Entry("hide-bot-slash", R.string.InuHideBotSlash, SECTION_HIDE_BOT_SLASH),
                 SearchRegistry.Entry("hide-bot-webview-input", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
                 SearchRegistry.Entry("hide-send-as-picker", R.string.InuHideSendAsPicker, TOGGLE_HIDE_SEND_AS_PICKER),

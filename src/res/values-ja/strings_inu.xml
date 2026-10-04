@@ -129,13 +129,14 @@
     <string name="InuResetStorageConfirm">保留中の認証をリセットするため、ローカル認証キーとキャッシュを消去します。よろしいですか？</string>
     <string name="InuHideBottomBar">下部バーを非表示</string>
     <string name="InuHideBottomBarJoined">参加中のチャンネル</string>
-    <string name="InuHideBottomBarNonJoined">未参加のチャンネル</string>
     <string name="InuHideBottomBarReplies">返信</string>
     <string name="InuHideBottomBarPinned">ピン留めメッセージ</string>
     <string name="InuHideBotSlash">ボットのコマンドメニューボタンを非表示</string>
     <string name="InuHideBotSlashGroups">グループチャットで</string>
     <string name="InuHideBotSlashBots">ボットとのチャットで</string>
     <string name="InuHideBotWebView">ボットのウェブアプリを非表示</string>
+    <string name="InuHideJoinBar">チャンネルの「参加」バーを隠す</string>
+    <string name="InuHideJoinBarInfo">チャンネルのプロフィールから参加できます</string>
     <string name="InuHideSendAsPicker">「送信者」選択を非表示</string>
     <string name="InuHideSendAsPickerInfo">絵文字ボタンを長押しで一時的に表示</string>
     <string name="InuHideRepostToStory">「ストーリーに転送」を非表示</string>

@@ -203,7 +203,6 @@
     <string name="InuResetStorageConfirm">Bu işlem, bekleyen kimlik doğrulamasını sıfırlamak için yerel doğrulama anahtarlarını ve önbellekleri silecektir. Emin misiniz?</string>
     <string name="InuHideBottomBar">Alt çubuğu gizle</string>
     <string name="InuHideBottomBarJoined">Katılınan kanallar</string>
-    <string name="InuHideBottomBarNonJoined">Katılınmayan kanallar</string>
     <string name="InuHideBottomBarNonJoinedGroups">Katılınmayan gruplar</string>
     <string name="InuHideBottomBarReplies">Yanıtlar</string>
     <string name="InuHideBottomBarPinned">Sabitlenmiş mesajlar</string>
@@ -211,6 +210,8 @@
     <string name="InuHideBotSlashGroups">Grup sohbetlerinde</string>
     <string name="InuHideBotSlashBots">Botlarla olan sohbetlerde</string>
     <string name="InuHideBotWebView">Bot Web Uygulamasını gizle</string>
+    <string name="InuHideJoinBar">Kanallarda Katıl çubuğunu gizle</string>
+    <string name="InuHideJoinBarInfo">Yine de kanal profilinden katılabilirsin</string>
     <string name="InuHideSendAsPicker">\"Farklı gönder\" seçicisini gizle</string>
     <string name="InuHideSendAsPickerInfo">Geçici olarak göstermek için emoji düğmesine uzun basın</string>
     <string name="InuHideRepostToStory">\"Hikayede Yeniden Paylaş\"ı gizle</string>

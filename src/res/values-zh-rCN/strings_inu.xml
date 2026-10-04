@@ -129,13 +129,14 @@
     <string name="InuResetStorageConfirm">这将清除本地认证密钥和缓存，以重置待处理的认证。确定吗？</string>
     <string name="InuHideBottomBar">隐藏底部栏</string>
     <string name="InuHideBottomBarJoined">已加入的频道</string>
-    <string name="InuHideBottomBarNonJoined">未加入的频道</string>
     <string name="InuHideBottomBarReplies">回复</string>
     <string name="InuHideBottomBarPinned">置顶消息</string>
     <string name="InuHideBotSlash">隐藏机器人命令菜单按钮</string>
     <string name="InuHideBotSlashGroups">在群组聊天中</string>
     <string name="InuHideBotSlashBots">在与机器人的聊天中</string>
     <string name="InuHideBotWebView">隐藏机器人小程序</string>
+    <string name="InuHideJoinBar">隐藏频道中的“加入”栏</string>
+    <string name="InuHideJoinBarInfo">仍可在频道资料页中加入</string>
     <string name="InuHideSendAsPicker">隐藏「以…身份发送」选择器</string>
     <string name="InuHideSendAsPickerInfo">长按表情按钮可临时显示</string>
     <string name="InuHideRepostToStory">隐藏「转发到快拍」</string>
