@@ -238,6 +238,7 @@ class IosStyleSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.msg_newphone,
             factory = ::IosStyleSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("disable-glass-glare", R.string.InuDisableGlassGlare, TOGGLE_DISABLE_GLASS_GLARE),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("ios-bottom-bar", R.string.InuIosBottomBar, TOGGLE_IOS_BOTTOM_BAR),
                 SearchRegistry.Entry("ios-chats-tab-first-folder", R.string.InuIosChatsTabFirstFolder, TOGGLE_IOS_CHATS_TAB_FIRST_FOLDER),

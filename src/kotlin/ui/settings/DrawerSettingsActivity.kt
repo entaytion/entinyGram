@@ -119,6 +119,7 @@ class DrawerSettingsActivity : SettingsPageActivity() {
             iconRes = R.drawable.inu_tabler_menu_2,
             factory = ::DrawerSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("hide-bottom-tabs", R.string.InuBottomTabsHide, TOGGLE_HIDE_BOTTOM_TABS),
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),

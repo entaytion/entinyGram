@@ -566,6 +566,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             factory = ::CategoryChatsSettingsActivity,
             aliases = listOf("dialogs"),
             entries = DialogsSettingsActivity.PAGE.entries + listOf(
+                SearchRegistry.Entry("mention-separator-bots", R.string.InuMentionSeparatorBots, TOGGLE_MENTION_SEPARATOR_BOTS),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),
                 SearchRegistry.Entry("disable-pull-to-next", R.string.InuDisablePullToNext, TOGGLE_DISABLE_PULL_TO_NEXT),
                 SearchRegistry.Entry("chat-always-show-down", R.string.InuChatAlwaysShowDown, TOGGLE_CHAT_ALWAYS_SHOW_DOWN),

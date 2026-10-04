@@ -659,6 +659,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             iconRes = R.drawable.inu_tabler_device_floppy,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("logs-enabled", R.string.InuLogsEnabled, TOGGLE_LOGS_ENABLED),
                 SearchRegistry.Entry("additional-donate", R.string.InuDonateRow, BUTTON_DONATE),
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),
                 SearchRegistry.Entry("auto-update-check", R.string.InuAutoUpdateCheck, TOGGLE_AUTO_UPDATE_CHECK),

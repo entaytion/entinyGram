@@ -3,6 +3,7 @@ package desu.inugram.ui.settings
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import desu.inugram.SearchRegistry
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.ShortcutHelper
 import desu.inugram.helpers.security.ParanoiaHelper
@@ -211,5 +212,22 @@ class ParanoiaActivity : SettingsPageActivity() {
         private val TOGGLE_HIDE_MY_STORIES = InuUtils.generateId()
         private val TOGGLE_DISABLE_NOTIFICATIONS = InuUtils.generateId()
         private val TOGGLE_HIDE_SETTINGS = InuUtils.generateId()
+
+        @JvmField
+        val PAGE = SearchRegistry.Page(
+            slug = "paranoia",
+            titleRes = R.string.InuParanoiaMode,
+            iconRes = R.drawable.inu_tabler_spy,
+            factory = ::ParanoiaActivity,
+            entries = listOf(
+                SearchRegistry.Entry("paranoia-whitelist", R.string.InuParanoiaWhitelist, TOGGLE_WHITELIST),
+                SearchRegistry.Entry("paranoia-launcher-shortcut", R.string.InuParanoiaLauncherShortcut, TOGGLE_LAUNCHER_SHORTCUT),
+                SearchRegistry.Entry("paranoia-disguise", R.string.InuParanoiaDisguise, TOGGLE_DISGUISE),
+                SearchRegistry.Entry("paranoia-hide-other-accounts", R.string.InuParanoiaHideOtherAccounts, TOGGLE_HIDE_OTHER_ACCOUNTS),
+                SearchRegistry.Entry("paranoia-hide-folders", R.string.InuParanoiaHideFolders, TOGGLE_HIDE_FOLDERS),
+                SearchRegistry.Entry("paranoia-hide-my-stories", R.string.InuParanoiaHideMyStories, TOGGLE_HIDE_MY_STORIES),
+                SearchRegistry.Entry("paranoia-disable-notifications", R.string.InuParanoiaDisableNotifications, TOGGLE_DISABLE_NOTIFICATIONS),
+            ),
+        )
     }
 }

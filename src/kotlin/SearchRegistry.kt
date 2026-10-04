@@ -31,6 +31,7 @@ import desu.inugram.ui.settings.MenusSettingsActivity
 import desu.inugram.ui.settings.MessagesSettingsActivity
 import desu.inugram.ui.settings.PillStackSettingsActivity
 import desu.inugram.ui.settings.RecentChatsSettingsActivity
+import desu.inugram.ui.settings.ParanoiaActivity
 import desu.inugram.ui.settings.PrivacySecurityActivity
 import desu.inugram.ui.settings.RegexFilterSettingsActivity
 import desu.inugram.ui.settings.SettingsPageActivity
@@ -93,6 +94,7 @@ object SearchRegistry {
             RegexFilterSettingsActivity.PAGE,
             TranslatorSettingsActivity.PAGE,
             PrivacySecurityActivity.PAGE,
+            ParanoiaActivity.PAGE,
             AntiCensorshipSettingsActivity.PAGE,
             DatacenterStatusActivity.PAGE,
             BackupSettingsActivity.PAGE,
