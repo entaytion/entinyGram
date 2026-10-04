@@ -823,6 +823,9 @@ object InuConfig {
     val DISABLE_QUICK_SHARE = BoolItem("disable_quick_share", true)
 
     @JvmField
+    val MEMORY_TRIM = BoolItem("memory_trim", true)
+
+    @JvmField
     val HIDE_CHANNEL_SHARE_BUTTON = BoolItem("hide_channel_share_button", false)
 
     @JvmField

@@ -209,6 +209,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_INTRO_STICKER, R.string.InuDisableIntroSticker, R.string.InuDisableIntroStickerInfo, InuConfig.DISABLE_INTRO_STICKER.value))
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_VOLUME_PLAY_VIDEO, R.string.InuDisableVolumePlayVideo, R.string.InuDisableVolumePlayVideoInfo, InuConfig.DISABLE_VOLUME_PLAY_VIDEO.value))
         items.add(mkTwoLineCheckItem(TOGGLE_DISABLE_QUICK_SHARE, R.string.InuDisableQuickShare, R.string.InuDisableQuickShareInfo, InuConfig.DISABLE_QUICK_SHARE.value))
+        items.add(mkTwoLineCheckItem(TOGGLE_MEMORY_TRIM, R.string.InuMemoryTrim, R.string.InuMemoryTrimInfo, InuConfig.MEMORY_TRIM.value))
         items.add(mkTwoLineCheckItem(TOGGLE_SAVE_SELECTED_FILES, R.string.InuSaveSelectedFiles, R.string.InuSaveSelectedFilesInfo, InuConfig.SAVE_SELECTED_FILES.value))
         items.add(UItem.asShadow(null))
 
@@ -502,6 +503,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_INTRO_STICKER -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_INTRO_STICKER.toggle()
             TOGGLE_DISABLE_VOLUME_PLAY_VIDEO -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_VOLUME_PLAY_VIDEO.toggle()
             TOGGLE_DISABLE_QUICK_SHARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.DISABLE_QUICK_SHARE.toggle()
+            TOGGLE_MEMORY_TRIM -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.MEMORY_TRIM.toggle()
             TOGGLE_SAVE_SELECTED_FILES -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SAVE_SELECTED_FILES.toggle()
 
             TOGGLE_SHOW_SECONDS -> {
@@ -643,6 +645,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_INTRO_STICKER = InuUtils.generateId()
         private val TOGGLE_DISABLE_VOLUME_PLAY_VIDEO = InuUtils.generateId()
         private val TOGGLE_DISABLE_QUICK_SHARE = InuUtils.generateId()
+        private val TOGGLE_MEMORY_TRIM = InuUtils.generateId()
         private val TOGGLE_SAVE_SELECTED_FILES = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
         private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
@@ -719,6 +722,7 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-intro-sticker", R.string.InuDisableIntroSticker, TOGGLE_DISABLE_INTRO_STICKER),
                 SearchRegistry.Entry("disable-volume-play-video", R.string.InuDisableVolumePlayVideo, TOGGLE_DISABLE_VOLUME_PLAY_VIDEO),
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
+                SearchRegistry.Entry("memory-trim", R.string.InuMemoryTrim, TOGGLE_MEMORY_TRIM),
                 SearchRegistry.Entry("save-selected-files", R.string.InuSaveSelectedFiles, TOGGLE_SAVE_SELECTED_FILES),
                 SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
                 SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),

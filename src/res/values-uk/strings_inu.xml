@@ -144,6 +144,8 @@
     <string name="InuHideKeyboardOnScroll">Приховувати клавіатуру при прокручуванні</string>
     <string name="InuDisablePullToNext">Вимкнути потягування до наступного каналу</string>
     <string name="InuDisableSensitive">Вимкнути фільтр делікатного контенту</string>
+    <string name="InuMemoryTrim">Звільняти пам\'ять у фоні</string>
+    <string name="InuMemoryTrimInfo">Очищає кеші зображень і стискає пам\'ять невдовзі після згортання застосунку</string>
     <string name="InuDisableQuickShare">Вимкнути швидке поширення</string>
     <string name="InuDisableQuickShareInfo">Не показувати часті контакти при довгому натисканні кнопки поширення</string>
     <string name="InuSaveSelectedFiles">Збереження виділених файлів</string>

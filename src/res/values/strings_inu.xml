@@ -208,6 +208,8 @@
     <string name="InuHideKeyboardOnScroll">Hide keyboard on scroll</string>
     <string name="InuDisablePullToNext">Disable pull to next channel</string>
     <string name="InuDisableSensitive">Disable sensitive filter</string>
+    <string name="InuMemoryTrim">Free memory in background</string>
+    <string name="InuMemoryTrimInfo">Clears image caches and compacts memory shortly after the app goes to background</string>
     <string name="InuDisableQuickShare">Disable quick share</string>
     <string name="InuDisableQuickShareInfo">Don\'t show frequent contacts on long-tapping the share button (next to channel messages); it sends without confirmation</string>
     <string name="InuSaveSelectedFiles">Save selected files</string>

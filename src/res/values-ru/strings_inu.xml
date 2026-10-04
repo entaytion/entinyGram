@@ -893,6 +893,8 @@
     <string name="InuDelay">Задержка</string>
 
     <string name="InuDisableQuickShare">Отключить быструю отправку</string>
+    <string name="InuMemoryTrim">Освобождать память в фоне</string>
+    <string name="InuMemoryTrimInfo">Очищает кэши изображений и сжимает память вскоре после сворачивания приложения</string>
     <string name="InuDisableQuickShareInfo">Не показывать частые контакты при долгом нажатии кнопки «Поделиться» (рядом с сообщениями каналов); отправка без подтверждения</string>
     <string name="InuSaveSelectedFiles">Сохранение выделенных файлов</string>
     <string name="InuSaveSelectedFilesInfo">Добавляет кнопку загрузки при выделении файлов в медиа профиля и поиске; незагруженные файлы докачиваются автоматически</string>
