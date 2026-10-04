@@ -1404,6 +1404,9 @@ object InuConfig {
     val DIALOG_AVATAR_OPENS_PROFILE = BoolItem("dialog_avatar_opens_profile", false)
 
     @JvmField
+    val ALWAYS_SHOW_DOWNLOADS = BoolItem("always_show_downloads", false)
+
+    @JvmField
     val IOS_CHAT_HEADER = BoolItem("ios_chat_header", false)
 
     @JvmField

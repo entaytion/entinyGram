@@ -1612,6 +1612,8 @@
     <string name="InuConnectProxyImmediately">立即连接</string>
     <string name="InuDialogAvatarOpensProfile">点击头像打开资料</string>
     <string name="InuDialogAvatarOpensProfileInfo">在聊天列表中点击聊天头像会直接打开对方资料，而不是进入聊天。</string>
+    <string name="InuAlwaysShowDownloads">下载按钮</string>
+    <string name="InuAlwaysShowDownloadsInfo">始终在聊天列表标题栏显示下载按钮</string>
     <string name="InuGhostModeDisabled">幽灵模式已关闭</string>
     <string name="InuGhostModeEnabled">幽灵模式已开启</string>
     <string name="InuHidePinnedForever">在此聊天中始终隐藏</string>

@@ -561,6 +561,8 @@
     <string name="InuDisableChatPreviewExpandInfo">تعطيل النقر للتوسيع، وجعل الفقاعات تفاعلية بدلاً من ذلك</string>
     <string name="InuDialogAvatarOpensProfile">النقر على الصورة الرمزية يفتح الملف الشخصي</string>
     <string name="InuDialogAvatarOpensProfileInfo">النقر على الصورة الرمزية لمحادثة في القائمة يفتح ملفها الشخصي مباشرة بدلاً من المحادثة.</string>
+    <string name="InuAlwaysShowDownloads">زر التنزيلات</string>
+    <string name="InuAlwaysShowDownloadsInfo">إظهار زر التنزيلات دائمًا في رأس المحادثات</string>
     <string name="InuHideMyPhoneNumber">إخفاء رقم هاتفي</string>
     <string name="InuFonts">الخطوط</string>
     <string name="InuAppFont">خط التطبيق</string>

@@ -1597,6 +1597,8 @@
     <string name="InuConnectProxyImmediately">すぐに接続</string>
     <string name="InuDialogAvatarOpensProfile">アバターをタップでプロフィールを開く</string>
     <string name="InuDialogAvatarOpensProfileInfo">チャット一覧でアバターをタップすると、チャットではなくプロフィールを直接開きます。</string>
+    <string name="InuAlwaysShowDownloads">ダウンロードボタン</string>
+    <string name="InuAlwaysShowDownloadsInfo">チャット一覧のヘッダーにダウンロードボタンを常に表示します</string>
     <string name="InuDisableLinkPreview">リンクプレビューを無効化</string>
     <string name="InuEnableLinkPreview">リンクプレビューを有効化</string>
     <string name="InuGhostModeDisabled">ゴーストモードをオフにしました</string>

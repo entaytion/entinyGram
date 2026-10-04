@@ -175,6 +175,14 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 InuConfig.DIALOG_AVATAR_OPENS_PROFILE.value
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_ALWAYS_SHOW_DOWNLOADS,
+                R.string.InuAlwaysShowDownloads,
+                R.string.InuAlwaysShowDownloadsInfo,
+                InuConfig.ALWAYS_SHOW_DOWNLOADS.value
+            )
+        )
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuBottomTabs)))
@@ -386,6 +394,11 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
 
             TOGGLE_DIALOG_AVATAR_OPENS_PROFILE -> {
                 val new = InuConfig.DIALOG_AVATAR_OPENS_PROFILE.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
+
+            TOGGLE_ALWAYS_SHOW_DOWNLOADS -> {
+                val new = InuConfig.ALWAYS_SHOW_DOWNLOADS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
 
@@ -658,6 +671,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_FAB_LEFT_SIDE = InuUtils.generateId()
         private val TOGGLE_INTERACTIVE_CHAT_PREVIEW = InuUtils.generateId()
         private val TOGGLE_DIALOG_AVATAR_OPENS_PROFILE = InuUtils.generateId()
+        private val TOGGLE_ALWAYS_SHOW_DOWNLOADS = InuUtils.generateId()
         private val TOGGLE_HIDE_ALL_CHATS_TAB = InuUtils.generateId()
         private val BUTTON_COMMUNITY_DISPLAY_MODE = InuUtils.generateId()
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
@@ -715,6 +729,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("hide-bot-webview-dialogs", R.string.InuHideBotWebView, TOGGLE_BOT_WEBVIEW_BUTTON),
                 SearchRegistry.Entry("disable-chat-preview-expand", R.string.InuDisableChatPreviewExpand, TOGGLE_INTERACTIVE_CHAT_PREVIEW),
                 SearchRegistry.Entry("dialog-avatar-opens-profile", R.string.InuDialogAvatarOpensProfile, TOGGLE_DIALOG_AVATAR_OPENS_PROFILE),
+                SearchRegistry.Entry("always-show-downloads", R.string.InuAlwaysShowDownloads, TOGGLE_ALWAYS_SHOW_DOWNLOADS),
                 SearchRegistry.Entry("community-display-mode", R.string.InuCommunityDisplayMode, BUTTON_COMMUNITY_DISPLAY_MODE),
                 SearchRegistry.Entry("bottom-tabs-hide", R.string.InuBottomTabsHide, TOGGLE_BOTTOM_TABS_HIDE),
                 SearchRegistry.Entry("compact-mode", R.string.InuCompactMode, TOGGLE_COMPACT_MODE),

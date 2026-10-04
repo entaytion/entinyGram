@@ -103,6 +103,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **branded first-run intro**
 - 📡 **pill stack**: interactive pills in chats search bar - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
 - 📡 **support card**: optional way to support the developer, can be hidden
+- 📡 **downloads button**: always show the downloads list button in the chats header
 
 ### profile & identity tools
 

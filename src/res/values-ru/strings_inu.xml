@@ -1651,6 +1651,8 @@
     <string name="InuConnectProxyImmediately">Подключиться сразу</string>
     <string name="InuDialogAvatarOpensProfile">Нажатие на аватар открывает профиль</string>
     <string name="InuDialogAvatarOpensProfileInfo">Нажатие на аватар чата в списке чатов открывает профиль вместо самого чата.</string>
+    <string name="InuAlwaysShowDownloads">Кнопка загрузок</string>
+    <string name="InuAlwaysShowDownloadsInfo">Всегда показывать кнопку загрузок в шапке чатов</string>
     <string name="InuGhostModeDisabled">Режим призрака выключен</string>
     <string name="InuGhostModeEnabled">Режим призрака включён</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрировать аватар</string>

@@ -561,6 +561,8 @@
     <string name="InuDisableChatPreviewExpandInfo">ضربه برای بزرگ‌کردن غیرفعال شود و در عوض حباب‌ها تعاملی شوند</string>
     <string name="InuDialogAvatarOpensProfile">ضربه روی آواتار نمایه را باز می‌کند</string>
     <string name="InuDialogAvatarOpensProfileInfo">ضربه روی آواتار یک گفتگو در فهرست، به‌جای گفتگو مستقیماً نمایه او را باز می‌کند.</string>
+    <string name="InuAlwaysShowDownloads">دکمه دانلودها</string>
+    <string name="InuAlwaysShowDownloadsInfo">همیشه دکمه دانلودها را در سربرگ چت‌ها نشان بده</string>
     <string name="InuHideMyPhoneNumber">پنهان کردن شماره تلفن من</string>
     <string name="InuFonts">فونت‌ها</string>
     <string name="InuAppFont">فونت برنامه</string>

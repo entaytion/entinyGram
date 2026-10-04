@@ -1649,6 +1649,8 @@
     <string name="InuConnectProxyImmediately">Підключитися одразу</string>
     <string name="InuDialogAvatarOpensProfile">Тап по аватарці відкриває профіль</string>
     <string name="InuDialogAvatarOpensProfileInfo">Тап по аватарці чату в списку чатів відкриває профіль замість самого чату.</string>
+    <string name="InuAlwaysShowDownloads">Кнопка завантажень</string>
+    <string name="InuAlwaysShowDownloadsInfo">Завжди показувати кнопку завантажень у шапці чатів</string>
     <string name="InuIosStyle">Стиль iOS</string>
     <string name="InuIosSettings">Налаштування iOS</string>
     <string name="InuIosSettingsInfo">Центрування заголовків, нижня панель, поле вводу, заголовок чату та liquid glass.</string>

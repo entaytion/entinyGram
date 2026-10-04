@@ -607,6 +607,8 @@
     <string name="InuDisableChatPreviewExpandInfo">Disable tap-to-expand, and make the bubbles interactive instead</string>
     <string name="InuDialogAvatarOpensProfile">Tap avatar to open profile</string>
     <string name="InuDialogAvatarOpensProfileInfo">Tapping a chat\'s avatar in the chat list opens their profile directly instead of the chat.</string>
+    <string name="InuAlwaysShowDownloads">Downloads button</string>
+    <string name="InuAlwaysShowDownloadsInfo">Always show the downloads button in the chats header</string>
     <string name="InuHideMyPhoneNumber">Hide my phone number</string>
     <string name="InuFonts">Fonts</string>
     <string name="InuAppFont">App font</string>

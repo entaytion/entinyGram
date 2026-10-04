@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 4 Oct 2026 19:12:00 +0300
+Subject: entiny__always-show-downloads: always show the downloads button in the chats header
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java      | 2 +-
+ .../src/main/java/org/telegram/ui/DownloadProgressIcon.java | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -10569,7 +10569,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 break;
+             }
+         }
+-        if ((getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
++        if ((desu.inugram.InuConfig.ALWAYS_SHOW_DOWNLOADS.getValue() || getDownloadController().hasUnviewedDownloads() || showDownloads || (downloadsItem.getVisibility() == View.VISIBLE && downloadsItem.getAlpha() == 1 && !force))) {
+             downloadsItemVisible = true;
+         } else {
+             downloadsItemVisible = false;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DownloadProgressIcon.java b/TMessagesProj/src/main/java/org/telegram/ui/DownloadProgressIcon.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DownloadProgressIcon.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DownloadProgressIcon.java
+@@ -108,6 +108,12 @@ public class DownloadProgressIcon extends View implements NotificationCenter.Not
+         AndroidUtilities.rectTmp.set(startPadding, cy - r, startPadding + width * currentProgress, cy + r);
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, paint);
+ 
++        if (currentListeners.isEmpty() && !showCompletedIcon && desu.inugram.InuConfig.ALWAYS_SHOW_DOWNLOADS.getValue()) {
++            desu.inugram.helpers.dialogs.DownloadsHelper.drawIdleIcon(canvas, this, currentColor, cy - r);
++            wasDrawn = true;
++            return;
++        }
++
+         canvas.save();
+         canvas.clipRect(0, 0, getMeasuredWidth(), cy - r);
+         if (progress != 1f) {
