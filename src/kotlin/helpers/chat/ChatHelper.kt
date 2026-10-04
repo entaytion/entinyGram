@@ -1424,7 +1424,11 @@ object ChatHelper {
         hideCaption: Boolean,
         payStars: Long,
     ) {
-        val batch = ArrayList(messages)
+        val limit = if (UserConfig.getInstance(account).isPremium) FileLoader.DEFAULT_MAX_FILE_SIZE_PREMIUM else FileLoader.DEFAULT_MAX_FILE_SIZE
+        val (tooBig, fits) = messages.partition { (it.document?.size ?: 0L) > limit }
+        // entiny: re-upload hits the account upload limit, so skip oversized files up front instead of a silent "!"
+        if (tooBig.isNotEmpty()) showForwardToast(LocaleController.formatString(R.string.InuForwardTooLarge, AndroidUtilities.formatFileSize(limit)))
+        val batch = ArrayList(fits)
         if (batch.isEmpty()) return
         restrictedForwardQueue.postRunnable {
             val temporaryFiles = ArrayList<File>()
@@ -1533,6 +1537,8 @@ object ChatHelper {
         }
         if (pending.isEmpty()) return resolved
 
+        val totalBytes = pending.values.sumOf { it.document?.size ?: 0L }
+        showForwardToast(LocaleController.formatString(R.string.InuForwardDownloading, AndroidUtilities.formatFileSize(totalBytes)))
         val waiter = MediaDownloadWaiter(account, pending.keys)
         // entiny: subscribe NotificationCenter observer on main thread before starting downloads to close race
         AndroidUtilities.runOnUIThread {
@@ -1551,7 +1557,14 @@ object ChatHelper {
             localMediaFile(loader, msg)?.let { forwardableMediaFile(it, temporaryFiles) }
                 ?.let { resolved[msg] = it }
         }
+        if (pending.values.any { !resolved.containsKey(it) }) showForwardToast(LocaleController.getString(R.string.InuForwardDownloadFailed))
         return resolved
+    }
+
+    private fun showForwardToast(text: String) {
+        AndroidUtilities.runOnUIThread {
+            android.widget.Toast.makeText(ApplicationLoader.applicationContext, text, android.widget.Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun forwardableMediaFile(source: File, temporaryFiles: MutableList<File>): File? {

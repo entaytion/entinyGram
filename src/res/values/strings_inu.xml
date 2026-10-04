@@ -594,6 +594,9 @@
     <string name="InuTranslateLlmTemperatureInfo">Lower values keep translations literal and repeatable; higher values allow looser, more idiomatic wording.</string>
     <string name="InuTranslateProviderNotConfigured">Translation provider is not configured. Falling back to Telegram translation.</string>
     <string name="InuTranslateProviderFailed">Translation failed: %1$s. Try again in a moment.</string>
+    <string name="InuForwardDownloading">Downloading %1$s first, then forwarding</string>
+    <string name="InuForwardDownloadFailed">Couldn\'t download the file, so it wasn\'t forwarded.</string>
+    <string name="InuForwardTooLarge">File is over your upload limit (%1$s), can\'t forward it.</string>
     <string name="InuTranslateGoogleBlocked">Google is blocking translation from this network (HTTP 429). Change connection or pick another provider.</string>
     <string name="InuPoweredByProvider">Translations are powered by %1$s.</string>
     <string name="InuHideReactionEntry">Hide reaction appear animation</string>

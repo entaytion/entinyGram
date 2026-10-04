@@ -1633,6 +1633,9 @@
     <string name="InuForwardProUseStock">Telegram الأساسي</string>
     <string name="InuForwardProPlaceholder">نص الرسالة</string>
     <string name="InuForwardProEmptyNotice">لا يمكن أن يكون نص الرسالة فارغاً</string>
+    <string name="InuForwardDownloading">جارٍ تنزيل %1$s أولاً، ثم سيتم التوجيه</string>
+    <string name="InuForwardDownloadFailed">تعذّر تنزيل الملف، لذا لم يتم توجيهه</string>
+    <string name="InuForwardTooLarge">الملف يتجاوز حد الرفع (%1$s)، لا يمكن توجيهه</string>
 
     <string name="InuIosButtonPlacement">موضع الأزرار (iOS)</string>
     <string name="InuIosButtonPlacementInfo">يضع المرفقات على اليسار والإيموجي داخل حقل الإدخال على اليمين.</string>

@@ -1559,6 +1559,9 @@
     <string name="InuForwardProUseStock">Standart Telegram</string>
     <string name="InuForwardProPlaceholder">Mesaj metni</string>
     <string name="InuForwardProEmptyNotice">Mesaj metni boş olamaz</string>
+    <string name="InuForwardDownloading">Önce %1$s indiriliyor, sonra iletilecek</string>
+    <string name="InuForwardDownloadFailed">Dosya indirilemedi, iletilmedi</string>
+    <string name="InuForwardTooLarge">Dosya yükleme sınırını aşıyor (%1$s), iletilemez</string>
 
     <string name="InuIosButtonPlacement">Düğme yerleşimi (iOS)</string>
     <string name="InuIosButtonPlacementInfo">Ek dosya düğmesini sola ve ifade düğmesini giriş alanının sağına taşır.</string>

@@ -1613,6 +1613,9 @@
     <string name="InuForwardProUseStock">Telegram پایه</string>
     <string name="InuForwardProPlaceholder">متن پیام</string>
     <string name="InuForwardProEmptyNotice">متن پیام نمی‌تواند خالی باشد</string>
+    <string name="InuForwardDownloading">ابتدا %1$s دانلود می‌شود، سپس فوروارد می‌شود</string>
+    <string name="InuForwardDownloadFailed">دانلود فایل ناموفق بود، فوروارد نشد</string>
+    <string name="InuForwardTooLarge">فایل از حد آپلود (%1$s) بیشتر است، فوروارد نمی‌شود</string>
 
     <string name="InuIosButtonPlacement">جایگاه دکمه‌ها (iOS)</string>
     <string name="InuIosButtonPlacementInfo">پیوست را در چپ و ایموجی را در راست داخل کادر ورودی قرار می‌دهد.</string>

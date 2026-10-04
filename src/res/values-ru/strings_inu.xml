@@ -1630,6 +1630,9 @@
     <string name="InuForwardProUseStock">Обычный Telegram</string>
     <string name="InuForwardProPlaceholder">Текст сообщения</string>
     <string name="InuForwardProEmptyNotice">Текст сообщения не может быть пустым</string>
+    <string name="InuForwardDownloading">Сначала скачиваю %1$s, затем перешлю</string>
+    <string name="InuForwardDownloadFailed">Не удалось скачать файл, пересылка отменена</string>
+    <string name="InuForwardTooLarge">Файл превышает лимит загрузки (%1$s), переслать нельзя</string>
 
     <string name="InuIosButtonPlacement">Расположение кнопок как в iOS</string>
     <string name="InuIosButtonPlacementInfo">Переносит кнопку вложений влево, а эмодзи внутрь поля ввода справа.</string>

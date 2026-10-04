@@ -1551,6 +1551,9 @@
     <string name="InuForwardProUseStock">公式Telegram</string>
     <string name="InuForwardProPlaceholder">メッセージのテキスト</string>
     <string name="InuForwardProEmptyNotice">メッセージのテキストを空にすることはできません</string>
+    <string name="InuForwardDownloading">まず %1$s をダウンロードしてから転送します</string>
+    <string name="InuForwardDownloadFailed">ファイルをダウンロードできなかったため転送されませんでした</string>
+    <string name="InuForwardTooLarge">ファイルがアップロード上限（%1$s）を超えているため転送できません</string>
     <string name="InuAntiCensorship">検閲回避</string>
     <string name="InuAntiCensorshipTransport">接続</string>
     <string name="InuAntiCensorshipPrivacy">漏洩防止</string>

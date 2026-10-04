@@ -1628,6 +1628,9 @@
     <string name="InuForwardProUseStock">Стоковий Telegram</string>
     <string name="InuForwardProPlaceholder">Текст повідомлення</string>
     <string name="InuForwardProEmptyNotice">Текст повідомлення не може бути порожнім</string>
+    <string name="InuForwardDownloading">Спочатку завантажую %1$s, потім перешлю</string>
+    <string name="InuForwardDownloadFailed">Не вдалося завантажити файл, пересилання скасовано</string>
+    <string name="InuForwardTooLarge">Файл перевищує ліміт завантаження (%1$s), переслати неможливо</string>
 
     <string name="InuIosButtonPlacement">Розташування кнопок як в iOS</string>
     <string name="InuIosButtonPlacementInfo">Переносить кнопку вкладень ліворуч, а емодзі всередину поля вводу праворуч.</string>
