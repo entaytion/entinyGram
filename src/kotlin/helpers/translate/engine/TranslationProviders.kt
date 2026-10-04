@@ -3,7 +3,9 @@ package desu.inugram.helpers.translate.engine
 import android.util.Log
 import desu.inugram.InuConfig
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
+import org.json.JSONTokener
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
 import org.telegram.ui.Components.TranslateAlert2
@@ -122,12 +124,28 @@ object GoogleWebProvider : TranslationProvider {
     @Volatile
     private var blockedUntil = 0L
 
+    // entiny: engine runs 8 workers; unthrottled bursts on chat open trip Google's 429 block
+    private val gate = java.util.concurrent.Semaphore(2)
+
     override fun translate(text: String, toLang: String): String {
+        gate.acquire()
+        try {
+            return translateGated(text, toLang)
+        } finally {
+            gate.release()
+        }
+    }
+
+    private fun translateGated(text: String, toLang: String): String {
         val tl = normalizeToLang(toLang)
         if (System.currentTimeMillis() < blockedUntil) {
             return translateViaApp(text, tl)
                 ?: translateViaDictionary(text, tl)
-                ?: translateViaGtx(text, tl)
+                ?: try {
+                    translateViaGtx(text, tl)
+                } catch (e: ProviderRateLimitException) {
+                    throw ProviderRateLimitException(LocaleController.getString(R.string.InuTranslateGoogleBlocked))
+                }
         }
         return try {
             translateViaGtx(text, tl)
@@ -223,6 +241,36 @@ object GoogleWebProvider : TranslationProvider {
         }
         return code.lowercase()
     }
+}
+
+// entiny: splits only on newlines/spaces so markers like <inue12> are never cut in half
+internal fun splitForProvider(text: String, maxChars: Int): List<Pair<String, String>> {
+    val out = ArrayList<Pair<String, String>>()
+    val cur = StringBuilder()
+    fun flush(tail: String) {
+        if (cur.isEmpty()) return
+        out.add(cur.toString() to tail)
+        cur.setLength(0)
+    }
+    for (line in text.split('\n')) {
+        if (cur.isNotEmpty() && cur.length + 1 + line.length > maxChars) flush("\n")
+        if (line.length <= maxChars) {
+            if (cur.isNotEmpty()) cur.append('\n')
+            cur.append(line)
+            continue
+        }
+        flush("\n")
+        var rest = line
+        while (rest.length > maxChars) {
+            var cut = rest.lastIndexOf(' ', maxChars)
+            if (cut <= 0) cut = maxChars
+            out.add(rest.substring(0, cut) to if (rest[cut] == ' ') " " else "")
+            rest = rest.substring(cut).trimStart(' ')
+        }
+        cur.append(rest)
+    }
+    flush("")
+    return out
 }
 
 private const val USER_AGENT = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36"
@@ -438,16 +486,15 @@ object MyMemoryProvider : TranslationProvider {
         if (text.length <= MAX_CHUNK_CHARS) {
             return translateChunk(text, lang)
         }
-        val chunks = splitChunks(text)
         val sb = StringBuilder(text.length + 32)
-        for ((i, chunk) in chunks.withIndex()) {
-            if (i > 0) sb.append('\n')
-            sb.append(translateChunk(chunk, lang))
+        for ((chunk, tail) in splitForProvider(text, MAX_CHUNK_CHARS)) {
+            sb.append(translateChunk(chunk, lang)).append(tail)
         }
         return sb.toString()
     }
 
     private fun translateChunk(text: String, lang: String): String {
+        if (text.isBlank()) return text
         val url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) +
             "&langpair=autodetect%7C" + encodeURIComponent(lang)
         val resp = httpJson(url)
@@ -459,36 +506,6 @@ object MyMemoryProvider : TranslationProvider {
         val translated = json.optJSONObject("responseData")?.optString("translatedText", "").orEmpty()
         if (translated.isEmpty()) throw IOException("MyMemory returned an empty result")
         return translated
-    }
-
-    private fun splitChunks(text: String): List<String> {
-        val out = ArrayList<String>()
-        var current = StringBuilder()
-        for (line in text.split('\n')) {
-            if (line.length <= MAX_CHUNK_CHARS &&
-                current.length + (if (current.isEmpty()) 0 else 1) + line.length <= MAX_CHUNK_CHARS
-            ) {
-                if (current.isNotEmpty()) current.append('\n')
-                current.append(line)
-                continue
-            }
-            if (current.isNotEmpty()) {
-                out.add(current.toString())
-                current = StringBuilder()
-            }
-            if (line.length <= MAX_CHUNK_CHARS) {
-                current.append(line)
-            } else {
-                var start = 0
-                while (start < line.length) {
-                    val end = minOf(start + MAX_CHUNK_CHARS, line.length)
-                    out.add(line.substring(start, end))
-                    start = end
-                }
-            }
-        }
-        if (current.isNotEmpty()) out.add(current.toString())
-        return out
     }
 
     private fun normalizeToLang(code: String): String = when (code.lowercase()) {
@@ -508,6 +525,8 @@ object BingProvider : TranslationProvider {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
             "Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
 
+    private const val MAX_CHUNK_CHARS = 2500
+
     @Volatile private var ig: String? = null
     @Volatile private var iid: String? = null
     @Volatile private var key: String? = null
@@ -516,29 +535,59 @@ object BingProvider : TranslationProvider {
     @Volatile private var tokenExpiry: Long = 3_600_000L
 
     override fun translate(text: String, toLang: String): String {
-        ensureConfig()
-        val body = "fromLang=auto-detect" +
-            "&to=" + encodeURIComponent(normalizeToLang(toLang)) +
-            "&text=" + encodeURIComponent(text) +
-            "&token=" + encodeURIComponent(token!!) +
-            "&key=" + encodeURIComponent(key!!) +
-            "&tryFetchingGenderDebiasedTranslations=true"
-        val resp = httpJson(
-            "https://www.bing.com/ttranslatev3?isVertical=1&IG=" + encodeURIComponent(ig!!) +
-                "&IID=" + encodeURIComponent(iid!!) + ".1&ref=TThis&edgepdftranslator=1",
-            method = "POST",
-            body = body,
-            contentType = "application/x-www-form-urlencoded",
-            headers = mapOf(
-                "User-Agent" to USER_AGENT,
-                "Referer" to "https://www.bing.com/translator",
-            ),
-        )
-        val translations = JSONArray(resp).optJSONObject(0)?.optJSONArray("translations") ?: JSONArray()
-        if (translations.length() == 0) throw IOException("Bing returned an empty result")
-        return translations.getJSONObject(0).optString("text", "")
+        if (text.length <= MAX_CHUNK_CHARS) return translateChunk(text, toLang)
+        val sb = StringBuilder(text.length + 32)
+        for ((chunk, tail) in splitForProvider(text, MAX_CHUNK_CHARS)) {
+            sb.append(translateChunk(chunk, toLang)).append(tail)
+        }
+        return sb.toString()
     }
 
+    private fun translateChunk(text: String, toLang: String): String {
+        if (text.isBlank()) return text
+        var attempt = 0
+        while (true) {
+            ensureConfig()
+            val body = "fromLang=auto-detect" +
+                "&to=" + encodeURIComponent(normalizeToLang(toLang)) +
+                "&text=" + encodeURIComponent(text) +
+                "&token=" + encodeURIComponent(token!!) +
+                "&key=" + encodeURIComponent(key!!) +
+                "&tryFetchingGenderDebiasedTranslations=true"
+            val resp = httpJson(
+                "https://www.bing.com/ttranslatev3?isVertical=1&IG=" + encodeURIComponent(ig!!) +
+                    "&IID=" + encodeURIComponent(iid!!) + ".1&ref=TThis&edgepdftranslator=1",
+                method = "POST",
+                body = body,
+                contentType = "application/x-www-form-urlencoded",
+                headers = mapOf(
+                    "User-Agent" to USER_AGENT,
+                    "Referer" to "https://www.bing.com/translator",
+                ),
+            )
+            val root = try {
+                JSONTokener(resp).nextValue()
+            } catch (e: JSONException) {
+                throw IOException("Bing returned an unreadable response")
+            }
+            if (root is JSONArray) {
+                val translations = root.optJSONObject(0)?.optJSONArray("translations") ?: JSONArray()
+                if (translations.length() == 0) throw IOException("Bing returned an empty result")
+                return translations.getJSONObject(0).optString("text", "")
+            }
+            val code = (root as? JSONObject)?.optInt("statusCode", 0) ?: 0
+            if (code == 429) throw ProviderRateLimitException("Bing: too many requests")
+            // entiny: an error object usually means a stale token, so refresh the config once before giving up
+            if (++attempt > 1) throw IOException("Bing error $code")
+            invalidateConfig()
+        }
+    }
+
+    private fun invalidateConfig() {
+        synchronized(this) { tokenTs = 0L }
+    }
+
+    @Synchronized
     private fun ensureConfig() {
         val cached = token
         if (cached != null && System.currentTimeMillis() - tokenTs < tokenExpiry) return

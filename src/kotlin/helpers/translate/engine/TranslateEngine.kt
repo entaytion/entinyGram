@@ -9,6 +9,7 @@ import org.telegram.messenger.TranslateController
 import org.telegram.messenger.Utilities
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.Components.Bulletin
+import org.json.JSONException
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -434,6 +435,10 @@ object TranslateEngine {
                 sleepBackoff(attempt)
             } catch (e: ProviderConfigException) {
                 throw e
+            } catch (e: JSONException) {
+                attempt++
+                if (attempt > MAX_ATTEMPTS) throw IOException("Unexpected response from the translation service")
+                sleepBackoff(attempt)
             } catch (e: IOException) {
                 attempt++
                 if (attempt > MAX_ATTEMPTS) throw e
