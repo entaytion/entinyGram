@@ -74,6 +74,10 @@ object ApkInstaller {
     fun installFromFile(activity: Activity, apk: File) {
         if (!apk.exists()) return
         if (dialog?.isShowing == true) return
+        if (!activity.packageManager.canRequestPackageInstalls()) {
+            AlertsCreator.createApkRestrictedDialog(activity, null).show()
+            return
+        }
 
         val progressBar = buildProgressBar(activity)
         dialog = buildProgressDialog(activity, progressBar).also { it.show() }
@@ -260,7 +264,11 @@ object ApkInstaller {
             if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
                 @Suppress("DEPRECATION")
                 val confirm = i.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
-                if (confirm != null && runCatching { context.startActivity(confirm) }.isSuccess) {
+                val launcher = LaunchActivity.instance ?: context
+                if (confirm != null && runCatching {
+                        launcher.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    }.isSuccess
+                ) {
                     return
                 }
                 abandonSession(i.getIntExtra(PackageInstaller.EXTRA_SESSION_ID, 0))

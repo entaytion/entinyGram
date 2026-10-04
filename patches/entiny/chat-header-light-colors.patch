@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
-@@ -2555,7 +2555,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2558,7 +2558,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  || (animatorAvatarContainerHasAvatar != null && animatorAvatarContainerHasAvatar.isAnimating());
      }
  
@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -17555,6 +17555,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -17556,6 +17556,9 @@ public class ChatActivity extends BaseFragment implements
              }
              invalidateAllGlassAttachedViews();
              checkSystemBarColors();
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
          }
  
          int inputFieldHeight = 0;
-@@ -43896,22 +43899,26 @@ public class ChatActivity extends BaseFragment implements
+@@ -43897,22 +43900,26 @@ public class ChatActivity extends BaseFragment implements
                      return animatingColors.valueAt(index);
                  }
              }
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -1999,10 +1999,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2010,10 +2010,24 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      private int getThemedColor(int key) {

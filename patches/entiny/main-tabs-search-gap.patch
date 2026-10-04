@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -488,7 +488,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -489,7 +489,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsBarContainer.addView(tabsView, new LinearLayout.LayoutParams(dp(tabsViewWidth), LayoutHelper.MATCH_PARENT));
          if (searchTabContainer != null) {
              LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
              searchParams.setMarginEnd(dp(4));
              searchParams.height = LayoutHelper.MATCH_PARENT;
              tabsBarContainer.addView(searchTabContainer, searchParams);
-@@ -1216,7 +1216,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1217,7 +1217,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          if (wrapperWidth <= 0) return;
          final boolean showSearch = searchTabContainer != null && searchTabContainer.getVisibility() != View.GONE;
          final int searchWidth = showSearch ? searchTabContainer.getLayoutParams().width : 0;

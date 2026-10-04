@@ -852,6 +852,7 @@
     <string name="InuFeedNewestOnTop">Нові пости зверху</string>
     <string name="InuFeedNewestOnTopInfo">Увімкнено: нові пости зверху (стиль Twitter). Вимкнено: знизу (стиль Telegram).</string>
     <string name="InuFeedAllChannels">Усі канали</string>
+    <string name="InuFeedFolder">Папка стрічки</string>
     <string name="InuFeedAllExcluded">Усі канали приховано зі стрічки.</string>
     <string name="InuFeedChannelHidden">**%1$s** приховано зі стрічки</string>
     <string name="InuFeedMarkAllReadConfirm">Позначити всі пости в каналах стрічки прочитаними? Їх також буде позначено прочитаними в оригінальних каналах.</string>

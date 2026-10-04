@@ -11,8 +11,8 @@ Subject: feat(content-protection): allow opted-in access to protected content
  .../java/org/telegram/messenger/MessagesController.java  | 2 ++
  .../java/org/telegram/messenger/SendMessagesHelper.java  | 9 +++++++++
  .../main/java/org/telegram/ui/Cells/ChatMessageCell.java | 2 +-
- .../src/main/java/org/telegram/ui/ChatActivity.java      | 6 +++---
- 6 files changed, 18 insertions(+), 7 deletions(-)
+ .../src/main/java/org/telegram/ui/ChatActivity.java      | 7 ++++---
+ 6 files changed, 19 insertions(+), 7 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 index 0000000..0000000 100644
@@ -121,7 +121,15 @@ index 0000000..0000000 100644
          actionMode.setItemVisibility(star, selectedMessagesCanStarIds[0].size() + selectedMessagesCanStarIds[1].size() != 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(delete, cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
          actionMode.setItemVisibility(tag_message, getUserConfig().isPremium() ? View.VISIBLE : View.GONE);
-@@ -19419,7 +19419,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -12269,6 +12269,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     private boolean hasSelectedNoforwardsMessage() {
++        if (desu.inugram.InuConfig.ALLOW_FORWARD_RESTRICTED.getValue()) return false;
+         try {
+             for (int i = 0; i < selectedMessagesIds.length; ++i) {
+                 for (int j = 0; j < selectedMessagesIds[i].size(); ++j) {
+@@ -19419,7 +19420,7 @@ public class ChatActivity extends BaseFragment implements
                  int copyVisible = View.GONE, starVisible = View.GONE, newCopyVisible = View.GONE, newStarVisible = View.GONE;
                  if (copyItem != null) {
                      copyVisible = copyItem.getVisibility();

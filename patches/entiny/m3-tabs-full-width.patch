@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
-@@ -485,7 +485,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -486,7 +486,8 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
          tabsBarContainer.setClipChildren(false);
          tabsBarContainer.setClipToPadding(false);
          tabsBarContainer.setPadding(dp(2), 0, dp(2), 0);
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          if (searchTabContainer != null) {
              LinearLayout.LayoutParams searchParams = new LinearLayout.LayoutParams(dp(52), dp(52));
              searchParams.setMarginStart(-dp(Math.max(0, mainTabsMargin - 4)));
-@@ -494,7 +495,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -495,7 +496,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
              tabsBarContainer.addView(searchTabContainer, searchParams);
          }
          tabsBarContainer.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
@@ -30,7 +30,7 @@ index 0000000..0000000 100644
          tabsViewWrapper.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> repositionSearchButton());
          tabsViewWrapper.setClipToPadding(false);
          M3MainTabsHelper.applyTabsWrapper(tabsViewWrapper);
-@@ -1209,6 +1210,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+@@ -1210,6 +1211,10 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
  
      private void repositionSearchButton() {
          if (tabsView == null || tabsViewWrapper == null || tabsBarContainer == null) return;

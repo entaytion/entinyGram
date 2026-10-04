@@ -25,7 +25,7 @@ index 0000000..0000000 100644
              MessageObject messageObject = null;
              for (int a = 1; a >= 0; a--) {
                  if (messageObject == null && selectedMessagesIds[a].size() != 0) {
-@@ -19425,6 +19429,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -19426,6 +19430,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, true);
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
                      }
                      forwardButtonAnimation.playTogether(animators);
                      forwardButtonAnimation.setDuration(100);
-@@ -19446,6 +19453,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -19447,6 +19454,9 @@ public class ChatActivity extends BaseFragment implements
                      }
                      if (actionsButtonsLayout != null) {
                          actionsButtonsLayout.setForwardButtonEnabled(cantForwardMessagesCount == 0 || noforwards, false);
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (saveItem != null) {
-@@ -19532,7 +19542,11 @@ public class ChatActivity extends BaseFragment implements
+@@ -19533,7 +19543,11 @@ public class ChatActivity extends BaseFragment implements
                              }
                          }
                      }

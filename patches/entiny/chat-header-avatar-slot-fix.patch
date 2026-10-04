@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                      return false;
                  }
              }
-@@ -2580,7 +2580,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2583,7 +2583,11 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
          final int t = inu_glassTop;
          final int b = inu_glassBottom;
  
@@ -33,7 +33,7 @@ index 0000000..0000000 100644
              if (inu_nonIsland) {
                  glassDrawable.setBounds(0, 0, getWidth(), getHeight());
              } else {
-@@ -2803,4 +2807,4 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+@@ -2806,4 +2810,4 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
              invalidate();
          }
      }

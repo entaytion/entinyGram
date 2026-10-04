@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
 /**
- * Publishes the website changelog card (`site` from release-notes.json) to the entinyGram site.
+ * Publishes the website changelog card (`site` card and the full `en`/`uk` notes from release-notes.json) to the entinyGram site.
  * Best-effort: a missing token or an unreachable site must never fail a release.
  *
  *   CHANGELOG_TOKEN - shared bearer secret (also set on the site)
@@ -29,10 +29,11 @@ try {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify({
-      version: info.verName,
+      version: tag && !/^[0-9a-f]{40}$/.test(tag) ? tag.replace(/^v/, '') : info.verName,
       prerelease: process.env.PRE_RELEASE === 'true',
       url: tag && !/^[0-9a-f]{40}$/.test(tag) ? `https://github.com/${info.repo}/releases/tag/${tag}` : '',
       site: notes.site,
+      md: { en: notes.en, uk: notes.uk },
     }),
     signal: AbortSignal.timeout(20000),
   })

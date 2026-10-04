@@ -48,7 +48,7 @@ index 0000000..0000000 100644
          }
          if (subtitleTextView != null && subtitleTextView.getVisibility() != GONE) {
              width = Math.max(width, subtitleTextView.getExactWidthIncludeDrawables()
-@@ -1012,6 +1012,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1023,6 +1023,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
  
              final int avatarLeft;
              if (inu_isIosMenuSlotAvatar()) {
@@ -58,7 +58,7 @@ index 0000000..0000000 100644
                  // The slot sits a good 40dp past this container's own right edge (the container is
                  // inset by the back-button and menu margins), so it is only ever drawn because
                  // nothing clips it. Assert that here instead of relying on fadeOutToLessWidth
-@@ -1056,7 +1059,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1067,7 +1070,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
                  ? Math.min(titleTextView.getCenteringDrawableBias(), titleBiasSlack)
                  : 0;
          final int titleL = l + titleDrawableBias;
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
          SimpleTextView titleTextLargerCopyView = this.titleTextLargerCopyView.get();
          if (getSubtitleTextView().getVisibility() != GONE) {
              titleTextView.layout(titleL, viewTop + dp(1.66f) - titleTextView.getPaddingTop(), titleR, viewTop + titleTextView.getTextHeight() + dp(1.66f) - titleTextView.getPaddingTop() + titleTextView.getPaddingBottom());
-@@ -2031,6 +2034,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -2042,6 +2045,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
          inu_invalidateCenteredTextWidth();
          if (actionBar != null) {
              actionBar.checkAvatarContainerWidth(animated);

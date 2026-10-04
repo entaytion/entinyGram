@@ -25,37 +25,47 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.AvatarDrawable
 import org.telegram.ui.Components.BackupImageView
 import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.ChatActivity
 import org.telegram.ui.DialogsActivity
 
 object RecentChatsSidebar {
-    private val bars = java.util.WeakHashMap<BaseFragment, SidebarView>()
-
-    private val strips = java.util.WeakHashMap<DialogsActivity, StripView>()
+    // entiny: bars live only in the fragment's own view tree, a static map pinned every closed chat
+    private inline fun <reified T : View> find(fragment: BaseFragment): T? {
+        val root = fragment.fragmentView as? ViewGroup ?: return null
+        for (i in 0 until root.childCount) (root.getChildAt(i) as? T)?.let { return it }
+        return null
+    }
 
     @JvmStatic
     fun stripTopPush(fragment: DialogsActivity): Int =
-        if (!FolderHelper.atBottom() && strips[fragment]?.active() == true) dp(STRIP_HEIGHT_DP.toFloat()) else 0
+        if (!FolderHelper.atBottom() && find<StripView>(fragment)?.active() == true) dp(STRIP_HEIGHT_DP.toFloat()) else 0
 
     @JvmStatic
     fun stripBottomPush(fragment: DialogsActivity): Int =
-        if (FolderHelper.atBottom() && strips[fragment]?.active() == true) dp(STRIP_HEIGHT_DP.toFloat()) else 0
+        if (FolderHelper.atBottom() && find<StripView>(fragment)?.active() == true) dp(STRIP_HEIGHT_DP.toFloat()) else 0
 
     fun toggleStrip(fragment: BaseFragment): Boolean {
-        val strip = strips[fragment as? DialogsActivity ?: return false] ?: return false
+        val strip = find<StripView>(fragment) ?: ensure(fragment)?.let { find<StripView>(fragment) } ?: return false
         strip.setShown(!strip.shown)
         return true
     }
 
     @JvmStatic
     fun toggleSidebar(fragment: BaseFragment): Boolean {
-        val bar = bars[fragment] ?: return false
+        val bar = find<SidebarView>(fragment) ?: ensure(fragment)?.let { find<SidebarView>(fragment) } ?: return false
         bar.setExpanded(!bar.expanded)
         return true
     }
 
+    private fun ensure(fragment: BaseFragment): Unit? {
+        if (fragment !is ChatActivity && fragment !is DialogsActivity) return null
+        attach(fragment, (fragment as? ChatActivity)?.dialogId ?: 0L)
+        return Unit
+    }
+
     fun collapse(fragment: BaseFragment) {
-        bars[fragment]?.setExpanded(false)
-        (fragment as? DialogsActivity)?.let { strips[it]?.setShown(false) }
+        find<SidebarView>(fragment)?.setExpanded(false)
+        find<StripView>(fragment)?.setShown(false)
     }
 
     private const val WIDTH_DP = 64
@@ -63,23 +73,25 @@ object RecentChatsSidebar {
 
     @JvmStatic
     fun attach(fragment: BaseFragment, excludeDialogId: Long) {
+        val style = InuConfig.RECENT_CHATS_STYLE.value
+        if (style != InuConfig.RecentChatsStyleItem.SIDEBAR && style != InuConfig.RecentChatsStyleItem.STRIP) return
         val root = fragment.fragmentView as? ViewGroup ?: return
         val context = fragment.parentActivity ?: return
-        val bar = SidebarView(context, fragment, excludeDialogId)
-        val params = LayoutHelper.createFrame(WIDTH_DP, LayoutHelper.MATCH_PARENT.toFloat(), Gravity.RIGHT or Gravity.TOP, 0f, 0f, 4f, 80f)
-        root.addView(bar, params)
-        bars[fragment] = bar
-        val extra = if (fragment is DialogsActivity) dp(108f) else 0
-        root.post {
-            val barBottom = fragment.actionBar?.bottom ?: 0
-            val minTop = ActionBar.getCurrentActionBarHeight() + AndroidUtilities.statusBarHeight
-            params.topMargin = maxOf(barBottom, minTop) + extra + dp(8f)
-            bar.layoutParams = params
-        }
-        if (fragment is DialogsActivity) {
+        if (style == InuConfig.RecentChatsStyleItem.SIDEBAR) {
+            if (find<SidebarView>(fragment) != null) return
+            val bar = SidebarView(context, fragment, excludeDialogId)
+            val params = LayoutHelper.createFrame(WIDTH_DP, LayoutHelper.MATCH_PARENT.toFloat(), Gravity.RIGHT or Gravity.TOP, 0f, 0f, 4f, 80f)
+            root.addView(bar, params)
+            val extra = if (fragment is DialogsActivity) dp(108f) else 0
+            root.post {
+                val barBottom = fragment.actionBar?.bottom ?: 0
+                val minTop = ActionBar.getCurrentActionBarHeight() + AndroidUtilities.statusBarHeight
+                params.topMargin = maxOf(barBottom, minTop) + extra + dp(8f)
+                bar.layoutParams = params
+            }
+        } else if (fragment is DialogsActivity && find<StripView>(fragment) == null) {
             val strip = StripView(context, fragment, root)
             root.addView(strip, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, STRIP_HEIGHT_DP.toFloat(), Gravity.TOP, 8f, 0f, 8f, 0f))
-            strips[fragment] = strip
         }
     }
 

@@ -187,6 +187,10 @@ class FeedActivity @JvmOverloads constructor(
             menu.addItem(MENU_MARK_ALL_READ, R.drawable.msg_markread, chatActivity.themeDelegate)
                 .contentDescription = LocaleController.getString(R.string.InuFeedMarkAllRead)
         }
+        if (menu.getItem(MENU_FEED_FOLDER) == null) {
+            menu.addItem(MENU_FEED_FOLDER, R.drawable.msg_folders, chatActivity.themeDelegate)
+                .contentDescription = LocaleController.getString(R.string.InuFeedFolder)
+        }
         if (menu.getItem(MENU_FEED_SETTINGS) == null) {
             menu.addItem(MENU_FEED_SETTINGS, R.drawable.msg_settings, chatActivity.themeDelegate)
                 .contentDescription = LocaleController.getString(R.string.InuFeedManageChannels)
@@ -199,6 +203,7 @@ class FeedActivity @JvmOverloads constructor(
                 if (id == -1 && hasMainTabs && !chatActionBar.isActionModeShowed) return
                 when (id) {
                     MENU_MARK_ALL_READ -> showMarkAllReadDialog()
+                    MENU_FEED_FOLDER -> showFolderPicker(menu.getItem(MENU_FEED_FOLDER) ?: return)
                     MENU_FEED_SETTINGS -> presentFragment(FeedExcludedChannelsSettingsActivity())
                     else -> chatItemClick?.onItemClick(id)
                 }
@@ -442,6 +447,7 @@ class FeedActivity @JvmOverloads constructor(
         const val FEED_SEARCH_TYPE = 4
         const val MENU_FEED_SETTINGS = 75
         const val MENU_MARK_ALL_READ = 76
+        const val MENU_FEED_FOLDER = 77
         const val LOAD_NEW_POSTS_DELAY = 1000L
     }
 }
