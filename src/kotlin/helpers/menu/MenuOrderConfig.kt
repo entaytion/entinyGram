@@ -412,6 +412,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
         PROXY("proxy", R.string.ProxySettings, R.drawable.outline_shield_check),
         GHOST_MODE("ghost_mode", R.string.InuGhostMode, R.drawable.inu_ghost),
         SETTINGS("settings", R.string.Settings, R.drawable.msg_settings),
+        ENTINY_SETTINGS("entiny_settings", R.string.InuSettings, R.drawable.icon_settings_inu),
         DIVIDER_2("divider_2", R.string.InuMenuDivider, R.drawable.msg_list),
         DIVIDER_3("divider_3", R.string.InuMenuDivider, R.drawable.msg_list),
         DIVIDER_4("divider_4", R.string.InuMenuDivider, R.drawable.msg_list),
@@ -445,6 +446,7 @@ class DrawerMenuConfig(key: String) : MenuOrderConfig<DrawerMenuConfig.Item>(key
     companion object {
         private val OFF_BY_DEFAULT = setOf(
             Item.RECENT_CHATS,
+            Item.ENTINY_SETTINGS,
             Item.DIVIDER_2,
             Item.DIVIDER_3,
             Item.DIVIDER_4,

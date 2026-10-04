@@ -27,6 +27,7 @@ import desu.inugram.ui.drawer.DrawerProxyCell
 import desu.inugram.ui.drawer.DrawerSwipeController
 import desu.inugram.ui.drawer.DrawerUserCell
 import desu.inugram.ui.drawer.SideMenultItemAnimator
+import desu.inugram.ui.settings.InuSettingsActivity
 import desu.inugram.ui.settings.ParanoiaActivity
 import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.messenger.AndroidUtilities
@@ -621,6 +622,11 @@ object DrawerHelper {
 
             ITEM_SETTINGS -> {
                 nav.presentFragment(SettingsActivity())
+                close()
+            }
+
+            DrawerLayoutAdapter.ITEM_ENTINY_SETTINGS -> {
+                nav.presentFragment(InuSettingsActivity())
                 close()
             }
 
