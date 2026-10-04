@@ -9,6 +9,11 @@ on:
   schedule:
     - cron: "0 6 * * *"
   workflow_dispatch:
+    inputs:
+      upload_translations:
+        description: Upload existing translations from the repo to Crowdin
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -23,8 +28,9 @@ jobs:
       - uses: crowdin/github-action@v2
         with:
           upload_sources: true
-          upload_translations: false
-          download_translations: true
+          upload_translations: ${{ inputs.upload_translations == true }}
+          auto_approve_imported: ${{ inputs.upload_translations == true }}
+          download_translations: ${{ inputs.upload_translations != true }}
           localization_branch_name: l10n_crowdin
           create_pull_request: false
         env:
