@@ -4,3 +4,14 @@ preserve_hierarchy: true
 files:
   - source: /src/res/values/strings_inu.xml
     translation: /src/res/values-%android_code%/%original_file_name%
+    skip_untranslated_files: true
+    languages_mapping:
+      android_code:
+        uk: uk
+        ru: ru
+        ja: ja
+        tr: tr
+        ar: ar
+        fa: fa
+        be: be
+        zh-CN: zh-rCN
