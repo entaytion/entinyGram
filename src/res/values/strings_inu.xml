@@ -788,9 +788,6 @@
 
     <string name="InuDisableGlassGlare">Disable glass glare</string>
     <string name="InuDisableProfileAvatarBlur">Disable profile avatar blur</string>
-    <string name="InuLiquidGlass">Liquid Glass</string>
-    <string name="InuLiquidGlassAngle">Liquid Glass angle</string>
-    <string name="InuLiquidGlassIntensity">Liquid Glass intensity</string>
     <string name="InuClownAvatarsSection">Blocked avatars</string>
     <string name="InuClownAvatarBlocked">Clown avatar for blocked users</string>
     <string name="InuClownAvatarBlockedInfo">Show a clown instead of the photo for users you blocked.</string>

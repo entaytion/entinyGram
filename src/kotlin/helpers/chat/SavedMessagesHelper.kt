@@ -735,6 +735,8 @@ object SavedMessagesHelper {
     fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
         // entiny: reject dialog id 0 to prevent marking matching IDs in unrelated chats as deleted
         if (dialogId == 0L) return
+        // entiny: unsent or cancelled uploads carry local ids and must never reach the archive
+        if (msgId <= 0 || (message != null && message.send_state != 0)) return
         // entiny: a message already archived (timer path) keeps getting its real text from the storage delete even when the chat type is off
         val alreadyRecorded = isMessageDeleted(account, dialogId, msgId)
         if (!forceSave && !alreadyRecorded && !shouldSaveForDialog(account, dialogId)) return
@@ -840,7 +842,8 @@ object SavedMessagesHelper {
 
     @JvmStatic
     fun isMessageDeleted(account: Int, dialogId: Long, msgId: Int): Boolean {
-        if (!isSaveDeletedEnabled()) return false
+        // entiny: timer and secret-chat archives keep their mark with the general toggle off
+        if (!isSaveDeletedEnabled() && !InuConfig.SAVE_TIMED_MESSAGES.value && !InuConfig.SAVE_SELF_DESTRUCT_TEXT.value) return false
         ensureAccountLoaded(account)
         return synchronized(cacheLock) {
             val accMap = deletedMessageIds.get(account.toLong()) ?: return@synchronized false
