@@ -400,6 +400,13 @@ jobs:
             bun run tsx scripts/ci/upload.ts out --ci-only
           fi
 
+      - name: Publish changelog to website
+        continue-on-error: true
+        if: ${{ inputs.prerelease != true && inputs.prerelease != 'true' }}
+        env:
+          CHANGELOG_TOKEN: ${{ secrets.CHANGELOG_TOKEN }}
+        run: bun run tsx scripts/ci/publish-site.ts out
+
       - name: Bump build variables
         continue-on-error: true
         env:

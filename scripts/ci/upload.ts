@@ -243,6 +243,8 @@ try {
     const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).trim() : ''
 
     const linksHtml = html`<a href="${postUrl(apkMsg.id)}">Завантажити / Download</a>`
+    const siteUrl = process.env.SITE_CHANGELOG_URL ?? 'https://entaytion.is-a.dev/entinygram/changelog'
+    const siteHtml = html`🌐 <a href="${siteUrl}">Усі нові функції на сайті / See all new features on the website</a>`
     const arm7NoteHtml = arm7Msg
       ? html`⚠️ 32-біт (arm7) для старих пристроїв, більшості не треба — <a href="${postUrl(arm7Msg.id)}">тут</a> / 32-bit (arm7) for old devices, most people don't need it — <a href="${postUrl(arm7Msg.id)}">here</a>`
       : null
@@ -254,6 +256,7 @@ try {
       extra ? html`${extra}` : null,
       ukHtml,
       enHtml ? html`🇬🇧 Eng:\n<blockquote expandable>${enHtml}</blockquote>` : null,
+      siteHtml,
       html`🏷️ #release • @entinyGram • @entinyGramChat`,
     ].filter((b): b is NonNullable<typeof b> => b !== null)
 
@@ -269,6 +272,7 @@ try {
         arm7NoteHtml,
         extra ? html`${extra}` : null,
         ukHtml,
+        siteHtml,
         html`🏷️ #release • @entinyGram • @entinyGramChat`,
       ].filter((b): b is NonNullable<typeof b> => b !== null)
 

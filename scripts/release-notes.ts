@@ -8,7 +8,8 @@ import { join, resolve } from 'node:path'
  *   {
  *     "en":  "...full github markdown notes...",
  *     "uk":  "...повні нотатки для github...",
- *     "tg":  "...short bilingual telegram post (en + uk, [+]/[*]/[-]/[=] style)..."
+ *     "tg":  "...short bilingual telegram post (en + uk, [+]/[*]/[-]/[=] style)...",
+ *     "site": { "en": SiteNotes, "uk": SiteNotes }   // structured card for the website
  *   }
  *
  * Config:
@@ -26,6 +27,14 @@ interface BuildInfo {
   repo: string
   commits: Commit[]
 }
+
+/** Structured release card for the website; layout is the site's job, not the model's. */
+interface SiteNotes {
+  headline: string
+  highlights: { icon: string, title: string, text: string }[]
+  fixes: string[]
+}
+interface SiteBundle { en: SiteNotes, uk: SiteNotes }
 
 /** One entry from settings-registry.json (produced by dump-registry.ts). */
 interface RegistryEntry { slug: string; label: string }
@@ -248,9 +257,17 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
 
   lines.push(
     '',
+    'Website card in "site_en" / "site_uk" (an object, same facts as the notes above, never more):',
+    '{"headline": "one short sentence naming the main thing in this release",',
+    ' "highlights": [{"icon": "one emoji", "title": "feature name, 1-3 words", "text": "one plain sentence"}],',
+    ' "fixes": ["short fix, a few words"]}',
+    '- 3 to 6 highlights, only new capabilities and the most noticeable improvements; fewer if the release is small.',
+    '- "fixes" holds the remaining bug fixes, at most 8 short entries; [] when there are none.',
+    '- No markdown, no links, no version numbers in any site field.',
+    '',
     'Reply with JSON only - no code fences - with exactly these keys:',
-    '{"en": "...", "uk": "...", "tg_uk": "...", "tg_en": "..."}',
-    '"uk" and "tg_uk" are Ukrainian, "en" and "tg_en" are English.',
+    '{"en": "...", "uk": "...", "tg_uk": "...", "tg_en": "...", "site_en": {...}, "site_uk": {...}}',
+    '"uk", "tg_uk" and "site_uk" are Ukrainian, "en", "tg_en" and "site_en" are English.',
   )
 
   return lines.join('\n')
@@ -310,7 +327,20 @@ function dropMetaBullets(text: string): string {
   return out.join('\n').replace(/\n{3,}/g, '\n\n').trim()
 }
 
-function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string } {
+const str = (v: unknown, max: number) => String(v ?? '').replace(/[*_`]|\[|\]\([^)]*\)/g, '').trim().slice(0, max)
+
+function parseSite(v: unknown): SiteNotes {
+  const o = (v && typeof v === 'object' ? v : {}) as Record<string, unknown>
+  const highlights = (Array.isArray(o.highlights) ? o.highlights : []).slice(0, 6).map((h: any) => ({
+    icon: str(h?.icon, 8),
+    title: str(h?.title, 40),
+    text: str(h?.text, 160),
+  })).filter(h => h.title && h.text)
+  const fixes = (Array.isArray(o.fixes) ? o.fixes : []).slice(0, 8).map(f => str(f, 80)).filter(Boolean)
+  return { headline: str(o.headline, 120), highlights, fixes }
+}
+
+function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, site: SiteBundle } {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   // Some models wrap the JSON in prose or reasoning; take the outermost object.
   const parsed = JSON.parse(cleaned.slice(cleaned.indexOf('{'), cleaned.lastIndexOf('}') + 1))
@@ -323,6 +353,7 @@ function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en
     tg_uk: tgUk,
     tg_en: tgEn,
     tg: tgCombined,
+    site: { en: parseSite(parsed.site_en), uk: parseSite(parsed.site_uk) },
   }
 }
 
@@ -362,13 +393,30 @@ function categorize(message: string): 'sync' | 'fix' | 'feature' | 'other' {
   return 'other'
 }
 
-function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string } {
+/** No AI: new features become highlights, everything else a fix line. */
+function ruleSite(commits: Commit[]): SiteBundle {
+  const highlights: SiteNotes['highlights'] = []
+  const fixes: string[] = []
+  for (const c of commits) {
+    const subject = c.message.split('\n')[0].trim()
+    const m = subject.match(/^\[([+*\-=])\]\s*(.*)$/)
+    const text = m ? m[2] : subjectText(subject)
+    if (m ? m[1] === '+' : categorize(subject) === 'feature') {
+      if (highlights.length < 6) highlights.push({ icon: '✨', title: text.slice(0, 40), text })
+    } else if (fixes.length < 8) fixes.push(text.slice(0, 80))
+  }
+  const card = { headline: '', highlights, fixes }
+  return { en: card, uk: card }
+}
+
+function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, site: SiteBundle } {
   if (commits.length === 0) return {
     en: 'No changes in this build.',
     uk: 'У цій збірці змін немає.',
     tg_uk: '[=] Змін немає',
     tg_en: '[=] No changes',
     tg: '🇺🇦 UK:\n[=] Змін немає\n\n🇺🇸 EN:\n[=] No changes',
+    site: ruleSite([]),
   }
 
   // Commits already carry "[+] / [*] / [-] / [=] text" - keep them verbatim instead of guessing.
@@ -381,7 +429,7 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
     return rebase ? `[*] **Rebase to ${rebase[1]} (ported by entinyGram)**` : `[${marker}] ${text}`
   }).join('\n')
 
-  return { en: lines, uk: lines, tg_uk: lines, tg_en: lines, tg: `🇺🇦 UK:\n${lines}\n\n🇺🇸 EN:\n${lines}` }
+  return { en: lines, uk: lines, tg_uk: lines, tg_en: lines, tg: `🇺🇦 UK:\n${lines}\n\n🇺🇸 EN:\n${lines}`, site: ruleSite(commits) }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
@@ -398,7 +446,7 @@ try {
   console.warn('release-notes: settings-registry.json not found; deep links disabled')
 }
 
-let notes: { en: string, uk: string, tg: string }
+let notes: { en: string, uk: string, tg: string, site: SiteBundle }
 const candidates = commits.length > 0 ? await buildCandidates() : []
 if (candidates.length > 0) {
   try {
