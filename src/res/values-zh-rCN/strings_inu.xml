@@ -1619,6 +1619,8 @@
     <string name="InuHidePinnedUntilNew">直到有新消息被置顶</string>
     <string name="InuIosChatHeaderAvatarStatic">不居中头像</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">头像保持在返回按钮旁，仅标题胶囊居中。</string>
+    <string name="InuHideChatAvatar">隐藏头像</string>
+    <string name="InuHideChatAvatarInfo">从聊天标题栏移除头像，保留三点菜单。点击标题即可打开资料。</string>
     <string name="InuIosStyle">iOS 风格</string>
     <string name="InuPingAllProxies">Ping 所有代理</string>
     <string name="InuRoundRecorderExposureLevels">曝光等级按钮</string>

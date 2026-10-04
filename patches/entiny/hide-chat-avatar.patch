@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Sun, 4 Oct 2026 09:56:37 +0300
+Subject: entiny__hide-chat-avatar: option to hide the chat header avatar
+
+---
+ .../org/telegram/ui/Components/ChatAvatarContainer.java     | 2 +-
+ .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -250,7 +250,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             if (parentFragment == null || (parentFragment.getChatMode() != ChatActivity.MODE_QUICK_REPLIES && parentFragment.getChatMode() != ChatActivity.MODE_WELCOME_MESSAGES && parentFragment.getChatMode() != ChatActivity.MODE_EDIT_BUSINESS_LINK) && parentFragment.getChatMode() != ChatActivity.MODE_SUGGESTIONS && !parentFragment.isInBotForumMode()) {
+                 sharedMediaPreloader = new SharedMediaLayout.SharedMediaPreloader(baseFragment);
+             }
+-            avatarImageIsHidden = parentFragment != null && (
++            avatarImageIsHidden = desu.inugram.helpers.InuUtils.hideChatAvatar() || parentFragment != null && (
+                 parentFragment.isThreadChat() && !parentFragment.isReplyChatComment() ||
+                 parentFragment.getChatMode() == ChatActivity.MODE_PINNED ||
+                 parentFragment.getChatMode() == ChatActivity.MODE_QUICK_REPLIES ||
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -6507,7 +6507,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+         if (listView == null) return;
+         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) avatarContainer.getLayoutParams();
+         avatarX = listView.getMeasuredWidth() / 2f - (params.width * avatarScale * 0.5f);
+-        if (openAnimationInProgress) {
++        if (openAnimationInProgress && !Float.isNaN(prevAvatarTranslation)) {
+             avatarX = lerp(prevAvatarTranslation, avatarX, avatarAnimationProgress);
+         }
+         avatarContainer.setTranslationX(avatarX);
+@@ -10220,7 +10220,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     final ViewGroup previousRoot = previousTransitionMainFragment != null && previousTransitionMainFragment.getFragmentView() instanceof ViewGroup
+                         ? (ViewGroup) previousTransitionMainFragment.getFragmentView()
+                         : previousTransitionFragment.getContentView();
+-                    prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, previousRoot);
++                    prevAvatarTranslation = avatarContainer.hasVisibleAvatar() ? ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, previousRoot) : Float.NaN;
+                     if (avatarContainer.getTitleTextView() != null) {
+                         SimpleTextView titleView = avatarContainer.getTitleTextView();
+                         int textOffset = titleView.getTextStartX() - (int) titleView.getX();
+@@ -10325,7 +10325,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             if (previousFragment instanceof ChatActivity) {
+                 ChatAvatarContainer avatarContainer = ((ChatActivity) previousFragment).getAvatarContainer();
+                 AndroidUtilities.doOnPreDraw(avatarContainer, () -> {
+-                    prevAvatarTranslation = ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, (ViewGroup) previousFragment.fragmentView);
++                    prevAvatarTranslation = avatarContainer.hasVisibleAvatar() ? ViewPositionWatcher.computeXCoordinateInParent(avatarContainer.avatarImageView, (ViewGroup) previousFragment.fragmentView) : Float.NaN;
+                     if (avatarContainer.getTitleTextView() != null) {
+                         SimpleTextView titleView = avatarContainer.getTitleTextView();
+                         int textOffset = titleView.getTextStartX() - (int) titleView.getX();

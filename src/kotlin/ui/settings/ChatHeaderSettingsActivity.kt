@@ -33,6 +33,15 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 InuConfig.CENTER_TITLE_CHATS.value,
             )
         )
+        items.add(
+            mkIconCheckItem(
+                TOGGLE_HIDE_CHAT_AVATAR,
+                R.drawable.inu_tabler_dots_vertical,
+                R.string.InuHideChatAvatar,
+                R.string.InuHideChatAvatarInfo,
+                InuConfig.HIDE_CHAT_AVATAR.value,
+            )
+        )
         if (InuConfig.CENTER_TITLE_CHATS.value) {
             items.add(
                 mkIconCheckItem(
@@ -43,7 +52,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                     InuConfig.IOS_CHAT_HEADER.value,
                 )
             )
-            if (InuConfig.IOS_CHAT_HEADER.value) {
+            if (InuConfig.IOS_CHAT_HEADER.value && !InuConfig.HIDE_CHAT_AVATAR.value) {
                 items.add(
                     mkIconCheckItem(
                         TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT,
@@ -65,8 +74,8 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                     )
                 }
             }
-            if (!InuConfig.IOS_CHAT_HEADER.value ||
-                (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value && !InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value)
+            if (!InuConfig.HIDE_CHAT_AVATAR.value && (!InuConfig.IOS_CHAT_HEADER.value ||
+                (!InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value && !InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value))
             ) {
                 items.add(
                     mkIconCheckItem(
@@ -124,6 +133,11 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
                 refreshAll()
             }
 
+            TOGGLE_HIDE_CHAT_AVATAR -> {
+                (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_CHAT_AVATAR.toggle()
+                refreshAll()
+            }
+
             TOGGLE_IOS_CHAT_HEADER -> {
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.IOS_CHAT_HEADER.toggle()
                 refreshAll()
@@ -170,6 +184,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
     companion object {
         private val TOGGLE_CENTER_TITLE_CHATS = InuUtils.generateId()
         private val TOGGLE_CENTER_TITLE_RIGHT_AVATAR = InuUtils.generateId()
+        private val TOGGLE_HIDE_CHAT_AVATAR = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT = InuUtils.generateId()
         private val TOGGLE_IOS_CHAT_HEADER_AVATAR_STATIC = InuUtils.generateId()
@@ -186,6 +201,7 @@ class ChatHeaderSettingsActivity : SettingsPageActivity() {
             entries = listOf(
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("center-title-chats", R.string.InuCenterTitleChats, TOGGLE_CENTER_TITLE_CHATS),
+                SearchRegistry.Entry("hide-chat-avatar", R.string.InuHideChatAvatar, TOGGLE_HIDE_CHAT_AVATAR),
                 SearchRegistry.Entry("center-title-right-avatar", R.string.InuCenterTitleRightAvatar, TOGGLE_CENTER_TITLE_RIGHT_AVATAR),
                 SearchRegistry.Entry("ios-chat-header", R.string.InuIosChatHeader, TOGGLE_IOS_CHAT_HEADER),
                 SearchRegistry.Entry("ios-chat-header-avatar-slot", R.string.InuIosChatHeaderAvatarSlot, TOGGLE_IOS_CHAT_HEADER_AVATAR_SLOT),

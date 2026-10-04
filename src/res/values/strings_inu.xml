@@ -1244,6 +1244,8 @@
     <string name="InuIosChatHeaderAvatarSlotInfo">Put the avatar in the menu slot: tap for the profile, long-press for the chat menu.</string>
     <string name="InuIosChatHeaderAvatarStatic">Do not center the avatar</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Keep the avatar next to the back button; only the title pill is centered.</string>
+    <string name="InuHideChatAvatar">Hide avatar</string>
+    <string name="InuHideChatAvatarInfo">Removes the avatar from the chat header and keeps the three-dot menu. Tap the title to open the profile.</string>
     <string name="InuChatTitleMarquee">Text marquee for long titles</string>
     <string name="InuChatTitleMarqueeInfo">Auto-scrolls chat header titles and subtitles, screen titles and profile names when they do not fit horizontally</string>
     <string name="InuSaveDeletedMessages">Save deleted messages</string>

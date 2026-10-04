@@ -1596,6 +1596,8 @@
     <string name="InuIosChatHeaderAvatarSlotInfo">Аватар замість кнопки меню: натискання відкриває профіль, довге натискання — меню чату.</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрувати аватарку</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Аватар залишається біля кнопки «Назад», по центру лише пілюля із заголовком.</string>
+    <string name="InuHideChatAvatar">Сховати аватарку</string>
+    <string name="InuHideChatAvatarInfo">Прибирає аватарку із шапки чату, залишається меню з трьома крапками. Профіль відкривається по тапу на назву.</string>
     <string name="InuAiInsertQuoteInfo">Коли ви натискаєте «Використати» в AI-редакторі, результат замінює чернетку як цитата. Якщо вимкнено, він замінює чернетку звичайним текстом.</string>
     <string name="InuAiOnlyAnswerInfo">Для моделей із міркуванням: ховає хід думок і залишає лише фінальну відповідь. Якщо вимкнено, міркування показується над відповіддю після бульбашки думок.</string>
     <string name="InuBurnOneTime">Знищити</string>

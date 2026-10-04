@@ -1612,6 +1612,8 @@
     <string name="InuIosButtonPlacementInfo">添付ボタンを左に、絵文字ボタンを入力欄の右側に配置します。</string>
     <string name="InuIosChatHeaderAvatarStatic">アバターを中央に寄せない</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">アバターは戻るボタンの横に残し、タイトルのピルだけを中央に配置します。</string>
+    <string name="InuHideChatAvatar">アバターを非表示</string>
+    <string name="InuHideChatAvatarInfo">チャットヘッダーからアバターを外し、3点メニューは残ります。タイトルをタップするとプロフィールが開きます。</string>
     <string name="InuIosInputAppearance">外観（iOS）</string>
     <string name="InuIosInputAppearanceInfo">ガラス風のカプセル型入力欄と丸いアクションボタン。</string>
     <string name="InuIosStyle">iOS スタイル</string>

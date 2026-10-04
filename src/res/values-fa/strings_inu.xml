@@ -1184,6 +1184,8 @@
     <string name="InuIosChatHeaderAvatarSlotInfo">آواتار را در جایگاه منو بگذار: ضربه برای نمایه، نگه داشتن برای منوی گفتگو.</string>
     <string name="InuIosChatHeaderAvatarStatic">وسط‌چین نکردن آواتار</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">آواتار را کنار دکمه بازگشت نگه دار؛ فقط قرص عنوان وسط‌چین می‌شود.</string>
+    <string name="InuHideChatAvatar">پنهان کردن آواتار</string>
+    <string name="InuHideChatAvatarInfo">آواتار را از سربرگ گفتگو حذف می‌کند و منوی سه‌نقطه می‌ماند. برای باز کردن پروفایل روی عنوان بزنید.</string>
     <string name="InuChatTitleMarquee">متن متحرک برای عنوان‌های بلند</string>
     <string name="InuChatTitleMarqueeInfo">عنوان و زیرعنوان سرصفحه گفتگو، عنوان صفحه‌ها و نام نمایه‌ها را وقتی در عرض جا نمی‌شوند خودکار اسکرول می‌کند</string>
     <string name="InuSaveDeletedMessages">ذخیره پیام‌های حذف‌شده</string>

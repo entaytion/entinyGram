@@ -1204,6 +1204,8 @@
     <string name="InuIosChatHeaderAvatarSlotInfo">وضع الصورة الرمزية في خانة القائمة: انقر لفتح الملف الشخصي، واضغط مطولاً لقائمة المحادثة.</string>
     <string name="InuIosChatHeaderAvatarStatic">عدم توسيط الصورة الرمزية</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">إبقاء الصورة الرمزية بجانب زر الرجوع؛ تُوسَّط كبسولة العنوان فقط.</string>
+    <string name="InuHideChatAvatar">إخفاء الصورة الرمزية</string>
+    <string name="InuHideChatAvatarInfo">يزيل الصورة الرمزية من رأس الدردشة وتبقى قائمة النقاط الثلاث. اضغط على العنوان لفتح الملف الشخصي.</string>
     <string name="InuChatTitleMarquee">نص متحرك للعناوين الطويلة</string>
     <string name="InuChatTitleMarqueeInfo">تمرير تلقائي لعناوين وعناوين فرعية ترويسة المحادثة وعناوين الشاشات وأسماء الملفات الشخصية عندما لا تتسع أفقياً</string>
     <string name="InuSaveDeletedMessages">حفظ الرسائل المحذوفة</string>

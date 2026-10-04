@@ -1653,6 +1653,8 @@
     <string name="InuGhostModeEnabled">Режим призрака включён</string>
     <string name="InuIosChatHeaderAvatarStatic">Не центрировать аватар</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Аватар остаётся рядом с кнопкой «Назад», по центру только пилюля с заголовком.</string>
+    <string name="InuHideChatAvatar">Скрыть аватарку</string>
+    <string name="InuHideChatAvatarInfo">Убирает аватарку из шапки чата, остаётся меню с тремя точками. Профиль открывается по нажатию на название.</string>
     <string name="InuIosStyle">Стиль iOS</string>
     <string name="InuIosSettings">Настройки iOS</string>
     <string name="InuIosSettingsInfo">Центрирование заголовков, нижняя панель, поле ввода, заголовок чата и liquid glass.</string>

@@ -123,6 +123,7 @@ class ChatHeaderPreviewCell(context: Context) : FrameLayout(context) {
         val avatarSlot = InuUtils.chatAvatarInMenuSlot()
         val avatarStatic = InuUtils.chatAvatarStatic()
         val avatarOnRight = InuUtils.chatAvatarOnRight()
+        val noAvatar = InuUtils.hideChatAvatar()
 
         val titleWidth = titlePaint.measureText(titleText)
         val subtitleWidth = subtitlePaint.measureText(subtitleText)
@@ -138,13 +139,13 @@ class ChatHeaderPreviewCell(context: Context) : FrameLayout(context) {
             val textCenterX = if (isCenter) {
                 (contentLeft + contentRight) / 2f
             } else {
-                val start = contentLeft + avatarRadius * 2 + avatarGap
+                val start = contentLeft + if (noAvatar) 0f else avatarRadius * 2 + avatarGap
                 start + textBlockWidth / 2f
             }
             return Snapshot(avatarCx, dotsAlpha, 0f, barMidX, barMidX, textCenterX)
         }
 
-        val avatarInPill = !avatarSlot && !avatarStatic
+        val avatarInPill = !avatarSlot && !avatarStatic && !noAvatar
         val pillContentWidth = if (avatarInPill) {
             textBlockWidth + pillPadH * 2 + avatarRadius * 2 + avatarGap
         } else {
@@ -213,8 +214,10 @@ class ChatHeaderPreviewCell(context: Context) : FrameLayout(context) {
             drawDots(canvas, dotsCxDefault, cy)
         }
 
-        canvas.drawCircle(current.avatarCx, cy, avatarRadius, avatarPaint)
-        canvas.drawText(avatarLetter, current.avatarCx, cy - (titlePaint.descent() + titlePaint.ascent()) / 2f, titlePaint)
+        if (!InuUtils.hideChatAvatar()) {
+            canvas.drawCircle(current.avatarCx, cy, avatarRadius, avatarPaint)
+            canvas.drawText(avatarLetter, current.avatarCx, cy - (titlePaint.descent() + titlePaint.ascent()) / 2f, titlePaint)
+        }
 
         drawTextBlock(canvas, current.textCenterX, cy)
     }

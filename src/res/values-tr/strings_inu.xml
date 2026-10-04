@@ -1617,6 +1617,8 @@
     <string name="InuHidePinnedUntilNew">Yeni bir mesaj sabitlenene kadar</string>
     <string name="InuIosChatHeaderAvatarStatic">Avatarı ortalama</string>
     <string name="InuIosChatHeaderAvatarStaticInfo">Avatar geri düğmesinin yanında kalır, yalnızca başlık hapı ortalanır.</string>
+    <string name="InuHideChatAvatar">Avatarı gizle</string>
+    <string name="InuHideChatAvatarInfo">Sohbet başlığından avatarı kaldırır, üç nokta menüsü kalır. Profili açmak için başlığa dokunun.</string>
     <string name="InuIosStyle">iOS stili</string>
     <string name="InuPingAllProxies">Tüm proxy\'lere ping at</string>
     <string name="InuRoundRecorderExposureLevels">Pozlama seviyesi düğmeleri</string>

@@ -77,18 +77,22 @@ public object InuUtils {
         centerChatTitle() && desu.inugram.InuConfig.IOS_CHAT_HEADER.value
 
     @JvmStatic
+    fun hideChatAvatar(): Boolean = desu.inugram.InuConfig.HIDE_CHAT_AVATAR.value
+
+    @JvmStatic
     fun chatAvatarInMenuSlot(): Boolean =
-        compactChatPill() && desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value
+        !hideChatAvatar() && compactChatPill() && desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_SLOT.value
 
     @JvmStatic
     fun chatAvatarStatic(): Boolean =
-        compactChatPill() &&
+        !hideChatAvatar() && compactChatPill() &&
             !chatAvatarInMenuSlot() &&
             desu.inugram.InuConfig.IOS_CHAT_HEADER_AVATAR_STATIC.value
 
     @JvmStatic
     fun chatAvatarOnRight(): Boolean =
         centerChatTitle() &&
+            !hideChatAvatar() &&
             !chatAvatarInMenuSlot() &&
             !chatAvatarStatic() &&
             desu.inugram.InuConfig.CENTER_TITLE_RIGHT_AVATAR.value
