@@ -125,9 +125,7 @@ object MessageDetailsHelper {
         }
         rootLayout.addView(backItem, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48))
 
-        val headerGap = ActionBarPopupWindow.GapView(context, rp).apply {
-            background = null
-        }
+        val headerGap = View(context)
         rootLayout.addView(headerGap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8))
 
         val scrollView = object : ScrollView(context) {
@@ -155,9 +153,8 @@ object MessageDetailsHelper {
     }
 
     private fun addGap(context: Context, layout: LinearLayout, rp: Theme.ResourcesProvider?) {
-        val gap = ActionBarPopupWindow.GapView(context, rp).apply {
-            background = null
-        }
+        // plain spacer: GapView still draws its grey divider shadow in onDraw even with background = null
+        val gap = View(context)
         layout.addView(gap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8))
     }
 

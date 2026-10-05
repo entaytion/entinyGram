@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 5 Oct 2026 20:17:48 +0300
+Subject: [*] topic icon inset in header
+
+---
+ .../java/org/telegram/ui/Components/ChatAvatarContainer.java  | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -1061,7 +1061,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             } else {
+                 avatarLeft = actionBar.inu_titlePillLeft - inu_containerLeft() + dp(9);
+             }
+-            avatarImageView.layout(avatarLeft, 1 + viewTop, avatarLeft + avatarW, 1 + viewTop + avatarH);
++            // entiny: topic icons fill the whole box, inset them so they do not touch the pill edge
++            final int topicInset = parentFragment != null && parentFragment.isTopic ? dp(4) : 0;
++            avatarImageView.layout(avatarLeft + topicInset, 1 + viewTop + topicInset, avatarLeft + avatarW - topicInset, 1 + viewTop + avatarH - topicInset);
+         } else {
+             avatarImageView.layout(1 + leftPadding, 1 + viewTop, 1 + leftPadding + avatarW, 1 + viewTop + avatarH);
+             int inset = avatarImageView.getVisibility() == VISIBLE ? (1 + leftPadding + avatarW + dp(4)) : dp(glassMode ? 20 : 16);

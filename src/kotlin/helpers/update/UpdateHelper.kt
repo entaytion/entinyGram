@@ -91,6 +91,12 @@ object UpdateHelper {
 
     @JvmStatic
     fun revealPendingUpdate() {
+        // entiny: a stale pending entry for the installed version must never pop up
+        val pendingVer = SharedConfig.pendingAppUpdate?.version?.toIntOrNull()
+        if (pendingVer != null && pendingVer <= currentVersionCode()) {
+            clearPending()
+            return
+        }
         NotificationCenter.getGlobalInstance()
             .postNotificationName(NotificationCenter.appUpdateAvailable, true)
     }

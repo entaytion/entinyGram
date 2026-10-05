@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 5 Oct 2026 20:17:44 +0300
+Subject: [*] forum search back
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -7524,7 +7524,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         if (hasShownSheet()) {
+             if (invoked) closeSheet();
+             return false;
+-        } else if (rightSlidingDialogContainer.hasFragment() && rightSlidingDialogContainer.getFragment().onBackPressed(invoked)) {
++        } else if (!animatorSearchVisible.getValue() && rightSlidingDialogContainer.hasFragment() && rightSlidingDialogContainer.getFragment().onBackPressed(invoked)) {
+             if (invoked) {
+                 rightSlidingDialogContainer.finishPreview();
+                 if (searchViewPager != null) {

@@ -89,7 +89,27 @@ class AyuMessageHistoryActivity(
                 } ?: InuDatabaseHelper.deletedMessagesInDialog(db, dialogId).map {
                     EditEntry(it.date.toLong(), it.text, it.mediaPath, originalMessageId = it.msgId, fromId = it.fromId, message = it.message)
                 }
+                // entiny: senders that are not in the in-memory cache have no avatar or name, load them from the users table first
+                val userIds = HashSet<Long>()
+                val chatIds = HashSet<Long>()
+                for (e in deleted) {
+                    val peer = e.message?.from_id
+                    val uid = if (e.fromId > 0) e.fromId else peer?.user_id ?: 0L
+                    val cid = if (e.fromId < 0) -e.fromId else maxOf(peer?.channel_id ?: 0L, peer?.chat_id ?: 0L)
+                    if (uid > 0 && messagesController.getUser(uid) == null) userIds.add(uid)
+                    if (cid > 0 && messagesController.getChat(cid) == null) chatIds.add(cid)
+                }
+                val loadedUsers = ArrayList<TLRPC.User>()
+                val loadedChats = ArrayList<TLRPC.Chat>()
+                try {
+                    if (userIds.isNotEmpty()) storage.getUsersInternal(userIds, loadedUsers)
+                    if (chatIds.isNotEmpty()) storage.getChatsInternal(chatIds.joinToString(","), loadedChats)
+                } catch (e: Throwable) {
+                    org.telegram.messenger.FileLog.e(e)
+                }
                 AndroidUtilities.runOnUIThread {
+                    if (loadedUsers.isNotEmpty()) messagesController.putUsers(loadedUsers, true)
+                    if (loadedChats.isNotEmpty()) messagesController.putChats(loadedChats, true)
                     historyEntries.clear()
                     historyEntries.addAll(deleted.asReversed())
                     loaded = true
@@ -198,7 +218,24 @@ class AyuMessageHistoryActivity(
         frameLayout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray))
         frameLayout.setBackgroundImage(Theme.getCachedWallpaper(), Theme.isWallpaperMotion())
 
-        val recycler = RecyclerListView(context).apply {
+        // entiny: stock ChatActivity draws message avatars from its list's drawChild, the cell never draws them itself
+        val recycler = object : RecyclerListView(context) {
+            override fun drawChild(canvas: Canvas, child: View, drawingTime: Long): Boolean {
+                val result = super.drawChild(canvas, child, drawingTime)
+                if (child is ChatMessageCell && child.isAvatarVisible) {
+                    val receiver = child.avatarImage ?: return result
+                    val top = child.top + child.paddingTop
+                    var y = child.top + child.paddingTop + child.layoutHeight
+                    if (y > child.bottom) y = child.bottom
+                    if (y - AndroidUtilities.dp(48f) < top) y = top + AndroidUtilities.dp(48f)
+                    receiver.setImageY((y - AndroidUtilities.dp(44f)).toFloat())
+                    receiver.setAlpha(1f)
+                    receiver.setVisible(true, false)
+                    receiver.draw(canvas)
+                }
+                return result
+            }
+        }.apply {
             setItemAnimator(null)
             setLayoutAnimation(null)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

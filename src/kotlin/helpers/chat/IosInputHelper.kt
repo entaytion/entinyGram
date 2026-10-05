@@ -46,8 +46,9 @@ object IosInputHelper {
     }
 
     @JvmStatic
-    fun drawBubbleSquare(canvas: Canvas, bubble: BlurredBackgroundDrawable?, view: View?, sizePx: Int) {
+    fun drawBubbleSquare(canvas: Canvas, bubble: BlurredBackgroundDrawable?, view: View?, sizeDp: Int) {
         if (bubble == null || view == null || view.visibility != View.VISIBLE || view.alpha <= 0) return
+        val sizePx = AndroidUtilities.dp(sizeDp.toFloat())
         drawFollowing(canvas, bubble, view, view.right - sizePx, view.bottom - sizePx, view.right, view.bottom)
     }
 

@@ -184,7 +184,7 @@ object ChatHelper {
         val isDeleted = isDeletedOrPreserved(msg)
         if (isDeleted) {
             if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
-                width += AndroidUtilities.dp(13f)
+                width += AndroidUtilities.dp(deletedMarkSizeDp()) + ceil(Theme.chat_timePaint.measureText(" ")).toInt()
             }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             width += AndroidUtilities.dp(11f)
@@ -209,7 +209,7 @@ object ChatHelper {
         if (isDeleted) {
             if (InuConfig.DELETED_MARK_STYLE.value != InuConfig.DeletedMarkStyleItem.NOTHING) {
                 val markColor = InuConfig.DELETED_MARK_COLOR.value
-                appendTimeIcon(sb, deletedMarkIconRes(), sizeDp = 11f, translateYDp = 1f, overrideColor = markColor)
+                appendTimeIcon(sb, deletedMarkIconRes(), sizeDp = deletedMarkSizeDp(), overrideColor = markColor)
                 sb.append(" ")
             } else {
                 appendDeletedMarkText(sb)
@@ -227,8 +227,13 @@ object ChatHelper {
         InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE -> R.drawable.inu_tabler_trash
         InuConfig.DeletedMarkStyleItem.CROSS -> R.drawable.ic_deleted_mark_cross
         InuConfig.DeletedMarkStyleItem.EYE_CROSSED -> R.drawable.ic_deleted_mark_eye_off
-        else -> R.drawable.inu_tabler_trash_filled
+        else -> R.drawable.ic_deleted_mark_trash
     }
+
+    // entiny: the trash/cross/eye marks are 14dp vectors (ported from NagramXF) whose glyph fills most of the box; the 24dp tabler outline needs a larger box to look as big
+    @JvmStatic
+    fun deletedMarkSizeDp(): Float =
+        if (InuConfig.DELETED_MARK_STYLE.value == InuConfig.DeletedMarkStyleItem.TRASH_BIN_OUTLINE) 18f else 14f
 
     @JvmStatic
     fun appendDeletedMarkText(sb: SpannableStringBuilder) {

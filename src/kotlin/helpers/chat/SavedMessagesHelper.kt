@@ -697,6 +697,10 @@ object SavedMessagesHelper {
     }
 
     // entiny: a deletion is only worth archiving when we actually hold something to preserve
+    private fun findShadowDialog(account: Int, msgId: Int): Long? = synchronized(cacheLock) {
+        shadowMessageCache.get(account.toLong())?.keys?.lastOrNull { it.second == msgId && it.first > 0 }?.first
+    }
+
     private fun hasPreservableData(text: String?, message: TLRPC.Message?): Boolean {
         if (!text.isNullOrBlank()) return true
         val media = message?.media ?: return false
@@ -732,7 +736,17 @@ object SavedMessagesHelper {
 
     @JvmStatic
     @JvmOverloads
-    fun markMessageDeleted(account: Int, dialogId: Long, msgId: Int, fromId: Long, text: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
+    fun markMessageDeleted(account: Int, dialogId: Long, msgIdIn: Int, fromId: Long, textIn: String?, date: Int, message: TLRPC.Message? = null, forceSave: Boolean = false) {
+        var dialogId = dialogId
+        var text = textIn
+        val msgId = msgIdIn
+        // entiny: private deletes arrive without a dialog id, recover it from the shadow cache
+        if (dialogId == 0L && message == null && msgId > 0) {
+            findShadowDialog(account, msgId)?.let { dialogId = it }
+        }
+        if (text.isNullOrEmpty() && message == null && dialogId != 0L) {
+            text = synchronized(cacheLock) { shadowMessageCache.get(account.toLong())?.get(dialogId to msgId)?.text }
+        }
         // entiny: reject dialog id 0 to prevent marking matching IDs in unrelated chats as deleted
         if (dialogId == 0L) return
         // entiny: unsent or cancelled uploads carry local ids and must never reach the archive
