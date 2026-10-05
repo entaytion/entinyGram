@@ -179,11 +179,24 @@ object BlockedMessagesHelper {
             state
         }
 
+    private val manualHidden = HashMap<String, HashSet<Int>>()
+
+    private fun manualKey(msg: MessageObject) = "${msg.currentAccount}:${msg.dialogId}"
+
+    private fun isManuallyHidden(msg: MessageObject): Boolean =
+        !msg.isDateObject && manualHidden[manualKey(msg)]?.contains(msg.id) == true
+
+    fun hideManually(adapter: ChatActivity.ChatActivityAdapter, messages: Collection<MessageObject>) {
+        for (msg in messages) manualHidden.getOrPut(manualKey(msg)) { HashSet() }.add(msg.id)
+        epoch++
+        adapter.notifyDataSetChanged()
+    }
+
     @JvmStatic
     fun refreshVisible(adapter: ChatActivity.ChatActivityAdapter): ArrayList<MessageObject> {
         val source = adapter.inu_getSourceMessages()
         val state = stateFor(adapter)
-        if (!hasHideFilter()) return source
+        if (!hasHideFilter() && manualHidden.isEmpty()) return source
         val buffer = adapter.inu_visibleMessages
         // entiny: getMessages() runs per adapter query, so rebuild only after the data actually changed
         val config = configStamp()
@@ -198,7 +211,7 @@ object BlockedMessagesHelper {
         // entiny: oldest first so a reply to a hidden reply is hidden too
         for (i in source.size - 1 downTo 0) {
             val msg = source[i] ?: continue
-            var hide = shouldHide(msg)
+            var hide = shouldHide(msg) || isManuallyHidden(msg)
             if (hiddenIds != null) {
                 if (hide) {
                     if (RegexFilterHelper.isMessageFiltered(msg)) hiddenIds.add(msg.id)

@@ -13,6 +13,7 @@
     <string name="InuClearDeletedHere">Очистить удалённые</string>
     <string name="InuClearDeletedHereAlert">Удалить локально сохранённые удалённые сообщения этого чата и их медиа? Это нельзя отменить.</string>
     <string name="InuSetReminder">Задать напоминание</string>
+    <string name="InuHideMessage">Скрыть</string>
     <string name="InuBanUserConfirm">Заблокировать %1$s в этой группе?</string>
     <string name="InuSettings">Настройки entinyGram</string>
     <string name="InuSettingsInfo">сквозь землю и ветер я иду за тобой</string>

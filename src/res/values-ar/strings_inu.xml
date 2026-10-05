@@ -1729,6 +1729,7 @@
     <string name="InuRootPrivacy">الميزات والخصوصية</string>
     <string name="InuRootSystem">النظام</string>
     <string name="InuSetReminder">ضبط تذكير</string>
+    <string name="InuHideMessage">إخفاء</string>
     <string name="InuSideMenu">القائمة الجانبية</string>
     <string name="InuSideMenuInfo">القائمة المنسدلة وأقسامها والحسابات وعناصر القائمة.</string>
 </resources>

@@ -473,3 +473,4 @@ entiny/logs-respect-toggle.patch
 entiny/hide-chat-avatar.patch
 entiny/always-show-downloads.patch
 entiny/clown-avatar-blocked.patch
+entiny/hide-message.patch

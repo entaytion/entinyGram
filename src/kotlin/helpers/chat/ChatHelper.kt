@@ -135,6 +135,7 @@ object ChatHelper {
     const val OPTION_SHARE_ONE_TIME = 529
     const val OPTION_FORWARD_ONE_TIME = 530
     const val OPTION_SET_REMINDER = 531
+    const val OPTION_HIDE_MESSAGE = 532
 
     private fun getForwardsCount(msg: MessageObject?): Int {
         if (msg == null || !InuConfig.SHOW_FORWARDS_COUNT.value) return 0
@@ -444,6 +445,12 @@ object ChatHelper {
             items.add(LocaleController.getString(R.string.InuSetReminder))
             options.add(OPTION_SET_REMINDER)
             icons.add(R.drawable.msg_notifications)
+        }
+
+        if (isMenuItemEnabled(MessageMenuConfig.Item.HIDE_MESSAGE)) {
+            items.add(LocaleController.getString(R.string.InuHideMessage))
+            options.add(OPTION_HIDE_MESSAGE)
+            icons.add(R.drawable.inu_tabler_eye_off)
         }
 
         if (options.contains(ChatActivity.OPTION_FORWARD)) {
@@ -765,6 +772,11 @@ object ChatHelper {
                 val messages = ArrayList<MessageObject>()
                 if (selectedObjectGroup != null) messages.addAll(selectedObjectGroup.messages) else messages.add(selectedObject)
                 setReminder(activity, messages)
+            }
+
+            OPTION_HIDE_MESSAGE -> {
+                val messages = selectedObjectGroup?.messages ?: listOf(selectedObject)
+                BlockedMessagesHelper.hideManually(activity.chatAdapter, messages)
             }
 
             OPTION_FORWARD_PRO -> {

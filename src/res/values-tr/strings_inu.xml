@@ -1706,6 +1706,7 @@
     <string name="InuRootPrivacy">Özellikler ve gizlilik</string>
     <string name="InuRootSystem">Sistem</string>
     <string name="InuSetReminder">Hatırlatıcı ayarla</string>
+    <string name="InuHideMessage">Gizle</string>
     <string name="InuSideMenu">Yan menü</string>
     <string name="InuSideMenuInfo">Hamburger çekmece, bölümleri, hesaplar ve menü öğeleri.</string>
 </resources>

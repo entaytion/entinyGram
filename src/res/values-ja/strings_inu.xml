@@ -1707,6 +1707,7 @@
     <string name="InuRootPrivacy">機能とプライバシー</string>
     <string name="InuRootSystem">システム</string>
     <string name="InuSetReminder">リマインダーを設定</string>
+    <string name="InuHideMessage">非表示</string>
     <string name="InuSideMenu">サイドメニュー</string>
     <string name="InuSideMenuInfo">ドロワー、そのセクション、アカウント、メニュー項目。</string>
 </resources>

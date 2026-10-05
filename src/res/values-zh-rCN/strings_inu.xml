@@ -1708,6 +1708,7 @@
     <string name="InuRootPrivacy">功能与隐私</string>
     <string name="InuRootSystem">系统</string>
     <string name="InuSetReminder">设置提醒</string>
+    <string name="InuHideMessage">隐藏</string>
     <string name="InuSideMenu">侧边菜单</string>
     <string name="InuSideMenuInfo">汉堡抽屉、其分区、账号和菜单项。</string>
 </resources>

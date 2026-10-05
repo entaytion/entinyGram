@@ -120,6 +120,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 ### messages & media tools
 
 - 📡 **message details & JSON view**
+- 📡 **hide message**: message menu item that hides a message until you restart the app - *inspired by exteraGram*
 - 📡 **url parsing improvements**
 - 📡 **AI providers as cards**: add any number of providers (Gemini, OpenAI, Groq, OpenRouter, Cloudflare or a custom OpenAI-compatible endpoint), auto-detect the endpoint, pick models from a searchable list and choose which one serves chat and voice
 - 📡 **AI by task**: voice-to-text, AI editor and message summaries each get their own provider, model and temperature; AI editor opens on your own provider

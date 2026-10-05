@@ -366,6 +366,7 @@ class MessageMenuConfig(key: String) : MenuOrderConfig<MessageMenuConfig.Item>(k
         EDIT_HISTORY("edit_history", listOf(ChatHelper.OPTION_EDIT_HISTORY), R.string.InuEditHistory, R.drawable.inu_tabler_file_diff),
         ADD_FILTER("add_filter", listOf(ChatHelper.OPTION_ADD_FILTER), R.string.InuRegexFilterAddFromMessage, R.drawable.inu_tabler_filter),
         SET_REMINDER("set_reminder", listOf(ChatHelper.OPTION_SET_REMINDER), R.string.InuSetReminder, R.drawable.msg_notifications),
+        HIDE_MESSAGE("hide_message", listOf(ChatHelper.OPTION_HIDE_MESSAGE), R.string.InuHideMessage, R.drawable.inu_tabler_eye_off),
 
         SLOT_REPLY("slot_reply", emptyList(), R.string.Reply, R.drawable.menu_reply, true),
         SLOT_COPY("slot_copy", emptyList(), R.string.Copy, R.drawable.msg_copy, true),

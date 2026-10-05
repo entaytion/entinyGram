@@ -1709,6 +1709,7 @@
     <string name="InuRootPrivacy">قابلیت‌ها و حریم خصوصی</string>
     <string name="InuRootSystem">سیستم</string>
     <string name="InuSetReminder">تنظیم یادآور</string>
+    <string name="InuHideMessage">پنهان کردن</string>
     <string name="InuSideMenu">منوی کناری</string>
     <string name="InuSideMenuInfo">منوی کشویی، بخش‌ها، حساب‌ها و موارد منو.</string>
 </resources>
