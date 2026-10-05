@@ -146,6 +146,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **UnifiedPush** notifications without Google Play - *ported from [Forkgram](https://github.com/forkgram/TelegramAndroid) & [Mercurygram](https://github.com/mercurygram/mercurygram)*
 - 📡 **background service**: optional always-on connection so notifications arrive on time, at the cost of battery - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - 📡 **fix stuck playback on pause** (MIUI and certain DSPs)
+- 📡 **fix in-app vibration setting ignored**: turning in-app notification vibration on or off now takes effect
 - 📡 **rotate the call screen** instead of locking it to portrait
 - 📡 **cache management**: per-category size overview; clear deleted messages, edit history, removed reactions, saved media, presence logs, feed, recent chats, temp files and logs one by one or all at once
 - 📡 **media size badge**: optional file size label on photos

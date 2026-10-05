@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 5 Oct 2026 15:18:44 +0300
+Subject: [*] in-app notification vibration
+
+---
+ .../java/org/telegram/messenger/NotificationsController.java    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -3979,7 +3979,7 @@ public class NotificationsController extends BaseController implements Notificat
+                     }
+                     newSettingsHash = Utilities.MD5(newSettings.toString());
+                     newSettings.setLength(0);
+-                    if (isInApp && importance != channelImportance) {
++                    if (isInApp && (importance != channelImportance || !isEmptyVibration(vibrationPattern) != vibrate)) {
+                         shouldOverwrite = true;
+                     } else if (!newSettingsHash.equals(settings)) {
+                         SharedPreferences.Editor editor = null;
