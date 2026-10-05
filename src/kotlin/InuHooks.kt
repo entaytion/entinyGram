@@ -214,7 +214,7 @@ object InuHooks {
         val resId = when (current) {
             LauncherIconController.LauncherIcon.DEFAULT,
             LauncherIconController.LauncherIcon.OLD -> R.string.InuAppIconLicenseInugram
-            else -> R.string.InuAppIconLicenseTelegram
+            else -> if (current?.concept == true) R.string.InuAppIconLicenseConcept else R.string.InuAppIconLicenseTelegram
         }
         return AndroidUtilities.replaceTags(getString(resId))
     }

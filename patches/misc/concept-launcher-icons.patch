@@ -1,0 +1,308 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Mon, 5 Oct 2026 19:20:38 +0300
+Subject: Add concept launcher icons
+
+---
+ TMessagesProj/src/main/AndroidManifest.xml    | 240 ++++++++++++++++++
+ .../telegram/ui/LauncherIconController.java   |  22 ++
+ 2 files changed, 262 insertions(+)
+
+diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/AndroidManifest.xml
++++ b/TMessagesProj/src/main/AndroidManifest.xml
+@@ -181,6 +181,246 @@
+             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
+         </activity-alias>
+ 
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.InuTributeIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_inutribute"
++            android:roundIcon="@mipmap/ic_launcher_concept_inutribute"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.RadarIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_radar"
++            android:roundIcon="@mipmap/ic_launcher_concept_radar"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.ConstellationIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_constellation"
++            android:roundIcon="@mipmap/ic_launcher_concept_constellation"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.OrbitIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_orbit"
++            android:roundIcon="@mipmap/ic_launcher_concept_orbit"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.AvatarIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_avatar"
++            android:roundIcon="@mipmap/ic_launcher_concept_avatar"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.NothingIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_nothing"
++            android:roundIcon="@mipmap/ic_launcher_concept_nothing"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.MonoIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_mono"
++            android:roundIcon="@mipmap/ic_launcher_concept_mono"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.SunsetIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_sunset"
++            android:roundIcon="@mipmap/ic_launcher_concept_sunset"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.AmethystIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_amethyst"
++            android:roundIcon="@mipmap/ic_launcher_concept_amethyst"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.AuroraIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_aurora"
++            android:roundIcon="@mipmap/ic_launcher_concept_aurora"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.Google26Icon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_google26"
++            android:roundIcon="@mipmap/ic_launcher_concept_google26"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.LunarIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_lunar"
++            android:roundIcon="@mipmap/ic_launcher_concept_lunar"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.MathBookIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_mathbook"
++            android:roundIcon="@mipmap/ic_launcher_concept_mathbook"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.JungleIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_jungle"
++            android:roundIcon="@mipmap/ic_launcher_concept_jungle"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.GoldIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_gold"
++            android:roundIcon="@mipmap/ic_launcher_concept_gold"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.DishIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_dish"
++            android:roundIcon="@mipmap/ic_launcher_concept_dish"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
+         <activity-alias
+             android:enabled="false"
+             android:name="org.telegram.messenger.VintageIcon"
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+@@ -36,6 +36,22 @@ public class LauncherIconController {
+     public enum LauncherIcon {
+         DEFAULT("DefaultIcon", R.drawable.icon_background_inu, R.drawable.icon_foreground_inu, R.string.AppIconDefault),
+         OLD("OldIcon", R.drawable.icon_background_old_inu, R.drawable.icon_foreground_old_inu, R.string.InuAppIconOldEntinygram),
++        INU_TRIBUTE("InuTributeIcon", R.drawable.icon_bg_concept_inutribute, R.drawable.icon_foreground_blank, R.string.InuAppIconInuTribute, false, true),
++        RADAR("RadarIcon", R.drawable.icon_bg_concept_radar, R.drawable.icon_foreground_blank, R.string.InuAppIconRadar, false, true),
++        CONSTELLATION("ConstellationIcon", R.drawable.icon_bg_concept_constellation, R.drawable.icon_foreground_blank, R.string.InuAppIconConstellation, false, true),
++        ORBIT("OrbitIcon", R.drawable.icon_bg_concept_orbit, R.drawable.icon_foreground_blank, R.string.InuAppIconOrbit, false, true),
++        AVATAR("AvatarIcon", R.drawable.icon_bg_concept_avatar, R.drawable.icon_foreground_blank, R.string.InuAppIconAvatar, false, true),
++        NOTHING("NothingIcon", R.drawable.icon_bg_concept_nothing, R.drawable.icon_foreground_blank, R.string.InuAppIconNothing, false, true),
++        MONO("MonoIcon", R.drawable.icon_bg_concept_mono, R.drawable.icon_foreground_blank, R.string.InuAppIconMono, false, true),
++        SUNSET("SunsetIcon", R.drawable.icon_bg_concept_sunset, R.drawable.icon_foreground_blank, R.string.InuAppIconSunset, false, true),
++        AMETHYST("AmethystIcon", R.drawable.icon_bg_concept_amethyst, R.drawable.icon_foreground_blank, R.string.InuAppIconAmethyst, false, true),
++        AURORA("AuroraIcon", R.drawable.icon_bg_concept_aurora, R.drawable.icon_foreground_blank, R.string.InuAppIconAurora, false, true),
++        GOOGLE26("Google26Icon", R.drawable.icon_bg_concept_google26, R.drawable.icon_foreground_blank, R.string.InuAppIconGoogle26, false, true),
++        LUNAR("LunarIcon", R.drawable.icon_bg_concept_lunar, R.drawable.icon_foreground_blank, R.string.InuAppIconLunar, false, true),
++        MATHBOOK("MathBookIcon", R.drawable.icon_bg_concept_mathbook, R.drawable.icon_foreground_blank, R.string.InuAppIconMathBook, false, true),
++        JUNGLE("JungleIcon", R.drawable.icon_bg_concept_jungle, R.drawable.icon_foreground_blank, R.string.InuAppIconJungle, false, true),
++        GOLD("GoldIcon", R.drawable.icon_bg_concept_gold, R.drawable.icon_foreground_blank, R.string.InuAppIconGold, false, true),
++        DISH("DishIcon", R.drawable.icon_bg_concept_dish, R.drawable.icon_foreground_blank, R.string.InuAppIconDish, false, true),
+         STOCK("StockIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.InuAppIconStock),
+         VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
+         AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
+@@ -49,6 +65,7 @@ public class LauncherIconController {
+         public final int foreground;
+         public final int title;
+         public final boolean premium;
++        public final boolean concept;
+ 
+         private ComponentName componentName;
+ 
+@@ -64,6 +81,11 @@ public class LauncherIconController {
+         }
+ 
+         LauncherIcon(String key, int background, int foreground, int title, boolean premium) {
++            this(key, background, foreground, title, premium, false);
++        }
++
++        LauncherIcon(String key, int background, int foreground, int title, boolean premium, boolean concept) {
++            this.concept = concept;
+             this.key = key;
+             this.background = background;
+             this.foreground = foreground;

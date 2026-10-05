@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<defs>
+<clipPath id="a-c"><path d="M50,2 C12,2 2,12 2,50 C2,88 12,98 50,98 C88,98 98,88 98,50 C98,12 88,2 50,2 Z"/></clipPath>
+<radialGradient id="a-bg" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#F25A38"/><stop offset=".5" stop-color="#C71F18"/><stop offset="1" stop-color="#690909"/></radialGradient>
+<linearGradient id="a-d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF3DA"/><stop offset="1" stop-color="#E0AE76"/></linearGradient>
+<radialGradient id="a-v" cx=".5" cy=".5" r=".6"><stop offset=".55" stop-color="#2a0303" stop-opacity="0"/><stop offset="1" stop-color="#2a0303" stop-opacity=".55"/></radialGradient>
+<radialGradient id="a-gl" cx=".3" cy=".1" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<filter id="a-s" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="1.3" stdDeviation="1.4" flood-color="#240203" flood-opacity=".6"/></filter>
+<path id="a-sw" d="M50 46a4 4 0 0 1 4 4a8 8 0 0 1-8 8a12 12 0 0 1-12-12a16 16 0 0 1 16-16a20 20 0 0 1 20 20a24 24 0 0 1-24 24a28 28 0 0 1-28-28a32 32 0 0 1 32-32a36 36 0 0 1 36 36a40 40 0 0 1-40 40"/>
+</defs>
+<g clip-path="url(#a-c)">
+<rect width="100" height="100" fill="url(#a-bg)"/>
+<g fill="none" stroke-linecap="round">
+<use href="#a-sw" stroke="#3a0505" stroke-opacity=".55" stroke-width="8"/>
+<use href="#a-sw" stroke="#3a0505" stroke-opacity=".55" stroke-width="8" transform="rotate(180 48 48)"/>
+<use href="#a-sw" stroke="#FF8660" stroke-opacity=".4" stroke-width="1.6" transform="translate(-2.6 -2.6)"/>
+<use href="#a-sw" stroke="#FF8660" stroke-opacity=".4" stroke-width="1.6" transform="rotate(180 48 48) translate(-2.6 -2.6)"/>
+<use href="#a-sw" stroke="#FFD0A0" stroke-opacity=".18" stroke-width=".8" transform="translate(3 3)"/>
+</g>
+<rect width="100" height="100" fill="url(#a-v)"/>
+<g transform="translate(20 20) scale(2.5)" filter="url(#a-s)" stroke-linecap="round" stroke-linejoin="round">
+<path d="M4 10a7.31 7.31 0 0 0 10 10Z" fill="url(#a-d)" stroke="url(#a-d)" stroke-width="1.6"/>
+<path d="M5 10.9a6.3 6.3 0 0 0 8.1 8.1Z" fill="#B97A42" opacity=".28"/>
+<path d="M7 14.45a1.3 1.3 0 0 1 1.3 1.3a2.6 2.6 0 0 1-2.6 2.6a3.9 3.9 0 0 1-3.9-3.9a5.2 5.2 0 0 1 5.2-5.2" transform="translate(4.2 1.2) scale(.62)" fill="none" stroke="#A3622C" stroke-width="1.3"/>
+<path d="m9 15 3-3" fill="none" stroke="#F8E3BD" stroke-width="1.8"/>
+<path d="M17 13a6 6 0 0 0-6-6" fill="none" stroke="#FFE9C4" stroke-width="1.8"/>
+<path d="M21 13A10 10 0 0 0 11 3" fill="none" stroke="#FFE9C4" stroke-opacity=".65" stroke-width="1.8"/>
+</g>
+<rect width="100" height="100" fill="url(#a-gl)"/>
+</g>
+<path d="M50,2 C12,2 2,12 2,50 C2,88 12,98 50,98 C88,98 98,88 98,50 C98,12 88,2 50,2 Z" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width=".8"/>
+</svg>

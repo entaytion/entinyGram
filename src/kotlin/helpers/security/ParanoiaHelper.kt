@@ -157,6 +157,7 @@ object ParanoiaHelper {
         if (isDisguised()) {
             icons.remove(LauncherIcon.DEFAULT)
             icons.remove(LauncherIcon.STOCK)
+            icons.removeAll { it.concept }
             val disguiseIdx = icons.indexOf(LauncherIcon.DISGUISE)
             if (disguiseIdx != -1) {
                 icons.removeAt(disguiseIdx)

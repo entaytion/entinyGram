@@ -475,3 +475,5 @@ entiny/always-show-downloads.patch
 entiny/clown-avatar-blocked.patch
 entiny/hide-message.patch
 entiny/inapp-notification-vibration.patch
+entiny/agp-9.patch
+misc/concept-launcher-icons.patch

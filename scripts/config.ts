@@ -137,6 +137,16 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/mipmap-anydpi-v26',
     replace: true,
   },
+  // concept launcher icons, produced by `node scripts/generate-concept-icons.mjs`
+  {
+    source: 'src/res/launcher/concepts/generated/png/*',
+    target: 'TMessagesProj/src/main/res/drawable-nodpi',
+  },
+  {
+    source: 'src/res/launcher/concepts/generated/mipmap/*',
+    target: 'TMessagesProj/src/main/res/mipmap-anydpi-v26',
+    replace: true,
+  },
   {
     source: 'src/res/launcher/generated/mipmap-debug/*',
     target: 'TMessagesProj_App/src/debug/res/mipmap-anydpi-v26',
