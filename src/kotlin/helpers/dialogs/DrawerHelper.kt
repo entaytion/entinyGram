@@ -630,6 +630,11 @@ object DrawerHelper {
                 close()
             }
 
+            DrawerLayoutAdapter.ITEM_RESTART_APP -> {
+                close()
+                LaunchActivity.instance?.let { confirmRestartApp(it, null) }
+            }
+
             ITEM_PROXY -> {
                 nav.presentFragment(ProxyListActivity())
                 close()
@@ -729,7 +734,7 @@ object DrawerHelper {
                     instance.presentFragment(ParanoiaActivity())
                 }
                 DialogsMenuConfig.Item.RESTART_APP -> io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
-                    confirmRestartApp(instance)
+                    instance.parentActivity?.let { confirmRestartApp(it, instance.getResourceProvider()) }
                 }
                 DialogsMenuConfig.Item.SETTINGS -> if (bottomTabsHidden) io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
                     instance.presentFragment(SettingsActivity())
@@ -739,9 +744,8 @@ object DrawerHelper {
         }
     }
 
-    private fun confirmRestartApp(instance: DialogsActivity) {
-        val activity = instance.parentActivity ?: return
-        AlertDialog.Builder(activity, instance.getResourceProvider())
+    private fun confirmRestartApp(activity: Activity, resourceProvider: Theme.ResourcesProvider?) {
+        AlertDialog.Builder(activity, resourceProvider)
             .setTitle(getString(R.string.InuRestartApp))
             .setMessage(getString(R.string.InuRestartAppAlert))
             .setPositiveButton(getString(R.string.InuRestartApp)) { _, _ ->

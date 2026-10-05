@@ -293,6 +293,8 @@ class DrawerLayoutAdapter(
                     items.add(Item(8, LocaleController.getString(R.string.Settings), R.drawable.msg_settings))
                 DrawerMenuConfig.Item.ENTINY_SETTINGS ->
                     items.add(Item(ITEM_ENTINY_SETTINGS, LocaleController.getString(R.string.InuSettings), R.drawable.icon_settings_inu))
+                DrawerMenuConfig.Item.RESTART_APP ->
+                    items.add(Item(ITEM_RESTART_APP, LocaleController.getString(R.string.InuRestartApp), R.drawable.msg_retry))
             }
         }
         while (items.isNotEmpty() && items[items.size - 1] == null) items.removeAt(items.size - 1)
@@ -305,6 +307,7 @@ class DrawerLayoutAdapter(
         const val ITEM_FEED = 21
         const val ITEM_RECENT_CHATS = 22
         const val ITEM_ENTINY_SETTINGS = 23
+        const val ITEM_RESTART_APP = 24
     }
 
     class Item private constructor(
