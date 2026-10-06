@@ -29,6 +29,21 @@ plugin may break with future updates.
 Inugram API stability does not freeze Telegram's internals: Java classes/methods can
 change with upstream updates, as well as the TL schema.
 
+
+## Porting Python (Exteragram) plugins with AI
+
+If you have a Python `.plugin` written for Exteragram, and want to port it to Inugram, there's an agent skill for that: `inugram-plugin-port`.
+
+It maps the Python plugin APIs to their Inugram equivalents, and nudges the agent towards small single-purpose plugins, high-level APIs and data interception instead of a line-by-line translation full of JVM reflection and xposed hooks.
+
+Install it into your plugin project with the [skills.sh](https://skills.sh) CLI:
+
+```bash
+npx skills add teidesu/inugram --skill inugram-plugin-port
+```
+
+The skill only gets you a first draft. Review the result and test it on a device before publishing.
+
 ## TOC
 
 - [getting-started.md](getting-started.md): how to get up and running with the plugins SDK
