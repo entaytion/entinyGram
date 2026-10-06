@@ -1,0 +1,190 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 20:07:22 +0400
+Subject: temporary patch with extra debug logs for stuck webm stickers
+
+---
+ .../messenger/AnimatedFileDrawableStream.java  |  6 +++++-
+ .../telegram/messenger/FileLoadOperation.java  |  6 +++---
+ .../org/telegram/messenger/FileLoader.java     |  4 +++-
+ .../org/telegram/ui/Cells/ChatMessageCell.java |  1 +
+ .../ui/Components/AnimatedFileDrawable.java    | 18 ++++++++++--------
+ 5 files changed, 22 insertions(+), 13 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AnimatedFileDrawableStream.java b/TMessagesProj/src/main/java/org/telegram/messenger/AnimatedFileDrawableStream.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AnimatedFileDrawableStream.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AnimatedFileDrawableStream.java
+@@ -9,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
+ 
+ public class AnimatedFileDrawableStream implements FileLoadOperationStream {
+ 
+-    private FileLoadOperation loadOperation;
++    public FileLoadOperation loadOperation;
+     private CountDownLatch countDownLatch;
+     private TLRPC.Document document;
+     private ImageLocation location;
+@@ -35,6 +35,7 @@ public class AnimatedFileDrawableStream implements FileLoadOperationStream {
+         preview = prev;
+         this.loadingPriority = loadingPriority;
+         loadOperation = FileLoader.getInstance(currentAccount).loadStreamFile(this, document, location, parentObject, 0, preview, loadingPriority, cacheType);
++        desu.inugram.helpers.media.WebmStickerDebugHelper.onStreamCreated(this);
+     }
+ 
+     public boolean isFinishedLoadingFile() {
+@@ -96,8 +97,10 @@ public class AnimatedFileDrawableStream implements FileLoadOperationStream {
+                         }
+                         if (countDownLatch != null) {
+                             waitingForLoad = true;
++                            desu.inugram.helpers.media.WebmStickerDebugHelper.onReadWaitBegin(this, offset, readLength);
+                             countDownLatch.await();
+                             waitingForLoad = false;
++                            desu.inugram.helpers.media.WebmStickerDebugHelper.onReadWaitEnd(this);
+                         }
+                     }
+                 }
+@@ -117,6 +120,7 @@ public class AnimatedFileDrawableStream implements FileLoadOperationStream {
+         if (canceled) {
+             return;
+         }
++        desu.inugram.helpers.media.WebmStickerDebugHelper.onStreamCanceled(this, removeLoading);
+         synchronized (sync) {
+             if (countDownLatch != null) {
+                 countDownLatch.countDown();
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java
+@@ -141,7 +141,7 @@ public class FileLoadOperation {
+         }
+     }
+ 
+-    private ArrayList<FileLoadOperationStream> streamListeners;
++    public ArrayList<FileLoadOperationStream> streamListeners;
+ 
+     private final static int stateIdle = 0;
+     private final static int stateDownloading = 1;
+@@ -203,9 +203,9 @@ public class FileLoadOperation {
+     protected TLRPC.InputFileLocation location;
+     private TLRPC.InputWebFileLocation webLocation;
+     private WebFile webFile;
+-    private volatile int state = stateIdle;
++    public volatile int state = stateIdle;
+     private volatile boolean paused;
+-    private long downloadedBytes;
++    public long downloadedBytes;
+     public long totalBytesCount;
+     private long bytesCountPadding;
+     private long streamStartOffset;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
+@@ -214,7 +214,7 @@ public class FileLoader extends BaseController {
+     private int currentUploadSmallOperationsCount = 0;
+ 
+ 
+-    private final ConcurrentHashMap<String, FileLoadOperation> loadOperationPaths = new ConcurrentHashMap<>();
++    public final ConcurrentHashMap<String, FileLoadOperation> loadOperationPaths = new ConcurrentHashMap<>();
+     private final ConcurrentHashMap<String, LoadOperationUIObject> loadOperationPathsUI = new ConcurrentHashMap<>(10, 1, 2);
+     private final HashMap<String, Long> uploadSizes = new HashMap<>();
+ 
+@@ -605,6 +605,7 @@ public class FileLoader extends BaseController {
+         } else {
+             fileName = name;
+         }
++        desu.inugram.helpers.media.WebmStickerDebugHelper.onLoadCanceled(fileName);
+         LoadOperationUIObject uiObject = loadOperationPathsUI.remove(fileName);
+         Runnable runnable = uiObject != null ? uiObject.loadInternalRunnable : null;
+         boolean removed = uiObject != null;
+@@ -628,6 +629,7 @@ public class FileLoader extends BaseController {
+     public void cancel(FileLoadOperation operation) {
+         if (operation == null) return;
+         final String fileName = operation.getFileName();
++        desu.inugram.helpers.media.WebmStickerDebugHelper.onLoadCanceled(fileName);
+         LoadOperationUIObject uiObject = loadOperationPathsUI.remove(fileName);
+         Runnable runnable = uiObject != null ? uiObject.loadInternalRunnable : null;
+         boolean removed = uiObject != null;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -9798,6 +9798,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             if (!loopStickers()) {
+                                 photoImage.animatedFileDrawableRepeatMaxCount = 1;
+                             }
++                            desu.inugram.helpers.media.WebmStickerDebugHelper.watch(photoImage, messageObject);
+                         } else if (messageObject.pathThumb != null) {
+                             photoImage.setImage(ImageLocation.getForDocument(messageObject.getDocument()), filter,
+                                     messageObject.pathThumb,
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileDrawable.java
+@@ -69,17 +69,17 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+     private int lastTimeStamp;
+     private int invalidateAfter = 50;
+     private final int[] metaData = new int[8];
+-    private Runnable loadFrameTask;
++    public Runnable loadFrameTask;
+     private boolean isStaticVideoDetected;
+ 
+     private final ArrayList<AnimatedFileBuffer> unusedBuffers = new ArrayList<>();
+-    private AnimatedFileBuffer renderingBuffer;
+-    private AnimatedFileBuffer nextRenderingBuffer;
++    public AnimatedFileBuffer renderingBuffer;
++    public AnimatedFileBuffer nextRenderingBuffer;
+     private AnimatedFileBuffer nextRenderingBuffer2;
+     private AnimatedFileBuffer backgroundBuffer;
+ 
+     private boolean destroyWhenDone;
+-    private boolean decoderCreated;
++    public boolean decoderCreated;
+     private boolean decodeSingleFrame;
+     private boolean singleFrameDecoded;
+     private boolean forceDecodeAfterNextFrame;
+@@ -112,8 +112,8 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+     private final RectF dstRect = new RectF();
+     private volatile boolean isRunning;
+     private volatile boolean isRecycled;
+-    private volatile AnimatedFileNative mDecoder;
+-    private boolean ptrFail;
++    public volatile AnimatedFileNative mDecoder;
++    public boolean ptrFail;
+     private DispatchQueue decodeQueue;
+     private float startTime;
+     private float endTime;
+@@ -133,7 +133,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+ 
+     private final ReferenceList<ImageReceiver> parents = new ReferenceList<>(true);
+ 
+-    private AnimatedFileDrawableStream stream;
++    public AnimatedFileDrawableStream stream;
+ 
+     private boolean useSharedQueue;
+     private boolean invalidatePath = true;
+@@ -310,7 +310,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+         }
+     }
+ 
+-    private int decoderTryCount = 0;
++    public int decoderTryCount = 0;
+     private final int MAX_TRIES = 15;
+     private final Runnable loadFrameRunnable = this::loadFrameRunnableImpl;
+ 
+@@ -334,6 +334,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+             adaptRenderingSize();
+             updateScaleFactor();
+             decoderCreated = !isWebmSticker || mDecoder != null || (decoderTryCount++) > MAX_TRIES;
++            desu.inugram.helpers.media.WebmStickerDebugHelper.onDecoderCreateAttempt(this);
+             AndroidUtilities.runOnUIThread(AnimatedFileDrawable.this::checkChoreographerInternal);
+         }
+         if (mDecoder == null && !precache) {
+@@ -683,6 +684,7 @@ public final class AnimatedFileDrawable extends BitmapDrawable implements Animat
+             recycleWithSecond = true;
+             return;
+         }
++        desu.inugram.helpers.media.WebmStickerDebugHelper.onDrawableRecycled(this);
+         isRunning = false;
+         isRecycled = true;
+         checkChoreographer();
