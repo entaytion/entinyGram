@@ -38,7 +38,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **presence logger**: per-contact online/offline history with notifications
 - 📡 **force relay calls**: route calls through Telegram servers to hide your IP
 - 📡 **censorship bypass**:
-  - **WebSocket tunnel**: connect through Telegram Web endpoints, no third-party servers - *inspired by [tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) (@Flowseal) and [NimarkoGram](https://github.com/Ettacent/NimarkoGram)*
+  - **WebSocket tunnel**: connect through Telegram Web endpoints, no third-party servers; excluded from settings backups - *inspired by [tg-ws-proxy](https://github.com/Flowseal/tg-ws-proxy) (@Flowseal) and [NimarkoGram](https://github.com/Ettacent/NimarkoGram)*
   - **block direct connections**: extra requests go only through your SOCKS5 proxy
 - 📡 **datacenter status**: live ping for DC1–DC5 - *inspired by [Nekogram](https://github.com/Nekogram/Nekogram) / [NagramX](https://github.com/temporaryna/NagramXTurbo)*
 - 📡 **adblock & content filtering**:
