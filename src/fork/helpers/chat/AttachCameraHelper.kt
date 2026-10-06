@@ -1,11 +1,14 @@
 package desu.inugram.helpers.chat
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import desu.inugram.InuConfig
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.FAB
 import desu.inugram.InuConfig.AttachCameraModeItem.Companion.INSTANT
@@ -20,7 +23,7 @@ import org.telegram.ui.Components.ChatAttachAlertPhotoLayout
 import java.lang.ref.WeakReference
 
 object AttachCameraHelper {
-    private var pendingOpen: WeakReference<ChatAttachAlertPhotoLayout>? = null
+    private var pendingOpen: WeakReference<ChatAttachAlert>? = null
 
     @JvmStatic
     fun isInstant(): Boolean = InuConfig.ATTACH_CAMERA_MODE.value == INSTANT
@@ -69,18 +72,19 @@ object AttachCameraHelper {
     fun openCamera(alert: ChatAttachAlert) {
         val layout = alert.photoLayout ?: return
         if (alert.currentAttachLayout !== layout) {
-            pendingOpen = WeakReference(layout)
+            pendingOpen = WeakReference(alert)
             alert.showLayout(layout)
             return
         }
-        openCameraNow(layout)
+        openCameraNow(alert, layout)
     }
 
     @JvmStatic
     fun onLayoutShown(layout: ChatAttachAlertPhotoLayout) {
-        if (pendingOpen?.get() !== layout) return
+        val alert = pendingOpen?.get() ?: return
+        if (alert.photoLayout !== layout) return
         pendingOpen = null
-        openCameraNow(layout)
+        openCameraNow(alert, layout)
     }
 
     @JvmStatic
@@ -95,10 +99,9 @@ object AttachCameraHelper {
         alert.delegate?.didPressedButton(0, false, true, 0, 0, 0L, alert.isCaptionAbove, false, 0L)
     }
 
-    @JvmStatic
-    fun openCameraNow(layout: ChatAttachAlertPhotoLayout) {
-        if (layout.noCameraPermissions) {
-            layout.checkCamera(true)
+    private fun openCameraNow(alert: ChatAttachAlert, layout: ChatAttachAlertPhotoLayout) {
+        if (ContextCompat.checkSelfPermission(layout.context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            openSystemCamera(alert)
             return
         }
         layout.openCameraByClick()
