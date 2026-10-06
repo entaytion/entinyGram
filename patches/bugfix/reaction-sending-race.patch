@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.pet>
-Date: Tue, 6 Oct 2026 18:10:07 +0400
+From: alina sireneva <alina@tei.su>
+Date: Tue, 12 May 2026 11:05:37 +0200
 Subject: fix reactions silently disappearing right after being sent
 
 ---
@@ -67,7 +67,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -3829,6 +3829,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3825,6 +3825,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
          if (messageObject == null || parentFragment == null) {
              return;
          }
@@ -79,7 +79,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -33085,6 +33085,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -33008,6 +33008,7 @@ public class ChatActivity extends BaseFragment implements
          }
  
          ReactionsEffectOverlay.removeCurrent(false);

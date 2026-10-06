@@ -7,13 +7,15 @@ Subject: change app name to Inugram
  TMessagesProj/src/main/AndroidManifest.xml    | 33 +++++++++++++++++++
  .../telegram/messenger/AndroidUtilities.java  |  2 +-
  .../messenger/ContactsController.java         | 10 +++---
- .../telegram/messenger/LocaleController.java  | 21 ++++++++++--
+ .../telegram/messenger/LocaleController.java  | 15 +++++++--
  .../telegram/messenger/MediaController.java   | 22 ++++++-------
  .../java/org/telegram/ui/DialogsActivity.java |  6 +++-
  .../telegram/ui/LauncherIconController.java   |  6 ++--
  .../ui/Stories/DialogStoriesCell.java         | 23 ++++++++-----
  .../java/org/telegram/ui/ThemeActivity.java   | 12 +++++--
  .../org/telegram/ui/UpdateLayoutWrapper.java  | 14 ++------
+ .../res/mipmap-anydpi-v26/ic_launcher.xml     |  6 ++--
+ .../mipmap-anydpi-v26/ic_launcher_round.xml   |  6 ++--
  .../mipmap-anydpi-v26/ic_launcher_stock.xml   |  6 ++++
  .../ic_launcher_stock_round.xml               |  6 ++++
  .../src/main/res/values-de/strings.xml        |  4 +--
@@ -28,7 +30,7 @@ Subject: change app name to Inugram
  TMessagesProj/src/main/res/values/strings.xml | 10 +++---
  TMessagesProj/src/main/res/xml/auth.xml       |  2 +-
  .../src/main/res/xml/sync_contacts.xml        |  2 +-
- 24 files changed, 142 insertions(+), 71 deletions(-)
+ 26 files changed, 142 insertions(+), 77 deletions(-)
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
  create mode 100644 TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock_round.xml
 
@@ -142,29 +144,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -1444,15 +1444,30 @@ public class LocaleController {
-     }
- 
-     private String getStringInternal(String key, String fallback, int res) {
-+        if (key == null && res != 0) {
-+            try {
-+                key = ApplicationLoader.applicationContext.getResources().getResourceEntryName(res);
-+            } catch (Exception ignore) {}
-+        }
-+        final String local = desu.inugram.helpers.LocaleHelper.getLocalString(key, res); // inu: fork-only strings never come from cloud
-+        if (local != null) {
-+            return local;
-+        }
-         final String value = getStringV2(key, res, fallback);
-         if (value == null) {
-+            if (res != 0) {
-+                try {
-+                    return ApplicationLoader.applicationContext.getString(res); // inu: fork strings are not in stock Localization
-+                } catch (Exception ignore) {}
-+            }
-             return "LOC_ERR:" + key;
-         }
-         return value;
+@@ -1452,7 +1452,8 @@ public class LocaleController {
      }
  
      public static String getServerString(String key) {
@@ -174,24 +154,32 @@ index 0000000..0000000 100644
          if (value == null) {
              value = getInstance().getLocalizedString(key);
          }
-@@ -1626,7 +1641,7 @@ public class LocaleController {
+@@ -4443,7 +4444,10 @@ public class LocaleController {
+     @Nullable
+     private String getStringV2(String key, @StringRes int stringRes, String fallback) {
+         final Context context = ApplicationLoader.applicationContext;
+-        String value;
++        String value = desu.inugram.helpers.LocaleHelper.getLocalString(key, stringRes);
++        if (value != null) {
++            return value;
++        }
  
-     private static String formatString(String key, String fallback, int res, Object... args) {
-         try {
--            final String value = getInstance().getStringV2(key, res, fallback);
-+            final String value = nullable(getInstance().getStringInternal(key, fallback, res)); // inu: route through fork lookup
-             if (value == null) {
-                 return "LOC_ERR: " + key;
-             }
-@@ -1652,7 +1667,7 @@ public class LocaleController {
+         if (BuildVars.USE_CLOUD_STRINGS) {
+             value = localizationExternal.getByResNameOrResId(context, key, stringRes);
+@@ -4463,7 +4467,12 @@ public class LocaleController {
+             return value;
+         }
  
-     private static CharSequence formatSpannable(String key, String fallback, int res, Object... args) {
-         try {
--            final String value = getInstance().getStringV2(key, res, fallback);
-+            final String value = nullable(getInstance().getStringInternal(key, fallback, res)); // inu: route through fork lookup
-             if (value == null) {
-                 return "LOC_ERR: " + key;
-             }
+-        return localizationInternal.getByResName(fallback);
++        value = localizationInternal.getByResName(fallback);
++        if (value != null) {
++            return value;
++        }
++
++        return desu.inugram.helpers.LocaleHelper.getResourceString(stringRes, fallback);
+     }
+ 
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
@@ -492,6 +480,35 @@ index 0000000..0000000 100644
  
          super.dispatchDraw(canvas);
      }
+diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
++++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+-    <background android:drawable="@drawable/icon_background" />
+-    <foreground android:drawable="@mipmap/icon_foreground" />
+-    <monochrome android:drawable="@drawable/icon_plane" />
++    <background android:drawable="@drawable/icon_background_inu" />
++    <foreground android:drawable="@drawable/icon_foreground_inu" />
++    <monochrome android:drawable="@drawable/icon_plane_inu" />
+ </adaptive-icon>
+\ No newline at end of file
+diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
++++ b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+-    <background android:drawable="@drawable/icon_background_round" />
+-    <foreground android:drawable="@mipmap/icon_foreground_round" />
+-    <monochrome android:drawable="@drawable/icon_plane" />
++    <background android:drawable="@drawable/icon_background_inu" />
++    <foreground android:drawable="@drawable/icon_foreground_inu_round" />
++    <monochrome android:drawable="@drawable/icon_plane_inu" />
+ </adaptive-icon>
 diff --git a/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml b/TMessagesProj/src/main/res/mipmap-anydpi-v26/ic_launcher_stock.xml
 new file mode 100644
 index 0000000..0000000

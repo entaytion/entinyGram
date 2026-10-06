@@ -1,23 +1,28 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: alina sireneva <alina@tei.su>
-Date: Fri, 8 May 2026 13:52:58 +0200
+From: alina sireneva <alina@tei.pet>
+Date: Mon, 5 Oct 2026 06:09:33 +0400
 Subject: translator-related features
 
 ---
  .../org/telegram/messenger/MessageObject.java |  13 +-
- .../messenger/TranslateController.java        |  10 +-
+ .../messenger/TranslateController.java        |  25 ++-
+ .../telegram/tgnet/ConnectionsManager.java    |   9 +
  .../java/org/telegram/ui/ArticleViewer.java   |  17 +-
  .../telegram/ui/Cells/ChatMessageCell.java    |  42 +++-
  .../ui/Cells/TextSelectionHelper.java         |   1 +
- .../java/org/telegram/ui/ChatActivity.java    | 194 +++---------------
+ .../java/org/telegram/ui/ChatActivity.java    | 200 +++---------------
+ .../ui/Components/TranslateAlert2.java        |   3 +-
+ .../ui/Components/TranslateAlert3.java        |   5 +-
+ .../ui/Components/TranslateButton.java        |   4 +-
+ .../telegram/ui/LanguageSelectActivity.java   |   2 +-
  .../org/telegram/ui/web/WebActionBar.java     |   3 +
- 7 files changed, 91 insertions(+), 189 deletions(-)
+ 12 files changed, 120 insertions(+), 204 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -3700,7 +3700,7 @@ public class MessageObject {
+@@ -3677,7 +3677,7 @@ public class MessageObject {
      public boolean updateTranslation(boolean force) {
          boolean replyUpdated = replyMessageObject != null && replyMessageObject != this && replyMessageObject.updateTranslation(force);
          TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
@@ -26,7 +31,7 @@ index 0000000..0000000 100644
          final TLRPC.TL_textWithEntities summarizedText = messageOwner != null && messageOwner.summarizedOpen ? messageOwner.summaryText : null;
          final TLRPC.TL_textWithEntities summarizeTranslatedText = messageOwner != null && messageOwner.summarizedOpen ? messageOwner.translatedSummaryText : null;
          if (
-@@ -3736,6 +3736,7 @@ public class MessageObject {
+@@ -3713,6 +3713,7 @@ public class MessageObject {
              generateCaption();
              return replyUpdated || true;
          } else if (
@@ -34,7 +39,7 @@ index 0000000..0000000 100644
              messageOwner != null &&
              TranslateController.isTranslatable(this) &&
              translateController.isTranslatingDialog(getDialogId()) &&
-@@ -7509,7 +7510,7 @@ public class MessageObject {
+@@ -7476,7 +7477,7 @@ public class MessageObject {
          }
          if (linkDescription == null) {
              if (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaWebPage && getMedia(messageOwner).webpage instanceof TLRPC.TL_webPage && getMedia(messageOwner).webpage.description != null) {
@@ -43,7 +48,7 @@ index 0000000..0000000 100644
                  String siteName = getMedia(messageOwner).webpage.site_name;
                  if (siteName != null) {
                      siteName = siteName.toLowerCase();
-@@ -7661,8 +7662,9 @@ public class MessageObject {
+@@ -7628,8 +7629,9 @@ public class MessageObject {
          } else if (messageOwner.translatedText != null && translated) {
              captionSummarized = false;
              captionTranslated = true;
@@ -55,7 +60,7 @@ index 0000000..0000000 100644
          } else {
              captionSummarized = false;
              captionTranslated = false;
-@@ -8010,7 +8012,8 @@ public class MessageObject {
+@@ -7977,7 +7979,8 @@ public class MessageObject {
              if (messageOwner.voiceTranscriptionOpen) {
                  return messageOwner.translatedVoiceTranscription != null ? messageOwner.translatedVoiceTranscription.entities : null;
              } else {
@@ -77,6 +82,42 @@ index 0000000..0000000 100644
  
  import java.util.ArrayList;
  import java.util.Arrays;
+@@ -91,7 +92,7 @@ public class TranslateController extends BaseController {
+     }
+ 
+     public boolean isFeatureAvailable() {
+-        return isChatTranslateEnabled() && UserConfig.getInstance(currentAccount).isPremium();
++        return isChatTranslateEnabled() && desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount);
+     }
+ 
+     public boolean isFeatureAvailable(long dialogId) {
+@@ -100,7 +101,7 @@ public class TranslateController extends BaseController {
+         }
+         final TLRPC.Chat chat = getMessagesController().getChat(-dialogId);
+         return (
+-            UserConfig.getInstance(currentAccount).isPremium() ||
++            desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount) ||
+             chat != null && chat.autotranslation
+         );
+     }
+@@ -109,7 +110,7 @@ public class TranslateController extends BaseController {
+     private Boolean contextTranslateEnabled;
+ 
+     public boolean isChatTranslateEnabled() {
+-        if (!getMessagesController().isTranslationsAutoEnabled()) {
++        if (!getMessagesController().isTranslationsAutoEnabled() && !desu.inugram.helpers.translate.TranslationProviderHelper.isActive()) {
+             return false;
+         }
+         if (chatTranslateEnabled == null) {
+@@ -119,7 +120,7 @@ public class TranslateController extends BaseController {
+     }
+ 
+     public boolean isContextTranslateEnabled() {
+-        if (!getMessagesController().isTranslationsManualEnabled()) {
++        if (!getMessagesController().isTranslationsManualEnabled() && !desu.inugram.helpers.translate.TranslationProviderHelper.isActive()) {
+             return false;
+         }
+         if (contextTranslateEnabled == null) {
 @@ -769,6 +770,9 @@ public class TranslateController extends BaseController {
          if (messageObject == null || messageObject.messageOwner == null) {
              return;
@@ -96,7 +137,33 @@ index 0000000..0000000 100644
          MessageObject message,
          String language,
          Utilities.Callback4<Boolean, Integer, TLRPC.TL_textWithEntities, String> callback
-@@ -1606,7 +1610,7 @@ public class TranslateController extends BaseController {
+@@ -1043,6 +1047,7 @@ public class TranslateController extends BaseController {
+         } else {
+             source.text = message.messageOwner.message;
+             source.entities = message.messageOwner.entities;
++            desu.inugram.helpers.translate.TranslationProviderHelper.setSourceLanguage(source, message.messageOwner.originalLanguage);
+         }
+ 
+         PendingTranslation pendingTranslation;
+@@ -1103,7 +1108,7 @@ public class TranslateController extends BaseController {
+                 }
+ 
+                 final String method = getMessagesController().translationsAutoEnabled;
+-                if ("alternative".equals(method) || "system".equals(method)) {
++                if (!desu.inugram.helpers.translate.TranslationProviderHelper.isActive() && ("alternative".equals(method) || "system".equals(method))) {
+                     final String toLanguage = pendingTranslation1.language;
+                     for (int i = 0; i < pendingTranslation1.messageIds.size(); ++i) {
+                         final int id = pendingTranslation1.messageIds.get(i);
+@@ -1142,7 +1147,7 @@ public class TranslateController extends BaseController {
+                 }*/
+ 
+                 final TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
+-                if (isTranscription) {
++                if (isTranscription || desu.inugram.helpers.translate.TranslationProviderHelper.isActive()) {
+                     req.flags |= 2;
+                     req.text.addAll(pendingTranslation1.messageTexts);
+                 } else {
+@@ -1606,7 +1611,7 @@ public class TranslateController extends BaseController {
                  (messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal ?
                      loadingTranscriptionTranslations : loadingTranslations
                  ).contains(messageObject.getId()) &&
@@ -105,7 +172,7 @@ index 0000000..0000000 100644
              );
          }
      }
-@@ -1615,7 +1619,7 @@ public class TranslateController extends BaseController {
+@@ -1615,7 +1620,7 @@ public class TranslateController extends BaseController {
          if (messageObject == null) {
              return false;
          }
@@ -114,6 +181,49 @@ index 0000000..0000000 100644
              return false;
          }
          final boolean isTranscription = messageObject.messageOwner != null && messageObject.messageOwner.voiceTranscriptionOpen && messageObject.messageOwner.voiceTranscriptionFinal;
+@@ -1940,6 +1945,7 @@ public class TranslateController extends BaseController {
+         final TLRPC.TL_textWithEntities text = new TLRPC.TL_textWithEntities();
+         text.text = storyItem.caption;
+         text.entities = storyItem.entities;
++        desu.inugram.helpers.translate.TranslationProviderHelper.setSourceLanguage(text, storyItem.detectedLng);
+         req.text.add(text);
+         req.to_lang = normalizeLanguage(toLang);
+         getConnectionsManager().sendRequest(req, (res, err) -> {
+@@ -2077,6 +2083,7 @@ public class TranslateController extends BaseController {
+         if (text.entities == null) {
+             text.entities = new ArrayList<>();
+         }
++        desu.inugram.helpers.translate.TranslationProviderHelper.setSourceLanguage(text, messageObject.messageOwner.originalLanguage);
+         req.text.add(text);
+         req.to_lang = normalizeLanguage(toLang);
+         final long start = System.currentTimeMillis();
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -386,6 +386,9 @@ public class ConnectionsManager extends BaseController {
+     }
+ 
+     private void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
++        if (desu.inugram.helpers.translate.TranslationProviderHelper.maybeTranslate(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
++            return;
++        }
+         if (BuildVars.LOGS_ENABLED) {
+             FileLog.d("send request " + object + " with token = " + requestToken);
+         }
+@@ -570,6 +573,12 @@ public class ConnectionsManager extends BaseController {
+ 
+     public void cancelRequest(int token, boolean notifyServer, Runnable onCancelled) {
+         Utilities.stageQueue.postRunnable(() -> {
++            if (desu.inugram.helpers.translate.TranslationProviderHelper.cancelRequest(currentAccount, token)) {
++                if (onCancelled != null) {
++                    onCancelled.run();
++                }
++                return;
++            }
+             if (onCancelled != null) {
+                 listenCancel(token, () -> {
+                     Utilities.stageQueue.postRunnable(onCancelled);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
@@ -197,7 +307,7 @@ index 0000000..0000000 100644
      private int factCheckY;
      public int textY;
      public int totalHeight;
-@@ -1822,6 +1824,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -1821,6 +1823,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      private int lastDeleteDate;
      private int lastViewsCount;
      private int lastRepliesCount;
@@ -205,7 +315,7 @@ index 0000000..0000000 100644
      private float selectedBackgroundProgress;
      private boolean lastTranslated;
  
-@@ -6801,7 +6804,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6788,7 +6791,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  lastPostAuthor != messageObject.messageOwner.post_author ||
                  wasPinned != isPinned ||
                  newReply != lastReplyMessage ||
@@ -215,7 +325,7 @@ index 0000000..0000000 100644
          boolean groupChanged = groupedMessages != currentMessagesGroup;
          boolean pollChanged = false;
  
-@@ -6943,6 +6947,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -6930,6 +6934,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              linkPreviewY = 0;
              factCheckY = 0;
              lastTranslated = messageObject.translated;
@@ -223,7 +333,7 @@ index 0000000..0000000 100644
              lastSendState = messageObject.messageOwner.send_state;
              lastDeleteDate = messageObject.messageOwner.destroyTime;
              lastViewsCount = messageObject.messageOwner.views;
-@@ -7909,7 +7914,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -7896,7 +7901,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                          isSmallImage = false;
                          linkPreviewAbove = currentMessageObject.messageOwner != null && currentMessageObject.messageOwner.invert_media;
                      } else if (hasLinkPreview) {
@@ -232,7 +342,7 @@ index 0000000..0000000 100644
                          site_name = webPage.site_name;
                          title = drawInstantViewType != 6 && drawInstantViewType != 7 ? webPage.title : null;
                          if (instantViewTypeIsGiftAuction != null) {
-@@ -12466,6 +12471,27 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -12450,6 +12455,27 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          }
      }
  
@@ -260,7 +370,7 @@ index 0000000..0000000 100644
      @Override
      public void invalidate() {
          if (currentMessageObject == null) {
-@@ -15562,7 +15588,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15538,7 +15564,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              restore = true;
  
              AndroidUtilities.rectTmp.set(linkX, linkPreviewY - dp(6), linkX + width, linkPreviewY + linkPreviewHeight + (drawInstantButtonInside && drawInstantView ? dp(42) : 0));
@@ -269,7 +379,7 @@ index 0000000..0000000 100644
              float rad = (float) Math.floor(SharedConfig.bubbleRadius / (currentMessageObject.isSponsored() ? 2f : 3f));
              linkLine
                  .offsetEmoji(0, drawPhotoImageBefore ? (1f - isSmallImage()) * (dp(18) + photoImage.getImageHeight() + (siteNameLayout != null ? siteNameLayout.getLineBottom(siteNameLayout.getLineCount() - 1) : 0)) : 0)
-@@ -15939,7 +15965,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -15913,7 +15939,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  photoImage.setImageY(smallImageStartY);
              } else {
                  photoImage.setImageX(linkX + (hasInvoicePreview ? -dp(6.3f) : dp(10)));
@@ -278,7 +388,7 @@ index 0000000..0000000 100644
              }
              if (transitionParams != null && transitionParams.animateSmallImage) {
                  if (!isSmallImage && documentAttachType != DOCUMENT_ATTACH_TYPE_DOCUMENT) {
-@@ -16832,7 +16858,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -16804,7 +16830,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
  
          final TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();
          final boolean translating = translateController.isTranslating(currentMessageObject);
@@ -287,7 +397,7 @@ index 0000000..0000000 100644
          final boolean shouldSummarize = currentMessageObject != null && currentMessageObject.messageOwner.summarizedOpen;
          final boolean isFinal = shouldTranslate == (currentMessageObject != null && currentMessageObject.translated) && shouldSummarize == (currentMessageObject != null && currentMessageObject.summarized);
          if (origin == !isFinal) {
-@@ -18518,7 +18544,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18490,7 +18516,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  }
                  timeString = LocaleController.formatPmEditedDate(editDate);
              } else {
@@ -296,7 +406,7 @@ index 0000000..0000000 100644
              }
          } else if (currentMessageObject.isSaved && currentMessageObject.messageOwner.fwd_from != null && (currentMessageObject.messageOwner.fwd_from.date != 0 || currentMessageObject.messageOwner.fwd_from.saved_date != 0)) {
              int date = currentMessageObject.messageOwner.fwd_from.saved_date;
-@@ -18572,7 +18598,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18544,7 +18570,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  currentTimeString = TextUtils.concat(formatString(R.string.MessageScheduledRepeatSeconds, period), ", ", currentTimeString);
              }
          }
@@ -306,7 +416,7 @@ index 0000000..0000000 100644
          if (currentMessageObject.scheduled && currentMessageObject.messageOwner.date == 0x7FFFFFFE || currentMessageObject.notime) {
              timeWidth -= dp(8);
          }
-@@ -18670,6 +18697,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18642,6 +18669,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          } else {
              signWidth = 0;
          }
@@ -330,7 +440,25 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -24929,6 +24929,14 @@ public class ChatActivity extends BaseFragment implements
+@@ -9877,7 +9877,7 @@ public class ChatActivity extends BaseFragment implements
+         translateButton = new TranslateButton(getContext(), this, themeDelegate) {
+             @Override
+             protected void onButtonClick() {
+-                if (getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation) {
++                if (desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount) || currentChat != null && currentChat.autotranslation) {
+                     getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId());
+                 } else {
+                     MessagesController.getNotificationsSettings(currentAccount).edit().putInt("dialog_show_translate_count" + getDialogId(), 14).commit();
+@@ -11338,7 +11338,7 @@ public class ChatActivity extends BaseFragment implements
+         if (translateItem == null) {
+             return;
+         }
+-        translateItem.setVisibility(getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) && getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) ? View.VISIBLE : View.GONE);
++        translateItem.setVisibility(getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) /* && getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) */ ? View.VISIBLE : View.GONE);
+     }
+ 
+     private Animator infoTopViewAnimator;
+@@ -24854,6 +24854,14 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void saveGeneralScroll() {
@@ -345,7 +473,7 @@ index 0000000..0000000 100644
          int scrollByCellHeight = 0;
          ChatMessageCell scrollByCell = null;
          for (int i = 0; i < chatListView.getChildCount(); ++i) {
-@@ -24983,16 +24991,19 @@ public class ChatActivity extends BaseFragment implements
+@@ -24908,16 +24916,19 @@ public class ChatActivity extends BaseFragment implements
                  boolean update = false;
                  if (cellMessageObject.getId() == messageObject.getId()) {
                      cellMessageObject.messageOwner.translatedText = messageObject.messageOwner.translatedText;
@@ -371,7 +499,7 @@ index 0000000..0000000 100644
                      }
                  }
                  MessageObject.GroupedMessages group = groupedMessagesMap.get(messageObject.getGroupId());
-@@ -25021,6 +25032,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -24946,6 +24957,7 @@ public class ChatActivity extends BaseFragment implements
                          saveGeneralScroll();
                      }
                      cellMessageObject.forceUpdate = true;
@@ -379,7 +507,7 @@ index 0000000..0000000 100644
                      cell.setMessageObject(cellMessageObject, cell.getCurrentMessagesGroup(), cell.isPinnedBottom(), cell.isPinnedTop(), cell.isFirstInChat(), cell.isLastInChatList());
                      if (group != null) {
                          if (chatListItemAnimator != null) {
-@@ -26926,6 +26938,8 @@ public class ChatActivity extends BaseFragment implements
+@@ -26848,6 +26860,8 @@ public class ChatActivity extends BaseFragment implements
                  a--;
              }
  
@@ -388,7 +516,16 @@ index 0000000..0000000 100644
              addToPolls(messageObject, old);
              if (old.richCheckboxEcho && messageObject.type == MessageObject.TYPE_ARTICLE && old.richLayout != null && messageObject.messageOwner != null) {
                  messageObject.richLayout = old.richLayout;
-@@ -32140,169 +32154,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -29313,7 +29327,7 @@ public class ChatActivity extends BaseFragment implements
+ 
+         boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
+         boolean showTranslate = (
+-            getUserConfig().isPremium() || currentChat != null && currentChat.autotranslation ?
++            desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount) || currentChat != null && currentChat.autotranslation ?
+                 getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
+                 !getMessagesController().premiumFeaturesBlocked() && preferences.getInt("dialog_show_translate_count" + did, 5) <= 0
+         ) || DEBUG_TOP_PANELS;
+@@ -32111,169 +32125,7 @@ public class ChatActivity extends BaseFragment implements
                      });
                      cell.setOnLongClickListener(v1 -> ChatHelper.onMenuOptionLongClick(this, popupLayout, cell, options, i, selectedObject, selectedObjectGroup));
                      if (option == OPTION_TRANSLATE) {
@@ -559,7 +696,7 @@ index 0000000..0000000 100644
                      }
                  }
                  if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.video_processing_pending) {
-@@ -46141,7 +45993,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46136,7 +45988,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }
@@ -568,7 +705,7 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
-@@ -46489,7 +46341,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -46484,7 +46336,7 @@ public class ChatActivity extends BaseFragment implements
                      options.add(OPTION_PIN);
                      icons.add(R.drawable.msg_pin);
                  }
@@ -577,6 +714,88 @@ index 0000000..0000000 100644
                      items.add(LocaleController.getString(R.string.TranslateMessage));
                      options.add(OPTION_TRANSLATE);
                      icons.add(R.drawable.msg_translate);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+@@ -398,12 +398,13 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
+         }
+ 
+         TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
+-        if (reqPeer != null) {
++        if (reqPeer != null && !desu.inugram.helpers.translate.TranslationProviderHelper.isActive()) {
+             req.flags |= 1;
+             req.peer = reqPeer;
+             req.id.add(reqMessageId);
+         } else {
+             req.flags |= 2;
++            desu.inugram.helpers.translate.TranslationProviderHelper.setSourceLanguage(textWithEntities, fromLanguage);
+             req.text.add(textWithEntities);
+         }
+ //        if (fromLanguage != null && !"und".equals(fromLanguage)) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+@@ -114,7 +114,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+                     AndroidUtilities.addToClipboard(translated);
+                 }
+             } else if (item.id == 2) {
+-                if (!UserConfig.getInstance(currentAccount).isPremium()) {
++                if (!desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount)) {
+                     final BaseFragment fragment = LaunchActivity.getSafeLastFragment();
+                     if (fragment == null) return;
+                     new PremiumFeatureBottomSheet(getContext(), PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, true, resourcesProvider)
+@@ -419,12 +419,13 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+             final TLRPC.TL_messages_translateText req = new TLRPC.TL_messages_translateText();
+             req.to_lang = to_lang;
+ 
+-            if (dialogId != 0 && messageId != 0) {
++            if (dialogId != 0 && messageId != 0 && !desu.inugram.helpers.translate.TranslationProviderHelper.isActive()) {
+                 req.flags |= TLObject.FLAG_0;
+                 req.peer = MessagesController.getInstance(currentAccount).getInputPeer(dialogId);
+                 req.id.add(messageId);
+             } else {
+                 req.flags |= TLObject.FLAG_1;
++                desu.inugram.helpers.translate.TranslationProviderHelper.setSourceLanguage(fromText, from_lang);
+                 req.text.add(fromText);
+             }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateButton.java
+@@ -114,7 +114,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
+         menuView.setImageResource(R.drawable.msg_mini_customize);
+         menuView.setOnClickListener(e -> {
+             final TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialogId);
+-            if (UserConfig.getInstance(currentAccount).isPremium() || chat != null && chat.autotranslation) {
++            if (desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount) || chat != null && chat.autotranslation) {
+                 onMenuClick();
+             } else {
+                 onCloseClick();
+@@ -414,7 +414,7 @@ public class TranslateButton extends FrameLayout implements Theme.Colorable {
+             }
+             textView.setText(TextUtils.concat(translateIcon, " ", text));
+         }
+-        menuView.setImageResource(UserConfig.getInstance(currentAccount).isPremium() || chat != null && chat.autotranslation ? R.drawable.msg_mini_customize : R.drawable.msg_close);
++        menuView.setImageResource(desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount) || chat != null && chat.autotranslation ? R.drawable.msg_mini_customize : R.drawable.msg_close);
+     }
+ 
+     public static void showCocoonAlert(Context context, Theme.ResourcesProvider resourcesProvider) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LanguageSelectActivity.java
+@@ -220,7 +220,7 @@ public class LanguageSelectActivity extends BaseFragment implements Notification
+                         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateSearchSettings);
+                     } else if (position == autoTranslationPosition) {
+                         boolean value = !getChatValue();
+-                        if (value && !getUserConfig().isPremium()) {
++                        if (value && !desu.inugram.helpers.translate.TranslationProviderHelper.canTranslateChats(currentAccount)) {
+                             showDialog(new PremiumFeatureBottomSheet(LanguageSelectActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_TRANSLATIONS, false));
+                             return;
+                         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java

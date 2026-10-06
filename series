@@ -172,7 +172,6 @@ feature/hide-blocked-messages.patch
 feature/show-deleted-replies.patch
 bugfix/reply-name-end-padding.patch
 bugfix/image-loader-leak.patch
-bugfix/video-ads-leak.patch
 bugfix/chat-avatar-leak.patch
 bugfix/chat-attach-alert-adapter-leak.patch
 debloat/sponsored-data-saver.patch
@@ -224,6 +223,7 @@ feature/join-request-member-count.patch
 bugfix/folder-pins-missing-dialogs.patch
 feature/select-all-dialogs.patch
 bugfix/forward-bar-stale-count.patch
+bugfix/video-audio-focus.patch
 bugfix/reorder-sync-dispatch.patch
 bugfix/optimistic-hidden-forwards.patch
 bugfix/file-load-cancel-stuck.patch

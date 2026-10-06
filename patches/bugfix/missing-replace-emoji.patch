@@ -445,7 +445,7 @@ index 0000000..0000000 100644
                  } else if (pinnedMessageObject.type == MessageObject.TYPE_POLL) {
                      if (pinnedMessageObject.messageOwner.media instanceof TLRPC.TL_messageMediaPoll) {
                          TLRPC.TL_messageMediaPoll poll = (TLRPC.TL_messageMediaPoll) pinnedMessageObject.messageOwner.media;
-@@ -40509,15 +40514,16 @@ public class ChatActivity extends BaseFragment implements
+@@ -40580,15 +40585,16 @@ public class ChatActivity extends BaseFragment implements
                  userButton.addView(imageView, LayoutHelper.createFrame(34, 34, Gravity.LEFT | Gravity.CENTER_VERTICAL, 13, 0, 0, 0));
  
                  final TextView titleText = new TextView(getContext());
@@ -747,7 +747,7 @@ index 0000000..0000000 100644
          } else {
              if (peerIds.size() == 0) {
                  titleView.setText(LocaleController.getString(R.string.NobodyViewed));
-@@ -370,6 +372,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -375,6 +377,7 @@ public class MessageSeenView extends FrameLayout {
              nameView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
              nameView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
              nameView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
@@ -755,7 +755,7 @@ index 0000000..0000000 100644
  
              statusBadgeComponent = new StatusBadgeComponent(this);
              nameView.setDrawablePadding(AndroidUtilities.dp(3));
-@@ -410,7 +413,7 @@ public class MessageSeenView extends FrameLayout {
+@@ -415,7 +418,7 @@ public class MessageSeenView extends FrameLayout {
                  avatarDrawable.setInfo(currentAccount, object);
                  ImageLocation imageLocation = ImageLocation.getForUserOrChat(currentAccount, object, ImageLocation.TYPE_SMALL);
                  avatarImageView.setImage(imageLocation, "50_50", avatarDrawable, object);
@@ -780,7 +780,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -458,6 +458,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -456,6 +456,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          titleView.setGravity(Gravity.CENTER);
          titleView.setSingleLine();
          titleView.setEllipsize(TextUtils.TruncateAt.END);
@@ -788,7 +788,7 @@ index 0000000..0000000 100644
          topView.addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 16, 138.333f - 12, 16, 0));
  
          subtitleView = new TextView(context);
-@@ -534,7 +535,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -532,7 +533,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          avatarDrawable.setInfo(user);
          avatarView.setForUserOrChat(user, avatarDrawable);
@@ -797,7 +797,7 @@ index 0000000..0000000 100644
          final StringBuilder sb = new StringBuilder();
          if (user != null) {
              sb.append(PhoneFormat.getInstance().format("+" + user.phone));
-@@ -985,6 +986,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -983,6 +984,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              textView.setTextSize(15);
              textView.setTypeface(AndroidUtilities.bold());
              textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
@@ -805,7 +805,7 @@ index 0000000..0000000 100644
  
              botDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(textView, dp(24), AnimatedEmojiDrawable.CACHE_TYPE_EMOJI_STATUS);
              emojiStatusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(textView, dp(24), AnimatedEmojiDrawable.CACHE_TYPE_EMOJI_STATUS);
-@@ -1048,7 +1050,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1046,7 +1048,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              avatarDrawable.setInfo(account, user);
              avatarView.getImageReceiver().setCurrentAccount(account);
              avatarView.setForUserOrChat(user, avatarDrawable);

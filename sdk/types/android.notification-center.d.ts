@@ -247,7 +247,7 @@ declare namespace inu {
       /** `update`: `TLRPC.Update` */
       newPeopleNearbyAvailable(update: JavaObject): void
 
-      /** Global or per-account. */
+      /** Global. */
       stopAllHeavyOperations(flags: number): void
 
       /** Global. */

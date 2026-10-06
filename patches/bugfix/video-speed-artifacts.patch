@@ -56,7 +56,7 @@ index 0000000..0000000 100644
              ExoPlayer.Builder builder = new ExoPlayer.Builder(ApplicationLoader.applicationContext).setRenderersFactory(factory)
                      .setTrackSelector(trackSelector)
                      .setLoadControl(loadControl);
-@@ -1460,7 +1485,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+@@ -1461,7 +1486,7 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
      public void setPlaybackSpeed(float speed) {
          try {
              if (player != null) {
@@ -65,7 +65,7 @@ index 0000000..0000000 100644
              }
          } catch (Exception ignore) {}
      }
-@@ -1788,25 +1813,42 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
+@@ -1796,25 +1821,42 @@ public class VideoPlayer implements Player.Listener, VideoListener, AnalyticsLis
          return repeatCount;
      }
  
@@ -89,7 +89,7 @@ index 0000000..0000000 100644
 -                boolean enableFloatOutput,
 -                boolean enableAudioTrackPlaybackParams) {
 -            return new DefaultAudioSink.Builder(context)
-+        protected AudioSink buildAudioSink(Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams) {
++        protected AudioSink buildAudioSink(@NonNull Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams) {
 +            DefaultAudioSink.Builder builder = new DefaultAudioSink.Builder(context)
                      .setEnableFloatOutput(enableFloatOutput)
                      .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
@@ -123,7 +123,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -10758,6 +10758,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -10759,6 +10759,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  }
              }
  

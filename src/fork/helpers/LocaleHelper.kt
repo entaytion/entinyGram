@@ -7,12 +7,13 @@ import org.telegram.messenger.LocaleController
 import java.util.Locale
 import desu.inugram.helpers.security.ParanoiaHelper
 
+// resolves fork ("local-only") strings against the Telegram-selected locale instead of the
+// system locale. builds candidate Locales from LocaleInfo (pluralLangCode/baseLangCode/shortName,
+// to cover official + third-party packs) and picks the first whose value differs from values/.
 object LocaleHelper {
     @Volatile
     private var cachedKey: String? = null
-    @Volatile
     private var cachedDefault: Resources? = null
-    @Volatile
     private var cachedCandidates: List<Resources> = emptyList()
 
     @JvmStatic
@@ -22,29 +23,35 @@ object LocaleHelper {
             key == "AppName" ||
             key == "AppNameBeta" ||
             key == "AppUpdate" ||
-            key == "AppUpdateBeta" ||
-            key == "Page1Title"
+            key == "AppUpdateBeta"
     }
 
     @JvmStatic
     fun getLocalString(key: String?, res: Int): String? {
         if (!isLocalOnlyString(key)) return null
         disguiseName(key)?.let { return it }
-        if (res == 0) return getLocalString(key)
-        return resolve(res)
+        val ctx = ApplicationLoader.applicationContext ?: return null
+        val id = if (res != 0) res else ctx.resources.getIdentifier(key, "string", ctx.packageName)
+        if (id == 0) return null
+        return resolve(id) ?: getResourceString(id, null)
     }
 
     @JvmStatic
-    fun getLocalString(key: String?): String? {
-        if (!isLocalOnlyString(key)) return null
-        disguiseName(key)?.let { return it }
-        val ctx = ApplicationLoader.applicationContext ?: return null
-        val id = ctx.resources.getIdentifier(key, "string", ctx.packageName)
-        if (id == 0) return null
-        return resolve(id)
+    fun getLocalString(key: String?): String? = getLocalString(key, 0)
+
+    // stock asset packs only hold strings.xml, fork strings stay plain android resources
+    @JvmStatic
+    fun getResourceString(res: Int, fallback: String?): String? {
+        getLocalString(fallback)?.let { return it }
+        if (res == 0) return null
+        return try {
+            ApplicationLoader.applicationContext.getString(res)
+        } catch (_: Exception) {
+            null
+        }
     }
 
-    // entiny: disguised app name must read as stock Telegram regardless of locale
+    // when disguised, the app name must read as stock Telegram regardless of locale.
     private fun disguiseName(key: String?): String? {
         if (!ParanoiaHelper.isDisguised()) return null
         return when (key) {
@@ -52,28 +59,26 @@ object LocaleHelper {
             "AppNameBeta" -> "Telegram Beta"
             "AppUpdate" -> "Update Telegram"
             "AppUpdateBeta" -> "Update Telegram Beta"
-            "Page1Title" -> "Telegram"
             else -> null
         }
     }
 
-    // entiny: local-only keys must resolve locally regardless of whether the value happens
-    // to match ROOT (e.g. "en" with no values-en/ falls back to the same base resource) --
-    // otherwise a null here sends AppName/Inu* through getStringV2 into the stock lang pack.
     private fun resolve(res: Int): String? {
         if (!ensureCache()) return null
+        val def = try {
+            cachedDefault!!.getString(res)
+        } catch (_: Exception) {
+            return null
+        }
         for (r in cachedCandidates) {
-            try {
-                return r.getString(res)
+            val v = try {
+                r.getString(res)
             } catch (_: Exception) {
                 continue
             }
+            if (v != def) return v
         }
-        return try {
-            cachedDefault?.getString(res)
-        } catch (_: Exception) {
-            null
-        }
+        return null
     }
 
     @Synchronized
@@ -133,12 +138,10 @@ object LocaleHelper {
         val parts = norm.split("-").filter { p -> p.isNotEmpty() && p != "raw" && p != "beta" && p.all { it.isLetterOrDigit() } }
         if (parts.isEmpty()) return
         if (parts.size >= 2 && parts[1].length in 2..3) {
-            runCatching { Locale.Builder().setLanguage(parts[0]).setRegion(parts[1].uppercase()).build() }
-                .getOrNull()?.let { out.add(it) }
+            out.add(Locale(parts[0], parts[1].uppercase()))
         }
         if (parts[0].length in 2..3) {
-            runCatching { Locale.Builder().setLanguage(parts[0]).build() }
-                .getOrNull()?.let { out.add(it) }
+            out.add(Locale(parts[0]))
         }
     }
 }

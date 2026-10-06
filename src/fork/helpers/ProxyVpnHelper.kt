@@ -64,7 +64,7 @@ object ProxyVpnHelper {
                 putBoolean("proxy_enabled", false)
                 putBoolean("proxy_enabled_calls", false)
             }
-            ConnectionsManager.setProxySettings(false, "", 1080, "", "", "")
+            ConnectionsManager.setProxySettings(false, null)
             InuConfig.PROXY_SUPPRESSED_BY_VPN.value = true
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged)
         } finally {
@@ -80,7 +80,7 @@ object ProxyVpnHelper {
             MessagesController.getGlobalMainSettings().edit {
                 putBoolean("proxy_enabled", true)
             }
-            ConnectionsManager.setProxySettings(true, proxy.settings.address, proxy.settings.port, proxy.settings.user, proxy.settings.password, proxy.settings.secret)
+            ConnectionsManager.setProxySettings(true, proxy.settings)
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged)
         } finally {
             applying = false

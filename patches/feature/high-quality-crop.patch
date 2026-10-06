@@ -4,15 +4,15 @@ Date: Thu, 2 Jul 2026 19:52:25 +0400
 Subject: high-quality photo cropping in PhotoViewer (crop *before* downscaling)
 
 ---
- .../telegram/messenger/MediaController.java   | 28 +++++++++++-
+ .../telegram/messenger/MediaController.java   | 16 ++++++-
  .../java/org/telegram/ui/PhotoViewer.java     | 44 ++++++++++++++-----
- 2 files changed, 58 insertions(+), 14 deletions(-)
+ 2 files changed, 46 insertions(+), 14 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -492,6 +492,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -491,6 +491,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          public String paintPath;
          public String croppedPaintPath;
          public String fullPaintPath;
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
  
          public boolean isLivePhoto() {
              return this instanceof PhotoEntry && ((PhotoEntry) this).isLivePhoto();
-@@ -526,6 +527,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -525,6 +526,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
          }
  
          public void reset() {
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
              caption = null;
              coverPath = null;
              coverPhoto = null;
-@@ -558,6 +563,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -557,6 +562,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              paintPath = state.paintPath;
              croppedPaintPath = state.croppedPaintPath;
              fullPaintPath = state.fullPaintPath;
@@ -39,7 +39,7 @@ index 0000000..0000000 100644
  
              entities = state.entities;
              savedFilterState = state.savedFilterState;
-@@ -780,12 +786,30 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -779,12 +785,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      new File(croppedPaintPath).delete();
                  } catch (Exception ignore) {}
              }
@@ -56,18 +56,6 @@ index 0000000..0000000 100644
 +            final Pair<Integer, Integer> orientation = AndroidUtilities.getImageOrientation(sourcePath);
              final Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
 -            final Bitmap bitmap = StoryEntry.getScaledBitmap(opts -> BitmapFactory.decodeFile(filterPath != null ? filterPath : path, opts), AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), false, true);
-+            if (highQuality && fullPaintPath == null && cropState != null && !isVideo) {
-+                Bitmap hq = desu.inugram.helpers.media.PhotoViewerHelper.renderHighQualityCrop(this);
-+                if (hq != null) {
-+                    if (imagePath != null) {
-+                        new File(imagePath).delete(); imagePath = null;
-+                    }
-+                    TLRPC.PhotoSize hqSize = ImageLoader.scaleAndSaveImage(hq, compressFormat, AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), 99, false, 101, 101);
-+                    imagePath = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(hqSize, true).toString();
-+                    hq.recycle();
-+                    return;
-+                }
-+            }
 +            final Bitmap bitmap = StoryEntry.getScaledBitmap(opts -> BitmapFactory.decodeFile(sourcePath, opts), AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), false, true);
              if (imagePath != null) {
                  new File(imagePath).delete(); imagePath = null;

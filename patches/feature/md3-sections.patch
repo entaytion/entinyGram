@@ -4,7 +4,6 @@ Date: Thu, 28 May 2026 22:18:07 +0400
 Subject: md3-style sections redesign
 
 ---
- .../telegram/messenger/RichMessageLayout.java |  2 +-
  .../ui/ActionBar/ThemeDescription.java        |  7 ++-
  .../java/org/telegram/ui/BoostsActivity.java  |  5 ++
  .../java/org/telegram/ui/Cells/TextCell.java  | 35 ++++++++++--
@@ -16,30 +15,15 @@ Subject: md3-style sections redesign
  .../org/telegram/ui/ChatUsersActivity.java    |  6 +++
  .../telegram/ui/Components/ItemOptions.java   |  8 +++
  .../ui/Components/RecyclerListView.java       | 54 ++++++++++++++++---
- .../ui/Components/TranslateAlert3.java        |  3 +-
  .../ui/Components/UniversalAdapter.java       | 15 +++++-
  .../telegram/ui/LiteModeSettingsActivity.java |  7 +++
- .../java/org/telegram/ui/LogoutActivity.java  |  4 +-
  .../telegram/ui/MessageStatisticActivity.java |  2 +
  .../org/telegram/ui/PeerColorActivity.java    |  9 ++--
  .../org/telegram/ui/ProxyListActivity.java    |  5 --
  .../org/telegram/ui/SettingsActivity.java     | 18 +++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 21 files changed, 174 insertions(+), 31 deletions(-)
+ 18 files changed, 168 insertions(+), 28 deletions(-)
 
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
-@@ -10012,7 +10012,7 @@ public class RichMessageLayout {
-             @Override
-             public PreviewView createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
-                 final PreviewView cell = new PreviewView(context, currentAccount, resourcesProvider);
--                cell.setPadding(dp(20), 0, dp(20), dp(16));
-+                cell.setPadding(dp(20), desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? dp(16) : 0, dp(20), dp(16));
-                 return cell;
-             }
- 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
@@ -374,7 +358,7 @@ index 0000000..0000000 100644
          ViewGroup container = pointContainer = this.container == null ? fragment.getParentLayout().getOverlayContainerView() : this.container;
  
          if (context == null || container == null) {
-@@ -2167,6 +2174,7 @@ public class ItemOptions {
+@@ -2173,6 +2180,7 @@ public class ItemOptions {
                      } else {
                          canvas.save();
                      }
@@ -504,27 +488,6 @@ index 0000000..0000000 100644
          boolean prev, next;
          int position = getChildAdapterPosition(child);
          if (position == RecyclerView.NO_POSITION) {
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
-@@ -577,6 +577,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
-             anotherExampleIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), PorterDuff.Mode.SRC_IN));
-             anotherExampleText.setTextColor(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider));
-             anotherExample.setBackground(Theme.createRadSelectorDrawable(Theme.multAlpha(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), .10f), dp(8), dp(8)));
-+            desu.inugram.helpers.theme.M3SectionsHelper.styleTranslateHeader(this, resourcesProvider);
-         }
- 
-         public void set(CharSequence text1, CharSequence text2, CharSequence text3, View.OnClickListener onText2Click, boolean emojify, View.OnClickListener onEmojifyClick, View.OnClickListener onAnotherExampleClick) {
-@@ -691,7 +692,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
-             this.resourcesProvider = resourcesProvider;
- 
-             setClipToPadding(false);
--            setPadding(dp(20), 0, dp(20), dp(16));
-+            setPadding(dp(20), desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? dp(16) : 0, dp(20), dp(16));
- 
-             shortTextView = new SpoilersTextView(context) {
-                 private GradientClip clip = new GradientClip();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
@@ -603,21 +566,6 @@ index 0000000..0000000 100644
              } else if (viewType == VIEW_TYPE_SWITCH2) {
                  TextCell textCell = (TextCell) holder.itemView;
                  if (item.type == SWITCH_TYPE_SMOOTH_TRANSITIONS) {
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
-@@ -255,7 +255,9 @@ public class LogoutActivity extends BaseFragment {
-             switch (viewType) {
-                 case 0: {
-                     view = new HeaderCell(mContext);
--                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-+                    if (!desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
-+                        view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
-+                    }
-                     break;
-                 }
-                 case 1: {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
@@ -692,7 +640,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1204,6 +1204,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1202,6 +1202,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              titleView.setTranslationX(icon == 0 ? dp(2) : 0);
              subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
  
@@ -701,7 +649,7 @@ index 0000000..0000000 100644
              iconBackground.setColor(iconColorTop, iconColorBottom);
              iconView.setImageResource(icon);
              titleView.setText(title);
-@@ -1219,6 +1221,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1217,6 +1219,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          @Override
          protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -715,7 +663,7 @@ index 0000000..0000000 100644
              super.onMeasure(
                  MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
                  MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? 60 : 50), MeasureSpec.EXACTLY)
-@@ -1247,8 +1256,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1245,8 +1254,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  this.border = drawBorder;
              }
  

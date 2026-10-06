@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package desu.inugram.helpers.dialogs
 
 import android.annotation.SuppressLint
@@ -20,10 +18,6 @@ import desu.inugram.helpers.plugins.ui.ActionSurface
 import desu.inugram.helpers.plugins.ui.PluginActions
 // #endif
 import desu.inugram.helpers.dialogs.DrawerHelper.setupMainFragment
-import desu.inugram.helpers.menu.DialogsMenuConfig
-import desu.inugram.helpers.menu.DialogsMenuHelper
-import desu.inugram.helpers.security.GhostHelper
-import desu.inugram.helpers.security.ParanoiaHelper
 import desu.inugram.helpers.update.UpdateHelper
 import desu.inugram.ui.drawer.DrawerAddCell
 import desu.inugram.ui.drawer.DrawerLayoutAdapter
@@ -32,9 +26,6 @@ import desu.inugram.ui.drawer.DrawerProxyCell
 import desu.inugram.ui.drawer.DrawerSwipeController
 import desu.inugram.ui.drawer.DrawerUserCell
 import desu.inugram.ui.drawer.SideMenultItemAnimator
-import desu.inugram.ui.settings.InuSettingsActivity
-import desu.inugram.ui.settings.ParanoiaActivity
-import desu.inugram.ui.settings.TosSettingsActivity
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.AndroidUtilities.dp
 import org.telegram.messenger.ApplicationLoader
@@ -51,7 +42,6 @@ import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLRPC
 import org.telegram.tgnet.tl.TL_stars
 import org.telegram.ui.AccountFrozenAlert
-import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.BaseFragment
 import org.telegram.ui.ActionBar.DrawerLayoutContainer
 import org.telegram.ui.ActionBar.INavigationLayout
@@ -60,7 +50,6 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.CallLogActivity
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.AnimatedEmojiDrawable
-import org.telegram.ui.Components.BulletinFactory
 import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.RecyclerListView
@@ -102,12 +91,14 @@ object DrawerHelper {
         return main
     }
 
+    /** Root fragment on startup: stock `addFragmentToStack` + navigation drawer wiring. */
     @JvmStatic
     fun setupMainFragment(activity: LaunchActivity, layout: INavigationLayout, dlc: DrawerLayoutContainer) {
         layout.addFragmentToStack(createMainFragment())
         if (InuConfig.NAVIGATION_DRAWER.value) setup(activity, dlc, layout)
     }
 
+    /** Push the main fragment, forwarding a pending search query when tabs are present. */
     @JvmStatic
     fun addMainFragmentToStack(layout: INavigationLayout, searchQuery: String?) {
         val main = createMainFragment()
@@ -117,6 +108,12 @@ object DrawerHelper {
         ensureSetup(layout)
     }
 
+    /**
+     * Wire the side drawer onto the activity's container once (idempotent), or
+     * refresh its contents if already wired. Needed for login/relogin flows that
+     * present the main fragment outside [setupMainFragment] — without this the
+     * post-login `DialogsActivity` has no drawer.
+     */
     @JvmStatic
     fun ensureSetup(layout: INavigationLayout?) {
         if (!InuConfig.NAVIGATION_DRAWER.value || layout == null) return
@@ -162,13 +159,7 @@ object DrawerHelper {
         }
         sm.layoutManager = LinearLayoutManager(context)
         val itemAnimator = SideMenultItemAnimator(sm)
-        val newAdapter = DrawerLayoutAdapter(
-            context,
-            itemAnimator,
-            drawerLayoutContainer,
-            ::applyProxyEnabled,
-            ::applyGhostEnabled,
-        )
+        val newAdapter = DrawerLayoutAdapter(context, itemAnimator, drawerLayoutContainer, ::applyProxyEnabled)
         adapter = newAdapter
         sideMenu = sm
         sm.setItemAnimator(itemAnimator)
@@ -248,6 +239,8 @@ object DrawerHelper {
         sm: RecyclerListView,
     ) {
         if (activity == null) return
+        // Stock UpdateLayoutWrapper: paints accent across the navbar inset, propagates
+        // paddingBottom to the row so centered content stays in the visible 44dp.
         val wrapper = UpdateLayoutWrapper(activity)
         container.addView(
             wrapper,
@@ -257,7 +250,9 @@ object DrawerHelper {
                 Gravity.BOTTOM,
             ),
         )
-        // entiny: re-propagate padding on every inset dispatch because the child row is added later by createUpdateUI
+        // UpdateLayoutWrapper.setPadding propagates to children — but only children that exist
+        // at call time. The row is added later by UpdateLayout.createUpdateUI, so always
+        // re-propagate on every inset dispatch instead of guarding by current value.
         wrapper.setOnApplyWindowInsetsListener { v, insets ->
             v.setPadding(0, 0, 0, insets.systemWindowInsetBottom)
             v.requestLayout()
@@ -265,12 +260,14 @@ object DrawerHelper {
         }
         wrapper.setPadding(0, 0, 0, AndroidUtilities.navigationBarHeight)
 
+        // Overwrites any prior UpdateLayout, releasing its Activity ref (Activity.recreate path).
         val ul = ApplicationLoader.applicationLoaderInstance
             ?.takeUpdateLayout(activity, wrapper) ?: return
         updateLayout = ul
         applySideMenuBottomPadding(sm)
         ul.updateAppUpdateViews(UserConfig.selectedAccount, false)
 
+        // Observer lambda closes only over singleton state — registered once per process.
         if (updateObserver == null) {
             val obs = NotificationCenter.NotificationCenterDelegate { id, _, args ->
                 val current = updateLayout ?: return@NotificationCenterDelegate
@@ -289,9 +286,6 @@ object DrawerHelper {
                     }
 
                     NotificationCenter.fileLoadProgressChanged -> {
-                        val doc = SharedConfig.pendingAppUpdate?.document ?: return@NotificationCenterDelegate
-                        val name = args.getOrNull(0) as? String ?: return@NotificationCenterDelegate
-                        if (name != FileLoader.getAttachFileName(doc)) return@NotificationCenterDelegate
                         current.updateFileProgress(args)
                         refreshMenuButton(true)
                     }
@@ -332,16 +326,26 @@ object DrawerHelper {
         acct.addObserver(obs, NotificationCenter.fileLoadFailed)
     }
 
+    /**
+     * Updates the menu drawable used as a back-button in the drawer-mode DialogsActivity to reflect
+     * the current pending-update state: exclamation when available, circular progress while
+     * downloading. Mirrors stock Telegram 11.4.2's `updateMenuButton`.
+     */
     @JvmStatic
     fun refreshMenuButton(drawable: MenuDrawable?, animated: Boolean) {
+        // The patch seeds with a non-null drawable on DialogsActivity creation; we cache the
+        // reference so notification observers can update the icon even when DialogsActivity
+        // isn't the top fragment (e.g. user is in AboutActivity when the check completes).
         if (drawable != null) menuDrawableRef = drawable
         val d = drawable ?: menuDrawableRef ?: return
         val type: Int
         val downloadProgress: Float
         if (SharedConfig.isAppUpdateAvailable()) {
-            if (UpdateHelper.isPendingStart || UpdateHelper.isDownloading()) {
+            val doc = SharedConfig.pendingAppUpdate.document
+            val fileName = FileLoader.getAttachFileName(doc)
+            if (UpdateHelper.isPendingStart || FileLoader.getInstance(UserConfig.selectedAccount).isLoadingFile(fileName)) {
                 type = MenuDrawable.TYPE_UDPATE_DOWNLOADING
-                downloadProgress = UpdateHelper.getDownloadProgress() ?: 0f
+                downloadProgress = ImageLoader.getInstance().getFileProgress(fileName) ?: 0f
             } else {
                 type = MenuDrawable.TYPE_UDPATE_AVAILABLE
                 downloadProgress = 0f
@@ -369,7 +373,7 @@ object DrawerHelper {
         val bg = Theme.getColor(Theme.key_chats_menuBackground)
         sm.setBackgroundColor(bg)
         sm.setGlowColor(bg)
-        sm.setListSelectorColor(if (DrawerM3SectionsHelper.isEnabled()) 0 else Theme.getColor(Theme.key_listSelector))
+        sm.setListSelectorColor(Theme.getColor(Theme.key_listSelector))
     }
 
     private fun installThemeObserver() {
@@ -401,35 +405,20 @@ object DrawerHelper {
             .putBoolean("proxy_enabled", enabled && proxy != null)
             .apply()
         if (proxy != null) {
-            ConnectionsManager.setProxySettings(
-                true, proxy.settings.address, proxy.settings.port,
-                proxy.settings.user, proxy.settings.password, proxy.settings.secret
-            )
+            ConnectionsManager.setProxySettings(true, proxy.settings)
         } else {
-            ConnectionsManager.setProxySettings(false, "", 0, "", "", "")
+            ConnectionsManager.setProxySettings(false, null)
         }
         NotificationCenter.getGlobalInstance()
             .postNotificationName(NotificationCenter.proxySettingsChanged)
-    }
-
-    private fun applyGhostEnabled(enabled: Boolean) {
-        GhostHelper.setGhostMode(enabled)
-        adapter?.notifyDataSetChanged()
-        val lastFragment = LaunchActivity.instance?.actionBarLayout?.lastFragment
-        if (lastFragment is DialogsActivity) {
-            lastFragment.updateStatus(UserConfig.getInstance(lastFragment.currentAccount).currentUser, true)
-        }
-        if (lastFragment != null) {
-            val str = getString(if (enabled) R.string.InuGhostEnabled else R.string.InuGhostDisabled)
-            BulletinFactory.of(lastFragment).createImageBulletin(R.drawable.inu_ghost, str).show()
-        }
     }
 
     private fun refreshTheme() {
         sideMenuContainer?.setBackgroundColor(Theme.getColor(Theme.key_chats_menuBackground))
         sideMenu?.let { applySideMenuColors(it) }
         adapter?.notifyDataSetChanged()
-        // entiny: sync sunDrawable frame on theme change because static drawable persists across rebinding
+        // Static sunDrawable persists across theme changes; notifyDataSetChanged
+        // rebinds the cell but never re-syncs the day/night frame.
         adapter?.profileCell?.updateSunDrawable(Theme.isCurrentThemeDark())
     }
 
@@ -438,6 +427,11 @@ object DrawerHelper {
         statusPopup = null
     }
 
+    /**
+     * Emoji status selector anchored to the drawer profile cell. Ported from
+     * 11.14.1 stock LaunchActivity.showSelectStatusDialog, selection handling
+     * mirrors 12.x DialogsActivity.showSelectStatusDialog (gift statuses).
+     */
     fun showSelectStatusDialog(cell: DrawerProfileCell, drawerLayoutContainer: DrawerLayoutContainer) {
         if (statusPopup != null || SharedConfig.appLocked) return
         val fragment = drawerLayoutContainer.parentActionBarLayout?.lastFragment ?: return
@@ -557,12 +551,14 @@ object DrawerHelper {
             return
         }
 
+        // Account row tap: switch to that account.
         if (view is DrawerUserCell) {
             LaunchActivity.instance?.switchToAccount(view.accountNumber, true)
             close()
             return
         }
 
+        // "Add account" row.
         if (view is DrawerAddCell) {
             val availableAccount = (UserConfig.MAX_ACCOUNT_COUNT - 1 downTo 0)
                 .firstOrNull { !UserConfig.getInstance(it).isClientActivated }
@@ -573,6 +569,7 @@ object DrawerHelper {
             return
         }
 
+        // Side-menu attach bot.
         adapter.getAttachMenuBot(position)?.let { bot ->
             val activity = LaunchActivity.instance ?: return
             LaunchActivity.showAttachMenuBot(activity, account, bot, null, true)
@@ -597,6 +594,7 @@ object DrawerHelper {
             }
 
             ITEM_NEW_GROUP -> {
+                // mirrors the "New Group" row in ContactsActivity
                 if (MessagesController.getInstance(account).isFrozen) {
                     AccountFrozenAlert.show(account)
                 } else {
@@ -606,6 +604,7 @@ object DrawerHelper {
             }
 
             ITEM_NEW_MESSAGE -> {
+                // swapped in for New Group when a compose draft is pending
                 val top = nav.lastFragment
                 val dialogs = if (top is MainTabsActivity) top.currentVisibleFragment else top
                 (dialogs as? DialogsActivity)?.openWriteContacts()
@@ -625,7 +624,7 @@ object DrawerHelper {
             }
 
             ITEM_SAVED_MESSAGES -> {
-                // entiny: ChatActivity expects user_id parameter for bots instead of dialog_id
+                // ChatActivity expects user_id, not dialog_id
                 val args = Bundle()
                 args.putLong("user_id", UserConfig.getInstance(account).getClientUserId())
                 nav.presentFragment(ChatActivity(args))
@@ -644,36 +643,9 @@ object DrawerHelper {
                 close()
             }
 
-            DrawerLayoutAdapter.ITEM_ENTINY_SETTINGS -> {
-                nav.presentFragment(InuSettingsActivity())
-                close()
-            }
-
-            DrawerLayoutAdapter.ITEM_RESTART_APP -> {
-                close()
-                LaunchActivity.instance?.let { confirmRestartApp(it, null) }
-            }
-
             ITEM_PROXY -> {
                 nav.presentFragment(ProxyListActivity())
                 close()
-            }
-
-            ITEM_GHOST -> {
-                nav.presentFragment(TosSettingsActivity())
-                close()
-            }
-
-            ITEM_FEED -> {
-                nav.presentFragment(desu.inugram.ui.feed.FeedActivity())
-                close()
-            }
-
-            DrawerLayoutAdapter.ITEM_RECENT_CHATS -> {
-                val top = nav.lastFragment
-                val target = if (top is MainTabsActivity) top.currentVisibleFragment else top
-                close()
-                if (target != null) RecentChatsHelper.show(target, target.actionBar)
             }
 
             else -> close()
@@ -688,6 +660,7 @@ object DrawerHelper {
         drawerLayoutContainer.inu_drawer?.closeDrawer(false)
     }
 
+    // Stock DrawerLayoutAdapter item IDs — these are stable identifiers from the stock drawer.
     private const val ITEM_MY_PROFILE = 16
     private const val ITEM_NEW_GROUP = 2
     private const val ITEM_NEW_MESSAGE = 17
@@ -697,8 +670,6 @@ object DrawerHelper {
     private const val ITEM_SETTINGS = 8
     private const val ITEM_PROXY = DrawerLayoutAdapter.ITEM_PROXY
     private const val ITEM_ARCHIVE = DrawerLayoutAdapter.ITEM_ARCHIVE
-    private const val ITEM_GHOST = DrawerLayoutAdapter.ITEM_GHOST
-    private const val ITEM_FEED = DrawerLayoutAdapter.ITEM_FEED
 
     @JvmStatic
     fun notifyDataChanged() {
@@ -753,91 +724,28 @@ object DrawerHelper {
     @JvmStatic
     fun addDialogsActivityOptions(instance: DialogsActivity, io: ItemOptions) {
         val bottomTabsHidden = MainTabsHelper.isHidden
-        for (entry in InuConfig.DIALOGS_MENU_ITEMS.value) {
-            if (!entry.enabled || !DialogsMenuHelper.isEnabled(entry.item)) continue
-            when (entry.item) {
-                DialogsMenuConfig.Item.MY_PROFILE -> if (bottomTabsHidden) io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
-                    instance.presentFragment(ProfileActivity(Bundle().apply {
-                        putLong("user_id", UserConfig.getInstance(instance.currentAccount).getClientUserId())
-                        putBoolean("my_profile", true)
-                    }))
-                }
-                DialogsMenuConfig.Item.CONTACTS -> if (bottomTabsHidden || !MainTabsHelper.isEnabled(desu.inugram.helpers.menu.MainTabsMenuConfig.Item.CONTACTS.index)) {
-                    io.add(R.drawable.msg_contacts, getString(R.string.Contacts)) {
-                        instance.presentFragment(ContactsActivity(Bundle().apply { putBoolean("needPhonebook", true) }))
-                    }
-                }
-                DialogsMenuConfig.Item.ARCHIVE -> io.add(R.drawable.msg_archive, getString(R.string.ArchivedChats)) {
-                    instance.presentFragment(DialogsActivity(Bundle().apply { putInt("folderId", 1) }))
-                }
-                DialogsMenuConfig.Item.RECENT_CHATS -> io.add(R.drawable.msg_recent_solar, getString(R.string.InuRecentChats)) {
-                    RecentChatsHelper.show(instance, instance.getActionBar())
-                }
-                DialogsMenuConfig.Item.CLEAR_CACHE -> io.add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearCache)) {
-                    showClearCacheOptions(instance)
-                }
-                DialogsMenuConfig.Item.FEED -> io.add(R.drawable.msg_channel, getString(R.string.InuFeed)) {
-                    instance.presentFragment(desu.inugram.ui.feed.FeedActivity())
-                }
-                DialogsMenuConfig.Item.GHOST_MODE -> {
-                    val isGhostOn = GhostHelper.isGhostActive()
-                    io.add(if (isGhostOn) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(R.string.InuGhostMode)) {
-                        val isGhost = GhostHelper.toggleGhostMode()
-                        instance.updateStatus(UserConfig.getInstance(instance.currentAccount).currentUser, true)
-                        BulletinFactory.of(instance).createImageBulletin(if (isGhost) R.drawable.inu_ghost_filled else R.drawable.inu_ghost, getString(if (isGhost) R.string.InuGhostEnabled else R.string.InuGhostDisabled)).show()
-                    }
-                }
-                DialogsMenuConfig.Item.PARANOIA -> if (!ParanoiaHelper.isParanoia()) io.add(R.drawable.inu_tabler_spy, getString(R.string.InuParanoiaMode)) {
-                    instance.presentFragment(ParanoiaActivity())
-                }
-                DialogsMenuConfig.Item.RESTART_APP -> io.add(R.drawable.msg_retry, getString(R.string.InuRestartApp)) {
-                    instance.parentActivity?.let { confirmRestartApp(it, instance.getResourceProvider()) }
-                }
-                DialogsMenuConfig.Item.SETTINGS -> if (bottomTabsHidden) io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
-                    instance.presentFragment(SettingsActivity())
-                }
-                else -> Unit
+
+        if (bottomTabsHidden) {
+            io.add(R.drawable.left_status_profile, getString(R.string.MyProfile)) {
+                val args = Bundle()
+                args.putLong("user_id", UserConfig.getInstance(instance.currentAccount).getClientUserId())
+                args.putBoolean("my_profile", true)
+                instance.presentFragment(ProfileActivity(args))
             }
         }
-    }
 
-    private fun confirmRestartApp(activity: Activity, resourceProvider: Theme.ResourcesProvider?) {
-        AlertDialog.Builder(activity, resourceProvider)
-            .setTitle(getString(R.string.InuRestartApp))
-            .setMessage(getString(R.string.InuRestartAppAlert))
-            .setPositiveButton(getString(R.string.InuRestartApp)) { _, _ ->
-                desu.inugram.helpers.InuUtils.restartApp(activity)
+        if (bottomTabsHidden || MainTabsHelper.isContactsTabHidden) {
+            io.add(R.drawable.msg_contacts, getString(R.string.Contacts)) {
+                val args = Bundle()
+                args.putBoolean("needPhonebook", true)
+                instance.presentFragment(ContactsActivity(args))
             }
-            .setNegativeButton(getString(R.string.Cancel), null)
-            .show()
-    }
+        }
 
-    private fun showClearCacheOptions(instance: DialogsActivity) {
-        ItemOptions.makeOptions(instance, instance.getActionBar())
-            .add(R.drawable.msg_filled_storageusage, getString(R.string.StorageUsage)) {
-                instance.presentFragment(org.telegram.ui.CacheControlActivity())
+        if (bottomTabsHidden) {
+            io.add(R.drawable.msg_settings_old, getString(R.string.Settings)) {
+                instance.presentFragment(SettingsActivity())
             }
-            .add(R.drawable.inu_tabler_trash_x, getString(R.string.InuClearDeletedCache)) {
-                confirmClearDeletedMessagesCache(instance)
-            }
-            .show()
-    }
-
-    private fun confirmClearDeletedMessagesCache(instance: DialogsActivity) {
-        val context = instance.parentActivity ?: return
-        AlertDialog.Builder(context, instance.getResourceProvider())
-            .setTitle(getString(R.string.InuClearDeletedCache))
-            .setMessage(getString(R.string.InuClearDeletedCacheAlert))
-            .setPositiveButton(getString(R.string.ClearButton).uppercase()) { _, _ ->
-                val account = instance.currentAccount
-                desu.inugram.helpers.chat.SavedMessagesHelper.clearCache(account, null) {
-                    BulletinFactory.of(instance)
-                        .createSimpleBulletin(R.raw.ic_delete, getString(R.string.InuClearDeletedCacheDone))
-                        .show()
-                }
-            }
-            .setNegativeButton(getString(R.string.Cancel), null)
-            .makeRed(AlertDialog.BUTTON_POSITIVE)
-            .show()
+        }
     }
 }

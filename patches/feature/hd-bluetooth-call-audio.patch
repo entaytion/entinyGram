@@ -1,12 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: alina sireneva <alina@tei.pet>
-Date: Wed, 26 Aug 2026 22:51:36 +0300
+Date: Thu, 13 Aug 2026 03:02:26 +0400
 Subject: Play call audio as media on Bluetooth to avoid the low-quality HFP profile
 
 ---
  .../telegram/messenger/voip/VoIPService.java  | 37 +++++++++++++++----
  .../java/org/telegram/ui/VoIPFragment.java    |  4 +-
- 2 files changed, 31 insertions(+), 10 deletions(-)
+ .../webrtc/voiceengine/WebRtcAudioTrack.java  | 32 ++++++++++++++++
+ 3 files changed, 63 insertions(+), 10 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
 index 0000000..0000000 100755
@@ -21,7 +22,7 @@ index 0000000..0000000 100755
  					if (!btAdapter.isEnabled() || !PermissionRequest.hasPermission(Manifest.permission.BLUETOOTH_CONNECT) || btAdapter.getProfileConnectionState(BluetoothProfile.HEADSET) != BluetoothProfile.STATE_CONNECTED) {
  						updateBluetoothHeadsetState(false);
  						return;
-@@ -3852,6 +3852,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -3849,6 +3849,13 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  					break;
  			}
  		} else if (audioConfigured && !USE_CONNECTION_SERVICE) {
@@ -35,7 +36,7 @@ index 0000000..0000000 100755
  			switch (which) {
  				case 2:
  					if (!bluetoothScoActive) {
-@@ -3917,6 +3924,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -3914,6 +3921,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  			int route = systemCallConnection.getCallAudioState().getRoute();
  			return hasEarpiece() ? route == CallAudioState.ROUTE_SPEAKER : route == CallAudioState.ROUTE_BLUETOOTH;
  		} else if (audioConfigured && !USE_CONNECTION_SERVICE) {
@@ -45,7 +46,7 @@ index 0000000..0000000 100755
  			AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
  			VoipAudioManager vam = VoipAudioManager.get();
  			return hasEarpiece() ? vam.isSpeakerphoneOn() : am.isBluetoothScoOn();
-@@ -3940,6 +3950,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -3937,6 +3947,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  			return audioRouteToSet;
  		}
  		if (audioConfigured) {
@@ -55,7 +56,7 @@ index 0000000..0000000 100755
  			AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
  			VoipAudioManager vam = VoipAudioManager.get();
  			if (am.isBluetoothScoOn()) {
-@@ -4752,11 +4765,12 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4749,11 +4762,12 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  	}
  
  	private void loadResources() {
@@ -69,7 +70,7 @@ index 0000000..0000000 100755
  			spConnectingId = soundPool.load(this, R.raw.voip_connecting, 1);
  			spRingbackID = soundPool.load(this, R.raw.voip_ringback, 1);
  			spFailedID = soundPool.load(this, R.raw.voip_failed, 1);
-@@ -4817,10 +4831,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4814,10 +4828,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  		if (BuildVars.LOGS_ENABLED) {
  			FileLog.d("configureDeviceForCall, route to set = " + audioRouteToSet);
  		}
@@ -83,7 +84,7 @@ index 0000000..0000000 100755
  		}
  
  		needPlayEndSound = true;
-@@ -4839,7 +4854,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4836,7 +4851,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  						return;
  					}
  
@@ -92,7 +93,7 @@ index 0000000..0000000 100755
  				} catch (Exception e) {
  					FileLog.e(e);
  				}
-@@ -4847,7 +4862,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4844,7 +4859,10 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  					int focusResult = am.requestAudioFocus(VoIPService.this, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
  					hasAudioFocus = focusResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
  					final VoipAudioManager vam = VoipAudioManager.get();
@@ -104,7 +105,7 @@ index 0000000..0000000 100755
  						switch (audioRouteToSet) {
  							case AUDIO_ROUTE_BLUETOOTH:
  								if (!bluetoothScoActive) {
-@@ -4997,7 +5015,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -4994,7 +5012,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  				if (BuildVars.LOGS_ENABLED) {
  					FileLog.d("SCO already active, setting audio routing");
  				}
@@ -113,7 +114,7 @@ index 0000000..0000000 100755
  					am.setSpeakerphoneOn(false);
  					am.setBluetoothScoOn(true);
  				}
-@@ -5005,7 +5023,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -5002,7 +5020,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  				if (BuildVars.LOGS_ENABLED) {
  					FileLog.d("startBluetoothSco");
  				}
@@ -122,7 +123,7 @@ index 0000000..0000000 100755
  					needSwitchToBluetoothAfterScoActivates = true;
  					AndroidUtilities.runOnUIThread(() -> {
  						try {
-@@ -5492,6 +5510,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+@@ -5489,6 +5507,9 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
  	}
  
  	public boolean isBluetoothOn() {
@@ -154,3 +155,63 @@ index 0000000..0000000 100644
              selectedSpeaker = 0;
              bottomButton.setType(VoIpSwitchLayout.Type.SPEAKER, true);
          } else {
+diff --git a/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java b/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
++++ b/TMessagesProj/src/main/java/org/webrtc/voiceengine/WebRtcAudioTrack.java
+@@ -13,6 +13,7 @@ package org.webrtc.voiceengine;
+ import android.annotation.TargetApi;
+ import android.content.Context;
+ import android.media.AudioAttributes;
++import android.media.AudioDeviceInfo;
+ import android.media.AudioFormat;
+ import android.media.AudioManager;
+ import android.media.AudioTrack;
+@@ -326,6 +327,7 @@ public class WebRtcAudioTrack {
+       releaseAudioResources();
+       return -1;
+     }
++    inu_onAudioTrackCreated(audioTrack);
+     logMainParameters();
+     logMainParametersExtended();
+     return minBufferSizeInBytes;
+@@ -543,9 +545,39 @@ public class WebRtcAudioTrack {
+     return speakerMute;
+   }
+ 
++  private static @Nullable AudioDeviceInfo inu_preferredDevice;
++  private static @Nullable AudioTrack inu_currentTrack;
++
++  public static synchronized void inu_setPreferredDevice(@Nullable AudioDeviceInfo device) {
++    inu_preferredDevice = device;
++    if (Build.VERSION.SDK_INT >= 23 && inu_currentTrack != null) {
++      try {
++        inu_currentTrack.setPreferredDevice(device);
++      } catch (Throwable e) {
++        Logging.e(TAG, "inu_setPreferredDevice failed", e);
++      }
++    }
++  }
++
++  private static synchronized void inu_onAudioTrackCreated(AudioTrack track) {
++    inu_currentTrack = track;
++    if (Build.VERSION.SDK_INT >= 23 && inu_preferredDevice != null) {
++      try {
++        track.setPreferredDevice(inu_preferredDevice);
++      } catch (Throwable e) {
++        Logging.e(TAG, "inu_setPreferredDevice failed", e);
++      }
++    }
++  }
++
++  private static synchronized void inu_onAudioTrackReleased() {
++    inu_currentTrack = null;
++  }
++
+   // Releases the native AudioTrack resources.
+   private void releaseAudioResources() {
+     Logging.e(TAG, "releaseAudioResources", new Exception());
++    inu_onAudioTrackReleased();
+     if (audioTrack != null) {
+       AudioTrack track = audioTrack;
+       audioTrack = null;
