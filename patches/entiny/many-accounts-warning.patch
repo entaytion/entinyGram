@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 6 Oct 2026 12:49:17 +0300
+Subject: [+] warn when adding more than 8 accounts
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+@@ -913,6 +913,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+         super.onResume();
+         if (newAccount) {
+             ConnectionsManager.getInstance(currentAccount).setAppPaused(false, false);
++            LoginHelper.warnManyAccounts(this);
+         }
+         AndroidUtilities.requestAdjustResize(getParentActivity(), classGuid);
+         if (fragmentView != null) {

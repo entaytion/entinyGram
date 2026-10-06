@@ -26,6 +26,9 @@
     <string name="InuChatBackgroundSection">Chat background</string>
     <string name="InuMediaSection">Media</string>
     <string name="InuAccountsSection">Accounts</string>
+    <string name="InuManyAccountsTitle">Many accounts</string>
+    <string name="InuManyAccountsMessage">More than 8 accounts can slow the app down and drain the battery. Add another one anyway?</string>
+    <string name="InuManyAccountsContinue">Continue</string>
     <string name="InuCallsSection">Calls</string>
     <string name="InuDeviceSection">Device</string>
     <string name="InuDownloadsAndNetwork">Downloads and network</string>

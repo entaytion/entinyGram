@@ -356,7 +356,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - passkey login
 - qr login
 - password autofill hints in login (for password managers)
-- account limit raised to 8 (premium gating disabled)
+- account limit raised to 16 (premium gating disabled); a slowdown warning is shown when adding more than 8
 - 🐶 customizable account order
 - 🐶 launcher shortcut that asks which account to open
 - 📡 option to hide recent/frequent chats from the app icon's long-press menu

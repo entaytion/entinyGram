@@ -14,7 +14,7 @@ debloat/hide-ai-features.patch
 feature/stickers.patch
 debloat/disable-sensitive.patch
 debloat/disable-swipe-to-unarchive.patch
-feature/multi-account.patch
+entiny/multi-account.patch
 feature/autofill-hints.patch
 bugfix/keyboard-image-paste.patch
 feature/default-delete-for-both.patch
@@ -481,3 +481,4 @@ entiny/forum-search-back.patch
 entiny/topic-icon-inset.patch
 entiny/no-vibration.patch
 entiny/restricted-message-flag.patch
+entiny/many-accounts-warning.patch

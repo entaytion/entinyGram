@@ -53,7 +53,22 @@ import java.util.function.BooleanSupplier
 object LoginHelper {
 
     private const val REFRESH_BUFFER_SEC = 5
+    private const val SLOW_ACCOUNTS_THRESHOLD = 8
     private var activeQrLogin: State? = null
+    private val warnedLogins = java.util.Collections.newSetFromMap(java.util.WeakHashMap<LoginActivity, Boolean>())
+
+    // adding an account past the 8th gets a one-time slowdown warning
+    @JvmStatic
+    fun warnManyAccounts(activity: LoginActivity) {
+        val context = activity.parentActivity ?: return
+        if (UserConfig.getActivatedAccountsCount() < SLOW_ACCOUNTS_THRESHOLD || !warnedLogins.add(activity)) return
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.InuManyAccountsTitle))
+            .setMessage(getString(R.string.InuManyAccountsMessage))
+            .setPositiveButton(getString(R.string.InuManyAccountsContinue), null)
+            .setNegativeButton(getString(R.string.Cancel)) { _, _ -> activity.finishFragment() }
+            .show()
+    }
 
     fun onUpdate(update: TLObject?, account: Int) {
         if (update !is TL_update.TL_updateLoginToken) return

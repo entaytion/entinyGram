@@ -1680,6 +1680,9 @@
     <string name="InuChatBackgroundSection">Фон чату</string>
     <string name="InuMediaSection">Медіа</string>
     <string name="InuAccountsSection">Акаунти</string>
+    <string name="InuManyAccountsTitle">Багато акаунтів</string>
+    <string name="InuManyAccountsMessage">Понад 8 акаунтів можуть сповільнювати застосунок і витрачати заряд. Усе одно додати ще один?</string>
+    <string name="InuManyAccountsContinue">Продовжити</string>
     <string name="InuCallsSection">Дзвінки</string>
     <string name="InuDeviceSection">Пристрій</string>
     <string name="InuDownloadsAndNetwork">Завантаження і мережа</string>
