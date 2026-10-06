@@ -281,6 +281,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
 - tap a web preview photo to open it in the photo viewer
+- 🐶 tap the photo/video in the bot "What can this bot do?" card to open it in the photo viewer
 - 🐶 "Preview" in the link long-tap menu: peek a t.me message link (public or private) as a chat preview at that exact message
 - message details from menu (+ show json)
 - per-message statistics from message menu

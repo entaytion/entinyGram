@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 17:17:14 +0400
+Subject: open bot description photo/video in photo viewer
+
+---
+ .../org/telegram/ui/Cells/BotHelpCell.java    | 20 +++++++++++++++++++
+ .../java/org/telegram/ui/ChatActivity.java    | 11 ++++++++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotHelpCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotHelpCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotHelpCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotHelpCell.java
+@@ -94,6 +94,9 @@ public class BotHelpCell extends View {
+ 
+     private boolean animating;
+ 
++    public Runnable inu_onPhotoClick;
++    private boolean inu_photoPressed;
++
+     public interface BotHelpCellDelegate {
+         void didPressUrl(String url);
+     }
+@@ -242,6 +245,10 @@ public class BotHelpCell extends View {
+         }
+     }
+ 
++    public ImageReceiver inu_getPhotoImage() {
++        return isPhotoVisible && !"setup".equals(currentPhotoKey) ? imageReceiver : null;
++    }
++
+     public CharSequence getText() {
+         if (textLayout == null) {
+             return null;
+@@ -254,6 +261,19 @@ public class BotHelpCell extends View {
+         float x = event.getX();
+         float y = event.getY();
+ 
++        if (event.getAction() == MotionEvent.ACTION_DOWN) {
++            inu_photoPressed = inu_onPhotoClick != null && inu_getPhotoImage() != null && imageReceiver.isInsideImage(x - getSideMenuWidth() / 2f, y);
++        }
++        if (inu_photoPressed) {
++            if (event.getAction() == MotionEvent.ACTION_UP) {
++                inu_onPhotoClick.run();
++            }
++            if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
++                inu_photoPressed = false;
++            }
++            return true;
++        }
++
+         boolean result = false;
+         if (textLayout != null) {
+             if (event.getAction() == MotionEvent.ACTION_DOWN || pressedLink != null && event.getAction() == MotionEvent.ACTION_UP) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -20254,6 +20254,8 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                     }
+                 }
++            } else if (view instanceof BotHelpCell && messageObject == null && fileLocation == null) {
++                imageReceiver = ((BotHelpCell) view).inu_getPhotoImage();
+             }
+ 
+             if (imageReceiver != null) {
+@@ -20264,6 +20266,9 @@ public class ChatActivity extends BaseFragment implements
+                 view.getLocationInWindow(coords);
+                 PhotoViewer.PlaceProviderObject object = new PhotoViewer.PlaceProviderObject();
+                 object.viewX = coords[0];
++                if (view instanceof BotHelpCell) {
++                    object.viewX += ((BotHelpCell) view).getSideMenuWidth() / 2;
++                }
+                 object.viewY = coords[1] - 0 + view.getPaddingTop();
+                 object.parentView = chatListView;
+                 object.animatingImageView = null;
+@@ -37683,6 +37688,12 @@ public class ChatActivity extends BaseFragment implements
+                         return ChatActivity.this.getSideMenuWidth();
+                     }
+                 };
++                ((BotHelpCell) view).inu_onPhotoClick = () -> desu.inugram.helpers.chat.BotDescriptionMediaHelper.openMedia(ChatActivity.this, currentUser == null ? null : botInfo.get(currentUser.id), new PhotoViewer.EmptyPhotoViewerProvider() {
++                    @Override
++                    public PhotoViewer.PlaceProviderObject getPlaceForPhoto(MessageObject messageObject, TLRPC.FileLocation fileLocation, int index, boolean needPreview, boolean closing) {
++                        return ChatActivity.this.getPlaceForPhoto(null, null, index, needPreview, true);
++                    }
++                });
+                 ((BotHelpCell) view).setDelegate(url -> {
+                     if (url.startsWith("@")) {
+                         getMessagesController().openByUserName(url.substring(1), ChatActivity.this, 0);
