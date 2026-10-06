@@ -91,6 +91,15 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         )
 
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_REMEMBER_SELECTED_FOLDER,
+                R.string.InuRememberSelectedFolder,
+                R.string.InuRememberSelectedFolderInfo,
+                InuConfig.REMEMBER_SELECTED_FOLDER.value
+            )
+        )
+
+        items.add(
             UItem.asCheck(
                 TOGGLE_FOLDERS_AT_BOTTOM,
                 LocaleController.getString(R.string.InuFoldersAtBottom),
@@ -341,6 +350,11 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                     storage.storageQueue.postRunnable { storage.resetAllUnreadCounters(false) }
                 }
                 softRebuild()
+            }
+
+            TOGGLE_REMEMBER_SELECTED_FOLDER -> {
+                val new = InuConfig.REMEMBER_SELECTED_FOLDER.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_HIDE_ALL_CHATS_TAB -> {
@@ -673,6 +687,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DIALOG_AVATAR_OPENS_PROFILE = InuUtils.generateId()
         private val TOGGLE_ALWAYS_SHOW_DOWNLOADS = InuUtils.generateId()
         private val TOGGLE_HIDE_ALL_CHATS_TAB = InuUtils.generateId()
+        private val TOGGLE_REMEMBER_SELECTED_FOLDER = InuUtils.generateId()
         private val BUTTON_COMMUNITY_DISPLAY_MODE = InuUtils.generateId()
         private val BUTTON_TITLE_TEXT = InuUtils.generateId()
         private val TOGGLE_TITLE_TEXT_OVERRIDE_ARCHIVE = InuUtils.generateId()
@@ -718,6 +733,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("tab-indicator-stroke", R.string.InuTabIndicatorStroke, TOGGLE_TAB_INDICATOR_STROKE),
                 SearchRegistry.Entry("folders-unread-counter", R.string.InuFoldersUnreadCounter, BUTTON_FOLDERS_UNREAD_COUNTER_MODE),
                 SearchRegistry.Entry("hide-all-chats-tab", R.string.InuHideAllChatsTab, TOGGLE_HIDE_ALL_CHATS_TAB),
+                SearchRegistry.Entry("remember-selected-folder", R.string.InuRememberSelectedFolder, TOGGLE_REMEMBER_SELECTED_FOLDER),
                 SearchRegistry.Entry("folders-at-bottom", R.string.InuFoldersAtBottom, TOGGLE_FOLDERS_AT_BOTTOM),
                 SearchRegistry.Entry("hide-archive", R.string.InuHideArchive, TOGGLE_HIDE_ARCHIVE),
                 SearchRegistry.Entry("title-text", R.string.InuTitleText, BUTTON_TITLE_TEXT),

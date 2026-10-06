@@ -140,6 +140,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **instant mark reactions as read** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
 - 📡 **calendar system**: Gregorian, Hijri or Jalali
 - 📡 **local folders** once the server limit is reached
+- 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats
 - 📡 **folder icon picker**
 - 📡 **separator after mention** - *inspired by [exteraGram](https://github.com/exteraSquad/exteraGram)*
 - 📡 **export chat** as JSON or HTML
