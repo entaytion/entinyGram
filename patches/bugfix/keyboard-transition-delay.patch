@@ -1,0 +1,159 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 16:12:49 +0400
+Subject: don't wait for keyboard to hide before screen transitions
+
+---
+ .../ui/ActionBar/ActionBarLayout.java         | 83 ++-----------------
+ 1 file changed, 9 insertions(+), 74 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -405,11 +405,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+             getWindowVisibleDisplayFrame(rect);
+             int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
+             isKeyboardVisible = usableViewHeight - (rect.bottom - rect.top) > 0;
+-            if (waitingForKeyboardCloseRunnable != null && !containerView.isKeyboardVisible && !containerViewBack.isKeyboardVisible) {
+-                AndroidUtilities.cancelRunOnUIThread(waitingForKeyboardCloseRunnable);
+-                waitingForKeyboardCloseRunnable.run();
+-                waitingForKeyboardCloseRunnable = null;
+-            }
+         }
+ 
+         @Override
+@@ -570,7 +565,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+     private static Drawable layerShadowDrawable;
+     private static Paint scrimPaint;
+ 
+-    private Runnable waitingForKeyboardCloseRunnable;
+     private Runnable delayedOpenAnimationRunnable;
+ 
+     private boolean inBubbleMode;
+@@ -692,7 +686,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+     private List<BaseFragment> fragmentsStack;
+     private List<BackButtonMenu.PulledDialog> pulledDialogs;
+     private Rect rect = new Rect();
+-    private boolean delayedAnimationResumed;
+     private Runnable onFragmentStackChangedListener;
+ 
+     private int overrideWidthOffset = -1;
+@@ -1734,10 +1727,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+     private void onAnimationEndCheck(boolean byCheck) {
+         onCloseAnimationEnd();
+         onOpenAnimationEnd();
+-        if (waitingForKeyboardCloseRunnable != null) {
+-            AndroidUtilities.cancelRunOnUIThread(waitingForKeyboardCloseRunnable);
+-            waitingForKeyboardCloseRunnable = null;
+-        }
+         if (currentAnimation != null) {
+             if (byCheck) {
+                 currentAnimation.cancel();
+@@ -1954,8 +1943,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+ 
+     @Override
+     public void resumeDelayedFragmentAnimation() {
+-        delayedAnimationResumed = true;
+-        if (delayedOpenAnimationRunnable == null || waitingForKeyboardCloseRunnable != null) {
++        if (delayedOpenAnimationRunnable == null) {
+             return;
+         }
+         AndroidUtilities.cancelRunOnUIThread(delayedOpenAnimationRunnable);
+@@ -2249,7 +2237,6 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                     fragment.onTransitionAnimationStart(true, false);
+                 }
+ 
+-                delayedAnimationResumed = false;
+                 oldFragment = currentFragment;
+                 newFragment = fragment;
+                 AnimatorSet animation = null;
+@@ -2267,51 +2254,10 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                         containerView.setScaleX(1.0f);
+                         containerView.setScaleY(1.0f);
+                     }
+-                    if (containerView.isKeyboardVisible || containerViewBack.isKeyboardVisible) {
+-                        if (currentFragment != null && !preview) {
+-                            currentFragment.saveKeyboardPositionBeforeTransition();
+-                        }
+-                        waitingForKeyboardCloseRunnable = new Runnable() {
+-                            @Override
+-                            public void run() {
+-                                if (waitingForKeyboardCloseRunnable != this) {
+-                                    return;
+-                                }
+-                                waitingForKeyboardCloseRunnable = null;
+-                                if (noDelay) {
+-                                    if (currentFragment != null) {
+-                                        currentFragment.onTransitionAnimationStart(false, false);
+-                                    }
+-                                    fragment.onTransitionAnimationStart(true, false);
+-                                    startLayoutAnimation(true, true, preview);
+-                                } else if (delayedOpenAnimationRunnable != null) {
+-                                    AndroidUtilities.cancelRunOnUIThread(delayedOpenAnimationRunnable);
+-                                    if (delayedAnimationResumed) {
+-                                        delayedOpenAnimationRunnable.run();
+-                                    } else {
+-                                        AndroidUtilities.runOnUIThread(delayedOpenAnimationRunnable, 200);
+-                                    }
+-                                }
+-                            }
+-                        };
+-                        if (fragment.needDelayOpenAnimation()) {
+-                            delayedOpenAnimationRunnable = new Runnable() {
+-                                @Override
+-                                public void run() {
+-                                    if (delayedOpenAnimationRunnable != this) {
+-                                        return;
+-                                    }
+-                                    delayedOpenAnimationRunnable = null;
+-                                    if (currentFragment != null) {
+-                                        currentFragment.onTransitionAnimationStart(false, false);
+-                                    }
+-                                    fragment.onTransitionAnimationStart(true, false);
+-                                    startLayoutAnimation(true, true, preview);
+-                                }
+-                            };
+-                        }
+-                        AndroidUtilities.runOnUIThread(waitingForKeyboardCloseRunnable, 250);
+-                    } else if (fragment.needDelayOpenAnimation()) {
++                    if (currentFragment != null && !preview && (containerView.isKeyboardVisible || containerViewBack.isKeyboardVisible)) {
++                        currentFragment.saveKeyboardPositionBeforeTransition();
++                    }
++                    if (fragment.needDelayOpenAnimation()) {
+                         delayedOpenAnimationRunnable = new Runnable() {
+                             @Override
+                             public void run() {
+@@ -2319,6 +2265,9 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                                     return;
+                                 }
+                                 delayedOpenAnimationRunnable = null;
++                                if (currentFragment != null) {
++                                    currentFragment.onTransitionAnimationStart(false, false);
++                                }
+                                 fragment.onTransitionAnimationStart(true, false);
+                                 startLayoutAnimation(true, true, preview);
+                             }
+@@ -2706,21 +2655,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                     animation = currentFragment.onCustomTransitionAnimation(false, () -> onAnimationEndCheck(false));
+                 }
+                 if (animation == null) {
+-                    if (!inPreviewMode && (containerView.isKeyboardVisible || containerViewBack.isKeyboardVisible)) {
+-                        waitingForKeyboardCloseRunnable = new Runnable() {
+-                            @Override
+-                            public void run() {
+-                                if (waitingForKeyboardCloseRunnable != this) {
+-                                    return;
+-                                }
+-                                waitingForKeyboardCloseRunnable = null;
+-                                startLayoutAnimation(false, true, false);
+-                            }
+-                        };
+-                        AndroidUtilities.runOnUIThread(waitingForKeyboardCloseRunnable, 200);
+-                    } else {
+-                        startLayoutAnimation(false, true, inPreviewMode || transitionAnimationPreviewMode);
+-                    }
++                    startLayoutAnimation(false, true, inPreviewMode || transitionAnimationPreviewMode);
+                 } else {
+                     currentAnimation = animation;
+                     if (Bulletin.getVisibleBulletin() != null && Bulletin.getVisibleBulletin().isShowing()) {
