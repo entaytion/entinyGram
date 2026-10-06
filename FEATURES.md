@@ -207,6 +207,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 reduce menu motion: skip context menu stagger and reaction bar slide-in/scale animations
 - material 3:
   - switches
+  - sliders
   - fabs
   - predictive back
   - navigation animation

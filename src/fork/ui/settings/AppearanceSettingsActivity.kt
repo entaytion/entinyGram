@@ -36,6 +36,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             LocaleController.getString(R.string.InuMaterial3),
             listOf(
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Switches, InuConfig.MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_SWITCHES),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3Sliders, InuConfig.MATERIAL3_SLIDERS, TOGGLE_MATERIAL3_SLIDERS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Avatars, InuConfig.MATERIAL3_AVATARS, TOGGLE_MATERIAL3_AVATARS),
@@ -343,6 +344,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_DISABLE_PROFILE_AVATAR_BLUR = InuUtils.generateId()
         private val TOGGLE_REDUCE_MENU_MOTION = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_SWITCHES = InuUtils.generateId()
+        private val TOGGLE_MATERIAL3_SLIDERS = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
@@ -389,6 +391,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-profile-avatar-blur", R.string.InuDisableProfileAvatarBlur, TOGGLE_DISABLE_PROFILE_AVATAR_BLUR),
                 SearchRegistry.Entry("reduce-menu-motion", R.string.InuReduceMenuMotion, TOGGLE_REDUCE_MENU_MOTION),
                 SearchRegistry.Entry("material3-switches", R.string.InuMaterial3Switches, TOGGLE_MATERIAL3_SWITCHES),
+                SearchRegistry.Entry("material3-sliders", R.string.InuMaterial3Sliders, TOGGLE_MATERIAL3_SLIDERS),
                 SearchRegistry.Entry("material3-fabs", R.string.InuMaterial3Fabs, TOGGLE_MATERIAL3_FABS),
                 SearchRegistry.Entry("material3-sections", R.string.InuMaterial3Sections, TOGGLE_M3_SECTIONS_STYLE),
                 SearchRegistry.Entry("material3-avatars", R.string.InuMaterial3Avatars, TOGGLE_MATERIAL3_AVATARS),

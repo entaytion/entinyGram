@@ -10,9 +10,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.util.TypedValue
+import desu.inugram.helpers.theme.M3SliderHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Components.AnimatedFloat
+import org.telegram.ui.Components.CubicBezierInterpolator
 import org.telegram.ui.Components.LayoutHelper
 import org.telegram.ui.Components.SeekBar
 
@@ -33,9 +36,17 @@ class SliderCell(
     var value: Float = snap(initialValue)
         private set
 
+    // snap stop count for M3 tick dots; 0 = continuous (no step, or step not evenly dividing the range)
+    private val tickSteps: Int = step?.let {
+        val intervals = (max - min) / it
+        val rounded = Math.round(intervals)
+        if (rounded >= 1 && Math.abs(intervals - rounded) < 0.01f) rounded + 1 else 0
+    } ?: 0
+
     private val seekBarView = SeekBarWrapper(
         context,
         snapProgress = step?.let { s -> { p -> snapProgress(p, s) } },
+        tickSteps = tickSteps,
     ).apply {
         onProgressChanged = {
             setValue(min + it * (max - min), syncSlider = false)
@@ -178,10 +189,19 @@ class SliderCell(
     private class SeekBarWrapper(
         context: Context,
         private val snapProgress: ((Float) -> Float)? = null,
+        private val tickSteps: Int = 0,
     ) : View(context) {
         var onProgressChanged: ((Float) -> Unit)? = null
         var onFinished: (() -> Unit)? = null
         private val seekBar = SeekBar(this)
+
+        // the snap touch path below bypasses seekBar.onTouch, so seekBar.isDragging stays false
+        private var snapDragging = false
+
+        // last progress committed to seekBar; the drawn position glides toward it, mirroring
+        // stock SeekBarView's 60ms snap animation
+        private var committedProgress = 0f
+        private val animatedProgress = AnimatedFloat(this, 0, 60, CubicBezierInterpolator.EASE_OUT)
 
         init {
             updateColors()
@@ -208,6 +228,7 @@ class SliderCell(
         }
 
         fun setProgress(progress: Float) {
+            committedProgress = progress
             seekBar.setProgress(progress)
             invalidate()
         }
@@ -219,7 +240,27 @@ class SliderCell(
 
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
-            seekBar.draw(canvas)
+            val progress: Float
+            if (snapProgress != null) {
+                progress = animatedProgress.set(committedProgress)
+            } else {
+                // getThumbX tracks the finger mid-drag; getProgress only updates on release
+                val thumbWidth = AndroidUtilities.dp(24f)
+                progress = (seekBar.getThumbX() - thumbWidth / 2f) / (width - thumbWidth).coerceAtLeast(1)
+            }
+
+            if (M3SliderHelper.drawPlain(this, canvas, progress, seekBar.isDragging || snapDragging, tickSteps)) {
+                return
+            }
+
+            if (snapProgress != null && progress != committedProgress) {
+                // stock SeekBar has no drawn-vs-committed split; borrow its thumb for this frame
+                seekBar.setProgress(progress)
+                seekBar.draw(canvas)
+                seekBar.setProgress(committedProgress)
+            } else {
+                seekBar.draw(canvas)
+            }
         }
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -227,6 +268,7 @@ class SliderCell(
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     parent?.requestDisallowInterceptTouchEvent(true)
                 }
+
                 val handled = seekBar.onTouch(event.action, event.x, event.y)
                 if (handled) invalidate()
                 if (handled && (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL)) {
@@ -240,12 +282,36 @@ class SliderCell(
                     if (event.action == MotionEvent.ACTION_DOWN) {
                         parent?.requestDisallowInterceptTouchEvent(true)
                     }
+
+                    snapDragging = event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE
+                    if (event.action == MotionEvent.ACTION_CANCEL) {
+                        // a cancel's coordinates are meaningless (parent intercepted); keep whatever
+                        // the preceding moves already committed and just drop the handle
+                        invalidate()
+                        return true
+                    }
+
                     val thumbWidth = AndroidUtilities.dp(24f)
                     val denom = (width - thumbWidth).coerceAtLeast(1).toFloat()
                     val raw = ((event.x - thumbWidth / 2f) / denom).coerceIn(0f, 1f)
                     val snapped = snapProgress.invoke(raw)
-                    seekBar.setProgress(snapped)
-                    onProgressChanged?.invoke(snapped)
+                    if (snapped != committedProgress) {
+                        committedProgress = snapped
+                        seekBar.setProgress(snapped)
+
+                        // Dense snap ranges draw only selected ticks; vibrate at those ticks rather
+                        // than at every intermediate snap. Keep releases silent like stock.
+                        val stepIndex = Math.round(snapped * (tickSteps - 1))
+                        val trackSpan = (width - AndroidUtilities.dp(24f)).toFloat()
+                        if (event.action != MotionEvent.ACTION_UP &&
+                            M3SliderHelper.shouldVibrateAtTick(stepIndex, tickSteps, trackSpan)
+                        ) {
+                            AndroidUtilities.vibrateCursor(this)
+                        }
+
+                        onProgressChanged?.invoke(snapped)
+                    }
+
                     invalidate()
                     if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
                         onFinished?.invoke()
