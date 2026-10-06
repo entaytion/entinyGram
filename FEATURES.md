@@ -552,6 +552,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
 - crash rendering tables in rich messages and instant view with oversized/negative col/rowspans or a row wider than the first (stock sized the grid from raw spans and the first row only)
+- hashtags, mentions, custom emoji and other entities missing from rich message previews in the chat list (stock preview formatter dropped every rich text type it did not list)
 - blank white area where the keyboard was when opening another screen from a chat with the keyboard up (leftover adjustResize-era filler drawn over the edge-to-edge chat)
 - opening/closing a screen with the keyboard up no longer waits up to 250ms for the keyboard to hide first (adjustResize-era delay, pointless with edge-to-edge)
 - avatar long-press preview stuck on blurred placeholder after the cached profile photo reference expired (stock used the often-null `UserFull.user` and a parent that cannot refresh profile photo references)
