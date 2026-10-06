@@ -44,6 +44,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.LocaleController.formatString
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.R
@@ -118,6 +119,7 @@ object PluginManager {
         hosting = true
         PluginAppVisibility.watch(context)
         PluginAccounts.watch()
+        watchLanguage()
         PluginBlobs.scheduleSweep()
         PluginTransfers.scheduleSweep()
         ensureLoaded()
@@ -516,14 +518,7 @@ object PluginManager {
         try {
             // runs the JNI bridge wiring, which throws when a descriptor does not resolve
             startEngine(session, bridge)
-            session.engine.installInfo(
-                appVersion = BuildVars.BUILD_VERSION_STRING,
-                appBuild = appBuild,
-                apiVersion = PLUGIN_API_VERSION,
-                layer = TLRPC.LAYER,
-                language = LocaleController.getInstance().currentLocaleInfo?.langCode ?: "",
-                header = session.manifest.raw,
-            )
+            installInfo(session)
             session.engine.evaluate(session.source, session.manifest.name)
             notifyChanged()
         } catch (e: Throwable) {
@@ -531,6 +526,37 @@ object PluginManager {
                 // before the field is cleared: [fail] reads it to decide the fault is still this plugin's
                 fail(session, PluginFailure.Site.LOAD, e.message ?: e.toString())
             }
+        }
+    }
+
+    private fun installInfo(session: PluginSession) {
+        session.engine.installInfo(
+            appVersion = BuildVars.BUILD_VERSION_STRING,
+            appBuild = appBuild,
+            apiVersion = PLUGIN_API_VERSION,
+            layer = TLRPC.LAYER,
+            language = getLanguage(),
+            header = session.manifest.raw,
+        )
+    }
+
+    private fun getLanguage(): String = LocaleController.getInstance().currentLocaleInfo?.langCode ?: ""
+
+    private var lastLanguage: String? = null
+
+    /** `LocaleController` has no language-changed event, but posts `reloadInterface` after applying one */
+    private fun watchLanguage() {
+        AndroidUtilities.runOnUIThread {
+            lastLanguage = getLanguage()
+            NotificationCenter.getGlobalInstance().addObserver({ _, _, _ ->
+                val language = getLanguage()
+                if (language != lastLanguage) {
+                    lastLanguage = language
+                    EngineDispatch.scheduler.postRunnable {
+                        for (plugin in getDispatchTargets()) plugin.session?.let(::installInfo)
+                    }
+                }
+            }, NotificationCenter.reloadInterface)
         }
     }
 
