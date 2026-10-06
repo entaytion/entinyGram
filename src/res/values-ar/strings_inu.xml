@@ -1136,6 +1136,8 @@
 
     <string name="InuLogs">التصحيح</string>
     <string name="InuLogsEnabled">وضع التصحيح</string>
+    <string name="InuForceNoVibration">تعطيل كل الاهتزازات</string>
+    <string name="InuForceNoVibrationInfo">يوقف الاهتزاز اللمسي واهتزاز التطبيق والإشعارات حتى لو كان مفعلًا في إعدادات Telegram.</string>
     <string name="InuLogsSize">حجم السجلات: %1$s</string>
     <string name="InuLogsShare">مشاركة السجلات</string>
     <string name="InuLogsShareZip">كل السجلات (.zip)</string>

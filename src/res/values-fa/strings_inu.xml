@@ -1126,6 +1126,8 @@
 
     <string name="InuLogs">اشکال‌زدایی</string>
     <string name="InuLogsEnabled">حالت اشکال‌زدایی</string>
+    <string name="InuForceNoVibration">غیرفعال کردن همه لرزش‌ها</string>
+    <string name="InuForceNoVibrationInfo">لرزش لمسی، لرزش درون‌برنامه و اعلان‌ها را حتی اگر در تنظیمات تلگرام روشن باشد خاموش می‌کند.</string>
     <string name="InuLogsSize">حجم گزارش‌ها: %1$s</string>
     <string name="InuLogsShare">اشتراک‌گذاری گزارش‌ها</string>
     <string name="InuLogsShareZip">همه گزارش‌ها (.zip)</string>

@@ -855,6 +855,8 @@
 
     <string name="InuLogs">Hata Ayıklama</string>
     <string name="InuLogsEnabled">Hata ayıklama modu</string>
+    <string name="InuForceNoVibration">Tüm titreşimi kapat</string>
+    <string name="InuForceNoVibrationInfo">Telegram ayarlarında açık olsa bile dokunsal geri bildirimi, uygulama içi ve bildirim titreşimini kapatır.</string>
     <string name="InuLogsSize">Günlük boyutu: %1$s</string>
     <string name="InuLogsShare">Günlükleri paylaş</string>
     <string name="InuLogsShareZip">Tüm günlükler (.zip)</string>

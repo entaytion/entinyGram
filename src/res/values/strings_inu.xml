@@ -1201,6 +1201,8 @@
 
     <string name="InuLogs">Debug</string>
     <string name="InuLogsEnabled">Debug mode</string>
+    <string name="InuForceNoVibration">Disable all vibration</string>
+    <string name="InuForceNoVibrationInfo">Turn off haptics, in-app and notification vibration, even if enabled in Telegram settings.</string>
     <string name="InuLogsPrivacyTitle">Enable debug mode?</string>
     <string name="InuLogsPrivacyText">The app will write technical logs to the device. They may contain account and chat identifiers, so share them only with people you trust. Logs are kept up to 25 MB and can be cleared at any time.</string>
     <string name="InuLogsEnableAction">Enable</string>

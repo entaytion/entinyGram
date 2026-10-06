@@ -32,6 +32,7 @@ object InuConfig {
         migrateGhostAutoOffline()
         migrateSelfDestructCategories()
         migrateFeedEnabled(context)
+        desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
     }
 
     // entiny: the feed became opt-in; anyone who ever touched it keeps it on
@@ -1489,6 +1490,14 @@ object InuConfig {
 
     @JvmField
     val ALLOW_SCREENSHOTS = BoolItem("allow_screenshots", false)
+    val FORCE_NO_VIBRATION = object : BoolItem("force_no_vibration", false) {
+        override var value: Boolean
+            get() = super.value
+            set(v) {
+                super.value = v
+                desu.inugram.helpers.vibration.HapticFeedbackConstants.sync()
+            }
+    }
 
     @JvmField
     val SUPPRESS_SCREENSHOT_NOTIFICATION = BoolItem("suppress_screenshot_notification", false)

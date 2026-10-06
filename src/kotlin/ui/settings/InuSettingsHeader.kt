@@ -3,7 +3,7 @@ package desu.inugram.ui.settings
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView

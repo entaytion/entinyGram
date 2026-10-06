@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout

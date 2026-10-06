@@ -8,7 +8,7 @@ import android.graphics.Shader
 import android.content.DialogInterface
 import android.os.Bundle
 import android.graphics.drawable.Drawable
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast

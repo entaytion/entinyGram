@@ -772,6 +772,8 @@
 
     <string name="InuLogs">デバッグ</string>
     <string name="InuLogsEnabled">デバッグモード</string>
+    <string name="InuForceNoVibration">すべての振動を無効化</string>
+    <string name="InuForceNoVibrationInfo">Telegramの設定で有効になっていても、触覚フィードバック、アプリ内の振動、通知の振動をオフにします。</string>
     <string name="InuLogsSize">ログサイズ: %1$s</string>
     <string name="InuLogsShare">ログを共有</string>
     <string name="InuLogsShareZip">全ログ (.zip)</string>

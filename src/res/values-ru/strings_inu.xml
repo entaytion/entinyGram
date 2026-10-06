@@ -866,6 +866,8 @@
 
     <string name="InuLogs">Отладка</string>
     <string name="InuLogsEnabled">Режим отладки</string>
+    <string name="InuForceNoVibration">Отключить всю вибрацию</string>
+    <string name="InuForceNoVibrationInfo">Отключает виброотклик, вибрацию в приложении и уведомлениях, даже если она включена в настройках Telegram.</string>
     <string name="InuLogsPrivacyTitle">Включить режим отладки?</string>
     <string name="InuLogsPrivacyText">Приложение будет записывать технические логи на устройство. В них могут быть идентификаторы аккаунта и чатов, поэтому отправляйте их только тем, кому доверяете. Логи занимают до 25 МБ и очищаются в любой момент.</string>
     <string name="InuLogsEnableAction">Включить</string>

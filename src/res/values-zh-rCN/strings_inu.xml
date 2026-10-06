@@ -771,6 +771,8 @@
 
     <string name="InuLogs">调试</string>
     <string name="InuLogsEnabled">调试模式</string>
+    <string name="InuForceNoVibration">禁用所有振动</string>
+    <string name="InuForceNoVibrationInfo">即使在 Telegram 设置中已开启，也关闭触觉反馈、应用内振动和通知振动。</string>
     <string name="InuLogsSize">日志大小: %1$s</string>
     <string name="InuLogsShare">分享日志</string>
     <string name="InuLogsShareZip">全部日志 (.zip)</string>

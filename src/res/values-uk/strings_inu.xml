@@ -1083,6 +1083,8 @@
     <string name="InuGoToMessage">Перейти до повідомлення</string>
     <string name="InuGoToMessagePrompt">ID повідомлення</string>
     <string name="InuLogsEnabled">Режим налагодження</string>
+    <string name="InuForceNoVibration">Вимкнути всю вібрацію</string>
+    <string name="InuForceNoVibrationInfo">Вимикає вібровідгук, вібрацію в застосунку та сповіщень, навіть якщо вона ввімкнена в налаштуваннях Telegram.</string>
     <string name="InuLogsPrivacyTitle">Увімкнути режим налагодження?</string>
     <string name="InuLogsPrivacyText">Застосунок записуватиме технічні логи на пристрій. У них можуть бути ідентифікатори акаунта й чатів, тож надсилайте їх лише тим, кому довіряєте. Логи займають до 25 МБ і очищаються будь-коли.</string>
     <string name="InuLogsEnableAction">Увімкнути</string>

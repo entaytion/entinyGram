@@ -1,0 +1,1933 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Tue, 6 Oct 2026 11:05:09 +0300
+Subject: [+] force disable vibration
+
+---
+ .../androidx/recyclerview/widget/ItemTouchHelper.java    | 2 +-
+ .../src/main/java/me/vkryl/android/ViewUtils.java        | 2 +-
+ .../src/main/java/me/vkryl/android/util/ClickHelper.java | 2 +-
+ .../java/org/telegram/messenger/AndroidUtilities.java    | 2 +-
+ .../java/org/telegram/messenger/ApplicationLoader.java   | 5 +++++
+ .../telegram/messenger/BotWebViewVibrationEffect.java    | 1 +
+ .../java/org/telegram/messenger/FactCheckController.java | 2 +-
+ .../java/org/telegram/messenger/MediaController.java     | 2 +-
+ .../org/telegram/messenger/NotificationsController.java  | 2 +-
+ .../java/org/telegram/messenger/RichMessageLayout.java   | 2 +-
+ .../java/org/telegram/messenger/camera/CameraView.java   | 3 ++-
+ .../messenger/voip/VoIPPreNotificationService.java       | 2 +-
+ .../java/org/telegram/messenger/voip/VoIPService.java    | 9 +++++++--
+ .../java/org/telegram/ui/ActionBar/ActionBarLayout.java  | 2 +-
+ .../src/main/java/org/telegram/ui/ArticleViewer.java     | 2 +-
+ .../src/main/java/org/telegram/ui/CalendarActivity.java  | 2 +-
+ .../main/java/org/telegram/ui/Cells/AboutLinkCell.java   | 2 +-
+ .../src/main/java/org/telegram/ui/Cells/BaseCell.java    | 2 +-
+ .../main/java/org/telegram/ui/Cells/ChatActionCell.java  | 2 +-
+ .../main/java/org/telegram/ui/Cells/ChatMessageCell.java | 2 +-
+ .../src/main/java/org/telegram/ui/Cells/DialogCell.java  | 2 +-
+ .../main/java/org/telegram/ui/Cells/SharedLinkCell.java  | 2 +-
+ .../java/org/telegram/ui/Cells/SlideIntChooseView.java   | 2 +-
+ .../main/java/org/telegram/ui/Cells/TextDetailCell.java  | 2 +-
+ .../java/org/telegram/ui/Cells/TextSelectionHelper.java  | 2 +-
+ .../org/telegram/ui/Cells/ThemesHorizontalListCell.java  | 2 +-
+ .../main/java/org/telegram/ui/Charts/BaseChartView.java  | 3 ++-
+ .../main/java/org/telegram/ui/Charts/PieChartView.java   | 2 +-
+ .../src/main/java/org/telegram/ui/ChatActivity.java      | 2 +-
+ .../src/main/java/org/telegram/ui/ChatEditActivity.java  | 2 +-
+ .../java/org/telegram/ui/ChatPullingDownDrawable.java    | 2 +-
+ .../java/org/telegram/ui/Components/AIEditorAlert.java   | 2 +-
+ .../java/org/telegram/ui/Components/AlertsCreator.java   | 2 +-
+ .../java/org/telegram/ui/Components/BulletinFactory.java | 2 +-
+ .../java/org/telegram/ui/Components/CanvasButton.java    | 2 +-
+ .../telegram/ui/Components/ChatActivityEnterView.java    | 2 +-
+ .../java/org/telegram/ui/Components/ChatAttachAlert.java | 2 +-
+ .../ui/Components/ChatAttachAlertPhotoLayoutPreview.java | 2 +-
+ .../telegram/ui/Components/Crop/CropRotationWheel.java   | 2 +-
+ .../telegram/ui/Components/CustomPhoneKeyboardView.java  | 2 +-
+ .../telegram/ui/Components/EmojiColorPickerWindow.java   | 2 +-
+ .../java/org/telegram/ui/Components/EmojiPacksAlert.java | 2 +-
+ .../main/java/org/telegram/ui/Components/EmojiView.java  | 2 +-
+ .../java/org/telegram/ui/Components/FilterTabsView.java  | 2 +-
+ .../ui/Components/FloatingDebug/FloatingDebugView.java   | 2 +-
+ .../org/telegram/ui/Components/FragmentContextView.java  | 2 +-
+ .../java/org/telegram/ui/Components/GroupCallPip.java    | 2 +-
+ .../org/telegram/ui/Components/InstantCameraView.java    | 2 +-
+ .../java/org/telegram/ui/Components/NumberPicker.java    | 2 +-
+ .../telegram/ui/Components/Paint/Views/EntityView.java   | 2 +-
+ .../java/org/telegram/ui/Components/PasscodeView.java    | 2 +-
+ .../java/org/telegram/ui/Components/PhotoFilterView.java | 2 +-
+ .../ui/Components/PhotoViewerCaptionEnterView.java       | 2 +-
+ .../org/telegram/ui/Components/Premium/CarouselView.java | 2 +-
+ .../telegram/ui/Components/Premium/LimitPreviewView.java | 2 +-
+ .../ui/Components/Premium/LimitReachedBottomSheet.java   | 2 +-
+ .../ui/Components/Premium/PremiumPreviewBottomSheet.java | 2 +-
+ .../Premium/PremiumStickersPreviewRecycler.java          | 2 +-
+ .../ui/Components/Premium/boosts/BoostDialogs.java       | 2 +-
+ .../Premium/boosts/UserSelectorBottomSheet.java          | 2 +-
+ .../org/telegram/ui/Components/ProfileActionsView.java   | 2 +-
+ .../java/org/telegram/ui/Components/ProximitySheet.java  | 2 +-
+ .../java/org/telegram/ui/Components/RLottieDrawable.java | 2 +-
+ .../ui/Components/Reactions/BackSpaceButtonView.java     | 2 +-
+ .../Components/Reactions/CustomEmojiReactionsWindow.java | 2 +-
+ .../ui/Components/Reactions/ReactionsEffectOverlay.java  | 2 +-
+ .../telegram/ui/Components/ReactionsContainerLayout.java | 2 +-
+ .../org/telegram/ui/Components/RecyclerListView.java     | 2 +-
+ .../telegram/ui/Components/ScrollSlidingTabStrip.java    | 2 +-
+ .../org/telegram/ui/Components/SenderSelectPopup.java    | 2 +-
+ .../main/java/org/telegram/ui/Components/ShareAlert.java | 2 +-
+ .../java/org/telegram/ui/Components/SlideChooseView.java | 2 +-
+ .../java/org/telegram/ui/Components/StickersAlert.java   | 2 +-
+ .../org/telegram/ui/Components/SuggestEmojiView.java     | 2 +-
+ .../telegram/ui/Components/SwipeGestureSettingsView.java | 2 +-
+ .../main/java/org/telegram/ui/Components/UndoView.java   | 2 +-
+ .../java/org/telegram/ui/Components/ZoomControlView.java | 2 +-
+ .../quickforward/QuickShareSelectorDrawable.java         | 2 +-
+ .../main/java/org/telegram/ui/ContentPreviewViewer.java  | 3 ++-
+ .../src/main/java/org/telegram/ui/DialogsActivity.java   | 2 +-
+ .../java/org/telegram/ui/EmojiAnimationsOverlay.java     | 2 +-
+ .../java/org/telegram/ui/FilterChatlistActivity.java     | 2 +-
+ .../main/java/org/telegram/ui/FiltersSetupActivity.java  | 2 +-
+ .../org/telegram/ui/Gifts/ProfileGiftsContainer.java     | 2 +-
+ .../src/main/java/org/telegram/ui/GroupCallActivity.java | 2 +-
+ .../src/main/java/org/telegram/ui/LaunchActivity.java    | 8 +++++++-
+ .../java/org/telegram/ui/LiteModeSettingsActivity.java   | 2 +-
+ .../src/main/java/org/telegram/ui/LoginActivity.java     | 2 +-
+ .../main/java/org/telegram/ui/ManageLinksActivity.java   | 2 +-
+ .../java/org/telegram/ui/MessageStatisticActivity.java   | 2 +-
+ .../telegram/ui/MultiContactsSelectorBottomSheet.java    | 2 +-
+ .../java/org/telegram/ui/NotificationsSoundActivity.java | 2 +-
+ .../src/main/java/org/telegram/ui/PasscodeActivity.java  | 2 +-
+ .../main/java/org/telegram/ui/PaymentFormActivity.java   | 2 +-
+ .../java/org/telegram/ui/PhotoAlbumPickerActivity.java   | 2 +-
+ .../main/java/org/telegram/ui/PhotoPickerActivity.java   | 2 +-
+ .../src/main/java/org/telegram/ui/PhotoViewer.java       | 2 +-
+ .../java/org/telegram/ui/PremiumPreviewFragment.java     | 2 +-
+ .../java/org/telegram/ui/PrivacySettingsActivity.java    | 2 +-
+ .../src/main/java/org/telegram/ui/ProfileActivity.java   | 2 +-
+ .../src/main/java/org/telegram/ui/QrActivity.java        | 2 +-
+ .../java/org/telegram/ui/SelectAnimatedEmojiDialog.java  | 2 +-
+ .../main/java/org/telegram/ui/Stars/StarGiftSheet.java   | 2 +-
+ .../java/org/telegram/ui/Stars/StarReactionsOverlay.java | 2 +-
+ .../java/org/telegram/ui/Stars/StarsReactionsSheet.java  | 2 +-
+ .../java/org/telegram/ui/Stories/DialogStoriesCell.java  | 2 +-
+ .../java/org/telegram/ui/Stories/PeerStoriesView.java    | 2 +-
+ .../java/org/telegram/ui/Stories/SelfStoryViewsPage.java | 2 +-
+ .../java/org/telegram/ui/Stories/StealthModeAlert.java   | 2 +-
+ .../java/org/telegram/ui/Stories/StoriesUtilities.java   | 2 +-
+ .../main/java/org/telegram/ui/Stories/StoryViewer.java   | 2 +-
+ .../org/telegram/ui/Stories/recorder/CaptionStory.java   | 2 +-
+ .../telegram/ui/Stories/recorder/CollageLayoutView2.java | 2 +-
+ .../org/telegram/ui/Stories/recorder/DualCameraView.java | 2 +-
+ .../telegram/ui/Stories/recorder/EmojiBottomSheet.java   | 2 +-
+ .../java/org/telegram/ui/Stories/recorder/PaintView.java | 2 +-
+ .../telegram/ui/Stories/recorder/RoundVideoRecorder.java | 2 +-
+ .../org/telegram/ui/Stories/recorder/SliderView.java     | 2 +-
+ .../ui/Stories/recorder/StoryPrivacyBottomSheet.java     | 2 +-
+ .../ui/Stories/recorder/StoryPrivacySelector.java        | 2 +-
+ .../org/telegram/ui/Stories/recorder/StoryRecorder.java  | 2 +-
+ .../org/telegram/ui/Stories/recorder/TimelineView.java   | 2 +-
+ .../src/main/java/org/telegram/ui/TopicsFragment.java    | 2 +-
+ .../org/telegram/ui/TwoStepVerificationActivity.java     | 2 +-
+ .../telegram/ui/TwoStepVerificationSetupActivity.java    | 2 +-
+ .../org/telegram/ui/bots/BotCommandsMenuContainer.java   | 2 +-
+ .../org/telegram/ui/iv/ChatAttachAlertRichLayout.java    | 2 +-
+ .../main/java/org/telegram/ui/iv/RichButtonRowCell.java  | 2 +-
+ .../src/main/java/org/telegram/ui/iv/RichEditText.java   | 2 +-
+ .../src/main/java/org/telegram/ui/iv/RichEditor.java     | 2 +-
+ .../main/java/org/telegram/ui/iv/RichEditorListView.java | 6 +++---
+ .../src/main/java/org/telegram/ui/web/WebActionBar.java  | 2 +-
+ 132 files changed, 153 insertions(+), 133 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/androidx/recyclerview/widget/ItemTouchHelper.java b/TMessagesProj/src/main/java/androidx/recyclerview/widget/ItemTouchHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/androidx/recyclerview/widget/ItemTouchHelper.java
++++ b/TMessagesProj/src/main/java/androidx/recyclerview/widget/ItemTouchHelper.java
+@@ -24,7 +24,7 @@ import android.graphics.Rect;
+ import android.os.Build;
+ import android.util.Log;
+ import android.view.GestureDetector;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/me/vkryl/android/ViewUtils.java b/TMessagesProj/src/main/java/me/vkryl/android/ViewUtils.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/me/vkryl/android/ViewUtils.java
++++ b/TMessagesProj/src/main/java/me/vkryl/android/ViewUtils.java
+@@ -19,7 +19,7 @@ package me.vkryl.android;
+ 
+ import android.graphics.drawable.Drawable;
+ import android.os.Build;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/me/vkryl/android/util/ClickHelper.java b/TMessagesProj/src/main/java/me/vkryl/android/util/ClickHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/me/vkryl/android/util/ClickHelper.java
++++ b/TMessagesProj/src/main/java/me/vkryl/android/util/ClickHelper.java
+@@ -19,7 +19,7 @@
+ 
+ package me.vkryl.android.util;
+ 
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/AndroidUtilities.java
+@@ -91,7 +91,7 @@ import android.util.StateSet;
+ import android.util.TypedValue;
+ import android.view.Display;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.PixelCopy;
+ import android.view.Surface;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
+@@ -51,6 +51,11 @@ import java.util.Locale;
+ 
+ public class ApplicationLoader extends Application {
+ 
++    @Override
++    public Object getSystemService(String name) {
++        return desu.inugram.helpers.vibration.VibrationHelper.service(name, super.getSystemService(name));
++    }
++
+     public static ApplicationLoader applicationLoaderInstance;
+ 
+     @SuppressLint("StaticFieldLeak")
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/BotWebViewVibrationEffect.java b/TMessagesProj/src/main/java/org/telegram/messenger/BotWebViewVibrationEffect.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/BotWebViewVibrationEffect.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/BotWebViewVibrationEffect.java
+@@ -42,6 +42,7 @@ public enum BotWebViewVibrationEffect {
+     }
+ 
+     public void vibrate() {
++        if (desu.inugram.helpers.vibration.VibrationHelper.blocked()) return;
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             AndroidUtilities.getVibrator().vibrate(getVibrationEffectForOreo());
+         } else {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FactCheckController.java b/TMessagesProj/src/main/java/org/telegram/messenger/FactCheckController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/FactCheckController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/FactCheckController.java
+@@ -19,7 +19,7 @@ import android.util.LongSparseArray;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -63,7 +63,7 @@ import android.telephony.TelephonyManager;
+ import android.text.TextUtils;
+ import android.util.Pair;
+ import android.util.SparseArray;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.TextureView;
+ import android.view.View;
+ import android.view.WindowManager;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/NotificationsController.java
+@@ -4349,7 +4349,7 @@ public class NotificationsController extends BaseController implements Notificat
+ 
+         InuDialogNotificationSettings result = new InuDialogNotificationSettings();
+         result.notifyDisabled = notifyDisabled;
+-        result.vibrate = vibrate;
++        result.vibrate = desu.inugram.helpers.vibration.VibrationHelper.notificationMode(vibrate);
+         result.soundPath = soundPath;
+         result.isInternalSoundFile = isInternalSoundFile;
+         result.ledColor = ledColor;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+@@ -48,7 +48,7 @@ import android.text.style.URLSpan;
+ import android.util.Log;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+ import android.view.VelocityTracker;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/camera/CameraView.java
+@@ -48,7 +48,7 @@ import android.os.Message;
+ import android.os.VibrationEffect;
+ import android.os.Vibrator;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.Surface;
+ import android.view.TextureView;
+ import android.view.View;
+@@ -1080,6 +1080,7 @@ public class CameraView extends FrameLayout implements TextureView.SurfaceTextur
+     }
+ 
+     public void runHaptic() {
++        if (desu.inugram.helpers.vibration.VibrationHelper.blocked()) return;
+         long[] vibrationWaveFormDurationPattern = {0, 1};
+         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+             final Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPPreNotificationService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPPreNotificationService.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPPreNotificationService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPPreNotificationService.java
+@@ -342,7 +342,7 @@ public class VoIPPreNotificationService { // } extends Service implements AudioM
+                 } else {
+                     vibrate = prefs.getInt("vibrate_calls", 0);
+                 }
+-                if ((vibrate != 2 && vibrate != 4 && (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE || am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL)) || (vibrate == 4 && am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE)) {
++                if (!desu.inugram.helpers.vibration.VibrationHelper.blocked() && ((vibrate != 2 && vibrate != 4 && (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE || am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL)) || (vibrate == 4 && am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE))) {
+                     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                     long duration = 700;
+                     if (vibrate == 1) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+index 0000000..0000000 100755
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/voip/VoIPService.java
+@@ -83,7 +83,7 @@ import android.text.SpannableString;
+ import android.text.TextUtils;
+ import android.text.style.ForegroundColorSpan;
+ import android.util.LruCache;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.View;
+ import android.view.WindowManager;
+@@ -169,6 +169,11 @@ import java.util.concurrent.atomic.AtomicInteger;
+ @SuppressLint("NewApi")
+ public class VoIPService extends Service implements SensorEventListener, AudioManager.OnAudioFocusChangeListener, NotificationCenter.NotificationCenterDelegate, VoIPServiceState {
+ 
++    @Override
++    public Object getSystemService(String name) {
++        return desu.inugram.helpers.vibration.VibrationHelper.service(name, super.getSystemService(name));
++    }
++
+ 	public static final int CALL_MIN_LAYER = 65;
+ 
+ 	public static final int STATE_HANGING_UP = 10;
+@@ -4129,7 +4134,7 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
+ 				} else {
+ 					vibrate = prefs.getInt("vibrate_calls", 0);
+ 				}
+-				if ((vibrate != 2 && vibrate != 4 && (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE || am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL)) || (vibrate == 4 && am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE)) {
++				if (!desu.inugram.helpers.vibration.VibrationHelper.blocked() && ((vibrate != 2 && vibrate != 4 && (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE || am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL)) || (vibrate == 4 && am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE))) {
+ 					vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+ 					long duration = 700;
+ 					if (vibrate == 1) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -36,7 +36,7 @@ import android.graphics.drawable.Drawable;
+ import android.os.Build;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.MotionEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+@@ -67,7 +67,7 @@ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.DisplayCutout;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java
+@@ -18,7 +18,7 @@ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.GestureDetector;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AboutLinkCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AboutLinkCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AboutLinkCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AboutLinkCell.java
+@@ -33,7 +33,7 @@ import android.text.style.ClickableSpan;
+ import android.text.style.URLSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/BaseCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/BaseCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/BaseCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/BaseCell.java
+@@ -13,7 +13,7 @@ import android.content.res.ColorStateList;
+ import android.graphics.Canvas;
+ import android.graphics.drawable.Drawable;
+ import android.graphics.drawable.RippleDrawable;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.ViewConfiguration;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
+@@ -51,7 +51,7 @@ import android.text.style.URLSpan;
+ import android.util.StateSet;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -78,7 +78,7 @@ import android.util.Property;
+ import android.util.SparseArray;
+ import android.util.StateSet;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -45,7 +45,7 @@ import android.text.style.ClickableSpan;
+ import android.text.style.ReplacementSpan;
+ import android.text.style.StyleSpan;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.accessibility.AccessibilityEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedLinkCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedLinkCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedLinkCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedLinkCell.java
+@@ -27,7 +27,7 @@ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.util.SparseArray;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.ViewConfiguration;
+ import android.view.accessibility.AccessibilityNodeInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SlideIntChooseView.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SlideIntChooseView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SlideIntChooseView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SlideIntChooseView.java
+@@ -17,7 +17,7 @@ import android.graphics.Rect;
+ import android.os.Build;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.widget.FrameLayout;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextDetailCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextDetailCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextDetailCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextDetailCell.java
+@@ -18,7 +18,7 @@ import android.graphics.drawable.Drawable;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.accessibility.AccessibilityNodeInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java
+@@ -28,7 +28,7 @@ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.MotionEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ThemesHorizontalListCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ThemesHorizontalListCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ThemesHorizontalListCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ThemesHorizontalListCell.java
+@@ -24,7 +24,7 @@ import android.os.SystemClock;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Charts/BaseChartView.java b/TMessagesProj/src/main/java/org/telegram/ui/Charts/BaseChartView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Charts/BaseChartView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Charts/BaseChartView.java
+@@ -19,7 +19,7 @@ import android.os.Bundle;
+ import android.os.VibrationEffect;
+ import android.os.Vibrator;
+ import android.text.TextPaint;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+@@ -1095,6 +1095,7 @@ public abstract class BaseChartView<T extends ChartData, L extends LineViewData>
+     }
+ 
+     protected void runSmoothHaptic() {
++        if (desu.inugram.helpers.vibration.VibrationHelper.blocked()) return;
+         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+             final Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+             if (vibrationEffect == null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Charts/PieChartView.java b/TMessagesProj/src/main/java/org/telegram/ui/Charts/PieChartView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Charts/PieChartView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Charts/PieChartView.java
+@@ -9,7 +9,7 @@ import android.graphics.RectF;
+ import android.graphics.Typeface;
+ import android.os.Build;
+ import android.text.TextPaint;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ 
+ import org.telegram.messenger.AndroidUtilities;
+ import org.telegram.ui.Charts.data.ChartData;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -84,7 +84,7 @@ import android.util.SparseArray;
+ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.MotionEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatEditActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatEditActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatEditActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatEditActivity.java
+@@ -38,7 +38,7 @@ import android.text.TextWatcher;
+ import android.text.style.ClickableSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.inputmethod.EditorInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatPullingDownDrawable.java
+@@ -18,7 +18,7 @@ import android.text.StaticLayout;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ 
+ import org.telegram.messenger.AccountInstance;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AIEditorAlert.java
+@@ -31,7 +31,7 @@ import android.text.TextWatcher;
+ import android.text.style.ReplacementSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.inputmethod.EditorInfo;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+@@ -56,7 +56,7 @@ import android.util.Base64;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/BulletinFactory.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/BulletinFactory.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/BulletinFactory.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/BulletinFactory.java
+@@ -18,7 +18,7 @@ import android.text.TextUtils;
+ import android.text.style.ClickableSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/CanvasButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/CanvasButton.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/CanvasButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/CanvasButton.java
+@@ -12,7 +12,7 @@ import android.graphics.drawable.Drawable;
+ import android.graphics.drawable.RippleDrawable;
+ import android.os.Build;
+ import android.util.StateSet;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -72,7 +72,7 @@ import android.util.Property;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.MotionEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlert.java
+@@ -58,7 +58,7 @@ import android.util.Property;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.MotionEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayoutPreview.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayoutPreview.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayoutPreview.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAttachAlertPhotoLayoutPreview.java
+@@ -26,7 +26,7 @@ import android.os.SystemClock;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropRotationWheel.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropRotationWheel.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropRotationWheel.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropRotationWheel.java
+@@ -10,7 +10,7 @@ import android.graphics.RectF;
+ import android.os.Build;
+ import android.text.TextPaint;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.widget.FrameLayout;
+ import android.widget.ImageView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/CustomPhoneKeyboardView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/CustomPhoneKeyboardView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/CustomPhoneKeyboardView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/CustomPhoneKeyboardView.java
+@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
+ import android.text.Editable;
+ import android.text.TextPaint;
+ import android.view.GestureDetector;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java
+@@ -9,7 +9,7 @@ import android.graphics.Paint;
+ import android.graphics.RectF;
+ import android.graphics.drawable.Drawable;
+ import android.util.Pair;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
+@@ -27,7 +27,7 @@ import android.util.LongSparseArray;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+@@ -55,7 +55,7 @@ import android.util.SparseArray;
+ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FilterTabsView.java
+@@ -36,7 +36,7 @@ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.util.Property;
+ import android.util.SparseIntArray;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.accessibility.AccessibilityNodeInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FloatingDebug/FloatingDebugView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FloatingDebug/FloatingDebugView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FloatingDebug/FloatingDebugView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FloatingDebug/FloatingDebugView.java
+@@ -18,7 +18,7 @@ import android.util.DisplayMetrics;
+ import android.util.TypedValue;
+ import android.view.GestureDetector;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
+@@ -42,7 +42,7 @@ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallPip.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallPip.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallPip.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallPip.java
+@@ -14,7 +14,7 @@ import android.graphics.PixelFormat;
+ import android.os.Build;
+ import android.os.SystemClock;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
+@@ -50,7 +50,7 @@ import android.os.Handler;
+ import android.os.Looper;
+ import android.os.Message;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.Surface;
+ import android.view.TextureView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/NumberPicker.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/NumberPicker.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/NumberPicker.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/NumberPicker.java
+@@ -27,7 +27,7 @@ import android.text.TextUtils;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EntityView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EntityView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EntityView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/EntityView.java
+@@ -11,7 +11,7 @@ import android.graphics.DashPathEffect;
+ import android.graphics.Paint;
+ import android.graphics.PointF;
+ import android.os.Build;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PasscodeView.java
+@@ -35,7 +35,7 @@ import android.text.method.PasswordTransformationMethod;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoFilterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoFilterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoFilterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoFilterView.java
+@@ -28,7 +28,7 @@ import android.text.StaticLayout;
+ import android.text.TextPaint;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.TextureView;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoViewerCaptionEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoViewerCaptionEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoViewerCaptionEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PhotoViewerCaptionEnterView.java
+@@ -33,7 +33,7 @@ import android.text.style.ImageSpan;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/CarouselView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/CarouselView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/CarouselView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/CarouselView.java
+@@ -6,7 +6,7 @@ import android.animation.ValueAnimator;
+ import android.content.Context;
+ import android.graphics.Canvas;
+ import android.view.GestureDetector;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.animation.Interpolator;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitPreviewView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitPreviewView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitPreviewView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitPreviewView.java
+@@ -24,7 +24,7 @@ import android.text.StaticLayout;
+ import android.text.TextPaint;
+ import android.text.style.RelativeSizeSpan;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.animation.OvershootInterpolator;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitReachedBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitReachedBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitReachedBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/LimitReachedBottomSheet.java
+@@ -30,7 +30,7 @@ import android.transition.TransitionValues;
+ import android.transition.Visibility;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumPreviewBottomSheet.java
+@@ -22,7 +22,7 @@ import android.text.TextUtils;
+ import android.text.style.ClickableSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumStickersPreviewRecycler.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumStickersPreviewRecycler.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumStickersPreviewRecycler.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/PremiumStickersPreviewRecycler.java
+@@ -3,7 +3,7 @@ package org.telegram.ui.Components.Premium;
+ import android.content.Context;
+ import android.graphics.Canvas;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostDialogs.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostDialogs.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostDialogs.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostDialogs.java
+@@ -18,7 +18,7 @@ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.ViewGroup;
+ import android.widget.Button;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/UserSelectorBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/UserSelectorBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/UserSelectorBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/UserSelectorBottomSheet.java
+@@ -21,7 +21,7 @@ import android.text.TextUtils;
+ import android.text.style.ReplacementSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.widget.FrameLayout;
+ import android.widget.LinearLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProfileActionsView.java
+@@ -23,7 +23,7 @@ import android.graphics.drawable.Drawable;
+ import android.os.Build;
+ import android.os.Bundle;
+ import android.text.Layout;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.accessibility.AccessibilityEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java
+@@ -14,7 +14,7 @@ import android.os.Build;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
+@@ -25,7 +25,7 @@ import android.graphics.drawable.Animatable;
+ import android.graphics.drawable.BitmapDrawable;
+ import android.text.TextUtils;
+ import android.util.JsonReader;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ 
+ import androidx.annotation.AnyThread;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/BackSpaceButtonView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/BackSpaceButtonView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/BackSpaceButtonView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/BackSpaceButtonView.java
+@@ -7,7 +7,7 @@ import android.graphics.PorterDuffColorFilter;
+ import android.graphics.drawable.Drawable;
+ import android.os.Build;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.widget.FrameLayout;
+ import android.widget.ImageView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java
+@@ -26,7 +26,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
+ import android.graphics.drawable.Drawable;
+ import android.os.Build;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsEffectOverlay.java
+@@ -9,7 +9,7 @@ import android.graphics.Color;
+ import android.graphics.PixelFormat;
+ import android.graphics.PorterDuff;
+ import android.graphics.PorterDuffColorFilter;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.WindowManager;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+@@ -30,7 +30,7 @@ import android.util.LongSparseArray;
+ import android.util.Property;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecyclerListView.java
+@@ -40,7 +40,7 @@ import android.text.TextPaint;
+ import android.util.Pair;
+ import android.util.SparseIntArray;
+ import android.util.StateSet;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.SoundEffectConstants;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ScrollSlidingTabStrip.java
+@@ -27,7 +27,7 @@ import android.transition.TransitionSet;
+ import android.transition.TransitionValues;
+ import android.util.SparseArray;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java
+@@ -16,7 +16,7 @@ import android.text.SpannableStringBuilder;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -38,7 +38,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SlideChooseView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SlideChooseView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SlideChooseView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SlideChooseView.java
+@@ -8,7 +8,7 @@ import android.graphics.PorterDuff;
+ import android.graphics.drawable.Drawable;
+ import android.os.Bundle;
+ import android.text.TextPaint;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.accessibility.AccessibilityNodeInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+@@ -40,7 +40,7 @@ import android.transition.TransitionValues;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmojiView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestEmojiView.java
+@@ -15,7 +15,7 @@ import android.text.SpannableStringBuilder;
+ import android.text.Spanned;
+ import android.text.TextWatcher;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SwipeGestureSettingsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SwipeGestureSettingsView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SwipeGestureSettingsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SwipeGestureSettingsView.java
+@@ -8,7 +8,7 @@ import android.graphics.PorterDuffColorFilter;
+ import android.graphics.RectF;
+ import android.os.Build;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.accessibility.AccessibilityEvent;
+ import android.view.accessibility.AccessibilityNodeInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
+@@ -27,7 +27,7 @@ import android.text.method.LinkMovementMethod;
+ import android.text.style.CharacterStyle;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ZoomControlView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ZoomControlView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ZoomControlView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ZoomControlView.java
+@@ -8,7 +8,7 @@ import android.content.Context;
+ import android.graphics.Canvas;
+ import android.graphics.drawable.Drawable;
+ import android.util.Property;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java
+@@ -23,7 +23,7 @@ import android.graphics.RectF;
+ import android.graphics.Shader;
+ import android.graphics.drawable.Drawable;
+ import android.util.Property;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewTreeObserver;
+ import android.view.animation.DecelerateInterpolator;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ContentPreviewViewer.java
+@@ -37,7 +37,7 @@ import android.text.StaticLayout;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+@@ -1537,6 +1537,7 @@ public class ContentPreviewViewer {
+     VibrationEffect vibrationEffect;
+ 
+     protected void runSmoothHaptic() {
++        if (desu.inugram.helpers.vibration.VibrationHelper.blocked()) return;
+         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+             final Vibrator vibrator = (Vibrator) containerView.getContext().getSystemService(Context.VIBRATOR_SERVICE);
+             if (vibrationEffect == null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -64,7 +64,7 @@ import android.util.Property;
+ import android.util.StateSet;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/EmojiAnimationsOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/EmojiAnimationsOverlay.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/EmojiAnimationsOverlay.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/EmojiAnimationsOverlay.java
+@@ -2,7 +2,7 @@ package org.telegram.ui;
+ 
+ import android.graphics.Canvas;
+ import android.text.TextUtils;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.widget.FrameLayout;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FilterChatlistActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FilterChatlistActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FilterChatlistActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FilterChatlistActivity.java
+@@ -29,7 +29,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/FiltersSetupActivity.java
+@@ -13,7 +13,7 @@ import android.graphics.drawable.Drawable;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Gifts/ProfileGiftsContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Gifts/ProfileGiftsContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Gifts/ProfileGiftsContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Gifts/ProfileGiftsContainer.java
+@@ -29,7 +29,7 @@ import android.text.TextWatcher;
+ import android.util.Pair;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+@@ -58,7 +58,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -55,7 +55,7 @@ import android.util.Base64;
+ import android.util.SparseIntArray;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.Menu;
+ import android.view.MotionEvent;
+@@ -257,6 +257,12 @@ import java.util.zip.ZipEntry;
+ import java.util.zip.ZipInputStream;
+ 
+ public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, IPipActivity {
++
++    @Override
++    public Object getSystemService(String name) {
++        return desu.inugram.helpers.vibration.VibrationHelper.service(name, super.getSystemService(name));
++    }
++
+     public final static String EXTRA_FORCE_NOT_INTERNAL_APPS = "force_not_internal_apps";
+     public final static String EXTRA_FORCE_REQUEST = "force_request";
+     public final static Pattern PREFIX_T_ME_PATTERN = Pattern.compile("^(?:http(?:s|)://|)([A-z0-9-]+?)\\.t\\.me");
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LiteModeSettingsActivity.java
+@@ -21,7 +21,7 @@ import android.text.style.DynamicDrawableSpan;
+ import android.text.style.ImageSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.accessibility.AccessibilityEvent;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+@@ -72,7 +72,7 @@ import android.text.style.ReplacementSpan;
+ import android.util.Base64;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ManageLinksActivity.java
+@@ -18,7 +18,7 @@ import android.text.TextUtils;
+ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
+@@ -21,7 +21,7 @@ import android.os.Bundle;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MultiContactsSelectorBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/MultiContactsSelectorBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MultiContactsSelectorBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MultiContactsSelectorBottomSheet.java
+@@ -12,7 +12,7 @@ import android.text.Spanned;
+ import android.text.TextUtils;
+ import android.text.style.ReplacementSpan;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.widget.LinearLayout;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/NotificationsSoundActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/NotificationsSoundActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/NotificationsSoundActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/NotificationsSoundActivity.java
+@@ -20,7 +20,7 @@ import android.text.TextUtils;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.accessibility.AccessibilityNodeInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PasscodeActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PasscodeActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PasscodeActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PasscodeActivity.java
+@@ -26,7 +26,7 @@ import android.text.method.PasswordTransformationMethod;
+ import android.util.TypedValue;
+ import android.view.ActionMode;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PaymentFormActivity.java
+@@ -44,7 +44,7 @@ import android.text.method.PasswordTransformationMethod;
+ import android.text.style.ClickableSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoAlbumPickerActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoAlbumPickerActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoAlbumPickerActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoAlbumPickerActivity.java
+@@ -23,7 +23,7 @@ import android.text.InputFilter;
+ import android.text.TextPaint;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.Surface;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoPickerActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoPickerActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoPickerActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoPickerActivity.java
+@@ -35,7 +35,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -91,7 +91,7 @@ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.ContextThemeWrapper;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.OrientationEventListener;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
+@@ -33,7 +33,7 @@ import android.text.Spanned;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PrivacySettingsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PrivacySettingsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PrivacySettingsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PrivacySettingsActivity.java
+@@ -24,7 +24,7 @@ import android.text.Spanned;
+ import android.text.TextUtils;
+ import android.text.style.DynamicDrawableSpan;
+ import android.text.style.ImageSpan;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -82,7 +82,7 @@ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Display;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/QrActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/QrActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/QrActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/QrActivity.java
+@@ -41,7 +41,7 @@ import android.text.TextUtils;
+ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
+@@ -39,7 +39,7 @@ import android.util.SparseArray;
+ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarGiftSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarGiftSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarGiftSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarGiftSheet.java
+@@ -65,7 +65,7 @@ import android.text.style.ClickableSpan;
+ import android.text.style.RelativeSizeSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarReactionsOverlay.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarReactionsOverlay.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarReactionsOverlay.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarReactionsOverlay.java
+@@ -10,7 +10,7 @@ import android.graphics.Canvas;
+ import android.graphics.Paint;
+ import android.graphics.RectF;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsReactionsSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsReactionsSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsReactionsSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/StarsReactionsSheet.java
+@@ -34,7 +34,7 @@ import android.transition.ChangeBounds;
+ import android.transition.TransitionManager;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/DialogStoriesCell.java
+@@ -30,7 +30,7 @@ import android.text.Spanned;
+ import android.text.TextUtils;
+ import android.text.style.ClickableSpan;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -48,7 +48,7 @@ import android.text.style.ReplacementSpan;
+ import android.text.style.URLSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.Menu;
+ import android.view.MotionEvent;
+ import android.view.SurfaceView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsPage.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsPage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsPage.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsPage.java
+@@ -17,7 +17,7 @@ import android.text.TextUtils;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StealthModeAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StealthModeAlert.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StealthModeAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StealthModeAlert.java
+@@ -6,7 +6,7 @@ import android.graphics.PorterDuffColorFilter;
+ import android.text.Layout;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.widget.FrameLayout;
+ import android.widget.ImageView;
+ import android.widget.LinearLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesUtilities.java
+@@ -21,7 +21,7 @@ import android.graphics.drawable.BitmapDrawable;
+ import android.graphics.drawable.Drawable;
+ import android.text.SpannableStringBuilder;
+ import android.text.TextPaint;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryViewer.java
+@@ -30,7 +30,7 @@ import android.util.LongSparseArray;
+ import android.util.SparseArray;
+ import android.view.GestureDetector;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.SurfaceView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java
+@@ -17,7 +17,7 @@ import android.graphics.RectF;
+ import android.graphics.drawable.AnimatedVectorDrawable;
+ import android.graphics.drawable.Drawable;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.widget.FrameLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CollageLayoutView2.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CollageLayoutView2.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CollageLayoutView2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CollageLayoutView2.java
+@@ -24,7 +24,7 @@ import android.net.Uri;
+ import android.os.Build;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.TextureView;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/DualCameraView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/DualCameraView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/DualCameraView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/DualCameraView.java
+@@ -11,7 +11,7 @@ import android.hardware.camera2.CameraAccessException;
+ import android.os.Build;
+ import android.text.TextUtils;
+ import android.util.Log;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.ViewConfiguration;
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
+@@ -37,7 +37,7 @@ import android.util.SparseArray;
+ import android.util.SparseIntArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
+@@ -43,7 +43,7 @@ import android.util.Pair;
+ import android.util.SparseArray;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/RoundVideoRecorder.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/RoundVideoRecorder.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/RoundVideoRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/RoundVideoRecorder.java
+@@ -10,7 +10,7 @@ import android.graphics.Canvas;
+ import android.graphics.Paint;
+ import android.graphics.Path;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.ViewGroup;
+ import android.widget.FrameLayout;
+ import android.widget.ViewAnimator;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/SliderView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/SliderView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/SliderView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/SliderView.java
+@@ -14,7 +14,7 @@ import android.graphics.drawable.Drawable;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacyBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacyBottomSheet.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacyBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacyBottomSheet.java
+@@ -34,7 +34,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacySelector.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacySelector.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacySelector.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryPrivacySelector.java
+@@ -19,7 +19,7 @@ import android.text.Layout;
+ import android.text.StaticLayout;
+ import android.text.TextPaint;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
+@@ -62,7 +62,7 @@ import android.text.style.ImageSpan;
+ import android.text.style.URLSpan;
+ import android.util.Pair;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.ScaleGestureDetector;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/TimelineView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/TimelineView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/TimelineView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/TimelineView.java
+@@ -29,7 +29,7 @@ import android.text.StaticLayout;
+ import android.text.TextPaint;
+ import android.text.TextUtils;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.VelocityTracker;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+@@ -31,7 +31,7 @@ import android.text.style.DynamicDrawableSpan;
+ import android.text.style.ImageSpan;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationActivity.java
+@@ -26,7 +26,7 @@ import android.text.TextWatcher;
+ import android.text.method.PasswordTransformationMethod;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.view.inputmethod.EditorInfo;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TwoStepVerificationSetupActivity.java
+@@ -32,7 +32,7 @@ import android.text.TextWatcher;
+ import android.text.method.PasswordTransformationMethod;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java
+@@ -11,7 +11,7 @@ import android.graphics.Paint;
+ import android.graphics.PorterDuff;
+ import android.graphics.PorterDuffColorFilter;
+ import android.graphics.drawable.Drawable;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.animation.OvershootInterpolator;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/ChatAttachAlertRichLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/ChatAttachAlertRichLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/ChatAttachAlertRichLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/ChatAttachAlertRichLayout.java
+@@ -16,7 +16,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichButtonRowCell.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichButtonRowCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichButtonRowCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichButtonRowCell.java
+@@ -9,7 +9,7 @@ import android.graphics.PorterDuffColorFilter;
+ import android.graphics.drawable.Drawable;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewConfiguration;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditText.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditText.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditText.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditText.java
+@@ -397,7 +397,7 @@ public class RichEditText extends EditTextCaption {
+         inlineButtonLongPressed = true;
+         pressedInlineButton.setPressed(false);
+         try {
+-            performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
++            performHapticFeedback(desu.inugram.helpers.vibration.HapticFeedbackConstants.LONG_PRESS);
+         } catch (Exception ignore) {}
+         inlineButtonClickListener.onInlineButtonClick(this, pressedInlineButton, true);
+     };
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+@@ -31,7 +31,7 @@ import android.text.Spanned;
+ import android.text.TextUtils;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.View;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditorListView.java
+@@ -2278,14 +2278,14 @@ public class RichEditorListView extends UniversalRecyclerView {
+                         } else if (pressTarget instanceof RichTableCell) {
+                             RichTableCell cell = (RichTableCell) pressTarget;
+                             if (handleTableHandleTap(cell, localX, localY)) {
+-                                try { cell.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS); } catch (Exception ignore) {}
++                                try { cell.performHapticFeedback(desu.inugram.helpers.vibration.HapticFeedbackConstants.LONG_PRESS); } catch (Exception ignore) {}
+                                 longPressConsumed = true;
+                                 return;
+                             }
+                             TL_iv.pageTableCell tableCell = cell.findCellAt(localX, localY);
+                             if (tableCell != null) {
+                                 startCellSelectionDrag(cell, tableCell);
+-                                try { cell.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS); } catch (Exception ignore) {}
++                                try { cell.performHapticFeedback(desu.inugram.helpers.vibration.HapticFeedbackConstants.LONG_PRESS); } catch (Exception ignore) {}
+                                 longPressConsumed = true;
+                             } else {
+                                 startBlockDrag(pressTarget);
+@@ -2615,7 +2615,7 @@ public class RichEditorListView extends UniversalRecyclerView {
+         longPressConsumed = true;
+         if (textSelectionHelper.isInSelectionMode()) textSelectionHelper.clear();
+         try {
+-            cell.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
++            cell.performHapticFeedback(desu.inugram.helpers.vibration.HapticFeedbackConstants.LONG_PRESS);
+         } catch (Exception ignore) {}
+         itemTouchHelper.startDrag(holder);
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/web/WebActionBar.java
+@@ -25,7 +25,7 @@ import android.text.TextUtils;
+ import android.text.TextWatcher;
+ import android.util.TypedValue;
+ import android.view.Gravity;
+-import android.view.HapticFeedbackConstants;
++import desu.inugram.helpers.vibration.HapticFeedbackConstants;
+ import android.view.KeyEvent;
+ import android.view.MotionEvent;
+ import android.view.ViewConfiguration;

@@ -109,6 +109,16 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         }
         items.add(UItem.asShadow(null))
 
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_FORCE_NO_VIBRATION,
+                R.string.InuForceNoVibration,
+                R.string.InuForceNoVibrationInfo,
+                InuConfig.FORCE_NO_VIBRATION.value,
+            )
+        )
+        items.add(UItem.asShadow(null))
+
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuLogs)))
         items.add(
             UItem.asCheck(
@@ -361,6 +371,11 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
                 (view as? NotificationsCheckCell)?.isChecked = InuConfig.HIDE_DEV_BADGES.toggle()
                 // entiny: update badge on cached TLRPC user/chat objects so toggle takes effect without app restart
                 BadgeRegistry.refreshCached()
+            }
+
+            TOGGLE_FORCE_NO_VIBRATION -> {
+                val new = InuConfig.FORCE_NO_VIBRATION.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
             }
 
             TOGGLE_LOGS_ENABLED -> {
@@ -640,6 +655,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
         private val TOGGLE_AUTO_UPDATE_CHECK = InuUtils.generateId()
         private val TOGGLE_UPDATES_INCLUDE_BETA = InuUtils.generateId()
         private val TOGGLE_HIDE_DEV_BADGES = InuUtils.generateId()
+        private val TOGGLE_FORCE_NO_VIBRATION = InuUtils.generateId()
         private val TOGGLE_LOGS_ENABLED = InuUtils.generateId()
         private val BUTTON_DONATE = InuUtils.generateId()
         private val BUTTON_COPY_SYSINFO = InuUtils.generateId()
@@ -659,6 +675,7 @@ class AdditionalSettingsActivity : SettingsPageActivity(), NotificationCenter.No
             iconRes = R.drawable.inu_tabler_device_floppy,
             factory = ::AdditionalSettingsActivity,
             entries = listOf(
+                SearchRegistry.Entry("force-no-vibration", R.string.InuForceNoVibration, TOGGLE_FORCE_NO_VIBRATION),
                 SearchRegistry.Entry("logs-enabled", R.string.InuLogsEnabled, TOGGLE_LOGS_ENABLED),
                 SearchRegistry.Entry("additional-donate", R.string.InuDonateRow, BUTTON_DONATE),
                 SearchRegistry.Entry("hide-dev-badges", R.string.InuHideDevBadges, TOGGLE_HIDE_DEV_BADGES),

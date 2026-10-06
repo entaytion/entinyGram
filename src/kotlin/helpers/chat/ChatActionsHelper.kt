@@ -6,7 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.View
 import android.widget.FrameLayout
 import androidx.core.content.edit

@@ -4,7 +4,7 @@ import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics
 import android.util.Range
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView

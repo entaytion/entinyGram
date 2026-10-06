@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
 import android.widget.LinearLayout
 import android.widget.TextView
 import org.telegram.messenger.AndroidUtilities.dp
