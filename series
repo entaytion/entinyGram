@@ -362,6 +362,7 @@ bugfix/link-scrim-offset.patch
 bugfix/scrim-touch-lock.patch
 feature/plugins.patch
 bugfix/settings-activity-bulletin.patch
+bugfix/table-spans.patch
 entiny/branding.patch
 entiny/amoled-theme.patch
 entiny/hide-dialogs-banners.patch
