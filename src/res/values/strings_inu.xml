@@ -536,6 +536,8 @@
     <string name="InuNotificationIconInfo">On Xiaomi (MIUI/HyperOS) the system may replace this icon with the app icon, so the choice might not be visible there</string>
     <string name="InuAppIconOldEntinygram">Old entinyGram</string>
     <string name="InuDisableChatBubbles">Disable Android notification bubbles</string>
+    <string name="InuKeepChatsInStack">Keep previous chats open</string>
+    <string name="InuKeepChatsInStackInfo">Opening another chat won\'t close the chats behind it</string>
     <string name="InuInPlaceTranslation">In-place translation</string>
     <string name="InuTranslateWebPreviews">Translate web previews</string>
     <string name="InuKeepOriginalAfterTranslation">Show original text</string>

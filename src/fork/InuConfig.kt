@@ -429,6 +429,9 @@ object InuConfig {
     val BYPASS_GIF_RESTRICTIONS = BoolItem("bypass_gif_restrictions", false)
 
     @JvmField
+    val KEEP_CHATS_IN_STACK = BoolItem("keep_chats_in_stack", false)
+
+    @JvmField
     val SORT_ALBUMS_BY_SIZE = BoolItem("sort_albums_by_size", true)
 
     @JvmField

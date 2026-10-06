@@ -390,6 +390,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - 🐶 disable swipe-to-hide the General topic in the forum topics list
 - disable motion photos (rendering + detection, in picker and in messages)
 - disable notification chat bubbles
+- 🐶 keep previous chats in the back stack when opening another chat
 - 🐶 disable cloud drafts upload
 - 🐶 disable wallpaper parallax
 - 🐶 disable scroll-snap in profile

@@ -1,0 +1,94 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 20:43:50 +0400
+Subject: keep nav stack when opening another chat
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java |  2 +-
+ .../main/java/org/telegram/ui/ProfileActivity.java  |  6 +++---
+ .../main/java/org/telegram/ui/TopicsFragment.java   | 13 ++++++++++++-
+ 3 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -22309,7 +22309,7 @@ public class ChatActivity extends BaseFragment implements
+             } else {
+                 if (AndroidUtilities.isTablet() && parentLayout != null && parentLayout.getFragmentStack().size() > 1) {
+                     finishFragment();
+-                } else {
++                } else if (parentDialog != null || !desu.inugram.InuConfig.KEEP_CHATS_IN_STACK.getValue()) {
+                     removeSelfFromStack(true);
+                 }
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -7076,7 +7076,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+             if (!getMessagesController().checkCanOpenChat(args, ProfileActivity.this)) {
+                 return;
+             }
+-            boolean removeFragment = arguments.getBoolean("removeFragmentOnChatOpen", true);
++            boolean removeFragment = arguments.getBoolean("removeFragmentOnChatOpen", true) && !desu.inugram.InuConfig.KEEP_CHATS_IN_STACK.getValue();
+             if (!AndroidUtilities.isTablet() && removeFragment) {
+                 getNotificationCenter().removeObserver(ProfileActivity.this, NotificationCenter.closeChats);
+                 getNotificationCenter().postNotificationName(NotificationCenter.closeChats);
+@@ -9175,7 +9175,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     TLRPC.EncryptedChat encryptedChat = (TLRPC.EncryptedChat) args[0];
+                     Bundle args2 = new Bundle();
+                     args2.putInt("enc_id", encryptedChat.id);
+-                    presentFragment(new ChatActivity(args2), true);
++                    presentFragment(new ChatActivity(args2), !desu.inugram.InuConfig.KEEP_CHATS_IN_STACK.getValue());
+                 });
+             }
+         } else if (id == NotificationCenter.encryptedChatUpdated) {
+@@ -9284,7 +9284,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     sharedMediaLayout.setChatInfo(chatInfo);
+                 }
+             }
+-        } else if (id == NotificationCenter.closeChats) {
++        } else if (id == NotificationCenter.closeChats && (parentDialog != null || !desu.inugram.InuConfig.KEEP_CHATS_IN_STACK.getValue())) {
+             removeSelfFromStack(true);
+         } else if (id == NotificationCenter.closeProfileActivity) {
+             final long dialogId = (long) args[0];
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+@@ -2702,6 +2702,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.notificationsSettingsUpdated);
+         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.chatSwitchedForum);
+         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.closeChats);
++        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.dialogDeleted);
+         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.openedChatChanged);
+ 
+         updateTopicsList(false, false);
+@@ -2736,6 +2737,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.notificationsSettingsUpdated);
+         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.chatSwitchedForum);
+         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.closeChats);
++        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.dialogDeleted);
+         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.openedChatChanged);
+ 
+         TLRPC.Chat chatLocal = getMessagesController().getChat(chatId);
+@@ -2864,8 +2866,17 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+             updateChatInfo(true);
+         } else if (id == NotificationCenter.chatSwitchedForum) {
+ 
+-        } else if (id == NotificationCenter.closeChats) {
++        } else if (id == NotificationCenter.closeChats && (parentDialog != null || !desu.inugram.InuConfig.KEEP_CHATS_IN_STACK.getValue())) {
+             removeSelfFromStack(true);
++        } else if (id == NotificationCenter.dialogDeleted && desu.inugram.InuConfig.KEEP_CHATS_IN_STACK.getValue()) {
++            long topicId = args[1] instanceof Long ? (Long) args[1] : 0;
++            if ((long) args[0] == -chatId && topicId == 0) {
++                if (parentLayout != null && parentLayout.getLastFragment() == this) {
++                    finishFragment();
++                } else {
++                    removeSelfFromStack();
++                }
++            }
+         }
+         if (id == NotificationCenter.openedChatChanged) {
+             if (getParentActivity() == null || !(inPreviewMode && AndroidUtilities.isTablet())) {
