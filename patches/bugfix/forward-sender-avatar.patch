@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 17:30:21 +0400
+Subject: fix sender avatar tap opening forward source
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -2243,7 +2243,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     } else if (currentChat != null) {
+                         int id;
+                         TLRPC.Chat chat = currentChat;
+-                        if (currentMessageObject.messageOwner.fwd_from != null) {
++                        if (currentMessageObject.messageOwner.fwd_from != null && currentMessageObject.getFromChatId() != -currentChat.id) {
+                             if (chat == null && (currentMessageObject.messageOwner.fwd_from.flags & 16) != 0) {
+                                 id = currentMessageObject.messageOwner.fwd_from.saved_from_msg_id;
+                             } else {
+@@ -5232,7 +5232,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                             } else if (currentChat != null) {
+                                 int id;
+                                 TLRPC.Chat chat = currentChat;
+-                                if (currentMessageObject.messageOwner.fwd_from != null) {
++                                if (currentMessageObject.messageOwner.fwd_from != null && currentMessageObject.getFromChatId() != -currentChat.id) {
+                                     if ((currentMessageObject.messageOwner.fwd_from.flags & 16) != 0) {
+                                         id = currentMessageObject.messageOwner.fwd_from.saved_from_msg_id;
+                                     } else {

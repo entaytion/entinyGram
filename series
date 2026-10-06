@@ -371,6 +371,7 @@ bugfix/rich_preview_entities.patch
 bugfix/reactions-cull-during-change.patch
 bugfix/persistent-bot-keyboard-back.patch
 feature/bot-description-media-viewer.patch
+bugfix/forward-sender-avatar.patch
 entiny/branding.patch
 entiny/amoled-theme.patch
 entiny/hide-dialogs-banners.patch
