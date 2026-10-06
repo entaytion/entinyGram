@@ -1,0 +1,82 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 20:50:44 +0400
+Subject: temporary patch adding debug logs for black screen when opening crop in PhotoViewer
+
+---
+ .../main/java/org/telegram/ui/Components/Crop/CropView.java  | 3 +++
+ TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 5 +++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Crop/CropView.java
+@@ -396,6 +396,7 @@ public class CropView extends FrameLayout implements CropAreaView.AreaViewListen
+                 areaView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                     @Override
+                     public boolean onPreDraw() {
++                        desu.inugram.helpers.media.CropDebugHelper.onPreDrawReset(CropView.this);
+                         reset();
+                         if (restoreState != null) {
+                             if (restoreState.lockedAspectRatio > 0.0001f) {
+@@ -456,6 +457,7 @@ public class CropView extends FrameLayout implements CropAreaView.AreaViewListen
+             }
+             imageView.setImageBitmap(videoView == null ? bitmap : null);
+         }
++        desu.inugram.helpers.media.CropDebugHelper.onSetBitmap(this, same, restoreState);
+     }
+ 
+     public void willShow() {
+@@ -1348,6 +1350,7 @@ public class CropView extends FrameLayout implements CropAreaView.AreaViewListen
+         cropState.lockedAspectRatio = areaView.getLockAspectRatio();
+ 
+         cropState.initied = true;
++        desu.inugram.helpers.media.CropDebugHelper.onApplyToCropState(this, cropState, width, height, sc);
+     }
+ 
+     private void setLockedAspectRatio(float aspectRatio) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -4758,6 +4758,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+             updateColors();
+             return;
+         }
++        desu.inugram.helpers.media.CropDebugHelper.onReparent(parentActivity, activity, photoCropView, containerView);
+         inBubbleMode = activity instanceof BubbleActivity;
+         parentActivity = activity;
+         activityContext = new ContextThemeWrapper(parentActivity, R.style.Theme_TMessages);
+@@ -7793,6 +7794,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                 if (!isCurrentVideo && (currentEditMode == EDIT_MODE_CROP || sendPhotoType == SELECT_TYPE_AVATAR || sendPhotoType == SELECT_TYPE_STICKER) && photoCropView != null) {
+                     Bitmap bitmap = imageReceiver.getBitmap();
+                     if (bitmap != null) {
++                        desu.inugram.helpers.media.CropDebugHelper.onImageSetInCrop(bitmap, imageReceiver.getOrientation(), photoCropView.cropView);
+                         photoCropView.setBitmap(bitmap, imageReceiver.getOrientation(), sendPhotoType != SELECT_TYPE_AVATAR && sendPhotoType != SELECT_TYPE_STICKER, true, paintingOverlay, cropTransform, null, null);
+                     }
+                 }
+@@ -11889,6 +11891,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+     }
+ 
+     private void createCropView() {
++        desu.inugram.helpers.media.CropDebugHelper.onCreateCropView(photoCropView, containerView);
+         if (photoCropView != null) {
+             return;
+         }
+@@ -12501,6 +12504,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                     }
+ 
+                     final Bitmap bitmap = centerImage.getBitmap();
++                    desu.inugram.helpers.media.CropDebugHelper.onCropOpen(photoCropView, containerView, bitmap, centerImage.getOrientation(), editState.cropState);
+                     if (bitmap != null || isCurrentVideo) {
+                         photoCropView.setBitmap(bitmap, centerImage.getOrientation(), sendPhotoType != SELECT_TYPE_AVATAR, false, paintingOverlay, cropTransform, isCurrentVideo ? (VideoEditTextureView) videoTextureView : null, editState.cropState);
+                         photoCropView.onDisappear();
+@@ -19600,6 +19604,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+     }
+ 
+     public void inu_reloadCurrentPhoto(MediaController.PhotoEntry entry, boolean reloadImage) {
++        desu.inugram.helpers.media.CropDebugHelper.onReloadCurrentPhoto(currentEditMode, switchingToMode, reloadImage);
+         if (currentEditMode != EDIT_MODE_NONE || currentIndex < 0 || currentIndex >= imagesArrLocals.size() || !(imagesArrLocals.get(currentIndex) instanceof MediaController.PhotoEntry)) {
+             android.util.Log.d("inu-gallery", "inu_reloadCurrentPhoto: skipped, editMode=" + currentEditMode + " index=" + currentIndex);
+             return;
