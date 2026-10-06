@@ -237,7 +237,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - custom title text: Inugram / @username / first name / "Chats"
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation
-- 🐶 deeplink / username quick-open from global search
+- 🐶 deeplink / username / cached peer ID quick-open from global search
 - open archive directly on pull-down (🐶 done right, without revealing the cell)
 - mutual contact icon in contacts list
 - customizable dialogs list pull-down action: reveal archive (stock), open archive directly (🐶 done right, without revealing the cell), open saved messages, open search, or disabled entirely. when the pull-down no longer leads to the archive, the archive row is hidden from the list and an "Archived Chats" entry appears in the drawer/overflow menu instead
