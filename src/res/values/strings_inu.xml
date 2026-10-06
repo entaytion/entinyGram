@@ -1091,6 +1091,10 @@
     <string name="InuCallbackDataCopied">Callback data copied</string>
     <string name="InuNetwork">Network</string>
     <string name="InuAutoDisableProxyOnVpn">Disable proxy when VPN is active</string>
+    <string name="InuProxyImportFromClipboard">Import from clipboard</string>
+    <string name="InuProxyImportNothing">No new proxy links found in clipboard</string>
+    <string name="InuProxyImported_one">%1$d proxy imported</string>
+    <string name="InuProxyImported_other">%1$d proxies imported</string>
     <string name="InuFasterDownloads">Faster downloads</string>
     <string name="InuFasterUploads">Faster uploads</string>
     <string name="InuFasterTransfersInfo">Larger chunks and more parallel requests. May help — or hurt — throughput.</string>

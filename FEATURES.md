@@ -399,6 +399,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - open bottom-tab menus early by swiping up; flat highlight (not ripple) on menu hover
 - faster downloads/uploads
 - auto-disable the configured proxy while a VPN is active
+- batch import proxy links from clipboard (one per line)
 - send MP4 files attached through Files as playable videos without conversion
 - sort attach panel albums by photo count instead of recency
 - 🐶 "Minimize" option in the attach panel discard prompt to keep the selection (e.g. to choose a message to reply to)

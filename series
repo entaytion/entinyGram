@@ -374,6 +374,7 @@ feature/bot-description-media-viewer.patch
 bugfix/forward-sender-avatar.patch
 bugfix/search-highlight-block-offset.patch
 bugfix/video-no-thumb-placeholder.patch
+feature/proxy-batch-import.patch
 entiny/branding.patch
 entiny/amoled-theme.patch
 entiny/hide-dialogs-banners.patch
