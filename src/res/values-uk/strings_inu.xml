@@ -1145,6 +1145,11 @@
     <string name="InuDeleteOwnMessagesFloodWait">Ліміт запитів, очікуємо %d с…</string>
     <string name="InuBiometricConfirm">Біометричне підтвердження</string>
     <string name="InuBiometricConfirmTitle">Підтвердьте особу</string>
+    <string name="InuBiometricExplicitConfirmation">Підтвердження після розпізнавання</string>
+    <string name="InuBiometricExplicitConfirmationInfo">Запитувати додаткове підтвердження після розпізнавання обличчя або райдужки ока. Налаштування пристрою можуть вимагати підтвердження, навіть якщо опцію вимкнено.</string>
+    <string name="InuBiometricRequireConfirmationPasscode">Під час розблокування застосунку</string>
+    <string name="InuBiometricRequireConfirmationBots">У міні-застосунках</string>
+    <string name="InuBiometricRequireConfirmationActions">Під час видалення чатів або виходу з акаунта</string>
     <string name="InuBiometricConfirmDeleteChat">Підтверджувати видалення чатів</string>
     <string name="InuBiometricConfirmDeleteChatInfo">Запитувати біометричне підтвердження перед видаленням або очищенням чату.</string>
     <string name="InuBiometricConfirmLogout">Підтверджувати вихід з акаунту</string>
