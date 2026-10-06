@@ -1,7 +1,6 @@
 // Renders the launcher "concept" icons from src/res/launcher/concepts/svg.
-// Each SVG becomes a 432x432 full-bleed adaptive-icon background (the squircle sits
-// in the 288px visible area, the margin is a blurred bleed of the same artwork),
-// plus an adaptive-icon XML. Run manually after changing the SVGs; output is committed.
+// Each SVG becomes a 432x432 full-bleed adaptive-icon background (the 100x100 artboard fills the 288px
+// visible area, its background continues into the margin), plus an adaptive-icon XML. Run manually after changing the SVGs; output is committed.
 // Needs Chrome/Edge: set CHROME_PATH if it is not in a default location.
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -23,17 +22,16 @@ const chrome = [
 if (!chrome) throw new Error('Chrome not found, set CHROME_PATH')
 
 const SIZE = 432
-const VISIBLE = 288
 mkdirSync(pngDir, { recursive: true })
 mkdirSync(xmlDir, { recursive: true })
 
 for (const file of readdirSync(svgDir).filter((f) => f.endsWith('.svg'))) {
   const slug = file.replace('.svg', '')
-  const data = `data:image/svg+xml;base64,${Buffer.from(readFileSync(join(svgDir, file))).toString('base64')}`
-  const html = `<!doctype html><html><body style="margin:0;width:${SIZE}px;height:${SIZE}px;overflow:hidden;position:relative;background:#000">
-<img src="${data}" style="position:absolute;left:50%;top:50%;width:${SIZE * 3}px;height:${SIZE * 3}px;transform:translate(-50%,-50%);filter:blur(40px) saturate(1.1)">
-<img src="${data}" style="position:absolute;left:${(SIZE - VISIBLE) / 2}px;top:${(SIZE - VISIBLE) / 2}px;width:${VISIBLE}px;height:${VISIBLE}px">
-</body></html>`
+  // the art keeps a 100x100 artboard but its background runs on to -25..125, so the 432px canvas
+  // (288px visible + 72px margin per side) is plain artwork, no faked bleed
+  const svg = readFileSync(join(svgDir, file), 'utf8').replace('viewBox="0 0 100 100"', `viewBox="-25 -25 150 150" width="${SIZE}" height="${SIZE}"`)
+  const data = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+  const html = `<!doctype html><html><body style="margin:0;width:${SIZE}px;height:${SIZE}px;overflow:hidden;background:#000"><img src="${data}" style="display:block;width:${SIZE}px;height:${SIZE}px"></body></html>`
   const page = join(tmpdir(), `concept-${slug}.html`)
   writeFileSync(page, html)
   execFileSync(chrome, [

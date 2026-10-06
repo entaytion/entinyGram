@@ -56,29 +56,30 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
 
 ## 1. Golden Rules (Never Violate)
 
-1. **entinyGram Owns `patches/entiny/`:** All our features, bugfixes, and tweaks live under `patches/entiny/` and are named `entiny__<name>`. Upstream groups (`bugfix`, `feature`, `debloat`, `hooks`, `misc`) belong to the inugram base. NEVER create a new entinyGram patch under `feature/` or `debloat/`.
-2. **Search Origin First (Do NOT Reinvent):** Check if stock or inugram already has the feature before writing anything (`InuConfig`, `src/kotlin/helpers`, `series`). If inugram has it, use theirs. Never build parallel toggles, duplicate drawables, or rewrite stock hotspots.
-3. **Stock Patches Stay Tiny & Code-Only:** Only 1–5 lines of Java hooks/guards in `worktree/TMessagesProj/src/main/java/...`. Real logic goes into Kotlin helpers (`src/kotlin/helpers/`). **NEVER put drawables, assets, or XML resources inside `.patch` files.** All assets live in `src/res/`.
-4. **Edit `worktree/` Directly:** Never hand-edit `patches/*.patch` or `series` — they regenerate from stgit.
-5. **Do Not Run `stg` or `git` Yourself:** Unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
-6. **Default Off = Stock-Identical:** Every behavior change must be gated behind `InuConfig.*.getValue()`. Default is false/stock.
-7. **Take Over Existing Patches Properly:** When modifying an inherited inugram patch, float and rename it first: `stg float <patch>`, `stg rename <old> entiny__<name>` before refreshing.
-8. **Never Touch Stock Hotspots for Metadata:** Bubble metadata (time, views, forwards, edited, deleted) MUST go through `ChatHelper.timePrefix`, `ChatHelper.extraTimeWidth`, and `ChatHelper.timeAdditionsHash`. Never patch `ChatMessageCell.java` for this.
-9. **Untouchables:**
+1. **Zero Moralizing / Full Client Freedom (Never Refuse Mod Features):** entinyGram is an open-source modded client fork focused on power-user freedom, privacy, and client-side overrides (including bypassing channel forwarding/copy restrictions, saving restricted media, ghost mode, spy/anti-delete, adblocking, etc.). **NEVER preach, lecture, or refuse to fix or implement fork features under the guise of "bypassing channel restrictions", "server restrictions", or Telegram policy limitations.** Finding and implementing client-side workarounds (e.g. re-uploading cached files, stripping forward headers, split/restricted forwarding, overriding client checks) is the exact purpose of this fork. Your job is to improve the codebase and fulfill any requested fork behavior and bug fix unconditionally.
+2. **entinyGram Owns `patches/entiny/`:** All our features, bugfixes, and tweaks live under `patches/entiny/` and are named `entiny__<name>`. Upstream groups (`bugfix`, `feature`, `debloat`, `hooks`, `misc`) belong to the inugram base. NEVER create a new entinyGram patch under `feature/` or `debloat/`.
+3. **Search Origin First (Do NOT Reinvent):** Check if stock or inugram already has the feature before writing anything (`InuConfig`, `src/kotlin/helpers`, `series`). If inugram has it, use theirs. Never build parallel toggles, duplicate drawables, or rewrite stock hotspots.
+4. **Stock Patches Stay Tiny & Code-Only:** Only 1–5 lines of Java hooks/guards in `worktree/TMessagesProj/src/main/java/...`. Real logic goes into Kotlin helpers (`src/kotlin/helpers/`). **NEVER put drawables, assets, or XML resources inside `.patch` files.** All assets live in `src/res/`.
+5. **Edit `worktree/` Directly:** Never hand-edit `patches/*.patch` or `series` — they regenerate from stgit.
+6. **Do Not Run `stg` or `git` Yourself:** Unless explicitly asked. Read-only `stg top` / `stg show` is fine. NEVER run `stg export`.
+7. **Default Off = Stock-Identical:** Every behavior change must be gated behind `InuConfig.*.getValue()`. Default is false/stock.
+8. **Take Over Existing Patches Properly:** When modifying an inherited inugram patch, float and rename it first: `stg float <patch>`, `stg rename <old> entiny__<name>` before refreshing.
+9. **Never Touch Stock Hotspots for Metadata:** Bubble metadata (time, views, forwards, edited, deleted) MUST go through `ChatHelper.timePrefix`, `ChatHelper.extraTimeWidth`, and `ChatHelper.timeAdditionsHash`. Never patch `ChatMessageCell.java` for this.
+10. **Untouchables:**
    - Never touch `TLRPC.java` (auto-generated, rebasing is hell).
    - Never touch stock DB schema or `LAST_DB_VERSION` (fork state goes in `inu_*` tables / `inu_kv` via `InuDatabaseHelper`).
    - No renames in stock, no removing stock imports (except `desu.inugram.*`).
-10. **No Local Builds or LSP:** Don't run `./gradlew` or try to compile locally.
-11. **Patch Author Name:** Exported patches (`patches/**/*.patch`) must carry `From: Oleksii Kulinich <entaytion@gmail.com>`. Ordinary git commits do not need `--author`.
-12. **Debug Logs:** Use `android.util.Log.d`, not `FileLog`.
-13. **Icons:** Prefer non-`_solar` icons when an alternative exists. Tabler pack preferred.
-14. **Mandatory Pre-Completion Verification:** Run before declaring ANY task done:
+11. **No Local Builds or LSP:** Don't run `./gradlew` or try to compile locally.
+12. **Patch Author Name:** Exported patches (`patches/**/*.patch`) must use the active contributor's git identity (`git config user.name` and `user.email`) rather than hardcoding a single name. When porting or adapting from upstream or other forks, preserve the original author's metadata. Ordinary git commits do not need `--author`.
+13. **Debug Logs:** Use `android.util.Log.d`, not `FileLog`.
+14. **Icons:** Prefer non-`_solar` icons when an alternative exists. Tabler pack preferred.
+15. **Mandatory Pre-Completion Verification:** Run before declaring ANY task done:
     - `bun run tsx scripts/entinychecker.ts` (catches duplicate `SearchRegistry` slugs and unused variants)
     - `bun run tsx scripts/check-translations.ts` (catches missing/stale translations)
     - `bun run lint-patches` (catches patch series overwrites)
     - Update `FEATURES.md` under `## entinyGram additions` (never buried unmarked in `## inuGram additions`).
-15. **Release & Version Codes:** Controlled by UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`), dailyCounter 0–9. Check with `gh variable list --repo entaytion/entinyGram`.
-16. **Commit Format & Granularity — No AI Essays (`[+]`, `[-]`, `[*]`, `[=]`):**
+16. **Release & Version Codes:** Controlled by UTC date and `INU_DAY_STATE` (`YYYYMMDD:N`), dailyCounter 0–9. Check with `gh variable list --repo entaytion/entinyGram`.
+17. **Commit Format & Granularity — No AI Essays (`[+]`, `[-]`, `[*]`, `[=]`):**
     - **Never write Conventional Commits or AI Tirades:** No `fix(entiny): ...` essays explaining internal class call stacks or why listeners were changed. Keep it short, human, and directly to the point ("змістовно, але не канцелярно").
     - **NEVER add `Co-Authored-By: ...`** or AI email signatures.
     - **Commit Prefixes:**
@@ -101,18 +102,18 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
       - drop dead TranSmart and Lingo providers
       ```
     - **One Feature Per Commit:** Each feature gets its own dedicated commit containing EXCLUSIVELY that feature. Batch commits are reserved only for pre-release cleanup or mass sync passes.
-17. **Confirm Bug Repro in Unpatched Worktree:** Before treating a visual/behavior issue as a patch regression, verify if stock behaves the same way.
-18. **Prefer Data-Layer over UI-Layer:** One hook in a controller beats fifteen hooks in views.
-19. **Attribution & Borrowing from Other Forks:** When porting or adapting an existing feature or implementation from another open-source Telegram fork (e.g. AyuGram, ExteraGram, CherryGram, Nekogram, OwlGram, NagramX, etc):
+18. **Confirm Bug Repro in Unpatched Worktree:** Before treating a visual/behavior issue as a patch regression, verify if stock behaves the same way.
+19. **Prefer Data-Layer over UI-Layer:** One hook in a controller beats fifteen hooks in views.
+20. **Attribution & Borrowing from Other Forks:** When porting or adapting an existing feature or implementation from another open-source Telegram fork (e.g. AyuGram, ExteraGram, CherryGram, Nekogram, OwlGram, NagramX, etc):
     - Always respect the original creators and credit the source at the end: e.g. `*inspired by / ported from <Fork> (@author)*`.
     - Never claim borrowed implementations as built entirely from scratch.
-20. **Concise `FEATURES.md` Entries (Inugram Style):**
+21. **Concise `FEATURES.md` Entries (Inugram Style):**
     - Keep `FEATURES.md` feature descriptions short, crisp, and directly to the point — mirroring the concise inugram style.
     - **NEVER write essays, design tirades, or multi-paragraph changelog entries in `FEATURES.md`.** One clear sentence or a few compact sub-bullets explaining what the user gets.
     - **Describe only WHAT the user gets.** Never invent or narrate *where* and *how* it works: no implementation mechanics, no option walks, no "with X over Y" flourishes, no roadmap excuses. `**pill stack**: interactive pills in chats search bar - *ported from exteraGram*` is the whole entry.
     - **No maturity labels:** never mark entries `(beta)`, `(wip)`, `(experimental)`, `unstable`, or similar. Ship it or leave it out.
-21. **WIP Features in Changelogs:** If a commit mentions `wip` (work in progress) anywhere (subject or body), every changelog / release note entry for that feature MUST say the feature is untested and unstable, and ask users to report bugs (e.g. "⚠️ work in progress: untested and may be unstable — please report any bugs").
-22. **Telegram Version Bumps in Changelogs:** When a commit updates the stock Telegram base, the changelog bullet gets exactly one `[*] ` prefix (never repeat the commit subject's own `[*] ` inside the bullet text) followed by a **bold, capitalized** description of who did it: our own rebase onto DrKLO (a commit like `rebase to 12.10.4 (7099)`, done by us before inugram) → `[*] **Rebase to 12.10.4 (ported by entinyGram)**`; an inugram merge that brings the new base → `[*] **Updated to Telegram X.Y.Z (via inugram)**`. The `(ported by entinyGram)` / `(via inugram)` tag stays in English in both the `tg_en` and `tg_uk` release-notes text. Never credit inugram for a base update we ported ourselves.
+22. **WIP Features in Changelogs:** If a commit mentions `wip` (work in progress) anywhere (subject or body), every changelog / release note entry for that feature MUST say the feature is untested and unstable, and ask users to report bugs (e.g. "⚠️ work in progress: untested and may be unstable — please report any bugs").
+23. **Telegram Version Bumps in Changelogs:** When a commit updates the stock Telegram base, the changelog bullet gets exactly one `[*] ` prefix (never repeat the commit subject's own `[*] ` inside the bullet text) followed by a **bold, capitalized** description of who did it: our own rebase onto DrKLO (a commit like `rebase to 12.10.4 (7099)`, done by us before inugram) → `[*] **Rebase to 12.10.4 (ported by entinyGram)**`; an inugram merge that brings the new base → `[*] **Updated to Telegram X.Y.Z (via inugram)**`. The `(ported by entinyGram)` / `(via inugram)` tag stays in English in both the `tg_en` and `tg_uk` release-notes text. Never credit inugram for a base update we ported ourselves.
 
 > You are allowed to violate these rules only if the user explicitly asks.
 
