@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 16:49:34 +0400
+Subject: fix system back with persistent bot keyboard
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ .../org/telegram/ui/Components/ChatActivityEnterView.java     | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -34937,7 +34937,7 @@ public class ChatActivity extends BaseFragment implements
+         } else if (actionBar != null && actionBar.isActionModeShowed()) {
+             if (invoked) clearSelectionMode();
+             return false;
+-        } else if (chatActivityEnterView != null && chatActivityEnterView.isPopupShowing()) {
++        } else if (chatActivityEnterView != null && chatActivityEnterView.isPopupShowing() && !chatActivityEnterView.inu_isPersistentBotKeyboardShowing()) {
+             if (invoked) chatActivityEnterView.hidePopup(true);
+             return false;
+ //        } else if (chatActivityEnterView != null && chatActivityEnterView.hasBotWebView() && chatActivityEnterView.botCommandsMenuIsShowing() && chatActivityEnterView.onBotWebViewBackPressed()) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -13228,6 +13228,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+         return emojiViewVisible || botKeyboardViewVisible;
+     }
+ 
++    public boolean inu_isPersistentBotKeyboardShowing() {
++        return isPopupShowing() && currentPopupContentType == POPUP_CONTENT_BOT_KEYBOARD && botReplyMarkup != null && botButtonsMessageObject != null && botReplyMarkup.is_persistent;
++    }
++
+     public boolean closeCreationLinkDialog(boolean invoked) {
+         return messageEditText != null && messageEditText.closeCreationLinkDialog(invoked);
+     }
