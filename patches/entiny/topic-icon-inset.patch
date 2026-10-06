@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -1061,7 +1061,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -1062,7 +1062,9 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
              } else {
                  avatarLeft = actionBar.inu_titlePillLeft - inu_containerLeft() + dp(9);
              }

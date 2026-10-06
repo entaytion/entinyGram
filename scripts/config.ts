@@ -13,25 +13,73 @@ export const upstreamCommitFile = join(rootDir, 'upstream-commit')
 export const assetsDir = join(rootDir, 'src/res/assets')
 
 export const debugAppId = 'ua.entaytion.entinygram'
+// nested submodules we never build, skipped by the recursive update. lsplant's test deps are
+// private repos behind ssh urls
+export const skippedSubmodules = [
+  'test/src/main/jni/external/lsparself',
+  'test/src/main/jni/external/lsprism',
+]
+
+export interface SubmodulePatch {
+  submodule: string
+  patch: string
+}
+
+// changes carried against a submodule's pinned commit, applied to its working tree after
+// `git submodule update --init`. the pin stays upstream's, so nothing here needs a fork.
+export const submodulePatches: SubmodulePatch[] = [
+  {
+    submodule: 'TMessagesProj_App/jni/lsplant',
+    patch: join(rootDir, 'patches-native/lsplant-c-abi.patch'),
+  },
+  {
+    submodule: 'TMessagesProj_App/jni/lsplant',
+    patch: join(rootDir, 'patches-native/lsplant-unhook-backup-id.patch'),
+  },
+]
+
 
 export interface ForkSyncFile {
   source: string
   target: string
   directory?: boolean
   replace?: boolean
+  pluginsOnly?: boolean
 }
 
 export const forkSyncFiles: ForkSyncFile[] = [
   // code
   {
-    source: 'src/kotlin',
-    target: 'TMessagesProj/src/main/kotlin/desu/inugram',
+    source: 'src/fork',
+    target: 'TMessagesProj/src/inu/kotlin/desu/inugram',
     directory: true,
   },
   {
-    source: 'src/kotlin-app',
+    source: 'src/fork-app',
     target: 'TMessagesProj_App/src/main/kotlin/desu/inugram',
     directory: true,
+  },
+  // the plugin bridge's own suite, against the real stock classes.
+  // `./gradlew :TMessagesProj:connectedDebugAndroidTest`
+  {
+    source: 'src/test/kotlin',
+    pluginsOnly: true,
+    target: 'TMessagesProj/src/androidTest/kotlin/desu/inugram',
+    directory: true,
+  },
+  // the js oracles, for the suites that run one rather than restating what it asserts. Test assets
+  // only - the app itself ships none of them, so a debug build starts with no plugins installed
+  {
+    source: 'src/test/plugins/*',
+    pluginsOnly: true,
+    target: 'TMessagesProj/src/androidTest/assets/inu_plugins',
+  },
+  // src/test/kotlin is synced into a kotlin source root, so what the suite needs as a *file* is
+  // kept beside it rather than in it
+  {
+    source: 'src/test/assets/*.{dex,gif,json}',
+    pluginsOnly: true,
+    target: 'TMessagesProj/src/androidTest/assets/inu',
   },
   {
     source: 'src/kotlin-osmdroid',
@@ -43,8 +91,25 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'InuCore',
     directory: true,
   },
+  // native: rust plugin engine (rquickjs/quickjs-ng + jni bridge), built into libinu_native.so
+  // by a cargo-ndk Exec task wired in TMessagesProj_App/build.gradle
   {
-    source: 'src/java/google_material',
+    source: 'src/native',
+    pluginsOnly: true,
+    target: 'TMessagesProj_App/native',
+    directory: true,
+  },
+  // ART baseline profile. A plugin action runs the bridge's read path a few hundred times and
+  // stops, under the JIT's threshold, so without this every crossing a user pays for runs
+  // interpreted (measured at 5-8x the compiled cost). Release builds AOT-compile the listed
+  // classes at install, through profileinstaller; the debuggable variant ignores it
+  {
+    source: 'src/profile/baseline-prof.txt',
+    pluginsOnly: true,
+    target: 'TMessagesProj_App/src/main',
+  },
+  {
+    source: 'src/vendor/google_material',
     target: 'TMessagesProj/src/main/java/google_material',
     directory: true,
   },
@@ -263,6 +328,7 @@ export const ICON_SELECTION: { pack: IconifyJSON, icons: string[], options?: Svg
       'currency-bitcoin',
       'currency-solana',
       'diamond',
+      'alert-triangle-filled',
     ],
   },
 ]

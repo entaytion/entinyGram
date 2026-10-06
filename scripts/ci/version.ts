@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 
-const props = await fs.readFile('worktree/gradle.properties', 'utf8')
+const worktree = process.argv.includes('--pluginless') ? 'worktree-pluginless' : 'worktree'
+const props = await fs.readFile(`${worktree}/gradle.properties`, 'utf8')
 const appVerName = /^APP_VERSION_NAME=(.+)$/m.exec(props)?.[1]
 if (!appVerName) throw new Error('failed to read APP_VERSION_NAME')
 const appVerCode = /^APP_VERSION_CODE=(\d+)$/m.exec(props)?.[1]

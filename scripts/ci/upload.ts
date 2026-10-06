@@ -1,8 +1,8 @@
+import type { InputRichMessageMedia } from '@mtcute/node'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { html, MemoryStorage, TelegramClient } from '@mtcute/node'
-import { joinTextWithEntities } from '@mtcute/node/utils.js'
+import { InputMedia, MemoryStorage, TelegramClient } from '@mtcute/node'
 
 interface ApkFile {
   file: string
@@ -15,7 +15,6 @@ interface BuildInfo {
   buildDate: string
   apkFiles: ApkFile[]
   commitSha: string
-  commits: { sha: string, message: string }[]
   repo: string
 }
 
@@ -288,7 +287,7 @@ try {
 } finally {
   const exported = await tg.exportSession()
   if (exported !== cachedSession) {
-    await persistSession(exported)
+    await persistSession(exported).catch(e => console.warn('failed to persist session:', e))
   }
   await tg.destroy()
 }

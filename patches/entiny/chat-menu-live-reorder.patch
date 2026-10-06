@@ -29,7 +29,7 @@ index 0000000..0000000 100644
  
      public static class Item {
          public int viewType;
-@@ -2666,6 +2670,14 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -2671,6 +2675,14 @@ public class ActionBarMenuItem extends FrameLayout {
              return;
          }
          if (inu_reorderable) {
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
              desu.inugram.helpers.chat.ChatActionsHelper.reorder(lazyList);
          }
          for (int i = 0; i < lazyList.size(); ++i) {
-@@ -2674,6 +2686,22 @@ public class ActionBarMenuItem extends FrameLayout {
+@@ -2679,6 +2691,22 @@ public class ActionBarMenuItem extends FrameLayout {
          lazyList.clear();
      }
  

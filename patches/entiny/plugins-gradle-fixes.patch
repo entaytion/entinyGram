@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+Date: Tue, 6 Oct 2026 15:11:00 +0300
+Subject: [*] plugins gradle: AGP 9 source sets, Windows bindgen/libclang
+
+---
+ TMessagesProj_App/build.gradle | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
+index 0000000..0000000 100644
+--- a/TMessagesProj_App/build.gradle
++++ b/TMessagesProj_App/build.gradle
+@@ -188,7 +188,7 @@ tasks.register('unpackShadowhook', Copy) {
+     into shadowhookJniLibsDir
+ }
+ 
+-android.sourceSets.main.jniLibs.srcDirs += shadowhookJniLibsDir
++android.sourceSets.main.jniLibs.directories.add(shadowhookJniLibsDir.absolutePath)
+ tasks.matching { it.name ==~ /merge.*JniLibFolders/ }.configureEach {
+     dependsOn 'unpackShadowhook'
+ }
+@@ -218,9 +218,9 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+     def outputDir = new File(rustJniLibsDir, buildType)
+     tasks.register(taskName, Exec) {
+         workingDir rustModuleDir
+-        environment 'ANDROID_NDK_HOME', android.ndkDirectory.absolutePath
++        environment 'ANDROID_NDK_HOME', androidComponents.sdkComponents.ndkDirectory.get().asFile.absolutePath
+         environment 'PATH', (cargoPathDirs + [System.getenv('PATH') ?: '']).join(File.pathSeparator)
+-        def prebuilt = file("${android.ndkDirectory}/toolchains/llvm/prebuilt")
++        def prebuilt = file("${androidComponents.sdkComponents.ndkDirectory.get().asFile}/toolchains/llvm/prebuilt")
+         def ndkHost = prebuilt.listFiles()?.find { it.isDirectory() }
+         def libclangCandidates = [
+             project.findProperty('libclang.path'),
+@@ -230,16 +230,26 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+             '/opt/homebrew/opt/llvm/lib', '/usr/local/opt/llvm/lib',
+             '/run/current-system/sw/lib', "${System.getProperty('user.home')}/.nix-profile/lib",
+             '/usr/lib/llvm/lib', '/usr/lib',
++            'C:/Program Files/LLVM/bin',
+         ]
+         def libclangDir = libclangCandidates.findAll { it }.find { dir ->
+             def d = file(dir)
+-            d.isDirectory() && d.listFiles()?.any { it.name ==~ /libclang\.(dylib|so)(\..*)?/ }
++            d.isDirectory() && d.listFiles()?.any { it.name ==~ /libclang\.(dylib|so|dll)(\..*)?/ }
+         }
+         if (libclangDir != null) environment 'LIBCLANG_PATH', libclangDir
++        if (ndkHost != null && System.getProperty('os.name').toLowerCase().contains('windows')) {
++            // the NDK ships no libclang headers search path bindgen can find on Windows, so hand it the sysroot
++            def clangVersion = new File(ndkHost, 'lib/clang').listFiles()?.find { it.isDirectory() }?.name
++            def fwd = { File f -> f.absolutePath.replace('\\', '/') }
++            def bindgenArgs = "--target=aarch64-linux-android24 --sysroot=${fwd(new File(ndkHost, 'sysroot'))} -isystem ${fwd(new File(ndkHost, "lib/clang/${clangVersion}/include"))}"
++            environment 'BINDGEN_EXTRA_CLANG_ARGS', bindgenArgs
++            // cargo-ndk sets the per-target variable itself and bindgen prefers it, so override that one too
++            environment 'BINDGEN_EXTRA_CLANG_ARGS_aarch64-linux-android', bindgenArgs
++        }
+         commandLine cargoExe, 'ndk', '-t', 'arm64-v8a', '-o', outputDir.absolutePath, 'build', '--profile', cargoProfile
+     }
+ 
+-    android.sourceSets[buildType].jniLibs.srcDirs += outputDir
++    android.sourceSets[buildType].jniLibs.directories.add(outputDir.absolutePath)
+     tasks.matching { it.name ==~ /merge${buildType.capitalize()}.*JniLibFolders/ }.configureEach {
+         dependsOn taskName
+     }

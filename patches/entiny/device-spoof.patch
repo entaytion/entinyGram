@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -634,6 +634,10 @@ public class ConnectionsManager extends BaseController {
+@@ -640,6 +640,10 @@ public class ConnectionsManager extends BaseController {
      }
  
      public void init(int version, int layer, int apiId, String deviceModel, String systemVersion, String appVersion, String langCode, String systemLangCode, String configPath, String logPath, String regId, String cFingerprint, int timezoneOffset, long userId, boolean userPremium, boolean enablePushConnection) {
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          final SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
          final ProxySettings proxySettings = ProxySettings.fromSharedPreferences(preferences);
          if (preferences.getBoolean("proxy_enabled", false) && proxySettings.isValid()) {
-@@ -679,6 +683,7 @@ public class ConnectionsManager extends BaseController {
+@@ -685,6 +689,7 @@ public class ConnectionsManager extends BaseController {
              packageId = "";
          }
  

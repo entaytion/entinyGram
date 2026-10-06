@@ -39,7 +39,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarCo
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
-@@ -961,7 +961,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+@@ -962,7 +962,7 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
      }
  
      // entiny: Saved Messages centers like any other chat header now; only non-chat headers (no dialog yet, reply-comments, Replies pseudo-user) stay excluded.

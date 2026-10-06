@@ -1,0 +1,453 @@
+package desu.inugram.ui.settings
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Paint.FontMetricsInt
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
+import android.text.Layout
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.StaticLayout
+import android.text.TextPaint
+import android.text.style.ReplacementSpan
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.graphics.withTranslation
+import desu.inugram.InuConfig
+import desu.inugram.SearchRegistry
+import desu.inugram.helpers.InuUtils
+import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
+import org.telegram.messenger.Utilities
+import org.telegram.ui.ActionBar.SimpleTextView
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Cells.NotificationsCheckCell
+import org.telegram.ui.Cells.TextCell
+import org.telegram.ui.Cells.TextCheckCell
+import org.telegram.ui.Components.Bulletin
+import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ColoredImageSpan
+import org.telegram.ui.Components.ItemOptions
+import org.telegram.ui.Components.LayoutHelper
+import org.telegram.ui.Components.UItem
+import org.telegram.ui.Components.UniversalAdapter
+import org.telegram.ui.Components.UniversalFragment
+import org.telegram.ui.Components.UniversalRecyclerView
+import org.telegram.ui.LaunchActivity
+
+abstract class SettingsPageActivity : UniversalFragment() {
+    @Suppress("OVERRIDE_DEPRECATION")
+    override fun isSupportEdgeToEdge(): Boolean = true
+
+    private var highlightItemId: Int = -1
+
+    fun withHighlight(itemId: Int) = apply { highlightItemId = itemId }
+
+    @Suppress("DEPRECATION")
+    override fun createView(context: Context): View {
+        // entiny: resize content for IME so focused inline fields remain reachable when keyboard opens
+        parentActivity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        return super.createView(context).also {
+            if (actionBar.backButtonImageView == null) {
+                actionBar.setBackButtonImage(R.drawable.ic_ab_back)
+            }
+            if (actionBar.actionBarMenuOnItemClick == null) {
+                actionBar.setActionBarMenuOnItemClick(object : org.telegram.ui.ActionBar.ActionBar.ActionBarMenuOnItemClick() {
+                    override fun onItemClick(id: Int) {
+                        if (id == -1) finishFragment()
+                    }
+                })
+            }
+            listView.setSections()
+            actionBar.setAdaptiveBackground(listView)
+            listView.clipToPadding = false
+            // entiny: pre-scroll before first layout so target row is on-screen without post-transition jump
+            if (highlightItemId != -1) {
+                val index = findItemPosition(listView, highlightItemId)
+                if (index >= 0) {
+                    listView.layoutManager.scrollToPositionWithOffset(index, AndroidUtilities.dp(60f))
+                }
+            }
+        }
+    }
+
+    override fun onTransitionAnimationEnd(isOpen: Boolean, backward: Boolean) {
+        super.onTransitionAnimationEnd(isOpen, backward)
+        if (!isOpen || backward || highlightItemId == -1) return
+        val index = findItemPosition(listView, highlightItemId)
+        highlightItemId = -1
+        if (index >= 0) listView.highlightRow { index }
+    }
+
+    private fun findItemPosition(lv: UniversalRecyclerView, target: Int): Int {
+        var i = 0
+        while (true) {
+            val item = lv.adapter.getItem(i) ?: return -1
+            if (item.id == target) return i
+            i++
+        }
+    }
+
+    override fun onInsets(left: Int, top: Int, right: Int, bottom: Int) {
+        lastBottomInset = bottom
+        val lv = listView ?: return
+        val container = stickyButtonContainer
+        if (container != null) {
+            lv.setPadding(0, 0, 0, bottom + dp(STICKY_BUTTON_HEIGHT))
+            container.setPadding(dp(16), dp(8), dp(16), dp(8) + bottom)
+        } else {
+            lv.setPadding(lv.paddingLeft, lv.paddingTop, lv.paddingRight, bottom)
+        }
+    }
+
+    override fun onFragmentDestroy() {
+        if (stickyButtonContainer != null) Bulletin.removeDelegate(this)
+        super.onFragmentDestroy()
+    }
+
+    private var stickyButtonContainer: FrameLayout? = null
+    private var lastBottomInset = 0
+
+    protected fun attachStickyButton(rootView: View, button: View) {
+        val container = FrameLayout(rootView.context).apply {
+            setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite))
+            setPadding(dp(16), dp(8), dp(16), dp(8) + lastBottomInset)
+            addView(button, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48f))
+        }
+        stickyButtonContainer = container
+        (rootView as FrameLayout).addView(
+            container,
+            LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM)
+        )
+        listView.setPadding(0, 0, 0, lastBottomInset + dp(STICKY_BUTTON_HEIGHT))
+        Bulletin.addDelegate(this, object : Bulletin.Delegate {
+            override fun getBottomOffset(tag: Int): Int = stickyButtonContainer?.height ?: 0
+        })
+    }
+
+    private fun dp(v: Int) = AndroidUtilities.dp(v.toFloat())
+
+    protected fun postNotificationForAllAccounts(id: Int, vararg args: Any?) {
+        for (i in 0 until UserConfig.MAX_ACCOUNT_COUNT) {
+            if (UserConfig.getInstance(i).isClientActivated) {
+                NotificationCenter.getInstance(i).postNotificationName(id, *args)
+            }
+        }
+    }
+
+    protected fun softRebuild() {
+        LaunchActivity.instance?.rebuildAllFragments(false)
+    }
+
+    protected fun mkTwoLineEntry(id: Int, iconRes: Int, title: CharSequence, subtitle: CharSequence): UItem =
+        TwoLineEntryCell.Factory.of(id, iconRes, title, subtitle)
+
+    protected fun setCellChecked(view: View, checked: Boolean) {
+        when (view) {
+            is NotificationsCheckCell -> view.isChecked = checked
+            is TextCheckCell -> view.isChecked = checked
+        }
+    }
+
+    protected fun invalidateVisibleRows() {
+        fun walk(view: View) {
+            view.invalidate()
+            if (view is ViewGroup) for (i in 0 until view.childCount) walk(view.getChildAt(i))
+        }
+        walk(listView ?: return)
+    }
+
+    protected fun showRestartBulletin() {
+        BulletinFactory.of(this)
+            .createSimpleBulletin(
+                R.raw.chats_infotip,
+                LocaleController.getString(R.string.InuRestartRequired),
+                LocaleController.getString(R.string.InuRestartNow)
+            ) {
+                val activity = parentActivity ?: return@createSimpleBulletin
+                InuUtils.restartApp(activity)
+            }
+            .show()
+    }
+
+    protected fun mkTwoLineCheckItem(
+        id: Int,
+        textRes: Int,
+        infoRes: Int,
+        checked: Boolean,
+        experimental: Boolean = false
+    ): UItem {
+        val rawText = LocaleController.getString(textRes)
+        val text = if (experimental) addExperimentalSpan(rawText) else rawText
+        val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
+        return UItem.asButtonCheck(id, text, subtext).also {
+            it.checked = checked
+            it.bind = Utilities.Callback { view ->
+                // entiny: read it.checked instead of captured local because DiffUtil treats flipped row as unchanged
+                (view as? NotificationsCheckCell)?.setTextAndValueAndCheck(
+                    text,
+                    subtext,
+                    it.checked,
+                    0,
+                    subtext != null,
+                    !InuConfig.M3_SECTIONS_STYLE.value
+                )
+                (view as? NotificationsCheckCell)?.setDrawLine(false)
+            }
+        }
+    }
+
+    // entiny: like mkTwoLineCheckItem, but with a leading icon
+    protected fun mkIconCheckItem(
+        id: Int,
+        iconRes: Int,
+        textRes: Int,
+        infoRes: Int,
+        checked: Boolean,
+        experimental: Boolean = false
+    ): UItem {
+        val rawText = LocaleController.getString(textRes)
+        val text = if (experimental) addExperimentalSpan(rawText) else rawText
+        val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
+        return UItem(UniversalAdapter.VIEW_TYPE_ICON_TEXT_CHECK, false).also {
+            it.id = id
+            it.text = text
+            it.subtext = subtext
+            it.iconResId = iconRes
+            it.checked = checked
+            it.bind = Utilities.Callback { view ->
+                (view as? NotificationsCheckCell)?.setTextAndValueAndIconAndCheck(
+                    text,
+                    subtext,
+                    iconRes,
+                    it.checked,
+                    0,
+                    subtext != null,
+                    !InuConfig.M3_SECTIONS_STYLE.value,
+                )
+                (view as? NotificationsCheckCell)?.setDrawLine(false)
+            }
+        }
+    }
+
+    protected fun mkSubPageButton(id: Int, text: CharSequence): UItem {
+        return UItem.asButton(id, text).also {
+            it.bind = Utilities.Callback { view ->
+                val cell = view as? TextCell ?: return@Callback
+                val iv = cell.valueImageView
+                iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
+                iv.colorFilter = PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
+                    PorterDuff.Mode.MULTIPLY,
+                )
+                iv.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    protected fun mkSubPageButton(id: Int, text: CharSequence, value: CharSequence?): UItem {
+        return UItem.asButton(id, text, value).also {
+            it.bind = Utilities.Callback { view ->
+                val cell = view as? TextCell ?: return@Callback
+                val iv = cell.valueImageView
+                iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
+                iv.colorFilter = PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
+                    PorterDuff.Mode.MULTIPLY,
+                )
+                iv.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    protected fun mkSubPageButton(id: Int, iconRes: Int, text: CharSequence): UItem {
+        return UItem.asButton(id, iconRes, text).also {
+            it.bind = Utilities.Callback { view ->
+                val cell = view as? TextCell ?: return@Callback
+                val iv = cell.valueImageView
+                iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f // plain bitmap, never auto-mirrored
+                iv.colorFilter = PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
+                    PorterDuff.Mode.MULTIPLY,
+                )
+                iv.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    protected fun mkIconSubPageButton(id: Int, iconRes: Int, text: CharSequence, subtext: CharSequence): UItem {
+        return UItem.asButton(id, text, subtext).also {
+            it.bind = Utilities.Callback { view ->
+                val cell = view as? TextCell ?: return@Callback
+                cell.setTextAndValueAndIcon(text, subtext, iconRes, false)
+                val iv = cell.valueImageView
+                iv.setImageResource(R.drawable.msg_arrowright)
+                iv.scaleX = if (LocaleController.isRTL) -1f else 1f
+                iv.colorFilter = PorterDuffColorFilter(
+                    Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon),
+                    PorterDuff.Mode.MULTIPLY,
+                )
+                iv.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    protected fun mkSplitCheckItem(
+        id: Int,
+        textRes: Int,
+        infoRes: Int,
+        checked: Boolean,
+        experimental: Boolean = false
+    ): UItem {
+        val rawText = LocaleController.getString(textRes)
+        val text = if (experimental) addExperimentalSpan(rawText) else rawText
+        val subtext = if (infoRes == 0) null else LocaleController.getString(infoRes)
+        return UItem.asButtonCheck(id, text, subtext).also {
+            it.checked = checked
+            it.bind = Utilities.Callback { view ->
+                (view as? NotificationsCheckCell)?.setTextAndValueAndCheck(
+                    text,
+                    subtext,
+                    checked,
+                    0,
+                    subtext != null,
+                    !InuConfig.M3_SECTIONS_STYLE.value
+                )
+                (view as? NotificationsCheckCell)?.setDrawLine(true)
+            }
+        }
+    }
+
+
+    protected fun addExperimentalSpan(string: CharSequence): CharSequence {
+        val pill = SpannableString(" ")
+        pill.setSpan(
+            BetaPillSpan(LocaleController.getString(R.string.InuBetaPill), Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader)),
+            0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+        )
+        return SpannableStringBuilder().append(pill).append("  ").append(string)
+    }
+
+    /** small tinted "beta" pill drawn before a title, same look as the value pills on settings rows */
+    private class BetaPillSpan(private val label: String, tint: Int) : ReplacementSpan() {
+        private val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            typeface = AndroidUtilities.bold()
+            textSize = AndroidUtilities.dp(11f).toFloat()
+            color = tint
+        }
+        private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = tint
+            alpha = 40
+        }
+        private val padX = AndroidUtilities.dp(6f)
+        private val padY = AndroidUtilities.dp(2.5f)
+
+        override fun getSize(paint: Paint, text: CharSequence?, start: Int, end: Int, fm: FontMetricsInt?): Int =
+            (textPaint.measureText(label) + padX * 2).toInt() + AndroidUtilities.dp(2f)
+
+        override fun draw(canvas: Canvas, text: CharSequence?, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: Paint) {
+            val w = textPaint.measureText(label)
+            val fm = textPaint.fontMetrics
+            val cy = y + (paint.ascent() + paint.descent()) / 2f
+            val half = (fm.descent - fm.ascent) / 2f + padY
+            val left = x + AndroidUtilities.dp(1f)
+            val r = AndroidUtilities.dp(5f).toFloat()
+            AndroidUtilities.rectTmp.set(left, cy - half, left + w + padX * 2, cy + half)
+            canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, bgPaint)
+            canvas.drawText(label, left + padX, cy - (fm.ascent + fm.descent) / 2f, textPaint)
+        }
+    }
+
+    override fun onLongClick(item: UItem, view: View, position: Int, x: Float, y: Float): Boolean {
+        val opts = ItemOptions.makeOptions(this, view)
+        val hasText = hasTruncatedText(view) && addFullTextOption(opts, item)
+        opts.addGapIf(hasText && SearchRegistry.deepLinkForItemId(item.id) != null)
+        val hasLink = addCopyLinkOption(opts, item)
+        if (!hasText && !hasLink) return false
+        opts.show()
+        return true
+    }
+
+    protected fun hasTruncatedText(view: View): Boolean {
+        when (view) {
+            is TextView -> {
+                val layout = view.layout ?: return false
+                val text = view.text ?: return false
+                for (i in 0 until layout.lineCount) {
+                    if (layout.getEllipsisCount(i) > 0) return true
+                }
+                return layout.lineCount == 1 &&
+                    Layout.getDesiredWidth(text, view.paint) > layout.width + 1
+            }
+            is SimpleTextView -> {
+                val text = view.text ?: return false
+                val shownWidth = view.textWidth
+                if (shownWidth > view.width - view.paddingLeft - view.paddingRight) return true
+                return Layout.getDesiredWidth(text, view.textPaint) > shownWidth + AndroidUtilities.dp(1f)
+            }
+            is ViewGroup -> {
+                for (i in 0 until view.childCount) {
+                    if (hasTruncatedText(view.getChildAt(i))) return true
+                }
+            }
+        }
+        return false
+    }
+
+    protected fun addFullTextOption(opts: ItemOptions, item: UItem): Boolean {
+        val maxWidth = AndroidUtilities.dp(280f)
+        var added = false
+        if (!item.text.isNullOrEmpty()) {
+            opts.addText(item.text, 14, maxWidth)
+            added = true
+        }
+        if (!item.subtext.isNullOrEmpty()) {
+            opts.addText(item.subtext, 13, maxWidth)
+            added = true
+        }
+        return added
+    }
+
+    protected fun addCopyLinkOption(opts: ItemOptions, item: UItem): Boolean {
+        val link = SearchRegistry.deepLinkForItemId(item.id) ?: return false
+        opts.add(R.drawable.msg_link, LocaleController.getString(R.string.CopyLink)) {
+            val cm = ApplicationLoader.applicationContext
+                .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            cm.setPrimaryClip(ClipData.newPlainText("label", link))
+            BulletinFactory.of(this).createCopyLinkBulletin().show()
+        }
+        return true
+    }
+
+    companion object {
+        private const val STICKY_BUTTON_HEIGHT = 64
+
+        /** [string] with a small pill of [tag] after it, the way settings badge an experiment */
+        fun appendTag(string: CharSequence, tag: CharSequence, color: Int): CharSequence {
+            val text = SpannableStringBuilder(string)
+            text.append("  ")
+            val start = text.length
+            text.append(tag)
+            text.setSpan(android.text.style.ForegroundColorSpan(color), start, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            return text
+        }
+    }
+}

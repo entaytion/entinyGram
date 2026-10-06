@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -8970,6 +8970,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -8996,6 +8996,10 @@ public class ChatActivity extends BaseFragment implements
              }
          }
  

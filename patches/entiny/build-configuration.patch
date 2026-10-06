@@ -8,23 +8,19 @@ Subject: [=] build configuration
  TMessagesProj/build.gradle                    |  46 +-
  TMessagesProj/proguard-rules.pro              |  17 +-
  TMessagesProj/src/main/AndroidManifest.xml    |  25 -
- .../telegram/messenger/RefererReceiver.java   |  23 -
  .../telegram/messenger/car/HomeScreen.java    | 430 ------------------
  .../messenger/car/MusicSongsScreen.java       | 123 -----
  .../messenger/car/TelegramCarAppService.java  |  46 +-
  .../messenger/car/TelegramCarSession.java     |  16 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 -
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +-
- .../src/main/res/xml/automotive_app_desc.xml  |   5 -
  TMessagesProj_App/build.gradle                |  38 +-
  build.gradle                                  |  45 +-
  gradle.properties                             |   2 +
- 15 files changed, 143 insertions(+), 725 deletions(-)
- delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
+ 13 files changed, 143 insertions(+), 697 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
- delete mode 100644 TMessagesProj/src/main/res/xml/automotive_app_desc.xml
 
 diff --git a/.gitignore b/.gitignore
 index 0000000..0000000 100644
@@ -99,11 +95,11 @@ index 0000000..0000000 100644
 -    }
 +    // pure-java osm renderer, no native libs (replaces maplibre, which cost ~12MB of .so per ABI)
 +    implementation 'org.osmdroid:osmdroid-android:6.1.20'
-     // end inu
- 
- //    implementation 'com.google.mlkit:translate:17.0.3'
-@@ -123,9 +131,7 @@ android {
-     sourceSets.main.jniLibs.srcDirs = ['./jni/']
+     androidTestImplementation 'androidx.test:runner:1.6.2'
+     androidTestImplementation 'junit:junit:4.13.2'
+     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
+@@ -195,9 +203,7 @@ android {
+     }
  
      // inu
 -    if (!project.hasProperty("NOMAPS")) {
@@ -113,7 +109,7 @@ index 0000000..0000000 100644
      // end inu
  
      externalNativeBuild {
-@@ -155,7 +161,12 @@ android {
+@@ -231,7 +237,12 @@ android {
          targetSdkVersion 36
  
          ndk {
@@ -127,7 +123,7 @@ index 0000000..0000000 100644
          }
  
          externalNativeBuild {
-@@ -175,6 +186,7 @@ android {
+@@ -251,6 +262,7 @@ android {
              jniDebuggable true
              shrinkResources false
              multiDexEnabled true
@@ -135,7 +131,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
              buildConfigField "String", "BUILD_VERSION_STRING", "\"" + rootProject.ext.verName + "\""
              buildConfigField "String", "BUILD_DATE", "\"" + rootProject.ext.buildDate + "\""
-@@ -187,9 +199,15 @@ android {
+@@ -263,9 +275,15 @@ android {
  
          release {
              jniDebuggable false
@@ -251,35 +247,6 @@ index 0000000..0000000 100644
          <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES" android:value="face,barcode" />
  
          <meta-data android:name="android.max_aspect" android:value="2.5" />
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java b/TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
-deleted file mode 100644
-index 0000000..0000000
---- a/TMessagesProj/src/main/java/org/telegram/messenger/RefererReceiver.java
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/*
-- * This is the source code of Telegram for Android v. 5.x.x.
-- * It is licensed under GNU GPL v. 2 or later.
-- * You should have received a copy of the license in this archive (see LICENSE).
-- *
-- * Copyright Nikolai Kudashov, 2013-2018.
-- */
--
--package org.telegram.messenger;
--
--import android.content.BroadcastReceiver;
--import android.content.Context;
--import android.content.Intent;
--
--public class RefererReceiver extends BroadcastReceiver {
--    public void onReceive(Context context, Intent intent) {
--        try {
--            MessagesController.getInstance(UserConfig.selectedAccount).setReferer(intent.getExtras().getString("referrer"));
--        } catch (Exception ignore) {
--
--        }
--    }
--}
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java b/TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
 deleted file mode 100644
 index 0000000..0000000
@@ -935,7 +902,7 @@ index 0000000..0000000 100644
  
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AccountInstance;
-@@ -1942,15 +1939,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1943,15 +1940,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
                      final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
                      if (linkManager.handle(data)) {
@@ -951,7 +918,7 @@ index 0000000..0000000 100644
                          return true;
                      }
  
-@@ -2859,15 +2847,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -2860,15 +2848,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                  }
                              }
                          }
@@ -1049,23 +1016,11 @@ index 0000000..0000000 100644
                              public void onSuccess(Token token) {
                                  if (canceled) {
                                      return;
-diff --git a/TMessagesProj/src/main/res/xml/automotive_app_desc.xml b/TMessagesProj/src/main/res/xml/automotive_app_desc.xml
-deleted file mode 100644
-index 0000000..0000000
---- a/TMessagesProj/src/main/res/xml/automotive_app_desc.xml
-+++ /dev/null
-@@ -1,5 +0,0 @@
--<?xml version="1.0" encoding="utf-8"?>
--<automotiveApp>
--    <uses name="notification"/>
--    <uses name="template"/>
--</automotiveApp>
-\ No newline at end of file
 diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -25,15 +25,31 @@ dependencies {
+@@ -33,15 +33,31 @@ dependencies {
  android {
      compileSdkVersion 36
      buildToolsVersion '36.0.0'
@@ -1098,7 +1053,7 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -49,7 +65,7 @@ android {
+@@ -57,7 +73,7 @@ android {
  
      androidResources {
          noCompress += "pack"
@@ -1107,7 +1062,7 @@ index 0000000..0000000 100644
      }
  
      signingConfigs {
-@@ -69,7 +85,7 @@ android {
+@@ -77,7 +93,7 @@ android {
              minifyEnabled false
              shrinkResources false
              multiDexEnabled true
@@ -1116,7 +1071,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
          }
  
-@@ -77,11 +93,14 @@ android {
+@@ -85,11 +101,14 @@ android {
              debuggable false
              jniDebuggable false
              signingConfig signingConfigs.release
@@ -1134,8 +1089,8 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -108,7 +127,12 @@ android {
-         ndkVersion "27.2.12479018"
+@@ -117,7 +136,12 @@ android {
+         ndkVersion "29.0.14206865"
  
          ndk {
 -            abiFilters "arm64-v8a"
@@ -1147,7 +1102,7 @@ index 0000000..0000000 100644
 +            }
          }
  
-         externalNativeBuild {
+         if (!rootProject.ext.inuPluginless) externalNativeBuild {
 diff --git a/build.gradle b/build.gradle
 index 0000000..0000000 100644
 --- a/build.gradle
@@ -1166,9 +1121,9 @@ index 0000000..0000000 100644
  // Strip JLatexMath fonts we don't ship (transitive AAR assets from
  // io.noties.markwon:ext-latex -> ru.noties:jlatexmath-android, ~764 KB total under
  // assets/org/scilab/forge/jlatexmath/fonts/). Has to live in the APK modules — a
-@@ -54,12 +61,44 @@ subprojects {
-     }
- }
+@@ -58,13 +65,45 @@ def inuBuildProperties = new Properties()
+ def inuBuildFile = file('inu-build.properties')
+ if (inuBuildFile.exists()) inuBuildFile.withInputStream { inuBuildProperties.load(it) }
  
 -def commitId = System.getenv('COMMIT_ID')
 +def getGitCommitSha = {
@@ -1199,6 +1154,7 @@ index 0000000..0000000 100644
 +def currentVerCode = System.getenv('INU_BUILD') ? Integer.parseInt(System.getenv('INU_BUILD')) : getNextLocalBuildNumber()
  
  ext {
+   inuPluginless = (findProperty('inu.pluginless') ?: inuBuildProperties.getProperty('inu.pluginless', 'false')).toBoolean()
    verName = "${APP_VERSION_NAME}${commitId != null ? "-${commitId.take(7)}" : ''}"
 -  verCode = Integer.parseInt(System.getenv('INU_BUILD') ?: '1000000')
 +  verCode = currentVerCode

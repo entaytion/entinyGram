@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2432,7 +2432,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2435,7 +2435,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          newMsg.flags &=~ 64;
                      }
                  }

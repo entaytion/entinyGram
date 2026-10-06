@@ -1691,6 +1691,7 @@
     <string name="InuManyAccountsTitle">Много аккаунтов</string>
     <string name="InuManyAccountsMessage">Больше 8 аккаунтов может замедлять приложение и расходовать заряд. Всё равно добавить ещё один?</string>
     <string name="InuManyAccountsContinue">Продолжить</string>
+    <string name="InuBetaPill">бета</string>
     <string name="InuCallsSection">Звонки</string>
     <string name="InuDeviceSection">Устройство</string>
     <string name="InuDownloadsAndNetwork">Загрузки и сеть</string>

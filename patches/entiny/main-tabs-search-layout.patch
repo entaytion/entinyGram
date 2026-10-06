@@ -139,8 +139,8 @@ index 0000000..0000000 100644
                      (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE ? filterTabsView.getMeasuredHeight() : 0) +
                      (topPanelLayout != null ? topPanelLayout.getHeight() : 0) +
                      (dialogStoriesCell != null && dialogStoriesCellVisible ? (int) ((1f - dialogStoriesCell.getCollapsedProgress()) * dp(DialogStoriesCell.HEIGHT_IN_DP)) : 0) +
--                    (NonIslandHelper.globalSearch() ? 0 : dp(SEARCH_FIELD_HEIGHT))
-+                    (NonIslandHelper.globalSearch() || shouldSuppressSearchFieldSpace() ? 0 : dp(SEARCH_FIELD_HEIGHT))
+-                    (NonIslandHelper.globalSearch() ? 0 : dp(SEARCH_FIELD_HEIGHT) - (int) MathUtils.clamp(-scrollYOffset - getMaxScrollYOffsetWithoutSearch(), 0, dp(SEARCH_FIELD_HEIGHT)))
++                    (NonIslandHelper.globalSearch() || shouldSuppressSearchFieldSpace() ? 0 : dp(SEARCH_FIELD_HEIGHT) - (int) MathUtils.clamp(-scrollYOffset - getMaxScrollYOffsetWithoutSearch(), 0, dp(SEARCH_FIELD_HEIGHT)))
                  );
              }
  

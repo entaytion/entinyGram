@@ -1,0 +1,758 @@
+package desu.inugram.helpers.profile
+
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Paint
+import android.graphics.Shader
+import android.content.DialogInterface
+import android.os.Bundle
+import android.graphics.drawable.Drawable
+import desu.inugram.helpers.vibration.HapticFeedbackConstants
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.collection.LongSparseArray
+import androidx.core.graphics.ColorUtils
+import desu.inugram.InuConfig
+// #if PLUGINS
+import desu.inugram.helpers.plugins.ui.ActionKey
+import desu.inugram.helpers.plugins.ui.ActionRow
+import desu.inugram.helpers.plugins.ui.ActionSurface
+import desu.inugram.helpers.plugins.ui.PluginActions
+// #endif
+import desu.inugram.helpers.WebAppHelper
+import desu.inugram.helpers.chat.BlockedMessagesHelper
+import desu.inugram.helpers.chat.ChatExportHelper
+import desu.inugram.helpers.chat.ChatHelper
+import desu.inugram.helpers.chat.ForumDisplayHelper
+import desu.inugram.helpers.security.GhostHelper
+import desu.inugram.ui.profile.DeleteProfilePhotosSheet
+import java.util.WeakHashMap
+import org.json.JSONArray
+import org.telegram.messenger.AccountInstance
+import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.BuildVars
+import org.telegram.messenger.ApplicationLoader
+import org.telegram.messenger.ChatObject
+import org.telegram.messenger.DialogObject
+import org.telegram.messenger.FileLog
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessagesController
+import org.telegram.messenger.MessagesStorage
+import org.telegram.messenger.R
+import org.telegram.messenger.UserConfig
+import org.telegram.messenger.UserObject
+import org.telegram.messenger.support.LongSparseLongArray
+import org.telegram.tgnet.TLObject
+import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ActionBar.ActionBarMenuItem
+import org.telegram.ui.ActionBar.ActionBarMenuSubItem
+import org.telegram.ui.ActionBar.AlertDialog
+import org.telegram.ui.ActionBar.BaseFragment
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.ChatActivity
+import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ItemOptions
+import org.telegram.ui.Components.ProfileGalleryBlurView
+import org.telegram.ui.Components.ProfileGalleryView
+import org.telegram.ui.ProfileActivity
+import org.telegram.ui.Stars.StarsController
+import org.telegram.ui.Stories.StoriesController
+import org.telegram.ui.LaunchActivity
+import java.util.Date
+
+object ProfileHelper {
+    const val ACTION_TOGGLE_HIDE_WALLPAPER = 505
+    const val ACTION_TOGGLE_HIDE_THEME = 506
+    const val ACTION_TOGGLE_HIDE_MESSAGES = 507
+    const val ACTION_TOGGLE_GHOST_DIALOG = 508
+    const val ACTION_MARK_AS_READ = 509
+    const val ACTION_DELETE_PROFILE_PHOTOS = 510
+    const val ACTION_TOGGLE_PRESENCE_WATCH = 511
+    const val ACTION_DELETE_MY_MESSAGES = 512
+    const val ACTION_EXPORT_CHAT = 513
+    const val ACTION_EDIT_LOCAL_NAME = 514
+    const val ACTION_DEBUG_CLEAR_CACHE = 599
+
+    private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
+    private val fadePaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val actionsBackdropPaint = Paint()
+    private var cachedRampGradient: LinearGradient? = null
+    private var cachedRampHeight = 0f
+
+    @JvmStatic
+    fun useProfilePhotoGradientFade(): Boolean = InuConfig.PROFILE_PHOTO_GRADIENT_FADE.value
+
+    @JvmStatic
+    fun reduceMotion(): Boolean = InuConfig.REDUCE_PROFILE_MOTION.value
+
+    @JvmStatic
+    fun preferMediaTab(): Boolean = InuConfig.PROFILE_PREFER_MEDIA_TAB.value
+
+    @JvmStatic
+    fun useMaterialProfileActions(): Boolean = InuConfig.MATERIAL_PROFILE_ACTIONS.value
+
+    @JvmStatic
+    fun applyReduceMotionAlpha(openAnimationInProgress: Boolean, diff: Float, vararg views: View?) {
+        if (!reduceMotion() || openAnimationInProgress) return
+        val fade = diff.coerceIn(0f, 1f)
+        for (v in views) v?.alpha = fade
+    }
+
+    @JvmStatic
+    fun notifyBlurExpandProgress(pager: ProfileGalleryView?, value: Float) {
+        val b = pager?.blurDrawer ?: return
+        b.inu_expandProgress = value
+        b.invalidate()
+    }
+
+    @JvmStatic
+    fun effectiveChipExpand(
+        playProfileAnimation: Int,
+        avatarAnimationProgress: Float,
+        currentExpandAnimatorValue: Float,
+        openAnimationInProgress: Boolean
+    ): Float = when {
+        playProfileAnimation == 2 -> 1f
+        // entiny: stock reuses currentExpandAnimatorValue during open animation which causes 8dp jump on last frame
+        openAnimationInProgress -> 0f
+        avatarAnimationProgress >= 1f || playProfileAnimation == 0 -> currentExpandAnimatorValue.coerceIn(0f, 1f)
+        else -> 0f
+    }
+
+    @JvmStatic
+    fun expandedActionsOffset(
+        playProfileAnimation: Int,
+        avatarAnimationProgress: Float,
+        currentExpandAnimatorValue: Float,
+        openAnimationInProgress: Boolean
+    ): Float {
+        if (!useProfilePhotoGradientFade()) return 0f
+        return AndroidUtilities.dpf2(8f) * effectiveChipExpand(
+            playProfileAnimation,
+            avatarAnimationProgress,
+            currentExpandAnimatorValue,
+            openAnimationInProgress
+        )
+    }
+
+    @JvmStatic
+    fun adjustChipColor(btnColor: Int, whiteColor: Int, expandProgress: Float): Int =
+        if (useProfilePhotoGradientFade() && expandProgress > 0f) {
+            ColorUtils.blendARGB(btnColor, whiteColor, expandProgress)
+        } else btnColor
+
+    @JvmStatic
+    fun blendChipBackgroundForExpand(backgroundColor: Int, whiteColor: Int, expandProgress: Float): Int =
+        if (useProfilePhotoGradientFade() && expandProgress > 0f) {
+            ColorUtils.blendARGB(backgroundColor, whiteColor, expandProgress)
+        } else backgroundColor
+
+    @JvmStatic
+    fun forceChipShadowForExpand(expandProgress: Float): Boolean =
+        useProfilePhotoGradientFade() && expandProgress > 0f
+
+    @JvmStatic
+    fun drawProfilePhotoGradientFade(
+        canvas: Canvas,
+        blurView: ProfileGalleryBlurView,
+        width: Float,
+        translate: Boolean,
+        fraction: Float,
+        alpha: Float,
+    ): Boolean {
+        if (!useProfilePhotoGradientFade()) return false
+        val visibility = (1f - fraction).coerceIn(0f, 1f) * alpha.coerceIn(0f, 1f)
+        if (visibility <= 0f || width <= 0f) return true
+
+        val openingScale = if (blurView.measuredWidth > 0) width / blurView.measuredWidth else 1f
+        val sizePx = blurView.size * openingScale
+        val actionPx = blurView.actionSize * openingScale
+        val scaledSize = sizePx * (1f - fraction).coerceIn(0f, 1f)
+
+        val photoTop = if (translate) -scaledSize else 0f
+        val photoBottom = if (translate) 0f else sizePx
+        val actionBottom = if (translate) 0f else sizePx + actionPx
+
+        if (photoBottom > photoTop) {
+            val rampEnd = AndroidUtilities.dpf2(56f).coerceAtMost(photoBottom - photoTop)
+            fadePaint.shader = getRampGradient(rampEnd)
+            fadePaint.alpha = (visibility * 255f).toInt().coerceIn(0, 255)
+            canvas.save()
+            canvas.translate(0f, photoTop)
+            canvas.drawRect(0f, 0f, width, rampEnd, fadePaint)
+            canvas.restore()
+            fadePaint.shader = null
+
+            if (photoTop + rampEnd < photoBottom) {
+                fadePaint.color = GRADIENT_FADE_DARK
+                fadePaint.alpha = ((GRADIENT_FADE_DARK ushr 24) * visibility).toInt().coerceIn(0, 255)
+                canvas.drawRect(0f, photoTop + rampEnd, width, photoBottom, fadePaint)
+            }
+        }
+
+        if (actionBottom > photoBottom) {
+            actionsBackdropPaint.color = Theme.getColor(Theme.key_windowBackgroundGray)
+            actionsBackdropPaint.alpha = (visibility * 255f).toInt().coerceIn(0, 255)
+            canvas.drawRect(0f, photoBottom, width, actionBottom, actionsBackdropPaint)
+        }
+
+        return true
+    }
+
+    private fun getRampGradient(rampHeight: Float): LinearGradient {
+        cachedRampGradient?.let { if (cachedRampHeight == rampHeight) return it }
+        return LinearGradient(
+            0f, 0f, 0f, rampHeight,
+            Color.TRANSPARENT, GRADIENT_FADE_DARK,
+            Shader.TileMode.CLAMP,
+        ).also {
+            cachedRampGradient = it
+            cachedRampHeight = rampHeight
+        }
+    }
+
+    @JvmStatic
+    fun shouldShowIdRow(): Boolean {
+        return InuConfig.PROFILE_ID_MODE.value != InuConfig.ProfileIdModeItem.OFF
+    }
+
+    private fun getRawDialogWallpaper(currentAccount: Int, dialogId: Long): TLRPC.WallPaper? {
+        val controller = MessagesController.getInstance(currentAccount)
+        return if (dialogId >= 0) controller.getUserFull(dialogId)?.wallpaper
+        else controller.getChatFull(-dialogId)?.wallpaper
+    }
+
+    @Suppress("DEPRECATION")
+    private fun hasRawDialogTheme(currentAccount: Int, dialogId: Long): Boolean {
+        val controller = MessagesController.getInstance(currentAccount)
+        val emoticon = if (dialogId >= 0) controller.getUserFull(dialogId)?.theme_emoticon
+        else controller.getChatFull(-dialogId)?.theme_emoticon
+        return !emoticon.isNullOrEmpty()
+    }
+
+    @JvmStatic
+    fun addMenuItems(fragment: BaseFragment, otherItem: ActionBarMenuItem?, currentAccount: Int, dialogId: Long, resourcesProvider: Theme.ResourcesProvider?) {
+        if (otherItem == null) return
+        if (!InuConfig.DISABLE_CHAT_BACKGROUNDS.value && getRawDialogWallpaper(currentAccount, dialogId) != null) {
+            val hidden = ChatHelper.isRemoveWallpaperSetForDialog(currentAccount, dialogId)
+            val label = if (hidden) R.string.InuShowCustomWallpaper else R.string.InuHideCustomWallpaper
+            otherItem.addSubItem(
+                ACTION_TOGGLE_HIDE_WALLPAPER,
+                R.drawable.menu_feature_wallpaper,
+                LocaleController.getString(label),
+            )
+        }
+        if (!InuConfig.DISABLE_CHAT_THEMES.value && hasRawDialogTheme(currentAccount, dialogId)) {
+            val hidden = ChatHelper.isRemoveThemeSetForDialog(currentAccount, dialogId)
+            val label = if (hidden) R.string.InuShowCustomTheme else R.string.InuHideCustomTheme
+            otherItem.addSubItem(
+                ACTION_TOGGLE_HIDE_THEME,
+                R.drawable.msg_theme,
+                LocaleController.getString(label),
+            )
+        }
+        if (BlockedMessagesHelper.isEnabled() && canHideMessagesFrom(currentAccount, dialogId)) {
+            val hidden = BlockedMessagesHelper.isExtraHidden(currentAccount, dialogId)
+            val label = if (hidden) R.string.InuShowHiddenMessages else R.string.InuHideMessages
+            otherItem.addSubItem(
+                ACTION_TOGGLE_HIDE_MESSAGES,
+                R.drawable.menu_hide_gift,
+                LocaleController.getString(label),
+            )
+        }
+        if (isRegularForum(currentAccount, dialogId)) {
+            ForumDisplayHelper.addProfileMenuItem(fragment, otherItem, currentAccount, -dialogId, resourcesProvider)
+        }
+        val isSelf = dialogId > 0 && dialogId == UserConfig.getInstance(currentAccount).clientUserId
+        if (dialogId > 0 && !isSelf) {
+            val watching = desu.inugram.helpers.security.PresenceHelper.isWatched(currentAccount, dialogId)
+            val label = if (watching) R.string.InuPresenceUnwatchUser else R.string.InuPresenceWatchUser
+            otherItem.addSubItem(
+                ACTION_TOGGLE_PRESENCE_WATCH,
+                R.drawable.inu_tabler_user_scan,
+                LocaleController.getString(label),
+            )
+        }
+        // entiny: per-chat overrides work without the global mode, so the entry is always offered
+        if (!isSelf && dialogId != 0L && !GhostHelper.isChannelDialog(dialogId)) {
+            val ghosted = GhostHelper.isGhostActiveForDialog(dialogId)
+            otherItem.addSubItem(
+                ACTION_TOGGLE_GHOST_DIALOG,
+                if (ghosted) R.drawable.inu_ghost_filled else R.drawable.inu_ghost,
+                LocaleController.getString(R.string.InuGhostMode),
+            )
+
+            if (GhostHelper.shouldSuppressRead(dialogId)) {
+                otherItem.addSubItem(
+                    ACTION_MARK_AS_READ,
+                    R.drawable.msg_markread,
+                    LocaleController.getString(R.string.InuMarkChatAsRead),
+                )
+            }
+        }
+        if (InuConfig.LOCAL_NAMES.value && dialogId != 0L && !DialogObject.isEncryptedDialog(dialogId)) {
+            otherItem.addSubItem(
+                ACTION_EDIT_LOCAL_NAME,
+                R.drawable.msg_edit,
+                LocaleController.getString(R.string.InuLocalName),
+            )
+        }
+        if (InuConfig.CHAT_EXPORT.value && dialogId != 0L && !DialogObject.isEncryptedDialog(dialogId)) {
+            otherItem.addSubItem(
+                ACTION_EXPORT_CHAT,
+                R.drawable.msg_share_solar,
+                LocaleController.getString(R.string.InuChatExport),
+            )
+        }
+        if (isSelf) {
+            otherItem.addSubItem(
+                ACTION_DELETE_PROFILE_PHOTOS,
+                R.drawable.inu_tabler_photo_x,
+                LocaleController.getString(R.string.InuDeleteProfilePhotos),
+            )
+        } else {
+            otherItem.addSubItem(
+                ACTION_DELETE_MY_MESSAGES,
+                R.drawable.msg_delete,
+                LocaleController.getString(R.string.InuDeleteMyMessages),
+            )
+        }
+        // #if PLUGINS
+        addPluginItems(otherItem, currentAccount, dialogId)
+        // #endif
+    }
+
+    // #if PLUGINS
+    // --- plugin rows (inu.registerProfileAction) ---
+
+    /**
+     * keyed by the menu the rows were drawn into, since a profile is rebuilt rather than reused.
+     * The state never holds that menu back: it is this map's key, and a weak one.
+     */
+    private class ProfilePluginMenu(val surface: ActionSurface) {
+        var rows = emptyList<ActionRow>()
+        var shownKeys = emptyList<ActionKey>()
+        var generation = 0
+    }
+
+    private val pluginMenus = WeakHashMap<ActionBarMenuItem, ProfilePluginMenu>()
+    private var watchingActions = false
+
+    /**
+     * The rows land one globalQueue hop later (an engine cannot be entered from the ui thread), so
+     * they are rendered when the menu is *built* - which for a profile is when it opens, well
+     * before the user taps the overflow.
+     */
+    private fun addPluginItems(otherItem: ActionBarMenuItem, currentAccount: Int, dialogId: Long) {
+        val state = ProfilePluginMenu(ActionSurface.profile(currentAccount, dialogId))
+        pluginMenus[otherItem] = state
+        watchPluginActions()
+        if (!PluginActions.hasRows(PluginActions.KIND_PROFILE)) return
+        refreshPluginItems(otherItem, state)
+    }
+
+    /**
+     * a profile's menu is built when it opens and lives as long as it, so a plugin that registers
+     * or drops a row while it is on screen - a reload, which dev mode does on every push - would
+     * otherwise be answered by rows drawn for an engine that is gone.
+     */
+    private fun watchPluginActions() {
+        if (watchingActions) return
+        watchingActions = true
+        PluginActions.watchCounts {
+            for ((otherItem, state) in pluginMenus.entries.toList()) refreshPluginItems(otherItem, state)
+        }
+    }
+
+    private fun refreshPluginItems(otherItem: ActionBarMenuItem, state: ProfilePluginMenu) {
+        // a render with no dynamic rows answers without leaving the ui thread, so two refreshes can
+        // land out of order
+        state.generation++
+        val generation = state.generation
+        PluginActions.render(PluginActions.KIND_PROFILE, state.surface) { rows ->
+            if (pluginMenus[otherItem] !== state || state.generation != generation) return@render
+            state.rows = rows
+            val keys = rows.map { it.key }
+            for (key in state.shownKeys) {
+                if (key !in keys) otherItem.hideSubItem(PluginActions.optionIdFor(key))
+            }
+            for (row in rows) {
+                val id = PluginActions.optionIdFor(row.key)
+                if (otherItem.hasSubItem(id)) {
+                    // the cell outlives the engine that drew it, so a reload may have renamed it
+                    (otherItem.getSubItem(id) as? ActionBarMenuSubItem)
+                        ?.setTextAndIcon(row.text, R.drawable.msg_settings_old)
+                    otherItem.showSubItem(id)
+                } else {
+                    otherItem.addSubItem(id, R.drawable.msg_settings_old, row.text)
+                }
+            }
+            state.shownKeys = keys
+        }
+    }
+
+    private fun dispatchPluginItem(id: Int, otherItem: ActionBarMenuItem?, currentAccount: Int, dialogId: Long): Boolean {
+        val state = pluginMenus[otherItem] ?: return false
+        val row = PluginActions.rowAt(state.rows, id) ?: return false
+        PluginActions.dispatch(row, state.surface)
+        return true
+    }
+
+    // #endif
+
+    private fun canHideMessagesFrom(currentAccount: Int, dialogId: Long): Boolean {
+        if (dialogId > 0) return dialogId != UserConfig.getInstance(currentAccount).clientUserId
+        val chat = MessagesController.getInstance(currentAccount).getChat(-dialogId)
+        return ChatObject.isChannelAndNotMegaGroup(chat)
+    }
+
+    private fun isRegularForum(currentAccount: Int, dialogId: Long): Boolean {
+        if (dialogId >= 0) return false
+        val chat = MessagesController.getInstance(currentAccount).getChat(-dialogId)
+        return ChatObject.isForum(chat) && !ChatObject.isMonoForum(chat)
+    }
+
+    @JvmStatic
+    fun handleMenuClick(id: Int, otherItem: ActionBarMenuItem?, currentAccount: Int, dialogId: Long): Boolean {
+        // #if PLUGINS
+        if (id >= PluginActions.OPTION_BASE) return dispatchPluginItem(id, otherItem, currentAccount, dialogId)
+        // #endif
+        when (id) {
+            ACTION_TOGGLE_HIDE_WALLPAPER -> ChatHelper.toggleRemoveWallpaper(currentAccount, dialogId)
+            ACTION_TOGGLE_HIDE_THEME -> ChatHelper.toggleRemoveTheme(currentAccount, dialogId)
+            ACTION_TOGGLE_HIDE_MESSAGES -> BlockedMessagesHelper.toggleExtraHidden(currentAccount, dialogId)
+            ACTION_EDIT_LOCAL_NAME -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                LocalNameHelper.showEditor(fragment, currentAccount, dialogId)
+            }
+            ACTION_TOGGLE_GHOST_DIALOG -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                GhostHelper.showChatOverridesDialog(fragment, currentAccount, dialogId)
+            }
+            ACTION_MARK_AS_READ -> {
+                GhostHelper.markDialogAsRead(currentAccount, dialogId)
+                BulletinFactory.global().createSimpleBulletin(R.raw.contact_check, LocaleController.getString(R.string.InuMarkChatAsReadDone)).show()
+            }
+            ACTION_TOGGLE_PRESENCE_WATCH -> {
+                val watching = desu.inugram.helpers.security.PresenceHelper.toggleWatch(currentAccount, dialogId)
+                val msg = if (watching) {
+                    LocaleController.getString(R.string.InuPresenceWatchEnabledDone)
+                } else {
+                    LocaleController.getString(R.string.InuPresenceWatchDisabledDone)
+                }
+                BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, msg).show()
+            }
+            ACTION_DELETE_PROFILE_PHOTOS -> {
+                val activity = LaunchActivity.getLastFragment()?.parentActivity ?: LaunchActivity.instance ?: return true
+                DeleteProfilePhotosSheet(activity, currentAccount).show()
+            }
+            ACTION_DELETE_MY_MESSAGES -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                desu.inugram.helpers.chat.SelfMessageWipeHelper.confirmAndDelete(fragment, currentAccount, dialogId)
+            }
+            ACTION_EXPORT_CHAT -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                ChatExportHelper.start(fragment, currentAccount, dialogId)
+            }
+            ACTION_DEBUG_CLEAR_CACHE -> debugClearProfileCache(currentAccount, dialogId)
+            else -> return false
+        }
+        return true
+    }
+
+    private fun debugClearProfileCache(currentAccount: Int, dialogId: Long) {
+        val mc = MessagesController.getInstance(currentAccount)
+        val mcCls = MessagesController::class.java
+        val isUser = dialogId > 0
+        val keyAbs = if (isUser) dialogId else -dialogId
+
+        runCatching {
+            val mapName = if (isUser) "fullUsers" else "fullChats"
+            val loadedName = if (isUser) "loadedFullUsers" else "loadedFullChats"
+
+            mcCls.getDeclaredField(mapName).apply { isAccessible = true }.let { f ->
+                val map = f.get(mc) as LongSparseArray<*>
+                map.remove(keyAbs)
+            }
+            mcCls.getDeclaredField(loadedName).apply { isAccessible = true }.let { f ->
+                val arr = f.get(mc) as LongSparseLongArray
+                arr.delete(keyAbs)
+            }
+        }.onFailure { it.printStackTrace() }
+
+        runCatching {
+            mcCls.getDeclaredField("dialogPhotos").apply { isAccessible = true }.let { f ->
+                val map = f.get(mc) as LongSparseArray<*>
+                map.remove(dialogId)
+            }
+        }.onFailure { it.printStackTrace() }
+
+        runCatching {
+            val sc = mc.storiesController
+            StoriesController::class.java.getDeclaredField("allStoriesMap").apply { isAccessible = true }.let { f ->
+                val map = f.get(sc) as LongSparseArray<*>
+                map.remove(dialogId)
+            }
+            sc.dialogIdToMaxReadId.delete(dialogId)
+        }.onFailure { it.printStackTrace() }
+
+        runCatching {
+            StarsController.getInstance(currentAccount).invalidateProfileGifts(dialogId)
+        }.onFailure { it.printStackTrace() }
+
+        val storage = MessagesStorage.getInstance(currentAccount)
+        storage.storageQueue.postRunnable {
+            runCatching {
+                val db = storage.database
+                val settingsTable = if (isUser) "user_settings" else "chat_settings_v2"
+                db.executeFast("DELETE FROM $settingsTable WHERE uid = $keyAbs").stepThis().dispose()
+                db.executeFast("DELETE FROM media_v4 WHERE uid = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM media_counts_v2 WHERE uid = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM dialog_photos WHERE uid = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM dialog_photos_count WHERE uid = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM stories WHERE dialog_id = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM stories_counter WHERE dialog_id = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM profile_stories WHERE dialog_id = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM profile_stories_albums WHERE dialog_id = $dialogId").stepThis().dispose()
+                db.executeFast("DELETE FROM profile_stories_albums_links WHERE dialog_id = $dialogId").stepThis().dispose()
+            }.onFailure { it.printStackTrace() }
+        }
+
+        Toast.makeText(ApplicationLoader.applicationContext, "Profile cache cleared — close & reopen profile", Toast.LENGTH_LONG).show()
+    }
+
+    @JvmStatic
+    fun formatId(userId: Long, chat: TLRPC.Chat?): String {
+        val isBotApi = InuConfig.PROFILE_ID_MODE.value == InuConfig.ProfileIdModeItem.BOT_API_ID
+        if (userId != 0L) {
+            return userId.toString()
+        }
+
+        if (chat != null) {
+            if (!isBotApi) return chat.id.toString()
+            if (ChatObject.isChannel(chat)) return (-1000000000000L - chat.id).toString()
+            return (-chat.id).toString()
+        }
+
+        return ""
+    }
+
+    @JvmStatic
+    fun onIdRowClick(
+        fragment: BaseFragment,
+        clipBackground: Drawable,
+        view: View,
+        userId: Long,
+        chatId: Long,
+        accountInstance: AccountInstance,
+    ) {
+        val messagesController = accountInstance.messagesController;
+        val chat = if (chatId != 0L) messagesController.getChat(chatId) else null
+        val text = formatId(userId, chat)
+        if (text.isEmpty()) return
+
+        ItemOptions.makeOptions(fragment, view)
+            .setScrimViewBackground(clipBackground)
+            .add(R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
+                AndroidUtilities.addToClipboard(text)
+                if (AndroidUtilities.shouldShowClipboardToast()) {
+                    BulletinFactory.of(fragment).createCopyBulletin(
+                        LocaleController.getString(R.string.InuProfileIdCopied)
+                    ).show()
+                }
+            }.add(R.drawable.inu_tabler_code, LocaleController.getString(R.string.InuShowJson)) {
+                val items = arrayListOf<TLObject>()
+                if (userId != 0L) {
+                    val user = messagesController.getUser(userId)
+                    if (user != null) items.add(user)
+                    val userFull = messagesController.getUserFull(userId)
+                    if (userFull != null) items.add(userFull)
+                    val botInfo = accountInstance.mediaDataController.getBotInfoCached(userId, userId)
+                    if (botInfo != null) items.add(botInfo)
+                } else {
+                    if (chat != null) items.add(chat)
+                    val chatFull = messagesController.getChatFull(chatId)
+                    if (chatFull != null) items.add(chatFull)
+                }
+                WebAppHelper.openTlViewer(fragment, items)
+            }.let { opts ->
+                if (userId != 0L) {
+                    val regDate = getRegDate(userId)
+                    if (regDate != null) {
+                        opts.addGap()
+                            .addText(LocaleController.formatString(R.string.InuRegDate, regDate), 13)
+                    }
+                } else if (chat != null && chat.date != 0) {
+                    val joined = ChatObject.isChannel(chat) && !ChatObject.isNotInChat(chat)
+                    val res = if (joined) R.string.InuJoinDate else R.string.InuCreatedDate
+                    opts.addGap()
+                        .addText(LocaleController.formatString(res, formatDateTime(chat.date * 1000L)), 13)
+                }
+                opts
+            }.show()
+    }
+
+    @JvmStatic
+    fun showStopBotAlert(fragment: BaseFragment, user: TLRPC.User) {
+        val activity = fragment.parentActivity ?: return
+        val dialog = AlertDialog.Builder(activity, fragment.resourceProvider)
+            .setTitle(LocaleController.getString(R.string.InuStopBot))
+            .setMessage(
+                AndroidUtilities.replaceTags(
+                    LocaleController.formatString(R.string.InuStopBotAlert, UserObject.getUserName(user))
+                )
+            )
+            .setPositiveButton(LocaleController.getString(R.string.InuStopBotAction)) { _, _ ->
+                MessagesController.getInstance(fragment.currentAccount).blockPeer(user.id)
+                if (BulletinFactory.canShowBulletin(fragment)) {
+                    BulletinFactory.of(fragment)
+                        .createSimpleBulletin(R.raw.ic_ban, LocaleController.getString(R.string.InuStopBotDone))
+                        .show()
+                }
+            }
+            .setNegativeButton(LocaleController.getString(R.string.Cancel), null)
+            .create()
+        fragment.showDialog(dialog)
+        (dialog.getButton(DialogInterface.BUTTON_POSITIVE) as? TextView)
+            ?.setTextColor(fragment.getThemedColor(Theme.key_text_RedBold))
+    }
+
+    private data class RegDateEntry(val id: Long, val date: Long)
+
+    private val regDateEntries: List<RegDateEntry> by lazy { loadRegDateData() }
+
+    private fun loadRegDateData(): List<RegDateEntry> {
+        return try {
+            val json = ApplicationLoader.applicationContext.assets.open("id_date.json")
+                .bufferedReader().use { it.readText() }
+            val data = JSONArray(json)
+            List(data.length()) { i ->
+                val pair = data.getJSONArray(i)
+                RegDateEntry(pair.getLong(0), pair.getLong(1))
+            }
+        } catch (e: Exception) {
+            FileLog.e(e)
+            emptyList()
+        }
+    }
+
+    private fun formatShortDate(dateMs: Long): String {
+        return LocaleController.getInstance().formatterYear.format(Date(dateMs))
+    }
+
+    private fun formatDateTime(dateMs: Long): String {
+        return LocaleController.getInstance().formatterStats.format(Date(dateMs))
+    }
+
+    private fun getRegDate(userId: Long): String? {
+        val list = regDateEntries
+        if (list.isEmpty()) return null
+        for (i in 1 until list.size) {
+            val a = list[i - 1]
+            val b = list[i]
+            if (userId in a.id..b.id) {
+                val t = (userId - a.id).toDouble() / (b.id - a.id)
+                val date = (a.date + t * (b.date - a.date)) * 1000.0
+                return "~" + formatShortDate(Math.round(date))
+            }
+        }
+        if (userId <= list.first().id) return formatShortDate(list.first().date * 1000L)
+        return ">" + formatShortDate(list.last().date * 1000L)
+    }
+
+    @JvmStatic
+    fun shouldShowRegDateRow(userId: Long, chat: TLRPC.Chat?): Boolean {
+        if (!InuConfig.SHOW_PROFILE_REG_DATE.value) return false
+        if (userId != 0L) return true
+        return chat != null && chat.date != 0
+    }
+
+    @JvmStatic
+    fun getDc(user: TLRPC.User?, chat: TLRPC.Chat?): Int {
+        if (user?.photo is TLRPC.TL_userProfilePhoto) {
+            return (user.photo as TLRPC.TL_userProfilePhoto).dc_id
+        }
+        if (chat?.photo is TLRPC.TL_chatPhoto) {
+            return (chat.photo as TLRPC.TL_chatPhoto).dc_id
+        }
+        return 0
+    }
+
+    @JvmStatic
+    fun getDcString(user: TLRPC.User?, chat: TLRPC.Chat?): String {
+        return when (getDc(user, chat)) {
+            1 -> "DC 1 (Miami)"
+            2 -> "DC 2 (Amsterdam)"
+            3 -> "DC 3 (Miami)"
+            4 -> "DC 4 (Amsterdam)"
+            5 -> "DC 5 (Singapore)"
+            else -> ""
+        }
+    }
+
+    @JvmStatic
+    fun getRegDateValue(userId: Long, chat: TLRPC.Chat?): String {
+        if (userId != 0L) {
+            return getRegDate(userId) ?: ""
+        }
+        if (chat != null && chat.date != 0) {
+            return formatDateTime(chat.date * 1000L)
+        }
+        return ""
+    }
+
+    @JvmStatic
+    fun getRegDateSubtitle(userId: Long, chat: TLRPC.Chat?, user: TLRPC.User?): String {
+        val base = LocaleController.getString(R.string.InuProfileRegDate)
+        val dc = getDcString(user, chat)
+        return if (dc.isNotEmpty()) "$base • $dc" else base
+    }
+
+    @JvmStatic
+    fun onRegDateRowClick(
+        fragment: BaseFragment,
+        clipBackground: Drawable,
+        view: View,
+        userId: Long,
+        chatId: Long,
+        accountInstance: AccountInstance,
+    ) {
+        val messagesController = accountInstance.messagesController
+        val user = if (userId != 0L) messagesController.getUser(userId) else null
+        val chat = if (chatId != 0L) messagesController.getChat(chatId) else null
+        val dateVal = getRegDateValue(userId, chat)
+        val dc = getDcString(user, chat)
+        val textToCopy = if (dc.isNotEmpty()) "$dateVal ($dc)" else dateVal
+        if (textToCopy.isEmpty()) return
+
+        ItemOptions.makeOptions(fragment, view)
+            .setScrimViewBackground(clipBackground)
+            .add(R.drawable.msg_copy, LocaleController.getString(R.string.Copy)) {
+                AndroidUtilities.addToClipboard(textToCopy)
+                if (AndroidUtilities.shouldShowClipboardToast()) {
+                    BulletinFactory.of(fragment).createCopyBulletin(
+                        LocaleController.getString(R.string.InuProfileRegDateCopied)
+                    ).show()
+                }
+            }.show()
+    }
+
+    @JvmStatic
+    fun openProfileOrChat(fragment: BaseFragment, view: View, dialogId: Long): Boolean {
+        val args = Bundle()
+        val openAsChat: Boolean
+        if (dialogId > 0) {
+            if (fragment.messagesController.getUser(dialogId) == null) return false
+            args.putLong("user_id", dialogId)
+            openAsChat = false
+        } else {
+            val chat = fragment.messagesController.getChat(-dialogId) ?: return false
+            args.putLong("chat_id", -dialogId)
+            openAsChat = ChatObject.isChannelAndNotMegaGroup(chat)
+        }
+        fragment.presentFragment(if (openAsChat) ChatActivity(args) else ProfileActivity(args))
+        return true
+    }
+}

@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoade
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -274,14 +274,19 @@ public class ApplicationLoader extends Application {
+@@ -274,8 +274,10 @@ public class ApplicationLoader extends Application {
  
          MediaController.getInstance();
          for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
@@ -25,7 +25,8 @@ index 0000000..0000000 100644
 +            }
          }
          BillingController.getInstance().startConnection();
-     }
+ 
+@@ -288,6 +290,9 @@ public class ApplicationLoader extends Application {
  
      private static void initAccount(int a) {
          UserConfig.getInstance(a).loadConfig();
@@ -97,7 +98,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -676,7 +676,7 @@ public class ConnectionsManager extends BaseController {
+@@ -682,7 +682,7 @@ public class ConnectionsManager extends BaseController {
              packageId = "";
          }
  

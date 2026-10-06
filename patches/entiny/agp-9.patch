@@ -4,15 +4,15 @@ Date: Mon, 5 Oct 2026 16:13:02 +0300
 Subject: [*] AGP 9.4.0, Gradle 9.6.0, target SDK 37
 
 ---
- TMessagesProj/build.gradle                    | 22 ++++++++++--------
- TMessagesProj_App/build.gradle                | 23 ++++++++-----------
- build.gradle                                  |  7 +++---
+ TMessagesProj/build.gradle                    | 33 ++++++++++---------
+ TMessagesProj_App/build.gradle                | 24 ++++++--------
+ build.gradle                                  |  7 ++--
  buildSrc/build.gradle.kts                     |  2 +-
- .../telegram/plugin/TelegramBuildAppPlugin.kt | 14 -----------
+ .../telegram/plugin/TelegramBuildAppPlugin.kt | 14 --------
  gradle.properties                             |  2 +-
  gradle/wrapper/gradle-wrapper.properties      |  2 +-
- settings.gradle                               |  8 ++++++-
- 8 files changed, 35 insertions(+), 45 deletions(-)
+ settings.gradle                               |  8 ++++-
+ 8 files changed, 40 insertions(+), 52 deletions(-)
 
 diff --git a/TMessagesProj/build.gradle b/TMessagesProj/build.gradle
 index 0000000..0000000 100644
@@ -34,7 +34,7 @@ index 0000000..0000000 100644
      implementation 'androidx.palette:palette:1.0.0'
      implementation 'androidx.exifinterface:exifinterface:1.3.6'
      implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-@@ -125,14 +125,15 @@ dependencies {
+@@ -189,22 +189,23 @@ def preprocessInuSources = tasks.register('preprocessInuSources') {
  }
  
  android {
@@ -44,8 +44,21 @@ index 0000000..0000000 100644
      ndkVersion "27.2.12479018"
  
 -    sourceSets.main.jniLibs.srcDirs = ['./jni/']
+-    sourceSets.androidTest.kotlin.srcDirs += ['src/androidTest/kotlin']
+-    sourceSets.main.kotlin.srcDir inuGeneratedSources
 +    sourceSets.main.jniLibs.directories.clear()
 +    sourceSets.main.jniLibs.directories.add('./jni/')
++    sourceSets.androidTest.kotlin.directories.add('src/androidTest/kotlin')
++    sourceSets.main.kotlin.directories.add(inuGeneratedSources.get().asFile.absolutePath)
+     if (rootProject.ext.inuPluginless) {
+-        sourceSets.androidTest.kotlin.setSrcDirs([])
+-        sourceSets.androidTest.assets.setSrcDirs([])
++        sourceSets.androidTest.kotlin.directories.clear()
++        sourceSets.androidTest.assets.directories.clear()
+     } else {
+-        sourceSets.androidTest.jniLibs.srcDirs += ["$rootDir/TMessagesProj_App/build/inuTestJniLibs"]
++        sourceSets.androidTest.jniLibs.directories.add("$rootDir/TMessagesProj_App/build/inuTestJniLibs")
+     }
  
      // inu
 -    sourceSets.main.java.srcDirs += 'src/main/kotlin-osmdroid'
@@ -53,7 +66,7 @@ index 0000000..0000000 100644
      // end inu
  
      externalNativeBuild {
-@@ -141,7 +142,7 @@ android {
+@@ -214,7 +215,7 @@ android {
          }
      }
  
@@ -62,16 +75,19 @@ index 0000000..0000000 100644
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
          disable 'BlockedPrivateApi'
-@@ -152,14 +153,11 @@ android {
+@@ -225,17 +226,13 @@ android {
          targetCompatibility JavaVersion.VERSION_1_8
      }
  
 -    kotlinOptions {
 -        jvmTarget = "1.8"
 -    }
- 
+-
  
      defaultConfig {
+         buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
+         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+         testInstrumentationRunnerArguments package: "desu.inugram"
 -        minSdkVersion 26
 -        targetSdkVersion 36
 +        minSdk 26
@@ -79,7 +95,7 @@ index 0000000..0000000 100644
  
          ndk {
              def filters = System.getenv('ABI_FILTERS')
-@@ -219,6 +217,10 @@ android {
+@@ -295,6 +292,10 @@ android {
          }
      }
  
@@ -101,7 +117,7 @@ index 0000000..0000000 100644
  
  repositories {
      mavenCentral()
-@@ -23,7 +22,7 @@ dependencies {
+@@ -31,7 +30,7 @@ dependencies {
  }
  
  android {
@@ -110,7 +126,7 @@ index 0000000..0000000 100644
      buildToolsVersion '36.0.0'
      ndkVersion "27.2.12479018"
  
-@@ -52,7 +51,7 @@ android {
+@@ -60,7 +59,7 @@ android {
          }
      }
  
@@ -119,7 +135,7 @@ index 0000000..0000000 100644
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
          disable 'BlockedPrivateApi'
-@@ -114,15 +113,10 @@ android {
+@@ -122,16 +121,10 @@ android {
  
      defaultConfig.versionCode = rootProject.ext.verCode
  
@@ -128,16 +144,17 @@ index 0000000..0000000 100644
 -            outputFileName = "app.apk"
 -        }
 -    }
- 
+-
      defaultConfig {
+         buildConfigField "boolean", "INU_PLUGINLESS", rootProject.ext.inuPluginless.toString()
 -        minSdkVersion 26
 -        targetSdkVersion 36
 +        minSdk 26
 +        targetSdk 37
          versionName rootProject.ext.verName
-         ndkVersion "27.2.12479018"
+         ndkVersion "29.0.14206865"
  
-@@ -152,12 +146,15 @@ android {
+@@ -167,12 +160,15 @@ android {
      }
      namespace 'org.telegram.messenger.regular'
  

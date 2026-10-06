@@ -1,0 +1,245 @@
+package desu.inugram
+
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import desu.inugram.helpers.CrashReporter
+import desu.inugram.helpers.LoginHelper
+import desu.inugram.helpers.ProxyVpnHelper
+import desu.inugram.helpers.ShortcutHelper
+import desu.inugram.helpers.UrlCleanerHelper
+import desu.inugram.helpers.cloud.CloudSettingsHelper
+import desu.inugram.helpers.dialogs.DrawerHelper
+import desu.inugram.helpers.font.FontHelper
+import desu.inugram.helpers.maps.MapsHelper
+// #if PLUGINS
+import desu.inugram.helpers.plugins.PluginManager
+// #endif
+import desu.inugram.helpers.security.PasscodeHelper
+import desu.inugram.helpers.theme.MonetHelper
+import desu.inugram.helpers.theme.NonIslandHelper
+import desu.inugram.helpers.update.ApkInstaller
+import desu.inugram.helpers.update.UpdateHelper
+import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.LocaleController.getString
+import org.telegram.messenger.MessageObject
+import org.telegram.messenger.MessagesController
+import org.telegram.messenger.NotificationCenter
+import org.telegram.messenger.R
+import org.telegram.messenger.Utilities
+import org.telegram.tgnet.TLObject
+import org.telegram.tgnet.tl.TL_update
+import org.telegram.ui.ActionBar.Theme
+import org.telegram.ui.Components.AnimatedFloat
+import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ChatActivityEnterView
+import org.telegram.ui.Components.GestureDetector2
+import org.telegram.ui.Components.GestureDetectorFixDoubleTap
+import org.telegram.ui.LaunchActivity
+import org.telegram.ui.LauncherIconController
+
+
+object InuHooks {
+    @JvmStatic
+    fun preInit(context: Context) {
+        CrashReporter.install()
+        InuConfig.load(context)
+        desu.inugram.helpers.network.CensorshipHelper.init()
+    }
+
+    /**
+     * Runs once `ApplicationLoader` has armed its main-thread handler: until it does,
+     * [AndroidUtilities.runOnUIThread] drops what it is given instead of posting it.
+     */
+    @JvmStatic
+    fun init(context: Context) {
+        FontHelper.init(context)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            FontHelper.installGlobal()
+        }
+        syncDoubleTapDelay()
+        syncAnimationSpeed()
+        syncChatInputRowHeight()
+        desu.inugram.helpers.media.DownloadKeepAliveHelper.startPolling()
+        (context.applicationContext as? android.app.Application)?.let { desu.inugram.helpers.MemoryTrimHelper.init(it) }
+        (context.applicationContext as? android.app.Application)?.let { desu.inugram.helpers.SystemBarsDiagHelper.init(it) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MonetHelper.registerOverlayChangeReceiver(context)
+            MonetHelper.registerThemeReloadReceiver(context)
+        }
+        Utilities.globalQueue.postRunnable {
+            UpdateHelper.clearPendingIfInstalled()
+            ApkInstaller.dismissInstalledNotification()
+        }
+        Utilities.globalQueue.postRunnable {
+            CloudSettingsHelper.attachAutoSyncListener()
+            ProxyVpnHelper.init(context)
+            UrlCleanerHelper.preload()
+        }
+        // #if PLUGINS
+        PluginManager.init(context)
+        // #endif
+    }
+
+    @JvmStatic
+    fun syncClockFormat() {
+        org.telegram.messenger.LocaleController.is24HourFormat = when (InuConfig.CLOCK_FORMAT.value) {
+            InuConfig.ClockFormatItem.TWELVE_HOUR -> false
+            InuConfig.ClockFormatItem.TWENTY_FOUR_HOUR -> true
+            else -> android.text.format.DateFormat.is24HourFormat(org.telegram.messenger.ApplicationLoader.applicationContext)
+        }
+        org.telegram.messenger.LocaleController.getInstance().recreateFormatters()
+    }
+
+    private val newMessagesObserver = NotificationCenter.NotificationCenterDelegate { id, acc, args ->
+        if (id != NotificationCenter.didReceiveNewMessages) return@NotificationCenterDelegate
+        @Suppress("UNCHECKED_CAST")
+        val messages = args[1] as? ArrayList<MessageObject> ?: return@NotificationCenterDelegate
+        for (msg in messages) onNewMessage(msg, acc)
+    }
+
+    // entiny: re-assert presence on reconnect because stock resets connection-level online state
+    private val connectionStateObserver = NotificationCenter.NotificationCenterDelegate { id, acc, _ ->
+        if (id != NotificationCenter.didUpdateConnectionState) return@NotificationCenterDelegate
+        if (org.telegram.tgnet.ConnectionsManager.getInstance(acc).connectionState
+            != org.telegram.tgnet.ConnectionsManager.ConnectionStateConnected
+        ) return@NotificationCenterDelegate
+        desu.inugram.helpers.security.GhostHelper.syncPresence(acc)
+    }
+
+    @JvmStatic
+    fun onAppBoot() {
+        // #if PLUGINS
+        PluginManager.onAppBoot()
+        // #endif
+    }
+
+    @JvmStatic
+    fun onMessagesControllerCreated(messagesController: MessagesController, account: Int) {
+        MapsHelper.syncMapProvider(messagesController)
+        desu.inugram.helpers.dialogs.PinHelper.load(account)
+        desu.inugram.helpers.dialogs.FolderMembershipHelper.load(account)
+        desu.inugram.helpers.dialogs.RecentChatsHelper.load(account)
+        desu.inugram.helpers.security.PresenceHelper.load(account)
+        desu.inugram.helpers.security.GhostHelper.syncPresence(account)
+        desu.inugram.helpers.badges.BadgeRegistry.init(account)
+        desu.inugram.helpers.chat.SavedMessagesHelper.pruneIfNeeded(account)
+        desu.inugram.helpers.security.PresenceHelper.pruneIfNeeded(account)
+        AndroidUtilities.runOnUIThread {
+            val nc = NotificationCenter.getInstance(account)
+            // entiny: drop stale observers before adding because MessagesController can recreate without clearing them
+            nc.removeObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
+            nc.addObserver(newMessagesObserver, NotificationCenter.didReceiveNewMessages)
+            nc.removeObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
+            nc.addObserver(connectionStateObserver, NotificationCenter.didUpdateConnectionState)
+        }
+    }
+
+    fun onNewMessage(message: MessageObject, account: Int) {
+        if (message.messageOwner != null) UpdateHelper.onNewMessage(message.messageOwner)
+    }
+
+    @JvmStatic
+    fun syncAnimationSpeed() {
+        try {
+            Class.forName("android.animation.ValueAnimator")
+                .getMethod("setDurationScale", Float::class.javaPrimitiveType)
+                .invoke(null, 1f / InuConfig.ANIMATION_SPEED.value)
+        } catch (_: Throwable) {
+        }
+        AnimatedFloat.inu_multiplier = InuConfig.ANIMATION_SPEED.value
+    }
+
+    @JvmStatic
+    fun onUpdate(update: TLObject?, account: Int) {
+        if (update is TL_update.TL_updateUserStatus) {
+            desu.inugram.helpers.security.PresenceHelper.onStatusUpdate(update, account)
+        }
+        LoginHelper.onUpdate(update, account)
+    }
+
+    @JvmStatic
+    fun handleIntent(activity: LaunchActivity, intent: Intent?): Boolean {
+        return PasscodeHelper.tryHandleDeepLink(activity, intent)
+            || SearchRegistry.tryHandleDeepLink(activity, intent)
+            || tryHandleUpdateDeepLink(activity, intent)
+            || tryHandleFunDeepLink(activity, intent)
+            || ShortcutHelper.handleAction(activity, intent)
+    }
+
+    private fun tryHandleUpdateDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {
+        val uri = intent?.data ?: return false
+        if (uri.scheme != "tg") return false
+        val host = uri.host ?: uri.schemeSpecificPart?.removePrefix("//")?.substringBefore('/')
+        if (host != "update") return false
+        UpdateHelper.checkForCustomUpdate(true) {
+            if (UpdateHelper.pendingBetaUpdate != null) UpdateHelper.revealPendingUpdate()
+        }
+        return true
+    }
+
+    private fun tryHandleFunDeepLink(activity: LaunchActivity, intent: Intent?): Boolean {
+        val uri = intent?.data ?: return false
+        if (uri.scheme != "tg") return false
+        val host = uri.host ?: uri.schemeSpecificPart?.removePrefix("//")?.substringBefore('/')
+        val (icon, text) = when (host) {
+            "nya" -> R.raw.msg_emoji_cat to "meow~"
+            "woof" -> R.raw.msg_emoji_activities to "woof :3"
+            else -> return false
+        }
+        val fragment = activity.actionBarLayout?.lastFragment ?: return false
+        BulletinFactory.of(fragment).createSimpleBulletin(icon, text).show()
+        return true
+    }
+
+    @JvmStatic
+    fun onAuthSuccess(account: Int) {
+        PasscodeHelper.removeForAccount(account)
+    }
+
+    @JvmStatic
+    fun onResume(launchActivity: LaunchActivity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MonetHelper.refreshMonetThemeIfChanged()
+        }
+        val bg = Theme.getColor(Theme.key_windowBackgroundWhite)
+        launchActivity.window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(bg))
+        CrashReporter.maybeShowReportSheet(launchActivity)
+        desu.inugram.helpers.LogsHelper.trimIfNeeded()
+        ProxyVpnHelper.reconcile()
+        DrawerHelper.refreshUpdateState()
+        desu.inugram.helpers.security.GhostHelper.syncPresence(org.telegram.messenger.UserConfig.selectedAccount)
+        // #if PLUGINS
+        PluginManager.onAppInteractive()
+        // #endif
+    }
+
+    @JvmStatic
+    fun syncDoubleTapDelay() {
+        val delay = InuConfig.DOUBLE_TAP_DELAY.value
+        GestureDetectorFixDoubleTap.GestureDetectorCompatImplBase.DOUBLE_TAP_TIMEOUT = delay
+        GestureDetector2.DOUBLE_TAP_TIMEOUT = delay
+    }
+
+    @JvmStatic
+    fun syncChatInputRowHeight() {
+        val height = NonIslandHelper.chatInputRowHeight()
+        val delta = (height - 44) / 2
+        ChatActivityEnterView.DEFAULT_HEIGHT = height
+        ChatActivityEnterView.inu_FIELD_PADDING_TOP = 9 + delta
+        ChatActivityEnterView.inu_FIELD_PADDING_BOTTOM = 10 + delta
+        ChatActivityEnterView.inu_ICON_PADDING = 7.5f + delta
+    }
+
+    @JvmStatic
+    fun getCurrentAppIconLicense(): CharSequence {
+        val current = LauncherIconController.LauncherIcon.entries
+            .firstOrNull { LauncherIconController.isEnabled(it) }
+        val resId = when (current) {
+            LauncherIconController.LauncherIcon.DEFAULT,
+            LauncherIconController.LauncherIcon.OLD -> R.string.InuAppIconLicenseInugram
+            else -> if (current?.concept == true) R.string.InuAppIconLicenseConcept else R.string.InuAppIconLicenseTelegram
+        }
+        return AndroidUtilities.replaceTags(getString(resId))
+    }
+}

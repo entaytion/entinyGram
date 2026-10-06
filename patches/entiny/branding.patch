@@ -45,12 +45,12 @@ index 0000000..0000000 100644
 +    if (!project.hasProperty("NOMAPS")) {
 +        implementation 'org.maplibre.gl:android-sdk:13.1.0'
 +    }
-     // end inu
- 
- //    implementation 'com.google.mlkit:translate:17.0.3'
-@@ -120,6 +122,12 @@ android {
- 
-     sourceSets.main.jniLibs.srcDirs = ['./jni/']
+     androidTestImplementation 'androidx.test:runner:1.6.2'
+     androidTestImplementation 'junit:junit:4.13.2'
+     androidTestImplementation "org.jetbrains.kotlin:kotlin-test:2.1.20"
+@@ -192,6 +194,12 @@ android {
+         sourceSets.androidTest.jniLibs.srcDirs += ["$rootDir/TMessagesProj_App/build/inuTestJniLibs"]
+     }
  
 +    // inu
 +    if (!project.hasProperty("NOMAPS")) {
@@ -548,7 +548,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -26,7 +26,7 @@ android {
+@@ -34,7 +34,7 @@ android {
      compileSdkVersion 36
      buildToolsVersion '36.0.0'
  

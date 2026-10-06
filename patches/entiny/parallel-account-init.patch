@@ -56,8 +56,8 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -280,6 +280,21 @@ public class ApplicationLoader extends Application {
-         BillingController.getInstance().startConnection();
+@@ -286,6 +286,21 @@ public class ApplicationLoader extends Application {
+         }
      }
  
 +    private static void initAccount(int a) {
