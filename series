@@ -320,7 +320,6 @@ bugfix/recycler-stale-longpress-position.patch
 bugfix/message-drawable-oom-cache.patch
 feature/switch-account-shortcut.patch
 feature/md3-navbar.patch
-bugfix/stale-unread-reaction.patch
 bugfix/native-byte-buffer-pool.patch
 bugfix/chat-reply-line-leak.patch
 bugfix/bot-location-context.patch

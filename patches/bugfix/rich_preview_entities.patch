@@ -20,7 +20,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.community.CommunityUtils;
  import org.telegram.ui.web.BotWebViewContainer;
  
-@@ -6425,6 +6426,15 @@ public class MessageObject {
+@@ -6428,6 +6429,15 @@ public class MessageObject {
                      return out;
                  }
              }
