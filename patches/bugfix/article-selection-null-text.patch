@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 16:08:40 +0400
+Subject: fix crash copying multi-block article selection with empty blocks
+
+---
+ .../java/org/telegram/ui/Cells/TextSelectionHelper.java     | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextSelectionHelper.java
+@@ -3826,11 +3826,15 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
+                 } else {
+                     int n = childCountByPosition.get(i);
+                     for (int k = startViewChildPosition; k < n; k++) {
++                        CharSequence text = textByPosition.get(i + (k << 16));
++                        if (text == null) {
++                            continue;
++                        }
+                         CharSequence prefix = prefixTextByPosition.get(i + (k << 16));
+                         if (prefix != null) {
+                             stringBuilder.append(prefix).append(' ');
+                         }
+-                        stringBuilder.append(textByPosition.get(i + (k << 16)));
++                        stringBuilder.append(text);
+                         stringBuilder.append('\n');
+                     }
+                 }

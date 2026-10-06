@@ -159,7 +159,7 @@ index 0000000..0000000 100644
                      } else {
                          nameTextView[a].setRightDrawable(null);
                      }
-@@ -16675,7 +16681,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16674,7 +16680,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          if (collectibleHint != null) {
              collectibleHint.hide();
          }

@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 16:32:30 +0400
+Subject: fix hashtags and custom emoji missing from rich message previews
+
+---
+ .../java/org/telegram/messenger/MessageObject.java     | 10 ++++++++++
+ .../main/java/org/telegram/ui/Cells/DialogCell.java    |  4 ++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
+@@ -101,6 +101,7 @@ import org.telegram.ui.PhotoViewer;
+ import org.telegram.ui.Stars.StarsController;
+ import org.telegram.ui.Stars.StarsIntroActivity;
+ import org.telegram.ui.Stories.StoriesController;
++import org.telegram.ui.iv.RichTextStyle;
+ import org.telegram.ui.community.CommunityUtils;
+ import org.telegram.ui.web.BotWebViewContainer;
+ 
+@@ -6428,6 +6429,15 @@ public class MessageObject {
+                     return out;
+                 }
+             }
++        } else if (text instanceof TL_iv.textCustomEmoji) {
++            final TL_iv.textCustomEmoji customEmoji = (TL_iv.textCustomEmoji) text;
++            out.append(TextUtils.isEmpty(customEmoji.alt) ? "😀" : customEmoji.alt);
++            out.setSpan(new AnimatedEmojiSpan(customEmoji.document_id, null), start, out.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
++        } else if (text instanceof TL_iv.textDiff) {
++            final TL_iv.textDiff diff = (TL_iv.textDiff) text;
++            formatRichText(RichTextStyle.isEmpty(diff.text) ? diff.old_text : diff.text, isOut, photoViewer, maxLength, out, flags);
++        } else if (text.text != null) {
++            formatRichText(text.text, isOut, photoViewer, maxLength, out, flags);
+         }
+         if (out.length() > start && flags != 0) {
+             final TextStyleSpan.TextStyleRun run = new TextStyleSpan.TextStyleRun();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -1630,7 +1630,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                     } else {
+                         CharSequence mess;
+                         if (draftMessage != null && draftMessage.rich_message != null) {
+-                            mess = MessageObject.formatRichMessage(draftMessage.rich_message, false, false, 150);
++                            mess = AnimatedEmojiSpan.cloneSpans(MessageObject.formatRichMessage(draftMessage.rich_message, false, false, 150), -1, Theme.dialogs_messagePaint[paintIndex].getFontMetricsInt());
+                         } else if (draftVoice) {
+                             mess = getString(R.string.AttachAudio);
+                         } else if (draftMessage != null) {
+@@ -5986,7 +5986,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 final TL_iv.PageBlock block = message.messageOwner.rich_message.blocks.get(0);
+                 accentColor = MessageObject.isBlueBlock(block);
+             }
+-            stringBuilder = formatInternal(messageFormatType, message.messageText, messageNameString);
++            stringBuilder = formatInternal(messageFormatType, AnimatedEmojiSpan.cloneSpans(message.messageText, -1, Theme.dialogs_messagePaint[paintIndex].getFontMetricsInt()), messageNameString);
+             if (accentColor && !isForumCell()) {
+                 try {
+                     stringBuilder.setSpan(new ForegroundColorSpanThemable(Theme.key_chats_actionMessage, resourcesProvider), hasNameInMessage ? messageNameString.length() + 2 : 0, stringBuilder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

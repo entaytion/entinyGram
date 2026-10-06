@@ -78,13 +78,13 @@ index 0000000..0000000 100644
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 @@ -69,6 +69,7 @@ import androidx.core.graphics.ColorUtils;
  
- import com.google.android.exoplayer2.ExoPlayer;
+ import androidx.media3.exoplayer.ExoPlayer;
  
 +import desu.inugram.helpers.chat.RoundRecorderHelper;
  import desu.inugram.helpers.chat.VoiceRecorderHelper;
  import org.telegram.messenger.AndroidUtilities;
  import org.telegram.messenger.ApplicationLoader;
-@@ -325,6 +326,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -325,6 +326,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          buttonsLayout.setOrientation(LinearLayout.HORIZONTAL);
          addView(buttonsLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 56, Gravity.LEFT | Gravity.BOTTOM, 1, 0, 0, 0));
  
@@ -93,7 +93,7 @@ index 0000000..0000000 100644
          switchCameraButton = new FlashViews.ImageViewInvertable(context);
          switchCameraButton.setScaleType(ImageView.ScaleType.CENTER);
          switchCameraButton.setContentDescription(LocaleController.getString(R.string.AccDescrSwitchCamera));
-@@ -595,6 +598,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -595,6 +598,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
  
      public void destroy(boolean async) {
          if (useCamera2) {
@@ -101,7 +101,7 @@ index 0000000..0000000 100644
              for (int a = 0; a < camera2Sessions.length; ++a) {
                  if (camera2Sessions[a] != null) {
                      camera2Sessions[a].destroy(async);
-@@ -666,6 +670,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -666,6 +670,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          if (recording) {
              cancelled = recordedTime < 800;
              recording = false;
@@ -109,7 +109,7 @@ index 0000000..0000000 100644
              updateFlash();
              if (cameraThread != null) {
                  NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, cancelled ? 4 : 2);
-@@ -774,8 +779,9 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -774,8 +779,9 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          }
  
          if (useCamera2) {
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                  for (int a = 0; a < 2; ++a) {
                      if (camera2Sessions[a] == null) {
                          camera2Sessions[a] = Camera2Session.create(a == 0, MessagesController.getInstance(UserConfig.selectedAccount).roundVideoSize, MessagesController.getInstance(UserConfig.selectedAccount).roundVideoSize);
-@@ -791,6 +797,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -791,6 +797,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      bothCameras = false;
                  }
                  if (camera2SessionCurrent == null) return;
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
              } else {
                  camera2SessionCurrent = camera2Sessions[isFrontface ? 0 : 1] = Camera2Session.create(isFrontface, MessagesController.getInstance(UserConfig.selectedAccount).roundVideoSize, MessagesController.getInstance(UserConfig.selectedAccount).roundVideoSize);
                  if (camera2SessionCurrent == null) return;
-@@ -1012,6 +1020,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1018,6 +1026,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
              cancelled = recordedTime < 800;
              recording = false;
              flashing = false;
@@ -137,7 +137,7 @@ index 0000000..0000000 100644
              updateFlash();
              int reason;
              if (cancelled) {
-@@ -1071,6 +1080,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1077,6 +1086,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          cancelled = true;
          recording = false;
          flashing = false;
@@ -145,7 +145,7 @@ index 0000000..0000000 100644
          updateFlash();
          NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStopped, recordingGuid, byGesture ? 0 : 6);
          if (cameraThread != null) {
-@@ -1161,6 +1171,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1167,6 +1177,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          initCamera();
          cameraReady = false;
          cameraThread.reinitForNewCamera();
@@ -153,7 +153,7 @@ index 0000000..0000000 100644
      }
  
      // Old Camera1 API
-@@ -1327,9 +1338,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1333,9 +1344,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
  
              if (useCamera2) {
                  if (bothCameras) {
@@ -164,7 +164,7 @@ index 0000000..0000000 100644
                  } else {
                      if (index == 1) return;
                      cameraThread.setCurrentSession(camera2SessionCurrent);
-@@ -1973,6 +1982,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -1979,6 +1988,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
  
                      textureBuffer = ByteBuffer.allocateDirect(texData.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
                      textureBuffer.put(texData).position(0);
@@ -172,7 +172,7 @@ index 0000000..0000000 100644
                      break;
                  }
              }
-@@ -3248,6 +3258,8 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3254,6 +3264,8 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                      recordPlusTime = fromPause ? recordedTime : 0;
                      recordStartTime = System.currentTimeMillis();
                      recording = true;
@@ -181,7 +181,7 @@ index 0000000..0000000 100644
                      updateFlash();
                      invalidate();
                      NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.recordStarted, recordingGuid, false);
-@@ -3758,6 +3770,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3765,6 +3777,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  pinchStartDistance = (float) Math.hypot(ev.getX(1) - ev.getX(0), ev.getY(1) - ev.getY(0));
  
                  pinchScale = 1f;
@@ -189,7 +189,7 @@ index 0000000..0000000 100644
  
                  pointerId1 = ev.getPointerId(0);
                  pointerId2 = ev.getPointerId(1);
-@@ -3786,15 +3799,17 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3793,15 +3806,17 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
                  return false;
              }
              pinchScale = (float) Math.hypot(ev.getX(index2) - ev.getX(index1), ev.getY(index2) - ev.getY(index1)) / pinchStartDistance;
@@ -209,7 +209,7 @@ index 0000000..0000000 100644
          } else if ((ev.getActionMasked() == MotionEvent.ACTION_UP || (ev.getActionMasked() == MotionEvent.ACTION_POINTER_UP && checkPointerIds(ev)) || ev.getActionMasked() == MotionEvent.ACTION_CANCEL) && isInPinchToZoomTouchMode) {
              isInPinchToZoomTouchMode = false;
              finishZoom();
-@@ -3803,32 +3818,38 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -3810,32 +3825,38 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
      }
  
      ValueAnimator finishZoomTransition;

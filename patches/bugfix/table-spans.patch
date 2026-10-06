@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 15:45:42 +0400
+Subject: fix crash on tables with oversized spans or rows wider than the first
+
+---
+ .../telegram/messenger/RichMessageLayout.java   |  9 +--------
+ .../java/org/telegram/ui/ArticleViewer.java     | 10 +---------
+ .../org/telegram/ui/Components/TableLayout.java | 17 +++++++++++++++++
+ 3 files changed, 19 insertions(+), 17 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+@@ -4195,14 +4195,7 @@ public class RichMessageLayout {
+             }
+             tableLayout.setMinimumCellHeight(dp(block.compact ? 18 : 36));
+ 
+-            int maxCols = 0;
+-            if (!block.rows.isEmpty()) {
+-                final TL_iv.pageTableRow row0 = block.rows.get(0);
+-                for (int c = 0; c < row0.cells.size(); ++c) {
+-                    final TL_iv.pageTableCell cell = row0.cells.get(c);
+-                    maxCols += (cell.colspan != 0 ? cell.colspan : 1);
+-                }
+-            }
++            int maxCols = TableLayout.inu_sanitizeSpans(block.rows);
+             for (int r = 0; r < block.rows.size(); ++r) {
+                 final TL_iv.pageTableRow row = block.rows.get(r);
+                 int cols = 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ArticleViewer.java
+@@ -9700,15 +9700,7 @@ public class ArticleViewer extends IArticleViewer implements NotificationCenter.
+             tableLayout.setStriped(currentBlock.striped);
+             tableLayout.setRtl(adapter != null && adapter.isRtl);
+ 
+-            int maxCols = 0;
+-
+-            if (!currentBlock.rows.isEmpty()) {
+-                TL_iv.pageTableRow row = currentBlock.rows.get(0);
+-                for (int c = 0, size2 = row.cells.size(); c < size2; c++) {
+-                    TL_iv.pageTableCell cell = row.cells.get(c);
+-                    maxCols += (cell.colspan != 0 ? cell.colspan : 1);
+-                }
+-            }
++            int maxCols = TableLayout.inu_sanitizeSpans(currentBlock.rows);
+ 
+             for (int r = 0, size = currentBlock.rows.size(); r < size; r++) {
+                 TL_iv.pageTableRow row = currentBlock.rows.get(r);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TableLayout.java
+@@ -412,6 +412,23 @@ public class TableLayout extends View {
+ 
+     private ArrayList<Child> childrens = new ArrayList<>();
+ 
++    // html caps colspan at 1000
++    private static final int inu_MAX_COLSPAN = 1000;
++
++    public static int inu_sanitizeSpans(ArrayList<TL_iv.pageTableRow> rows) {
++        int columns = 0;
++        for (int r = 0; r < rows.size(); r++) {
++            int cols = 0;
++            for (TL_iv.pageTableCell cell : rows.get(r).cells) {
++                cell.colspan = Math.max(1, Math.min(cell.colspan, inu_MAX_COLSPAN));
++                cell.rowspan = Math.max(1, Math.min(cell.rowspan, rows.size() - r));
++                cols += cell.colspan;
++            }
++            columns = Math.max(columns, cols);
++        }
++        return columns;
++    }
++
+     public void addChild(int x, int y, int colspan, int rowspan) {
+         Child child = new Child(childrens.size());
+         LayoutParams layoutParams = new LayoutParams();

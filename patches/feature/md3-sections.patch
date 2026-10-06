@@ -4,6 +4,7 @@ Date: Thu, 28 May 2026 22:18:07 +0400
 Subject: md3-style sections redesign
 
 ---
+ .../telegram/messenger/RichMessageLayout.java |  2 +-
  .../ui/ActionBar/ThemeDescription.java        |  7 ++-
  .../java/org/telegram/ui/BoostsActivity.java  |  5 ++
  .../java/org/telegram/ui/Cells/TextCell.java  | 35 ++++++++++--
@@ -15,15 +16,30 @@ Subject: md3-style sections redesign
  .../org/telegram/ui/ChatUsersActivity.java    |  6 +++
  .../telegram/ui/Components/ItemOptions.java   |  8 +++
  .../ui/Components/RecyclerListView.java       | 54 ++++++++++++++++---
+ .../ui/Components/TranslateAlert3.java        |  3 +-
  .../ui/Components/UniversalAdapter.java       | 15 +++++-
  .../telegram/ui/LiteModeSettingsActivity.java |  7 +++
+ .../java/org/telegram/ui/LogoutActivity.java  |  4 +-
  .../telegram/ui/MessageStatisticActivity.java |  2 +
  .../org/telegram/ui/PeerColorActivity.java    |  9 ++--
  .../org/telegram/ui/ProxyListActivity.java    |  5 --
  .../org/telegram/ui/SettingsActivity.java     | 18 +++++++
  .../org/telegram/ui/StatisticActivity.java    |  1 +
- 18 files changed, 168 insertions(+), 28 deletions(-)
+ 21 files changed, 174 insertions(+), 31 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/RichMessageLayout.java
+@@ -10012,7 +10012,7 @@ public class RichMessageLayout {
+             @Override
+             public PreviewView createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
+                 final PreviewView cell = new PreviewView(context, currentAccount, resourcesProvider);
+-                cell.setPadding(dp(20), 0, dp(20), dp(16));
++                cell.setPadding(dp(20), desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? dp(16) : 0, dp(20), dp(16));
+                 return cell;
+             }
+ 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ThemeDescription.java
@@ -36,19 +52,19 @@ index 0000000..0000000 100644
  import org.telegram.ui.Components.AnimatedArrowDrawable;
  import org.telegram.ui.Components.AudioPlayerAlert;
  import org.telegram.ui.Components.AvatarDrawable;
-@@ -529,7 +530,11 @@ public class ThemeDescription {
-                             }
-                         }
-                     } else if ((changeFlags & FLAG_CELLBACKGROUNDCOLOR) != 0) {
--                        child.setBackgroundColor(color);
-+                        if (child instanceof HeaderCell && viewToInvalidate instanceof RecyclerListView && ((RecyclerListView) viewToInvalidate).hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
-+                            // skip
-+                        } else {
-+                            child.setBackgroundColor(color);
-+                        }
-                     } else if ((changeFlags & FLAG_TEXTCOLOR) != 0) {
-                         if (child instanceof TextView) {
-                             ((TextView) child).setTextColor(color);
+@@ -552,7 +553,11 @@ public class ThemeDescription {
+                 }
+             }
+         } else if ((changeFlags & FLAG_CELLBACKGROUNDCOLOR) != 0) {
+-            child.setBackgroundColor(color);
++            if (child instanceof HeaderCell && viewToInvalidate instanceof RecyclerListView && ((RecyclerListView) viewToInvalidate).hasSections() && desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
++                // skip
++            } else {
++                child.setBackgroundColor(color);
++            }
+         } else if ((changeFlags & FLAG_TEXTCOLOR) != 0) {
+             if (child instanceof TextView) {
+                 ((TextView) child).setTextColor(color);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/BoostsActivity.java
@@ -417,7 +433,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -3257,12 +3277,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3261,12 +3281,12 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
          return sectionsItemDecoration != null;
      }
  
@@ -433,7 +449,7 @@ index 0000000..0000000 100644
      public boolean applyPaddingToSections = false;
  
      public static final int TAG_NOT_SECTION = -33024;
-@@ -3288,7 +3308,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3292,7 +3312,7 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      }
      public void setSections(int padding, float roundRadius, boolean topPadding) {
          setSections(
@@ -442,7 +458,7 @@ index 0000000..0000000 100644
              padding,
              roundRadius,
              this::drawBackgroundRect,
-@@ -3405,6 +3425,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3409,6 +3429,9 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
                          if (last) outRect.bottom = padding;
                      }
                  }
@@ -452,7 +468,7 @@ index 0000000..0000000 100644
              }
          }
  
-@@ -3476,6 +3499,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3480,6 +3503,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      public void drawSectionsBackgrounds(Canvas canvas) {
          if (drawSectionBackground == null) return;
  
@@ -464,7 +480,7 @@ index 0000000..0000000 100644
          if (isAnimating()) {
              if (sections == null) {
                  sections = new ArrayList<>();
-@@ -3622,6 +3650,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3626,6 +3654,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
          if (child == null || !sectionsItemDecoration.isSectionItem.run(child))
              return;
  
@@ -476,7 +492,7 @@ index 0000000..0000000 100644
          boolean prev, next;
          int position = getChildAdapterPosition(child);
          if (position == RecyclerView.NO_POSITION) {
-@@ -3682,6 +3715,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
+@@ -3686,6 +3719,11 @@ public class RecyclerListView extends RecyclerView implements IBlur3Capture {
      public Drawable getClipBackground(View child, boolean forceRound) {
          if (child.getParent() != this || !hasSections() || !sectionsItemDecoration.isSectionItem.run(child)) return null;
  
@@ -488,6 +504,27 @@ index 0000000..0000000 100644
          boolean prev, next;
          int position = getChildAdapterPosition(child);
          if (position == RecyclerView.NO_POSITION) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
+@@ -577,6 +577,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+             anotherExampleIcon.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), PorterDuff.Mode.SRC_IN));
+             anotherExampleText.setTextColor(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider));
+             anotherExample.setBackground(Theme.createRadSelectorDrawable(Theme.multAlpha(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), .10f), dp(8), dp(8)));
++            desu.inugram.helpers.theme.M3SectionsHelper.styleTranslateHeader(this, resourcesProvider);
+         }
+ 
+         public void set(CharSequence text1, CharSequence text2, CharSequence text3, View.OnClickListener onText2Click, boolean emojify, View.OnClickListener onEmojifyClick, View.OnClickListener onAnotherExampleClick) {
+@@ -691,7 +692,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+             this.resourcesProvider = resourcesProvider;
+ 
+             setClipToPadding(false);
+-            setPadding(dp(20), 0, dp(20), dp(16));
++            setPadding(dp(20), desu.inugram.helpers.theme.M3SectionsHelper.isEnabled() ? dp(16) : 0, dp(20), dp(16));
+ 
+             shortTextView = new SpoilersTextView(context) {
+                 private GradientClip clip = new GradientClip();
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UniversalAdapter.java
@@ -566,6 +603,21 @@ index 0000000..0000000 100644
              } else if (viewType == VIEW_TYPE_SWITCH2) {
                  TextCell textCell = (TextCell) holder.itemView;
                  if (item.type == SWITCH_TYPE_SMOOTH_TRANSITIONS) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LogoutActivity.java
+@@ -255,7 +255,9 @@ public class LogoutActivity extends BaseFragment {
+             switch (viewType) {
+                 case 0: {
+                     view = new HeaderCell(mContext);
+-                    view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
++                    if (!desu.inugram.helpers.theme.M3SectionsHelper.isEnabled()) {
++                        view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
++                    }
+                     break;
+                 }
+                 case 1: {
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/MessageStatisticActivity.java
@@ -587,7 +639,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
-@@ -2289,10 +2289,13 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+@@ -2535,10 +2535,13 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
  
          @Override
          protected void dispatchDraw(Canvas canvas) {
@@ -608,7 +660,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
-@@ -1008,27 +1008,22 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+@@ -949,27 +949,22 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                      break;
                  case VIEW_TYPE_TEXT_SETTING:
                      view = new TextSettingsCell(mContext);
@@ -640,7 +692,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -1195,6 +1195,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1202,6 +1202,8 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              titleView.setTranslationX(icon == 0 ? dp(2) : 0);
              subtitleView.setTranslationX(icon == 0 ? dp(2) : 0);
  
@@ -649,7 +701,7 @@ index 0000000..0000000 100644
              iconBackground.setColor(iconColorTop, iconColorBottom);
              iconView.setImageResource(icon);
              titleView.setText(title);
-@@ -1210,6 +1212,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1217,6 +1219,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          @Override
          protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -663,7 +715,7 @@ index 0000000..0000000 100644
              super.onMeasure(
                  MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
                  MeasureSpec.makeMeasureSpec(dp(mini ? 44 : twoLines ? 60 : 50), MeasureSpec.EXACTLY)
-@@ -1238,8 +1247,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -1245,8 +1254,17 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                  this.border = drawBorder;
              }
  

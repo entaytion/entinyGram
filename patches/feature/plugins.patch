@@ -1,0 +1,1006 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Wed, 2 Sep 2026 05:51:47 +0400
+Subject: Add the QuickJS plugin engine (hooks, action rows)
+
+---
+ TMessagesProj/jni/gifvideo.cpp                |  13 ++
+ .../messenger/MessagesController.java         | 124 ++++++++++--------
+ .../messenger/SendMessageChatArguments.java   |   7 +
+ .../messenger/SendMessagesHelper.java         |  38 +++++-
+ .../telegram/tgnet/ConnectionsManager.java    |   8 +-
+ .../java/org/telegram/ui/Cells/TextCell.java  |   2 +-
+ .../java/org/telegram/ui/ChatActivity.java    | 117 ++++++++++++++---
+ .../ui/Components/AnimatedFileNative.java     |   7 +
+ .../ui/Components/ChatAvatarContainer.java    |   9 +-
+ .../org/telegram/ui/GroupCreateActivity.java  |  33 +++--
+ .../java/org/telegram/ui/LaunchActivity.java  |   1 +
+ 11 files changed, 269 insertions(+), 90 deletions(-)
+
+diff --git a/TMessagesProj/jni/gifvideo.cpp b/TMessagesProj/jni/gifvideo.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/gifvideo.cpp
++++ b/TMessagesProj/jni/gifvideo.cpp
+@@ -954,6 +954,19 @@ extern "C" JNIEXPORT int JNICALL Java_org_telegram_ui_Components_AnimatedFileNat
+     return result;
+ }
+ 
++extern "C" JNIEXPORT jint JNICALL Java_org_telegram_ui_Components_AnimatedFileNative_nInuWriteCurrentFrame(JNIEnv *env, jclass clazz, jlong ptr, jobject bitmap, jintArray data) {
++    if (ptr == 0 || bitmap == nullptr || data == nullptr) {
++        return 0;
++    }
++    VideoInfo *info = (VideoInfo *) (intptr_t) ptr;
++    AVFrame *frame = info->reader->frame();
++    if (frame == nullptr || frame->data[0] == nullptr) {
++        return 0;
++    }
++    writeFrameToBitmap(env, info, frame, data, bitmap);
++    return 1;
++}
++
+ extern "C" JNIEXPORT jint JNICALL Java_org_telegram_ui_Components_AnimatedFileNative_nGetVideoFrame(JNIEnv *env, jclass clazz, jlong ptr, jobject bitmap, jintArray data, jboolean preview, jfloat start_time, jfloat end_time, jboolean loop) {
+     if (ptr == 0) {
+         return 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -8173,7 +8173,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         }));
+     }
+ 
+-    protected void processNewChannelDifferenceParams(int pts, int pts_count, long channelId) {
++    public void processNewChannelDifferenceParams(int pts, int pts_count, long channelId) {
+         if (BuildVars.LOGS_ENABLED) {
+             FileLog.d("processNewChannelDifferenceParams pts = " + pts + " pts_count = " + pts_count + " channeldId = " + channelId);
+         }
+@@ -16785,7 +16785,10 @@ public class MessagesController extends BaseController implements NotificationCe
+                         }
+                     }
+ 
+-                    Utilities.stageQueue.postRunnable(() -> {
++                    Utilities.stageQueue.postRunnable(new Runnable() { public void run() {
++                        if (desu.inugram.helpers.plugins.telegram.PluginUpdates.onDifference(res.new_messages, res.other_updates, currentAccount, this)) {
++                            return;
++                        }
+                         boolean notifyAbountDifference = true;
+                         if (res instanceof TLRPC.TL_updates_channelDifference || res instanceof TLRPC.TL_updates_channelDifferenceEmpty) {
+                             if (!res.new_messages.isEmpty()) {
+@@ -16896,7 +16899,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.onReceivedChannelDifference, channelId);
+                             });
+                         }
+-                    });
++                    }});
+                 });
+             } else if (error != null) {
+                 AndroidUtilities.runOnUIThread(() -> {
+@@ -17043,7 +17046,10 @@ public class MessagesController extends BaseController implements NotificationCe
+                             }
+                         }
+ 
+-                        Utilities.stageQueue.postRunnable(() -> {
++                        Utilities.stageQueue.postRunnable(new Runnable() { public void run() {
++                            if (desu.inugram.helpers.plugins.telegram.PluginUpdates.onDifference(res.new_messages, res.other_updates, currentAccount, this)) {
++                                return;
++                            }
+                             if (!res.new_messages.isEmpty() || !res.new_encrypted_messages.isEmpty()) {
+                                 LongSparseArray<ArrayList<MessageObject>> messages = new LongSparseArray<>();
+                                 for (int b = 0; b < res.new_encrypted_messages.size(); b++) {
+@@ -17161,7 +17167,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                             if (BuildVars.LOGS_ENABLED) {
+                                 FileLog.d("received difference with date = " + getMessagesStorage().getLastDateValue() + " pts = " + getMessagesStorage().getLastPtsValue() + " seq = " + getMessagesStorage().getLastSeqValue() + " messages = " + res.new_messages.size() + " users = " + res.users.size() + " chats = " + res.chats.size() + " other updates = " + res.other_updates.size());
+                             }
+-                        });
++                        }});
+                     });
+                 }
+             } else {
+@@ -17911,8 +17917,64 @@ public class MessagesController extends BaseController implements NotificationCe
+         }
+     }
+ 
++    public TLRPC.TL_message inu_buildShortMessage(TLRPC.Updates updates) {
++        long userId = updates instanceof TLRPC.TL_updateShortChatMessage ? updates.from_id : updates.user_id;
++        TLRPC.TL_message message = new TLRPC.TL_message();
++        message.id = updates.id;
++        long clientUserId = getUserConfig().getClientUserId();
++        if (updates instanceof TLRPC.TL_updateShortMessage) {
++            message.from_id = new TLRPC.TL_peerUser();
++            if (updates.out) {
++                message.from_id.user_id = clientUserId;
++            } else {
++                message.from_id.user_id = userId;
++            }
++            message.peer_id = new TLRPC.TL_peerUser();
++            message.peer_id.user_id = userId;
++            message.dialog_id = userId;
++        } else {
++            message.from_id = new TLRPC.TL_peerUser();
++            message.from_id.user_id = userId;
++            message.peer_id = new TLRPC.TL_peerChat();
++            message.peer_id.chat_id = updates.chat_id;
++            message.dialog_id = -updates.chat_id;
++        }
++
++        message.fwd_from = updates.fwd_from;
++        message.silent = updates.silent;
++        message.out = updates.out;
++        message.mentioned = updates.mentioned;
++        message.media_unread = updates.media_unread;
++        message.entities = updates.entities;
++        message.message = updates.message;
++        message.date = updates.date;
++        message.via_bot_id = updates.via_bot_id;
++        message.flags = updates.flags | TLRPC.MESSAGE_FLAG_HAS_FROM_ID;
++        message.reply_to = updates.reply_to;
++        message.ttl_period = updates.ttl_period;
++        message.media = new TLRPC.TL_messageMediaEmpty();
++
++        ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
++        Integer value = read_max.get(message.dialog_id);
++        if (value == null) {
++            value = getMessagesStorage().getDialogReadMax(message.out, message.dialog_id);
++            read_max.put(message.dialog_id, value);
++        }
++        message.unread = value < message.id;
++
++        if (message.dialog_id == clientUserId) {
++            message.unread = false;
++            message.media_unread = false;
++            message.out = true;
++        }
++        return message;
++    }
++
+     // must be run from Utilities.stageQueue
+     public void processUpdates(final TLRPC.Updates updates, boolean fromQueue) {
++        if (desu.inugram.helpers.plugins.telegram.PluginUpdates.onUpdates(this, updates, currentAccount, fromQueue)) {
++            return;
++        }
+         ArrayList<Long> needGetChannelsDiff = null;
+         boolean needGetDiff = false;
+         boolean needReceivedQueue = false;
+@@ -18013,54 +18075,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                 needGetDiff = true;
+             } else {
+                 if (getMessagesStorage().getLastPtsValue() + updates.pts_count == updates.pts) {
+-                    TLRPC.TL_message message = new TLRPC.TL_message();
+-                    message.id = updates.id;
+-                    long clientUserId = getUserConfig().getClientUserId();
+-                    if (updates instanceof TLRPC.TL_updateShortMessage) {
+-                        message.from_id = new TLRPC.TL_peerUser();
+-                        if (updates.out) {
+-                            message.from_id.user_id = clientUserId;
+-                        } else {
+-                            message.from_id.user_id = userId;
+-                        }
+-                        message.peer_id = new TLRPC.TL_peerUser();
+-                        message.peer_id.user_id = userId;
+-                        message.dialog_id = userId;
+-                    } else {
+-                        message.from_id = new TLRPC.TL_peerUser();
+-                        message.from_id.user_id = userId;
+-                        message.peer_id = new TLRPC.TL_peerChat();
+-                        message.peer_id.chat_id = updates.chat_id;
+-                        message.dialog_id = -updates.chat_id;
+-                    }
+-
+-                    message.fwd_from = updates.fwd_from;
+-                    message.silent = updates.silent;
+-                    message.out = updates.out;
+-                    message.mentioned = updates.mentioned;
+-                    message.media_unread = updates.media_unread;
+-                    message.entities = updates.entities;
+-                    message.message = updates.message;
+-                    message.date = updates.date;
+-                    message.via_bot_id = updates.via_bot_id;
+-                    message.flags = updates.flags | TLRPC.MESSAGE_FLAG_HAS_FROM_ID;
+-                    message.reply_to = updates.reply_to;
+-                    message.ttl_period = updates.ttl_period;
+-                    message.media = new TLRPC.TL_messageMediaEmpty();
+-
+-                    ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
+-                    Integer value = read_max.get(message.dialog_id);
+-                    if (value == null) {
+-                        value = getMessagesStorage().getDialogReadMax(message.out, message.dialog_id);
+-                        read_max.put(message.dialog_id, value);
+-                    }
+-                    message.unread = value < message.id;
+-
+-                    if (message.dialog_id == clientUserId) {
+-                        message.unread = false;
+-                        message.media_unread = false;
+-                        message.out = true;
+-                    }
++                    TLRPC.TL_message message = inu_buildShortMessage(updates);
+ 
+                     getMessagesStorage().setLastPtsValue(updates.pts);
+                     boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
+@@ -18539,6 +18554,9 @@ public class MessagesController extends BaseController implements NotificationCe
+                 FileLog.d("process update " + baseUpdate.getClass().getSimpleName());
+             }
+             desu.inugram.InuHooks.onUpdate(baseUpdate, currentAccount);
++            if (desu.inugram.helpers.plugins.telegram.PluginUpdates.isDropped(baseUpdate)) {
++                continue;
++            }
+             if (baseUpdate instanceof TL_update.TL_updateNewMessage || baseUpdate instanceof TL_update.TL_updateNewChannelMessage || baseUpdate instanceof TL_update.TL_updateNewScheduledMessage) {
+                 TLRPC.Message message;
+                 if (baseUpdate instanceof TL_update.TL_updateNewMessage) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessageChatArguments.java
+@@ -6,17 +6,20 @@ public class SendMessageChatArguments {
+     public final long welcomeMessageChatId;
+     public final String quickReplyShortcut;
+     public final int quickReplyShortcutId;
++    public final boolean inu_composed;
+ 
+     private SendMessageChatArguments(Builder builder) {
+         this.welcomeMessageChatId = builder.welcomeMessageChatId;
+         this.quickReplyShortcut = builder.quickReplyShortcut;
+         this.quickReplyShortcutId = builder.quickReplyShortcutId;
++        this.inu_composed = builder.inu_composed;
+     }
+ 
+     public static class Builder {
+         private long welcomeMessageChatId;
+         private String quickReplyShortcut;
+         private int quickReplyShortcutId;
++        private boolean inu_composed;
+ 
+         public void setWelcomeMessageChatId(long welcomeMessageChatId) {
+             this.welcomeMessageChatId = welcomeMessageChatId;
+@@ -27,6 +30,10 @@ public class SendMessageChatArguments {
+             this.quickReplyShortcutId = quickReplyShortcutId;
+         }
+ 
++        public void inu_setComposed(boolean composed) {
++            this.inu_composed = composed;
++        }
++
+         public SendMessageChatArguments build() {
+             return new SendMessageChatArguments(this);
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
+@@ -1766,7 +1766,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         return true;
+     }
+ 
+-    protected void processSentMessage(int id) {
++    public void processSentMessage(int id) {
+         int prevSize = unsentMessages.size();
+         unsentMessages.remove(id);
+         if (prevSize != 0 && unsentMessages.size() == 0) {
+@@ -2083,6 +2083,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (messages == null || messages.isEmpty()) {
+             return 0;
+         }
++        if (desu.inugram.helpers.plugins.telegram.PluginCompose.interceptForward(this, currentAccount, messages, peer, forwardFromMyName, hideCaption, notify, scheduleDate, scheduleRepeatPeriod, replyToTopMsg, video_timestamp, payStars, monoForumPeerId, suggestionParams)) {
++            return 0;
++        }
+         int sendResult = 0;
+         long myId = getUserConfig().getClientUserId();
+         boolean isChannel = false;
+@@ -3843,7 +3846,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             req.msg_id = messageObject.messageOwner.fwd_from.saved_from_msg_id;
+         } else {
+             req.peer = getMessagesController().getInputPeer(messageObject.getDialogId());
+-            req.msg_id = messageObject.getId();
++            req.msg_id = messageObject.getRealId();
+         }
+         req.add_to_recent = addToRecent;
+         if (addToRecent && addedReaction != null) {
+@@ -4281,6 +4284,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     }
+ 
+     public void sendMessage(SendMessageParams sendMessageParams) {
++        if (desu.inugram.helpers.plugins.telegram.PluginCompose.interceptParams(this, currentAccount, sendMessageParams)) return;
+         final SendMessageChatArguments sendMessageChatArguments = sendMessageParams.sendMessageChatArguments != null ?
+                 sendMessageParams.sendMessageChatArguments : SendMessageChatArguments.EMPTY;
+         String message = sendMessageParams.message;
+@@ -4826,7 +4830,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                 if (newMsg.attachPath == null) {
+                     newMsg.attachPath = "";
+                 }
+-                newMsg.local_id = newMsg.id = getUserConfig().getNewMessageId();
++                newMsg.local_id = newMsg.id = sendMessageParams.inu_messageId != 0 ? sendMessageParams.inu_messageId : getUserConfig().getNewMessageId();
++                sendMessageParams.inu_messageId = 0;
+                 newMsg.out = true;
+                 TLRPC.Chat chat = sendToPeer != null ? getMessagesController().getChat(sendToPeer.channel_id) : null;
+                 if (isChannel && sendToPeer != null && (chat == null || !chat.signatures)) {
+@@ -7441,7 +7446,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         }
+     }
+ 
+-    protected TLRPC.Message removeFromSendingMessages(int mid, boolean scheduled) {
++    public TLRPC.Message removeFromSendingMessages(int mid, boolean scheduled) {
+         TLRPC.Message message;
+         if (mid > 0) {
+             message = editingMessages.get(mid);
+@@ -7572,6 +7577,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             return;
+         }
+ 
++        desu.inugram.helpers.plugins.telegram.PluginRpc.bindOptimisticMessages(request, currentAccount, msgObjs);
+         int reqId = getConnectionsManager().sendRequest(request, (response, error) -> {
+             if (error != null && FileRefController.isFileRefError(error.text)) {
+                 final int fileRefIndex = FileRefController.getFileRefErrorIndex(error.text);
+@@ -7842,6 +7848,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                     }
+                     Utilities.stageQueue.postRunnable(() -> getMessagesController().processUpdates(updates, false));
+                 } else {
++                    if (desu.inugram.helpers.plugins.telegram.PluginRpc.handleDroppedSends(this, currentAccount, msgObjs, scheduled)) {
++                        return;
++                    }
+                     AlertsCreator.processError(currentAccount, error, null, request);
+                     isSentError = true;
+                 }
+@@ -7956,6 +7965,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         }
+         final TLRPC.Message newMsgObj = msgObj.messageOwner;
+         putToSendingMessages(newMsgObj, scheduled);
++        if (desu.inugram.helpers.plugins.telegram.PluginCompose.parkRequest(msgObj, () -> performSendMessageRequest(req, msgObj, originalPath, parentMessage, check, delayedMessage, parentObject, params, scheduled))) {
++            return;
++        }
+         if (!StarsController.getInstance(currentAccount).beforeSendingFinalRequest(req, msgObj, () -> performSendMessageRequest(req, msgObj, originalPath, parentMessage, check, delayedMessage, parentObject, params, scheduled))) {
+             return;
+         }
+@@ -7966,6 +7978,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+             return;
+         }
+ 
++        desu.inugram.helpers.plugins.telegram.PluginRpc.bindOptimisticMessage(req, currentAccount, msgObj);
+         newMsgObj.reqId = getConnectionsManager().sendRequest(req, (response, error) -> {
+             if (error != null && (req instanceof TLRPC.TL_messages_sendMedia || req instanceof TL_ephemeral.TL_sendMessage || req instanceof TLRPC.TL_messages_editMessage || req instanceof TLRPC.TL_messages_addPollAnswer) && FileRefController.isFileRefError(error.text)) {
+                 if (FileRefController.isFileRefErrorCover(error.text)) {
+@@ -8387,6 +8400,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+                             }
+                         }
+                     } else {
++                        if (desu.inugram.helpers.plugins.telegram.PluginRpc.handleDroppedSend(this, currentAccount, newMsgObj, scheduled)) {
++                            return;
++                        }
+                         AlertsCreator.processError(currentAccount, error, null, req);
+                         isSentError = true;
+                     }
+@@ -8495,7 +8511,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         return false;
+     }
+ 
+-    private void updateMediaPaths(MessageObject newMsgObj, TLRPC.Message sentMessage, int newMsgId, String originalPath, boolean post, HashMap<String, String> params) {
++    public void updateMediaPaths(MessageObject newMsgObj, TLRPC.Message sentMessage, int newMsgId, String originalPath, boolean post, HashMap<String, String> params) {
+         updateMediaPaths(newMsgObj, sentMessage, newMsgId, Collections.singletonList(originalPath), post, -1, params);
+     }
+ 
+@@ -9972,6 +9988,11 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (paths == null && originalPaths == null && uris == null || paths != null && originalPaths != null && paths.size() != originalPaths.size()) {
+             return;
+         }
++        if (desu.inugram.helpers.plugins.telegram.PluginCompose.composeDocuments(accountInstance, paths, originalPaths, uris, caption, captionEntities, dialogId, replyToMsg, replyToTopMsg, quote, notify, scheduleDate, sendMessageChatArguments,
++                editingMessageObject != null || storyItem != null || pollSendParams != null,
++                (p, op, u, c, e, did, reply, top, q, n, date, args) -> prepareSendingDocuments(accountInstance, p, op, u, c, e, mime, did, reply, top, storyItem, q, editingMessageObject, n, date, scheduleRepeatPeriod, inputContent, args, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, pollSendIndexes, pollSendUriIndexes, forcedPollDoNotSendFinal))) {
++            return;
++        }
+         Utilities.globalQueue.postRunnable(() -> {
+             int error = 0;
+             long[] groupId = new long[1];
+@@ -10698,6 +10719,12 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+         if (media.isEmpty()) {
+             return;
+         }
++        final boolean inu_groupMedia = groupMedia;
++        if (desu.inugram.helpers.plugins.telegram.PluginCompose.composeMedia(accountInstance, media, dialogId, replyToMsg, replyToTopMsg, quote, forceDocument, notify, scheduleDate, sendMessageChatArguments,
++                editingMessageObject != null || storyItem != null || pollToAddOptionMessageObject != null || pollSendParams != null,
++                (m, did, reply, top, q, n, date, args) -> prepareSendingMedia(accountInstance, m, did, reply, top, storyItem, q, forceDocument, inu_groupMedia, editingMessageObject, pollToAddOptionMessageObject, n, date, scheduleRepeatPeriod, mode, updateStikcersOrder, inputContent, args, effectId, invertMedia, payStars, monoForumPeerId, suggestionParams, pollSendParams, forcedPollDoNotSendFinal))) {
++            return;
++        }
+         for (int a = 0, N = media.size(); a < N; a++) {
+             if (media.get(a).ttl > 0) {
+                 groupMedia = false;
+@@ -12131,6 +12158,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+     }
+ 
+     public static class SendMessageParams {
++        public int inu_messageId;
+         public String message;
+         public String caption;
+         public TLRPC.MessageMedia location;
+diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
++++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
+@@ -385,10 +385,13 @@ public class ConnectionsManager extends BaseController {
+         return requestToken;
+     }
+ 
+-    private void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
++    public void sendRequestInternal(TLObject object, RequestDelegate onComplete, RequestDelegateTimestamp onCompleteTimestamp, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connectionType, boolean immediate, int requestToken) {
+         if (desu.inugram.helpers.translate.TranslationProviderHelper.maybeTranslate(currentAccount, requestToken, object, onComplete, onCompleteTimestamp)) {
+             return;
+         }
++        if (desu.inugram.helpers.plugins.telegram.PluginRpc.maybeIntercept(this, object, onComplete, onCompleteTimestamp, onQuickAck, onWriteToSocket, flags, datacenterId, connectionType, immediate, requestToken, currentAccount)) {
++            return;
++        }
+         if (BuildVars.LOGS_ENABLED) {
+             FileLog.d("send request " + object + " with token = " + requestToken);
+         }
+@@ -579,6 +582,7 @@ public class ConnectionsManager extends BaseController {
+                 }
+                 return;
+             }
++            desu.inugram.helpers.plugins.telegram.PluginRpc.onRequestCancelled(currentAccount, token, notifyServer, onCancelled);
+             if (onCancelled != null) {
+                 listenCancel(token, () -> {
+                     Utilities.stageQueue.postRunnable(onCancelled);
+@@ -594,6 +598,7 @@ public class ConnectionsManager extends BaseController {
+ 
+     public void cancelRequestsForGuid(int guid) {
+         Utilities.stageQueue.postRunnable(() -> {
++            desu.inugram.helpers.plugins.telegram.PluginRpc.onRequestsCancelledForGuid(currentAccount, guid);
+             native_cancelRequestsForGuid(currentAccount, guid);
+         });
+     }
+@@ -602,6 +607,7 @@ public class ConnectionsManager extends BaseController {
+         if (guid == 0) {
+             return;
+         }
++        desu.inugram.helpers.plugins.telegram.PluginRpc.onRequestBoundToGuid(currentAccount, requestToken, guid);
+         native_bindRequestToGuid(currentAccount, requestToken, guid);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/TextCell.java
+@@ -50,7 +50,7 @@ import org.telegram.ui.Stories.recorder.HintView2;
+ public class TextCell extends FrameLayout {
+ 
+     public final SimpleTextView textView;
+-    private final SimpleTextView subtitleView;
++    public final SimpleTextView subtitleView;
+     public final AnimatedTextView valueTextView;
+     public final SimpleTextView valueSpoilersTextView;
+     public final RLottieImageView imageView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -436,7 +436,7 @@ public class ChatActivity extends BaseFragment implements
+     private WallpaperBitmapProvider wallpaperBitmapProvider = new WallpaperBitmapProvider();
+ 
+     private ChatActivityFadeView chatActivityFadeView;
+-    protected ChatActivityEnterView chatActivityEnterView;
++    public ChatActivityEnterView chatActivityEnterView;
+     private ChatActivityEnterTopView chatActivityEnterTopView;
+     private ChatReplyContainer replyLayout;
+     private int chatActivityEnterViewAnimateFromTop;
+@@ -682,6 +682,7 @@ public class ChatActivity extends BaseFragment implements
+     public static final int MODE_SEARCH = 7;
+     public static final int MODE_SUGGESTIONS = 8;
+     public static final int MODE_WELCOME_MESSAGES = 9;
++    public static final int inu_MODE_PLUGIN_HISTORY = 100;
+ 
+     public static final int SEARCH_THIS_CHAT = 0;
+     public static final int SEARCH_MY_MESSAGES = 1;
+@@ -1134,8 +1135,8 @@ public class ChatActivity extends BaseFragment implements
+     public static Pattern publicMsgUrlPattern;
+     public static Pattern voiceChatUrlPattern;
+     public static Pattern privateMsgUrlPattern;
+-    private boolean waitingForSendingMessageLoad;
+-    private ValueAnimator changeBoundAnimator;
++    public boolean waitingForSendingMessageLoad;
++    public ValueAnimator changeBoundAnimator;
+     private Animator messageEditTextAnimator;
+ 
+     private boolean openImport;
+@@ -2864,6 +2865,10 @@ public class ChatActivity extends BaseFragment implements
+             if (searchType == 0 || searchingHashtag == null) {
+                 return false;
+             }
++        } else if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++            if (!desu.inugram.helpers.plugins.ui.PluginChatHistory.attach(this, arguments)) {
++                return false;
++            }
+         } else {
+             return false;
+         }
+@@ -2919,7 +2924,7 @@ public class ChatActivity extends BaseFragment implements
+                 observersGroup.add(NotificationCenter.didVerifyMessagesStickers);
+             }
+         }
+-        if (chatMode != MODE_PINNED) {
++        if (chatMode != MODE_PINNED && chatMode != inu_MODE_PLUGIN_HISTORY) {
+             observersGroup.add(NotificationCenter.didReceiveNewMessages);
+         }
+         if (chatMode == 0) {
+@@ -3271,6 +3276,8 @@ public class ChatActivity extends BaseFragment implements
+             waitingForLoad.add(lastLoadIndex);
+             if (chatMode == MODE_SEARCH) {
+                 HashtagSearchController.getInstance(currentAccount).searchHashtag(searchingHashtag, classGuid, searchType, lastLoadIndex++);
++            } else if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++                desu.inugram.helpers.plugins.ui.PluginChatHistory.load(this, lastLoadIndex++, false);
+             } else if (startLoadFromDate != 0) {
+                 getMessagesController().loadMessages(dialog_id, mergeDialogId, false, 30, 0, startLoadFromDate, true, 0, classGuid, 4, 0, chatMode, threadMessageId, replyMaxReadId, lastLoadIndex++, isTopic);
+             } else if (startLoadFromMessageId != 0 && (!isThreadChat() || startLoadFromMessageId == highlightMessageId || isTopic)) {
+@@ -3369,6 +3376,9 @@ public class ChatActivity extends BaseFragment implements
+     @Override
+     public void onFragmentDestroy() {
+         super.onFragmentDestroy();
++        if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++            desu.inugram.helpers.plugins.ui.PluginChatHistory.onDestroyed(this);
++        }
+         if (commentsMessagesObserver != null) {
+             getNotificationCenter().removeObserver(commentsMessagesObserver, NotificationCenter.messagesDidLoad);
+             commentsMessagesObserver = null;
+@@ -3709,9 +3719,15 @@ public class ChatActivity extends BaseFragment implements
+         }
+ 
+         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
++            @Override
++            public boolean canOpenMenu() {
++                return chatMode != inu_MODE_PLUGIN_HISTORY || !desu.inugram.helpers.plugins.ui.PluginChatHistory.requestMenu(ChatActivity.this);
++            }
++
+             @Override
+             public void onItemClick(final int id) {
+                 if (ChatActionsHelper.handleClick(id, ChatActivity.this)) return;
++                if (chatMode == inu_MODE_PLUGIN_HISTORY && desu.inugram.helpers.plugins.ui.PluginChatHistory.onMenuItemClick(ChatActivity.this, id)) return;
+                 if (id == -1) {
+                     if (isInPollAddOptionMode()) {
+                         pollAddOptionModeClose();
+@@ -4515,6 +4531,11 @@ public class ChatActivity extends BaseFragment implements
+                 feeItemGap.setVisibility(View.GONE);
+                 feeItemText.setVisibility(View.GONE);
+             }
++        } else if (chatMode == inu_MODE_PLUGIN_HISTORY && desu.inugram.helpers.plugins.ui.PluginChatHistory.hasMenu(this)) {
++            headerItem = menu.addItem(chat_menu_options, otherIcon);
++            otherIcon.addView(headerItem.getIconView());
++            headerItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
++            headerItem.getPopupLayout();
+         } else if (chatMode == MODE_EDIT_BUSINESS_LINK) {
+             headerItem = menu.addItem(chat_menu_options, otherIcon);
+             otherIcon.addView(headerItem.getIconView());
+@@ -4571,7 +4592,7 @@ public class ChatActivity extends BaseFragment implements
+             }
+         }
+ 
+-        if (BuildConfig.DEBUG_PRIVATE_VERSION && headerItem != null) {
++        if (BuildConfig.DEBUG_PRIVATE_VERSION && headerItem != null && chatMode != inu_MODE_PLUGIN_HISTORY) {
+             headerItem.lazilyAddSubItem(888, R.drawable.menu_download_round, "Dump Canvas");
+         }
+ 
+@@ -4610,9 +4631,12 @@ public class ChatActivity extends BaseFragment implements
+             BlurredBackgroundProviderImpl.topPanelChatActivity(themeDelegate),
+             ChatObject.isForum(currentChat));
+ 
+-        if (chatMode == MODE_PINNED) {
++        if (chatMode == MODE_PINNED || chatMode == inu_MODE_PLUGIN_HISTORY) {
+             actionBar.setChatAvatarContainer(avatarContainer);
+             avatarContainer.setActionBar(actionBar);
++            if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++                desu.inugram.helpers.plugins.ui.PluginChatHistory.applyAvatar(this, avatarContainer.avatarImageView);
++            }
+         } else if (chatMode == MODE_WELCOME_MESSAGES) {
+             actionBar.setChatAvatarContainer(avatarContainer);
+             actionBar.setForcedMenuWidth(dp(46));
+@@ -8594,6 +8618,8 @@ public class ChatActivity extends BaseFragment implements
+                     args.putLong("chat_id", -dialogId);
+                 }
+                 presentFragment(new ChatActivity(args));
++            } else if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++                desu.inugram.helpers.plugins.ui.PluginChatHistory.onButtonClick(this);
+             } else if (isReport()) {
+                 ArrayList<Integer> ids = new ArrayList<>();
+                 for (int b = 0; b < selectedMessagesIds[0].size(); b++) {
+@@ -13950,6 +13976,19 @@ public class ChatActivity extends BaseFragment implements
+ 
+             return;
+         }
++        if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++            if (totalItemCount - firstVisibleItemFinal - visibleItemCountFinal <= checkLoadCount && !loading && !endReached[0]) {
++                loading = true;
++                waitingForLoad.add(lastLoadIndex);
++                desu.inugram.helpers.plugins.ui.PluginChatHistory.load(this, lastLoadIndex++, false);
++            }
++            if (visibleItemCountFinal > 0 && !loadingForward && firstVisibleItemFinal <= 10 && !forwardEndReached[0]) {
++                loadingForward = true;
++                waitingForLoad.add(lastLoadIndex);
++                desu.inugram.helpers.plugins.ui.PluginChatHistory.load(this, lastLoadIndex++, true);
++            }
++            return;
++        }
+ 
+         AndroidUtilities.runOnUIThread(() -> {
+             if (totalItemCount - firstVisibleItemFinal - visibleItemCountFinal <= checkLoadCount && !loading) {
+@@ -15933,6 +15972,10 @@ public class ChatActivity extends BaseFragment implements
+ 
+             waitingForLoad.add(lastLoadIndex);
+             AndroidUtilities.runOnUIThread(() -> {
++                if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++                    desu.inugram.helpers.plugins.ui.PluginChatHistory.reload(this, lastLoadIndex++);
++                    return;
++                }
+                 getMessagesController().loadMessages(dialog_id, mergeDialogId, false, 30, 0, 0, true, 0, classGuid, 0, 0, chatMode, threadMessageId, replyMaxReadId, lastLoadIndex++, isTopic);
+             }, SCROLL_DEBUG_DELAY ? 7500 : 0);
+         }
+@@ -16382,6 +16425,9 @@ public class ChatActivity extends BaseFragment implements
+             }
+             if (chatMode != MODE_SCHEDULED && messageObject != null) {
+                 int id = messageObject.getId();
++                if (chatMode == inu_MODE_PLUGIN_HISTORY && visibleToBeRead) {
++                    desu.inugram.helpers.plugins.ui.PluginChatHistory.onVisible(this, id);
++                }
+                 if (
+                     !isThreadChat() && visibleToBeRead && (!messageObject.isOut() && messageObject.isUnread() || messageObject.messageOwner.from_scheduled && id > currentReadMaxId) ||
+                      (isThreadChat() || ChatObject.isMonoForum(currentChat)) && id > 0 && id > currentReadMaxId && id > replyMaxReadId
+@@ -19106,7 +19152,8 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     private void checkActionBarMenu(boolean animated) {
+-        if (currentEncryptedChat != null && !(currentEncryptedChat instanceof TLRPC.TL_encryptedChat) ||
++        if (chatMode == inu_MODE_PLUGIN_HISTORY ||
++                currentEncryptedChat != null && !(currentEncryptedChat instanceof TLRPC.TL_encryptedChat) ||
+                 currentChat != null && (chatMode != 0 || threadMessageId != 0 || chatInfo == null || chatInfo.ttl_period == 0) ||
+                 currentUser != null && (UserObject.isDeleted(currentUser) || currentEncryptedChat == null && (userInfo == null || userInfo.ttl_period == 0))) {
+             if (timeItem2 != null) {
+@@ -19367,14 +19414,14 @@ public class ChatActivity extends BaseFragment implements
+                     if (!messageObject.isAnimatedEmoji() && (messageObject.isSticker() || messageObject.isAnimatedSticker()) && MessageObject.isStickerHasSet(messageObject.getDocument())) {
+                         selectedMessagesCanStarIds[index].put(messageObject.getId(), messageObject);
+                     }
+-                    if (messageObject.canEditMessage(currentChat)) {
++                    if (chatMode != inu_MODE_PLUGIN_HISTORY && messageObject.canEditMessage(currentChat)) {
+                         canEditMessagesCount++;
+                     }
+-                    if (!messageObject.canDeleteMessage(chatMode == MODE_SCHEDULED, currentChat)) {
++                    if (chatMode == inu_MODE_PLUGIN_HISTORY || !messageObject.canDeleteMessage(chatMode == MODE_SCHEDULED, currentChat)) {
+                         cantDeleteMessagesCount++;
+                     }
+                     boolean noforwards = isPeerNoForwards();
+-                    if (chatMode == MODE_SCHEDULED || !messageObject.canForwardMessage() || noforwards) {
++                    if (chatMode == MODE_SCHEDULED || !messageObject.canForwardMessage() || noforwards || chatMode == inu_MODE_PLUGIN_HISTORY && desu.inugram.helpers.plugins.ui.PluginChatHistory.isSynthetic(ChatActivity.this, messageObject)) {
+                         cantForwardMessagesCount++;
+                     } else {
+                         canForwardMessagesCount++;
+@@ -19757,6 +19804,8 @@ public class ChatActivity extends BaseFragment implements
+             }
+         } else if (chatMode == MODE_PINNED) {
+             avatarContainer.setTitle(LocaleController.formatPluralString("PinnedMessagesCount", getPinnedMessagesCount()));
++        } else if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++            avatarContainer.setTitle(desu.inugram.helpers.plugins.ui.PluginChatHistory.title(this));
+         } else if (currentChat != null) {
+             avatarContainer.setTitle(AndroidUtilities.removeRTL(AndroidUtilities.removeDiacritics(currentChat.title)), currentChat.scam, currentChat.fake, currentChat.verified, false, currentChat.emoji_status, animated);
+         } else if (currentUser != null) {
+@@ -25606,7 +25655,7 @@ public class ChatActivity extends BaseFragment implements
+     private Runnable updateStreamingTopic;
+ 
+     private ArrayList<MessageObject> notPushedSponsoredMessages;
+-    private void processNewMessages(ArrayList<MessageObject> arr) {
++    public void processNewMessages(ArrayList<MessageObject> arr) {
+         processNewMessages(arr, true);
+     }
+     private void processNewMessages(ArrayList<MessageObject> arr, final boolean animatedFromBottom) {
+@@ -26559,7 +26608,7 @@ public class ChatActivity extends BaseFragment implements
+         return sponsoredMessagesCount;
+     }
+ 
+-    private void processDeletedMessages(ArrayList<Integer> markAsDeletedMessages, long channelId, boolean sent) {
++    public void processDeletedMessages(ArrayList<Integer> markAsDeletedMessages, long channelId, boolean sent) {
+         processDeletedMessages(markAsDeletedMessages, channelId, sent, true);
+     }
+     private void processDeletedMessages(ArrayList<Integer> markAsDeletedMessages, long channelId, boolean sent, boolean thanos) {
+@@ -26921,7 +26970,7 @@ public class ChatActivity extends BaseFragment implements
+     private final BotForumHelper.BotDraftAnimationsPool botDraftAnimationsPool = new BotForumHelper.BotDraftAnimationsPool();
+     private final ChatActivityDraftMessageMeasureController botDraftHeightController = new ChatActivityDraftMessageMeasureController();
+ 
+-    private void replaceMessageObjects(ArrayList<MessageObject> messageObjects, int loadIndex, boolean remove) {
++    public void replaceMessageObjects(ArrayList<MessageObject> messageObjects, int loadIndex, boolean remove) {
+         replaceMessageObjects(messageObjects, loadIndex, remove, false);
+     }
+ 
+@@ -28060,6 +28109,10 @@ public class ChatActivity extends BaseFragment implements
+             }
+         } else if (isReport()) {
+             updateActionModeTitle();
++        } else if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++            bottomOverlayChatText.setTag(null);
++            CharSequence inu_buttonText = desu.inugram.helpers.plugins.ui.PluginChatHistory.buttonText(this);
++            bottomOverlayChatText.setText(inu_buttonText != null ? inu_buttonText : "");
+         } else if (chatMode == MODE_PINNED) {
+             boolean allowPin;
+             if (currentChat != null) {
+@@ -28317,7 +28370,7 @@ public class ChatActivity extends BaseFragment implements
+             } else if (isReport()) {
+                 bottomChannelButtonsLayout.setVisibility(View.VISIBLE);
+                 chatActivityEnterView.setVisibility(View.INVISIBLE);
+-            } else if (chatMode == MODE_PINNED ||
++            } else if (chatMode == MODE_PINNED || chatMode == inu_MODE_PLUGIN_HISTORY ||
+                     currentChat != null && (!ChatObject.isMonoForum(currentChat) || !isSubscriberSuggestions) && ((!ChatHelper.isEffectivelyInChat(currentChat) && !UserObject.isBotForum(currentUser) || !ChatObject.canWriteToChat(currentChat)) && (currentChat.join_to_send || !isThreadChat() || ChatObject.isForum(currentChat)) || forumTopic != null && forumTopic.closed && !ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) || shouldDisplaySwipeToLeftToReplyInForum()) ||
+                     currentUser != null && (UserObject.isDeleted(currentUser) || userBlocked || UserObject.isReplyUser(currentUser))) {
+                 if (chatActivityEnterView.isEditingMessage()) {
+@@ -32226,6 +32279,7 @@ public class ChatActivity extends BaseFragment implements
+                         }
+                     }
+                     scrimPopupWindowItems[a] = cell;
++                    ChatHelper.bindMenuCell(cell, option);
+                     if (option == OPTION_REMOVE_ADS) {
+                         popupLayout.addView(new ActionBarPopupWindow.GapView(contentView.getContext(), themeDelegate), LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 8));
+                     }
+@@ -32665,10 +32719,11 @@ public class ChatActivity extends BaseFragment implements
+                     }
+                 }, 420);
+             };
++            Runnable inu_showMenu = ChatHelper.gateMessageMenu(showMenu);
+             if (waitForLangDetection.get()) {
+-                onLangDetectionDone.set(showMenu);
++                onLangDetectionDone.set(inu_showMenu);
+             } else {
+-                showMenu.run();
++                inu_showMenu.run();
+             }
+             chatListView.stopScroll();
+             chatLayoutManager.setCanScrollVertically(false);
+@@ -33053,7 +33108,7 @@ public class ChatActivity extends BaseFragment implements
+     }
+ 
+     public void selectReaction(View cell, MessageObject primaryMessage, ReactionsContainerLayout reactionsLayout, View fromView, float x, float y, ReactionsLayoutInBubble.VisibleReaction visibleReaction, boolean fromDoubleTap, boolean bigEmoji, boolean addToRecent, boolean withoutAnimation) {
+-        if (isInScheduleMode() || primaryMessage == null) {
++        if (isInScheduleMode() || primaryMessage == null || chatMode == inu_MODE_PLUGIN_HISTORY && desu.inugram.helpers.plugins.ui.PluginChatHistory.isSynthetic(this, primaryMessage)) {
+             return;
+         }
+         if (getMessagesController().isFrozen()) {
+@@ -34206,6 +34261,9 @@ public class ChatActivity extends BaseFragment implements
+                 if (selectedObject == replyingMessageObject && isComments) {
+                     req.id = replyOriginalMessageId;
+                     req.channel = MessagesController.getInputChannel(replyOriginalChat);
++                } else if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++                    req.id = selectedObject.getRealId();
++                    req.channel = MessagesController.getInputChannel(getMessagesController().getChat(-selectedObject.getDialogId()));
+                 } else {
+                     req.id = selectedObject.getId();
+                     req.channel = MessagesController.getInputChannel(currentChat);
+@@ -34409,7 +34467,9 @@ public class ChatActivity extends BaseFragment implements
+             }
+             case OPTION_VIEW_REPLIES_OR_THREAD: {
+                 MessageObject message = selectedObjectGroup != null ? selectedObjectGroup.findPrimaryMessageObject() : selectedObject;
+-                if (message != null) {
++                if (message != null && chatMode == inu_MODE_PLUGIN_HISTORY) {
++                    openDiscussionMessageChat(-message.getDialogId(), null, message.getRealId(), 0, -1, 0, null);
++                } else if (message != null) {
+                     openDiscussionMessageChat(currentChat.id, null, message.getId(), 0, -1, 0, null);
+                 }
+                 break;
+@@ -34650,6 +34710,9 @@ public class ChatActivity extends BaseFragment implements
+                 }
+             }
+         }
++        if (chatMode == inu_MODE_PLUGIN_HISTORY) {
++            desu.inugram.helpers.plugins.ui.PluginChatHistory.realMessages(fmessages);
++        }
+         for (int j = 0; j < dids.size(); j++) {
+             TLRPC.Chat chat = getMessagesController().getChat(-dids.get(j).dialogId);
+             if (chat != null) {
+@@ -35658,6 +35721,18 @@ public class ChatActivity extends BaseFragment implements
+         return chatMode;
+     }
+ 
++    public void inu_pluginHistoryEnds(boolean older, boolean newer) {
++        endReached[0] = older;
++        forwardEndReached[0] = newer;
++    }
++
++    public void inu_setPluginUnreadCount(int count) {
++        newUnreadMessageCount = count;
++        if (sideControlsButtonsLayout != null) {
++            inlineUpdate2();
++        }
++    }
++
+     public boolean isInBotForumMode() {
+         return UserObject.isBotForum(currentUser);
+     }
+@@ -36527,7 +36602,7 @@ public class ChatActivity extends BaseFragment implements
+                     if (chatMode != MODE_SEARCH) {
+                         finishFragment();
+                     }
+-                } else if (str.contains("@")) {
++                } else if (str.contains("@") || chatMode == inu_MODE_PLUGIN_HISTORY) {
+                     presentFragment(new HashtagActivity(str, resourceProvider));
+                 } else {
+                     openHashtagSearch(str);
+@@ -37737,7 +37812,7 @@ public class ChatActivity extends BaseFragment implements
+                 if (view instanceof ChatMessageCell) {
+                     final ChatMessageCell messageCell = (ChatMessageCell) view;
+                     MessageObject.GroupedMessages groupedMessages = desu.inugram.helpers.chat.BlockedMessagesHelper.filterGroup(getValidGroupedMessage(message));
+-                    messageCell.isChat = currentChat != null || UserObject.isUserSelf(currentUser) || UserObject.isReplyUser(currentUser) || (chatMode == MODE_SEARCH);
++                    messageCell.isChat = currentChat != null || UserObject.isUserSelf(currentUser) || UserObject.isReplyUser(currentUser) || (chatMode == MODE_SEARCH) || desu.inugram.helpers.plugins.ui.PluginChatHistory.showsAvatars(ChatActivity.this);
+                     messageCell.setSponsoredMessageVisible(true, false);
+                     messageCell.isBotForum = UserObject.isBotForum(currentUser);
+                     messageCell.isReportChat = isReport();
+@@ -41094,7 +41169,7 @@ public class ChatActivity extends BaseFragment implements
+ 
+         @Override
+         public boolean shouldShowDialogButton(ChatMessageCell cell) {
+-            return chatMode == MODE_SEARCH && searchType == SEARCH_MY_MESSAGES;
++            return chatMode == MODE_SEARCH && searchType == SEARCH_MY_MESSAGES || desu.inugram.helpers.plugins.ui.PluginChatHistory.showsInChat(ChatActivity.this, cell.getMessageObject());
+         }
+ 
+         @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileNative.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileNative.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileNative.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AnimatedFileNative.java
+@@ -71,6 +71,11 @@ public class AnimatedFileNative {
+         return getVideoFrame(mNativePtr, bitmap, mMetaData, preview, startTimeSeconds, endTimeSeconds, loop);
+     }
+ 
++    public int inu_writeCurrentFrame(Bitmap bitmap) {
++        checkNotDestroyed();
++        return nInuWriteCurrentFrame(mNativePtr, bitmap, mMetaData);
++    }
++
+     public void seekToMs(long ms, boolean precise) {
+         checkNotDestroyed();
+         seekToMs(mNativePtr, ms, mMetaData, precise);
+@@ -208,4 +213,6 @@ public class AnimatedFileNative {
+     private static native void nPrepareToSeek(long ptr);
+ 
+     private static native void nGetVideoInfo(String src, int[] params, long fileOffset);
++
++    private static native int nInuWriteCurrentFrame(long ptr, Bitmap bitmap, int[] data);
+ }
+\ No newline at end of file
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatAvatarContainer.java
+@@ -255,7 +255,8 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+                 parentFragment.getChatMode() == ChatActivity.MODE_PINNED ||
+                 parentFragment.getChatMode() == ChatActivity.MODE_QUICK_REPLIES ||
+                 parentFragment.getChatMode() == ChatActivity.MODE_WELCOME_MESSAGES ||
+-                parentFragment.getChatMode() == ChatActivity.MODE_EDIT_BUSINESS_LINK
++                parentFragment.getChatMode() == ChatActivity.MODE_EDIT_BUSINESS_LINK ||
++                parentFragment.getChatMode() == ChatActivity.inu_MODE_PLUGIN_HISTORY && !desu.inugram.helpers.plugins.ui.PluginChatHistory.hasAvatar(parentFragment)
+             );
+             if (avatarImageIsHidden) {
+                 avatarImageView.setVisibility(GONE);
+@@ -1096,6 +1097,12 @@ public class ChatAvatarContainer extends FrameLayout implements FactorAnimator.T
+             setSubtitle(BusinessLinksController.stripHttps(parentFragment.businessLink.link));
+             return;
+         }
++        if (parentFragment.getChatMode() == ChatActivity.inu_MODE_PLUGIN_HISTORY) {
++            CharSequence inu_subtitle = desu.inugram.helpers.plugins.ui.PluginChatHistory.subtitle(parentFragment);
++            getSubtitleTextView().setVisibility(inu_subtitle == null ? GONE : VISIBLE);
++            if (inu_subtitle != null) setSubtitle(inu_subtitle);
++            return;
++        }
+         TLRPC.User user = parentFragment.getCurrentUser();
+         TLRPC.Chat chat = parentFragment.getCurrentChat();
+         boolean showSavedMessagesHint = (
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateActivity.java
+@@ -145,6 +145,9 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+     private final boolean allowPremium;
+     private final boolean allowMiniApps;
+     private final boolean inu_allowChannels;
++    private final boolean inu_peerPicker;
++    private final int inu_peerTypes;
++    private final boolean inu_allowEmpty;
+     private GroupCreateSpan selectedPremium;
+     private GroupCreateSpan selectedMiniApps;
+     private LongSparseArray<GroupCreateSpan> selectedContacts = new LongSparseArray<>();
+@@ -238,9 +241,14 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+         allowPremium = args.getBoolean("allowPremium", false);
+         allowMiniApps = args.getBoolean("allowMiniapps", false);
+         inu_allowChannels = args.getBoolean("inu_allowChannels", false);
++        inu_peerPicker = args.getBoolean("inu_peerPicker", false);
++        inu_peerTypes = args.getInt("inu_peerTypes", 7);
++        inu_allowEmpty = args.getBoolean("inu_allowEmpty", false);
+         chatId = args.getLong("chatId");
+         channelId = args.getLong("channelId");
+-        if (isAlwaysShare || isNeverShare || addToGroup) {
++        if (inu_peerPicker) {
++            maxCount = args.getInt("inu_limit", 0);
++        } else if (isAlwaysShare || isNeverShare || addToGroup) {
+             maxCount = 0;
+         } else if (isCall) {
+             maxCount = getMessagesController().conferenceCallSizeLimit - 1;
+@@ -302,7 +310,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+         if (chatType == ChatObject.CHAT_TYPE_CHANNEL) {
+             doneButtonVisible = true;
+         } else {
+-            doneButtonVisible = !addToGroup;
++            doneButtonVisible = inu_peerPicker ? inu_allowEmpty : !addToGroup;
+         }
+ 
+         actionBar.setBackgroundColor(0);
+@@ -578,10 +586,10 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+                 if (selectedSpan != null) {
+                     spansContainer.removeSpan(selectedSpan);
+                 } else {
+-                    if (maxCount != 0 && selectedContacts.size() == maxCount) {
++                    if (maxCount != 0 && (inu_peerPicker ? selectedContacts.size() >= maxCount : selectedContacts.size() == maxCount)) {
+                         return;
+                     }
+-                    if (chatType == ChatObject.CHAT_TYPE_CHAT && selectedContacts.size() == getMessagesController().maxGroupCount) {
++                    if (!inu_peerPicker && chatType == ChatObject.CHAT_TYPE_CHAT && selectedContacts.size() == getMessagesController().maxGroupCount) {
+                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+                         builder.setTitle(getString(R.string.AppName));
+                         builder.setMessage(getString(R.string.SoftUserLimitAlert));
+@@ -789,6 +797,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+     }
+ 
+     private void updateButtonsVisibility() {
++        if (inu_peerPicker && floatingButton != null) updateHint();
+         if (buttonsContainer == null) return;
+         final boolean show = !selectedContacts.isEmpty();
+         animatorCallButtonsVisible.setValue(show, true);
+@@ -1002,6 +1011,9 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+     }
+ 
+     private boolean onDonePressed(boolean alert) {
++        if (inu_peerPicker && !inu_allowEmpty && selectedContacts.isEmpty()) {
++            return false;
++        }
+         if (selectedContacts.isEmpty() && (chatType != ChatObject.CHAT_TYPE_CHANNEL && addToGroup)) {
+             return false;
+         }
+@@ -1129,7 +1141,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+                 }
+             }
+         }
+-        if (chatType != ChatObject.CHAT_TYPE_CHANNEL && addToGroup) {
++        if (chatType != ChatObject.CHAT_TYPE_CHANNEL && (addToGroup || inu_peerPicker && !inu_allowEmpty)) {
+             if (doneButtonVisible && allSpans.isEmpty()) {
+                 floatingButton.setButtonVisible(false, true);
+                 doneButtonVisible = false;
+@@ -1197,7 +1209,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+             ArrayList<TLRPC.TL_contact> arrayList = getContactsController().contacts;
+             for (int a = 0; a < arrayList.size(); a++) {
+                 TLRPC.User user = getMessagesController().getUser(arrayList.get(a).user_id);
+-                if (user == null || user.self || user.deleted) {
++                if (user == null || user.self || user.deleted || inu_peerPicker && !desu.inugram.helpers.plugins.ui.PluginUi.canSelectPeer(user, inu_peerTypes)) {
+                     continue;
+                 }
+                 contacts.add(user);
+@@ -1225,7 +1237,7 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+                             continue;
+                         }
+                         TLRPC.Chat chat = getMessagesController().getChat(-dialog.id);
+-                        if (chat == null || chat.migrated_to != null || ChatObject.isChannel(chat) && !chat.megagroup && !inu_allowChannels) {
++                        if (chat == null || chat.migrated_to != null || ChatObject.isChannel(chat) && !chat.megagroup && !inu_allowChannels || inu_peerPicker && !desu.inugram.helpers.plugins.ui.PluginUi.canSelectPeer(chat, inu_peerTypes)) {
+                             continue;
+                         }
+                         contacts.add(chat);
+@@ -1242,7 +1254,12 @@ public class GroupCreateActivity extends BaseFragment implements NotificationCen
+                 }
+             }
+ 
+-            searchAdapterHelper = new SearchAdapterHelper(false);
++            searchAdapterHelper = inu_peerPicker ? new SearchAdapterHelper(false) {
++                @Override
++                protected boolean filter(TLObject obj) {
++                    return super.filter(obj) && desu.inugram.helpers.plugins.ui.PluginUi.canSelectPeer(obj, inu_peerTypes);
++                }
++            } : new SearchAdapterHelper(false);
+             searchAdapterHelper.setDelegate((searchId) -> {
+                 showItemsAnimated(currentItemsCount);
+                 if (searchRunnable == null && !searchAdapterHelper.isSearchInProgress() && getItemCount() == 0) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -564,6 +564,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+             if (getLastFragment() != null && getLastFragment().getLastStoryViewer() != null) {
+                 getLastFragment().getLastStoryViewer().updatePlayingMode();
+             }
++            desu.inugram.helpers.plugins.ui.PluginScreens.onFragmentStackChanged(this);
+         });
+         actionBarLayout.setDelegate(this);
+         Theme.loadWallpaper(true);

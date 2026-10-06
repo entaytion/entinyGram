@@ -58,7 +58,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.jav
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
-@@ -621,7 +621,7 @@ public class SharedConfig {
+@@ -628,7 +628,7 @@ public class SharedConfig {
              streamAllVideo = preferences.getBoolean("streamAllVideo", BuildVars.DEBUG_VERSION);
              streamMkv = preferences.getBoolean("streamMkv", false);
              suggestStickers = preferences.getInt("suggestStickers", 0);
@@ -67,7 +67,7 @@ index 0000000..0000000 100644
              overrideDevicePerformanceClass = preferences.getInt("overrideDevicePerformanceClass", -1);
              devicePerformanceClass = preferences.getInt("devicePerformanceClass", -1);
              sortContactsByName = preferences.getBoolean("sortContactsByName", false);
-@@ -673,7 +673,7 @@ public class SharedConfig {
+@@ -680,7 +680,7 @@ public class SharedConfig {
              debugVideoQualities = preferences.getBoolean("debugVideoQualities", false);
              shadowsInSections = preferences.getBoolean("shadowsInSections", false);
              debugViewMetrics = preferences.getBoolean("debugViewMetrics", false);
@@ -76,7 +76,7 @@ index 0000000..0000000 100644
              photoLiveDefault = preferences.getBoolean("photoLiveDefault", false);
  
              loadDebugConfig(preferences);
-@@ -1823,7 +1823,7 @@ public class SharedConfig {
+@@ -1805,7 +1805,7 @@ public class SharedConfig {
      }
  
      public static boolean isUsingCamera2(int currentAccount) {

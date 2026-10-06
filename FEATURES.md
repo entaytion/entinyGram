@@ -33,6 +33,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - 🐶 reduce menu motion: skip context menu stagger and reaction bar slide-in/scale animations
 - material 3:
   - switches
+  - sliders
   - fabs
   - predictive back
   - navigation animation
@@ -47,6 +48,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - MapLibre-based map view
 - customizable map preview provider
 - in-app updater - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
+- updater picks the APK matching the installed variant (full/pluginless)
 - 🐶 crash report sheet: catches uncaught exceptions, offers to share the log on next launch, posts a tap-to-restart notification
 - keep search query after picking a result in peer selection screens
 
@@ -62,7 +64,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - custom title text: Inugram / @username / first name / "Chats"
 - 🐶 dialogs fab customization: main + secondary actions, hide-on-scroll, left-side
 - 🐶 "create as supergroup" toggle in group creation
-- 🐶 deeplink / username quick-open from global search
+- 🐶 deeplink / username / cached peer ID quick-open from global search
 - mutual contact icon in contacts list
 - customizable dialogs list pull-down action: reveal archive (stock), open archive directly (🐶 done right, without revealing the cell), open saved messages, open search, or disabled entirely. when the pull-down no longer leads to the archive, the archive row is hidden from the list and an "Archived Chats" entry appears in the drawer/overflow menu instead
 - interactive chat preview (long-tap avatar): tappable bubbles, no tap-to-expand
@@ -105,6 +107,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - 🐶 disable web preview limit on twitter-like websites
 - 🐶 spoiler web previews: when the preview-generating link is under a spoiler, cover the whole preview card too
 - tap a web preview photo to open it in the photo viewer
+- 🐶 tap the photo/video in the bot "What can this bot do?" card to open it in the photo viewer
 - 🐶 "Preview" in the link long-tap menu: peek a t.me message link (public or private) as a chat preview at that exact message
 - message details from menu (+ show json)
 - per-message statistics from message menu
@@ -208,6 +211,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - 🐶 disable swipe-to-hide the General topic in the forum topics list
 - disable motion photos (rendering + detection, in picker and in messages)
 - disable notification chat bubbles
+- 🐶 keep previous chats in the back stack when opening another chat
 - 🐶 disable cloud drafts upload
 - 🐶 disable wallpaper parallax
 - 🐶 disable scroll-snap in profile
@@ -217,6 +221,7 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - open bottom-tab menus early by swiping up; flat highlight (not ripple) on menu hover
 - faster downloads/uploads
 - auto-disable the configured proxy while a VPN is active
+- batch import proxy links from clipboard (one per line)
 - send MP4 files attached through Files as playable videos without conversion
 - sort attach panel albums by photo count instead of recency
 - 🐶 "Minimize" option in the attach panel discard prompt to keep the selection (e.g. to choose a message to reply to)
@@ -246,8 +251,10 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - disable quick share (long-tap share button → send to frequent contact without confirmation)
 - disable auto-play when opening the pinned music player on a profile
 
+
 ## 🐶 bugfixes (vs stock)
 
+- channel update queue no longer replays the same update indefinitely after an earlier queued update advances PTS
 - connection status title no longer gets stuck on "Updating..." when its transition animation is cancelled
 - accelerated video playback no longer applies an unnecessary pitch shift; live speed-slider changes use Android's low-latency audio mixer path
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
@@ -367,8 +374,12 @@ most things are toggleable in `Settings → Inugram`, with sensible opinionated 
 - crash tapping the story privacy badge on a story from a user with no first name (e.g. deleted account)
 - stop spamming doomed admin-list requests (`COMMUNITY_FILTER_INVALID`) on every open of a community you're not an admin of
 - crash in the forward picker inside a community when the community's info updates (stock updates an action bar avatar view that picker mode never creates)
+- crash rendering tables in rich messages and instant view with oversized/negative col/rowspans or a row wider than the first (stock sized the grid from raw spans and the first row only)
+- hashtags, mentions, custom emoji and other entities missing from rich message previews in the chat list (stock preview formatter dropped every rich text type it did not list)
+- blank white area where the keyboard was when opening another screen from a chat with the keyboard up (leftover adjustResize-era filler drawn over the edge-to-edge chat)
+- opening/closing a screen with the keyboard up no longer waits up to 250ms for the keyboard to hide first (adjustResize-era delay, pointless with edge-to-edge)
+- avatar long-press preview stuck on blurred placeholder after the cached profile photo reference expired (stock used the often-null `UserFull.user` and a parent that cannot refresh profile photo references)
 - fix bottom progress bar on video bubbles now following inline playback (autoplay & play-with-sound)
 - correctly publish album name for streamed music
 - permanently white/stale message bubbles on low-memory devices (stock bug: `MessageDrawable` committed its radius/color cache keys even when the bitmap allocation for the bubble nine-patch failed, so the stale drawable was never rebuilt; the shadow nine-patch also recycled its old bitmap before allocating the new one, leaving a recycled bitmap in use)
-- unread reaction/poll vote badge stuck on a chat after reading some of them on another device (stock only persisted the dialog counter once it hit zero); counter now follows every single-message read, each read is acked to the server right away; the jump-to-reaction button no longer marks everything read when its offset overshoots
 - group call recording timer showing a nonsense duration (the whole unix epoch, e.g. `496691:48:15`) right after starting a recording: stock flips the local `recording` flag optimistically while `record_start_date` is still 0

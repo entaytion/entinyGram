@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileStreamLoadOperation.java
-@@ -222,6 +222,8 @@ public class FileStreamLoadOperation extends BaseDataSource implements FileLoadO
+@@ -231,6 +231,8 @@ public class FileStreamLoadOperation implements DataSource, FileLoadOperationStr
                  }
              } catch (InterruptedException e) {
                  FileLog.e(e);

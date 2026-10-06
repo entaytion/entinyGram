@@ -7,6 +7,8 @@ import {
   forkSyncFiles,
   rootDir,
   seriesFile,
+  skippedSubmodules,
+  submodulePatches,
   upstreamCommitFile,
   upstreamUrl,
 } from './config.js'
@@ -65,8 +67,18 @@ export async function ensureDir(dir: string) {
   await fs.mkdir(dir, { recursive: true })
 }
 
-export async function cloneUpstream(targetDir: string, commit: string) {
+export async function cloneUpstream(targetDir: string, commit: string, shallow = false) {
   await ensureEmptyCloneTarget(targetDir)
+  if (shallow) {
+    step(`Fetching upstream ${commit} into ${targetDir}`)
+    await ensureDir(targetDir)
+    const git = cd(targetDir)
+    await git`git init -q`
+    await git`git remote add upstream ${upstreamUrl}`
+    await git`git fetch --depth 1 upstream ${commit}`
+    await git`git checkout FETCH_HEAD`
+    return
+  }
   if (!existsSync(join(targetDir, '.git'))) {
     step(`Cloning upstream into ${targetDir}`)
     await $`git clone ${upstreamUrl} ${targetDir}`
@@ -101,14 +113,15 @@ export async function ensureUpstreamRemote(repoDir: string) {
   await git`git remote add upstream ${upstreamUrl}`
 }
 
-export async function syncSubmodules(repoDir: string) {
+export async function syncSubmodules(repoDir: string, excludedSubmodules: string[] = [], shallow = false) {
   if (!existsSync(join(repoDir, '.gitmodules'))) {
     return false
   }
 
   const git = cd(repoDir)
+  const paths = ['.', ...excludedSubmodules.map(path => `:(exclude)${path}`)]
   // status prefixes: ' ' in sync, '-' uninitialized, '+' sha mismatch, 'U' conflicted
-  const stale = (await git`git submodule status`)
+  const stale = (await git`git submodule status -- ${paths}`)
     .stdout
     .split(/\r?\n/)
     .filter(line => line.length > 0 && line[0] !== ' ')
@@ -118,8 +131,30 @@ export async function syncSubmodules(repoDir: string) {
   }
 
   step(`Syncing ${stale.length} submodule(s), this will take a while`)
-  await git`git submodule update --init --recursive --filter=blob:none`
+  const skips = skippedSubmodules.flatMap(name => ['-c', `submodule.${name}.update=none`])
+  const depth = shallow ? ['--depth', '1'] : ['--filter=blob:none']
+  await git`git ${skips} submodule update --init --recursive ${depth} -- ${paths}`
   return true
+}
+
+export async function applySubmodulePatches(repoDir: string, excludedSubmodules: string[] = []) {
+  let appliedAny = false
+
+  for (const { submodule, patch } of submodulePatches) {
+    if (excludedSubmodules.includes(submodule)) continue
+    const dir = join(repoDir, submodule)
+    if (!existsSync(dir)) continue
+
+    const git = cd(dir)
+    const alreadyApplied = await git`git apply --reverse --check ${patch}`.nothrow().quiet()
+    if (alreadyApplied.exitCode === 0) continue
+
+    step(`Patching ${submodule}`)
+    await git`git apply ${patch}`
+    appliedAny = true
+  }
+
+  return appliedAny
 }
 
 export function hasGitRepo(repoDir: string) {
@@ -189,8 +224,14 @@ interface ResolvedLink {
   replace?: boolean
 }
 
-async function linkForkEntry(repoDir: string, entry: ResolvedLink) {
+async function linkForkEntry(repoDir: string, entry: ResolvedLink, skip = false) {
   const targetPath = join(repoDir, entry.repoRelativeTarget)
+  if (skip) {
+    const stat = await fs.lstat(targetPath).catch(() => null)
+    if (!stat?.isSymbolicLink() || resolve(dirname(targetPath), await fs.readlink(targetPath)) !== entry.sourcePath) return false
+    await fs.unlink(targetPath)
+    return true
+  }
   const created = await ensureSymlink(targetPath, entry.sourcePath, entry.type)
   if (created) {
     step(`Symlinking ${targetPath}`)
@@ -204,8 +245,15 @@ async function linkForkEntry(repoDir: string, entry: ResolvedLink) {
   return created
 }
 
-export async function linkForkSource(repoDir: string) {
+export async function linkForkSource(repoDir: string, pluginless = false) {
   let dirty = false
+  const oldSourceRoot = join(repoDir, 'TMessagesProj/src/main/kotlin/desu/inugram')
+  const oldSourceStat = await fs.lstat(oldSourceRoot).catch(() => null)
+  if (oldSourceStat?.isSymbolicLink()
+    && resolve(dirname(oldSourceRoot), await fs.readlink(oldSourceRoot)) === join(rootDir, 'src/fork')) {
+    await fs.unlink(oldSourceRoot)
+    dirty = true
+  }
 
   for (const entry of forkSyncFiles) {
     if (entry.directory) {
@@ -214,7 +262,7 @@ export async function linkForkSource(repoDir: string) {
         repoRelativeTarget: entry.target,
         type: 'dir',
         replace: entry.replace,
-      })
+      }, pluginless && entry.pluginsOnly)
       dirty ||= created
       continue
     }
@@ -226,7 +274,7 @@ export async function linkForkSource(repoDir: string) {
         repoRelativeTarget: join(entry.target, basename(sourcePath)),
         type: 'file',
         replace: entry.replace,
-      })
+      }, pluginless && entry.pluginsOnly)
       dirty ||= created
     }
   }
@@ -304,7 +352,7 @@ export async function getPatchSubject(repoDir: string, patchName: string) {
 }
 
 export async function generateStablePatchFromCommit(repoDir: string, commitId: string) {
-  const patch = await cd(repoDir)`git format-patch --stdout --zero-commit --no-signature --subject-prefix= -1 ${commitId}`
+  const patch = await cd(repoDir)`git format-patch --stdout --ignore-submodules=none --zero-commit --no-signature --subject-prefix= -1 ${commitId}`
   return patch.stdout
     .replace(/^index [0-9a-f]+\.\.[0-9a-f]+( \d+)?$/gm, 'index 0000000..0000000$1')
     .replace(/^Subject:.*(?:\n[ \t].*)+/m, m => m.replace(/\n[ \t]+/g, ' '))

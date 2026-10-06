@@ -29,6 +29,7 @@ feature/call-confirmation.patch
 feature/double-tap-delay.patch
 feature/mutual-contact-icon.patch
 hooks/chat-activity.patch
+hooks/send-preview.patch
 feature/message-menu.patch
 debloat/disable-pull-to-next.patch
 debloat/always-show-go-to-down.patch
@@ -176,7 +177,6 @@ feature/hide-blocked-messages.patch
 feature/show-deleted-replies.patch
 bugfix/reply-name-end-padding.patch
 bugfix/image-loader-leak.patch
-bugfix/video-ads-leak.patch
 bugfix/chat-avatar-leak.patch
 bugfix/launch-activity-leaks.patch
 bugfix/chat-attach-alert-adapter-leak.patch
@@ -286,7 +286,6 @@ bugfix/recycler-stale-longpress-position.patch
 bugfix/message-drawable-oom-cache.patch
 feature/switch-account-shortcut.patch
 feature/md3-navbar.patch
-bugfix/stale-unread-reaction.patch
 bugfix/native-byte-buffer-pool.patch
 bugfix/chat-reply-line-leak.patch
 bugfix/bot-location-context.patch
@@ -319,3 +318,23 @@ feature/instant-camera-mode.patch
 feature/minimize-attach-panel.patch
 bugfix/link-scrim-offset.patch
 bugfix/scrim-touch-lock.patch
+feature/md3-sliders.patch
+feature/plugins.patch
+bugfix/settings-activity-bulletin.patch
+bugfix/table-spans.patch
+bugfix/avatar-preview-file-ref.patch
+bugfix/article-selection-null-text.patch
+bugfix/chat-keyboard-transition-gap.patch
+bugfix/keyboard-transition-delay.patch
+bugfix/rich_preview_entities.patch
+bugfix/reactions-cull-during-change.patch
+bugfix/persistent-bot-keyboard-back.patch
+feature/bot-description-media-viewer.patch
+bugfix/forward-sender-avatar.patch
+bugfix/search-highlight-block-offset.patch
+bugfix/video-no-thumb-placeholder.patch
+feature/proxy-batch-import.patch
+bugfix/channel-updates-queue-pts.patch
+misc/debug-webm-stickers.patch
+feature/keep-chats-in-stack.patch
+misc/debug-photo-crop.patch

@@ -5,7 +5,7 @@ on:
 
 concurrency:
   group: release-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -38,7 +38,8 @@ jobs:
 
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
-          name: inugram-${{ github.sha }}-unsigned
+          pattern: inugram-${{ github.sha }}-unsigned-*
+          merge-multiple: true
           path: out
 
       - name: decode keystore
@@ -57,26 +58,27 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          apk='${{ needs.build.outputs.apk-name }}'
           apksigner=$ANDROID_HOME/build-tools/36.0.0/apksigner
-          "$apksigner" sign \
-            --ks "$RUNNER_TEMP/release.keystore" \
-            --ks-key-alias inugram \
-            --ks-pass "pass:$KEYSTORE_PASSWORD" \
-            --key-pass "pass:$KEY_PASSWORD" \
-            --in "out/$apk" \
-            --out "out/$apk.signed"
-          "$apksigner" verify --print-certs "out/$apk.signed"
-          mv "out/$apk.signed" "out/$apk"
+          for apk in '${{ needs.build.outputs.apk-full-name }}' '${{ needs.build.outputs.apk-pluginless-name }}'; do
+            "$apksigner" sign \
+              --ks "$RUNNER_TEMP/release.keystore" \
+              --ks-key-alias inugram \
+              --ks-pass "pass:$KEYSTORE_PASSWORD" \
+              --key-pass "pass:$KEY_PASSWORD" \
+              --in "out/$apk" \
+              --out "out/$apk.signed"
+            "$apksigner" verify --print-certs "out/$apk.signed"
+            mv "out/$apk.signed" "out/$apk"
+          done
 
       - name: wipe keystore
         if: always()
         run: rm -f "$RUNNER_TEMP/release.keystore"
 
-      - name: attest signed apk
+      - name: attest signed apks
         uses: actions/attest@281a49d4cbb0a72c9575a50d18f6deb515a11deb # v4
         with:
-          subject-path: out/${{ needs.build.outputs.apk-name }}
+          subject-path: out/*.apk
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -85,7 +87,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-  upload:
+  github-release:
     needs: [build, sign]
     if: github.repository == 'teidesu/inugram'
     runs-on: ubuntu-latest
@@ -94,14 +96,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-
-      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: 20
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
+          sparse-checkout: changelogs
 
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
@@ -111,14 +107,59 @@ jobs:
       - name: create github release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           tag='${{ needs.build.outputs.tag }}'
-          apk='${{ needs.build.outputs.apk-name }}'
-          gh release create "$tag" \
-            --target "$GITHUB_SHA" \
-            --title "$tag" \
-            --generate-notes \
-            "out/$apk"
+          notes=(--generate-notes)
+          changelog='changelogs/${{ needs.build.outputs.build-num }}.md'
+          if [ -f "$changelog" ]; then
+            notes=(--notes-file "$changelog")
+          fi
+          apks=('out/${{ needs.build.outputs.apk-full-name }}' 'out/${{ needs.build.outputs.apk-pluginless-name }}')
+          if target=$(gh release view "$tag" --json targetCommitish --jq .targetCommitish 2>/dev/null); then
+            if [ "$target" != "$GITHUB_SHA" ]; then
+              echo "::error::release $tag already exists for $target; re-run the run that created it instead"
+              exit 1
+            fi
+            gh release upload "$tag" "${apks[@]}" --clobber
+            gh release edit "$tag" --draft=false
+          else
+            gh release create "$tag" \
+              --target "$GITHUB_SHA" \
+              --title "$tag" \
+              "${notes[@]}" \
+              "${apks[@]}"
+          fi
+
+      - name: bump INU_BUILD variable
+        env:
+          GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          next=$((${{ needs.build.outputs.build-num }} + 1))
+          gh variable set INU_BUILD --body "$next"
+
+  telegram:
+    needs: [build, github-release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: inugram-${{ github.sha }}
+          path: out
 
       - name: upload to telegram
         env:
@@ -130,10 +171,33 @@ jobs:
           GH_VARS_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
         run: pnpm tsx scripts/ci/upload.ts out
 
-      - name: bump INU_BUILD and LAST_RELEASE_SHA variables
+  publish-sdk:
+    needs: [build, github-release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: inugram-${{ github.sha }}-sdk
+          path: sdk/types
+
+      - name: publish sdk
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GH_TOKEN: ${{ secrets.INU_VARS_TOKEN }}
-        run: |
-          next=$((${{ needs.build.outputs.build-num }} + 1))
-          gh variable set INU_BUILD --body "$next"
-          gh variable set LAST_RELEASE_SHA --body "$GITHUB_SHA"
+          INU_BUILD: ${{ needs.build.outputs.build-num }}
+          SDK_HASH: ${{ vars.SDK_HASH }}
+        run: pnpm tsx scripts/ci/publish-sdk.ts

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserServ
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MusicBrowserService.java
-@@ -45,6 +45,9 @@ public class MusicBrowserService extends MediaBrowserService {
+@@ -46,6 +46,9 @@ public class MusicBrowserService extends MediaBrowserService {
          if (clientPackageName == null) {
              return null;
          }

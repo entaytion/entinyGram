@@ -217,7 +217,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawa
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RLottieDrawable.java
-@@ -838,6 +838,10 @@ public class RLottieDrawable extends BitmapDrawable implements Animatable, Bitma
+@@ -892,6 +892,10 @@ public class RLottieDrawable extends BitmapDrawable implements Animatable, Bitma
      }
  
      public final void setLayerColor(String layerName, int color) {
@@ -245,7 +245,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -453,6 +453,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -450,6 +450,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
          cameraImageView = new ImageView(context);
          cameraImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
          cameraImageView.setImageResource(R.drawable.filled_premium_camera);

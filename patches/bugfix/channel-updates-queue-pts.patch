@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 19:58:07 +0400
+Subject: fix channel update queue replaying same update after pts advances
+
+---
+ .../src/main/java/org/telegram/messenger/MessagesController.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -16398,6 +16398,7 @@ public class MessagesController extends BaseController implements NotificationCe
+             }
+             if (updateState == 0) {
+                 processUpdates(updates, true);
++                channelPts = channelsPts.get(channelId);
+                 anyProceed = true;
+                 if (a >= updatesQueue.size()) break;
+                 updatesQueue.remove(a);

@@ -42,7 +42,7 @@ index 0000000..0000000 100644
  import me.vkryl.core.BitwiseUtils;
  import me.vkryl.core.reference.ReferenceList;
  
-@@ -206,7 +207,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -204,7 +205,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
      private TextView bottomOverlayChatText;
      private ChatActivityChannelButtonsLayout bottomOverlayChat2;
      private FrameLayout emptyViewContainer;
@@ -51,7 +51,7 @@ index 0000000..0000000 100644
      private LinearLayout emptyLayoutView;
      private ImageView emptyImageView;
      private TextView emptyView;
-@@ -519,6 +520,34 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -517,6 +518,34 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
          });
      }
  
@@ -86,7 +86,7 @@ index 0000000..0000000 100644
      private void loadMessages(boolean reset) {
          if (loading) {
              return;
-@@ -934,7 +963,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -932,7 +961,9 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
              public void onItemClick(final int id) {
                  if (id == -1) {
                      finishFragment();
@@ -96,7 +96,7 @@ index 0000000..0000000 100644
              }
          });
  
-@@ -977,6 +1008,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -975,6 +1006,11 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
          });
          searchItem.setSearchFieldHint(getString(R.string.Search));
          searchItem.setSearchPaddingStart(7);
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
          avatarContainer.setEnabled(false);
  
          avatarContainer.setTitle(currentChat.title);
-@@ -1651,7 +1687,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -1636,7 +1672,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
      private final static int OPTION_CALL = 17;
      private final static int OPTION_RESTRICT = 33;
      private final static int OPTION_REPORT_FALSE_POSITIVE = 34;
@@ -117,7 +117,7 @@ index 0000000..0000000 100644
  
      private boolean createMenu(View v) {
          return createMenu(v, 0, 0);
-@@ -1865,6 +1901,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -1850,6 +1886,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                  options.add(OPTION_CALL);
              }
          }
@@ -125,7 +125,7 @@ index 0000000..0000000 100644
  
          boolean callbackSent = false;
  
-@@ -2121,11 +2158,14 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+@@ -2106,11 +2143,14 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
          roundVideoContainer.setVisibility(View.INVISIBLE);
      }
  

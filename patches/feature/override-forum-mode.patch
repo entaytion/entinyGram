@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/ChatObject.java
-@@ -2628,6 +2628,10 @@ public class ChatObject {
+@@ -2629,6 +2629,10 @@ public class ChatObject {
      }
  
      public static boolean areTabsEnabled(TLRPC.Chat chat) {
@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
-@@ -19068,7 +19068,7 @@ public class MessagesStorage extends BaseController {
+@@ -19069,7 +19069,7 @@ public class MessagesStorage extends BaseController {
                  TLRPC.Chat chat = getChat(-dialogId);
                  if (chat != null && chat.forum) {
                      value |= FORUM_TYPE_CHAT;
@@ -36,7 +36,7 @@ index 0000000..0000000 100644
                          value |= FORUM_TYPE_CHAT_TABS;
                      }
                  }
-@@ -19100,7 +19100,7 @@ public class MessagesStorage extends BaseController {
+@@ -19101,7 +19101,7 @@ public class MessagesStorage extends BaseController {
          return (value & type) != 0;
      }
  

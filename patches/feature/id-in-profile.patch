@@ -96,7 +96,7 @@ index 0000000..0000000 100644
                  return VIEW_TYPE_TEXT_DETAIL;
              } else if (position == usernameRow || position == setUsernameRow) {
                  return VIEW_TYPE_TEXT_DETAIL_MULTILINE;
-@@ -15754,6 +15767,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -15753,6 +15766,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              put(++pointer, bizHoursRow, sparseIntArray);
              put(++pointer, bizLocationRow, sparseIntArray);
              put(++pointer, birthdayRow, sparseIntArray);

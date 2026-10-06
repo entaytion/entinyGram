@@ -4,30 +4,14 @@ Date: Tue, 5 May 2026 14:46:16 +0200
 Subject: "create as supergroup" toggle when creating a group
 
 ---
- .../telegram/ui/GroupCreateFinalActivity.java | 28 ++++++++++++++++---
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ .../telegram/ui/GroupCreateFinalActivity.java | 26 +++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateFinalActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateFinalActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateFinalActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCreateFinalActivity.java
-@@ -20,7 +20,6 @@ import android.content.Context;
- import android.content.Intent;
- import android.graphics.Canvas;
- import android.graphics.Paint;
--import android.graphics.drawable.ColorDrawable;
- import android.graphics.drawable.Drawable;
- import android.location.Location;
- import android.os.Bundle;
-@@ -62,7 +61,6 @@ import org.telegram.ui.Cells.TextSettingsCell;
- import org.telegram.ui.Components.AutoDeletePopupWrapper;
- import org.telegram.ui.Components.AvatarDrawable;
- import org.telegram.ui.Components.BackupImageView;
--import org.telegram.ui.Components.CombinedDrawable;
- import org.telegram.ui.Components.EditTextEmoji;
- import org.telegram.ui.Components.FillLastLinearLayoutManager;
- import org.telegram.ui.Components.FragmentFloatingButton;
-@@ -110,6 +108,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -108,6 +108,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
      private String nameToSet;
      private int chatType;
      private boolean canToggleTopics;
@@ -35,7 +19,7 @@ index 0000000..0000000 100644
  
      private RLottieDrawable cameraDrawable;
      
-@@ -626,6 +625,14 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -624,6 +625,14 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                  });
                  presentFragment(fragment);
              }
@@ -50,7 +34,7 @@ index 0000000..0000000 100644
              if (view instanceof TextCell && chatType != ChatObject.CHAT_TYPE_FORUM) {
                  if (popupWindow != null && popupWindow.isShowing()) {
                      return;
-@@ -684,7 +691,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -682,7 +691,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                  createAfterUpload = true;
              } else {
                  showEditDoneProgress(true);
@@ -59,7 +43,7 @@ index 0000000..0000000 100644
              }
          });
  
-@@ -723,7 +730,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -721,7 +730,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                      if (delegate != null) {
                          delegate.didStartChatCreation();
                      }
@@ -68,7 +52,7 @@ index 0000000..0000000 100644
                  }
                  showAvatarProgress(false, true);
                  avatarEditor.setImageDrawable(null);
-@@ -904,6 +911,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -902,6 +911,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
          private final static int VIEW_TYPE_TEXT_INFO_CELL = 5;
          private final static int VIEW_TYPE_TOPICS = 6;
          private final static int VIEW_TYPE_LAST_EMPTY_VIEW = 7;
@@ -76,7 +60,7 @@ index 0000000..0000000 100644
  
          ArrayList<InnerItem> items = new ArrayList<>();
  
-@@ -919,6 +927,9 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -917,6 +927,9 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                  items.add(new InnerItem(VIEW_TYPE_TOPICS));
                  items.add(new InnerItem(VIEW_TYPE_TEXT_INFO_CELL, getString(R.string.ForumToggleDescription)));
              } else {
@@ -86,7 +70,7 @@ index 0000000..0000000 100644
                  items.add(new InnerItem(VIEW_TYPE_AUTO_DELETE));
                  items.add(new InnerItem(VIEW_TYPE_TEXT_INFO_CELL, getString(R.string.GroupCreateAutodeleteDescription)));
              }
-@@ -946,6 +957,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -944,6 +957,7 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
  
          @Override
          public boolean isEnabled(RecyclerView.ViewHolder holder) {
@@ -94,7 +78,7 @@ index 0000000..0000000 100644
              return holder.getItemViewType() == VIEW_TYPE_TEXT_SETTINGS || holder.getItemViewType() == VIEW_TYPE_AUTO_DELETE || holder.getItemViewType() == VIEW_TYPE_TOPICS && canToggleTopics;
          }
  
-@@ -982,6 +994,9 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -980,6 +994,9 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                      view = new View(context);
                      view.setTag(RecyclerListView.TAG_NOT_SECTION);
                      break;
@@ -104,7 +88,7 @@ index 0000000..0000000 100644
              }
              return new RecyclerListView.Holder(view);
          }
-@@ -1031,6 +1046,11 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
+@@ -1029,6 +1046,11 @@ public class GroupCreateFinalActivity extends BaseFragment implements Notificati
                      TextInfoPrivacyCell textInfoPrivacyCell = (TextInfoPrivacyCell) holder.itemView;
                      textInfoPrivacyCell.setText(items.get(position).string);
                      break;

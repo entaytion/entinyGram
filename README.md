@@ -41,12 +41,19 @@ the patchset is managed using stgit and a few supporting scripts in `scripts/`.
 
 ## repo layout
 
-- `src/kotlin`: our custom Kotlin code
+- `src/fork`: our custom Kotlin code
+- `src/fork-app`: ditto, for the bits that live in the app module instead of the library one
+- `src/core`: InuCore, a plain jvm module (so it can be tested without a device)
+- `src/native`: rust plugin engine (quickjs + jni bridge)
+- `src/test`: on-device suite for the plugin bridge (`kotlin/`) and the files it needs (`assets/`)
+- `src/vendor`: third-party code copied in as-is
 - `src/res`: our custom resources
+- `sdk`: the plugin sdk - the api typings (`sdk/types`) and the author-facing cli (`sdk/cli`)
 - `patches/`: stock patches
 - `series`: patch apply order
 - `upstream-commit`: pinned Telegram commit
 - `worktree/`: local Telegram checkout, gitignored
+- `worktree-pluginless/`: separate checkout prepared by `setup --pluginless`, gitignored. should not be used for development.
 
 patches are grouped by their type:
 
@@ -75,6 +82,21 @@ pnpm run setup
 
 this will clone the upstream into `worktree/` and set up stgit in it, along with all the current patches.
 you can then simply open (not import!) `worktree/` in Android Studio and start hacking. it should build right away.
+
+`pnpm run setup -- --pluginless` prepares `worktree-pluginless/` instead, skipping
+`feature/plugins.patch`, LSPlant and its nested submodules/local patches, and plugin API generation.
+It also works with `--ci` and `--no-submodules`. Build it with `pnpm run build-debug-pluginless`.
+The plain build excludes the plugin engine, native hooking libraries, plugin screens, and plugin test assets.
+Other scripts continue to target `worktree/`.
+
+Setup writes the checkout's build variant to the ignored `inu-build.properties` file.
+Gradle exposes it as `BuildConfig.INU_PLUGINLESS` in both Android modules.
+
+Fork Kotlin sources are linked under `TMessagesProj/src/inu/kotlin` and preprocessed by Gradle's
+`preprocessInuSources` task into `build/generated/inu/kotlin`. Edit `src/fork`, not the generated files.
+Use `// #if PLUGINS`, optional `// #else`, and `// #endif` around plugin-only imports and code.
+Both variants are preprocessed; nested directives are supported, excluded lines remain blank to
+preserve line numbers, and malformed directives fail the build.
 
 ### adding a new patch
 

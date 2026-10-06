@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 18:00:08 +0400
+Subject: black placeholder blinking on videos without thumbs
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -16979,6 +16979,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                         if (currentThumb != null) {
+                             imageReceiver.setOrientation(currentThumb.orientation, false);
+                         }
++                    } else if (currentThumb != null && imageReceiver == centerImage) {
++                        imageReceiver.setImageBitmap(new BitmapDrawable(currentThumb.bitmap));
++                        imageReceiver.setOrientation(currentThumb.orientation, false);
+                     } else {
+                         imageReceiver.setImageBitmap(parentActivity.getResources().getDrawable(R.drawable.photoview_placeholder));
+                     }

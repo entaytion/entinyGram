@@ -4,23 +4,10 @@ Date: Thu, 9 Apr 2026 03:23:55 +0300
 Subject: settings ui
 
 ---
- .../org/telegram/messenger/ApplicationLoader.java     |  1 +
  .../main/java/org/telegram/ui/ProfileActivity.java    |  4 ++--
  .../main/java/org/telegram/ui/SettingsActivity.java   | 11 ++++++++++-
- 3 files changed, 13 insertions(+), 3 deletions(-)
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-+++ b/TMessagesProj/src/main/java/org/telegram/messenger/ApplicationLoader.java
-@@ -291,6 +291,7 @@ public class ApplicationLoader extends Application {
- 
-         // AndroidUtilities must be initialized before FileLog
-         final String helloWorld = AndroidUtilities.getHelloWorld();
-+        desu.inugram.InuHooks.init(this);
- 
-         if (BuildVars.LOGS_ENABLED) {
-             FileLog.d(helloWorld);
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
@@ -34,7 +21,7 @@ index 0000000..0000000 100644
                      new SearchResult(500, getString(R.string.EditName), 0, () -> f.presentFragment(new ChangeNameActivity(resourcesProvider))),
                      new SearchResult(501, getString(R.string.ChangePhoneNumber), 0, () -> f.presentFragment(new ActionIntroActivity(ActionIntroActivity.ACTION_TYPE_CHANGE_PHONE_NUMBER))).withLink("tg://settings/edit/change-number"),
                      new SearchResult(502, getString(R.string.AddAnotherAccount), 0, () -> {
-@@ -14798,7 +14798,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -14797,7 +14797,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      new SearchResult(402, getString(R.string.AskAQuestion), getString(R.string.SettingsHelp), R.drawable.msg2_help, () -> f.showDialog(AlertsCreator.createSupportAlert(f, null))).withLink("tg://settings/ask-question"),
                      new SearchResult(403, getString(R.string.TelegramFAQ), getString(R.string.SettingsHelp), R.drawable.msg2_help, () -> Browser.openUrl(f.getParentActivity(), getString(R.string.TelegramFaqUrl))).withLink("tg://settings/faq"),
                      new SearchResult(404, getString(R.string.PrivacyPolicy), getString(R.string.SettingsHelp), R.drawable.msg2_help, () -> Browser.openUrl(f.getParentActivity(), getString(R.string.PrivacyPolicyUrl))).withLink("tg://settings/privacy-policy"),
@@ -47,7 +34,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -688,6 +688,11 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -685,6 +685,11 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
              items.add(UItem.asShadow(null));
          }
  
@@ -59,17 +46,17 @@ index 0000000..0000000 100644
          items.add(SettingCell.Factory.of(1, IconBackgroundColors.BLUE.top, IconBackgroundColors.BLUE.bottom, R.drawable.settings_account, getString(R.string.SettingsAccount), getString(R.string.SettingsAccountInfo)));
          items.add(SettingCell.Factory.of(2, IconBackgroundColors.ORANGE.top, IconBackgroundColors.ORANGE.bottom, R.drawable.settings_chat, getString(R.string.SettingsChat), getString(R.string.SettingsChatInfo)));
          items.add(SettingCell.Factory.of(3, IconBackgroundColors.GREEN.top, IconBackgroundColors.GREEN.bottom, R.drawable.settings_privacy, getString(R.string.SettingsPrivacySecurity), getString(R.string.SettingsPrivacySecurityInfo)));
-@@ -742,7 +747,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
-         items.add(SettingCell.Factory.of(23, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_features, getString(R.string.TelegramFeatures)));
-         items.add(SettingCell.Factory.of(19, IconBackgroundColors.GREEN.top, IconBackgroundColors.GREEN.bottom, R.drawable.settings_policy, getString(R.string.PrivacyPolicy)));
+@@ -745,7 +750,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+             items.add(SettingCell.Factory.of(24, 0xFFF45255, 0xFFDF3955, 0, getString(R.string.RoundVideoSettings)));
+         }
  
 -        if (BuildVars.LOGS_ENABLED || BuildVars.DEBUG_PRIVATE_VERSION) {
 +        if (false && (BuildVars.LOGS_ENABLED || BuildVars.DEBUG_PRIVATE_VERSION)) { // inu: replaced by AboutActivity Logs section
              items.add(UItem.asShadow(null));
              items.add(UItem.asHeader(getString(R.string.SettingsDebug)));
              items.add(SettingCell.Factory.of(20, 0xFF55CA47, 0xFF27B434, 0, getString(R.string.DebugSendLogs)));
-@@ -880,6 +885,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
-                 }
+@@ -887,6 +892,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+                 presentFragment(new RoundVideoSettingsActivity());
                  break;
              }
 +

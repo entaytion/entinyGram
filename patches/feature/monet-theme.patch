@@ -102,7 +102,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8882,7 +8882,7 @@ public class MessageObject {
+@@ -8885,7 +8885,7 @@ public class MessageObject {
                  if (block.code && !block.quote && textLayout.getText() instanceof Spannable) {
                      SpannableString sb;
                      if (!TextUtils.isEmpty(range.language)) {
@@ -111,7 +111,7 @@ index 0000000..0000000 100644
                      } else {
                          sb = new SpannableString(blockText.toString());
                      }
-@@ -8922,7 +8922,7 @@ public class MessageObject {
+@@ -8925,7 +8925,7 @@ public class MessageObject {
                  try {
                      SpannableString sb;
                      if (block.code && !block.quote) {
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
                      } else {
                          sb = SpannableString.valueOf(blockText);
                      }
-@@ -9345,7 +9345,7 @@ public class MessageObject {
+@@ -9348,7 +9348,7 @@ public class MessageObject {
                      if (block.code && !block.quote && textLayout.getText() instanceof Spannable) {
                          SpannableString sb;
                          if (!TextUtils.isEmpty(range.language)) {
@@ -129,7 +129,7 @@ index 0000000..0000000 100644
                          } else {
                              sb = new SpannableString(text.subSequence(range.start, range.end));
                          }
-@@ -9372,7 +9372,7 @@ public class MessageObject {
+@@ -9375,7 +9375,7 @@ public class MessageObject {
                      try {
                          SpannableString sb;
                          if (block.code && !block.quote) {
@@ -138,7 +138,7 @@ index 0000000..0000000 100644
                          } else {
                              sb = SpannableString.valueOf(text.subSequence(startCharacter, endCharacter));
                          }
-@@ -9388,7 +9388,7 @@ public class MessageObject {
+@@ -9391,7 +9391,7 @@ public class MessageObject {
                  }
  
                  if (block.code && block.textLayout.getText() instanceof Spannable && TextUtils.isEmpty(range.language)) {
@@ -391,7 +391,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -24039,7 +24039,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24051,7 +24051,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (currentMessageObject != null && currentMessageObject.sendPreview) {
                  alpha *= effectDrawable == null ? 0f : effectDrawable.isNotEmpty();
              }
@@ -400,7 +400,7 @@ index 0000000..0000000 100644
  
              int r;
              if (documentAttachType != DOCUMENT_ATTACH_TYPE_ROUND && documentAttachType != DOCUMENT_ATTACH_TYPE_STICKER && currentMessageObject.type != MessageObject.TYPE_EMOJIS) {
-@@ -24082,7 +24082,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -24094,7 +24094,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                      canvas.restore();
                      Paint dimPaint = getThemedPaint(Theme.key_paint_chatTimeBackground);
                      int oldAlpha2 = dimPaint.getAlpha();
@@ -426,7 +426,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -13662,6 +13662,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -13656,6 +13656,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
      private void showItemOptions() {
          ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
          io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));

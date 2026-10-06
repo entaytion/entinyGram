@@ -11,11 +11,11 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCamer
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InstantCameraView.java
-@@ -2368,6 +2368,7 @@ public class InstantCameraView extends FrameLayout implements NotificationCenter
+@@ -2374,6 +2374,7 @@ public class InstantCameraView extends InstantCameraViewBase implements Notifica
          }
  
          public void stopRecording(int send, SendOptions options) {
 +            if (handler == null) return;
              handler.sendMessage(handler.obtainMessage(MSG_STOP_RECORDING, send, 0, options));
              AndroidUtilities.runOnUIThread(() -> {
-                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.stopAllHeavyOperations, 512);
+                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.startAllHeavyOperations, 512);

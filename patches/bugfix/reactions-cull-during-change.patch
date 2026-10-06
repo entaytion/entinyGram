@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 16:41:17 +0400
+Subject: fix reactions flicker during message change animation
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -5961,7 +5961,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             }
+         }
+ 
+-        final boolean reactionsVisible = intersect(reactionsLayoutInBubble.y, reactionsLayoutInBubble.y + reactionsLayoutInBubble.height, childPosition, childPosition + visibleHeight);
++        if (currentMessageObject != null) {
++            updateReactionLayoutPosition();
++        }
++        final boolean reactionsVisible = transitionParams.animateChange || transitionParams.animateBackgroundBoundsInner || intersect(reactionsLayoutInBubble.y, reactionsLayoutInBubble.y + reactionsLayoutInBubble.height, childPosition, childPosition + visibleHeight);
+         if (this.reactionsVisible != reactionsVisible) {
+             this.reactionsVisible = reactionsVisible;
+             invalidate();

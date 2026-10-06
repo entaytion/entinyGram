@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 16:12:25 +0400
+Subject: fix blank area where keyboard was when leaving chat
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -17513,9 +17513,6 @@ public class ChatActivity extends BaseFragment implements
+         ArrayList<ChatMessageCell> drawCaptionAfter = new ArrayList<>();
+         ArrayList<ChatMessageCell> drawReactionsAfter = new ArrayList<>();
+ 
+-        Paint backgroundPaint;
+-        int backgroundColor;
+-
+         @Override
+         protected boolean invalidateOptimized() {
+             return true;
+@@ -18450,16 +18447,6 @@ public class ChatActivity extends BaseFragment implements
+                 }
+             }
+ 
+-            if (fixedKeyboardHeight > 0 && keyboardHeight < AndroidUtilities.dp(20)) {
+-                int color = getThemedColor(Theme.key_windowBackgroundWhite);
+-                if (backgroundPaint == null) {
+-                    backgroundPaint = new Paint();
+-                }
+-                if (backgroundColor != color) {
+-                    backgroundPaint.setColor(backgroundColor = color);
+-                }
+-                canvas.drawRect(0,getMeasuredHeight() - fixedKeyboardHeight, getMeasuredWidth(), getMeasuredHeight(), backgroundPaint);
+-            }
+             if (pullingDownDrawable != null && pullingDownDrawable.needDrawBottomPanel()) {
+                 int top, bottom;
+                 top = (int) chatInputViewsContainer.getInputBubbleTop();

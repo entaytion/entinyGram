@@ -14,15 +14,15 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
-@@ -77,7 +77,6 @@ import com.google.android.exoplayer2.C;
- import com.google.android.exoplayer2.ExoPlayer;
- import com.google.android.exoplayer2.Player;
- import com.google.android.exoplayer2.extractor.jpeg.MotionPhotoDescription;
--import com.google.android.exoplayer2.extractor.jpeg.XmpMotionPhotoDescriptionParser;
- import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+@@ -79,7 +79,6 @@ import androidx.media3.common.util.UnstableApi;
+ import androidx.media3.exoplayer.ExoPlayer;
+ import androidx.media3.common.Player;
+ import androidx.media3.extractor.jpeg.MotionPhotoDescription;
+-import androidx.media3.extractor.jpeg.XmpMotionPhotoDescriptionParser;
+ 
+ import org.telegram.ui.AspectRatioFrameLayout;
  import com.google.android.gms.cast.MediaMetadata;
- import com.google.android.gms.common.images.WebImage;
-@@ -623,7 +622,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -626,7 +625,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                  final ExifInterface ei = new ExifInterface(new File(path));
                  final String xmp = ei.getAttribute(ExifInterface.TAG_XMP);
                  if (xmp != null) {
@@ -31,7 +31,7 @@ index 0000000..0000000 100644
                      if (motionPhoto != null) {
                          MotionPhotoDescription.ContainerItem photo = null, video = null;
                          for (int i = 0; i < motionPhoto.items.size(); ++i) {
-@@ -1245,8 +1244,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1248,8 +1247,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                      return;
                  }
                  refreshGalleryRunnable = null;
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
          }
  
          @Override
-@@ -1257,6 +1258,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1260,6 +1261,18 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              }
              scheduleReloadRunnable();
          }
@@ -63,7 +63,7 @@ index 0000000..0000000 100644
      }
  
      private static class GalleryObserverExternal extends ContentObserver {
-@@ -1272,8 +1285,22 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -1275,8 +1288,22 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              }
              AndroidUtilities.runOnUIThread(refreshGalleryRunnable = () -> {
                  refreshGalleryRunnable = null;
@@ -88,7 +88,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -6325,7 +6352,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -6328,7 +6355,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              AndroidUtilities.cancelRunOnUIThread(broadcastPhotosRunnable);
          }
          AndroidUtilities.runOnUIThread(broadcastPhotosRunnable = () -> {
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
                  broadcastNewPhotos(guid, mediaAlbumsSorted, photoAlbumsSorted, cameraAlbumIdFinal, allMediaAlbumFinal, allPhotosAlbumFinal, allVideosAlbumFinal, 1000);
                  return;
              }
-@@ -6335,6 +6362,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+@@ -6338,6 +6365,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
              allPhotosAlbumEntry = allPhotosAlbumFinal;
              allMediaAlbumEntry = allMediaAlbumFinal;
              allVideosAlbumEntry = allVideosAlbumFinal;
@@ -142,7 +142,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMes
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
-@@ -19439,6 +19439,32 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -19446,6 +19446,32 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          return imagesArrLocals;
      }
  
