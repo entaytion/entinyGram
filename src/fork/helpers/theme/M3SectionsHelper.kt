@@ -21,6 +21,7 @@ import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Cells.HeaderCell
 import org.telegram.ui.Cells.TextCheckCell
 import org.telegram.ui.Components.RecyclerListView
+import org.telegram.ui.Components.TranslateAlert3
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 import org.telegram.ui.SettingsActivity
@@ -70,7 +71,7 @@ object M3SectionsHelper {
 
     @JvmStatic
     fun isDetachedHeaderCell(view: View): Boolean {
-        return isEnabled() && view is HeaderCell && !isMergedWithPrev(view) && !isMergedWithNext(view)
+        return isEnabled() && (view is HeaderCell || view is TranslateAlert3.Header) && !isMergedWithPrev(view) && !isMergedWithNext(view)
     }
 
     private val outerR get() = AndroidUtilities.dp(20f).toFloat()
@@ -324,6 +325,17 @@ object M3SectionsHelper {
         tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
         tv.typeface = AndroidUtilities.bold()
         tv.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader))
+    }
+
+    @JvmStatic
+    fun styleTranslateHeader(header: TranslateAlert3.Header, resourcesProvider: Theme.ResourcesProvider?) {
+        if (!isEnabled()) return
+        header.setPadding(header.paddingLeft, AndroidUtilities.dp(17f), header.paddingRight, header.paddingBottom)
+        val color = Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader, resourcesProvider)
+        for (tv in arrayOf(header.text1View, header.text2View, header.text3View)) {
+            tv.typeface = AndroidUtilities.bold()
+            tv.setTextColor(color)
+        }
     }
 
     private fun setRadii(top: Float, bottom: Float) {
