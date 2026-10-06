@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateControl
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/TranslateController.java
-@@ -1172,7 +1172,7 @@ public class TranslateController extends BaseController {
+@@ -1173,7 +1173,7 @@ public class TranslateController extends BaseController {
                                  _callback.run(isTranscription, id, resultWithEntities, toLanguage);
                              } else {
                                  toggleTranslatingDialog(dialogId, false);
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              }
                          });
                      }
-@@ -1248,7 +1248,7 @@ public class TranslateController extends BaseController {
+@@ -1249,7 +1249,7 @@ public class TranslateController extends BaseController {
                                      _callback.run(isTranscription, id, resultWithEntities, toLanguage);
                                  } else {
                                      _callback.run(isTranscription, id, null, toLanguage);

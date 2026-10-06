@@ -69,7 +69,7 @@ index 0000000..0000000 100644
          setFocusable(true);
      }
  
-@@ -311,6 +330,22 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -310,6 +329,22 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
          } else {
              setRightPadding(0, true, false);
          }
@@ -92,7 +92,7 @@ index 0000000..0000000 100644
      }
  
      public void setRightPadding(int pad, boolean top, boolean bottom) {
-@@ -742,6 +777,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
+@@ -741,6 +776,12 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
                  (currentChat != null && currentChat.forum ? dp(14) : dp(24)));
  
          nameTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));

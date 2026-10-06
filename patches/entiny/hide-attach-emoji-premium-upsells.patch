@@ -22,7 +22,7 @@ index 0000000..0000000 100644
          if (!(parentFragment instanceof ChatActivity) || !ChatObject.isChannelAndNotMegaGroup(((ChatActivity) parentFragment).getCurrentChat())) {
              return;
          }
-@@ -6663,7 +6666,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
+@@ -6672,7 +6675,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                          needPremium = !MessagesController.getInstance(currentAccount).storyEntitiesAllowed();
                      }
                      attachButton.glassTabView.setCounter(err ? "!" : null, err, false);

@@ -10,14 +10,14 @@ Subject: [=] build configuration
  TMessagesProj/src/main/AndroidManifest.xml    |  25 -
  .../telegram/messenger/car/HomeScreen.java    | 430 ------------------
  .../messenger/car/MusicSongsScreen.java       | 123 -----
- .../messenger/car/TelegramCarAppService.java  |  33 +-
+ .../messenger/car/TelegramCarAppService.java  |  32 +-
  .../messenger/car/TelegramCarSession.java     |  16 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 -
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +-
  TMessagesProj_App/build.gradle                |  36 +-
  build.gradle                                  |  45 +-
  gradle.properties                             |   2 +
- 13 files changed, 140 insertions(+), 680 deletions(-)
+ 13 files changed, 140 insertions(+), 679 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
@@ -832,14 +832,13 @@ index 0000000..0000000 100644
 -    public Session onCreateSession() {
 -        return new TelegramCarSession();
 -    }
--}
 +// Android Auto integration is disabled (its <service> registration in AndroidManifest.xml
 +// is commented out, so the OS never instantiates a real CarAppService). This stub only
 +// exists so TelegramMediaSession's idle-check keeps compiling without depending on
 +// androidx.car.app, whose dependency was otherwise unused dead weight.
 +public class TelegramCarAppService {
 +    public static final boolean inu_running = false;
-+}
+ }
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java b/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
 deleted file mode 100644
 index 0000000..0000000

@@ -20,7 +20,7 @@ index 0000000..0000000 100644
  import org.telegram.ui.community.CommunityUtils;
  import org.telegram.ui.web.BotWebViewContainer;
  
-@@ -6428,6 +6429,15 @@ public class MessageObject {
+@@ -6433,6 +6434,15 @@ public class MessageObject {
                      return out;
                  }
              }
@@ -49,7 +49,7 @@ index 0000000..0000000 100644
                          } else if (draftVoice) {
                              mess = getString(R.string.AttachAudio);
                          } else if (draftMessage != null) {
-@@ -5986,7 +5986,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+@@ -5994,7 +5994,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                  final TL_iv.PageBlock block = message.messageOwner.rich_message.blocks.get(0);
                  accentColor = MessageObject.isBlueBlock(block);
              }

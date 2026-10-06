@@ -16,7 +16,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -890,7 +890,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -875,7 +875,7 @@ public class MessagesController extends BaseController implements NotificationCe
  
      public void lockFiltersInternal() {
          boolean changed = false;

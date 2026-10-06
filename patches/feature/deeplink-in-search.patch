@@ -4,9 +4,9 @@ Date: Sat, 2 May 2026 17:52:16 +0200
 Subject: quickly open deeplinks or usernames from the global search
 
 ---
- .../ui/Adapters/DialogsSearchAdapter.java     | 36 ++++++++++++++++++-
- .../java/org/telegram/ui/DialogsActivity.java |  4 +++
- 2 files changed, 39 insertions(+), 1 deletion(-)
+ .../ui/Adapters/DialogsSearchAdapter.java     | 40 ++++++++++++++++++-
+ .../java/org/telegram/ui/DialogsActivity.java |  4 ++
+ 2 files changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
 index 0000000..0000000 100644
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          filterRecent(query);
          if (!TextUtils.equals(sponsoredQuery, query)) {
              sponsoredQuery = query;
-@@ -1339,7 +1341,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1339,7 +1345,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
      @Override
      public int getItemCount() {
          if (waitingResponseCount == 3) {

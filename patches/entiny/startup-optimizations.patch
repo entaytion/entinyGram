@@ -77,7 +77,7 @@ index 0000000..0000000 100644
              return stringMap;
          } catch (Exception e) {
              try {
-@@ -2061,9 +2070,13 @@ public class LocaleController {
+@@ -2047,9 +2056,13 @@ public class LocaleController {
          is24HourFormat = DateFormat.is24HourFormat(ApplicationLoader.applicationContext);
          systemDefaultLocale = newConfig.locale;
          if (languageOverride != null) {
@@ -98,7 +98,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
 +++ b/TMessagesProj/src/main/java/org/telegram/tgnet/ConnectionsManager.java
-@@ -682,7 +682,7 @@ public class ConnectionsManager extends BaseController {
+@@ -691,7 +691,7 @@ public class ConnectionsManager extends BaseController {
              packageId = "";
          }
  

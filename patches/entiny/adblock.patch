@@ -40,7 +40,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Adapters/DialogsSearchAdapter.java
-@@ -1120,7 +1120,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
+@@ -1124,7 +1124,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                  ConnectionsManager.getInstance(currentAccount).cancelRequest(sponsoredReqId, true);
                  sponsoredReqId = 0;
              }

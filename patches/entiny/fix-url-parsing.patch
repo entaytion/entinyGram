@@ -52,7 +52,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -13759,19 +13759,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -13786,19 +13786,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      AboutLinkCell aboutLinkCell = (AboutLinkCell) holder.itemView;
                      if (position == userInfoRow) {
                          TLRPC.User user = userInfo.user != null ? userInfo.user : getMessagesController().getUser(userInfo.id);

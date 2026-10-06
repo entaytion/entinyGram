@@ -87,7 +87,7 @@ index 0000000..0000000 100644
                                      return true;
                                  }
                                  if (recordingAudioVideo && isInScheduleMode()) {
-@@ -12476,7 +12468,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12458,7 +12450,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                              }
                          };
                          if (!showConfirmAlert(runnable)) {
@@ -99,7 +99,7 @@ index 0000000..0000000 100644
                          }
                      });
                  }
-@@ -12750,7 +12745,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -12732,7 +12727,10 @@ public class ChatActivityEnterView extends FrameLayout implements
                      MediaDataController.getInstance(currentAccount).addRecentSticker(MediaDataController.TYPE_IMAGE, parent, sticker, (int) (System.currentTimeMillis() / 1000), false);
                  };
                  if (!showConfirmAlert(runnable)) {

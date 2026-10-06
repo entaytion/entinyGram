@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java 
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java
-@@ -1299,6 +1299,10 @@ public class FileLoader extends BaseController {
+@@ -1301,6 +1301,10 @@ public class FileLoader extends BaseController {
                      File encCacheRes = new File(cacheRes.getPath() + ".enc");
                      if (encCacheRes.exists()) return encCacheRes;
                  }
@@ -22,7 +22,7 @@ index 0000000..0000000 100644
                  return res;
              } else if (MessageObject.getMedia(message) instanceof TLRPC.TL_messageMediaPhoto) {
                  ArrayList<TLRPC.PhotoSize> sizes = MessageObject.getMedia(message).photo.sizes;
-@@ -1315,6 +1319,10 @@ public class FileLoader extends BaseController {
+@@ -1317,6 +1321,10 @@ public class FileLoader extends BaseController {
                              File encCacheRes = new File(cacheRes.getPath() + ".enc");
                              if (encCacheRes.exists()) return encCacheRes;
                          }

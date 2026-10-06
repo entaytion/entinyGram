@@ -11,11 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -13609,12 +13609,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
-                     } else if (position == inu_idRow) {
-                         detailCell.setTextAndValue(ProfileHelper.formatId(userId, chatId != 0 ? getMessagesController().getChat(chatId) : null), LocaleController.getString(R.string.InuProfileId), false);
-                     } else if (position == inu_regDateRow) {
-                         TLRPC.User u = userId != 0 ? getMessagesController().getUser(userId) : null;
+@@ -13623,8 +13623,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          TLRPC.Chat c = chatId != 0 ? getMessagesController().getChat(chatId) : null;
                          detailCell.setTextAndValue(ProfileHelper.getRegDateValue(userId, c), ProfileHelper.getRegDateSubtitle(userId, c, u), false);
                      } else if (position == noteRow) {
@@ -25,7 +21,7 @@ index 0000000..0000000 100644
                          TLRPC.TL_textWithEntities note = userInfo.note;
                          CharSequence text;
                          if (!UserConfig.getInstance(currentAccount).isPremium()) {
-@@ -16389,8 +16388,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16404,8 +16403,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
          final ItemOptions o = ItemOptions.makeOptions(this, view);
          o.setScrimViewBackground(listView.getClipBackground(view));
          o.setLongPressSelectionEnabled(false);
@@ -36,7 +32,7 @@ index 0000000..0000000 100644
              final CharSequence text = MessageObject.formatTextWithEntities(userInfo.note, false);
              AndroidUtilities.addToClipboard(text);
              BulletinFactory.of(ProfileActivity.this)
-@@ -16408,11 +16407,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -16423,11 +16422,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                  .setTitle(getString(R.string.ProfileNotesRemoveTitle))
                  .setMessage(getString(R.string.ProfileNotesRemoveText))
                  .setPositiveButton(getString(R.string.Delete), (di, w) -> {

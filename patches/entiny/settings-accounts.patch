@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java b
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/SettingsActivity.java
-@@ -700,6 +700,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
+@@ -698,6 +698,13 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
  
          // inu: the accounts list is hidden entirely - switching happens from the drawer/avatar
          // (ported from inugram PR #34, made unconditional)

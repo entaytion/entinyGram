@@ -81,7 +81,7 @@ index 0000000..0000000 100644
          if (formatterScheduleYear == null) {
              synchronized (this) {
                  if (formatterScheduleYear == null) {
-@@ -2773,6 +2794,9 @@ public class LocaleController {
+@@ -2759,6 +2780,9 @@ public class LocaleController {
      }
  
      public static String formatYearMonthDay(long date, boolean alwaysShowYear) {
@@ -91,7 +91,7 @@ index 0000000..0000000 100644
          try {
              date *= 1000;
              Calendar rightNow = Calendar.getInstance();
-@@ -2808,6 +2832,9 @@ public class LocaleController {
+@@ -2794,6 +2818,9 @@ public class LocaleController {
      }
  
      public static String formatYearMont(long date, boolean alwaysShowYear) {

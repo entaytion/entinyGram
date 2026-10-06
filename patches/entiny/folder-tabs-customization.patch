@@ -143,7 +143,7 @@ index 0000000..0000000 100644
      }
  
      public boolean storiesEnabled = true;
-@@ -14424,7 +14433,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14416,7 +14425,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          final int actionBarHeight = actionBar.getMeasuredHeight()
              + dp(DialogsActivity.SEARCH_FIELD_HEIGHT)
              + dp(hasStories ? DialogStoriesCell.HEIGHT_IN_DP : 0)
@@ -152,7 +152,7 @@ index 0000000..0000000 100644
              + (topPanelLayout != null && topPanelLayout.getVisibility() == View.VISIBLE ? topPanelLayout.getSumHeightOfAllVisibleChild() : 0)
              + ((int) scrollYOffset);
  
-@@ -14468,7 +14477,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -14460,7 +14469,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          } else if (communityId != 0) {
              return navigationBarHeight + dp(12 + 48 + 12);
          } else {

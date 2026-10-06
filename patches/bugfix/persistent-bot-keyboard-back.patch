@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -34945,7 +34945,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -35010,7 +35010,7 @@ public class ChatActivity extends BaseFragment implements
          } else if (actionBar != null && actionBar.isActionModeShowed()) {
              if (invoked) clearSelectionMode();
              return false;
@@ -25,7 +25,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivity
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
-@@ -13228,6 +13228,10 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -13247,6 +13247,10 @@ public class ChatActivityEnterView extends FrameLayout implements
          return emojiViewVisible || botKeyboardViewVisible;
      }
  

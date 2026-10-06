@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
          cancelSearchLinks();
          linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
-@@ -28090,9 +28106,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28082,9 +28098,9 @@ public class ChatActivity extends BaseFragment implements
          if (chat && encryptedChat == null) {
              menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
          }
@@ -61,7 +61,7 @@ index 0000000..0000000 100644
  
          aiButton = new ImageView(context);
          aiButton.setImageDrawable(aiButtonIcon = new AiButtonDrawable(context));
-@@ -6296,6 +6297,12 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6278,6 +6279,12 @@ public class ChatActivityEnterView extends FrameLayout implements
          setRecordVideoButtonVisible(!isInVideoMode(), true);
      }
  
@@ -74,7 +74,7 @@ index 0000000..0000000 100644
      public void inu_startRecordingLocked(boolean video) {
          createRecordCircle();
          setRecordVideoButtonVisible(video, false);
-@@ -8866,6 +8873,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8848,6 +8855,7 @@ public class ChatActivityEnterView extends FrameLayout implements
                  suggestButton.setTranslationX(shownSendButton ? -Math.max(0, sendButton.width() - dp(64)) : dp(42));
              }
          }
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
      }
  
      private void setSlowModeButtonVisible(boolean visible) {
-@@ -8895,7 +8903,11 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8877,7 +8885,11 @@ public class ChatActivityEnterView extends FrameLayout implements
                  layoutParams.rightMargin = dp(50);
              }
          } else {
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
                  layoutParams.rightMargin = dp(50);
              } else {
                  layoutParams.rightMargin = dp(2);
-@@ -8913,6 +8925,15 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -8895,6 +8907,15 @@ public class ChatActivityEnterView extends FrameLayout implements
              layoutParams2.rightMargin = editingMessageObject == null ? Math.max(0, sendButton.width() - dp(DEFAULT_HEIGHT)) : 0;
              recordedAudioPanel.setLayoutParams(layoutParams2);
          }
@@ -115,7 +115,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAle
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert3.java
-@@ -486,7 +486,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -487,7 +487,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
  
              layout1 = new LinearLayout(context);
              layout1.setOrientation(LinearLayout.HORIZONTAL);
@@ -124,7 +124,7 @@ index 0000000..0000000 100644
  
              text1View = new TextView(context);
              text1View.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-@@ -530,14 +530,14 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -531,14 +531,14 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
              emojifyTextView.setTypeface(AndroidUtilities.bold());
              emojifyTextView.setText(LocaleController.getString(R.string.AIEditorEmojify));
              emojifyContainer.addView(emojifyTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL, 3, -1, 2, 0));
@@ -141,7 +141,7 @@ index 0000000..0000000 100644
              ScaleStateListAnimator.apply(anotherExample, 0.025f, 1.5f);
  
              anotherExampleIcon = new ImageView(context);
-@@ -690,7 +690,11 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -692,7 +692,11 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
                  @Override
                  protected void onDraw(Canvas canvas) {
                      final int w = moreView.getWidth() + dp(8);
@@ -154,7 +154,7 @@ index 0000000..0000000 100644
  
                      super.onDraw(canvas);
  
-@@ -699,8 +703,13 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -701,8 +705,13 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
                      SquigglyLinesSpan.drawOnText(canvas, getLayout());
                      canvas.restore();
  
@@ -170,7 +170,7 @@ index 0000000..0000000 100644
                      canvas.restore();
                  }
              };
-@@ -716,7 +725,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -718,7 +727,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
              moreView.setPadding(dp(8), 0, dp(8), 0);
              moreView.setGravity(Gravity.CENTER);
              ScaleStateListAnimator.apply(moreView);
@@ -179,7 +179,7 @@ index 0000000..0000000 100644
  
              textView = new SpoilersTextView(context) {
                  @Override
-@@ -739,7 +748,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -741,7 +750,7 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
              copyButton.setScaleType(ImageView.ScaleType.CENTER);
              copyButton.setContentDescription(getString(R.string.Copy));
              ScaleStateListAnimator.apply(copyButton);
@@ -188,7 +188,7 @@ index 0000000..0000000 100644
              copyButton.setVisibility(View.GONE);
  
              updateColors();
-@@ -812,6 +821,9 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -814,6 +823,9 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
              moreView.setOnClickListener(click);
              setClipChildren(collapsed);
  
@@ -198,7 +198,7 @@ index 0000000..0000000 100644
              shortTextView.setText(text);
              textView.setText(text);
              textView.setTextIsSelectable(!noforwards && (spans == null || spans.length == 0));
-@@ -855,6 +867,9 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
+@@ -857,6 +869,9 @@ public class TranslateAlert3 extends BottomSheetWithRecyclerListView {
              if (copyButton.getVisibility() != View.VISIBLE) return false;
              final Layout layout = textView.getLayout();
              if (layout.getLineCount() <= 0) return false;

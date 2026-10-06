@@ -276,7 +276,7 @@ index 0000000..0000000 100644
              getMessagesController().deleteMessages(messageIds, null, null, dialogId, topicId, false, mode);
          }
      }
-@@ -2952,6 +2953,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2948,6 +2949,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  messageObject.editingMessageEntities = newMsg.entities;
                  path = newMsg.attachPath;
              } else {
@@ -286,7 +286,7 @@ index 0000000..0000000 100644
                  messageObject.previousMedia = newMsg.media;
                  messageObject.previousMessage = newMsg.message;
                  messageObject.previousMessageEntities = newMsg.entities;
-@@ -3473,6 +3477,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -3469,6 +3473,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                  req.flags |= TLObject.FLAG_18;
              }
          }

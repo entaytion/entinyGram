@@ -89,7 +89,7 @@ index 0000000..0000000 100644
      private final ConcurrentHashMap<String, LoadOperationUIObject> loadOperationPathsUI = new ConcurrentHashMap<>(10, 1, 2);
      private final HashMap<String, Long> uploadSizes = new HashMap<>();
  
-@@ -605,6 +605,7 @@ public class FileLoader extends BaseController {
+@@ -604,6 +604,7 @@ public class FileLoader extends BaseController {
          } else {
              fileName = name;
          }
@@ -97,7 +97,7 @@ index 0000000..0000000 100644
          LoadOperationUIObject uiObject = loadOperationPathsUI.remove(fileName);
          Runnable runnable = uiObject != null ? uiObject.loadInternalRunnable : null;
          boolean removed = uiObject != null;
-@@ -628,6 +629,7 @@ public class FileLoader extends BaseController {
+@@ -627,6 +628,7 @@ public class FileLoader extends BaseController {
      public void cancel(FileLoadOperation operation) {
          if (operation == null) return;
          final String fileName = operation.getFileName();
@@ -109,7 +109,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.j
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
-@@ -9798,6 +9798,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -9802,6 +9802,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              if (!loopStickers()) {
                                  photoImage.animatedFileDrawableRepeatMaxCount = 1;
                              }

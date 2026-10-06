@@ -15,7 +15,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.ja
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java
-@@ -8663,7 +8663,8 @@ public class MessageObject {
+@@ -8673,7 +8673,8 @@ public class MessageObject {
          if (messageOwner.send_state != MESSAGE_SEND_STATE_SENT) {
              hasEntities = false;
          } else {
@@ -29,7 +29,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2435,7 +2435,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2431,7 +2431,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          newMsg.flags &=~ 64;
                      }
                  }
@@ -333,7 +333,7 @@ index 0000000..0000000 100644
          if (parentActivity == null || !allowShare) {
              return;
          }
-@@ -5806,6 +5806,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+@@ -5807,6 +5807,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
          editItem.setContentDescription(getString(R.string.AccDescrPhotoEditor));
          sendItem = menu.addItem(gallery_menu_send, R.drawable.msg_header_share);
          sendItem.setContentDescription(getString(R.string.Forward));

@@ -34,7 +34,7 @@ index 0000000..0000000 100644
              if (richDraftActive) {
                  if (richDraftMessage == null) return;
                  new AIEditorAlert(getContext(), resourcesProvider)
-@@ -6149,7 +6165,9 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6131,7 +6147,9 @@ public class ChatActivityEnterView extends FrameLayout implements
  
          if (shownAiButton == show) return;
          if (show) {
@@ -45,7 +45,7 @@ index 0000000..0000000 100644
          }
          shownAiButton = show;
          aiButton.setVisibility(View.VISIBLE);
-@@ -6174,6 +6192,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+@@ -6156,6 +6174,7 @@ public class ChatActivityEnterView extends FrameLayout implements
              }
  
              if (

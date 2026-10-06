@@ -135,7 +135,7 @@ index 0000000..0000000 100644
          disable 'MissingTranslation'
          disable 'ExtraTranslation'
          disable 'BlockedPrivateApi'
-@@ -122,16 +121,10 @@ android {
+@@ -124,16 +123,10 @@ android {
  
      defaultConfig.versionCode = rootProject.ext.verCode
  
@@ -154,7 +154,7 @@ index 0000000..0000000 100644
          versionName rootProject.ext.verName
          ndkVersion "29.0.14206865"
  
-@@ -167,12 +160,15 @@ android {
+@@ -169,12 +162,15 @@ android {
      }
      namespace 'org.telegram.messenger.regular'
  

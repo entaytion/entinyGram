@@ -1,5 +1,5 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: "Oleksii \"Entaytion\" Kulinich" <entaytion@gmail.com>
+From: "\"Oleksii \\\"Entaytion\\\" Kulinich\"" <entaytion@gmail.com>
 Date: Tue, 6 Oct 2026 15:11:00 +0300
 Subject: [*] plugins gradle: AGP 9 source sets, Windows bindgen/libclang
 
@@ -11,7 +11,7 @@ diff --git a/TMessagesProj_App/build.gradle b/TMessagesProj_App/build.gradle
 index 0000000..0000000 100644
 --- a/TMessagesProj_App/build.gradle
 +++ b/TMessagesProj_App/build.gradle
-@@ -188,7 +188,7 @@ tasks.register('unpackShadowhook', Copy) {
+@@ -190,7 +190,7 @@ tasks.register('unpackShadowhook', Copy) {
      into shadowhookJniLibsDir
  }
  
@@ -20,7 +20,7 @@ index 0000000..0000000 100644
  tasks.matching { it.name ==~ /merge.*JniLibFolders/ }.configureEach {
      dependsOn 'unpackShadowhook'
  }
-@@ -218,9 +218,9 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+@@ -220,9 +220,9 @@ inuNativeProfiles.each { buildType, cargoProfile ->
      def outputDir = new File(rustJniLibsDir, buildType)
      tasks.register(taskName, Exec) {
          workingDir rustModuleDir
@@ -32,7 +32,7 @@ index 0000000..0000000 100644
          def ndkHost = prebuilt.listFiles()?.find { it.isDirectory() }
          def libclangCandidates = [
              project.findProperty('libclang.path'),
-@@ -230,16 +230,26 @@ inuNativeProfiles.each { buildType, cargoProfile ->
+@@ -232,16 +232,26 @@ inuNativeProfiles.each { buildType, cargoProfile ->
              '/opt/homebrew/opt/llvm/lib', '/usr/local/opt/llvm/lib',
              '/run/current-system/sw/lib', "${System.getProperty('user.home')}/.nix-profile/lib",
              '/usr/lib/llvm/lib', '/usr/lib',

@@ -13,7 +13,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -22309,7 +22309,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -22337,7 +22337,7 @@ public class ChatActivity extends BaseFragment implements
              } else {
                  if (AndroidUtilities.isTablet() && parentLayout != null && parentLayout.getFragmentStack().size() > 1) {
                      finishFragment();
@@ -26,7 +26,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
-@@ -7076,7 +7076,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -7103,7 +7103,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (!getMessagesController().checkCanOpenChat(args, ProfileActivity.this)) {
                  return;
              }
@@ -35,7 +35,7 @@ index 0000000..0000000 100644
              if (!AndroidUtilities.isTablet() && removeFragment) {
                  getNotificationCenter().removeObserver(ProfileActivity.this, NotificationCenter.closeChats);
                  getNotificationCenter().postNotificationName(NotificationCenter.closeChats);
-@@ -9175,7 +9175,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9202,7 +9202,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      TLRPC.EncryptedChat encryptedChat = (TLRPC.EncryptedChat) args[0];
                      Bundle args2 = new Bundle();
                      args2.putInt("enc_id", encryptedChat.id);
@@ -44,7 +44,7 @@ index 0000000..0000000 100644
                  });
              }
          } else if (id == NotificationCenter.encryptedChatUpdated) {
-@@ -9284,7 +9284,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -9311,7 +9311,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                      sharedMediaLayout.setChatInfo(chatInfo);
                  }
              }

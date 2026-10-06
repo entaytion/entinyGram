@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                              if (chat == null && (currentMessageObject.messageOwner.fwd_from.flags & 16) != 0) {
                                  id = currentMessageObject.messageOwner.fwd_from.saved_from_msg_id;
                              } else {
-@@ -5232,7 +5232,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -5234,7 +5234,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                              } else if (currentChat != null) {
                                  int id;
                                  TLRPC.Chat chat = currentChat;
