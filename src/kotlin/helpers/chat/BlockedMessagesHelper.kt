@@ -186,6 +186,10 @@ object BlockedMessagesHelper {
     private fun isManuallyHidden(msg: MessageObject): Boolean =
         !msg.isDateObject && manualHidden[manualKey(msg)]?.contains(msg.id) == true
 
+    fun forgetManual(account: Int, dialogId: Long) {
+        if (manualHidden.remove("$account:$dialogId") != null) epoch++
+    }
+
     fun hideManually(adapter: ChatActivity.ChatActivityAdapter, messages: Collection<MessageObject>) {
         for (msg in messages) manualHidden.getOrPut(manualKey(msg)) { HashSet() }.add(msg.id)
         epoch++

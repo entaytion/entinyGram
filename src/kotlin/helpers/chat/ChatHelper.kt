@@ -1495,7 +1495,7 @@ object ChatHelper {
             val album = if (end - index > 1) {
                 messages.subList(index, end).mapNotNull { msg ->
                     // entiny: exclude stickers and voice from albums to prevent replacing shared group DelayedMessage
-                    if (msg.isAnyKindOfSticker || msg.isVoice) null
+                    if (msg.isAnyKindOfSticker || msg.isVoice || (needsMediaReupload(msg) && files[msg] == null)) null
                     else buildResendParams(
                         account, msg, did, null, threadMsg, notify, scheduleDate,
                         scheduleRepeatPeriod, hideCaption, files[msg], isCloudViewOnce(msg),
@@ -1521,6 +1521,8 @@ object ChatHelper {
             } else {
                 for (i in index until end) {
                     val msg = messages[i]
+                    // entiny: by-reference send of protected media is always rejected by the server
+                    if (needsMediaReupload(msg) && files[msg] == null) continue
                     buildResendAction(
                         helper, account, msg, did, null, threadMsg, null, notify, scheduleDate,
                         scheduleRepeatPeriod, mono, suggest, null, hideCaption, payStars, files[msg],
@@ -1571,8 +1573,9 @@ object ChatHelper {
 
         for (msg in messages) {
             if (!needsMediaReupload(msg) || resolved.containsKey(msg)) continue
-            localMediaFile(loader, msg)?.let { forwardableMediaFile(it, temporaryFiles) }
-                ?.let { resolved[msg] = it }
+            // entiny: path DB lags behind fileLoaded, so fall back to the file the notification delivered
+            val loaded = localMediaFile(loader, msg) ?: downloadKey(msg)?.let { waiter.loadedFile(it) }
+            loaded?.let { forwardableMediaFile(it, temporaryFiles) }?.let { resolved[msg] = it }
         }
         if (pending.values.any { !resolved.containsKey(it) }) showForwardToast(LocaleController.getString(R.string.InuForwardDownloadFailed))
         return resolved
@@ -1677,6 +1680,9 @@ object ChatHelper {
     ) : NotificationCenter.NotificationCenterDelegate {
         private val pending = HashSet(keys)
         private val latch = CountDownLatch(1)
+        private val loaded = java.util.concurrent.ConcurrentHashMap<String, File>()
+
+        fun loadedFile(key: String): File? = loaded[key]?.takeIf { it.exists() && it.length() > 0L }
 
         fun subscribe() {
             val center = NotificationCenter.getInstance(account)
@@ -1708,6 +1714,7 @@ object ChatHelper {
         // entiny: treat load failure like completion so caller falls back to by-reference send instead of stalling
         override fun didReceivedNotification(id: Int, account: Int, vararg args: Any?) {
             val key = args.getOrNull(0) as? String ?: return
+            (args.getOrNull(1) as? File)?.let { loaded[key] = it }
             if (!pending.remove(key)) return
             settle()
         }
@@ -2235,6 +2242,7 @@ object ChatHelper {
         desu.inugram.helpers.translate.engine.EntinyTranslate.resetDialog(activity.dialogId)
         TranslateHelper.resetForDialog(activity.dialogId)
         TypingSpoofHelper.stop(activity.dialogId)
+        BlockedMessagesHelper.forgetManual(activity.currentAccount, activity.dialogId)
     }
 
     @JvmField
