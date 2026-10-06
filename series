@@ -364,6 +364,7 @@ feature/plugins.patch
 bugfix/settings-activity-bulletin.patch
 bugfix/table-spans.patch
 bugfix/avatar-preview-file-ref.patch
+bugfix/article-selection-null-text.patch
 entiny/branding.patch
 entiny/amoled-theme.patch
 entiny/hide-dialogs-banners.patch

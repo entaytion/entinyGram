@@ -54,7 +54,9 @@ object WebPreviewHelper {
     }
 
     @JvmStatic
-    fun shouldShowAllLines(webPage: TLRPC.WebPage): Boolean {
+    fun shouldShowAllLines(webPage: TLRPC.WebPage?): Boolean {
+        if (webPage?.site_name == null) return false
+
         // entiny: admin log original message uses a fake webpage preview that needs all lines
         if (webPage.site_name == LocaleController.getString(R.string.EventLogOriginalMessages)) return true;
 
