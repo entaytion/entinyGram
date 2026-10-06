@@ -432,6 +432,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 
 ### 🐶 bugfixes (vs stock)
 
+- channel update queue no longer replays the same update indefinitely after an earlier queued update advances PTS
 - connection status title no longer gets stuck on "Updating..." when its transition animation is cancelled
 - accelerated video playback no longer applies an unnecessary pitch shift; live speed-slider changes use Android's low-latency audio mixer path
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
