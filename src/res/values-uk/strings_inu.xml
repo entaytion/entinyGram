@@ -189,7 +189,7 @@
     <string name="InuHideHashtagSuggestions">Приховати підказки хештегів</string>
     <string name="InuHideRichEditorButton">Приховати кнопку форматування тексту</string>
     <string name="InuDisableProfileScrollSnap">Вимкнути фіксацію під час прокручування профілю</string>
-    <string name="InuDisableProfileScrollSnapInfo">Не прив'язувати шапку профілю до фіксованих позицій під час прокручування</string>
+    <string name="InuDisableProfileScrollSnapInfo">Не прив\'язувати шапку профілю до фіксованих позицій під час прокручування</string>
     <string name="InuReduceProfileMotion">Зменшити анімації профілю</string>
     <string name="InuProfilePreferMediaTab">Відкривати першою вкладку «Медіа»</string>
     <string name="InuProfilePreferMediaTabInfo">…замість вкладок «Подарунки» та «Дописи»</string>
@@ -383,7 +383,7 @@
     <string name="InuMsgDetailMedia">Медіа</string>
     <string name="InuMsgDetailFileId">File ID</string>
     <string name="InuMsgDetailFileUniqueId">Unique File ID</string>
-    <string name="InuMsgDetailFileIdInfo">Цей ідентифікатор файлу прив'язаний до поточного акаунту й втратить чинність через деякий час.</string>
+    <string name="InuMsgDetailFileIdInfo">Цей ідентифікатор файлу прив\'язаний до поточного акаунту й втратить чинність через деякий час.</string>
     <string name="InuMsgDetailStickerPackCreator">Творець пакунка наліпок</string>
     <string name="InuMsgDetailEmojiPackCreators">Творці пакунків емодзі</string>
     <string name="InuShowJson">Показати JSON</string>
@@ -691,11 +691,11 @@
     <string name="InuParanoiaExit">Вийти з режиму параної</string>
     <string name="InuBotSettings">Налаштування ботів</string>
     <string name="InuBotHelp">Допомога по ботах</string>
-    <string name="InuSimulateOom">Симулювати збій нестачі пам'яті (OOM)</string>
+    <string name="InuSimulateOom">Симулювати збій нестачі пам\'яті (OOM)</string>
     <string name="InuCrashTitle">Inugram аварійно завершив роботу минулого разу</string>
-    <string name="InuCrashTitleOom">В Inugram закінчилася пам'ять</string>
+    <string name="InuCrashTitleOom">В Inugram закінчилася пам\'ять</string>
     <string name="InuCrashDesc">Перепрошуємо за це. Ви можете надіслати звіт про збій розробнику, щоб допомогти усунути проблему.</string>
-    <string name="InuCrashDescOom">Перепрошуємо. Звичайні журнали збоїв мало чим допоможуть у разі вичерпання пам'яті — натомість потрібен дамп купи (heap dump).</string>
+    <string name="InuCrashDescOom">Перепрошуємо. Звичайні журнали збоїв мало чим допоможуть у разі вичерпання пам\'яті — натомість потрібен дамп купи (heap dump).</string>
     <string name="InuCrashDescHeapDump">Також збережено дамп купи. НЕ ДІЛІТЬСЯ НИМ! Він містить особисті дані! За бажанням ви можете переглянути його самостійно та поділитися знахідками — це дуже допоможе.</string>
     <string name="InuCrashOomEnableLogs">Увімкніть режим налагодження в Налаштуваннях Inugram > Про додаток, щоб створювати дамп купи (heap dump) у разі кожного наступного OOM.</string>
     <string name="InuCrashShare">Поділитися звітом про збій</string>
@@ -843,7 +843,7 @@
     <string name="InuPluginTrustWarning">Шкідливий плагін може захопити ваш акаунт</string>
     <string name="InuPluginTrustAccept">Зрозуміло, продовжити</string>
     <string name="InuPluginsDevMode">Режим розробника</string>
-    <string name="InuPluginsDevModeInfo">Надсилайте плагіни з комп'ютера через ADB: вони встановлюватимуться та перезавантажуватимуться без підтвердження</string>
+    <string name="InuPluginsDevModeInfo">Надсилайте плагіни з комп\'ютера через ADB: вони встановлюватимуться та перезавантажуватимуться без підтвердження</string>
     <string name="InuPluginsDevModeBanner">Будь-що з доступом ADB до цього пристрою може без запиту встановити плагін і надати йому будь-які дозволи. Вимкніть цей режим, коли завершите.</string>
     <string name="InuPluginsDevModeTurnOff">Вимкнути режим розробника</string>
     <string name="InuPluginsDevChip">розр.</string>
@@ -852,9 +852,9 @@
     <string name="InuPluginsDevPushed_many">Надіслано %d плагінів</string>
     <string name="InuPluginsDevPushed_other">Надіслано %d плагінів</string>
     <string name="InuPluginsDevModeSheetTitle">Увімкнути режим розробника?</string>
-    <string name="InuPluginsDevModeSheetInfo">Цей режим призначений для розробки плагінів: комп'ютер надсилає файл через ADB, а додаток одразу його встановлює. Поки режим увімкнено:</string>
+    <string name="InuPluginsDevModeSheetInfo">Цей режим призначений для розробки плагінів: комп\'ютер надсилає файл через ADB, а додаток одразу його встановлює. Поки режим увімкнено:</string>
     <string name="InuPluginsDevMode1Title">Будь-що з доступом ADB</string>
-    <string name="InuPluginsDevMode1Text">Будь-який підключений комп'ютер і все, що вже взаємодіє з пристроєм через ADB (наприклад, Shizuku), може надіслати плагін.</string>
+    <string name="InuPluginsDevMode1Text">Будь-який підключений комп\'ютер і все, що вже взаємодіє з пристроєм через ADB (наприклад, Shizuku), може надіслати плагін.</string>
     <string name="InuPluginsDevMode2Title">Без перевірки дозволів</string>
     <string name="InuPluginsDevMode2Text">Надісланий плагін встановлюється з усіма заявленими дозволами. Без екрана довіри, списку дозволів і можливості скасувати.</string>
     <string name="InuPluginsDevMode3Title">Доки ви його не вимкнете</string>
