@@ -1,0 +1,45 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Tue, 6 Oct 2026 15:54:35 +0400
+Subject: fix avatar long-press preview stuck on blurred placeholder
+
+---
+ .../src/main/java/org/telegram/ui/AvatarPreviewer.java    | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewer.java b/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewer.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewer.java
+@@ -208,11 +208,11 @@ public class AvatarPreviewer {
+         }
+ 
+         public static Data of(TLRPC.User user, TLRPC.UserFull userFull, MenuItem... menuItems) {
+-            ImageLocation imageLocation = ImageLocation.getForUserOrChat(userFull.user, ImageLocation.TYPE_BIG);
++            ImageLocation imageLocation = ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_BIG);
+             if (imageLocation == null && userFull.profile_photo != null) {
+                 imageLocation = ImageLocation.getForPhoto(FileLoader.getClosestPhotoSizeWithSize(userFull.profile_photo.sizes, 500), userFull.profile_photo);
+             }
+-            final ImageLocation thumbImageLocation = ImageLocation.getForUserOrChat(userFull.user, ImageLocation.TYPE_SMALL);
++            final ImageLocation thumbImageLocation = ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_SMALL);
+             final String thumbFilter = thumbImageLocation != null && thumbImageLocation.photoSize instanceof TLRPC.TL_photoStrippedSize ? "b" : null;
+             final ImageLocation videoLocation;
+             final String videoFileName;
+@@ -226,7 +226,7 @@ public class AvatarPreviewer {
+                 videoFileName = null;
+             }
+             final String videoFilter = videoLocation != null && videoLocation.imageType == FileLoader.IMAGE_TYPE_ANIMATION ? ImageLoader.AUTOPLAY_FILTER : null;
+-            return new Data(imageLocation, thumbImageLocation, videoLocation, null, thumbFilter, videoFilter, videoFileName, thumb, userFull.user, menuItems, null);
++            return new Data(imageLocation, thumbImageLocation, videoLocation, null, thumbFilter, videoFilter, videoFileName, thumb, "avatar_" + user.id, menuItems, null);
+         }
+ 
+         public static Data of(TLRPC.Chat chat, int classGuid, MenuItem... menuItems) {
+@@ -253,7 +253,7 @@ public class AvatarPreviewer {
+                 videoFileName = null;
+             }
+             final String videoFilter = videoLocation != null && videoLocation.imageType == FileLoader.IMAGE_TYPE_ANIMATION ? ImageLoader.AUTOPLAY_FILTER : null;
+-            return new Data(imageLocation, thumbImageLocation, videoLocation, null, thumbFilter, videoFilter, videoFileName, thumb, chat, menuItems, null);
++            return new Data(imageLocation, thumbImageLocation, videoLocation, null, thumbFilter, videoFilter, videoFileName, thumb, "avatar_" + (-chat.id), menuItems, null);
+         }
+ 
+         private final ImageLocation imageLocation;
