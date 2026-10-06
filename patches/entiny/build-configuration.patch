@@ -6,18 +6,18 @@ Subject: [=] build configuration
 ---
  .gitignore                                    |   3 +
  TMessagesProj/build.gradle                    |  46 +-
- TMessagesProj/proguard-rules.pro              |  17 +-
+ TMessagesProj/proguard-rules.pro              |  12 +-
  TMessagesProj/src/main/AndroidManifest.xml    |  25 -
  .../telegram/messenger/car/HomeScreen.java    | 430 ------------------
  .../messenger/car/MusicSongsScreen.java       | 123 -----
- .../messenger/car/TelegramCarAppService.java  |  46 +-
+ .../messenger/car/TelegramCarAppService.java  |  33 +-
  .../messenger/car/TelegramCarSession.java     |  16 -
  .../java/org/telegram/ui/LaunchActivity.java  |  21 -
  .../org/telegram/ui/PaymentFormActivity.java  |  28 +-
- TMessagesProj_App/build.gradle                |  38 +-
+ TMessagesProj_App/build.gradle                |  36 +-
  build.gradle                                  |  45 +-
  gradle.properties                             |   2 +
- 13 files changed, 143 insertions(+), 697 deletions(-)
+ 13 files changed, 140 insertions(+), 680 deletions(-)
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/HomeScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/MusicSongsScreen.java
  delete mode 100644 TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
@@ -177,14 +177,7 @@ index 0000000..0000000 100644
  -keep class org.telegram.messenger.time.* { *; }
  -keep class org.telegram.messenger.video.* { *; }
  -keep class org.telegram.messenger.voip.* { *; }
-@@ -52,18 +55,22 @@
- -dontwarn org.scilab.forge.jlatexmath.**
- 
- # inu
--# fixes for some libs
- -dontwarn java.awt.**
- -dontwarn javax.imageio.**
- -dontwarn com.googlecode.mp4parser.authoring.tracks.mjpeg.**
+@@ -59,8 +62,13 @@
  -dontwarn javax.naming.**
  -dontwarn org.bouncycastle.cert.**
  -dontwarn org.bouncycastle.openssl.**
@@ -196,14 +189,8 @@ index 0000000..0000000 100644
 +-dontwarn com.stripe.android.stripe3ds2.**
 +-dontwarn com.stripe.**
  -keep class desu.inugram.** { *; }
- # /inu
- 
- # Use -keep to explicitly keep any other classes shrinking would remove
--#-dontoptimize
--#-dontobfuscate
-\ No newline at end of file
-+-dontoptimize
-+-dontobfuscate
+ -dontobfuscate
+ -dontoptimize
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
@@ -816,7 +803,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarA
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarAppService.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarAppService.java
-@@ -1,43 +1,9 @@
+@@ -1,29 +1,9 @@
  package org.telegram.messenger.car;
  
 -import androidx.annotation.NonNull;
@@ -827,20 +814,6 @@ index 0000000..0000000 100644
 -import org.telegram.messenger.BuildVars;
 -
 -public class TelegramCarAppService extends CarAppService {
--
--    public static volatile boolean inu_running;
--
--    @Override
--    public void onCreate() {
--        super.onCreate();
--        inu_running = true;
--    }
--
--    @Override
--    public void onDestroy() {
--        inu_running = false;
--        super.onDestroy();
--    }
 -
 -    @NonNull
 -    @Override
@@ -859,13 +832,14 @@ index 0000000..0000000 100644
 -    public Session onCreateSession() {
 -        return new TelegramCarSession();
 -    }
+-}
 +// Android Auto integration is disabled (its <service> registration in AndroidManifest.xml
 +// is commented out, so the OS never instantiates a real CarAppService). This stub only
 +// exists so TelegramMediaSession's idle-check keeps compiling without depending on
 +// androidx.car.app, whose dependency was otherwise unused dead weight.
 +public class TelegramCarAppService {
 +    public static final boolean inu_running = false;
- }
++}
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java b/TMessagesProj/src/main/java/org/telegram/messenger/car/TelegramCarSession.java
 deleted file mode 100644
 index 0000000..0000000
@@ -902,7 +876,7 @@ index 0000000..0000000 100644
  
  import org.telegram.PhoneFormat.PhoneFormat;
  import org.telegram.messenger.AccountInstance;
-@@ -1943,15 +1940,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -1945,15 +1942,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
  
                      final LinkManager linkManager = new LinkManager(this, intentAccount[0], progress, openedTelegram);
                      if (linkManager.handle(data)) {
@@ -918,7 +892,7 @@ index 0000000..0000000 100644
                          return true;
                      }
  
-@@ -2860,15 +2848,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -2862,15 +2850,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                  }
                              }
                          }
@@ -1053,16 +1027,7 @@ index 0000000..0000000 100644
      }
  
      lintOptions {
-@@ -57,7 +73,7 @@ android {
- 
-     androidResources {
-         noCompress += "pack"
--        localeFilters += ["zz", "uk", "ru", "ja", "tr", "zh-rCN"] // inu: keep strings_inu translations
-+        localeFilters += ["zz", "uk", "ru", "ja", "tr", "zh-rCN", "ar", "fa"] // inu: keep strings_inu translations
-     }
- 
-     signingConfigs {
-@@ -77,7 +93,7 @@ android {
+@@ -79,7 +95,7 @@ android {
              minifyEnabled false
              shrinkResources false
              multiDexEnabled true
@@ -1071,7 +1036,7 @@ index 0000000..0000000 100644
              ndk.debugSymbolLevel = 'FULL'
          }
  
-@@ -85,11 +101,14 @@ android {
+@@ -87,11 +103,14 @@ android {
              debuggable false
              jniDebuggable false
              signingConfig signingConfigs.release
@@ -1089,7 +1054,7 @@ index 0000000..0000000 100644
          }
      }
  
-@@ -117,7 +136,12 @@ android {
+@@ -119,7 +138,12 @@ android {
          ndkVersion "29.0.14206865"
  
          ndk {

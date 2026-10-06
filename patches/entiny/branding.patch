@@ -69,7 +69,7 @@ index 0000000..0000000 100644
          android:requestLegacyExternalStorage="true"
          tools:replace="android:supportsRtl">
  
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC0kWYWax7MdxCDd9i9uSDXbeeHb4BZOx4" />
 +        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
  
          <service
@@ -82,7 +82,7 @@ index 0000000..0000000 100644
          android:requestLegacyExternalStorage="true"
          tools:replace="android:supportsRtl">
  
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC0kWYWax7MdxCDd9i9uSDXbeeHb4BZOx4" />
 +        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
  
          <service
@@ -95,7 +95,7 @@ index 0000000..0000000 100644
          android:requestLegacyExternalStorage="true"
          tools:replace="android:supportsRtl">
  
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC0kWYWax7MdxCDd9i9uSDXbeeHb4BZOx4" />
 +        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
  
          <service
@@ -108,7 +108,7 @@ index 0000000..0000000 100644
          android:requestLegacyExternalStorage="true"
          tools:replace="android:supportsRtl">
  
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC0kWYWax7MdxCDd9i9uSDXbeeHb4BZOx4" />
 +        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
  
          <service
@@ -121,7 +121,7 @@ index 0000000..0000000 100644
              </intent-filter>
          </activity-alias>
  
--        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
+-        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyC0kWYWax7MdxCDd9i9uSDXbeeHb4BZOx4" />
 +        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA81BteNJiB2NZoAJzDV4A-dR4tAqWsYuU" />
  
          <service

@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.FrameLayout
 import desu.inugram.InuConfig
 import desu.inugram.helpers.InuUtils
+import desu.inugram.helpers.chat.ForwardProHelper
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLoader
 import org.telegram.messenger.FileLog
@@ -21,11 +22,14 @@ import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.SharedConfig
+import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.ActionBarMenuItem
 import org.telegram.ui.ActionBar.ActionBarMenuSubItem
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.ItemOptions
 import org.telegram.ui.PhotoViewer
+import desu.inugram.ui.profile.DeleteProfilePhotosSheet
 import org.telegram.ui.Stories.recorder.StoryEntry
 import java.io.File
 import java.io.FileInputStream
@@ -37,6 +41,11 @@ object PhotoViewerHelper {
     private const val MENU_COPY_FRAME = 101
     private const val MENU_FOOTER = 102
     private const val MENU_FOOTER_GAP = 103
+    private const val MENU_DELETE_PROFILE_PHOTOS = 104
+
+    private var footerGap: View? = null
+    private var footerItem: ActionBarMenuSubItem? = null
+    private var lastAvatarsDialogId: Long = 0L
 
     @JvmStatic
     fun ensureEditSourceSnapshot(entry: MediaController.MediaEditState) {
@@ -133,6 +142,7 @@ object PhotoViewerHelper {
 
     @JvmStatic
     fun getAvatarSubtitle(location: ImageLocation?, dialogId: Long, account: Int): CharSequence? {
+        lastAvatarsDialogId = dialogId
         if (location == null) return null
         val userFull = if (dialogId > 0) MessagesController.getInstance(account).getUserFull(dialogId) else null
         val photo = location.photo ?: findUserPhotoById(userFull, location.photoId) ?: return null
@@ -166,6 +176,29 @@ object PhotoViewerHelper {
         applyFooter(menuItem, dc, platform)
     }
 
+    @JvmStatic
+    fun setFooter(menuItem: ActionBarMenuItem, photo: TLRPC.Photo, account: Int) {
+        val dc = photo.dc_id.takeIf { it != 0 } ?: return applyFooter(menuItem, null)
+        val hasVideo = photo.video_sizes?.isEmpty() == false
+        val platform = if (hasVideo) null else {
+            val size = FileLoader.getClosestPhotoSizeWithSize(photo.sizes, 1280)
+            val location = ImageLocation.getForPhoto(size, photo)
+            val file = runCatching {
+                FileLoader.getInstance(account).getPathToAttach(
+                    PhotoViewer.getFileLocation(location), PhotoViewer.getFileLocationExt(location), true,
+                )
+            }.getOrNull()
+            detectPlatform(file, isPfp = true)
+        }
+        applyFooter(menuItem, dc, platform)
+    }
+
+    @JvmStatic
+    fun setFooter(menuItem: ActionBarMenuItem, botApp: TLRPC.TL_botApp) {
+        val dc = botApp.photo?.dc_id?.takeIf { it != 0 } ?: return applyFooter(menuItem, null)
+        applyFooter(menuItem, dc, null)
+    }
+
     private fun applyFooter(menuItem: ActionBarMenuItem, dc: Int, platform: String?) =
         applyFooter(menuItem, if (platform != null) "DC $dc • $platform" else "DC $dc")
 
@@ -178,7 +211,6 @@ object PhotoViewerHelper {
         if (visible) item.setTextAndIcon(text, 0)
     }
 
-    // thanks https://github.com/kukuruzka165/materialgram/blob/64dd8f3c43b9f7c169473fe464eec8cc5b097ede/Telegram/SourceFiles/media/view/media_view_overlay_widget.cpp#L8097
     private val PHOTO_HEADERS: List<Pair<ByteArray, String>> = listOf(
         "FFD8FFE000104A46494600010100000100010000FFDB004300090607" to "iOS",
         "FFD8FFE000104A46494600010101004800480000FFE201D84943435F50524F46494C45" to "Android",
@@ -228,10 +260,30 @@ object PhotoViewerHelper {
 
     @JvmStatic
     fun addMenuItems(menuItem: ActionBarMenuItem) {
-        menuItem.addSubItem(MENU_COPY_PHOTO, R.drawable.msg_copy, LocaleController.getString(R.string.InuCopyPhoto))
+        menuItem.addSubItem(MENU_COPY_PHOTO, R.drawable.inu_tabler_copy, LocaleController.getString(R.string.InuCopyPhoto))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
-        menuItem.addSubItem(MENU_COPY_FRAME, R.drawable.msg_copy, LocaleController.getString(R.string.InuCopyFrame))
+        menuItem.addSubItem(MENU_COPY_FRAME, R.drawable.inu_tabler_copy, LocaleController.getString(R.string.InuCopyFrame))
             .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
+        menuItem.addSubItem(MENU_DELETE_PROFILE_PHOTOS, R.drawable.inu_tabler_photo_x, LocaleController.getString(R.string.InuDeleteProfilePhotos))
+            .setColors(0xfffafafa.toInt(), 0xfffafafa.toInt())
+    }
+
+    // entiny: long-press on the share icon offers a one-off stock-vs-Forward-Pro choice.
+    @JvmStatic
+    fun attachSendLongPress(viewer: PhotoViewer, sendItem: ActionBarMenuItem) {
+        if (!InuConfig.FORWARD_PRO.value) return
+        sendItem.setOnLongClickListener {
+            ItemOptions.makeOptions(viewer.containerView, null, sendItem)
+                .add(R.drawable.msg_forward, LocaleController.getString(R.string.InuForwardProUseStock)) {
+                    ForwardProHelper.requestStockShareOnce()
+                    viewer.onSharePressed()
+                }
+                .add(R.drawable.msg_edit, LocaleController.getString(R.string.InuForwardPro)) {
+                    viewer.onSharePressed()
+                }
+                .show()
+            true
+        }
     }
 
     @JvmStatic
@@ -251,13 +303,22 @@ object PhotoViewerHelper {
 
     @JvmStatic
     fun resetMenuItems(menuItem: ActionBarMenuItem) {
+        lastAvatarsDialogId = 0L
         menuItem.hideSubItem(MENU_COPY_PHOTO)
         menuItem.hideSubItem(MENU_COPY_FRAME)
+        menuItem.hideSubItem(MENU_DELETE_PROFILE_PHOTOS)
         applyFooter(menuItem, null)
     }
 
     @JvmStatic
     fun updateMenuItems(menuItem: ActionBarMenuItem, allowShare: Boolean, isVideo: Boolean, isGif: Boolean) {
+        val isOwnAvatar = lastAvatarsDialogId > 0 && lastAvatarsDialogId == UserConfig.getInstance(UserConfig.selectedAccount).clientUserId
+        if (isOwnAvatar) {
+            menuItem.showSubItem(MENU_DELETE_PROFILE_PHOTOS)
+        } else {
+            menuItem.hideSubItem(MENU_DELETE_PROFILE_PHOTOS)
+        }
+
         if (!allowShare) return
         if (isVideo || isGif) {
             menuItem.showSubItem(MENU_COPY_FRAME)
@@ -281,6 +342,11 @@ object PhotoViewerHelper {
             MENU_COPY_FRAME -> {
                 val bitmap = viewer.pipCreatePrimaryWindowViewBitmap() ?: viewer.centerImage.bitmap
                 if (bitmap != null) copyBitmapToClipboard(bitmap, viewer.containerView)
+            }
+
+            MENU_DELETE_PROFILE_PHOTOS -> {
+                val activity = viewer.parentActivity ?: return true
+                DeleteProfilePhotosSheet(activity, UserConfig.selectedAccount).show()
             }
 
             else -> return false
@@ -309,12 +375,7 @@ object PhotoViewerHelper {
         }
     }
 
-    // applyCurrentEditMode bakes the crop into entry.imagePath from centerImage's bitmap; when
-    // that bitmap is unavailable the bake used to fail silently *after* makeCrop committed
-    // entry.cropState, so the viewer kept rendering the crop while the un-cropped original got
-    // sent (still photos are sent from imagePath alone — cropState is video-only at send time).
-    // These decode the source from disk instead, like stock PhotoEntry.rebuildPhoto does.
-    // (part of bugfix__photo-crop-not-applied-on-send)
+    // entiny: decode source from disk when centerImage bitmap is missing so crop bakes into imagePath before send
     @JvmStatic
     fun loadEditSourceBitmap(entry: MediaController.MediaEditState, orientation: IntArray): Bitmap? {
         val path = getEditSourcePath(entry)

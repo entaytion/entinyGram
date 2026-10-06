@@ -88,7 +88,7 @@ index 0000000..0000000 100644
              if (emptyRow < 0 && emptyRow2 < 0) {
                  if (hasMusic || peerColor != null || actionsView == null) {
                      emptyRow2 = rowCount++;
-@@ -13608,6 +13629,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+@@ -13608,7 +13629,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                          }
                          isFragmentPhoneNumber = phoneNumber != null && phoneNumber.matches("888\\d{8}");
                          detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile), false);
@@ -99,7 +99,8 @@ index 0000000..0000000 100644
 +                        TLRPC.Chat c = chatId != 0 ? getMessagesController().getChat(chatId) : null;
 +                        detailCell.setTextAndValue(ProfileHelper.getRegDateValue(userId, c), ProfileHelper.getRegDateSubtitle(userId, c, u), false);
                      } else if (position == noteRow) {
-                         if (userInfo == null || userInfo.note == null) return;
+                         final TLRPC.UserFull userInfo = getMessagesController().getUserFull(userId);
+                         if (userInfo == null) return;
                          TLRPC.TL_textWithEntities note = userInfo.note;
 @@ -14429,7 +14456,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
              if (position == infoHeaderRow || position == membersHeaderRow || position == settingsSectionRow2 ||

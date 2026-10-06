@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelp
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/SendMessagesHelper.java
-@@ -2273,7 +2273,17 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
+@@ -2269,7 +2269,17 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                          }
                          newMsg.fwd_from.channel_post = msgObj.getId();
                          newMsg.fwd_from.flags |= 4;

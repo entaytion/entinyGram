@@ -27,6 +27,7 @@ hooks/photo-viewer-menu.patch
 debloat/hide-bot-elements.patch
 feature/call-confirmation.patch
 feature/double-tap-delay.patch
+entiny/mutual-contact-icon.patch
 hooks/chat-activity.patch
 hooks/send-preview.patch
 debloat/disable-pull-to-next.patch
@@ -44,6 +45,7 @@ debloat/simple-attachalert-anim.patch
 debloat/hide-suggestions.patch
 feature/double-tap-action.patch
 debloat/disable-chat-title-phone.patch
+entiny/id-in-profile.patch
 feature/hide-spoiler-pending.patch
 bugfix/paid-reaction-animation.patch
 feature/folders-display-mode.patch
@@ -265,10 +267,7 @@ entiny/colorful-icons-and-popups.patch
 entiny/fix-url-parsing.patch
 feature/message-menu.patch
 entiny/adblock.patch
-entiny/mutual-contact-icon.patch
-entiny/id-in-profile.patch
 entiny/free-transcription.patch
-entiny/webrtc-audio-fix.patch
 entiny/settings-api-compat.patch
 entiny/edited-time-display.patch
 bugfix/profile-actionbar-lifecycle.patch
@@ -439,7 +438,6 @@ entiny/unified-push.patch
 entiny/liquid-glass-controls.patch
 entiny/disable-profile-avatar-blur.patch
 entiny/chat-input-match-font-size.patch
-entiny/fix-lingering-music-notification.patch
 entiny/presence-color-dots.patch
 entiny/disable-audiotrack-playback-params.patch
 entiny/centered-header-fixes.patch
