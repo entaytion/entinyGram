@@ -1915,4 +1915,9 @@
     <string name="InuPluginsFailedAtRuntime">Ошибка выполнения</string>
     <string name="InuPluginsFailedAtUnload">Ошибка выгрузки</string>
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
+    <string name="InuPluginsErrorRequires">Нужен плагин %1$s. Сначала установите его</string>
+    <string name="InuPluginsErrorRequiresVersion">Нужен %1$s версии %2$s или новее</string>
+    <string name="InuMarketplace">Маркетплейс</string>
+    <string name="InuMarketplaceDownloadFailed">Не удалось получить плагин: %1$s</string>
+    <string name="InuMarketplaceChecksum">файл не совпадает с контрольной суммой</string>
 </resources>

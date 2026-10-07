@@ -1907,4 +1907,9 @@
     <string name="InuPluginsFailedAtRuntime">Помилка виконання</string>
     <string name="InuPluginsFailedAtUnload">Помилка вивантаження</string>
     <string name="InuPluginsFailedFormat">%1$s: %2$s</string>
+    <string name="InuPluginsErrorRequires">Потрібен плагін %1$s. Спершу встановіть його</string>
+    <string name="InuPluginsErrorRequiresVersion">Потрібен %1$s версії %2$s або новіше</string>
+    <string name="InuMarketplace">Маркетплейс</string>
+    <string name="InuMarketplaceDownloadFailed">Не вдалося отримати плагін: %1$s</string>
+    <string name="InuMarketplaceChecksum">файл не збігається з контрольною сумою</string>
 </resources>

@@ -16,6 +16,8 @@ import android.text.TextUtils
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.children
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -24,6 +26,7 @@ import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.BootGuard
 import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.plugins.Plugin
+import desu.inugram.helpers.plugins.PluginDependencies
 import desu.inugram.helpers.plugins.PluginDevServer
 import desu.inugram.helpers.plugins.PluginImportHelper
 import desu.inugram.helpers.plugins.PluginManager
@@ -175,6 +178,9 @@ class PluginsActivity : SettingsPageActivity() {
         }
 
         items.add(UItem.asShadow(null))
+        if (PluginDependencies.sdkEnabled()) {
+            items.add(mkSubPageButton(BUTTON_MARKET, R.drawable.menu_shop, LocaleController.getString(R.string.InuMarketplace)))
+        }
         items.add(
             UItem.asButton(
                 BUTTON_LOAD,
@@ -225,7 +231,7 @@ class PluginsActivity : SettingsPageActivity() {
         ) { enabled ->
             PluginManager.setEnabled(plugin, enabled)
         }
-        row.bindSettings(if (plugin.settingsPageId != null) ({ PluginUi.openRegisteredSettings(plugin) }) else null)
+        row.bindSettings(if (plugin.settingsPageId != null && plugin.manifest.id != PluginDependencies.SDK_ID) ({ PluginUi.openRegisteredSettings(plugin) }) else null)
         row.bindActions(
             onReload = { PluginManager.reload(plugin) },
             onRemove = { removePlugin(plugin) },
@@ -271,6 +277,11 @@ class PluginsActivity : SettingsPageActivity() {
                         acceptRes = R.string.InuPluginsDevModeSheetAccept,
                     ) { setDevMode(true) }
                 }
+            }
+            BUTTON_MARKET -> PluginManager.plugins().firstOrNull { it.manifest.id == PluginDependencies.SDK_ID }?.let { sdk ->
+                val session = sdk.session
+                val pageId = sdk.settingsPageId
+                if (session != null && pageId != null) presentFragment(PluginSettingsActivity(session, pageId))
             }
             BUTTON_LOAD -> launchLoad()
             // plugin rows handle their own clicks (see PluginRow's background comment)
@@ -362,6 +373,7 @@ class PluginsActivity : SettingsPageActivity() {
     companion object {
         private val ENGINE_TOGGLE = InuUtils.generateId()
         private val BUTTON_LOAD = InuUtils.generateId()
+        private val BUTTON_MARKET = InuUtils.generateId()
         private val SAFE_MODE_BANNER = InuUtils.generateId()
         private val DEV_BANNER = InuUtils.generateId()
         private val DEV_TOGGLE = InuUtils.generateId()
@@ -510,16 +522,16 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
                 ellipsize = TextUtils.TruncateAt.END
             }
 
-            val actions = LinearLayout(context).apply { orientation = HORIZONTAL }
+            val actions = ActionsFlow(context)
             settingsAction = mkAction(R.string.Settings, red = false).also {
                 it.visibility = GONE
-                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
+                actions.addView(it, actions.childParams())
             }
             reloadAction = mkAction(R.string.InuPluginsReload, red = false).also {
-                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
+                actions.addView(it, actions.childParams())
             }
             removeAction = mkAction(R.string.InuPluginsRemove, red = true).also {
-                actions.addView(it, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 4f, 0f, 4f, 0f))
+                actions.addView(it, actions.childParams())
             }
 
             val content = LinearLayout(context).apply { orientation = VERTICAL }
@@ -534,8 +546,7 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
             content.addView(
                 actions,
                 LayoutHelper.createLinear(
-                    LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT,
-                    if (rtl) Gravity.LEFT else Gravity.RIGHT,
+                    LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.NO_GRAVITY,
                     if (rtl) 8 else 0, 6, if (rtl) 0 else 8, 0,
                 ),
             )
@@ -668,6 +679,56 @@ class PluginRow(context: Context, val compact: Boolean) : LinearLayout(context) 
         private const val ROOMY_DIVIDER_INSET_DP = 60f
         private const val WARNING_SIZE_DP = 12.5f
         private const val WARNING_OFFSET_DP = 1.5f
+    }
+}
+
+// entiny: wraps onto more lines instead of squeezing the last action into one letter per line
+private class ActionsFlow(context: Context) : ViewGroup(context) {
+    fun childParams() = MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+        leftMargin = AndroidUtilities.dp(4f)
+        rightMargin = AndroidUtilities.dp(4f)
+    }
+
+    private fun wrap(max: Int): List<List<View>> {
+        val lines = ArrayList<ArrayList<View>>()
+        var x = 0
+        for (child in children.filter { it.visibility != GONE }) {
+            val lp = child.layoutParams as MarginLayoutParams
+            child.measure(MeasureSpec.makeMeasureSpec(max, MeasureSpec.AT_MOST), MeasureSpec.UNSPECIFIED)
+            val w = child.measuredWidth + lp.leftMargin + lp.rightMargin
+            if (lines.isEmpty() || x + w > max) {
+                lines.add(ArrayList())
+                x = 0
+            }
+            lines.last().add(child)
+            x += w
+        }
+        return lines
+    }
+
+    private fun View.outerWidth() = measuredWidth + (layoutParams as MarginLayoutParams).let { it.leftMargin + it.rightMargin }
+
+    private fun View.outerHeight() = measuredHeight + (layoutParams as MarginLayoutParams).let { it.topMargin + it.bottomMargin }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val lines = wrap(MeasureSpec.getSize(widthMeasureSpec))
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), lines.sumOf { line -> line.maxOf { it.outerHeight() } })
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        val width = r - l
+        val rtl = LocaleController.isRTL
+        var y = 0
+        for (line in wrap(width)) {
+            var x = if (rtl) 0 else width - line.sumOf { it.outerWidth() }
+            for (child in line) {
+                val lp = child.layoutParams as MarginLayoutParams
+                x += lp.leftMargin
+                child.layout(x, y + lp.topMargin, x + child.measuredWidth, y + lp.topMargin + child.measuredHeight)
+                x += child.measuredWidth + lp.rightMargin
+            }
+            y += line.maxOf { it.outerHeight() }
+        }
     }
 }
 

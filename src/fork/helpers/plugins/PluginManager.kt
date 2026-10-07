@@ -259,9 +259,33 @@ object PluginManager {
         notifyChanged()
         if (enabled) {
             if (mayRun(plugin)) run(plugin)
+            retryUnmet()
         } else {
             stop(plugin)
+            stopUnmet()
         }
+    }
+
+    /** a plugin that needs another one stops with it: a dependent keeps its reason on the plugin list */
+    private fun stopUnmet() {
+        for (dependent in plugins()) {
+            if (!dependent.running) continue
+            val problem = PluginDependencies.unmet(dependent.manifest) ?: continue
+            stop(dependent)
+            dependent.failure = PluginFailure(PluginFailure.Site.REFUSED, problem)
+        }
+        notifyChanged()
+    }
+
+    /** and starts again once what it needs is back */
+    private fun retryUnmet() {
+        for (dependent in plugins()) {
+            if (dependent.running || !dependent.enabled || dependent.failure?.at != PluginFailure.Site.REFUSED) continue
+            if (PluginDependencies.unmet(dependent.manifest) != null) continue
+            dependent.failure = null
+            if (mayRun(dependent)) run(dependent)
+        }
+        notifyChanged()
     }
 
     fun reload(plugin: Plugin) {
@@ -302,6 +326,7 @@ object PluginManager {
         val manifest = PluginManifestParser.parseOrNull(source)
             ?: return ImportResult.Refused(getString(R.string.InuPluginsErrorNoManifest))
         badGrants(manifest)?.let { return ImportResult.Refused(it) }
+        PluginDependencies.unmet(manifest)?.let { return ImportResult.Refused(it) }
         val reclaimed = manifest.id?.let { PluginStore.findUnloaded(it) }
         val id = reclaimed?.id ?: PluginInstalls.mintId()
         val target = File(PluginStore.dir, PluginInstalls.fileName(id))
@@ -321,6 +346,7 @@ object PluginManager {
         republishOrder()
         notifyChanged()
         if (mayRun(plugin)) run(plugin)
+        retryUnmet()
         return ImportResult.Installed(plugin, reversible)
     }
 
@@ -392,6 +418,7 @@ object PluginManager {
         PluginActions.retainInstalls(PluginStore.installIds(plugins))
         PluginTranslation.retainInstalls(PluginStore.installIds(plugins))
         republishOrder()
+        stopUnmet()
         notifyChanged()
     }
 
@@ -421,6 +448,7 @@ object PluginManager {
         if (platform != null && !platform.equals(PLATFORM, ignoreCase = true)) {
             return formatString(R.string.InuPluginsErrorPlatform, platform)
         }
+        PluginDependencies.unmet(manifest)?.let { return it }
         return badGrants(manifest)
     }
 
