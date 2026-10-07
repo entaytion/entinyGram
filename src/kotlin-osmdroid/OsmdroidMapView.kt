@@ -34,6 +34,8 @@ internal class OsmIMapView(context: Context) : IMapsProvider.IMapView {
 
     val mapView = object : OsmMapView(context) {
         override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+            // entiny: osmdroid consumes the drag itself, so onInterceptTouchEvent only sees the DOWN and the sheet never learns the map was moved
+            if (ev.actionMasked == MotionEvent.ACTION_MOVE) interceptInterceptor?.onInterceptTouchEvent(ev) { false }
             val di = dispatchInterceptor ?: return super.dispatchTouchEvent(ev)
             return di.onInterceptTouchEvent(ev) { e -> super.dispatchTouchEvent(e) }
         }
