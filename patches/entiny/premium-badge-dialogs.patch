@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 7 Oct 2026 12:58:00 +0300
+Subject: [*] hide premium star in chats title
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3091,7 +3091,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 showSelectStatusDialog();
+             });
+             SelectAnimatedEmojiDialog.preload(currentAccount);
+-        } else if (user != null && MessagesController.getInstance(currentAccount).isPremiumUser(user)) {
++        } else if (user != null && MessagesController.getInstance(currentAccount).isPremiumUser(user) && !desu.inugram.InuConfig.HIDE_PREMIUM_BADGE.getValue()) {
+             if (premiumStar == null) {
+                 premiumStar = getContext().getResources().getDrawable(R.drawable.msg_premium_liststar).mutate();
+                 premiumStar = new AnimatedEmojiDrawable.WrapSizeDrawable(premiumStar, dp(18), dp(18)) {

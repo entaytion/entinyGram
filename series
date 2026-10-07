@@ -502,3 +502,8 @@ entiny/no-vibration.patch
 entiny/restricted-message-flag.patch
 entiny/many-accounts-warning.patch
 entiny/plugins-gradle-fixes.patch
+entiny/share-intent-lag.patch
+entiny/feed-media-channel-name.patch
+entiny/splash-icon-theme.patch
+entiny/app-icon-round.patch
+entiny/premium-badge-dialogs.patch

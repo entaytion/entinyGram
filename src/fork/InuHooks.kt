@@ -21,6 +21,7 @@ import desu.inugram.helpers.theme.NonIslandHelper
 import desu.inugram.helpers.update.ApkInstaller
 import desu.inugram.helpers.update.UpdateHelper
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController.getString
 import org.telegram.messenger.MessageObject
 import org.telegram.messenger.MessagesController
@@ -139,12 +140,22 @@ object InuHooks {
         if (message.messageOwner != null) UpdateHelper.onNewMessage(message.messageOwner)
     }
 
+    private fun systemAnimatorScale(): Float = try {
+        android.provider.Settings.Global.getFloat(
+            ApplicationLoader.applicationContext.contentResolver,
+            android.provider.Settings.Global.ANIMATOR_DURATION_SCALE,
+            1f
+        )
+    } catch (_: Throwable) {
+        1f
+    }
+
     @JvmStatic
     fun syncAnimationSpeed() {
         try {
             Class.forName("android.animation.ValueAnimator")
                 .getMethod("setDurationScale", Float::class.javaPrimitiveType)
-                .invoke(null, 1f / InuConfig.ANIMATION_SPEED.value)
+                .invoke(null, systemAnimatorScale() / InuConfig.ANIMATION_SPEED.value)
         } catch (_: Throwable) {
         }
         AnimatedFloat.inu_multiplier = InuConfig.ANIMATION_SPEED.value
@@ -202,6 +213,7 @@ object InuHooks {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MonetHelper.refreshMonetThemeIfChanged()
         }
+        desu.inugram.helpers.SplashThemeHelper.apply(launchActivity)
         val bg = Theme.getColor(Theme.key_windowBackgroundWhite)
         launchActivity.window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(bg))
         CrashReporter.maybeShowReportSheet(launchActivity)

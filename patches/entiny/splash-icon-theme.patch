@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 7 Oct 2026 12:57:44 +0300
+Subject: [*] splash theme per app icon
+
+---
+ .../src/main/java/org/telegram/ui/LauncherIconController.java    | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
+@@ -31,6 +31,7 @@ public class LauncherIconController {
+             pm.setComponentEnabledSetting(i.getComponentName(ctx), i == icon ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+         }
++        desu.inugram.helpers.SplashThemeHelper.apply(LaunchActivity.instance);
+     }
+ 
+     public enum LauncherIcon {

@@ -27,6 +27,7 @@ object ConfirmSendHelper {
         if (viewer.isVisible && !viewer.inu_confirmMode) return false
         val inlineResult = media as? TLRPC.BotInlineResult
         val document = media as? TLRPC.Document ?: inlineResult?.document
+        if (inlineResult != null && document == null && inlineResult.content == null) return false
         val isGif = inlineResult != null || document?.let { MessageObject.isGifDocument(it) } == true
         if (document == null && inlineResult == null) return false
         if (!isGif && document?.attributes?.none { it is TLRPC.TL_documentAttributeSticker && it.stickerset != null } != false) return false
@@ -36,7 +37,7 @@ object ConfirmSendHelper {
         viewer.setParentActivity(activity)
         viewer.setDelegate(delegate)
         viewer.open(
-            if (inlineResult != null) null else document, null, emoji, null, inlineResult,
+            document, null, emoji, null, if (document != null) null else inlineResult,
             if (isGif) ContentPreviewViewer.CONTENT_TYPE_GIF else ContentPreviewViewer.CONTENT_TYPE_STICKER,
             false, parent, resourcesProvider, 1
         )

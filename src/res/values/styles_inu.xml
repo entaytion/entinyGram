@@ -1,0 +1,5 @@
+<resources>
+    <style name="Theme.TMessages.Start.Plain" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@null</item>
+    </style>
+</resources>

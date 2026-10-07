@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 7 Oct 2026 12:57:40 +0300
+Subject: [*] share intent doesn't freeze ui
+
+---
+ .../src/main/java/org/telegram/ui/LaunchActivity.java          | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -1778,7 +1778,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+                                     if (exportingChatUri == null) {
+                                         path = AndroidUtilities.getPath(uri);
+                                         if (!BuildVars.NO_SCOPED_STORAGE) {
+-                                            path = MediaController.copyFileToCache(uri, "file");
++                                            // entiny: copy on UI thread freezes launch; plain documents are copied later in prepareSendingDocuments
++                                            path = type != null && (type.startsWith("video/") || type.startsWith("audio/ogg")) ? MediaController.copyFileToCache(uri, "file") : null;
+                                         }
+                                         if (path != null) {
+                                             if (path.startsWith("file:")) {
