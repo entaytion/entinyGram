@@ -44,8 +44,12 @@ async function findDeadStrings(): Promise<{ dead: string[], total: number }> {
   for (const m of baseXml.matchAll(STRING_KEY_RE)) declared.add(m[1])
 
   const sourceFiles: string[] = []
-  await walk(join(rootDir, 'src/kotlin'), sourceFiles, ['.kt'])
-  await walk(join(rootDir, 'src/kotlin-app'), sourceFiles, ['.kt'])
+  for (const dir of ['src/fork', 'src/kotlin', 'src/kotlin-app']) {
+    const full = join(rootDir, dir)
+    try {
+      await walk(full, sourceFiles, ['.kt'])
+    } catch (_) {}
+  }
   await walk(worktreeDir, sourceFiles, ['.java'])
 
   const xmlFiles: string[] = []
@@ -79,9 +83,13 @@ async function findDeadStrings(): Promise<{ dead: string[], total: number }> {
 }
 
 async function main() {
-  const srcKotlin = join(rootDir, 'src/kotlin')
   const files: string[] = []
-  await walk(srcKotlin, files)
+  for (const dir of ['src/fork', 'src/kotlin']) {
+    const full = join(rootDir, dir)
+    try {
+      await walk(full, files)
+    } catch (_) {}
+  }
 
   const hits: SlugHit[] = []
 
