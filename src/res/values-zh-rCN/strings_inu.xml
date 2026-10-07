@@ -357,7 +357,6 @@
     <string name="InuMapPreviewProvider">地图预览提供方</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Yandex</string>
 
     <string name="InuReplyIn">在…中回复</string>
     <string name="InuDeletedMessage">已删除的消息</string>
@@ -1417,8 +1416,6 @@
     <string name="InuTranslateProviderNotConfigured">翻译提供商未配置。正在回退到 Telegram 翻译。</string>
     <string name="InuTranslateProviderSection">翻译提供商</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
-    <string name="InuTranslateProviderYandex">Yandex 翻译</string>
-    <string name="InuTranslateYandexApiKey">Yandex API 密钥</string>
     <string name="InuYes">是</string>
     <string name="InuAccountSwitchShortcut">账号切换快捷方式</string>
     <string name="InuAccountSwitchShortcutInfo">在应用图标长按菜单中添加快捷方式，点击可选择要打开的账号</string>
@@ -1630,10 +1627,6 @@
     <string name="InuDatacenterStatusAbout">检查 Telegram **数据中心**的状态和往返延迟。</string>
     <string name="InuDatacenterYourDc">您的DC</string>
     <string name="InuDatacenterLeakGuardBlocked">已被防泄漏保护阻止</string>
-    <string name="InuCalendarSystem">历法</string>
-    <string name="InuCalendarSystemGregorian">公历</string>
-    <string name="InuCalendarSystemHijri">伊斯兰阴历</string>
-    <string name="InuCalendarSystemPersian">伊斯兰太阳历（贾拉里历）</string>
     <string name="InuClockFormat">时间格式</string>
     <string name="InuClockFormatSystem">使用系统设置</string>
     <string name="InuClockFormat12Hour">12 小时制</string>

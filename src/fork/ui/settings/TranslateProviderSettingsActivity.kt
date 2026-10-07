@@ -23,7 +23,14 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuTranslateProviderSection)))
         items.add(UItem.asRadio(PROVIDER_BASE + TranslationProviders.PROVIDER_TELEGRAM, LocaleController.getString(R.string.InuTranslateProviderTelegram)).also { it.checked = provider == TranslationProviders.PROVIDER_TELEGRAM })
         for (p in TranslationProviders.all) {
-            items.add(UItem.asRadio(PROVIDER_BASE + p.id, LocaleController.getString(p.nameRes)).also { it.checked = provider == p.id })
+            items.add(UItem.asRadio(PROVIDER_BASE + p.id, p.displayName()).also { it.checked = provider == p.id })
+        }
+        // entiny: providers that plugins registered, picked the same way
+        TranslationProviders.plugins().forEachIndexed { index, p ->
+            val key = p.pluginKey
+            items.add(UItem.asRadio(PLUGIN_BASE + index, p.displayName()).also {
+                it.checked = provider == TranslationProviders.PROVIDER_PLUGIN && InuConfig.TRANSLATION_PROVIDER.value == key
+            })
         }
         items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateProviderInfo)))
 
@@ -72,14 +79,6 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
                 items.add(UItem.asShadow(LocaleController.getString(R.string.InuTranslateLlmTemperatureInfo)))
             }
 
-            TranslationProviders.PROVIDER_YANDEX -> keyField(
-                items,
-                ::yandexKeyField,
-                LocaleController.getString(R.string.InuTranslateYandexApiKey),
-                InuConfig.TRANSLATE_YANDEX_KEY.value,
-                InputType.TYPE_TEXT_VARIATION_PASSWORD,
-            ) { InuConfig.TRANSLATE_YANDEX_KEY.value = it }
-
             TranslationProviders.PROVIDER_MICROSOFT -> {
                 keyField(items, ::microsoftKeyField, LocaleController.getString(R.string.InuTranslateMicrosoftApiKey), InuConfig.TRANSLATE_MICROSOFT_KEY.value, InputType.TYPE_TEXT_VARIATION_PASSWORD) { InuConfig.TRANSLATE_MICROSOFT_KEY.value = it }
                 keyField(items, ::microsoftRegionField, LocaleController.getString(R.string.InuTranslateMicrosoftRegion), InuConfig.TRANSLATE_MICROSOFT_REGION.value) { InuConfig.TRANSLATE_MICROSOFT_REGION.value = it }
@@ -95,7 +94,6 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
     private var llmKeyField: FieldSlot? = null
     private var llmModelField: FieldSlot? = null
     private var llmPromptField: FieldSlot? = null
-    private var yandexKeyField: FieldSlot? = null
     private var microsoftKeyField: FieldSlot? = null
     private var microsoftRegionField: FieldSlot? = null
 
@@ -117,8 +115,19 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
         if (item.id in PROVIDER_BASE..(PROVIDER_BASE + 10)) {
             val newProvider = item.id - PROVIDER_BASE
+            // entiny: a built-in provider hands Telegram's own translation requests back to the app's engine
+            InuConfig.TRANSLATION_PROVIDER.value = ""
             if (newProvider != InuConfig.TRANSLATE_PROVIDER.value) {
                 InuConfig.TRANSLATE_PROVIDER.value = newProvider
+                EntinyTranslate.onProviderChanged()
+                unlockStockTranslateButton()
+            }
+            listView.adapter.update(true)
+        } else if (item.id in PLUGIN_BASE..(PLUGIN_BASE + 99)) {
+            val key = TranslationProviders.plugins().getOrNull(item.id - PLUGIN_BASE)?.pluginKey
+            if (key != null) {
+                InuConfig.TRANSLATION_PROVIDER.value = key
+                InuConfig.TRANSLATE_PROVIDER.value = TranslationProviders.PROVIDER_PLUGIN
                 EntinyTranslate.onProviderChanged()
                 unlockStockTranslateButton()
             }
@@ -135,5 +144,6 @@ class TranslateProviderSettingsActivity : SettingsPageActivity() {
 
     companion object {
         private const val PROVIDER_BASE = 24000
+        private const val PLUGIN_BASE = 24100
     }
 }

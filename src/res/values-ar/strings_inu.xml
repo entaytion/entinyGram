@@ -333,10 +333,6 @@
     <string name="InuPredictiveBackOff">إيقاف</string>
     <string name="InuPredictiveBackStock">الافتراضي</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
-    <string name="InuCalendarSystem">نظام التقويم</string>
-    <string name="InuCalendarSystemGregorian">الميلادي</string>
-    <string name="InuCalendarSystemHijri">الهجري القمري</string>
-    <string name="InuCalendarSystemPersian">الهجري الشمسي (الجلالي)</string>
     <string name="InuClockFormat">تنسيق الساعة</string>
     <string name="InuClockFormatSystem">استخدام إعداد النظام</string>
     <string name="InuClockFormat12Hour">12 ساعة</string>
@@ -535,12 +531,10 @@
     <string name="InuTranslateProviderGoogle">ترجمة Google</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderLlm">LLM (متوافق مع OpenAI)</string>
-    <string name="InuTranslateProviderYandex">ترجمة Yandex</string>
     <string name="InuTranslateProviderMicrosoft">ترجمة Bing (مجانية، بدون مفتاح)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (مفتاح API)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (مجانية، بدون مفتاح)</string>
     <string name="InuTranslateDeepLApiKey">مفتاح API الخاص بـ DeepL</string>
-    <string name="InuTranslateYandexApiKey">مفتاح API الخاص بـ Yandex</string>
     <string name="InuTranslateMicrosoftApiKey">مفتاح API الخاص بـ Azure Translator</string>
     <string name="InuTranslateMicrosoftRegion">منطقة Azure (اختياري)</string>
     <string name="InuTranslateLlmEndpointUrl">عنوان نقطة نهاية API</string>
@@ -649,7 +643,6 @@
     <string name="InuMapPreviewProvider">مزود معاينة الخريطة</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Yandex</string>
 
     <string name="InuReplyIn">الرد في…</string>
     <string name="InuDeletedMessage">رسالة محذوفة</string>

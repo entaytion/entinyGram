@@ -333,10 +333,6 @@
     <string name="InuPredictiveBackOff">خاموش</string>
     <string name="InuPredictiveBackStock">پیش‌فرض</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
-    <string name="InuCalendarSystem">سیستم تقویم</string>
-    <string name="InuCalendarSystemGregorian">میلادی</string>
-    <string name="InuCalendarSystemHijri">هجری قمری</string>
-    <string name="InuCalendarSystemPersian">هجری شمسی (جلالی)</string>
     <string name="InuClockFormat">قالب ساعت</string>
     <string name="InuClockFormatSystem">استفاده از تنظیم سیستم</string>
     <string name="InuClockFormat12Hour">۱۲ ساعته</string>
@@ -535,12 +531,10 @@
     <string name="InuTranslateProviderGoogle">Google Translate</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderLlm">LLM (سازگار با OpenAI)</string>
-    <string name="InuTranslateProviderYandex">Yandex Translate</string>
     <string name="InuTranslateProviderMicrosoft">Bing Translate (رایگان، بدون کلید)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (کلید API)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (رایگان، بدون کلید)</string>
     <string name="InuTranslateDeepLApiKey">کلید API دیپل (DeepL)</string>
-    <string name="InuTranslateYandexApiKey">کلید API یاندکس</string>
     <string name="InuTranslateMicrosoftApiKey">کلید API مترجم Azure</string>
     <string name="InuTranslateMicrosoftRegion">منطقه Azure (اختیاری)</string>
     <string name="InuTranslateLlmEndpointUrl">نشانی نقطه پایانی API</string>
@@ -649,7 +643,6 @@
     <string name="InuMapPreviewProvider">ارائه‌دهنده پیش‌نمایش نقشه</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Yandex</string>
 
     <string name="InuReplyIn">پاسخ در…</string>
     <string name="InuDeletedMessage">پیام حذف‌شده</string>

@@ -147,13 +147,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuFormatting)))
         items.add(
             UItem.asButton(
-                BUTTON_CALENDAR_SYSTEM,
-                LocaleController.getString(R.string.InuCalendarSystem),
-                calendarSystemLabel(InuConfig.CALENDAR_SYSTEM.value),
-            )
-        )
-        items.add(
-            UItem.asButton(
                 BUTTON_CLOCK_FORMAT,
                 LocaleController.getString(R.string.InuClockFormat),
                 clockFormatLabel(InuConfig.CLOCK_FORMAT.value),
@@ -316,7 +309,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 when (InuConfig.MAP_PREVIEW_PROVIDER.value) {
                     InuConfig.MapPreviewProviderItem.TELEGRAM -> LocaleController.getString(R.string.InuMapPreviewProviderTelegram)
                     InuConfig.MapPreviewProviderItem.GOOGLE -> LocaleController.getString(R.string.InuMapPreviewProviderGoogle)
-                    InuConfig.MapPreviewProviderItem.YANDEX -> LocaleController.getString(R.string.InuMapPreviewProviderYandex)
                     InuConfig.MapPreviewProviderItem.DISABLED -> LocaleController.getString(R.string.Disable)
                     else -> LocaleController.getString(R.string.Default)
                 }
@@ -483,21 +475,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
             TOGGLE_FASTER_DOWNLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_DOWNLOADS.toggle()
             TOGGLE_FASTER_UPLOADS -> (view as? TextCheckCell)?.isChecked = InuConfig.FASTER_UPLOADS.toggle()
 
-            BUTTON_CALENDAR_SYSTEM -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.InuCalendarSystemGregorian),
-                    LocaleController.getString(R.string.InuCalendarSystemHijri),
-                    LocaleController.getString(R.string.InuCalendarSystemPersian),
-                ),
-                InuConfig.CALENDAR_SYSTEM.value,
-            ) { which ->
-                if (InuConfig.CALENDAR_SYSTEM.value == which) return@show
-                InuConfig.CALENDAR_SYSTEM.value = which
-                invalidateVisibleRows()
-                listView.adapter.update(true)
-            }
-
             BUTTON_CLOCK_FORMAT -> RadioItemOptions.show(
                 this, view,
                 listOf(
@@ -545,19 +522,26 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 ApplicationLoader.inu_resetMapsProvider()
             }
 
-            BUTTON_MAP_PREVIEW_PROVIDER -> RadioItemOptions.show(
-                this, view,
-                listOf(
-                    LocaleController.getString(R.string.Default),
-                    LocaleController.getString(R.string.InuMapPreviewProviderTelegram),
-                    LocaleController.getString(R.string.InuMapPreviewProviderGoogle),
-                    LocaleController.getString(R.string.InuMapPreviewProviderYandex),
-                    LocaleController.getString(R.string.Disable),
-                ),
-                InuConfig.MAP_PREVIEW_PROVIDER.value,
-            ) { which ->
-                InuConfig.MAP_PREVIEW_PROVIDER.value = which
-                MapsHelper.syncMapProvider(messagesController)
+            BUTTON_MAP_PREVIEW_PROVIDER -> {
+                val values = intArrayOf(
+                    InuConfig.MapPreviewProviderItem.DEFAULT,
+                    InuConfig.MapPreviewProviderItem.TELEGRAM,
+                    InuConfig.MapPreviewProviderItem.GOOGLE,
+                    InuConfig.MapPreviewProviderItem.DISABLED,
+                )
+                RadioItemOptions.show(
+                    this, view,
+                    listOf(
+                        LocaleController.getString(R.string.Default),
+                        LocaleController.getString(R.string.InuMapPreviewProviderTelegram),
+                        LocaleController.getString(R.string.InuMapPreviewProviderGoogle),
+                        LocaleController.getString(R.string.Disable),
+                    ),
+                    values.indexOf(InuConfig.MAP_PREVIEW_PROVIDER.value).coerceAtLeast(0),
+                ) { which ->
+                    InuConfig.MAP_PREVIEW_PROVIDER.value = values[which]
+                    MapsHelper.syncMapProvider(messagesController)
+                }
             }
         }
     }
@@ -663,19 +647,12 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MEMORY_TRIM = InuUtils.generateId()
         private val TOGGLE_SAVE_SELECTED_FILES = InuUtils.generateId()
         private val TOGGLE_DISABLE_ROUNDING = InuUtils.generateId()
-        private val BUTTON_CALENDAR_SYSTEM = InuUtils.generateId()
         private val BUTTON_CLOCK_FORMAT = InuUtils.generateId()
         private val TOGGLE_ACCOUNT_SWITCH_SHORTCUT = InuUtils.generateId()
 
         private val mapProviderOptions: List<Pair<Int, Int>> = buildList {
             add(InuConfig.MapProviderItem.GOOGLE to R.string.InuMapProviderGoogle)
             if (MapsHelper.hasOsmdroid) add(InuConfig.MapProviderItem.OSM_LITE to R.string.InuMapProviderOsmLite)
-        }
-
-        private fun calendarSystemLabel(value: Int): String = when (value) {
-            InuConfig.CalendarSystemItem.HIJRI -> LocaleController.getString(R.string.InuCalendarSystemHijri)
-            InuConfig.CalendarSystemItem.PERSIAN -> LocaleController.getString(R.string.InuCalendarSystemPersian)
-            else -> LocaleController.getString(R.string.InuCalendarSystemGregorian)
         }
 
         private fun clockFormatLabel(value: Int): String = when (value) {
@@ -740,7 +717,6 @@ class BehaviorSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("disable-quick-share", R.string.InuDisableQuickShare, TOGGLE_DISABLE_QUICK_SHARE),
                 SearchRegistry.Entry("memory-trim", R.string.InuMemoryTrim, TOGGLE_MEMORY_TRIM),
                 SearchRegistry.Entry("save-selected-files", R.string.InuSaveSelectedFiles, TOGGLE_SAVE_SELECTED_FILES),
-                SearchRegistry.Entry("calendar-system", R.string.InuCalendarSystem, BUTTON_CALENDAR_SYSTEM),
                 SearchRegistry.Entry("clock-format", R.string.InuClockFormat, BUTTON_CLOCK_FORMAT),
                 SearchRegistry.Entry("account-switch-shortcut", R.string.InuAccountSwitchShortcut, TOGGLE_ACCOUNT_SWITCH_SHORTCUT),
             ),

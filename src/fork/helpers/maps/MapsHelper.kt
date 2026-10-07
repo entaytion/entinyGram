@@ -29,7 +29,6 @@ object MapsHelper {
         InuConfig.MapPreviewProviderItem.TELEGRAM -> 2
         // entiny: 101 disambiguates manual Google override from server-pushed Google in syncMapProvider
         InuConfig.MapPreviewProviderItem.GOOGLE -> 101
-        InuConfig.MapPreviewProviderItem.YANDEX -> 1
         InuConfig.MapPreviewProviderItem.DISABLED -> -1
         else -> stock
     }

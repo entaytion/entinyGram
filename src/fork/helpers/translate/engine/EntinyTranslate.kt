@@ -45,7 +45,7 @@ object EntinyTranslate {
         // premium bypass) - report whatever provider will actually receive the message text, never
         // the raw preference, or the UI claims "Telegram API" while text goes to Google
         val provider = TranslationProviders.current() ?: GoogleWebProvider
-        return LocaleController.getString(provider.nameRes)
+        return provider.displayName()
     }
 
     // entiny: single provider-resolution path shared by handle()/handlePoll()/handleWebPage() -
@@ -56,7 +56,7 @@ object EntinyTranslate {
         if (!isActive(account)) return null
         val provider = TranslationProviders.current() ?: GoogleWebProvider
         if (!provider.isConfigured()) {
-            Log.d(TAG, "provider ${provider.nameRes} not configured; falling back to Telegram API")
+            Log.d(TAG, "provider ${provider.displayName()} not configured; falling back to Telegram API")
             if (configBulletins.add(dialogId)) {
                 NotificationCenter.getGlobalInstance().postNotificationName(
                     NotificationCenter.showBulletin,

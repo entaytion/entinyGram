@@ -19,6 +19,12 @@ interface TranslationProvider {
     val id: Int
     val nameRes: Int
 
+    /** a provider that comes from a plugin has no string resource for its name */
+    fun displayName(): String = LocaleController.getString(nameRes)
+
+    /** what the choice is stored as when the provider comes from a plugin, null for the built-in ones */
+    val pluginKey: String? get() = null
+
     fun isConfigured(): Boolean = true
 
     @Throws(Exception::class)
@@ -38,26 +44,40 @@ object TranslationProviders {
     const val PROVIDER_GOOGLE = 1
     const val PROVIDER_DEEPL = 2
     const val PROVIDER_LLM = 3
-    const val PROVIDER_YANDEX = 4
     const val PROVIDER_MICROSOFT = 5
     const val PROVIDER_MYMEMORY = 6
     const val PROVIDER_BING = 9
+
+    /** the choice is one of the plugin providers, named by `InuConfig.TRANSLATION_PROVIDER` */
+    const val PROVIDER_PLUGIN = 100
 
     val all: List<TranslationProvider> = listOf(
         GoogleWebProvider,
         DeepLProvider,
         LlmProvider,
-        YandexProvider,
         BingProvider,
         MicrosoftProvider,
         MyMemoryProvider,
     )
 
+    /** providers installed plugins registered with `inu.registerTranslationProvider` */
+    fun plugins(): List<TranslationProvider> {
+        // #if PLUGINS
+        return desu.inugram.helpers.plugins.telegram.PluginTranslation.providers
+            .filter { it.session.canDispatch() }
+            .map { PluginTranslationProvider(it.key, it.name) }
+        // #else
+        return emptyList()
+        // #endif
+    }
+
     fun current(): TranslationProvider? = when (InuConfig.TRANSLATE_PROVIDER.value) {
         PROVIDER_GOOGLE -> GoogleWebProvider
         PROVIDER_DEEPL -> DeepLProvider
         PROVIDER_LLM -> LlmProvider
-        PROVIDER_YANDEX -> YandexProvider
+        // #if PLUGINS
+        PROVIDER_PLUGIN -> plugins().firstOrNull { it.pluginKey == InuConfig.TRANSLATION_PROVIDER.value }
+        // #endif
         PROVIDER_MICROSOFT -> MicrosoftProvider
         PROVIDER_MYMEMORY -> MyMemoryProvider
         PROVIDER_BING -> BingProvider
@@ -409,37 +429,6 @@ object LlmProvider : TranslationProvider {
     """.trimIndent()
 }
 
-object YandexProvider : TranslationProvider {
-
-    override val id: Int = TranslationProviders.PROVIDER_YANDEX
-    override val nameRes: Int = R.string.InuTranslateProviderYandex
-
-    override fun isConfigured(): Boolean = InuConfig.TRANSLATE_YANDEX_KEY.value.trim().isNotEmpty()
-
-    override fun translate(text: String, toLang: String): String {
-        val key = InuConfig.TRANSLATE_YANDEX_KEY.value.trim()
-        val payload = JSONObject()
-            .put("targetLanguageCode", normalizeToLang(toLang))
-            .put("texts", JSONArray().put(text))
-        val resp = httpJson(
-            "https://translate.api.cloud.yandex.net/translate/v2/translate",
-            method = "POST",
-            body = payload.toString(),
-            contentType = "application/json",
-            headers = mapOf("Authorization" to "Api-Key $key"),
-        )
-        val translations = JSONObject(resp).optJSONArray("translations") ?: JSONArray()
-        if (translations.length() == 0) throw IOException("Yandex Translate returned an empty result")
-        return translations.getJSONObject(0).optString("text", "")
-    }
-
-    private fun normalizeToLang(code: String): String = when (code.lowercase()) {
-        "zh-cn", "zh-hans", "zh-hant", "zh-tw" -> "zh"
-        "iw" -> "he"
-        else -> code.lowercase()
-    }
-}
-
 object MicrosoftProvider : TranslationProvider {
 
     override val id: Int = TranslationProviders.PROVIDER_MICROSOFT
@@ -616,3 +605,31 @@ object BingProvider : TranslationProvider {
         else -> code.lowercase()
     }
 }
+
+// #if PLUGINS
+/** Runs the text through the plugin, waiting for the answer: the engine calls providers off the main thread. */
+class PluginTranslationProvider(val key: String, private val name: String) : TranslationProvider {
+    override val id: Int = TranslationProviders.PROVIDER_PLUGIN
+    override val pluginKey: String get() = key
+    override val nameRes: Int = 0
+
+    override fun displayName(): String = name
+
+    override fun translate(text: String, toLang: String): String {
+        val latch = java.util.concurrent.CountDownLatch(1)
+        var result: String? = null
+        val item = org.telegram.tgnet.TLRPC.TL_textWithEntities().apply {
+            this.text = text
+            entities = ArrayList()
+        }
+        desu.inugram.helpers.plugins.EngineDispatch.scheduler.postRunnable {
+            desu.inugram.helpers.plugins.telegram.PluginTranslation.translate(key, listOf(item), listOf(null), toLang, null) { texts ->
+                result = texts?.firstOrNull()?.text
+                latch.countDown()
+            }
+        }
+        if (!latch.await(35, java.util.concurrent.TimeUnit.SECONDS)) throw IOException("The translation plugin did not answer in time")
+        return result ?: throw IOException("The translation plugin failed, its log says why")
+    }
+}
+// #endif

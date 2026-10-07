@@ -382,10 +382,6 @@
     <string name="InuPredictiveBackOff">Off</string>
     <string name="InuPredictiveBackStock">Stock</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
-    <string name="InuCalendarSystem">Calendar system</string>
-    <string name="InuCalendarSystemGregorian">Gregorian</string>
-    <string name="InuCalendarSystemHijri">Hijri Qamari (lunar)</string>
-    <string name="InuCalendarSystemPersian">Hijri Shamsi (Jalali)</string>
     <string name="InuClockFormat">Clock format</string>
     <string name="InuClockFormatSystem">Use system setting</string>
     <string name="InuClockFormat12Hour">12-hour</string>
@@ -584,12 +580,10 @@
     <string name="InuTranslateProviderGoogle">Google Translate</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderLlm">LLM (OpenAI-compatible)</string>
-    <string name="InuTranslateProviderYandex">Yandex Translate</string>
     <string name="InuTranslateProviderMicrosoft">Bing Translate (free, no key)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API key)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (free, no key)</string>
     <string name="InuTranslateDeepLApiKey">DeepL API key</string>
-    <string name="InuTranslateYandexApiKey">Yandex API key</string>
     <string name="InuTranslateMicrosoftApiKey">Azure Translator API key</string>
     <string name="InuTranslateMicrosoftRegion">Azure region (optional)</string>
     <string name="InuTranslateLlmEndpointUrl">API endpoint URL</string>
@@ -701,7 +695,6 @@
     <string name="InuMapPreviewProvider">Map preview provider</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Yandex</string>
 
     <string name="InuReplyIn">Reply in…</string>
     <string name="InuDeletedMessage">Deleted message</string>

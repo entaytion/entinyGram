@@ -358,7 +358,6 @@
     <string name="InuMapPreviewProvider">地図プレビューのプロバイダー</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Yandex</string>
 
     <string name="InuReplyIn">…で返信</string>
     <string name="InuDeletedMessage">削除されたメッセージ</string>
@@ -1406,8 +1405,6 @@
     <string name="InuTranslateProviderNotConfigured">翻訳プロバイダーが設定されていません。Telegram 翻訳にフォールバックします。</string>
     <string name="InuTranslateProviderSection">翻訳プロバイダー</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
-    <string name="InuTranslateProviderYandex">Yandex 翻訳</string>
-    <string name="InuTranslateYandexApiKey">Yandex API キー</string>
     <string name="InuYes">はい</string>
     <string name="InuAccountSwitchShortcut">アカウント切り替えショートカット</string>
     <string name="InuAccountSwitchShortcutInfo">アプリアイコン長押し時に開くアカウントを選択するショートカットを追加します</string>
@@ -1613,10 +1610,6 @@
     <string name="InuActionButtonStyleInfo">すべての画面の送信・音声・適用ボタンの配色スタイル。</string>
     <string name="InuActionButtonStyleNeutral">ニュートラル</string>
     <string name="InuActionButtonStyleWhite">ホワイト</string>
-    <string name="InuCalendarSystem">暦法</string>
-    <string name="InuCalendarSystemGregorian">グレゴリオ暦</string>
-    <string name="InuCalendarSystemHijri">ヒジュラ太陰暦</string>
-    <string name="InuCalendarSystemPersian">ヒジュラ太陽暦（ジャラーリー暦）</string>
     <string name="InuClockFormat">時刻の表示形式</string>
     <string name="InuClockFormatSystem">システム設定に従う</string>
     <string name="InuClockFormat12Hour">12時間制</string>

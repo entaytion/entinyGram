@@ -476,7 +476,6 @@
     <string name="InuMapPreviewProvider">Harita önizleme sağlayıcısı</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Yandex</string>
 
     <string name="InuReplyIn">Şurada yanıtla…</string>
     <string name="InuDeletedMessage">Silinmiş mesaj</string>
@@ -1414,8 +1413,6 @@
     <string name="InuTranslateProviderNotConfigured">Çeviri sağlayıcısı yapılandırılmadı. Telegram çevirisine geri dönülüyor.</string>
     <string name="InuTranslateProviderSection">Çeviri sağlayıcıları</string>
     <string name="InuTranslateProviderTelegram">Telegram API</string>
-    <string name="InuTranslateProviderYandex">Yandex Çeviri</string>
-    <string name="InuTranslateYandexApiKey">Yandex API anahtarı</string>
     <string name="InuYes">Evet</string>
     <string name="InuAccountSwitchShortcut">Hesap değiştirici kısayolu</string>
     <string name="InuAccountSwitchShortcutInfo">Uygulama simgesine uzun basıldığında hangi hesabın açılacağını soran bir kısayol ekler</string>
@@ -1627,10 +1624,6 @@
     <string name="InuDatacenterStatusAbout">Telegram **veri merkezlerinin** durumunu ve gecikme süresini kontrol edin.</string>
     <string name="InuDatacenterYourDc">Sizin DC</string>
     <string name="InuDatacenterLeakGuardBlocked">Sızıntı koruması tarafından engellendi</string>
-    <string name="InuCalendarSystem">Takvim sistemi</string>
-    <string name="InuCalendarSystemGregorian">Miladi</string>
-    <string name="InuCalendarSystemHijri">Hicri Kameri (ay takvimi)</string>
-    <string name="InuCalendarSystemPersian">Hicri Şemsi (Celali)</string>
     <string name="InuClockFormat">Saat biçimi</string>
     <string name="InuClockFormatSystem">Sistem ayarını kullan</string>
     <string name="InuClockFormat12Hour">12 saatlik</string>

@@ -321,17 +321,6 @@ object InuConfig {
     @JvmField
     val PREDICTIVE_BACK_MODE = PredictiveBackModeItem()
 
-    class CalendarSystemItem : IntItem("calendar_system", GREGORIAN) {
-        companion object {
-            const val GREGORIAN = 0
-            const val HIJRI = 1
-            const val PERSIAN = 2
-        }
-    }
-
-    @JvmField
-    val CALENDAR_SYSTEM = CalendarSystemItem()
-
     class ClockFormatItem : IntItem("clock_format", SYSTEM) {
         companion object {
             const val SYSTEM = 0
@@ -1643,7 +1632,6 @@ object InuConfig {
             const val DEFAULT = 0
             const val TELEGRAM = 1
             const val GOOGLE = 2
-            const val YANDEX = 3
             const val DISABLED = 4
         }
     }
@@ -1768,9 +1756,6 @@ object InuConfig {
 
     @JvmField
     val TRANSLATE_DEEPL_KEY = StringItem("translate_deepl_key", "", exportable = false)
-
-    @JvmField
-    val TRANSLATE_YANDEX_KEY = StringItem("translate_yandex_key", "", exportable = false)
 
     @JvmField
     val TRANSLATE_MICROSOFT_KEY = StringItem("translate_microsoft_key", "", exportable = false)

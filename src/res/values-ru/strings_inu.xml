@@ -182,10 +182,6 @@
     <string name="InuPredictiveBackOff">Откл.</string>
     <string name="InuPredictiveBackStock">Стандартная</string>
     <string name="InuPredictiveBackMaterial3">Material 3</string>
-    <string name="InuCalendarSystem">Календарная система</string>
-    <string name="InuCalendarSystemGregorian">Григорианский</string>
-    <string name="InuCalendarSystemHijri">Хиджра Камари (лунная)</string>
-    <string name="InuCalendarSystemPersian">Хиджра Шамси (Джалали)</string>
     <string name="InuClockFormat">Формат времени</string>
     <string name="InuClockFormatSystem">Как в системе</string>
     <string name="InuClockFormat12Hour">12-часовой</string>
@@ -314,12 +310,10 @@
     <string name="InuTranslateProviderGoogle">Google Translate</string>
     <string name="InuTranslateProviderDeepL">DeepL</string>
     <string name="InuTranslateProviderLlm">LLM (совместимый с OpenAI)</string>
-    <string name="InuTranslateProviderYandex">Yandex Translate</string>
     <string name="InuTranslateProviderMicrosoft">Bing Translate (бесплатно, без ключа)</string>
     <string name="InuTranslateProviderMicrosoftAzure">Microsoft Azure (API-ключ)</string>
     <string name="InuTranslateProviderMyMemory">MyMemory (бесплатно, без ключа)</string>
     <string name="InuTranslateDeepLApiKey">API-ключ DeepL</string>
-    <string name="InuTranslateYandexApiKey">API-ключ Yandex</string>
     <string name="InuTranslateMicrosoftApiKey">API-ключ Azure Translator</string>
     <string name="InuTranslateMicrosoftRegion">Регион Azure (необязательно)</string>
     <string name="InuTranslateLlmEndpointUrl">URL эндпоинта API</string>
@@ -423,7 +417,6 @@
     <string name="InuMapPreviewProvider">Источник превью карт</string>
     <string name="InuMapPreviewProviderTelegram">Telegram</string>
     <string name="InuMapPreviewProviderGoogle">Google</string>
-    <string name="InuMapPreviewProviderYandex">Яндекс</string>
 
     <string name="InuReplyIn">Ответить в…</string>
     <string name="InuDeletedMessage">Удалённое сообщение</string>
