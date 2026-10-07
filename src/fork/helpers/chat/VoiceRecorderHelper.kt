@@ -33,6 +33,12 @@ object VoiceRecorderHelper {
     private var skipIntercept = false
 
     @JvmStatic
+    fun onRecordState(enterView: ChatActivityEnterView, recordState: Int) {
+        if (!InuConfig.KEEP_SCREEN_ON_RECORDING.value) return
+        enterView.keepScreenOn = recordState == ChatActivityEnterView.RECORD_STATE_ENTER
+    }
+
+    @JvmStatic
     fun isMovedToAttach(): Boolean =
         InuConfig.CHAT_VOICE_IN_ATTACH.value && !AttachCameraHelper.isFab()
 

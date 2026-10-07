@@ -39,6 +39,14 @@ class DrawerSettingsActivity : SettingsPageActivity() {
         if (InuConfig.NAVIGATION_DRAWER.value) {
             items.add(
                 mkTwoLineCheckItem(
+                    TOGGLE_DRAWER_KEEP_OPTIONS_MENU,
+                    R.string.InuDrawerKeepOptionsMenu,
+                    R.string.InuDrawerKeepOptionsMenuInfo,
+                    InuConfig.DRAWER_KEEP_OPTIONS_MENU.value,
+                )
+            )
+            items.add(
+                mkTwoLineCheckItem(
                     TOGGLE_DRAWER_M3_SECTIONS,
                     R.string.InuDrawerM3Sections,
                     R.string.InuDrawerM3SectionsInfo,
@@ -81,6 +89,12 @@ class DrawerSettingsActivity : SettingsPageActivity() {
                 showRestartBulletin()
             }
 
+            TOGGLE_DRAWER_KEEP_OPTIONS_MENU -> {
+                val new = InuConfig.DRAWER_KEEP_OPTIONS_MENU.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+                showRestartBulletin()
+            }
+
             TOGGLE_DRAWER_M3_SECTIONS -> {
                 val new = InuConfig.DRAWER_M3_SECTIONS.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
@@ -107,6 +121,7 @@ class DrawerSettingsActivity : SettingsPageActivity() {
     companion object {
         private val TOGGLE_NAVIGATION_DRAWER = InuUtils.generateId()
         private val TOGGLE_DRAWER_BACK_GESTURE = InuUtils.generateId()
+        private val TOGGLE_DRAWER_KEEP_OPTIONS_MENU = InuUtils.generateId()
         private val TOGGLE_DRAWER_M3_SECTIONS = InuUtils.generateId()
         private val TOGGLE_SHOW_DRAWER_ACCOUNTS = InuUtils.generateId()
         private val TOGGLE_HIDE_BOTTOM_TABS = InuUtils.generateId()
@@ -123,6 +138,7 @@ class DrawerSettingsActivity : SettingsPageActivity() {
                 // entiny: slugs kept verbatim from AppearanceSettingsActivity so old deeplinks keep resolving
                 SearchRegistry.Entry("navigation-drawer", R.string.InuNavigationDrawer, TOGGLE_NAVIGATION_DRAWER),
                 SearchRegistry.Entry("drawer-back-gesture", R.string.InuDrawerBackGesture, TOGGLE_DRAWER_BACK_GESTURE),
+                SearchRegistry.Entry("drawer-keep-options-menu", R.string.InuDrawerKeepOptionsMenu, TOGGLE_DRAWER_KEEP_OPTIONS_MENU),
                 SearchRegistry.Entry("drawer-m3-sections", R.string.InuDrawerM3Sections, TOGGLE_DRAWER_M3_SECTIONS),
                 SearchRegistry.Entry("show-drawer-accounts", R.string.InuShowDrawerAccounts, TOGGLE_SHOW_DRAWER_ACCOUNTS),
             ),

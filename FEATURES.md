@@ -62,7 +62,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - forward as your own message, without the "Forwarded from" header
   - forward, re-send or share saved view-once media
 - 📡 **whole-chat translation without Premium**
-- 📡 **translation providers**: Google, DeepL, OpenAI-compatible LLM, Yandex, Bing, Azure, MyMemory
+- 📡 **translation providers**: Google, DeepL, OpenAI-compatible LLM, Bing, Azure, MyMemory
 - 📡 **auto-translate every chat**, with per-chat exceptions - *inspired by [OwlGram](https://github.com/OwlGramDev/OwlGram)*
 - 📡 **LLM translation with conversation context**
 - 📡 **input actions**: translate a draft before sending, link preview toggle, find & replace, attachment picker from the input menu
@@ -138,7 +138,6 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **smaller APK**
 - 📡 **Forward Pro**: edit text or captions before forwarding, keep albums grouped - *inspired by Turbotel / NagramX*
 - 📡 **instant mark reactions as read** - *inspired by [exteraless](https://github.com/exteraless/exteraless)*
-- 📡 **calendar system**: Gregorian, Hijri or Jalali
 - 📡 **local folders** once the server limit is reached
 - 📡 **remember last folder**: the chat list opens on the folder you used last, not on All Chats
 - 📡 **folder icon picker**
@@ -155,6 +154,9 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **square camera tile**: the attach gallery camera takes one cell instead of two
 - 📡 **save selected files**: download button when selecting files in profile media and search - *ported from the Save Selected Files plugin by @akresik*
 - 📡 **free memory in background**: clears image caches shortly after the app is minimized
+- 📡 **keep keyboard while typing**: scrolling the chat doesn't hide the keyboard when there's a draft
+- 📡 **keep three-dot menu**: option to keep the chats list menu button when the side menu is on
+- 📡 **keep screen on while recording**: the screen doesn't turn off during a voice or video message
 
 ### debloat & premium noise
 

@@ -63,6 +63,8 @@
     <string name="InuDrawerBackGestureInfo">Swiping back from the left edge of the chat list opens the drawer instead of leaving the app.</string>
     <string name="InuDrawerM3Sections">Modular sections in navigation drawer</string>
     <string name="InuDrawerM3SectionsInfo">Groups the navigation drawer menu rows into rounded Material 3 cards.</string>
+    <string name="InuDrawerKeepOptionsMenu">Keep three-dot menu</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">Show the chats list menu button next to the side menu</string>
     <string name="InuShowDrawerAccounts">Show accounts in drawer</string>
     <string name="InuShowDrawerAccountsInfo">Show the expandable account switcher below your profile.</string>
     <string name="InuSettings">entinyGram Settings</string>
@@ -212,6 +214,8 @@
     <string name="InuShowAllRecentStickers">Show all recent stickers</string>
     <string name="InuNoStickerExtraPadding">Remove extra bottom padding</string>
     <string name="InuHideKeyboardOnScroll">Hide keyboard on scroll</string>
+    <string name="InuKeepKeyboardWhileTyping">Keep keyboard while typing</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">Don\'t hide it on scroll when there is a draft</string>
     <string name="InuDisablePullToNext">Disable pull to next channel</string>
     <string name="InuDisableSensitive">Disable sensitive filter</string>
     <string name="InuMemoryTrim">Free memory in background</string>
@@ -686,7 +690,7 @@
     <string name="InuIconReplacementOff">Default</string>
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">Maps</string>
     <string name="InuMapProvider">Map view provider</string>
@@ -780,6 +784,8 @@
 
     <string name="InuChatVoiceInAttach">Recorder in attachments</string>
     <string name="InuChatVoiceInAttachInfo">Moves the voice/video record button from the input bar into the attachment sheet</string>
+    <string name="InuKeepScreenOnRecording">Keep screen on while recording</string>
+    <string name="InuKeepScreenOnRecordingInfo">Prevents the screen from turning off during a voice or video message</string>
 
     <string name="InuDisableIntroSticker">Don\'t send intro sticker</string>
     <string name="InuDisableIntroStickerInfo">…and hide greeting sticker suggestions</string>
@@ -1310,7 +1316,7 @@
     <string name="InuSaveEditedMessages">Save edit history</string>
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
     <string name="InuSaveUserInfo">Save user info</string>
-    <string name="InuSaveUserInfoInfo">Keeps phone country, registration month and name/photo change dates after the server stops returning them (beta)</string>
+    <string name="InuSaveUserInfoInfo">Keeps phone country, registration month and name/photo change dates after the server stops returning them</string>
     <string name="InuCacheTtl">Auto-clear message cache</string>
     <string name="InuCacheTtlInfo">Automatically deletes saved deleted/edited messages older than the chosen period</string>
     <string name="InuCacheTtlNever">Never (keep forever)</string>
@@ -1714,7 +1720,7 @@
     <string name="InuSmallGifs">Show small GIFs</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">Author, caption and silent-send toggles plus editing before forwarding. Experimental.</string>
+    <string name="InuForwardProInfo">Author, caption and silent-send toggles plus editing before forwarding.</string>
     <string name="InuForwardProHideCaption">Hide captions</string>
     <string name="InuForwardProEditedNotice">Will be sent as a copy from you, without a forward label</string>
     <string name="InuForwardProUseStock">Stock Telegram</string>

@@ -23,6 +23,8 @@
     <string name="InuDrawerBackGestureInfo">Свайп назад від лівого краю списку чатів відкриває бічну панель замість виходу з додатка.</string>
     <string name="InuDrawerM3Sections">Модульні секції в бічному меню</string>
     <string name="InuDrawerM3SectionsInfo">Групує пункти бічного меню в картки Material 3.</string>
+    <string name="InuDrawerKeepOptionsMenu">Залишити меню з трьома крапками</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">Показувати кнопку меню списку чатів разом із бічним меню</string>
     <string name="InuSettings">Налаштування entinyGram</string>
     <string name="InuSettingsInfo">крізь землю та вітер я йду за тобою</string>
     <string name="InuGeneral">Загальні</string>
@@ -144,6 +146,8 @@
     <string name="InuShowAllRecentStickers">Показувати всі нещодавні наліпки</string>
     <string name="InuNoStickerExtraPadding">Прибрати додатковий відступ знизу</string>
     <string name="InuHideKeyboardOnScroll">Приховувати клавіатуру при прокручуванні</string>
+    <string name="InuKeepKeyboardWhileTyping">Не ховати клавіатуру під час набору</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">Не приховувати при прокручуванні, якщо в полі є текст</string>
     <string name="InuDisablePullToNext">Вимкнути потягування до наступного каналу</string>
     <string name="InuDisableSensitive">Вимкнути фільтр делікатного контенту</string>
     <string name="InuMemoryTrim">Звільняти пам\'ять у фоні</string>
@@ -514,7 +518,7 @@
     <string name="InuIconReplacementOff">За замовчуванням</string>
     <string name="InuIconReplacementSolar">Solar від @Design480</string>
     <string name="InuIconReplacementVkui">VKUI від VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">Карти</string>
     <string name="InuMapProvider">Провайдер карт</string>
@@ -608,6 +612,8 @@
 
     <string name="InuChatVoiceInAttach">Диктофон у вкладеннях</string>
     <string name="InuChatVoiceInAttachInfo">Переміщує кнопку запису голосових/відео у панель вкладень</string>
+    <string name="InuKeepScreenOnRecording">Не вимикати екран під час запису</string>
+    <string name="InuKeepScreenOnRecordingInfo">Екран не гасне під час запису голосового або відеоповідомлення</string>
 
     <string name="InuDisableIntroSticker">Не надсилати вступну наліпку</string>
     <string name="InuDisableIntroStickerInfo">…та приховати підказки вступних наліпок</string>
@@ -1043,7 +1049,7 @@
     <string name="InuSaveEditedMessagesInfo">Записує попередні версії повідомлень і дозволяє переглядати їх історію ✏️</string>
 
     <string name="InuSaveUserInfo">Зберігати дані про користувача</string>
-    <string name="InuSaveUserInfoInfo">Зберігає країну телефону, місяць реєстрації та дати зміни імені/фото, коли сервер перестає їх надсилати (бета)</string>
+    <string name="InuSaveUserInfoInfo">Зберігає країну телефону, місяць реєстрації та дати зміни імені/фото, коли сервер перестає їх надсилати</string>
     <string name="InuCacheTtl">Авто-очищення кешу повідомлень</string>
     <string name="InuCacheTtlInfo">Автоматично видаляє збережені видалені/відредаговані повідомлення, старші за обраний період</string>
     <string name="InuGhostReadOnSend">Читати при надсиланні</string>
@@ -1658,7 +1664,7 @@
     <string name="InuDeleteFailedProxiesConfirm">Ви впевнені, що хочете видалити всі недоступні проксі?</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">Перемикачі автора, підпису та беззвучного надсилання плюс редагування перед пересиланням. Експериментально.</string>
+    <string name="InuForwardProInfo">Перемикачі автора, підпису та беззвучного надсилання плюс редагування перед пересиланням.</string>
     <string name="InuForwardProHideCaption">Приховати підпис</string>
     <string name="InuForwardProEditedNotice">Надішлеться копією — від вашого імені, без мітки «Переслано від»</string>
     <string name="InuForwardProUseStock">Стоковий Telegram</string>

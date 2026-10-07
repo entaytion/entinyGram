@@ -42,7 +42,8 @@ class IconPacksSettingsActivity : SettingsPageActivity() {
             InuConfig.IconReplacementItem.PHOSPHOR to R.string.InuIconReplacementPhosphor,
         )
         packs.forEach { (packId, titleRes) ->
-            val title = LocaleController.getString(titleRes)
+            val rawTitle = LocaleController.getString(titleRes)
+            val title = if (packId == InuConfig.IconReplacementItem.PHOSPHOR) addExperimentalSpan(rawTitle) else rawTitle
             val checked = selectedPack == packId
             val card = LinearLayout(ctx).apply {
                 orientation = LinearLayout.HORIZONTAL

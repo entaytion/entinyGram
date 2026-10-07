@@ -40,6 +40,14 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             ).setChecked(InuConfig.HIDE_KEYBOARD_ON_SCROLL.value)
         )
         items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_KEEP_KEYBOARD_WHILE_TYPING,
+                R.string.InuKeepKeyboardWhileTyping,
+                R.string.InuKeepKeyboardWhileTypingInfo,
+                InuConfig.KEEP_KEYBOARD_WHILE_TYPING.value,
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_DISABLE_PULL_TO_NEXT,
                 LocaleController.getString(R.string.InuDisablePullToNext),
@@ -161,6 +169,14 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         items.add(UItem.asShadow(null))
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.InuVoiceRecorder)))
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_KEEP_SCREEN_ON_RECORDING,
+                R.string.InuKeepScreenOnRecording,
+                R.string.InuKeepScreenOnRecordingInfo,
+                InuConfig.KEEP_SCREEN_ON_RECORDING.value,
+            )
+        )
         if (InuConfig.ATTACH_CAMERA_MODE.value != InuConfig.AttachCameraModeItem.FAB) {
             items.add(
                 mkTwoLineCheckItem(
@@ -351,6 +367,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         super.onClick(item, view, position, x, y)
         when (item.id) {
             TOGGLE_HIDE_KEYBOARD_ON_SCROLL -> (view as? TextCheckCell)?.isChecked = InuConfig.HIDE_KEYBOARD_ON_SCROLL.toggle()
+            TOGGLE_KEEP_KEYBOARD_WHILE_TYPING -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.KEEP_KEYBOARD_WHILE_TYPING.toggle()
             TOGGLE_DISABLE_PULL_TO_NEXT -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_PULL_TO_NEXT.toggle()
             TOGGLE_CHAT_ALWAYS_SHOW_DOWN -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_ALWAYS_SHOW_DOWN.toggle()
             TOGGLE_CHAT_TWO_FINGER_SELECT -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_TWO_FINGER_SELECT.toggle()
@@ -396,6 +413,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 listView.adapter.update(true)
             }
 
+            TOGGLE_KEEP_SCREEN_ON_RECORDING -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.KEEP_SCREEN_ON_RECORDING.toggle()
             TOGGLE_CHAT_VOICE_IN_ATTACH -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.CHAT_VOICE_IN_ATTACH.toggle()
             TOGGLE_ATTACH_CAMERA_SQUARE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.ATTACH_CAMERA_SQUARE.toggle()
             TOGGLE_SORT_ALBUMS_BY_SIZE -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.SORT_ALBUMS_BY_SIZE.toggle()
@@ -490,6 +508,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
 
     companion object {
         private val TOGGLE_HIDE_KEYBOARD_ON_SCROLL = InuUtils.generateId()
+        private val TOGGLE_KEEP_KEYBOARD_WHILE_TYPING = InuUtils.generateId()
         private val TOGGLE_DISABLE_PULL_TO_NEXT = InuUtils.generateId()
         private val TOGGLE_CHAT_ALWAYS_SHOW_DOWN = InuUtils.generateId()
         private val TOGGLE_CHAT_TWO_FINGER_SELECT = InuUtils.generateId()
@@ -499,6 +518,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
         private val TOGGLE_MENTION_SEPARATOR_BOTS = InuUtils.generateId()
         private val TOGGLE_SHOW_ALL_RECENT_STICKERS = InuUtils.generateId()
         private val BUTTON_ATTACH_CAMERA_MODE = InuUtils.generateId()
+        private val TOGGLE_KEEP_SCREEN_ON_RECORDING = InuUtils.generateId()
         private val TOGGLE_CHAT_VOICE_IN_ATTACH = InuUtils.generateId()
         private val TOGGLE_ATTACH_CAMERA_SQUARE = InuUtils.generateId()
         private val TOGGLE_SORT_ALBUMS_BY_SIZE = InuUtils.generateId()
@@ -568,6 +588,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
             entries = DialogsSettingsActivity.PAGE.entries + listOf(
                 SearchRegistry.Entry("mention-separator-bots", R.string.InuMentionSeparatorBots, TOGGLE_MENTION_SEPARATOR_BOTS),
                 SearchRegistry.Entry("hide-keyboard-on-scroll", R.string.InuHideKeyboardOnScroll, TOGGLE_HIDE_KEYBOARD_ON_SCROLL),
+                SearchRegistry.Entry("keep-keyboard-while-typing", R.string.InuKeepKeyboardWhileTyping, TOGGLE_KEEP_KEYBOARD_WHILE_TYPING),
                 SearchRegistry.Entry("disable-pull-to-next", R.string.InuDisablePullToNext, TOGGLE_DISABLE_PULL_TO_NEXT),
                 SearchRegistry.Entry("chat-always-show-down", R.string.InuChatAlwaysShowDown, TOGGLE_CHAT_ALWAYS_SHOW_DOWN),
                 SearchRegistry.Entry("chat-two-finger-select", R.string.InuChatTwoFingerSelect, TOGGLE_CHAT_TWO_FINGER_SELECT),
@@ -576,6 +597,7 @@ class CategoryChatsSettingsActivity : DialogsSettingsActivity() {
                 SearchRegistry.Entry("mention-separator", R.string.InuMentionSeparator, BUTTON_MENTION_SEPARATOR),
                 SearchRegistry.Entry("show-all-recent-stickers", R.string.InuShowAllRecentStickers, TOGGLE_SHOW_ALL_RECENT_STICKERS),
                 SearchRegistry.Entry("attach-camera-mode", R.string.InuAttachCameraMode, BUTTON_ATTACH_CAMERA_MODE),
+                SearchRegistry.Entry("keep-screen-on-recording", R.string.InuKeepScreenOnRecording, TOGGLE_KEEP_SCREEN_ON_RECORDING),
                 SearchRegistry.Entry("chat-voice-in-attach", R.string.InuChatVoiceInAttach, TOGGLE_CHAT_VOICE_IN_ATTACH),
                 SearchRegistry.Entry("attach-camera-square", R.string.InuAttachCameraSquare, TOGGLE_ATTACH_CAMERA_SQUARE),
                 SearchRegistry.Entry("sort-albums-by-size", R.string.InuSortAlbumsBySize, TOGGLE_SORT_ALBUMS_BY_SIZE),

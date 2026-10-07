@@ -30,3 +30,4 @@ sdk/cli/dist
 src/core/src/main/resources/tl_tables.txt
 src/native/target
 out
+plugins/*/dist

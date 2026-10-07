@@ -15,6 +15,8 @@
     <string name="InuDrawerBackGestureInfo">السحب للخلف من حافة قائمة المحادثات اليسرى يفتح القائمة بدلاً من الخروج من التطبيق.</string>
     <string name="InuDrawerM3Sections">أقسام معيارية في القائمة الجانبية</string>
     <string name="InuDrawerM3SectionsInfo">تجمّع عناصر القائمة الجانبية في بطاقات مستديرة بنمط Material 3.</string>
+    <string name="InuDrawerKeepOptionsMenu">إبقاء قائمة النقاط الثلاث</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">إظهار زر قائمة قائمة الدردشات بجانب القائمة الجانبية</string>
     <string name="InuShowDrawerAccounts">إظهار الحسابات في القائمة</string>
     <string name="InuShowDrawerAccountsInfo">إظهار مبدّل الحسابات القابل للتوسيع أسفل ملفك الشخصي.</string>
     <string name="InuSettings">إعدادات entinyGram</string>
@@ -163,6 +165,8 @@
     <string name="InuShowAllRecentStickers">إظهار كل الملصقات الأخيرة</string>
     <string name="InuNoStickerExtraPadding">إزالة الحشوة السفلية الإضافية</string>
     <string name="InuHideKeyboardOnScroll">إخفاء لوحة المفاتيح عند التمرير</string>
+    <string name="InuKeepKeyboardWhileTyping">إبقاء لوحة المفاتيح أثناء الكتابة</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">عدم إخفائها عند التمرير إذا كان هناك نص في الحقل</string>
     <string name="InuDisablePullToNext">تعطيل السحب للقناة التالية</string>
     <string name="InuDisableSensitive">تعطيل مرشّح المحتوى الحساس</string>
     <string name="InuMemoryTrim">تحرير الذاكرة في الخلفية</string>
@@ -634,7 +638,7 @@
     <string name="InuIconReplacementOff">الافتراضية</string>
     <string name="InuIconReplacementSolar">Solar من @Design480</string>
     <string name="InuIconReplacementVkui">VKUI من VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (تجريبي)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">الخرائط</string>
     <string name="InuMapProvider">مزود عرض الخريطة</string>
@@ -728,6 +732,8 @@
 
     <string name="InuChatVoiceInAttach">المسجّل في المرفقات</string>
     <string name="InuChatVoiceInAttachInfo">ينقل زر تسجيل الصوت/الفيديو من شريط الإدخال إلى ورقة المرفقات</string>
+    <string name="InuKeepScreenOnRecording">إبقاء الشاشة مضاءة أثناء التسجيل</string>
+    <string name="InuKeepScreenOnRecordingInfo">يمنع إطفاء الشاشة أثناء تسجيل رسالة صوتية أو مرئية</string>
 
     <string name="InuDisableIntroSticker">عدم إرسال ملصق التعريف</string>
     <string name="InuDisableIntroStickerInfo">…وإخفاء اقتراحات ملصق الترحيب</string>
@@ -1257,7 +1263,7 @@
     <string name="InuSaveEditedMessages">حفظ سجل التعديلات</string>
     <string name="InuSaveEditedMessagesInfo">يحفظ النسخ السابقة للرسائل ويتيح عرض سجل التعديلات ✏️</string>
     <string name="InuSaveUserInfo">حفظ معلومات المستخدم</string>
-    <string name="InuSaveUserInfoInfo">يحتفظ ببلد الهاتف وشهر التسجيل وتواريخ تغيير الاسم/الصورة بعد أن يتوقف الخادم عن إرجاعها (تجريبي)</string>
+    <string name="InuSaveUserInfoInfo">يحتفظ ببلد الهاتف وشهر التسجيل وتواريخ تغيير الاسم/الصورة بعد أن يتوقف الخادم عن إرجاعها</string>
     <string name="InuCacheTtl">مسح ذاكرة الرسائل تلقائياً</string>
     <string name="InuCacheTtlInfo">يحذف تلقائياً الرسائل المحذوفة/المعدّلة المحفوظة الأقدم من المدة المختارة</string>
     <string name="InuCacheTtlNever">أبداً (الاحتفاظ إلى الأبد)</string>
@@ -1660,7 +1666,7 @@
     <string name="InuSmallGifs">إظهار الصور المتحركة الصغيرة</string>
 
     <string name="InuForwardPro">إعادة توجيه احترافية</string>
-    <string name="InuForwardProInfo">مفاتيح المرسل والتعليق والإرسال الصامت مع التعديل قبل إعادة التوجيه. تجريبي.</string>
+    <string name="InuForwardProInfo">مفاتيح المرسل والتعليق والإرسال الصامت مع التعديل قبل إعادة التوجيه.</string>
     <string name="InuForwardProHideCaption">إخفاء التعليقات</string>
     <string name="InuForwardProEditedNotice">ستُرسل كنسخة منك، دون علامة إعادة توجيه</string>
     <string name="InuForwardProUseStock">Telegram الأساسي</string>

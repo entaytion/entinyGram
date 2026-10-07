@@ -15,6 +15,8 @@
     <string name="InuDrawerBackGestureInfo">کشیدن از لبه چپ فهرست گفتگوها به‌جای خروج از برنامه، منو را باز می‌کند.</string>
     <string name="InuDrawerM3Sections">بخش‌های ماژولار در منوی کناری</string>
     <string name="InuDrawerM3SectionsInfo">ردیف‌های منوی کناری را در کارت‌های گرد Material 3 گروه‌بندی می‌کند.</string>
+    <string name="InuDrawerKeepOptionsMenu">حفظ منوی سه‌نقطه</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">نمایش دکمهٔ منوی فهرست گفتگوها در کنار منوی کناری</string>
     <string name="InuShowDrawerAccounts">نمایش حساب‌ها در منو</string>
     <string name="InuShowDrawerAccountsInfo">نمایش تعویض‌گر حساب قابل‌گسترش زیر نمایه شما.</string>
     <string name="InuSettings">تنظیمات entinyGram</string>
@@ -163,6 +165,8 @@
     <string name="InuShowAllRecentStickers">نمایش همه استیکرهای اخیر</string>
     <string name="InuNoStickerExtraPadding">حذف فاصله اضافی پایین</string>
     <string name="InuHideKeyboardOnScroll">پنهان کردن صفحه‌کلید هنگام اسکرول</string>
+    <string name="InuKeepKeyboardWhileTyping">حفظ صفحه‌کلید هنگام تایپ</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">در صورت وجود متن در کادر، هنگام اسکرول پنهان نشود</string>
     <string name="InuDisablePullToNext">غیرفعال کردن کشیدن برای کانال بعدی</string>
     <string name="InuDisableSensitive">غیرفعال کردن فیلتر محتوای حساس</string>
     <string name="InuMemoryTrim">آزادسازی حافظه در پس‌زمینه</string>
@@ -634,7 +638,7 @@
     <string name="InuIconReplacementOff">پیش‌فرض</string>
     <string name="InuIconReplacementSolar">Solar از @Design480</string>
     <string name="InuIconReplacementVkui">VKUI از VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (آزمایشی)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">نقشه‌ها</string>
     <string name="InuMapProvider">ارائه‌دهنده نمایش نقشه</string>
@@ -728,6 +732,8 @@
 
     <string name="InuChatVoiceInAttach">ضبط‌کننده در پیوست‌ها</string>
     <string name="InuChatVoiceInAttachInfo">دکمه ضبط صدا/تصویر را از نوار ورودی به برگه پیوست می‌برد</string>
+    <string name="InuKeepScreenOnRecording">روشن ماندن صفحه هنگام ضبط</string>
+    <string name="InuKeepScreenOnRecordingInfo">از خاموش شدن صفحه هنگام ضبط پیام صوتی یا تصویری جلوگیری می‌کند</string>
 
     <string name="InuDisableIntroSticker">ارسال نکردن استیکر معرفی</string>
     <string name="InuDisableIntroStickerInfo">…و پنهان کردن پیشنهادهای استیکر خوش‌آمدگویی</string>
@@ -1241,7 +1247,7 @@
     <string name="InuSaveEditedMessages">ذخیره تاریخچه ویرایش</string>
     <string name="InuSaveEditedMessagesInfo">نسخه‌های قبلی پیام‌ها را ذخیره می‌کند و مشاهده تاریخچه ویرایش را ممکن می‌سازد ✏️</string>
     <string name="InuSaveUserInfo">ذخیره اطلاعات کاربر</string>
-    <string name="InuSaveUserInfoInfo">کشور تلفن، ماه ثبت‌نام و تاریخ تغییر نام/عکس را پس از اینکه سرور دیگر آن‌ها را برنگرداند نگه می‌دارد (آزمایشی)</string>
+    <string name="InuSaveUserInfoInfo">کشور تلفن، ماه ثبت‌نام و تاریخ تغییر نام/عکس را پس از اینکه سرور دیگر آن‌ها را برنگرداند نگه می‌دارد</string>
     <string name="InuCacheTtl">پاک کردن خودکار حافظه نهان پیام</string>
     <string name="InuCacheTtlInfo">پیام‌های حذف‌شده/ویرایش‌شده ذخیره‌شده‌ای را که از بازه انتخابی قدیمی‌ترند خودکار حذف می‌کند</string>
     <string name="InuCacheTtlNever">هرگز (برای همیشه نگه دار)</string>
@@ -1644,7 +1650,7 @@
     <string name="InuSmallGifs">نمایش گیف‌های کوچک</string>
 
     <string name="InuForwardPro">بازارسال حرفه‌ای</string>
-    <string name="InuForwardProInfo">کلیدهای فرستنده، توضیح و ارسال بی‌صدا به‌علاوه ویرایش پیش از بازارسال. آزمایشی.</string>
+    <string name="InuForwardProInfo">کلیدهای فرستنده، توضیح و ارسال بی‌صدا به‌علاوه ویرایش پیش از بازارسال.</string>
     <string name="InuForwardProHideCaption">پنهان کردن توضیح‌ها</string>
     <string name="InuForwardProEditedNotice">به‌صورت کپی از طرف شما و بدون برچسب بازارسال ارسال می‌شود</string>
     <string name="InuForwardProUseStock">Telegram پایه</string>

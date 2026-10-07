@@ -110,6 +110,8 @@
     <string name="InuShowAllRecentStickers">显示全部最近贴纸</string>
     <string name="InuNoStickerExtraPadding">去除底部多余的内边距</string>
     <string name="InuHideKeyboardOnScroll">滚动时隐藏键盘</string>
+    <string name="InuKeepKeyboardWhileTyping">输入时保持键盘</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">输入框有文字时，滚动不隐藏键盘</string>
     <string name="InuDisablePullToNext">禁用下拉到下一个频道</string>
     <string name="InuDisableSensitive">禁用敏感内容过滤</string>
     <string name="InuMemoryTrim">后台释放内存</string>
@@ -349,7 +351,7 @@
     <string name="InuIconReplacementOff">默认</string>
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">地图</string>
     <string name="InuMapProvider">地图视图提供方</string>
@@ -380,6 +382,8 @@
 
     <string name="InuChatVoiceInAttach">录制按钮放入附件</string>
     <string name="InuChatVoiceInAttachInfo">将语音/视频录制按钮从输入栏移入附件面板</string>
+    <string name="InuKeepScreenOnRecording">录制时保持屏幕常亮</string>
+    <string name="InuKeepScreenOnRecordingInfo">录制语音或视频消息时屏幕不会熄灭</string>
 
     <string name="InuDisableIntroSticker">不发送介绍贴纸</string>
     <string name="InuDisableIntroStickerInfo">…并隐藏问候贴纸建议</string>
@@ -701,6 +705,8 @@
     <string name="InuDrawerBackGestureInfo">从聊天列表左边缘向内滑动返回时打开抽屉，而不是退出应用。</string>
     <string name="InuDrawerM3Sections">导航抽屉中的模块化分区</string>
     <string name="InuDrawerM3SectionsInfo">将抽屉菜单行分组为圆角 Material 3 卡片。</string>
+    <string name="InuDrawerKeepOptionsMenu">保留三点菜单</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">启用侧边菜单时仍显示聊天列表的菜单按钮</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">开关</string>
     <string name="InuMaterial3Sliders">滑块</string>
@@ -1032,7 +1038,7 @@
     <string name="InuSaveEditedMessagesInfo">保存以前的消息版本并允许查看编辑历史 ✏️</string>
 
     <string name="InuSaveUserInfo">保存用户信息</string>
-    <string name="InuSaveUserInfoInfo">在服务器停止返回后保留电话号码国家/地区、注册月份以及姓名/头像更改日期（测试版）</string>
+    <string name="InuSaveUserInfoInfo">在服务器停止返回后保留电话号码国家/地区、注册月份以及姓名/头像更改日期</string>
     <string name="InuSelfDestructMedia">阅后即焚媒体</string>
     <string name="InuStickerSetRefreshFailed">无法刷新贴纸包</string>
     <string name="InuStickerSetRefreshed">贴纸包已更新</string>
@@ -1593,7 +1599,7 @@
     <string name="InuDeleteFailedProxiesConfirm">确定要删除所有不可用的代理吗？</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">转发时提供作者、说明和静默发送开关，以及转发前编辑。实验性功能。</string>
+    <string name="InuForwardProInfo">转发时提供作者、说明和静默发送开关，以及转发前编辑。</string>
     <string name="InuForwardProHideCaption">隐藏文字说明</string>
     <string name="InuForwardProEditedNotice">将作为您的副本发送，不带转发标签</string>
     <string name="InuForwardProUseStock">官方 Telegram</string>

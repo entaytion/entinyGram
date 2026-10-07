@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 7 Oct 2026 12:57:59 +0300
+Subject: [+] keep three-dot menu with side menu
+
+---
+ .../src/main/java/org/telegram/ui/DialogsActivity.java          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -3510,7 +3510,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         });
+         fragmentSearchFieldWatcher.setDoNotCloseAfterFieldEmpty();
+ 
+-        if (initialDialogsType == DIALOGS_TYPE_DEFAULT && !(desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue() && !isArchive() && communityId == 0)) {
++        if (initialDialogsType == DIALOGS_TYPE_DEFAULT && !(desu.inugram.InuConfig.NAVIGATION_DRAWER.getValue() && !desu.inugram.InuConfig.DRAWER_KEEP_OPTIONS_MENU.getValue() && !isArchive() && communityId == 0)) {
+             optionsItem = menu.addItem(4, R.drawable.ic_ab_other);
+             optionsItem.setContentDescription(LocaleController.getString(R.string.AccDescrMoreOptions));
+             optionsItem.setOnClickListener(v -> {

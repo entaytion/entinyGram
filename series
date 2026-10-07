@@ -502,7 +502,10 @@ entiny/restricted-message-flag.patch
 entiny/many-accounts-warning.patch
 entiny/plugins-gradle-fixes.patch
 entiny/share-intent-lag.patch
+entiny/keyboard-scroll-typing.patch
 entiny/feed-media-channel-name.patch
+entiny/keep-screen-on-recording.patch
 entiny/splash-icon-theme.patch
 entiny/app-icon-round.patch
+entiny/drawer-keep-options-menu.patch
 entiny/premium-badge-dialogs.patch

@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/LocaleController.java
-@@ -748,7 +748,8 @@ public class LocaleController {
+@@ -727,7 +727,8 @@ public class LocaleController {
          }
  
          systemDefaultLocale = Locale.getDefault();
@@ -21,7 +21,7 @@ index 0000000..0000000 100644
          LocaleInfo currentInfo = null;
          boolean override = false;
  
-@@ -2074,7 +2075,8 @@ public class LocaleController {
+@@ -2053,7 +2054,8 @@ public class LocaleController {
          if (changingConfiguration) {
              return;
          }

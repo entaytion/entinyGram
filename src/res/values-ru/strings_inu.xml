@@ -125,6 +125,8 @@
     <string name="InuShowAllRecentStickers">Показывать все недавние стикеры</string>
     <string name="InuNoStickerExtraPadding">Убрать лишний отступ снизу</string>
     <string name="InuHideKeyboardOnScroll">Скрывать клавиатуру при прокрутке</string>
+    <string name="InuKeepKeyboardWhileTyping">Не скрывать клавиатуру при наборе</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">Не прятать при прокрутке, если в поле есть текст</string>
     <string name="InuDisablePullToNext">Отключить переход к следующему каналу</string>
     <string name="InuDisableSensitive">Отключить фильтр чувствительного контента</string>
     <string name="InuHideChannelShareButton">Скрыть кнопку «Поделиться» в каналах</string>
@@ -408,7 +410,7 @@
     <string name="InuIconReplacementOff">По умолчанию</string>
     <string name="InuIconReplacementSolar">Solar от @Design480</string>
     <string name="InuIconReplacementVkui">VKUI от VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">Карты</string>
     <string name="InuMapProvider">Источник карт</string>
@@ -440,6 +442,8 @@
 
     <string name="InuChatVoiceInAttach">Запись в панели вложений</string>
     <string name="InuChatVoiceInAttachInfo">Перемещает кнопку записи голоса/видео из строки ввода в панель вложений</string>
+    <string name="InuKeepScreenOnRecording">Не выключать экран при записи</string>
+    <string name="InuKeepScreenOnRecordingInfo">Экран не гаснет во время записи голосового или видеосообщения</string>
 
     <string name="InuDisableIntroSticker">Не отправлять приветственный стикер</string>
     <string name="InuDisableIntroStickerInfo">…и скрывать предложения приветственных стикеров</string>
@@ -776,6 +780,8 @@
     <string name="InuDrawerBackGestureInfo">Свайп назад от левого края списка чатов открывает боковое меню вместо выхода из приложения.</string>
     <string name="InuDrawerM3Sections">Модульные секции в боковом меню</string>
     <string name="InuDrawerM3SectionsInfo">Группирует пункты бокового меню в карточки Material 3.</string>
+    <string name="InuDrawerKeepOptionsMenu">Оставить меню с тремя точками</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">Показывать кнопку меню списка чатов вместе с боковым меню</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">Переключатели</string>
     <string name="InuMaterial3Sliders">Ползунки</string>
@@ -1125,7 +1131,7 @@
     <string name="InuSaveEditedMessagesInfo">Сохраняет предыдущие версии сообщений и позволяет просматривать историю ✏️</string>
 
     <string name="InuSaveUserInfo">Сохранять данные о пользователе</string>
-    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и даты смены имени/фото, когда сервер перестаёт их присылать (бета)</string>
+    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и даты смены имени/фото, когда сервер перестаёт их присылать</string>
     <string name="InuEditHistory">История редактирования</string>
     <string name="InuNoEditHistory">История редактирования отсутствует</string>
     <string name="InuCacheTtl">Автоочистка кэша сообщений</string>
@@ -1660,7 +1666,7 @@
     <string name="InuDeleteFailedProxiesConfirm">Вы уверены, что хотите удалить все недоступные прокси?</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">Переключатели автора, подписи и беззвучной отправки, плюс редактирование перед пересылкой. Экспериментально.</string>
+    <string name="InuForwardProInfo">Переключатели автора, подписи и беззвучной отправки, плюс редактирование перед пересылкой.</string>
     <string name="InuForwardProHideCaption">Скрыть подпись</string>
     <string name="InuForwardProEditedNotice">Отправится копией — от вашего имени, без пометки «Переслано от»</string>
     <string name="InuForwardProUseStock">Обычный Telegram</string>

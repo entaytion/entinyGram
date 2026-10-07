@@ -110,6 +110,8 @@
     <string name="InuShowAllRecentStickers">最近のスタンプをすべて表示</string>
     <string name="InuNoStickerExtraPadding">下の余分な余白を削除</string>
     <string name="InuHideKeyboardOnScroll">スクロール時にキーボードを隠す</string>
+    <string name="InuKeepKeyboardWhileTyping">入力中はキーボードを維持</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">入力欄に文字があるときはスクロールしても隠さない</string>
     <string name="InuDisablePullToNext">次のチャンネルへの引き下げを無効化</string>
     <string name="InuDisableSensitive">センシティブフィルターを無効化</string>
     <string name="InuMemoryTrim">バックグラウンドでメモリを解放</string>
@@ -350,7 +352,7 @@
     <string name="InuIconReplacementOff">デフォルト</string>
     <string name="InuIconReplacementSolar">Solar by @Design480</string>
     <string name="InuIconReplacementVkui">VKUI by VK</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">地図</string>
     <string name="InuMapProvider">地図ビューのプロバイダー</string>
@@ -381,6 +383,8 @@
 
     <string name="InuChatVoiceInAttach">録音を添付パネルへ</string>
     <string name="InuChatVoiceInAttachInfo">音声/動画録音ボタンを入力バーから添付シートに移動します</string>
+    <string name="InuKeepScreenOnRecording">録音中は画面を点灯したままにする</string>
+    <string name="InuKeepScreenOnRecordingInfo">音声・ビデオメッセージの録音中に画面が消えないようにします</string>
 
     <string name="InuDisableIntroSticker">紹介スタンプを送らない</string>
     <string name="InuDisableIntroStickerInfo">…また挨拶スタンプの提案も非表示にします</string>
@@ -702,6 +706,8 @@
     <string name="InuDrawerBackGestureInfo">チャットリストの左端から戻るスワイプをすると、アプリを終了せずにドロワーを開きます。</string>
     <string name="InuDrawerM3Sections">ナビゲーションドロワーのモジュラーセクション</string>
     <string name="InuDrawerM3SectionsInfo">ドロワーメニューの行を角丸のMaterial 3カードとしてグループ化します。</string>
+    <string name="InuDrawerKeepOptionsMenu">3点メニューを残す</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">サイドメニューと一緒にチャット一覧のメニューボタンを表示</string>
     <string name="InuMaterial3">Material Design 3</string>
     <string name="InuMaterial3Switches">スイッチ</string>
     <string name="InuMaterial3Sliders">スライダー</string>
@@ -1036,7 +1042,7 @@
     <string name="InuSaveEditedMessagesInfo">メッセージの過去のバージョンを保存し、編集履歴 ✏️ を表示できるようにします</string>
 
     <string name="InuSaveUserInfo">ユーザー情報を保存</string>
-    <string name="InuSaveUserInfoInfo">サーバーが返さなくなった電話番号の国、登録月、名前/写真の変更日を保存します (ベータ)</string>
+    <string name="InuSaveUserInfoInfo">サーバーが返さなくなった電話番号の国、登録月、名前/写真の変更日を保存します</string>
     <string name="InuSelfDestructMedia">消えるメディア</string>
     <string name="InuStickerSetRefreshFailed">パックを更新できませんでした</string>
     <string name="InuStickerSetRefreshed">パックを更新しました</string>
@@ -1583,7 +1589,7 @@
     <string name="InuDeleteFailedProxiesConfirm">利用できないすべてのプロキシを削除してもよろしいですか？</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">転送時の投稿者、キャプション、静音送信のトグルと転送前の編集。実験的機能です。</string>
+    <string name="InuForwardProInfo">転送時の投稿者、キャプション、静音送信のトグルと転送前の編集。</string>
     <string name="InuForwardProHideCaption">キャプションを非表示</string>
     <string name="InuForwardProEditedNotice">転送ラベルなしで、あなたのコピーとして送信されます</string>
     <string name="InuForwardProUseStock">公式Telegram</string>

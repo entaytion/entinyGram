@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Wed, 7 Oct 2026 12:57:41 +0300
+Subject: [+] keep keyboard while typing
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -6946,7 +6946,7 @@ public class ChatActivity extends BaseFragment implements
+                         wasManualScroll = true;
+                         scrollingChatListView = true;
+                     } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+-                        if (InuConfig.HIDE_KEYBOARD_ON_SCROLL.getValue()) {
++                        if (InuConfig.HIDE_KEYBOARD_ON_SCROLL.getValue() && !(InuConfig.KEEP_KEYBOARD_WHILE_TYPING.getValue() && chatActivityEnterView != null && chatActivityEnterView.hasText())) {
+                             if (isKeyboardVisible()) {
+                                 AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
+                             } else if (chatActivityEnterView != null) {

@@ -38,6 +38,7 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 R.string.InuSaveUserInfo,
                 R.string.InuSaveUserInfoInfo,
                 InuConfig.SAVE_USER_INFO.value,
+                experimental = true,
             )
         )
         items.add(mkSubPageButton(BUTTON_WATCH_LIST, R.drawable.inu_tabler_user_search, LocaleController.getString(R.string.InuPresenceWatchList)))

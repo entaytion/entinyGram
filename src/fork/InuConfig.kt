@@ -481,6 +481,9 @@ object InuConfig {
     val DRAWER_BACK_GESTURE = BoolItem("drawer_back_gesture", false)
 
     @JvmField
+    val DRAWER_KEEP_OPTIONS_MENU = BoolItem("drawer_keep_options_menu", false)
+
+    @JvmField
     val DRAWER_M3_SECTIONS = BoolItem("drawer_m3_sections", false)
 
     @JvmField
@@ -520,6 +523,9 @@ object InuConfig {
 
     @JvmField
     val HIDE_KEYBOARD_ON_SCROLL = BoolItem("hide_keyboard_on_scroll", true)
+
+    @JvmField
+    val KEEP_KEYBOARD_WHILE_TYPING = BoolItem("keep_keyboard_while_typing", false)
 
     @JvmField
     val DISABLE_PULL_TO_NEXT = BoolItem("disable_pull_to_next", true)
@@ -1220,6 +1226,9 @@ object InuConfig {
 
     @JvmField
     val SIMPLE_ATTACH_POPUP_ANIMATION = BoolItem("simple_attach_popup_animation", false)
+
+    @JvmField
+    val KEEP_SCREEN_ON_RECORDING = BoolItem("keep_screen_on_recording", false)
 
     @JvmField
     val CHAT_VOICE_IN_ATTACH = BoolItem("chat_voice_in_attach", false)

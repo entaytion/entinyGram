@@ -50,7 +50,7 @@ All features are optional. Toggle them on in `Settings → entinyGram`, or keep 
 - **Skip Login Countdown:** Tap the countdown timer on the login screen to request a new SMS or call code immediately.
 
 ### 🌐 Free AI Translation & Voice-to-Text
-- **Whole-Chat Translation:** Free chat translation bar powered by Google, DeepL, Yandex, Bing, Azure, or custom OpenAI-compatible LLM endpoints with conversation context.
+- **Whole-Chat Translation:** Free chat translation bar powered by Google, DeepL, Bing, Azure, or custom OpenAI-compatible LLM endpoints with conversation context.
 - **Free Voice Transcription:** Transcribe voice messages and video notes via Groq Whisper, Gemini Flash, Cloudflare AI, or OpenAI without Telegram Premium.
 
 ### 🎨 Aesthetics & Deep Customization

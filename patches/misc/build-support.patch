@@ -19,7 +19,7 @@ Subject: build support stuff for fork-specific code: - added kotlin - bumped min
  build.gradle                                  |  19 +-
  gradle.properties                             |   2 +-
  settings.gradle                               |  40 ++-
- 17 files changed, 385 insertions(+), 347 deletions(-)
+ 15 files changed, 359 insertions(+), 221 deletions(-)
  create mode 100644 TMessagesProj_App/jni/CMakeLists.txt
  create mode 160000 TMessagesProj_App/jni/lsplant
 

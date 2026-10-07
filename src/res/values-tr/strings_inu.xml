@@ -10,6 +10,8 @@
     <string name="InuDrawerBackGestureInfo">Sohbet listesinin sol kenarından sağa kaydırmak, uygulamadan çıkmak yerine yan menüyü açar.</string>
     <string name="InuDrawerM3Sections">Yan menüde modüler bölümler</string>
     <string name="InuDrawerM3SectionsInfo">Yan menü öğelerini yuvarlatılmış Material 3 kartları olarak gruplar.</string>
+    <string name="InuDrawerKeepOptionsMenu">Üç nokta menüsünü koru</string>
+    <string name="InuDrawerKeepOptionsMenuInfo">Yan menüyle birlikte sohbet listesi menü düğmesini göster</string>
     <string name="InuSettings">entinyGram Ayarları</string>
     <string name="InuSettingsInfo">through the land and wind I follow you</string>
     <string name="InuGeneral">Genel</string>
@@ -153,6 +155,8 @@
     <string name="InuShowAllRecentStickers">Tüm son çıkartmaları göster</string>
     <string name="InuNoStickerExtraPadding">Alt boşluğu kaldır</string>
     <string name="InuHideKeyboardOnScroll">Kaydırırken klavyeyi gizle</string>
+    <string name="InuKeepKeyboardWhileTyping">Yazarken klavyeyi koru</string>
+    <string name="InuKeepKeyboardWhileTypingInfo">Alanda metin varsa kaydırırken gizleme</string>
     <string name="InuDisablePullToNext">Sonraki kanala geçmek için çekmeyi devre dışı bırak</string>
     <string name="InuDisableSensitive">Hassas içerik filtresini devre dışı bırak</string>
     <string name="InuMemoryTrim">Arka planda belleği boşalt</string>
@@ -468,7 +472,7 @@
     <string name="InuIconReplacementOff">Varsayılan</string>
     <string name="InuIconReplacementSolar">@Design480 tarafından Solar</string>
     <string name="InuIconReplacementVkui">VK tarafından VKUI</string>
-    <string name="InuIconReplacementPhosphor">Phosphor Icons (Beta)</string>
+    <string name="InuIconReplacementPhosphor">Phosphor Icons</string>
 
     <string name="InuMapsHeader">Haritalar</string>
     <string name="InuMapProvider">Harita görünümü sağlayıcısı</string>
@@ -500,6 +504,8 @@
 
     <string name="InuChatVoiceInAttach">Eklerde kaydedici</string>
     <string name="InuChatVoiceInAttachInfo">Ses/video kayıt düğmesini giriş çubuğundan ek paneline taşır</string>
+    <string name="InuKeepScreenOnRecording">Kayıt sırasında ekranı açık tut</string>
+    <string name="InuKeepScreenOnRecordingInfo">Sesli veya görüntülü mesaj kaydederken ekranın kapanmasını engeller</string>
 
     <string name="InuDisableIntroSticker">Tanıtım çıkartması gönderme</string>
     <string name="InuDisableIntroStickerInfo">…ve karşılama çıkartma önerilerini gizle</string>
@@ -1029,7 +1035,7 @@
     <string name="InuSaveEditedMessagesInfo">Önceki mesaj sürümlerini kaydeder ve düzenleme geçmişini ✏️ görüntülemeyi sağlar</string>
 
     <string name="InuSaveUserInfo">Kullanıcı bilgilerini kaydet</string>
-    <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesi, kayıt ayı ve ad/fotoğraf değişiklik tarihlerini saklar (beta)</string>
+    <string name="InuSaveUserInfoInfo">Sunucu göndermeyi bıraktığında telefon ülkesi, kayıt ayı ve ad/fotoğraf değişiklik tarihlerini saklar</string>
     <string name="InuSelfDestructMedia">Süreli medya</string>
     <string name="InuStickerSetRefreshFailed">Paket yenilenemedi</string>
     <string name="InuStickerSetRefreshed">Paket güncellendi</string>
@@ -1590,7 +1596,7 @@
     <string name="InuDeleteFailedProxiesConfirm">Tüm kullanılamayan vekil sunucuları silmek istediğinizden emin misiniz?</string>
 
     <string name="InuForwardPro">Forward Pro</string>
-    <string name="InuForwardProInfo">İletmeden önce yazar, altyazı ve sessiz gönderme anahtarları ile düzenleme. Deneysel.</string>
+    <string name="InuForwardProInfo">İletmeden önce yazar, altyazı ve sessiz gönderme anahtarları ile düzenleme.</string>
     <string name="InuForwardProHideCaption">Başlıkları gizle</string>
     <string name="InuForwardProEditedNotice">Sizden bir kopya olarak, iletildi etiketi olmadan gönderilecektir</string>
     <string name="InuForwardProUseStock">Standart Telegram</string>
