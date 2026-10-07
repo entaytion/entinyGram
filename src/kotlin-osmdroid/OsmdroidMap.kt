@@ -206,7 +206,7 @@ internal class OsmIMap(
             IMapsProvider.MAP_TYPE_SATELLITE, IMapsProvider.MAP_TYPE_HYBRID ->
                 EsriSatelliteTileSource to ATTRIBUTION_SATELLITE
 
-            else -> normalTileSource to ATTRIBUTION_OSM
+            else -> normalTileSource to normalAttribution()
         }
         viewWrapper.attribution.text = Html.fromHtml(attr, Html.FROM_HTML_MODE_LEGACY)
         mapView.setTileSource(source)

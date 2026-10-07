@@ -1618,6 +1618,17 @@ object InuConfig {
     val NOTIFICATION_ICON = NotificationIconItem()
 
     class MapProviderItem : IntItem("map_provider", OSM_LITE) {
+        // entiny: a plugin's tile source only exists on the osmdroid map, the stored choice stays untouched
+        override var value: Int
+            get() = if (desu.inugram.helpers.maps.EntinyMapTiles.active != null) OSM_LITE else super.value
+            set(v) {
+                super.value = v
+            }
+
+        override fun SharedPreferences.Editor.write() {
+            putInt(key, super.value)
+        }
+
         companion object {
             const val GOOGLE = 0
             const val OSM_LITE = 2 // osmdroid raster renderer (pure java, no native libs)

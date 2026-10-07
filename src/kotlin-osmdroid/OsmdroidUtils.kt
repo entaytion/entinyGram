@@ -6,8 +6,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.text.Html
 import androidx.core.graphics.createBitmap
+import desu.inugram.helpers.maps.EntinyMapTiles
 import org.osmdroid.tileprovider.tilesource.ITileSource
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.tileprovider.tilesource.XYTileSource
 import org.osmdroid.util.MapTileIndex
@@ -33,7 +36,18 @@ internal object EsriSatelliteTileSource : XYTileSource(
             MapTileIndex.getX(pMapTileIndex)
 }
 
-internal val normalTileSource: ITileSource get() = TileSourceFactory.MAPNIK
+internal class EntinyTileSource(private val source: EntinyMapTiles.Source) : OnlineTileSourceBase(
+    "Entiny_" + source.name, source.minZoom, source.maxZoom, source.tileSize, ".png", arrayOf(), "",
+) {
+    override fun getTileURLString(pMapTileIndex: Long): String =
+        source.url(MapTileIndex.getZoom(pMapTileIndex), MapTileIndex.getX(pMapTileIndex), MapTileIndex.getY(pMapTileIndex))
+}
+
+internal val normalTileSource: ITileSource
+    get() = EntinyMapTiles.active?.let(::EntinyTileSource) ?: TileSourceFactory.MAPNIK
+
+internal fun normalAttribution(): String =
+    EntinyMapTiles.active?.let { Html.escapeHtml(it.attribution) } ?: ATTRIBUTION_OSM
 
 private fun fillPaint(color: Int) = Paint(Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
 private fun strokePaint(color: Int, widthPx: Float) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
