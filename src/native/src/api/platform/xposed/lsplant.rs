@@ -80,6 +80,12 @@ impl Native {
 fn dlopen(name: &CStr) -> Option<*mut c_void> {
   // SAFETY: a valid C string naming one of the app's own libraries, whose constructors need nothing
   let handle = unsafe { libc::dlopen(name.as_ptr(), libc::RTLD_NOW) };
+  if handle.is_null() {
+    // SAFETY: dlerror returns null or a C string that stays valid until the next dl call on this thread
+    let error = unsafe { libc::dlerror() };
+    let reason = if error.is_null() { String::new() } else { unsafe { CStr::from_ptr(error) }.to_string_lossy().into_owned() };
+    log_init_failure(&format!("dlopen {} failed: {reason}", name.to_string_lossy()));
+  }
   (!handle.is_null()).then_some(handle)
 }
 
@@ -87,6 +93,9 @@ fn dlopen(name: &CStr) -> Option<*mut c_void> {
 /// `T` must be a function pointer type matching the C declaration of `name`.
 unsafe fn dlsym<T: Copy>(handle: *mut c_void, name: &CStr) -> Option<T> {
   let symbol = libc::dlsym(handle, name.as_ptr());
+  if symbol.is_null() {
+    log_init_failure(&format!("dlsym {} failed", name.to_string_lossy()));
+  }
   (!symbol.is_null()).then(|| std::mem::transmute_copy(&symbol))
 }
 
@@ -217,7 +226,9 @@ fn load() -> Option<Native> {
   // (shadowhook.h, and the LSPlant*C wrappers in patches-native/lsplant-c-abi.patch)
   let (shadowhook, lsplant) = unsafe {
     let init: ShadowhookInit = dlsym(shadowhook_lib, c"shadowhook_init")?;
-    if init(SHADOWHOOK_MODE_UNIQUE, false) != 0 {
+    let code = init(SHADOWHOOK_MODE_UNIQUE, false);
+    if code != 0 {
+      log_init_failure(&format!("shadowhook_init returned {code}"));
       return None;
     }
     let shadowhook = Shadowhook {
