@@ -1,0 +1,29 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 8 Oct 2026 20:37:48 +0300
+Subject: Log name, username, bio and photo changes of contacts
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java    | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -6875,6 +6875,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         desu.inugram.helpers.profile.LocalNameHelper.applyTo(user, currentAccount);
+         fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
+         TLRPC.User oldUser = users.get(user.id);
++        if (!fromCache) desu.inugram.helpers.profile.ContactChangesHelper.onUserChanged(currentAccount, oldUser, user);
+         desu.inugram.helpers.security.LastSeenHelper.onUserStatus(currentAccount, user);
+         if (oldUser == user && !force) {
+             return false;
+@@ -7858,6 +7859,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                         }
+                     }
+                     desu.inugram.helpers.profile.LocalNameHelper.applyTo(userFull, currentAccount);
++                    desu.inugram.helpers.profile.ContactChangesHelper.onFullUserChanged(currentAccount, user.id, fullUsers.get(user.id), userFull);
+                     fullUsers.put(user.id, userFull);
+                     getTranslateController().updateDialogFull(user.id);
+                     StarsController.getInstance(currentAccount).invalidateProfileGifts(userFull);

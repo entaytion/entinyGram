@@ -1131,7 +1131,15 @@
     <string name="InuSaveEditedMessagesInfo">Сохраняет предыдущие версии сообщений и позволяет просматривать историю ✏️</string>
 
     <string name="InuSaveUserInfo">Сохранять данные о пользователе</string>
-    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и даты смены имени/фото, когда сервер перестаёт их присылать</string>
+    <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и журнал смены имени, юзернейма, био и фото, когда сервер перестаёт их присылать</string>
+    <string name="InuContactChanges">Изменения контакта</string>
+    <string name="InuContactChangesEmpty">Для этого контакта пока нет сохранённых изменений</string>
+    <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
+    <string name="InuContactChangePhoto">Фото профиля изменено</string>
+    <string name="InuContactFieldFirstName">Имя</string>
+    <string name="InuContactFieldLastName">Фамилия</string>
+    <string name="InuContactFieldUsername">Юзернейм</string>
+    <string name="InuContactFieldBio">Био</string>
     <string name="InuSaveReadTime">Сохранять время прочтения</string>
     <string name="InuSaveReadTimeInfo">Показывает, когда собеседник прочитал твои сообщения в личных чатах</string>
     <string name="InuReadAt">прочитано %1$s</string>

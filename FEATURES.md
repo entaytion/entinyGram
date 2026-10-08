@@ -34,7 +34,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - save view-once photos, videos, video notes and voice notes, optionally straight to the gallery when you open them
   - keep secret-chat media, text and timed messages
   - expired voice notes and round videos stay playable
-- 📡 **save user info**: keep phone country, registration date and name/avatar change history
+- 📡 **save user info**: keep phone country, registration date and a change log of name, username, bio and photo, shown in the profile menu
 - 📡 **read time**: when the other side read your private messages, shown next to the bubble time
 - 📡 **last seen**: remembers the last online time, so it stays visible after a contact hides their status
 - 📡 **presence logger**: per-contact online/offline history with notifications

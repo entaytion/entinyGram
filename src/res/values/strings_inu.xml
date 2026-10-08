@@ -1318,7 +1318,15 @@
     <string name="InuSaveEditedMessages">Save edit history</string>
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
     <string name="InuSaveUserInfo">Save user info</string>
-    <string name="InuSaveUserInfoInfo">Keeps phone country, registration month and name/photo change dates after the server stops returning them</string>
+    <string name="InuSaveUserInfoInfo">Keeps phone country, registration month, and a log of name, username, bio and photo changes after the server stops returning them</string>
+    <string name="InuContactChanges">Contact changes</string>
+    <string name="InuContactChangesEmpty">No changes saved for this contact yet</string>
+    <string name="InuContactChangeLine">%1$s: %2$s → %3$s</string>
+    <string name="InuContactChangePhoto">Profile photo changed</string>
+    <string name="InuContactFieldFirstName">First name</string>
+    <string name="InuContactFieldLastName">Last name</string>
+    <string name="InuContactFieldUsername">Username</string>
+    <string name="InuContactFieldBio">Bio</string>
     <string name="InuSaveReadTime">Save read time</string>
     <string name="InuSaveReadTimeInfo">Shows when the other side read your messages in private chats</string>
     <string name="InuReadAt">read %1$s</string>

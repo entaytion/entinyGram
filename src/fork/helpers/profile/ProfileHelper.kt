@@ -73,6 +73,7 @@ object ProfileHelper {
     const val ACTION_DELETE_MY_MESSAGES = 512
     const val ACTION_EXPORT_CHAT = 513
     const val ACTION_EDIT_LOCAL_NAME = 514
+    const val ACTION_SHOW_CONTACT_CHANGES = 515
     const val ACTION_DEBUG_CLEAR_CACHE = 599
 
     private const val GRADIENT_FADE_DARK = 0x80000000.toInt()
@@ -292,6 +293,13 @@ object ProfileHelper {
                 )
             }
         }
+        if (InuConfig.SAVE_USER_INFO.value && !isSelf && dialogId > 0L) {
+            otherItem.addSubItem(
+                ACTION_SHOW_CONTACT_CHANGES,
+                R.drawable.inu_tabler_file_diff,
+                LocaleController.getString(R.string.InuContactChanges),
+            )
+        }
         if (InuConfig.LOCAL_NAMES.value && dialogId != 0L && !DialogObject.isEncryptedDialog(dialogId)) {
             otherItem.addSubItem(
                 ACTION_EDIT_LOCAL_NAME,
@@ -426,6 +434,10 @@ object ProfileHelper {
             ACTION_EDIT_LOCAL_NAME -> {
                 val fragment = LaunchActivity.getLastFragment() ?: return true
                 LocalNameHelper.showEditor(fragment, currentAccount, dialogId)
+            }
+            ACTION_SHOW_CONTACT_CHANGES -> {
+                val fragment = LaunchActivity.getLastFragment() ?: return true
+                ContactChangesHelper.showLog(fragment, currentAccount, dialogId)
             }
             ACTION_TOGGLE_GHOST_DIALOG -> {
                 val fragment = LaunchActivity.getLastFragment() ?: return true

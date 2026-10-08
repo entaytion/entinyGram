@@ -156,6 +156,15 @@ object InuDatabaseHelper {
             version = 17
         }
 
+        if (version == 17) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_contact_changes(user_id INTEGER NOT NULL, field TEXT NOT NULL, old_value TEXT, new_value TEXT, date INTEGER NOT NULL)")
+                .stepThis().dispose()
+            db.executeFast("CREATE INDEX IF NOT EXISTS idx_inu_contact_changes_user ON inu_contact_changes(user_id)")
+                .stepThis().dispose()
+            writeKv(db, "version", "18")
+            version = 18
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
@@ -204,6 +213,35 @@ object InuDatabaseHelper {
         }
         return list
     }
+
+    fun saveContactChange(db: SQLiteDatabase, userId: Long, field: String, oldValue: String?, newValue: String?, date: Int) {
+        val query = db.executeFast("INSERT INTO inu_contact_changes(user_id, field, old_value, new_value, date) VALUES(?, ?, ?, ?, ?)")
+        query.bindLong(1, userId)
+        query.bindString(2, field)
+        if (oldValue == null) query.bindNull(3) else query.bindString(3, oldValue)
+        if (newValue == null) query.bindNull(4) else query.bindString(4, newValue)
+        query.bindInteger(5, date)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadContactChanges(db: SQLiteDatabase, userId: Long, limit: Int = 200): List<ContactChangeRow> {
+        val list = ArrayList<ContactChangeRow>()
+        val cursor = db.queryFinalized(
+            "SELECT field, old_value, new_value, date FROM inu_contact_changes WHERE user_id = ? ORDER BY date DESC LIMIT ?",
+            userId, limit,
+        )
+        try {
+            while (cursor.next()) {
+                list.add(ContactChangeRow(cursor.stringValue(0), cursor.stringValue(1), cursor.stringValue(2), cursor.intValue(3)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    data class ContactChangeRow(val field: String, val oldValue: String?, val newValue: String?, val date: Int)
 
     fun saveLocalFolderChat(db: SQLiteDatabase, filterId: Int, dialogId: Long) {
         val query = db.executeFast("INSERT OR IGNORE INTO inu_local_folder_chats(filter_id, dialog_id) VALUES(?, ?)")
