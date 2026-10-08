@@ -45,7 +45,7 @@ for (const m of stringsXml.matchAll(/<string name="([^"]+)">([^<]*)<\/string>/g)
 
 // ── 2. Collect all *SettingsActivity.kt source files ────────────────────────
 
-const settingsDir = join(root, 'src/kotlin/ui/settings')
+const settingsDir = join(root, 'src/fork/ui/settings')
 
 async function findKtFiles(dir: string): Promise<string[]> {
   const results: string[] = []
