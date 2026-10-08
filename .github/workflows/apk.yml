@@ -105,9 +105,9 @@ jobs:
         run: |
           # Pluginless worktree always (worktree-pluginless/). Plugins worktree only when plugins
           # are requested; pre-releases never build plugins.
-          bun run setup -- --no-stgit --pluginless
+          bun run setup -- --ci --pluginless
           if [ '${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}' = 'true' ]; then
-            bun run setup -- --no-stgit
+            bun run setup -- --ci
           fi
 
       - name: Write google-services.json
