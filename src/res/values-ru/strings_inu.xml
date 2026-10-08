@@ -1135,6 +1135,8 @@
     <string name="InuSaveReadTime">Сохранять время прочтения</string>
     <string name="InuSaveReadTimeInfo">Показывает, когда собеседник прочитал твои сообщения в личных чатах</string>
     <string name="InuReadAt">прочитано %1$s</string>
+    <string name="InuSaveLastSeen">Сохранять последний онлайн</string>
+    <string name="InuSaveLastSeenInfo">Запоминает время последнего онлайна, чтобы оно оставалось видимым, когда контакт скрыл статус</string>
     <string name="InuEditHistory">История редактирования</string>
     <string name="InuNoEditHistory">История редактирования отсутствует</string>
     <string name="InuCacheTtl">Автоочистка кэша сообщений</string>

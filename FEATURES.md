@@ -36,6 +36,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
   - expired voice notes and round videos stay playable
 - 📡 **save user info**: keep phone country, registration date and name/avatar change history
 - 📡 **read time**: when the other side read your private messages, shown next to the bubble time
+- 📡 **last seen**: remembers the last online time, so it stays visible after a contact hides their status
 - 📡 **presence logger**: per-contact online/offline history with notifications
 - 📡 **force relay calls**: route calls through Telegram servers to hide your IP
 - 📡 **censorship bypass**:

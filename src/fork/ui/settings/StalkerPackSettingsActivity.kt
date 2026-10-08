@@ -50,6 +50,15 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 experimental = true,
             )
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_SAVE_LAST_SEEN,
+                R.string.InuSaveLastSeen,
+                R.string.InuSaveLastSeenInfo,
+                InuConfig.SAVE_LAST_SEEN.value,
+                experimental = true,
+            )
+        )
         items.add(mkSubPageButton(BUTTON_WATCH_LIST, R.drawable.inu_tabler_user_search, LocaleController.getString(R.string.InuPresenceWatchList)))
         items.add(mkSubPageButton(BUTTON_TYPING_SPOOF_LIST, R.drawable.inu_tabler_keyboard, LocaleController.getString(R.string.InuTypingSpoof)))
     }
@@ -72,6 +81,10 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.SAVE_READ_TIME.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
             }
+            TOGGLE_SAVE_LAST_SEEN -> {
+                val new = InuConfig.SAVE_LAST_SEEN.toggle()
+                (view as? NotificationsCheckCell)?.isChecked = new
+            }
             BUTTON_WATCH_LIST -> presentFragment(PresenceWatchListSettingsActivity())
             BUTTON_TYPING_SPOOF_LIST -> presentFragment(TypingSpoofQuickListSettingsActivity())
         }
@@ -82,6 +95,7 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_FORCE_RELAY_CALLS = InuUtils.generateId()
         private val TOGGLE_SAVE_USER_INFO = InuUtils.generateId()
         private val TOGGLE_SAVE_READ_TIME = InuUtils.generateId()
+        private val TOGGLE_SAVE_LAST_SEEN = InuUtils.generateId()
         private val BUTTON_WATCH_LIST = InuUtils.generateId()
         private val BUTTON_TYPING_SPOOF_LIST = InuUtils.generateId()
 
@@ -96,6 +110,7 @@ class StalkerPackSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("force-relay-calls", R.string.InuForceRelayCalls, TOGGLE_FORCE_RELAY_CALLS),
                 SearchRegistry.Entry("save-user-info", R.string.InuSaveUserInfo, TOGGLE_SAVE_USER_INFO),
                 SearchRegistry.Entry("save-read-time", R.string.InuSaveReadTime, TOGGLE_SAVE_READ_TIME),
+                SearchRegistry.Entry("save-last-seen", R.string.InuSaveLastSeen, TOGGLE_SAVE_LAST_SEEN),
             ),
         )
     }

@@ -149,6 +149,13 @@ object InuDatabaseHelper {
             version = 16
         }
 
+        if (version == 16) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_last_seen(user_id INTEGER PRIMARY KEY, seen_at INTEGER NOT NULL)")
+                .stepThis().dispose()
+            writeKv(db, "version", "17")
+            version = 17
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
@@ -170,6 +177,27 @@ object InuDatabaseHelper {
         try {
             while (cursor.next()) {
                 list.add(Triple(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
+    }
+
+    fun saveLastSeen(db: SQLiteDatabase, userId: Long, seenAt: Int) {
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_last_seen(user_id, seen_at) VALUES(?, ?)")
+        query.bindLong(1, userId)
+        query.bindInteger(2, seenAt)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadLastSeen(db: SQLiteDatabase): List<Pair<Long, Int>> {
+        val list = ArrayList<Pair<Long, Int>>()
+        val cursor = db.queryFinalized("SELECT user_id, seen_at FROM inu_last_seen")
+        try {
+            while (cursor.next()) {
+                list.add(Pair(cursor.longValue(0), cursor.intValue(1)))
             }
         } finally {
             cursor.dispose()

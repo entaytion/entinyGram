@@ -89,6 +89,7 @@
   "keep-downloads-in-background": "media",
   "keep-screen-on-recording": "media",
   "keyboard-scroll-typing": "chat",
+  "last-seen": "privacy",
   "liquid-glass-controls": "ui",
   "liquid-glass-live-update": "ui",
   "local-custom-emoji": "ui",
