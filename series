@@ -502,3 +502,4 @@ entiny/feed/feed-media-channel-name.patch
 entiny/media/keep-screen-on-recording.patch
 entiny/tabs/drawer-keep-options-menu.patch
 entiny/premium/premium-badge-dialogs.patch
+entiny/chat/read-time.patch

@@ -1132,6 +1132,9 @@
 
     <string name="InuSaveUserInfo">Сохранять данные о пользователе</string>
     <string name="InuSaveUserInfoInfo">Сохраняет страну телефона, месяц регистрации и даты смены имени/фото, когда сервер перестаёт их присылать</string>
+    <string name="InuSaveReadTime">Сохранять время прочтения</string>
+    <string name="InuSaveReadTimeInfo">Показывает, когда собеседник прочитал твои сообщения в личных чатах</string>
+    <string name="InuReadAt">прочитано %1$s</string>
     <string name="InuEditHistory">История редактирования</string>
     <string name="InuNoEditHistory">История редактирования отсутствует</string>
     <string name="InuCacheTtl">Автоочистка кэша сообщений</string>

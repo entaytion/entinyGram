@@ -128,6 +128,7 @@
   "proxy-link-alert": "proxy",
   "proxy-management": "proxy",
   "push-service-foreground": "notifications",
+  "read-time": "chat",
   "recent-chats": "tabs",
   "recent-chats-sidebar": "tabs",
   "recent-chats-strip": "tabs",

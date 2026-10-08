@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 8 Oct 2026 20:27:11 +0300
+Subject: Show the time the other side read your private messages
+
+---
+ .../src/main/java/org/telegram/messenger/MessagesController.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -18943,6 +18943,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     dialogId = -update.peer.chat_id;
+                 } else {
+                     markAsReadMessagesOutbox.put(update.peer.user_id, update.max_id);
++                    desu.inugram.helpers.chat.ReadTimeHelper.onReadOutbox(currentAccount, update.peer.user_id, update.max_id, date);
+                     dialogId = update.peer.user_id;
+                     TLRPC.User user = getUser(update.peer.user_id);
+                     if (user != null && user.status != null && user.status.expires <= 0 && Math.abs(getConnectionsManager().getCurrentTime() - date) < 30) {

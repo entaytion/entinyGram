@@ -1319,6 +1319,9 @@
     <string name="InuSaveEditedMessagesInfo">Saves previous message versions and allows viewing edit history ✏️</string>
     <string name="InuSaveUserInfo">Save user info</string>
     <string name="InuSaveUserInfoInfo">Keeps phone country, registration month and name/photo change dates after the server stops returning them</string>
+    <string name="InuSaveReadTime">Save read time</string>
+    <string name="InuSaveReadTimeInfo">Shows when the other side read your messages in private chats</string>
+    <string name="InuReadAt">read %1$s</string>
     <string name="InuCacheTtl">Auto-clear message cache</string>
     <string name="InuCacheTtlInfo">Automatically deletes saved deleted/edited messages older than the chosen period</string>
     <string name="InuCacheTtlNever">Never (keep forever)</string>

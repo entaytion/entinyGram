@@ -185,6 +185,10 @@ object ChatHelper {
             hash = hash * 31 + 4
             hash = hash * 31 + forwards
         }
+        ReadTimeHelper.readAt(msg)?.let {
+            hash = hash * 31 + 5
+            hash = hash * 31 + it
+        }
         return hash
     }
 
@@ -233,6 +237,10 @@ object ChatHelper {
             }
         } else if (edited && InuConfig.COMPACT_EDITED.value) {
             appendTimeIcon(sb, R.drawable.group_edit, sizeDp = 11f)
+            sb.append(" ")
+        }
+        ReadTimeHelper.readAt(msg)?.let {
+            sb.append(LocaleController.formatString(R.string.InuReadAt, LocaleController.formatDateTime(it.toLong(), true)))
             sb.append(" ")
         }
         return if (sb.isEmpty()) time else sb.append(time)

@@ -142,10 +142,39 @@ object InuDatabaseHelper {
             version = 15
         }
 
+        if (version == 15) {
+            db.executeFast("CREATE TABLE IF NOT EXISTS inu_read_times(dialog_id INTEGER NOT NULL, max_id INTEGER NOT NULL, read_at INTEGER NOT NULL, PRIMARY KEY(dialog_id, max_id))")
+                .stepThis().dispose()
+            writeKv(db, "version", "16")
+            version = 16
+        }
+
         // entiny: the feed no longer keeps its own cache
         db.executeFast("DROP TABLE IF EXISTS inu_feed_cache").stepThis().dispose()
 
         Log.d("InuDatabaseHelper", "migrating finished, new version = $version")
+    }
+
+    fun saveReadTime(db: SQLiteDatabase, dialogId: Long, maxId: Int, readAt: Int) {
+        val query = db.executeFast("INSERT OR REPLACE INTO inu_read_times(dialog_id, max_id, read_at) VALUES(?, ?, ?)")
+        query.bindLong(1, dialogId)
+        query.bindInteger(2, maxId)
+        query.bindInteger(3, readAt)
+        query.step()
+        query.dispose()
+    }
+
+    fun loadReadTimes(db: SQLiteDatabase): List<Triple<Long, Int, Int>> {
+        val list = ArrayList<Triple<Long, Int, Int>>()
+        val cursor = db.queryFinalized("SELECT dialog_id, max_id, read_at FROM inu_read_times ORDER BY dialog_id, max_id")
+        try {
+            while (cursor.next()) {
+                list.add(Triple(cursor.longValue(0), cursor.intValue(1), cursor.intValue(2)))
+            }
+        } finally {
+            cursor.dispose()
+        }
+        return list
     }
 
     fun saveLocalFolderChat(db: SQLiteDatabase, filterId: Int, dialogId: Long) {

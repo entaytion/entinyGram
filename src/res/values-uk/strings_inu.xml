@@ -1050,6 +1050,9 @@
 
     <string name="InuSaveUserInfo">Зберігати дані про користувача</string>
     <string name="InuSaveUserInfoInfo">Зберігає країну телефону, місяць реєстрації та дати зміни імені/фото, коли сервер перестає їх надсилати</string>
+    <string name="InuSaveReadTime">Зберігати час прочитання</string>
+    <string name="InuSaveReadTimeInfo">Показує, коли співрозмовник прочитав твої повідомлення в приватних чатах</string>
+    <string name="InuReadAt">прочитано %1$s</string>
     <string name="InuCacheTtl">Авто-очищення кешу повідомлень</string>
     <string name="InuCacheTtlInfo">Автоматично видаляє збережені видалені/відредаговані повідомлення, старші за обраний період</string>
     <string name="InuGhostReadOnSend">Читати при надсиланні</string>
