@@ -60,6 +60,7 @@ const out = {
   'apk-arm7': `entinygram${isPrerelease ? '-beta' : ''}-armeabi-v7a-${appVerName}-${verCode}.apk`,
   // the updater only offers "-plugins-" APKs to plugins builds, and pluginless APKs to everyone else.
   'apk-plugins': `entinygram${isPrerelease ? '-beta' : ''}-plugins-arm64-${appVerName}-${verCode}.apk`,
+  'apk-arm7-plugins': `entinygram${isPrerelease ? '-beta' : ''}-plugins-armeabi-v7a-${appVerName}-${verCode}.apk`,
   tag,
 }
 

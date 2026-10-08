@@ -103,9 +103,10 @@ jobs:
 
       - name: Set up worktree
         run: |
-          # Default build is pluginless (worktree-pluginless/); plugins build is opt-in.
+          # Pluginless worktree always (worktree-pluginless/). Plugins worktree only when plugins
+          # are requested; pre-releases never build plugins.
           bun run setup -- --no-stgit --pluginless
-          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
+          if [ '${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}' = 'true' ]; then
             bun run setup -- --no-stgit
           fi
 
@@ -192,7 +193,7 @@ jobs:
           cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
 
       - name: Build arm64-v8a with plugins
-        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        if: ${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}
         working-directory: worktree
         env:
           COMMIT_ID: ${{ github.sha }}
@@ -205,6 +206,21 @@ jobs:
         run: |
           ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
           cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-plugins }}"
+
+      - name: Build armeabi-v7a with plugins
+        if: ${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') && (inputs.build_arm7 == true || inputs.build_arm7 == 'true') }}
+        working-directory: worktree
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
+          ABI_FILTERS: armeabi-v7a
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
+        run: |
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7-plugins }}"
 
       - name: Show ccache stats
         if: always()
@@ -225,7 +241,7 @@ jobs:
           fi
 
           plugins=''
-          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
+          if [ '${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}' = 'true' ]; then
             plugins='${{ steps.info.outputs.apk-plugins }}'
           fi
 
