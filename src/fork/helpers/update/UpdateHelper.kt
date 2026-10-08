@@ -29,7 +29,12 @@ object UpdateHelper {
     private const val INFLIGHT_TIMEOUT_MS = 60L * 1000
     private const val RESOLVE_BACKOFF_MS = 30L * 60 * 1000
 
-    private val APK_RE = Regex("^entinygram(?:-beta)?-arm64-(.+)-(\\d+)\\.apk$")
+    // pluginless is the default APK name; plugins builds are "-plugins-" so each variant only sees its own
+    private val APK_RE = if (BuildConfig.INU_PLUGINLESS) {
+        Regex("^entinygram(?:-beta)?-arm64-(.+)-(\\d+)\\.apk$")
+    } else {
+        Regex("^entinygram(?:-beta)?-plugins-arm64-(.+)-(\\d+)\\.apk$")
+    }
 
     @Volatile
     private var resolvedChannelId: Long? = null

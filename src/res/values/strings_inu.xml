@@ -1031,6 +1031,7 @@
     <string name="InuFontStyles_many">%1$d styles</string>
     <string name="InuFontStyles_other">%1$d styles</string>
     <string name="InuBackupImportSheetApply">Yes, apply</string>
+    <string name="InuBackupImportSheetReplace">Replace all settings</string>
     <string name="InuBackupImportSheetCancel">No, leave as is</string>
     <string name="InuBackupSettings">Backup &amp; reset</string>
     <string name="InuBackupReset">Reset settings</string>
@@ -1285,6 +1286,7 @@
     <string name="InuSaveTimedMessages">Keep timed messages</string>
     <string name="InuAllowForwardRestricted">Allow forwarding from protected chats</string>
     <string name="InuAllowForwardRestrictedInfo">Bypass content protection to forward, copy and save media from chats with forwarding disabled.</string>
+    <string name="InuAllowForwardRestrictedWarning">Telegram can still block some forwards even with this on. If you see "Plain forwarding is not allowed.", copy the text or save the media instead.</string>
     <string name="InuDownloadingStory">Downloading story…</string>
     <string name="InuSaveAnyStory">Save any story</string>
     <string name="InuSaveAnyStoryInfo">Allows downloading any story to gallery without Premium requirements or author restrictions.</string>

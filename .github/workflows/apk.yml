@@ -24,6 +24,11 @@ on:
         required: false
         default: false
         type: boolean
+      build_plugins:
+        description: 'Also build an arm64 APK with plugins. Offered only to plugins builds by the in-app updater.'
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: build-apk-${{ github.ref }}
@@ -45,6 +50,7 @@ jobs:
     outputs:
       apk-arm64:      ${{ steps.info.outputs.apk-arm64 }}
       apk-arm7:       ${{ steps.info.outputs.apk-arm7 }}
+      apk-plugins:    ${{ steps.info.outputs.apk-plugins }}
       ver-name:       ${{ steps.info.outputs.ver-name }}
       ver-code:       ${{ steps.info.outputs.ver-code }}
       app-ver-code:   ${{ steps.info.outputs.app-ver-code }}
@@ -96,7 +102,12 @@ jobs:
           save: true
 
       - name: Set up worktree
-        run: bun run setup -- --no-stgit
+        run: |
+          # Default build is pluginless (worktree-pluginless/); plugins build is opt-in.
+          bun run setup -- --no-stgit --pluginless
+          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
+            bun run setup -- --no-stgit
+          fi
 
       - name: Write google-services.json
         env:
@@ -106,8 +117,11 @@ jobs:
             echo "::error::GOOGLE_SERVICES_JSON secret missing"
             exit 1
           fi
-          printf '%s' "$GOOGLE_SERVICES_JSON" > worktree/TMessagesProj/google-services.json
-          printf '%s' "$GOOGLE_SERVICES_JSON" > worktree/TMessagesProj_App/google-services.json
+          for dir in worktree-pluginless worktree; do
+            [ -d "$dir" ] || continue
+            printf '%s' "$GOOGLE_SERVICES_JSON" > "$dir/TMessagesProj/google-services.json"
+            printf '%s' "$GOOGLE_SERVICES_JSON" > "$dir/TMessagesProj_App/google-services.json"
+          done
 
       - name: Compute build info
         id: info
@@ -147,6 +161,38 @@ jobs:
         run: ccache -z
 
       - name: Build arm64-v8a
+        working-directory: worktree-pluginless
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
+          ABI_FILTERS: arm64-v8a
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
+        run: |
+          # Pre-release and stable builds both compile the release buildType.
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
+
+      - name: Build armeabi-v7a
+        if: ${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}
+        working-directory: worktree-pluginless
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          INU_BUILD: ${{ steps.info.outputs.ver-code }}
+          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
+          ABI_FILTERS: armeabi-v7a
+          CCACHE_COMPILERCHECK: content
+          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
+          CCACHE_BASEDIR: ${{ github.workspace }}/worktree-pluginless
+        run: |
+          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
+
+      - name: Build arm64-v8a with plugins
+        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
         working-directory: worktree
         env:
           COMMIT_ID: ${{ github.sha }}
@@ -157,25 +203,8 @@ jobs:
           CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
           CCACHE_BASEDIR: ${{ github.workspace }}/worktree
         run: |
-          # Pre-release and stable builds both compile the release buildType.
           ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          mkdir -p "$GITHUB_WORKSPACE/out"
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm64 }}"
-
-      - name: Build armeabi-v7a
-        if: ${{ inputs.build_arm7 == true || inputs.build_arm7 == 'true' }}
-        working-directory: worktree
-        env:
-          COMMIT_ID: ${{ github.sha }}
-          INU_BUILD: ${{ steps.info.outputs.ver-code }}
-          INU_BUILD_TYPE: ${{ (inputs.prerelease == true || inputs.prerelease == 'true') && 'beta' || 'release' }}
-          ABI_FILTERS: armeabi-v7a
-          CCACHE_COMPILERCHECK: content
-          CCACHE_SLOPPINESS: time_macros,file_macro,include_file_mtime,include_file_ctime,locale,system_headers
-          CCACHE_BASEDIR: ${{ github.workspace }}/worktree
-        run: |
-          ./gradlew --no-daemon :TMessagesProj_App:assembleRelease
-          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
+          cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-plugins }}"
 
       - name: Show ccache stats
         if: always()
@@ -193,6 +222,11 @@ jobs:
             apk_files_json=$(jq -cn --arg a "$apk" --arg b '${{ steps.info.outputs.apk-arm7 }}' '[{file:$a},{file:$b}]')
           else
             apk_files_json=$(jq -cn --arg f "$apk" '[{file:$f}]')
+          fi
+
+          plugins=''
+          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
+            plugins='${{ steps.info.outputs.apk-plugins }}'
           fi
 
           base="$LAST_UPLOADED_SHA"
@@ -214,7 +248,8 @@ jobs:
             --arg     commitSha    "$GITHUB_SHA"                            \
             --argjson commits      "$commits_json"                          \
             --arg     repo         "$GITHUB_REPOSITORY"                     \
-            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,apkFiles:$apkFiles,commitSha:$commitSha,commits:$commits,repo:$repo}' \
+            --arg     plugins      "$plugins"                               \
+            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,apkFiles:$apkFiles,pluginsApk:(if $plugins == "" then null else {file:$plugins} end),commitSha:$commitSha,commits:$commits,repo:$repo}' \
             > out/build-info.json
 
       - name: Dump settings registry

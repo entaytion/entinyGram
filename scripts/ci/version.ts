@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 
-const worktree = process.argv.includes('--pluginless') ? 'worktree-pluginless' : 'worktree'
+// main APK is the pluginless build, so its version props come from that worktree
+const worktree = 'worktree-pluginless'
 const props = await fs.readFile(`${worktree}/gradle.properties`, 'utf8')
 const appVerName = /^APP_VERSION_NAME=(.+)$/m.exec(props)?.[1]
 if (!appVerName) throw new Error('failed to read APP_VERSION_NAME')
@@ -57,6 +58,8 @@ const out = {
   // ever matches "-arm64-" -- the arm7 build is intentionally invisible to the auto-updater.
   'apk-arm64': `entinygram${isPrerelease ? '-beta' : ''}-arm64-${appVerName}-${verCode}.apk`,
   'apk-arm7': `entinygram${isPrerelease ? '-beta' : ''}-armeabi-v7a-${appVerName}-${verCode}.apk`,
+  // the updater only offers "-plugins-" APKs to plugins builds, and pluginless APKs to everyone else.
+  'apk-plugins': `entinygram${isPrerelease ? '-beta' : ''}-plugins-arm64-${appVerName}-${verCode}.apk`,
   tag,
 }
 

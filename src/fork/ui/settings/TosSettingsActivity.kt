@@ -10,12 +10,23 @@ import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
+import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.Cells.NotificationsCheckCell
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
 class TosSettingsActivity : SettingsPageActivity() {
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuTOS)
+
+    private fun showForwardRestrictedWarning() {
+        val ctx = parentActivity ?: return
+        val dialog = AlertDialog.Builder(ctx, resourceProvider)
+            .setTitle(LocaleController.getString(R.string.InuAllowForwardRestricted))
+            .setMessage(LocaleController.getString(R.string.InuAllowForwardRestrictedWarning))
+            .setPositiveButton(LocaleController.getString(R.string.OK), null)
+            .create()
+        showDialog(dialog)
+    }
 
     private var unlimitedPinsSlider: SliderCell? = null
 
@@ -186,6 +197,7 @@ class TosSettingsActivity : SettingsPageActivity() {
             TOGGLE_ALLOW_FORWARD_RESTRICTED -> {
                 val new = InuConfig.ALLOW_FORWARD_RESTRICTED.toggle()
                 (view as? NotificationsCheckCell)?.isChecked = new
+                if (new) showForwardRestrictedWarning()
             }
             TOGGLE_DISABLE_FLAG_SECURE -> {
                 val new = InuConfig.ALLOW_SCREENSHOTS.toggle()

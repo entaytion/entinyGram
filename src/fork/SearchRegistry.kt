@@ -20,6 +20,7 @@ import desu.inugram.ui.settings.DatacenterStatusActivity
 import desu.inugram.ui.settings.DialogsSettingsActivity
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.ui.settings.FeedExcludedChannelsSettingsActivity
+import desu.inugram.ui.settings.NicheSettingsActivity
 import desu.inugram.ui.settings.GhostModeSettingsActivity
 import desu.inugram.ui.settings.IconPacksSettingsActivity
 import desu.inugram.ui.settings.InuSettingsActivity
@@ -99,6 +100,7 @@ object SearchRegistry {
             DatacenterStatusActivity.PAGE,
             BackupSettingsActivity.PAGE,
             FeedExcludedChannelsSettingsActivity.PAGE,
+            NicheSettingsActivity.PAGE,
         )
     }
 
@@ -140,6 +142,7 @@ object SearchRegistry {
         val extra = ArrayList<ProfileActivity.SearchAdapter.SearchResult>()
         for (page in pages) {
             if (page === FeedExcludedChannelsSettingsActivity.PAGE && !FeedHelper.isEnabled()) continue
+            if (page === NicheSettingsActivity.PAGE && !InuConfig.NICHE_SETTINGS_UNLOCKED.value) continue
             val pageTitle = LocaleController.getString(page.titleRes)
             val parent = "${LocaleController.getString(R.string.InuSettings)} → $pageTitle"
             extra.add(
@@ -191,6 +194,7 @@ object SearchRegistry {
             else -> return false
         }
         val target = targetBySlug[segs.last()] ?: return false
+        if (target.page === NicheSettingsActivity.PAGE && !InuConfig.NICHE_SETTINGS_UNLOCKED.value) return false
         val fragment = target.page.factory()
         target.entry?.let { fragment.withHighlight(it.itemId) }
         activity.actionBarLayout.presentFragment(fragment)

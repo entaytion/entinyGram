@@ -136,11 +136,13 @@ object SettingsBackupHelper {
         return root.toString(2)
     }
 
-    fun apply(parsed: ParseResult.Ok): Int {
+    fun apply(parsed: ParseResult.Ok, replace: Boolean = false): Int {
         CloudSettingsHelper.restoring = true
         try {
             val root = parsed.root
             val values = root.optJSONObject("values") ?: return 0
+            // replace: wipe to defaults first, so keys missing from the file end up default instead of kept
+            if (replace) resetToDefaults()
 
             val byKey = InuConfig.items.filter { it.exportable }.associateBy { it.key }
             var applied = 0
@@ -262,16 +264,19 @@ object SettingsBackupHelper {
                         LocaleController.getString(R.string.InuBackupImportNoChanges)
                     ).show()
                 } else {
-                    SettingsImportConfirmSheet(ctx, parsed.changed) {
-                        applyAndPromptRestart(fragment, parsed)
-                    }.show()
+                    SettingsImportConfirmSheet(
+                        ctx,
+                        parsed.changed,
+                        onConfirm = { applyAndPromptRestart(fragment, parsed) },
+                        onReplace = { applyAndPromptRestart(fragment, parsed, replace = true) },
+                    ).show()
                 }
             }
         }
     }
 
-    fun applyAndPromptRestart(fragment: BaseFragment, parsed: ParseResult.Ok) {
-        val applied = apply(parsed)
+    fun applyAndPromptRestart(fragment: BaseFragment, parsed: ParseResult.Ok, replace: Boolean = false) {
+        val applied = apply(parsed, replace)
         BulletinFactory.of(fragment).createSimpleBulletin(
             R.raw.chats_infotip,
             LocaleController.formatString(R.string.InuBackupImportSuccess, applied),

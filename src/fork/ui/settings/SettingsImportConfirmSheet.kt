@@ -22,6 +22,7 @@ class SettingsImportConfirmSheet(
     context: Context,
     private val changed: Int,
     private val onConfirm: () -> Unit,
+    private val onReplace: () -> Unit,
 ) : BottomSheet(context, false) {
 
     init {
@@ -76,6 +77,26 @@ class SettingsImportConfirmSheet(
             }
         }
         container.addView(confirmBtn, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, 0, 14, 28, 14, 6))
+
+        val replaceBtn = TextView(context).apply {
+            gravity = Gravity.CENTER
+            ellipsize = TextUtils.TruncateAt.END
+            isSingleLine = true
+            setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+            typeface = AndroidUtilities.bold()
+            text = LocaleController.getString(R.string.InuBackupImportSheetReplace)
+            setTextColor(Theme.getColor(Theme.key_text_RedBold))
+            background = Theme.createSimpleSelectorRoundRectDrawable(
+                AndroidUtilities.dp(8f),
+                Color.TRANSPARENT,
+                ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_text_RedBold), 120)
+            )
+            setOnClickListener {
+                dismiss()
+                onReplace()
+            }
+        }
+        container.addView(replaceBtn, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, 0, 14, 8, 14, 6))
 
         val cancelBtn = TextView(context).apply {
             gravity = Gravity.CENTER
