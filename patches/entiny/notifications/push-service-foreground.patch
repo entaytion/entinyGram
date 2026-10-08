@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      <uses-permission android:name="android.permission.RECORD_AUDIO" />
      <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-@@ -537,8 +538,11 @@
+@@ -777,8 +778,11 @@
              android:name=".NotificationsService"
              android:enabled="true"
              android:exported="true"

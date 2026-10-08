@@ -21,7 +21,7 @@ index 0000000..0000000 100644
      <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
      <uses-permission android:name="android.permission.INTERNET" />
      <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-@@ -298,6 +299,9 @@
+@@ -316,6 +317,9 @@
                  <data android:host="telegram.dog" android:scheme="https" />
                  <data android:host="t.me" android:scheme="http" />
                  <data android:host="t.me" android:scheme="https" />

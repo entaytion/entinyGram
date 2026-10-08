@@ -54,7 +54,7 @@ async function exportPatchFile(repoDir: string, patchName: string, commitId: str
     warn(`Patch ${patchName} is empty`)
   }
 
-  const targetDir = join(patchesDir, parsed.group)
+  const targetDir = join(patchesDir, parsed.dir)
   const targetFile = join(targetDir, `${parsed.name}.patch`)
   await ensureDir(targetDir)
 

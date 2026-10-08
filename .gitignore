@@ -8,6 +8,7 @@ worktree/
 .gradle/
 .gradle-local/
 build/
+!patches/entiny/build/
 .cxx/
 *.apk
 *.aab

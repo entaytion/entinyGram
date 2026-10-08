@@ -11,7 +11,7 @@ Assumes you've already run through [Development](README.md#development) —
 - **Android SDK**, matching what `TMessagesProj_App/build.gradle` pins:
   - `compileSdk 36` / `targetSdk 36`, `minSdk 26`
   - `build-tools 36.0.0`
-  - `ndk 29.0.14206865` (NDK r29, latest stable)
+  - `ndk 27.2.12479018`
   - `cmake 3.22.1`
 
 The simplest way to get all of the SDK components: install Android Studio and let its

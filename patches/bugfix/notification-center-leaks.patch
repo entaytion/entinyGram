@@ -171,7 +171,7 @@ index 0000000..0000000 100644
  
      private boolean isOnLogout;
  
-@@ -405,20 +406,22 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+@@ -403,20 +404,22 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
              loaderDialog.setCanCancel(false);
              loaderDialog.showDelayed(1000);
  
@@ -196,7 +196,7 @@ index 0000000..0000000 100644
              LocaleController.getInstance().applyLanguage(localeInfo, true, false, currentAccount);
          });
  
-@@ -472,6 +475,10 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+@@ -470,6 +473,10 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
          destroyed = true;
          NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.suggestedLangpack);
          NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.configLoaded);

@@ -19,9 +19,8 @@ Subject: paranoia mode (hide chats, accounts, disguise as stock app)
  .../org/telegram/ui/GroupCreateActivity.java  |  4 ++-
  .../telegram/ui/PrivacyControlActivity.java   |  4 +++
  .../java/org/telegram/ui/ProfileActivity.java |  2 +-
- .../org/telegram/ui/SessionBottomSheet.java   |  3 ++
  .../ui/Stories/StoriesController.java         | 33 +++++++++++++++++++
- 17 files changed, 108 insertions(+), 24 deletions(-)
+ 16 files changed, 105 insertions(+), 24 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ContactsController.java
 index 0000000..0000000 100644
@@ -412,8 +411,8 @@ index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SessionCell.java
 @@ -251,6 +251,10 @@ public class SessionCell extends FrameLayout {
-             stringBuilder.append(session.app_name);
-             stringBuilder.append(" ").append(session.app_version);
+             stringBuilder.append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppName(session.app_name));
+             stringBuilder.append(" ").append(desu.inugram.helpers.security.ParanoiaHelper.getSessionAppVersion(session.app_version));
  
 +            if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
 +                stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
@@ -576,20 +575,6 @@ index 0000000..0000000 100644
          }
          if (!hasMedia && userInfo != null && userInfo.bot_info != null) {
              hasMedia = userInfo.bot_info.has_preview_medias;
-diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
-index 0000000..0000000 100644
---- a/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
-+++ b/TMessagesProj/src/main/java/org/telegram/ui/SessionBottomSheet.java
-@@ -112,6 +112,9 @@ public class SessionBottomSheet extends BottomSheet {
-         stringBuilder = new StringBuilder();
-         stringBuilder.append(session.app_name);
-         stringBuilder.append(" ").append(session.app_version);
-+        if (session.current && desu.inugram.helpers.security.ParanoiaHelper.isDisguised()) {
-+            stringBuilder = new StringBuilder("Telegram Android " + desu.inugram.helpers.update.UpdateHelper.getStockVersionName());
-+        }
-         applicationItemView.valueText.setText(stringBuilder);
-         Drawable drawable = ContextCompat.getDrawable(context, R.drawable.menu_devices).mutate();
-         drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesController.java

@@ -46,7 +46,7 @@ Per conflicting patch:
 
 1. **Identify** — `scripts/status.sh` (or `stg top` + `stg show 2>/dev/null | head -6`). The subject states the fork's *intent* here — anchor your resolution to it.
 2. **Read both sides** with enough surrounding context to see the enclosing structure (loop/method/braces), not just the marked lines.
-3. **Cross-reference the patch file** — `cat patches/<group>/<name>.patch`. Do this for anything non-trivial. It shows the **exact** `+`/`-` lines the fork changed, which is the only reliable way to separate the real fork delta from stock context that merely surrounds it. Skipping this is how you misread a one-token change as a full rewrite.
+3. **Cross-reference the patch file** — `cat patches/<group>/<name>.patch` (for `entiny`: `patches/entiny/<topic>/<name>.patch`, topic from `scripts/patch-topics.ts`). Do this for anything non-trivial. It shows the **exact** `+`/`-` lines the fork changed, which is the only reliable way to separate the real fork delta from stock context that merely surrounds it. Skipping this is how you misread a one-token change as a full rewrite.
 4. **Resolve** (see shapes below).
 5. **Verify + continue** — `scripts/continue.sh` (or, inline: confirm `rg -n -a '^(<<<<<<<|>>>>>>>)' <file>` is empty, then `git add -f <file> && stg refresh && stg push -a`).
 

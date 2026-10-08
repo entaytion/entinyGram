@@ -138,9 +138,9 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: |
-            ${{ env.ANDROID_HOME }}/ndk/29.0.14206865
+            ${{ env.ANDROID_HOME }}/ndk/27.2.12479018
             ${{ env.ANDROID_HOME }}/cmake/3.10.2.4988404
-          key: android-ndk-cmake-29.0.14206865-3.10.2.4988404
+          key: android-ndk-cmake-27.2.12479018-3.10.2.4988404
 
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4
         with:
@@ -148,7 +148,7 @@ jobs:
             platforms;android-35
             build-tools;35.0.0
             cmake;3.10.2.4988404
-            ndk;29.0.14206865
+            ndk;27.2.12479018
 
       - name: Tune Gradle
         run: |

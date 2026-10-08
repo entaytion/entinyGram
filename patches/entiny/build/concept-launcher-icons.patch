@@ -1,18 +1,29 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Oleksii Kulinich <entaytion@gmail.com>
-Date: Mon, 5 Oct 2026 19:20:38 +0300
-Subject: Add concept launcher icons
+Date: Sun, 6 Sep 2026 00:39:15 +0300
+Subject: [*] launcher icons: concept set, round icon, old alias and splash theme
 
+Merges icon alias theme, splash icon theme and round app icon fixes.
 ---
- TMessagesProj/src/main/AndroidManifest.xml    | 240 ++++++++++++++++++
- .../telegram/ui/LauncherIconController.java   |  22 ++
- 2 files changed, 262 insertions(+)
+ TMessagesProj/src/main/AndroidManifest.xml    | 242 +++++++++++++++++-
+ .../ui/Cells/AppIconsSelectorCell.java        |   2 +-
+ .../telegram/ui/LauncherIconController.java   |  23 ++
+ 3 files changed, 265 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/AndroidManifest.xml
 +++ b/TMessagesProj/src/main/AndroidManifest.xml
-@@ -181,6 +181,246 @@
+@@ -134,7 +134,7 @@
+             android:enabled="false"
+             android:name="org.telegram.messenger.OldIcon"
+             android:targetActivity="org.telegram.ui.LaunchActivity"
+-            android:theme="@style/Theme.TMessages.Start.Old"
++            android:theme="@style/Theme.TMessages.Start"
+             android:icon="@mipmap/ic_launcher_old"
+             android:roundIcon="@mipmap/ic_launcher_old"
+             android:exported="true">
+@@ -180,6 +180,246 @@
              <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
          </activity-alias>
  
@@ -259,11 +270,30 @@ index 0000000..0000000 100644
          <activity-alias
              android:enabled="false"
              android:name="org.telegram.messenger.VintageIcon"
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
+@@ -49,7 +49,7 @@ import java.util.Arrays;
+ import java.util.List;
+ 
+ public class AppIconsSelectorCell extends RecyclerListView implements NotificationCenter.NotificationCenterDelegate {
+-    public final static float ICONS_ROUND_RADIUS = 18;
++    public final static float ICONS_ROUND_RADIUS = 29;
+ 
+     private List<LauncherIconController.LauncherIcon> availableIcons = new ArrayList<>();
+     private LinearLayoutManager linearLayoutManager;
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-@@ -36,6 +36,22 @@ public class LauncherIconController {
+@@ -31,11 +31,28 @@ public class LauncherIconController {
+             pm.setComponentEnabledSetting(i.getComponentName(ctx), i == icon ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+         }
++        desu.inugram.helpers.SplashThemeHelper.apply(LaunchActivity.instance);
+     }
+ 
      public enum LauncherIcon {
          DEFAULT("DefaultIcon", R.drawable.icon_background_inu, R.drawable.icon_foreground_inu, R.string.AppIconDefault),
          OLD("OldIcon", R.drawable.icon_background_old_inu, R.drawable.icon_foreground_old_inu, R.string.InuAppIconOldEntinygram),
@@ -286,7 +316,7 @@ index 0000000..0000000 100644
          STOCK("StockIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.InuAppIconStock),
          VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
          AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
-@@ -49,6 +65,7 @@ public class LauncherIconController {
+@@ -49,6 +66,7 @@ public class LauncherIconController {
          public final int foreground;
          public final int title;
          public final boolean premium;
@@ -294,7 +324,7 @@ index 0000000..0000000 100644
  
          private ComponentName componentName;
  
-@@ -64,6 +81,11 @@ public class LauncherIconController {
+@@ -64,6 +82,11 @@ public class LauncherIconController {
          }
  
          LauncherIcon(String key, int background, int foreground, int title, boolean premium) {

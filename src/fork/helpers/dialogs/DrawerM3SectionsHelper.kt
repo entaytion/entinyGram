@@ -1,11 +1,8 @@
 package desu.inugram.helpers.dialogs
 
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
-import android.view.Gravity
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
@@ -20,7 +17,7 @@ object DrawerM3SectionsHelper {
 
     private val outerR get() = AndroidUtilities.dp(16f).toFloat()
 
-    // one rounded card per group, hairline dividers between rows (inset past the icon), no gaps
+    // one rounded card per group, no gaps and no dividers between rows
     fun styleMenuRow(view: View, posInGroup: Int, groupSize: Int) {
         view.setStateListAnimator(null)
         val first = posInGroup == 0
@@ -36,14 +33,9 @@ object DrawerM3SectionsHelper {
             setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
             cornerRadii = radii
         }
-        val background: Drawable = if (last) card else LayerDrawable(arrayOf(card, divider())).apply {
-            setLayerGravity(1, Gravity.BOTTOM)
-            setLayerHeight(1, AndroidUtilities.dp(1f))
-            setLayerInsetLeft(1, AndroidUtilities.dp(72f))
-        }
         view.background = RippleDrawable(
             ColorStateList.valueOf(Theme.getColor(Theme.key_listSelector)),
-            background,
+            card,
             card,
         )
         val lp = view.layoutParams as RecyclerView.LayoutParams
@@ -54,11 +46,6 @@ object DrawerM3SectionsHelper {
             if (last) AndroidUtilities.dp(6f) else 0,
         )
         view.layoutParams = lp
-    }
-
-    private fun divider(): GradientDrawable = GradientDrawable().apply {
-        shape = GradientDrawable.RECTANGLE
-        setColor(Theme.getColor(Theme.key_divider))
     }
 
     fun resetMenuRow(view: View) {

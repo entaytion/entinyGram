@@ -1,5 +1,6 @@
 package desu.inugram.helpers.entiny
 
+// #if PLUGINS
 import desu.inugram.InuConfig
 import desu.inugram.helpers.plugins.PluginImportHelper
 import desu.inugram.helpers.plugins.PluginManager
@@ -39,3 +40,4 @@ object EntinyMarketBridge {
         }
     }
 }
+// #endif

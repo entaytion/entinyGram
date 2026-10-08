@@ -121,11 +121,11 @@ when adding, removing, or meaningfully changing a patch, update `FEATURES.md` in
 
 ## 2. Patch Groups & Ownership
 
-Format: `group__name` → `patches/<group>/<name>.patch`. Commit subject = plain human sentence (`Allow editing by double tapping a message`).
+Format: `group__name` → `patches/<group>/<name>.patch`. For `entiny`, the patch sits in its topic folder: `patches/entiny/<topic>/<name>.patch`, with the topic set in `scripts/patch-topics.json`. Commit subject = plain human sentence (`Allow editing by double tapping a message`).
 
 | Group | Ownership & Scope |
 | --- | --- |
-| `entiny` | **entinyGram-owned patches** — our work, not inugram's. Ghost mode, adblock, save-deleted, branding, updater, etc. Live in `patches/entiny/`. Inugram merges never touch this folder. **Always include this group** when listing, searching, auditing, or exporting patches. |
+| `entiny` | **entinyGram-owned patches** — our work, not inugram's. Ghost mode, adblock, save-deleted, branding, updater, etc. Live in `patches/entiny/<topic>/` (topics: accounts, ai, build, calls, chat, feed, media, misc, notifications, premium, privacy, proxy, restrictions, settings, tabs, translator, ui). A new `entiny__` patch needs a topic entry in `scripts/patch-topics.json`, otherwise export fails. Inugram merges never touch this folder. **Always include this group** when listing, searching, auditing, or exporting patches. |
 | `bugfix` | Inherited inugram base: upstream bug fixes. |
 | `feature` | Inherited inugram base: upstream user-facing capabilities. |
 | `debloat` | Inherited inugram base: hides/disables stock behavior behind a toggle. |
