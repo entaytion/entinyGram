@@ -125,6 +125,7 @@ class MainTabsPreviewCell(
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (dragging) {
+                    chipViews.values.forEach { if (it !== chip) it.translationX = 0f }
                     chip.animate().translationX(0f).scaleX(1f).scaleY(1f).setDuration(150)
                         .withEndAction { chip.elevation = 0f }.start()
                     if (dragOrder != visibleOrder()) onReorder(fullOrder(dragOrder))

@@ -2,7 +2,8 @@ import type { InputRichMessageMedia } from '@mtcute/node'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { InputMedia, MemoryStorage, TelegramClient } from '@mtcute/node'
+import { html, InputMedia, MemoryStorage, TelegramClient } from '@mtcute/node'
+import { joinTextWithEntities } from '@mtcute/node/utils.js'
 
 interface ApkFile {
   file: string

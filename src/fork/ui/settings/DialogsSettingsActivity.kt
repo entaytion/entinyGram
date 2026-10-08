@@ -539,6 +539,7 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
         val hidden = mainTabsEntries.filter { it.item == MainTabsMenuConfig.Item.FEED && !FeedHelper.isEnabled() }
         mainTabsEntries = (newOrder.mapNotNull { byItem[it] } + hidden).toMutableList()
         InuConfig.BOTTOM_TABS_ORDER.value = mainTabsEntries
+        mainTabsPreview?.let { refreshMainTabsPreview(it) }
         showRestartBulletin()
     }
 
