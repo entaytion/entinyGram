@@ -1864,8 +1864,6 @@
     <string name="InuDeviceSection">دستگاه</string>
     <string name="InuDownloadsAndNetwork">دانلودها و شبکه</string>
     <string name="InuDrawerBots">برنامه‌های کوچک</string>
-    <string name="InuDrawerMenuAddDivider">افزودن جداکننده</string>
-    <string name="InuDrawerMenuHidden">موارد پنهان</string>
     <string name="InuDrawerMenuItems">موارد</string>
     <string name="InuDrawerMenuOrder">موارد منو</string>
     <string name="InuDrawerMenuOrderInfo">برای پنهان یا نمایان کردن موارد ضربه بزنید و برای تغییر ترتیب نگه دارید. جداکننده‌ها منو را به گروه‌ها تقسیم می‌کنند.</string>

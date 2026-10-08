@@ -571,9 +571,12 @@ object PluginManager {
     private fun getLanguage(): String = LocaleController.getInstance().currentLocaleInfo?.langCode ?: ""
 
     private var lastLanguage: String? = null
+    private var languageWatched = false
 
     /** `LocaleController` has no language-changed event, but posts `reloadInterface` after applying one */
     private fun watchLanguage() {
+        if (languageWatched) return
+        languageWatched = true
         AndroidUtilities.runOnUIThread {
             lastLanguage = getLanguage()
             NotificationCenter.getGlobalInstance().addObserver({ _, _, _ ->

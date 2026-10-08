@@ -727,7 +727,7 @@ index 0000000..0000000 100644
 +                    paint.setShader(null);
 +                    paint.setColor(inu_monetColor);
 +                    Rect b = getBounds();
-+                    canvas.drawCircle(b.exactCenterX(), b.exactCenterY(), Math.min(b.width(), b.height()) / 2f, paint);
++                    if (desu.inugram.helpers.theme.M3SectionsHelper.isCircleIconsEnabled()) canvas.drawCircle(b.exactCenterX(), b.exactCenterY(), Math.min(b.width(), b.height()) / 2f, paint); else { AndroidUtilities.rectTmp.set(b); canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(10), dp(10), paint); }
 +                    return;
 +                }
                  final float r = dp(10);

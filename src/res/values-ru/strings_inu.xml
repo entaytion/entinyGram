@@ -1748,9 +1748,7 @@
     <string name="InuMenuProfileInfoDesc">Телефон, о себе, юзернейм и другие строки в профилях.</string>
     <string name="InuDrawerMenuOrder">Пункты меню</string>
     <string name="InuDrawerMenuItems">Пункты</string>
-    <string name="InuDrawerMenuOrderInfo">Нажмите, чтобы скрыть или показать пункт, удерживайте для изменения порядка. Разделители делят меню на группы.</string>
-    <string name="InuDrawerMenuHidden">Скрытые пункты</string>
-    <string name="InuDrawerMenuAddDivider">Добавить разделитель</string>
+    <string name="InuDrawerMenuOrderInfo">Измените порядок или скройте пункты бокового меню. Перетаскивайте для перестановки, переключайте, чтобы скрыть. Разделители делят меню на группы.</string>
     <string name="InuDrawerMenuReset">Сбросить меню</string>
     <string name="InuDrawerBots">Мини-приложения</string>
     <string name="InuMenuDivider">Разделитель</string>

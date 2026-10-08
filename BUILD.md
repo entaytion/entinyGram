@@ -11,7 +11,7 @@ Assumes you've already run through [Development](README.md#development) —
 - **Android SDK**, matching what `TMessagesProj_App/build.gradle` pins:
   - `compileSdk 36` / `targetSdk 36`, `minSdk 26`
   - `build-tools 36.0.0`
-  - `ndk 27.2.12479018`
+  - `ndk 29.0.14206865` (NDK r29, latest stable)
   - `cmake 3.22.1`
 
 The simplest way to get all of the SDK components: install Android Studio and let its
@@ -57,6 +57,10 @@ cd worktree
 - **ABI:** defaults to `arm64-v8a` only (fast local builds). Set the `ABI_FILTERS` env
   var (comma-separated ABIs, or `all`) before running Gradle if you need other
   architectures, e.g. `ABI_FILTERS=all ./gradlew TMessagesProj_App:assembleDebug`.
+  For the x86 emulator, use `ABI_FILTERS=x86_64` on its own (unverified with a list).
+- **Pluginless vs plugins:** the default build is pluginless. Setup with
+  `bun run setup -- --pluginless` builds the pluginless variant; plugins are opt-in.
+  CI builds both.
 
 Only `:TMessagesProj_App` is a real, buildable app module — `TMessagesProj_AppHuawei`,
 `TMessagesProj_AppHockeyApp`, and `TMessagesProj_AppStandalone` still exist as

@@ -1,11 +1,11 @@
 package desu.inugram.helpers.dialogs
 
-import android.content.Context
+import desu.inugram.helpers.InuPrefs
 import desu.inugram.InuConfig
 import org.telegram.messenger.ApplicationLoader
 
 object FolderTagsHelper {
-    private fun prefs() = ApplicationLoader.applicationContext.getSharedPreferences("inugram_folder_tags", Context.MODE_PRIVATE)
+    private fun prefs() = InuPrefs.of("inugram_folder_tags")
 
     private fun key(account: Int) = "local_only_$account"
 

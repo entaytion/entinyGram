@@ -173,6 +173,14 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
         ADMINISTRATORS("administrators", listOf(ChatActionsHelper.ACTION_ADMINISTRATORS), R.string.ChannelAdministrators, R.drawable.msg_admins),
         PERMISSIONS("permissions", listOf(ChatActionsHelper.ACTION_PERMISSIONS), R.string.ChannelPermissions, R.drawable.msg_permissions),
         INVITE_LINKS("invite_links", listOf(ChatActionsHelper.ACTION_INVITE_LINKS), R.string.InviteLinks, R.drawable.msg_link2),
+        TYPING_SPOOF("typing_spoof", listOf(ChatActionsHelper.ACTION_TYPING_SPOOF), R.string.InuTypingSpoof, R.drawable.input_mic),
+        REGEX_CHAT_FILTERS("regex_chat_filters", listOf(ChatActionsHelper.ACTION_REGEX_CHAT_FILTERS), R.string.InuRegexChatFilters, R.drawable.msg_block2),
+        DELETED_MESSAGES("deleted_messages", listOf(ChatActionsHelper.ACTION_DELETED_MESSAGES), R.string.InuDeletedArchive, R.drawable.msg_delete),
+        GHOST_MODE("ghost_mode", listOf(ChatActionsHelper.ACTION_GHOST_MODE), R.string.InuGhostMode, R.drawable.inu_ghost),
+        CHAT_EXPORT("chat_export", listOf(ChatActionsHelper.ACTION_CHAT_EXPORT), R.string.InuChatExport, R.drawable.msg_share_solar),
+        CHAT_LOCAL_NAME("chat_local_name", listOf(ChatActionsHelper.ACTION_CHAT_LOCAL_NAME), R.string.InuLocalName, R.drawable.msg_edit),
+        CHAT_MARK_READ("chat_mark_read", listOf(ChatActionsHelper.ACTION_CHAT_MARK_READ), R.string.InuMarkChatAsRead, R.drawable.msg_markread),
+        CHAT_DELETE_MY_MESSAGES("chat_delete_my_messages", listOf(ChatActionsHelper.ACTION_CHAT_DELETE_MY_MESSAGES), R.string.InuDeleteMyMessages, R.drawable.msg_delete),
         ACTIONS("actions", listOf(ChatActionsHelper.ACTION_PLUGIN_ACTIONS), R.string.InuActions, R.drawable.msg_settings_old);
 
         companion object {
@@ -196,6 +204,7 @@ class ChatMenuConfig(key: String) : MenuOrderConfig<ChatMenuConfig.Item>(key, It
             Item.RECENT_ACTIONS, Item.GO_TO_BEGINNING, Item.GO_TO_MESSAGE, Item.DELETE_OWN_MESSAGES,
             Item.STATISTICS, Item.ADMINISTRATORS, Item.PERMISSIONS, Item.INVITE_LINKS,
             Item.LINKED_CHAT, Item.HIDE_TITLE, Item.CLEAR_DELETED,
+            Item.CHAT_EXPORT, Item.CHAT_LOCAL_NAME, Item.CHAT_MARK_READ, Item.CHAT_DELETE_MY_MESSAGES,
         )
     }
 }

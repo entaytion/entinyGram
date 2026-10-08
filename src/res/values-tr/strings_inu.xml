@@ -1857,8 +1857,6 @@
     <string name="InuDeviceSection">Cihaz</string>
     <string name="InuDownloadsAndNetwork">İndirmeler ve ağ</string>
     <string name="InuDrawerBots">Mini uygulamalar</string>
-    <string name="InuDrawerMenuAddDivider">Ayırıcı ekle</string>
-    <string name="InuDrawerMenuHidden">Gizli öğeler</string>
     <string name="InuDrawerMenuItems">Öğeler</string>
     <string name="InuDrawerMenuOrder">Menü öğeleri</string>
     <string name="InuDrawerMenuOrderInfo">Öğeleri gizlemek veya göstermek için dokunun, sıralamak için basılı tutun. Ayırıcılar menüyü gruplara böler.</string>

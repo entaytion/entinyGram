@@ -20,6 +20,7 @@ import desu.inugram.helpers.plugins.ui.PluginActions
 import desu.inugram.helpers.plugins.ui.PluginIcons
 // #endif
 import desu.inugram.helpers.menu.ChatMenuConfig
+import desu.inugram.helpers.profile.ProfileHelper
 import desu.inugram.helpers.menu.reorderByMenu
 import desu.inugram.helpers.security.GhostHelper
 import desu.inugram.helpers.translate.TranslateHelper
@@ -78,6 +79,10 @@ object ChatActionsHelper {
     const val ACTION_CLEAR_DELETED = 525
     const val ACTION_DELETED_MESSAGES = 541
     const val ACTION_PLUGIN_ACTIONS = 542
+    const val ACTION_CHAT_EXPORT = 543
+    const val ACTION_CHAT_LOCAL_NAME = 544
+    const val ACTION_CHAT_MARK_READ = 545
+    const val ACTION_CHAT_DELETE_MY_MESSAGES = 546
 
     const val ACTION_SELECT_RANGE = 1500
     const val ACTION_SELECTION_MENU = 1501
@@ -213,6 +218,32 @@ object ChatActionsHelper {
             headerItem.lazilyAddSubItem(
                 ACTION_GHOST_MODE, R.drawable.inu_ghost,
                 LocaleController.getString(R.string.InuGhostMode),
+            )
+        }
+        val dialogId = activity.dialogId
+        val notEncrypted = activity.currentEncryptedChat == null && dialogId != 0L
+        if (InuConfig.CHAT_EXPORT.value && notEncrypted) {
+            headerItem.lazilyAddSubItem(
+                ACTION_CHAT_EXPORT, R.drawable.msg_share_solar,
+                LocaleController.getString(R.string.InuChatExport),
+            )
+        }
+        if (InuConfig.LOCAL_NAMES.value && notEncrypted) {
+            headerItem.lazilyAddSubItem(
+                ACTION_CHAT_LOCAL_NAME, R.drawable.msg_edit,
+                LocaleController.getString(R.string.InuLocalName),
+            )
+        }
+        if (notEncrypted && GhostHelper.shouldSuppressRead(dialogId)) {
+            headerItem.lazilyAddSubItem(
+                ACTION_CHAT_MARK_READ, R.drawable.msg_markread,
+                LocaleController.getString(R.string.InuMarkChatAsRead),
+            )
+        }
+        if (notEncrypted && !ChatObject.isChannelAndNotMegaGroup(activity.currentChat) && dialogId != UserConfig.getInstance(activity.currentAccount).clientUserId) {
+            headerItem.lazilyAddSubItem(
+                ACTION_CHAT_DELETE_MY_MESSAGES, R.drawable.msg_delete,
+                LocaleController.getString(R.string.InuDeleteMyMessages),
             )
         }
         // #if PLUGINS
@@ -513,6 +544,11 @@ object ChatActionsHelper {
             ACTION_HIDE_TITLE -> toggleHideTitle(activity)
             ACTION_CLEAR_DELETED -> confirmClearDeleted(activity)
             ACTION_TYPING_SPOOF -> showTypingSpoofSelector(activity)
+            // same handlers as the profile menu, keyed by its ids
+            ACTION_CHAT_EXPORT -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EXPORT_CHAT, null, activity.currentAccount, activity.dialogId)
+            ACTION_CHAT_LOCAL_NAME -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_EDIT_LOCAL_NAME, null, activity.currentAccount, activity.dialogId)
+            ACTION_CHAT_MARK_READ -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_MARK_AS_READ, null, activity.currentAccount, activity.dialogId)
+            ACTION_CHAT_DELETE_MY_MESSAGES -> ProfileHelper.handleMenuClick(ProfileHelper.ACTION_DELETE_MY_MESSAGES, null, activity.currentAccount, activity.dialogId)
             ACTION_REGEX_CHAT_FILTERS -> activity.presentFragment(desu.inugram.ui.settings.RegexChatFilterSettingsActivity(activity.dialogId))
             ACTION_GHOST_MODE -> GhostHelper.showChatOverridesDialog(activity, activity.currentAccount, activity.dialogId) {
                 GhostHelper.applyChatTitleGhost(activity, activity.avatarContainer?.titleTextView)

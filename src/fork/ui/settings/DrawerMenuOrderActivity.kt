@@ -1,11 +1,11 @@
 package desu.inugram.ui.settings
 
-import android.view.View
 import desu.inugram.InuConfig
 import desu.inugram.SearchRegistry
-import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.feed.FeedHelper
 import desu.inugram.helpers.menu.DrawerMenuConfig
+import android.view.View
+import desu.inugram.helpers.InuUtils
 import desu.inugram.helpers.menu.MenuOrderEntry
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.NotificationCenter
@@ -13,17 +13,50 @@ import org.telegram.messenger.R
 import org.telegram.ui.Components.UItem
 import org.telegram.ui.Components.UniversalAdapter
 
-class DrawerMenuOrderActivity : SettingsPageActivity() {
-
-    private var entries = InuConfig.DRAWER_MENU_ITEMS.value.toMutableList()
+class DrawerMenuOrderActivity : MenuOrderActivity<DrawerMenuConfig.Item>() {
+    override val config get() = InuConfig.DRAWER_MENU_ITEMS
+    override val infoStringRes = R.string.InuDrawerMenuOrderInfo
+    override val headerStringRes = R.string.InuDrawerMenuItems
+    override val resetStringRes = R.string.InuDrawerMenuReset
 
     override fun getTitle(): CharSequence = LocaleController.getString(R.string.InuDrawerMenuOrder)
 
-    override fun createView(context: android.content.Context): View {
-        val view = super.createView(context)
-        listView.listenReorder { _, items -> applyReorder(items) }
-        listView.allowReorder(true)
-        return view
+    // dividers are fixed slots: only the ones the user added show up, the rest stay hidden
+    override fun rowVisible(entry: MenuOrderEntry<DrawerMenuConfig.Item>): Boolean =
+        (entry.item != DrawerMenuConfig.Item.FEED || FeedHelper.isEnabled()) &&
+            (!entry.item.isDivider || entry.enabled)
+
+    override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
+        fillMainSection(items, adapter)
+        if (entries.any { it.item.isDivider && !it.enabled }) {
+            items.add(UItem.asButton(BUTTON_ADD_DIVIDER, R.drawable.msg_add, LocaleController.getString(R.string.InuDrawerMenuAddDivider)))
+        }
+        fillResetSection(items, adapter)
+    }
+
+    // turning a divider off removes it from the list right away; "Add divider" brings it back
+    override fun onRowToggle(entry: MenuOrderEntry<DrawerMenuConfig.Item>, row: MenuOrderRow?) {
+        super.onRowToggle(entry, row)
+        if (entry.item.isDivider) listView.adapter.update(true)
+    }
+
+    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (item.id == BUTTON_ADD_DIVIDER) {
+            addDivider()
+        } else {
+            super.onClick(item, view, position, x, y)
+        }
+    }
+
+    // appends the next free divider slot after the last main row, like the old standalone screen
+    private fun addDivider() {
+        val slot = entries.firstOrNull { it.item.isDivider && !it.enabled } ?: return
+        val rest = entries.filter { it !== slot }.toMutableList()
+        val lastMain = rest.indexOfLast { !it.bottom }
+        rest.add(lastMain + 1, slot.copy(enabled = true))
+        entries = rest
+        config.value = entries
+        listView.adapter.update(true)
     }
 
     override fun onFragmentDestroy() {
@@ -32,103 +65,8 @@ class DrawerMenuOrderActivity : SettingsPageActivity() {
         super.onFragmentDestroy()
     }
 
-    private fun rowVisible(entry: MenuOrderEntry<DrawerMenuConfig.Item>): Boolean =
-        entry.item != DrawerMenuConfig.Item.FEED || FeedHelper.isEnabled()
-
-    private fun shown() = entries.filter { it.enabled && rowVisible(it) }
-
-    private fun hidden() = entries.filter { !it.enabled && !it.item.isDivider && rowVisible(it) }
-
-    private fun canAddDivider() = entries.any { it.item.isDivider && !it.enabled }
-
-    private fun rowItem(item: DrawerMenuConfig.Item): UItem {
-        val uItem = UItem.asButton(ITEM_BASE + item.ordinal, item.iconRes, LocaleController.getString(item.labelRes))
-        uItem.`object` = item
-        return uItem
-    }
-
-    override fun fillItems(items: ArrayList<UItem>, adapter: UniversalAdapter) {
-        items.add(UItem.asHeader(LocaleController.getString(R.string.InuDrawerMenuItems)))
-        adapter.reorderSectionStart()
-        for (entry in shown()) items.add(rowItem(entry.item))
-        adapter.reorderSectionEnd()
-        if (canAddDivider()) {
-            items.add(UItem.asButton(BUTTON_ADD_DIVIDER, R.drawable.msg_add, LocaleController.getString(R.string.InuDrawerMenuAddDivider)))
-        }
-        items.add(UItem.asShadow(SHADOW_INFO, LocaleController.getString(R.string.InuDrawerMenuOrderInfo)))
-
-        val hiddenEntries = hidden()
-        if (hiddenEntries.isNotEmpty()) {
-            items.add(UItem.asHeader(LocaleController.getString(R.string.InuDrawerMenuHidden)))
-            for (entry in hiddenEntries) items.add(rowItem(entry.item))
-            items.add(UItem.asShadow(SHADOW_HIDDEN, null))
-        }
-        items.add(UItem.asButton(BUTTON_RESET, R.drawable.msg_reset, LocaleController.getString(R.string.InuDrawerMenuReset)))
-        items.add(UItem.asShadow(SHADOW_END, null))
-    }
-
-    override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
-        when (item.id) {
-            BUTTON_ADD_DIVIDER -> {
-                val divider = entries.firstOrNull { it.item.isDivider && !it.enabled } ?: return
-                showAtEnd(divider.item)
-            }
-
-            BUTTON_RESET -> {
-                InuConfig.DRAWER_MENU_ITEMS.resetToDefault()
-                entries = InuConfig.DRAWER_MENU_ITEMS.default.toMutableList()
-                listView.adapter.update(true)
-            }
-
-            else -> {
-                val menuItem = item.`object` as? DrawerMenuConfig.Item ?: return
-                val entry = entries.firstOrNull { it.item == menuItem } ?: return
-                if (entry.enabled) setEnabled(menuItem, false) else showAtEnd(menuItem)
-            }
-        }
-    }
-
-    private fun setEnabled(item: DrawerMenuConfig.Item, enabled: Boolean) {
-        val idx = entries.indexOfFirst { it.item == item }
-        if (idx < 0) return
-        entries[idx] = entries[idx].copy(enabled = enabled)
-        save()
-    }
-
-    // entiny: revealed rows land after the last visible one, matching how the drawer reads its list
-    private fun showAtEnd(item: DrawerMenuConfig.Item) {
-        val idx = entries.indexOfFirst { it.item == item }
-        if (idx < 0) return
-        val entry = entries.removeAt(idx).copy(enabled = true)
-        entries.add(entries.indexOfLast { it.enabled } + 1, entry)
-        save()
-    }
-
-    private fun applyReorder(items: List<UItem>) {
-        val order = items.mapNotNull { it.`object` as? DrawerMenuConfig.Item }
-        val orderSet = order.toSet()
-        val slots = entries.indices.filter { entries[it].item in orderSet }
-        if (slots.size != order.size) return
-        val byItem = entries.associateBy { it.item }
-        val out = entries.toMutableList()
-        slots.forEachIndexed { i, slot -> out[slot] = byItem.getValue(order[i]) }
-        entries = out
-        InuConfig.DRAWER_MENU_ITEMS.value = entries.toList()
-    }
-
-    private fun save() {
-        InuConfig.DRAWER_MENU_ITEMS.value = entries.toList()
-        listView.adapter.update(true)
-    }
-
     companion object {
-        private const val ITEM_BASE = 30000
         private val BUTTON_ADD_DIVIDER = InuUtils.generateId()
-        private val BUTTON_RESET = InuUtils.generateId()
-        // entiny: distinct ids because DiffUtil aliases identical shadows and crashes animated diff
-        private val SHADOW_INFO = InuUtils.generateId()
-        private val SHADOW_HIDDEN = InuUtils.generateId()
-        private val SHADOW_END = InuUtils.generateId()
 
         @JvmField
         val PAGE = SearchRegistry.Page(

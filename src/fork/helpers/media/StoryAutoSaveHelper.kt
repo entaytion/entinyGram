@@ -1,5 +1,6 @@
 package desu.inugram.helpers.media
 
+import desu.inugram.helpers.InuPrefs
 import android.content.Context
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.MediaController
@@ -13,7 +14,7 @@ object StoryAutoSaveHelper {
     private const val RETRY_DELAY_MS = 1000L
 
     private val saved by lazy {
-        val raw = ApplicationLoader.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY_IDS, "") ?: ""
+        val raw = InuPrefs.of(PREFS).getString(KEY_IDS, "") ?: ""
         LinkedHashSet(raw.split(',').filter { it.isNotEmpty() })
     }
     private var lastAttemptKey: String? = null
@@ -37,7 +38,7 @@ object StoryAutoSaveHelper {
     private fun remember(key: String) {
         saved.add(key)
         while (saved.size > MAX_REMEMBERED) saved.remove(saved.first())
-        ApplicationLoader.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        InuPrefs.of(PREFS)
             .edit().putString(KEY_IDS, saved.joinToString(",")).apply()
     }
 }

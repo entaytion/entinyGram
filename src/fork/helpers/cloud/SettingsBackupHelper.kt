@@ -1,6 +1,6 @@
 package desu.inugram.helpers.cloud
 
-import android.content.Context
+import desu.inugram.helpers.InuPrefs
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import desu.inugram.InuConfig
@@ -35,7 +35,7 @@ object SettingsBackupHelper {
     )
 
     internal fun stockPrefs() =
-        ApplicationLoader.applicationContext.getSharedPreferences(STOCK_PREF_NAME, Context.MODE_PRIVATE)
+        InuPrefs.of(STOCK_PREF_NAME)
 
     private fun typedKey(key: String, value: Any?): String = when (value) {
         is Long -> key + "_long"

@@ -32,6 +32,7 @@ class CacheSummaryCell(
     private class UsageBar(context: Context) : View(context) {
         private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         private val rect = RectF()
+        private val clip = android.graphics.Path()
         private var segments: List<Pair<Int, Long>> = emptyList()
 
         fun setSegments(value: List<Pair<Int, Long>>) {
@@ -45,7 +46,8 @@ class CacheSummaryCell(
             val gap = AndroidUtilities.dp(2f).toFloat()
             rect.set(0f, 0f, width.toFloat(), height.toFloat())
             val save = canvas.save()
-            val clip = android.graphics.Path().apply { addRoundRect(rect, r, r, android.graphics.Path.Direction.CW) }
+            clip.reset()
+            clip.addRoundRect(rect, r, r, android.graphics.Path.Direction.CW)
             canvas.clipPath(clip)
             paint.color = ColorUtils.setAlphaComponent(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText), 40)
             canvas.drawRect(rect, paint)

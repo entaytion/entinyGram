@@ -1,5 +1,6 @@
 package desu.inugram.helpers.theme
 
+import desu.inugram.helpers.InuPrefs
 import android.annotation.TargetApi
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -617,7 +618,7 @@ object MonetHelper {
     }
 
     private fun themeConfigPrefs() =
-        ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Context.MODE_PRIVATE)
+        InuPrefs.of("themeconfig")
 
     private fun rememberLastTheme(name: String, dark: Boolean) {
         themeConfigPrefs().edit {

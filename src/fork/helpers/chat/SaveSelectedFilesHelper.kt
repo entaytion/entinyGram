@@ -37,14 +37,14 @@ object SaveSelectedFilesHelper {
 
     @JvmStatic
     fun save(fragment: BaseFragment, messages: Collection<MessageObject>) {
-        val context = fragment.parentActivity ?: return
+        val appContext = (fragment.parentActivity ?: return).applicationContext
         val list = ArrayList(messages)
         Thread {
             list.forEach { requestLoad(it) }
             var saved = 0
             for (message in list) {
                 try {
-                    if (saveOne(message, context)) saved++
+                    if (saveOne(message, appContext)) saved++
                 } catch (e: Throwable) {
                     Log.d("SaveSelectedFiles", "failed to save", e)
                 }

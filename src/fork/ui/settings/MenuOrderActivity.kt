@@ -214,7 +214,7 @@ abstract class MenuOrderActivity<I : MenuOrderItem> : SettingsPageActivity() {
         val showActions = false
         // #endif
         val visible = entries.filter {
-            !it.bottom && (it.item.key != "actions" || showActions)
+            !it.bottom && rowVisible(it) && (it.item.key != "actions" || showActions)
         }
         if (reordered.size != visible.size) return
         val byItem = entries.associateBy { it.item }

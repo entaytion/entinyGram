@@ -1,6 +1,6 @@
 package desu.inugram.helpers.security
 
-import android.content.Context
+import desu.inugram.helpers.InuPrefs
 import android.content.Intent
 import android.util.Base64
 import androidx.core.content.edit
@@ -18,7 +18,7 @@ object PasscodeHelper {
     const val PANIC_ACCOUNT = Int.MAX_VALUE
 
     private val prefs by lazy {
-        ApplicationLoader.applicationContext.getSharedPreferences("inugram_passcode", Context.MODE_PRIVATE)
+        InuPrefs.of("inugram_passcode")
     }
 
     @JvmStatic

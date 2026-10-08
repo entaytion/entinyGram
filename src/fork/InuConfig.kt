@@ -253,6 +253,7 @@ object InuConfig {
 
     @JvmField
     val M3_SECTIONS_STYLE = BoolItem("m3_sections_style", false)
+    val M3_ACCENT_ICONS = BoolItem("m3_accent_icons", false)
 
     @JvmField
     val MATERIAL3_AVATARS = BoolItem("material3_avatars", false)
@@ -484,7 +485,7 @@ object InuConfig {
     val DRAWER_KEEP_OPTIONS_MENU = BoolItem("drawer_keep_options_menu", false)
 
     @JvmField
-    val DRAWER_M3_SECTIONS = BoolItem("drawer_m3_sections", false)
+    val DRAWER_M3_SECTIONS = BoolItem("drawer_m3_sections", true)
 
     @JvmField
     val SHOW_DRAWER_ACCOUNTS = BoolItem("show_drawer_accounts", true)
@@ -1314,6 +1315,11 @@ object InuConfig {
 
     @JvmField
     val FORWARD_PRO = BoolItem("forward_pro", false)
+
+    // Forward Pro quick toggles remembered between forwards
+    val FORWARD_PRO_SILENT = BoolItem("forward_pro_silent", false)
+    val FORWARD_PRO_HIDE_CAPTION = BoolItem("forward_pro_hide_caption", false)
+    val FORWARD_PRO_SHOW_SENDER = BoolItem("forward_pro_show_sender", true)
 
     @JvmField
     val BUBBLE_TAILS = BoolItem("bubble_tails", true)

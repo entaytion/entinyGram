@@ -47,8 +47,7 @@
     <string name="InuMenuProfileInfoDesc">Phone, bio, username and other rows in profiles.</string>
     <string name="InuDrawerMenuOrder">Menu items</string>
     <string name="InuDrawerMenuItems">Items</string>
-    <string name="InuDrawerMenuOrderInfo">Tap to hide or show items, hold to reorder. Dividers split the menu into groups.</string>
-    <string name="InuDrawerMenuHidden">Hidden items</string>
+    <string name="InuDrawerMenuOrderInfo">Reorder or hide side menu items. Drag to move, toggle to hide. Dividers split the menu into groups.</string>
     <string name="InuDrawerMenuAddDivider">Add divider</string>
     <string name="InuDrawerMenuReset">Reset menu</string>
     <string name="InuDrawerBots">Mini apps</string>
@@ -173,6 +172,7 @@
     <string name="InuMaterial3Sliders">Sliders</string>
     <string name="InuMaterial3Fabs">Floating buttons</string>
     <string name="InuMaterial3Sections">List items</string>
+    <string name="InuMaterial3AccentIcons">Accent-colored icons</string>
     <string name="InuMaterial3Avatars">Avatars</string>
     <string name="InuMaterial3NavigationAnimation">Navigation animation</string>
     <string name="InuMaterialProfileActions">Profile action buttons</string>

@@ -1860,8 +1860,6 @@
     <string name="InuDeviceSection">设备</string>
     <string name="InuDownloadsAndNetwork">下载与网络</string>
     <string name="InuDrawerBots">小程序</string>
-    <string name="InuDrawerMenuAddDivider">添加分隔线</string>
-    <string name="InuDrawerMenuHidden">已隐藏项目</string>
     <string name="InuDrawerMenuItems">项目</string>
     <string name="InuDrawerMenuOrder">菜单项</string>
     <string name="InuDrawerMenuOrderInfo">点按隐藏或显示项目，长按调整顺序。分隔线会把菜单分成若干组。</string>

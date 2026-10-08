@@ -1740,9 +1740,7 @@
     <string name="InuMenuProfileInfoDesc">Телефон, про себе, юзернейм та інші рядки в профілях.</string>
     <string name="InuDrawerMenuOrder">Пункти меню</string>
     <string name="InuDrawerMenuItems">Пункти</string>
-    <string name="InuDrawerMenuOrderInfo">Натисніть, щоб приховати або показати пункт, утримуйте для зміни порядку. Роздільники ділять меню на групи.</string>
-    <string name="InuDrawerMenuHidden">Приховані пункти</string>
-    <string name="InuDrawerMenuAddDivider">Додати роздільник</string>
+    <string name="InuDrawerMenuOrderInfo">Змінюйте порядок або приховуйте пункти бічного меню. Перетягніть, щоб рухати, перемикач — щоб приховати. Роздільники ділять меню на групи.</string>
     <string name="InuDrawerMenuReset">Скинути меню</string>
     <string name="InuDrawerBots">Міні-застосунки</string>
     <string name="InuMenuDivider">Роздільник</string>

@@ -1,8 +1,11 @@
 package desu.inugram.helpers.dialogs
 
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
+import android.view.Gravity
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import desu.inugram.InuConfig
@@ -16,36 +19,46 @@ object DrawerM3SectionsHelper {
         InuConfig.NAVIGATION_DRAWER.value && InuConfig.DRAWER_M3_SECTIONS.value
 
     private val outerR get() = AndroidUtilities.dp(16f).toFloat()
-    private val innerR get() = AndroidUtilities.dp(4f).toFloat()
 
+    // one rounded card per group, hairline dividers between rows (inset past the icon), no gaps
     fun styleMenuRow(view: View, posInGroup: Int, groupSize: Int) {
         view.setStateListAnimator(null)
         val first = posInGroup == 0
         val last = posInGroup == groupSize - 1
         val radii = when {
             first && last -> FloatArray(8) { outerR }
-            first -> floatArrayOf(outerR, outerR, outerR, outerR, innerR, innerR, innerR, innerR)
-            last -> floatArrayOf(innerR, innerR, innerR, innerR, outerR, outerR, outerR, outerR)
-            else -> FloatArray(8) { innerR }
+            first -> floatArrayOf(outerR, outerR, outerR, outerR, 0f, 0f, 0f, 0f)
+            last -> floatArrayOf(0f, 0f, 0f, 0f, outerR, outerR, outerR, outerR)
+            else -> FloatArray(8)
         }
         val card = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
             setColor(Theme.getColor(Theme.key_windowBackgroundWhite))
             cornerRadii = radii
         }
+        val background: Drawable = if (last) card else LayerDrawable(arrayOf(card, divider())).apply {
+            setLayerGravity(1, Gravity.BOTTOM)
+            setLayerHeight(1, AndroidUtilities.dp(1f))
+            setLayerInsetLeft(1, AndroidUtilities.dp(72f))
+        }
         view.background = RippleDrawable(
             ColorStateList.valueOf(Theme.getColor(Theme.key_listSelector)),
-            card,
+            background,
             card,
         )
         val lp = view.layoutParams as RecyclerView.LayoutParams
         lp.setMargins(
             AndroidUtilities.dp(12f),
-            if (first) AndroidUtilities.dp(4f) else AndroidUtilities.dp(1f),
+            if (first) AndroidUtilities.dp(6f) else 0,
             AndroidUtilities.dp(12f),
-            if (last) AndroidUtilities.dp(4f) else AndroidUtilities.dp(1f),
+            if (last) AndroidUtilities.dp(6f) else 0,
         )
         view.layoutParams = lp
+    }
+
+    private fun divider(): GradientDrawable = GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        setColor(Theme.getColor(Theme.key_divider))
     }
 
     fun resetMenuRow(view: View) {

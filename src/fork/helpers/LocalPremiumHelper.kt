@@ -1,6 +1,5 @@
 package desu.inugram.helpers
 
-import android.content.Context
 import android.content.SharedPreferences
 import desu.inugram.InuConfig
 import org.telegram.messenger.ApplicationLoader
@@ -31,7 +30,7 @@ public object LocalPremiumHelper {
     private val overrides = HashMap<Int, UserOverrides>()
 
     private fun prefs(): SharedPreferences =
-        ApplicationLoader.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        InuPrefs.of(PREFS)
 
     @Synchronized
     private fun cached(accountId: Int): UserOverrides {

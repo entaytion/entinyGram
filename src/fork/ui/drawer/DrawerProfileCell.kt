@@ -2,9 +2,9 @@
 
 package desu.inugram.ui.drawer
 
+import desu.inugram.helpers.InuPrefs
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -225,10 +225,10 @@ class DrawerProfileCell(
                     toDark = !Theme.isCurrentThemeDark()
                     themeInfo = if (toDark) (Theme.getTheme("Monet Dark") ?: Theme.getTheme("Dark Blue")) else (Theme.getTheme("Monet Light") ?: Theme.getTheme("Blue"))
                 }
-                val preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
+                val preferences = InuPrefs.of("themeconfig")
                 preferences.edit().putString(if (toDark) "lastDarkTheme" else "lastDayTheme", themeInfo.key).apply()
             } else {
-                val preferences = ApplicationLoader.applicationContext.getSharedPreferences("themeconfig", Activity.MODE_PRIVATE)
+                val preferences = InuPrefs.of("themeconfig")
                 var dayThemeName = preferences.getString("lastDayTheme", "Blue")!!
                 if (Theme.getTheme(dayThemeName) == null || Theme.getTheme(dayThemeName).isDark || dayThemeName.startsWith("Monet")) {
                     dayThemeName = "Blue"

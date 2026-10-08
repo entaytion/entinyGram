@@ -20,7 +20,6 @@ CLAUDE.local.md
 .local_build_number
 .freebuff/
 desktop.ini
-# not sure if this is needed, but it seems to be
 entinyBot/
 entinyTodo/
 worktree-pluginless/

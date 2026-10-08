@@ -1,6 +1,5 @@
 package desu.inugram.helpers
 
-import android.content.Context
 import androidx.core.content.edit
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
@@ -30,7 +29,7 @@ object LogsHelper {
     fun setEnabled(enabled: Boolean) {
         if (BuildVars.LOGS_ENABLED == enabled) return
         BuildVars.LOGS_ENABLED = enabled
-        ApplicationLoader.applicationContext.getSharedPreferences(SYSTEM_PREFS, Context.MODE_PRIVATE).edit {
+        InuPrefs.of(SYSTEM_PREFS).edit {
             putBoolean(LOGS_ENABLED_KEY, enabled)
         }
         if (enabled) {

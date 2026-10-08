@@ -39,6 +39,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sliders, InuConfig.MATERIAL3_SLIDERS, TOGGLE_MATERIAL3_SLIDERS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Fabs, InuConfig.MATERIAL3_FABS, TOGGLE_MATERIAL3_FABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Sections, InuConfig.M3_SECTIONS_STYLE, TOGGLE_M3_SECTIONS_STYLE),
+                ExpandableBoolGroup.Option(R.string.InuMaterial3AccentIcons, InuConfig.M3_ACCENT_ICONS, TOGGLE_M3_ACCENT_ICONS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3Avatars, InuConfig.MATERIAL3_AVATARS, TOGGLE_MATERIAL3_AVATARS),
                 ExpandableBoolGroup.Option(R.string.InuMaterial3BottomTabs, InuConfig.M3_BOTTOM_TABS, TOGGLE_M3_BOTTOM_TABS),
                 ExpandableBoolGroup.Option(R.string.InuMaterialProfileActions, InuConfig.MATERIAL_PROFILE_ACTIONS, TOGGLE_MATERIAL_PROFILE_ACTIONS),
@@ -212,7 +213,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         if (m3Group.handleClick(item, view) { changed ->
             when (changed?.id) {
                 TOGGLE_MATERIAL3_SWITCHES -> invalidateVisibleRows()
-                TOGGLE_M3_SECTIONS_STYLE -> inu_rebuildSelf()
+                TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS -> inu_rebuildSelf()
                 TOGGLE_M3_BOTTOM_TABS -> {
                     if (InuConfig.M3_BOTTOM_TABS.value && InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value) {
                         InuConfig.IOS_BOTTOM_NAVIGATION_BAR.value = false
@@ -221,7 +222,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                     }
                 }
             }
-            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_BOTTOM_TABS)) {
+            if (changed?.id in setOf(TOGGLE_MATERIAL3_SWITCHES, TOGGLE_MATERIAL3_FABS, TOGGLE_M3_SECTIONS_STYLE, TOGGLE_M3_ACCENT_ICONS, TOGGLE_M3_BOTTOM_TABS)) {
                 softRebuild()
             }
             listView.adapter.update(true)
@@ -347,6 +348,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val TOGGLE_MATERIAL3_SLIDERS = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_FABS = InuUtils.generateId()
         private val TOGGLE_M3_SECTIONS_STYLE = InuUtils.generateId()
+        private val TOGGLE_M3_ACCENT_ICONS = InuUtils.generateId()
         private val TOGGLE_MATERIAL3_AVATARS = InuUtils.generateId()
         private val TOGGLE_M3_BOTTOM_TABS = InuUtils.generateId()
         private val TOGGLE_MATERIAL_PROFILE_ACTIONS = InuUtils.generateId()

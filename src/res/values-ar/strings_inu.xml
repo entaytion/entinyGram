@@ -1880,8 +1880,6 @@
     <string name="InuDeviceSection">الجهاز</string>
     <string name="InuDownloadsAndNetwork">التنزيلات والشبكة</string>
     <string name="InuDrawerBots">التطبيقات المصغّرة</string>
-    <string name="InuDrawerMenuAddDivider">إضافة فاصل</string>
-    <string name="InuDrawerMenuHidden">العناصر المخفية</string>
     <string name="InuDrawerMenuItems">العناصر</string>
     <string name="InuDrawerMenuOrder">عناصر القائمة</string>
     <string name="InuDrawerMenuOrderInfo">اضغط لإخفاء العنصر أو إظهاره، واضغط مطولًا لإعادة الترتيب. تقسّم الفواصل القائمة إلى مجموعات.</string>

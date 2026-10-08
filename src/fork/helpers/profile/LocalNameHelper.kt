@@ -1,6 +1,6 @@
 package desu.inugram.helpers.profile
 
-import android.content.Context
+import desu.inugram.helpers.InuPrefs
 import android.content.Intent
 import android.text.InputType
 import android.util.Log
@@ -69,7 +69,7 @@ object LocalNameHelper {
     private val maps = arrayOfNulls<ConcurrentHashMap<Long, Entry>>(UserConfig.MAX_ACCOUNT_COUNT)
     private var pendingUpdater: ImageUpdater? = null
 
-    private fun prefs() = ApplicationLoader.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private fun prefs() = InuPrefs.of(PREFS)
 
     private fun avatarDir() = File(ApplicationLoader.applicationContext.filesDir, "inu_local_avatars").apply { mkdirs() }
 

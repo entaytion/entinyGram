@@ -1,6 +1,5 @@
 package desu.inugram.helpers
 
-import android.content.Context
 import androidx.collection.LongSparseArray
 import androidx.core.content.edit
 import desu.inugram.InuConfig
@@ -17,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 object NotificationsHelper {
     private val prefs by lazy {
-        ApplicationLoader.applicationContext.getSharedPreferences("inugram_notifications", Context.MODE_PRIVATE)
+        InuPrefs.of("inugram_notifications")
     }
 
     @JvmStatic

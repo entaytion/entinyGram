@@ -1859,8 +1859,6 @@
     <string name="InuDeviceSection">デバイス</string>
     <string name="InuDownloadsAndNetwork">ダウンロードとネットワーク</string>
     <string name="InuDrawerBots">ミニアプリ</string>
-    <string name="InuDrawerMenuAddDivider">区切りを追加</string>
-    <string name="InuDrawerMenuHidden">非表示の項目</string>
     <string name="InuDrawerMenuItems">項目</string>
     <string name="InuDrawerMenuOrder">メニュー項目</string>
     <string name="InuDrawerMenuOrderInfo">タップで項目の表示/非表示、長押しで並べ替えができます。区切りを使うとメニューをグループに分けられます。</string>
