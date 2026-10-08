@@ -1937,4 +1937,13 @@
     <string name="InuMarketplace">Маркетплейс</string>
     <string name="InuMarketplaceDownloadFailed">Не удалось получить плагин: %1$s</string>
     <string name="InuMarketplaceChecksum">файл не совпадает с контрольной суммой</string>
+    <string name="InuMaterial3Player">Плеер музыки</string>
+    <string name="InuMd3PlayerOpen">Открыть плеер</string>
+    <string name="InuMd3PlayerSeek">Позиция воспроизведения</string>
+    <string name="InuMd3PlayerFromProfile">Воспроизведение из профиля</string>
+    <string name="InuMd3PlayerFromSearch">Воспроизведение из поиска</string>
+    <string name="InuMd3PlayerFromChat">Воспроизведение из чата</string>
+    <string name="InuMd3PlayerSpeed">Скорость воспроизведения</string>
+    <string name="InuMd3PlayerQueue">Очередь</string>
+    <string name="InuMd3PlayerClassic">Классический плеер</string>
 </resources>

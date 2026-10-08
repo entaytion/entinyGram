@@ -505,3 +505,4 @@ entiny/premium/premium-badge-dialogs.patch
 entiny/chat/read-time.patch
 entiny/privacy/last-seen.patch
 entiny/privacy/contact-changes.patch
+entiny/ui/md3-player.patch

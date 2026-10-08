@@ -1,0 +1,180 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Thu, 8 Oct 2026 21:59:48 +0300
+Subject: [+] md3 player
+
+---
+ .../org/telegram/messenger/MediaController.java     |  2 ++
+ .../src/main/java/org/telegram/ui/ChatActivity.java |  2 +-
+ .../telegram/ui/Components/FragmentContextView.java | 13 ++++++++-----
+ .../main/java/org/telegram/ui/DialogsActivity.java  |  8 ++++----
+ .../main/java/org/telegram/ui/LaunchActivity.java   |  2 +-
+ .../main/java/org/telegram/ui/MainTabsActivity.java |  2 ++
+ .../main/java/org/telegram/ui/ProfileActivity.java  |  2 +-
+ 7 files changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MediaController.java
+@@ -4039,6 +4039,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
+                         if (Math.abs(currentMusicPlaybackSpeed - 1.0f) > 0.001f) {
+                             audioPlayer.setPlaybackSpeed(Math.round(currentMusicPlaybackSpeed * 10f) / 10f);
+                         }
++                    } else if (desu.inugram.helpers.player.Md3PlayerHelper.enabled() && Math.abs(currentMusicPlaybackSpeed - 1.0f) > 0.001f) {
++                        audioPlayer.setPlaybackSpeed(Math.round(currentMusicPlaybackSpeed * 10f) / 10f);
+                     }
+                 }
+                 if (messageObject.forceSeekTo >= 0) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -37869,7 +37869,7 @@ public class ChatActivity extends BaseFragment implements
+                     cell.resetPressedLink(-1);
+                 }
+                 if (!messageObject.isVoice()) {
+-                    showDialog(new AudioPlayerAlert(getContext(), themeDelegate));
++                    showDialog(desu.inugram.helpers.player.Md3PlayerHelper.create(getContext(), themeDelegate));
+                 }
+             } else if (str.startsWith("card:")) {
+                 didLongPressCard(cell, url, str.substring(5));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/FragmentContextView.java
+@@ -768,9 +768,9 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+                     if (messageObject.isMusic()) {
+                         final Activity activity = AndroidUtilities.findActivity(getContext());
+                         if (activity instanceof LaunchActivity) {
+-                            new AudioPlayerAlert(activity, resourcesProvider).show();
++                            desu.inugram.helpers.player.Md3PlayerHelper.create(activity, resourcesProvider).show();
+                         } else if (AndroidUtilities.isContextSafe(LaunchActivity.instance)) {
+-                            new AudioPlayerAlert(LaunchActivity.instance, resourcesProvider).show();
++                            desu.inugram.helpers.player.Md3PlayerHelper.create(LaunchActivity.instance, resourcesProvider).show();
+                         }
+                     } else {
+                         long dialogId = 0;
+@@ -1177,6 +1177,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+             }
+         }
+         currentStyle = style;
++        desu.inugram.helpers.player.Md3PlayerHelper.onStyle(this, style == STYLE_AUDIO_PLAYER);
+         frameLayout.setWillNotDraw(currentStyle != STYLE_INACTIVE_GROUP_CALL);
+         if (style != STYLE_INACTIVE_GROUP_CALL) {
+             notifyButtonEnabled = false;
+@@ -1613,6 +1614,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+     float micAmplitude;
+ 
+     public int getStyleHeight() {
++        if (desu.inugram.helpers.player.Md3PlayerHelper.isBarActive(this)) return desu.inugram.helpers.player.Md3PlayerHelper.BAR_HEIGHT_DP;
+         return currentStyle == STYLE_INACTIVE_GROUP_CALL ? 48 : 36;
+     }
+ 
+@@ -1835,7 +1837,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+             }
+         }
+         boolean wasVisible = visible;
+-        if (messageObject == null || messageObject.getId() == 0 || messageObject.isVideo()) {
++        if (messageObject == null || messageObject.getId() == 0 || messageObject.isVideo() || desu.inugram.helpers.player.Md3PlayerHelper.hidesContextPlayer(fragment, messageObject)) {
+             lastMessageObject = null;
+             boolean callAvailable = supportsCalls && VoIPService.getSharedInstance() != null && !VoIPService.getSharedInstance().isHangingUp() && VoIPService.getSharedInstance().getCallState() != VoIPService.STATE_WAITING_INCOMING && !GroupCallPip.isShowing();
+             if (!isPlayingVoice() && !callAvailable && chatActivity != null && !GroupCallPip.isShowing()) {
+@@ -1906,7 +1908,8 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+                 return;
+             }
+             int prevStyle = currentStyle;
+-            updateStyle(STYLE_AUDIO_PLAYER);
++            updateStyle(STYLE_AUDIO_PLAYER, desu.inugram.helpers.player.Md3PlayerHelper.barChanged(this));
++            desu.inugram.helpers.player.Md3PlayerHelper.syncBar(this);
+             if (create && topPadding == 0) {
+                 setTopPadding(AndroidUtilities.dp2(getStyleHeight()));
+                 if (delegate != null) {
+@@ -2664,7 +2667,7 @@ public class FragmentContextView extends FrameLayout implements NotificationCent
+         }
+         super.dispatchDraw(canvas);
+ 
+-        if (currentStyle == STYLE_AUDIO_PLAYER) {
++        if (currentStyle == STYLE_AUDIO_PLAYER && !desu.inugram.helpers.player.Md3PlayerHelper.isBarActive(this)) {
+             MessageObject playingMessageObject = MediaController.getInstance().getPlayingMessageObject();
+             if (playingMessageObject != null) {
+                 final float left = -dpf2(1);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -9145,8 +9145,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+     }
+ 
+-    private void updateFloatingButtonOffset() {
+-        final float top = -navigationBarHeight - additionFloatingButtonOffset - additionalFloatingTranslation;
++    public void updateFloatingButtonOffset() {
++        final float top = -navigationBarHeight - additionFloatingButtonOffset - Math.max(additionalFloatingTranslation, desu.inugram.helpers.player.Md3PlayerHelper.miniFabInset(this));
+         final float baseTranslationY = top
+             - floatingButtonPanOffset;
+ 
+@@ -14584,7 +14584,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         } else if (communityId != 0) {
+             return navigationBarHeight + dp(12 + 48 + 12);
+         } else {
+-            int bottom = navigationBarHeight + additionNavigationBarHeight;
++            int bottom = navigationBarHeight + additionNavigationBarHeight + desu.inugram.helpers.player.Md3PlayerHelper.miniListPadding(this);
+             if (filterTabsView != null && FolderHelper.atBottom()) {
+                 bottom += dp(FolderHelper.bottomReservedHeightDp());
+             }
+@@ -14650,7 +14650,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         }
+     }
+ 
+-    private void checkUi_chatListViewPaddingsBottom() {
++    public void checkUi_chatListViewPaddingsBottom() {
+         if (viewPages != null) {
+             final int listPaddingBottom = calculateListViewPaddingBottom();
+             for (int i = 0; i < viewPages.length; i++) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
+@@ -3127,7 +3127,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+             } else if (showPlayer) {
+                 if (!actionBarLayout.getFragmentStack().isEmpty()) {
+                     BaseFragment fragment = actionBarLayout.getFragmentStack().get(0);
+-                    fragment.showDialog(new AudioPlayerAlert(this, null));
++                    fragment.showDialog(desu.inugram.helpers.player.Md3PlayerHelper.create(this, null));
+                 }
+                 pushOpened = false;
+             } else if (showLocations) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MainTabsActivity.java
+@@ -471,6 +471,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+         fadeView.setBackground(fadeDrawable);
+ 
+         contentView.addView(fadeView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 0, Gravity.BOTTOM));
++        desu.inugram.helpers.player.Md3PlayerHelper.attachMini(this, contentView);
+ 
+         tabsViewWrapper = new FrameLayout(context) {
+             @Override
+@@ -1184,6 +1185,7 @@ public class MainTabsActivity extends ViewPagerActivity implements NotificationC
+     }
+ 
+     private void checkUi_fadeView() {
++        if (viewPager != null && updateLayoutWrapper != null) desu.inugram.helpers.player.Md3PlayerHelper.layoutMini(this, navigationBarHeight, updateLayoutWrapper.isUpdateLayoutVisible(), animatorTabsVisible.getFloatValue(), viewPager.getPositionAnimated());
+         if (viewPager == null || fadeView == null || MainTabsHelper.isHidden()) {
+             return;
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -3911,7 +3911,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                             MediaController.getInstance().playMessage(savedMusicList.list.get(0));
+                         }
+                     }
+-                    showDialog(new AudioPlayerAlert(getContext(), getResourceProvider()));
++                    showDialog(desu.inugram.helpers.player.Md3PlayerHelper.create(getContext(), getResourceProvider()));
+                 }
+             });
+ 

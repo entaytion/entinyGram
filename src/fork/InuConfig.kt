@@ -271,6 +271,9 @@ object InuConfig {
     val M3_NAVIGATION_ANIMATION = BoolItem("m3_navigation_animation", false)
 
     @JvmField
+    val MD3_PLAYER = BoolItem("md3_player", false)
+
+    @JvmField
     val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
 
     @JvmField
