@@ -202,6 +202,13 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             ).setChecked(InuConfig.COMPACT_EDITED.value)
         )
         items.add(
+            UItem.asButton(
+                BUTTON_EDITED_MESSAGE_DATE_MODE,
+                LocaleController.getString(R.string.InuEditedMessageDateMode),
+                editedMessageDateModeLabel(InuConfig.EDITED_MESSAGE_DATE_MODE.value),
+            )
+        )
+        items.add(
             UItem.asCheck(
                 TOGGLE_BUBBLE_TAILS,
                 LocaleController.getString(R.string.InuBubbleTails),
@@ -331,6 +338,21 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 val new = InuConfig.COMPACT_EDITED.toggle()
                 (view as? TextCheckCell)?.isChecked = new
                 miscPreview?.invalidate()
+            }
+
+            BUTTON_EDITED_MESSAGE_DATE_MODE -> RadioItemOptions.show(
+                this, view,
+                listOf(
+                    LocaleController.getString(R.string.InuEditedMessageDateModeTelegram),
+                    LocaleController.getString(R.string.InuEditedMessageDateModeEdit),
+                    LocaleController.getString(R.string.InuEditedMessageDateModeSend),
+                ),
+                InuConfig.EDITED_MESSAGE_DATE_MODE.value,
+            ) { which ->
+                if (InuConfig.EDITED_MESSAGE_DATE_MODE.value == which) return@show
+                InuConfig.EDITED_MESSAGE_DATE_MODE.value = which
+                miscPreview?.invalidate()
+                listView.adapter.update(false)
             }
 
             TOGGLE_BUBBLE_TAILS -> {
@@ -492,6 +514,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
         private val BUTTON_FORWARD_HEADER_MODE = InuUtils.generateId()
         private val TOGGLE_SHOW_FORWARDS_COUNT = InuUtils.generateId()
         private val TOGGLE_COMPACT_EDITED = InuUtils.generateId()
+        private val BUTTON_EDITED_MESSAGE_DATE_MODE = InuUtils.generateId()
         private val TOGGLE_BUBBLE_TAILS = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_INCOMING = InuUtils.generateId()
         private val BUTTON_DOUBLE_TAP_OUTGOING = InuUtils.generateId()
@@ -521,6 +544,12 @@ class MessagesSettingsActivity : SettingsPageActivity() {
             else -> LocaleController.getString(R.string.InuForwardHeaderModeRegular)
         }
 
+        private fun editedMessageDateModeLabel(value: Int): String = when (value) {
+            InuConfig.EditedMessageDateModeItem.EDIT_DATE -> LocaleController.getString(R.string.InuEditedMessageDateModeEdit)
+            InuConfig.EditedMessageDateModeItem.SEND_DATE -> LocaleController.getString(R.string.InuEditedMessageDateModeSend)
+            else -> LocaleController.getString(R.string.InuEditedMessageDateModeTelegram)
+        }
+
         private fun blockedMessagesModeLabel(value: Int): String = when (value) {
             InuConfig.BlockedMessagesModeItem.SPOILER -> LocaleController.getString(R.string.InuBlockedMessagesModeSpoiler)
             InuConfig.BlockedMessagesModeItem.HIDE -> LocaleController.getString(R.string.InuBlockedMessagesModeHide)
@@ -547,6 +576,7 @@ class MessagesSettingsActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("compact-forwarded", R.string.InuForwardHeaderMode, BUTTON_FORWARD_HEADER_MODE),
                 SearchRegistry.Entry("show-forwards-count", R.string.InuShowForwardsCount, TOGGLE_SHOW_FORWARDS_COUNT),
                 SearchRegistry.Entry("compact-edited", R.string.InuCompactEdited, TOGGLE_COMPACT_EDITED),
+                SearchRegistry.Entry("edited-message-date", R.string.InuEditedMessageDateMode, BUTTON_EDITED_MESSAGE_DATE_MODE),
                 SearchRegistry.Entry("bubble-tails", R.string.InuBubbleTails, TOGGLE_BUBBLE_TAILS),
                 SearchRegistry.Entry("double-tap-incoming", R.string.InuIncomingMessages, BUTTON_DOUBLE_TAP_INCOMING),
                 SearchRegistry.Entry("double-tap-outgoing", R.string.InuOutgoingMessages, BUTTON_DOUBLE_TAP_OUTGOING),

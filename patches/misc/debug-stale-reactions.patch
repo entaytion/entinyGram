@@ -100,7 +100,7 @@ index 0000000..0000000 100644
                              currentDialog.unread_reactions_count = value.unread_reactions_count;
                              getNotificationCenter().postNotificationName(NotificationCenter.dialogsUnreadReactionsCounterChanged, currentDialog.id, 0L, currentDialog.unread_reactions_count, null);
                          }
-@@ -19544,6 +19553,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19572,6 +19581,9 @@ public class MessagesController extends BaseController implements NotificationCe
                  boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
                  MessageObject obj = new MessageObject(currentAccount, message, usersDict, chatsDict, isDialogCreated, isDialogCreated);
                  getTranslateController().invalidateTranslation(obj);
@@ -110,7 +110,7 @@ index 0000000..0000000 100644
  
                  LongSparseArray<ArrayList<MessageObject>> array;
                  if (editingMessages == null) {
-@@ -19608,6 +19620,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -19636,6 +19648,9 @@ public class MessagesController extends BaseController implements NotificationCe
              } else if (baseUpdate instanceof TL_update.TL_updateMessageReactions) {
                  TL_update.TL_updateMessageReactions update = (TL_update.TL_updateMessageReactions) baseUpdate;
                  long dialogId = MessageObject.getPeerId(update.peer);
@@ -120,7 +120,7 @@ index 0000000..0000000 100644
  
                  getMessagesStorage().updateMessageReactions(dialogId, update.msg_id, update.reactions);
  
-@@ -20634,6 +20649,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -20662,6 +20677,9 @@ public class MessagesController extends BaseController implements NotificationCe
                              final StarsController starsController = StarsController.getInstance(currentAccount);
                              MessageObject.addPaidReactions(currentAccount, update.reactions, (int) pendingPaid, starsController.getPaidReactionsDialogId(StarsController.MessageId.from(dialogId, update.msg_id), update.reactions), true);
                          }
@@ -130,7 +130,7 @@ index 0000000..0000000 100644
                          getNotificationCenter().postNotificationName(NotificationCenter.didUpdateReactions, dialogId, update.msg_id, update.reactions);
                      } else if (baseUpdate instanceof TL_update.TL_updateMessageExtendedMedia) {
                          TL_update.TL_updateMessageExtendedMedia extendedMedia = (TL_update.TL_updateMessageExtendedMedia) baseUpdate;
-@@ -21318,6 +21336,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21346,6 +21364,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      private void checkUnreadReactionsInternal(long dialogId, long topicId, SparseBooleanArray unreadReactions, boolean isReactions) {
@@ -140,7 +140,7 @@ index 0000000..0000000 100644
          final String tableMentionsForDialogs = isReactions ? "reaction_mentions" : "poll_votes_mentions";
          final String tableMentionsForTopics = isReactions ? "reaction_mentions_topics" : "poll_votes_mentions_topics";
          final boolean isVotes = !isReactions;
-@@ -21392,6 +21413,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21420,6 +21441,9 @@ public class MessagesController extends BaseController implements NotificationCe
                      e.printStackTrace();
                  }
              }
@@ -150,7 +150,7 @@ index 0000000..0000000 100644
              if (isReactions) {
                  checkUnreadReactionsInternal2(dialogId, topicId, needReload, changed, newUnreadCount, newUnreadMessages);
              }
-@@ -21408,16 +21432,25 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21436,16 +21460,25 @@ public class MessagesController extends BaseController implements NotificationCe
                  TLRPC.TL_inputDialogPeer inputDialogPeer = new TLRPC.TL_inputDialogPeer();
                  inputDialogPeer.peer = getInputPeer(dialogId);
                  req.peers.add(inputDialogPeer);
@@ -176,7 +176,7 @@ index 0000000..0000000 100644
                              dialog.unread_reactions_count = count;
                              getMessagesStorage().updateUnreadReactionsCount(dialogId, topicId, count);
                              getNotificationCenter().postNotificationName(NotificationCenter.dialogsUnreadReactionsCounterChanged, dialogId, topicId, count, newUnreadMessages);
-@@ -21464,6 +21497,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21492,6 +21525,9 @@ public class MessagesController extends BaseController implements NotificationCe
                          getMessagesStorage().updateDialogUnreadReactions(dialogId, 0, finalNewUnreadCount, true);
                          return;
                      }
@@ -186,7 +186,7 @@ index 0000000..0000000 100644
                      dialog.unread_reactions_count += finalNewUnreadCount;
                      if (dialog.unread_reactions_count < 0) {
                          dialog.unread_reactions_count = 0;
-@@ -21604,6 +21640,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -21632,6 +21668,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markReactionsAsRead(long dialogId, long topicId) {

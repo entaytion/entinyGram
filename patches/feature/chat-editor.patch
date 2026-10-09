@@ -4,12 +4,12 @@ Date: Wed, 29 Apr 2026 01:08:23 +0300
 Subject: chat editor improvements: - make it available for everyone (as a read-only view) - split media restrictions for stickers/gifs/games/inline
 
 ---
- .../org/telegram/ui/ChatEditActivity.java     | 38 ++++++--
- .../telegram/ui/ChatRightsEditActivity.java   |  4 +-
+ .../org/telegram/ui/ChatEditActivity.java     | 40 +++++++--
+ .../telegram/ui/ChatRightsEditActivity.java   | 49 ++++++++--
  .../org/telegram/ui/ChatUsersActivity.java    | 90 ++++++++++++++-----
  .../ui/Components/SlideChooseView.java        |  3 +
  .../java/org/telegram/ui/ProfileActivity.java |  2 +-
- 5 files changed, 106 insertions(+), 31 deletions(-)
+ 5 files changed, 148 insertions(+), 36 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatEditActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatEditActivity.java
 index 0000000..0000000 100644
@@ -77,6 +77,15 @@ index 0000000..0000000 100644
      private void processDone() {
          if (donePressed || nameTextView == null) {
              return;
+@@ -2407,7 +2429,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
+                         blockCell.setTextAndValueAndIcon(getString(R.string.ChannelBlacklist), String.format("%d", Math.max(info.banned_count, info.kicked_count)), R.drawable.msg_user_remove, logCell != null && logCell.getVisibility() == View.VISIBLE);
+                     } else {
+                         int count = 0;
+-                        int totalCount = forum ? 16 : 15;
++                        int totalCount = forum ? 19 : 18;
+                         if (currentChat.default_banned_rights != null) {
+                             if (!currentChat.default_banned_rights.send_plain) {
+                                 count++;
 @@ -2437,7 +2459,11 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
                          memberRequestsCell.setTextAndValueAndIcon(getString("MemberRequests", R.string.MemberRequests), String.format("%d", info.requests_pending), R.drawable.msg_requests, logCell != null && logCell.getVisibility() == View.VISIBLE);
                      }
@@ -103,7 +112,17 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatRightsEditActivity.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatRightsEditActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatRightsEditActivity.java
-@@ -653,7 +653,7 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+@@ -173,6 +173,9 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+     private int sendVoiceRow;
+     private int sendRoundRow;
+     private int sendStickersRow;
++    private int inu_sendGifsRow;
++    private int inu_sendGamesRow;
++    private int inu_sendInlineRow;
+     private int sendPollsRow;
+     private int embedLinksRow;
+     private int startVoiceChatRow;
+@@ -653,7 +656,7 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
          });
  
          listView.setOnItemClickListener((view, position) -> {
@@ -112,7 +131,52 @@ index 0000000..0000000 100644
                  return;
              }
              if (position == sendMediaRow) {
-@@ -1864,7 +1864,7 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+@@ -921,7 +924,13 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+                     } else if (position == sendVoiceRow) {
+                         value = bannedRights.send_voices = !bannedRights.send_voices;
+                     } else if (position == sendStickersRow) {
+-                        value = bannedRights.send_stickers = bannedRights.send_games = bannedRights.send_gifs = bannedRights.send_inline = !bannedRights.send_stickers;
++                        value = bannedRights.send_stickers = !bannedRights.send_stickers;
++                    } else if (position == inu_sendGifsRow) {
++                        value = bannedRights.send_gifs = !bannedRights.send_gifs;
++                    } else if (position == inu_sendGamesRow) {
++                        value = bannedRights.send_games = !bannedRights.send_games;
++                    } else if (position == inu_sendInlineRow) {
++                        value = bannedRights.send_inline = !bannedRights.send_inline;
+                     } else if (position == embedLinksRow) {
+                         if (bannedRights.send_plain || defaultBannedRights.send_plain) {
+                             View senMessagesView = linearLayoutManager.findViewByPosition(sendMessagesRow);
+@@ -1369,6 +1378,9 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+         sendVoiceRow = -1;
+         sendRoundRow = -1;
+         sendStickersRow = -1;
++        inu_sendGifsRow = -1;
++        inu_sendGamesRow = -1;
++        inu_sendInlineRow = -1;
+         sendPollsRow = -1;
+         embedLinksRow = -1;
+         startVoiceChatRow = -1;
+@@ -1455,6 +1467,9 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+                 sendVoiceRow = rowCount++;
+                 sendRoundRow = rowCount++;
+                 sendStickersRow = rowCount++;
++                inu_sendGifsRow = rowCount++;
++                inu_sendGamesRow = rowCount++;
++                inu_sendInlineRow = rowCount++;
+                 sendPollsRow = rowCount++;
+                 embedLinksRow = rowCount++;
+                 sendReactionsRow = rowCount++;
+@@ -1851,6 +1866,9 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+                 if (position == guardBotInfoRow) return 48;
+                 if (position == manageLinkedPeersRow) return 49;
+                 if (position == manageWelcomeRow) return 50;
++                if (position == inu_sendGifsRow) return 51;
++                if (position == inu_sendGamesRow) return 52;
++                if (position == inu_sendInlineRow) return 53;
+                 return 0;
+             } else {
+                 return super.getItemId(position);
+@@ -1864,7 +1882,7 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
                  return true;
              }
              if (!canEdit) {
@@ -121,6 +185,66 @@ index 0000000..0000000 100644
              }
              if ((currentType == TYPE_ADMIN || currentType == TYPE_ADD_BOT) && type == VIEW_TYPE_SWITCH_CELL) {
                  int position = holder.getAdapterPosition();
+@@ -2028,8 +2046,17 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+                     boolean animated = checkBoxCell.getTag() != null && (Integer) checkBoxCell.getTag() == position;
+                     checkBoxCell.setTag(position);
+                     if (position == sendStickersRow) {
+-                        checkBoxCell.setText(LocaleController.getString(R.string.SendMediaPermissionStickersGifs), "", !bannedRights.send_stickers && !defaultBannedRights.send_stickers, true, animated);
++                        checkBoxCell.setText(LocaleController.getString(R.string.InuSendStickers), "", !bannedRights.send_stickers && !defaultBannedRights.send_stickers, true, animated);
+                         checkBoxCell.setIcon(defaultBannedRights.send_stickers ? R.drawable.permission_locked : 0);
++                    } else if (position == inu_sendGifsRow) {
++                        checkBoxCell.setText(LocaleController.getString(R.string.InuSendGifs), "", !bannedRights.send_gifs && !defaultBannedRights.send_gifs, true, animated);
++                        checkBoxCell.setIcon(defaultBannedRights.send_gifs ? R.drawable.permission_locked : 0);
++                    } else if (position == inu_sendGamesRow) {
++                        checkBoxCell.setText(LocaleController.getString(R.string.InuSendGames), "", !bannedRights.send_games && !defaultBannedRights.send_games, true, animated);
++                        checkBoxCell.setIcon(defaultBannedRights.send_games ? R.drawable.permission_locked : 0);
++                    } else if (position == inu_sendInlineRow) {
++                        checkBoxCell.setText(LocaleController.getString(R.string.InuSendInline), "", !bannedRights.send_inline && !defaultBannedRights.send_inline, true, animated);
++                        checkBoxCell.setIcon(defaultBannedRights.send_inline ? R.drawable.permission_locked : 0);
+                     } else if (position == embedLinksRow) {
+                         checkBoxCell.setText(LocaleController.getString(R.string.UserRestrictionsEmbedLinks), "", !bannedRights.embed_links && !defaultBannedRights.embed_links && !bannedRights.send_plain && !defaultBannedRights.send_plain, true, animated);
+                         checkBoxCell.setIcon(defaultBannedRights.embed_links ? R.drawable.permission_locked : 0);
+@@ -2141,7 +2168,7 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+                     if (position == sendMediaRow) {
+                         int sentMediaCount = getSendMediaSelectedCount();
+                         checkCell.setTextAndCheck(LocaleController.getString(R.string.UserRestrictionsSendMedia), sentMediaCount > 0, true, true);
+-                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/10", sentMediaCount), !sendMediaExpanded, () -> {
++                        checkCell.setCollapseArrow(String.format(Locale.US, "%d/13", sentMediaCount), !sendMediaExpanded, () -> {
+                             if (!checkCell.isEnabled()) return;
+                             if (allDefaultMediaBanned()) {
+                                 new AlertDialog.Builder(getParentActivity())
+@@ -2441,6 +2468,15 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+         if (!bannedRights.send_stickers && !defaultBannedRights.send_stickers) {
+             i++;
+         }
++        if (!bannedRights.send_gifs && !defaultBannedRights.send_gifs) {
++            i++;
++        }
++        if (!bannedRights.send_games && !defaultBannedRights.send_games) {
++            i++;
++        }
++        if (!bannedRights.send_inline && !defaultBannedRights.send_inline) {
++            i++;
++        }
+         if (!bannedRights.send_audios && !defaultBannedRights.send_audios) {
+             i++;
+         }
+@@ -2509,13 +2545,14 @@ public class ChatRightsEditActivity extends BaseFragment implements Notification
+ 
+     private boolean allDefaultMediaBanned() {
+         return defaultBannedRights.send_photos && defaultBannedRights.send_videos && defaultBannedRights.send_stickers
++            && defaultBannedRights.send_gifs && defaultBannedRights.send_games && defaultBannedRights.send_inline
+             && defaultBannedRights.send_audios && defaultBannedRights.send_docs && defaultBannedRights.send_voices
+             && defaultBannedRights.send_roundvideos && defaultBannedRights.embed_links && defaultBannedRights.send_polls
+             && defaultBannedRights.send_reactions;
+     }
+ 
+     private boolean isExpandableSendMediaRow(int position) {
+-        if (position == sendStickersRow || position == embedLinksRow || position == sendPollsRow ||
++        if (position == sendStickersRow || position == inu_sendGifsRow || position == inu_sendGamesRow || position == inu_sendInlineRow || position == embedLinksRow || position == sendPollsRow ||
+             position == sendPhotosRow || position == sendVideosRow || position == sendFilesRow ||
+             position == sendMusicRow || position == sendRoundRow || position == sendVoiceRow || position == sendReactionsRow ||
+             position == channelPostMessagesRow || position == channelEditMessagesRow || position == channelDeleteMessagesRow ||
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatUsersActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatUsersActivity.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatUsersActivity.java

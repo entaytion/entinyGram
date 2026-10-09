@@ -26,6 +26,22 @@ class PrivacySecurityActivity : SettingsPageActivity() {
 
     private var sourceRow: TextDetailSettingsCell? = null
 
+    private val requireConfirmationGroup = ExpandableBoolGroup(
+        LocaleController.getString(R.string.InuBiometricExplicitConfirmation),
+        listOf(
+            ExpandableBoolGroup.Option(
+                R.string.InuBiometricRequireConfirmationPasscode,
+                InuConfig.BIOMETRIC_REQUIRE_CONFIRMATION_PASSCODE
+            ),
+            ExpandableBoolGroup.Option(R.string.InuBiometricRequireConfirmationBots, InuConfig.BIOMETRIC_REQUIRE_CONFIRMATION_BOTS),
+            ExpandableBoolGroup.Option(
+                R.string.InuBiometricRequireConfirmationActions,
+                InuConfig.BIOMETRIC_REQUIRE_CONFIRMATION_ACTIONS
+            ),
+        ),
+        sectionId = SECTION_BIOMETRIC_REQUIRE_CONFIRMATION,
+    )
+
     override fun onResume() {
         super.onResume()
         listView?.adapter?.update(true)
@@ -111,11 +127,17 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                     InuConfig.BIOMETRIC_ALLOW_DEVICE_CREDENTIAL.value
                 )
             )
-            items.add(UItem.asShadow(null))
+            if (BiometricHelper.hasPassiveBiometricSensor()) {
+                requireConfirmationGroup.addTo(items) { listView.adapter.update(true) }
+                items.add(UItem.asShadow(LocaleController.getString(R.string.InuBiometricExplicitConfirmationInfo)))
+            } else {
+                items.add(UItem.asShadow(null))
+            }
         }
     }
 
     override fun onClick(item: UItem, view: View, position: Int, x: Float, y: Float) {
+        if (requireConfirmationGroup.handleClick(item, view) { listView.adapter.update(true) }) return
         when (item.id) {
             BUTTON_PASSCODE -> presentFragment(PasscodeSettingsActivity())
             BUTTON_PARANOIA -> presentFragment(ParanoiaActivity())
@@ -235,6 +257,7 @@ class PrivacySecurityActivity : SettingsPageActivity() {
         private val TOGGLE_BIOMETRIC_DELETE_CHAT = InuUtils.generateId()
         private val TOGGLE_BIOMETRIC_LOGOUT = InuUtils.generateId()
         private val TOGGLE_BIOMETRIC_DEVICE_CREDENTIAL = InuUtils.generateId()
+        private val SECTION_BIOMETRIC_REQUIRE_CONFIRMATION = InuUtils.generateId()
 
         @JvmField val PAGE = SearchRegistry.Page(
             slug = "privacy-security",
@@ -249,7 +272,9 @@ class PrivacySecurityActivity : SettingsPageActivity() {
                 SearchRegistry.Entry("biometric-confirm-delete-chat", R.string.InuBiometricConfirmDeleteChat, TOGGLE_BIOMETRIC_DELETE_CHAT),
                 SearchRegistry.Entry("biometric-confirm-logout", R.string.InuBiometricConfirmLogout, TOGGLE_BIOMETRIC_LOGOUT),
                 SearchRegistry.Entry("biometric-allow-device-credential", R.string.InuBiometricAllowDeviceCredential, TOGGLE_BIOMETRIC_DEVICE_CREDENTIAL),
-            ),
+            ) + if (BiometricHelper.isSupported() && BiometricHelper.hasPassiveBiometricSensor()) listOf(
+                SearchRegistry.Entry("biometric-require-confirmation", R.string.InuBiometricExplicitConfirmation, SECTION_BIOMETRIC_REQUIRE_CONFIRMATION),
+            ) else emptyList(),
         )
     }
 }

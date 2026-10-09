@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 8 Oct 2026 06:30:13 +0300
+Subject: correctly update server-detected links in sent messages
+
+---
+ .../src/main/java/org/telegram/ui/ChatActivity.java | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -22744,7 +22744,18 @@ public class ChatActivity extends BaseFragment implements
+                 messagesDict[0].put(newMsgId, obj);
+                 obj.messageOwner.id = newMsgId;
+                 obj.messageOwner.send_state = MessageObject.MESSAGE_SEND_STATE_SENT;
+-                obj.forceUpdate = mediaUpdated || inu_fwdBecameHidden;
++                boolean inu_textUpdated = false;
++                if (newMsgObj != null && !TextUtils.isEmpty(newMsgObj.message)) {
++                    if (obj.type == MessageObject.TYPE_TEXT || obj.type == MessageObject.TYPE_EMOJIS) {
++                        obj.applyNewText();
++                        inu_textUpdated = true;
++                    } else if (obj.caption != null) {
++                        obj.caption = null;
++                        obj.generateCaption();
++                        inu_textUpdated = true;
++                    }
++                }
++                obj.forceUpdate = mediaUpdated || inu_fwdBecameHidden || inu_textUpdated;
+                 addReplyMessageOwner(obj, msgId);
+                 if (args.length >= 6) {
+                     obj.applyMediaExistanceFlags((Integer) args[5]);

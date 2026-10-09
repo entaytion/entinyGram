@@ -4,10 +4,24 @@ Date: Wed, 26 Aug 2026 07:22:06 +0400
 Subject: use low-latency audio stack to avoid crackling artifacts when changing video speed
 
 ---
+ .../messenger/video/VideoPlayerRewinder.java  |  2 -
  .../telegram/ui/Components/VideoPlayer.java   | 68 +++++++++++++++----
  .../java/org/telegram/ui/PhotoViewer.java     |  1 +
- 2 files changed, 56 insertions(+), 13 deletions(-)
+ 3 files changed, 56 insertions(+), 15 deletions(-)
 
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoPlayerRewinder.java b/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoPlayerRewinder.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoPlayerRewinder.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/video/VideoPlayerRewinder.java
+@@ -222,8 +222,6 @@ public class VideoPlayerRewinder {
+                 } else {
+                     seekTo(rewindBackSeekPlayerPosition, false);
+                 }
+-            } else {
+-                seekTo(getCurrentPosition(), false);
+             }
+             setPlaybackSpeed(playSpeed);
+         }
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/VideoPlayer.java

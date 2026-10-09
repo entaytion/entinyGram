@@ -149,7 +149,8 @@ object ChatActionsHelper {
                 LocaleController.getString(R.string.Statistics),
             )
         }
-        if (activity.currentChat != null) {
+        val chat = activity.currentChat
+        if (chat != null && (!chat.broadcast || ChatObject.hasAdminRights(chat))) {
             headerItem.lazilyAddSubItem(
                 ACTION_ADMINISTRATORS, R.drawable.msg_admins,
                 LocaleController.getString(R.string.ChannelAdministrators),

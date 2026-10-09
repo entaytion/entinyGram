@@ -674,6 +674,9 @@ object InuConfig {
     val SIMPLE_ATTACH_POPUP_ANIMATION = BoolItem("simple_attach_popup_animation", false)
 
     @JvmField
+    val OPTIMIZED_ATTACHMENT_MENU = BoolItem("optimized_attachment_menu", true)
+
+    @JvmField
     val CHAT_VOICE_IN_ATTACH = BoolItem("chat_voice_in_attach", false)
 
     @JvmField
@@ -733,6 +736,17 @@ object InuConfig {
 
     @JvmField
     val COMPACT_EDITED = BoolItem("compact_edited", false)
+
+    class EditedMessageDateModeItem : IntItem("edited_message_date_mode", TELEGRAM) {
+        companion object {
+            const val TELEGRAM = 0
+            const val EDIT_DATE = 1
+            const val SEND_DATE = 2
+        }
+    }
+
+    @JvmField
+    val EDITED_MESSAGE_DATE_MODE = EditedMessageDateModeItem()
 
     @JvmField
     val SHOW_FORWARDS_COUNT = BoolItem("show_forwards_count", false)
@@ -943,6 +957,15 @@ object InuConfig {
 
     @JvmField
     val BIOMETRIC_CONFIRM_LOGOUT = BoolItem("biometric_confirm_logout", false)
+
+    @JvmField
+    val BIOMETRIC_REQUIRE_CONFIRMATION_PASSCODE = BoolItem("biometric_require_confirmation_passcode", true)
+
+    @JvmField
+    val BIOMETRIC_REQUIRE_CONFIRMATION_BOTS = BoolItem("biometric_require_confirmation_bots", true)
+
+    @JvmField
+    val BIOMETRIC_REQUIRE_CONFIRMATION_ACTIONS = BoolItem("biometric_require_confirmation_actions", false)
 
     @JvmField
     val BIOMETRIC_ALLOW_DEVICE_CREDENTIAL = BoolItem("biometric_allow_device_credential", false)

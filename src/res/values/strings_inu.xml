@@ -396,6 +396,9 @@
     <string name="InuChatVoiceInAttach">Recorder in attachments</string>
     <string name="InuChatVoiceInAttachInfo">Moves the voice/video record button from the input bar into the attachment sheet</string>
 
+    <string name="InuOptimizedAttachmentMenu">Optimized attachment menu</string>
+    <string name="InuOptimizedAttachmentMenuInfo">Improves animation smoothness when opening photos and videos</string>
+
     <string name="InuDisableIntroSticker">Don\'t send intro sticker</string>
     <string name="InuDisableIntroStickerInfo">…and hide greeting sticker suggestions</string>
 
@@ -483,6 +486,10 @@
     <string name="InuForwardHeaderModeCompact">Compact</string>
     <string name="InuShowForwardsCount">Show forward count</string>
     <string name="InuCompactEdited">Compact edit indicator</string>
+    <string name="InuEditedMessageDateMode">Edited message timestamp</string>
+    <string name="InuEditedMessageDateModeTelegram">Default</string>
+    <string name="InuEditedMessageDateModeEdit">Edit date</string>
+    <string name="InuEditedMessageDateModeSend">Send date</string>
 
     <string name="InuAddToStickersGifs">Add to Stickers/GIFs</string>
     <string name="InuLongTapAction">Long-tap action</string>
@@ -754,6 +761,11 @@
     <string name="InuDeleteOwnMessagesFloodWait">Rate limited, waiting for %ds…</string>
     <string name="InuBiometricConfirm">Biometric confirmation</string>
     <string name="InuBiometricConfirmTitle">Confirm your identity</string>
+    <string name="InuBiometricExplicitConfirmation">Extra confirmation</string>
+    <string name="InuBiometricExplicitConfirmationInfo">Ask for an extra tap after successful face/iris scans</string>
+    <string name="InuBiometricRequireConfirmationPasscode">When unlocking the app</string>
+    <string name="InuBiometricRequireConfirmationBots">In mini apps</string>
+    <string name="InuBiometricRequireConfirmationActions">When deleting chats or logging out</string>
     <string name="InuBiometricConfirmDeleteChat">Confirm deleting chats</string>
     <string name="InuBiometricConfirmDeleteChatInfo">Ask for biometric confirmation before deleting or clearing a chat.</string>
     <string name="InuBiometricConfirmLogout">Confirm logging out</string>

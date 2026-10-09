@@ -202,16 +202,21 @@ object M3SliderHelper {
         val gap = AndroidUtilities.dpf2(GAP)
         val trackLeft = centerX(0f) - outerR
         val trackRight = centerX((count - 1).toFloat()) + outerR
-        val activeColor = view.getThemedColor(Theme.key_switchTrackChecked)
-        val inactiveColor = view.getThemedColor(Theme.key_switchTrack)
+        val activeColor = view.getThemedColor(Theme.key_player_progress)
+        val inactiveColor = view.getThemedColor(Theme.key_player_progressBackground)
 
         // stock: options at/below minIndex show at half alpha; dashed region beyond dashedFrom
         // (approximate/auto values) rendered dimmed instead of dashed
         val minActive = view.minIndex != Int.MIN_VALUE && view.minIndex >= 0
         val dimUntil = if (minActive) centerX(view.minIndex.toFloat()) else -Float.MAX_VALUE
         val dimFrom = if (view.dashedFrom != -1) centerX(view.dashedFrom.toFloat()) else Float.MAX_VALUE
-        drawSpan(canvas, trackLeft, cx - hw - gap, cy, outerR, innerR, activeColor, dimUntil, dimFrom)
-        drawSpan(canvas, cx + hw + gap, trackRight, cy, innerR, outerR, inactiveColor, dimUntil, dimFrom)
+        // the caps extend past the edge stops further than the handle gap covers
+        if (cx > centerX(0f) + 1f) {
+            drawSpan(canvas, trackLeft, cx - hw - gap, cy, outerR, innerR, activeColor, dimUntil, dimFrom)
+        }
+        if (cx < centerX((count - 1).toFloat()) - 1f) {
+            drawSpan(canvas, cx + hw + gap, trackRight, cy, innerR, outerR, inactiveColor, dimUntil, dimFrom)
+        }
 
         val tickR = AndroidUtilities.dpf2(TICK_RADIUS)
         for (a in 0 until count) {

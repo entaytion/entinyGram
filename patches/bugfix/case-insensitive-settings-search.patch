@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 9 Oct 2026 02:37:01 +0200
+Subject: make settings search case-insensitive
+
+---
+ .../src/main/java/org/telegram/ui/ProfileActivity.java      | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -15224,7 +15224,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 ArrayList<SearchResult> results = new ArrayList<>();
+                 ArrayList<MessagesController.FaqSearchResult> faqResults = new ArrayList<>();
+                 ArrayList<CharSequence> names = new ArrayList<>();
+-                String[] searchArgs = text.split(" ");
++                String[] searchArgs = text.toLowerCase(Locale.ROOT).split(" ");
+                 String[] translitArgs = new String[searchArgs.length];
+                 for (int a = 0; a < searchArgs.length; a++) {
+                     translitArgs[a] = LocaleController.getInstance().getTranslitString(searchArgs[a]);
+@@ -15238,7 +15238,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                     if (result == null) {
+                         continue;
+                     }
+-                    String title = " " + result.searchTitle.toLowerCase();
++                    String title = " " + result.searchTitle.toLowerCase(Locale.ROOT);
+                     SpannableStringBuilder stringBuilder = null;
+                     for (int i = 0; i < searchArgs.length; i++) {
+                         if (searchArgs[i].length() != 0) {
+@@ -15278,7 +15278,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (faqWebPage != null) {
+                     for (int a = 0, N = faqSearchArray.size(); a < N; a++) {
+                         MessagesController.FaqSearchResult result = faqSearchArray.get(a);
+-                        String title = " " + result.title.toLowerCase();
++                        String title = " " + result.title.toLowerCase(Locale.ROOT);
+                         SpannableStringBuilder stringBuilder = null;
+                         for (int i = 0; i < searchArgs.length; i++) {
+                             if (searchArgs[i].length() != 0) {

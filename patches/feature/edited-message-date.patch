@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 9 Oct 2026 02:45:43 +0200
+Subject: customizable edit date mode (send date vs edit date)
+
+---
+ .../src/main/java/org/telegram/ui/Cells/ChatMessageCell.java  | 4 ++--
+ .../org/telegram/ui/Components/MessagePrivateSeenView.java    | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -18537,12 +18537,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+         } else if (currentMessageObject.isRepostPreview) {
+             timeString = LocaleController.formatSmallDateChat(messageObject.messageOwner.date) + ", " + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+         } else if (edited) {
+-            if (AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()) {
++            if (desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(currentAccount)) {
+                 int editDate = currentMessagesGroup != null ? currentMessagesGroup.getMaxEditDate() : messageObject.messageOwner.edit_date;
+                 if (editDate == 0 && currentMessageObject.isEditing()) {
+                     editDate = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
+                 }
+-                timeString = LocaleController.formatPmEditedDate(editDate);
++                timeString = desu.inugram.InuConfig.COMPACT_EDITED.getValue() ? LocaleController.formatDateAudio(editDate, true) : LocaleController.formatPmEditedDate(editDate);
+             } else {
+                 timeString = ((desu.inugram.InuConfig.COMPACT_EDITED.getValue() ? "" : getString(R.string.EditedMessage) + " ") + LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000));
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePrivateSeenView.java
+@@ -88,7 +88,7 @@ public class MessagePrivateSeenView extends FrameLayout {
+         addView(iconView, LayoutHelper.createFrame(24, 24, Gravity.LEFT | Gravity.CENTER_VERTICAL, 11, 0, 0, 0));
+         int icon;
+         if (type == TYPE_EDIT) {
+-            icon = AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
++            icon = desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(currentAccount) ?
+                 R.drawable.outline_message_time_24:
+                 R.drawable.menu_edited_stamp;
+         } else if (type == TYPE_FORWARD) {
+@@ -135,7 +135,7 @@ public class MessagePrivateSeenView extends FrameLayout {
+             valueLayout.setAlpha(1f);
+             loadingView.setAlpha(0f);
+             premiumTextView.setVisibility(View.GONE);
+-            valueTextView.setText(AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get() ?
++            valueTextView.setText(desu.inugram.helpers.chat.ChatHelper.shouldUseEditedDate(currentAccount) ?
+                 LocaleController.formatPmSentDate(sent_date):
+                 LocaleController.formatPmEditedDate(edit_date));
+             return;

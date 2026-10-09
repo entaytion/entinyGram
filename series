@@ -319,6 +319,7 @@ feature/minimize-attach-panel.patch
 bugfix/link-scrim-offset.patch
 bugfix/scrim-touch-lock.patch
 feature/md3-sliders.patch
+feature/explicit-biometric-confirmation.patch
 feature/plugins.patch
 bugfix/settings-activity-bulletin.patch
 bugfix/table-spans.patch
@@ -337,4 +338,15 @@ feature/proxy-batch-import.patch
 bugfix/channel-updates-queue-pts.patch
 misc/debug-webm-stickers.patch
 feature/keep-chats-in-stack.patch
+feature/attachment-preview-resolution.patch
+feature/optimized-attachment-menu.patch
+bugfix/sticker-mask-alpha.patch
 misc/debug-photo-crop.patch
+bugfix/sent-message-server-entities.patch
+misc/debug-folder-slots.patch
+bugfix/tgnet-session-reset.patch
+bugfix/background-pending-requests.patch
+bugfix/emoji-status-tabs.patch
+bugfix/case-insensitive-settings-search.patch
+feature/edited-message-date.patch
+bugfix/photo-viewer-selection-crash.patch

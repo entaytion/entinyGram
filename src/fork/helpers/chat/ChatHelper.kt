@@ -52,6 +52,7 @@ import java.io.File
 import java.util.Calendar
 import kotlin.math.roundToInt
 import org.telegram.messenger.AndroidUtilities
+import org.telegram.messenger.AppGlobalConfig
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.ChatObject
 import org.telegram.messenger.DialogObject
@@ -96,6 +97,13 @@ import org.telegram.ui.LaunchActivity
 import kotlin.math.ceil
 
 object ChatHelper {
+    @JvmStatic
+    fun shouldUseEditedDate(currentAccount: Int): Boolean = when (InuConfig.EDITED_MESSAGE_DATE_MODE.value) {
+        InuConfig.EditedMessageDateModeItem.EDIT_DATE -> true
+        InuConfig.EditedMessageDateModeItem.SEND_DATE -> false
+        else -> AppGlobalConfig.getInstance(currentAccount).messagePrimaryEditedDate.get()
+    }
+
     private var skipNextReactionConfirm = false
 
     private const val COMPACT_FORWARD_ICON_SIZE = 12f
