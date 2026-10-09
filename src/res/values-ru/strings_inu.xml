@@ -792,6 +792,15 @@
     <string name="InuUnifiedCornerRadius">Единый радиус скругления</string>
     <string name="InuUnifiedCornerRadiusInfo">Применять одинаковый радиус скругления ко всем аватаркам, включая темы форумов</string>
     <string name="InuMaterial3NavigationAnimation">Анимация навигации</string>
+    <string name="InuMaterial3Player">Плеер музыки</string>
+    <string name="InuMd3PlayerOpen">Открыть плеер</string>
+    <string name="InuMd3PlayerSeek">Позиция воспроизведения</string>
+    <string name="InuMd3PlayerFromProfile">Воспроизведение из профиля</string>
+    <string name="InuMd3PlayerFromSearch">Воспроизведение из поиска</string>
+    <string name="InuMd3PlayerFromChat">Воспроизведение из чата</string>
+    <string name="InuMd3PlayerSpeed">Скорость воспроизведения</string>
+    <string name="InuMd3PlayerQueue">Очередь</string>
+    <string name="InuMd3PlayerClassic">Классический плеер</string>
     <string name="InuMaterialProfileActions">Кнопки действий в профиле</string>
     <string name="InuMonetTheme">Monet тема</string>
     <string name="InuMonetThemeDisabled">Отключено</string>
@@ -1937,13 +1946,6 @@
     <string name="InuMarketplace">Маркетплейс</string>
     <string name="InuMarketplaceDownloadFailed">Не удалось получить плагин: %1$s</string>
     <string name="InuMarketplaceChecksum">файл не совпадает с контрольной суммой</string>
-    <string name="InuMaterial3Player">Плеер музыки</string>
-    <string name="InuMd3PlayerOpen">Открыть плеер</string>
-    <string name="InuMd3PlayerSeek">Позиция воспроизведения</string>
-    <string name="InuMd3PlayerFromProfile">Воспроизведение из профиля</string>
-    <string name="InuMd3PlayerFromSearch">Воспроизведение из поиска</string>
-    <string name="InuMd3PlayerFromChat">Воспроизведение из чата</string>
-    <string name="InuMd3PlayerSpeed">Скорость воспроизведения</string>
-    <string name="InuMd3PlayerQueue">Очередь</string>
-    <string name="InuMd3PlayerClassic">Классический плеер</string>
+    <string name="InuCopyAllProxies">Копировать все</string>
+    <string name="InuShareAllProxies">Поделиться всеми</string>
 </resources>

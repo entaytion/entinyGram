@@ -1309,6 +1309,15 @@
     <string name="InuPerformanceClassAverage">Середній</string>
     <string name="InuPerformanceClassHigh">Високий</string>
     <string name="InuMaterial3NavigationAnimation">Анімація навігації</string>
+    <string name="InuMaterial3Player">Плеєр музики</string>
+    <string name="InuMd3PlayerOpen">Відкрити плеєр</string>
+    <string name="InuMd3PlayerSeek">Позиція відтворення</string>
+    <string name="InuMd3PlayerFromProfile">Відтворення з профілю</string>
+    <string name="InuMd3PlayerFromSearch">Відтворення з пошуку</string>
+    <string name="InuMd3PlayerFromChat">Відтворення з чату</string>
+    <string name="InuMd3PlayerSpeed">Швидкість відтворення</string>
+    <string name="InuMd3PlayerQueue">Черга</string>
+    <string name="InuMd3PlayerClassic">Класичний плеєр</string>
     <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
@@ -1929,13 +1938,6 @@
     <string name="InuMarketplace">Маркетплейс</string>
     <string name="InuMarketplaceDownloadFailed">Не вдалося отримати плагін: %1$s</string>
     <string name="InuMarketplaceChecksum">файл не збігається з контрольною сумою</string>
-    <string name="InuMaterial3Player">Плеєр музики</string>
-    <string name="InuMd3PlayerOpen">Відкрити плеєр</string>
-    <string name="InuMd3PlayerSeek">Позиція відтворення</string>
-    <string name="InuMd3PlayerFromProfile">Відтворення з профілю</string>
-    <string name="InuMd3PlayerFromSearch">Відтворення з пошуку</string>
-    <string name="InuMd3PlayerFromChat">Відтворення з чату</string>
-    <string name="InuMd3PlayerSpeed">Швидкість відтворення</string>
-    <string name="InuMd3PlayerQueue">Черга</string>
-    <string name="InuMd3PlayerClassic">Класичний плеєр</string>
+    <string name="InuCopyAllProxies">Копіювати всі</string>
+    <string name="InuShareAllProxies">Поділитися всіма</string>
 </resources>

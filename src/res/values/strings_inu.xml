@@ -175,6 +175,15 @@
     <string name="InuMaterial3AccentIcons">Accent-colored icons</string>
     <string name="InuMaterial3Avatars">Avatars</string>
     <string name="InuMaterial3NavigationAnimation">Navigation animation</string>
+    <string name="InuMaterial3Player">Music player</string>
+    <string name="InuMd3PlayerOpen">Open player</string>
+    <string name="InuMd3PlayerSeek">Playback position</string>
+    <string name="InuMd3PlayerFromProfile">Playing from profile</string>
+    <string name="InuMd3PlayerFromSearch">Playing from search</string>
+    <string name="InuMd3PlayerFromChat">Playing from chat</string>
+    <string name="InuMd3PlayerSpeed">Playback speed</string>
+    <string name="InuMd3PlayerQueue">Queue</string>
+    <string name="InuMd3PlayerClassic">Classic player</string>
     <string name="InuMaterialProfileActions">Profile action buttons</string>
     <string name="InuAvatarCorners">Avatar corners</string>
     <string name="InuAvatarCornersLeft">Sharp</string>
@@ -1936,13 +1945,6 @@
     <string name="InuMarketplace">Marketplace</string>
     <string name="InuMarketplaceDownloadFailed">Could not get the plugin: %1$s</string>
     <string name="InuMarketplaceChecksum">the file does not match its checksum</string>
-    <string name="InuMaterial3Player">Music player</string>
-    <string name="InuMd3PlayerOpen">Open player</string>
-    <string name="InuMd3PlayerSeek">Playback position</string>
-    <string name="InuMd3PlayerFromProfile">Playing from profile</string>
-    <string name="InuMd3PlayerFromSearch">Playing from search</string>
-    <string name="InuMd3PlayerFromChat">Playing from chat</string>
-    <string name="InuMd3PlayerSpeed">Playback speed</string>
-    <string name="InuMd3PlayerQueue">Queue</string>
-    <string name="InuMd3PlayerClassic">Classic player</string>
+    <string name="InuCopyAllProxies">Copy all</string>
+    <string name="InuShareAllProxies">Share all</string>
 </resources>

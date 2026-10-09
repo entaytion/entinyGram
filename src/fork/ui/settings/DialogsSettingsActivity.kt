@@ -536,8 +536,23 @@ open class DialogsSettingsActivity : SettingsPageActivity() {
 
     private fun reorderMainTabs(newOrder: List<MainTabsMenuConfig.Item>) {
         val byItem = mainTabsEntries.associateBy { it.item }
-        val hidden = mainTabsEntries.filter { it.item == MainTabsMenuConfig.Item.FEED && !FeedHelper.isEnabled() }
-        mainTabsEntries = (newOrder.mapNotNull { byItem[it] } + hidden).toMutableList()
+        val moved = newOrder.distinct().mapNotNull { byItem[it] }
+        val movedItems = moved.mapTo(HashSet()) { it.item }
+        // entiny: emit moved entries once at the first moved slot so filtered-out entries keep their position
+        val result = ArrayList<MenuOrderEntry<MainTabsMenuConfig.Item>>(mainTabsEntries.size)
+        var movedEmitted = false
+        for (entry in mainTabsEntries) {
+            if (entry.item in movedItems) {
+                if (!movedEmitted) {
+                    result.addAll(moved)
+                    movedEmitted = true
+                }
+            } else {
+                result.add(entry)
+            }
+        }
+        if (!movedEmitted) result.addAll(moved)
+        mainTabsEntries = result
         InuConfig.BOTTOM_TABS_ORDER.value = mainTabsEntries
         mainTabsPreview?.let { refreshMainTabsPreview(it) }
         showRestartBulletin()

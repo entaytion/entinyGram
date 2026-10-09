@@ -21,7 +21,6 @@ import org.telegram.messenger.R
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.Components.LayoutHelper
 import kotlin.math.abs
-import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor", "ClickableViewAccessibility")
 class MainTabsPreviewCell(
@@ -35,17 +34,17 @@ class MainTabsPreviewCell(
         gravity = Gravity.CENTER_VERTICAL
     }
     private val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
-    private val chipViews = LinkedHashMap<MainTabsMenuConfig.Item, Chip>()
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
-    private var order: List<MainTabsMenuConfig.Item> = emptyList()
-    private var dragOrder: List<MainTabsMenuConfig.Item> = emptyList()
-    private var dragging = false
-    private var dragFromIndex = -1
-    private var dragStartRawX = 0f
+    private var order = emptyList<MainTabsMenuConfig.Item>()
+    private var enabledItems = emptySet<MainTabsMenuConfig.Item>()
     private var separateSearch = false
-
     private var chipWidthDp = CHIP_WIDTH_DP
+    private var draggedItem: MainTabsMenuConfig.Item? = null
+    private var dragStartRawX = 0f
+    private var dragging = false
+    private var dragStartOrder = emptyList<MainTabsMenuConfig.Item>()
+    private var dragStartIndex = -1
 
     init {
         setWillNotDraw(false)
@@ -54,118 +53,126 @@ class MainTabsPreviewCell(
     }
 
     fun setState(order: List<MainTabsMenuConfig.Item>, enabledItems: Set<MainTabsMenuConfig.Item>, separateSearch: Boolean) {
-        this.order = order
+        this.order = order.distinct()
+        this.enabledItems = enabledItems
         this.separateSearch = separateSearch
-        this.dragOrder = visibleOrder()
-        group.removeAllViews()
-        group.addView(row, LinearLayout.LayoutParams(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT))
+        render()
+    }
+
+    private fun render() {
         row.removeAllViews()
-        chipViews.clear()
         addChip(null, true)
-        for (item in visibleOrder()) addChip(item, item in enabledItems)
+        visibleOrder().forEach { item -> addChip(item, item in enabledItems) }
         if (separateSearch) {
-            val searchChip = Chip(context).apply {
+            val search = Chip(context).apply {
                 bind(R.drawable.outline_header_search, MainTabsMenuConfig.Item.SEARCH.labelRes, MainTabsMenuConfig.Item.SEARCH in enabledItems)
                 setStandalone()
                 isClickable = true
-                foreground = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
                 setOnClickListener { onToggle(MainTabsMenuConfig.Item.SEARCH) }
             }
-            group.addView(
-                searchChip,
-                LayoutHelper.createLinear(
-                    SEARCH_BUTTON_SIZE_DP,
-                    SEARCH_BUTTON_SIZE_DP,
-                    0f, SEARCH_ZONE_WIDTH_DP, 0, 0, 0, 0,
-                ),
-            )
+            group.addView(search, LayoutHelper.createLinear(SEARCH_BUTTON_SIZE_DP, SEARCH_BUTTON_SIZE_DP, 0f, SEARCH_ZONE_WIDTH_DP, 0, 0, 0, 0))
         }
         requestLayout()
     }
 
     private fun addChip(item: MainTabsMenuConfig.Item?, enabled: Boolean) {
-        val chip = Chip(context)
-        chip.bind(
-            iconRes = item?.iconRes ?: R.drawable.msg_viewchats,
-            labelRes = item?.labelRes ?: R.string.InuChats,
-            enabled = enabled,
-        )
-        if (item != null) {
-            chipViews[item] = chip
-            chip.isClickable = true
-            chip.background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
-            chip.setOnTouchListener { _, ev -> handleTouch(item, chip, ev) }
+        val chip = Chip(context).apply {
+            bind(item?.iconRes ?: R.drawable.msg_viewchats, item?.labelRes ?: R.string.InuChats, enabled)
+            if (item != null) {
+                tag = item
+                isClickable = true
+                background = Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL)
+                setOnTouchListener { _, event -> handleTouch(item, event) }
+            }
         }
-        row.addView(chip, LayoutHelper.createLinear(chipWidthDp, LayoutHelper.WRAP_CONTENT, 0f, 2, 0, 2, 0))
+        row.addView(chip, chipLayoutParams())
     }
 
-    private fun handleTouch(item: MainTabsMenuConfig.Item, chip: Chip, ev: MotionEvent): Boolean {
-        when (ev.actionMasked) {
+    private fun handleTouch(item: MainTabsMenuConfig.Item, event: MotionEvent): Boolean {
+        when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                dragStartRawX = ev.rawX
-                dragFromIndex = visibleOrder().indexOf(item)
-                dragOrder = visibleOrder()
+                draggedItem = item
+                dragStartRawX = event.rawX
                 dragging = false
+                dragStartOrder = visibleOrder()
+                dragStartIndex = dragStartOrder.indexOf(item)
             }
-
             MotionEvent.ACTION_MOVE -> {
-                val dx = ev.rawX - dragStartRawX
-                if (!dragging && abs(dx) > touchSlop) {
-                    dragging = true
-                    chip.animate().scaleX(1.1f).scaleY(1.1f).setDuration(120).start()
-                    chip.elevation = dp(4f).toFloat()
-                    chip.bringToFront()
-                    parent?.requestDisallowInterceptTouchEvent(true)
-                }
-                if (dragging) {
-                    chip.translationX = dx
-                    checkSwap(item, dx)
+                if (draggedItem == item && dragStartIndex >= 0) {
+                    if (!dragging && abs(event.rawX - dragStartRawX) > touchSlop) {
+                        dragging = true
+                        parent?.requestDisallowInterceptTouchEvent(true)
+                    }
+                    if (dragging) updateDrag(item, event.rawX)
                 }
             }
-
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP -> {
+                if (draggedItem != item) return true
                 if (dragging) {
-                    chipViews.values.forEach { if (it !== chip) it.translationX = 0f }
-                    chip.animate().translationX(0f).scaleX(1f).scaleY(1f).setDuration(150)
-                        .withEndAction { chip.elevation = 0f }.start()
-                    if (dragOrder != visibleOrder()) onReorder(fullOrder(dragOrder))
-                } else if (ev.actionMasked == MotionEvent.ACTION_UP) {
-                    onToggle(item)
+                    updateDrag(item, event.rawX)
+                    val newOrder = orderFromPointer(item, event.rawX)
+                    resetDragViews()
+                    dragging = false
+                    draggedItem = null
+                    parent?.requestDisallowInterceptTouchEvent(false)
+                    if (newOrder != visibleOrder()) onReorder(newOrder)
+                } else {
+                    draggedItem = null
+                    if (dragStartIndex >= 0) onToggle(item)
                 }
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                resetDragViews()
                 dragging = false
+                draggedItem = null
+                parent?.requestDisallowInterceptTouchEvent(false)
             }
         }
         return true
     }
 
-    private fun checkSwap(item: MainTabsMenuConfig.Item, dx: Float) {
-        val slotPx = dp((chipWidthDp + CHIP_GAP_DP).toFloat())
-        val curIdx = dragOrder.indexOf(item)
-        val targetIdx = (dragFromIndex + (dx / slotPx).roundToInt()).coerceIn(0, dragOrder.size - 1)
-        if (targetIdx == curIdx) return
-        val mutable = dragOrder.toMutableList()
-        mutable.removeAt(curIdx)
-        mutable.add(targetIdx, item)
-        dragOrder = mutable
-        for ((idx, other) in dragOrder.withIndex()) {
-            if (other == item) continue
-            val chip = chipViews[other] ?: continue
-            val originalIdx = visibleOrder().indexOf(other)
-            chip.animate().translationX(((idx - originalIdx) * slotPx).toFloat()).setDuration(120).start()
+    private fun orderFromPointer(item: MainTabsMenuConfig.Item, rawX: Float): List<MainTabsMenuConfig.Item> {
+        val result = dragStartOrder.toMutableList()
+        if (dragStartIndex < 0) return result
+
+        val location = IntArray(2)
+        row.getLocationOnScreen(location)
+        var target = 0
+        for (index in 0 until dragStartOrder.size) {
+            val view = row.getChildAt(index + 1) ?: continue
+            val center = location[0] + view.left + view.width / 2f
+            if (rawX >= center) target = index
+        }
+        target = target.coerceIn(0, result.lastIndex)
+        if (dragStartIndex != target) result.add(target, result.removeAt(dragStartIndex))
+        return result
+    }
+
+    private fun updateDrag(item: MainTabsMenuConfig.Item, rawX: Float) {
+        val chip = row.findViewWithTag<Chip>(item) ?: return
+        chip.translationX = rawX - dragStartRawX
+        val targetOrder = orderFromPointer(item, rawX)
+        val step = dp((chipWidthDp + CHIP_GAP_DP).toFloat()).toFloat()
+        targetOrder.forEachIndexed { index, targetItem ->
+            val neighbor = row.findViewWithTag<Chip>(targetItem) ?: return@forEachIndexed
+            if (neighbor !== chip) {
+                val originalIndex = dragStartOrder.indexOf(targetItem)
+                neighbor.translationX = (index - originalIndex) * step
+            }
+        }
+    }
+
+    private fun resetDragViews() {
+        for (index in 0 until row.childCount) {
+            row.getChildAt(index).translationX = 0f
         }
     }
 
     private fun visibleOrder(): List<MainTabsMenuConfig.Item> =
         if (separateSearch) order.filterNot { it == MainTabsMenuConfig.Item.SEARCH } else order
 
-    private fun fullOrder(visible: List<MainTabsMenuConfig.Item>): List<MainTabsMenuConfig.Item> {
-        if (!separateSearch) return visible
-        val searchIndex = order.indexOf(MainTabsMenuConfig.Item.SEARCH)
-        if (searchIndex < 0) return visible
-        return visible.toMutableList().apply {
-            add(searchIndex.coerceIn(0, size), MainTabsMenuConfig.Item.SEARCH)
-        }
-    }
+    private fun chipLayoutParams() =
+        LayoutHelper.createLinear(chipWidthDp, LayoutHelper.WRAP_CONTENT, 0f, 2, 0, 2, 0)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val availableWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
@@ -176,14 +183,14 @@ class MainTabsPreviewCell(
             val newChipWidthDp = fitWidthDp.toInt().coerceIn(MIN_CHIP_WIDTH_DP, CHIP_WIDTH_DP)
             if (newChipWidthDp != chipWidthDp) {
                 chipWidthDp = newChipWidthDp
-                for (i in 0 until row.childCount) {
-                    (row.getChildAt(i).layoutParams as? LinearLayout.LayoutParams)?.width = dp(chipWidthDp.toFloat())
+                for (index in 0 until row.childCount) {
+                    row.getChildAt(index).layoutParams = chipLayoutParams()
                 }
             }
         }
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(dp(HEIGHT_DP.toFloat()), MeasureSpec.EXACTLY)
+            MeasureSpec.makeMeasureSpec(dp(HEIGHT_DP.toFloat()), MeasureSpec.EXACTLY),
         )
     }
 
@@ -225,7 +232,6 @@ class MainTabsPreviewCell(
             label.visibility = GONE
             gravity = Gravity.CENTER
             setPadding(0, 0, 0, 0)
-            // entiny: accent FAB colors so Monet keeps the circle tinted instead of matching the bar
             background = Theme.createRoundRectDrawable(dp(SEARCH_BUTTON_SIZE_DP / 2f), Theme.getColor(Theme.key_chats_actionBackground))
             icon.colorFilter = PorterDuffColorFilter(Theme.getColor(Theme.key_chats_actionIcon), PorterDuff.Mode.MULTIPLY)
             icon.alpha = if (enabled) 1f else 0.5f

@@ -40,6 +40,8 @@ class FeedChatIntegration(
     private var viewportActive = false
     private var preserveScrollLoadIndex = -1
     private var lastPagedownCount = -1
+    private var seenNewestRow: MessageObject? = null
+    private var seenOldestRow: MessageObject? = null
 
     private val settleAtNewestRunnable = Runnable { settleAtNewestNow() }
 
@@ -387,10 +389,15 @@ class FeedChatIntegration(
         if (!host.isListReady() || host.isScrollAnimationRunning()) {
             return
         }
-        val newestVisibleIndex = host.getNewestVisibleMessageIndex()
-        val unreadBelow = if (newestVisibleIndex == Int.MIN_VALUE) {
+        val rawNewestIndex = host.getNewestVisibleMessageIndex()
+        val unreadBelow = if (rawNewestIndex == Int.MIN_VALUE) {
             0
         } else {
+            val newestVisibleIndex = maxOf(0, rawNewestIndex)
+            val oldestVisibleIndex = host.getLastVisibleMessageIndex()
+            if (canMarkVisibleAsRead() && oldestVisibleIndex >= 0) {
+                markScrolledPastAsSeen(host.getMessages(), newestVisibleIndex, oldestVisibleIndex)
+            }
             FeedController.getInstance(currentAccount).countUnreadBelow(host.getMessages(), newestVisibleIndex)
         }
         if (unreadBelow != lastPagedownCount) {
@@ -403,6 +410,30 @@ class FeedChatIntegration(
         } else if (!host.canScrollToNewer()) {
             pagedownShownByScroll = false
             host.setPagedownButtonVisible(false)
+        }
+    }
+
+    private fun markScrolledPastAsSeen(rows: ArrayList<MessageObject?>, newestIndex: Int, oldestIndex: Int) {
+        val prevNewest = seenNewestRow
+        val prevOldest = seenOldestRow
+        seenNewestRow = rows.getOrNull(newestIndex)
+        seenOldestRow = rows.getOrNull(oldestIndex)
+        if (prevNewest == null || prevOldest == null) {
+            return
+        }
+        val prevNewestIndex = rows.indexOf(prevNewest)
+        val prevOldestIndex = rows.indexOf(prevOldest)
+        if (prevNewestIndex < 0 || prevOldestIndex < 0) {
+            return
+        }
+        val feedController = FeedController.getInstance(currentAccount)
+        val from = maxOf(0, minOf(newestIndex, oldestIndex, prevNewestIndex, prevOldestIndex))
+        val to = minOf(rows.size - 1, maxOf(newestIndex, oldestIndex, prevNewestIndex, prevOldestIndex))
+        for (i in from..to) {
+            val row = rows[i]
+            if (FeedMessageUtils.isPostRow(row)) {
+                feedController.onPostSeen(row!!.dialogId, row.realId)
+            }
         }
     }
 
@@ -873,6 +904,8 @@ class FeedChatIntegration(
             AndroidUtilities.cancelRunOnUIThread(settleAtNewestRunnable)
             settleAtNewestScheduled = false
         }
+        seenNewestRow = null
+        seenOldestRow = null
         cancelPendingReactionsRefresh()
     }
 
