@@ -103,10 +103,9 @@ jobs:
 
       - name: Set up worktree
         run: |
-          # Pluginless worktree always (worktree-pluginless/). Plugins worktree only when plugins
-          # are requested; pre-releases never build plugins.
+          # Pluginless worktree always (worktree-pluginless/). Plugins worktree only when plugins are requested.
           bun run setup -- --ci --pluginless
-          if [ '${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}' = 'true' ]; then
+          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
             bun run setup -- --ci
           fi
 
@@ -157,6 +156,33 @@ jobs:
           echo 'org.gradle.parallel=true'                                             >> ~/.gradle/gradle.properties
           echo 'org.gradle.jvmargs=-Xmx8192m -Dfile.encoding=UTF-8 -XX:+UseParallelGC' >> ~/.gradle/gradle.properties
           echo 'android.native.buildOutput=verbose'                                   >> ~/.gradle/gradle.properties
+
+      # The plugin engine is Rust: rquickjs-sys runs bindgen, which needs libclang (the runner image ships only the
+      # clang drivers), and cargo-ndk drives the Android cross build.
+      - name: Install libclang
+        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libclang-dev
+
+      - name: Cache cargo
+        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin/cargo-ndk
+            src/native/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('src/native/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install Android Rust toolchain
+        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
+        run: |
+          rustup target add aarch64-linux-android armv7-linux-androideabi
+          cargo install cargo-ndk --version 4.1.2 --locked
 
       - name: Reset ccache stats
         run: ccache -z
