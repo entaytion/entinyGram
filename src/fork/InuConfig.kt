@@ -470,6 +470,9 @@ object InuConfig {
     val UNLIMITED_FOLDER_CHATS = BoolItem("unlimited_folder_chats", false)
 
     @JvmField
+    val NEW_APP_ICON_PICKER = BoolItem("new_app_icon_picker", false)
+
+    @JvmField
     val LOCAL_FOLDERS = BoolItem("local_folders", false)
 
     @JvmField

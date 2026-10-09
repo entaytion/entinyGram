@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 9 Oct 2026 12:16:28 +0300
+Subject: [+] app icon picker
+
+---
+ .../main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/AppIconsSelectorCell.java
+@@ -107,6 +107,10 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
+             }
+         });
+         setOnItemClickListener((view, position) -> {
++            if (desu.inugram.InuConfig.NEW_APP_ICON_PICKER.getValue()) {
++                fragment.presentFragment(new desu.inugram.ui.appicons.AppIconsActivity());
++                return;
++            }
+             IconHolderView holderView = (IconHolderView) view;
+             LauncherIconController.LauncherIcon icon = availableIcons.get(position);
+             if (icon.premium && !UserConfig.hasPremiumOnAccounts()) {
