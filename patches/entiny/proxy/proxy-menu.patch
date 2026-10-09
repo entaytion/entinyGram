@@ -1,0 +1,335 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 9 Oct 2026 18:16:19 +0300
+Subject: [+] proxy list menu with ping, delete and copy actions
+
+---
+ .../org/telegram/ui/ProxyListActivity.java    | 238 +++++++++++-------
+ 1 file changed, 143 insertions(+), 95 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProxyListActivity.java
+@@ -77,6 +77,13 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+     private final static boolean IS_PROXY_ROTATION_AVAILABLE = true;
+     private static final int MENU_DELETE = 0;
+     private static final int MENU_SHARE = 1;
++    private static final int MENU_PING_ALL = 2;
++    private static final int MENU_DELETE_ALL = 3;
++    private static final int MENU_DELETE_FAILED = 4;
++    private static final int MENU_MORE = 5;
++    private static final int MENU_IMPORT_CLIPBOARD = 6;
++    private static final int MENU_COPY_ALL = 7;
++    private static final int MENU_SHARE_ALL = 8;
+ 
+     private ListAdapter listAdapter;
+     private RecyclerListView listView;
+@@ -100,15 +107,13 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+     private int rotationRow;
+     private int rotationTimeoutRow;
+     private int rotationTimeoutInfoRow;
+-    private int deleteAllRow;
+-    private int deleteFailedRow;
+     private int inu_importRow;
+-    private int inu_pingAllRow;
+ 
+     private ItemTouchHelper itemTouchHelper;
+     private NumberTextView selectedCountTextView;
+     private ActionBarMenuItem shareMenuItem;
+     private ActionBarMenuItem deleteMenuItem;
++    private ActionBarMenuItem moreMenuItem;
+ 
+     private List<SharedConfig.ProxyInfo> selectedItems = new ArrayList<>();
+     private List<SharedConfig.ProxyInfo> proxyList = new ArrayList<>();
+@@ -471,66 +476,6 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 presentFragment(new ProxySettingsActivity());
+             } else if (position == inu_importRow) {
+                 desu.inugram.helpers.ProxyImportHelper.importFromClipboard(this);
+-            } else if (position == inu_pingAllRow) {
+-                inu_forceCheckProxyList();
+-            } else if (position == deleteAllRow) {
+-                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+-                builder.setMessage(getString(R.string.DeleteAllProxiesConfirm));
+-                builder.setNegativeButton(getString(R.string.Cancel), null);
+-                builder.setTitle(getString(R.string.DeleteProxyTitle));
+-                builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
+-                    for (SharedConfig.ProxyInfo info : proxyList) {
+-                        SharedConfig.deleteProxy(info);
+-                    }
+-                    useProxySettings = false;
+-                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+-                    NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+-                    updateRows(true);
+-                    if (listAdapter != null) {
+-                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
+-                        listAdapter.clearSelected();
+-                    }
+-                });
+-                AlertDialog dialog = builder.create();
+-                showDialog(dialog);
+-                TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+-                if (button != null) {
+-                    button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+-                }
+-            } else if (position == deleteFailedRow) {
+-                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+-                builder.setMessage(getString(R.string.InuDeleteFailedProxiesConfirm));
+-                builder.setNegativeButton(getString(R.string.Cancel), null);
+-                builder.setTitle(getString(R.string.InuDeleteFailedProxies));
+-                builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
+-                    boolean removedCurrent = false;
+-                    for (SharedConfig.ProxyInfo info : proxyList) {
+-                        if (!info.checking && info.availableCheckTime != 0 && !info.available) {
+-                            if (SharedConfig.currentProxy == info) {
+-                                removedCurrent = true;
+-                            }
+-                            SharedConfig.deleteProxy(info);
+-                        }
+-                    }
+-                    if (removedCurrent) {
+-                        useProxySettings = false;
+-                    }
+-                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+-                    NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+-                    updateRows(true);
+-                    if (listAdapter != null) {
+-                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
+-                        listAdapter.clearSelected();
+-                    }
+-                });
+-                AlertDialog failedDialog = builder.create();
+-                showDialog(failedDialog);
+-                TextView failedButton = (TextView) failedDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+-                if (failedButton != null) {
+-                    failedButton.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+-                }
+             }
+         });
+         listView.setOnItemLongClickListener((view, position) -> {
+@@ -541,6 +486,16 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+             return false;
+         });
+ 
++        ActionBarMenu menu = actionBar.createMenu();
++        moreMenuItem = menu.addItem(MENU_MORE, R.drawable.ic_ab_other);
++        moreMenuItem.addSubItem(MENU_IMPORT_CLIPBOARD, R.drawable.msg_addbot, getString(R.string.InuProxyImportFromClipboard));
++        moreMenuItem.addSubItem(MENU_COPY_ALL, R.drawable.msg_copy, getString(R.string.InuCopyAllProxies));
++        moreMenuItem.addSubItem(MENU_SHARE_ALL, R.drawable.msg_share, getString(R.string.InuShareAllProxies));
++        moreMenuItem.addSubItem(MENU_PING_ALL, R.drawable.msg_retry, getString(R.string.InuPingAllProxies));
++        moreMenuItem.addSubItem(MENU_DELETE_FAILED, R.drawable.msg_delete, getString(R.string.InuDeleteFailedProxies));
++        moreMenuItem.addSubItem(MENU_DELETE_ALL, R.drawable.msg_delete, getString(R.string.DeleteAllProxies));
++        inu_updateMoreMenu();
++
+         ActionBarMenu actionMode = actionBar.createActionMode();
+         selectedCountTextView = new NumberTextView(actionMode.getContext());
+         selectedCountTextView.setTextSize(18);
+@@ -595,6 +550,29 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                             button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                         }
+                         break;
++                    case MENU_IMPORT_CLIPBOARD:
++                        desu.inugram.helpers.ProxyImportHelper.importFromClipboard(ProxyListActivity.this);
++                        break;
++                    case MENU_COPY_ALL:
++                        AndroidUtilities.addToClipboard(inu_allProxyLinks());
++                        break;
++                    case MENU_SHARE_ALL:
++                        Intent inuShareIntent = new Intent(Intent.ACTION_SEND);
++                        inuShareIntent.setType("text/plain");
++                        inuShareIntent.putExtra(Intent.EXTRA_TEXT, inu_allProxyLinks());
++                        Intent inuChooser = Intent.createChooser(inuShareIntent, getString(R.string.ShareLinks));
++                        inuChooser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
++                        context.startActivity(inuChooser);
++                        break;
++                    case MENU_PING_ALL:
++                        inu_pingAllProxies();
++                        break;
++                    case MENU_DELETE_ALL:
++                        inu_deleteAllProxies();
++                        break;
++                    case MENU_DELETE_FAILED:
++                        inu_deleteFailedProxies();
++                        break;
+                     case MENU_SHARE:
+                         StringBuilder links = new StringBuilder();
+                         for (SharedConfig.ProxyInfo info : selectedItems) {
+@@ -698,30 +676,114 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         proxyAddRow = rowCount++;
+         inu_importRow = rowCount++;
+         proxyShadowRow = rowCount++;
+-        if (proxyList.size() >= 2) {
+-            inu_pingAllRow = rowCount++;
+-        } else {
+-            inu_pingAllRow = -1;
++        checkProxyList();
++        inu_updateMoreMenu();
++        if (notify && listAdapter != null) {
++            listAdapter.notifyDataSetChanged();
+         }
+-        if (proxyList.size() >= 10) {
+-            deleteAllRow = rowCount++;
+-        } else {
+-            deleteAllRow = -1;
++    }
++
++    private void inu_pingAllProxies() {
++        inu_forceCheckProxyList();
++    }
++
++    private void inu_deleteAllProxies() {
++        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
++        builder.setMessage(getString(R.string.DeleteAllProxiesConfirm));
++        builder.setNegativeButton(getString(R.string.Cancel), null);
++        builder.setTitle(getString(R.string.DeleteProxyTitle));
++        builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
++            for (SharedConfig.ProxyInfo info : proxyList) {
++                SharedConfig.deleteProxy(info);
++            }
++            useProxySettings = false;
++            NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
++            NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++            updateRows(true);
++            if (listAdapter != null) {
++                listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++                listAdapter.clearSelected();
++            }
++        });
++        AlertDialog dialog = builder.create();
++        showDialog(dialog);
++        TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
++        if (button != null) {
++            button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
++        }
++    }
++
++    private void inu_deleteFailedProxies() {
++        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
++        builder.setMessage(getString(R.string.InuDeleteFailedProxiesConfirm));
++        builder.setNegativeButton(getString(R.string.Cancel), null);
++        builder.setTitle(getString(R.string.InuDeleteFailedProxies));
++        builder.setPositiveButton(getString(R.string.Delete), (dialog, which) -> {
++            boolean removedCurrent = false;
++            for (SharedConfig.ProxyInfo info : proxyList) {
++                if (!info.checking && info.availableCheckTime != 0 && !info.available) {
++                    if (SharedConfig.currentProxy == info) {
++                        removedCurrent = true;
++                    }
++                    SharedConfig.deleteProxy(info);
++                }
++            }
++            if (removedCurrent) {
++                useProxySettings = false;
++            }
++            NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
++            NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
++            updateRows(true);
++            if (listAdapter != null) {
++                listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
++                listAdapter.clearSelected();
++            }
++        });
++        AlertDialog failedDialog = builder.create();
++        showDialog(failedDialog);
++        TextView failedButton = (TextView) failedDialog.getButton(DialogInterface.BUTTON_POSITIVE);
++        if (failedButton != null) {
++            failedButton.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+         }
+-        int inu_failedProxyCount = 0;
++    }
++
++    private String inu_allProxyLinks() {
++        StringBuilder links = new StringBuilder();
++        for (SharedConfig.ProxyInfo info : proxyList) {
++            if (links.length() > 0) {
++                links.append("\n\n");
++            }
++            links.append(info.settings.getLink());
++        }
++        return links.toString();
++    }
++
++    private void inu_updateMoreMenu() {
++        if (moreMenuItem == null) {
++            return;
++        }
++        int failedCount = 0;
+         for (SharedConfig.ProxyInfo info : proxyList) {
+             if (!info.checking && info.availableCheckTime != 0 && !info.available) {
+-                inu_failedProxyCount++;
++                failedCount++;
+             }
+         }
+-        if (inu_failedProxyCount > 0) {
+-            deleteFailedRow = rowCount++;
++        if (proxyList.size() >= 2) {
++            moreMenuItem.showSubItem(MENU_PING_ALL);
+         } else {
+-            deleteFailedRow = -1;
++            moreMenuItem.hideSubItem(MENU_PING_ALL);
+         }
+-        checkProxyList();
+-        if (notify && listAdapter != null) {
+-            listAdapter.notifyDataSetChanged();
++        if (proxyList.size() >= 10) {
++            moreMenuItem.showSubItem(MENU_DELETE_ALL);
++        } else {
++            moreMenuItem.hideSubItem(MENU_DELETE_ALL);
++        }
++        if (failedCount > 0) {
++            moreMenuItem.showSubItem(MENU_DELETE_FAILED);
++        } else {
++            moreMenuItem.hideSubItem(MENU_DELETE_FAILED);
+         }
+     }
+ 
+@@ -915,14 +977,6 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                         textCell.setText(getString(R.string.AddProxy), true);
+                     } else if (position == inu_importRow) {
+                         textCell.setText(getString(R.string.InuProxyImportFromClipboard), false);
+-                    } else if (position == inu_pingAllRow) {
+-                        textCell.setText(getString(R.string.InuPingAllProxies), deleteAllRow != -1 || deleteFailedRow != -1);
+-                    } else if (position == deleteAllRow) {
+-                        textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+-                        textCell.setText(getString(R.string.DeleteAllProxies), deleteFailedRow != -1);
+-                    } else if (position == deleteFailedRow) {
+-                        textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
+-                        textCell.setText(getString(R.string.InuDeleteFailedProxies), false);
+                     }
+                     break;
+                 }
+@@ -1017,7 +1071,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         @Override
+         public boolean isEnabled(RecyclerView.ViewHolder holder) {
+             int position = holder.getAdapterPosition();
+-            return position == useProxyRow || position == rotationRow || position == proxyAddRow || position == inu_importRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow || position >= proxyStartRow && position < proxyEndRow;
++            return position == useProxyRow || position == rotationRow || position == proxyAddRow || position == inu_importRow || position >= proxyStartRow && position < proxyEndRow;
+         }
+ 
+         @Override
+@@ -1064,12 +1118,6 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+                 return -4;
+             } else if (position == connectionsHeaderRow) {
+                 return -6;
+-            } else if (position == deleteAllRow) {
+-                return -8;
+-            } else if (position == deleteFailedRow) {
+-                return -13;
+-            } else if (position == inu_pingAllRow) {
+-                return -14;
+             } else if (position == rotationRow) {
+                 return -9;
+             } else if (position == rotationTimeoutRow) {
+@@ -1089,7 +1137,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
+         public int getItemViewType(int position) {
+             if (position == useProxyShadowRow || position == proxyShadowRow) {
+                 return VIEW_TYPE_SHADOW;
+-            } else if (position == proxyAddRow || position == inu_importRow || position == inu_pingAllRow || position == deleteAllRow || position == deleteFailedRow) {
++            } else if (position == proxyAddRow || position == inu_importRow) {
+                 return VIEW_TYPE_TEXT_SETTING;
+             } else if (position == useProxyRow || position == rotationRow) {
+                 return VIEW_TYPE_TEXT_CHECK;

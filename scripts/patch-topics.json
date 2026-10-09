@@ -131,6 +131,7 @@
   "presence-color-dots": "ui",
   "profile-actionbar-lifecycle": "ui",
   "proxy-link-alert": "proxy",
+  "proxy-menu": "proxy",
   "proxy-management": "proxy",
   "push-service-foreground": "notifications",
   "read-time": "chat",

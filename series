@@ -519,3 +519,4 @@ entiny/privacy/contact-changes.patch
 entiny/ui/md3-player.patch
 entiny/ui/app-icon-picker.patch
 entiny/tabs/system-folders.patch
+entiny/proxy/proxy-menu.patch
