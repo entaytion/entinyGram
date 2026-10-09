@@ -279,6 +279,7 @@ jobs:
       - name: Generate release notes
         env:
           GEMINI_API_KEY:  ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
           GEMINI_BASE_URL: ${{ vars.GEMINI_BASE_URL }}
         run: bun run tsx scripts/release-notes.ts out
 
