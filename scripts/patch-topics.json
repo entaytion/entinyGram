@@ -47,6 +47,7 @@
   "dialog-avatar-tap-profile": "ui",
   "dialogs-menu-customization": "tabs",
   "dialogs-title-text": "tabs",
+  "system-folders": "tabs",
   "disable-audiotrack-playback-params": "media",
   "disable-call-rating": "calls",
   "disable-profile-avatar-blur": "ui",

@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 9 Oct 2026 17:59:59 +0300
+Subject: [+] system folders hook in message controller
+
+---
+ .../main/java/org/telegram/messenger/MessagesController.java  | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -1318,6 +1318,9 @@ public class MessagesController extends BaseController implements NotificationCe
+             if (desu.inugram.helpers.dialogs.FolderMembershipHelper.isLocallyIncluded(accountInstance.getCurrentAccount(), id, dialogId)) {
+                 return true;
+             }
++            if (desu.inugram.helpers.dialogs.SystemFoldersHelper.isAdministratorFolder(id)) {
++                return desu.inugram.helpers.dialogs.SystemFoldersHelper.matchesAdministrator(accountInstance.getCurrentAccount(), dialogId);
++            }
+             if (d.folder_id != 0 && (flags & DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED) != 0) {
+                 return false;
+             }
+@@ -2247,6 +2250,7 @@ public class MessagesController extends BaseController implements NotificationCe
+                     putUsers(users, true);
+                     putChats(chats, true);
+                     dialogFiltersLoaded = true;
++                    desu.inugram.helpers.dialogs.SystemFoldersHelper.sync(currentAccount);
+                     getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
+                     if (remote == 0) {
+                         loadRemoteFilters(false);
