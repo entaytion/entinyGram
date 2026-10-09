@@ -76,6 +76,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 
 ### appearance & customization
 
+- 📡 **system folders**: Administrator, Bots, Unread, Groups and Channels tabs in the folder bar - *inspired by [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **avatar corners**: adjustable radius - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*
 - 📡 **clown avatar for blocked users**: blocked users show 🤡 (or 💩 / 💀) instead of their photo - *ported from [NiagramX](https://github.com/HSSkyBoy/NiagramX)*
 - 📡 **clown avatar for users who blocked me**: guessed from a missing photo and last seen, so it can be wrong - *ported from [NagramXF](https://github.com/Keeperorowner/NagramXF)*

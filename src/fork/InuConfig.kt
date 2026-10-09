@@ -473,6 +473,9 @@ object InuConfig {
     val UNLIMITED_FOLDER_CHATS = BoolItem("unlimited_folder_chats", false)
 
     @JvmField
+    val SYSTEM_FOLDERS = BoolItem("system_folders", false)
+
+    @JvmField
     val LOCAL_FOLDERS = BoolItem("local_folders", false)
 
     @JvmField

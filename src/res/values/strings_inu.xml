@@ -184,6 +184,27 @@
     <string name="InuMd3PlayerSpeed">Playback speed</string>
     <string name="InuMd3PlayerQueue">Queue</string>
     <string name="InuMd3PlayerClassic">Classic player</string>
+    <string name="InuMd3PlayerUpNext">Up next</string>
+    <string name="InuMd3PlayerTracks_one">%1$d track</string>
+    <string name="InuMd3PlayerTracks_few">%1$d tracks</string>
+    <string name="InuMd3PlayerTracks_many">%1$d tracks</string>
+    <string name="InuMd3PlayerTracks_other">%1$d tracks</string>
+    <string name="InuMd3PlayerLyrics">Lyrics</string>
+    <string name="InuMd3PlayerLyricsSearching">Searching for lyrics…</string>
+    <string name="InuMd3PlayerNoLyrics">No lyrics in the file</string>
+    <string name="InuMd3PlayerNoLyricsInfo">You can search LRCLIB for lyrics. The track name will be sent over the internet.</string>
+    <string name="InuMd3PlayerFindLyrics">Search online</string>
+    <string name="InuMd3PlayerLyricsNotFound">Lyrics not found</string>
+    <string name="InuMd3PlayerLyricsNotFoundInfo">LRCLIB has no lyrics for this track.</string>
+    <string name="InuMd3PlayerLyricsError">Couldn\'t load lyrics</string>
+    <string name="InuMd3PlayerLyricsErrorInfo">Check your connection and try again.</string>
+    <string name="InuMd3PlayerRetry">Retry</string>
+    <string name="InuMd3PlayerInstrumental">Instrumental</string>
+    <string name="InuMd3PlayerInstrumentalInfo">This track has no lyrics.</string>
+    <string name="InuMd3PlayerSourceSynced">Synced lyrics · %1$s</string>
+    <string name="InuMd3PlayerSourcePlain">Lyrics · %1$s</string>
+    <string name="InuMd3PlayerSourceSyncedFile">Synced lyrics from the file</string>
+    <string name="InuMd3PlayerSourcePlainFile">Lyrics from the file</string>
     <string name="InuMaterialProfileActions">Profile action buttons</string>
     <string name="InuAvatarCorners">Avatar corners</string>
     <string name="InuAvatarCornersLeft">Sharp</string>
@@ -507,6 +528,12 @@
     <string name="InuRememberSelectedFolder">Remember Selected Folder</string>
     <string name="InuRememberSelectedFolderInfo">Reopen the last active folder when returning to the chat list.</string>
     <string name="InuFoldersAtBottom">Move Folders to Bottom</string>
+    <string name="InuSystemFolders">System Folders</string>
+    <string name="InuSystemFolderAdministrator">Administrator</string>
+    <string name="InuSystemFolderBots">Bots</string>
+    <string name="InuSystemFolderUnread">Unread</string>
+    <string name="InuSystemFolderGroups">Groups</string>
+    <string name="InuSystemFolderChannels">Channels</string>
     <string name="InuHideArchive">Remove \"Archived Chats\" from Chat List</string>
     <string name="InuCommunityDisplayMode">Communities</string>
     <string name="InuCommunityDisplayModeRegular">Regular</string>
@@ -1957,11 +1984,13 @@
 
     <string name="InuAppIconsSelect">Apply icon</string>
     <string name="InuAppIconsKeep">Keep current icon</string>
+
     <string name="InuAppIconBlush">Blush</string>
     <string name="InuAppIconNoxSky">Nox Sky</string>
     <string name="InuAppIconInverse">Inverse</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconAmongUs">Among Us</string>
+
     <string name="InuAppIconCrimson">Crimson</string>
     <string name="InuAppIconBy">by %1$s</string>
     <string name="InuAppIconDescDefault">The classic entinyGram dish</string>
@@ -1988,26 +2017,4 @@
     <string name="InuAppIconDescOsu">Low-poly hit-circle pink</string>
     <string name="InuAppIconDescAmongUs">A crewmate on bright yellow</string>
     <string name="InuAppIconDescCrimson">A blood moon over a sakura dusk</string>
-
-    <string name="InuMd3PlayerUpNext">Up next</string>
-    <string name="InuMd3PlayerTracks_one">%1$d track</string>
-    <string name="InuMd3PlayerTracks_few">%1$d tracks</string>
-    <string name="InuMd3PlayerTracks_many">%1$d tracks</string>
-    <string name="InuMd3PlayerTracks_other">%1$d tracks</string>
-    <string name="InuMd3PlayerLyrics">Lyrics</string>
-    <string name="InuMd3PlayerLyricsSearching">Searching for lyrics…</string>
-    <string name="InuMd3PlayerNoLyrics">No lyrics in the file</string>
-    <string name="InuMd3PlayerNoLyricsInfo">You can search LRCLIB for lyrics. The track name will be sent over the internet.</string>
-    <string name="InuMd3PlayerFindLyrics">Search online</string>
-    <string name="InuMd3PlayerLyricsNotFound">Lyrics not found</string>
-    <string name="InuMd3PlayerLyricsNotFoundInfo">LRCLIB has no lyrics for this track.</string>
-    <string name="InuMd3PlayerLyricsError">Couldn\'t load lyrics</string>
-    <string name="InuMd3PlayerLyricsErrorInfo">Check your connection and try again.</string>
-    <string name="InuMd3PlayerRetry">Retry</string>
-    <string name="InuMd3PlayerInstrumental">Instrumental</string>
-    <string name="InuMd3PlayerInstrumentalInfo">This track has no lyrics.</string>
-    <string name="InuMd3PlayerSourceSynced">Synced lyrics · %1$s</string>
-    <string name="InuMd3PlayerSourcePlain">Lyrics · %1$s</string>
-    <string name="InuMd3PlayerSourceSyncedFile">Synced lyrics from the file</string>
-    <string name="InuMd3PlayerSourcePlainFile">Lyrics from the file</string>
 </resources>

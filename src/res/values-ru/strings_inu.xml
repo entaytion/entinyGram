@@ -221,6 +221,12 @@
     <string name="InuRememberSelectedFolder">Запоминать выбранную папку</string>
     <string name="InuRememberSelectedFolderInfo">Открывать последнюю активную папку при возврате к списку чатов.</string>
     <string name="InuFoldersAtBottom">Перенести папки вниз</string>
+    <string name="InuSystemFolders">Системные папки</string>
+    <string name="InuSystemFolderAdministrator">Администратор</string>
+    <string name="InuSystemFolderBots">Боты</string>
+    <string name="InuSystemFolderUnread">Непрочитанные</string>
+    <string name="InuSystemFolderGroups">Группы</string>
+    <string name="InuSystemFolderChannels">Каналы</string>
     <string name="InuHideArchive">Убрать «Архив» из списка чатов</string>
     <string name="InuHideCallActionButton">Скрыть кнопку звонка в заголовке</string>
     <string name="InuDisableProfileScrollSnap">Отключить прилипание прокрутки профиля</string>
@@ -801,6 +807,27 @@
     <string name="InuMd3PlayerSpeed">Скорость воспроизведения</string>
     <string name="InuMd3PlayerQueue">Очередь</string>
     <string name="InuMd3PlayerClassic">Классический плеер</string>
+    <string name="InuMd3PlayerUpNext">Далее</string>
+    <string name="InuMd3PlayerTracks_one">%1$d трек</string>
+    <string name="InuMd3PlayerTracks_few">%1$d трека</string>
+    <string name="InuMd3PlayerTracks_many">%1$d треков</string>
+    <string name="InuMd3PlayerTracks_other">%1$d трека</string>
+    <string name="InuMd3PlayerLyrics">Текст</string>
+    <string name="InuMd3PlayerLyricsSearching">Ищем текст…</string>
+    <string name="InuMd3PlayerNoLyrics">В файле нет текста</string>
+    <string name="InuMd3PlayerNoLyricsInfo">Можно поискать текст в LRCLIB. Название трека будет отправлено через интернет.</string>
+    <string name="InuMd3PlayerFindLyrics">Искать онлайн</string>
+    <string name="InuMd3PlayerLyricsNotFound">Текст не найден</string>
+    <string name="InuMd3PlayerLyricsNotFoundInfo">В LRCLIB нет текста для этого трека.</string>
+    <string name="InuMd3PlayerLyricsError">Не удалось загрузить текст</string>
+    <string name="InuMd3PlayerLyricsErrorInfo">Проверьте подключение и попробуйте ещё раз.</string>
+    <string name="InuMd3PlayerRetry">Повторить</string>
+    <string name="InuMd3PlayerInstrumental">Инструментал</string>
+    <string name="InuMd3PlayerInstrumentalInfo">В этом треке нет слов.</string>
+    <string name="InuMd3PlayerSourceSynced">Синхронизированный текст · %1$s</string>
+    <string name="InuMd3PlayerSourcePlain">Текст · %1$s</string>
+    <string name="InuMd3PlayerSourceSyncedFile">Синхронизированный текст из файла</string>
+    <string name="InuMd3PlayerSourcePlainFile">Текст из файла</string>
     <string name="InuMaterialProfileActions">Кнопки действий в профиле</string>
     <string name="InuMonetTheme">Monet тема</string>
     <string name="InuMonetThemeDisabled">Отключено</string>
@@ -1963,11 +1990,13 @@
 
     <string name="InuAppIconsSelect">Применить иконку</string>
     <string name="InuAppIconsKeep">Оставить текущую иконку</string>
+
     <string name="InuAppIconBlush">Blush</string>
     <string name="InuAppIconNoxSky">Nox Sky</string>
     <string name="InuAppIconInverse">Inverse</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconAmongUs">Among Us</string>
+
     <string name="InuAppIconCrimson">Багровый</string>
     <string name="InuAppIconBy">от %1$s</string>
     <string name="InuAppIconDescDefault">Классическая тарелка entinyGram</string>
@@ -1994,26 +2023,4 @@
     <string name="InuAppIconDescOsu">Розовый low-poly hit-circle</string>
     <string name="InuAppIconDescAmongUs">Член экипажа на ярко-жёлтом</string>
     <string name="InuAppIconDescCrimson">Кровавая луна над сумерками сакуры</string>
-
-    <string name="InuMd3PlayerUpNext">Далее</string>
-    <string name="InuMd3PlayerTracks_one">%1$d трек</string>
-    <string name="InuMd3PlayerTracks_few">%1$d трека</string>
-    <string name="InuMd3PlayerTracks_many">%1$d треков</string>
-    <string name="InuMd3PlayerTracks_other">%1$d трека</string>
-    <string name="InuMd3PlayerLyrics">Текст</string>
-    <string name="InuMd3PlayerLyricsSearching">Ищем текст…</string>
-    <string name="InuMd3PlayerNoLyrics">В файле нет текста</string>
-    <string name="InuMd3PlayerNoLyricsInfo">Можно поискать текст в LRCLIB. Название трека будет отправлено через интернет.</string>
-    <string name="InuMd3PlayerFindLyrics">Искать онлайн</string>
-    <string name="InuMd3PlayerLyricsNotFound">Текст не найден</string>
-    <string name="InuMd3PlayerLyricsNotFoundInfo">В LRCLIB нет текста для этого трека.</string>
-    <string name="InuMd3PlayerLyricsError">Не удалось загрузить текст</string>
-    <string name="InuMd3PlayerLyricsErrorInfo">Проверьте подключение и попробуйте ещё раз.</string>
-    <string name="InuMd3PlayerRetry">Повторить</string>
-    <string name="InuMd3PlayerInstrumental">Инструментал</string>
-    <string name="InuMd3PlayerInstrumentalInfo">В этом треке нет слов.</string>
-    <string name="InuMd3PlayerSourceSynced">Синхронизированный текст · %1$s</string>
-    <string name="InuMd3PlayerSourcePlain">Текст · %1$s</string>
-    <string name="InuMd3PlayerSourceSyncedFile">Синхронизированный текст из файла</string>
-    <string name="InuMd3PlayerSourcePlainFile">Текст из файла</string>
 </resources>

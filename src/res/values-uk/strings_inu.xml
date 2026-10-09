@@ -383,6 +383,12 @@
     <string name="InuRememberSelectedFolder">Запам\'ятовувати обрану папку</string>
     <string name="InuRememberSelectedFolderInfo">Відкривати останню активну папку при поверненні до списку чатів.</string>
     <string name="InuFoldersAtBottom">Перенести теки вниз</string>
+    <string name="InuSystemFolders">Системні теки</string>
+    <string name="InuSystemFolderAdministrator">Адміністратор</string>
+    <string name="InuSystemFolderBots">Боти</string>
+    <string name="InuSystemFolderUnread">Непрочитані</string>
+    <string name="InuSystemFolderGroups">Групи</string>
+    <string name="InuSystemFolderChannels">Канали</string>
     <string name="InuHideArchive">Прибрати «Архів» зі списку чатів</string>
     <string name="InuCommunityDisplayMode">Спільноти</string>
     <string name="InuCommunityDisplayModeRegular">Звичайний</string>
@@ -1318,6 +1324,27 @@
     <string name="InuMd3PlayerSpeed">Швидкість відтворення</string>
     <string name="InuMd3PlayerQueue">Черга</string>
     <string name="InuMd3PlayerClassic">Класичний плеєр</string>
+    <string name="InuMd3PlayerUpNext">Далі</string>
+    <string name="InuMd3PlayerTracks_one">%1$d трек</string>
+    <string name="InuMd3PlayerTracks_few">%1$d треки</string>
+    <string name="InuMd3PlayerTracks_many">%1$d треків</string>
+    <string name="InuMd3PlayerTracks_other">%1$d трека</string>
+    <string name="InuMd3PlayerLyrics">Текст</string>
+    <string name="InuMd3PlayerLyricsSearching">Шукаємо текст…</string>
+    <string name="InuMd3PlayerNoLyrics">У файлі немає тексту</string>
+    <string name="InuMd3PlayerNoLyricsInfo">Можна пошукати текст у LRCLIB. Назву треку буде надіслано через інтернет.</string>
+    <string name="InuMd3PlayerFindLyrics">Шукати онлайн</string>
+    <string name="InuMd3PlayerLyricsNotFound">Текст не знайдено</string>
+    <string name="InuMd3PlayerLyricsNotFoundInfo">У LRCLIB немає тексту для цього треку.</string>
+    <string name="InuMd3PlayerLyricsError">Не вдалося завантажити текст</string>
+    <string name="InuMd3PlayerLyricsErrorInfo">Перевірте підключення та спробуйте ще раз.</string>
+    <string name="InuMd3PlayerRetry">Спробувати ще раз</string>
+    <string name="InuMd3PlayerInstrumental">Інструментал</string>
+    <string name="InuMd3PlayerInstrumentalInfo">У цьому треку немає слів.</string>
+    <string name="InuMd3PlayerSourceSynced">Синхронізований текст · %1$s</string>
+    <string name="InuMd3PlayerSourcePlain">Текст · %1$s</string>
+    <string name="InuMd3PlayerSourceSyncedFile">Синхронізований текст із файлу</string>
+    <string name="InuMd3PlayerSourcePlainFile">Текст із файлу</string>
     <string name="InuEditHistoryDiff">Підсвічувати зміни в тексті (Diff)</string>
     <string name="InuEditHistoryDiffInfo">Показувати червоне закреслення для видаленого тексту та зелений колір для доданого в історії редагувань</string>
     <string name="InuNoEditHistory">Історія редагування для цього повідомлення відсутня</string>
@@ -1955,11 +1982,13 @@
 
     <string name="InuAppIconsSelect">Застосувати іконку</string>
     <string name="InuAppIconsKeep">Залишити поточну іконку</string>
+
     <string name="InuAppIconBlush">Blush</string>
     <string name="InuAppIconNoxSky">Nox Sky</string>
     <string name="InuAppIconInverse">Inverse</string>
     <string name="InuAppIconOsu">osu!</string>
     <string name="InuAppIconAmongUs">Among Us</string>
+
     <string name="InuAppIconCrimson">Багряний</string>
     <string name="InuAppIconBy">від %1$s</string>
     <string name="InuAppIconDescDefault">Класична тарілка entinyGram</string>
@@ -1986,26 +2015,4 @@
     <string name="InuAppIconDescOsu">Рожевий low-poly hit-circle</string>
     <string name="InuAppIconDescAmongUs">Член екіпажу на яскраво-жовтому</string>
     <string name="InuAppIconDescCrimson">Криваво-червоний місяць над сутінками сакури</string>
-
-    <string name="InuMd3PlayerUpNext">Далі</string>
-    <string name="InuMd3PlayerTracks_one">%1$d трек</string>
-    <string name="InuMd3PlayerTracks_few">%1$d треки</string>
-    <string name="InuMd3PlayerTracks_many">%1$d треків</string>
-    <string name="InuMd3PlayerTracks_other">%1$d трека</string>
-    <string name="InuMd3PlayerLyrics">Текст</string>
-    <string name="InuMd3PlayerLyricsSearching">Шукаємо текст…</string>
-    <string name="InuMd3PlayerNoLyrics">У файлі немає тексту</string>
-    <string name="InuMd3PlayerNoLyricsInfo">Можна пошукати текст у LRCLIB. Назву треку буде надіслано через інтернет.</string>
-    <string name="InuMd3PlayerFindLyrics">Шукати онлайн</string>
-    <string name="InuMd3PlayerLyricsNotFound">Текст не знайдено</string>
-    <string name="InuMd3PlayerLyricsNotFoundInfo">У LRCLIB немає тексту для цього треку.</string>
-    <string name="InuMd3PlayerLyricsError">Не вдалося завантажити текст</string>
-    <string name="InuMd3PlayerLyricsErrorInfo">Перевірте підключення та спробуйте ще раз.</string>
-    <string name="InuMd3PlayerRetry">Спробувати ще раз</string>
-    <string name="InuMd3PlayerInstrumental">Інструментал</string>
-    <string name="InuMd3PlayerInstrumentalInfo">У цьому треку немає слів.</string>
-    <string name="InuMd3PlayerSourceSynced">Синхронізований текст · %1$s</string>
-    <string name="InuMd3PlayerSourcePlain">Текст · %1$s</string>
-    <string name="InuMd3PlayerSourceSyncedFile">Синхронізований текст із файлу</string>
-    <string name="InuMd3PlayerSourcePlainFile">Текст із файлу</string>
 </resources>
