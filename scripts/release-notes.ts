@@ -8,7 +8,8 @@ import { join, resolve } from 'node:path'
  *   {
  *     "en":  "...full github markdown notes...",
  *     "uk":  "...повні нотатки для github...",
- *     "tg":  "...short bilingual telegram post (en + uk, [+]/[*]/[-]/[=] style)...",
+ *     "tg":  "...short bilingual telegram post (uk + en, plain prose lines)...",
+ *     "tg_ci": "...CI channel list: linked short hash and subject per commit...",
  *     "site": { "en": SiteNotes, "uk": SiteNotes }   // structured card for the website
  *   }
  *
@@ -64,17 +65,21 @@ async function geminiModels(key: string): Promise<string[]> {
 }
 
 async function buildCandidates(): Promise<Candidate[]> {
-  const out: Candidate[] = []
-  const gKey = process.env.GEMINI_API_KEY
-  if (gKey) {
+  // GEMINI_API_KEYS may hold several keys (comma/space/newline separated); GEMINI_API_KEY is still honoured.
+  const keys = [...new Set([...(process.env.GEMINI_API_KEYS ?? '').split(/[\s,]+/), process.env.GEMINI_API_KEY ?? ''].filter(Boolean))]
+  const perKey: Candidate[][] = []
+  for (const key of keys) {
     try {
-      const models = await geminiModels(gKey)
-      console.log(`release-notes: gemini models: ${models.join(', ')}`)
-      for (const model of models.slice(0, 6)) out.push({ url: geminiUrl, key: gKey, model })
+      const models = await geminiModels(key)
+      console.log(`release-notes: gemini models (key ${perKey.length + 1}): ${models.join(', ')}`)
+      perKey.push(models.slice(0, 6).map(model => ({ url: geminiUrl, key, model })))
     } catch (e) {
-      console.warn(`release-notes: gemini model list failed: ${e}`)
+      console.warn(`release-notes: gemini model list failed for key ${perKey.length + 1}: ${e}`)
     }
   }
+  // Interleave so one exhausted key never blocks the rest: best model on every key first, then the next model.
+  const out: Candidate[] = []
+  for (let i = 0; i < 6; i++) for (const list of perKey) if (list[i]) out.push(list[i])
   return out
 }
 
@@ -144,58 +149,41 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
     'not someone working on it.',
     '',
     'If a commit mentions "wip" (work in progress) anywhere, its bullet in every section and language',
-    'must say the feature is untested and may be unstable and ask users to report bugs',
-    '(e.g. "⚠️ WIP: untested, may be unstable - please report bugs").',
+    'must say the feature is untested and may be unstable and ask users to report bugs, written in',
+    'the language of that section (e.g. "⚠️ WIP: untested, may be unstable - please report bugs").',
     '',
     'Merge commits that touch the same change into one bullet.',
     'An upstream sync (subject mentioning "sync with upstream inugram") is always exactly one',
     'bullet; never list its internal patches.',
-    'A Telegram version bump gets exactly one "[*] " prefix (never repeat the commit subject\'s own',
-    '"[*] " inside the bullet text) followed by a bold, capitalized description of who did it: our own',
-    'rebase onto stock Telegram (a commit like "rebase to X.Y.Z") -> "[*] **Rebase to X.Y.Z (ported by',
-    'entinyGram)**"; an inugram sync that brings the new base -> "[*] **Updated to Telegram X.Y.Z (via',
-    'inugram)**". The "(ported by entinyGram)" / "(via inugram)" tag stays in English in both tg_en and',
-    'tg_uk. Never credit inugram for a base update we ported ourselves.',
+    'A Telegram version bump is exactly one line: "Rebase to X.Y.Z (ported by entinyGram)" for our own',
+    'rebase onto stock Telegram (a commit like "rebase to X.Y.Z"), or "Updated to Telegram X.Y.Z (via',
+    'inugram)" for an inugram sync that brings the new base. The "(ported by entinyGram)" / "(via inugram)"',
+    'tag stays in English in every language. Never credit inugram for a base update we ported ourselves.',
+    'NEVER state a Telegram version number unless a commit subject spells it out as X.Y.Z; a bare build number',
+    'like "7112" is not a version, and a commit that only says "rebase onto ..." gets no version line at all.',
     '',
-    'A commit subject that starts with "[+] ", "[*] ", "[-] " or "[=] " already states its category:',
-    'keep exactly that marker for its bullet, never move it to another one.',
+    'A commit subject that starts with "[+] ", "[*] ", "[-] " or "[=] " states its category (new capability,',
+    'fix or improvement, removal, upstream sync). Use it to decide where the line belongs; never print the marker.',
     'Stay close to the subjects. Do not expand a subject into details from the commit body unless the',
-    'subject alone is meaningless; a short subject stays a short bullet.',
+    'subject alone is meaningless; a short subject stays a short line.',
     '',
     'Sections in "en"/"uk" (full GitHub release notes): "### New Features", "### Bug Fixes", "### Improvements & Polish".',
     'Anything the user could not do before goes under New Features, not Improvements.',
     'Omit a section that would be empty. Use "- " for bullets.',
     '',
-    'Telegram release notes in "tg_en" and "tg_uk" MUST BE COMPACT AND CONSOLIDATED:',
-    '- Format prefixes: "[+] " added/new capability, "[*] " fixed/improved, "[-] " removal, "[=] " upstream sync.',
-    '- A flagship feature ALWAYS gets its own bullet line, never folded into a grouped one - even if that',
-    '  makes the list longer. "Flagship" means: a whole new screen/tab, a new settings section, or anything',
-    '  a user would specifically look for in a changelog (e.g. "[+] Feed: aggregated view of channel posts,',
-    '  scoped by folder, with bulk exclusion" must be its own line - never merged with unrelated bullets',
-    '  like login or video recording just because they shipped in the same build).',
-    '- In "tg_uk" and "tg_en", a flagship feature ALWAYS gets its own bullet like this:',
-    '  "[+] **<name>:** [дієслово](tg://entinySettings/<slug>) ...rest..." — the feature NAME is plain',
-    '  bold (no link on it), and the ACTION VERB right after the colon ("додано"/"added", etc.)',
-    '  carries the deep link. E.g. "[+] **Pill Stack:** [додано](tg://entinySettings/pill-stack)',
-    '  настроювані індикатори..." / "[+] **Pill Stack:** [added](tg://entinySettings/pill-stack)',
-    '  customizable indicators...". Never bold inside grouped "Added:"/"Fixed:" bullets.',
-    '- Smaller or genuinely related additions MAY be grouped into one combined bullet (e.g. "[+] Added: item 1, item 2, item 3").',
-    '  Never use a group to hide a flagship feature among minor ones.',
-    '- Bug fixes and refinements MUST be grouped into single combined bullets (e.g. "[*] Fixed: ghost mode, save messages, reaction read state, etc.").',
-    '- If there are roughly 6 or more bug-fix commits, do NOT enumerate them one by one - that reads like a raw',
-    '  git log, not a changelog. Instead write one polished line: name at most the 1-2 headline fixes a user would',
-    '  actually notice, then close with a natural phrase for the rest (e.g. "[*] Fixed message forwarding and the',
-    '  translation bar, plus a huge batch of smaller bugfixes and stability polish" / "[*] Виправлено пересилання',
-    '  повідомлень і панель перекладу, а також величезну кількість дрібних багів і покращень стабільності").',
-    '  Never dump a long comma-separated list of every fixed item just because the data is there.',
-    '- Never wrap anything in "[*] Fixed"/"[-] Removed" lines as a settings deep link. A fix is not a',
-    '  destination the reader needs to visit - links belong only on "[+]" (new-capability) bullets.',
-    '- Removals (if any) grouped: "[-] Removed: item 1, item 2".',
-    '- Upstream sync: "[=] Synced with upstream inugram" / "[=] Синхронізація з upstream inugram" - ONLY when a commit',
-    '  in COMMITS above actually says so. Never add this line speculatively or because past releases had one.',
-    '- Prefer more lines with real feature names over fewer lines that blur everything together. The list in',
-    '  "tg_en" / "tg_uk" should stay readable as a Telegram post - roughly 6 to 12 lines - and MUST stay under 1400 characters.',
-    'No language headers inside "tg_en"/"tg_uk".',
+    'Telegram posts go in "tg_uk" (Ukrainian) and "tg_en" (English): the same content in each.',
+    '- Plain prose lines, each starting with "– " (en dash and a space). NO "[+]", "[*]", "[-]" or "[=]" markers,',
+    '  no headers, no language labels, no bold.',
+    '- One line per feature or group of fixes, a short sentence saying what the user gets, in the style of:',
+    '  "Wide posts in channels and the feed, plus reactions and a jump to the original post in the feed." /',
+    '  "Широкі пости в каналах і стрічці, а в стрічці ще реакції та перехід до оригінального поста."',
+    '- A flagship feature (a whole new screen or tab, a new settings section, anything a user would look for)',
+    '  ALWAYS gets its own line, never folded into a grouped one. Smaller related additions may share one line.',
+    '- Bug fixes are never listed one by one. Close with one line such as "Hundreds of fixes and optimizations:',
+    '  ..." that names at most the 1-2 headline fixes a user would notice, then a natural phrase for the rest.',
+    '- Removals: one plain line saying what went away and, if the commits say, why.',
+    '- Upstream sync: only when a commit in COMMITS actually says so, one line. Never add it speculatively.',
+    '- Each post is roughly 6 to 12 lines and MUST stay under 1000 characters (link URLs do not count).',
   ]
 
   // ── Deep-link injection ─────────────────────────────────────────────────────
@@ -239,14 +227,13 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
         '',
         'SETTINGS DEEP LINKS (optional):',
         'entinyGram has in-app deep links of the form tg://entinySettings/<slug>.',
-        'When a "[+]" bullet in "tg_uk" or "tg_en" mentions a feature whose label closely matches one',
-        'of the entries below, link the ACTION VERB (not the name): **[name]:** [verb](tg://entinySettings/<slug>).',
-        'E.g. "[+] **Pill Stack:** [додано](tg://entinySettings/pill-stack) настроювані індикатори..." and',
-        '"[+] **Pill Stack:** [added](tg://entinySettings/pill-stack) customizable indicators..." —',
-        'the name is plain bold, the verb is the link. Use the same slug in both languages.',
-        'Link URLs do not count toward the visible character budget, so "tg_en" (the CI channel caption) gets links too.',
-        'Never link inside "[*] Fixed" or "[-] Removed" bullets — links are only for new capabilities',
-        'the reader might want to go turn on. Plain text everywhere else, including "en"/"uk".',
+        'When a new-capability line in "tg_uk" or "tg_en" mentions a feature whose label closely matches one',
+        'of the entries below, put the deep link on the feature name itself: "– [Wide posts](tg://entinySettings/<slug>) in',
+        'channels and the feed, ...". Link the name phrase, never a verb. Use the same slug in every language.',
+        'Linking is REQUIRED, not optional: every new-capability line in "tg_uk"/"tg_en" whose feature appears in the',
+        'list below MUST carry its link, exactly like in "en"/"uk". A post without any tg:// link is wrong when matches exist.',
+        'Never link inside fix lines or removals - links are only for new capabilities the reader might want to turn on.',
+        'Plain text everywhere else, including "en"/"uk".',
         'Only link when the match is unambiguous. Never invent slugs not in this list.',
         '',
         'SLUG → LABEL:',
@@ -276,7 +263,7 @@ function buildPrompt(info: BuildInfo, commits: Commit[], registry: RegistryEntry
 async function callChat(c: Candidate, prompt: string): Promise<string> {
   const { url, key, model } = c
   const res = await fetch(url, {
-    signal: AbortSignal.timeout(45000),
+    signal: AbortSignal.timeout(60000),
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -289,7 +276,7 @@ async function callChat(c: Candidate, prompt: string): Promise<string> {
         { role: 'user', content: prompt },
       ],
       temperature: 0,
-      max_tokens: 6000,
+      max_tokens: 16000,
     }),
   })
   if (!res.ok) {
@@ -310,7 +297,7 @@ async function callChat(c: Candidate, prompt: string): Promise<string> {
 function dropMetaBullets(text: string): string {
   const kept: string[] = []
   for (const line of text.split('\n')) {
-    const isBullet = /^\s*(-|\[[+*\-=]\])\s/.test(line)
+    const isBullet = /^\s*(-|–|\[[+*\-=]\])\s/.test(line)
     if (isBullet && META.test(line)) continue
     kept.push(line)
   }
@@ -340,6 +327,18 @@ function parseSite(v: unknown): SiteNotes {
   return { headline: str(o.headline, 120), highlights, fixes }
 }
 
+function combineTg(uk: string, en: string): string {
+  return `🇺🇦 UK:\n${uk}\n\n🇬🇧 Eng:\n${en}`
+}
+
+/** CI channel post: one line per commit, short hash linked to the commit, marker stripped, no AI involved. */
+function ciList(commits: Commit[], repo: string): string {
+  return commits.map((c) => {
+    const subject = c.message.split('\n')[0].trim().replace(/^\[[+*\-=]\]\s*/, '')
+    return `[${c.sha.slice(0, 7)}](https://github.com/${repo}/commit/${c.sha}): ${subject}`
+  }).join('\n')
+}
+
 function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en: string, tg: string, site: SiteBundle } {
   const cleaned = raw.trim().replace(/^```(?:json)?/m, '').replace(/```$/m, '').trim()
   // Some models wrap the JSON in prose or reasoning; take the outermost object.
@@ -360,13 +359,17 @@ function parseNotes(raw: string): { en: string, uk: string, tg_uk: string, tg_en
 async function aiNotes(candidates: Candidate[], info: BuildInfo, commits: Commit[], registry: RegistryEntry[]) {
   const prompt = buildPrompt(info, commits, registry)
   let lastErr: unknown = new Error('no AI providers configured')
-  const deadline = Date.now() + 180_000
+  const deadline = Date.now() + 300_000
   for (const c of candidates) {
     if (Date.now() > deadline) break
     try {
       console.log(`==> release-notes: calling ${c.model}`)
       const notes = parseNotes(await callChat(c, prompt))
       if (!notes.en && !notes.uk && !notes.tg_uk) throw new Error('empty ai notes')
+      // A weak model sometimes answers every language in English; reject it so the next model gets a turn.
+      const cyrillic = (t: string) => (t.match(/[а-щьюяіїєґ]/gi) ?? []).length / Math.max(1, (t.match(/\p{L}/gu) ?? []).length)
+      if (notes.tg_uk && cyrillic(notes.tg_uk) < 0.4) throw new Error('tg_uk is not Ukrainian')
+      if (notes.uk && cyrillic(notes.uk) < 0.4) throw new Error('uk is not Ukrainian')
       return notes
     } catch (e) {
       lastErr = e
@@ -413,23 +416,22 @@ function ruleFallback(commits: Commit[]): { en: string, uk: string, tg_uk: strin
   if (commits.length === 0) return {
     en: 'No changes in this build.',
     uk: 'У цій збірці змін немає.',
-    tg_uk: '[=] Змін немає',
-    tg_en: '[=] No changes',
-    tg: '🇺🇦 UK:\n[=] Змін немає\n\n🇺🇸 EN:\n[=] No changes',
+    tg_uk: '– Змін немає',
+    tg_en: '– No changes',
+    tg: combineTg('– Змін немає', '– No changes'),
     site: ruleSite([]),
   }
 
-  // Commits already carry "[+] / [*] / [-] / [=] text" - keep them verbatim instead of guessing.
+  // Commits already carry a "[+] / [*] / [-] / [=]" marker: drop it and keep the wording instead of guessing.
   const lines = commits.map(c => {
     const subject = c.message.split('\n')[0].trim()
     const m = subject.match(/^\[([+*\-=])\]\s*(.*)$/)
-    const marker = m ? m[1] : categorize(subject) === 'feature' ? '+' : '*'
     const text = m ? m[2] : subjectText(subject)
     const rebase = text.match(/^rebase to (\S+)/i)
-    return rebase ? `[*] **Rebase to ${rebase[1]} (ported by entinyGram)**` : `[${marker}] ${text}`
+    return rebase ? `– Rebase to ${rebase[1]} (ported by entinyGram)` : `– ${text}`
   }).join('\n')
 
-  return { en: lines, uk: lines, tg_uk: lines, tg_en: lines, tg: `🇺🇦 UK:\n${lines}\n\n🇺🇸 EN:\n${lines}`, site: ruleSite(commits) }
+  return { en: lines, uk: lines, tg_uk: lines, tg_en: lines, tg: combineTg(lines, lines), site: ruleSite(commits) }
 }
 
 const info: BuildInfo = JSON.parse(await fs.readFile(infoPath, 'utf8'))
@@ -446,7 +448,7 @@ try {
   console.warn('release-notes: settings-registry.json not found; deep links disabled')
 }
 
-let notes: { en: string, uk: string, tg: string, site: SiteBundle }
+let notes: { en: string, uk: string, tg: string, tg_ci?: string, site: SiteBundle }
 const candidates = commits.length > 0 ? await buildCandidates() : []
 if (candidates.length > 0) {
   try {
@@ -459,6 +461,8 @@ if (candidates.length > 0) {
   if (commits.length > 0) console.warn('release-notes: GEMINI_API_KEY not set; using rule-based fallback')
   notes = ruleFallback(commits)
 }
+
+notes.tg_ci = ciList(commits, info.repo)
 
 await fs.mkdir(artifactDir, { recursive: true })
 await fs.writeFile(join(artifactDir, 'release-notes.json'), JSON.stringify(notes, null, 2))

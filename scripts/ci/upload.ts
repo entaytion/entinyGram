@@ -15,6 +15,8 @@ interface BuildInfo {
   appVerCode: number
   buildDate: string
   apkFiles: ApkFile[]
+  pluginsApk?: ApkFile | null
+  pluginsArm7Apk?: ApkFile | null
   commitSha: string
   repo: string
 }
@@ -25,7 +27,7 @@ const artifactDir = resolve(process.argv[2] ?? 'out')
 const ciOnly = process.argv.includes('--ci-only')
 
 const info: BuildInfo = JSON.parse(await fs.readFile(join(artifactDir, 'build-info.json'), 'utf8'))
-for (const { file } of info.apkFiles) {
+for (const { file } of [...info.apkFiles, info.pluginsApk, info.pluginsArm7Apk].filter((f): f is ApkFile => !!f)) {
   await fs.access(join(artifactDir, file))
 }
 
@@ -82,16 +84,18 @@ try {
   let tgUk = ''
   let tgEn = ''
   let enNotes = ''
+  let tgCi = ''
   try {
     const notes = JSON.parse(await fs.readFile(join(artifactDir, 'release-notes.json'), 'utf8'))
     tgUk = String(notes.tg_uk ?? '').trim()
     tgEn = String(notes.tg_en ?? '').trim()
     enNotes = String(notes.en ?? '').trim()
+    tgCi = String(notes.tg_ci ?? '').trim()
 
     if (!tgUk && !tgEn && notes.tg) {
       const rawTg = String(notes.tg)
-      const ukMatch = rawTg.match(/🇺🇦\s*UK:\s*([\s\S]*?)(?=🇺🇸\s*EN:|🇬🇧\s*Eng:|$)/i)
-      const enMatch = rawTg.match(/(?:🇺🇸\s*EN:|🇬🇧\s*Eng:)\s*([\s\S]*?)(?=🇺🇦\s*UK:|$)/i)
+      const ukMatch = rawTg.match(/🇺🇦\s*UK:\s*([\s\S]*?)(?=🇺🇸\s*EN:|🇬🇧\s*(?:EN|Eng):|$)/i)
+      const enMatch = rawTg.match(/(?:🇺🇸\s*EN:|🇬🇧\s*(?:EN|Eng):)\s*([\s\S]*?)(?=🇺🇦\s*UK:|$)/i)
       if (ukMatch || enMatch) {
         tgUk = (ukMatch?.[1] ?? '').trim()
         tgEn = (enMatch?.[1] ?? '').trim()
@@ -136,11 +140,10 @@ try {
 
   const ukHtml = notesToEntities(postUk)
   const enHtml = postEn ? notesToEntities(postEn) : null
-  const ciHtml = enHtml ?? ukHtml
+  const ciHtml = tgCi ? notesToEntities(tgCi) : (enHtml ?? ukHtml)
   const isPreRelease = process.env.PRE_RELEASE === 'true'
   const appLabel = isPreRelease ? 'entinyGram Beta' : 'entinyGram'
 
-  const ARM7_NOTICE = html`<b>This is a build for older 32-bit (armeabi-v7a) devices. It ships rarely, usually only together with a stable release — it is not a pre-release.</b>`
   const PRERELEASE_WARNING = html`<i>‼️ Pre-release build — for testing new features and bug fixes. This version is unstable and may crash or misbehave.</i>`
 
   const releaseTagName = process.env.RELEASE_TAG ?? ''
@@ -151,7 +154,6 @@ try {
 
   // Updater clips its dialog to the caption <blockquote>; tag is #release XOR #prerelease.
   const releaseTag = isPreRelease ? '#prerelease' : '#release'
-  const { file } = info.apkFiles[0]
 
   function getHeader() {
     const label = isPreRelease ? 'entinyGram Beta' : 'entinyGram'
@@ -183,58 +185,99 @@ try {
   // Caption limit is 1024 chars; trim lines until it fits, full notes go in a reply.
   const buildCaption = (notesEntity: ReturnType<typeof html>) => buildPostCaption(html`<blockquote>${notesEntity}</blockquote>`)
 
-  let caption = buildCaption(ciHtml)
-  let needsCiFollowup = false
-
-  // Max caption length for Telegram media is 1024 characters. Keep safety margin.
-  if (caption.text.length > 1000) {
-    needsCiFollowup = true
-    const postCi = postEn || postUk
-    const rawLines = postCi.split('\n').map(l => l.trim()).filter(Boolean)
-    const keptLines: string[] = []
-    for (const line of rawLines) {
-      const candidateLines = [...keptLines, line, '... (повний список нижче / full changelog below)']
-      const candidateHtml = notesToEntities(candidateLines.join('\n'))
-      const candidateCaption = buildCaption(candidateHtml)
-      if (candidateCaption.text.length > 980) break
-      keptLines.push(line)
-    }
-    if (keptLines.length > 0) {
-      keptLines.push('... (повний список нижче / full changelog below)')
-      caption = buildCaption(notesToEntities(keptLines.join('\n')))
-    } else {
-      caption = buildCaption(html`• Оновлення v${info.verName}\n... (повний список нижче / full changelog below)`)
-    }
+  // Display order: with plugins first, then without. The label doubles as the DOWNLOAD link text.
+  const variants: { label: string, file: string, plugins: boolean }[] = []
+  const addVariant = (label: string, file: string | undefined, plugins: boolean) => {
+    if (file) variants.push({ label, file, plugins })
   }
+  addVariant('ARM64 + plugins', info.pluginsApk?.file, true)
+  addVariant('ARM7 + plugins', info.pluginsArm7Apk?.file, true)
+  addVariant('ARM64', info.apkFiles[0]?.file, false)
+  addVariant('ARM7', info.apkFiles[1]?.file, false)
 
-  const apkMsg = await tg.sendMedia(channelCI, {
-    type: 'document',
-    file: `file:${join(artifactDir, file)}`,
-    fileName: file,
-    caption,
-  })
+  let firstPostId: number
+  if (variants.length === 1) {
+    // A single APK keeps the classic post: the commit list is the caption, the rest goes in a reply.
+    let caption = buildCaption(ciHtml)
+    let needsCiFollowup = false
 
-  if (needsCiFollowup) {
-    console.log('CI caption was truncated to fit 1024 limit; sending full notes in reply...')
-    await tg.sendText(
-      channelCI,
-      html`📝 <b>Changelog v${info.verName}:</b>\n\n<blockquote expandable>${ciHtml}</blockquote>`,
-      { replyTo: apkMsg.id }
-    )
-  }
+    // Max caption length for Telegram media is 1024 characters. Keep safety margin.
+    if (caption.text.length > 1000) {
+      needsCiFollowup = true
+      const postCi = tgCi || postEn || postUk
+      const rawLines = postCi.split('\n').map(l => l.trim()).filter(Boolean)
+      const keptLines: string[] = []
+      for (const line of rawLines) {
+        const candidateLines = [...keptLines, line, '... (повний список нижче / full changelog below)']
+        const candidateHtml = notesToEntities(candidateLines.join('\n'))
+        const candidateCaption = buildCaption(candidateHtml)
+        if (candidateCaption.text.length > 980) break
+        keptLines.push(line)
+      }
+      if (keptLines.length > 0) {
+        keptLines.push('... (повний список нижче / full changelog below)')
+        caption = buildCaption(notesToEntities(keptLines.join('\n')))
+      } else {
+        caption = buildCaption(html`• Оновлення v${info.verName}\n... (повний список нижче / full changelog below)`)
+      }
+    }
 
-  // Optional arm7 (32-bit) build -- rare, only present when apk.yml's build_arm7 toggle was on.
-  // Full standalone post like arm64, but the changelog block is replaced by a device notice.
-  const arm7File = info.apkFiles[1]?.file
-  const arm7Caption = buildPostCaption(ARM7_NOTICE)
-  const arm7Msg = arm7File
-    ? await tg.sendMedia(channelCI, {
+    const apkMsg = await tg.sendMedia(channelCI, {
       type: 'document',
-      file: `file:${join(artifactDir, arm7File)}`,
-      fileName: arm7File,
-      caption: arm7Caption,
+      file: `file:${join(artifactDir, variants[0].file)}`,
+      fileName: variants[0].file,
+      caption,
     })
-    : null
+    firstPostId = apkMsg.id
+
+    if (needsCiFollowup) {
+      console.log('CI caption was truncated to fit 1024 limit; sending full notes in reply...')
+      await tg.sendText(
+        channelCI,
+        html`📝 <b>Changelog v${info.verName}:</b>\n\n<blockquote expandable>${ciHtml}</blockquote>`,
+        { replyTo: apkMsg.id },
+      )
+    }
+  } else {
+    // Several APKs go into one album; the caption only says which file is which, the changelog follows as replies.
+    const names = (plugins: boolean) => variants.filter(v => v.plugins === plugins).map(v => v.label.replace(' + plugins', ''))
+    const legend: ReturnType<typeof html>[] = []
+    if (names(true).length) legend.push(html`🔌 <b>With plugins:</b> ${names(true).join(' · ')}`)
+    if (names(false).length) legend.push(html`📦 <b>Without plugins:</b> ${names(false).join(' · ')}`)
+    legend.push(html`📝 Detailed changelog on the website and below`)
+    const albumCaption = buildPostCaption(joinTextWithEntities(legend, '\n'))
+
+    const album = await tg.sendMediaGroup(channelCI, variants.map((v, i) => ({
+      type: 'document' as const,
+      file: `file:${join(artifactDir, v.file)}`,
+      fileName: v.file,
+      ...(i === 0 ? { caption: albumCaption } : {}),
+    })))
+    firstPostId = album[0].id
+
+    // The full changelog: a commit list, split into messages that fit the 4096-character limit.
+    const changelogSource = tgCi || postEn || postUk
+    const chunks: string[] = []
+    let current = ''
+    for (const line of changelogSource.split('\n').map(l => l.trim()).filter(Boolean)) {
+      if (current.length + line.length + 1 > 3500) {
+        chunks.push(current)
+        current = ''
+      }
+      current += `${current ? '\n' : ''}${line}`
+    }
+    if (current) chunks.push(current)
+    let replyTo = album[0].id
+    for (const [i, chunk] of chunks.entries()) {
+      const tail = i === chunks.length - 1 && compareHtml ? html`\n\n${compareHtml}` : html``
+      const sent = await tg.sendText(
+        channelCI,
+        html`📝 <b>Changelog v${info.verName}${chunks.length > 1 ? ` (${i + 1}/${chunks.length})` : ''}:</b>\n\n<blockquote expandable>${notesToEntities(chunk)}</blockquote>${tail}`,
+        { replyTo },
+      )
+      replyTo = sent.id
+    }
+  }
 
   // 2) --ci-only stops here: no main-channel post. Pre-releases are always ci-only (apk.yml).
   if (ciOnly) {
@@ -242,17 +285,16 @@ try {
   } else {
     const extra = process.env.RELEASE_EXTRA ? esc(process.env.RELEASE_EXTRA).trim() : ''
 
-    const linksHtml = html`<a href="${postUrl(apkMsg.id)}">Завантажити / Download</a>`
+    // Every variant lives in the same CI album, so every DOWNLOAD link points at it (Telegram cannot link a single file).
+    const downloadHtml = variants.length > 1
+      ? html`⬇️ <b>DOWNLOAD:</b> ${joinTextWithEntities(variants.map(v => html`<a href="${postUrl(firstPostId)}"><b>${v.label}</b></a>`), ' · ')}`
+      : html`⬇️ <a href="${postUrl(firstPostId)}">Завантажити / Download</a>`
     const siteUrl = process.env.SITE_CHANGELOG_URL ?? 'https://entaytion.is-a.dev/entinygram/changelog'
     const siteHtml = html`🌐 <a href="${siteUrl}">Усі нові функції на сайті / See all new features on the website</a>`
-    const arm7NoteHtml = arm7Msg
-      ? html`⚠️ 32-біт (arm7) для старих пристроїв, більшості не треба — <a href="${postUrl(arm7Msg.id)}">тут</a> / 32-bit (arm7) for old devices, most people don't need it — <a href="${postUrl(arm7Msg.id)}">here</a>`
-      : null
-
     // Discrete blocks joined by a blank line each — no stray empty paragraphs.
     const blocks = [
-      html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — ${linksHtml}`,
-      arm7NoteHtml,
+      html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate})`,
+      downloadHtml,
       extra ? html`${extra}` : null,
       ukHtml,
       enHtml ? html`🇬🇧 Eng:\n<blockquote expandable>${enHtml}</blockquote>` : null,
@@ -268,8 +310,8 @@ try {
     } else {
       console.log('Main channel post is long; splitting into Ukrainian post and English reply...')
       const post1Blocks = [
-        html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate}) — ${linksHtml}`,
-        arm7NoteHtml,
+        html`📡 <b>entinyGram v${info.verName}</b> (build ${info.buildDate})`,
+        downloadHtml,
         extra ? html`${extra}` : null,
         ukHtml,
         siteHtml,

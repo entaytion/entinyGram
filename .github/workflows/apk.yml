@@ -193,7 +193,7 @@ jobs:
           cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-arm7 }}"
 
       - name: Build arm64-v8a with plugins
-        if: ${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}
+        if: ${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}
         working-directory: worktree
         env:
           COMMIT_ID: ${{ github.sha }}
@@ -208,7 +208,7 @@ jobs:
           cp TMessagesProj_App/build/outputs/apk/release/app.apk "$GITHUB_WORKSPACE/out/${{ steps.info.outputs.apk-plugins }}"
 
       - name: Build armeabi-v7a with plugins
-        if: ${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') && (inputs.build_arm7 == true || inputs.build_arm7 == 'true') }}
+        if: ${{ (inputs.build_plugins == true || inputs.build_plugins == 'true') && (inputs.build_arm7 == true || inputs.build_arm7 == 'true') }}
         working-directory: worktree
         env:
           COMMIT_ID: ${{ github.sha }}
@@ -241,8 +241,12 @@ jobs:
           fi
 
           plugins=''
-          if [ '${{ !(inputs.prerelease == true || inputs.prerelease == 'true') && (inputs.build_plugins == true || inputs.build_plugins == 'true') }}' = 'true' ]; then
+          plugins_arm7=''
+          if [ '${{ inputs.build_plugins == true || inputs.build_plugins == 'true' }}' = 'true' ]; then
             plugins='${{ steps.info.outputs.apk-plugins }}'
+            if [ "$build_arm7" = 'true' ]; then
+              plugins_arm7='${{ steps.info.outputs.apk-arm7-plugins }}'
+            fi
           fi
 
           base="$LAST_UPLOADED_SHA"
@@ -265,7 +269,8 @@ jobs:
             --argjson commits      "$commits_json"                          \
             --arg     repo         "$GITHUB_REPOSITORY"                     \
             --arg     plugins      "$plugins"                               \
-            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,apkFiles:$apkFiles,pluginsApk:(if $plugins == "" then null else {file:$plugins} end),commitSha:$commitSha,commits:$commits,repo:$repo}' \
+            --arg     pluginsArm7  "$plugins_arm7"                          \
+            '{verName:$verName,verCode:$verCode,appVerCode:$appVerCode,buildDate:$buildDate,apkFiles:$apkFiles,pluginsApk:(if $plugins == "" then null else {file:$plugins} end),pluginsArm7Apk:(if $pluginsArm7 == "" then null else {file:$pluginsArm7} end),commitSha:$commitSha,commits:$commits,repo:$repo}' \
             > out/build-info.json
 
       - name: Dump settings registry
