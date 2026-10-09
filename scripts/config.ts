@@ -206,9 +206,9 @@ export const forkSyncFiles: ForkSyncFile[] = [
     target: 'TMessagesProj/src/main/res/mipmap-anydpi-v26',
     replace: true,
   },
-  // concept launcher icons, produced by `node scripts/generate-concept-icons.mjs`
+  // concept launcher icon backgrounds (432px webp, full-bleed)
   {
-    source: 'src/res/launcher/concepts/generated/png/*',
+    source: 'src/res/launcher/concepts/webp/*',
     target: 'TMessagesProj/src/main/res/drawable-nodpi',
   },
   {

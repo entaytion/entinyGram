@@ -31,6 +31,10 @@
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_old_320</item>
     </style>
 
+    <style name="Theme.TMessages.Start.Tribute" parent="Theme.TMessages.Start">
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/inu_splash_tribute_320</item>
+    </style>
+
     <style name="ActionBar.Transparent.TMessages.Start" parent="android:style/Widget.Material.Light.ActionBar">
         <item name="android:background">#ff232d3a</item>
         <item name="android:textColor">#ffffff</item>

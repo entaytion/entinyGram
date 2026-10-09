@@ -9,9 +9,12 @@ object SplashThemeHelper {
     @JvmStatic
     fun apply(activity: LaunchActivity?) {
         if (activity == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-        val animated = LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.DEFAULT) ||
-            LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.OLD)
-        val theme = if (animated) R.style.Theme_TMessages_Start else R.style.Theme_TMessages_Start_Plain
+        val theme = when {
+            LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.DEFAULT) -> R.style.Theme_TMessages_Start
+            LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.OLD) -> R.style.Theme_TMessages_Start_Old
+            LauncherIconController.isEnabled(LauncherIconController.LauncherIcon.INU_TRIBUTE) -> R.style.Theme_TMessages_Start_Tribute
+            else -> R.style.Theme_TMessages_Start_Plain
+        }
         try {
             activity.splashScreen.setSplashScreenTheme(theme)
         } catch (_: Throwable) {

@@ -109,6 +109,7 @@ our own layer on top of the inugram patchset: restricted Telegram features, priv
 - 📡 **pill stack**: interactive pills in chats search bar - *ported from [exteraGram](https://github.com/exteraless/exteraless)*
 - 📡 **support card**: optional way to support the developer, can be hidden
 - 📡 **downloads button**: always show the downloads list button in the chats header
+- 📡 **app icon picker**: full-screen icon chooser with live preview - *ported from [exteraless](https://github.com/exteraless/exteraless)*
 
 ### profile & identity tools
 
@@ -193,7 +194,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - monet (material you) theme support - *based on [NagramX](https://github.com/risin42/NagramX)*, 🐶 improved. plus a quick switcher in appearance settings (light/dark/amoled/auto)
 - 🐶 classic ui mode for folders bar, shared media tabs, global search and chat elements (reverts the >12.6 "liquid glass" look)
 - icon replacement (solar pack by [480 Design](https://t.me/Design480) - *ported from [NagramX](https://github.com/risin42/NagramX)*; vkui pack by [VK](https://github.com/VKCOM/icons) - *ported from [Catogram](https://github.com/Catogram/Catogram)*)
-- 16 concept launcher icons (Inu tribute, Radar, Constellation, Orbit, Avatar, Nothing, Mono, Sunset, Amethyst, Aurora, Google ’26, Lunar, Math Book, Jungle, Gold, Dish) in the app icon picker, free for everyone
+- 22 concept launcher icons (Inu tribute, Radar, Constellation, Orbit, Avatar, Nothing, Mono, Sunset, Amethyst, Aurora, Google ’26, Lunar, Math Book, Jungle, Gold, Dish, Blush, Nox Sky, Inverse, osu!, Among Us, Crimson) in the app icon picker, free for everyone - *icons by [@xiurann](https://t.me/xiurann) and [@mkr_infinity](https://t.me/mkr_infinity)*
 - notification icon: Telegram (default) or entinyGram
 - show seconds in timestamps
 - override Telegram's detected device performance class

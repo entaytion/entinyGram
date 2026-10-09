@@ -5,10 +5,10 @@ Subject: [*] launcher icons: concept set, round icon, old alias and splash theme
 
 Merges icon alias theme, splash icon theme and round app icon fixes.
 ---
- TMessagesProj/src/main/AndroidManifest.xml    | 242 +++++++++++++++++-
+ TMessagesProj/src/main/AndroidManifest.xml    | 333 +++++++++++++++++-
  .../ui/Cells/AppIconsSelectorCell.java        |   2 +-
- .../telegram/ui/LauncherIconController.java   |  23 ++
- 3 files changed, 265 insertions(+), 2 deletions(-)
+ .../telegram/ui/LauncherIconController.java   |  29 ++
+ 3 files changed, 362 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/AndroidManifest.xml b/TMessagesProj/src/main/AndroidManifest.xml
 index 0000000..0000000 100644
@@ -23,7 +23,7 @@ index 0000000..0000000 100644
              android:icon="@mipmap/ic_launcher_old"
              android:roundIcon="@mipmap/ic_launcher_old"
              android:exported="true">
-@@ -180,6 +180,246 @@
+@@ -180,6 +180,337 @@
              <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
          </activity-alias>
  
@@ -31,6 +31,7 @@ index 0000000..0000000 100644
 +            android:enabled="false"
 +            android:name="org.telegram.messenger.InuTributeIcon"
 +            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:theme="@style/Theme.TMessages.Start.Tribute"
 +            android:icon="@mipmap/ic_launcher_concept_inutribute"
 +            android:roundIcon="@mipmap/ic_launcher_concept_inutribute"
 +            android:exported="true">
@@ -267,6 +268,96 @@ index 0000000..0000000 100644
 +            </intent-filter>
 +        </activity-alias>
 +
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.BlushIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_blush"
++            android:roundIcon="@mipmap/ic_launcher_concept_blush"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.NoxSkyIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_noxsky"
++            android:roundIcon="@mipmap/ic_launcher_concept_noxsky"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.InverseIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_inverse"
++            android:roundIcon="@mipmap/ic_launcher_concept_inverse"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.OsuIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_osu"
++            android:roundIcon="@mipmap/ic_launcher_concept_osu"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.AmongUsIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_amongus"
++            android:roundIcon="@mipmap/ic_launcher_concept_amongus"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
++        <activity-alias
++            android:enabled="false"
++            android:name="org.telegram.messenger.CrimsonIcon"
++            android:targetActivity="org.telegram.ui.LaunchActivity"
++            android:icon="@mipmap/ic_launcher_concept_crimson"
++            android:roundIcon="@mipmap/ic_launcher_concept_crimson"
++            android:exported="true">
++
++            <intent-filter>
++                <action android:name="android.intent.action.MAIN" />
++                <category android:name="android.intent.category.LAUNCHER" />
++                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
++            </intent-filter>
++        </activity-alias>
++
          <activity-alias
              android:enabled="false"
              android:name="org.telegram.messenger.VintageIcon"
@@ -287,7 +378,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LauncherIconController.java
-@@ -31,11 +31,28 @@ public class LauncherIconController {
+@@ -31,11 +31,34 @@ public class LauncherIconController {
              pm.setComponentEnabledSetting(i.getComponentName(ctx), i == icon ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
                      PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
          }
@@ -313,10 +404,16 @@ index 0000000..0000000 100644
 +        JUNGLE("JungleIcon", R.drawable.icon_bg_concept_jungle, R.drawable.icon_foreground_blank, R.string.InuAppIconJungle, false, true),
 +        GOLD("GoldIcon", R.drawable.icon_bg_concept_gold, R.drawable.icon_foreground_blank, R.string.InuAppIconGold, false, true),
 +        DISH("DishIcon", R.drawable.icon_bg_concept_dish, R.drawable.icon_foreground_blank, R.string.InuAppIconDish, false, true),
++        BLUSH("BlushIcon", R.drawable.icon_bg_concept_blush, R.drawable.icon_foreground_blank, R.string.InuAppIconBlush, false, true),
++        NOX_SKY("NoxSkyIcon", R.drawable.icon_bg_concept_noxsky, R.drawable.icon_foreground_blank, R.string.InuAppIconNoxSky, false, true),
++        INVERSE("InverseIcon", R.drawable.icon_bg_concept_inverse, R.drawable.icon_foreground_blank, R.string.InuAppIconInverse, false, true),
++        OSU("OsuIcon", R.drawable.icon_bg_concept_osu, R.drawable.icon_foreground_blank, R.string.InuAppIconOsu, false, true),
++        AMONG_US("AmongUsIcon", R.drawable.icon_bg_concept_amongus, R.drawable.icon_foreground_blank, R.string.InuAppIconAmongUs, false, true),
++        CRIMSON("CrimsonIcon", R.drawable.icon_bg_concept_crimson, R.drawable.icon_foreground_blank, R.string.InuAppIconCrimson, false, true),
          STOCK("StockIcon", R.drawable.icon_background_sa, R.mipmap.icon_foreground_sa, R.string.InuAppIconStock),
          VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
          AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
-@@ -49,6 +66,7 @@ public class LauncherIconController {
+@@ -49,6 +72,7 @@ public class LauncherIconController {
          public final int foreground;
          public final int title;
          public final boolean premium;
@@ -324,7 +421,7 @@ index 0000000..0000000 100644
  
          private ComponentName componentName;
  
-@@ -64,6 +82,11 @@ public class LauncherIconController {
+@@ -64,6 +88,11 @@ public class LauncherIconController {
          }
  
          LauncherIcon(String key, int background, int foreground, int title, boolean premium) {

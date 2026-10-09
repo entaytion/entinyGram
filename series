@@ -517,3 +517,4 @@ entiny/chat/read-time.patch
 entiny/privacy/last-seen.patch
 entiny/privacy/contact-changes.patch
 entiny/ui/md3-player.patch
+entiny/ui/app-icon-picker.patch

@@ -1,0 +1,194 @@
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:name="splash"
+            android:width="320dp"
+            android:height="320dp"
+            android:viewportWidth="320"
+            android:viewportHeight="320">
+            <group
+                android:name="scaleme"
+                android:pivotX="160"
+                android:pivotY="160"
+                android:scaleX="1"
+                android:scaleY="1">
+                <group android:name="bg">
+                    <path
+                        android:name="circle"
+                        android:pathData="M 160 110 C 146.744 110 134.018 115.271 124.645 124.645 C 115.271 134.018 110 146.744 110 160 C 110 173.256 115.271 185.982 124.645 195.355 C 134.018 204.729 146.744 210 160 210 C 173.256 210 185.982 204.729 195.355 195.355 C 204.729 185.982 210 173.256 210 160 C 210 146.744 204.729 134.018 195.355 124.645 C 185.982 115.271 173.256 110 160 110 Z"
+                        android:fillAlpha="0"
+                        android:strokeWidth="1">
+                        <aapt:attr name="android:fillColor">
+                            <gradient
+                                android:type="linear"
+                                android:startX="160"
+                                android:startY="60"
+                                android:endX="160"
+                                android:endY="260">
+                                <item android:offset="0" android:color="#FFD4A3FF" />
+                                <item android:offset="1" android:color="#FFD4A3FF" />
+                            </gradient>
+                        </aapt:attr>
+                    </path>
+                </group>
+                <group
+                    android:name="fg"
+                    android:pivotX="160"
+                    android:pivotY="160"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5">
+                    <clip-path
+                        android:name="mask"
+                        android:pathData="M 160 60 C 133.489 60 108.036 70.543 89.289 89.289 C 70.543 108.036 60 133.489 60 160 C 60 186.511 70.543 211.964 89.289 230.711 C 108.036 249.457 133.489 260 160 260 C 186.511 260 211.964 249.457 230.711 230.711 C 249.457 211.964 260 186.511 260 160 C 260 133.489 249.457 108.036 230.711 89.289 C 211.964 70.543 186.511 60 160 60 Z"/>
+                    <group
+                        android:name="glyph_pos"
+                        android:translateX="106"
+                        android:translateY="106"
+                        android:scaleX="4.5"
+                        android:scaleY="4.5">
+                        <path
+                            android:name="glyph1"
+                            android:pathData="M4 10a7.31 7.31 0 0 0 10 10Z"
+                            android:fillColor="#00000000"
+                            android:strokeColor="#ffffff"
+                            android:strokeAlpha="0"
+                            android:strokeWidth="1.8"
+                            android:strokeLineCap="round"
+                            android:strokeLineJoin="round" />
+                        <path
+                            android:name="glyph2"
+                            android:pathData="m9 15 3-3"
+                            android:fillColor="#00000000"
+                            android:strokeColor="#ffffff"
+                            android:strokeAlpha="0"
+                            android:strokeWidth="1.8"
+                            android:strokeLineCap="round"
+                            android:strokeLineJoin="round" />
+                        <path
+                            android:name="glyph3"
+                            android:pathData="M17 13a6 6 0 0 0-6-6"
+                            android:fillColor="#00000000"
+                            android:strokeColor="#ffffff"
+                            android:strokeAlpha="1"
+                            android:trimPathEnd="0"
+                            android:strokeWidth="1.8"
+                            android:strokeLineCap="round"
+                            android:strokeLineJoin="round" />
+                        <path
+                            android:name="glyph4"
+                            android:pathData="M21 13A10 10 0 0 0 11 3"
+                            android:fillColor="#00000000"
+                            android:strokeColor="#ffffff"
+                            android:strokeAlpha="1"
+                            android:trimPathEnd="0"
+                            android:strokeWidth="1.8"
+                            android:strokeLineCap="round"
+                            android:strokeLineJoin="round" />
+                    </group>
+                </group>
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="circle">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="pathData"
+                    android:startOffset="200"
+                    android:duration="300"
+                    android:valueFrom="M 160 110 C 146.744 110 134.018 115.271 124.645 124.645 C 115.271 134.018 110 146.744 110 160 C 110 173.256 115.271 185.982 124.645 195.355 C 134.018 204.729 146.744 210 160 210 C 173.256 210 185.982 204.729 195.355 195.355 C 204.729 185.982 210 173.256 210 160 C 210 146.744 204.729 134.018 195.355 124.645 C 185.982 115.271 173.256 110 160 110 Z"
+                    android:valueTo="M 160 60 C 133.489 60 108.036 70.543 89.289 89.289 C 70.543 108.036 60 133.489 60 160 C 60 186.511 70.543 211.964 89.289 230.711 C 108.036 249.457 133.489 260 160 260 C 186.511 260 211.964 249.457 230.711 230.711 C 249.457 211.964 260 186.511 260 160 C 260 133.489 249.457 108.036 230.711 89.289 C 211.964 70.543 186.511 60 160 60 Z"
+                    android:valueType="pathType"
+                    android:interpolator="@android:anim/overshoot_interpolator"/>
+                <objectAnimator
+                    android:propertyName="fillAlpha"
+                    android:startOffset="200"
+                    android:duration="100"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="glyph1">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="strokeAlpha"
+                    android:startOffset="200"
+                    android:duration="100"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="glyph2">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="strokeAlpha"
+                    android:startOffset="200"
+                    android:duration="100"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="glyph3">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="trimPathEnd"
+                    android:startOffset="250"
+                    android:duration="200"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="glyph4">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="trimPathEnd"
+                    android:startOffset="300"
+                    android:duration="200"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:interpolator/fast_out_slow_in"/>
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="fg">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:startOffset="200"
+                    android:duration="300"
+                    android:valueFrom="0.5"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:anim/overshoot_interpolator"/>
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:startOffset="200"
+                    android:duration="300"
+                    android:valueFrom="0.5"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:interpolator="@android:anim/overshoot_interpolator"/>
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>

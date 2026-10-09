@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Oleksii Kulinich <entaytion@gmail.com>
+Date: Fri, 9 Oct 2026 12:16:28 +0300
+Subject: [+] app icon picker
+
+---
+ TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemeActivity.java
+@@ -2464,7 +2464,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
+                     view = new RadioButtonCell(mContext);
+                     break;
+                 case TYPE_APP_ICON:
+-                    view = new AppIconsSelectorCell(mContext, ThemeActivity.this, currentAccount);
++                    view = new desu.inugram.ui.appicons.AppIconRowCell(mContext, ThemeActivity.this);
+                     break;
+                 case TYPE_CHOOSE_COLOR:
+                     view = new PeerColorActivity.ChangeNameColorCell(currentAccount, 0, mContext, getResourceProvider());

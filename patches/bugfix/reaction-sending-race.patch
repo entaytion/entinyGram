@@ -4,12 +4,12 @@ Date: Tue, 6 Oct 2026 18:10:07 +0400
 Subject: fix reactions silently disappearing right after being sent
 
 ---
- .../ChatMessagesMetadataController.java       |  7 +++++
- .../org/telegram/messenger/MessageObject.java | 19 +++++++++++++
- .../messenger/MessagesController.java         | 28 +++++++++++++++++++
+ .../ChatMessagesMetadataController.java       |  7 ++++++
+ .../org/telegram/messenger/MessageObject.java | 19 ++++++++++++++
+ .../messenger/MessagesController.java         | 25 +++++++++++++++++++
  .../messenger/SendMessagesHelper.java         |  1 +
  .../java/org/telegram/ui/ChatActivity.java    |  1 +
- 5 files changed, 56 insertions(+)
+ 5 files changed, 53 insertions(+)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/ChatMessagesMetadataController.java b/TMessagesProj/src/main/java/org/telegram/messenger/ChatMessagesMetadataController.java
 index 0000000..0000000 100644
@@ -68,7 +68,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -17794,6 +17794,32 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17794,6 +17794,29 @@ public class MessagesController extends BaseController implements NotificationCe
          }
      }
  
@@ -88,9 +88,6 @@ index 0000000..0000000 100644
 +                if (updates.get(b) instanceof TL_update.TL_updateMessageReactions) {
 +                    TL_update.TL_updateMessageReactions update = (TL_update.TL_updateMessageReactions) updates.get(b);
 +                    if (message.id == update.msg_id && dialogId == MessageObject.getPeerId(update.peer)) {
-+                        if (desu.inugram.helpers.chat.ReactionDebugHelper.isEnabled()) {
-+                            FileLog.d("InuRx merge edit reactions did=" + dialogId + " mid=" + message.id + " edit=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(message.reactions) + " update=" + desu.inugram.helpers.chat.ReactionDebugHelper.describe(update.reactions));
-+                        }
 +                        MessageObject.updateReactions(message, update.reactions);
 +                    }
 +                }
@@ -101,7 +98,7 @@ index 0000000..0000000 100644
      public static long getUpdateChannelId(TLRPC.Update update) {
          if (update instanceof TL_update.TL_updateNewChannelMessage) {
              return ((TL_update.TL_updateNewChannelMessage) update).message.peer_id.channel_id;
-@@ -18097,6 +18123,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18097,6 +18120,7 @@ public class MessagesController extends BaseController implements NotificationCe
              }
              if (!needGetDiff) {
                  getMessagesStorage().putUsersAndChats(updates.users, updates.chats, true, true);
@@ -109,7 +106,7 @@ index 0000000..0000000 100644
                  Collections.sort(updates.updates, updatesComparator);
                  for (int a = 0; a < updates.updates.size(); a++) {
                      TLRPC.Update update = updates.updates.get(a);
-@@ -18392,6 +18419,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18392,6 +18416,7 @@ public class MessagesController extends BaseController implements NotificationCe
              }
              return true;
          }
