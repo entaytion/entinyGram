@@ -160,6 +160,7 @@ class Md3PlayerIcon(stroke: String?, fill: String?, sizeDp: Float) : Drawable() 
         val PAUSE = roundRect(6f, 5f, 4.6f, 14f, 1.6f) + roundRect(13.4f, 5f, 4.6f, 14f, 1.6f)
         val SPEED = "M12 14l3.5-3.5M4.6 18a8.5 8.5 0 1 1 14.8 0"
         val QUEUE = "M4 6h12M4 11h12M4 16h7M15 14v6l5-3z"
+        val LYRICS = "M4 6h12M4 11h16M4 16h9"
         val NOTE = "M9 17V5l11-2v12" + circle(6.5f, 17f, 2.5f) + circle(17.5f, 15f, 2.5f)
         val CLOSE = "M6 6l12 12M18 6L6 18"
 

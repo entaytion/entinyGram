@@ -86,7 +86,7 @@ index 0000000..0000000 100644
              int prevStyle = currentStyle;
 -            updateStyle(STYLE_AUDIO_PLAYER);
 +            updateStyle(STYLE_AUDIO_PLAYER, desu.inugram.helpers.player.Md3PlayerHelper.barChanged(this));
-+            desu.inugram.helpers.player.Md3PlayerHelper.syncBar(this);
++            desu.inugram.helpers.player.Md3PlayerHelper.syncBar(this, resourcesProvider);
              if (create && topPadding == 0) {
                  setTopPadding(AndroidUtilities.dp2(getStyleHeight()));
                  if (delegate != null) {

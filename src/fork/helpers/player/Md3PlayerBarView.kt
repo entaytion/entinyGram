@@ -40,7 +40,7 @@ class Md3PlayerBarView(
 
     init {
         val theme = Md3PlayerColors.fromSeed(Md3PlayerColors.fallbackSeed(resourcesProvider), Md3PlayerColors.isDark(resourcesProvider))
-        background = Theme.getSelectorDrawable(false)
+        background = Theme.getSelectorDrawable(false, resourcesProvider)
         setOnClickListener { onOpen() }
         contentDescription = LocaleController.getString(R.string.InuMd3PlayerOpen)
 

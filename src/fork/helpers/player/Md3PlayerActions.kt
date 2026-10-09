@@ -32,7 +32,10 @@ import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.ActionBar.Theme
 import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.BulletinFactory
+import org.telegram.ui.Components.Forum.ForumUtilities
+import org.telegram.ui.DialogsActivity
 import org.telegram.ui.LaunchActivity
+import org.telegram.ui.TopicsFragment
 import java.io.File
 
 object Md3PlayerActions {
@@ -139,6 +142,91 @@ object Md3PlayerActions {
         LaunchActivity.getLastFragment()?.let {
             BulletinFactory.of(it).createSimpleBulletin(R.raw.forward, AndroidUtilities.replaceTags(LocaleController.getString(R.string.FwdMessageToSavedMessages))).show()
         }
+    }
+
+    fun forward(activity: LaunchActivity, messageObject: MessageObject) {
+        val account = messageObject.currentAccount
+        val messages: ArrayList<MessageObject>?
+        val document: TLRPC.TL_document?
+        if (messageObject.id < 0) {
+            document = messageObject.document as? TLRPC.TL_document ?: return
+            messages = null
+        } else {
+            document = null
+            messages = arrayListOf(messageObject)
+        }
+        ensureAccount(activity, account)
+        val savedMusicList = MediaController.getInstance().currentSavedMusicList
+        val args = Bundle()
+        args.putBoolean("onlySelect", true)
+        args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD)
+        args.putBoolean("canSelectTopics", true)
+        val fragment = DialogsActivity(args)
+        fragment.setDelegate(object : DialogsActivity.DialogsActivityDelegate {
+            override fun didSelectDialogs(
+                fragment1: DialogsActivity,
+                dids: ArrayList<MessagesStorage.TopicKey>,
+                message: CharSequence?,
+                param: Boolean,
+                notify: Boolean,
+                scheduleDate: Int,
+                scheduleRepeatPeriod: Int,
+                topicsFragment: TopicsFragment?,
+            ): Boolean {
+                val self = UserConfig.getInstance(account).getClientUserId()
+                if (dids.size > 1 || dids[0].dialogId == self || message != null || messages == null) {
+                    val helper = SendMessagesHelper.getInstance(account)
+                    for (topicKey in dids) {
+                        val did = topicKey.dialogId
+                        if (message != null) {
+                            helper.sendMessage(SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, true, 0, 0, null, false))
+                        }
+                        if (messages != null) {
+                            helper.sendMessage(messages, did, false, false, true, 0, 0L)
+                        } else {
+                            helper.sendMessage(SendMessagesHelper.SendMessageParams.of(document, null, messageObject.messageOwner.attachPath, did, null, null, null, null, null, null, notify, scheduleDate, 0, 0, savedMusicList, null, false, false))
+                        }
+                    }
+                    fragment1.finishFragment()
+                    showForwardBulletin(account, dids)
+                } else {
+                    val topicKey = dids[0]
+                    val did = topicKey.dialogId
+                    val chatArgs = Bundle()
+                    chatArgs.putBoolean("scrollToTopOnResume", true)
+                    if (DialogObject.isEncryptedDialog(did)) {
+                        chatArgs.putInt("enc_id", DialogObject.getEncryptedChatId(did))
+                    } else if (DialogObject.isUserDialog(did)) {
+                        chatArgs.putLong("user_id", did)
+                    } else {
+                        chatArgs.putLong("chat_id", -did)
+                    }
+                    val chatActivity = ChatActivity(chatArgs)
+                    if (topicKey.topicId != 0L) ForumUtilities.applyTopic(chatActivity, topicKey)
+                    if (activity.presentFragment(chatActivity, true, false)) {
+                        chatActivity.showFieldPanelForForward(true, messages)
+                        if (topicKey.topicId != 0L) fragment1.removeSelfFromStack()
+                    } else {
+                        fragment1.finishFragment()
+                    }
+                }
+                return true
+            }
+        })
+        activity.presentFragment(fragment)
+    }
+
+    private fun showForwardBulletin(account: Int, dids: ArrayList<MessagesStorage.TopicKey>) {
+        val last = LaunchActivity.getLastFragment() ?: return
+        val self = UserConfig.getInstance(account).getClientUserId()
+        val did = dids[0].dialogId
+        val text = when {
+            dids.size == 1 && did == self -> LocaleController.getString(R.string.FwdMessageToSavedMessages)
+            dids.size == 1 && did > 0 -> LocaleController.formatString(R.string.FwdMessageToUser, DialogObject.getShortName(account, did))
+            dids.size == 1 -> LocaleController.formatString(R.string.FwdMessageToGroup, DialogObject.getShortName(account, did))
+            else -> LocaleController.formatPluralStringComma("FwdMessageToManyChats", dids.size)
+        }
+        BulletinFactory.of(last).createSimpleBulletin(R.raw.forward, AndroidUtilities.replaceTags(text)).show()
     }
 
     fun saveToProfile(messageObject: MessageObject, save: Boolean, callback: (TLRPC.TL_error?) -> Unit) {

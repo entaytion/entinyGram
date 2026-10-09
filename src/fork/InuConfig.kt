@@ -274,6 +274,9 @@ object InuConfig {
     val MD3_PLAYER = BoolItem("md3_player", false)
 
     @JvmField
+    val MD3_PLAYER_ONLINE_LYRICS = BoolItem("md3_player_online_lyrics", false)
+
+    @JvmField
     val M3_BOTTOM_TABS = BoolItem("m3_bottom_tabs", false)
 
     @JvmField

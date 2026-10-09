@@ -21,11 +21,17 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import android.view.animation.PathInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.window.BackEvent
+import android.window.OnBackAnimationCallback
+import android.window.OnBackInvokedDispatcher
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.ColorUtils
+import desu.inugram.InuConfig
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.DialogObject
 import org.telegram.messenger.FileLoader
@@ -67,6 +73,7 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
 
         private val SPEEDS = floatArrayOf(1f, 1.2f, 1.5f, 1.7f, 2f, 0.5f)
         private val EMPHASIZED = CubicBezierInterpolator(0.2, 0.0, 0.0, 1.0)
+        private val BACK_GESTURE = PathInterpolator(0.1f, 0.1f, 0f, 1f)
 
         private fun lerpRect(a: RectF, b: RectF, t: Float, out: RectF) {
             out.set(a.left + (b.left - a.left) * t, a.top + (b.top - a.top) * t, a.right + (b.right - a.right) * t, a.bottom + (b.bottom - a.bottom) * t)
@@ -123,6 +130,21 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
     private var dragTracking = false
     private var dragActive = false
     private var coverAnimating = false
+    private val morphCoverBase = RectF()
+    private var morphCoverView: View? = null
+    private var morphCoverBaseRadius = 0f
+    private var backPreview = false
+    private var backProgress = 0f
+    private var backDirection = 0
+    private var backAnimator: ValueAnimator? = null
+    private var backGesture = false
+    private var backCallback: Any? = null
+    private var menu: ItemOptions? = null
+    private var lyricsMode = false
+    private var lyricsFraction = 0f
+    private var lyricsAnimator: ValueAnimator? = null
+    private var lyricsKey: String? = null
+    private var touchInLyrics = false
 
     private val bulletinDelegate = object : Bulletin.Delegate {
         override fun getBottomOffset(tag: Int): Int = getBottomInset()
@@ -135,7 +157,16 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
 
         override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
             if (morphProgress >= 0f || closing) return true
-            return super.dispatchTouchEvent(ev)
+            val action = ev.actionMasked
+            if (action == MotionEvent.ACTION_DOWN) {
+                touchInLyrics = lyricsMode && lyricsView.visibility == VISIBLE && hitInRoot(lyricsView, ev.x, ev.y)
+            }
+            val result = super.dispatchTouchEvent(ev)
+            if ((action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && touchInLyrics) {
+                touchInLyrics = false
+                this@Md3PlayerSheet.container.requestDisallowInterceptTouchEvent(false)
+            }
+            return result
         }
 
         override fun setTranslationY(translationY: Float) {
@@ -196,6 +227,13 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
     private val group = LinearLayout(context)
     private val speedButton = Md3MorphButton(context, Md3PlayerIcon.stroke(Md3PlayerIcon.SPEED, 20f))
     private val queueButton = Md3MorphButton(context, Md3PlayerIcon.stroke(Md3PlayerIcon.QUEUE, 20f))
+    private val lyricsButton = Md3MorphButton(context, Md3PlayerIcon.stroke(Md3PlayerIcon.LYRICS, 20f))
+    private val lyricsPanel = LinearLayout(context)
+    private val smallCover = Md3CoverImage(context, 28f)
+    private val smallTitle = TextView(context)
+    private val smallArtist = TextView(context)
+    private val lyricsView = Md3LyricsView(context)
+    private val sourceView = TextView(context)
 
     init {
         occupyNavigationBar = true
@@ -274,6 +312,46 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         })
         layout.addView(titleRow)
 
+        lyricsPanel.orientation = LinearLayout.VERTICAL
+        lyricsPanel.visibility = View.GONE
+        val smallRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+        smallCover.setRadius(dp(16f))
+        smallRow.addView(smallCover, LinearLayout.LayoutParams(dp(56f), dp(56f)))
+        val smallTitles = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        smallTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18f)
+        smallTitle.typeface = AndroidUtilities.bold()
+        smallTitle.setSingleLine(true)
+        smallTitle.ellipsize = TextUtils.TruncateAt.END
+        smallTitles.addView(smallTitle, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        smallArtist.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
+        smallArtist.setSingleLine(true)
+        smallArtist.ellipsize = TextUtils.TruncateAt.END
+        smallTitles.addView(smallArtist, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(2f) })
+        smallRow.addView(smallTitles, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+            gravity = Gravity.CENTER_VERTICAL
+            leftMargin = dp(14f)
+        })
+        lyricsPanel.addView(smallRow, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = dp(12f) })
+        lyricsView.delegate = object : Md3LyricsView.Delegate {
+            override fun onAction(state: Int) {
+                if (state == Md3LyricsView.STATE_OFFER) InuConfig.MD3_PLAYER_ONLINE_LYRICS.value = true
+                fetchLyrics()
+            }
+
+            override fun onSeek(ms: Long) {
+                current?.let { MediaController.getInstance().seekToProgressMs(it, ms) }
+            }
+        }
+        lyricsPanel.addView(lyricsView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply { topMargin = dp(16f) })
+        sourceView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12f)
+        sourceView.setSingleLine(true)
+        sourceView.ellipsize = TextUtils.TruncateAt.END
+        lyricsPanel.addView(sourceView, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(16f)).apply { topMargin = dp(8f) })
+        layout.addView(lyricsPanel)
+
         seekBar.contentDescription = str(R.string.InuMd3PlayerSeek)
         seekBar.delegate = object : Md3WavySeekBar.Delegate {
             override fun onSeekStart() {
@@ -335,10 +413,17 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         speedButton.setRadius(dp(26f).toFloat(), dp(8f).toFloat(), false)
         speedButton.setOnClickListener { cycleSpeed() }
         group.addView(speedButton, LinearLayout.LayoutParams(0, dp(52f), 1f))
+        lyricsButton.setText(str(R.string.InuMd3PlayerLyrics))
+        lyricsButton.setRadius(dp(8f).toFloat(), false)
+        lyricsButton.setOnClickListener { setLyricsMode(!lyricsMode, true) }
+        group.addView(lyricsButton, LinearLayout.LayoutParams(0, dp(52f), 1f).apply {
+            leftMargin = dp(4f)
+            rightMargin = dp(4f)
+        })
         queueButton.setText(str(R.string.InuMd3PlayerQueue))
         queueButton.setRadius(dp(8f).toFloat(), dp(26f).toFloat(), false)
-        queueButton.setOnClickListener { openClassic() }
-        group.addView(queueButton, LinearLayout.LayoutParams(0, dp(52f), 1f).apply { leftMargin = dp(4f) })
+        queueButton.setOnClickListener { openQueue() }
+        group.addView(queueButton, LinearLayout.LayoutParams(0, dp(52f), 1f))
         layout.addView(group)
 
         bubble.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
@@ -355,10 +440,27 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         playingAtStart?.let { bind(it, false) }
     }
 
-    override fun canDismissWithSwipe(): Boolean = morphProgress < 0f && !closing
+    override fun canDismissWithSwipe(): Boolean = morphProgress < 0f && !closing && (!touchInLyrics || !lyricsView.canScrollUp())
+
+    private fun hitInRoot(view: View, x: Float, y: Float): Boolean {
+        var left = 0f
+        var top = 0f
+        var v: View = view
+        while (v !== root) {
+            left += v.left + v.translationX
+            top += v.top + v.translationY
+            v = v.parent as? View ?: return false
+        }
+        return x >= left && x < left + view.width && y >= top && y < top + view.height
+    }
+
+    fun refreshModes() {
+        updateModes(true)
+    }
 
     override fun show() {
         super.show()
+        registerBack()
         instance = this
         val nc = NotificationCenter.getInstance(account)
         nc.addObserver(this, NotificationCenter.messagePlayingDidReset)
@@ -385,14 +487,20 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         val mini = miniSource
         if (!skipMorph && mini != null && !isDismissed) {
             if (morphProgress >= 0f) {
+                val preview = backPreview
                 closing = true
                 detach()
-                startMorph(morphProgress, 0f, 300L) { finishMorphClose() }
+                cancelBackAnimator()
+                if (preview) {
+                    backPreview = false
+                    morphCoverView?.visibility = View.INVISIBLE
+                }
+                startMorph(morphProgress, 0f, if (preview) 380L else 300L) { finishMorphClose() }
                 return
             }
             val ty = root.translationY
             root.translationY = 0f
-            if (prepareMorph()) {
+            if (prepareMorph(true)) {
                 closing = true
                 detach()
                 cancelSheetAnimation()
@@ -411,7 +519,9 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         }
         morphAnimator = null
         if (morphProgress >= 0f) {
-            cover.visibility = View.VISIBLE
+            cancelBackAnimator()
+            backPreview = false
+            restoreMorphCover()
             clearMorph()
         }
         miniSource?.setTransitionHidden(false)
@@ -434,12 +544,12 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
 
     override fun onCustomOpenAnimation(): Boolean {
         root.translationY = 0f
-        if (!prepareMorph()) return false
+        if (!prepareMorph(true)) return false
         morphTo.set(0f, 0f, root.width.toFloat(), root.height.toFloat())
         morphToRadius = 0f
         startMorph(0f, 1f, 420L) {
             clearMorph()
-            cover.visibility = View.VISIBLE
+            restoreMorphCover()
             cover.translationZ = -cover.elevation
             cover.animate().translationZ(0f).setDuration(250).start()
             morphBarsState = -1
@@ -466,9 +576,12 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         out.set(x + px * (1f - sx), y + py * (1f - sy), x + px + (view.width - px) * sx, y + py + (view.height - py) * sy)
     }
 
-    private fun prepareMorph(): Boolean {
+    private fun prepareMorph(hideCover: Boolean): Boolean {
         val mini = miniSource
         if (skipMorph || mini == null || !mini.canTransition() || root.width == 0 || !root.isAttachedToWindow) return false
+        lyricsAnimator?.let { if (it.isRunning) it.end() }
+        val coverView: Md3CoverImage = if (lyricsFraction >= 0.5f) smallCover else cover
+        morphCoverView = coverView
         val loc = IntArray(2)
         root.getLocationOnScreen(loc)
         mini.getCardRect(morphFrom)
@@ -480,9 +593,9 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         morphFromColor = mini.cardColor
         recycleSnapshot()
         morphSnapshot = mini.captureCard()
-        morphCoverBitmap = cover.imageReceiver.bitmap ?: mini.coverBitmap
-        rectInRoot(cover, morphCoverTo)
-        morphCoverToRadius = dp(28f) * cover.scaleX
+        morphCoverBitmap = coverView.imageReceiver.bitmap ?: mini.coverBitmap
+        rectInRoot(coverView, morphCoverTo)
+        morphCoverToRadius = if (coverView === cover) dp(28f) * cover.scaleX else dp(16f).toFloat()
         val decor = activity?.window?.decorView
         if (decor != null) {
             @Suppress("DEPRECATION")
@@ -492,9 +605,135 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         }
         morphBarsState = -1
         mini.setTransitionHidden(true)
-        cover.visibility = View.INVISIBLE
+        if (hideCover) coverView.visibility = View.INVISIBLE
         layout.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         return true
+    }
+
+    private fun restoreMorphCover() {
+        val view = morphCoverView
+        if (view === cover || view == null) {
+            cover.visibility = if (lyricsFraction >= 1f) View.INVISIBLE else View.VISIBLE
+        } else {
+            view.visibility = View.VISIBLE
+        }
+    }
+
+    private fun registerBack() {
+        if (Build.VERSION.SDK_INT < 34 || backCallback != null) return
+        val callback = createBackCallback()
+        onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, callback)
+        backCallback = callback
+    }
+
+    private fun unregisterBack() {
+        val callback = backCallback ?: return
+        backCallback = null
+        if (Build.VERSION.SDK_INT >= 34) unregisterBackCallback(callback)
+    }
+
+    @RequiresApi(34)
+    private fun unregisterBackCallback(callback: Any) {
+        onBackInvokedDispatcher.unregisterOnBackInvokedCallback(callback as OnBackAnimationCallback)
+    }
+
+    @RequiresApi(34)
+    private fun createBackCallback(): OnBackAnimationCallback = object : OnBackAnimationCallback {
+        override fun onBackStarted(backEvent: BackEvent) {
+            val edge = backEvent.swipeEdge
+            backGesture = !isDismissed && onBackPreviewStarted(if (edge == BackEvent.EDGE_LEFT) 1 else if (edge == BackEvent.EDGE_RIGHT) -1 else 0)
+        }
+
+        override fun onBackProgressed(backEvent: BackEvent) {
+            if (backGesture) onBackPreviewProgressed(backEvent.progress)
+        }
+
+        override fun onBackCancelled() {
+            if (backGesture) {
+                backGesture = false
+                onBackPreviewCancelled()
+            }
+        }
+
+        override fun onBackInvoked() {
+            val preview = backGesture
+            backGesture = false
+            if (preview) dismiss() else onBackPressed()
+        }
+    }
+
+    private fun onBackPreviewStarted(direction: Int): Boolean {
+        if (miniSource == null || skipMorph) return false
+        if (closing || (morphProgress >= 0f && !backPreview)) return true
+        if (menu?.isShown() == true) return false
+        if (backPreview) {
+            cancelBackAnimator()
+        } else if (root.translationY != 0f || !prepareMorph(false)) {
+            return false
+        } else {
+            morphCoverBase.set(morphCoverTo)
+            morphCoverBaseRadius = morphCoverToRadius
+            morphProgress = 1f
+            backProgress = 0f
+            backPreview = true
+        }
+        backDirection = direction
+        applyBackPreview()
+        return true
+    }
+
+    private fun onBackPreviewProgressed(progress: Float) {
+        if (!backPreview || closing) return
+        cancelBackAnimator()
+        backProgress = progress
+        applyBackPreview()
+    }
+
+    private fun onBackPreviewCancelled() {
+        if (!backPreview || closing) return
+        cancelBackAnimator()
+        backAnimator = ValueAnimator.ofFloat(backProgress, 0f).apply {
+            addUpdateListener {
+                backProgress = it.animatedValue as Float
+                applyBackPreview()
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    backAnimator = null
+                    backPreview = false
+                    clearMorph()
+                    miniSource?.setTransitionHidden(false)
+                    morphBarsState = -1
+                    applySystemBars(true)
+                }
+            })
+            duration = (250 * clamp01(backProgress)).toLong()
+            interpolator = CubicBezierInterpolator.DEFAULT
+            start()
+        }
+    }
+
+    private fun applyBackPreview() {
+        val t = BACK_GESTURE.getInterpolation(clamp01(backProgress))
+        val w = root.width.toFloat()
+        val h = root.height.toFloat()
+        val s = 1f - 0.1f * t
+        val inset = (w - w * s) / 2f
+        val left = inset + max(0f, inset - dp(8f)) * backDirection
+        val top = max(h / 2f, min(h, morphFrom.centerY())) * (1f - s)
+        morphTo.set(left, top, left + w * s, top + h * s)
+        morphToRadius = dp(28f) * t
+        morphCoverTo.set(left + morphCoverBase.left * s, top + morphCoverBase.top * s, left + morphCoverBase.right * s, top + morphCoverBase.bottom * s)
+        morphCoverToRadius = morphCoverBaseRadius * s
+        applyMorph()
+    }
+
+    private fun cancelBackAnimator() {
+        backAnimator?.let {
+            it.removeAllListeners()
+            it.cancel()
+        }
+        backAnimator = null
     }
 
     private fun startMorph(from: Float, to: Float, duration: Long, onEnd: () -> Unit) {
@@ -595,6 +834,7 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             }
         }
         canvas.restore()
+        if (backPreview) return
         lerpRect(morphCoverFrom, morphCoverTo, p, morphCover)
         val r = morphCoverFromRadius + (morphCoverToRadius - morphCoverFromRadius) * p
         morphPath.rewind()
@@ -627,6 +867,10 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
     private fun detach() {
         if (detached) return
         detached = true
+        unregisterBack()
+        lyricsAnimator?.removeAllListeners()
+        lyricsAnimator?.cancel()
+        lyricsAnimator = null
         if (instance === this) instance = null
         val nc = NotificationCenter.getInstance(account)
         nc.removeObserver(this, NotificationCenter.messagePlayingDidReset)
@@ -654,6 +898,11 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
                 val mo = current
                 if (mo?.document != null && TextUtils.equals(args.getOrNull(0) as? String, FileLoader.getAttachFileName(mo.document))) {
                     cover.bind(mo)
+                    smallCover.bind(mo)
+                    if (lyricsMode && lyricsView.state != Md3LyricsView.STATE_LYRICS) {
+                        lyricsKey = null
+                        loadLyrics()
+                    }
                 }
             }
             NotificationCenter.musicIdsLoaded -> updateLike(true)
@@ -668,7 +917,10 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         currentKey = key
         titleView.text = mo.musicTitle
         artistView.text = mo.musicAuthor
+        smallTitle.text = mo.musicTitle
+        smallArtist.text = mo.musicAuthor
         cover.bind(mo)
+        smallCover.bind(mo)
         if (changed) {
             val seed = Md3PlayerArt.cachedSeed(mo)
             if (seed != null) {
@@ -676,6 +928,8 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             } else if (Md3PlayerArt.fileCover(mo) == null && Md3PlayerArt.fullLocation(mo) == null && Md3PlayerArt.thumbLocation(mo) == null) {
                 animateColors(Md3PlayerColors.fromSeed(fallbackSeed, dark), animated)
             }
+            lyricsKey = null
+            if (lyricsMode) loadLyrics()
         }
         updateHeader()
         updateLike(animated)
@@ -793,6 +1047,139 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         val mo = current ?: return
         if (!seeking) seekBar.setProgress(mo.audioProgress)
         updateTimes()
+        if (lyricsMode) lyricsView.setPosition(positionMs())
+    }
+
+    private fun positionMs(): Long {
+        val mo = current ?: return 0L
+        return (mo.audioProgress * mo.duration * 1000).toLong()
+    }
+
+    private fun setLyricsMode(value: Boolean, animated: Boolean) {
+        if (lyricsMode == value) return
+        lyricsMode = value
+        lyricsButton.setActive(value, animated)
+        lyricsButton.setRadius(dp(if (value) 26f else 8f).toFloat(), animated)
+        if (value) {
+            loadLyrics()
+            lyricsView.setPosition(positionMs())
+        }
+        lyricsAnimator?.let {
+            it.removeAllListeners()
+            it.cancel()
+        }
+        val target = if (value) 1f else 0f
+        if (!animated) {
+            setLyricsFraction(target)
+            return
+        }
+        lyricsPanel.visibility = View.VISIBLE
+        cover.visibility = View.VISIBLE
+        titleRow.visibility = View.VISIBLE
+        lyricsAnimator = ValueAnimator.ofFloat(lyricsFraction, target).apply {
+            addUpdateListener { setLyricsFraction(it.animatedValue as Float) }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    lyricsAnimator = null
+                    setLyricsFraction(target)
+                }
+            })
+            duration = 360
+            interpolator = EMPHASIZED
+            start()
+        }
+    }
+
+    private fun setLyricsFraction(f: Float) {
+        lyricsFraction = f
+        val playerAlpha = max(0f, 1f - f * 1.6f)
+        val lyricsAlpha = max(0f, (f - 0.35f) / 0.65f)
+        cover.alpha = playerAlpha
+        titleRow.alpha = playerAlpha
+        cover.translationY = -dp(24f) * f
+        titleRow.translationY = -dp(24f) * f
+        lyricsPanel.alpha = lyricsAlpha
+        lyricsPanel.translationY = dp(24f) * (1f - f)
+        cover.visibility = if (f >= 1f) View.INVISIBLE else View.VISIBLE
+        titleRow.visibility = if (f >= 1f) View.INVISIBLE else View.VISIBLE
+        lyricsPanel.visibility = if (f <= 0f) View.GONE else View.VISIBLE
+    }
+
+    private fun lyricsQuery(mo: MessageObject): Md3OnlineLyrics.Query {
+        val album = if (Md3PlayerArt.isPlaying(mo)) MediaController.getInstance().getAudioInfo()?.getAlbum() else null
+        return Md3OnlineLyrics.Query(mo.getMusicAuthor(false), mo.getMusicTitle(false), album, mo.duration.roundToInt())
+    }
+
+    private fun loadLyrics() {
+        val mo = current ?: return
+        val key = currentKey
+        if (TextUtils.equals(lyricsKey, key)) return
+        lyricsKey = key
+        if (Md3PlayerArt.isPlaying(mo)) {
+            val embedded = Md3Lyrics.parse(MediaController.getInstance().getAudioInfo()?.getLyrics(), false)
+            if (embedded != null) {
+                showLyrics(embedded)
+                return
+            }
+        }
+        val q = lyricsQuery(mo)
+        if (!q.valid()) {
+            lyricsView.showState(Md3LyricsView.STATE_NOT_FOUND)
+            sourceView.text = null
+            return
+        }
+        Md3OnlineLyrics.cached(q)?.let {
+            showLyrics(it)
+            return
+        }
+        lyricsView.showState(Md3LyricsView.STATE_LOADING)
+        sourceView.text = null
+        Md3OnlineLyrics.loadCached(q) { lyrics, _ ->
+            if (!TextUtils.equals(key, currentKey)) return@loadCached
+            when {
+                lyrics != null -> showLyrics(lyrics)
+                InuConfig.MD3_PLAYER_ONLINE_LYRICS.value -> fetchLyrics()
+                else -> lyricsView.showState(Md3LyricsView.STATE_OFFER)
+            }
+        }
+    }
+
+    private fun fetchLyrics() {
+        val mo = current ?: return
+        val key = currentKey
+        val q = lyricsQuery(mo)
+        if (!q.valid() || Md3OnlineLyrics.knownMissing(q)) {
+            lyricsView.showState(Md3LyricsView.STATE_NOT_FOUND)
+            return
+        }
+        lyricsView.showState(Md3LyricsView.STATE_LOADING)
+        sourceView.text = null
+        Md3OnlineLyrics.fetch(q) { lyrics, status ->
+            if (!TextUtils.equals(key, currentKey)) return@fetch
+            if (lyrics != null) {
+                showLyrics(lyrics)
+            } else {
+                lyricsView.showState(if (status == Md3OnlineLyrics.ERROR) Md3LyricsView.STATE_ERROR else Md3LyricsView.STATE_NOT_FOUND)
+            }
+        }
+    }
+
+    private fun showLyrics(lyrics: Md3Lyrics) {
+        if (lyrics.instrumental) {
+            lyricsView.showState(Md3LyricsView.STATE_INSTRUMENTAL)
+            sourceView.text = Md3OnlineLyrics.PROVIDER
+            return
+        }
+        lyricsView.setLyrics(lyrics, positionMs())
+        sourceView.text = if (lyrics.online) {
+            LocaleController.formatString(if (lyrics.synced) R.string.InuMd3PlayerSourceSynced else R.string.InuMd3PlayerSourcePlain, Md3OnlineLyrics.PROVIDER)
+        } else {
+            str(if (lyrics.synced) R.string.InuMd3PlayerSourceSyncedFile else R.string.InuMd3PlayerSourcePlainFile)
+        }
+    }
+
+    private fun openQueue() {
+        Md3PlayerQueueSheet(context, colors, rp).show()
     }
 
     private fun updateTimes() {
@@ -852,6 +1239,11 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             }
             o.add(R.drawable.msg_stories_save, str(R.string.AudioSaveTo)) { o.openSwipeback(sub) }
             o.getLast()?.setRightIcon(R.drawable.msg_arrowright)
+            o.add(R.drawable.msg_forward, str(R.string.Forward)) {
+                o.dismiss()
+                dismissImmediately()
+                Md3PlayerActions.forward(a, mo)
+            }
         } else {
             o.add(R.drawable.menu_download_round, str(R.string.AudioSaveToMusicFolder)) {
                 o.dismiss()
@@ -873,6 +1265,7 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             openClassic()
         }
         o.setGravity(if (LocaleController.isRTL) Gravity.LEFT else Gravity.RIGHT)
+        menu = o
         o.show()
     }
 
@@ -969,6 +1362,12 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
         headerLabel.setTextColor(c.onSurfaceVariant)
         headerTitle.setTextColor(c.onSurface)
         cover.setColors(c.primaryContainer, c.onPrimaryContainer)
+        smallCover.setColors(c.primaryContainer, c.onPrimaryContainer)
+        smallTitle.setTextColor(c.onSurface)
+        smallArtist.setTextColor(c.onSurfaceVariant)
+        lyricsView.setColors(c)
+        sourceView.setTextColor(c.onSurfaceVariant)
+        lyricsButton.setColors(c.surfaceHigh, c.onSurface, c.primary, c.onPrimary)
         if (Build.VERSION.SDK_INT >= 28) {
             cover.outlineSpotShadowColor = c.shadow()
             cover.outlineAmbientShadowColor = c.shadow()
@@ -1013,6 +1412,7 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
 
     private inner class PlayerLayout(context: Context) : ViewGroup(context) {
         private var coverSize = 0
+        private var stageHeight = 0
 
         init {
             clipChildren = false
@@ -1038,8 +1438,10 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             val fixed = dp(56f) + dp(6f) + dp(40f) + timeRow.measuredHeight + dp(12f) + controls.measuredHeight + dp(52f) + dp(28f) + dp(16f)
             val available = height - top - bottom - fixed
             coverSize = max(dp(96f), min(contentW, available - dp(16f) - dp(26f) - titleRow.measuredHeight))
+            stageHeight = dp(16f) + coverSize + dp(26f) + titleRow.measuredHeight
             val coverSpec = MeasureSpec.makeMeasureSpec(coverSize, MeasureSpec.EXACTLY)
             cover.measure(coverSpec, coverSpec)
+            lyricsPanel.measure(exactW, MeasureSpec.makeMeasureSpec(stageHeight, MeasureSpec.EXACTLY))
             setMeasuredDimension(width, height)
         }
 
@@ -1052,11 +1454,13 @@ class Md3PlayerSheet(context: Context, private val rp: Theme.ResourcesProvider?)
             var y = getStatusBarHeight()
             header.layout(side - dp(12f), y, side - dp(12f) + header.measuredWidth, y + dp(56f))
             y += dp(56f)
+            val stageTop = y
             val coverLeft = (width - coverSize) / 2
             cover.layout(coverLeft, y + dp(16f), coverLeft + coverSize, y + dp(16f) + coverSize)
             val titleTop = y + dp(16f) + coverSize + dp(26f)
             titleRow.layout(side, titleTop, side + contentW, titleTop + titleRow.measuredHeight)
-            y = titleTop + titleRow.measuredHeight + dp(6f)
+            lyricsPanel.layout(side, stageTop, side + contentW, stageTop + stageHeight)
+            y = stageTop + stageHeight + dp(6f)
             seekBar.layout(side, y, side + contentW, y + dp(40f))
             val bubbleTop = y - dp(36f)
             bubble.layout(side, bubbleTop, side + bubble.measuredWidth, bubbleTop + bubble.measuredHeight)

@@ -106,7 +106,7 @@ object Md3PlayerHelper {
     fun isBarActive(fcv: FragmentContextView): Boolean = bars[fcv]?.active == true
 
     @JvmStatic
-    fun syncBar(fcv: FragmentContextView) {
+    fun syncBar(fcv: FragmentContextView, resourcesProvider: Theme.ResourcesProvider?) {
         val state = bars[fcv] ?: return
         if (!state.active) {
             state.view?.visibility = View.GONE
@@ -115,7 +115,7 @@ object Md3PlayerHelper {
         }
         var bar = state.view
         if (bar == null) {
-            bar = Md3PlayerBarView(fcv.context, null, { fcv.performClick() }, { MediaController.getInstance().cleanupPlayer(true, true) })
+            bar = Md3PlayerBarView(fcv.context, resourcesProvider, { fcv.performClick() }, { MediaController.getInstance().cleanupPlayer(true, true) })
             fcv.addView(bar, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(BAR_HEIGHT_DP.toFloat()), Gravity.TOP or Gravity.LEFT))
             state.view = bar
         }

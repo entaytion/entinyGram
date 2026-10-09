@@ -1994,4 +1994,26 @@
     <string name="InuAppIconDescOsu">Розовый low-poly hit-circle</string>
     <string name="InuAppIconDescAmongUs">Член экипажа на ярко-жёлтом</string>
     <string name="InuAppIconDescCrimson">Кровавая луна над сумерками сакуры</string>
+
+    <string name="InuMd3PlayerUpNext">Далее</string>
+    <string name="InuMd3PlayerTracks_one">%1$d трек</string>
+    <string name="InuMd3PlayerTracks_few">%1$d трека</string>
+    <string name="InuMd3PlayerTracks_many">%1$d треков</string>
+    <string name="InuMd3PlayerTracks_other">%1$d трека</string>
+    <string name="InuMd3PlayerLyrics">Текст</string>
+    <string name="InuMd3PlayerLyricsSearching">Ищем текст…</string>
+    <string name="InuMd3PlayerNoLyrics">В файле нет текста</string>
+    <string name="InuMd3PlayerNoLyricsInfo">Можно поискать текст в LRCLIB. Название трека будет отправлено через интернет.</string>
+    <string name="InuMd3PlayerFindLyrics">Искать онлайн</string>
+    <string name="InuMd3PlayerLyricsNotFound">Текст не найден</string>
+    <string name="InuMd3PlayerLyricsNotFoundInfo">В LRCLIB нет текста для этого трека.</string>
+    <string name="InuMd3PlayerLyricsError">Не удалось загрузить текст</string>
+    <string name="InuMd3PlayerLyricsErrorInfo">Проверьте подключение и попробуйте ещё раз.</string>
+    <string name="InuMd3PlayerRetry">Повторить</string>
+    <string name="InuMd3PlayerInstrumental">Инструментал</string>
+    <string name="InuMd3PlayerInstrumentalInfo">В этом треке нет слов.</string>
+    <string name="InuMd3PlayerSourceSynced">Синхронизированный текст · %1$s</string>
+    <string name="InuMd3PlayerSourcePlain">Текст · %1$s</string>
+    <string name="InuMd3PlayerSourceSyncedFile">Синхронизированный текст из файла</string>
+    <string name="InuMd3PlayerSourcePlainFile">Текст из файла</string>
 </resources>
