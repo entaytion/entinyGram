@@ -1165,8 +1165,8 @@
     <string name="InuDeleteOwnMessagesFloodWait">Ліміт запитів, очікуємо %d с…</string>
     <string name="InuBiometricConfirm">Біометричне підтвердження</string>
     <string name="InuBiometricConfirmTitle">Підтвердьте особу</string>
-    <string name="InuBiometricExplicitConfirmation">Підтвердження після розпізнавання</string>
-    <string name="InuBiometricExplicitConfirmationInfo">Запитувати додаткове підтвердження після розпізнавання обличчя або райдужки ока. Налаштування пристрою можуть вимагати підтвердження, навіть якщо опцію вимкнено.</string>
+    <string name="InuBiometricExplicitConfirmation">Додаткове підтвердження</string>
+    <string name="InuBiometricExplicitConfirmationInfo">Запитувати додатковий дотик після успішного розпізнавання обличчя або райдужки ока</string>
     <string name="InuBiometricRequireConfirmationPasscode">Під час розблокування застосунку</string>
     <string name="InuBiometricRequireConfirmationBots">У міні-застосунках</string>
     <string name="InuBiometricRequireConfirmationActions">Під час видалення чатів або виходу з акаунта</string>
@@ -1970,7 +1970,7 @@
 
     <string name="InuOptimizedAttachmentMenu">Оптимізоване меню вкладень</string>
     <string name="InuOptimizedAttachmentMenuInfo">Покращує плавність анімації під час відкриття фото та відео</string>
-    <string name="InuEditedMessageDateMode">Мітка часу редагованого повідомлення</string>
+    <string name="InuEditedMessageDateMode">Час редагування повідомлення</string>
     <string name="InuEditedMessageDateModeTelegram">За замовчуванням</string>
     <string name="InuEditedMessageDateModeEdit">Дата редагування</string>
     <string name="InuEditedMessageDateModeSend">Дата надсилання</string>

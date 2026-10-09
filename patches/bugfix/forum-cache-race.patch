@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 9 Oct 2026 19:17:01 +0200
+Subject: serialize forum type cache access
+
+---
+ .../src/main/java/org/telegram/messenger/MessagesStorage.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java
+@@ -19089,7 +19089,7 @@ public class MessagesStorage extends BaseController {
+         return isForum(dialogId, FORUM_TYPE_DIRECT);
+     }
+ 
+-    public int getForumTypeFlags(long dialogId) {
++    public synchronized int getForumTypeFlags(long dialogId) {
+         int value = dialogIsForumTyped.get(dialogId, -1);
+         if (value == -1) {
+             value = 0;
+@@ -19129,7 +19129,7 @@ public class MessagesStorage extends BaseController {
+         return (value & type) != 0;
+     }
+ 
+-    public void isForumCacheInvalidate(long dialogId) {
++    public synchronized void isForumCacheInvalidate(long dialogId) {
+         dialogIsForumTyped.delete(dialogId);
+     }
+ 

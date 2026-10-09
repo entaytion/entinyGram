@@ -388,6 +388,7 @@ bugfix/emoji-status-tabs.patch
 bugfix/case-insensitive-settings-search.patch
 feature/edited-message-date.patch
 bugfix/photo-viewer-selection-crash.patch
+bugfix/forum-cache-race.patch
 entiny/ui/amoled-theme.patch
 entiny/ui/hide-dialogs-banners.patch
 entiny/premium/hide-attach-emoji-premium-upsells.patch
