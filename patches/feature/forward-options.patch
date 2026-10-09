@@ -5,7 +5,8 @@ Subject: Long-tap forward in message menu to forward without sender or caption
 
 ---
  .../src/main/java/org/telegram/ui/ChatActivity.java        | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ .../src/main/java/org/telegram/ui/DialogsActivity.java     | 4 ++++
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 index 0000000..0000000 100644
@@ -47,3 +48,18 @@ index 0000000..0000000 100644
                  fragment.finishFragment();
                  createUndoView();
                  if (undoView != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -12065,6 +12065,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         final boolean onlyMyselfFinal = onlyMyself;
+ 
+         ItemOptions.makeOptions(this, view)
++            .addIf(!isQuote && delegate instanceof ChatActivity, R.drawable.msg_forward_noquote, LocaleController.getString(R.string.InuForwardNoQuote), () -> {
++                desu.inugram.helpers.chat.ChatHelper.pendingHideAuthor = true;
++                view.callOnClick();
++            })
+             .add(R.drawable.input_notify_off, getString(R.string.SendWithoutSound), () -> {
+                 this.notify = false;
+                 if (delegate == null || selectedDialogs.isEmpty()) {

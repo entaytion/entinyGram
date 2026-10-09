@@ -796,6 +796,9 @@
     <string name="InuKeepScreenOnRecording">Keep screen on while recording</string>
     <string name="InuKeepScreenOnRecordingInfo">Prevents the screen from turning off during a voice or video message</string>
 
+    <string name="InuOptimizedAttachmentMenu">Optimized attachment menu</string>
+    <string name="InuOptimizedAttachmentMenuInfo">Improves animation smoothness when opening photos and videos</string>
+
     <string name="InuDisableIntroSticker">Don\'t send intro sticker</string>
     <string name="InuDisableIntroStickerInfo">…and hide greeting sticker suggestions</string>
 
@@ -902,6 +905,10 @@
     <string name="InuForwardHeaderModeCompact">Compact</string>
     <string name="InuShowForwardsCount">Show forward count</string>
     <string name="InuCompactEdited">Compact edit indicator</string>
+    <string name="InuEditedMessageDateMode">Edited message timestamp</string>
+    <string name="InuEditedMessageDateModeTelegram">Default</string>
+    <string name="InuEditedMessageDateModeEdit">Edit date</string>
+    <string name="InuEditedMessageDateModeSend">Send date</string>
 
     <string name="InuAddToStickersGifs">Add to Stickers/GIFs</string>
     <string name="InuLongTapAction">Long-tap action</string>

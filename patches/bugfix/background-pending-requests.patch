@@ -1,0 +1,87 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 9 Oct 2026 01:38:18 +0200
+Subject: keep tgnet awake for pending requests in background
+
+---
+ TMessagesProj/jni/tgnet/ConnectionsManager.cpp | 10 ++++++----
+ TMessagesProj/jni/tgnet/ConnectionsManager.h   |  1 +
+ TMessagesProj/jni/tgnet/Defines.h              |  1 +
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
++++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+@@ -247,10 +247,11 @@ void ConnectionsManager::select() {
+ 
+     if (lastPauseTime != 0 && llabs(now - lastPauseTime) >= nextSleepTimeout) {
+         bool dontSleep = !requestingSaltsForDc.empty();
++        bool keepForGeneric = inu_backgroundPauseTime != 0 && llabs(now - inu_backgroundPauseTime) < INU_CONNECTION_BACKGROUND_PENDING_KEEP_TIME;
+         if (!dontSleep) {
+             for (auto & runningRequest : runningRequests) {
+                 Request *request = runningRequest.get();
+-                if (request->connectionType & ConnectionTypeDownload || request->connectionType & ConnectionTypeUpload) {
++                if (request->connectionType & ConnectionTypeDownload || request->connectionType & ConnectionTypeUpload || (keepForGeneric && request->connectionType & ConnectionTypeGeneric && !request->cancelled)) {
+                     dontSleep = true;
+                     break;
+                 }
+@@ -259,7 +260,7 @@ void ConnectionsManager::select() {
+         if (!dontSleep) {
+             for (auto & iter : requestsQueue) {
+                 Request *request = iter.get();
+-                if (request->connectionType & ConnectionTypeDownload || request->connectionType & ConnectionTypeUpload) {
++                if (request->connectionType & ConnectionTypeDownload || request->connectionType & ConnectionTypeUpload || (keepForGeneric && request->connectionType & ConnectionTypeGeneric && !request->cancelled)) {
+                     dontSleep = true;
+                     break;
+                 }
+@@ -276,7 +277,7 @@ void ConnectionsManager::select() {
+             return;
+         } else {
+             lastPauseTime = now;
+-            if (LOGS_ENABLED) DEBUG_D("don't sleep because of salt, upload or download request");
++            if (LOGS_ENABLED) DEBUG_D("don't sleep because of salt, upload, download or pending generic request");
+         }
+     }
+     if (networkPaused) {
+@@ -3828,6 +3829,7 @@ void ConnectionsManager::resumeNetwork(bool partial) {
+         } else {
+             lastPauseTime = 0;
+             lastMonotonicPauseTime = 0;
++            inu_backgroundPauseTime = 0;
+             lastSystemPauseTime = 0;
+             networkPaused = false;
+             if (LOGS_ENABLED) DEBUG_D("wakeup network account%u", instanceNum);
+@@ -3848,7 +3850,7 @@ void ConnectionsManager::pauseNetwork() {
+     if (lastPauseTime != 0) {
+         return;
+     }
+-    lastMonotonicPauseTime = lastPauseTime = getCurrentTimeMonotonicMillis();
++    inu_backgroundPauseTime = lastMonotonicPauseTime = lastPauseTime = getCurrentTimeMonotonicMillis();
+     lastSystemPauseTime = getCurrentTime();
+     saveConfig();
+ }
+diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.h b/TMessagesProj/jni/tgnet/ConnectionsManager.h
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionsManager.h
++++ b/TMessagesProj/jni/tgnet/ConnectionsManager.h
+@@ -175,6 +175,7 @@ private:
+     int32_t nextSleepTimeout = CONNECTION_BACKGROUND_KEEP_TIME;
+     int64_t lastPauseTime = 0;
+     int64_t lastMonotonicPauseTime = 0;
++    int64_t inu_backgroundPauseTime = 0;
+     int32_t lastSystemPauseTime = 0;
+     ConnectionState connectionState = ConnectionStateConnecting;
+     std::unique_ptr<ByteArray> movingAuthorization;
+diff --git a/TMessagesProj/jni/tgnet/Defines.h b/TMessagesProj/jni/tgnet/Defines.h
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/Defines.h
++++ b/TMessagesProj/jni/tgnet/Defines.h
+@@ -27,6 +27,7 @@
+ #define DOWNLOAD_CONNECTIONS_COUNT 2
+ #define UPLOAD_CONNECTIONS_COUNT 4
+ #define CONNECTION_BACKGROUND_KEEP_TIME 10000
++#define INU_CONNECTION_BACKGROUND_PENDING_KEEP_TIME 120000
+ #define MAX_ACCOUNT_COUNT 16
+ #define USE_DELEGATE_HOST_RESOLVE
+ 

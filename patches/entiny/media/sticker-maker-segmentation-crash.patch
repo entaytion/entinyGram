@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StickerMakerView.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StickerMakerView.java
-@@ -930,21 +930,29 @@ public class StickerMakerView extends FrameLayout implements NotificationCenter.
+@@ -936,21 +936,29 @@ public class StickerMakerView extends FrameLayout implements NotificationCenter.
  
      private void segment(Bitmap bitmap, int orientation, Utilities.Callback<List<SubjectMock>> whenDone, Utilities.Callback<SegmentedObject> whenEmpty) {
          segmentingLoading = true;

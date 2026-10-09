@@ -4,10 +4,10 @@ Date: Thu, 23 Jul 2026 12:29:15 +0400
 Subject: non-island ui in various parts of the app
 
 ---
- .../org/telegram/ui/ActionBar/ActionBar.java  |  45 +++---
+ .../org/telegram/ui/ActionBar/ActionBar.java  |  47 +++---
  .../ui/ActionBar/ActionBarLayout.java         |   2 +-
  .../telegram/ui/ChannelAdminLogActivity.java  |  21 ++-
- .../java/org/telegram/ui/ChatActivity.java    | 142 +++++++++++------
+ .../java/org/telegram/ui/ChatActivity.java    | 142 ++++++++++------
  .../ui/Components/ChatActivityEnterView.java  |  66 +++++---
  ...ChatActivityEnterViewAnimatedIconView.java |  17 +-
  .../ChatActivityTopPanelLayout.java           |  27 +++-
@@ -22,7 +22,7 @@ Subject: non-island ui in various parts of the app
  .../telegram/ui/Components/MediaActivity.java |   2 +-
  .../ui/Components/MentionsContainerView.java  |  19 +--
  .../ui/Components/RecyclerListView.java       |   7 +
- .../Components/ScrollSlidingTextTabStrip.java | 116 +++++++++++++-
+ .../Components/ScrollSlidingTextTabStrip.java | 116 ++++++++++++-
  .../ui/Components/SearchTagsList.java         |   3 +
  .../ui/Components/SharedMediaLayout.java      |  78 +++++++--
  .../ui/Components/TopicsTabsView.java         |  28 ++--
@@ -34,14 +34,14 @@ Subject: non-island ui in various parts of the app
  .../ChatActivityBlurredRoundButton.java       |   6 +-
  .../ChatActivityChannelButtonsLayout.java     |  33 +++-
  .../ui/Components/glass/GlassTabView.java     |   5 +-
- .../java/org/telegram/ui/DialogsActivity.java | 148 +++++++++++-------
+ .../java/org/telegram/ui/DialogsActivity.java | 152 +++++++++++-------
  .../java/org/telegram/ui/ProfileActivity.java |  28 ++--
  .../ui/SearchTabsAndFiltersLayout.java        |   6 +
  .../java/org/telegram/ui/bots/BotAdView.java  |   2 +-
  .../ui/bots/BotCommandsMenuContainer.java     |   4 +-
  .../bots/ChatAttachAlertBotWebViewLayout.java |   5 +-
  .../java/org/telegram/ui/iv/RichEditor.java   |   4 +-
- 37 files changed, 713 insertions(+), 265 deletions(-)
+ 37 files changed, 716 insertions(+), 268 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
 index 0000000..0000000 100644
@@ -131,6 +131,15 @@ index 0000000..0000000 100644
                  menu.setTranslationX(-lerp((float) dp(10), dp(5), searchFieldVisibleAlpha));
              }
              if (backgroundUpdateListener != null) {
+@@ -2240,7 +2243,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+             final int rightDefault = getWidth() - rightOffset;
+             final int widthDefault = rightDefault - leftDefault;
+             final int left, right;
+-            if (chatAvatarContainer != null) {
++            if (chatAvatarContainer != null && !inu_nonIsland) {
+                 final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
+                 left = (rightDefault + leftDefault - width) / 2;
+                 right = left + width;
 @@ -2256,14 +2259,18 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
                  right = rightDefault;
              }
@@ -2553,6 +2562,24 @@ index 0000000..0000000 100644
  
              fragmentLocationContextViewWrapper = new FrameLayout(context);
              topPanelLayout.addView(fragmentLocationContextViewWrapper);
+@@ -4960,7 +4980,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             commentView.getSendButton().setAlpha(0);
+ 
+             commentView.setViewParentForEmoji(chatInputInAppContainer);
+-            chatInputBubbleContainer.addView(commentView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 7, 0, 7, 0));
++            chatInputBubbleContainer.addView(commentView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM, 7, 0, 7, NonIslandHelper.chatElements() ? -9 : 0));
+             contentView.addView(chatInputViewsContainer.getFadeView(), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+             contentView.addView(chatInputViewsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+ 
+@@ -5143,7 +5163,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 }
+             };
+             writeButton.setCircleSize(dp(52), dp(38));
+-            writeButton.setCirclePadding(dp(7), dp(8));
++            writeButton.setCirclePadding(dp(7), dp(NonIslandHelper.chatElements() ? 1 : 8));
+             writeButton.newCounterPos = true;
+             contentView.addView(writeButton, LayoutHelper.createFrame(110, 50, Gravity.RIGHT | Gravity.BOTTOM));
+             writeButton.setScrimViewBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
 @@ -5174,6 +5194,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              filterTabsView.setPadding(0, dp(7), 0, dp(7));
              filterTabsView.setBlurredBackground(filterTabsViewBackground);

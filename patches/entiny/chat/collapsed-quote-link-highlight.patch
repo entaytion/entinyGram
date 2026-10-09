@@ -29,7 +29,7 @@ index 0000000..0000000 100644
                      drawProgressLoadingLink(canvas, a);
                  }
                  float collapsed = 1f;
-@@ -23939,9 +23947,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -23940,9 +23948,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              float blockRtl = block.isRtl() ? captionLayout.textXOffset - (block.quote ? dp(10) : 0) : 0;
              canvas.save();
              canvas.translate(captionX - blockRtl, captionY + block.textYOffset(captionLayout.textLayoutBlocks, transitionParams) + transitionYOffsetForDrawables + block.padTop);

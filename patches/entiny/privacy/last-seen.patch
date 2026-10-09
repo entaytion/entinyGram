@@ -27,7 +27,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -6875,6 +6875,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -6876,6 +6876,7 @@ public class MessagesController extends BaseController implements NotificationCe
          desu.inugram.helpers.profile.LocalNameHelper.applyTo(user, currentAccount);
          fromCache = fromCache && user.id / 1000 != 333 && user.id != 777000;
          TLRPC.User oldUser = users.get(user.id);

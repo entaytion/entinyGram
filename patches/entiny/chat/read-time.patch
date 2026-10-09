@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -18943,6 +18943,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18972,6 +18972,7 @@ public class MessagesController extends BaseController implements NotificationCe
                      dialogId = -update.peer.chat_id;
                  } else {
                      markAsReadMessagesOutbox.put(update.peer.user_id, update.max_id);

@@ -1,0 +1,110 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Thu, 8 Oct 2026 06:39:13 +0300
+Subject: add debug logging for dialog folder slot changes
+
+---
+ .../telegram/messenger/MessagesController.java  |  1 +
+ .../java/org/telegram/ui/DialogsActivity.java   | 17 +++++++++++------
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
+@@ -2535,6 +2535,7 @@ public class MessagesController extends BaseController implements NotificationCe
+         if (selectedDialogFilter[index] == filter) {
+             return;
+         }
++        desu.inugram.helpers.dialogs.FolderDebugHelper.onSelectFilter(this, index, filter);
+         DialogFilter prevFilter = selectedDialogFilter[index];
+         selectedDialogFilter[index] = filter;
+         if (selectedDialogFilter[index == 0 ? 1 : 0] == filter) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+index 0000000..0000000 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
+@@ -368,13 +368,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         public DialogsRecyclerView listView;
+         public RecyclerListViewScroller scroller;
+         private LinearLayoutManager layoutManager;
+-        private DialogsAdapter dialogsAdapter;
++        public DialogsAdapter dialogsAdapter;
+         private ItemTouchHelper itemTouchhelper;
+         private SwipeController swipeController;
+-        private int selectedType;
++        public int selectedType;
+         private PullForegroundDrawable pullForegroundDrawable;
+         private RecyclerAnimationScrollHelper scrollHelper;
+-        private int dialogsType;
++        public int dialogsType;
+         private int archivePullViewState;
+         private FlickerLoadingView progressView;
+         private int lastItemsCount;
+@@ -503,7 +503,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+ 
+     private float contactsAlpha = 1f;
+     private ValueAnimator contactsAlphaAnimator;
+-    private ViewPage[] viewPages;
++    public ViewPage[] viewPages;
+     private ActionBarMenuItem passcodeItem;
+     private ActionBarMenuItem downloadsItem;
+     private DownloadProgressIcon downloadProgressIcon;
+@@ -548,7 +548,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     public boolean isReplyTo, isQuote;
+     public long replyMessageAuthor;
+     public long forwardOriginalChannel;
+-    private int initialDialogsType;
++    public int initialDialogsType;
+ 
+     private boolean checkingImportDialog;
+ 
+@@ -3127,6 +3127,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+     @Override
+     public void onFragmentDestroy() {
+         super.onFragmentDestroy();
++        desu.inugram.helpers.dialogs.FolderDebugHelper.onEvent(this, "onFragmentDestroy");
+         if (observersGroup != null) {
+             observersGroup.removeAllObservers();
+             observersGroup = null;
+@@ -5713,6 +5714,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+             }
+         };
+         updateFilterTabs(true, false);
++        desu.inugram.helpers.dialogs.FolderDebugHelper.onEvent(this, "createView");
+         rightSlidingDialogContainer.setOpenProgress(0f);
+         contentView.addView(dialogStoriesCell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, DialogStoriesCell.HEIGHT_IN_DP));
+         contentView.addView(rightSlidingDialogContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+@@ -7018,6 +7020,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         viewPages[a].dialogsAdapter.setDialogsType(viewPages[a].dialogsType);
+         viewPages[a].layoutManager.scrollToPositionWithOffset(viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN ? 1 : 0, (int) scrollYOffset);
+         checkListLoad(viewPages[a]);
++        desu.inugram.helpers.dialogs.FolderDebugHelper.onEvent(this, "switchToCurrentSelectedMode animated=" + animated);
+     }
+ 
+     private boolean scrollBarVisible = true;
+@@ -7135,6 +7138,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                 viewPages[1].dialogsAdapter.notifyDataSetChanged();
+                 canShowFilterTabsView = false;
+                 updateFilterTabsVisibility(animated);
++                desu.inugram.helpers.dialogs.FolderDebugHelper.onEvent(this, "updateFilterTabs hide");
+                 for (int a = 0; a < viewPages.length; a++) {
+                     if (viewPages[a].dialogsType == DIALOGS_TYPE_DEFAULT && viewPages[a].archivePullViewState == ARCHIVE_ITEM_STATE_HIDDEN && hasHiddenArchive()) {
+                         int p = viewPages[a].layoutManager.findFirstVisibleItemPosition();
+@@ -7423,7 +7427,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+                     filterTabsView.selectTabWithStableId(dialogFilter.localId);
+                 }
+             }
+-        }
++        }        desu.inugram.helpers.dialogs.FolderDebugHelper.onEvent(this, "onResume");
+     }
+ 
+     @Override
+@@ -11329,6 +11333,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+         } else if (dialogsType == 7 || dialogsType == 8) {
+             MessagesController.DialogFilter dialogFilter = messagesController.selectedDialogFilter[dialogsType == 7 ? 0 : 1];
+             if (dialogFilter == null) {
++                desu.inugram.helpers.dialogs.FolderDebugHelper.onFilterFallback(this, dialogsType);
+                 return messagesController.getDialogs(folderId);
+             } else {
+                 if (initialDialogsType == DIALOGS_TYPE_FORWARD) {

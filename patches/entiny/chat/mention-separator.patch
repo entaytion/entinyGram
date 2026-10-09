@@ -45,7 +45,7 @@ index 0000000..0000000 100644
                          chatActivityEnterView.replaceWithText(start, len, spannable, false);
                      }
                  }
-@@ -40270,7 +40273,7 @@ public class ChatActivity extends BaseFragment implements
+@@ -40281,7 +40284,7 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = ChatObject.getPublicUsername(chat);
                  if (username != null) {
@@ -54,7 +54,7 @@ index 0000000..0000000 100644
                  } else {
                      return;
                  }
-@@ -40296,11 +40299,12 @@ public class ChatActivity extends BaseFragment implements
+@@ -40307,11 +40310,12 @@ public class ChatActivity extends BaseFragment implements
                  }
                  String username = UserObject.getPublicUsername(user);
                  if (username != null) {

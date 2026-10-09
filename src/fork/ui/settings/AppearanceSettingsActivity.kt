@@ -191,6 +191,14 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 LocaleController.getString(R.string.InuSimpleAttachPopupAnimation),
             ).setChecked(InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.value)
         )
+        items.add(
+            mkTwoLineCheckItem(
+                TOGGLE_OPTIMIZED_ATTACHMENT_MENU,
+                R.string.InuOptimizedAttachmentMenu,
+                R.string.InuOptimizedAttachmentMenuInfo,
+                InuConfig.OPTIMIZED_ATTACHMENT_MENU.value,
+            )
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             items.add(
                 UItem.asButton(
@@ -311,6 +319,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
             TOGGLE_DISABLE_CHAT_THEMES -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_CHAT_THEMES.toggle()
             TOGGLE_DISABLE_BG_PARALLAX -> (view as? TextCheckCell)?.isChecked = InuConfig.DISABLE_BG_PARALLAX.toggle()
             TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION -> (view as? TextCheckCell)?.isChecked = InuConfig.SIMPLE_ATTACH_POPUP_ANIMATION.toggle()
+            TOGGLE_OPTIMIZED_ATTACHMENT_MENU -> (view as? NotificationsCheckCell)?.isChecked = InuConfig.OPTIMIZED_ATTACHMENT_MENU.toggle()
 
             BUTTON_PREDICTIVE_BACK_MODE -> RadioItemOptions.show(
                 this, view,
@@ -361,6 +370,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
         private val BUTTON_MONET_THEME = InuUtils.generateId()
         private val BUTTON_IOS_STYLE = InuUtils.generateId()
         private val TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION = InuUtils.generateId()
+        private val TOGGLE_OPTIMIZED_ATTACHMENT_MENU = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_BACKGROUNDS = InuUtils.generateId()
         private val TOGGLE_DISABLE_CHAT_THEMES = InuUtils.generateId()
         private val TOGGLE_DISABLE_BG_PARALLAX = InuUtils.generateId()
@@ -414,6 +424,7 @@ class AppearanceSettingsActivity : SettingsPageActivity() {
                 // entiny: preserve legacy slug so existing tg://settings/inu deeplinks and search recents still resolve
                 SearchRegistry.Entry("hide-fade-view", R.string.InuHideFadeView, TOGGLE_HIDE_FADE_VIEW),
                 SearchRegistry.Entry("simple-attach-popup-animation", R.string.InuSimpleAttachPopupAnimation, TOGGLE_SIMPLE_ATTACH_POPUP_ANIMATION),
+                SearchRegistry.Entry("lightweight-attachment-animation", R.string.InuOptimizedAttachmentMenu, TOGGLE_OPTIMIZED_ATTACHMENT_MENU),
                 SearchRegistry.Entry("disable-chat-backgrounds", R.string.InuDisableChatBackgrounds, TOGGLE_DISABLE_CHAT_BACKGROUNDS),
                 SearchRegistry.Entry("disable-chat-themes", R.string.InuDisableChatThemes, TOGGLE_DISABLE_CHAT_THEMES),
                 SearchRegistry.Entry("disable-bg-parallax", R.string.InuDisableBgParallax, TOGGLE_DISABLE_BG_PARALLAX),

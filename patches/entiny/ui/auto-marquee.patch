@@ -499,7 +499,7 @@ index 0000000..0000000 100644
 -            final int rightDefault = getWidth() - rightOffset;
 -            final int widthDefault = rightDefault - leftDefault;
 -            final int left, right;
--            if (chatAvatarContainer != null) {
+-            if (chatAvatarContainer != null && !inu_nonIsland) {
 -                final int width = lerp(Math.min(widthDefault, (int) animatorAvatarContainerWidth.getFactor() + p * 2), widthDefault, Math.max(searchFactor, actionModeFactor));
 -                left = (rightDefault + leftDefault - width) / 2;
 -                right = left + width;

@@ -857,7 +857,10 @@ object InuConfig {
     val DISABLE_QUICK_SHARE = BoolItem("disable_quick_share", true)
 
     @JvmField
-    val MEMORY_TRIM = BoolItem("memory_trim", true)
+val MEMORY_TRIM = BoolItem("memory_trim", true)
+
+    @JvmField
+    val OPTIMIZED_ATTACHMENT_MENU = BoolItem("optimized_attachment_menu", true)
 
     @JvmField
     val HIDE_CHANNEL_SHARE_BUTTON = BoolItem("hide_channel_share_button", false)
@@ -1309,6 +1312,17 @@ object InuConfig {
 
     @JvmField
     val COMPACT_EDITED = BoolItem("compact_edited", false)
+
+    class EditedMessageDateModeItem : IntItem("edited_message_date_mode", TELEGRAM) {
+        companion object {
+            const val TELEGRAM = 0
+            const val EDIT_DATE = 1
+            const val SEND_DATE = 2
+        }
+    }
+
+    @JvmField
+    val EDITED_MESSAGE_DATE_MODE = EditedMessageDateModeItem()
 
     @JvmField
     val SHOW_FORWARDS_COUNT = BoolItem("show_forwards_count", false)

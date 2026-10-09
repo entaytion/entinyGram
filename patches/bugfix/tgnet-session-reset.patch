@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: alina sireneva <alina@tei.pet>
+Date: Fri, 9 Oct 2026 01:37:52 +0200
+Subject: fix tgnet clock offset and stale requests after session reset
+
+---
+ TMessagesProj/jni/tgnet/ConnectionsManager.cpp | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+index 0000000..0000000 100644
+--- a/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
++++ b/TMessagesProj/jni/tgnet/ConnectionsManager.cpp
+@@ -974,6 +974,13 @@ void ConnectionsManager::onConnectionDataReceived(Connection *connection, Native
+             if (processedStatus == 2) {
+                 if (object == nullptr) {
+                     connection->recreateSession();
++                    for (auto & runningRequest : runningRequests) {
++                        Request *request = runningRequest.get();
++                        Datacenter *requestDatacenter = getDatacenterWithId(request->datacenterId);
++                        if (request->connectionType & connection->getConnectionType() && requestDatacenter != nullptr && requestDatacenter->getDatacenterId() == datacenter->getDatacenterId()) {
++                            request->clear(true);
++                        }
++                    }
+                     connection->reconnect();
+                     return;
+                 } else {
+@@ -1147,6 +1154,13 @@ void ConnectionsManager::processServerResponse(TLObject *message, int64_t messag
+             if (processedStatus == 2) {
+                 if (innerMessage->unparsedBody != nullptr) {
+                     connection->recreateSession();
++                    for (auto & runningRequest : runningRequests) {
++                        Request *request = runningRequest.get();
++                        Datacenter *requestDatacenter = getDatacenterWithId(request->datacenterId);
++                        if (request->connectionType & connection->getConnectionType() && requestDatacenter != nullptr && requestDatacenter->getDatacenterId() == datacenter->getDatacenterId()) {
++                            request->clear(true);
++                        }
++                    }
+                     connection->reconnect();
+                     return;
+                 }
+@@ -1584,7 +1598,7 @@ void ConnectionsManager::processServerResponse(TLObject *message, int64_t messag
+                 }
+ 
+                 if (realId != 0) {
+-                    auto time = (int64_t) (messageId / 4294967296.0 * 1000);
++                    auto time = (int64_t) (realId / 4294967296.0 * 1000);
+                     int64_t currentTime = getCurrentTimeMillis();
+                     timeDifference = (int32_t) ((time - currentTime) / 1000 - currentPingTime / 2);
+                 }

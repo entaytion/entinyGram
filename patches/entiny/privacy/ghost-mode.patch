@@ -47,7 +47,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -14780,6 +14780,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -14781,6 +14781,9 @@ public class MessagesController extends BaseController implements NotificationCe
      }
  
      public void markDialogAsRead(long dialogId, int maxPositiveId, int maxNegativeId, int maxDate, boolean popup, long threadId, int countDiff, boolean readNow, int scheduledCount) {
@@ -113,7 +113,7 @@ index 0000000..0000000 100644
              if (!onlySelect) {
                  observersGroup.addGlobal(NotificationCenter.closeSearchByActiveAction);
                  observersGroup.addGlobal(NotificationCenter.proxySettingsChanged);
-@@ -10882,6 +10883,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10886,6 +10887,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
              }
          } else if (id == NotificationCenter.proxySettingsChanged) {
              updateProxyButton(false, false);

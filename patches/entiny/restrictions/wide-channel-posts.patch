@@ -593,7 +593,7 @@ index 0000000..0000000 100644
                  if (block.quote) {
                      if (quoteLine == null) {
                          quoteLine = new ReplyMessageLine(this);
-@@ -18742,6 +18869,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18743,6 +18870,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      }
  
      protected boolean checkNeedDrawShareButton(MessageObject messageObject) {
@@ -601,7 +601,7 @@ index 0000000..0000000 100644
          if (desu.inugram.InuConfig.HIDE_CHANNEL_SHARE_BUTTON.getValue()) return false;
          if (isReportChat) return false;
          if (currentMessageObject.deleted && !currentMessageObject.deletedByThanos) return false;
-@@ -18918,12 +19046,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -18919,12 +19047,16 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              viaWidth = (int) Math.ceil(Theme.chat_replyNamePaint.measureText(viaString, 0, viaString.length()));
          }
  
@@ -619,7 +619,7 @@ index 0000000..0000000 100644
              nameWidth = getMaxNameWidth();
              if (nameWidth < 0) {
                  nameWidth = dp(100);
-@@ -19859,6 +19991,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19860,6 +19992,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          return (
              isPinnedChat && currentMessageObject.type == MessageObject.TYPE_TEXT ||
              !pinnedTop && drawName && isChat && (!currentMessageObject.isOutOwner() || currentMessageObject.isSupergroup() && currentMessageObject.isFromGroup() || currentMessageObject.isRepostPreview) ||
@@ -627,7 +627,7 @@ index 0000000..0000000 100644
              currentMessageObject.isImportedForward() && currentMessageObject.messageOwner.fwd_from.from_id == null
          );
      }
-@@ -19963,6 +20096,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19964,6 +20097,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
      }
  
      public ImageReceiver getAvatarImage() {
@@ -637,7 +637,7 @@ index 0000000..0000000 100644
          return isAvatarVisible ? avatarImage : null;
      }
  
-@@ -20529,7 +20665,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -20530,7 +20666,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              } else {
                  if (isSideMenuEnabled) {
                      backgroundX = dp(20 + ChatActivity.SIDE_MENU_WIDTH);
@@ -646,7 +646,7 @@ index 0000000..0000000 100644
                      backgroundX = dp(20 + 48);
                  } else {
                      backgroundX = dp(20);
-@@ -21640,7 +21776,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -21641,7 +21777,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  textColorKey = Theme.key_windowBackgroundWhiteBlackText;
              }
              float collapsed = 1f;
@@ -655,7 +655,7 @@ index 0000000..0000000 100644
              if (block.quoteCollapse) {
                  AndroidUtilities.rectTmp.set(0, -block.padTop + dp(block.first ? 3 + 1.66f : 3), width, block.height(transitionParams) + dp(4));
                  AndroidUtilities.rectTmp.offset((block.isRtl() ? rtlOffset - dp(10) : 0), 0);
-@@ -25450,7 +25586,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -25451,7 +25587,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              if (currentMessageObject.isOutOwner()) {
                  x = layoutWidth - backgroundWidth + dp(16);
              } else {
@@ -664,7 +664,7 @@ index 0000000..0000000 100644
                      x = dp(74);
                  } else {
                      x = dp(25);
-@@ -25561,7 +25697,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -25562,7 +25698,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              } else {
                  if (isSideMenuEnabled) {
                      x = dp(20 + ChatActivity.SIDE_MENU_WIDTH);
@@ -673,7 +673,7 @@ index 0000000..0000000 100644
                      x = dp(20 + 48);
                  } else {
                      x = dp(20);
-@@ -26493,7 +26629,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -26494,7 +26630,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
              return dp(3) + this.layoutWidth - backgroundWidth;
          } else if (isSideMenuEnabled) {
              return dp(11 + ChatActivity.SIDE_MENU_WIDTH);
@@ -682,7 +682,7 @@ index 0000000..0000000 100644
              return dp(11 + 48);
          } else {
              return dp(11);
-@@ -29328,6 +29464,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -29329,6 +29465,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
          return Theme.isCurrentThemeDark();
      }
  

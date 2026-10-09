@@ -38,7 +38,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesControll
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
 +++ b/TMessagesProj/src/main/java/org/telegram/messenger/MessagesController.java
-@@ -20930,6 +20930,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -20958,6 +20958,7 @@ public class MessagesController extends BaseController implements NotificationCe
                                      updateDialogs = true;
                                      break;
                                  } else if (oldObject.getDialogId() == newMessage.getDialogId() && oldObject.messageOwner.action instanceof TLRPC.TL_messageActionPinMessage && oldObject.replyMessageObject != null && oldObject.replyMessageObject.getId() == newMessage.getId()) {

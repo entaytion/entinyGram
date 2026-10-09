@@ -4,8 +4,8 @@ Date: Tue, 26 May 2026 21:55:28 +0400
 Subject: add seekbar to gifs
 
 ---
- .../main/java/org/telegram/ui/PhotoViewer.java  | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ .../java/org/telegram/ui/PhotoViewer.java     | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
 index 0000000..0000000 100644
@@ -39,6 +39,15 @@ index 0000000..0000000 100644
              playerAutoStarted = true;
              onActionClick(false);
          } else if (!imagesArrLocals.isEmpty()) {
+@@ -14606,7 +14607,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+ 
+             boolean isInvoice = newMessageObject.isInvoice();
+             boolean noforwards = MessagesController.getInstance(currentAccount).isPeerNoForwards(newMessageObject.getDialogId()) || (newMessageObject.messageOwner != null && newMessageObject.messageOwner.noforwards) || newMessageObject.hasRevealedExtendedMedia();
+-            if (isVideo && !isLivePhoto) {
++            if ((isVideo || desu.inugram.helpers.media.PhotoViewerHelper.gifAsVideo(newMessageObject)) && !isLivePhoto) {
+                 bottomLayout.setVisibility(View.VISIBLE);
+                 bottomLayout.setTag(1);
+             } else {
 @@ -16895,7 +16896,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                  if (!TextUtils.isEmpty(restrictionReason)) {
                      imageReceiver.setImageBitmap(parentActivity.getResources().getDrawable(R.drawable.photoview_placeholder));

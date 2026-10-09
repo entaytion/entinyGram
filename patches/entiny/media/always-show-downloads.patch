@@ -12,7 +12,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -10569,7 +10569,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -10573,7 +10573,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                  break;
              }
          }

@@ -96,7 +96,7 @@ index 0000000..0000000 100644
                      });
                  }
              } else {
-@@ -17962,8 +17968,64 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -17988,8 +17994,64 @@ public class MessagesController extends BaseController implements NotificationCe
          }
      }
  
@@ -161,7 +161,7 @@ index 0000000..0000000 100644
          ArrayList<Long> needGetChannelsDiff = null;
          boolean needGetDiff = false;
          boolean needReceivedQueue = false;
-@@ -18064,54 +18126,7 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18090,54 +18152,7 @@ public class MessagesController extends BaseController implements NotificationCe
                  needGetDiff = true;
              } else {
                  if (getMessagesStorage().getLastPtsValue() + updates.pts_count == updates.pts) {
@@ -217,7 +217,7 @@ index 0000000..0000000 100644
  
                      getMessagesStorage().setLastPtsValue(updates.pts);
                      boolean isDialogCreated = createdDialogIds.contains(message.dialog_id);
-@@ -18590,6 +18605,9 @@ public class MessagesController extends BaseController implements NotificationCe
+@@ -18618,6 +18633,9 @@ public class MessagesController extends BaseController implements NotificationCe
                  FileLog.d("process update " + baseUpdate.getClass().getSimpleName());
              }
              desu.inugram.InuHooks.onUpdate(baseUpdate, currentAccount);

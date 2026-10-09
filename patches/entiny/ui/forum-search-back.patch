@@ -11,7 +11,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java b/
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/DialogsActivity.java
-@@ -7524,7 +7524,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
+@@ -7528,7 +7528,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
          if (hasShownSheet()) {
              if (invoked) closeSheet();
              return false;

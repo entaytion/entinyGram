@@ -1948,4 +1948,16 @@
     <string name="InuMarketplaceChecksum">файл не совпадает с контрольной суммой</string>
     <string name="InuCopyAllProxies">Копировать все</string>
     <string name="InuShareAllProxies">Поделиться всеми</string>
+
+    <string name="InuOptimizedAttachmentMenu">Оптимизированное меню вложений</string>
+    <string name="InuOptimizedAttachmentMenuInfo">Улучшает плавность анимации при открытии фото и видео</string>
+    <string name="InuEditedMessageDateMode">Время отредактированного сообщения</string>
+    <string name="InuEditedMessageDateModeTelegram">По умолчанию</string>
+    <string name="InuEditedMessageDateModeEdit">Дата редактирования</string>
+    <string name="InuEditedMessageDateModeSend">Дата отправки</string>
+
+    <string name="InuAllowForwardRestrictedWarning">Telegram всё равно может блокировать часть пересылок, даже с включённой опцией. Если видите "Plain forwarding is not allowed.", скопируйте текст или сохраните медиа.</string>
+    <string name="InuBackupImportSheetReplace">Заменить все настройки</string>
+    <string name="InuDrawerMenuAddDivider">Добавить разделитель</string>
+    <string name="InuMaterial3AccentIcons">Иконки акцентного цвета</string>
 </resources>

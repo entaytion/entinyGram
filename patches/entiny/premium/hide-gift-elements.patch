@@ -14,7 +14,7 @@ diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMe
 index 0000000..0000000 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
-@@ -27792,6 +27792,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -27803,6 +27803,9 @@ public class ChatActivity extends BaseFragment implements
      }
  
      private void checkGroupEmojiPackHint() {
@@ -24,7 +24,7 @@ index 0000000..0000000 100644
          if (groupEmojiPackHint == null && ChatObject.isMegagroup(currentChat)) {
              final TLRPC.ChatFull chatFull = getMessagesController().getChatFull(currentChat.id);
              if (chatFull == null || chatActivityEnterView == null || getContext() == null) {
-@@ -28454,6 +28457,10 @@ public class ChatActivity extends BaseFragment implements
+@@ -28465,6 +28468,10 @@ public class ChatActivity extends BaseFragment implements
  
          bottomOverlayChatText.setTextColorKey(accentTextButton ? Theme.key_featuredStickers_buttonText : Theme.key_glass_defaultText);
  

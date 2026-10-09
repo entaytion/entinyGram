@@ -260,7 +260,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - minimize sticker creator button in recent stickers
 - sticker time overlay modes: show / 🐶 hide time / 🐶 hide on incoming / hide completely
 - "Refresh" in the sticker/emoji pack menu
-- compact edited indicator: pencil icon instead of the "edited" label
+- edited-message display: compact pencil indicator and configurable primary timestamp
 - toggleable message bubble tails
 - 🐶 jump-to-discussion button from comments
 - jump-to-beginning button in calendar popup - *ported from [Nekogram](https://github.com/Nekogram/Nekogram)*
@@ -409,6 +409,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - batch import proxy links from clipboard (one per line)
 - send MP4 files attached through Files as playable videos without conversion
 - sort attach panel albums by photo count instead of recency
+- 🐶 optimized attachment menu setting: [smoother animations](https://github.com/teidesu/inugram/pull/56) when opening photos and videos, large photos open at up to 1920px, with full quality loaded when zooming or editing; disables background blur in the media viewer
 - 🐶 "Minimize" option in the attach panel discard prompt to keep the selection (e.g. to choose a message to reply to)
 - choose the media save folder (Inugram/Telegram) used for saved photos, videos, music and downloads
 - original video quality option in quality picker, including audio removal without re-encoding video
@@ -440,6 +441,9 @@ the sections below contain the broader feature set: inugram functionality, featu
 ### 🐶 bugfixes (vs stock)
 
 - channel update queue no longer replays the same update indefinitely after an earlier queued update advances PTS
+- flaky networks: server time offset no longer reset to the epoch by a `bad_msg_notification` inside a container (messages sent meanwhile were dated 1 Jan 1970); session resets on old retransmitted server messages re-send pending requests with fresh msg_id/seqno instead of stale ones (which made the server reject them and cascaded into more resets)
+- network stays awake in background for up to 2 minutes while generic requests (sends, getDifference) are pending, instead of pausing after 10 seconds regardless
+- sticker cutout/eraser edits no longer progressively fade and/or darken transparent PNGs
 - connection status title no longer gets stuck on "Updating..." when its transition animation is cancelled
 - accelerated video playback no longer applies an unnecessary pitch shift; live speed-slider changes use Android's low-latency audio mixer path
 - "Save to Downloads" copies uncached documents after downloading instead of requiring a second attempt
@@ -447,6 +451,7 @@ the sections below contain the broader feature set: inugram functionality, featu
 - "Save to Downloads" preserves the original filename on Android 10+
 - downloaded photos/videos no longer show up in the system gallery on devices whose scanner indexes app-private dirs (stock never wrote `.nomedia` into the media cache dirs; only on Android 11+, where the gallery-visible copies live elsewhere)
 - gboard image paste no longer skips PhotoViewer
+- PhotoViewer selected-media strip crash after sending/scheduling edited media while the strip is still moving
 - reordering an attach-panel album preserves per-photo captions and no longer duplicates its album caption
 - photo crop silently not applied to the sent image
 - high-quality photo cropping in PhotoViewer (crop *before* downscaling)

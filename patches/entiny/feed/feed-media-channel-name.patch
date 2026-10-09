@@ -20,7 +20,7 @@ index 0000000..0000000 100644
                  }
                  mediaBackground = isMedia = messageObject.type != MessageObject.TYPE_FILE;
                  drawImageButton = true;
-@@ -19061,6 +19061,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+@@ -19062,6 +19062,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                  && (currentPosition == null || (currentPosition.flags & MessageObject.POSITION_FLAG_TOP) != 0)) {
              drawName = true;
          }

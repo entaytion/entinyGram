@@ -36,7 +36,7 @@ index 0000000..0000000 100644
      private void requestLinkPreview(TL_account.getWebPagePreview req, Utilities.Callback2<Boolean, TLRPC.WebPage> done) {
          cancelSearchLinks();
          linkSearchRequestId = getConnectionsManager().sendRequestTyped(req, AndroidUtilities::runOnUIThread, (response, error) -> {
-@@ -28082,9 +28098,9 @@ public class ChatActivity extends BaseFragment implements
+@@ -28093,9 +28109,9 @@ public class ChatActivity extends BaseFragment implements
          if (chat && encryptedChat == null) {
              menu.add(R.id.menu_groupbolditalic, R.id.menu_date, order++, LocaleController.getString(R.string.FormattedDate));
          }
