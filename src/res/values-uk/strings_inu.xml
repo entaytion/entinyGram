@@ -392,6 +392,8 @@
     <string name="InuCreatedDate">Створено: %s</string>
     <string name="InuChatVoiceInAttach">Диктофон у вкладеннях</string>
     <string name="InuChatVoiceInAttachInfo">Переміщує кнопку запису голосових/відео у панель вкладень</string>
+    <string name="InuOptimizedAttachmentMenu">Оптимізоване меню вкладень</string>
+    <string name="InuOptimizedAttachmentMenuInfo">Покращує плавність анімації під час відкриття фото та відео</string>
     <string name="InuDisableIntroSticker">Не надсилати вступну наліпку</string>
     <string name="InuDisableIntroStickerInfo">…та приховати підказки вступних наліпок</string>
     <string name="InuRoundDefaultCamera">Камера відеоповідомлень за замовчуванням</string>
@@ -467,6 +469,10 @@
     <string name="InuForwardHeaderModeCompact">Компактний</string>
     <string name="InuShowForwardsCount">Показувати кількість пересилань</string>
     <string name="InuCompactEdited">Компактне інформування про редагування</string>
+    <string name="InuEditedMessageDateMode">Час редагування повідомлення</string>
+    <string name="InuEditedMessageDateModeTelegram">За замовчуванням</string>
+    <string name="InuEditedMessageDateModeEdit">Дата редагування</string>
+    <string name="InuEditedMessageDateModeSend">Дата надсилання</string>
     <string name="InuAddToStickersGifs">Додати до Наліпок/GIF</string>
     <string name="InuLongTapAction">Дія за тривалим дотиком</string>
     <string name="InuMenuMode">Режим</string>
@@ -736,6 +742,11 @@
     <string name="InuDeleteOwnMessagesFloodWait">Ліміт запитів, очікуємо %d с…</string>
     <string name="InuBiometricConfirm">Біометричне підтвердження</string>
     <string name="InuBiometricConfirmTitle">Підтвердьте особу</string>
+    <string name="InuBiometricExplicitConfirmation">Додаткове підтвердження</string>
+    <string name="InuBiometricExplicitConfirmationInfo">Запитувати додатковий дотик після успішного розпізнавання обличчя або райдужки ока</string>
+    <string name="InuBiometricRequireConfirmationPasscode">Під час розблокування застосунку</string>
+    <string name="InuBiometricRequireConfirmationBots">У міні-застосунках</string>
+    <string name="InuBiometricRequireConfirmationActions">Під час видалення чатів або виходу з акаунта</string>
     <string name="InuBiometricConfirmDeleteChat">Підтверджувати видалення чатів</string>
     <string name="InuBiometricConfirmDeleteChatInfo">Запитувати біометричне підтвердження перед видаленням або очищенням чату.</string>
     <string name="InuBiometricConfirmLogout">Підтверджувати вихід з акаунту</string>
