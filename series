@@ -522,3 +522,4 @@ entiny/ui/app-icon-picker.patch
 entiny/tabs/system-folders.patch
 entiny/proxy/proxy-menu.patch
 entiny/notifications/notifications-channel-scope.patch
+entiny/ui/topics-panel-redraw-storm.patch

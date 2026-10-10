@@ -170,6 +170,7 @@
   "suppress-screenshot-notification": "privacy",
   "theme-switch-recovery": "ui",
   "topic-icon-inset": "ui",
+  "topics-panel-redraw-storm": "ui",
   "translate-failure-bulletin": "translator",
   "translate-in-send-preview": "translator",
   "translate-preview-fixes": "translator",
