@@ -66,7 +66,6 @@ object ChatActionsHelper {
     const val ACTION_RECENT_ACTIONS = 513
     const val ACTION_GO_TO_BEGINNING = 514
     const val ACTION_GO_TO_MESSAGE = 515
-    const val ACTION_DELETE_OWN_MESSAGES = 516
     const val ACTION_STATISTICS = 517
     const val ACTION_ADMINISTRATORS = 518
     const val ACTION_PERMISSIONS = 519
@@ -170,12 +169,6 @@ object ChatActionsHelper {
             ACTION_CLEAR_DELETED, R.drawable.inu_tabler_trash_x,
             LocaleController.getString(R.string.InuClearDeletedHere),
         )
-        if (DeleteOwnMessagesHelper.isApplicable(activity.currentChat)) {
-            headerItem.lazilyAddSubItem(
-                ACTION_DELETE_OWN_MESSAGES, R.drawable.msg_delete,
-                LocaleController.getString(R.string.InuDeleteOwnMessages),
-            )
-        }
         if (ChatObject.isBoostSupported(activity.currentChat) && ChatObject.hasAdminRights(activity.currentChat)) {
             headerItem.lazilyAddSubItem(
                 ACTION_STATISTICS, R.drawable.msg_stats,
@@ -510,7 +503,6 @@ object ChatActionsHelper {
             ACTION_GO_TO_BEGINNING -> ChatHelper.jumpToBeginning(activity)
             ACTION_GO_TO_MESSAGE -> showGoToMessageDialog(activity)
             ACTION_DELETED_MESSAGES -> activity.presentFragment(AyuMessageHistoryActivity.forDeletedMessagesInDialog(activity.currentAccount, activity.dialogId))
-            ACTION_DELETE_OWN_MESSAGES -> DeleteOwnMessagesHelper.start(activity)
             ACTION_STATISTICS -> {
                 val chat = activity.currentChat
                 if (chat != null) activity.presentFragment(StatisticActivity.create(chat, false))
